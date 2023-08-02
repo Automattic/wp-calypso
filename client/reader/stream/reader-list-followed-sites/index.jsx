@@ -56,16 +56,16 @@ export class ReaderListFollowedSites extends Component {
 		} );
 	};
 
-	renderSites = ( sites ) => {
+	renderSites = ( follows ) => {
 		const { path } = this.props;
 		return map(
-			sites,
-			( site ) =>
-				site && (
+			follows,
+			( follow ) =>
+				follow && (
 					<ReaderListFollowingItem
-						key={ site.ID }
+						key={ follow.ID }
 						path={ path }
-						site={ site }
+						follow={ follow }
 						isUnseen={ this.isUnseen() }
 					/>
 				)
@@ -95,7 +95,8 @@ export class ReaderListFollowedSites extends Component {
 		return (
 			<>
 				<h2>
-					{ translate( 'Following' ) } <a href="/following/manage">{ translate( 'Manage' ) }</a>
+					{ translate( 'Subscriptions' ) }{ ' ' }
+					<a href="/read/subscriptions">{ translate( 'Manage' ) }</a>
 				</h2>
 				{ sites.length >= searchThreshold && (
 					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />
@@ -106,7 +107,6 @@ export class ReaderListFollowedSites extends Component {
 						<li className="reader-sidebar-more">
 							<Button
 								plain
-								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 								className="sidebar-streams__following-load-more"
 								onClick={ this.loadMoreSites }
 							>

@@ -2,6 +2,7 @@ import { Button, ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThankYou, { ThankYouCtaType } from './thank-you';
 
@@ -46,7 +47,7 @@ const AntiSpamProductThankYou = ( { installProgress }: { installProgress: number
 	);
 };
 
-export default connect( ( state ) => {
+export default connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
 	const installProgress = siteId && getJetpackProductInstallProgress( state, siteId );
 

@@ -1,67 +1,78 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import {
+	useSyncGlobalStylesUserConfig,
+	getVariationTitle,
+	getVariationType,
+} from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
-	withNotices,
+	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
-import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { setActiveTheme } from 'calypso/state/themes/actions';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
-import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES, NAVIGATOR_PATHS } from './constants';
+import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import useCategoryAll from './hooks/use-category-all';
+import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import { usePrefetchImages } from './hooks/use-prefetch-images';
 import useRecipe from './hooks/use-recipe';
-import NavigatorListener from './navigator-listener';
-import Notices, { getNoticeContent } from './notices/notices';
+import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import { useAllPatterns } from './patterns-data';
+import ScreenActivation from './screen-activation';
 import ScreenCategoryList from './screen-category-list';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
-import ScreenSection from './screen-section';
-import { encodePatternId, getVariationTitle, getVariationType } from './utils';
+import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { FC } from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
 const PatternAssembler = ( {
 	navigation,
 	flow,
 	stepName,
-	noticeList,
 	noticeOperations,
-}: StepProps & withNotices.Props ) => {
-	const [ navigatorPath, setNavigatorPath ] = useState( NAVIGATOR_PATHS.MAIN );
+	noticeUI,
+}: StepProps & NoticesProps ) => {
+	const translate = useTranslate();
+	const navigator = useNavigator();
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
-	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
+	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
@@ -77,14 +88,18 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
+	// New sites are created from 'site-setup' and 'with-site-assembler' flows
+	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
 
-	// Fetching all patterns and categories
-	const allPatterns = useAllPatterns( locale );
+	// The categories api triggers the ETK plugin before the PTK api request
+	const categories = usePatternCategories( site?.ID );
+	// Fetching all patterns and categories from PTK api
+	const dotcomPatterns = useDotcomPatterns( locale );
+	const allPatterns = useCategoryAll( dotcomPatterns );
 	const patternIds = useMemo(
 		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ allPatterns ]
 	);
-	const categories = usePatternCategories( site?.ID );
 	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
 	const {
 		header,
@@ -103,8 +118,6 @@ const PatternAssembler = ( {
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
-	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
-
 	const recordTracksEvent = useMemo(
 		() =>
 			createRecordTracksEvent( {
@@ -116,6 +129,7 @@ const PatternAssembler = ( {
 				color_variation_type: getVariationType( colorVariation ),
 				font_variation_title: getVariationTitle( fontVariation ),
 				font_variation_type: getVariationType( fontVariation ),
+				assembler_source: getAssemblerSource( selectedDesign ),
 			} ),
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
@@ -125,10 +139,7 @@ const PatternAssembler = ( {
 		[ colorVariation, fontVariation ]
 	);
 
-	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
-		selectedVariations,
-		isEnabledColorAndFonts
-	);
+	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
 	usePrefetchImages();
 
@@ -151,12 +162,6 @@ const PatternAssembler = ( {
 		}
 
 		return patterns.filter( ( pattern ) => pattern ) as Pattern[];
-	};
-
-	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_ADD_CLICK, {
-			pattern_type: patternType,
-		} );
 	};
 
 	const trackEventPatternSelect = ( {
@@ -201,10 +206,6 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const showNotice = ( action: string, pattern: Pattern ) => {
-		noticeOperations.createNotice( { content: getNoticeContent( action, pattern ) } );
-	};
-
 	const getDesign = () =>
 		( {
 			...selectedDesign,
@@ -225,13 +226,9 @@ const PatternAssembler = ( {
 		setHeader( pattern );
 		updateActivePatternPosition( -1 );
 		if ( pattern ) {
-			if ( header ) {
-				showNotice( 'replace', pattern );
-			} else {
-				showNotice( 'add', pattern );
-			}
+			noticeOperations.showPatternInsertedNotice( pattern );
 		} else if ( header ) {
-			showNotice( 'remove', header );
+			noticeOperations.showPatternRemovedNotice( header );
 		}
 	};
 
@@ -244,28 +241,24 @@ const PatternAssembler = ( {
 		setFooter( pattern );
 		activateFooterPosition( !! pattern );
 		if ( pattern ) {
-			if ( footer ) {
-				showNotice( 'replace', pattern );
-			} else {
-				showNotice( 'add', pattern );
-			}
+			noticeOperations.showPatternInsertedNotice( pattern );
 		} else if ( footer ) {
-			showNotice( 'remove', footer );
+			noticeOperations.showPatternRemovedNotice( footer );
 		}
 	};
 
-	const replaceSection = ( pattern: Pattern ) => {
-		if ( sectionPosition !== null ) {
+	const replaceSection = ( pattern: Pattern, position: number | null = sectionPosition ) => {
+		if ( position !== null ) {
 			setSections( [
-				...sections.slice( 0, sectionPosition ),
+				...sections.slice( 0, position ),
 				{
 					...pattern,
-					key: sections[ sectionPosition ].key,
+					key: sections[ position ].key,
 				},
-				...sections.slice( sectionPosition + 1 ),
+				...sections.slice( position + 1 ),
 			] );
-			updateActivePatternPosition( sectionPosition );
-			showNotice( 'replace', pattern );
+			updateActivePatternPosition( position );
+			noticeOperations.showPatternInsertedNotice( pattern );
 		}
 	};
 
@@ -278,11 +271,11 @@ const PatternAssembler = ( {
 			},
 		] );
 		updateActivePatternPosition( sections.length );
-		showNotice( 'add', pattern );
+		noticeOperations.showPatternInsertedNotice( pattern );
 	};
 
 	const deleteSection = ( position: number ) => {
-		showNotice( 'remove', sections[ position ] );
+		noticeOperations.showPatternRemovedNotice( sections[ position ] );
 		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
 		updateActivePatternPosition( position );
 	};
@@ -315,12 +308,7 @@ const PatternAssembler = ( {
 		selectedCategory?: string | null
 	) => {
 		if ( selectedPattern ) {
-			// Inject the selected pattern category or the first category
-			// because it's used in tracks and as pattern name in the list
-			const [ firstCategory ] = Object.keys( selectedPattern.categories );
-			selectedPattern.category = categories.find(
-				( { name } ) => name === ( selectedCategory || firstCategory )
-			);
+			injectCategoryToPattern( selectedPattern, categories, selectedCategory );
 
 			trackEventPatternSelect( {
 				patternType: type,
@@ -347,6 +335,11 @@ const PatternAssembler = ( {
 	};
 
 	const onBack = () => {
+		if ( navigator.location.path === NAVIGATOR_PATHS.ACTIVATION ) {
+			navigator.goBack();
+			return;
+		}
+
 		const patterns = getPatterns();
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
 			has_selected_patterns: patterns.length > 0,
@@ -358,26 +351,57 @@ const PatternAssembler = ( {
 
 	const onSubmit = () => {
 		const design = getDesign();
+		const stylesheet = design.recipe?.stylesheet ?? '';
+		const themeId = getThemeIdFromStylesheet( stylesheet );
+		const hasBlogPatterns = !! sections.find(
+			( { categories } ) => categories[ 'posts' ] || categories[ 'blog' ]
+		);
 
-		if ( ! siteSlugOrId ) {
+		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
 			return;
 		}
 
 		setPendingAction( () =>
-			applyThemeWithPatterns(
-				siteSlugOrId,
-				design,
-				syncedGlobalStylesUserConfig,
-				PLACEHOLDER_SITE_ID
-			).then( ( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) ) )
+			Promise.resolve()
+				.then( () =>
+					reduxDispatch(
+						activateOrInstallThenActivate(
+							themeId,
+							site?.ID,
+							'assembler',
+							false,
+							false
+						) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+					)
+				)
+				.then( ( activeThemeStylesheet: string ) =>
+					assembleSite( siteSlugOrId, activeThemeStylesheet, {
+						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
+						headerHtml: header?.html,
+						footerHtml: footer?.html,
+						globalStyles: syncedGlobalStylesUserConfig,
+						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
+						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
+						shouldResetContent: isNewSite && hasBlogPatterns,
+						// All sites using the assembler set the option wpcom_site_setup
+						siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
+					} )
+				)
 		);
 
 		recordSelectedDesign( { flow, intent, design } );
 		submit?.();
 	};
 
+	const handleContinue = () => {
+		if ( isNewSite ) {
+			onSubmit();
+		} else {
+			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
+		}
+	};
+
 	const {
-		isDismissed: isDismissedGlobalStylesUpgradeModal,
 		shouldUnlockGlobalStyles,
 		openModal: openGlobalStylesUpgradeModal,
 		globalStylesUpgradeModalProps,
@@ -387,6 +411,7 @@ const PatternAssembler = ( {
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,
+		onUpgradeLater: handleContinue,
 		recordTracksEvent,
 	} );
 
@@ -409,29 +434,21 @@ const PatternAssembler = ( {
 	const onContinueClick = () => {
 		trackEventContinue();
 
-		if ( shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal ) {
+		if ( shouldUnlockGlobalStyles ) {
 			openGlobalStylesUpgradeModal();
 			return;
 		}
 
+		handleContinue();
+	};
+
+	const onActivate = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
 		onSubmit();
 	};
 
 	const onMainItemSelect = ( name: string ) => {
-		if ( PATTERN_TYPES.includes( name ) ) {
-			trackEventPatternAdd( name );
-		}
-
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
-	};
-
-	const onAddSection = () => {
-		trackEventPatternAdd( 'section' );
-		setSectionPosition( null );
-	};
-
-	const onReplaceSection = ( position: number ) => {
-		setSectionPosition( position );
 	};
 
 	const onDeleteSection = ( position: number ) => {
@@ -450,6 +467,23 @@ const PatternAssembler = ( {
 	const onDeleteHeader = () => onSelect( 'header', null );
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
+
+	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
+		const [ firstCategory ] = Object.keys( pattern.categories );
+		const selectedCategory = pattern.category?.name || firstCategory;
+		const patterns =
+			patternsMapByCategory[ selectedCategory ] || patternsMapByCategory[ CATEGORY_ALL_SLUG ];
+		const shuffledPattern = getShuffledPattern( patterns, pattern );
+		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
+
+		if ( type === 'header' ) {
+			updateHeader( shuffledPattern );
+		} else if ( type === 'footer' ) {
+			updateFooter( shuffledPattern );
+		} else {
+			replaceSection( shuffledPattern, position );
+		}
+	};
 
 	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
@@ -488,25 +522,27 @@ const PatternAssembler = ( {
 	}
 
 	const stepContent = (
-		<NavigatorProvider
-			initialPath={ NAVIGATOR_PATHS.MAIN }
+		<div
 			className={ classnames( 'pattern-assembler__wrapper', {
 				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
 			} ) }
 			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
-			{ isEnabled( 'pattern-assembler/notices' ) && (
-				<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
-			) }
+			{ noticeUI }
 			<div className="pattern-assembler__sidebar">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
-						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
-						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
+						surveyDismissed={ surveyDismissed }
+						setSurveyDismissed={ setSurveyDismissed }
+						hasSections={ Boolean( sections.length ) }
+						hasHeader={ Boolean( header ) }
+						hasFooter={ Boolean( footer ) }
+						hasColor={ Boolean( colorVariation ) }
+						hasFont={ Boolean( fontVariation ) }
 					/>
 				</NavigatorScreen>
 
@@ -532,16 +568,6 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION }>
-					<ScreenSection
-						patterns={ sections }
-						onAddSection={ onAddSection }
-						onReplaceSection={ onReplaceSection }
-						onDeleteSection={ onDeleteSection }
-						onMoveUpSection={ onMoveUpSection }
-						onMoveDownSection={ onMoveDownSection }
-					/>
-				</NavigatorScreen>
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
 					<ScreenCategoryList
 						categories={ categories }
@@ -550,43 +576,38 @@ const PatternAssembler = ( {
 						replacePatternMode={ sectionPosition !== null }
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 						onSelect={ onSelect }
-						wrapperRef={ wrapperRef }
-						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						recordTracksEvent={ recordTracksEvent }
+						onTogglePatternPanelList={ setIsPatternPanelListOpen }
+						selectedPatterns={ sections }
+						onBack={ () => onPatternSelectorBack( 'section' ) }
 					/>
 				</NavigatorScreen>
 
-				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
-						<ScreenColorPalettes
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedColorPaletteVariation={ colorVariation }
-							onSelect={ onScreenColorsSelect }
-							onBack={ onScreenColorsBack }
-							onDoneClick={ onScreenColorsDone }
-						/>
-					</NavigatorScreen>
-				) }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
+					<ScreenColorPalettes
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedColorPaletteVariation={ colorVariation }
+						onSelect={ onScreenColorsSelect }
+						onBack={ onScreenColorsBack }
+						onDoneClick={ onScreenColorsDone }
+					/>
+				</NavigatorScreen>
 
-				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
-						<ScreenFontPairings
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ fontVariation }
-							onSelect={ onScreenFontsSelect }
-							onBack={ onScreenFontsBack }
-							onDoneClick={ onScreenFontsDone }
-						/>
-					</NavigatorScreen>
-				) }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
+					<ScreenFontPairings
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedFontPairingVariation={ fontVariation }
+						onSelect={ onScreenFontsSelect }
+						onBack={ onScreenFontsBack }
+						onDoneClick={ onScreenFontsDone }
+					/>
+				</NavigatorScreen>
 
-				<NavigatorListener
-					onLocationChange={ ( navigatorLocation ) => {
-						setNavigatorPath( navigatorLocation.path );
-					} }
-				/>
+				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
+					<ScreenActivation onActivate={ onActivate } />
+				</NavigatorScreen>
 			</div>
 			<PatternLargePreview
 				header={ header }
@@ -598,17 +619,26 @@ const PatternAssembler = ( {
 				onMoveDownSection={ onMoveDownSection }
 				onDeleteHeader={ onDeleteHeader }
 				onDeleteFooter={ onDeleteFooter }
+				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
-		</NavigatorProvider>
+		</div>
 	);
 
 	return (
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || flow === WITH_THEME_ASSEMBLER_FLOW }
+			hideBack={
+				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
+				navigator.location.path !== NAVIGATOR_PATHS.MAIN
+			}
+			backLabelText={
+				isSiteAssemblerFlow( flow ) && navigator.location.path === NAVIGATOR_PATHS.MAIN
+					? translate( 'Back to themes' )
+					: undefined
+			}
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
@@ -620,6 +650,7 @@ const PatternAssembler = ( {
 					stylesheet={ stylesheet }
 					patternIds={ patternIds }
 					siteInfo={ siteInfo }
+					isNewSite={ isNewSite }
 				>
 					{ stepContent }
 				</PatternAssemblerContainer>
@@ -629,4 +660,13 @@ const PatternAssembler = ( {
 	);
 };
 
-export default withGlobalStylesProvider( withNotices( PatternAssembler ) );
+const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => (
+	<NavigatorProvider initialPath={ NAVIGATOR_PATHS.MAIN } tabIndex={ -1 }>
+		<PatternAssembler { ...props } />
+	</NavigatorProvider>
+);
+
+export default compose(
+	withGlobalStylesProvider,
+	withNotices
+)( PatternAssemblerStep ) as FC< StepProps >;

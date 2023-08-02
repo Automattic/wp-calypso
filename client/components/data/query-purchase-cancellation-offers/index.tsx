@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCancellationOffers } from 'calypso/state/cancellation-offers/actions';
 import isFetchingCancellationOffers from 'calypso/state/cancellation-offers/selectors/is-fetching-cancellation-offers';
 

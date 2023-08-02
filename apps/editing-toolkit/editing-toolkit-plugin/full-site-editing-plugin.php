@@ -203,7 +203,7 @@ function load_blog_posts_block() {
 	$disable_block = (
 		( defined( 'WP_CLI' ) && WP_CLI ) ||
 		/* phpcs:ignore WordPress.Security.NonceVerification */
-		( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && preg_match( $slug_regex, sanitize_text_field( wp_unslash( $_GET['plugin'] ) ) ) ) ||
+		( isset( $_GET['action'] ) && isset( $_GET['plugin'] ) && 'activate' === $_GET['action'] && preg_match( $slug_regex, sanitize_text_field( wp_unslash( $_GET['plugin'] ) ) ) ) ||
 		preg_grep( $slug_regex, (array) get_option( 'active_plugins' ) ) ||
 		preg_grep( $slug_regex, (array) get_site_option( 'active_sitewide_plugins' ) )
 	);
@@ -387,15 +387,6 @@ function load_paragraph_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
 
 /**
- * Set the map block provider
- */
-function load_maps_provider() {
-	require_once __DIR__ . '/maps-provider/index.php';
-}
-
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_maps_provider' );
-
-/**
  * Override org documentation links
  */
 function load_wpcom_documentation_links() {
@@ -420,38 +411,10 @@ function load_wpcom_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
 
 /**
- * Shows a confirm prompt when the plugin is about to be deactivated on a unlaunched site.
- *
- * This will filter the FSE actions on the plugin manager list to add the confirm
- * prompt on the click event of the action=deactivate.
- *
- * The option launch-status exists only on wpcom sites.
- *
- * @TODO: Remove after coming-soon is migrated to the new jetpack-mu-wpcom plugin
+ * WP.com-specific Site Editor changes.
+ * (Core Full Site Editing)
  */
-if ( has_action( 'plugins_loaded', 'Jetpack\Mu_Wpcom\load_coming_soon' ) === false ) {
-	add_filter(
-		'plugin_action_links_' . plugin_basename( __FILE__ ),
-		function ( $actions ) {
-			$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
-
-			if ( $unlaunched ) {
-				$actions = array_map(
-					function ( $action ) {
-						$message = __( 'Disabling this plugin will make your site public.', 'full-site-editing' );
-						$confirm = "confirm('$message') ? null : event.preventDefault()";
-
-						return str_replace(
-							'<a href="plugins.php?action=deactivate',
-							"<a onclick=\"$confirm\" href=\"plugins.php?action=deactivate",
-							$action
-						);
-					},
-					$actions
-				);
-			}
-
-			return $actions;
-		}
-	);
+function load_wpcom_domain_upsell_callout() {
+	require_once __DIR__ . '/wpcom-domain-upsell-callout/class-wpcom-domain-upsell-callout.php';
 }
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_domain_upsell_callout' );

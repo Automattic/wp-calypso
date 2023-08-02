@@ -1,53 +1,56 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import {
-	__experimentalHStack as HStack,
+	NavigationButtonAsItem,
+	NavigatorHeader,
+	NavigatorItemGroup,
+} from '@automattic/onboarding';
+import {
+	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { focus } from '@wordpress/dom';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
+import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import { NavigationButtonAsItem } from './navigator-buttons';
-import NavigatorHeader from './navigator-header';
-import { NavigatorItemGroup } from './navigator-item-group';
+import NavigatorTitle from './navigator-title';
+import Survey from './survey';
 import type { MouseEvent } from 'react';
 
 interface Props {
-	shouldUnlockGlobalStyles: boolean;
-	isDismissedGlobalStylesUpgradeModal?: boolean;
 	onSelect: ( name: string ) => void;
-	onContinueClick: () => void;
+	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	surveyDismissed: boolean;
+	setSurveyDismissed: ( dismissed: boolean ) => void;
+	hasSections: boolean;
+	hasHeader: boolean;
+	hasFooter: boolean;
+	hasColor: boolean;
+	hasFont: boolean;
 }
 
 const ScreenMain = ( {
-	shouldUnlockGlobalStyles,
-	isDismissedGlobalStylesUpgradeModal,
 	onSelect,
 	onContinueClick,
 	recordTracksEvent,
+	surveyDismissed,
+	setSurveyDismissed,
+	hasSections,
+	hasHeader,
+	hasFooter,
+	hasColor,
+	hasFont,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
-
-	const getDescription = () => {
-		if ( ! shouldUnlockGlobalStyles ) {
-			return translate( 'Ready? Go to the Site Editor to edit your content.' );
-		}
-
-		if ( isDismissedGlobalStylesUpgradeModal ) {
-			return translate(
-				'Ready? Keep your styles and go to the Site Editor to edit your content. You’ll be able to upgrade to the Premium plan later.'
-			);
-		}
-
-		return translate( "You've selected a premium color or font for your site." );
-	};
+	const headerDescription = translate(
+		'Customize everything by first adding patterns and then choosing styles.'
+	);
 
 	// Use the mousedown event to prevent either the button focusing or text selection
 	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
@@ -89,69 +92,67 @@ const ScreenMain = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Let’s get creative' ) }
-				description={ translate(
-					'Use our library of styles and patterns to design your own homepage.'
-				) }
+				title={ <NavigatorTitle title={ translate( 'Design your own homepage' ) } /> }
+				description={ headerDescription }
 				hideBack
 			/>
-			<div
-				className="screen-container__body screen-container__body--align-sides"
-				ref={ wrapperRef }
-			>
-				<HStack direction="column" alignment="top" spacing="4">
-					<NavigatorItemGroup title={ translate( 'Layout' ) }>
+			<div className="screen-container__body" ref={ wrapperRef }>
+				<VStack spacing="4">
+					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigationButtonAsItem
-							path="/header"
+							checked={ hasHeader }
+							path={ NAVIGATOR_PATHS.HEADER }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => onSelect( 'header' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
+							{ translate( 'Header' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							path="/section"
+							checked={ hasSections }
+							path={ NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
 							onClick={ () => onSelect( 'section' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Sections' ) }</span>
+							{ translate( 'Sections' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							path="/footer"
+							checked={ hasFooter }
+							path={ NAVIGATOR_PATHS.FOOTER }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => onSelect( 'footer' ) }
 						>
-							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
+							{ translate( 'Footer' ) }
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
-					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
-						<NavigatorItemGroup title={ translate( 'Style' ) }>
-							<>
-								<NavigationButtonAsItem
-									path="/color-palettes"
-									icon={ color }
-									aria-label={ translate( 'Colors' ) }
-									onClick={ () => onSelect( 'color-palettes' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
-								</NavigationButtonAsItem>
-								<NavigationButtonAsItem
-									path="/font-pairings"
-									icon={ typography }
-									aria-label={ translate( 'Fonts' ) }
-									onClick={ () => onSelect( 'font-pairings' ) }
-								>
-									<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
-								</NavigationButtonAsItem>
-							</>
-						</NavigatorItemGroup>
-					) }
-				</HStack>
+					<NavigatorItemGroup title={ translate( 'Styles' ) }>
+						<>
+							<NavigationButtonAsItem
+								checked={ hasColor }
+								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
+								icon={ color }
+								aria-label={ translate( 'Colors' ) }
+								onClick={ () => onSelect( 'color-palettes' ) }
+							>
+								{ translate( 'Colors' ) }
+							</NavigationButtonAsItem>
+							<NavigationButtonAsItem
+								checked={ hasFont }
+								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
+								icon={ typography }
+								aria-label={ translate( 'Fonts' ) }
+								onClick={ () => onSelect( 'font-pairings' ) }
+							>
+								{ translate( 'Fonts' ) }
+							</NavigationButtonAsItem>
+						</>
+					</NavigatorItemGroup>
+				</VStack>
+				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
-				<span className="screen-container__description">{ getDescription() }</span>
 				<Button
 					className="pattern-assembler__button"
 					primary
@@ -159,9 +160,7 @@ const ScreenMain = ( {
 					onMouseDown={ handleMouseDown }
 					onClick={ handleClick }
 				>
-					{ shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
-						? translate( 'Unlock this style' )
-						: translate( 'Continue' ) }
+					{ translate( 'Save and continue' ) }
 				</Button>
 			</div>
 		</>

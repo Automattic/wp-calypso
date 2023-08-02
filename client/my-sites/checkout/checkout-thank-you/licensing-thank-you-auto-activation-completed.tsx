@@ -1,11 +1,11 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isProductsListFetching as getIsProductListFetching,
@@ -40,7 +40,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 		return subscriptionTransferSucceeded
 			? translate( `Your %(productName)s is active! %(celebrationEmoji)s`, {
 					args: {
-						productName: hasProductInfo ? productName : 'subscription',
+						productName: hasProductInfo ? ( productName as string ) : 'subscription',
 						celebrationEmoji: String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */,
 					},
 			  } )

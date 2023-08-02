@@ -1,3 +1,4 @@
+import { localeRegexString } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -77,7 +78,7 @@ function getLocation( path ) {
 	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
 		return 'recommended_posts';
 	}
-	if ( path.indexOf( '/read/search' ) === 0 ) {
+	if ( path.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) ) ) {
 		return 'search';
 	}
 	if ( path.indexOf( '/read/conversations/a8c' ) === 0 ) {
@@ -213,7 +214,7 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.source || getLocation( window.location.pathname );
+	const source = additionalProps.follow_source || getLocation( window.location.pathname );
 	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
@@ -228,7 +229,7 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 }
 
 export function recordUnfollow( url, railcar, additionalProps = {} ) {
-	const source = getLocation( window.location.pathname );
+	const source = additionalProps.follow_source || getLocation( window.location.pathname );
 	bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );

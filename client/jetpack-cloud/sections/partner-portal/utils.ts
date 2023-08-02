@@ -180,6 +180,10 @@ export function formatApiPartner( partner: APIPartner ): Partner {
  * @returns Product title
  */
 export function getProductTitle( product: string ): string {
+	if ( 'Jetpack AI' === product ) {
+		return 'AI Assistant';
+	}
+
 	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
 }
 
@@ -193,7 +197,12 @@ export function selectAlphabeticallySortedProductOptions(
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
 
-export const JETPACK_BUNDLES = [ 'jetpack-complete', 'jetpack-security-t1', 'jetpack-security-t2' ];
+export const JETPACK_BUNDLES = [
+	'jetpack-complete',
+	'jetpack-security-t1',
+	'jetpack-security-t2',
+	'jetpack-starter',
+];
 
 export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
 	if ( typeof product === 'string' ) {
@@ -212,4 +221,16 @@ export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
 export function areLicenseKeysAssignableToMultisite( licenseKeys: Array< string > ): boolean {
 	// If any license keys are not Jetpack Backup or Scan, they can be assigned to multisite.
 	return licenseKeys.some( ( key ) => ! /^jetpack-(backup|scan)/.test( key ) );
+}
+
+export const LICENSE_INFO_MODAL_ID = 'show_license_modal';
+
+/**
+ * Provided a license key or a product slug, can we trust that the product is a WooCommerce product
+ *
+ * @param keyOrSlug string
+ * @returns boolean True if WC product, false if not
+ */
+export function isWooCommerceProduct( keyOrSlug: string ) {
+	return keyOrSlug.startsWith( 'woocommerce' );
 }

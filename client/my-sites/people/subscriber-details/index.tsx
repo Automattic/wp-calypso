@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
@@ -13,6 +12,7 @@ import useRemoveFollowerMutation from 'calypso/data/followers/use-remove-followe
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Member } from '../types';

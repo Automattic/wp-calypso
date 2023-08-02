@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { fetchTranslationsList as fetchWporgTranslationsList } from 'calypso/lib/wporg';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -34,11 +34,11 @@ const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
 		data: wporgTranslations,
 		error,
 		isLoading,
-	} = useQuery(
-		[ 'wporg-translations', wpVersion ],
-		async () => fetchWporgTranslationsList( wpVersion ),
-		{ enabled: !! siteIsJetpack }
-	);
+	} = useQuery( {
+		queryKey: [ 'wporg-translations', wpVersion ],
+		queryFn: async () => fetchWporgTranslationsList( wpVersion ),
+		enabled: !! siteIsJetpack,
+	} );
 
 	// We only need to modify the language list for jetpack or atomic sites
 	if ( siteIsJetpack ) {

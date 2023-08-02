@@ -1,13 +1,18 @@
+import { PremiumBadge } from '@automattic/components';
 import {
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
-import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
+import { InView, IntersectionObserverProps } from 'react-intersection-observer';
+import {
+	GlobalStylesContext,
+	mergeBaseAndUserConfigs,
+	withExperimentalBlockEditorProvider,
+} from '../../gutenberg-bridge';
 import { useColorPaletteVariations } from '../../hooks';
 import ColorPaletteVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
@@ -25,6 +30,7 @@ interface ColorPaletteVariationsProps {
 	stylesheet: string;
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
+	limitGlobalStyles?: boolean;
 }
 
 const ColorPaletteVariation = ( {
@@ -41,7 +47,6 @@ const ColorPaletteVariation = ( {
 			merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
 		};
 	}, [ colorPaletteVariation, base ] );
-
 	return (
 		<CompositeItem
 			role="option"
@@ -55,15 +60,23 @@ const ColorPaletteVariation = ( {
 			aria-label={
 				translate( 'Color: %s', {
 					comment: 'Aria label for color preview buttons',
-					args: colorPaletteVariation.title ?? translate( 'Default' ),
+					args: colorPaletteVariation.title ?? translate( 'Free style' ),
 				} ) as string
 			}
 		>
-			<div className="global-styles-variation__item-preview">
-				<GlobalStylesContext.Provider value={ context }>
-					<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
-				</GlobalStylesContext.Provider>
-			</div>
+			<InView triggerOnce>
+				{
+					( ( { inView, ref } ) => (
+						<div className="global-styles-variation__item-preview" ref={ ref }>
+							{ ( isActive || inView ) && (
+								<GlobalStylesContext.Provider value={ context }>
+									<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
+								</GlobalStylesContext.Provider>
+							) }
+						</div>
+					) ) as IntersectionObserverProps[ 'children' ]
+				}
+			</InView>
 		</CompositeItem>
 	);
 };
@@ -73,6 +86,7 @@ const ColorPaletteVariations = ( {
 	stylesheet,
 	selectedColorPaletteVariation,
 	onSelect,
+	limitGlobalStyles,
 }: ColorPaletteVariationsProps ) => {
 	const { base } = useContext( GlobalStylesContext );
 	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
@@ -82,27 +96,48 @@ const ColorPaletteVariations = ( {
 		<Composite
 			{ ...composite }
 			role="listbox"
-			className="color-palette-variations"
 			aria-label={ translate( 'Color palette variations' ) }
+			className="global-styles-variations__container"
 		>
-			<ColorPaletteVariation
-				key="base"
-				colorPaletteVariation={ base }
-				isActive={ ! selectedColorPaletteVariation }
-				composite={ composite }
-				onSelect={ () => onSelect( null ) }
-			/>
-			{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
-				<ColorPaletteVariation
-					key={ index }
-					colorPaletteVariation={ colorPaletteVariation }
-					isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
-					composite={ composite }
-					onSelect={ () => onSelect( colorPaletteVariation ) }
-				/>
-			) ) }
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">{ translate( 'Free style' ) }</h3>
+				<div className="color-palette-variations">
+					<ColorPaletteVariation
+						key="base"
+						colorPaletteVariation={ { ...base, title: translate( 'Free style' ) } }
+						isActive={ ! selectedColorPaletteVariation }
+						composite={ composite }
+						onSelect={ () => onSelect( null ) }
+					/>
+				</div>
+			</div>
+			<div className="global-styles-variations__group">
+				<h3 className="global-styles-variations__group-title">
+					<span className="global-styles-variations__group-title-actual">
+						{ translate( 'Custom styles' ) }
+					</span>
+					{ limitGlobalStyles && (
+						<PremiumBadge
+							shouldHideTooltip
+							shouldCompactWithAnimation
+							labelText={ translate( 'Upgrade' ) }
+						/>
+					) }
+				</h3>
+				<div className="color-palette-variations">
+					{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
+						<ColorPaletteVariation
+							key={ index }
+							colorPaletteVariation={ colorPaletteVariation }
+							isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+							composite={ composite }
+							onSelect={ () => onSelect( colorPaletteVariation ) }
+						/>
+					) ) }
+				</div>
+			</div>
 		</Composite>
 	);
 };
 
-export default ColorPaletteVariations;
+export default withExperimentalBlockEditorProvider( ColorPaletteVariations );

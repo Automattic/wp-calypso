@@ -18,6 +18,11 @@ export type Template = {
 		raw: string;
 		rendered: string;
 	};
-	type: 'wp_template';
+	type: 'wp_template' | 'wp_template_part';
 	wp_id: number;
+};
+
+export type RequestTemplate = Partial< Omit< Template, 'title' | 'content' > > & {
+	title?: string;
+	content?: string;
 };

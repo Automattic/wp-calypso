@@ -58,6 +58,7 @@ export const getTask = (
 		isBlogger,
 		isFSEActive,
 		isRtl,
+		siteCount,
 	} = {}
 ) => {
 	let taskData = {};
@@ -118,7 +119,8 @@ export const getTask = (
 					: translate( 'Give your new site a title to let people know what your site is about.' ),
 				actionText: isBlogger ? translate( 'Name your blog' ) : translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
-				tour: 'checklistSiteTitle',
+				// only show the tour for the first two sites.
+				tour: siteCount > 2 ? undefined : 'checklistSiteTitle',
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
@@ -144,6 +146,19 @@ export const getTask = (
 					actionDispatch: requestSiteChecklistTaskUpdate,
 					actionDispatchArgs: [ siteId, task.id ],
 				} ),
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.CART_ITEMS_ABANDONED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Complete checkout' ),
+				description: translate(
+					'Unlock all the benefits of managed hosting, including unmetered bandwidth, multisite management, and realtime backups.'
+				),
+				actionText: translate( 'Go to checkout' ),
+				actionUrl: `/checkout/${ siteSlug }`,
+				actionDisableOnComplete: false,
 				isSkippable: true,
 			};
 			break;
@@ -340,6 +355,30 @@ export const getTask = (
 				actionText: translate( 'Enable sharing' ),
 				actionUrl: `/marketing/connections/${ siteSlug }`,
 				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.INSTALL_CUSTOM_PLUGIN:
+			taskData = {
+				timing: 5,
+				title: translate( 'Install a custom plugin' ),
+				description: translate(
+					'Add new features to your site with plugins. Choose from thousands of free and premium plugins or upload your own to make your site stand out.'
+				),
+				actionText: translate( 'Install' ),
+				actionUrl: `/plugins/${ siteSlug }`,
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.SETUP_SSH:
+			taskData = {
+				timing: 5,
+				title: translate( 'Set up SSH' ),
+				description: translate(
+					'Connect to your site via SSH to run commands and manage files on your server.'
+				),
+				actionText: translate( 'Setup' ),
+				actionUrl: `/hosting-config/${ siteSlug }#sftp-credentials`,
+				isSkippable: false,
 			};
 			break;
 	}

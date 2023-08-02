@@ -1,9 +1,12 @@
+import debugFactory from 'debug';
 import { useRef, useEffect } from 'react';
 import type {
 	ResponseCart,
 	ResponseCartMessages,
 	ResponseCartMessage,
 } from '@automattic/shopping-cart';
+
+const debug = debugFactory( 'wpcom-checkout:use-display-cart-messages' );
 
 export type ShowMessages = ( messages: ResponseCartMessage[] ) => void;
 
@@ -68,14 +71,17 @@ function displayCartMessages( {
 	const messages = getNewMessages( previousCart, newCart );
 
 	if ( messages.errors?.length ) {
+		debug( 'showing errors', messages.errors );
 		showErrorMessages( messages.errors );
 	}
 
 	if ( messages.success?.length ) {
+		debug( 'showing success', messages.errors );
 		showSuccessMessages( messages.success );
 	}
 
 	if ( messages.persistent_errors?.length && shouldShowPersistentErrors ) {
+		debug( 'showing persistent errors', messages.persistent_errors );
 		showErrorMessages( messages.persistent_errors );
 	}
 }
@@ -88,13 +94,49 @@ function getNewMessages(
 	const nextCartMessages = nextCartValue.messages || {};
 	const previousCartTimestamp = previousCartValue?.cart_generated_at_timestamp;
 	const nextCartTimestamp = nextCartValue.cart_generated_at_timestamp;
+	debug( 'comparing previous cart', previousCartTimestamp, 'to new cart', nextCartTimestamp );
 
 	// If there is no previous cart then just return the messages for the new cart
 	if ( ! previousCartTimestamp || ! nextCartTimestamp ) {
+		debug( 'no previous cart; just returning new messages' );
 		return nextCartMessages;
 	}
 
-	const hasNewServerData = new Date( nextCartTimestamp ) > new Date( previousCartTimestamp );
+	const doesNextCartHaveDifferentMessages = ( () => {
+		const nextCartErrorCodes = nextCartMessages?.errors
+			?.map( ( message ) => message.code )
+			.join( ';' );
+		const previousCartErrorCodes = previousCartValue.messages?.errors
+			?.map( ( message ) => message.code )
+			.join( ';' );
+		if ( nextCartErrorCodes !== previousCartErrorCodes ) {
+			return true;
+		}
+		const nextCartSuccessCodes = nextCartMessages?.success
+			?.map( ( message ) => message.code )
+			.join( ';' );
+		const previousCartSuccessCodes = previousCartValue.messages?.success
+			?.map( ( message ) => message.code )
+			.join( ';' );
+		if ( nextCartSuccessCodes !== previousCartSuccessCodes ) {
+			return true;
+		}
+		return false;
+	} )();
+	const nextCartHasNewData = ( () => {
+		const isNextCartNewer = new Date( nextCartTimestamp ) > new Date( previousCartTimestamp );
+		if ( isNextCartNewer ) {
+			return true;
+		}
+		// We need to actually check the messages themselves when the timestamp is
+		// the same because if the cart endpoint is fast enough you could get two
+		// different carts with the same timestamp.
+		if ( nextCartTimestamp === previousCartTimestamp ) {
+			return doesNextCartHaveDifferentMessages;
+		}
+		return false;
+	} )();
+	debug( 'does cart have new data?', nextCartHasNewData );
 
-	return hasNewServerData ? nextCartMessages : {};
+	return nextCartHasNewData ? nextCartMessages : {};
 }

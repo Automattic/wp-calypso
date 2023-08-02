@@ -1,5 +1,5 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Notice } from 'calypso/landing/subscriptions/components/notice';
+import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { PendingPostList, PendingSiteList } from '../../pending-list';
 import TabView from '../tab-view';
 
@@ -31,7 +31,7 @@ const Pending = () => {
 		! totalPendingPostsCount
 	) {
 		// todo: translate when we have agreed on the empty view message
-		return <Notice type="warning">No pending subscriptions were found.</Notice>;
+		return <Notice type={ NoticeType.Warning }>No pending subscriptions were found.</Notice>;
 	}
 
 	return (

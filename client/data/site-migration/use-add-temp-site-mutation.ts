@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 interface TempSiteToSourceOption {
@@ -9,8 +9,8 @@ interface TempSiteToSourceOption {
 
 function useAddTempSiteToSourceOptionMutation() {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		( { targetBlogId, sourceBlogId }: TempSiteToSourceOption ) =>
+	const mutation = useMutation( {
+		mutationFn: ( { targetBlogId, sourceBlogId }: TempSiteToSourceOption ) =>
 			wp.req.post(
 				`/migrations/from-source/${ sourceBlogId }`,
 				{
@@ -18,12 +18,10 @@ function useAddTempSiteToSourceOptionMutation() {
 				},
 				{ target_blog_id: targetBlogId }
 			),
-		{
-			onSuccess( data, { sourceBlogId } ) {
-				queryClient.setQueryData( [ 'temp-target-site', sourceBlogId ], data );
-			},
-		}
-	);
+		onSuccess( data, { sourceBlogId } ) {
+			queryClient.setQueryData( [ 'temp-target-site', sourceBlogId ], data );
+		},
+	} );
 
 	const { mutate } = mutation;
 	const addTempSiteToSourceOption = useCallback(

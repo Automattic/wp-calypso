@@ -35,10 +35,11 @@ export class ContactInfoBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const emailLocator = context.editorLocator.locator( selectors.emailTextarea );
+		const editorCanvas = await context.editorPage.getEditorCanvas();
+		const emailLocator = editorCanvas.locator( selectors.emailTextarea );
 		await emailLocator.fill( this.configurationData.email );
 
-		const phoneNumberLocator = context.editorLocator.locator( selectors.phoneNumberTextarea );
+		const phoneNumberLocator = editorCanvas.locator( selectors.phoneNumberTextarea );
 		await phoneNumberLocator.fill( this.configurationData.phoneNumber );
 	}
 

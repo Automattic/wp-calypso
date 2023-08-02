@@ -29,7 +29,7 @@ module.exports = ( api, opts ) => ( {
 			require.resolve( '@babel/preset-react' ),
 			{ runtime: 'automatic', importSource: '@emotion/react' },
 		],
-		require.resolve( '@babel/preset-typescript' ),
+		[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
 	],
 	plugins: [
 		require.resolve( '@babel/plugin-proposal-class-properties' ),

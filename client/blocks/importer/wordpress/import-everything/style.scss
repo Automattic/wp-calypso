@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -87,6 +89,123 @@
 
 		small {
 			color: var(--studio-gray-40);
+		}
+	}
+}
+
+.import__onboarding-page--redesign {
+	.onboarding-progress-simple {
+		min-width: 100% !important;
+
+		.onboarding-title {
+			font-size: rem(48px);
+		}
+
+		h2.onboarding-subtitle {
+			color: var(--studio-gray-60);
+			font-size: rem(18px);
+			line-height: rem(26px);
+			margin-bottom: rem(40px);
+		}
+
+		h3.onboarding-subtitle {
+			margin-bottom: rem(50px);
+		}
+
+		.progress-bar {
+			max-width: 385px;
+			margin-bottom: rem(24px);
+		}
+	}
+}
+
+.import__import-everything--redesign {
+	.onboarding-title {
+		@include onboarding-font-recoleta;
+		color: var(--studio-gray-100);
+		font-size: 2.75rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 3rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.import__heading-title {
+		text-align: center;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 2.5rem;
+	}
+
+	.import__upgrade-plan {
+		margin-top: 2.5rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.action-buttons__borderless {
+		font-weight: 500;
+		text-decoration: underline;
+		color: var(--studio-gray-100);
+	}
+
+	.action-buttons__migration-method-cta {
+		text-decoration: underline;
+		color: var(--studio-gray-100);
+		padding: 0;
+		font-size: 1rem;
+	}
+
+	.import__note {
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.import__footer-button-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		@include break-medium {
+			flex-direction: row;
+			justify-content: center;
+		}
+
+		button {
+			margin: 8px 0;
+			@include break-medium {
+				margin: 0 8px;
+			}
+		}
+
+		.action-buttons__install-jetpack-manually {
+			text-decoration: underline;
+		}
+	}
+	.select-items-wrapper {
+		display: flex;
+		justify-content: center;
+
+		.select-items {
+			border: solid 1px var(--studio-gray-5);
+			border-radius: 4px;
+			margin: 12px 0 24px;
+			padding-left: 50px;
+			max-width: 525px;
+			box-sizing: border-box;
+
+			.select-items__item {
+				padding: 1rem 0;
+				width: 100%;
+			}
+
+			.select-items__item-icon {
+				top: 20px;
+				left: -38px;
+			}
+
+			.select-items__item-button {
+				margin-right: 1rem;
+			}
 		}
 	}
 }

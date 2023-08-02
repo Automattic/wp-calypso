@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localeRegexString } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import closest from 'component-closest';
 import { truncate, get } from 'lodash';
@@ -9,12 +10,7 @@ import { connect } from 'react-redux';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import TagPost from 'calypso/blocks/reader-post-card/tag-post';
-import DiscoverFollowButton from 'calypso/reader/discover/follow-button';
-import {
-	getDiscoverBlogName,
-	getSourceFollowUrl as getDiscoverFollowUrl,
-} from 'calypso/reader/discover/helper';
+import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -43,17 +39,16 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
-		showPrimaryFollowButton: PropTypes.bool,
 		discoverPost: PropTypes.object,
 		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
-		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
+		showFollowButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -61,6 +56,7 @@ class ReaderPostCard extends Component {
 		onCommentClick: noop,
 		isSelected: false,
 		showSiteName: true,
+		showFollowButton: true,
 	};
 
 	propagateCardClick = () => {
@@ -100,6 +96,11 @@ class ReaderPostCard extends Component {
 			return;
 		}
 
+		// ignore clicks to close a dialog backdrop
+		if ( closest( event.target, '.dialog__backdrop', rootNode ) ) {
+			return;
+		}
+
 		// ignore clicks when highlighting text
 		if ( selection && selection.toString() ) {
 			return;
@@ -118,15 +119,11 @@ class ReaderPostCard extends Component {
 			currentRoute,
 			post,
 			discoverPost,
-			discoverSite,
 			site,
 			feed,
 			onCommentClick,
-			showPrimaryFollowButton,
 			isSelected,
 			showSiteName,
-			followSource,
-			isDiscoverStream,
 			postKey,
 			isExpanded,
 			expandCard,
@@ -134,6 +131,7 @@ class ReaderPostCard extends Component {
 			hasOrganization,
 			isWPForTeamsItem,
 			teams,
+			showFollowButton,
 		} = this.props;
 
 		let isSeen = false;
@@ -145,7 +143,12 @@ class ReaderPostCard extends Component {
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
-		const isReaderTagPage = currentRoute.startsWith( '/tag/' );
+		const isConversations = currentRoute.startsWith( '/read/conversations' );
+
+		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
+			currentRoute
+		);
+
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
@@ -155,20 +158,7 @@ class ReaderPostCard extends Component {
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
-			'is-tag-post': isReaderTagPage,
 		} );
-
-		let discoverFollowButton;
-
-		if ( isDiscover && ! compact ) {
-			const discoverBlogName = getDiscoverBlogName( post ) || null;
-			discoverFollowButton = discoverBlogName && (
-				<DiscoverFollowButton
-					siteName={ discoverBlogName }
-					followUrl={ getDiscoverFollowUrl( post ) }
-				/>
-			);
-		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const readerPostActions = (
@@ -176,10 +166,13 @@ class ReaderPostCard extends Component {
 				post={ discoverPost || post }
 				site={ site }
 				visitUrl={ post.URL }
+				showFollow={ showFollowButton }
 				showVisit={ true }
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
+				showViews={ !! post.views }
+				showSuggestedFollows={ isReaderSearchPage }
 				className="ignore-click"
 				iconSize={ 20 }
 			/>
@@ -187,66 +180,46 @@ class ReaderPostCard extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		// Set up post byline
-		let postByline;
-
-		if ( isDiscoverStream && discoverPost && discoverSite ) {
-			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {}, discoverPost || {}, {
-				date: post.date,
-				URL: post.URL,
-				primary_tag: post.primary_tag,
-			} );
-			postByline = (
-				<PostByline
-					post={ postForByline }
-					site={ discoverSite }
-					showSiteName={ true }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
-					followSource={ followSource }
-				/>
-			);
-		} else {
-			postByline = (
-				<PostByline
-					post={ post }
-					site={ site }
-					feed={ feed }
-					showSiteName={ showSiteName || isDiscover }
-					showAvatar={ ! compact }
-					teams={ teams }
-					showFollow={ ! isDiscover }
-					showPrimaryFollowButton={ showPrimaryFollowButton }
-					followSource={ followSource }
-				/>
-			);
-		}
+		const postByline = (
+			<PostByline
+				post={ post }
+				site={ site }
+				feed={ feed }
+				showSiteName={ showSiteName || isDiscover }
+				showAvatar={ ! compact }
+				teams={ teams }
+				showFollow={ ! isDiscover }
+				compact={ compact }
+			/>
+		);
 
 		// Set up post card
 		let readerPostCard;
-		if ( compact ) {
+		if ( isConversations ) {
 			readerPostCard = (
 				<ConversationPost
 					post={ post }
 					title={ title }
 					isDiscover={ isDiscover }
 					postByline={ postByline }
-					commentIds={ postKey.comments }
+					commentIds={ postKey?.comments ?? [] }
 					onClick={ this.handleCardClick }
 				/>
 			);
-		} else if ( isReaderTagPage ) {
+		} else if ( compact ) {
 			readerPostCard = (
-				<TagPost
+				<CompactPostCard
 					post={ post }
 					title={ title }
-					isDiscover={ isDiscover }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
 					site={ site }
 					postKey={ postKey }
-				></TagPost>
+					postByline={ postByline }
+					onClick={ this.handleCardClick }
+				>
+					{ readerPostActions }
+				</CompactPostCard>
 			);
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
@@ -259,7 +232,6 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					postKey={ postKey }
 				>
-					{ discoverFollowButton }
 					{ readerPostActions }
 				</PhotoPost>
 			);
@@ -279,7 +251,6 @@ class ReaderPostCard extends Component {
 				<StandardPost
 					post={ post }
 					title={ title }
-					isDiscover={ isDiscover }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
 					site={ site }
@@ -288,16 +259,15 @@ class ReaderPostCard extends Component {
 					{ isDailyPostChallengeOrPrompt( post ) && site && (
 						<DailyPostButton post={ post } site={ site } />
 					) }
-					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
 			);
 		}
 
-		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
+		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
-				{ ! compact && ! isReaderTagPage && postByline }
+				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>
@@ -312,11 +282,9 @@ export default connect(
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
 				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
-		hasOrganization: hasReaderFollowOrganization(
-			state,
-			ownProps.postKey.feedId,
-			ownProps.postKey.blogId
-		),
+		hasOrganization:
+			ownProps.postKey &&
+			hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		teams: getReaderTeams( state ),
 	} ),

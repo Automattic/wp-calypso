@@ -1,6 +1,6 @@
 import PostStatsCard from '../';
 
-export default { title: 'Post Stats Card' };
+export default { title: 'packages/components/Post Stats Card' };
 
 const PostStatsCardVariations = ( props ) => (
 	<PostStatsCard

@@ -2,11 +2,10 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
 import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import Layout from '../../layout';
+import LayoutHeader from '../../layout/header';
 
 import './styles.scss';
 
@@ -44,21 +43,24 @@ export default function AssignLicense( {
 	}, [] );
 
 	return (
-		<Main wideLayout className="assign-license">
-			<DocumentHead
-				title={ translate( 'Assign your license', 'Assign your licenses', {
-					count: licenseKeysArray.length,
-				} ) }
-			/>
-			<SidebarNavigation />
+		<Layout
+			className="assign-license"
+			title={ translate( 'Assign your license', 'Assign your licenses', {
+				count: licenseKeysArray.length,
+			} ) }
+			wide
+		>
 			<AssignLicenseStepProgress currentStep="assignLicense" />
-			<CardHeading size={ 36 }>
-				{ translate( 'Assign your license', 'Assign your licenses', {
-					count: licenseKeysArray.length,
-				} ) }
-			</CardHeading>
+
+			<LayoutHeader>
+				<CardHeading size={ 36 }>
+					{ translate( 'Assign your license', 'Assign your licenses', {
+						count: licenseKeysArray.length,
+					} ) }
+				</CardHeading>
+			</LayoutHeader>
 
 			<AssignLicenseForm sites={ sites } currentPage={ currentPage } search={ search } />
-		</Main>
+		</Layout>
 	);
 }

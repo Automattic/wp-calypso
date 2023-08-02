@@ -241,6 +241,8 @@ class ReaderPostEllipsisMenu extends Component {
 		event.preventDefault();
 	};
 
+	stopPropagation = ( event ) => event.stopPropagation();
+
 	render() {
 		const {
 			post,
@@ -286,6 +288,7 @@ class ReaderPostEllipsisMenu extends Component {
 				popoverClassName="reader-post-options-menu__popover ignore-click"
 				onToggle={ this.onMenuToggle }
 				position={ position }
+				onClick={ this.stopPropagation }
 			>
 				{ showConversationFollowButton && (
 					<ConversationFollowButton

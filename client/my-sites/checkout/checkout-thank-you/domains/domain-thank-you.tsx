@@ -1,9 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button, Gridicon } from '@automattic/components';
+import { useLaunchpad } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
@@ -12,6 +12,7 @@ import {
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { useDispatch } from 'calypso/state';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
@@ -34,6 +35,12 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	hideProfessionalEmailStep,
 	type,
 } ) => {
+	const {
+		data: { is_enabled: isLaunchpadIntentBuildEnabled },
+	} = useLaunchpad( selectedSiteSlug, 'intent-build' );
+	const launchpadScreen = useSiteOption( 'launchpad_screen' );
+	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
+	const siteIntent = useSiteOption( 'site_intent' );
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
 		return propsGetter( {
@@ -42,12 +49,23 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			email,
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
+			siteIntent,
+			launchpadScreen,
+			redirectTo,
 		} );
-	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
+	}, [
+		type,
+		domain,
+		selectedSiteSlug,
+		email,
+		hasProfessionalEmail,
+		hideProfessionalEmailStep,
+		siteIntent,
+		launchpadScreen,
+		redirectTo,
+	] );
 	const dispatch = useDispatch();
-	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const isLaunchpadEnabled = launchpadScreen === 'full';
-	const siteIntent = useSiteOption( 'site_intent' );
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
@@ -56,13 +74,20 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		};
 	}, [ dispatch ] );
 
-	const renderHeader = ( isLaunchpadEnabled: boolean, siteIntent: string ) => {
+	const renderHeader = (
+		isLaunchpadEnabled: boolean,
+		siteIntent: string,
+		redirectTo: 'home' | 'setup'
+	) => {
 		const buttonProps = isLaunchpadEnabled
 			? {
-					onClick: () =>
-						window.location.replace(
-							`/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`
-						),
+					onClick: () => {
+						const redirectUrl =
+							redirectTo === 'home'
+								? `/home/${ selectedSiteSlug }`
+								: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`;
+						window.location.replace( redirectUrl );
+					},
 			  }
 			: { href: domainManagementRoot() };
 		return (
@@ -80,7 +105,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 
 	return (
 		<>
-			{ renderHeader( isLaunchpadEnabled, siteIntent as string ) }
+			{ renderHeader( isLaunchpadEnabled, siteIntent as string, redirectTo ) }
 			<ThankYou
 				headerBackgroundColor="var( --studio-white )"
 				containerClassName="checkout-thank-you__domains"

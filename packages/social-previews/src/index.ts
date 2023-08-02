@@ -1,5 +1,9 @@
-export { default as FacebookPreview } from './facebook-preview';
-export { default as SearchPreview } from './search-preview';
+export * from './google-search-preview';
 export * from './twitter-preview';
 export * from './linkedin-preview';
+export * from './tumblr-preview';
+export * from './facebook-preview';
+export * from './mastodon-preview';
 export * from './constants';
+export * from './instagram-preview';
+export * from './types';

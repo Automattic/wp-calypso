@@ -1,10 +1,9 @@
-import { Button } from '@automattic/components';
+import { Button, PremiumBadge } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
-import { PremiumBadge } from '@automattic/design-picker';
+import { SelectCardCheckbox } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useGoals } from './goals';
-import SelectCard from './select-card';
 
 type SelectGoalsProps = {
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
@@ -80,7 +79,7 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 				{ hasBuiltByExpressGoal && isBuiltByExpressExperimentLoading
 					? goalOptions.map( ( { key } ) => (
 							<div
-								className="select-card__container"
+								className="select-card-checkbox__container"
 								role="progressbar"
 								key={ `goal-${ key }-placeholder` }
 								style={ { cursor: 'default' } }
@@ -89,15 +88,14 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 							</div>
 					  ) )
 					: goalOptions.map( ( { key, title, isPremium } ) => (
-							<SelectCard
+							<SelectCardCheckbox
 								key={ key }
-								onChange={ handleChange }
-								selected={ selectedGoals.includes( key ) }
-								value={ key }
+								onChange={ ( checked ) => handleChange( checked, key ) }
+								checked={ selectedGoals.includes( key ) }
 							>
 								<span className="select-goals__goal-title">{ title }</span>
 								{ isPremium && <PremiumBadge shouldHideTooltip={ true } /> }
-							</SelectCard>
+							</SelectCardCheckbox>
 					  ) ) }
 			</div>
 

@@ -8,8 +8,8 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 } from '@automattic/calypso-products';
 import { JetpackUpsellCard } from '@automattic/components';
-import { useSelector } from 'react-redux';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import usePurchasedProducts from './use-purchased-products';
 
@@ -27,11 +27,11 @@ export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
 	// NOTE: This will only work within Odyssey Stats.
-	const { purchasedProducts, error, isLoading } = usePurchasedProducts();
+	const { purchasedProducts } = usePurchasedProducts();
 
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
-	if ( isLoading || error || ! isOdysseyStats ) {
+	if ( ! isOdysseyStats ) {
 		return null;
 	}
 

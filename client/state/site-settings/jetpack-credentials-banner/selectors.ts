@@ -1,6 +1,6 @@
-import { DefaultRootState } from 'react-redux';
 import { Preference } from 'calypso/my-sites/site-settings/jetpack-credentials-banner/types';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { IAppState } from 'calypso/state/types';
 
 import 'calypso/state/site-settings/init';
 
@@ -14,7 +14,7 @@ export const JETPACK_CREDENTIALS_BANNER_PREFERENCE = 'backup-scan-security-setti
  * @param  {Object}  state  Global state tree
  * @returns {Preference[]}  Array of Preference objects
  */
-export function getJetpackCredentialsBannerPreference( state: DefaultRootState ): Preference[] {
+export function getJetpackCredentialsBannerPreference( state: IAppState ): Preference[] {
 	let preference = getPreference( state, JETPACK_CREDENTIALS_BANNER_PREFERENCE );
 
 	if ( ! preference || ! Array.isArray( preference ) ) {
@@ -30,7 +30,7 @@ export function getJetpackCredentialsBannerPreference( state: DefaultRootState )
  * @param  {Object}  state  Global state tree
  * @returns {boolean}       Whether the banner was dismissed
  */
-function isJetpackCredentialsBannerDismissed( state: DefaultRootState ): boolean {
+function isJetpackCredentialsBannerDismissed( state: IAppState ): boolean {
 	const preference = getJetpackCredentialsBannerPreference( state );
 	return preference.filter( ( { type } ) => type === 'dismiss' ).length > 0;
 }
@@ -41,7 +41,7 @@ function isJetpackCredentialsBannerDismissed( state: DefaultRootState ): boolean
  * @param  {Object}  state  Global state tree
  * @returns {number}        Number of times the banner was viewed
  */
-function getJetpackCredentialsBannerViewCount( state: DefaultRootState ): number {
+function getJetpackCredentialsBannerViewCount( state: IAppState ): number {
 	const preference = getJetpackCredentialsBannerPreference( state );
 	return preference.filter( ( { type } ) => type === 'view' ).length;
 }
@@ -53,7 +53,7 @@ function getJetpackCredentialsBannerViewCount( state: DefaultRootState ): number
  * @param  {Object}  state  Global state tree
  * @returns {boolean}       Whether the limit was exceeded
  */
-function isJetpackCredentialsBannerTimeLimitExceeded( state: DefaultRootState ): boolean {
+function isJetpackCredentialsBannerTimeLimitExceeded( state: IAppState ): boolean {
 	const preference = getJetpackCredentialsBannerPreference( state );
 	const firstView = preference.filter( ( { type } ) => type === 'view' )[ 0 ];
 
@@ -81,7 +81,7 @@ function isJetpackCredentialsBannerTimeLimitExceeded( state: DefaultRootState ):
  * @param  {Object}  state  Global state tree
  * @returns {boolean}       Whether the banner should be displayed
  */
-export function shouldDisplayJetpackCredentialsBanner( state: DefaultRootState ): boolean {
+export function shouldDisplayJetpackCredentialsBanner( state: IAppState ): boolean {
 	const viewCount = getJetpackCredentialsBannerViewCount( state );
 	const isBannerDismissed = isJetpackCredentialsBannerDismissed( state );
 	const isTimeLimitExceeded = isJetpackCredentialsBannerTimeLimitExceeded( state );

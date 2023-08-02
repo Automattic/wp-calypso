@@ -494,6 +494,10 @@ ul.module-content-list-item-action-submenu {
 	display: inline-block;
 	margin: 0 1em 0 0;
 
+	button {
+		cursor: pointer;
+	}
+
 	// So that 'View' label is moved more to the right since icon has been dropped
 	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
@@ -900,8 +904,7 @@ ul.module-content-list-legend {
 
 .horizontal-bar-list-item {
 	&:hover,
-	&:focus,
-	&:focus-within {
+	&:focus {
 		.stats-list-actions__mobile-toggle .gridicon,
 		.stats-list-actions__mobile-toggle .stats-icon {
 			fill: var(--color-text);

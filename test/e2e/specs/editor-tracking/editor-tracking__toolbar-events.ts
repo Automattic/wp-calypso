@@ -37,7 +37,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new post', async function () {

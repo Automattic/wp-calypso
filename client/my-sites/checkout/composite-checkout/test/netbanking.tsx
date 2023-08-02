@@ -8,9 +8,11 @@ import {
 	makeSuccessResponse,
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
 	createNetBankingMethod,
@@ -53,6 +55,13 @@ function getPaymentMethod( additionalArgs = {} ) {
 	return createNetBankingMethod( {
 		store,
 		...additionalArgs,
+	} );
+}
+
+function ResetNetbankingStoreFields() {
+	const { resetFields } = useDispatch( 'netbanking' );
+	useEffect( () => {
+		resetFields();
 	} );
 }
 
@@ -108,6 +117,9 @@ describe( 'Netbanking payment method', () => {
 				gstin,
 			} );
 		} );
+
+		// Manually reset the `netbanking` store fields.
+		render( <ResetNetbankingStoreFields /> );
 	} );
 
 	it( 'does not submit the data to the processor when the submit button is pressed if fields are missing', async () => {

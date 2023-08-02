@@ -5,8 +5,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 
 interface DeleteStagingSiteProps {
-	siteId: number;
-	stagingSiteId: number;
 	disabled: boolean;
 	children: React.ReactNode;
 	onClickDelete: () => void;

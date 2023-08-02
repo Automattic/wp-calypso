@@ -1,27 +1,5 @@
-.prices__header {
-	display: flex;
-	align-items: center;
-
-	> * + * {
-		margin-left: 24px;
-	}
-
-	a.button {
-		margin-left: auto;
-	}
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-wrap: wrap;
-		> * {
-			width: 100%;
-			margin-bottom: 16px;
-		}
-
-		> * + * {
-			margin-left: 0;
-		}
-	}
-}
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .prices__th-detail {
 	font-weight: 400;
@@ -96,6 +74,50 @@ tr:nth-child(odd) {
 	.prices__table th {
 		display: block;
 		width: 100%;
-		padding: 0.5rem 0;
+		padding: 0.5rem;
+	}
+}
+
+.prices__table thead {
+	display: none;
+}
+
+/* "Your Price" column highlight */
+@include break-large {
+	.prices__table thead {
+		display: table-header-group;
+	}
+
+	.prices__table td:last-child,
+	.prices__table th:last-child {
+		border: 2px solid #c9356e;
+		border-top-width: 0;
+		border-bottom-width: 0;
+	}
+	.prices__table tr:last-child td:last-child {
+		border-bottom-width: 2px;
+	}
+
+	th.prices__column-highlight {
+		visibility: visible;
+		padding: 8px;
+		line-height: 24px;
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: #fff;
+		background: #c9356e;
+		/* stylelint-disable-next-line scales/radii */
+		border-top-left-radius: 8px;
+		/* stylelint-disable-next-line scales/radii */
+		border-top-right-radius: 8px;
+	}
+
+	.prices__column-highlight-content {
+		display: flex;
+		align-items: center;
+	}
+
+	.prices__column-highlight-icon {
+		margin-right: 4px;
 	}
 }

@@ -3,58 +3,43 @@
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { BlazeCreditStatus, useBlazeCredits } from 'calypso/lib/promote-post';
+import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import CreditBalance from '../components/credit-balance';
 
-// Mock the useBlazeCredits hook, so we can tell TS about MockReturnValue
-type UseBlazeCreditsMock = jest.Mock< BlazeCreditStatus >;
-
-jest.mock( 'calypso/lib/promote-post', () => {
-	const module = jest.requireActual( 'calypso/lib/promote-post' );
-	return {
-		...module,
-		useBlazeCredits: jest.fn< UseBlazeCreditsMock, [] >(),
-	};
-} );
+jest.mock( 'calypso/data/promote-post/use-promote-post-credit-balance-query' );
 
 describe( 'CreditBalance component', () => {
-	test( 'displays null when balance is 0', () => {
-		const { container } = render( <CreditBalance /> );
-		expect( container.firstChild ).toBeNull();
+	test( 'displays null when balance is not available', () => {
+		useCreditBalanceQuery.mockReturnValue( { data: undefined } );
+
+		render( <CreditBalance /> );
+
+		expect( screen.queryByText( /Credits: \$.+/ ) ).toBeNull();
 	} );
 
-	describe( 'CreditBalance component when balance is set', () => {
-		const mockBalance = 10;
+	test( 'displays null when balance is invalid', () => {
+		useCreditBalanceQuery.mockReturnValue( { data: NaN } );
 
-		beforeEach( () => {
-			jest.clearAllMocks();
+		render( <CreditBalance /> );
 
-			// Set the balance
-			const useStateSpy = jest.spyOn( React, 'useState' );
-			useStateSpy.mockReturnValueOnce( [ mockBalance, jest.fn() ] );
-		} );
+		expect( screen.queryByText( /Credits: \$.+/ ) ).toBeNull();
+	} );
 
-		test( 'still returns null when credits are not enabled for the user', () => {
-			// Disable credits for this user
-			( useBlazeCredits as UseBlazeCreditsMock ).mockReturnValue( BlazeCreditStatus.DISABLED );
+	test( 'displays null when balance is 0.00', () => {
+		const mockBalance = '0.00';
+		useCreditBalanceQuery.mockReturnValue( { data: mockBalance } );
 
-			// Render the component
-			const { container } = render( <CreditBalance /> );
+		render( <CreditBalance /> );
 
-			// Expectations
-			expect( container.firstChild ).toBeNull();
-		} );
+		expect( screen.queryByText( /Credits: \$.+/ ) ).toBeNull();
+	} );
 
-		test( 'displays "Credits: $10" when balance is set to 10', () => {
-			// Enable credits for this user
-			( useBlazeCredits as UseBlazeCreditsMock ).mockReturnValue( BlazeCreditStatus.ENABLED );
+	test( 'displays "Credits: $10.00" when balance is set to 10', () => {
+		const mockBalance = '10.00';
+		useCreditBalanceQuery.mockReturnValue( { data: mockBalance } );
 
-			// Render the component
-			render( <CreditBalance /> );
+		render( <CreditBalance /> );
 
-			// Expectations
-			const balance = screen.getByText( /Credits: \$\d+/ );
-			expect( balance ).toHaveTextContent( `Credits: $${ mockBalance }` );
-		} );
+		expect( screen.getByText( /Credits: \$.+/ ) ).toHaveTextContent( 'Credits: $10.00' );
 	} );
 } );

@@ -23,10 +23,10 @@ export function installAndActivateTheme(
 	keepCurrentHomepage = false
 ) {
 	return ( dispatch ) => {
-		return dispatch( installTheme( themeId, siteId ) ).then( () => {
+		return dispatch( installTheme( themeId, siteId ) ).then( () =>
 			// This will be called even if `installTheme` silently fails. We rely on
 			// `activateTheme`'s own error handling here.
-			dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
-		} );
+			dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) )
+		);
 	};
 }

@@ -91,11 +91,34 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'trailing slash variations', () => {
-		expect( localizeUrl( 'https://automattic.com/cookies/', 'de' ) ).toEqual(
+		const isLoggedIn = false;
+
+		// Add trailing slashes everywhere (default).
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies', 'de' ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/?foo=bar'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/#baz'
+		);
+
+		// Preserve trailing slash variation.
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies'
+		);
+		expect(
+			localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn, true )
+		).toEqual( 'https://automattic.com/de/cookies?foo=bar' );
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies#baz'
 		);
 	} );
 
@@ -434,13 +457,13 @@ describe( '#localizeUrl', () => {
 			'https://jetpack.com/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'de' ) ).toEqual(
-			'https://de.jetpack.com/features/comparison/'
+			'https://jetpack.com/de/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pt-br' ) ).toEqual(
-			'https://br.jetpack.com/features/comparison/'
+			'https://jetpack.com/pt-br/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'zh-tw' ) ).toEqual(
-			'https://zh-tw.jetpack.com/features/comparison/'
+			'https://jetpack.com/zh-tw/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pl' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'
@@ -454,6 +477,62 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', 'de' ) ).toEqual(
 			'https://de.wordpress.com/wp-login.php?action=lostpassword'
 		);
+	} );
+
+	test( 'WordPress.com plans URLs', () => {
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', false ) ).toEqual(
+			'https://wordpress.com/es/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Greek
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', false ) ).toEqual(
+			'https://wordpress.com/el/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Romanian
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', false ) ).toEqual(
+			'https://wordpress.com/ro/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Non Mag-16, Finnish
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Full path to a site plan
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
 	} );
 
 	test( 'WordPress.com new style support URLs', () => {

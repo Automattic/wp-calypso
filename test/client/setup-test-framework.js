@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-
+const { TextEncoder, TextDecoder } = require( 'util' );
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.
@@ -17,6 +17,10 @@ afterAll( () => {
 	nock.restore();
 	nock.cleanAll();
 } );
+
+// Define TextEncoder for ReactDOMServer
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
 // This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33
 // JSDOM or CSSDOM don't provide an implementation for it, so for now we have to mock it.
@@ -36,9 +40,13 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 } ) );
 
-// TODO: structuredClone wasn't available in Jest before verson 28 so this creates
-// a version to be used for the tests. Once Jest is upgraded to 28 this should
-// be removed.
-global.structuredClone = jest.fn( ( value ) => {
-	return JSON.parse( JSON.stringify( value ) );
-} );
+global.matchMedia = jest.fn( ( query ) => ( {
+	matches: false,
+	media: query,
+	onchange: null,
+	addListener: jest.fn(), // deprecated
+	removeListener: jest.fn(), // deprecated
+	addEventListener: jest.fn(),
+	removeEventListener: jest.fn(),
+	dispatchEvent: jest.fn(),
+} ) );

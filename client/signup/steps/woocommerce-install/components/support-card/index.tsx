@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

@@ -1,4 +1,3 @@
-import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import page from 'page';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
@@ -38,8 +37,8 @@ export function plans( context, next ) {
 					? context.query.addDomainFlow === 'true'
 					: undefined
 			}
-			domainAndPlanPackage={ context.query.domainAndPlanPackage }
-			is2023PricingGridVisible={ is2023PricingGridActivePage( null, context.pathname ) }
+			domainAndPlanPackage={ context.query.domainAndPlanPackage === 'true' }
+			jetpackAppPlans={ context.query.jetpackAppPlans === 'true' }
 		/>
 	);
 	next();

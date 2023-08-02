@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import startingPointImageUrl from 'calypso/assets/images/onboarding/starting-point.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import StartingPoint from './starting-point';
 import type { StartingPointFlag } from './types';

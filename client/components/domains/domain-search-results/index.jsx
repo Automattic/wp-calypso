@@ -13,7 +13,6 @@ import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domai
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
-import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -29,6 +28,7 @@ class DomainSearchResults extends Component {
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
+		isCartPendingUpdateDomain: PropTypes.object,
 		premiumDomains: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -64,6 +64,7 @@ class DomainSearchResults extends Component {
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
+			lastDomainTld,
 			selectedSite,
 			translate,
 			isDomainOnly,
@@ -137,7 +138,7 @@ class DomainSearchResults extends Component {
 				? translate(
 						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
 						{
-							args: { tld: getTld( domain ) },
+							args: { tld: lastDomainTld },
 							components: {
 								strong: <strong />,
 							},
@@ -163,11 +164,15 @@ class DomainSearchResults extends Component {
 
 			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
 				domainUnavailableMessage = translate(
-					'{{strong}}%(domain)s{{/strong}} is already registered. Please try another search.',
+					'{{strong}}%(domain)s{{/strong}} is already registered. Do you own this domain? {{a}}Transfer it to WordPress.com{{/a}} now, or try another search.',
 					{
 						args: { domain },
 						components: {
 							strong: <strong />,
+							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a href={ `/setup/domain-transfer?new=${ domain ?? '' }` } />
+							),
 						},
 					}
 				);
@@ -178,7 +183,7 @@ class DomainSearchResults extends Component {
 					'{{strong}}.%(tld)s{{/strong}} domains are temporarily not offered on WordPress.com. ' +
 						'Please try again later or choose a different extension.',
 					{
-						args: { tld: getTld( domain ) },
+						args: { tld: lastDomainTld },
 						components: { strong: <strong /> },
 					}
 				);
@@ -282,6 +287,7 @@ class DomainSearchResults extends Component {
 					isReskinned={ this.props.isReskinned }
 					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				/>
 			);
 
@@ -312,6 +318,7 @@ class DomainSearchResults extends Component {
 						isReskinned={ this.props.isReskinned }
 						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 					/>
 				);
 			} );

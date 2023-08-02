@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { ReactChild } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
@@ -12,9 +11,12 @@ const MasterbarStyledBlock = styled( Masterbar )`
 `;
 
 const WordPressLogoStyled = styled( WordPressLogo )`
-	max-height: calc( 100% - 47px );
-	align-self: center;
 	fill: rgb( 54, 54, 54 );
+	margin: 24px 12px 24px 24px;
+
+	@media ( min-width: 480px ) {
+		margin: 24px;
+	}
 `;
 
 const ItemStyled = styled( Item )`
@@ -39,8 +41,9 @@ const ItemStyled = styled( Item )`
 	}
 
 	@media ( max-width: 480px ) {
-		.masterbar__item-content {
+		.gridicon + .masterbar__item-content {
 			display: block;
+			padding: 0 0 0 2px;
 		}
 	}
 `;
@@ -53,13 +56,13 @@ const MasterbarStyled = ( {
 	showContact = true,
 }: {
 	onClick: () => void;
-	backText: ReactChild;
+	backText: string;
 	canGoBack: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;
 } ) => (
 	<MasterbarStyledBlock>
-		<WordPressLogoStyled />
+		<WordPressLogoStyled size={ 24 } />
 		{ canGoBack && (
 			<ItemStyled icon="chevron-left" onClick={ onClick }>
 				{ backText }

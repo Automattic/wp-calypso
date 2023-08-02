@@ -3,8 +3,8 @@ import { withState } from '@wordpress/compose';
 
 interface StateProps {
 	category: number;
-	order: string;
-	orderBy: string;
+	order: 'asc' | 'desc';
+	orderBy: 'date' | 'title';
 	numberOfItems: number;
 }
 
@@ -48,7 +48,9 @@ const QueryControlsExample = withState( {
 			onOrderChange={ ( nextOrder ) => setState( { order: nextOrder } ) }
 			categoriesList={ categories }
 			selectedCategoryId={ category }
-			onCategoryChange={ ( nextCategory ) => setState( { category: nextCategory } ) }
+			onCategoryChange={ ( nextCategory: string ) =>
+				setState( { category: Number( nextCategory ) } )
+			}
 			onNumberOfItemsChange={ ( nextNumberOfItems ) =>
 				setState( { numberOfItems: nextNumberOfItems } )
 			}

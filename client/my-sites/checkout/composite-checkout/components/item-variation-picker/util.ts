@@ -10,10 +10,22 @@ export function getItemVariantCompareToPrice(
 	// month, then `compareToPriceForVariantTerm` would be (120 / 12) * 1,
 	// or 10 (per month). In this case, selecting the variant would save the user
 	// 50% (5 / 10).
-	const compareToPriceForVariantTerm = compareTo
-		? ( compareTo.priceInteger / compareTo.termIntervalInMonths ) * variant.termIntervalInMonths
-		: undefined;
-	return compareToPriceForVariantTerm;
+	if ( ! compareTo ) {
+		return undefined;
+	}
+
+	// CompareTo price with introductory offers (For Jetpack)
+	if (
+		compareTo.introductoryInterval === 1 &&
+		compareTo.introductoryTerm === 'year' &&
+		variant.introductoryInterval === 2 &&
+		variant.introductoryTerm === 'year'
+	) {
+		return compareTo.priceInteger + compareTo.priceBeforeDiscounts;
+	}
+
+	// CompareTo price without intro offers (For WPCOM)
+	return ( compareTo.priceInteger / compareTo.termIntervalInMonths ) * variant.termIntervalInMonths;
 }
 
 export function getItemVariantDiscountPercentage(
@@ -24,7 +36,7 @@ export function getItemVariantDiscountPercentage(
 	// Extremely low "discounts" are possible if the price of the longer term has been rounded
 	// if they cannot be rounded to at least a percentage point we should not show them.
 	const discountPercentage = compareToPriceForVariantTerm
-		? Math.floor( 100 - ( variant.priceInteger / compareToPriceForVariantTerm ) * 100 )
+		? Math.round( 100 - ( variant.priceInteger / compareToPriceForVariantTerm ) * 100 )
 		: 0;
 	return discountPercentage;
 }

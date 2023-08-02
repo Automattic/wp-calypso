@@ -1,14 +1,18 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react-hooks';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import '@testing-library/jest-dom/extend-expect';
+import { act } from 'react-dom/test-utils';
+import { SiteSubscriptionsSortBy } from '../../constants';
+import {
+	SiteSubscriptionsQueryPropsProvider,
+	useSiteSubscriptionsQueryProps,
+} from '../../contexts';
 import { callApi, getSubkey } from '../../helpers';
-import useSiteSubscriptionsQuery, {
-	SiteSubscriptionsSortBy,
-} from '../../queries/use-site-subscriptions-query';
+import useSiteSubscriptionsQuery from '../../queries/use-site-subscriptions-query';
 
 jest.mock( '../../helpers', () => ( {
 	callApi: jest.fn(),
@@ -18,7 +22,9 @@ jest.mock( '../../helpers', () => ( {
 const queryClient = new QueryClient();
 
 const wrapper = ( { children } ) => (
-	<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	<QueryClientProvider client={ queryClient }>
+		<SiteSubscriptionsQueryPropsProvider>{ children }</SiteSubscriptionsQueryPropsProvider>
+	</QueryClientProvider>
 );
 
 describe( 'useSiteSubscriptionsQuery hook', () => {
@@ -55,19 +61,15 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			total_subscriptions: 6,
 		} );
 
-		const { result, waitFor } = renderHook( () => useSiteSubscriptionsQuery( { number: 2 } ), {
+		const { result } = renderHook( () => useSiteSubscriptionsQuery( { number: 2 } ), {
 			wrapper,
 		} );
 
-		expect( result.current.isLoading ).toBe( true );
-
-		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
-
-		await waitFor( () => expect( callApi ).toHaveBeenCalledTimes( 3 ) );
-
-		expect( callApi ).toHaveBeenCalledTimes( 3 );
-		expect( result.current.data.subscriptions.length ).toBe( 6 );
-		expect( result.current.data.totalCount ).toBe( 6 );
+		await waitFor( () => {
+			expect( callApi ).toHaveBeenCalledTimes( 3 );
+			expect( result.current.data.subscriptions.length ).toBe( 6 );
+			expect( result.current.data.totalCount ).toBe( 6 );
+		} );
 	} );
 
 	it( 'fetches subscriptions data with search term', async () => {
@@ -80,15 +82,25 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			total_subscriptions: 2,
 		} );
 
-		const { result, waitFor } = renderHook(
-			() => useSiteSubscriptionsQuery( { searchTerm: 'Site 1' } ),
-			{ wrapper }
+		const { result } = renderHook(
+			() => {
+				const { setSearchTerm, searchTerm } = useSiteSubscriptionsQueryProps();
+				const { data, isLoading } = useSiteSubscriptionsQuery();
+				return { setSearchTerm, searchTerm, data, isLoading };
+			},
+			{
+				wrapper,
+			}
 		);
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
+		act( () => result.current.setSearchTerm( 'te 1' ) );
+		await waitFor( () => expect( result.current.searchTerm ).toBe( 'te 1' ) );
+
 		expect( callApi ).toHaveBeenCalledTimes( 1 );
 		expect( result.current.data.subscriptions.length ).toBe( 1 );
+		expect( result.current.data.subscriptions[ 0 ].name ).toBe( 'Site 1' );
 		expect( result.current.data.totalCount ).toBe( 2 );
 	} );
 
@@ -146,11 +158,20 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			total_subscriptions: 3,
 		} );
 
-		const { result, waitFor } = renderHook( () => useSiteSubscriptionsQuery( { sortTerm } ), {
-			wrapper,
-		} );
+		const { result } = renderHook(
+			() => {
+				const { setSortTerm, sortTerm } = useSiteSubscriptionsQueryProps();
+				const { data, isLoading } = useSiteSubscriptionsQuery();
+				return { data, isLoading, setSortTerm, sortTerm };
+			},
+			{
+				wrapper,
+			}
+		);
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		act( () => result.current.setSortTerm( sortTerm ) );
+		await waitFor( () => expect( result.current.sortTerm ).toBe( sortTerm ) );
 
 		expect( callApi ).toHaveBeenCalledTimes( 1 );
 		result.current.data.subscriptions.forEach( ( subscription, index ) => {

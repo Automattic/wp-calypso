@@ -6,8 +6,8 @@ import Popover from '../popover';
 
 type CountComparisonCardProps = {
 	count: number | null;
-	heading: React.ReactNode;
-	icon: React.ReactNode;
+	heading?: React.ReactNode;
+	icon?: React.ReactNode;
 	onClick?: ( event: MouseEvent ) => void;
 	previousCount?: number | null;
 	showValueTooltip?: boolean | null;
@@ -47,8 +47,8 @@ export default function CountComparisonCard( {
 
 	return (
 		<Card className="highlight-card">
-			<div className="highlight-card-icon">{ icon }</div>
-			<div className="highlight-card-heading">{ heading }</div>
+			{ icon && <div className="highlight-card-icon">{ icon }</div> }
+			{ heading && <div className="highlight-card-heading">{ heading }</div> }
 			<div
 				className={ classNames( 'highlight-card-count', {
 					'is-pointer': showValueTooltip,
@@ -95,8 +95,8 @@ export default function CountComparisonCard( {
 					>
 						<div className="highlight-card-tooltip-content">
 							<span className="highlight-card-tooltip-label">
-								<span className="highlight-card-tooltip-icon">{ icon }</span>
-								<span>{ heading }</span>
+								{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
+								{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
 							</span>
 							<span>{ formattedNumber( count ) }</span>
 						</div>

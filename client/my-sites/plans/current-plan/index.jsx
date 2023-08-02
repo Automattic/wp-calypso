@@ -43,7 +43,6 @@ import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
-import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -161,7 +160,7 @@ class CurrentPlan extends Component {
 	renderMain() {
 		const { selectedSiteId, selectedSite, showJetpackChecklist, translate } = this.props;
 		const isLoading = this.isLoading();
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const planTitle = getPlan( currentPlanSlug ).getTitle();
 		const planFeaturesHeader = translate( '{{planName/}} plan features', {
 			components: { planName: <>{ planTitle }</> },
@@ -214,7 +213,7 @@ class CurrentPlan extends Component {
 			isJetpackNotAtomic,
 		} = this.props;
 
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -295,8 +294,6 @@ class CurrentPlan extends Component {
 									</NoticeAction>
 								</Notice>
 							) }
-
-							{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 
 							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
 

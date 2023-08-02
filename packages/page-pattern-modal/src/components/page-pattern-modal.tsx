@@ -12,7 +12,6 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition, FormattedPattern } from '../pattern-definition';
-import type { KeyboardEvent, MouseEvent, FocusEvent } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
@@ -32,8 +31,6 @@ interface PagePatternModalProps {
 interface PagePatternModalState {
 	selectedCategory: string | null;
 }
-
-type CloseModalEvent = KeyboardEvent | MouseEvent | FocusEvent;
 
 class PagePatternModal extends Component< PagePatternModalProps, PagePatternModalState > {
 	constructor( props: PagePatternModalProps ) {
@@ -168,7 +165,9 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		this.setState( { selectedCategory } );
 	};
 
-	closeModal = ( event: CloseModalEvent ) => {
+	closeModal = (
+		event?: React.KeyboardEvent< HTMLDivElement > | React.SyntheticEvent< Element, Event >
+	) => {
 		// As of Gutenberg 13.1, the editor will auto-focus on the title block
 		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
 		// This ends up triggering a `blur` event on the Modal that causes it
@@ -180,7 +179,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// check what element triggered the `blur` (which doesn't work when the
 		// theme is block-based, as the title block DOM element is not directly
 		// accessible as it's inside the `editor-canvas` iframe).
-		if ( event.type === 'blur' ) {
+		if ( event?.type === 'blur' ) {
 			event.stopPropagation();
 			return;
 		}
@@ -326,11 +325,6 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<Modal
 				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-pattern-modal"
-				// @ts-expect-error `onRequestClose`'s type is () => void but ideally but
-				// in reality, it might receive an event object that might be one of multiple
-				// types (see the `CloseModalEvent` type above for more info). We ignore the
-				// error for now until the type is updated in DefinitelyTyped.
-				// DT PR: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60127.
 				onRequestClose={ this.closeModal }
 				aria={ {
 					labelledby: `page-pattern-modal__heading-${ instanceId }`,
@@ -359,7 +353,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 						</p>
 						<div className="page-pattern-modal__button-container">
 							<Button
-								isSecondary
+								variant="secondary"
 								onClick={ () => this.setPattern( 'blank' ) }
 								className="page-pattern-modal__blank-button"
 							>

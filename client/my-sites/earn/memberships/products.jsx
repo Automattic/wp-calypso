@@ -3,13 +3,12 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { Badge, Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import Badge from 'calypso/components/badge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';

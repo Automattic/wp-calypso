@@ -7,7 +7,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { Fragment } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import { maskField } from 'calypso/lib/checkout';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
@@ -16,6 +15,7 @@ import {
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
@@ -57,6 +57,9 @@ const actions = {
 	},
 	touchAllFields() {
 		return { type: 'TOUCH_ALL_FIELDS' };
+	},
+	resetFields() {
+		return { type: 'RESET_FIELDS' };
 	},
 };
 
@@ -125,6 +128,9 @@ export function createNetBankingPaymentMethodStore(): NetBankingStore {
 							{}
 						),
 					};
+				case 'RESET_FIELDS': {
+					return { ...state, fields: {} };
+				}
 			}
 			return state;
 		},

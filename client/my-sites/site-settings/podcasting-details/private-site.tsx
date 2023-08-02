@@ -1,6 +1,7 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface Props extends LocalizeProps {
@@ -50,7 +51,7 @@ const PodcastingPrivateSiteMessage: React.FC< Props > = function PodcastingPriva
 	);
 };
 
-export default connect( ( state ) => {
+export default connect( ( state: IAppState ) => {
 	return {
 		siteSlug: getSelectedSiteSlug( state ) ?? '',
 	};

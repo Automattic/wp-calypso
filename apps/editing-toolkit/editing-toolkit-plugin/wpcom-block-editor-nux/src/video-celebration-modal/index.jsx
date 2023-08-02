@@ -2,10 +2,10 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import request from 'wpcom-proxy-request';
 import videoSuccessImage from 'calypso/assets/images/illustrations/video-success.svg';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
-import useHasSeenVideoCelbrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-has-seen-video-celebration-modal';
+import { useHasSeenVideoCelebrationModal } from '../../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
+import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';
 import NuxModal from '../nux-modal';
 import './style.scss';
 
@@ -15,8 +15,7 @@ const VideoCelebrationModalInner = () => {
 	const [ hasDisplayedModal, setHasDisplayedModal ] = useState( false );
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
-	const { hasSeenVideoCelebrationModal, updateHasSeenVideoCelebrationModal } =
-		useHasSeenVideoCelbrationModal();
+	const { updateHasSeenVideoCelebrationModal } = useHasSeenVideoCelebrationModal();
 
 	const { isEditorSaving } = useSelect( ( select ) => {
 		if ( isSiteEditor ) {
@@ -46,24 +45,9 @@ const VideoCelebrationModalInner = () => {
 			isEditorSaving: isSavingEntity,
 		};
 	} );
-
-	const { siteIntent: intent } = useSiteIntent();
+	const shouldShowSellerCelebrationModal = useShouldShowVideoCelebrationModal( isEditorSaving );
 
 	useEffect( () => {
-		const maybeRenderVideoCelebrationModal = async () => {
-			// Get latest site options since the video may have just been uploaded.
-			const siteObj = await request( {
-				path: `/sites/${ window._currentSiteId }?http_envelope=1`,
-				apiVersion: '1.1',
-			} );
-
-			if ( siteObj?.options?.launchpad_checklist_tasks_statuses?.video_uploaded ) {
-				setIsModalOpen( true );
-				setHasDisplayedModal( true );
-				updateHasSeenVideoCelebrationModal( true );
-			}
-		};
-
 		// Conditions to show modal:
 		// - user just finished saving
 		// - celebration modal hasn't been viewed/isn't visible
@@ -73,17 +57,17 @@ const VideoCelebrationModalInner = () => {
 			! isEditorSaving &&
 			previousIsEditorSaving.current &&
 			! hasDisplayedModal &&
-			'videopress' === intent &&
-			! hasSeenVideoCelebrationModal
+			shouldShowSellerCelebrationModal
 		) {
-			maybeRenderVideoCelebrationModal();
+			setIsModalOpen( true );
+			setHasDisplayedModal( true );
+			updateHasSeenVideoCelebrationModal( true );
 		}
 		previousIsEditorSaving.current = isEditorSaving;
 	}, [
 		isEditorSaving,
 		hasDisplayedModal,
-		intent,
-		hasSeenVideoCelebrationModal,
+		shouldShowSellerCelebrationModal,
 		updateHasSeenVideoCelebrationModal,
 	] );
 
@@ -104,7 +88,7 @@ const VideoCelebrationModalInner = () => {
 					<Button
 						isPrimary
 						href={ `https://wordpress.com/setup/videopress/launchpad?siteSlug=${ window.location.hostname }` }
-						target="__blank"
+						target="_blank"
 						rel="noopener noreferrer"
 					>
 						{ __( 'Continue and launch', 'full-site-editing' ) }

@@ -1,7 +1,6 @@
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { Banner } from 'calypso/components/banner';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
@@ -9,6 +8,7 @@ import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -69,7 +69,7 @@ const GoogleSaleBanner = ( { domains }: GoogleSaleBannerProps ) => {
 	// Verify that we have a percentage discount
 	if (
 		! hasDiscount( googleWorkspaceProduct ) ||
-		( ! googleWorkspaceProduct?.sale_coupon?.discount ?? null )
+		! googleWorkspaceProduct?.sale_coupon?.discount
 	) {
 		return null;
 	}

@@ -1,8 +1,8 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import {
 	isFetchingSitePurchases,

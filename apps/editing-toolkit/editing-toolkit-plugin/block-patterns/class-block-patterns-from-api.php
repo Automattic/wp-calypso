@@ -75,7 +75,13 @@ class Block_Patterns_From_API {
 
 			foreach ( (array) $block_patterns as $pattern ) {
 				foreach ( (array) $pattern['categories'] as $slug => $category ) {
-					$pattern_categories[ $slug ] = array( 'label' => $category['title'] );
+					// Register categories from first pattern in each category.
+					if ( ! isset( $pattern_categories[ $slug ] ) ) {
+						$pattern_categories[ $slug ] = array(
+							'label'       => $category['title'],
+							'description' => $category['description'],
+						);
+					}
 				}
 			}
 
@@ -86,7 +92,9 @@ class Block_Patterns_From_API {
 				unregister_block_pattern_category( $existing_category['name'] );
 			}
 
-			$pattern_categories = array_merge( $pattern_categories, $existing_categories );
+			// Existing categories are registered in Gutenberg or other plugins.
+			// We overwrite them with the categories from Dotcom patterns.
+			$pattern_categories = array_merge( $existing_categories, $pattern_categories );
 
 			// Order categories alphabetically by their label.
 			uasort(
@@ -103,11 +111,20 @@ class Block_Patterns_From_API {
 			}
 
 			// Register categories (and re-register existing categories).
-			foreach ( (array) $pattern_categories as $slug => $category_properties ) {
+			foreach ( (array) $pattern_categories as $slug => &$category_properties ) {
+				// Rename category labels.
+				if ( 'posts' === $slug ) {
+					$category_properties['label'] = __(
+						'Blog Posts',
+						'full-site-editing'
+					);
+				} elseif ( 'gallery' === $slug ) {
+					$category_properties['label'] = __( 'Image Gallery', 'full-site-editing' );
+				}
 				register_block_pattern_category( $slug, $category_properties );
 			}
 
-			foreach ( (array) $block_patterns as $pattern ) {
+			foreach ( (array) $block_patterns as &$pattern ) {
 				if ( $this->can_register_pattern( $pattern ) ) {
 					$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
 
@@ -117,6 +134,13 @@ class Block_Patterns_From_API {
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
+
+					// The API /ptk/patterns/ adds all patterns to the category Featured because it's reused as All.
+					// Here we remove the category from All patterns because the editor crashes
+					// when rendering all patterns in the background.
+					if ( array_key_exists( 'featured', $pattern['categories'] ) ) {
+						unset( $pattern['categories']['featured'] );
+					}
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
@@ -138,7 +162,8 @@ class Block_Patterns_From_API {
 
 		$this->update_core_patterns_with_wpcom_categories();
 
-		$this->update_pattern_post_types();
+		// Temporarily removing the call to `update_pattern_post_types` while we investigate
+		// https://github.com/Automattic/wp-calypso/issues/79145.
 
 		return $results;
 	}

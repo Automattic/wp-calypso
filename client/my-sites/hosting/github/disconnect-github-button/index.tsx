@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMutation, useQueryClient } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -21,14 +21,16 @@ export function DisconnectGitHubButton( { connection }: DisconnectGitHubButtonPr
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	// Using ReactQuery to manage `isDisconnecting` state because it's not exposed from the Redux store.
-	const mutation = useMutation< unknown, unknown, Connection >( async ( c ) => {
-		dispatch( recordTracksEvent( 'calypso_hosting_github_unauthorize_click' ) );
-		await dispatch( deleteStoredKeyringConnection( c ) );
-		await queryClient.invalidateQueries( [
-			GITHUB_INTEGRATION_QUERY_KEY,
-			siteId,
-			GITHUB_CONNECTION_QUERY_KEY,
-		] );
+	const mutation = useMutation< unknown, unknown, Connection >( {
+		mutationFn: async ( c ) => {
+			dispatch( recordTracksEvent( 'calypso_hosting_github_unauthorize_click' ) );
+			await dispatch( deleteStoredKeyringConnection( c ) );
+			await queryClient.invalidateQueries( [
+				GITHUB_INTEGRATION_QUERY_KEY,
+				siteId,
+				GITHUB_CONNECTION_QUERY_KEY,
+			] );
+		},
 	} );
 	const { mutate: disconnect, isLoading: isDisconnecting } = mutation;
 

@@ -4,13 +4,13 @@ import { Icon, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import RoleSelect from 'calypso/my-sites/people/role-select';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { validateTokens, sendInvites } from 'calypso/state/invites/actions';
 import { getTokenValidation, getSendInviteState } from 'calypso/state/invites/selectors';
@@ -67,7 +67,9 @@ function InviteForm( props: Props ) {
 	useEffect( toggleShowContractorCb, [ role ] );
 	useEffect( checkSubmitReadiness, [ tokenErrors, validationProgress ] );
 	useEffect( reactOnInvitationSuccess, [ invitingSuccess ] );
-	useEffect( () => ( prevInvitingProgress.current = invitingProgress ), [ invitingProgress ] );
+	useEffect( () => {
+		prevInvitingProgress.current = invitingProgress;
+	}, [ invitingProgress ] );
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
 

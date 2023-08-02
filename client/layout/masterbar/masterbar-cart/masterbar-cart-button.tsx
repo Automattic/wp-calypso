@@ -4,7 +4,7 @@ import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from '../item';
 import { MasterBarCartCount } from './masterbar-cart-count';

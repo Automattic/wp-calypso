@@ -33,6 +33,11 @@ describe( 'External Link', () => {
 		expect( container.getElementsByTagName( 'a' )[ 0 ] ).toHaveAttribute( 'target', '_blank' );
 	} );
 
+	test( 'should have a title if given one', () => {
+		const { container } = render( <ExternalLink title="My Foo Bar" /> );
+		expect( container.getElementsByTagName( 'a' )[ 0 ] ).toHaveAttribute( 'title', 'My Foo Bar' );
+	} );
+
 	test( 'should have an icon className if specified', () => {
 		const { container } = render( <ExternalLink icon={ true } iconClassName="foo" /> );
 		expect( container.querySelectorAll( 'svg.foo' ) ).toHaveLength( 1 );

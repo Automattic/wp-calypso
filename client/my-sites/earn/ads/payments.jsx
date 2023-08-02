@@ -1,10 +1,9 @@
-import { Card } from '@automattic/components';
+import { Badge, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import QueryWordadsPayments from 'calypso/components/data/query-wordads-payments';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import Notice from 'calypso/components/notice';

@@ -13,6 +13,7 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
@@ -44,6 +45,7 @@ const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
+const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -226,6 +228,7 @@ const webpackConfig = {
 				cacheIdentifier,
 				cacheCompression: false,
 				exclude: /node_modules\//,
+				plugins: shouldHotReload ? [ require.resolve( 'react-refresh/babel' ) ] : [],
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
@@ -292,6 +295,9 @@ const webpackConfig = {
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 		} ),
+		fallback: {
+			stream: require.resolve( 'stream-browserify' ),
+		},
 	},
 	node: false,
 	plugins: [
@@ -402,6 +408,12 @@ const webpackConfig = {
 					// Sentry should _never_ fail the webpack build, so only emit warnings here:
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
 				},
+			} ),
+		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
+		shouldHotReload &&
+			new ReactRefreshWebpackPlugin( {
+				overlay: false,
+				exclude: [ /node_modules/, /devdocs/ ],
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],

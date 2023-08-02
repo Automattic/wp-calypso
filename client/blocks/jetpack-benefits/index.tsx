@@ -7,7 +7,6 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import {
 	productHasSearch,
@@ -20,6 +19,7 @@ import {
 import JetpackBenefitsScanHistory from 'calypso/blocks/jetpack-benefits/scan-history';
 import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-backups';
 import JetpackBenefitsVideoPress from 'calypso/blocks/jetpack-benefits/videopress';
+import { useSelector } from 'calypso/state';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 

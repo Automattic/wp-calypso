@@ -122,5 +122,9 @@ declare global {
 	interface Window {
 		AppBoot: () => void;
 		COMMIT_SHA: string; // Added by an inline script in <head> via SSR context + webpack.
+		app?: {
+			isDebug?: boolean;
+		};
+		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
 	}
 }

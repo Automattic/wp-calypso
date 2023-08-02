@@ -1,11 +1,11 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import ProfileDropdown from 'calypso/components/jetpack/profile-dropdown';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -23,7 +23,7 @@ const JetpackCloudMasterBar: React.FC = () => {
 	const isExteriorPage = /^\/(?:backup|scan)\/[^/]*$/.test( currentRoute );
 
 	const handleLogoClick = React.useCallback(
-		( e ) => {
+		( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			if ( isNarrow && 'sidebar' === currentLayoutFocus ) {
 				e.preventDefault();
 				dispatch( setLayoutFocus( 'content' ) );

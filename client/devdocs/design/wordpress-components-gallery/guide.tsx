@@ -14,7 +14,7 @@ const GuideExample = () => {
 
 	return (
 		<>
-			<Button isSecondary onClick={ openGuide }>
+			<Button variant="secondary" onClick={ openGuide }>
 				Open Guide
 			</Button>
 			{ isOpen && (

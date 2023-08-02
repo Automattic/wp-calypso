@@ -1,14 +1,13 @@
 import './style.scss';
 import { safeImageUrl } from '@automattic/calypso-url';
-import { Dialog, Gridicon } from '@automattic/components';
+import { Badge, Dialog, Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import FoldableCard from 'calypso/components/foldable-card';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
@@ -24,6 +23,7 @@ import {
 	getPostType,
 	normalizeCampaignStatus,
 } from 'calypso/my-sites/promote-post/utils';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdPreview from '../ad-preview';
 import AudienceBlock from '../audience-block';
@@ -38,6 +38,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
+	const localizeUrl = useLocalizeUrl();
 	const translate = useTranslate();
 
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
@@ -46,7 +47,6 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 		type,
 		content_config,
 		moderation_reason,
-		spent_budget_cents,
 		start_date,
 		end_date,
 		budget_cents,
@@ -54,11 +54,14 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 		display_delivery_estimate,
 		display_name,
 		creative_html,
-		impressions_total = 0,
-		clicks_total = 0,
 		target_url = '',
 		campaign_stats_loading,
+		campaign_stats,
 	} = campaign;
+
+	const clicks_total = campaign_stats?.clicks_total ?? 0;
+	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
+	const impressions_total = campaign_stats?.impressions_total ?? 0;
 
 	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign ] );
 
@@ -134,7 +137,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
-				cancelCampaign( siteId, campaign.campaign_id );
+				cancelCampaign( siteId ?? 0, campaign.campaign_id );
 			},
 		},
 	];
@@ -145,7 +148,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
-				window.open( 'https://wordpress.com/support/', '_blank' );
+				window.open( localizeUrl( 'https://wordpress.com/support/' ), '_blank' );
 			},
 		},
 		{
@@ -299,7 +302,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 				</div>
 				<div className="campaign-item__payment-and-action">
 					{ canCancelCampaign( campaignStatus ) && (
-						<Button isLink isDestructive onClick={ () => setShowDeleteDialog( true ) }>
+						<Button variant="link" isDestructive onClick={ () => setShowDeleteDialog( true ) }>
 							{ cancelCampaignButtonText }
 						</Button>
 					) }
@@ -314,7 +317,7 @@ export default function CampaignItem( { campaign, expanded, onClickCampaign }: P
 								components: {
 									wpcomTos: (
 										<a
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

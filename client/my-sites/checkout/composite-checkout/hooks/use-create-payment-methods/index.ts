@@ -38,7 +38,9 @@ import useCreateExistingCards from './use-create-existing-cards';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
+import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 import type { Stripe } from '@stripe/stripe-js';
+import type { ReactNode } from 'react';
 
 export { useCreateExistingCards };
 
@@ -70,7 +72,7 @@ export function useCreateCreditCard( {
 	stripeLoadingError: StripeLoadingError;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
-	activePayButtonText?: string | undefined;
+	activePayButtonText?: ReactNode;
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
@@ -337,6 +339,7 @@ function useCreateGooglePay( {
 }
 
 export default function useCreatePaymentMethods( {
+	contactDetailsType,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
@@ -344,6 +347,7 @@ export default function useCreatePaymentMethods( {
 	storedCards,
 	siteSlug,
 }: {
+	contactDetailsType: ContactDetailsType;
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
@@ -403,7 +407,12 @@ export default function useCreatePaymentMethods( {
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
 	const allowUseForAllSubscriptions = true;
+	// Normally checkout will get the tax contact information from the contact
+	// step. However, if the contact step is not shown, we need to collect it
+	// in the credit card form instead.
+	const shouldShowTaxFields = contactDetailsType === 'none';
 	const stripeMethod = useCreateCreditCard( {
+		shouldShowTaxFields,
 		isStripeLoading,
 		stripeLoadingError,
 		shouldUseEbanx,
@@ -434,12 +443,13 @@ export default function useCreatePaymentMethods( {
 		storedCards,
 	} );
 
+	// The order is the order of Payment Methods in Checkout.
 	return [
-		freePaymentMethod,
 		...existingCardMethods,
 		applePayMethod,
 		googlePayMethod,
 		stripeMethod,
+		freePaymentMethod,
 		paypalMethod,
 		idealMethod,
 		giropayMethod,

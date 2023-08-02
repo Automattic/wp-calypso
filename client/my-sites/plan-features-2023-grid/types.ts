@@ -1,6 +1,6 @@
-import { applyTestFiltersToPlansList } from '@automattic/calypso-products';
+import { applyTestFiltersToPlansList, PlanSlug } from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
-import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
@@ -12,24 +12,33 @@ export type PlanProperties = {
 	cartItemForPlan: {
 		product_slug: string;
 	} | null;
-	currencyCode: string | null;
+	currencyCode?: string | null;
 	features: TransformedFeatureObject[];
 	jpFeatures: TransformedFeatureObject[];
-	isLandingPage?: boolean;
-	isPlaceholder?: boolean;
 	isVisible: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
-	planName: string;
-	planObject: PricedAPIPlan | undefined;
-	product_name_short: string;
-	hideMonthly?: boolean;
+	planName: PlanSlug;
+	productNameShort: string;
 	rawPrice: number | null;
-	rawPriceForMonthlyPlan: number | null;
-	relatedMonthlyPlan: null | PricedAPIPlan | undefined;
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];
 	availableForPurchase: boolean;
 	current?: boolean;
-	showMonthlyPrice: boolean;
+	planActionOverrides?: PlanActionOverrides;
+};
+
+export interface PlanActionOverrides {
+	loggedInFreePlan?: {
+		callback: () => void;
+		text: TranslateResult;
+	};
+}
+
+// A generic type representing the response of an async request.
+// It's probably generic enough to be put outside of the pricing grid package,
+// but at the moment it's located here to reduce its scope of influence.
+export type DataResponse< T > = {
+	isLoading: boolean;
+	result?: T;
 };

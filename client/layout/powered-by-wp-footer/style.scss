@@ -1,0 +1,24 @@
+.powered-by-wp-footer {
+	position: absolute;
+	bottom: 0;
+	padding: 30px 0;
+	width: 100%;
+
+	.powered-by-wp-footer__info {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		font-size: 0.875rem;
+		color: var(--color-text);
+	}
+
+	.powered-by-wp-footer__logo {
+		fill: #000;
+	}
+
+	@media screen and ( max-width: 782px ) {
+		position: static;
+		width: unset;
+	}
+}

@@ -27,17 +27,40 @@ interface SitesGridProps {
 	className?: string;
 	isLoading: boolean;
 	sites: SiteExcerptData[];
+	siteSelectorMode?: boolean;
+	showLinkInBioBanner?: boolean;
+	onSiteSelectBtnClick?: ( site: SiteExcerptData ) => void;
 }
 
-export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => {
+export const SitesGrid = ( props: SitesGridProps ) => {
+	const {
+		sites,
+		isLoading,
+		className,
+		showLinkInBioBanner = true,
+		siteSelectorMode = false,
+		onSiteSelectBtnClick,
+	} = props;
+	const additionalProps = siteSelectorMode
+		? {
+				showLaunchNag: false,
+				showBadgeSection: false,
+				showThumbnailLink: false,
+				showSiteRenewLink: false,
+				onSiteSelectBtnClick,
+		  }
+		: {};
+
 	return (
 		<div className={ classnames( container, className ) }>
 			{ isLoading
 				? Array( N_LOADING_ROWS )
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
-				: sites.map( ( site ) => <SitesGridItem site={ site } key={ site.ID } /> ) }
-			<LinkInBioBanner displayMode="grid" />
+				: sites.map( ( site ) => (
+						<SitesGridItem site={ site } key={ site.ID } { ...additionalProps } />
+				  ) ) }
+			{ showLinkInBioBanner && <LinkInBioBanner displayMode="grid" /> }
 		</div>
 	);
 };

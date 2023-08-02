@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const Step1 = () => {

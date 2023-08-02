@@ -13,7 +13,6 @@ import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
 const allAdTrackers = [
 	'bing',
 	'floodlight',
-	'fullstory',
 	'googleAds',
 	'googleTagManager',
 	'ga',
@@ -48,7 +47,6 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	// Advertising trackers:
 	ga: Bucket.ADVERTISING,
 	gaEnhancedEcommerce: Bucket.ADVERTISING,
-	fullstory: Bucket.ADVERTISING,
 	hotjar: Bucket.ADVERTISING,
 	bing: Bucket.ADVERTISING,
 	floodlight: Bucket.ADVERTISING,
@@ -85,7 +83,6 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	floodlight: checkGtagInit,
 	googleAds: checkGtagInit,
 	googleTagManager: checkWooGTMInit,
-	fullstory: () => 'FS' in window,
 	bing: () => 'uetq' in window,
 	outbrain: () => 'obApi' in window,
 	pinterest: () => 'pintrk' in window,

@@ -15,24 +15,6 @@
 		}
 	}
 
-	.global-styles-variations {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		overflow: scroll;
-		padding: 12px 2px;
-		scrollbar-width: none;
-
-		&::-webkit-scrollbar {
-			display: none;
-		}
-
-		@include breakpoint-deprecated( "<960px" ) {
-			flex-wrap: nowrap;
-			padding: 12px 24px 16px 2px;
-		}
-	}
-
 	.theme__sheet-style-variations-header {
 		display: flex;
 		flex-direction: column;
@@ -63,7 +45,7 @@
 	}
 
 	.global-styles-variations__item {
-		flex-basis: 100px;
+		flex-basis: 80px;
 		flex-shrink: 0;
 
 		@include break-xlarge {

@@ -20,7 +20,7 @@ $nav-item-untitled-text-color: #b5bcc2; // former $light-gray-800
 
 	&:hover,
 	&:not([aria-disabled="true"]):active {
-		color: $white;
+		color: $white !important;
 	}
 
 	&:focus {

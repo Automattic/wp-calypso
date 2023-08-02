@@ -1,7 +1,10 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
+import { ErrorResponse } from '../types';
+import isValidId from './validators';
 
 type callApiParams = {
+	apiNamespace?: string;
 	path: string;
 	method?: 'GET' | 'POST';
 	body?: object;
@@ -16,6 +19,7 @@ const getSubkey = () => {
 
 // Helper function for fetching from subkey authenticated API. Subkey authentication process is only applied in case of logged-out users.
 async function callApi< ReturnType >( {
+	apiNamespace = '',
 	path,
 	method = 'GET',
 	body,
@@ -24,6 +28,7 @@ async function callApi< ReturnType >( {
 }: callApiParams ): Promise< ReturnType > {
 	if ( isLoggedIn ) {
 		const res = await wpcomRequest( {
+			apiNamespace,
 			path,
 			apiVersion,
 			method,
@@ -79,4 +84,50 @@ const applyCallbackToPages = < K extends string, T >(
 	};
 };
 
-export { callApi, applyCallbackToPages, getSubkey };
+// Subscriptions Management helper function to determine which API endpoint to call based on whether the user is logged in or not.
+const getSubscriptionMutationParams = (
+	action: 'new' | 'delete',
+	isLoggedIn: boolean,
+	blogId?: number | string,
+	url?: string,
+	emailId?: string,
+	subscriptionId?: number
+) => {
+	if ( isLoggedIn ) {
+		const isSubscriptionIdValid = isValidId( subscriptionId );
+		if ( ! isSubscriptionIdValid && ! url ) {
+			throw new Error( 'Subscription ID or URL is required to subscribe' );
+		}
+
+		return {
+			path: `/read/following/mine/${ action }`,
+			apiVersion: '1.1',
+			body: {
+				source: 'calypso',
+				...( isSubscriptionIdValid ? { sub_id: subscriptionId } : { url } ),
+			},
+		};
+	}
+
+	if ( ! blogId ) {
+		throw new Error( 'Blog ID is required for non-wpcom user to subscribe' );
+	}
+
+	return {
+		path: `/read/site/${ blogId }/post_email_subscriptions/${ action }`,
+		apiVersion: '1.2',
+		body: { ...( emailId ? { email_id: emailId } : {} ) },
+	};
+};
+
+const isErrorResponse = (
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	response: any
+): response is ErrorResponse => {
+	// This is good enough for us to know that the response is an error response
+	return response && ( response.errors || response.error_data );
+};
+
+export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams, isErrorResponse };
+export { default as buildQueryKey } from './query-key';
+export { default as isValidId } from './validators';

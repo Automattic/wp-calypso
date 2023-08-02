@@ -9,8 +9,6 @@
 	"discover_blog_id": 53424024,
 	"discover_feed_id": 41325786,
 	"daily_post_blog_id": 489937,
-	"discover_logged_out_redirect_url": false,
-	"happychat_pling_noise_path": "/calypso/audio/chat-pling.wav",
 	"facebook_api_key": false,
 	"features": {},
 	"google_analytics_key": false,
@@ -35,7 +33,12 @@
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
+	"advertising_dashboard_path_prefix": "/advertising",
 	"zendesk_presales_chat_key": false,
+	"zendesk_presales_chat_key_akismet": false,
+	"zendesk_presales_chat_key_jp_checkout": false,
+	"zendesk_presales_chat_key_jp_agency_dashboard": false,
+	"zendesk_support_chat_key": false,
 	"upwork_support_locales": [
 		"de",
 		"de-at",
@@ -181,6 +184,7 @@
 		"onboarding",
 		"onboarding-with-email",
 		"onboarding-pm",
+		"onboarding-media",
 		"with-add-ons",
 		"newsletter",
 		"setup-site",
@@ -201,6 +205,7 @@
 		"simple",
 		"woocommerce-install",
 		"with-theme",
+		"with-plugin",
 		"with-theme-assembler",
 		"free",
 		"personal",
@@ -218,7 +223,8 @@
 		"pro",
 		"starter",
 		"domain",
-		"onboarding-2023-pricing-grid"
+		"onboarding-2023-pricing-grid",
+		"domain-transfer"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

@@ -13,8 +13,9 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import type { AppState, SiteSlug } from 'calypso/types';
+import type { SiteSlug } from 'calypso/types';
 
 import './style.scss';
 
@@ -133,7 +134,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 };
 
 export default connect(
-	( state: AppState ) => {
+	( state: IAppState ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		return {

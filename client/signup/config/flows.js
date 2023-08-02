@@ -1,7 +1,11 @@
-import config from '@automattic/calypso-config';
-import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import {
+	PREMIUM_THEME,
+	DOT_ORG_THEME,
+	WOOCOMMERCE_THEME,
+	MARKETPLACE_THEME,
+	shouldGoToAssembler,
+} from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
-import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -28,7 +32,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return dependencies.cartItem || dependencies.domainItem;
 }
 
 function getSiteDestination( dependencies ) {
@@ -111,36 +115,61 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if (
-		isSiteAssemblerFlow( flowName ) &&
-		themeParameter === BLANK_CANVAS_DESIGN.slug &&
-		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-	) {
-		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
-		// screen for now
-		if ( isDesktop() ) {
+	if ( isSiteAssemblerFlow( flowName ) ) {
+		// Check whether to go to the assembler. If not, go to the site editor directly
+		if ( shouldGoToAssembler() ) {
 			return addQueryArgs(
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
+					isNewSite: true,
 				},
 				`/setup/with-theme-assembler`
 			);
 		}
 
-		return `/site-editor/${ siteSlug }`;
+		const params = new URLSearchParams( {
+			canvas: 'edit',
+			assembler: '1',
+		} );
+
+		return `/site-editor/${ siteSlug }?${ params }`;
 	}
+
 	return `/home/${ siteSlug }`;
 }
 
-function getWithThemeDestination( { siteSlug, themeParameter, styleVariation, themeType } ) {
-	if ( 'dot-org' === themeType ) {
+function getWithThemeDestination( {
+	siteSlug,
+	themeParameter,
+	styleVariation,
+	themeType,
+	cartItem,
+} ) {
+	if (
+		! cartItem &&
+		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
+	) {
+		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
+	}
+
+	if ( DOT_ORG_THEME === themeType ) {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
 	const style = styleVariation ? `&style=${ styleVariation }` : '';
 
-	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }&hideBack=true`;
+	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
+}
+
+function getWithPluginDestination( { siteSlug, pluginParameter, pluginBillingPeriod } ) {
+	// send to the thank you page when find a billing period (marketplace)
+	if ( pluginBillingPeriod ) {
+		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginParameter }`;
+	}
+
+	// otherwise send to installation page
+	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -179,8 +208,18 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHomeDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
+function getHostingFlowDestination() {
+	const queryArgs = getQueryArgs();
+
+	if ( queryArgs.flow === 'new-hosted-site' ) {
+		return '/setup/new-hosted-site';
+	}
+
+	if ( queryArgs.flow === 'import-hosted-site' ) {
+		return '/setup/import-hosted-site';
+	}
+
+	return '/sites?hosting-flow=true';
 }
 
 const flows = generateFlows( {
@@ -192,11 +231,12 @@ const flows = generateFlows( {
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
 	getWithThemeDestination,
+	getWithPluginDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getHomeDestination,
+	getHostingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

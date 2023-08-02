@@ -1,0 +1,19 @@
+.license-lightbox__pricing {
+	background-color: var(--studio-white);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	border: 1px solid var(--studio-jetpack-green-50);
+	padding: 1rem;
+}
+
+.license-lightbox__payment-plan-title {
+	font-size: 1rem;
+	margin-block-end: 8px;
+}
+
+.license-lightbox__cta-button {
+	margin-block-start: 1rem;
+	margin-block-end: 0;
+	display: block;
+	width: 100%;
+	padding: 10px 16px;
+}

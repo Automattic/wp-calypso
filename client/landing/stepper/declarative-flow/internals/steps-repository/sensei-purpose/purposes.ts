@@ -22,27 +22,37 @@ type Purpose = {
 export const purposes: Purpose[] = [
 	{
 		id: 'sell_courses',
-		label: __( 'Sell courses and generate income' ),
+		get label() {
+			return __( 'Sell courses and generate income' );
+		},
 		plugins: [],
 	},
 	{
 		id: 'provide_certification',
-		label: __( 'Provide certification' ),
+		get label() {
+			return __( 'Provide certification' );
+		},
 		plugins: [
 			{
 				slug: 'sensei-certificates',
 				id: 'sensei-certificates/woothemes-sensei-certificates',
 			},
 		],
-		description: __( 'Sensei LMS Certificates will be installed for free.' ),
+		get description() {
+			return __( 'Sensei LMS Certificates will be installed for free.' );
+		},
 	},
 	{
 		id: 'educate_students',
-		label: __( 'Educate students' ),
+		get label() {
+			return __( 'Educate students' );
+		},
 	},
 	{
 		id: 'train_employees',
-		label: __( 'Train employees' ),
+		get label() {
+			return __( 'Train employees' );
+		},
 	},
 ];
 const STORAGE_KEY = 'sensei-site-purpose';

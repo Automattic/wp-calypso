@@ -2,6 +2,7 @@ import { current as currentPage } from 'page';
 import {
 	addAddOnsToCart,
 	addPlanToCart,
+	addWithThemePlanToCart,
 	createAccount,
 	createSite,
 	createWpForTeamsSite,
@@ -17,7 +18,6 @@ import {
 	isPlanFulfilled,
 	isAddOnsFulfilled,
 	isDomainFulfilled,
-	isSiteTypeFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	isNewOrExistingSiteFulfilled,
 	createSiteAndAddDIFMToCart,
@@ -30,6 +30,7 @@ import { generateSteps } from './steps-pure';
 export default generateSteps( {
 	addAddOnsToCart,
 	addPlanToCart,
+	addWithThemePlanToCart,
 	createAccount,
 	createSite,
 	createWpForTeamsSite,
@@ -46,7 +47,6 @@ export default generateSteps( {
 	isPlanFulfilled,
 	isAddOnsFulfilled,
 	isDomainFulfilled,
-	isSiteTypeFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	isNewOrExistingSiteFulfilled,
 	createSiteAndAddDIFMToCart,

@@ -58,8 +58,21 @@
 
 	.plan-price.is-original {
 		color: var(--studio-gray-50);
-		text-decoration: line-through;
 		font-weight: 600;
+		position: relative;
+		white-space: nowrap;
+	}
+
+	// Price strike-through:
+	// (`text-decoration: line-through;` is misaligned in Firefox, so using
+	// pseudo-element is more compatible with all browsers.)
+	.plan-price.is-original::after {
+		border-top: 2px solid var(--studio-gray-50);
+		position: absolute;
+		content: "";
+		right: 0;
+		top: 44%;
+		left: 0;
 	}
 
 	.plan-price.is-discounted {
@@ -76,6 +89,10 @@
 		align-items: center;
 		margin: 0;
 	}
+
+	&.is-free .display-price__billing-time-frame {
+		margin-left: 4px;
+	}
 }
 
 .item-price .display-price.is-placeholder {
@@ -90,16 +107,6 @@
 	.display-price__billing-time-frame {
 		max-height: 40px;
 		margin-top: 0;
-	}
-}
-
-/*
-Hack to fix line-through not showing in the middle of the text in firefox browser.
-*/
-@-moz-document url-prefix() {
-	.plan-price {
-		/* stylelint-disable-next-line scales/font-sizes */
-		font-size: 1.4rem;
 	}
 }
 

@@ -74,6 +74,10 @@
 				margin-bottom: 24px;
 				color: var(--color-text-subtle);
 
+				a {
+					cursor: pointer;
+				}
+
 				@include break-mobile {
 					max-width: 625px;
 					margin: 0 40px 16px;

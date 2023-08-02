@@ -14,6 +14,6 @@ function render() {
 
 ## Props
 
-- `header` (`ReactChild`) - The header string or a component to render as the header.
-- `children` (`ReactChild | ReactChild[]`) - The content to be rendered inside the section.
+- `header` (`string | ReactElement`) - The header string or a component to render as the header.
+- `children` (`ReactNode`) - The content to be rendered inside the section.
 - `dark?` (`boolean`) - Makes the background of the section dark.

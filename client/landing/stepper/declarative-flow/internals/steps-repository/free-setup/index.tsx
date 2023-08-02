@@ -48,7 +48,9 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
 			setSelectedFile( file );
 		}
-	}, [ state ] );
+		// These are the actual dependencies, not the state object.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ state.siteTitle, state.siteDescription, state.siteLogo ] );
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();

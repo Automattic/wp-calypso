@@ -1,8 +1,9 @@
 import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
 import {
-	FacebookPreview,
-	TwitterPreview,
-	SearchPreview,
+	FacebookLinkPreview,
+	FacebookPostPreview,
+	TwitterLinkPreview,
+	GoogleSearchPreview,
 	TYPE_WEBSITE,
 	TYPE_ARTICLE,
 } from '@automattic/social-previews';
@@ -110,23 +111,25 @@ const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 };
 
 const GoogleSite = ( site, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ site.name }
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const GooglePost = ( site, post, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const FacebookSite = ( site, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookLinkPreview
 		title={ site.name }
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
@@ -136,7 +139,7 @@ const FacebookSite = ( site, frontPageMetaDescription ) => (
 );
 
 const FacebookPost = ( site, post, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookPostPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
@@ -147,7 +150,7 @@ const FacebookPost = ( site, post, frontPageMetaDescription ) => (
 );
 
 const TwitterSite = ( site, frontPageMetaDescription ) => (
-	<TwitterPreview
+	<TwitterLinkPreview
 		title={ site.name }
 		url={ site.URL }
 		type="summary"
@@ -157,7 +160,7 @@ const TwitterSite = ( site, frontPageMetaDescription ) => (
 );
 
 const TwitterPost = ( site, post, frontPageMetaDescription ) => (
-	<TwitterPreview
+	<TwitterLinkPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		type="large_image_summary"

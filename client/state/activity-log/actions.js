@@ -17,6 +17,7 @@ import {
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
+	REWIND_STAGING_CLONE,
 	REWIND_BACKUP,
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
@@ -164,6 +165,16 @@ export function rewindClone( siteId, timestamp, payload ) {
 		siteId,
 		timestamp,
 		payload,
+	};
+}
+
+export function rewindStagingClone( sourceBlogId, timestamp, payload, stagingBlogId ) {
+	return {
+		type: REWIND_STAGING_CLONE,
+		sourceBlogId,
+		timestamp,
+		payload,
+		stagingBlogId,
 	};
 }
 

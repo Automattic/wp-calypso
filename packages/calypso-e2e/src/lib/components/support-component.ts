@@ -1,35 +1,13 @@
-import { Locator, Page, Response } from 'playwright';
+import { Locator, Page } from 'playwright';
 
-type SupportResultType = 'article' | 'where';
-
-const selectors = {
-	// Components
-	supportPopoverButton: ( { isActive }: { isActive?: boolean } = {} ) =>
-		`button[title="Help"]${ isActive ? '.is-active' : '' }`,
-	searchInput: '[aria-label="Search"]',
-	clearSearch: '[aria-label="Close Search"]',
-	supportCard: '.card.help-search',
-	closeButton: '[aria-label="Close Help Center"]',
-
-	// Results
-	resultsPlaceholder: '.inline-help__results-placeholder-item',
-	resultsPlaceholderHelpCenter: '.placeholder-lines__help-center-item',
-	results: ( category: string ) => `[aria-labelledby="${ category }"] a`,
-	defaultResultsMessage: 'h3:text("Recommended resources")',
-	successfulSearchResponse: ( response: Response ) =>
-		response.url().includes( 'search' ) && response.status() === 200,
-
-	// Result types
-	supportCategory: 'inline-search--api_help',
-	whereCategory: 'inline-search--admin_section',
-	emptyResults: ':has-text("Sorry, there were no matches.")',
-};
+export type ResultsCategory = 'Docs' | 'Calypso Link';
 
 /**
- * Represents the Support popover available on most WPCOM screens.
+ * Represents the Help Center popover.
  */
 export class SupportComponent {
 	private page: Page;
+	private anchor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -38,116 +16,111 @@ export class SupportComponent {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-	}
-
-	/**
-	 *
-	 */
-	async waitForQueryComplete(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForSelector( selectors.resultsPlaceholderHelpCenter, { state: 'hidden' } ),
-			this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'hidden' } ),
-		] );
+		this.anchor = this.page.locator( '.help-center__container' );
 	}
 
 	/**
 	 * Opens the support popover from the closed state.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async openPopover(): Promise< void > {
-		if ( await this.page.isVisible( selectors.supportPopoverButton( { isActive: true } ) ) ) {
+		const helpButton = this.page
+			.getByRole( 'banner' )
+			.getByRole( 'button', { name: 'Help', exact: true } );
+
+		// The `isVisible` API is deprecated becaues it returns immediately,
+		// so it is not recommended here.
+		if ( await this.anchor.count() ) {
 			return;
 		}
 
-		// This Promise.all wrapper contains many calls due to a certain level of uncertainty
-		// when the support popover is launched.
-		await Promise.all( [
-			// Waits for all placeholder CSS elements to be removed from the DOM.
-			this.waitForQueryComplete(),
-			this.page.waitForSelector( selectors.supportPopoverButton() ),
-			this.page.click( selectors.supportPopoverButton() ),
-		] );
-
-		await this.page.waitForSelector( selectors.supportPopoverButton( { isActive: true } ) );
+		await helpButton.click();
+		await this.anchor.waitFor( { state: 'visible' } );
 	}
 
 	/**
 	 * Closes the support popover from the open state.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async closePopover(): Promise< void > {
-		if ( await this.page.isHidden( selectors.closeButton ) ) {
+		const helpButton = this.page
+			.getByRole( 'banner' )
+			.getByRole( 'button', { name: 'Help', exact: true } );
+
+		// The `isVisible` API is deprecated becaues it returns immediately,
+		// so it is not recommended here.
+		if ( ! ( await this.anchor.count() ) ) {
 			return;
 		}
-		await this.page.click( selectors.closeButton );
-		await this.page.waitForSelector( selectors.closeButton, { state: 'hidden' } );
+
+		await helpButton.click();
+		await this.anchor.waitFor( { state: 'detached' } );
 	}
 
-	/**
-	 * Wait for and scroll to expose the Support card, present only on My Home.
-	 */
-	async showSupportCard(): Promise< void > {
-		const locator = this.page.locator( selectors.supportCard );
-		await Promise.all( [ locator.waitFor(), locator.scrollIntoViewIfNeeded() ] );
-	}
-
-	/* Result methods */
+	/* Results */
 
 	/**
-	 * Checks whether the Support popover/card is in a default state (ie. no search keyword).
-	 */
-	async defaultStateShown(): Promise< void > {
-		await this.page.waitForSelector( selectors.defaultResultsMessage );
-	}
-
-	/**
-	 * Given a selector, returns a Locator that match the given selector.
-	 * Prior to selecing the elements, this method will wait for the 'load' event.
+	 * Returns the numnber of results found under each cateogry.
 	 *
-	 * @param {SupportResultType} category Type of support result item shown.
-	 * @returns {Promise<Locator>} Locator that matches the given selector.
+	 * If the category has no results (eg. Show Me Where has no results)
+	 * then the value 0 is returned.
+	 *
+	 * @returns {Promise<{articleCount: number, linkCount: number}>} Object with named values.
 	 */
-	async getResults( category: SupportResultType ): Promise< Locator > {
-		await this.waitForQueryComplete();
-
-		const selector = selectors.results(
-			category === 'article' ? selectors.supportCategory : selectors.whereCategory
-		);
-		await this.page.waitForSelector( selector );
-		return this.page.locator( selector );
+	async getResultCount(): Promise< { articleCount: number; linkCount: number } > {
+		return {
+			articleCount: await this.anchor
+				.getByLabel( 'Search Results' )
+				.getByRole( 'list', { name: 'Recommended resources' } )
+				.count(),
+			linkCount: await this.anchor
+				.getByLabel( 'Search Results' )
+				.getByRole( 'list', { name: 'Show me where to' } )
+				.count(),
+		};
 	}
 
 	/**
-	 * Checks whether popover search shows no results as expected.
+	 * Interact with the search result based on index.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {ResultsCategory} category Category of results to click on.
+	 * @param {number} index Locate results based on index. 0-indexed.
 	 */
-	async noResultsShown(): Promise< void > {
-		// Note that even for a search query like ;;;ppp;;; that produces no search results,
-		// some links are shown in the popover under the heading `Helpful resources for this section`.
-		await this.page.waitForSelector( selectors.emptyResults );
-	}
+	async clickResultByIndex( category: ResultsCategory, index: number ) {
+		const categoryText = category === 'Docs' ? 'Recommended resources' : 'Show me where to';
 
-	/* Interaction with results */
+		const locator = this.anchor
+			.getByRole( 'list', { name: categoryText } )
+			.getByRole( 'listitem' )
+			.nth( index );
 
-	/**
-	 * Click on the nth result specified by the target value.
-	 *
-	 * @param {SupportResultType} category Type of support result item shown.
-	 * @param {number} target The nth result to click under the type of result.
-	 */
-	async clickResult( category: SupportResultType, target: number ): Promise< void > {
-		let selector: string;
+		await locator.waitFor();
+		await locator.click();
 
-		if ( category === 'article' ) {
-			selector = selectors.results( selectors.supportCategory );
-		} else {
-			selector = selectors.results( selectors.whereCategory );
+		if ( category === 'Docs' ) {
+			// Sometimes, the network call for the help doc can be slow.
+			await this.page.waitForResponse( /\/help\/article/, { timeout: 15 * 1000 } );
 		}
+	}
 
-		await this.page.click( `:nth-match(${ selector }, ${ target })` );
+	/**
+	 * Returns the title of the article being viewed.
+	 *
+	 * @returns {string} Title of the article.
+	 */
+	async getOpenArticleTitle(): Promise< string > {
+		const locator = this.anchor.getByRole( 'article' ).getByRole( 'heading' ).first();
+
+		await locator.waitFor();
+		return await locator.innerText();
+	}
+
+	/**
+	 * Clicks on the "Back" button when an article is open.
+	 */
+	async goBack(): Promise< void > {
+		const locator = this.anchor.getByRole( 'button', { name: 'Back', exact: true } );
+
+		await locator.waitFor();
+		await locator.click();
 	}
 
 	/* Search input */
@@ -156,24 +129,40 @@ export class SupportComponent {
 	 * Fills the support popover search input and waits for the query to complete.
 	 *
 	 * @param {string} text Search keyword to be entered into the search field.
-	 * @returns {Promise<void>} No return value.
 	 */
 	async search( text: string ): Promise< void > {
-		// Wait for the response to the request and ensure the status is HTTP 200.
 		await Promise.all( [
-			this.page.waitForResponse( selectors.successfulSearchResponse ),
-			this.page.fill( selectors.searchInput, text ),
-			this.waitForQueryComplete(),
+			// If you don't wait for the request specific to your search, you can actually
+			// go fast enough to act on default or old results!
+			this.page.waitForResponse(
+				( response ) => {
+					return (
+						response.request().url().includes( '/help/search/wpcom' ) &&
+						response
+							.request()
+							.url()
+							.includes( `query=${ encodeURIComponent( text ) }` )
+					);
+				},
+				{ timeout: 15 * 1000 }
+			),
+			this.anchor.getByPlaceholder( 'Search for help' ).fill( text ),
 		] );
-		await this.page.waitForLoadState( 'load' );
+
+		// Wait for the search results to populate.
+		// For any query (valid or invalid), the Recommended resources will populate,
+		// so check for the presence of results under this header.
+		await this.anchor.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } );
 	}
 
 	/**
 	 * Clears the search field of all keywords.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async clearSearch(): Promise< void > {
-		await this.page.click( selectors.clearSearch );
+		const locator = this.page.getByRole( 'button', { name: 'Close Search' } );
+
+		if ( await locator.count() ) {
+			await locator.click();
+		}
 	}
 }

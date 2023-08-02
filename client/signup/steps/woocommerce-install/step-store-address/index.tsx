@@ -4,9 +4,9 @@ import { TextControl, ComboboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -166,8 +166,8 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 						<ComboboxControl
 							label={ __( 'Country / State' ) }
 							value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
-							onChange={ ( value: string | null ) => {
-								update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
+							onChange={ ( value ) => {
+								update( WOOCOMMERCE_DEFAULT_COUNTRY, value ?? '' );
 								clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
 							} }
 							options={ countriesAsOptions }

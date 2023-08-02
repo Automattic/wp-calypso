@@ -4,8 +4,8 @@ import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
-	READER_TAG_POST_FEATURED_MAX_IMAGE_HEIGHT,
-	READER_TAG_POST_FEATURED_MAX_IMAGE_WIDTH,
+	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
+	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
 } from 'calypso/state/reader/posts/sizes';
 import './style.scss';
 
@@ -21,7 +21,7 @@ const ReaderFeaturedImage = ( {
 	imageUrl,
 	imageWidth,
 	imageHeight,
-	isTagPost,
+	isCompactPost,
 } ) => {
 	const featuredImageUrl = imageUrl || canonicalMedia?.src;
 	if ( featuredImageUrl === undefined ) {
@@ -29,7 +29,7 @@ const ReaderFeaturedImage = ( {
 	}
 	let resizedImageWidth = imageWidth;
 	if ( resizedImageWidth === undefined ) {
-		resizedImageWidth = isTagPost ? READER_TAG_POST_FEATURED_MAX_IMAGE_WIDTH : 'auto';
+		resizedImageWidth = isCompactPost ? READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH : 'auto';
 	}
 	// Don't resize image if it was already fetched.
 	const resizedUrl = fetched
@@ -38,7 +38,9 @@ const ReaderFeaturedImage = ( {
 	const safeCssUrl = cssSafeUrl( resizedUrl );
 	const newHeight =
 		imageHeight ||
-		( isTagPost ? READER_TAG_POST_FEATURED_MAX_IMAGE_HEIGHT : READER_FEATURED_MAX_IMAGE_HEIGHT );
+		( isCompactPost
+			? READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT
+			: READER_FEATURED_MAX_IMAGE_HEIGHT );
 	let featuredImageStyle = { background: 'none' };
 	if ( safeCssUrl ) {
 		if ( children ) {

@@ -1,0 +1,32 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.confirm-modal {
+	.components-modal__frame {
+		max-width: 563px;
+	}
+
+	.components-modal__header {
+		border-bottom-color: $studio-gray-0;
+		padding: 18px 24px;
+
+		.components-modal__header-heading {
+			font-size: $font-body;
+		}
+	}
+
+	.components-modal__content {
+		padding: 0 24px 24px;
+
+		p {
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+	}
+
+	.confirm-modal__buttons {
+		display: flex;
+		justify-content: flex-end;
+		gap: 10px;
+	}
+}

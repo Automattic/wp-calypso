@@ -3,12 +3,12 @@ import { Button } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import { type } from 'calypso/lib/domains/constants';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -22,7 +22,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { CalypsoDispatch } from 'calypso/state/types';
 
 type SetAsPrimaryProps = {
 	domain: ResponseDomain;
@@ -31,7 +30,7 @@ type SetAsPrimaryProps = {
 
 const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch< CalypsoDispatch >();
+	const dispatch = useDispatch();
 
 	const isOnFreePlan = selectedSite?.plan?.is_free ?? false;
 	const hasDomainOnlySite = useSelector( ( state ) => isDomainOnlySite( state, selectedSite.ID ) );

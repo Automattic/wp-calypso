@@ -9,8 +9,11 @@ import {
 	isDotComPlan,
 	WPCOM_DIFM_LITE,
 	isDIFMProduct,
+	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 import CheckoutThankYouHeader from '../header';
 import { CheckoutThankYou } from '../index';
 
@@ -28,6 +31,7 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
+jest.mock( '../redesign-v2/sections/Footer', () => () => 'component--redesign-v2-footer' );
 jest.mock( '../atomic-store-thank-you-card', () => () => (
 	<div data-testid="atomic-store-thank-you-card" />
 ) );
@@ -59,8 +63,15 @@ const defaultProps = {
 	domainOnlySiteFlow: false,
 };
 
+const initialState = {
+	purchases: {
+		isFetchingSitePurchases: true,
+	},
+};
+
 describe( 'CheckoutThankYou', () => {
 	let originalScrollTo;
+	let store;
 
 	beforeAll( () => {
 		originalScrollTo = window.scrollTo;
@@ -68,6 +79,8 @@ describe( 'CheckoutThankYou', () => {
 	} );
 
 	beforeEach( () => {
+		const mockStore = configureStore();
+		store = mockStore( initialState );
 		CheckoutThankYouHeader.mockClear();
 	} );
 
@@ -77,12 +90,20 @@ describe( 'CheckoutThankYou', () => {
 
 	describe( 'Basic tests', () => {
 		test( 'should not blow up and have proper CSS class', () => {
-			const { container } = render( <CheckoutThankYou { ...defaultProps } /> );
+			const { container } = render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...defaultProps } />
+				</Provider>
+			);
 			expect( container.firstChild ).toHaveClass( 'checkout-thank-you' );
 		} );
 
 		test( 'Show WordPressLogo when there are no purchase but a receipt is present', () => {
-			render( <CheckoutThankYou { ...defaultProps } receiptId={ 12 } /> );
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...defaultProps } receiptId={ 12 } />
+				</Provider>
+			);
 			expect( screen.getByTestId( 'wordpress-logo' ) ).toBeVisible();
 		} );
 	} );
@@ -108,7 +129,11 @@ describe( 'CheckoutThankYou', () => {
 		};
 
 		test( 'Should display a full version when isSimplified is missing', () => {
-			render( <CheckoutThankYou { ...props } /> );
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } />
+				</Provider>
+			);
 			expect( screen.queryByTestId( 'business-plan-details' ) ).toBeVisible();
 			expect( screen.queryByTestId( 'happiness-support' ) ).toBeVisible();
 			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
@@ -118,7 +143,11 @@ describe( 'CheckoutThankYou', () => {
 		} );
 
 		test( 'Should display a simplified version when isSimplified is set to true', () => {
-			render( <CheckoutThankYou { ...props } isSimplified /> );
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } isSimplified />
+				</Provider>
+			);
 			expect( screen.queryByTestId( 'business-plan-details' ) ).not.toBeInTheDocument();
 			expect( screen.queryByTestId( 'happiness-support' ) ).not.toBeInTheDocument();
 			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
@@ -172,18 +201,32 @@ describe( 'CheckoutThankYou', () => {
 
 		test( 'Should be there for AT', () => {
 			render(
-				<CheckoutThankYou { ...props } transferComplete={ true } isWooCommerceInstalled={ true } />
+				<Provider store={ store }>
+					<CheckoutThankYou
+						{ ...props }
+						transferComplete={ true }
+						isWooCommerceInstalled={ true }
+					/>
+				</Provider>
 			);
 			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).toBeVisible();
 		} );
 
 		test( 'Should not be there for AT', () => {
-			const { rerender } = render( <CheckoutThankYou { ...props } transferComplete={ false } /> );
+			const { rerender } = render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } transferComplete={ false } />
+				</Provider>
+			);
 			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
 
 			isDotComPlan.mockImplementation( () => true );
 
-			rerender( <CheckoutThankYou { ...props } /> );
+			rerender(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } />
+				</Provider>
+			);
 			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
 		} );
 	} );
@@ -209,7 +252,11 @@ describe( 'CheckoutThankYou', () => {
 		};
 		test( 'Should be there with DIFM product', () => {
 			isDIFMProduct.mockImplementation( () => true );
-			render( <CheckoutThankYou { ...props } /> );
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } />
+				</Provider>
+			);
 
 			expect( screen.queryByTestId( 'difm-lite-thank-you' ) ).toBeVisible();
 		} );
@@ -218,19 +265,109 @@ describe( 'CheckoutThankYou', () => {
 			isDIFMProduct.mockImplementation( () => false );
 
 			render(
-				<CheckoutThankYou
-					{ ...{
-						...props,
-						receipt: {
-							...props.receipt,
-							data: {
-								purchases: [ { productSlug: PLAN_PREMIUM }, [] ],
+				<Provider store={ store }>
+					<CheckoutThankYou
+						{ ...{
+							...props,
+							receipt: {
+								...props.receipt,
+								data: {
+									purchases: [ { productSlug: PLAN_PREMIUM }, [] ],
+								},
 							},
-						},
-					} }
-				/>
+						} }
+					/>
+				</Provider>
 			);
 			expect( screen.queryByTestId( 'difm-lite-thank-you' ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	it( 'renders the failed purchases content if there are failed purchases', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [],
+					failedPurchases: [ { productSlug: PLAN_PREMIUM } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+
+		render(
+			<Provider store={ store }>
+				<CheckoutThankYou { ...props } />
+			</Provider>
+		);
+
+		expect( await screen.findByText( /These items could not be added/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the Jetpack plan content if the purchases include a Jetpack plan', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: 'jetpack_personal' } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+
+		render(
+			<Provider store={ store }>
+				<CheckoutThankYou { ...props } />
+			</Provider>
+		);
+
+		expect( await screen.findByText( 'component--jetpack-plan-details' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the redesignV2 footer content if the purchases include a Personal plan', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: PLAN_PERSONAL } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+
+		render(
+			<Provider store={ store }>
+				<CheckoutThankYou { ...props } />
+			</Provider>
+		);
+
+		expect( await screen.findByText( 'component--redesign-v2-footer' ) ).toBeInTheDocument();
 	} );
 } );

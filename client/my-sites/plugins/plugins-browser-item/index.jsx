@@ -1,14 +1,13 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -19,7 +18,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -266,11 +264,8 @@ function InstalledInOrPricing( {
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], softwareSlug )
 	)?.active;
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
-	const isPluginActiveOnsiteWithSubscription =
-		active && ! isMarketplaceProduct ? true : getPluginPurchased( plugin, purchases )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	if ( isPreinstalledPremiumPlugin ) {
@@ -291,10 +286,8 @@ function InstalledInOrPricing( {
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ isPluginActiveOnsiteWithSubscription ? 'success' : 'info' }>
-							{ isPluginActiveOnsiteWithSubscription
-								? translate( 'Active' )
-								: translate( 'Inactive' ) }
+						<Badge type={ active ? 'success' : 'info' }>
+							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }

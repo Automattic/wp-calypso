@@ -1,4 +1,5 @@
 import type { FONT_PAIRINGS } from './constants';
+import type { GlobalStyles } from '@automattic/data-stores/src/site/types'; // Import from a specific file to avoid the circular dependencies
 import type { ValuesType } from 'utility-types';
 
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
@@ -94,7 +95,6 @@ export interface Design {
 	title: string;
 	description?: string;
 	recipe?: DesignRecipe;
-	verticalizable?: boolean;
 	is_premium: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
@@ -127,10 +127,11 @@ export interface Design {
 
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
-	verticalId?: string;
+	globalStyles?: GlobalStyles;
 	pageTemplate?: string;
 	trimContent?: boolean;
 	posts_source_site_id?: number;
+	keepHomepage?: boolean;
 }
 
 export interface DesignPreviewOptions {
@@ -138,12 +139,12 @@ export interface DesignPreviewOptions {
 	vertical_id?: string;
 	site_title?: string;
 	site_tagline?: string;
-	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
 	remove_assets?: boolean;
 	style_variation?: StyleVariation;
+	viewport_unit_to_px?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

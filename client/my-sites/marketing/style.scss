@@ -51,6 +51,12 @@
 		}
 	}
 
+	&.instagram-business {
+		.sharing-service__logo {
+			color: var(--color-instagram);
+		}
+	}
+
 	&.mastodon {
 		h2,
 		.sharing-service__logo {
@@ -80,6 +86,10 @@
 			margin-left: 6px;
 		}
 	}
+}
+
+.sharing-services-group__services .notice.sharing-service__unsupported {
+	width: 100%;
 }
 
 .buttons__sharing-settings,
@@ -301,6 +311,7 @@
 @include sharing-service( "linkedin", var( --color-linkedin ) );
 @include sharing-service( "instagram-basic-display", var( --color-instagram ) );
 @include sharing-service( "mastodon", var( --color-mastodon ) );
+@include sharing-service( "instagram-business", var( --color-instagram ) );
 
 .sharing-service__name {
 	clear: none;
@@ -956,6 +967,7 @@
 @include sharing-button-service( "telegram", var( --color-telegram ) );
 @include sharing-button-service( "jetpack-whatsapp", var( --color-whatsapp ) );
 @include sharing-button-service( "mastodon", var( --color-mastodon ) );
+@include sharing-button-service( "nextdoor", var( --color-nextdoor ) );
 
 .sharing-buttons-preview__panel {
 	position: relative;
@@ -1139,4 +1151,14 @@
 
 .sharing-buttons__banner {
 	margin-top: -20px;
+}
+
+.service__new-badge.service__new-badge {
+	vertical-align: bottom;
+	background: #dfd1fb;
+	border-radius: 4px;
+	font-weight: 500;
+	font-size: $font-body-extra-small;
+	padding: 2px 10px;
+	margin-inline-start: 5px;
 }

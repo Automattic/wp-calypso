@@ -1,6 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import disconnectedIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import {
@@ -9,6 +8,7 @@ import {
 	TASK_REACTIVATE_RESTORE_BACKUP,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
 
 export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {

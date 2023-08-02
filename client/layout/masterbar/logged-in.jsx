@@ -22,6 +22,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -216,6 +217,7 @@ class MasterbarLoggedIn extends Component {
 			translate,
 			isCustomerHomeEnabled,
 			section,
+			currentRoute,
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
@@ -223,12 +225,21 @@ class MasterbarLoggedIn extends Component {
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
 
-		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
+		let mySitesUrl = domainOnlySite
+			? domainManagementList( siteSlug, currentRoute, true )
+			: homeUrl;
+
+		const icon =
+			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+
 		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+		if ( ! siteSlug && section === 'sites-dashboard' ) {
+			// we are the /sites page but there is no site. Disable the home link
+			return <Item icon={ icon } disabled />;
+		}
+
 		return (
 			<Item
 				url={ mySitesUrl }
@@ -236,7 +247,7 @@ class MasterbarLoggedIn extends Component {
 				icon={ icon }
 				onClick={ this.clickMySites }
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
-				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
+				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			>
 				{ hasMoreThanOneSite
@@ -592,6 +603,7 @@ export default connect(
 			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
+			currentRoute: getCurrentRoute( state ),
 		};
 	},
 	{

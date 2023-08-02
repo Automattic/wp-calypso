@@ -1,7 +1,12 @@
+import {
+	useMutation,
+	UseMutationOptions,
+	UseMutationResult,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
-import { useMutation, UseMutationOptions, UseMutationResult, useQueryClient } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 import type { APIInvoice, APIInvoices } from 'calypso/state/partner-portal/types';
@@ -24,48 +29,46 @@ export default function usePayInvoiceMutation< TContext = unknown >(
 	const queryClient = useQueryClient();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	return useMutation< APIInvoice, Error, PayInvoiceMutationVariables, TContext >(
-		payInvoiceMutation,
-		{
-			onSuccess: ( invoice: APIInvoice ) => {
-				const invoicePages = queryClient.getQueriesData( [
-					'partner-portal',
-					'invoices',
-					activeKeyId,
-				] );
+	return useMutation< APIInvoice, Error, PayInvoiceMutationVariables, TContext >( {
+		mutationFn: payInvoiceMutation,
+		onSuccess: ( invoice: APIInvoice ) => {
+			const invoicePages = queryClient.getQueriesData( [
+				'partner-portal',
+				'invoices',
+				activeKeyId,
+			] );
 
-				invoicePages.forEach( ( query ) => {
-					const data = query[ 1 ] as APIInvoices;
-					const index = data.items.findIndex( ( apiInvoice ) => apiInvoice.id === invoice.id );
+			invoicePages.forEach( ( query ) => {
+				const data = query[ 1 ] as APIInvoices;
+				const index = data.items.findIndex( ( apiInvoice ) => apiInvoice.id === invoice.id );
 
-					if ( index > -1 ) {
-						const spliced = [ ...data.items ];
-						spliced.splice( index, 1, invoice );
+				if ( index > -1 ) {
+					const spliced = [ ...data.items ];
+					spliced.splice( index, 1, invoice );
 
-						queryClient.setQueryData( query[ 0 ], {
-							...data,
-							items: spliced,
-						} );
+					queryClient.setQueryData( query[ 0 ], {
+						...data,
+						items: spliced,
+					} );
+				}
+			} );
+
+			dispatch(
+				successNotice(
+					sprintf(
+						/* translators: %s - the unique invoice number */
+						__( 'Invoice %s settled successfully.' ),
+						invoice.number
+					),
+					{
+						id: 'partner-portal-pay-invoice-success',
 					}
-				} );
-
-				dispatch(
-					successNotice(
-						sprintf(
-							/* translators: %s - the unique invoice number */
-							__( 'Invoice %s settled successfully.' ),
-							invoice.number
-						),
-						{
-							id: 'partner-portal-pay-invoice-success',
-						}
-					)
-				);
-			},
-			onError: ( error: Error ) => {
-				dispatch( errorNotice( error.message, { id: 'partner-portal-pay-invoice-failure' } ) );
-			},
-			...options,
-		}
-	);
+				)
+			);
+		},
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message, { id: 'partner-portal-pay-invoice-failure' } ) );
+		},
+		...options,
+	} );
 }

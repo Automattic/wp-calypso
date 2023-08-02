@@ -8,7 +8,7 @@ This uses [Stripe elements](https://stripe.com/payments/elements).
 
 You'll need to wrap this context provider around any component that wishes to use `useStripe` or `withStripeProps`. It accepts the following props:
 
-- `children: JSX.Element`
+- `children: React.ReactNode`
 - `fetchStripeConfiguration: GetStripeConfiguration` A function to fetch the stripe configuration from the WP.com HTTP API.
 - `configurationArgs?: null | GetStripeConfigurationArgs` Options to pass to the fetchStripeConfiguration function, specifically `country`.
 - `locale?: string` An optional locale string used to localize error messages for the Stripe elements fields.
@@ -17,8 +17,9 @@ You'll need to wrap this context provider around any component that wishes to us
 
 You'll need to wrap this context provider around any component that wishes to use `useStripeSetupIntentId`. It accepts the following props:
 
-- `children: JSX.Element`
-- `fetchStripeConfiguration: GetStripeSetupIntentId` A function to fetch the stripe configuration from the WP.com HTTP API. It will be passed `{needs_intent: true}`.
+- `children: React.ReactNode`
+- `fetchStripeSetupIntentId: GetStripeSetupIntentId` A function to fetch the stripe setup intent from the WP.com HTTP API.
+- `isDisabled?: boolean` An option to disable the fetching of the setup intent if it is not needed.
 
 ## useStripe
 

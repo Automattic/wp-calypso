@@ -3,16 +3,13 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import {
-	useSetting,
-	useStyle,
-} from '@wordpress/edit-site/build-module/components/global-styles/hooks';
 import { translate } from 'i18n-calypso';
 import {
 	STYLE_PREVIEW_WIDTH,
 	STYLE_PREVIEW_HEIGHT,
 	STYLE_PREVIEW_COLOR_SWATCH_SIZE,
 } from '../../constants';
+import { useGlobalSetting, useGlobalStyle } from '../../gutenberg-bridge';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import type { Color } from '../../types';
 
@@ -21,20 +18,19 @@ interface Props {
 }
 
 const ColorPaletteVariationPreview = ( { title }: Props ) => {
-	const [ fontWeight ] = useStyle( 'typography.fontWeight' );
-	const [ fontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
-	const [ headingFontFamily = fontFamily ] = useStyle( 'elements.h1.typography.fontFamily' );
-	const [ headingFontWeight = fontWeight ] = useStyle( 'elements.h1.typography.fontWeight' );
-	const [ textColor = 'black' ] = useStyle( 'color.text' );
-	const [ headingColor = textColor ] = useStyle( 'elements.h1.color.text' );
-	const [ backgroundColor = 'white' ] = useStyle( 'color.background' );
-	const [ gradientValue ] = useStyle( 'color.gradient' );
-	const [ themeColors ] = useSetting( 'color.palette.theme' );
+	const [ fontWeight ] = useGlobalStyle( 'typography.fontWeight' );
+	const [ fontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
+	const [ headingFontFamily = fontFamily ] = useGlobalStyle( 'elements.h1.typography.fontFamily' );
+	const [ headingFontWeight = fontWeight ] = useGlobalStyle( 'elements.h1.typography.fontWeight' );
+	const [ textColor = 'black' ] = useGlobalStyle( 'color.text' );
+	const [ headingColor = textColor ] = useGlobalStyle( 'elements.h1.color.text' );
+	const [ backgroundColor = 'white' ] = useGlobalStyle( 'color.background' );
+	const [ gradientValue ] = useGlobalStyle( 'color.gradient' );
+	const [ themeColors ] = useGlobalSetting( 'color.palette.theme' );
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
 	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio );
 	const normalizedSwatchSize = STYLE_PREVIEW_COLOR_SWATCH_SIZE * ratio * 2;
-
 	const uniqueColors = [ ...new Set< string >( themeColors.map( ( { color }: Color ) => color ) ) ];
 	const highlightedColors = uniqueColors
 		.filter(
@@ -106,7 +102,9 @@ const ColorPaletteVariationPreview = ( { title }: Props ) => {
 									textAlign: 'center',
 								} }
 							>
-								{ translate( 'Default' ) }
+								{ translate( 'Default', {
+									comment: 'The default value of the color palette',
+								} ) }
 							</div>
 						</VStack>
 					) }

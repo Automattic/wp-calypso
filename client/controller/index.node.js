@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
@@ -36,7 +36,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
-	headerSection,
+	renderHeaderSection,
 	redirectUri,
 	i18n,
 	showGdprBanner,
@@ -52,7 +52,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 					<LayoutLoggedOut
 						primary={ primary }
 						secondary={ secondary }
-						headerSection={ headerSection }
+						renderHeaderSection={ renderHeaderSection }
 						redirectUri={ redirectUri }
 						showGdprBanner={ showGdprBanner }
 					/>

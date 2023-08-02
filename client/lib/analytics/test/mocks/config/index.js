@@ -14,6 +14,9 @@ config.isEnabled = ( feature ) => {
 	if ( 'google-analytics' === feature ) {
 		return false;
 	}
+	if ( 'safari-idb-mitigation' === feature ) {
+		return false;
+	}
 	if ( 'ad-tracking' === feature ) {
 		return true;
 	}

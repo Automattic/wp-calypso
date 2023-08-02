@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getSendInviteState } from 'calypso/state/invites/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
@@ -12,9 +12,15 @@ export function useInvitingNotifications( tokenValues: string[] ) {
 	const noticeConfig = { displayOnNextPage: true };
 
 	useEffect( () => setPrevProgress( progress ), [ progress ] );
-	useEffect( () => prevProgress && error && showInvitingErrorNotice(), [ error ] );
-	useEffect( () => prevProgress && success && showInvitingSuccessNotice(), [ success ] );
-	useEffect( () => prevProgress && failure && showInvitingFailureNotice(), [ failure ] );
+	useEffect( () => {
+		prevProgress && error && showInvitingErrorNotice();
+	}, [ error ] );
+	useEffect( () => {
+		prevProgress && success && showInvitingSuccessNotice();
+	}, [ success ] );
+	useEffect( () => {
+		prevProgress && failure && showInvitingFailureNotice();
+	}, [ failure ] );
 
 	function showInvitingErrorNotice() {
 		let msg;

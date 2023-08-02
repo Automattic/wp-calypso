@@ -15,19 +15,26 @@
 		list-style-type: none;
 
 		@include break-xlarge() {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: 3fr 1fr 1fr;
 			grid-column-gap: 32px;
 			grid-row-gap: 32px;
 		}
 	}
 
-	&__list-item {
+	&__list-item,
+	&__list-item-small {
 		font-size: 1rem;
 
 		&--wide {
 			@include break-xlarge() {
 				grid-column-start: span 2;
 			}
+		}
+	}
+
+	&__list-item-small {
+		@include break-xlarge() {
+			display: none;
 		}
 	}
 
@@ -64,14 +71,36 @@
 	}
 
 	&__actions {
-		margin-top: 42px;
+		margin-top: 1rem;
 		display: flex;
-		flex-direction: row-reverse;
-		justify-content: space-between;
+		flex-wrap: wrap;
+
+		@include break-xlarge {
+			flex-wrap: nowrap;
+		}
+
+		.button {
+			flex: 0 0 100%;
+		}
+
+		.button:not(:last-child) {
+			margin-bottom: 0.5rem;
+		}
+
+		@include break-large {
+			.button {
+				flex: 0 0 auto;
+			}
+
+			.button:not(:last-child) {
+				margin-right: 1rem;
+				margin-bottom: 0;
+			}
+		}
 	}
 
 	&__assign-button {
-		@include break-xlarge {
+		@include break-large {
 			display: none;
 		}
 	}

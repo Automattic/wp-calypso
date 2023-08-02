@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
 import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
 import imgFreeMonth from 'calypso/assets/images/cancellation/free-month.png';
@@ -13,15 +13,15 @@ import imgLiveChat from 'calypso/assets/images/cancellation/live-chat.png';
 import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payments.png';
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import useHappyChat from '../use-happychat';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 type UpsellProps = {
-	children: React.ReactChild;
+	children?: React.ReactNode;
 	image: string;
 	title: TranslateResult;
 	acceptButtonText: TranslateResult;
@@ -46,19 +46,18 @@ function Upsell( { image, ...props }: UpsellProps ) {
 				<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
 				<div className="cancel-purchase-form__upsell-buttons">
 					<Button
-						isPrimary
+						variant="primary"
 						href={ props.acceptButtonUrl }
 						onClick={ () => {
 							setBusyButton( 'accept' );
 							props.onAccept?.();
 						} }
 						isBusy={ busyButton === 'accept' }
-						disabled={ Boolean( busyButton && busyButton !== 'accept' ) }
 					>
 						{ props.acceptButtonText }
 					</Button>
 					<Button
-						isSecondary
+						variant="primary"
 						onClick={ () => {
 							setBusyButton( 'decline' );
 							props.onDecline?.();
@@ -110,12 +109,12 @@ type StepProps = {
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
-	const happyChat = useHappyChat();
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = 25;
 	const couponCode = 'BIZWPC25';
-	const builtByURL = 'https://wordpress.com/built-by/?ref=wpcom-cancel-flow';
+	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
+	const { openChatWidget } = useChatWidget();
 
 	switch ( upsell ) {
 		case 'live-chat:plans':
@@ -132,11 +131,11 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
 
-						const userInfo = happyChat.getUserInfo( { site } );
-
-						happyChat.open();
-						happyChat.setChatTag( 'cancelation_chat_prompt' );
-						happyChat.sendUserInfo( { ...userInfo, cancellationReason: props.cancellationReason } );
+						openChatWidget(
+							"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+								props.cancellationReason,
+							site.URL
+						);
 						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }
@@ -277,7 +276,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							'But we’d love to see you stick around to build on what you started. ' +
 							'How about a free month of your %(currentPlan)s plan subscription to continue building your site?',
 						{
-							args: { planName: getPlan( purchase.productSlug )?.getTitle() },
+							args: { planName: getPlan( purchase.productSlug )?.getTitle() ?? '' },
 						}
 					) }
 				</Upsell>

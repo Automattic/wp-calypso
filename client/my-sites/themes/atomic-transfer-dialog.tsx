@@ -25,6 +25,7 @@ import {
 	isUploadInProgress,
 	getUploadError,
 } from 'calypso/state/themes/upload-theme/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Theme } from 'calypso/types';
 import './atomic-transfer-dialog.scss';
@@ -92,7 +93,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		const { requestActiveThemeCount } = this.state;
 		this.setState( { requestActiveThemeCount: requestActiveThemeCount + 1 } );
 
-		dispatchInitiateThemeTransfer( siteId, null, '' );
+		dispatchInitiateThemeTransfer( siteId, null, '', '', 'theme_install' );
 	}
 
 	getAtomicSitePath = () => {
@@ -224,7 +225,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 }
 
 export default connect(
-	( state ) => {
+	( state: IAppState ) => {
 		const siteId = getSelectedSiteId( state );
 		const themeId = getThemeForAtomicTransferDialog( state );
 

@@ -28,6 +28,7 @@ export interface Purchase {
 	introductoryOffer: PurchaseIntroductoryOffer | null;
 	isAutoRenewEnabled: boolean;
 	isCancelable: boolean;
+	isDomain?: boolean;
 	isDomainRegistration?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
@@ -37,6 +38,7 @@ export interface Purchase {
 	isRenewal: boolean;
 	meta?: string;
 	mostRecentRenewDate?: string;
+	ownershipId?: number;
 	partnerName: string | undefined;
 	partnerSlug: string | undefined;
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
@@ -190,6 +192,7 @@ export interface RawPurchase {
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 	is_cancelable: boolean;
+	is_domain: boolean;
 	is_domain_registration: boolean;
 	is_locked: boolean;
 	is_iap_purchase: boolean;
@@ -198,6 +201,7 @@ export interface RawPurchase {
 	is_renewable: boolean;
 	is_renewal: boolean;
 	meta: string | undefined;
+	ownership_id: number | undefined;
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
 	partner_key_id: number | undefined;
@@ -356,11 +360,14 @@ export interface MembershipSubscriptionsSite {
 }
 
 export interface Owner {
-	ID: string;
-	display_name: string;
+	ID: number;
+	display_name?: string;
 }
 export type GetChangePaymentMethodUrlFor = ( siteSlug: string, purchase: Purchase ) => string;
-export type GetManagePurchaseUrlFor = ( siteSlug: string, attachedToPurchaseId: string ) => string;
+export type GetManagePurchaseUrlFor = (
+	siteSlug: string,
+	attachedToPurchaseId: string | number
+) => string;
 
 export type RenderRenewsOrExpiresOn = ( args: {
 	moment: ReturnType< typeof useLocalizedMoment >;
@@ -368,9 +375,9 @@ export type RenderRenewsOrExpiresOn = ( args: {
 	siteSlug: string | undefined;
 	translate: ReturnType< typeof useTranslate >;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
-} ) => string;
+} ) => JSX.Element | null;
 
 export type RenderRenewsOrExpiresOnLabel = ( args: {
 	purchase: Purchase;
 	translate: ReturnType< typeof useTranslate >;
-} ) => string;
+} ) => string | null;

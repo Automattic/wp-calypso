@@ -19,6 +19,7 @@ class AuthorCompactProfile extends Component {
 		siteUrl: PropTypes.string,
 		feedUrl: PropTypes.string,
 		followCount: PropTypes.number,
+		onFollowToggle: PropTypes.func,
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
 		siteIcon: PropTypes.string,
@@ -35,6 +36,7 @@ class AuthorCompactProfile extends Component {
 			siteUrl,
 			feedUrl,
 			followCount,
+			onFollowToggle,
 			feedId,
 			siteId,
 			post,
@@ -90,7 +92,9 @@ class AuthorCompactProfile extends Component {
 						</div>
 					) : null }
 
-					{ followUrl && <ReaderFollowButton siteUrl={ followUrl } /> }
+					{ followUrl && (
+						<ReaderFollowButton siteUrl={ followUrl } onFollowToggle={ onFollowToggle } />
+					) }
 				</div>
 			</div>
 		);

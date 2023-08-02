@@ -8,6 +8,7 @@ import {
 	TYPE_PRO,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
+	TYPE_JETPACK_STARTER,
 	TYPE_STARTER,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -100,10 +101,6 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isFlexiblePlan( planKey ) ) {
 		return 'is-flexible-plan';
-	}
-
-	if ( isStarterPlan( planKey ) ) {
-		return 'is-starter-plan';
 	}
 
 	if ( isBloggerPlan( planKey ) ) {
@@ -350,6 +347,10 @@ export function isFlexiblePlan( planSlug: string ): boolean {
 
 export function isStarterPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_STARTER } );
+}
+
+export function isJetpackStarterPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_JETPACK_STARTER } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {
@@ -603,12 +604,22 @@ export function plansLink(
 	return url.toString();
 }
 
+export type FilteredPlan = Plan &
+	Pick<
+		WPComPlan,
+		| 'getPlanCompareFeatures'
+		| 'getAnnualPlansOnlyFeatures'
+		| 'getPlanTagline'
+		| 'getNewsletterTagLine'
+		| 'getLinkInBioTagLine'
+		| 'getBlogOnboardingTagLine'
+	>;
+
 export function applyTestFiltersToPlansList(
 	planName: string | Plan,
 	abtest: string | undefined,
 	extraArgs: Record< string, string | boolean[] > = {}
-): Plan &
-	Pick< WPComPlan, 'getPlanCompareFeatures' | 'getAnnualPlansOnlyFeatures' | 'getPlanTagline' > {
+): FilteredPlan {
 	const plan = getPlan( planName );
 	if ( ! plan ) {
 		throw new Error( `Unknown plan: ${ planName }` );
@@ -699,7 +710,7 @@ export const getPopularPlanSpec = ( {
 	isJetpack,
 	availablePlans,
 }: {
-	flowName: string;
+	flowName?: string | null;
 	customerType: string;
 	isJetpack: boolean;
 	availablePlans: string[];
@@ -767,8 +778,8 @@ export const chooseDefaultCustomerType = ( {
 	currentPlan,
 }: {
 	currentCustomerType: string;
-	selectedPlan: string;
-	currentPlan: { product_slug: string };
+	selectedPlan?: string;
+	currentPlan: { productSlug: PlanSlug };
 } ): string => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;
@@ -796,7 +807,7 @@ export const chooseDefaultCustomerType = ( {
 		return businessPlanSlugs.includes( selectedPlan as PlanSlug ) ? 'business' : 'personal';
 	} else if ( currentPlan ) {
 		const isPlanInBusinessGroup =
-			businessPlanSlugs.indexOf( currentPlan.product_slug as PlanSlug ) !== -1;
+			businessPlanSlugs.indexOf( currentPlan.productSlug as PlanSlug ) !== -1;
 		return isPlanInBusinessGroup ? 'business' : 'personal';
 	}
 

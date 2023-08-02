@@ -1,6 +1,5 @@
 // Search term suggestions
 .reader-blank-suggestions {
-	border-bottom: 1px solid var(--color-neutral-10);
 	font-size: $font-body-small;
 	color: var(--color-text-subtle);
 	padding: 16px 0;
@@ -8,14 +7,15 @@
 
 	a,
 	a:visited {
-		color: var(--color-primary);
+		font-weight: 500;
+		color: var(--color-neutral-60);
 	}
 
 	a:hover {
-		color: var(--color-primary-light);
+		color: var(--color-neutral-60);
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
-		padding: 16px;
+		padding: 16px 0 0;
 	}
 }

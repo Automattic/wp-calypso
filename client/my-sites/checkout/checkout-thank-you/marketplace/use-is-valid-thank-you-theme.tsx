@@ -1,6 +1,6 @@
-import { useSelector } from 'react-redux';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useSelector } from 'calypso/state';
 import {
 	isThemePremium,
 	isPremiumThemeAvailable,

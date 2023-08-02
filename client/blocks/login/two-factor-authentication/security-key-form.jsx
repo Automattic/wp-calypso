@@ -44,10 +44,13 @@ class SecurityKeyForm extends Component {
 		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
 
 		return (
-			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
+			<form
+				className="two-factor-authentication__verification-code-form-wrapper"
+				onSubmit={ this.initiateSecurityKeyAuthentication }
+			>
 				<Card compact className="two-factor-authentication__verification-code-form">
 					{ ! this.state.isAuthenticating && (
-						<div>
+						<div className="security-key-form__help-text">
 							<p>
 								{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
 									components: {

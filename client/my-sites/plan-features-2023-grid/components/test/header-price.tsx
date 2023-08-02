@@ -15,14 +15,15 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans/hooks/use-plan-prices', () => jest.fn() );
+jest.mock( '../../hooks/use-plan-prices-display', () => ( { usePlanPricesDisplay: jest.fn() } ) );
 
 import { render } from '@testing-library/react';
 import React from 'react';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
+import { usePlanPricesDisplay } from '../../hooks/use-plan-prices-display';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import type { PlanProperties } from '../../types';
-import type { PlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
+
+type PlanPricesDisplay = ReturnType< typeof usePlanPricesDisplay >;
 
 describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	const planProperties = {
@@ -30,7 +31,6 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 		showMonthlyPrice: false,
 	} as PlanProperties;
 	const defaultProps = {
-		is2023OnboardingPricingGrid: true,
 		isLargeCurrency: false,
 		planProperties,
 	};
@@ -40,30 +40,19 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	} );
 
 	test( 'should render raw and discounted prices when discount exists', () => {
-		const planPrices: PlanPrices = {
-			planDiscountedRawPrice: 0,
-			discountedRawPrice: 50,
-			rawPrice: 100,
+		const planPrices: PlanPricesDisplay = {
+			discountedPrice: 50,
+			originalPrice: 100,
 		};
-		usePlanPrices.mockImplementation( () => planPrices );
+		usePlanPricesDisplay.mockImplementation( () => planPrices );
 
-		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
-		const rawPrice = container.querySelector( '.plan-price.is-original' );
-		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
-
-		expect( rawPrice ).toHaveTextContent( '100' );
-		expect( discountedPrice ).toHaveTextContent( '50' );
-	} );
-
-	test( 'should render raw and plan-discounted prices when discount exists', () => {
-		const planPrices: PlanPrices = {
-			planDiscountedRawPrice: 50,
-			discountedRawPrice: 10,
-			rawPrice: 100,
-		};
-		usePlanPrices.mockImplementation( () => planPrices );
-
-		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
+		const { container } = render(
+			<PlanFeatures2023GridHeaderPrice
+				isPlanUpgradeCreditEligible={ false }
+				currentSitePlanSlug=""
+				{ ...defaultProps }
+			/>
+		);
 		const rawPrice = container.querySelector( '.plan-price.is-original' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
@@ -72,14 +61,19 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	} );
 
 	test( 'should render just the raw price when no discount exists', () => {
-		const planPrices: PlanPrices = {
-			planDiscountedRawPrice: 0,
-			discountedRawPrice: 0,
-			rawPrice: 100,
+		const planPrices: PlanPricesDisplay = {
+			discountedPrice: 0,
+			originalPrice: 100,
 		};
-		usePlanPrices.mockImplementation( () => planPrices );
+		usePlanPricesDisplay.mockImplementation( () => planPrices );
 
-		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
+		const { container } = render(
+			<PlanFeatures2023GridHeaderPrice
+				isPlanUpgradeCreditEligible={ false }
+				currentSitePlanSlug=""
+				{ ...defaultProps }
+			/>
+		);
 		const rawPrice = container.querySelector( '.plan-price' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 

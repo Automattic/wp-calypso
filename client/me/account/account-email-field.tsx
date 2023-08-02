@@ -2,7 +2,6 @@ import { FormInputValidation } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -11,6 +10,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { useDispatch, useSelector } from 'calypso/state';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
@@ -88,7 +88,7 @@ const AccountEmailValidationNotice = ( {
 					settingName: 'user_email',
 					unsavedUserSettings,
 					userSettings,
-				} ),
+				} ) as string,
 			},
 		} );
 	}
@@ -119,7 +119,7 @@ const AccountEmailPendingEmailChangeNotice = ( {
 		settingName: 'new_user_email',
 		unsavedUserSettings,
 		userSettings,
-	} );
+	} ) as string;
 
 	const hasCustomDomainRegistration = domainsList.some( ( domain ) => {
 		return domainTypes.REGISTERED === domain.type;

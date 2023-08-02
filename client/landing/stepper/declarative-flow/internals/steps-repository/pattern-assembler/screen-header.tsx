@@ -1,10 +1,10 @@
 import { Button } from '@automattic/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import PatternSelector from './pattern-selector';
-import { useHeaderPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 interface Props {
@@ -25,7 +25,6 @@ const ScreenHeader = ( {
 	patterns,
 }: Props ) => {
 	const translate = useTranslate();
-	const headerPatterns = useHeaderPatterns( patterns );
 	useEffect( () => {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
@@ -33,15 +32,15 @@ const ScreenHeader = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Header' ) }
+				title={ <NavigatorTitle title={ translate( 'Add header' ) } /> }
 				description={ translate(
-					'Your header will be added to all pages and is usually where your site navigation lives.'
+					'Pick the header that appears at the top of every page and shows your site logo, title and navigation.'
 				) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					patterns={ headerPatterns }
+					patterns={ patterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern, 'header' ) }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Header' ) }
@@ -54,7 +53,7 @@ const ScreenHeader = ( {
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save header' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

@@ -9,10 +9,10 @@ import {
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
+import { useSelector } from 'calypso/state';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
@@ -147,7 +147,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 		case PLAN_PERSONAL_MONTHLY:
 			planText = translate( 'Included in the Personal plan (%(cost)s/%(periodicity)s):', {
 				args: {
-					cost: planDisplayCost,
+					cost: planDisplayCost as string,
 					periodicity: periodicityLabel,
 				},
 			} );
@@ -156,7 +156,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 		case PLAN_BUSINESS_MONTHLY:
 			planText = translate( 'Included in the Business plan (%(cost)s/%(periodicity)s):', {
 				args: {
-					cost: planDisplayCost,
+					cost: planDisplayCost as string,
 					periodicity: periodicityLabel,
 				},
 			} );

@@ -1,8 +1,8 @@
+import { Badge } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { Component, createElement } from 'react';
-import Badge from 'calypso/components/badge';
 
 import './style.scss';
 
@@ -21,7 +21,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			isOnSale,
 			taxText,
 			omitHeading,
-			is2023OnboardingPricingGrid,
+			priceDisplayWrapperClassName,
 			isLargeCurrency,
 		} = this.props;
 
@@ -81,7 +81,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 				taxText={ taxText }
 				displayPerMonthNotation={ displayPerMonthNotation }
 				isOnSale={ isOnSale }
-				is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+				priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 				isSmallestUnit={ isSmallestUnit }
 			/>
 		);
@@ -169,7 +169,7 @@ export interface PlanPriceProps {
 	 *
 	 * Ignored if `rawPrice` is set and is an array.
 	 */
-	productDisplayPrice?: string;
+	productDisplayPrice?: string | TranslateResult;
 
 	/**
 	 * If set, the component will render a `span` instead of an `h4`.
@@ -187,14 +187,14 @@ export interface PlanPriceProps {
 	displayFlatPrice?: boolean;
 
 	/**
-	 * If true, this renders each price inside a `div` with the class
-	 * `plan-price__integer-fraction` but is otherwise identical to the output normally used by `rawPrice`.
+	 * If set, this renders each price inside a `div` with the class passed,
+	 * but is otherwise identical to the output normally used by `rawPrice`.
 	 *
 	 * Ignored if `displayFlatPrice` is set.
 	 *
 	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
 	 */
-	is2023OnboardingPricingGrid?: boolean;
+	priceDisplayWrapperClassName?: string;
 
 	/**
 	 * If true, this renders the price with a smaller font size by adding the `is-large-currency` class.
@@ -287,7 +287,7 @@ function MultiPriceDisplay( {
 	taxText,
 	displayPerMonthNotation,
 	isOnSale,
-	is2023OnboardingPricingGrid,
+	priceDisplayWrapperClassName,
 	isSmallestUnit,
 }: {
 	tagName: 'h4' | 'span';
@@ -298,7 +298,7 @@ function MultiPriceDisplay( {
 	taxText?: string;
 	displayPerMonthNotation?: boolean;
 	isOnSale?: boolean;
-	is2023OnboardingPricingGrid?: boolean;
+	priceDisplayWrapperClassName?: string;
 	isSmallestUnit?: boolean;
 } ) {
 	const { symbol: currencySymbol, symbolPosition } = getCurrencyObject(
@@ -319,7 +319,7 @@ function MultiPriceDisplay( {
 				<HtmlPriceDisplay
 					price={ smallerPrice }
 					currencyCode={ currencyCode }
-					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+					priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 					isSmallestUnit={ isSmallestUnit }
 				/>
 			) }
@@ -330,7 +330,7 @@ function MultiPriceDisplay( {
 							<HtmlPriceDisplay
 								price={ smallerPrice }
 								currencyCode={ currencyCode }
-								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
@@ -338,7 +338,7 @@ function MultiPriceDisplay( {
 							<HtmlPriceDisplay
 								price={ higherPrice }
 								currencyCode={ currencyCode }
-								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								priceDisplayWrapperClassName={ priceDisplayWrapperClassName }
 								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
@@ -378,19 +378,19 @@ function MultiPriceDisplay( {
 function HtmlPriceDisplay( {
 	price,
 	currencyCode,
-	is2023OnboardingPricingGrid,
+	priceDisplayWrapperClassName,
 	isSmallestUnit,
 }: {
 	price: number;
 	currencyCode: string;
-	is2023OnboardingPricingGrid?: boolean;
+	priceDisplayWrapperClassName?: string;
 	isSmallestUnit?: boolean;
 } ) {
 	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 
-	if ( is2023OnboardingPricingGrid ) {
+	if ( priceDisplayWrapperClassName ) {
 		return (
-			<div className="plan-price__integer-fraction">
+			<div className={ priceDisplayWrapperClassName }>
 				<span className="plan-price__integer">
 					{ priceObj.integer }
 					{ priceObj.hasNonZeroFraction && priceObj.fraction }

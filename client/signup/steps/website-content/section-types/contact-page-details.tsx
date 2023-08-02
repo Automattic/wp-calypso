@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import {
 	TextAreaField,
 	HorizontalGrid,
@@ -12,6 +11,7 @@ import {
 	MediaUploadData,
 	WordpressMediaUpload,
 } from 'calypso/signup/steps/website-content/wordpress-media-upload';
+import { useSelector, useDispatch } from 'calypso/state';
 import {
 	websiteContentFieldChanged,
 	mediaUploaded,
@@ -35,7 +35,6 @@ export function ContactPageDetails( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
-	const pageTitle = page.title;
 	const pageID = page.id;
 	const description = useTranslatedPageDescriptions( pageID, context );
 
@@ -126,9 +125,15 @@ export function ContactPageDetails( {
 			/>
 
 			<LabelBlock>
-				{ translate( 'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.', {
-					args: { pageTitle, noOfImages: page.media.length },
-				} ) }
+				{ translate(
+					'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
+					{
+						args: { noOfImages: page.media.length },
+						components: {
+							a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
+						},
+					}
+				) }
 			</LabelBlock>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (

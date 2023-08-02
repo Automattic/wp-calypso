@@ -37,7 +37,7 @@ interface Props {
 	importerStatus: ImportJob;
 	importerData: ImporterConfig;
 	site: SiteDetails | null | undefined;
-	urlData: UrlData;
+	urlData?: UrlData | null;
 	startImport: ( siteId: number, type: string ) => void;
 }
 const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {

@@ -8,12 +8,16 @@ import {
 	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
+	isJetpackStatsFreeProductSlug,
+	isJetpackStatsPaidProductSlug,
 	isJetpackVideoPressSlug,
+	isJetpackAISlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
 
 type featureString =
+	| 'ai'
 	| 'anti-spam'
 	| 'backup-t1'
 	| 'boost'
@@ -21,6 +25,8 @@ type featureString =
 	| 'search'
 	| 'social-basic'
 	| 'social-advanced'
+	| 'stats-free'
+	| 'stats'
 	| 'support'
 	| 'videopress'
 	| 'complete';
@@ -30,6 +36,13 @@ function getFeatureStrings(
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
 	switch ( feature ) {
+		case 'ai':
+			return [
+				translate( 'Prompt-based content generation' ),
+				translate( 'Adaptive tone adjustment' ),
+				translate( 'Superior spelling and grammar correction' ),
+				translate( 'Title and summary generation' ),
+			];
 		case 'anti-spam':
 			return [
 				translate( 'Comment and form spam protection' ),
@@ -52,6 +65,8 @@ function getFeatureStrings(
 				translate( 'Deferred non-essential JavaScript' ),
 				translate( 'Optimized CSS loading' ),
 				translate( 'Lazy image loading' ),
+				translate( 'CDN for images' ),
+				translate( 'Image optimization guide' ),
 			];
 		case 'complete':
 			return [
@@ -85,8 +100,19 @@ function getFeatureStrings(
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
-				translate( 'Sharing to Twitter, Facebook, LinkedIn, and Tumblr' ),
+				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
 				translate( 'Content recycling' ),
+			];
+		case 'stats-free':
+			return [
+				translate( 'Real-time data on visitors, likes, and comments' ),
+				translate( 'View weekly and yearly trends' ),
+			];
+		case 'stats':
+			return [
+				translate( 'Instant access to upcoming features' ),
+				translate( 'Priority support' ),
+				translate( 'Ad-free experience' ),
 			];
 		case 'support':
 			return [ translate( 'Priority support' ) ];
@@ -109,6 +135,10 @@ export default function getJetpackProductFeatures(
 	product: WithSnakeCaseSlug,
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
+	if ( isJetpackAISlug( product.product_slug ) ) {
+		return getFeatureStrings( 'ai', translate );
+	}
+
 	if ( isJetpackAntiSpamSlug( product.product_slug ) ) {
 		return getFeatureStrings( 'anti-spam', translate );
 	}
@@ -168,6 +198,18 @@ export default function getJetpackProductFeatures(
 		return [
 			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'social-advanced', translate ),
+		];
+	}
+
+	if ( isJetpackStatsFreeProductSlug( product.product_slug ) ) {
+		return [ ...getFeatureStrings( 'stats-free', translate ) ];
+	}
+
+	if ( isJetpackStatsPaidProductSlug( product.product_slug ) ) {
+		return [
+			...getFeatureStrings( 'stats-free', translate ),
+			...getFeatureStrings( 'stats', translate ),
+			...getFeatureStrings( 'support', translate ),
 		];
 	}
 

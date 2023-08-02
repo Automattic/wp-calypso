@@ -118,6 +118,16 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 	return breadcrumb;
 }
 
+function shouldEnableSentry(): boolean {
+	// This flag overrides the other settings, always enabling Sentry:
+	if ( config.isEnabled( 'always-enable-sentry' ) ) {
+		return true;
+	}
+
+	// Only load for 10% of requests when Sentry is enabled in the environment:
+	return config.isEnabled( 'catch-js-errors' ) && Math.floor( Math.random() * 10 ) === 1;
+}
+
 interface SentryOptions {
 	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
 	userId?: number;
@@ -132,20 +142,16 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 		}
 		state = { state: 'loading' };
 
-		// Enable Sentry only for 10% of requests or always in calypso.live for testing.
-		// Always disable if catch-js-errors is not available in the environment.
-		if (
-			! (
-				config.isEnabled( 'catch-js-errors' ) &&
-				( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 )
-			)
-		) {
-			// Set state to disabled to stop maintaining a queue of sentry method calls.
+		// Set state to disabled when we know we won't enable it for this request.
+		if ( ! shouldEnableSentry() ) {
 			state = { state: 'disabled' };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
 			return;
 		}
+
+		// eslint-disable-next-line no-console
+		console.info( 'Initializing error reporting...' );
 
 		const errorHandler = ( errorEvent: ErrorEvent ): void =>
 			void errorQueue.push( [
@@ -159,15 +165,10 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 			void rejectionQueue.push(
 				// Sentry does this, presumably for browsers being browsers 🤷
 				// https://github.com/getsentry/sentry-javascript/blob/4793df5f515575703d9c83ebf4159ac145478410/packages/browser/src/loader.js#L205
-				// eslint-disable-next-line no-nested-ternary
-				'reason' in exceptionEvent
-					? exceptionEvent.reason
-					: // @ts-expect-error Fixing up browser weirdness
-					'detail' in exceptionEvent && 'reason' in exceptionEvent.detail
-					? // @ts-expect-error Fixing up browser weirdness
-					  exceptionEvent.detail.reason
-					: exceptionEvent
+				// @ts-expect-error Fixing up browser weirdness
+				exceptionEvent?.reason ?? exceptionEvent?.detail?.reason ?? exceptionEvent
 			);
+
 		window.addEventListener( 'error', errorHandler );
 		window.addEventListener( 'unhandledrejection', rejectionHandler );
 

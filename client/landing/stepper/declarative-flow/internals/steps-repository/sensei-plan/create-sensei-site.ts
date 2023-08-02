@@ -2,7 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { SENSEI_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
@@ -58,6 +58,7 @@ export const useCreateSenseiSite = () => {
 		title: '',
 	} );
 
+	const { __ } = useI18n();
 	const locale = useLocale();
 	const visibility = useNewSiteVisibility();
 
@@ -118,6 +119,7 @@ export const useCreateSenseiSite = () => {
 
 		return { site: newSite };
 	}, [
+		__,
 		createSenseiSite,
 		currentUser?.username,
 		getNewSite,

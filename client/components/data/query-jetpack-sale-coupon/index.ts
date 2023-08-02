@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchJetpackSaleCoupon } from 'calypso/state/marketing/actions';
 import {
 	getHasRequestedJetpackSaleCoupon,

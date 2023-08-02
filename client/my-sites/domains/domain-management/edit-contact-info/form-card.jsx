@@ -26,6 +26,7 @@ import {
 	getWhoisSaveSuccess,
 } from 'calypso/state/domains/management/selectors';
 import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
 
@@ -377,8 +378,16 @@ class EditContactInfoFormCard extends Component {
 	getReturnDestination = () => {
 		const domainName = this.props.selectedDomain.name;
 		const siteSlug = this.props.selectedSite.slug;
-		const domainSettingsPage = domainManagementEdit( siteSlug, domainName );
-		const contactsPrivacyPage = domainManagementContactsPrivacy( siteSlug, domainName );
+		const domainSettingsPage = domainManagementEdit(
+			siteSlug,
+			domainName,
+			this.props.currentRoute
+		);
+		const contactsPrivacyPage = domainManagementContactsPrivacy(
+			siteSlug,
+			domainName,
+			this.props.currentRoute
+		);
 
 		return this.props.previousPath?.startsWith( domainSettingsPage )
 			? domainSettingsPage
@@ -495,6 +504,7 @@ class EditContactInfoFormCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
+			currentRoute: getCurrentRoute( state ),
 			currentUser: getCurrentUser( state ),
 			isUpdatingWhois: isUpdatingWhois( state, ownProps.selectedDomain.name ),
 			previousPath: getPreviousPath( state ),

@@ -1,10 +1,10 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordEmailUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { useSelector } from 'calypso/state';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';

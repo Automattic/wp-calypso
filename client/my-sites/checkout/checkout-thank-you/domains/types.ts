@@ -1,4 +1,5 @@
 import { ThankYouProps } from 'calypso/components/thank-you/types';
+import { useSiteOption } from 'calypso/state/sites/hooks';
 
 export type DomainThankYouType = 'MAPPING' | 'TRANSFER' | 'REGISTRATION';
 
@@ -12,7 +13,10 @@ export type DomainThankYouParams = {
 	email?: string;
 	hasProfessionalEmail: boolean;
 	hideProfessionalEmailStep: boolean;
+	launchpadScreen: ReturnType< typeof useSiteOption >;
 	selectedSiteSlug: string;
+	siteIntent: ReturnType< typeof useSiteOption >;
+	redirectTo: 'home' | 'setup';
 };
 
 export type DomainThankYouPropsGetter = ( params: DomainThankYouParams ) => DomainThankYouProps;

@@ -1,8 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
-
-$max-list-width: 1300px;
+@import "client/landing/subscriptions/styles/row-title-label";
 
 %ellipsis {
 	white-space: nowrap;
@@ -11,11 +10,10 @@ $max-list-width: 1300px;
 }
 
 .subscription-manager__comment-list {
-	max-width: $max-list-width;
 	min-width: 300px;
 
 	.row-wrapper {
-		border-bottom: 1px solid var(--color-border-subtle);
+		border-block-end: 1px solid rgb(238, 238, 238);
 
 		&.header {
 			@media (max-width: $break-small) {
@@ -28,6 +26,7 @@ $max-list-width: 1300px;
 		display: flex;
 		align-items: center;
 		flex-direction: row;
+		min-height: 44px;
 		margin-top: 20px;
 		margin-bottom: 20px;
 		justify-content: space-between;
@@ -37,6 +36,7 @@ $max-list-width: 1300px;
 		}
 
 		&.header {
+			min-height: auto;
 			padding-bottom: $font-code;
 			padding-top: 0;
 			margin: 0;
@@ -46,6 +46,7 @@ $max-list-width: 1300px;
 			flex: 0 0 403px;
 			font-size: $font-body-small;
 			line-height: 20px;
+			color: $studio-gray-60;
 
 			.title {
 				max-width: 350px;
@@ -82,12 +83,8 @@ $max-list-width: 1300px;
 			align-items: center;
 			min-width: 0;
 
-			.icon {
-				fill: var(--color-text-subtle);
-				width: 40px;
-				height: 40px;
-				flex: none;
-				border-radius: 50%;
+			.site-icon {
+				max-width: 40px;
 			}
 
 			.title-column {
@@ -107,6 +104,14 @@ $max-list-width: 1300px;
 
 					&:hover {
 						text-decoration: underline;
+					}
+
+					.p2-label {
+						@extend %p2-label;
+					}
+
+					.paid-label {
+						@extend %paid-label;
 					}
 				}
 

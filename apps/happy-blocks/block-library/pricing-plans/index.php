@@ -10,13 +10,12 @@
 /**
  * Load the necessary config data.
  *
+ * @param string $handle The handle of the script to add the config data to.
  * @return void
  */
-function happyblocks_pricing_plans_enqueue_config_data() {
-	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
-	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
+function happyblocks_pricing_plans_enqueue_config_data( $handle ) {
 	wp_add_inline_script(
-		'a8c-happyblocks-pricing-plans',
+		$handle,
 		sprintf(
 			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
 			window.configData ||= {};',
@@ -25,8 +24,19 @@ function happyblocks_pricing_plans_enqueue_config_data() {
 		'before'
 	);
 }
-add_action( 'enqueue_block_editor_assets', 'happyblocks_pricing_plans_enqueue_config_data' );
-add_action( 'wp_enqueue_scripts', 'happyblocks_pricing_plans_enqueue_config_data' );
+
+/**
+ * Include the necessary config data for both, the editor and the view of the block.
+ *
+ * @return void
+ */
+function happyblocks_pricing_plans_enqueue_config_data_for_handle() {
+	happyblocks_pricing_plans_enqueue_config_data( 'happy-blocks-pricing-plans-view-script' );
+	happyblocks_pricing_plans_enqueue_config_data( 'happy-blocks-pricing-plans-editor-script' );
+}
+
+add_action( 'enqueue_block_editor_assets', 'happyblocks_pricing_plans_enqueue_config_data_for_handle' );
+add_action( 'wp_enqueue_scripts', 'happyblocks_pricing_plans_enqueue_config_data_for_handle' );
 
 /**
  * Decide if the current logged in user is the topic author.

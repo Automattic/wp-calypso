@@ -24,9 +24,14 @@ import {
 	mockGetVatInfoEndpoint,
 	mockSetVatInfoEndpoint,
 	countryList,
+	mockGetPaymentMethodsEndpoint,
+	mockLogStashEndpoint,
+	mockGetSupportedCountriesEndpoint,
+	gSuiteProduct,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
-import type { CartKey } from '@automattic/shopping-cart';
+import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
@@ -44,22 +49,22 @@ jest.mock( 'calypso/lib/navigate' );
 // we are increasing this to 12 seconds.
 jest.setTimeout( 12000 );
 
+type TestProductType = 'google workspace' | 'plan' | 'plan with domain';
+
 describe( 'Checkout contact step extra tax fields', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
-		mainCartKey,
 		initialCart,
 	};
 
-	getPlansBySiteId.mockImplementation( () => ( {
+	( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
 	hasLoadedSiteDomains.mockImplementation( () => true );
 	getDomainsBySiteId.mockImplementation( () => [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
-	useCartKey.mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
@@ -69,15 +74,26 @@ describe( 'Checkout contact step extra tax fields', () => {
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/transactions/supported-countries' )
-			.reply( 200, countryList );
+		mockGetPaymentMethodsEndpoint( [] );
+		mockLogStashEndpoint();
+		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetVatInfoEndpoint( {} );
 	} );
 
 	it.each( [
+		{
+			tax: {
+				country_code: 'CA',
+				city: 'Montreal',
+				subdivision_code: 'QC',
+				postal_code: 'A1A 1A1',
+			},
+			labels: { subdivision_code: 'Province' },
+			product: 'google workspace',
+			expect: 'city and province',
+		},
 		{
 			tax: {
 				country_code: 'CA',
@@ -156,24 +172,57 @@ describe( 'Checkout contact step extra tax fields', () => {
 			labels?: Record< string, string >;
 			product: string;
 		} ) => {
+			const getPostalCodeLabel = ( productType: TestProductType ): string => {
+				if ( productType === 'plan' || productType === 'google workspace' ) {
+					return 'Postal code';
+				}
+				return 'Postal Code';
+			};
+			const getContactValidationEndpointType = (
+				productType: TestProductType
+			): Exclude< ContactDetailsType, 'none' > => {
+				if ( productType === 'plan' ) {
+					return 'tax';
+				}
+				if ( productType === 'plan with domain' ) {
+					return 'domain';
+				}
+				if ( productType === 'google workspace' ) {
+					return 'gsuite';
+				}
+				throw new Error( `Unknown product type '${ productType }'` );
+			};
+			const getCartProducts = ( productType: TestProductType ): ResponseCartProduct[] => {
+				if ( productType === 'plan' ) {
+					return [ planWithoutDomain ];
+				}
+				if ( productType === 'plan with domain' ) {
+					return [ planWithBundledDomain, domainProduct ];
+				}
+				if ( productType === 'google workspace' ) {
+					return [ gSuiteProduct ];
+				}
+				throw new Error( `Unknown product type '${ productType }'` );
+			};
+
 			const selects = { country_code: true, subdivision_code: true };
 			labels = {
 				city: 'City',
 				subdivision_code: 'State',
 				organization: 'Organization',
-				postal_code: product === 'plan' ? 'Postal code' : 'Postal Code',
+				postal_code: getPostalCodeLabel( product as TestProductType ),
 				country_code: 'Country',
 				address: 'Address',
 				...labels,
 			};
-			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
-				success: true,
-			} );
+			mockContactDetailsValidationEndpoint(
+				getContactValidationEndpointType( product as TestProductType ),
+				{
+					success: true,
+				}
+			);
 			const user = userEvent.setup();
-			const cartChanges =
-				product === 'plan'
-					? { products: [ planWithoutDomain ] }
-					: { products: [ planWithBundledDomain, domainProduct ] };
+			const cartChanges = { products: getCartProducts( product as TestProductType ) };
 
 			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
 
@@ -195,7 +244,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 				}
 			}
 
-			await user.click( screen.getByText( 'Continue' ) );
+			await user.click( screen.getByText( 'Continue to payment' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			expect( setCart ).toHaveBeenCalledWith(
 				mainCartKey,
@@ -260,7 +309,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 			}
 			await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 
-			await user.click( screen.getByText( 'Continue' ) );
+			await user.click( screen.getByText( 'Continue to payment' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			expect( setCart ).toHaveBeenCalledWith(
 				mainCartKey,
@@ -329,7 +378,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 				await user.type( await screen.findByLabelText( 'Address for GST' ), vatAddress );
 			}
 
-			await user.click( screen.getByText( 'Continue' ) );
+			await user.click( screen.getByText( 'Continue to payment' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			expect( setCart ).toHaveBeenCalledWith(
 				mainCartKey,

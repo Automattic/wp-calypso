@@ -1,11 +1,11 @@
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useSelector } from 'calypso/state';
 import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
 import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 

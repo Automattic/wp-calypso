@@ -7,7 +7,7 @@ import {
 	BusinessHoursFlow,
 	WhatsAppButtonFlow,
 	ContactFormFlow,
-	PremiumContentBlockFlow,
+	PaidContentBlockFlow,
 	SubscribeFlow,
 	ContactInfoBlockFlow,
 	DataHelper,
@@ -23,12 +23,10 @@ const blockFlows: BlockFlow[] = [
 	new WhatsAppButtonFlow( { phoneNumber: 1234567890, buttonText: 'Porpoises swim happily' } ),
 ];
 
-// Interacting with the Premium Content toolbar is currently broken on mobile, so only adding for desktop:
-// https://github.com/Automattic/jetpack/issues/22745
 // Stripe is not connected to this WordPress.com account, so skipping on Atomic
-if ( envVariables.VIEWPORT_NAME === 'desktop' && ! envVariables.TEST_ON_ATOMIC ) {
+if ( ! envVariables.TEST_ON_ATOMIC ) {
 	blockFlows.push(
-		new PremiumContentBlockFlow( {
+		new PaidContentBlockFlow( {
 			subscriberTitle: DataHelper.getRandomPhrase(),
 			subscriberText: DataHelper.getRandomPhrase(),
 		} )

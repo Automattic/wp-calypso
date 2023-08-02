@@ -31,7 +31,7 @@ export default function HelpResults( {
 					/>
 				) ) }
 				{ footer && (
-					<a href={ searchLink } target="__blank">
+					<a href={ searchLink } target="_blank" rel="noreferrer noopener">
 						<CompactCard className="help-results__footer">
 							<span className="help-results__footer-text">{ footer }</span>
 						</CompactCard>

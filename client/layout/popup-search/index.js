@@ -13,7 +13,8 @@ export default function PopUpSearch( { onClose } ) {
 	const translate = useTranslate();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const { data } = useHelpSearchQuery( searchQuery );
-	const searchResults = data?.wordpress_support_links ?? [];
+
+	const searchResults = data.slice( 0, 5 );
 
 	const onChildClick = ( e ) => e.stopPropagation();
 

@@ -16,6 +16,7 @@ import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/doc
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/docs/example';
 import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
 import DailyPostButton from 'calypso/blocks/daily-post-button/docs/example';
+import DataCenterPicker from 'calypso/blocks/data-center-picker/docs/example';
 import DismissibleCard from 'calypso/blocks/dismissible-card/docs/example';
 import DomainTip from 'calypso/blocks/domain-tip/docs/example';
 import FollowButton from 'calypso/blocks/follow-button/docs/example';
@@ -122,6 +123,7 @@ export default class AppComponents extends Component {
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
+					<DataCenterPicker readmeFilePath="data-center-picker" />
 					<FollowButton readmeFilePath="follow-button" />
 					<HappinessSupport />
 					<ImageEditor readmeFilePath="image-editor" />

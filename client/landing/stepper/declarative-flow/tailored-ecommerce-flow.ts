@@ -8,7 +8,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
+import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
@@ -61,7 +61,6 @@ const ecommerceFlow: Flow = {
 
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
-			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
 		return [
@@ -85,7 +84,16 @@ const ecommerceFlow: Flow = {
 
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 		const flowName = this.name;
-		const locale = useLocale();
+
+		// There is a race condition where useLocale is reporting english,
+		// despite there being a locale in the URL so we need to look it up manually.
+		// We also need to support both query param and path suffix localized urls
+		// depending on where the user is coming from.
+		const useLocaleSlug = useLocale();
+		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
+		const queryLocaleSlug = getLocaleFromQueryParam();
+		const pathLocaleSlug = getLocaleFromPathname();
+		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
 		const { recurType } = useSelect(
 			( select ) => ( {
@@ -118,9 +126,19 @@ const ecommerceFlow: Flow = {
 			return url + ( flags ? `&flags=${ flags }` : '' );
 		};
 
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/blog/blogger-intent route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				const logInUrl = getStartUrl();
+				window.location.assign( logInUrl );
+			}
+		}, [] );
+
 		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'store-setup requires a logged in user',

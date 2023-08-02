@@ -1,0 +1,10 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "client/assets/stylesheets/p2-vars";
+@import "client/landing/subscriptions/styles/row-title-label";
+@import "client/landing/subscriptions/styles/list-actions-bar";
+
+.site-subscriptions-list-actions-bar {
+	@extend %list-actions-bar;
+}

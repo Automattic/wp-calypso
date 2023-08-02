@@ -1,6 +1,6 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import flows from 'calypso/signup/config/flows';
+import { useSelector, useDispatch } from 'calypso/state';
 import { addExcludedSteps, removeExcludedSteps } from 'calypso/state/signup/flow/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import type { Dependencies } from 'calypso/signup/types';

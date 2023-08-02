@@ -43,7 +43,7 @@ describe( 'CoBlocks: Extensions: Cover Styles', function () {
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
@@ -51,11 +51,10 @@ describe( 'CoBlocks: Extensions: Cover Styles', function () {
 	} );
 
 	it( 'Insert Cover block', async () => {
+		const editorCanvas = await editorPage.getEditorCanvas();
+
 		await editorPage.addBlockFromSidebar( CoverBlock.blockName, CoverBlock.blockEditorSelector );
-		coverBlock = new CoverBlock(
-			editorPage.getEditorWindowLocator(),
-			editorPage.getEditorCanvasLocator().locator( CoverBlock.blockEditorSelector )
-		);
+		coverBlock = new CoverBlock( page, editorCanvas.locator( CoverBlock.blockEditorSelector ) );
 	} );
 
 	it( 'Upload image', async () => {

@@ -7,8 +7,8 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
-import { Button, Card } from '@wordpress/components';
+import { Gridicon, JetpackLogo } from '@automattic/components';
+import { Button, Card, Modal } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes } from 'lodash';
@@ -48,6 +48,9 @@ import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
+import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
+import { WooLoader } from './woo-loader';
+import { CreatingYourAccountStage } from './woo-loader-stages';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 const noop = () => {};
@@ -119,9 +122,14 @@ export class JetpackSignup extends Component {
 		this.props.resetAuthAccountType();
 	};
 
-	isWoo() {
+	isWooOnboarding() {
 		const { authQuery } = this.props;
 		return 'woocommerce-onboarding' === authQuery.from;
+	}
+
+	isWooCoreProfiler( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'woocommerce-core-profiler' === from;
 	}
 
 	getWooDnaConfig() {
@@ -190,6 +198,9 @@ export class JetpackSignup extends Component {
 	 * @param {string} _.bearerToken Bearer token
 	 */
 	handleUserCreationSuccess = ( { username, bearerToken } ) => {
+		if ( this.isWooCoreProfiler() ) {
+			this.props.recordTracksEvent( 'calypso_jpc_wc_coreprofiler_create_account_success' );
+		}
 		this.setState( {
 			newUsername: username,
 			bearerToken,
@@ -261,6 +272,10 @@ export class JetpackSignup extends Component {
 
 	renderFooterLink() {
 		const { authQuery } = this.props;
+
+		if ( this.isWooCoreProfiler() ) {
+			return null;
+		}
 
 		return (
 			<LoggedOutFormLinks>
@@ -445,12 +460,40 @@ export class JetpackSignup extends Component {
 		if ( this.getWooDnaConfig().isWooDnaFlow() ) {
 			return this.renderWooDna();
 		}
-		const { isCreatingAccount } = this.state;
+		const { isCreatingAccount, newUsername, bearerToken } = this.state;
+		const isWooCoreProfiler = this.isWooCoreProfiler();
+
+		const isLogging = newUsername && bearerToken;
+		if ( isWooCoreProfiler && ( isCreatingAccount || isLogging ) ) {
+			return (
+				// Wrap the loader in a modal to show it in full screen
+				<Modal
+					open
+					title=""
+					overlayClassName="jetpack-connect-woocommerce-loader__modal-overlay"
+					className="jetpack-connect-woocommerce-loader__modal"
+					shouldCloseOnClickOutside={ false }
+					shouldCloseOnEsc={ false }
+					isDismissible={ false }
+				>
+					<WooLoader stages={ [ CreatingYourAccountStage ] } />
+					{ this.renderLoginUser() }
+				</Modal>
+			);
+		}
+
 		return (
-			<MainWrapper isWoo={ this.isWoo() }>
+			<MainWrapper
+				isWooOnboarding={ this.isWooOnboarding() }
+				isWooCoreProfiler={ this.isWooCoreProfiler() }
+			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
-					<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
+					<AuthFormHeader
+						authQuery={ this.props.authQuery }
+						isWooOnboarding={ this.isWooOnboarding() }
+						isWooCoreProfiler={ this.isWooCoreProfiler() }
+					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
 						email={ this.props.authQuery.userEmail }
@@ -462,7 +505,11 @@ export class JetpackSignup extends Component {
 							{ auth_approved: true },
 							window.location.href
 						) }
-						submitButtonText={ this.props.translate( 'Create your account' ) }
+						submitButtonText={
+							isWooCoreProfiler
+								? this.props.translate( 'Create an account' )
+								: this.props.translate( 'Create your account' )
+						}
 						submitForm={ this.handleSubmitSignup }
 						submitting={ isCreatingAccount }
 						suggestedUsername=""
@@ -470,6 +517,15 @@ export class JetpackSignup extends Component {
 
 					{ this.renderLoginUser() }
 				</div>
+				{ isWooCoreProfiler && this.props.authQuery.installedExtSuccess && (
+					<WooInstallExtSuccessNotice />
+				) }
+				{ isWooCoreProfiler && (
+					<div className="jetpack-connect__jetpack-logo-wrapper">
+						<JetpackLogo monochrome size={ 18 } />{ ' ' }
+						<span>{ this.props.translate( 'Jetpack powered' ) }</span>
+					</div>
+				) }
 			</MainWrapper>
 		);
 	}

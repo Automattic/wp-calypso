@@ -1,7 +1,6 @@
 import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, FormEventHandler } from 'react';
-import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -11,6 +10,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
 import { getHostInfoFromId } from '../host-info';
@@ -26,6 +26,8 @@ interface Props {
 	onModeChange: ( fromMode: FormMode ) => void;
 	host: string;
 	role: string;
+	withHeader?: boolean;
+	children?: React.ReactNode;
 }
 
 const ServerCredentialsForm: FunctionComponent< Props > = ( {
@@ -38,6 +40,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	onModeChange,
 	host,
 	role = 'main',
+	withHeader = true,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -55,7 +58,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					...formState,
 					protocol: currentTarget.value as 'ftp' | 'ssh' | 'dynamic-ssh',
 					port: ( () => {
-						let port = parseInt( String( formState.port ) );
+						let port = parseInt( String( formState.port ) ) || 22;
 
 						if ( formState.port === 22 && currentTarget.value === 'ftp' ) {
 							port = 21;
@@ -375,13 +378,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						) }
 				</FormFieldset>
 			) }
-			{ ! isAlternate && (
-				<>
-					<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-				</>
+			{ ! isAlternate && withHeader && (
+				<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
 			) }
-			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
-			{ renderCredentialLinks() }
+			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
+			{ withHeader && renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>

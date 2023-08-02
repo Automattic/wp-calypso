@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactChild } from 'react';
 
 import './style.scss';
 
@@ -35,7 +34,7 @@ type StepKey = 'destination' | 'clonePoint' | 'configure';
 
 interface Step {
 	key: StepKey;
-	label: ReactChild | null;
+	label: string;
 }
 
 interface Props {
@@ -48,7 +47,7 @@ export default function CloneFlowStepProgress( { currentStep }: Props ) {
 
 	const steps: Step[] = [
 		{ key: 'destination', label: translate( 'Set destination' ) },
-		{ key: 'clonePoint', label: translate( 'Select clone point' ) },
+		{ key: 'clonePoint', label: translate( 'Select point to copy' ) },
 		{ key: 'configure', label: translate( 'Configure' ) },
 	];
 

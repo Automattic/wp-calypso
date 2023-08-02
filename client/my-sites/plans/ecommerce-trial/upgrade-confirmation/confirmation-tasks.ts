@@ -8,6 +8,7 @@ import wayToPay from 'calypso/assets/images/plans/wpcom/way-to-pay.png';
 
 type ConfirmationTasksProps = {
 	translate: typeof i18nTranslate;
+	hasWCPay?: boolean;
 };
 
 export interface GetActionUrlProps {
@@ -17,7 +18,7 @@ export interface GetActionUrlProps {
 	wpAdminUrl: string;
 }
 
-export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) => {
+export const getConfirmationTasks = ( { translate, hasWCPay }: ConfirmationTasksProps ) => {
 	return [
 		{
 			id: 'launch-store',
@@ -40,7 +41,12 @@ export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) =>
 			subtitle: translate(
 				'Set up one or more payment methods to make it easy for your customers to pay.'
 			),
-			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) => `${ wooAdminUrl }&task=payments`,
+			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) => {
+				if ( hasWCPay ) {
+					return `${ wooAdminUrl }&path=${ encodeURIComponent( '/payments/connect' ) }`;
+				}
+				return `${ wooAdminUrl }&task=payments`;
+			},
 		},
 		{
 			id: 'custom-domain',

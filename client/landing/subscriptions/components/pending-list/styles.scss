@@ -2,10 +2,8 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-$max-list-width: 1300px;
-
 .subscription-manager__pending-list {
-	max-width: $max-list-width;
+	margin: 0;
 
 	.row {
 		border-bottom: 1px solid var(--color-border-subtle);
@@ -30,12 +28,8 @@ $max-list-width: 1300px;
 			flex: 1.83;
 			min-width: 0;
 
-			.icon {
-				fill: var(--color-text-subtle);
-				width: 40px;
-				height: 40px;
-				flex: none;
-				border-radius: 50%;
+			.site-icon {
+				max-width: 40px;
 			}
 
 			.title-column {

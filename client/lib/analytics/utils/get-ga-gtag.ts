@@ -1,3 +1,5 @@
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from '../ad-tracking/constants';
 
@@ -6,8 +8,15 @@ import { TRACKING_IDS } from '../ad-tracking/constants';
  *
  * @returns The correct Gtag connected to GA environment
  */
-export const getGaGtag = ( isJetpackEnv = isJetpackCloud() ) => {
-	return ! isJetpackEnv
-		? TRACKING_IDS.wpcomGoogleAnalyticsGtag
-		: TRACKING_IDS.jetpackGoogleAnalyticsGtag;
+export const getGaGtag = (
+	isJetpackEnv = isJetpackCloud() || isJetpackCheckout(),
+	isAkismetEnv = isAkismetCheckout()
+) => {
+	if ( isJetpackEnv ) {
+		return TRACKING_IDS.jetpackGoogleAnalyticsGtag;
+	} else if ( isAkismetEnv ) {
+		return TRACKING_IDS.akismetGoogleAnalyticsGtag;
+	}
+
+	return TRACKING_IDS.wpcomGoogleAnalyticsGtag;
 };

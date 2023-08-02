@@ -14,7 +14,7 @@ const selectors = {
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
 		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
-
+	wpPreMigrationContentOnlyOptionButton: 'button:has-text("Use the content-only import option")',
 	// ImporterDrag page
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
@@ -126,6 +126,13 @@ export class StartImportFlow {
 	 */
 	async contentOnlyWordPressPage(): Promise< void > {
 		await this.page.click( selectors.wpContentOnlyContinueButton );
+	}
+
+	/**
+	 * Continue 'content only' WordPress migration on pre-migration page.
+	 */
+	async clickPremigrationOptionButton(): Promise< void > {
+		await this.page.locator( selectors.wpPreMigrationContentOnlyOptionButton ).click();
 	}
 
 	/**

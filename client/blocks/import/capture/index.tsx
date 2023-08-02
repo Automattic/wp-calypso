@@ -1,8 +1,11 @@
+import { useSelect } from '@wordpress/data';
 import { localize, translate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
+import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
@@ -10,6 +13,7 @@ import ScanningStep from '../scanning';
 import { GoToStep, UrlData } from '../types';
 import CaptureInput from './capture-input';
 import type { OnInputEnter, OnInputChange } from './types';
+import type { UserSelect } from '@automattic/data-stores';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -62,6 +66,7 @@ export { LocalizedCapture as Capture };
 
 type StepProps = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
+	disableImportListStep?: boolean;
 };
 
 const trackEventName = 'calypso_signup_step_start';
@@ -77,11 +82,17 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	isAnalyzing,
 	analyzerError,
 	recordTracksEvent,
+	disableImportListStep,
 } ) => {
 	/**
 	 ↓ Methods
 	 */
 
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const isStartingPointEventTriggeredRef = useRef( false );
 	const runProcess = ( url: string ): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
 		analyzeUrl( url ).then( ( response: UrlData ) => {
@@ -121,11 +132,21 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		recordTracksEvent( trackEventName, trackEventParams );
 	};
 
+	const recordMigrationStartingPointEvent = () => {
+		if ( currentUser && currentUser.ID && ! isStartingPointEventTriggeredRef.current ) {
+			isStartingPointEventTriggeredRef.current = true;
+			triggerMigrationStartingEvent( currentUser );
+		}
+	};
+
+	const onDontHaveSiteAddressClick = disableImportListStep ? undefined : () => goToStep( 'list' );
+
 	/**
 	 ↓ Effects
 	 */
 	useEffect( recordScanningEvent, [ isAnalyzing ] );
 	useEffect( recordScanningErrorEvent, [ analyzerError ] );
+	useEffect( recordMigrationStartingPointEvent, [ currentUser ] );
 	useEffect( recordCaptureScreen, [] );
 
 	return (
@@ -133,7 +154,7 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 			{ ! isAnalyzing && (
 				<LocalizedCapture
 					onInputEnter={ runProcess }
-					onDontHaveSiteAddressClick={ () => goToStep( 'list' ) }
+					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
 					hasError={ !! analyzerError }
 					onInputChange={ () => resetError() }
 				/>

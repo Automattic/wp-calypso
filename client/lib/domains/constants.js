@@ -12,6 +12,7 @@ export const transferStatus = {
 	CANCELLED: 'CANCELLED',
 	COMPLETED: 'COMPLETED',
 	PENDING_START: 'PENDING_START',
+	PENDING_ASYNC: 'PENDING_ASYNC',
 };
 
 export const registrar = {

@@ -1,10 +1,15 @@
-import { useMemo } from '@wordpress/element';
+import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { useViewportMatch } from '@wordpress/compose';
+import classnames from 'classnames';
+import { useMemo, useState } from 'react';
+import { useInlineCss, useScreens } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
 
-interface PreviewProps {
+interface DesignPreviewProps {
 	previewUrl: string;
 	title?: string;
 	author?: string;
@@ -15,18 +20,28 @@ interface PreviewProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
+	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
-	showGlobalStylesPremiumBadge: boolean;
+	siteId: number;
+	stylesheet: string;
+	isVirtual?: boolean;
+	selectedColorVariation: GlobalStylesObject | null;
+	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
+	selectedFontVariation: GlobalStylesObject | null;
+	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
+	onGlobalStylesChange: ( globalStyles?: GlobalStylesObject | null ) => void;
+	limitGlobalStyles: boolean;
+	globalStylesInPersonalPlan: boolean;
+	onNavigatorPathChange?: ( path?: string ) => void;
+	onScreenSelect?: ( screenSlug: string ) => void;
+	onScreenBack?: ( screenSlug: string ) => void;
+	onScreenSubmit?: ( screenSlug: string ) => void;
 }
 
-const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
-
-const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
-	variations.find( ( variation ) => variation.slug === slug );
-
-const Preview: React.FC< PreviewProps > = ( {
+// @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
+const Preview: React.FC< DesignPreviewProps > = ( {
 	previewUrl,
 	title,
 	author,
@@ -34,28 +49,73 @@ const Preview: React.FC< PreviewProps > = ( {
 	description,
 	shortDescription,
 	pricingBadge,
-	variations = [],
+	variations,
 	selectedVariation,
 	onSelectVariation,
+	splitDefaultVariation,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
-	showGlobalStylesPremiumBadge,
+	siteId,
+	stylesheet,
+	isVirtual,
+	selectedColorVariation,
+	onSelectColorVariation,
+	selectedFontVariation,
+	onSelectFontVariation,
+	onGlobalStylesChange,
+	limitGlobalStyles,
+	globalStylesInPersonalPlan,
+	onScreenSelect,
+	onScreenBack,
+	onScreenSubmit,
+	onNavigatorPathChange,
 } ) => {
-	const sitePreviewInlineCss = useMemo( () => {
-		if ( selectedVariation ) {
-			const inlineCss =
-				selectedVariation.inline_css ??
-				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
+	const isDesktop = useViewportMatch( 'large' );
+	const [ isInitialScreen, setIsInitialScreen ] = useState( true );
+	const selectedVariations = useMemo(
+		() =>
+			[ selectedColorVariation, selectedFontVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ selectedColorVariation, selectedFontVariation ]
+	);
 
-			return inlineCss + INJECTED_CSS;
-		}
+	const inlineCss = useInlineCss( variations, selectedVariation );
 
-		return '';
-	}, [ variations, selectedVariation ] );
+	const screens = useScreens( {
+		siteId,
+		stylesheet,
+		isVirtual,
+		limitGlobalStyles,
+		globalStylesInPersonalPlan,
+		variations,
+		splitDefaultVariation,
+		selectedVariation,
+		selectedColorVariation,
+		selectedFontVariation,
+		onSelectVariation,
+		onSelectColorVariation,
+		onSelectFontVariation,
+		onScreenSelect,
+		onScreenBack,
+		onScreenSubmit,
+	} );
+
+	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );
+
+	const handleNavigatorPathChange = ( path?: string ) => {
+		setIsInitialScreen( path === '/' );
+		onNavigatorPathChange?.( path );
+	};
+
+	useSyncGlobalStylesUserConfig( selectedVariations, onGlobalStylesChange );
 
 	return (
-		<div className="design-preview">
+		<div
+			className={ classnames( 'design-preview', {
+				'design-preview--has-multiple-screens': screens.length > 1,
+				'design-preview--is-fullscreen': isFullscreen,
+			} ) }
+		>
 			<Sidebar
 				title={ title }
 				author={ author }
@@ -63,20 +123,30 @@ const Preview: React.FC< PreviewProps > = ( {
 				description={ description }
 				shortDescription={ shortDescription }
 				pricingBadge={ pricingBadge }
-				variations={ variations }
-				selectedVariation={ selectedVariation }
-				onSelectVariation={ onSelectVariation }
-				onClickCategory={ onClickCategory }
+				screens={ screens }
 				actionButtons={ actionButtons }
-				showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+				onClickCategory={ onClickCategory }
+				onNavigatorPathChange={ handleNavigatorPathChange }
 			/>
 			<SitePreview
 				url={ previewUrl }
-				inlineCss={ sitePreviewInlineCss }
+				inlineCss={ inlineCss }
+				isFullscreen={ isFullscreen }
+				animated={ ! isDesktop && screens.length > 0 }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>
 	);
 };
 
-export default Preview;
+const DesignPreview = ( props: DesignPreviewProps ) => (
+	<GlobalStylesProvider
+		siteId={ props.siteId }
+		stylesheet={ props.stylesheet }
+		placeholder={ null }
+	>
+		<Preview { ...props } />
+	</GlobalStylesProvider>
+);
+
+export default DesignPreview;

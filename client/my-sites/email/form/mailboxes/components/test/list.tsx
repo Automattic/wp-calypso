@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import nock from 'nock';
-import { ReactChild } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import {
@@ -16,7 +16,7 @@ import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailbox
 import { FIELD_MAILBOX } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 
-function renderWithStore( element: ReactChild ) {
+function renderWithStore( element: ReactElement ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	const store = createStore( ( state ) => state, { ui: { selectedSiteId: 1 } } );
 	return {

@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
+import CheckMark from 'calypso/assets/images/icons/check-mark.svg';
+import Plus from 'calypso/assets/images/icons/plus.svg';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import FollowButton from 'calypso/blocks/follow-button/button';
+import SVGIcon from 'calypso/components/svg-icon';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import {
@@ -9,7 +12,8 @@ import {
 } from 'calypso/reader/stats';
 
 function ReaderFollowButton( props ) {
-	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl, iconSize } = props;
+	const { onFollowToggle, railcar, followSource, hasButtonStyle, isButtonOnly, siteUrl, iconSize } =
+		props;
 
 	function recordFollowToggle( isFollowing ) {
 		if ( isFollowing ) {
@@ -23,8 +27,23 @@ function ReaderFollowButton( props ) {
 		}
 	}
 
-	const followingIcon = ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } );
-	const followIcon = ReaderFollowFeedIcon( { iconSize: iconSize || 20 } );
+	const followingIcon = hasButtonStyle ? (
+		<SVGIcon
+			classes="reader-following-feed"
+			name="check-mark"
+			size="20"
+			icon={ CheckMark }
+			key="check-mark-icon"
+		/>
+	) : (
+		ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } )
+	);
+
+	const followIcon = hasButtonStyle ? (
+		<SVGIcon classes="reader-follow-feed" name="plus" size="20" icon={ Plus } key="plus-icon" />
+	) : (
+		ReaderFollowFeedIcon( { iconSize: iconSize || 20 } )
+	);
 
 	if ( isButtonOnly ) {
 		return (
@@ -33,6 +52,7 @@ function ReaderFollowButton( props ) {
 				onFollowToggle={ recordFollowToggle }
 				followIcon={ followIcon }
 				followingIcon={ followingIcon }
+				hasButtonStyle={ hasButtonStyle }
 			/>
 		);
 	}
@@ -43,6 +63,7 @@ function ReaderFollowButton( props ) {
 			onFollowToggle={ recordFollowToggle }
 			followIcon={ followIcon }
 			followingIcon={ followingIcon }
+			hasButtonStyle={ hasButtonStyle }
 		/>
 	);
 }
@@ -51,6 +72,7 @@ ReaderFollowButton.propTypes = {
 	onFollowToggle: PropTypes.func,
 	railcar: PropTypes.object,
 	followSource: PropTypes.string,
+	hasButtonStyle: PropTypes.bool,
 };
 
 export default ReaderFollowButton;

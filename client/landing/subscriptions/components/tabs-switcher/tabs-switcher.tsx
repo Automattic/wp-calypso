@@ -1,89 +1,108 @@
-import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import DocumentHead from 'calypso/components/data/document-head';
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import {
 	Comments,
+	Pending,
 	Settings,
 	Sites,
-	Pending,
 } from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
-const TabsSwitcher = () => {
-	const translate = useTranslate();
+type SubscriptionManagerTab = {
+	id: string;
+	label: string;
+	count?: number;
+	onClick: () => void;
+	selected: boolean;
+	hide?: boolean;
+};
+
+const getPath = ( subpath: string ) => `/subscriptions/${ subpath }`;
+
+// Localed path only applies for external users, WPCOM users inherits locale from user's language settings.
+const getPathWithLocale = ( subpath: string, locale: string, isLoggedIn: boolean ) =>
+	getPath( subpath ) + ( ! isLoggedIn && locale !== 'en' ? '/' + locale : '' );
+
+const useTabs = (): SubscriptionManagerTab[] => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
+	const translate = useTranslate();
 	const locale = useLocale();
-	const shouldEnableCommentsTab =
-		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en';
-	const shouldEnablePendingTab =
-		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en';
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
+	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 
-	const getFullPath = ( subpath: string ) =>
-		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
-	const [ sitesPath, commentsPath, pendingPath, settingsPath ] = [
-		'sites',
-		'comments',
-		'pending',
-		'settings',
-	].map( getFullPath );
+	return useMemo( () => {
+		return [
+			{
+				id: 'sites',
+				label: translate( 'Sites' ),
+				count: counts?.blogs || undefined,
+				onClick: () => navigate( getPathWithLocale( 'sites', locale, isLoggedIn ) ),
+				selected: pathname.startsWith( getPath( 'sites' ) ),
+			},
+			{
+				id: 'comments',
+				label: translate( 'Comments' ),
+				count: undefined, // temporarily disable inaccurate comments count
+				onClick: () => navigate( getPathWithLocale( 'comments', locale, isLoggedIn ) ),
+				selected: pathname.startsWith( getPath( 'comments' ) ),
+			},
+			{
+				id: 'pending',
+				label: translate( 'Pending' ),
+				count: counts?.pending || undefined,
+				onClick: () => navigate( getPathWithLocale( 'pending', locale, isLoggedIn ) ),
+				selected: pathname.startsWith( getPath( 'pending' ) ),
+				hide: ! counts?.pending && ! pathname.includes( 'pending' ),
+			},
+			{
+				id: 'settings',
+				label: translate( 'Settings' ),
+				onClick: () => navigate( getPathWithLocale( 'settings', locale, isLoggedIn ) ),
+				selected: pathname.startsWith( getPath( 'settings' ) ),
+			},
+		];
+	}, [ counts?.blogs, counts?.pending, locale, isLoggedIn, navigate, pathname, translate ] );
+};
 
+const TabsSwitcher = () => {
+	const translate = useTranslate();
+	const tabs = useTabs();
+	const { label: selectedText, count: selectedCount } = tabs.find( ( tab ) => tab.selected ) ?? {};
 	return (
 		<>
-			<Nav className="subscription-manager-tab-switcher">
+			<DocumentHead
+				title={ translate( 'Subscriptions: %s', {
+					args: selectedText,
+					comment:
+						'%s is the selected tab. Example: "Subscriptions: Sites" or "Subscriptions: Comments"',
+				} ) }
+			/>
+			<Nav
+				className="subscription-manager-tab-switcher"
+				selectedText={ selectedText }
+				selectedCount={ selectedCount }
+			>
 				<NavTabs>
-					<NavItem
-						onClick={ () => navigate( sitesPath ) }
-						count={ counts?.blogs || undefined }
-						selected={ pathname.startsWith( sitesPath ) }
-					>
-						{ translate( 'Sites' ) }
-					</NavItem>
-
-					<NavItem
-						onClick={ () => {
-							shouldEnableCommentsTab
-								? navigate( commentsPath )
-								: window.location.replace(
-										`https://wordpress.com/email-subscriptions/?option=comments&locale=${ locale }`
-								  );
-						} }
-						count={ counts?.comments || undefined }
-						selected={ pathname.startsWith( commentsPath ) }
-					>
-						{ translate( 'Comments' ) }
-					</NavItem>
-
-					{ counts?.pending || pathname.includes( 'pending' ) ? (
-						<NavItem
-							onClick={ () => {
-								shouldEnablePendingTab
-									? navigate( pendingPath )
-									: window.location.replace(
-											`https://wordpress.com/email-subscriptions/?option=pending&locale=${ locale }`
-									  );
-							} }
-							count={ counts?.pending || undefined }
-							selected={ pathname.startsWith( pendingPath ) }
-						>
-							{ translate( 'Pending' ) }
-						</NavItem>
-					) : (
-						''
+					{ tabs.map( ( tab ) =>
+						tab.hide ? null : (
+							<NavItem
+								key={ tab.id }
+								onClick={ tab.onClick }
+								count={ tab.count }
+								selected={ tab.selected }
+							>
+								{ tab.label }
+							</NavItem>
+						)
 					) }
-
-					<NavItem
-						onClick={ () => navigate( settingsPath ) }
-						selected={ pathname.startsWith( settingsPath ) }
-					>
-						{ translate( 'Settings' ) }
-					</NavItem>
 				</NavTabs>
 			</Nav>
 

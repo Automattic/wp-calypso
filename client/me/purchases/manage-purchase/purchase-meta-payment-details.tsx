@@ -4,13 +4,14 @@ import { isOneTimePurchase, isPaidWithCreditCard } from 'calypso/lib/purchases';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { canEditPaymentDetails } from '../utils';
 import PaymentInfoBlock from './payment-info-block';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase, GetChangePaymentMethodUrlFor } from 'calypso/lib/purchases/types';
 
 interface PaymentProps {
 	purchase: Purchase;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	siteSlug?: string;
-	site?: string;
+	site?: SiteDetails;
 	isAkismetPurchase: boolean;
 }
 

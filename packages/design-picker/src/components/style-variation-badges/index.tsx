@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
+import { isDefaultGlobalStylesVariationSlug } from '../../utils';
 import Badge from './badge';
 import type { StyleVariation } from '../../types';
 import './style.scss';
@@ -20,6 +22,7 @@ const Badges: React.FC< BadgesProps > = ( {
 	onClick,
 	selectedVariation,
 } ) => {
+	const isSelectedVariationDefault = isDefaultGlobalStylesVariationSlug( selectedVariation?.slug );
 	const variationsToShow = useMemo( () => {
 		return variations.slice( 0, maxVariationsToShow );
 	}, [ variations, maxVariationsToShow ] );
@@ -32,7 +35,8 @@ const Badges: React.FC< BadgesProps > = ( {
 					variation={ variation }
 					onClick={ onClick }
 					isSelected={
-						( ! selectedVariation && variation.slug === 'default' ) ||
+						( isSelectedVariationDefault &&
+							variation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) ||
 						variation.slug === selectedVariation?.slug
 					}
 				/>

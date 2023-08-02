@@ -14,9 +14,10 @@
 	border-radius: 6px;
 	.search__icon-navigation {
 		/* stylelint-disable-next-line scales/radii */
-		border-bottom-left-radius: 6px;
-		/* stylelint-disable-next-line scales/radii */
-		border-top-left-radius: 6px;
+		border-radius: 6px;
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
 	}
 	.search__input.form-text-input[type="search"],
 	.search__close-icon {
@@ -47,12 +48,32 @@
 	}
 }
 
+.layout.has-header-section .search-stream__fixed-area {
+	position: static;
+	padding-top: 0;
+	margin-top: 0;
+}
+
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
 	margin: 0;
 }
 
+.search-stream__fixed-area .formatted-header.is-left-align.has-screen-options {
+	@media only screen and (max-width: 660px) {
+		display: none;
+	}
+}
+
 .search-stream .search-stream__input-card.card {
 	margin-bottom: 0;
+	border-radius: 4px;
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-top: 20px;
+
+		.search__icon-navigation {
+			border-radius: 4px;
+		}
+	}
 }
 
 .search-stream__input-card.card {
@@ -79,7 +100,7 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		flex-flow: row wrap;
-		padding: 15px 5px 15px 15px;
+		padding-top: 15px;
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -103,33 +124,10 @@
 	box-sizing: border-box;
 	border-bottom: 1px solid var(--color-neutral-10);
 	display: flex;
-	flex-basis: calc(50% - 15px);
-	margin: 0 0 0 15px;
+	margin: 0;
 	padding: 20px 0;
+	width: 100%;
 
-	@include breakpoint-deprecated( "<960px" ) {
-		margin: 0;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 0 0 15px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		margin: 0 5px 0 0;
-	}
-
-	&:nth-child(2n) {
-		margin: 0 15px 0 0;
-
-		@include breakpoint-deprecated( "<960px" ) {
-			margin: 0;
-		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin: 0 5px 0 0;
-		}
-	}
 
 	.reader-related-card__post {
 		max-height: 16px * 1.6 * 11;
@@ -292,6 +290,11 @@
 	.reader-infinite-stream__row-wrapper {
 		border: 0;
 	}
+}
+
+// Site results and Popular sites
+.search-stream .search-stream__site-results,
+.search-stream .reader-two-column .reader-tag-sidebar-recommended-sites {
 
 	.reader-subscription-list-item .follow-button__label,
 	.reader-subscription-list-item__settings-label {
@@ -303,9 +306,19 @@
 	}
 }
 
-.search-stream__results.is-two-columns .reader-subscription-list-item__byline {
-	min-width: 177px;
-	max-width: 177px;
+// For popular sites list on single column view.
+.search-stream .following:not(.reader-two-column) .reader-subscription-list-item {
+	border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.search-stream__results.is-two-columns .reader-subscription-list-item__byline,
+.search-stream .reader-two-column .reader-subscription-list-item__byline {
+	min-width: 185px;
+	max-width: 185px;
+}
+
+.search-stream__single-column-results .reader-infinite-stream__row-wrapper {
+	margin-top: 20px;
 }
 
 .search-stream__single-column-results .reader-subscription-list-item__options {
@@ -321,11 +334,6 @@
 	}
 }
 
-// Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
-.search-stream__single-column-results .reader-subscription-list-item__timestamp {
-	display: none;
-}
-
 // Custom styling for cards in post results
 .search-stream__results.is-two-columns {
 	display: flex;
@@ -337,7 +345,7 @@
 
 .search-stream__results.is-two-columns .search-stream__post-results {
 	max-width: 660px;
-	width: calc(100% - 300px);
+	width: calc(100% - 304px);
 
 	.reader-post-card__post {
 		@include breakpoint-deprecated( "<960px" ) {
@@ -436,5 +444,15 @@
 				color: var(--color-success);
 			}
 		}
+	}
+}
+
+.search-stream__site-results-none {
+	color: var(--color-neutral-50);
+	margin-top: 1em;
+	text-align: center;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-top: 2em;
 	}
 }

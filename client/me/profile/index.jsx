@@ -18,14 +18,14 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import DomainUpsell from 'calypso/me/domain-upsell';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
-import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import { getIAmDeveloperCopy } from './get-i-am-a-developer-copy';
 import UpdatedGravatarString from './updated-gravatar-string';
-
 import './style.scss';
 
 class Profile extends Component {
@@ -39,6 +39,10 @@ class Profile extends Component {
 
 	toggleGravatarHidden = ( isHidden ) => {
 		this.props.setUserSetting( 'gravatar_profile_hidden', isHidden );
+	};
+
+	toggleIsDevAccount = ( isDevAccount ) => {
+		this.props.setUserSetting( 'is_dev_account', isDevAccount );
 	};
 
 	render() {
@@ -129,6 +133,19 @@ class Profile extends Component {
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
+							/>
+						</FormFieldset>
+
+						<FormFieldset
+							className={ classnames( {
+								'profile__is_dev_account-fieldset-is-loading': this.props.isFetchingUserSettings,
+							} ) }
+						>
+							<ToggleControl
+								disabled={ this.props.isFetchingUserSettings }
+								checked={ this.props.getSetting( 'is_dev_account' ) }
+								onChange={ this.toggleIsDevAccount }
+								label={ getIAmDeveloperCopy( this.props.translate ) }
 							/>
 						</FormFieldset>
 

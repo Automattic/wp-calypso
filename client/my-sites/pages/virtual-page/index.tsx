@@ -34,8 +34,8 @@ const HomepagePopover = ( { isAdmin, template }: HomepagePopoverProps ) => {
 	const learnMoreLink = (
 		<ExternalLink
 			href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
-			target="_blank"
 			rel="noopener noreferrer"
+			children={ null }
 		/>
 	);
 
@@ -114,7 +114,9 @@ const VirtualPage = ( {
 		? addQueryArgs( { templateId: id, templateType: type }, defaultEditorUrl )
 		: defaultEditorUrl;
 
-	const { data: template, isLoading } = useTemplate( site.ID, id, { enabled: isAdmin && !! id } );
+	const { data: template, isInitialLoading } = useTemplate( site.ID, id, {
+		enabled: isAdmin && !! id,
+	} );
 
 	const recordGoogleEvent = ( action: string ) => {
 		props.recordGoogleEvent( 'Pages', action );
@@ -178,7 +180,7 @@ const VirtualPage = ( {
 		props.recordGoogleEvent( 'Pages', 'Clicked Copy Page Link' );
 	};
 
-	if ( isAdmin && isLoading ) {
+	if ( isAdmin && isInitialLoading ) {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
 

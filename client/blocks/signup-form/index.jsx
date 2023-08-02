@@ -56,6 +56,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
@@ -107,6 +108,7 @@ class SignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
+		loginUrl: PropTypes.string,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -507,7 +509,9 @@ class SignupForm extends Component {
 	globalNotice( notice, status ) {
 		return (
 			<Notice
-				className="signup-form__notice"
+				className={ classNames( 'signup-form__notice', {
+					'signup-form__span-columns': this.isHorizontal(),
+				} ) }
 				showDismiss={ false }
 				status={ status }
 				text={ this.getNoticeMessageWithLogin( notice ) }
@@ -655,7 +659,7 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || this.props.isWoo
+							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -952,7 +956,19 @@ class SignupForm extends Component {
 	}
 
 	hasFilledInputValues = () => {
-		return Object.values( this.getUserData() ).every( ( value ) => value.trim().length > 0 );
+		const userInputFields = [ 'email', 'username', 'password' ];
+		return userInputFields.every( ( field ) => {
+			const value = formState.getFieldValue( this.state.form, field );
+			if ( typeof value === 'string' ) {
+				return value.trim().length > 0;
+			}
+			// eslint-disable-next-line no-console
+			console.warn(
+				`hasFilledInputValues: field ${ field } has a value of type ${ typeof value }. Expected string.`
+			);
+			// If we can't determine if the field is filled, we assume it is so that the user can submit the form.
+			return true;
+		} );
 	};
 
 	formFooter() {
@@ -1016,7 +1032,7 @@ class SignupForm extends Component {
 				{ ! this.props.isReskinned && (
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ flowName === 'onboarding'
+							{ flowName === 'onboarding' || flowName === 'onboarding-pm'
 								? translate( 'Log in to create a site for your existing account.' )
 								: translate( 'Already have a WordPress.com account?' ) }
 						</LoggedOutFormLinkItem>
@@ -1218,6 +1234,7 @@ class SignupForm extends Component {
 							flowName={ this.props.flowName }
 							compact={ this.props.isWoo || isGravatarOAuth2Client( this.props.oauth2Client ) }
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+							loginUrl={ this.props.loginUrl }
 						/>
 					</Fragment>
 				) }
@@ -1239,6 +1256,8 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
+
 		return {
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
@@ -1248,7 +1267,8 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-			isWoo: isWooOAuth2Client( oauth2Client ),
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
+			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 		};

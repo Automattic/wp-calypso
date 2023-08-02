@@ -1,6 +1,6 @@
-import { useQuery, UseQueryResult } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 
 type HomeTemplateSettings = {
@@ -22,14 +22,14 @@ export const useBlockEditorSettingsQuery = (
 
 	const queryKey = [ 'blockEditorSettings', siteId, themeId ];
 
-	return useQuery< BlockEditorSettings >(
+	return useQuery< BlockEditorSettings >( {
 		queryKey,
-		() => {
+		queryFn: () => {
 			return wpcom.req.get( {
 				path: `/sites/${ siteId }/block-editor`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		{ enabled: isEnabled && !! siteId }
-	);
+		enabled: isEnabled && !! siteId,
+	} );
 };

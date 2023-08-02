@@ -1,8 +1,14 @@
 $social-preview-text-color: #1e1e1e;
 $social-preview-light-text-color: #757575;
 
+.social-preview {
+	padding: 0 0.5rem;
+}
+
 .social-preview__section {
 	margin-bottom: 2rem;
+	width: clamp(200px, 100%, 680px);
+	margin-inline: auto;
 }
 
 .social-preview__section-heading {

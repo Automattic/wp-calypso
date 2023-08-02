@@ -1,5 +1,7 @@
 import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 
+export const TRACK_SOURCE_NAME = 'sites-dashboard';
+
 export const getLaunchpadUrl = ( slug: string, flow: string ) => {
 	return `/setup/${ flow }/launchpad?siteSlug=${ slug }`;
 };

@@ -1,14 +1,17 @@
-.promote-post {
-
+@import "@automattic/color-studio/dist/color-variables";
+.promote-post-i2 {
 	.empty-promotion-list__container {
 		text-align: center;
 		margin-top: 80px;
 		padding: 0 20px;
 		.empty-promotion-list__title {
-			font-weight: 700;
-			font-size: $font-title-small;
+			font-weight: 400;
+			font-size: $font-title-large;
 			margin-bottom: 20px;
 		}
+		.empty-promotion-list__body {
+			font-size: $font-body;
+			color: $studio-gray-50;
+		}
 	}
-
 }

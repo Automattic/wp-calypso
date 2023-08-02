@@ -283,9 +283,9 @@ export class LoginLinks extends Component {
 
 		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
 
-		// If we got here coming from Jetpack Cloud login page, we want to go back
+		// If we got here coming from Jetpack Cloud / Gravatar login page, we want to go back
 		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) || this.props.isGravatar ) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
 			const queryArgs = {

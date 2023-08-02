@@ -1,6 +1,6 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
-import { ReactChild } from 'react';
+import { ReactNode } from 'react';
 import DropdownGroup from './dropdown-group';
 import SwipeGroup from './swipe-group';
 
@@ -18,7 +18,7 @@ const ResponsiveToolbarGroup = ( {
 	hrefList = [],
 	forceSwipe = false,
 }: {
-	children: ReactChild[];
+	children: ReactNode[];
 	className?: string;
 	hideRatio?: number;
 	showRatio?: number;

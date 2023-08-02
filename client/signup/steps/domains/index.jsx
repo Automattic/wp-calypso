@@ -1,4 +1,4 @@
-import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingFlow } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingSignupFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -14,9 +14,9 @@ import { recordUseYourDomainButtonClick } from 'calypso/components/domains/regis
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
-	themeItem,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
@@ -26,8 +26,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -58,7 +57,6 @@ import {
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
@@ -142,13 +140,6 @@ class DomainsStep extends Component {
 				}
 			);
 		}
-
-		loadExperimentAssignment( 'paid_media_signup_2023_03_legacy_free_presentation' ).then(
-			( experimentName ) => {
-				this.setState( { experiment: experimentName } );
-				this.setState( { experimentIsLoading: false } );
-			}
-		);
 	}
 
 	getLocale() {
@@ -165,6 +156,10 @@ class DomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion, position ) => {
+		const signupDomainOrigin = suggestion?.is_free
+			? SIGNUP_DOMAIN_ORIGIN.FREE
+			: SIGNUP_DOMAIN_ORIGIN.CUSTOM;
+
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -179,7 +174,7 @@ class DomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain();
+			this.submitWithDomain( { signupDomainOrigin } );
 		} );
 	};
 
@@ -199,11 +194,8 @@ class DomainsStep extends Component {
 		const themeSlug = this.getThemeSlug();
 		const themeStyleVariation = this.getThemeStyleVariation();
 		const themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug );
-		const theme = this.isPurchasingTheme()
-			? themeItem( themeSlug, 'signup-with-theme' )
-			: undefined;
 
-		return { themeSlug, themeSlugWithRepo, themeStyleVariation, themeItem: theme };
+		return { themeSlug, themeSlugWithRepo, themeStyleVariation };
 	};
 
 	getThemeSlugWithRepo = ( themeSlug ) => {
@@ -228,7 +220,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
@@ -250,28 +242,30 @@ class DomainsStep extends Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+			this.submitWithDomain( { googleAppsCartItem, shouldHideFreePlan, signupDomainOrigin } );
 		} );
 	};
 
 	handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
-		this.handleSkip( undefined, hideFreePlan );
+		this.handleSkip( undefined, hideFreePlan, SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER );
 	};
 
 	handleUseYourDomainClick = () => {
-		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 		page( this.getUseYourDomainUrl() );
+		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 	};
 
-	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
+	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		const suggestion = this.props.step.suggestion;
+		const { step } = this.props;
+		const { lastDomainSearched } = step.domainForm ?? {};
 
+		const { suggestion } = step;
 		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
 
 		const siteUrl =
@@ -312,7 +306,10 @@ class DomainsStep extends Component {
 			Object.assign(
 				{ domainItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
-				useThemeHeadstartItem
+				useThemeHeadstartItem,
+				signupDomainOrigin ? { signupDomainOrigin } : {},
+				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				lastDomainSearched ? { lastDomainSearched } : {}
 			)
 		);
 
@@ -323,7 +320,7 @@ class DomainsStep extends Component {
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
-	handleAddMapping = ( sectionName, domain, state ) => {
+	handleAddMapping = ( { sectionName, domain, state } ) => {
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -345,7 +342,14 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			Object.assign(
+				{ domainItem },
+				useThemeHeadstartItem,
+				{
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+				},
+				{ siteUrl: domain }
+			)
 		);
 
 		this.props.goToNextStep();
@@ -379,7 +383,7 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			Object.assign( { domainItem }, useThemeHeadstartItem, { siteUrl: domain } )
 		);
 
 		this.props.goToNextStep();
@@ -406,7 +410,7 @@ class DomainsStep extends Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteType, signupDependencies } = this.props;
+		const { flowName, isDomainOnly } = this.props;
 
 		// 'subdomain' flow coming from .blog landing pages
 		if ( flowName === 'subdomain' ) {
@@ -421,15 +425,6 @@ class DomainsStep extends Component {
 		// No .blog subdomains for domain only sites
 		if ( isDomainOnly ) {
 			return false;
-		}
-
-		// If we detect a 'blog' site type from Signup data
-		if (
-			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' ) ||
-			'blog' === siteType
-		) {
-			return true;
 		}
 
 		const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
@@ -544,7 +539,7 @@ class DomainsStep extends Component {
 					otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
-					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
+					onAddMapping={ this.handleAddMapping.bind( this, { sectionName: 'domainForm' } ) }
 					onSave={ this.handleSave.bind( this, 'domainForm' ) }
 					offerUnavailableOption={ ! this.props.isDomainOnly }
 					isDomainOnly={ this.props.isDomainOnly }
@@ -584,7 +579,7 @@ class DomainsStep extends Component {
 	};
 
 	onUseMyDomainConnect = ( { domain } ) => {
-		this.handleAddMapping( 'useYourDomainForm', domain );
+		this.handleAddMapping( { sectionName: 'useYourDomainForm', domain } );
 	};
 
 	insertUrlParams( params ) {
@@ -626,17 +621,17 @@ class DomainsStep extends Component {
 						showHeader={ false }
 						onTransfer={ this.handleAddTransfer }
 						onConnect={ this.onUseMyDomainConnect }
+						onSkip={ () => this.handleSkip( undefined, false ) }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
 
-	isHostingFlow = () => isHostingFlow( this.props.flowName );
+	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, siteType, stepSectionName, isReskinned, translate } =
-			this.props;
+		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -678,17 +673,11 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
-		}
-
-		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
-		const onboardingSubHeaderCopy =
-			siteType &&
-			flowName === 'onboarding' &&
-			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
-
-		if ( onboardingSubHeaderCopy ) {
-			return onboardingSubHeaderCopy;
+			return (
+				! stepSectionName &&
+				'domain-transfer' !== this.props.flowName &&
+				translate( 'Enter some descriptive keywords to get started' )
+			);
 		}
 
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
@@ -697,10 +686,9 @@ class DomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
-			this.props;
+		const { headerText, isAllDomains, isReskinned, stepSectionName, translate } = this.props;
 
-		if ( stepSectionName === 'use-your-domain' ) {
+		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === this.props.flowName ) {
 			return '';
 		}
 
@@ -716,9 +704,7 @@ class DomainsStep extends Component {
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
-		const headerPropertyName = 'signUpFlowDomainsStepHeader';
-
-		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName );
+		return getSitePropertyDefaults( 'signUpFlowDomainsStepHeader' );
 	}
 
 	getAnalyticsSection() {
@@ -749,6 +735,11 @@ class DomainsStep extends Component {
 			sideContent = this.getSideContent();
 		}
 
+		if ( 'domain-transfer' === this.props.flowName && ! this.props.stepSectionName ) {
+			content = this.useYourDomainForm();
+			sideContent = null;
+		}
+
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains__step-section-wrapper">
@@ -772,7 +763,10 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if ( 'use-your-domain' !== this.props.stepSectionName ) {
+		if (
+			'use-your-domain' !== this.props.stepSectionName &&
+			'domain-transfer' !== this.props.flowName
+		) {
 			return null;
 		}
 
@@ -834,6 +828,9 @@ class DomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
+		} else if ( ! previousStepBackUrl && 'domain-transfer' === this.props.flowName ) {
+			backUrl = null;
+			backLabelText = null;
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
@@ -937,7 +934,6 @@ export default connect(
 			designType: getDesignType( state ),
 			productsList,
 			productsLoaded,
-			siteType: getSiteType( state ),
 			selectedSite,
 			sites: getSitesItems( state ),
 			userSiteCount: getCurrentUserSiteCount( state ),

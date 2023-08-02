@@ -16,13 +16,14 @@ class FollowingManageSearchFollowed extends Component {
 	};
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<SearchCard
 				compact={ true }
 				pinned={ false }
 				className="following-manage__search-followed"
 				additionalClasses="following-manage__search-followed-input"
-				placeholder={ this.props.translate( 'Search followed sites…' ) }
+				placeholder={ translate( 'Search…' ) }
 				onSearch={ this.props.onSearch }
 				initialValue={ this.props.initialValue }
 				delaySearch={ true }

@@ -3,16 +3,34 @@
 $plan-features-sidebar-width: 272px;
 $plan-features-header-banner-height: 20px;
 
-// Breakpoints
+// Plan Features Grid Breakpoints
 $plans-2023-small-breakpoint: 780px;
 $plans-2023-medium-breakpoint: 1200px;
 
 $minWidthToGridWidthMap: (
 	780px: "668px",
 	1024px: "860px",
-	1200px: "1134px",
-	1440px: "1320px",
-	1600px: "1480px",
+	1200px: "100%",
+);
+
+// Plan Comparison Grid Breakpoints
+$plans-comparison-small-breakpoint: 880px;
+$plans-comparison-medium-breakpoint: 1024px;
+$plans-comparison-large-breakpoint: 1281px;
+
+$planComparisonMinWidthToGridWidthMap: (
+	780px: "686px",
+	880px: "870px",
+	1024px: "1024px",
+	1281px: "1238px",
+);
+
+// TODO: Replace with use of $plan-features-sidebar-width
+$planComparisonMinWidthToGridWidthWithSidebarMap: (
+	1052px: "686px",
+	1152px: "870px",
+	1296px: "1024px",
+	1553px: "1238px",
 );
 
 
@@ -24,7 +42,16 @@ $minWidthToGridWidthMap: (
 			width: #{$gridWidth};
 		}
 	}
+}
 
+@mixin plan-comparison-grid-breakpoints {
+	width: 100%;
+
+	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthMap {
+		@media ( min-width: #{$screenMinWidth} ) {
+			width: #{$gridWidth};
+		}
+	}
 }
 
 /**
@@ -33,6 +60,16 @@ $minWidthToGridWidthMap: (
  */
 @mixin pricing-grid-breakpoints-with-sidebar {
 	width: 100%;
+}
+
+@mixin plan-comparison-grid-breakpoints-with-sidebar {
+	width: 100%;
+
+	@each $screenMinWidth, $gridWidth in $planComparisonMinWidthToGridWidthWithSidebarMap {
+		@media ( min-width: #{$screenMinWidth} ) {
+			width: #{$gridWidth};
+		}
+	}
 }
 
 /**
@@ -63,10 +100,18 @@ $minWidthToGridWidthMap: (
 	}
 
 	.plan-features-2023-grid__mobile-view {
-		display: block;
+		display: flex;
 
 		@media ( min-width: $plans-2023-small-breakpoint ) {
 			display: none;
+		}
+	}
+
+	.plan-features-2023-grid__plan-spotlight {
+		display: none;
+
+		@media ( min-width: $plans-2023-small-breakpoint ) {
+			display: block;
 		}
 	}
 }
@@ -96,10 +141,18 @@ $minWidthToGridWidthMap: (
 	}
 
 	.plan-features-2023-grid__mobile-view {
-		display: block;
+		display: flex;
 
 		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
 			display: none;
+		}
+	}
+
+	.plan-features-2023-grid__plan-spotlight {
+		display: none;
+
+		@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
+			display: block;
 		}
 	}
 }
@@ -146,6 +199,20 @@ $minWidthToGridWidthMap: (
 	}
 }
 
+@mixin plans-section-break-medium() {
+	.is-section-plans:not(.is-sidebar-collapsed) & {
+		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
+			@content;
+		}
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@content;
+		}
+	}
+}
+
 /**
  * @see client/my-sites/plans/modernized-layout.tsx
  * This file introduces padding for the header on the plans page
@@ -155,7 +222,7 @@ $minWidthToGridWidthMap: (
  */
 @mixin plans-section-custom-mobile-breakpoint() {
 	.is-section-plans & {
-		@media ( min-width: $custom-mobile-breakpoint ) {
+		@media ( min-width: $plans-2023-small-breakpoint ) {
 			@content;
 		}
 	}

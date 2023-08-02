@@ -1,0 +1,160 @@
+@import "~calypso/blocks/import/style/base";
+@import "../style.scss";
+
+.import__pre-migration.import__import-everything--redesign {
+	max-width: 100%;
+}
+
+.import__pre-migration {
+	padding: 0 rem(20px);
+	max-width: 100%;
+
+	> div {
+		text-align: center;
+		margin: rem(20px) auto rem(40px) auto !important;
+	}
+
+	.pre-migration__form-container {
+		display: flex;
+		flex-wrap: wrap;
+		position: relative;
+		justify-content: center;
+		width: 100%;
+
+		.pre-migration__form {
+			width: 100%;
+			order: 2;
+
+			@include break-medium {
+				width: 450px;
+				order: 1;
+			}
+
+			@include break-large {
+				width: 550px;
+			}
+
+			.credentials-form {
+				margin-top: 0;
+				margin-bottom: rem(20px);
+			}
+		}
+
+		.pre-migration__credentials-help {
+			text-align: left;
+			width: 100%;
+			order: 1;
+			margin-bottom: 1rem;
+
+			@include break-medium {
+				margin-inline-start: rem(40px);
+				width: 220px;
+				order: 2;
+			}
+
+			@include break-large {
+				width: 240px;
+			}
+
+			h3 {
+				font-weight: 500;
+				font-size: 1rem;
+			}
+
+			p {
+				margin-top: 1rem;
+				color: var(--color-text-subtle);
+				font-size: 0.875rem;
+			}
+
+			select {
+				margin-top: 1rem;
+				width: 100%;
+			}
+		}
+	}
+
+	.step-container__content {
+		padding: rem(20px);
+		box-sizing: border-box;
+	}
+
+	.pre-migration__title-container {
+		text-align: center;
+
+		margin: rem(20px) 0 rem(40px) 0 !important;
+
+		@include break-small {
+			margin: rem(36px) auto rem(58px) auto !important;
+		}
+
+		.onboarding-subtitle {
+			margin-bottom: 1.5rem;
+			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		}
+	}
+
+	.pre-migration__error {
+		color: var(--color-error);
+		margin-bottom: rem(40px);
+		font-size: 0.875rem;
+		text-align: center;
+	}
+
+	.pre-migration__credentials {
+		button {
+			vertical-align: baseline;
+			font-size: 1rem;
+		}
+	}
+
+	.pre-migration__credentials-help-text a {
+		color: var(--studio-gray-100);
+		text-decoration: underline;
+	}
+
+	/** Override the default styles for the credentials form **/
+	.pre-migration__form form,
+	.pre-migration__credentials-help form {
+		text-align: start;
+
+		label {
+			color: var(--studio-gray-60);
+			font-size: rem(16px);
+		}
+
+		select,
+		input[type="text"],
+		input[type="password"],
+		textarea {
+			border-color: var(--studio-gray-10);
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 0.875rem;
+			/* We need to allow space for the SVG checkmark */
+			padding: 0.875rem calc(0.5rem + 24px) 0.875rem 1rem;
+		}
+
+		*::placeholder {
+			color: var(--studio-gray-30);
+		}
+
+
+		.form-password-input .form-password-input__toggle-visibility {
+			top: 14px;
+		}
+
+		.credentials-form__support-info {
+			margin-bottom: rem(8px);
+		}
+
+		/** Adjust margins to also work well with RTL languages **/
+		.credentials-form__server-address.form-fieldset,
+		.credentials-form__username.form-fieldset {
+			@include break-large {
+				margin: 0;
+				margin-inline-end: rem(16px);
+			}
+		}
+	}
+}

@@ -31,7 +31,6 @@ $brand-display: "SF Pro Display", $sans;
 	background-color: $studio-white;
 	word-break: initial;
 
-
 	&__settings {
 		select {
 			min-height: 30px;
@@ -89,18 +88,17 @@ $brand-display: "SF Pro Display", $sans;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
 		padding: 4px;
-		width: min-content;
+		width: fit-content;
 		margin-bottom: 16px;
 
 		&-label {
 			background: $studio-gray-0;
 			padding: 4px 16px;
-			height: 28px;
 			font-family: $brand-display;
 			font-weight: 500;
 			font-size: 0.875rem;
 			line-height: 20px;
-			border: none;
+			border: 0.5px solid $studio-gray-0;
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 5px;
 			margin: 0;
@@ -229,6 +227,8 @@ $brand-display: "SF Pro Display", $sans;
 		margin: 18px 0;
 		row-gap: 8px;
 		column-gap: 26px;
+		border: none;
+		padding: 0;
 	}
 
 	&__billing-option-input {
@@ -249,7 +249,6 @@ $brand-display: "SF Pro Display", $sans;
 		letter-spacing: -0.15px;
 		color: $studio-gray-60;
 	}
-
 
 	&__detail {
 		flex: 1;

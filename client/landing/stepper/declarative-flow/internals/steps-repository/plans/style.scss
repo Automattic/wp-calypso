@@ -125,48 +125,6 @@
 			text-decoration: underline;
 		}
 
-		.plans-features-main {
-			ul.segmented-control {
-				background-color: #f2f2f2;
-				border-radius: 6px;  /* stylelint-disable-line scales/radii */
-				border-color: var(--studio-gray-5);
-
-				li.segmented-control__item {
-					border: 6px;
-					padding: 2px;
-					&:first-child {
-						margin-right: 5px;
-					}
-					&.is-selected {
-						a.segmented-control__link {
-							padding-top: 6px;
-							padding-bottom: 6px;
-							border: 0.5px solid #0000000a;
-							background-color: var(--studio-white);
-							color: var(--color-text);
-							border-radius: 5px;  /* stylelint-disable-line scales/radii */
-							box-shadow: 0 3px 8px #0000001f, 0 3px 1px #0000000a;
-						}
-					}
-					a.segmented-control__link {
-						border: solid 1px #f2f2f2;
-						border-radius: 5px;  /* stylelint-disable-line scales/radii */
-					}
-				}
-				li.segmented-control__item:not(.is-selected) {
-					a.segmented-control__link {
-						border: solid 1px #f2f2f2;
-						border-radius: 5px;  /* stylelint-disable-line scales/radii */
-						&:hover {
-							background-color: unset !important;
-							border: 1px solid var(--studio-gray-10);
-							border-radius: 5px;  /* stylelint-disable-line scales/radii */
-						}
-					}
-				}
-			}
-		}
-
 		.plans__loading {
 			width: 100%;
 			display: flex;
@@ -174,6 +132,24 @@
 			align-items: center;
 			position: relative;
 		}
+	}
+}
+
+// Onboarding flow
+
+.onboarding-media.plans {
+	.signup-header h1 {
+		display: none;
+	}
+
+	button.button.navigation-link.is-borderless {
+		background: none;
+		border: none;
+		color: var(--studio-gray-100);
+		font-size: 0.875rem;
+		font-weight: 600;
+		padding: 0;
+		text-decoration: none;
 	}
 }
 
@@ -195,3 +171,37 @@
 	}
 }
 
+.start-writing,
+.design-first {
+	#step-header {
+		margin: 0;
+	}
+
+	.plan-features-2023-grid__popular-badge.is-current-plan,
+	.plan-features-2023-grid__popular-badge.is-business-plan {
+		display: none;
+	}
+}
+
+// Override styles for newsletter flow
+.newsletter.plans {
+	.step-container {
+		.step-wrapper__header {
+			.formatted-header {
+				h1.formatted-header__title {
+					font-size: rem(32px); //typography-exception
+					line-height: rem(40px); //typography-exception
+
+					@include break-medium {
+						font-size: rem(44px); //typography-exception
+						line-height: rem(52px); //typography-exception
+					}
+				}
+				.formatted-header__subtitle {
+					font-size: rem(16px);
+					line-height: rem(24px);
+				}
+			}
+		}
+	}
+}

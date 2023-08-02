@@ -7,10 +7,8 @@ export type NavigationControls = {
 	/**
 	 * Call this function if you want to go to the previous step.
 	 *
-	 * @deprecated Avoid this method. Use submit() instead.
-	 * If you need to navigate back and forth between
-	 * stepper screens, consider adding screen(s) to a new
-	 * stepper flow and linking directly between flows/screens.
+	 * Please don't change the type of this function to add parameters. Passing data should strictly happen through the `submit` function.
+	 * See why here: pdDR7T-KR-p2#steps-should-only-submit
 	 */
 	goBack?: () => void;
 
@@ -32,6 +30,7 @@ export type NavigationControls = {
 	 * between flows/screens.
 	 */
 	goToStep?: ( step: string ) => void;
+
 	/**
 	 * Submits the answers provided in the flow
 	 */
@@ -87,7 +86,9 @@ export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	steps?: FlowSteps[ number ][ 'slug' ][]
 ) => NavigationControls;
 
-export type UseAssertConditionsHook = () => AssertConditionResult;
+export type UseAssertConditionsHook< FlowSteps extends StepperStep[] > = (
+	navigate?: Navigate< FlowSteps >
+) => AssertConditionResult;
 
 export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
@@ -104,7 +105,7 @@ export type Flow = {
 	classnames?: string | [ string ];
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
-	useAssertConditions?: UseAssertConditionsHook;
+	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
@@ -120,6 +121,7 @@ export type StepProps = {
 	 */
 	variantSlug?: string;
 	data?: Record< string, unknown >;
+	children?: React.ReactNode;
 };
 
 export type Step = React.FC< StepProps >;

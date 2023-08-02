@@ -1,18 +1,21 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { requestTags } from 'calypso/state/reader/tags/items/actions';
 
-const QueryReaderTag = ( { tag, requestTags: request } ) => {
+const QueryReaderTag = ( { tag } ) => {
+	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const dispatch = useDispatch();
+
 	useEffect( () => {
-		request( tag );
-	}, [ request, tag ] );
+		dispatch( requestTags( tag, locale ) );
+	}, [ dispatch, locale, tag ] );
 	return null;
 };
 
 QueryReaderTag.propTypes = {
-	requestTags: PropTypes.func.isRequired,
 	tag: PropTypes.string.isRequired,
 };
 
-export default connect( null, { requestTags } )( QueryReaderTag );
+export default QueryReaderTag;

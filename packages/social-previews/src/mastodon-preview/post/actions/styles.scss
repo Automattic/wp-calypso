@@ -1,0 +1,40 @@
+@import "../../variables";
+
+.mastodon-preview__post-actions {
+	margin-top: 1rem;
+
+	ul {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		margin: 0;
+		padding: 0;
+
+		list-style-type: none;
+
+		> li {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+
+			margin: 0;
+		}
+	}
+}
+
+.mastodon-preview__post-icon-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	width: 24px;
+	height: 24px;
+}
+
+.mastodon-preview__post-icon-text {
+	color: $mastodon-ui-text-color;
+
+	font-size: 0.75rem;
+	font-weight: 500;
+}

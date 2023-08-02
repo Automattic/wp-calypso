@@ -9,6 +9,6 @@ import type { AppState } from 'calypso/types';
  * @returns true if staging sites has been fetched; otherwise, false.
  */
 const hasFetchedStagingSitesList = ( state: AppState, siteId: number ): boolean =>
-	state.rewind[ siteId ]?.staging?.hasFetchedStagingSitesList || false;
+	state.rewind[ siteId ]?.staging?.stagingSitesList?.hasFetchedStagingSitesList || false;
 
 export default hasFetchedStagingSitesList;

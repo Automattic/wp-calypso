@@ -1,4 +1,5 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 import { EditorPopoverMenuComponent } from './editor-popover-menu-component';
 
 const selectors = {
@@ -11,25 +12,27 @@ export interface DimensionsSettings {
 	margin?: number;
 }
 
-type EditorContext = 'site-styles' | 'block';
-
 /**
  * Represents a dimenstions settings component (used in blocks and site styles).
  */
 export class EditorDimensionsComponent {
+	private page: Page;
+	private editor: EditorComponent;
+
 	// Usually low-level components don't contain other components like this.
 	// In this case however, because the popover is always used whereever this component is,
 	// and tieing it together at a higher level is kind of messy, it makes sense to add it here.
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
-	 * @param {EditorContext} context Whether we're in global styles or a block.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( private page: Page, private editor: Locator, private context: EditorContext ) {
+	constructor( page: Page, editor: EditorComponent ) {
+		this.page = page;
+		this.editor = editor;
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, editor );
 	}
 
@@ -52,7 +55,8 @@ export class EditorDimensionsComponent {
 	 * Reset all of the dimension settings.
 	 */
 	async resetAll(): Promise< void > {
-		const optionsButtonLocator = this.editor.locator( selectors.optionsButton );
+		const editorParent = await this.editor.parent();
+		const optionsButtonLocator = editorParent.locator( selectors.optionsButton );
 		await optionsButtonLocator.click();
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset all' );
 	}
@@ -63,6 +67,7 @@ export class EditorDimensionsComponent {
 	 * @param {number} padding Padding dimension to select.
 	 */
 	private async setPadding( padding: number ): Promise< void > {
-		await this.editor.getByLabel( 'All sides padding' ).fill( padding.toString() );
+		const editorParent = await this.editor.parent();
+		await editorParent.getByLabel( 'All sides padding' ).fill( padding.toString() );
 	}
 }

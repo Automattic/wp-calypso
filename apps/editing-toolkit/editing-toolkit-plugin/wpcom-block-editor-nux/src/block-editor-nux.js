@@ -10,19 +10,29 @@ import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { getQueryArg } from '@wordpress/url';
+import { ShouldShowFirstPostPublishedModalProvider } from '../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
+import { HasSeenSellerCelebrationModalProvider } from '../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
+import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
 import DraftPostModal from './draft-post-modal';
-import PostPublishedModal from './post-published-modal';
+import FirstPostPublishedModal from './first-post-published-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
+import PostPublishedSharingModal from './sharing-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
-	'@wordpress/edit-site'
-);
+let unlock;
+try {
+	unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+		'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+		'@wordpress/edit-site'
+	).unlock;
+} catch ( error ) {
+	// eslint-disable-next-line no-console
+	console.error( 'Error: Unable to get the unlock api. Reason: %s', error );
+}
 
 function WelcomeTour() {
 	const [ showDraftPostModal ] = useState(
@@ -39,15 +49,19 @@ function WelcomeTour() {
 	} = useSelect( ( select ) => {
 		const welcomeGuideStoreSelect = select( 'automattic/wpcom-welcome-guide' );
 		const starterPageLayoutsStoreSelect = select( 'automattic/starter-page-layouts' );
-		const _canvasMode =
-			select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
+		let canvasMode;
+		if ( unlock && select( 'core/edit-site' ) ) {
+			canvasMode =
+				select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
+		}
+
 		return {
 			show: welcomeGuideStoreSelect.isWelcomeGuideShown(),
 			isLoaded: welcomeGuideStoreSelect.isWelcomeGuideStatusLoaded(),
 			variant: welcomeGuideStoreSelect.getWelcomeGuideVariant(),
 			isManuallyOpened: welcomeGuideStoreSelect.isWelcomeGuideManuallyOpened(),
 			isNewPageLayoutModalOpen: starterPageLayoutsStoreSelect?.isOpen(), // Handle the case where SPT is not initalized.
-			siteEditorCanvasMode: _canvasMode,
+			siteEditorCanvasMode: canvasMode,
 		};
 	}, [] );
 
@@ -97,12 +111,17 @@ function WelcomeTour() {
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: () => (
-		<>
-			<WelcomeTour />
-			<PostPublishedModal />
-			<SellerCelebrationModal />
-			<PurchaseNotice />
-			<VideoPressCelebrationModal />
-		</>
+		<HasSeenSellerCelebrationModalProvider>
+			<HasSeenVideoCelebrationModalProvider>
+				<ShouldShowFirstPostPublishedModalProvider>
+					<WelcomeTour />
+					<FirstPostPublishedModal />
+					<PostPublishedSharingModal />
+					<SellerCelebrationModal />
+					<PurchaseNotice />
+					<VideoPressCelebrationModal />
+				</ShouldShowFirstPostPublishedModalProvider>
+			</HasSeenVideoCelebrationModalProvider>
+		</HasSeenSellerCelebrationModalProvider>
 	),
 } );

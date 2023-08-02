@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSelector } from 'calypso/state';
 import {
 	getCurrentPlan,
 	getECommerceTrialDaysLeft,
@@ -67,7 +67,7 @@ const ECommerceTrialBanner = ( props: ECommerceTrialBannerProps ) => {
 									count: eCommerceTrialDaysLeftToDisplay,
 									args: {
 										daysLeft: eCommerceTrialDaysLeftToDisplay,
-										expirationdate: readableExpirationDate,
+										expirationdate: readableExpirationDate as string,
 									},
 								}
 						  ) }

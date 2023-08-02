@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { type as domainType } from 'calypso/lib/domains/constants';
+import { transferStatus, type as domainType } from 'calypso/lib/domains/constants';
 import { isCancelable, isRemovable } from 'calypso/lib/purchases';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -9,6 +9,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import { IAppState } from 'calypso/state/types';
 import DomainInfoCard from '..';
 import type { DomainDeleteInfoCardProps, DomainInfoCardProps } from '../types';
 
@@ -24,7 +25,8 @@ const DomainDeleteInfoCard = ( {
 		isLoadingPurchase ||
 		! purchase ||
 		! domain.currentUserIsOwner ||
-		domain.pendingRegistration
+		domain.pendingRegistration ||
+		domain.transferStatus === transferStatus.PENDING_ASYNC
 	) {
 		return null;
 	}
@@ -85,7 +87,7 @@ const DomainDeleteInfoCard = ( {
 	);
 };
 
-export default connect( ( state, ownProps: DomainInfoCardProps ) => {
+export default connect( ( state: IAppState, ownProps: DomainInfoCardProps ) => {
 	const { subscriptionId } = ownProps.domain;
 	return {
 		purchase: getByPurchaseId( state, Number( subscriptionId ) ),

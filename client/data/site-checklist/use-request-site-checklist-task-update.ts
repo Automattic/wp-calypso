@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import useSiteChecklistTask from './use-site-checklist-task';

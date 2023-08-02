@@ -1,7 +1,7 @@
 import { AnnualHighlightCards } from '@automattic/components';
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import YearNavigation from './year-navigation';

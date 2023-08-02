@@ -5,7 +5,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData } from './types';
-import type { State } from '.';
+import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
@@ -27,10 +27,6 @@ type Language = {
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
-} );
-export const setPatternContent = ( patternContent: string ) => ( {
-	type: 'SET_SITE_PATTERN_CONTENT' as const,
-	patternContent,
 } );
 
 export interface CreateSiteBaseActionParameters {
@@ -305,6 +301,11 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
+export const setSiteGeoAffinity = ( siteGeoAffinity: string ) => ( {
+	type: 'SET_SITE_GEO_AFFINITY' as const,
+	siteGeoAffinity,
+} );
+
 export const setSiteDescription = ( siteDescription: string ) => ( {
 	type: 'SET_SITE_DESCRIPTION' as const,
 	siteDescription,
@@ -450,9 +451,26 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 	domainCartItem,
 } );
 
+export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
+	type: 'SET_DOMAINS_TRANSFER_DATA' as const,
+	bulkDomainsData,
+} );
+
+export const setShouldImportDomainTransferDnsRecords = (
+	shouldImportDomainTransferDnsRecords: boolean
+) => ( {
+	type: 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' as const,
+	shouldImportDomainTransferDnsRecords,
+} );
+
 export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	type: 'SET_HIDE_FREE_PLAN' as const,
 	hideFreePlan,
+} );
+
+export const setHidePlansFeatureComparison = ( hidePlansFeatureComparison: boolean ) => ( {
+	type: 'SET_HIDE_PLANS_FEATURE_COMPARISON' as const,
+	hidePlansFeatureComparison,
 } );
 
 export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
@@ -470,6 +488,11 @@ export const setProfilerData = ( profilerData: ProfilerData ) => ( {
 	profilerData,
 } );
 
+export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
+	type: 'SET_PAID_SUBSCRIBERS' as const,
+	paidSubscribers,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -477,6 +500,8 @@ export type OnboardAction = ReturnType<
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
+	| typeof setDomainsTransferData
+	| typeof setShouldImportDomainTransferDnsRecords
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
@@ -493,8 +518,8 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
-	| typeof setPatternContent
 	| typeof setSiteTitle
+	| typeof setSiteGeoAffinity
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
 	| typeof setAnchorSpotifyUrl
@@ -522,7 +547,9 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setHideFreePlan
+	| typeof setHidePlansFeatureComparison
 	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
+	| typeof setPaidSubscribers
 >;

@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 
@@ -17,20 +17,18 @@ export const useDeploymentStatusQuery = (
 	connectionId: number,
 	options?: UseQueryOptions< DeploymentData >
 ) => {
-	return useQuery< DeploymentData >(
-		[ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'deployment-status' ],
-		(): DeploymentData =>
+	return useQuery< DeploymentData >( {
+		queryKey: [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'deployment-status' ],
+		queryFn: (): DeploymentData =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/github/deployment-status`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			enabled: !! siteId,
-			meta: {
-				persist: false,
-			},
-			...options,
-			refetchInterval: 5000,
-		}
-	);
+		enabled: !! siteId,
+		meta: {
+			persist: false,
+		},
+		...options,
+		refetchInterval: 5000,
+	} );
 };

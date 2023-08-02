@@ -1,12 +1,20 @@
-import { LINK_IN_BIO_DOMAIN_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_DOMAIN_FLOW,
+	START_WRITING_FLOW,
+	CONNECT_DOMAIN_FLOW,
+	NEW_HOSTED_SITE_FLOW,
+	DESIGN_FIRST_FLOW,
+	TRANSFERRING_HOSTED_SITE_FLOW,
+	IMPORT_HOSTED_SITE_FLOW,
+	DOMAIN_TRANSFER,
+	ONBOARDING_PM_FLOW,
+	GOOGLE_TRANSFER,
+} from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
-
-	'anchor-fm-flow': () =>
-		import( /* webpackChunkName: "anchor-fm-flow" */ '../declarative-flow/anchor-fm-flow' ),
 
 	'copy-site': () =>
 		import( /* webpackChunkName: "copy-site-flow" */ '../declarative-flow/copy-site' ),
@@ -72,11 +80,38 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
 
+	blog: () => import( /* webpackChunkName: "blog" */ '../declarative-flow/blog' ),
+
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
-};
 
-availableFlows[ 'plugin-bundle' ] = () =>
-	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+	[ DESIGN_FIRST_FLOW ]: () =>
+		import( /* webpackChunkName: "design-first-flow" */ './design-first' ),
+
+	[ CONNECT_DOMAIN_FLOW ]: () =>
+		import( /* webpackChunkName: "connect-domain" */ '../declarative-flow/connect-domain' ),
+
+	[ NEW_HOSTED_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
+
+	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
+		),
+	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
+
+	[ ONBOARDING_PM_FLOW ]: () =>
+		import( /* webpackChunkName: "new-hosted-site-flow" */ './onboarding-pm' ),
+
+	[ DOMAIN_TRANSFER ]: () =>
+		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
+
+	[ GOOGLE_TRANSFER ]: () =>
+		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
+
+	[ 'plugin-bundle' ]: () =>
+		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
+};
 
 export default availableFlows;

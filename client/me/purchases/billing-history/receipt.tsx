@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { Component, useState, useCallback } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -19,6 +19,7 @@ import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
 import {
@@ -30,7 +31,7 @@ import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billi
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
-	renderTransactionAmount,
+	TransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
@@ -282,7 +283,7 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 			<br />
 			{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
 				args: {
-					vatCountry: vatDetails.country,
+					vatCountry: vatDetails.country ?? '',
 					vatId: vatDetails.id,
 				},
 				comment: 'This is the user-supplied VAT number, format "UK 553557881".',
@@ -311,9 +312,9 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 				<td className="billing-history__receipt-item-name">
 					<span>{ item.variation }</span>
 					<small>({ item.type_localized })</small>
-					{ termLabel ? <em>{ termLabel }</em> : null }
+					{ termLabel && <em>{ termLabel }</em> }
 					<br />
-					<em>{ item.domain }</em>
+					{ item.domain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
@@ -354,7 +355,7 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 								transaction.credit
 							}
 						>
-							{ renderTransactionAmount( transaction, { translate } ) }
+							<TransactionAmount transaction={ transaction } />
 						</td>
 					</tr>
 				</tfoot>
@@ -387,7 +388,7 @@ function EmptyReceiptDetails() {
 	// When the content of the text area is empty, hide the "Billing Details" label for printing.
 	const [ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ] = useState( true );
 	const onChange = useCallback(
-		( e ) => {
+		( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
 			const value = e.target.value.trim();
 			if ( hideDetailsLabelOnPrint && value.length > 0 ) {
 				setHideDetailsLabelOnPrint( false );

@@ -23,4 +23,8 @@ button.button.payment-method-tax-info__edit-button svg.gridicon {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		display: inline-flex;
+	}
 }

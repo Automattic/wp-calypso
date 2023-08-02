@@ -4,29 +4,44 @@ import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 
-const CheckboxTermsWrapper = styled( FormLabel )< { displayErrorMessage: boolean } >`
-	padding: 24px 24px 24px 59px;
-	border: ${ ( props ) =>
-		props.displayErrorMessage ? '3px solid var( --color-error )' : 'initial' };
-	border-radius: ${ ( props ) => ( props.displayErrorMessage ? '3px' : 'initial' ) };
-`;
+const CheckboxTermsWrapper = styled.div`
+	column-gap: 8px;
+	display: grid;
+	grid-template-areas:
+		'checkbox message'
+		'. error-message';
+	grid-template-columns: 16px 1fr;
+	row-gap: 4px;
+	align-items: center;
+	padding: 0;
+	margin: 0;
 
-const StyledFormCheckbox = styled( FormCheckbox )`
-	// Increase specificity with && to avoid form-checkbox overriding the margin
-	// Source: https://stackoverflow.com/a/64486501
-	&& {
-		margin: 8px 0 16px -24px;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 24px 0;
 	}
 `;
 
-const MessageWrapper = styled.div`
+const StyledFormCheckbox = styled( FormCheckbox )`
+	grid-area: checkbox;
+
+	// Increase specificity with && to avoid form-checkbox overriding the margin
+	// Source: https://stackoverflow.com/a/64486501
+	&& {
+		margin: 0;
+	}
+`;
+
+const MessageWrapper = styled.div< { displayErrorMessage: boolean } >`
+	color: ${ ( props ) => ( props.displayErrorMessage ? 'var( --color-error )' : 'inherit' ) };
 	font-size: 12px;
+	grid-area: message;
 	margin-left: 0;
 `;
 
 const ErrorMessage = styled.small`
 	color: var( --color-error );
 	font-weight: normal;
+	grid-area: error-message;
 `;
 
 interface ExternalProps {
@@ -50,17 +65,19 @@ function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }
 	};
 
 	return (
-		<CheckboxTermsWrapper displayErrorMessage={ displayErrorMessage }>
-			<StyledFormCheckbox
-				onChange={ handleChange }
-				onBlur={ () => setTouched( true ) }
-				checked={ isAccepted }
-			/>
-			<MessageWrapper>{ message }</MessageWrapper>
-			{ displayErrorMessage && (
-				<ErrorMessage>{ translate( 'The terms above need to be accepted' ) }</ErrorMessage>
-			) }
-		</CheckboxTermsWrapper>
+		<FormLabel>
+			<CheckboxTermsWrapper>
+				<StyledFormCheckbox
+					onChange={ handleChange }
+					onBlur={ () => setTouched( true ) }
+					checked={ isAccepted }
+				/>
+				<MessageWrapper displayErrorMessage={ displayErrorMessage }>{ message }</MessageWrapper>
+				{ displayErrorMessage && (
+					<ErrorMessage>{ translate( 'The terms above need to be accepted' ) }</ErrorMessage>
+				) }
+			</CheckboxTermsWrapper>
+		</FormLabel>
 	);
 }
 

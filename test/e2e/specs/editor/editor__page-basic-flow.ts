@@ -10,7 +10,6 @@ import {
 	PublishedPostPage,
 	TestAccount,
 	PagesPage,
-	PageTemplateModalComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
@@ -58,21 +57,14 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		// @TODO Consider moving this to EditorPage.
-		editorPage = new EditorPage( page, { target: features.siteType } );
-		await editorPage.waitUntilLoaded();
-
-		const editorWindowLocator = editorPage.getEditorWindowLocator();
-		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindowLocator );
-
-		await pageTemplateModalComponent.selectTemplateCategory( 'About' );
-		await pageTemplateModalComponent.selectTemplate( 'About me' );
+		editorPage = new EditorPage( page );
+		await editorPage.selectTemplateCategory( 'About' );
+		await editorPage.selectTemplate( 'About me' );
 	} );
 
 	it( 'Template content loads into editor', async function () {
-		// @TODO Consider moving this to EditorPage.
-		const editorWindowLocator = editorPage.getEditorWindowLocator();
-		await editorWindowLocator.locator( `h1:text-is("About Me")` ).waitFor();
+		const editorCanvas = await editorPage.getEditorCanvas();
+		await editorCanvas.locator( `h1:text-is("About Me")` ).waitFor();
 	} );
 
 	it( 'Open setting sidebar', async function () {

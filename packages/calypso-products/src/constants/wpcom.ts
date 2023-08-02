@@ -5,6 +5,7 @@ export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
+export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
 export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
@@ -49,6 +50,7 @@ export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_PRO_2_YEARS = 'pro-plan-2y';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
 export const PLAN_ENTERPRISE_GRID_WPCOM = 'plan-enterprise-grid-wpcom'; // Not a real plan; we show the VIP section in the plans grid as part of pdgrnI-1Qp-p2.
+export const PLAN_MIGRATION_TRIAL_MONTHLY = 'wp_bundle_migration_trial_monthly';
 
 export const WPCOM_PLANS = <const>[
 	PLAN_BUSINESS_MONTHLY,
@@ -68,8 +70,9 @@ export const WPCOM_PLANS = <const>[
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_ECOMMERCE_3_YEARS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_FREE,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
@@ -96,6 +99,7 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,

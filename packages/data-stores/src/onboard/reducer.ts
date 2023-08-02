@@ -1,7 +1,12 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
 import type { OnboardAction } from './actions';
-import type { DomainForm, ProfilerData } from './types';
+import type {
+	DomainForm,
+	ProfilerData,
+	DomainTransferNames,
+	DomainTransferAuthCodes,
+} from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
@@ -12,16 +17,6 @@ import type { Reducer } from 'redux';
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
-const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
-		return action.patternContent;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -213,6 +208,16 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return null;
+	}
+	return state;
+};
+
+const siteGeoAffinity: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_GEO_AFFINITY' ) {
+		return action.siteGeoAffinity;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
 	}
 	return state;
 };
@@ -462,6 +467,16 @@ const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action 
 	return state;
 };
 
+const hidePlansFeatureComparison: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HIDE_PLANS_FEATURE_COMPARISON' ) {
+		return action.hidePlansFeatureComparison;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAction > = (
 	state = undefined,
 	action
@@ -509,13 +524,88 @@ export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = 
 	return state;
 };
 
+export const domainTransferNames: Reducer< DomainTransferNames | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_DOMAINS_TRANSFER_DATA' ) {
+		// we don't want to store empty objects
+		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
+			// remove auth codes for safety
+			return Object.entries( action.bulkDomainsData ).reduce(
+				( domainTransferNames, [ key, value ] ) => {
+					domainTransferNames[ key ] = value.domain;
+					return domainTransferNames;
+				},
+				{} as DomainTransferNames
+			);
+		}
+		return undefined;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+/**
+ * A separate reducer for auth codes to avoid persisting sensitive data.
+ */
+export const domainTransferAuthCodes: Reducer<
+	DomainTransferAuthCodes | undefined,
+	OnboardAction
+> = ( state, action ) => {
+	if ( action.type === 'SET_DOMAINS_TRANSFER_DATA' ) {
+		// we don't want to store empty objects
+		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
+			return Object.entries( action.bulkDomainsData ).reduce( ( authCodes, [ key, value ] ) => {
+				authCodes[ key ] = {
+					auth: value.auth,
+					valid: value.valid,
+					rawPrice: value.rawPrice,
+					saleCost: value.saleCost,
+					currencyCode: value.currencyCode,
+				};
+				return authCodes;
+			}, {} as DomainTransferAuthCodes );
+		}
+		return undefined;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+export const shouldImportDomainTransferDnsRecords: Reducer< boolean, OnboardAction > = (
+	state = true,
+	action
+) => {
+	if ( action.type === 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' ) {
+		return action.shouldImportDomainTransferDnsRecords;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return true;
+	}
+	return state;
+};
+
+const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
+		return action.paidSubscribers;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
-	patternContent,
 	domainSearch,
 	domainCategory,
 	domainForm,
@@ -523,12 +613,16 @@ const reducer = combineReducers( {
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	selectedFeatures,
+	domainTransferNames,
+	domainTransferAuthCodes,
+	shouldImportDomainTransferDnsRecords,
 	storeType,
 	selectedFonts,
 	selectedDesign,
 	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
+	siteGeoAffinity,
 	showSignupDialog,
 	planProductId,
 	randomizedDesigns,
@@ -543,6 +637,7 @@ const reducer = combineReducers( {
 	goals,
 	editEmail,
 	hideFreePlan,
+	hidePlansFeatureComparison,
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
@@ -554,6 +649,7 @@ const reducer = combineReducers( {
 	isMigrateFromWp,
 	pluginsToVerify,
 	profilerData,
+	paidSubscribers,
 } );
 
 export type State = ReturnType< typeof reducer >;

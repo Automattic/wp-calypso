@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SiteContent from '../index';
@@ -15,6 +15,11 @@ jest.mock( '@automattic/viewport-react', () => ( {
 	useMobileBreakpoint: () => false,
 	useBreakpoint: () => true,
 } ) );
+
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
+	() => 'span'
+);
 
 describe( '<SiteContent>', () => {
 	nock( 'https://public-api.wordpress.com' )

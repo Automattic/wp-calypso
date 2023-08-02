@@ -1,6 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -9,6 +8,7 @@ import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
 import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
@@ -56,7 +56,7 @@ function SubscribersTeam( props: Props ) {
 				className="people__page-heading"
 				headerText={ translate( 'Users' ) }
 				subHeaderText={ translate(
-					'Invite subscribers and team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
+					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
 					{
 						components: {
 							learnMore: (

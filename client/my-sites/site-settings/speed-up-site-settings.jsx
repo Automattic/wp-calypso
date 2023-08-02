@@ -8,10 +8,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

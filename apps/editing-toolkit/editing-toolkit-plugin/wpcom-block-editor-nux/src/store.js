@@ -120,9 +120,6 @@ const actions = {
 	setUsedPageOrPatternsModal: () => {
 		return { type: 'WPCOM_HAS_USED_PATTERNS_MODAL' };
 	},
-	setShouldShowFirstPostPublishedModal: ( value ) => {
-		return { type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL', value };
-	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
 	resetStore: () => ( {

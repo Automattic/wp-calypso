@@ -1,8 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+
+import './service-description.scss';
 
 class SharingServiceDescription extends Component {
 	static propTypes = {
@@ -31,6 +35,41 @@ class SharingServiceDescription extends Component {
 					{
 						comment: 'Description for Facebook Publicize when no accounts are connected',
 					}
+				);
+			},
+			instagram_business: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate(
+						'Sharing photos to your Instagram account.',
+						'Sharing photos to your Instagram accounts.',
+						{
+							count: this.props.numberOfConnections,
+							comment:
+								'Description for Instagram Publicize when one or more accounts are connected',
+						}
+					);
+				}
+
+				return (
+					<>
+						{ this.props.translate(
+							'Share photos from your site to your Instagram Business account.',
+							{
+								comment: 'Description for Instagram Publicize when no accounts are connected',
+							}
+						) }
+						<InfoPopover className="instagram-business__info">
+							{ this.props.translate(
+								'Instagram requires a business account connected to Facebook in order to work with third party services.'
+							) }
+							<ExternalLink
+								className="instagram-business__help-link"
+								href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
+							>
+								{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</>
 				);
 			},
 			twitter: function () {

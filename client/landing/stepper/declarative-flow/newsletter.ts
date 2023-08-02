@@ -1,8 +1,10 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { updateLaunchpadSettings, UserSelect } from '@automattic/data-stores';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -12,10 +14,10 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
@@ -23,11 +25,23 @@ const newsletter: Flow = {
 		return translate( 'Newsletter' );
 	},
 	useSteps() {
+		const query = useQuery();
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+
 		return [
-			{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+			// Load intro step component only when not coming from the marketing page
+			...( ! isComingFromMarketingPage
+				? [
+						{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+				  ]
+				: [] ),
 			{
 				slug: 'newsletterSetup',
 				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
+			},
+			{
+				slug: 'newsletterGoals',
+				asyncComponent: () => import( './internals/steps-repository/newsletter-goals' ),
 			},
 			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
@@ -49,7 +63,13 @@ const newsletter: Flow = {
 			},
 		];
 	},
-
+	useSideEffect() {
+		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		useEffect( () => {
+			setHidePlansFeatureComparison( true );
+			clearSignupDestinationCookie();
+		}, [] );
+	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const userIsLoggedIn = useSelect(
@@ -58,18 +78,34 @@ const newsletter: Flow = {
 		);
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const query = useQuery();
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+		const isLoadingIntroScreen =
+			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
+
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName,
 		} );
 		setStepProgress( flowProgress );
-		const locale = useLocale();
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }/newsletterSetup`,
+			pageTitle: 'Newsletter',
+		} );
 
-		const getStartUrl = () => {
-			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`;
+		const completeSubscribersTask = async () => {
+			if ( siteSlug ) {
+				await updateLaunchpadSettings( siteSlug, {
+					checklist_statuses: { subscribers_added: true },
+				} );
+			}
 		};
+
+		// Unless showing intro step, send non-logged-in users to account screen.
+		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
+			window.location.assign( logInUrl );
+		}
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -85,18 +121,19 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-			const logInUrl = getStartUrl();
+			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
 				case 'intro':
-					clearSignupDestinationCookie();
-
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
+					return navigate( 'newsletterGoals' );
+
+				case 'newsletterGoals':
 					return navigate( 'domains' );
 
 				case 'domains':
@@ -119,26 +156,23 @@ const newsletter: Flow = {
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-						persistSignupDestination( destination );
+						persistSignupDestination( launchpadUrl );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
-						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
-						);
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( providedDependencies?.siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+							) }?redirect_to=${ launchpadUrl }&signup=1`
 						);
 					}
-					// If the user chooses a free plan, we need to redirect to the subscribers and not checkout.
+
 					return window.location.assign(
-						`/setup/${ flowName }/subscribers?siteSlug=${ providedDependencies?.siteSlug }`
+						`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`
 					);
 
 				case 'subscribers':
+					completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
 		}
@@ -151,9 +185,8 @@ const newsletter: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					return window.location.assign( `/view/${ siteSlug }` );
-
 				default:
-					return navigate( 'intro' );
+					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
 			}
 		};
 

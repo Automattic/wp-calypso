@@ -1,7 +1,6 @@
 import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
@@ -9,6 +8,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import Main from 'calypso/components/main';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
@@ -41,7 +41,7 @@ export default function TermsOfServiceConsent() {
 	const [ checkedTOS, setCheckedTOS ] = useState( false );
 
 	const checkTOS = useCallback(
-		( event ) => {
+		( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setCheckedTOS( event.target.checked );
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_tos_toggle', {

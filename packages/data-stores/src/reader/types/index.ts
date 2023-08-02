@@ -1,3 +1,5 @@
+import { EmailDeliveryFrequency } from '../constants';
+
 export type EmailFormatType = 'html' | 'text';
 
 export type DeliveryWindowDayType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -32,14 +34,14 @@ type SiteSubscriptionMeta = {
 	};
 };
 
-type SiteSubscriptionDeliveryMethods = {
-	email: {
+export type SiteSubscriptionDeliveryMethods = {
+	email?: {
 		send_posts: boolean;
-		send_comments: boolean;
-		post_delivery_frequency: string;
-		date_subscribed: Date;
+		send_comments?: boolean;
+		post_delivery_frequency: EmailDeliveryFrequency;
+		date_subscribed?: Date;
 	};
-	notification: {
+	notification?: {
 		send_posts: boolean;
 	};
 };
@@ -65,19 +67,32 @@ export type SiteSubscription = {
 	site_icon: string;
 	is_owner: boolean;
 	meta: SiteSubscriptionMeta;
+	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
+	isDeleted: boolean;
 };
 
-export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
+export type SiteSubscriptionPage = {
+	subscriptions: SiteSubscription[];
+	total_subscriptions: number;
+};
+
+export type SiteSubscriptionsPages = {
+	pageParams: [];
+	pages: SiteSubscriptionPage[];
+};
 
 export type PostSubscription = {
 	id: string;
 	blog_id: string;
-	subscription_date: Date;
+	date_subscribed: Date;
 	site_id: string;
 	site_title: string;
 	site_icon: string;
 	site_url: string;
 	domain: string;
+	is_wpforteams_site: boolean;
+	is_paid_subscription: boolean;
 	organization_id: number;
 	post_id: number;
 	post_title: string;
@@ -98,7 +113,7 @@ export type PendingSiteSubscription = {
 export type PendingPostSubscription = {
 	id: string;
 	blog_id: string;
-	subscription_date: Date;
+	date_subscribed: Date;
 	site_id: string;
 	site_title: string;
 	site_icon: string;
@@ -120,3 +135,52 @@ export type PendingPostSubscriptionsResult = {
 	pendingPosts: PendingPostSubscription[];
 	totalCount: number;
 };
+
+export type SiteSubscriptionDetails = {
+	ID: string;
+	blog_ID: string;
+	name: string;
+	URL: string;
+	site_icon: string;
+	date_subscribed: Date;
+	subscriber_count: number;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
+	payment_details: SiteSubscriptionPaymentDetails[];
+};
+
+export type SiteSubscriptionPaymentDetails = {
+	ID: string;
+	site_id: string;
+	status: string;
+	start_date: string;
+	end_date: string;
+	renew_interval: string;
+	renewal_price: string;
+	currency: string;
+	product_id: string;
+	title: string;
+};
+
+export type ErrorResponse< Errors = unknown, ErrorData = unknown > = {
+	errors: Errors;
+	error_data: ErrorData;
+};
+
+export type SiteSubscriptionDetailsErrorResponse = ErrorResponse<
+	{
+		invalid_blog?: string[];
+		invalid_user?: string[];
+		subscription_not_found?: string[];
+		unauthorized?: string[];
+	},
+	{
+		invalid_blog?: { status: 404 };
+		invalid_user?: { status: 403 };
+		subscription_not_found?: { status: 404 };
+		unauthorized?: { status: 401 };
+	}
+>;
+
+export type SiteSubscriptionDetailsResponse =
+	| SiteSubscriptionDetails
+	| SiteSubscriptionDetailsErrorResponse;

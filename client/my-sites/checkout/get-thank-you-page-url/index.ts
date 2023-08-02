@@ -323,7 +323,7 @@ export default function getThankYouPageUrl( {
 		return newBlogReceiptUrl;
 	}
 
-	// disable upsell for tailored signup users
+	// disable upsell for given tailored signup users
 	const isTailoredSignup = isTailoredSignupFlow( signupFlowName );
 
 	const redirectUrlForPostCheckoutUpsell =
@@ -544,7 +544,10 @@ function getFallbackDestination( {
 		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
 
 	const marketplacePluginSlugs = marketplaceProducts
-		.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
+		.filter(
+			( { extra } ) =>
+				extra.product_type === 'marketplace_plugin' || extra.product_type === 'saas_plugin'
+		)
 		.map( ( { extra } ) => extra.product_slug );
 
 	const marketplaceThemeSlugs = marketplaceProducts
@@ -554,7 +557,10 @@ function getFallbackDestination( {
 	if ( marketplaceProducts.length > 0 ) {
 		debug( 'site with marketplace products' );
 		return addQueryArgs(
-			{ plugins: marketplacePluginSlugs.join( ',' ), themes: marketplaceThemeSlugs.join( ',' ) },
+			{
+				...( marketplacePluginSlugs.length ? { plugins: marketplacePluginSlugs.join( ',' ) } : {} ),
+				...( marketplaceThemeSlugs.length ? { themes: marketplaceThemeSlugs.join( ',' ) } : {} ),
+			},
 			`/marketplace/thank-you/${ siteSlug }`
 		);
 	}

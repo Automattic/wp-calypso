@@ -5,20 +5,22 @@ import {
 	buildDomainStepForLaunchpadNextSteps,
 	buildDomainStepForProfessionalEmail,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
-import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { useSiteOption } from 'calypso/state/sites/hooks';
 import type {
 	DomainThankYouParams,
 	DomainThankYouProps,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
-const DomainRegistrationThankYouProps = ( {
+const domainRegistrationThankYouProps = ( {
 	domain,
 	email,
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
 	selectedSiteSlug,
+	siteIntent,
+	launchpadScreen,
+	redirectTo,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -32,31 +34,14 @@ const DomainRegistrationThankYouProps = ( {
 		true
 	);
 
-	const siteIntent = useSiteOption( 'site_intent' );
-	const launchpadScreen = useSiteOption( 'launchpad_screen' );
-
 	const launchpadNextSteps = buildDomainStepForLaunchpadNextSteps(
 		siteIntent as string,
 		launchpadScreen as string,
 		selectedSiteSlug,
 		'REGISTRATION',
+		redirectTo,
 		true
 	);
-
-	const createSiteStep = {
-		stepKey: 'domain_registration_whats_next_create-site',
-		stepTitle: translate( 'Add a site' ),
-		stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
-		stepCta: (
-			<FullWidthButton
-				href={ createSiteFromDomainOnly( domain, null ) }
-				busy={ false }
-				disabled={ false }
-			>
-				{ translate( 'Create a site' ) }
-			</FullWidthButton>
-		),
-	};
 
 	const viewDomainsStep = {
 		stepKey: 'domain_registration_whats_next_view_domains',
@@ -90,11 +75,7 @@ const DomainRegistrationThankYouProps = ( {
 				sectionTitle: translate( 'What’s next?' ),
 				nextSteps: launchpadNextSteps
 					? [ launchpadNextSteps ]
-					: [
-							...( professionalEmail ? [ professionalEmail ] : [] ),
-							...( ! selectedSiteSlug ? [ createSiteStep ] : [] ),
-							viewDomainsStep,
-					  ],
+					: [ ...( professionalEmail ? [ professionalEmail ] : [] ), viewDomainsStep ],
 			},
 		],
 		thankYouImage: {
@@ -117,4 +98,4 @@ const DomainRegistrationThankYouProps = ( {
 	return returnProps;
 };
 
-export default DomainRegistrationThankYouProps;
+export default domainRegistrationThankYouProps;

@@ -1,10 +1,10 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryBackupStagingSitesList from 'calypso/components/data/query-backup-staging-sites-list';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -16,11 +16,17 @@ import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewinda
 import accept from 'calypso/lib/accept';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { rewindClone } from 'calypso/state/activity-log/actions';
+import { useDispatch, useSelector } from 'calypso/state';
+import { rewindClone, rewindStagingClone } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import getBackupStagingSites from 'calypso/state/rewind/selectors/get-backup-staging-sites';
+import hasFetchedStagingSitesList from 'calypso/state/rewind/selectors/has-fetched-staging-sites-list';
+import isFetchingStagingSitesList from 'calypso/state/rewind/selectors/is-fetching-staging-sites-list';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -37,6 +43,8 @@ import RewindConfigEditor from '../rewind-flow/rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from '../rewind-flow/rewind-flow-notice';
 import { defaultRewindConfig, RewindConfig } from '../rewind-flow/types';
 import CloneFlowStepProgress from './step-progress';
+import CloneFlowSuggestionSearch from './suggestion-search';
+import type { UseQueryResult } from '@tanstack/react-query';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 import './style.scss';
@@ -44,6 +52,10 @@ import './style.scss';
 interface Props {
 	siteId: number;
 }
+
+type ActivityLogEntry = {
+	activityDate: string;
+};
 
 const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const dispatch = useDispatch();
@@ -60,9 +72,11 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 	const [ userHasSetDestination, setUserHasSetDestination ] = useState< boolean >( false );
 	const [ cloneDestination, setCloneDestination ] = useState< string >( '' );
+	const [ isCloneToStaging, setIsCloneToStaging ] = useState< boolean >( false );
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
 	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
+	const [ showCredentialForm, setShowCredentialForm ] = useState< boolean >( false );
 
 	const activityLogPath = '/activity-log/' + siteSlug;
 	const refreshBackups = useCallback(
@@ -76,10 +90,23 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		return getInProgressBackupForSite( state, siteId );
 	} );
 
-	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
+	// This is the ID which will perform the restore.
+	// For clone restores, it will be the site ID.
+	// For staging restores, it will be the staging/destination site ID.
+	const restoreSiteId = isCloneToStaging ? Number( cloneDestination ) : siteId;
+
+	const rewindState = useSelector( ( state ) => {
+		return getRewindState( state, siteId );
+	} ) as RewindState;
+
+	const stagingSiteRewindState = useSelector( ( state ) => {
+		return getRewindState( state, cloneDestination );
+	} ) as RewindState;
+
 	const cloneRoleCredentials = useSelector( ( state ) => {
 		return getJetpackCredentials( state, siteId, cloneDestination );
 	} );
+
 	const getUrlFromCreds = () => {
 		if ( ! cloneRoleCredentials ) {
 			return '';
@@ -94,10 +121,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	};
 
 	const inProgressRewindStatus = useSelector( ( state ) => {
-		return getInProgressRewindStatus( state, siteId, backupPeriod );
+		return getInProgressRewindStatus( state, restoreSiteId, backupPeriod );
 	} );
 	const { message, percent, currentEntry, status } = useSelector( ( state ) => {
-		return getRestoreProgress( state, siteId ) || ( {} as RestoreProgress );
+		return getRestoreProgress( state, restoreSiteId ) || ( {} as RestoreProgress );
 	} );
 
 	const CredSettings = {
@@ -106,13 +133,65 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		role: 'alternate',
 	};
 
-	const requestClone = useCallback(
-		() =>
-			dispatch(
-				rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
-			),
-		[ dispatch, siteId, backupPeriod, rewindConfig, CredSettings.role ]
+	const stagingSites = useSelector( ( state ) => getBackupStagingSites( state, siteId ) );
+	const isRequestingStagingList = useSelector( ( state ) =>
+		isFetchingStagingSitesList( state, siteId )
 	);
+	const hasFetchedStagingList = useSelector( ( state ) =>
+		hasFetchedStagingSitesList( state, siteId )
+	);
+
+	const isLoadingStagingSites = isRequestingStagingList && ! hasFetchedStagingList;
+
+	const getDestinationUrl = () => {
+		if ( isCloneToStaging ) {
+			return (
+				stagingSites.find( ( site ) => site.blog_id.toString() === cloneDestination )?.siteurl || ''
+			);
+		}
+
+		return getUrlFromCreds();
+	};
+
+	function onAddNewClick() {
+		setShowCredentialForm( true );
+		setIsCloneToStaging( false );
+		dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_new_destination' ) );
+	}
+
+	function onSearchChange( newValue: string, isNavigating: boolean ) {
+		if ( true === isNavigating ) {
+			const selectedSite = stagingSites.find( ( site ) => site.siteurl === newValue );
+			if ( selectedSite ) {
+				setCloneDestination( selectedSite.blog_id.toString() );
+				setUserHasSetDestination( true );
+				setIsCloneToStaging( true );
+				dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site' ) );
+			}
+		}
+	}
+
+	const requestClone = useCallback( () => {
+		if ( isCloneToStaging ) {
+			// If we're cloning to staging, we should use a new staging action
+			return dispatch(
+				rewindStagingClone( siteId, backupPeriod, { types: rewindConfig }, cloneDestination )
+			);
+		}
+
+		return dispatch(
+			rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
+		);
+	}, [
+		isCloneToStaging,
+		dispatch,
+		siteId,
+		backupPeriod,
+		rewindConfig,
+		CredSettings.role,
+		cloneDestination,
+	] );
+
 	const onConfirm = useCallback( () => {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
@@ -129,7 +208,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	);
 
 	const onSetBackupPeriod = useCallback(
-		( period ) => {
+		( period: string ) => {
 			// Grab the selected backup period / rewindId and set it
 			setBackupPeriod( period );
 			setUserHasSetBackupPeriod( true );
@@ -141,13 +220,29 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		},
 		[ moment, gmtOffset, timezone ]
 	);
+	const trackedSetLatestBackupPeriod = useTrackCallback(
+		onSetBackupPeriod,
+		'calypso_jetpack_clone_flow_set_backup_period_latest'
+	);
+	const trackedSetOtherBackupPeriod = useTrackCallback(
+		onSetBackupPeriod,
+		'calypso_jetpack_clone_flow_set_backup_period_other'
+	);
 
 	const loading = rewindState.state === 'uninitialized';
-	const { restoreId } = rewindState.rewind || {};
+
+	const restoreId =
+		( isCloneToStaging
+			? stagingSiteRewindState.rewind?.restoreId
+			: rewindState.rewind?.restoreId ) || null;
 
 	const disableClone = false;
 
-	const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+	const { data: logs } = useRewindableActivityLogQuery(
+		siteId,
+		{},
+		{ enabled: !! siteId }
+	) as UseQueryResult< ActivityLogEntry[] >;
 	const lastBackup = logs && logs.length > 0 ? logs[ 0 ] : undefined;
 
 	// Screen that allows user to add credentials for an alternate restore / clone
@@ -155,18 +250,24 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		<>
 			<CloneFlowStepProgress currentStep="destination" />
 			<h3 className="clone-flow__title">{ translate( 'Set a destination site' ) }</h3>
-			<p className="clone-flow__info">
-				{ translate( 'Input information about the site you want to clone to' ) }
-			</p>
+			<p className="clone-flow__info">{ translate( 'Where do you want to copy this site to?' ) }</p>
 			<div className="clone-flow__advanced-credentials">
-				<AdvancedCredentials
-					action={ CredSettings.action }
-					host={ CredSettings.host }
-					role={ CredSettings.role }
-					onFinishCallback={ () => onSetDestination( CredSettings.role ) }
-					redirectOnFinish={ false }
-					goBackPath={ previousPath }
+				<CloneFlowSuggestionSearch
+					loading={ isLoadingStagingSites }
+					siteSuggestions={ stagingSites }
+					onSearchChange={ onSearchChange }
+					onAddNewClick={ onAddNewClick }
 				/>
+				{ showCredentialForm && (
+					<AdvancedCredentials
+						action={ CredSettings.action }
+						host={ CredSettings.host }
+						role={ CredSettings.role }
+						onFinishCallback={ () => onSetDestination( CredSettings.role ) }
+						redirectOnFinish={ false }
+						goBackPath={ previousPath }
+					/>
+				) }
 			</div>
 		</>
 	);
@@ -175,9 +276,16 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const renderSetBackupPeriod = () => (
 		<>
 			<CloneFlowStepProgress currentStep="clonePoint" />
-			<h3 className="clone-flow__title">{ translate( 'Select a Backup Point to Copy' ) }</h3>
+			<h3 className="clone-flow__title">{ translate( 'Select a point to copy' ) }</h3>
 			<p className="clone-flow__info">
-				{ translate( "Which point in your site's history would you like to copy from?" ) }
+				{ translate( 'What do you want to copy to {{strong}}%(destinationUrl)s{{/strong}}?', {
+					args: {
+						destinationUrl: getDestinationUrl(),
+					},
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</p>
 			<div className="activity-log-v2__content">
 				{ lastBackup && (
@@ -187,16 +295,16 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 							selectedDate={ moment( lastBackup.activityDate ) }
 							lastBackupAttemptOnDate={ undefined }
 							availableActions={ [ 'clone' ] }
-							onClickClone={ onSetBackupPeriod }
+							onClickClone={ trackedSetLatestBackupPeriod }
 						/>
 					</Card>
 				) }
 				<ActivityCardList
-					logs={ logs.slice( 1 ) }
+					logs={ logs?.slice( 1 ) ?? [] }
 					pageSize={ 10 }
 					showFilter={ false }
 					availableActions={ [ 'clone' ] }
-					onClickClone={ onSetBackupPeriod }
+					onClickClone={ trackedSetOtherBackupPeriod }
 				/>
 			</div>
 		</>
@@ -207,10 +315,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<div className="clone-flow__confirmation-popover-heading">{ translate( 'Important!' ) }</div>
 			<div className="clone-flow__confirmation-popover-info">
 				{ translate(
-					'Before continue, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
+					'Before continuing, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
 					{
 						args: {
-							destinationUrl: getUrlFromCreds(),
+							destinationUrl: getDestinationUrl(),
 						},
 						components: {
 							strong: <strong />,
@@ -235,6 +343,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const goBackFromConfirm = () => {
 		setUserHasSetBackupPeriod( false );
+		dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_back_from_configure' ) );
 	};
 
 	// Screen that allows the user to configure which items to clone
@@ -247,7 +356,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					'Select the items you want to copy to {{strong}}%(destinationUrl)s{{/strong}}.',
 					{
 						args: {
-							destinationUrl: getUrlFromCreds(),
+							destinationUrl: getDestinationUrl(),
 						},
 						components: {
 							strong: <strong />,
@@ -323,7 +432,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					{ translate( 'Copying site to %(destinationUrl)s', {
 						args: {
 							backupDisplayDate,
-							destinationUrl: getUrlFromCreds(),
+							destinationUrl: getDestinationUrl(),
 						},
 					} ) }
 				</h3>
@@ -339,7 +448,13 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 						'Jetpack is copying your site. You will be notified when the process is finished in the activity log.'
 					) }
 				</p>
-				<Button className="clone-flow__activity-log-button" href={ activityLogPath }>
+				<Button
+					className="clone-flow__activity-log-button"
+					href={ activityLogPath }
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_in_progress_activity_log' ) )
+					}
+				>
 					{ translate( 'Go to Activity Log' ) }
 				</Button>
 			</Card>
@@ -372,10 +487,22 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 						}
 					) }
 				</p>
-				<Button className="clone-flow__activity-log-button" href={ activityLogPath }>
+				<Button
+					className="clone-flow__activity-log-button"
+					href={ activityLogPath }
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_finished_activity_log' ) )
+					}
+				>
 					{ translate( 'Go to Activity Log' ) }
 				</Button>
-				<Button primary href={ getUrlFromCreds() }>
+				<Button
+					primary
+					href={ getDestinationUrl() }
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_finished_view_site' ) )
+					}
+				>
 					{ translate( 'View your website' ) }
 					<Gridicon icon="external" size={ 18 } />
 				</Button>
@@ -435,8 +562,9 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				<div className="clone-flow__content">
 					<QueryRewindBackups siteId={ siteId } />
 					<QueryRewindState siteId={ siteId } />
+					<QueryBackupStagingSitesList siteId={ siteId } />
 					{ restoreId && 'running' === inProgressRewindStatus && (
-						<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
+						<QueryRewindRestoreStatus siteId={ restoreSiteId } restoreId={ restoreId } />
 					) }
 					{ render() }
 				</div>

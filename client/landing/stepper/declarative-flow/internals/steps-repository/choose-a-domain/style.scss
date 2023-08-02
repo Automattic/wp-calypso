@@ -316,3 +316,46 @@ $videopress-background: #010101;
 		background-color: #646970;
 	}
 }
+
+#choose-a-domain-writer-header {
+	p {
+		text-align: center;
+	}
+
+	button {
+		margin-left: 5px;
+	}
+}
+
+.start-writing,
+.design-first {
+	.register-domain-step {
+		box-shadow: none;
+		background: none;
+	}
+
+	.register-domain-step__next-page-button {
+		padding-bottom: 8px !important;
+		margin: 20px 0;
+	}
+
+	.is-borderless {
+		border: none;
+	}
+
+	.domain-suggestion,
+	.domain-suggestion:hover,
+	.featured-domain-suggestion,
+	.featured-domain-suggestion:hover,
+	.register-domain-step__next-page {
+		background-color: inherit;
+		box-shadow: none;
+		border-top: solid 1px var(--studio-gray-5);
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.has-underline {
+		text-decoration: underline;
+	}
+}

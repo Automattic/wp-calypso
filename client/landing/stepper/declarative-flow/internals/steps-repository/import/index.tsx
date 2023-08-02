@@ -1,12 +1,16 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer, IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
+import {
+	StepContainer,
+	IMPORT_FOCUSED_FLOW,
+	IMPORT_HOSTED_SITE_FLOW,
+} from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
 import CaptureStepRetired from 'calypso/blocks/import/capture-retired';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
+import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
@@ -19,13 +23,34 @@ export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
 	const { navigation, children, stepName, flow } = props;
 	const currentRoute = useCurrentRoute();
+	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
 	const shouldHideBackBtn = currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
-	const skipLabelText =
-		flow === IMPORT_FOCUSED_FLOW ? __( 'Skip to dashboard' ) : __( "I don't have a site address" );
+	const getSkipLabelText = () => {
+		if ( flow === IMPORT_HOSTED_SITE_FLOW ) {
+			return __( 'Create a site' );
+		}
+
+		return flow === IMPORT_FOCUSED_FLOW
+			? __( 'Skip to dashboard' )
+			: __( "I don't have a site address" );
+	};
+
+	const getGoNext = () => {
+		if ( flow === IMPORT_HOSTED_SITE_FLOW ) {
+			return () => window.location.assign( '/setup/new-hosted-site' );
+		}
+
+		return navigation.goNext;
+	};
+
+	useEffect( () => setMigrationConfirmed( false ), [] );
 
 	const shouldHideSkipBtn = () => {
 		switch ( flow ) {
 			case IMPORT_FOCUSED_FLOW:
+				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
+
+			case IMPORT_HOSTED_SITE_FLOW:
 				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
 
 			default:
@@ -45,8 +70,8 @@ export const ImportWrapper: Step = function ( props ) {
 				hideBack={ shouldHideBackBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
-				goNext={ navigation.goNext }
-				skipLabelText={ skipLabelText }
+				goNext={ getGoNext() }
+				skipLabelText={ getSkipLabelText() }
 				isFullLayout={ true }
 				stepContent={ children as ReactElement }
 				recordTracksEvent={ recordTracksEvent }
@@ -56,12 +81,13 @@ export const ImportWrapper: Step = function ( props ) {
 };
 
 const ImportStep: Step = function ImportStep( props ) {
-	const { navigation } = props;
+	const { navigation, flow } = props;
 
 	return (
 		<ImportWrapper { ...props }>
 			{ isEnabledImportLight ? (
 				<CaptureStep
+					disableImportListStep={ IMPORT_HOSTED_SITE_FLOW === flow }
 					goToStep={ ( step, section ) =>
 						navigation.goToStep?.( generateStepPath( step, section ) )
 					}

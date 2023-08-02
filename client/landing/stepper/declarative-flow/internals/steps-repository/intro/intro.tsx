@@ -14,6 +14,7 @@ export interface IntroContent {
 	text?: WPElement | string;
 	secondaryText?: WPElement | string;
 	buttonText: string;
+	secondaryButtonText?: string;
 	modal?: IntroModal;
 }
 
@@ -29,7 +30,7 @@ export interface IntroModal {
 
 const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 	const [ showModal, setShowModal ] = useState( false );
-	const { title, text, buttonText, modal, secondaryText } = introContent;
+	const { title, text, buttonText, modal, secondaryButtonText, secondaryText } = introContent;
 
 	const modalClasses = classNames( 'intro__more-modal', {
 		show: showModal,
@@ -57,6 +58,15 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 					<Button className="intro__button" primary onClick={ onSubmit }>
 						{ buttonText }
 					</Button>
+					{ secondaryButtonText && (
+						<Button
+							className="intro__button-more"
+							href="https://wordpress.com/create-a-course/"
+							transparent
+						>
+							{ secondaryButtonText }
+						</Button>
+					) }
 					{ modal && (
 						<Button className="intro__button-more" transparent onClick={ handleMoreClick }>
 							{ modal.buttonText }

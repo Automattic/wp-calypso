@@ -29,3 +29,6 @@ export const getTopJITM = ( state, messagePath ) => {
 
 	return jitms[ 0 ];
 };
+
+export const isFetchingJITM = ( state, messagePath ) =>
+	get( state, [ 'jitm', 'isFetchingJITM', messagePath + getSelectedSiteId( state ) ], false );

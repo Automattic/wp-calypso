@@ -1,0 +1,67 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.subscriber-profile {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+
+	&.subscriber-profile--compact {
+		.subscriber-profile__user-details {
+			.subscriber-profile__name {
+				font-weight: 600;
+				font-size: $font-code;
+				line-height: rem(22px);
+			}
+
+			.subscriber-profile__email {
+				font-size: $font-body-extra-small;
+				line-height: rem(24px);
+			}
+		}
+
+		.subscriber-profile__user-image {
+			height: 40px;
+			width: 40px;
+			margin-right: 12px;
+		}
+	}
+
+	.subscriber-profile__user-image {
+		height: 56px;
+		width: 56px;
+		border-radius: 50%;
+		margin-right: 16px;
+		flex: 0;
+	}
+
+	.subscriber-profile__user-details {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		max-width: 100%;
+		overflow: hidden;
+		min-width: 0;
+
+		.subscriber-profile__name {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-weight: 500;
+			font-size: $font-title-small;
+			line-height: rem(26px);
+			min-width: 0;
+		}
+
+		.subscriber-profile__email {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-weight: 400;
+			font-size: $font-body;
+			line-height: rem(24px);
+			color: $studio-gray-40;
+			min-width: 0;
+		}
+	}
+}

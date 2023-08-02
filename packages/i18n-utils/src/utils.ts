@@ -5,13 +5,17 @@ import i18n, { getLocaleSlug } from 'i18n-calypso';
 import { find, map, pickBy, includes } from 'lodash';
 
 /**
+ * This regex is defined as a string so that it can be combined with other regexes.
+ *
  * a locale can consist of three component
  * aa: language code
  * -bb: regional code
  * _cc: variant suffix
  * while the language code is mandatory, the other two are optional.
  */
-const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
+export const localeRegexString = '[a-zA-Z]{2,3}(-[a-zA-Z]{2,3})?(_[a-zA-Z]{2,6})?';
+
+const localeOnlyRegex = new RegExp( '^' + localeRegexString + '$' );
 
 export function getPathParts( path: string ) {
 	// Remove trailing slash then split. If there is a trailing slash,
@@ -124,9 +128,9 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
  */
 export function getLanguage( langSlug: string | undefined ): Language | undefined {
 	langSlug = getMappedLanguageSlug( langSlug );
-	if ( langSlug && localeRegex.test( langSlug ) ) {
+	if ( langSlug && localeOnlyRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
-		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
+		// Please see the comment above `localeOnlyRegex` to see why we can split by - or _ and find the parent slug.
 		return ( find( languages, { langSlug } ) ||
 			find( languages, { langSlug: langSlug.split( /[-_]/ )[ 0 ] } ) ) as Language | undefined;
 	}

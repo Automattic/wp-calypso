@@ -22,7 +22,7 @@ import type {
 	ManagedContactDetails,
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, ReactElement } from 'react';
 
 const GridRow = styled.div`
 	display: -ms-grid;
@@ -63,12 +63,14 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
-	const taxRequirements = getCountryTaxRequirements( countriesList, countryCode?.value );
+	const taxRequirements =
+		countriesList.length && countryCode?.value
+			? getCountryTaxRequirements( countriesList, countryCode?.value )
+			: {};
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 
-	const fields: JSX.Element[] = [
+	const fields: ReactElement[] = [
 		<CountrySelectMenu
-			translate={ translate }
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
 				onChange(
 					updateOnChangePayload(
@@ -87,7 +89,7 @@ export default function TaxFields( {
 			} }
 			isError={ countryCode?.isTouched && ! isValid( countryCode ) }
 			isDisabled={ isDisabled }
-			errorMessage={ countryCode?.errors[ 0 ] ?? translate( 'This field is required.' ) }
+			errorMessage={ countryCode?.errors?.[ 0 ] ?? translate( 'This field is required.' ) }
 			currentValue={ countryCode?.value }
 			countriesList={ countriesList }
 		/>,
@@ -122,7 +124,9 @@ export default function TaxFields( {
 				} }
 				autoComplete={ section + ' postal-code' }
 				isError={ postalCode?.isTouched && ! isValid( postalCode ) }
-				errorMessage={ postalCode?.errors[ 0 ] ?? String( translate( 'This field is required.' ) ) }
+				errorMessage={
+					postalCode?.errors?.[ 0 ] ?? String( translate( 'This field is required.' ) )
+				}
 			/>
 		);
 	}
@@ -152,7 +156,7 @@ export default function TaxFields( {
 				} }
 				autoComplete={ section + ' city' }
 				isError={ city?.isTouched && ! isValid( city ) }
-				errorMessage={ city?.errors[ 0 ] ?? String( translate( 'This field is required.' ) ) }
+				errorMessage={ city?.errors?.[ 0 ] ?? String( translate( 'This field is required.' ) ) }
 			/>
 		);
 	}

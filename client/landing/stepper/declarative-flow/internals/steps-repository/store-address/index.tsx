@@ -14,6 +14,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
+import { useComingFromThemeActivationParam } from '../../../../hooks/use-coming-from-theme-activation';
 import { useCountries } from '../../../../hooks/use-countries';
 import SupportCard from './support-card';
 import type { Step } from '../../types';
@@ -48,7 +49,7 @@ const CityZipRow = styled.div`
 `;
 
 const StoreAddress: Step = function StoreAddress( { navigation } ) {
-	const { goNext, submit } = navigation;
+	const { goBack, goNext, submit } = navigation;
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
@@ -71,6 +72,8 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
+
+	const comingFromThemeActivation = useComingFromThemeActivationParam();
 
 	const [ settingChanges, setSettingChanges ] = useState< {
 		[ key: string ]: string;
@@ -257,7 +260,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 						<FormLabel htmlFor="store_postcode">{ __( 'Country / State' ) }</FormLabel>
 						<ComboboxControl
 							value={ getSettingsValue( 'store_country' ) }
-							onChange={ ( value: string | null ) => {
+							onChange={ ( value?: string | null ) => {
 								onChange( 'store_country', value || '' );
 							} }
 							options={ countriesAsOptions }
@@ -312,6 +315,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			stepName="store-address"
 			className={ `is-step-${ intent }` }
 			goNext={ goNext }
+			goBack={ goBack }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
@@ -328,7 +332,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			recordTracksEvent={ recordTracksEvent }
 			stepProgress={ stepProgress }
 			hideSkip
-			hideBack
+			hideBack={ ! comingFromThemeActivation }
 		/>
 	);
 };

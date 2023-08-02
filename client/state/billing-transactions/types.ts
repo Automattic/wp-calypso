@@ -1,8 +1,8 @@
-import type { RawReceiptPurchase } from 'calypso/state/receipts/types';
+import type { Purchase, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface IndividualReceipt {
 	receipt_id: number;
-	purchases: RawReceiptPurchase[];
+	purchases: Purchase[];
 	display_price: string;
 	price_integer: number;
 	price_float: number;
@@ -65,6 +65,8 @@ export interface BillingTransaction {
 	tax_integer: number;
 
 	url: string;
+
+	tax_vendor_info?: TaxVendorInfo;
 }
 
 export interface BillingTransactionItem {

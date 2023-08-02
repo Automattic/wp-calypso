@@ -2,39 +2,35 @@
  * @jest-environment jsdom
  */
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
+import { render, screen, within, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
-import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import CheckoutMain from '../components/checkout-main';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
-	siteId,
 	domainProduct,
 	planWithoutDomain,
-	fetchStripeConfiguration,
+	planWithoutDomainMonthly,
 	mockSetCartEndpointWith,
-	mockGetCartEndpointWith,
 	getActivePersonalPlanDataForType,
-	createTestReduxStore,
 	countryList,
 	getBasicCart,
 	mockMatchMediaOnWindow,
+	mockGetPaymentMethodsEndpoint,
+	mockGetVatInfoEndpoint,
+	mockGetSupportedCountriesEndpoint,
+	mockLogStashEndpoint,
 } from './util';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/* eslint-disable jest/no-conditional-expect */
+import { MockCheckout } from './util/mock-checkout';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
@@ -44,10 +40,16 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( 'calypso/state/notices/actions' );
 
 describe( 'CheckoutMain', () => {
-	let container;
-	let MyCheckout;
+	const initialCart = getBasicCart();
+	const mainCartKey = 123456;
+
+	const mockSetCartEndpoint = mockSetCartEndpointWith( {
+		currency: initialCart.currency,
+		locale: initialCart.locale,
+	} );
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
@@ -55,81 +57,48 @@ describe( 'CheckoutMain', () => {
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
+		( errorNotice as jest.Mock ).mockImplementation( ( value ) => {
+			return {
+				type: 'errorNotice',
+				value,
+			};
+		} );
 		( hasLoadedSiteDomains as jest.Mock ).mockImplementation( () => true );
 		( getDomainsBySiteId as jest.Mock ).mockImplementation( () => [] );
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
 		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
-		container = document.createElement( 'div' );
-		document.body.appendChild( container );
-
-		const initialCart = getBasicCart();
-
-		const mockSetCartEndpoint = mockSetCartEndpointWith( {
-			currency: initialCart.currency,
-			locale: initialCart.locale,
-		} );
-
-		const store = createTestReduxStore();
-		const queryClient = new QueryClient();
-
-		MyCheckout = ( {
-			cartChanges,
-			additionalProps,
-			additionalCartProps,
-			useUndefinedCartKey,
-		}: {
-			cartChanges: Partial< ResponseCart >;
-			additionalProps: Partial< Parameters< typeof CheckoutMain > >;
-			additionalCartProps: Partial< Parameters< typeof ShoppingCartProvider > >;
-			useUndefinedCartKey?: boolean;
-		} ) => {
-			const managerClient = createShoppingCartManagerClient( {
-				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
-				setCart: mockSetCartEndpoint,
-			} );
-			const mainCartKey = 123456;
-			( useCartKey as jest.Mock ).mockImplementation( () =>
-				useUndefinedCartKey ? undefined : mainCartKey
-			);
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
-			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/rest/v1.1/me/transactions/supported-countries' )
-				.reply( 200, countryList );
-			mockMatchMediaOnWindow();
-			return (
-				<ReduxProvider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<ShoppingCartProvider
-							managerClient={ managerClient }
-							options={ {
-								defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
-							} }
-							{ ...additionalCartProps }
-						>
-							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-								<CheckoutMain
-									siteId={ siteId }
-									siteSlug="foo.com"
-									overrideCountryList={ countryList }
-									{ ...additionalProps }
-								/>
-							</StripeHookProvider>
-						</ShoppingCartProvider>
-					</QueryClientProvider>
-				</ReduxProvider>
-			);
-		};
-	} );
-
-	afterEach( () => {
-		document.body.removeChild( container );
-		container = null;
+		mockGetPaymentMethodsEndpoint( [] );
+		mockLogStashEndpoint();
+		mockGetVatInfoEndpoint( {} );
+		mockGetSupportedCountriesEndpoint( countryList );
+		mockMatchMediaOnWindow();
 	} );
 
 	it( 'renders the line items with prices', async () => {
-		render( <MyCheckout />, container );
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+		} );
+	} );
+
+	it( 'renders the line items with prices when logged-out', async () => {
+		const cartChanges = { products: [] };
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				cartChanges={ cartChanges }
+				useUndefinedSiteId
+				additionalProps={ {
+					isLoggedOutCart: true,
+					productAliasFromUrl: 'personal',
+					sitelessCheckoutType: 'jetpack',
+				} }
+			/>
+		);
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'WordPress.com Personal' )
@@ -138,7 +107,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'renders the tax amount', async () => {
-		render( <MyCheckout />, container );
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'Tax' )
@@ -147,7 +116,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'renders the total amount', async () => {
-		render( <MyCheckout />, container );
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'Total' )
@@ -156,23 +125,30 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'renders the checkout summary', async () => {
-		render( <MyCheckout />, container );
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
+		const user = userEvent.setup();
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
-		fireEvent.click( removeProductButton );
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
+		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
@@ -180,15 +156,22 @@ describe( 'CheckoutMain', () => {
 
 	it( 'redirects to the plans page if the cart is empty after removing the last product', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		fireEvent.click( removeProductButton );
+		const user = userEvent.setup();
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
+		await user.click( confirmButton );
 		await waitFor( () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
@@ -196,15 +179,22 @@ describe( 'CheckoutMain', () => {
 
 	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove foo.cash from cart'
 		);
-		fireEvent.click( removeProductButton );
+		const user = userEvent.setup();
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
+		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
@@ -212,7 +202,13 @@ describe( 'CheckoutMain', () => {
 
 	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {
 		const cartChanges = { products: [] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
@@ -222,8 +218,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalled();
@@ -234,8 +234,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			screen
@@ -251,8 +255,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			screen
@@ -268,8 +276,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			screen
@@ -285,13 +297,17 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = {
 			productAliasFromUrl: 'ak_plus_yearly_1',
-			sitelessCheckoutType: 'akismet',
+			sitelessCheckoutType: 'akismet' as SitelessCheckoutType,
 			isNoSiteCart: true,
 		};
 
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 
 		await waitFor( async () => {
@@ -305,13 +321,17 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = {
 			productAliasFromUrl: 'ak_plus_yearly_1,ak_plus_yearly_2',
-			sitelessCheckoutType: 'akismet',
+			sitelessCheckoutType: 'akismet' as SitelessCheckoutType,
 			isNoSiteCart: true,
 		};
 
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 
 		await waitFor( async () => {
@@ -326,8 +346,12 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
 		await act( async () => {
 			render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
+				<MockCheckout
+					initialCart={ initialCart }
+					setCart={ mockSetCartEndpoint }
+					cartChanges={ cartChanges }
+					additionalProps={ additionalProps }
+				/>
 			);
 		} );
 		expect( navigate ).not.toHaveBeenCalled();
@@ -337,8 +361,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			screen
@@ -355,8 +383,12 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
 		await act( async () => {
 			render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
+				<MockCheckout
+					initialCart={ initialCart }
+					setCart={ mockSetCartEndpoint }
+					cartChanges={ cartChanges }
+					additionalProps={ additionalProps }
+				/>
 			);
 		} );
 		expect( navigate ).not.toHaveBeenCalled();
@@ -366,8 +398,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			screen
@@ -386,7 +422,13 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = {
 			productAliasFromUrl: `${ productSlug }:${ domainName }:-q-${ quantity }`,
 		};
-		render( <MyCheckout additionalProps={ additionalProps } />, container );
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				additionalProps={ additionalProps }
+			/>
+		);
 		expect(
 			await screen.findByLabelText(
 				`Google Workspace for '${ domainName }' and quantity '${ quantity }'`
@@ -400,7 +442,13 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = {
 			productAliasFromUrl: `${ productSlug }:-q-${ quantity }`,
 		};
-		render( <MyCheckout additionalProps={ additionalProps } />, container );
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				additionalProps={ additionalProps }
+			/>
+		);
 		expect(
 			await screen.findByLabelText( `Google Workspace for '' and quantity '${ quantity }'` )
 		).toBeInTheDocument();
@@ -411,8 +459,12 @@ describe( 'CheckoutMain', () => {
 		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
 		await act( async () => {
 			render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
+				<MockCheckout
+					initialCart={ initialCart }
+					setCart={ mockSetCartEndpoint }
+					cartChanges={ cartChanges }
+					additionalProps={ additionalProps }
+				/>
 			);
 		} );
 		expect( navigate ).not.toHaveBeenCalled();
@@ -422,8 +474,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			screen
@@ -440,8 +496,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal-bundle', purchaseId: '12345' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			screen
@@ -454,8 +514,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_reg:foo.cash', purchaseId: '12345' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
@@ -467,8 +531,12 @@ describe( 'CheckoutMain', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_map:bar.com', purchaseId: '12345' };
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
@@ -483,14 +551,90 @@ describe( 'CheckoutMain', () => {
 			purchaseId: '12345,54321',
 		};
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
+	} );
+
+	it( 'displays an error and empties the cart when the url has a renewal but no site', async () => {
+		const cartChanges = { products: [ planWithoutDomainMonthly ] };
+		const additionalProps = {
+			productAliasFromUrl: 'personal-bundle',
+			purchaseId: '12345',
+			siteId: 0,
+		};
+
+		( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
+		render(
+			<MockCheckout
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+			/>
+		);
+		await waitFor( async () => {
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+		await waitFor( async () => {
+			expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
+		} );
+
+		// Noticing the error message is a little difficult because we are not
+		// mounting the error display components. Instead, we spy on the
+		// `errorNotice` action creator. However, `CheckoutMain` does not pass the
+		// raw error message string to the action creator; it passes an array of
+		// React components, one of which contains the string. The following code
+		// lets us verify that.
+		expect( errorNotice ).toHaveBeenCalledWith(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					props: expect.objectContaining( {
+						children: expect.stringMatching( /This renewal is invalid/ ),
+					} ),
+				} ),
+			] )
+		);
+	} );
+
+	it( 'adds the product to the cart for a gift renewal', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			productAliasFromUrl: 'personal-bundle',
+			purchaseId: '12345',
+			siteId: 0,
+			siteSlug: 'no-site',
+			couponCode: null,
+			isLoggedOutCart: false,
+			isNoSiteCart: false,
+			isGiftPurchase: true,
+		};
+
+		( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
+		render(
+			<MockCheckout
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+			/>
+		);
+		await waitFor( async () => {
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+		expect( await screen.findByText( /WordPress.com Personal/ ) ).toBeInTheDocument();
+		// There are two versions of the "Gift" label: one shown at small width and one at wide width.
+		expect( ( await screen.findAllByText( 'Gift' ) ).length ).toBeGreaterThan( 0 );
+		expect( errorNotice ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
@@ -501,8 +645,12 @@ describe( 'CheckoutMain', () => {
 			coupon_savings_total_display: '$R10',
 		};
 		render(
-			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-			container
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>
 		);
 		await waitFor( () => {
 			screen
@@ -515,8 +663,9 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
+		( useCartKey as jest.Mock ).mockImplementation( () => undefined );
 		await act( async () => {
-			render( <MyCheckout useUndefinedCartKey={ true } />, container );
+			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );

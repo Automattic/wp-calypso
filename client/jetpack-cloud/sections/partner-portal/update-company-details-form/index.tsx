@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { receivePartner } from 'calypso/state/partner-portal/partner/actions';

@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { useSelector } from 'calypso/state';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import ThankYou, { ThankYouCtaType } from './thank-you';
 

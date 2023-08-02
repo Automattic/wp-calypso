@@ -15,9 +15,11 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementContactsPrivacy,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
+import { IAppState } from 'calypso/state/types';
 import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
@@ -50,15 +52,21 @@ const EditContactInfoPage = ( {
 		}
 
 		const previousPath = domainManagementEdit(
-			selectedSite.slug,
+			selectedSite?.slug,
 			selectedDomainName,
 			currentRoute
 		);
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, currentRoute ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					currentRoute,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
@@ -95,7 +103,7 @@ const EditContactInfoPage = ( {
 			return (
 				<EditContactInfoPrivacyEnabledCard
 					selectedDomainName={ selectedDomainName }
-					selectedSiteSlug={ selectedSite.slug }
+					selectedSiteSlug={ selectedSite?.slug }
 				/>
 			);
 		}
@@ -189,7 +197,7 @@ const EditContactInfoPage = ( {
 	);
 };
 
-export default connect( ( state, ownProps: EditContactInfoPageProps ) => {
+export default connect( ( state: IAppState, ownProps: EditContactInfoPageProps ) => {
 	return {
 		currentRoute: getCurrentRoute( state ),
 		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),

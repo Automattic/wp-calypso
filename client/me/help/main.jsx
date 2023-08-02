@@ -1,5 +1,5 @@
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -18,6 +18,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
+import HelpContactUsFooter from './help-contact-us-footer';
+import HelpContactUsHeader from './help-contact-us-header';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
@@ -126,7 +128,7 @@ class Help extends PureComponent {
 				<CompactCard
 					className="help__support-link"
 					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
-					target="__blank"
+					target="_blank"
 				>
 					<Gridicon icon="video" size={ 36 } />
 					<div className="help__support-link-section">
@@ -142,8 +144,8 @@ class Help extends PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://wpcourses.com/?ref=wpcom-help-more-resources"
-					target="__blank"
+					href="https://wordpress.com/learn/courses?ref=wpcom-help-more-resources"
+					target="_blank"
 				>
 					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
@@ -158,7 +160,7 @@ class Help extends PureComponent {
 				<CompactCard
 					className="help__support-link"
 					href="https://learn.wordpress.com"
-					target="__blank"
+					target="_blank"
 				>
 					<Gridicon icon="list-ordered" size={ 36 } />
 					<div className="help__support-link-section">
@@ -174,33 +176,13 @@ class Help extends PureComponent {
 		</>
 	);
 
-	getContactUs = () => (
-		<>
-			<h2 className="help__section-title">{ this.props.translate( 'Contact Us' ) }</h2>
-			<CompactCard className="help__contact-us-card" href="/help/contact/">
-				<Gridicon icon="help" size={ 36 } />
-				<div className="help__contact-us-section">
-					<h3 className="help__contact-us-title">{ this.props.translate( 'Contact support' ) }</h3>
-					<p className="help__contact-us-content">
-						{ this.props.translate(
-							"Can't find the answer? Drop us a line and we'll lend a hand."
-						) }
-					</p>
-				</div>
-				<Button className="help__contact-us-button">
-					{ this.props.translate( 'Contact support' ) }
-				</Button>
-			</CompactCard>
-		</>
-	);
-
 	getCoursesTeaser = () => {
 		return (
 			<CompactCard
 				className="help__support-link"
 				href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 				onClick={ this.trackCoursesButtonClick }
-				target="__blank"
+				target="_blank"
 			>
 				<Gridicon icon="chat" size={ 36 } />
 				<div className="help__support-link-section">
@@ -218,10 +200,6 @@ class Help extends PureComponent {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 		} );
-	};
-
-	trackContactUsClick = () => {
-		recordTracksEvent( 'calypso_help_header_button_click' );
 	};
 
 	getPlaceholders = () => (
@@ -257,11 +235,7 @@ class Help extends PureComponent {
 						subHeaderText={ translate( 'Get help with your WordPress.com site' ) }
 						align="left"
 					/>
-					<div className="help__contact-us-header-button">
-						<Button onClick={ this.trackContactUsClick } href="/help/contact/">
-							{ translate( 'Contact support' ) }
-						</Button>
-					</div>
+					<HelpContactUsHeader />
 				</div>
 				<HelpSearch onSearch={ this.setIsSearching } />
 				{ ! this.state.isSearching && (
@@ -271,7 +245,7 @@ class Help extends PureComponent {
 						{ this.getSupportLinks() }
 					</div>
 				) }
-				{ this.getContactUs() }
+				<HelpContactUsFooter />
 				<QueryUserPurchases />
 			</Main>
 		);

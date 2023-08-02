@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'calypso/state';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import type { CountryListItem, CountryListItemWithVat } from '@automattic/wpcom-checkout';
@@ -42,4 +42,10 @@ export default function useCountryList(
 	}, [ isListFetched, globalCountryList, reduxDispatch, shouldFetch ] );
 
 	return overrideCountryList ?? countriesList;
+}
+
+export function useTaxName( countryCode: string ): undefined | string {
+	const countryList = useCountryList();
+	const country = countryList.find( ( country ) => country.code === countryCode );
+	return country?.tax_name;
 }

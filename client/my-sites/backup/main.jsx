@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -26,6 +26,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
@@ -37,7 +38,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BackupDatePicker from './backup-date-picker';
-import AgenciesSurveyBanner from './banners/agencies-survey-banner';
 import BackupsMadeRealtimeBanner from './banners/backups-made-realtime-banner';
 import EnableRestoresBanner from './banners/enable-restores-banner';
 import { backupMainPath, backupClonePath } from './paths';
@@ -187,6 +187,7 @@ function BackupStatus( {
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
@@ -215,7 +216,13 @@ function BackupStatus( {
 										'To test your site changes, migrate or keep your data safe in another site'
 									) }
 								>
-									<Button className="backup__clone-button" href={ backupClonePath( siteSlug ) }>
+									<Button
+										className="backup__clone-button"
+										href={ backupClonePath( siteSlug ) }
+										onClick={ () =>
+											dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) )
+										}
+									>
 										{ translate( 'Copy this site' ) }
 									</Button>
 								</Tooltip>
@@ -228,8 +235,6 @@ function BackupStatus( {
 				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
-
-				<AgenciesSurveyBanner />
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />

@@ -39,7 +39,8 @@ export type CardStoreAction =
 	| { type: 'FIELD_VALUE_SET'; payload: { key: string; value: string } }
 	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }
 	| { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET'; payload: boolean }
-	| { type: 'TOUCH_ALL_FIELDS' };
+	| { type: 'TOUCH_ALL_FIELDS' }
+	| { type: 'RESET_FIELDS' };
 
 export type StripeFieldChangeInput =
 	| {

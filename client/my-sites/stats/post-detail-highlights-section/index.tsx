@@ -1,10 +1,9 @@
-import config from '@automattic/calypso-config';
 import { Card, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -67,7 +66,9 @@ export default function PostDetailHighlightsSection( {
 
 	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
 	// isWPcomSite: The Newsletter Stats is only covering `WPCOM sites` for now.
-	const isEmailTabsAvailable = config.isEnabled( 'newsletter/stats' ) && postId > 0 && isWPcomSite;
+	// TODO: remove the (post?.date && new Date(post?.date) >= new Date("2023-05-30")) check when the Newsletter Stats data is backfilled.
+	const isEmailTabsAvailable =
+		postId > 0 && isWPcomSite && post?.date && new Date( post?.date ) >= new Date( '2023-05-30' );
 
 	return (
 		<div className="stats__post-detail-highlights-section">

@@ -53,7 +53,7 @@ describe( `Editor: Advanced Post Flow`, function () {
 		} );
 
 		it( 'Enter post title', async function () {
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page );
 			await editorPage.enterTitle( postTitle );
 		} );
 

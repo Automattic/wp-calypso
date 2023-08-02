@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import Notice from 'calypso/components/notice';
+import { useDispatch, useSelector } from 'calypso/state';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { getPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { ProductInfo } from '../types';
@@ -12,29 +12,26 @@ export default function SiteAddLicenseNotification() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const licenseInfo = useSelector( getPurchasedLicense );
+	const licensesAdded = useSelector( getPurchasedLicense );
 
-	const dismissBanner = useCallback( () => {
-		dispatch( setPurchasedLicense() );
-	}, [ dispatch ] );
-
+	// Dismiss the banner once this component unloads
 	useEffect( () => {
 		return () => {
-			dismissBanner();
+			dispatch( setPurchasedLicense() );
 		};
-	}, [ dismissBanner ] );
+	}, [ dispatch ] );
 
-	if ( ! licenseInfo || ! licenseInfo.selectedSite ) {
+	if ( ! licensesAdded || ! licensesAdded.selectedSite ) {
 		return null;
 	}
 
-	const { selectedSite, selectedProducts } = licenseInfo;
+	const { selectedSite, selectedProducts } = licensesAdded;
 	const assignedLicenses = selectedProducts.filter( ( product ) => product.status === 'fulfilled' );
 	const rejectedLicenses = selectedProducts.filter( ( product ) => product.status === 'rejected' );
 
 	const clearLicenses = ( type: 'fulfilled' | 'rejected' ) => {
 		const license = {
-			...licenseInfo,
+			...licensesAdded,
 			selectedProducts: selectedProducts.filter( ( product ) => product.status !== type ),
 		};
 		dispatch( setPurchasedLicense( license.selectedProducts.length ? license : undefined ) );

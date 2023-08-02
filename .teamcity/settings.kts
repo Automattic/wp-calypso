@@ -42,7 +42,7 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2022.04"
+version = "2023.05"
 
 project {
 
@@ -63,8 +63,7 @@ project {
 		// as supported (even though both TeamCity and chalk support that.)
 		param("env.FORCE_COLOR", "1")
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("JEST_E2E_WORKERS", "100%", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
-		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
+		text("JEST_E2E_WORKERS", "100%", label = "Jest max workers", description = "Number or percent of cores to use when running E2E tests.", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
 		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
@@ -81,9 +80,9 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22", "credentialsJSON:d9abde26-f565-4d21-bdf3-e2e00d3e45ec", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23", "credentialsJSON:873582a4-c421-4647-b901-56c86abf09c8", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_JUN_27_23", "credentialsJSON:7f7a0165-754f-4a52-93ef-c97852cd83e0", display = ParameterDisplay.HIDDEN)
+		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JUN_27_23%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
@@ -92,7 +91,6 @@ project {
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
 
 		// Values related to the WPCOM VCS
-		password("WPCOM_VCS_ROOT_ID", "credentialsJSON:f7437cc0-c8f2-4b10-bdfa-271946bb5f72", display = ParameterDisplay.HIDDEN)
 		password("WPCOM_JETPACK_PLUGIN_PATH", "credentialsJSON:db955a02-2a79-4167-a823-ac4840fd71d7", display = ParameterDisplay.HIDDEN)
 		password("WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH", "credentialsJSON:81683f57-784e-4535-9af0-26212c9e599b", display = ParameterDisplay.HIDDEN)
 	}

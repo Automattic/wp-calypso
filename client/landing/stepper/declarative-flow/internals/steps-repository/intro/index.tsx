@@ -1,9 +1,10 @@
 import { useLocale } from '@automattic/i18n-utils';
 import {
-	NEWSLETTER_FLOW,
 	ECOMMERCE_FLOW,
-	VIDEOPRESS_FLOW,
 	FREE_FLOW,
+	NEWSLETTER_FLOW,
+	SENSEI_FLOW,
+	VIDEOPRESS_FLOW,
 	isLinkInBioFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
@@ -85,11 +86,22 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
-				title: __( 'The Newsletter. Elevated.' ),
+				title: __( 'Write. Grow. Earn. This is Newsletter.' ),
 				text: __(
-					'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com.'
+					'Unlimited subscribers. Everything you need to grow your audience. And the permanence of WordPress.com.'
 				),
-				buttonText: __( 'Launch your Newsletter' ),
+				buttonText: __( 'Launch my newsletter' ),
+			};
+		}
+
+		if ( flowName === SENSEI_FLOW ) {
+			return {
+				title: createInterpolateElement(
+					__( 'You are minutes away from<br />being ready to launch your<br />first course.' ),
+					{ br: <br /> }
+				),
+				buttonText: __( 'Get started' ),
+				secondaryButtonText: __( 'Learn more' ),
 			};
 		}
 
@@ -121,7 +133,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		return {
 			title: createInterpolateElement(
-				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
+				__( 'You’re 3 minutes away from<br />a launch-ready newsletter. ' ),
 				{ br: <br /> }
 			),
 			buttonText: __( 'Get started' ),
@@ -146,8 +158,9 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
+			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
+			showSenseiPowered={ flow === SENSEI_FLOW }
 			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);

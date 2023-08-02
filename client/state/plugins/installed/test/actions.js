@@ -53,7 +53,14 @@ import {
 	removePlugin,
 	handleDispatchSuccessCallback,
 } from '../actions';
-import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
+import {
+	akismet,
+	akismetWithSites,
+	helloDolly,
+	jetpack,
+	jetpackWithSites,
+	jetpackUpdated,
+} from './fixtures/plugins';
 
 describe( 'actions', () => {
 	const spy = jest.fn();
@@ -79,7 +86,7 @@ describe( 'actions', () => {
 		spy.mockClear();
 	} );
 
-	describe( '#fetchAllSitePlugins()', () => {
+	describe( '#fetchAllPlugins()', () => {
 		describe( 'success', () => {
 			beforeAll( () => {
 				nock( 'https://public-api.wordpress.com:443' )
@@ -250,7 +257,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			activatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
+			activatePlugin( 2916284, {
+				...akismetWithSites,
+				sites: { [ 2916284 ]: { active: false } },
+			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_ACTIVATE_REQUEST,
@@ -261,18 +271,29 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin activate request success action when request completes', async () => {
-			await activatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
+			await activatePlugin( 2916284, {
+				...akismetWithSites,
+				sites: { [ 2916284 ]: { active: false } },
+			} )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 				action: ACTIVATE_PLUGIN,
 				siteId: 2916284,
 				pluginId: 'akismet/akismet',
-				data: { ...akismet, active: true, log: [ 'Plugin activated.' ] },
+				data: {
+					...akismet,
+					active: true,
+					log: [ 'Plugin activated.' ],
+				},
 			} );
 		} );
 
 		test( 'should dispatch fail action when request fails', async () => {
-			await activatePlugin( 2916284, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
+			await activatePlugin( 2916284, {
+				slug: 'fake',
+				id: 'fake/fake',
+				sites: { [ 2916284 ]: { active: false } },
+			} )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_ACTIVATE_REQUEST_FAILURE,
 				action: ACTIVATE_PLUGIN,
@@ -301,10 +322,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet', active: true } )(
-				spy,
-				getState
-			);
+			deactivatePlugin( 2916284, akismetWithSites )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST,
@@ -315,10 +333,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin deactivate request success action when request completes', async () => {
-			await deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet', active: true } )(
-				spy,
-				getState
-			);
+			await deactivatePlugin( 2916284, akismetWithSites )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
 				action: DEACTIVATE_PLUGIN,
@@ -369,10 +384,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack', update: {} } )(
-				spy,
-				getState
-			);
+			updatePlugin( site.ID, jetpackWithSites )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_UPDATE_REQUEST,
@@ -383,11 +395,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin update request success action when request completes', () => {
-			const response = updatePlugin( site.ID, {
-				slug: 'jetpack',
-				id: 'jetpack/jetpack',
-				update: {},
-			} )( spy, getState );
+			const response = updatePlugin( site.ID, jetpackWithSites )( spy, getState );
 			return response.then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: PLUGIN_UPDATE_REQUEST_SUCCESS,
@@ -400,11 +408,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch site update action when request completes', () => {
-			const response = updatePlugin( site.ID, {
-				slug: 'jetpack',
-				id: 'jetpack/jetpack',
-				update: {},
-			} )( spy, getState );
+			const response = updatePlugin( site.ID, jetpackWithSites )( spy, getState );
 			return response.then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_PLUGIN_UPDATED,
@@ -430,10 +434,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch site update actions when plugin already up-to-date', async () => {
-			await updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack', update: true } )(
-				spy,
-				getState
-			);
+			await updatePlugin( site.ID, jetpackWithSites )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_UPDATE_REQUEST_SUCCESS,
@@ -477,10 +478,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			enableAutoupdatePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )(
-				spy,
-				getState
-			);
+			enableAutoupdatePlugin( site.ID, {
+				...akismetWithSites,
+				sites: { [ 2916284 ]: { autoupdate: false } },
+			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST,
@@ -492,8 +493,8 @@ describe( 'actions', () => {
 
 		test( 'should dispatch plugin enable autoupdate request success action when request completes', async () => {
 			await enableAutoupdatePlugin( site.ID, {
-				slug: 'akismet',
-				id: 'akismet/akismet',
+				...akismetWithSites,
+				sites: { [ 2916284 ]: { autoupdate: false } },
 			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -519,9 +520,8 @@ describe( 'actions', () => {
 
 		test( 'should dispatch plugin update request', async () => {
 			await enableAutoupdatePlugin( site.ID, {
-				slug: 'jetpack',
-				id: 'jetpack/jetpack',
-				update: {},
+				...jetpackWithSites,
+				sites: { [ 2916284 ]: { autoupdate: false } },
 			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -561,11 +561,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			disableAutoupdatePlugin( site.ID, {
-				slug: 'akismet',
-				id: 'akismet/akismet',
-				autoupdate: true,
-			} )( spy, getState );
+			disableAutoupdatePlugin( site.ID, akismetWithSites )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST,
@@ -576,11 +572,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin disable autoupdate request success action when request completes', async () => {
-			await disableAutoupdatePlugin( site.ID, {
-				slug: 'akismet',
-				id: 'akismet/akismet',
-				autoupdate: true,
-			} )( spy, getState );
+			await disableAutoupdatePlugin( site.ID, akismetWithSites )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
@@ -715,7 +707,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
+			removePlugin( site.ID, akismetWithSites )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_REMOVE_REQUEST,
@@ -726,7 +718,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin remove request success action when request completes', async () => {
-			await removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
+			await removePlugin( site.ID, akismetWithSites )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_REMOVE_REQUEST_SUCCESS,

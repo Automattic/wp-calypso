@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {

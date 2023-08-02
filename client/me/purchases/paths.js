@@ -28,6 +28,16 @@ export function managePurchase( siteName, purchaseId ) {
 	return purchasesRoot + `/${ siteName }/${ purchaseId }`;
 }
 
+export function managePurchaseByOwnership( ownershipId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof ownershipId ) {
+			throw new Error( 'ownershipId must be provided' );
+		}
+	}
+
+	return '/me/purchases-by-owner/' + ownershipId;
+}
+
 export function cancelPurchase( siteName, purchaseId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {

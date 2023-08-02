@@ -22,7 +22,6 @@ const CheckIcon = () => <img className="checkmark-icon" src={ Checkmark } alt=""
 
 const allChecked: ComparisonDataItem[ 'features' ][ number ][ 'info' ] = {
 	FREE: { content: <CheckIcon /> },
-	BACKUP: { content: <CheckIcon /> },
 	SECURITY: { content: <CheckIcon /> },
 	COMPLETE: { content: <CheckIcon /> },
 };
@@ -43,20 +42,6 @@ export const useComparisonData = () => {
 						icon: BackupIcon,
 						url: links.backup,
 						info: {
-							BACKUP: {
-								highlight: true,
-								content: (
-									<>
-										{ translate( 'Real-time backups' ) }
-										<br data-screen="desktop" />
-										<span data-screen="mobile"> - </span>
-										{ translate( '%(amount)s storage', {
-											args: { amount: '10GB' },
-											comment: '%s is a storage amount like 1TB or 10GB',
-										} ) }
-									</>
-								),
-							},
 							SECURITY: {
 								highlight: true,
 								content: (
@@ -127,10 +112,6 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Last 20 events' ),
 							},
-							BACKUP: {
-								highlight: true,
-								content: translate( '30-day archive' ),
-							},
 							SECURITY: {
 								highlight: true,
 								content: translate( '30-day archive' ),
@@ -193,9 +174,6 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Manual Critical CSS' ),
 							},
-							BACKUP: {
-								content: translate( 'Manual Critical CSS' ),
-							},
 							SECURITY: {
 								content: translate( 'Manual Critical CSS' ),
 							},
@@ -212,9 +190,6 @@ export const useComparisonData = () => {
 						url: links.videopress,
 						info: {
 							FREE: {
-								content: translate( '1 video (Up to 1GB)' ),
-							},
-							BACKUP: {
 								content: translate( '1 video (Up to 1GB)' ),
 							},
 							SECURITY: {
@@ -262,9 +237,6 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Free' ),
 							},
-							BACKUP: {
-								content: translate( 'Free' ),
-							},
 							SECURITY: {
 								content: translate( 'Free' ),
 							},
@@ -281,9 +253,6 @@ export const useComparisonData = () => {
 						icon: SocialIcon,
 						info: {
 							FREE: {
-								content: translate( 'Social Free' ),
-							},
-							BACKUP: {
 								content: translate( 'Social Free' ),
 							},
 							SECURITY: {
@@ -307,15 +276,6 @@ export const useComparisonData = () => {
 						id: 'ad_network',
 						name: translate( 'Ad network' ),
 						url: links.ad_network,
-						info: {
-							SECURITY: { content: <CheckIcon /> },
-							COMPLETE: { content: <CheckIcon /> },
-						},
-					},
-					{
-						id: 'google_analytics',
-						name: translate( 'Google Analytics integration' ),
-						url: links.google_analytics,
 						info: {
 							SECURITY: { content: <CheckIcon /> },
 							COMPLETE: { content: <CheckIcon /> },
@@ -350,7 +310,6 @@ export const useComparisonData = () => {
 						url: links.themes,
 						info: {
 							FREE: { content: translate( 'Starter Themes' ) },
-							BACKUP: { content: translate( 'Starter Themes' ) },
 							SECURITY: { content: translate( 'Starter Themes' ) },
 							COMPLETE: { content: translate( 'Starter Themes' ) },
 						},
@@ -391,7 +350,6 @@ export const useComparisonData = () => {
 						name: translate( 'Priority support' ),
 						url: links.priority_support,
 						info: {
-							BACKUP: { content: <CheckIcon /> },
 							SECURITY: { content: <CheckIcon /> },
 							COMPLETE: { content: <CheckIcon /> },
 						},

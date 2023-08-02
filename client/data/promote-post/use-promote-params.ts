@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import { useRouteModal } from 'calypso/lib/route-modal';
+import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 

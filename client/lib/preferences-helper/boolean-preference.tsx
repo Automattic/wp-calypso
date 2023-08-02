@@ -1,5 +1,5 @@
 import { FunctionComponent, ChangeEventHandler, useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 
 interface Props {

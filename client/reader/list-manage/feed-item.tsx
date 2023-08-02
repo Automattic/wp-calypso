@@ -3,10 +3,10 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { addReaderListFeed, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';

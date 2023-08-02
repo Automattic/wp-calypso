@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { GlobalStylesProvider } from '@automattic/global-styles';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
@@ -9,7 +8,7 @@ import StepperLoader from '../../components/stepper-loader';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const withGlobalStylesProvider = createHigherOrderComponent(
-	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps > ) => {
+	< OuterProps extends object >( InnerComponent: React.ComponentType< OuterProps > ) => {
 		return ( props: OuterProps ) => {
 			const selectedDesign = useSelect(
 				( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -22,10 +21,6 @@ const withGlobalStylesProvider = createHigherOrderComponent(
 
 			if ( ! siteSlugOrId || ! stylesheet ) {
 				return <StepperLoader />;
-			}
-
-			if ( ! isEnabled( 'pattern-assembler/color-and-fonts' ) ) {
-				return <InnerComponent { ...props } />;
 			}
 
 			// TODO: We might need to lazy load the GlobalStylesProvider

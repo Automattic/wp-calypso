@@ -105,9 +105,8 @@ export class CommentsComponent {
 			// See the like() method for info on the following method call.
 			await waitForWPWidgetsIfNecessary( this.page );
 
-			const likeButtonFrame = this.page
-				.frameLocator( `iframe[name^="like-comment-frame"]:below(:text("${ comment }"))` )
-				.first();
+			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
+			const likeButtonFrame = commentContent.frameLocator( "iframe[name^='like-comment-frame']" );
 
 			unlikeButton = likeButtonFrame.getByRole( 'link', { name: 'Liked by you' } );
 			unlikedStatus = likeButtonFrame.getByRole( 'link', { name: 'Like' } );
@@ -119,7 +118,6 @@ export class CommentsComponent {
 		}
 
 		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
-		await unlikeButton.waitFor();
 		await unlikeButton.click();
 		await unlikedStatus.waitFor();
 	}

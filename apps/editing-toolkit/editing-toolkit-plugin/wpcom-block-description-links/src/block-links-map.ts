@@ -97,6 +97,8 @@ const blockLinks: { [ key: string ]: string } = {
 
 	'core/comments': 'https://wordpress.com/support/full-site-editing/theme-blocks/comments-block/',
 
+	'core/post-time-to-read':
+		'https://wordpress.com/support/site-editing/theme-blocks/time-to-read-block',
 	/**
 	 * A8C and CO Blocks
 	 */
@@ -193,6 +195,13 @@ export const blockLinksWithVariations: {
 		'group-row': 'https://wordpress.com/support/wordpress-editor/blocks/row-block/',
 		'group-stack': 'https://wordpress.com/support/wordpress-editor/blocks/row-block/',
 	},
+};
+
+export const childrenBlockLinksWithDifferentUrl: { [ key: string ]: string } = {
+	/**
+	 * Core Blocks
+	 */
+	'core/nextpage': 'https://wordpress.com/support/wordpress-editor/blocks/page-break-block/',
 };
 
 export default blockLinks;

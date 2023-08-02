@@ -1,8 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
 	getPlan,
-	PLAN_WPCOM_PRO,
 	PLAN_PREMIUM,
 	isBusiness,
 	isPremium,
@@ -17,15 +15,15 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getProductBySlug, getProductCost } from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -147,10 +145,6 @@ const CTASectionWrapper = styled.div`
 	margin: 2rem 0;
 `;
 
-const LinkButton = styled( Button )`
-	font-size: 1rem;
-`;
-
 const StepContainer = styled.div`
 	display: flex;
 	gap: 20px;
@@ -238,14 +232,22 @@ export default function DIFMLanding( {
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
 
+	const planObject = getPlan( PLAN_PREMIUM );
+	const planTitle = planObject?.getTitle();
+	const planCostInteger = useSelector( ( state ) => getProductCost( state, PLAN_PREMIUM ) );
+
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
 	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const hasPriceDataLoaded = productCost && extraPageCost && currencyCode;
+	const hasPriceDataLoaded = productCost && extraPageCost && planCostInteger && currencyCode;
 
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
+		: '';
+
+	const planCost = hasPriceDataLoaded
+		? formatCurrency( planCostInteger, currencyCode, { stripZeros: true } )
 		: '';
 
 	const extraPageDisplayCost = hasPriceDataLoaded
@@ -269,10 +271,6 @@ export default function DIFMLanding( {
 			} );
 		}
 	}, [ isFAQSectionOpen ] );
-
-	const planTitle = isEnabled( 'plans/pro-plan' )
-		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
-		: getPlan( PLAN_PREMIUM )?.getTitle();
 
 	const headerText = translate(
 		'Let us build your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
@@ -312,7 +310,7 @@ export default function DIFMLanding( {
 				'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 				{
 					args: {
-						plan: planTitle,
+						plan: planTitle ?? '',
 						freePages: 5,
 					},
 					components: {
@@ -368,9 +366,7 @@ export default function DIFMLanding( {
 						) }
 					</p>
 					<CTASectionWrapper>
-						<NextButton onClick={ onSubmit } isPrimary={ true }>
-							{ translate( 'Get started' ) }
-						</NextButton>
+						<NextButton onClick={ onSubmit }>{ translate( 'Get started' ) }</NextButton>
 					</CTASectionWrapper>
 				</ContentSection>
 				<ImageSection>
@@ -397,112 +393,37 @@ export default function DIFMLanding( {
 						<FoldableFAQ
 							id="faq-1"
 							expanded={ true }
-							question={ translate( 'What is Built By WordPress.com Express?' ) }
+							question={ translate( 'What is Built By WordPress.com Express, and who is it for?' ) }
 						>
 							<p>
 								{ translate(
-									'This service was created for customers who would like to hire a professional to set up their website. Our professional builders have expert knowledge of the WordPress editor, themes, and available blocks; they take advantage of all the best options for your new site build. Once you’ve provided us with your content, we’ll create custom layouts for each page of your website and add your content to each of them. You will receive an email with a link to your finished website within 4 business days. You can then edit all of the content of the site using the WordPress editor. Add as many new pages or posts as you need, and contact WordPress.com support with any questions regarding how to edit or further customize your new site!'
+									'Our website-building service is for anyone who wants a polished website fast: small businesses, personal websites, bloggers, clubs or organizations, and more. ' +
+										"Just answer a few questions, submit your content, and we'll handle the rest. " +
+										"Click the button above to start, and you'll receive your customized 5-page site within 4 business days!"
 								) }
 							</p>
 						</FoldableFAQ>
-						<FoldableFAQ id="faq-2" question={ translate( 'How do I get started?' ) }>
-							<ul>
-								<li>
-									{ translate( 'Click {{a}}Get started{{/a}} to begin.', {
-										components: {
-											a: <LinkButton isLink={ true } onClick={ onSubmit } />,
-										},
-									} ) }
-								</li>
-								<li>
-									{ translate(
-										'Submit your business information and optionally add your social media profiles.'
-									) }
-								</li>
-								<li>
-									{ translate(
-										'Select your design from our catalog of professionally designed themes, or select {{b}}Let us choose{{/b}} to let our professionals select the best design for your site (recommended).',
-										{
-											components: {
-												b: <b />,
-											},
-										}
-									) }
-								</li>
-								<li>
-									{ translate(
-										'Select up to five page types to use for your new site (About, Services, Contact, etc).'
-									) }
-								</li>
-								<li>{ translate( 'Complete the purchase at Checkout.' ) }</li>
-								<li>
-									{ translate(
-										'Submit the content for your new website, adding text and images (optional) for each page. You can always edit this content on the site later using the WordPress editor.'
-									) }
-								</li>
-								<li>
-									{ translate( 'Receive your finished website in 4 business days or less!' ) }
-								</li>
-							</ul>
-						</FoldableFAQ>
-						<FoldableFAQ id="faq-3" question={ translate( 'Who is this service for?' ) }>
-							<ul>
-								<li>{ translate( 'Small business owners looking to get online quickly.' ) }</li>
-								<li>
-									{ translate( 'Bloggers wanting some help with their initial site setup.' ) }
-								</li>
-								<li>{ translate( 'Anyone who could benefit from professional page layouts.' ) }</li>
-							</ul>
-						</FoldableFAQ>
-						<FoldableFAQ id="faq-4" question={ translate( 'How much does the service cost?' ) }>
+						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
 							<p>
 								{ translate(
-									'The service costs %(displayCost)s, plus an additional purchase of the %(planTitle)s hosting plan.',
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, 13 GB of storage, a free domain for one year, and live chat support.',
 									{
 										args: {
 											displayCost,
-											planTitle,
+											planTitle: planTitle ?? '',
+											planCost,
 										},
 									}
 								) }
 							</p>
 						</FoldableFAQ>
-						<FoldableFAQ id="faq-5" question={ translate( 'What does the service include?' ) }>
-							<ul>
-								<li>
-									{ translate(
-										'Custom page layouts for up to 5 pages, using the content you provide during sign up.'
-									) }
-								</li>
-								<li>
-									{ translate(
-										'Theme selection (when the “Let us choose” option is selected during sign up).'
-									) }
-								</li>
-								<li>{ translate( 'Color palette creation, based on your branding.' ) }</li>
-								<li>
-									{ translate(
-										'Your logo (provided by you) added to the site, and creation of a site icon.'
-									) }
-								</li>
-								<li>{ translate( 'Creation of a main navigation menu.' ) }</li>
-								<li>{ translate( 'Creation of a social profiles menu.' ) }</li>
-								<li>{ translate( 'Creation of a contact form.' ) }</li>
-								<li>{ translate( 'Addition of custom CSS (when needed).' ) }</li>
-								<li>
-									{ translate( 'Sourcing of additional professional images (when needed).' ) }
-								</li>
-							</ul>
-						</FoldableFAQ>
 						<FoldableFAQ
-							id="faq-6"
-							question={ translate(
-								'I need more than the included 5 pages. Can I purchase additional pages?'
-							) }
+							id="faq-3"
+							question={ translate( 'Can I purchase additional pages if I need more than five?' ) }
 						>
 							<p>
 								{ translate(
-									'Yes! Additional pages can be purchased for %(extraPageDisplayCost)s each.',
+									'Yes, extra pages can be purchased for %(extraPageDisplayCost)s each.',
 									{
 										args: {
 											extraPageDisplayCost,
@@ -512,27 +433,61 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ
-							id="faq-7"
-							question={ translate( 'What will my finished site look like?' ) }
+							id="faq-4"
+							question={ translate( "What if I don't have enough images or content?" ) }
 						>
 							<p>
 								{ translate(
-									'Your finished site will be built using a WordPress.com theme. The layout of your site will be a mobile-friendly responsive design and the content will adjust to look great on every device. The professional website builder will create the layout of each page based on the content you provide during the signup process. Additional high-quality professional images may be sourced from Pexels, a vast open source library of stock photos, to make sure each page stands out. Custom CSS may be added for further design tweaks.'
+									"Don't worry if you don't have images or content for every page. " +
+										"After checkout, you'll have an option to opt into AI text creation. " +
+										'Our design team can select images and use AI to create your site content, all of which you can edit later using the editor. ' +
+										"If you select the blog page during sign up, we'll even create three blog posts for you to get you started!"
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-5" question={ translate( 'When will you contact me?' ) }>
+							<p>
+								{ translate(
+									'After you check out, you’ll fill out a content upload form that includes any design preferences and reference sites. ' +
+										"While we can't guarantee an exact match, we'll consider all your feedback during site construction, and you'll receive an email when your new site is ready — always within four business days."
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ
+							id="faq-6"
+							question={ translate( 'What will my completed website look like?' ) }
+						>
+							<p>
+								{ translate(
+									'Each website is unique, mobile-friendly, and customized to your brand and content. ' +
+										'With a 97% satisfaction rate, we are confident that you will love your new site, just like hundreds of customers before you. ' +
+										'Additionally, we offer a 14-day refund window, giving you peace of mind.'
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-7" question={ translate( 'How many revisions are included?' ) }>
+							<p>
+								{ translate(
+									'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+										'Furthermore, our Premium plan offers live chat and priority email support if you need assistance.'
 								) }
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ
 							id="faq-8"
-							question={ translate( 'What if I want changes to the finished site?' ) }
+							question={ translate( 'What happens to my existing content?' ) }
 						>
 							<p>
 								{ translate(
-									'Although revisions aren’t included with this service, you will be able to edit all content of the site using the WordPress editor. You will be able to change images, edit text, and also add additional pages and posts. You could even try a new theme for a different look, and you will still have the professionally designed page layouts. Your %(planTitle)s plan comes with access to live chat and priority email support, so you can always contact support if you need help customizing your new site or have questions about this service.',
-									{
-										args: {
-											planTitle,
-										},
-									}
+									'If you choose to use your current WordPress.com site, your existing content will remain untouched. ' +
+										"We'll create new pages with your provided content while applying a new, customized theme. However, we won't edit any existing content on your site's pages."
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-9" question={ translate( 'Can I use my existing domain name?' ) }>
+							<p>
+								{ translate(
+									'Yes, our support team will help you connect your existing domain name to your site after the build is complete.'
 								) }
 							</p>
 						</FoldableFAQ>

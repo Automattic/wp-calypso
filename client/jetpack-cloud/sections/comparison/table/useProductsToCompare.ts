@@ -1,5 +1,4 @@
 import {
-	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_FREE,
@@ -17,11 +16,6 @@ export const useProductsToCompare = () => {
 				id: 'FREE',
 				name: translate( 'Free' ),
 				productSlug: PLAN_JETPACK_FREE,
-			},
-			{
-				id: 'BACKUP',
-				name: translate( 'VaultPress Backup' ),
-				productSlug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 			},
 			{
 				id: 'SECURITY',

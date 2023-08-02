@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 

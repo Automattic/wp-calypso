@@ -1,6 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
@@ -9,6 +8,7 @@ import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useSelector } from 'calypso/state';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,

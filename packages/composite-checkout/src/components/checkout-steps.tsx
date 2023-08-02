@@ -27,7 +27,6 @@ import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
 import { CheckIcon } from './shared-icons';
 import { useCustomPropertyForHeight } from './use-custom-property-for-height';
-import type { Theme } from '../lib/theme';
 import type {
 	CheckoutStepProps,
 	StepCompleteCallback,
@@ -120,6 +119,12 @@ function createCheckoutStepGroupActions(
 		onStateChange();
 	};
 
+	const validateActiveStepNumber = () => {
+		if ( state.activeStepNumber > state.totalSteps ) {
+			state.activeStepNumber = state.totalSteps;
+		}
+	};
+
 	const setTotalSteps = ( stepCount: number ) => {
 		if ( stepCount < 0 ) {
 			throw new Error( `Cannot set total steps to '${ stepCount }' because it is too low` );
@@ -128,6 +133,7 @@ function createCheckoutStepGroupActions(
 			return;
 		}
 		state.totalSteps = stepCount;
+		validateActiveStepNumber();
 		onStateChange();
 	};
 
@@ -200,16 +206,13 @@ const CheckoutWrapper = styled.div`
 `;
 
 export const MainContentWrapper = styled.div`
-	display: flex;
-	flex-direction: column;
 	width: 100%;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		margin: 0 auto 32px;
+		margin: 0 auto;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		align-items: flex-start;
 		flex-direction: row;
 		justify-content: center;
 		max-width: none;
@@ -220,21 +223,12 @@ const CheckoutSummary = styled.div`
 	box-sizing: border-box;
 	margin: 0 auto;
 	width: 100%;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		max-width: 556px;
-	}
+	display: flex;
+	flex-direction: column;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		margin-right: 0;
-		margin-left: 24px;
-		order: 2;
-		width: 328px;
-
-		.rtl & {
-			margin-right: 24px;
-			margin-left: 0;
-		}
+		padding-left: 24px;
+		padding-right: 24px;
 	}
 `;
 
@@ -251,19 +245,7 @@ export const CheckoutSummaryArea = ( {
 	);
 };
 
-export const CheckoutSummaryCard = styled.div`
-	background: ${ ( props ) => props.theme.colors.surface };
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-
-	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		border-bottom: none 0;
-	}
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	}
-`;
+export const CheckoutSummaryCard = styled.div``;
 
 function isElementAStep( el: ReactNode ): boolean {
 	const childStep = el as { type?: { isCheckoutStep?: boolean } };
@@ -340,9 +322,11 @@ interface CheckoutStepsProps {
 function CheckoutStepGroupWrapper( {
 	children,
 	className,
+	loadingContent,
 	store,
 }: PropsWithChildren< {
 	className?: string;
+	loadingContent?: ReactNode;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -371,9 +355,7 @@ function CheckoutStepGroupWrapper( {
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( store.actions.setActiveStepNumber );
 
-	// Note: the composite-checkout class name is also used by FullStory to avoid recording
-	// WordPress.com checkout session activity. If this class name is changed or removed, we
-	// will also need to adjust this FullStory configuration.
+	// WordPress.com checkout session activity.
 	const classNames = joinClasses( [
 		'composite-checkout',
 		...( className ? [ className ] : [] ),
@@ -384,7 +366,7 @@ function CheckoutStepGroupWrapper( {
 		return (
 			<CheckoutWrapper className={ classNames }>
 				<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
-					<LoadingContent />
+					{ loadingContent ? loadingContent : <LoadingContent /> }
 				</MainContentWrapper>
 			</CheckoutWrapper>
 		);
@@ -404,6 +386,7 @@ function CheckoutStepGroupWrapper( {
 export const CheckoutStep = ( {
 	activeStepContent,
 	activeStepFooter,
+	activeStepHeader,
 	completeStepContent,
 	titleContent,
 	stepId,
@@ -490,6 +473,7 @@ export const CheckoutStep = ( {
 			}
 			activeStepContent={
 				<>
+					{ activeStepHeader }
 					{ activeStepContent }
 					{ activeStepFooter }
 				</>
@@ -506,42 +490,33 @@ export const CheckoutStepAreaWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
 	margin: 0 auto;
-	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 
 	&.checkout__step-wrapper--last-step {
 		margin-bottom: var( ${ customPropertyForSubmitButtonHeight }, 100px );
 	}
 
-	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	}
-
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		max-width: 556px;
 		margin-bottom: 0;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin: 0;
-		order: 1;
-		width: 556px;
 	}
 `;
 
 export const SubmitButtonWrapper = styled.div`
-	background: ${ ( props ) => props.theme.colors.background };
-	padding: 24px;
+	background: ${ ( props ) => props.theme.colors.surface };
+	padding: 24px 16px;
 	bottom: 0;
 	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
-	border-top-width: 0;
-	border-top-style: solid;
-	border-top-color: ${ ( props ) => props.theme.colors.borderColorLight };
 
 	.checkout__step-wrapper--last-step & {
-		border-top-width: 1px;
 		position: fixed;
 	}
 
@@ -551,18 +526,22 @@ export const SubmitButtonWrapper = styled.div`
 	}
 
 	.checkout-button {
-		width: calc( 100% - 60px );
 		margin: 0 auto;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 24px 0px 24px 40px;
+
 		.checkout-button {
 			width: 100%;
 		}
 
 		.checkout__step-wrapper--last-step & {
 			position: relative;
-			border: 0;
+		}
+
+		.rtl & {
+			padding: 24px 40px 24px 0px;
 		}
 	}
 `;
@@ -611,7 +590,7 @@ export function CheckoutFormSubmit( {
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const onSubmitButtonLoadError = useCallback(
-		( error ) => onPageLoadError?.( 'submit_button_load', error ),
+		( error: Error ) => onPageLoadError?.( 'submit_button_load', error ),
 		[ onPageLoadError ]
 	);
 
@@ -634,31 +613,29 @@ export function CheckoutFormSubmit( {
 
 const StepWrapper = styled.div< HTMLAttributes< HTMLDivElement > >`
 	position: relative;
-	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 16px;
-
-	&.checkout-step {
-		background: ${ ( props ) => props.theme.colors.background };
-	}
-
-	&.checkout-step.is-active,
-	&.checkout-step.is-complete {
-		background: ${ ( props ) => props.theme.colors.surface };
-	}
+	padding: 24px;
+	width: 100%;
+	box-sizing: border-box;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px;
+		padding: 50px 0 0 0;
 	}
 `;
 
 const StepContentWrapper = styled.div< StepContentWrapperProps & HTMLAttributes< HTMLDivElement > >`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
-	padding-left: 35px;
+	box-sizing: border-box;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-left: 40px;
+	}
 
 	.rtl & {
-		padding-right: 35px;
-		padding-left: 0;
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			padding-left: 0;
+			padding-right: 40px;
+		}
 	}
 `;
 
@@ -670,11 +647,17 @@ const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
-	padding-left: 35px;
+	box-sizing: border-box;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-left: 40px;
+	}
 
 	.rtl & {
-		padding-right: 35px;
-		padding-left: 0;
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			padding-left: 0;
+			padding-right: 40px;
+		}
 	}
 `;
 
@@ -830,9 +813,10 @@ export function useSetStepComplete(): SetStepComplete {
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
 	color: ${ ( props ) =>
-		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor };
-	font-weight: ${ ( props ) =>
-		props.isActive ? props.theme.weights.bold : props.theme.weights.normal };
+		props.isActive || props.isComplete
+			? props.theme.colors.textColorDark
+			: props.theme.colors.textColorDisabled };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
 	flex: 1;
 
@@ -843,12 +827,13 @@ const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement 
 `;
 
 interface StepTitleProps {
+	isComplete?: boolean;
 	isActive?: boolean;
 	fullWidth?: boolean;
 }
 
 const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
-	font-size: 16px;
+	font-size: 20px;
 	display: flex;
 	width: 100%;
 	align-items: center;
@@ -899,7 +884,11 @@ function CheckoutStepHeader( {
 			<Stepper isComplete={ isComplete } isActive={ isActive } id={ id }>
 				{ stepNumber || null }
 			</Stepper>
-			<StepTitle fullWidth={ ! shouldShowEditButton } isActive={ isActive }>
+			<StepTitle
+				fullWidth={ ! shouldShowEditButton }
+				isComplete={ isComplete }
+				isActive={ isActive }
+			>
 				{ title }
 			</StepTitle>
 			{ shouldShowEditButton && (
@@ -918,13 +907,22 @@ function CheckoutStepHeader( {
 
 const StepNumberOuterWrapper = styled.div`
 	position: relative;
-	width: 27px;
-	height: 27px;
+	width: 26px;
+	height: 26px;
 	margin-right: 8px;
 
 	.rtl & {
 		margin-right: 0;
 		margin-left: 8px;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		margin-right: 12px;
+
+		.rtl & {
+			margin-right: 0;
+			margin-left: 12px;
+		}
 	}
 `;
 
@@ -943,15 +941,23 @@ interface StepNumberInnerWrapperProps {
 }
 
 const StepNumber = styled.div< StepNumberProps & HTMLAttributes< HTMLDivElement > >`
-	background: ${ getStepNumberBackgroundColor };
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: ${ ( props ) => props.theme.colors.surface };
 	font-weight: normal;
-	width: 27px;
-	height: 27px;
-	line-height: 27px;
+	font-size: 16px;
+	width: 26px;
+	height: 26px;
 	box-sizing: border-box;
 	text-align: center;
 	border-radius: 50%;
-	color: ${ getStepNumberForegroundColor };
+	border-width: 1px;
+	border-style: solid;
+	border-color: ${ ( props ) =>
+		props.isActive ? props.theme.colors.textColor : props.theme.colors.textColorDisabled };
+	color: ${ ( props ) =>
+		props.isActive ? props.theme.colors.textColor : props.theme.colors.textColorDisabled };
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -976,16 +982,13 @@ interface StepNumberProps {
 
 const StepNumberCompleted = styled( StepNumber )`
 	background: ${ ( props ) => props.theme.colors.success };
+	border-color: ${ ( props ) => props.theme.colors.success };
 	transform: rotateY( 180deg );
 	// Reason: media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		backface-visibility: visible;
 		z-index: ${ ( props ) => ( props.isComplete ? '1' : '0' ) };
-	}
-
-	svg {
-		margin-top: 4px;
 	}
 `;
 
@@ -1036,39 +1039,6 @@ Stepper.propTypes = {
 	isComplete: PropTypes.bool,
 	isActive: PropTypes.bool,
 };
-
-function getStepNumberBackgroundColor( {
-	isComplete,
-	isActive,
-	theme,
-}: {
-	isComplete?: boolean;
-	isActive?: boolean;
-	theme: Theme;
-} ) {
-	if ( isActive ) {
-		return theme.colors.highlight;
-	}
-	if ( isComplete ) {
-		return theme.colors.success;
-	}
-	return theme.colors.upcomingStepBackground;
-}
-
-function getStepNumberForegroundColor( {
-	isComplete,
-	isActive,
-	theme,
-}: {
-	isComplete?: boolean;
-	isActive?: boolean;
-	theme: Theme;
-} ) {
-	if ( isComplete || isActive ) {
-		return theme.colors.surface;
-	}
-	return theme.colors.textColor;
-}
 
 function saveStepNumberToUrl( stepNumber: number ) {
 	if ( ! window?.history || ! window?.location ) {
@@ -1146,14 +1116,16 @@ export function CheckoutStepGroup( {
 	areStepsActive,
 	stepAreaHeader,
 	store,
+	loadingContent,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
+	loadingContent?: ReactNode;
 } > ) {
 	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
-		<CheckoutStepGroupWrapper store={ stepGroupStore }>
+		<CheckoutStepGroupWrapper store={ stepGroupStore } loadingContent={ loadingContent }>
 			{ stepAreaHeader }
 			<CheckoutStepArea>
 				<CheckoutStepGroupInner areStepsActive={ areStepsActive }>

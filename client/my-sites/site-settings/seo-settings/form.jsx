@@ -28,7 +28,7 @@ import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -429,7 +429,7 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 
-	const activePlugins = getPlugins( state, [ siteId ], 'active' );
+	const activePlugins = getFilteredAndSortedPlugins( state, [ siteId ], 'active' );
 	const conflictedSeoPlugin = siteIsJetpack
 		? getFirstConflictingPlugin( activePlugins ) // Pick first one to keep the notice short.
 		: null;

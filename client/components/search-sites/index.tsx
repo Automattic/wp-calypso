@@ -11,10 +11,8 @@ interface SearchSitesProps {
 }
 
 const searchSites = createHigherOrderComponent(
-	< OuterProps extends { sites: SiteDetails[] } >(
-		Component: ComponentType< OuterProps & SearchSitesProps >
-	) => {
-		return ( props: OuterProps ) => {
+	< OuterProps, >( Component: ComponentType< OuterProps & SearchSitesProps > ) => {
+		return ( props: OuterProps & { sites: SiteDetails[] } ) => {
 			const [ term, setTerm ] = useState< string | null >( null );
 
 			const results = useFuzzySearch( {

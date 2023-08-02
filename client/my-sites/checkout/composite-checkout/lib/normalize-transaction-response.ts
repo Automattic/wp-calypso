@@ -1,24 +1,26 @@
 import { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
-const emptyResponse: WPCOMTransactionEndpointResponse = {
+export interface FailedResponse {
+	success: false;
+}
+
+const emptyResponse: FailedResponse = {
 	success: false,
-	error_code: '',
-	error_message: '',
 };
 
 export default function normalizeTransactionResponse(
 	response: unknown
-): WPCOMTransactionEndpointResponse {
+): WPCOMTransactionEndpointResponse | FailedResponse {
 	if ( ! response ) {
 		return emptyResponse;
 	}
 	const transactionResponse = response as WPCOMTransactionEndpointResponse;
 	if (
-		transactionResponse.message ||
+		( 'message' in transactionResponse && transactionResponse.message ) ||
 		transactionResponse.order_id ||
-		transactionResponse.receipt_id ||
-		transactionResponse.purchases ||
-		transactionResponse.failed_purchases ||
+		( 'receipt_id' in transactionResponse && transactionResponse.receipt_id ) ||
+		( 'purchases' in transactionResponse && transactionResponse.purchases ) ||
+		( 'failed_purchases' in transactionResponse && transactionResponse.failed_purchases ) ||
 		transactionResponse.redirect_url
 	) {
 		return transactionResponse;

@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { hasTranslation } from '@wordpress/i18n';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
@@ -139,12 +140,15 @@ export class ReaderSidebar extends Component {
 	};
 
 	renderSidebar() {
-		const { path, translate, teams } = this.props;
+		const { path, translate, teams, locale } = this.props;
+		const recentLabelTranslationReady = hasTranslation( 'Recent' ) || locale.startsWith( 'en' );
 		return (
 			<SidebarMenu>
 				<QueryReaderLists />
 				<QueryReaderTeams />
 				<QueryReaderOrganizations />
+
+				<SidebarSeparator />
 
 				<SidebarItem
 					label={ translate( 'Search' ) }
@@ -158,6 +162,16 @@ export class ReaderSidebar extends Component {
 
 				<SidebarSeparator />
 
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+						'sidebar-streams__following': true,
+					} ) }
+					label={ recentLabelTranslationReady ? translate( 'Recent' ) : translate( 'Following' ) }
+					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+					customIcon={ <ReaderFollowingIcon /> }
+					link="/read"
+				/>
+
 				{ isDiscoverEnabled() && (
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
@@ -169,16 +183,6 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 				) }
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
-						'sidebar-streams__following': true,
-					} ) }
-					label={ translate( 'Following' ) }
-					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-					customIcon={ <ReaderFollowingIcon /> }
-					link="/read"
-				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }

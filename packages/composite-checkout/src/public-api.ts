@@ -30,6 +30,7 @@ import {
 	getDefaultPaymentMethodStep,
 	getDefaultOrderReviewStep,
 } from './components/default-steps';
+import LoadingContent from './components/loading-content';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
@@ -45,6 +46,7 @@ import {
 	usePaymentMethod,
 	usePaymentMethodId,
 	useAllPaymentMethods,
+	useAvailablePaymentMethodIds,
 	useTogglePaymentMethod,
 } from './lib/payment-methods';
 import PaymentLogo from './lib/payment-methods/payment-logo';
@@ -82,6 +84,7 @@ export {
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	InvalidPaymentProcessorResponseError,
+	LoadingContent,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
@@ -101,6 +104,7 @@ export {
 	makeRedirectResponse,
 	makeSuccessResponse,
 	useAllPaymentMethods,
+	useAvailablePaymentMethodIds,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,

@@ -34,7 +34,7 @@ const SitesGridItemExample = () => {
 		<div className={ classnames( container, className ) }>
 			{ sampleSiteData.map( ( site ) => (
 				<div className={ itemClassName } key={ site.ID }>
-					<SitesGridItem site={ site } />
+					<SitesGridItem site={ site } key={ site.ID } />
 				</div>
 			) ) }
 		</div>

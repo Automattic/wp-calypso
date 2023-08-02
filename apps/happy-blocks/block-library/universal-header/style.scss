@@ -3,7 +3,6 @@
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
-$search-icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"%3E%3Cpath d="M9.16667 15.8333C12.8486 15.8333 15.8333 12.8486 15.8333 9.16667C15.8333 5.48477 12.8486 2.5 9.16667 2.5C5.48477 2.5 2.5 5.48477 2.5 9.16667C2.5 12.8486 5.48477 15.8333 9.16667 15.8333Z" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M17.5 17.5L13.875 13.875" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3C/svg%3E';
 $recoleta-font-family: "Recoleta", sans-serif;
 $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
 	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
@@ -57,14 +56,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	cursor: pointer;
 	transition: 0.15s ease-out;
 	transition-property: background, color, opacity;
-}
-
-.x-nav-item--wide.login-link {
-	margin-top: 8px;
-}
-
-.x-nav-item--wide.get-started-btn {
-	margin-top: 10px;
 }
 
 .x-link:hover {
@@ -138,10 +129,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	transform: rotate(-45deg);
 }
 
-.x-icon--logo {
-	left: -1px;
-}
-
 .x-icon--menu {
 	width: 26px;
 	padding-top: 10px;
@@ -162,6 +149,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	opacity: 0;
 	transform-origin: 50% 0;
 	pointer-events: none;
+
+	.logged-in.admin-bar & {
+		top: 77px; //If logged in, we need to take into consideration the adminbar height.
+	}
 }
 
 .x-dropdown-bottom,
@@ -275,17 +266,18 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 .x-nav {
-	z-index: 1000;
-	height: auto;
-	padding: 0 24px;
 	display: flex;
-	color: #fff;
+	justify-content: space-between;
+	height: 57px;
+	padding: 0 24px;
+	color: rgb(var(--lp-color-primary, 255, 255, 255));
 }
 
 .x-nav-list {
 	display: flex;
-	align-items: flex-end;
+	align-items: center;
 	margin: 0;
+	gap: 24px;
 }
 
 .x-nav-list--left {
@@ -293,8 +285,13 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 .x-nav-list--right {
-	margin-left: auto;
 	position: initial;
+	.x-nav-link--primary {
+		border: 1px solid var(--studio-gray-5);
+		background-color: transparent;
+		padding: 9px 12px 10px;
+		border-radius: 4px;
+	}
 }
 
 .x-nav-item {
@@ -307,19 +304,12 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 .x-nav-link {
 	display: block;
-	padding: 10px 9px 10px;
 	font-size: 1rem;
 	font-weight: 600;
 	line-height: 16px;
 	white-space: nowrap;
 	cursor: pointer;
-}
-
-.x-nav-link--primary {
-	background-color: #0675c4;
-	margin-top: 0;
-	padding: 9px 12px 10px;
-	border-radius: 4px;
+	color: #003c56;
 }
 
 .x-nav-link-chevron {
@@ -334,8 +324,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 .x-nav-link--logo {
-	padding: 0;
-	margin-top: 9px;
+	padding-right: 16px;
 }
 
 .x-nav-link--menu {
@@ -344,9 +333,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 @media ( min-width: 768px ) {
-	.x-nav-link--logo {
-		padding: 0 24px 0;
-	}
 
 	.x-nav-link--menu {
 		padding: 0 9px 0 9px;
@@ -364,7 +350,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	}
 
 	.x-nav-link--logo {
-		padding: 0 12px 0 10px;
+		padding: 0 6px 0 0;
 	}
 
 	.x-nav-link--primary {
@@ -384,14 +370,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 @media ( min-width: 1056px ) {
-	.x-nav-link {
-		padding-right: 12px;
-		padding-left: 12px;
-	}
-
-	.x-nav-link--logo {
-		padding: 0 18px 0 10px;
-	}
 
 	.x-nav-link--primary {
 		padding: 9px 12px 10px;
@@ -515,10 +493,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	flex-wrap: wrap;
 }
 
-.x-menu-grid--logged-in {
-	display: none;
-}
-
 .x-menu-grid-item {
 	width: 50%;
 }
@@ -556,169 +530,13 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	font-weight: 600;
 }
 
-.x-nav .x-nav-link {
-	color: #01283d;
-}
-
-.x-nav .x-nav-link.x-nav-link--logo {
-	color: #0675c4;
-}
-
-.x-nav .x-nav-link.x-nav-link--primary {
-	color: #fff;
+.login-link .x-nav-link {
+	&:hover {
+		text-decoration: none;
+	}
 }
 
 button.x-link:hover {
 	background-image: none !important;
 	background-color: transparent !important;
-}
-
-body.logged-in .x-nav {
-	top: 32px;
-}
-
-body.logged-in .login-link {
-	display: none;
-}
-
-body.logged-in .mob-signup {
-	display: none;
-}
-
-body.logged-in .x-dropdown {
-	top: 72px;
-}
-
-@media only screen and ( max-width: 782px ) {
-	body.logged-in .x-nav {
-		top: 46px;
-	}
-}
-
-.happy-blocks-search {
-	min-height: 399px;
-	position: relative;
-	padding: 0;
-}
-
-.happy-blocks-global-header__top {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-top: 37px;
-	margin-bottom: 32px;
-
-	@media only screen and ( max-width: $breakpoint-mobile ) {
-		flex-direction: column-reverse;
-	}
-}
-
-.happy-blocks-global-header__tabs {
-	display: flex;
-	width: 100%;
-}
-
-.happy-blocks-global-header__tab {
-	display: block;
-	padding: 3px 2px;
-	margin-right: 32px;
-	font-size: 1rem;
-	text-decoration: none !important;
-	color: var(--color-neutral-100);
-
-	&.active {
-		border-bottom: 2px solid #0675c4;
-	}
-
-	&:hover,
-	&:active {
-		border-bottom: 2px solid #0675c4;
-	}
-}
-
-.happy-blocks-mini-search {
-	.screen-reader-text {
-		clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
-		clip: rect(1px, 1px, 1px, 1px);
-		position: absolute !important;
-	}
-	margin-bottom: 45px;
-	// This applies to all search bars
-	.happy-blocks-search__inside-wrapper {
-		// width is 1/3 of the grid width minus 30px * 2 / 3 for the grid gap (gap is 30px, we need 2/3 of it)
-		width: calc(var(--wp--style--global--wide-size, 1224px) / 3 - 30px * 2 / 3);
-		height: 50px;
-		max-width: 100%;
-		position: relative;
-		border-radius: 4px;
-		background-color: #fff;
-		box-shadow: 0 0 0 1px var(--color-neutral-5) inset;
-		display: flex;
-		margin-left: auto;
-
-		@media only screen and ( max-width: $breakpoint-mobile ) {
-			margin-left: 0;
-			width: 100%;
-			margin-bottom: 20px;
-		}
-
-		input {
-			flex: 1;
-			padding-left: 40px;
-			background-color: transparent;
-			// Removes duplicated glass icon on mobile browsers
-			-webkit-appearance: none;
-			border-width: 0;
-			border-style: none;
-			border-radius: 4px;
-
-			&,
-			&::placeholder {
-				font-size: 1rem;
-				color: var(--color-neutral-50);
-			}
-
-			font-size: 1rem;
-			color: var(--color-neutral-50);
-		}
-
-		&::before {
-			z-index: 10;
-			content: "";
-			background: url($search-icon) 16px no-repeat;
-			background-position: 70% 50%;
-			position: absolute;
-			top: 0;
-			bottom: -1px;
-			left: 0;
-			width: 36px;
-		}
-	}
-
-	.happy-blocks-search-container {
-		margin: 0 auto;
-		max-width: var(--wp--style--global--wide-size, 1224px);
-
-		form {
-			width: 100%;
-		}
-
-		@media ( max-width: $breakpoint-desktop ) {
-			padding: 0 24px;
-		}
-	}
-}
-
-.happy-blocks-global-header-site__title {
-	h1 {
-		font-family: $recoleta-font-family;
-		font-size: 2.75rem;
-		margin-bottom: 5px;
-	}
-
-	p {
-		color: var(--color-neutral-60);
-		font-family: $system-font-family;
-		font-size: 1rem;
-	}
 }

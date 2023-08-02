@@ -1,12 +1,16 @@
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting';
+export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
+export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_DOMAIN_FLOW = 'link-in-bio-domain';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
+export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const VIDEOPRESS_FLOW = 'videopress';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
+export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
 export const SENSEI_FLOW = 'sensei';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const WOOEXPRESS_FLOW = 'wooexpress';
@@ -17,13 +21,20 @@ export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
+export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
+export const DOMAIN_TRANSFER = 'domain-transfer';
+export const GOOGLE_TRANSFER = 'google-transfer';
+export const ONBOARDING_PM_FLOW = 'onboarding-media';
 
-export const isLinkInBioFlow = ( flowName: string | null ) => {
+export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
+	return Boolean( flowName && flowName === ONBOARDING_PM_FLOW );
+};
+export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
 		flowName &&
 			[ LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
@@ -63,8 +74,23 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	);
 };
 
-export const isHostingFlow = ( flowName: string | null ) => {
+export const isHostingSignupFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
+};
+
+export const isNewHostedSiteCreationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && NEW_HOSTED_SITE_FLOW === flowName );
+};
+
+export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && TRANSFERRING_HOSTED_SITE_FLOW === flowName );
+};
+
+export const isAnyHostingFlow = ( flowName?: string | null ) => {
+	return Boolean(
+		flowName &&
+			[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
+	);
 };
 
 export const isMigrationFlow = ( flowName: string | null ) => {
@@ -90,8 +116,21 @@ export const isWriteFlow = ( flowName: string | null ) => {
 export const isUpdateDesignFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ UPDATE_DESIGN_FLOW ].includes( flowName ) );
 };
+
 export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
+};
+
+export const isDesignFirstFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ DESIGN_FIRST_FLOW ].includes( flowName ) );
+};
+
+export const isBlogOnboardingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
+};
+
+export const isDomainUpsellFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
@@ -104,6 +143,14 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW, WITH_THEME_ASSEMBLER_FLOW ];
 
 	return !! flowName && WITH_THEME_FLOWS.includes( flowName );
+};
+
+export const isSiteSetupFlow = ( flowName: string | null ) => {
+	return !! flowName && SITE_SETUP_FLOW === flowName;
+};
+
+export const isSenseiFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && SENSEI_FLOW === flowName );
 };
 
 export const ecommerceFlowRecurTypes = {

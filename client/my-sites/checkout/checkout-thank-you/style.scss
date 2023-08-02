@@ -838,6 +838,7 @@ main.akismet-checkout-thank-you {
 
 	.akismet-checkout-thank-you__main-message,
 	.akismet-checkout-thank-you__email-message,
+	.akismet-checkout-thank-you__overlap-notice,
 	.akismet-checkout-thank-you__email-message-loading {
 		margin: 1em 0;
 		letter-spacing: -0.02em;
@@ -847,7 +848,8 @@ main.akismet-checkout-thank-you {
 		}
 	}
 
-	.akismet-checkout-thank-you__email-message {
+	.akismet-checkout-thank-you__email-message,
+	.akismet-checkout-thank-you__overlap-notice {
 		font-size: $font-title-small;
 	}
 
@@ -859,6 +861,10 @@ main.akismet-checkout-thank-you {
 
 		@include break-mobile {
 			margin-top: 1.5em;
+		}
+
+		&-loading {
+			@include placeholder( --color-neutral-20 );
 		}
 	}
 

@@ -164,7 +164,6 @@ const buildApp = ( environment ) => {
 					port: 3000,
 					env_id: environment,
 					rtl: false,
-					discover_logged_out_redirect_url: 'http://discover.url/',
 					i18n_default_locale_slug: 'en',
 					favicon_url: 'http://favicon.url/',
 					enable_all_sections: true,
@@ -1009,24 +1008,6 @@ describe( 'main app', () => {
 		} );
 	} );
 
-	describe( 'Route /discover', () => {
-		it( 'redirects to discover url for anonymous users', async () => {
-			const { response } = await app.run( { request: { url: '/discover' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( 'http://discover.url/' );
-		} );
-	} );
-
-	describe( 'Route /read/search', () => {
-		it( 'redirects to public search for anonymous users', async () => {
-			const { response } = await app.run( {
-				request: { url: '/read/search', query: { q: 'my query' } },
-			} );
-			expect( response.redirect ).toHaveBeenCalledWith(
-				'https://en.search.wordpress.com/?q=my%20query'
-			);
-		} );
-	} );
-
 	describe( 'Route /plans', () => {
 		it( 'redirects to login if the request is for jetpack', async () => {
 			const { response } = await app.run( {
@@ -1203,7 +1184,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://en.search.wordpress.com/?q=my%20search'
+					'https://wordpress.com/read/search?q=my%20search'
 				);
 			} );
 
@@ -1218,7 +1199,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://en.search.wordpress.com/?q=my%20search'
+					'https://wordpress.com/read/search?q=my%20search'
 				);
 			} );
 
@@ -1263,6 +1244,13 @@ describe( 'main app', () => {
 		it( 'redirects to start flow with locale', async () => {
 			const { response } = await app.run( { request: { url: '/new/fr' } } );
 			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start/fr' );
+		} );
+	} );
+
+	describe( 'Route /start/domain-transfer', () => {
+		it( 'redirects to /setup/domain-transfer', async () => {
+			const { response } = await app.run( { request: { url: '/start/domain-transfer' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/setup/domain-transfer' );
 		} );
 	} );
 

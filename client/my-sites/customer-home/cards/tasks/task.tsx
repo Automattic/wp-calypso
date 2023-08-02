@@ -1,14 +1,14 @@
-import { Button, Gridicon, Spinner } from '@automattic/components';
+import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { useInstanceId } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import Badge from 'calypso/components/badge';
+import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { useDispatch } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ReminderDuration } from 'calypso/data/home/use-skip-current-view-mutation';

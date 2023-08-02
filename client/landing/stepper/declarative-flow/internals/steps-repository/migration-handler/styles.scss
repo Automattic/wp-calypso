@@ -1,16 +1,4 @@
-@import "../style";
-
-.migration-handler {
-	max-width: 540px;
-	text-align: center;
-	margin: 16vh auto 0;
-
-	.step-container__content {
-		.onboarding-title {
-			font-size: 1.625rem; /* stylelint-disable-line scales/font-sizes */
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1em;
-			margin-bottom: 1.5rem;
-		}
-	}
+.import__loading {
+	display: flex;
+	flex-direction: column;
 }

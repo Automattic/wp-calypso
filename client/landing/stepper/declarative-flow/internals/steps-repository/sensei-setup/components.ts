@@ -23,6 +23,8 @@ export const Input = styled.input`
 	padding: 12px 16px;
 	font-size: 14px;
 	line-height: 20px;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
 
 	&:placeholder {
 		color: #909398;

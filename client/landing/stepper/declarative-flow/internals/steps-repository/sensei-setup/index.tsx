@@ -101,7 +101,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						onChange={ ( ev ) => {
 							setSiteTitle( ev.target.value );
 						} }
-						placeholder={ __( 'My Site Name' ) }
+						placeholder={ __( 'Photography Class' ) }
 						value={ siteTitle }
 					/>
 					<Label>{ __( 'Pick a style' ) }</Label>
@@ -124,13 +124,21 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						) ) }
 					</div>
 					{ ! isDesktop && preview }
-					<button className="sensei-button" disabled={ ! siteTitle } onClick={ handleSubmit }>
-						{ __( 'Continue' ) }
-					</button>
-					<p className="sensei-style-notice">
-						<Gridicon icon="notice-outline" />
-						{ __( 'You can change all of this later, too.' ) }
-					</p>
+					<div className="sensei-onboarding-action">
+						<div className="sensei-onboarding-action__content">
+							<button
+								className="sensei-button"
+								disabled={ siteTitle.length < 2 }
+								onClick={ handleSubmit }
+							>
+								{ __( 'Continue' ) }
+							</button>
+							<p className="sensei-style-notice">
+								<Gridicon icon="notice-outline" />
+								{ __( 'You can change all of this later, too.' ) }
+							</p>
+						</div>
+					</div>
 				</div>
 				{ isDesktop && preview }
 			</div>

@@ -1,16 +1,13 @@
-import { isEcommerce } from '@automattic/calypso-products/src';
+import { fetchLaunchpad } from '@automattic/data-stores';
 import page from 'page';
-import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
-import { launchpadFlowTasks } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/tasks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
-import {
-	canCurrentUserUseCustomerHome,
-	getSiteUrl,
-	getSitePlan,
-} from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
+import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteSlug,
 	getSelectedSiteId,
@@ -45,43 +42,52 @@ export async function maybeRedirect( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
+	let fetchPromise;
+
+	if ( isSiteOnWooExpressEcommerceTrial( state, siteId ) ) {
+		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
+		fetchPromise = Promise.allSettled( [
+			context.store.dispatch( fetchSitePlugins( siteId ) ),
+			context.store.dispatch( fetchModuleList( siteId ) ),
+		] );
+	}
 
 	try {
-		const { launchpad_screen, checklist_statuses, site_intent } = await fetchLaunchpad( slug );
+		const {
+			launchpad_screen: launchpadScreenOption,
+			site_intent: siteIntentOption,
+			checklist: launchpadChecklist,
+		} = await fetchLaunchpad( slug );
+
 		if (
-			launchpad_screen === 'full' &&
-			! areLaunchpadTasksCompleted(
-				site_intent,
-				launchpadFlowTasks,
-				checklist_statuses,
-				isSiteLaunched
-			)
+			launchpadScreenOption === 'full' &&
+			! areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched )
 		) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
 			// client-side router, so page.redirect won't work. We need to use the
 			// traditional window.location Web API.
 			const verifiedParam = getQueryArgs()?.verified;
-			redirectToLaunchpad( slug, site_intent, verifiedParam );
+			redirectToLaunchpad( slug, siteIntentOption, verifiedParam );
 			return;
 		}
 	} catch ( error ) {}
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home.
 	// Temporary redirection until we create a dedicated Home for Ecommerce.
-	if ( isEcommerce( getSitePlan( state, siteId ) ) ) {
-		const siteUrl = getSiteUrl( state, siteId );
-
-		if ( siteUrl !== null ) {
-			// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
-			// So we need to trigger a fetch of site plugins
-			await context.store.dispatch( fetchSitePlugins( siteId ) );
-
-			const refetchedState = context.store.getState();
-			const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
-			if ( installedWooCommercePlugin && installedWooCommercePlugin.active ) {
-				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+	if ( fetchPromise?.then ) {
+		// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
+		// So we need to trigger a fetch of site plugins
+		fetchPromise.then( () => {
+			const siteUrl = getSiteUrl( state, siteId );
+			if ( siteUrl !== null ) {
+				const refetchedState = context.store.getState();
+				const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
+				const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );
+				if ( isSSOEnabled && installedWooCommercePlugin && installedWooCommercePlugin.active ) {
+					window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+				}
 			}
-		}
+		} );
 	}
 
 	next();

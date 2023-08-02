@@ -1,0 +1,35 @@
+
+// Overrides layout for WP Admin.
+.wp-admin {
+	// CSS variable overrides.
+	--sidebar-width-max: 160px;
+	--sidebar-width-min: 36px;
+
+	& #wpcom .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding-top: 32px;
+		padding-left: 1px;
+	}
+
+	// Offset margin of menu items set in Calypso.
+	ul.wp-submenu,
+	ul.wp-submenu-wrap {
+		margin-left: 0;
+	}
+
+	#wpbody-content {
+		padding-bottom: 0;
+	}
+}
+
+.card {
+	background: var(--studio-white);
+	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
+	box-sizing: border-box;
+}
+
+.notice {
+	margin: 0;
+	border: none;
+	box-shadow: none;
+}

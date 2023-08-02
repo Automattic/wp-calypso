@@ -26,7 +26,8 @@ class PostLifecycle extends Component {
 	};
 
 	render() {
-		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId } = this.props;
+		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId, isDiscoverStream } =
+			this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -51,8 +52,10 @@ class PostLifecycle extends Component {
 					/>
 				</div>
 			);
-		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
-			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
+		} else if ( ! isDiscoverStream && streamKey.indexOf( 'rec' ) > -1 ) {
+			return (
+				<EmptySearchRecommendedPost post={ post } postKey={ postKey } streamKey={ streamKey } />
+			);
 		} else if ( postKey.isGap ) {
 			return (
 				<ListGap

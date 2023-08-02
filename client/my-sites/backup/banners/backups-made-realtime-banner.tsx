@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import '../style.scss';

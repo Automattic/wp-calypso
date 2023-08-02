@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
+import { useSelector } from 'calypso/state';
 import SitesList from '../sites-list';
 import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';

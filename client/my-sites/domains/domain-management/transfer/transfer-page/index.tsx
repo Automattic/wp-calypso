@@ -7,7 +7,7 @@ import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import moment from 'moment';
 import { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
@@ -30,7 +30,9 @@ import {
 	domainManagementList,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
+import { useDispatch } from 'calypso/state';
 import {
 	getDomainLockError,
 	getDomainTransferCodeError,
@@ -57,6 +59,10 @@ import './style.scss';
 type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
 const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
 
+type ErrResponse = {
+	error?: string;
+};
+
 const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
@@ -79,12 +85,16 @@ const TransferPage = ( props: TransferPageProps ) => {
 		const items = [
 			{
 				// translators: Internet domains, e.g. mygroovydomain.com
-				label: __( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute ) ? __( 'All Domains' ) : __( 'Domains' ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					currentRoute,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
 				// translators: Verb - Transfer a domain somewhere else
@@ -98,7 +108,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				__( 'Back to %s' ),
 				selectedDomainName
 			),
-			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -117,7 +127,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				<ActionCard
 					key="transfer-to-another-user"
 					buttonHref={ domainManagementTransferToAnotherUser(
-						selectedSite.slug,
+						selectedSite?.slug,
 						selectedDomainName,
 						currentRoute
 					) }
@@ -151,7 +161,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 			<ActionCard
 				key="transfer-to-another-site"
 				buttonHref={ domainManagementTransferToOtherSite(
-					selectedSite.slug,
+					selectedSite?.slug,
 					selectedDomainName,
 					currentRoute
 				) }
@@ -210,9 +220,13 @@ const TransferPage = ( props: TransferPageProps ) => {
 					getNoticeOptions( selectedDomainName )
 				)
 			);
-		} catch ( { error } ) {
+		} catch ( error ) {
 			dispatch(
-				errorNotice( getDomainTransferCodeError( error ), getNoticeOptions( selectedDomainName ) )
+				errorNotice(
+					// Note: getDomainTransferCodeError handles undefined error codes.
+					getDomainTransferCodeError( ( error as ErrResponse )?.error ),
+					getNoticeOptions( selectedDomainName )
+				)
 			);
 		} finally {
 			setIsRequestingTransferCode( false );

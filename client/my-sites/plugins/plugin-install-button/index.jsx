@@ -26,6 +26,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { isCompatiblePlugin } from '../plugin-compatibility';
 import { getPeriodVariationValue } from '../plugin-price';
 
@@ -35,7 +36,7 @@ const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
 	const disabledInfoLabel = useRef();
 	const infoPopover = useRef();
 	const togglePopover = ( event ) => {
-		infoPopover.current._onClick( event );
+		infoPopover.current.handleClick( event );
 	};
 	return (
 		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
@@ -255,8 +256,16 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { plugin, isEmbed, selectedSite, siteIsConnected, siteIsWpcomAtomic, translate } =
-			this.props;
+		const {
+			plugin,
+			isEmbed,
+			selectedSite,
+			siteIsConnected,
+			siteIsJetpackSite,
+			siteIsWpcomAtomic,
+			translate,
+			canInstallPurchasedPlugins,
+		} = this.props;
 
 		if ( siteIsConnected === false ) {
 			return (
@@ -302,6 +311,23 @@ export class PluginInstallButton extends Component {
 			) : null;
 		}
 
+		if ( siteIsJetpackSite && ! siteIsWpcomAtomic && plugin.isMarketplaceProduct ) {
+			return (
+				<PluginInstallNotice
+					warningText={
+						canInstallPurchasedPlugins
+							? translate( 'Purchase disabled' )
+							: translate( 'Upgrade disabled' )
+					}
+					isEmbed={ isEmbed }
+				>
+					<div>
+						<p>{ translate( 'Paid plugins are not yet available for Jetpack Sites.' ) }</p>
+					</div>
+				</PluginInstallNotice>
+			);
+		}
+
 		if ( ! plugin.isMarketplaceProduct ) {
 			return this.renderButton();
 		}
@@ -338,6 +364,7 @@ export default connect(
 			userId: getCurrentUserId( state ),
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
+			siteIsJetpackSite: isJetpackSite( state, siteId ),
 			canInstallPurchasedPlugins: siteHasFeature(
 				state,
 				siteId,

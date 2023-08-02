@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorBackButton as NavigatorBackButton,
 	__unstableComposite as Composite,
@@ -11,8 +12,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import PatternListPanel from './pattern-list-panel';
+import { replaceCategoryAllName } from './utils';
 import type { Pattern, Category } from './types';
 import './screen-category-list.scss';
 
@@ -20,6 +22,7 @@ interface Props {
 	categories: Category[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	onDoneClick: () => void;
+	onBack: () => void;
 	onSelect: (
 		type: string,
 		selectedPattern: Pattern | null,
@@ -27,55 +30,35 @@ interface Props {
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
-	wrapperRef: React.RefObject< HTMLDivElement > | null;
-	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
+	selectedPatterns: Pattern[];
 	recordTracksEvent: ( name: string, eventProperties: any ) => void;
+	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 }
 
 const ScreenCategoryList = ( {
 	patternsMapByCategory,
 	categories,
 	onDoneClick,
+	onBack,
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
-	wrapperRef,
-	onTogglePatternPanelList,
+	selectedPatterns,
 	recordTracksEvent,
+	onTogglePatternPanelList,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
 	const composite = useCompositeState( { orientation: 'vertical' } );
 
-	const handleFocusOutside = ( event: Event ) => {
-		// Click outside the sidebar or action bar to close Pattern List
-		const target = event.target as HTMLElement;
-		if (
-			! (
-				target.closest( '.pattern-action-bar' ) || target.closest( '.pattern-assembler__sidebar' )
-			)
-		) {
-			setSelectedCategory( null );
-			onTogglePatternPanelList?.( false );
-		}
-	};
-
 	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
-			pattern_category: name,
+			pattern_category: replaceCategoryAllName( name ),
 		} );
 	};
 
 	useEffect( () => {
-		wrapperRef?.current?.addEventListener( 'click', handleFocusOutside );
-		return () => {
-			wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
-		};
-	}, [] );
-
-	useEffect( () => {
-		// Notify the pattern panel list is going to close when umount
 		return () => {
 			onTogglePatternPanelList?.( false );
 		};
@@ -84,21 +67,28 @@ const ScreenCategoryList = ( {
 	return (
 		<div className="screen-container">
 			<NavigatorHeader
-				title={ replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
+				title={
+					<NavigatorTitle
+						title={
+							replacePatternMode ? translate( 'Replace section' ) : translate( 'Add sections' )
+						}
+					/>
+				}
 				description={
 					replacePatternMode
 						? translate(
 								'Replace the selected pattern by choosing from the list of categories below.'
 						  )
 						: translate(
-								'Find the right patterns for you by exploring the list of categories below.'
+								'Find the right patterns for your homepage by exploring the pattern categories below.'
 						  )
 				}
+				onBack={ onBack }
 			/>
 			<Composite
 				{ ...composite }
 				role="listbox"
-				className="screen-container__body screen-container__body--align-sides screen-category-list__body"
+				className="screen-container__body screen-category-list__body"
 				aria-label={ translate( 'Block pattern categories' ) }
 			>
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
@@ -117,19 +107,24 @@ const ScreenCategoryList = ( {
 							role="option"
 							as="button"
 							{ ...composite }
-							className={ classNames( 'screen-category-list__category-button navigator-button', {
-								'screen-category-list__category-button--is-open': isOpen,
-							} ) }
+							className={ classNames(
+								'components-navigator-button',
+								'navigator-button',
+								'screen-category-list__category-button',
+								{
+									'screen-category-list__category-button--is-open': isOpen,
+								}
+							) }
 							aria-label={ label }
 							aria-describedby={ description }
 							aria-current={ isOpen }
 							onClick={ () => {
 								if ( isOpen ) {
-									setSelectedCategory( null );
 									onTogglePatternPanelList?.( false );
+									setSelectedCategory( null );
 								} else {
-									setSelectedCategory( name );
 									onTogglePatternPanelList?.( true );
+									setSelectedCategory( name );
 									trackEventCategoryClick( name );
 								}
 							} }
@@ -161,6 +156,7 @@ const ScreenCategoryList = ( {
 					onSelect( 'section', selectedPattern, selectedCategory )
 				}
 				selectedPattern={ selectedPattern }
+				selectedPatterns={ selectedPatterns }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
 				patternsMapByCategory={ patternsMapByCategory }

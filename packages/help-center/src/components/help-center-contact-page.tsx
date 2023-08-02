@@ -5,9 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
-import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -16,19 +14,20 @@ import classnames from 'classnames';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
 import { BackButton } from '..';
-import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
-import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
-import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
+import {
+	useChatStatus,
+	useShouldRenderChatOption,
+	useShouldRenderEmailOption,
+	useStillNeedHelpURL,
+	useZendeskMessaging,
+} from '../hooks';
 import { Mail, Forum } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
-import { SibylArticles } from './help-center-sibyl-articles';
 
 const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
 	if ( active ) {
@@ -42,13 +41,23 @@ export const HelpCenterContactPage: FC = () => {
 	const locale = useLocale();
 
 	const renderEmail = useShouldRenderEmailOption();
-	const renderChat = useShouldRenderChatOption();
-	const email = useSelector( getCurrentUserEmail );
-	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
-		staleTime: 30 * 60 * 1000,
-	} );
-	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
+	const {
+		hasActiveChats,
+		isChatAvailable,
+		isEligibleForChat,
+		isLoading: isLoadingChatStatus,
+		supportActivity,
+	} = useChatStatus();
+	useZendeskMessaging(
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats,
+		isEligibleForChat || hasActiveChats
+	);
+	const renderChat = useShouldRenderChatOption(
+		isChatAvailable || hasActiveChats,
+		isEligibleForChat
+	);
+	const isLoading = renderEmail.isLoading || isLoadingChatStatus;
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -113,33 +122,19 @@ export const HelpCenterContactPage: FC = () => {
 		);
 	}
 
-	const hasAccessToLivechat = ! [ 'free', 'personal', 'starter' ].includes(
-		supportAvailability?.supportLevel || ''
-	);
-
 	return (
 		<div className="help-center-contact-page">
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				<HelpCenterActiveTicketNotice tickets={ tickets } />
+				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
 				{ /* Easter */ }
 				<GMClosureNotice
 					displayAt="2023-04-03 00:00Z"
 					closesAt="2023-04-09 00:00Z"
 					reopensAt="2023-04-10 07:00Z"
-					enabled={ hasAccessToLivechat }
+					enabled={ renderChat.render }
 				/>
-				{ renderChat.env === 'staging' && (
-					<Notice
-						status="warning"
-						actions={ [ { label: 'Learn more', url: 'https://wp.me/PCYsg-Q7X' } ] }
-						className="help-center-contact-page__staging-notice"
-						isDismissible={ false }
-					>
-						Targeting HappyChat staging
-					</Notice>
-				) }
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
 					<Link to="/contact-form?mode=FORUM">
@@ -191,9 +186,7 @@ export const HelpCenterContactPage: FC = () => {
 						<Link
 							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
 							to={ `/contact-form?mode=EMAIL&overflow=${ (
-								renderChat.eligible &&
-								renderChat.state !== 'CLOSED' &&
-								renderChat.state !== 'AVAILABLE'
+								renderChat.eligible && renderChat.state !== 'AVAILABLE'
 							).toString() }` }
 						>
 							<div
@@ -213,7 +206,6 @@ export const HelpCenterContactPage: FC = () => {
 					) }
 				</div>
 			</div>
-			<SibylArticles articleCanNavigateBack />
 		</div>
 	);
 };

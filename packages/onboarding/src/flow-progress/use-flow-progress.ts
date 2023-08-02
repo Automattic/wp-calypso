@@ -5,6 +5,7 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	FREE_FLOW,
 	COPY_SITE_FLOW,
+	ONBOARDING_PM_FLOW,
 } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
@@ -18,7 +19,8 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	newsletter: {
 		intro: 0,
 		user: 0,
-		newsletterSetup: 1,
+		newsletterSetup: 0,
+		newsletterGoals: 1,
 		domains: 2,
 		'plans-newsletter': 3,
 		subscribers: 4,
@@ -88,6 +90,15 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		processing: 2,
 		'automated-copy': 3,
 		'processing-copy': 3,
+	},
+	[ ONBOARDING_PM_FLOW ]: {
+		user: 0,
+		domains: 1,
+		plans: 2,
+		siteCreationStep: 3,
+		processing: 4,
+		/** Phantom step that is outside stepper */
+		checkout: 5,
 	},
 };
 

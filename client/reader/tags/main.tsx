@@ -12,7 +12,7 @@ interface Props {
 export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 	const translate = useTranslate();
 	return (
-		<div className="tags">
+		<div className="tags__main">
 			<h4>
 				{
 					// translators: The heading of the reader trending tags section

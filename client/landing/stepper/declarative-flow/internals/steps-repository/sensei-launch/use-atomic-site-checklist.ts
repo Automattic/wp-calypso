@@ -1,6 +1,6 @@
 import { useCallback } from '@wordpress/element';
-import { useDispatch as useRootDispatch, useSelector } from 'react-redux';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useDispatch as useRootDispatch, useSelector } from 'calypso/state';
 import { requestSiteChecklist } from 'calypso/state/checklist/actions';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 

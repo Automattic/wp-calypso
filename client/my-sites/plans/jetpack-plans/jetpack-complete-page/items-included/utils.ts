@@ -16,6 +16,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCT_LANDING_PAGE_URL,
 	JETPACK_CRM_PRODUCT_LANDING_PAGE_URL,
 } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 
 const PRODUCT_URL_MAP: { [ key: string ]: string } = {
 	[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
@@ -28,4 +29,5 @@ const PRODUCT_URL_MAP: { [ key: string ]: string } = {
 	[ PRODUCT_JETPACK_CRM ]: JETPACK_CRM_PRODUCT_LANDING_PAGE_URL,
 };
 
-export const getProductUrl = ( productSlug: string ) => PRODUCT_URL_MAP[ productSlug ];
+export const getProductUrl = ( productSlug: string ) =>
+	localizeUrl( PRODUCT_URL_MAP[ productSlug ] );

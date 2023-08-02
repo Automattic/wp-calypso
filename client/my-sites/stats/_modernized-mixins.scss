@@ -1,5 +1,7 @@
-@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+$common-border-radius: 4px;
 
 /**
  * CSS used to transform existing Segment component to the styles used in the modernized Stats.
@@ -68,5 +70,58 @@
 	@media ( max-width: $break-mobile ) {
 		margin: 16px 0;
 		min-width: unset;
+	}
+}
+
+/**
+ * Used to style the segmented controls in the comments module and subscribers module.
+ */
+@mixin segmented-controls {
+	.segmented-control {
+		.segmented-control__link {
+			padding: 6px 8px;
+			font-weight: 500;
+			line-height: 20px;
+			color: var(--studio-black);
+
+			&:focus {
+				outline: none;
+			}
+		}
+
+		.segmented-control__item {
+			&:not(:first-of-type) {
+				margin-left: -1px;
+			}
+
+			&.is-selected {
+				.segmented-control__link {
+					background-color: var(--color-primary);
+					border-color: var(--color-primary);
+					color: var(--studio-white);
+					position: relative;
+					z-index: 1;
+				}
+			}
+
+			&:first-of-type .segmented-control__link {
+				border-top-left-radius: $common-border-radius;
+				border-bottom-left-radius: $common-border-radius;
+				border-right: 0;
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-top-right-radius: $common-border-radius;
+				border-bottom-right-radius: $common-border-radius;
+			}
+		}
+
+		@media ( max-width: 660px ) {
+			margin-top: 16px;
+
+			.segmented-control__link {
+				padding: 6px 26px;
+			}
+		}
 	}
 }

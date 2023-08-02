@@ -12,16 +12,20 @@ import {
 	isMigrationFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
+	isNewHostedSiteCreationFlow,
+	isNewsletterFlow,
+	isBlogOnboardingFlow,
+	isOnboardingPMFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
-import { useSiteQuery } from 'calypso/data/sites/use-site-query';
+import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -30,17 +34,25 @@ import {
 	wasSignupCheckoutPageUnloaded,
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
-
 import './styles.scss';
 
-const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
+const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
-const DEFAULT_START_WRITING_THEME = 'pub/livro';
+const DEFAULT_START_WRITING_THEME = 'pub/hey';
+
+function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
+	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
+		return true;
+	}
+	return false;
+}
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
@@ -50,14 +62,16 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		[]
 	);
 
-	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
+	const urlData = useSelector( getUrlData );
+
+	const { domainItem, domainCartItem, planCartItem, selectedSiteTitle, productCartItems } =
 		useSelect(
 			( select ) => ( {
+				domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
-				getSelectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+				selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 			} ),
 			[]
 		);
@@ -66,15 +80,18 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
-	let theme: string;
+	// when it's empty, the default WordPress theme will be used.
+	let theme = '';
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
-		theme = DEFAULT_WP_SITE_THEME;
+		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
-	} else {
-		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
+	} else if ( isLinkInBioFlow( flow ) ) {
+		theme = DEFAULT_LINK_IN_BIO_THEME;
+	} else if ( isNewsletterFlow( flow ) ) {
+		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
@@ -94,7 +111,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isFreeFlow( flow ) ||
 		isLinkInBioFlow( flow ) ||
 		isMigrationFlow( flow ) ||
-		isStartWritingFlow( flow ) ||
+		isBlogOnboardingFlow( flow ) ||
+		isNewHostedSiteCreationFlow( flow ) ||
+		isOnboardingPMFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -107,11 +126,11 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
-	const blogTitle = isFreeFlow( 'free' ) ? getSelectedSiteTitle : '';
 	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
-	const search = window.location.search;
-	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
-	const { data: siteData } = useSiteQuery( sourceSiteSlug, isCopySiteFlow( flow ) );
+	const urlQueryParams = useQuery();
+	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
+	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
+	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -121,34 +140,40 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			};
 		}
 
+		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
-			flow as string,
+			flow,
 			true,
 			isPaidDomainItem,
 			theme,
 			siteVisibility,
-			blogTitle,
-			siteAccentColor,
-			true,
+			urlData?.meta.title ?? selectedSiteTitle,
+			// We removed the color option during newsletter onboarding.
+			// But backend still expects/needs a value, so supplying the default.
+			// Ideally should remove this and update code downstream to handle this.
+			'#113AF5',
+			useThemeHeadstart,
 			username,
+			domainItem,
 			domainCartItem,
-			data?.sourceSlug as string
+			sourceSlug
 		);
 
-		if ( planCartItem ) {
-			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );
+		if ( planCartItem && site?.siteSlug ) {
+			await addPlanToCart( site.siteSlug, flow, true, theme, planCartItem );
 		}
 
-		if ( productCartItems?.length ) {
-			await addProductsToCart( site?.siteSlug as string, flow as string, productCartItems );
+		if ( productCartItems?.length && site?.siteSlug ) {
+			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
-		if ( isMigrationFlow( flow ) ) {
+		if ( isMigrationFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
 			// Store temporary target blog id to source site option
-			addTempSiteToSourceOption( site?.siteId as number, siteData?.ID as number );
+			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
 		}
 
 		return {
+			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
 		};

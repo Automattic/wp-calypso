@@ -2,6 +2,7 @@ package _self.lib.customBuildType
 
 import Settings
 import _self.bashNodeScript
+import jetbrains.buildServer.configs.kotlin.v2019_2.AbsoluteId
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -56,6 +57,8 @@ open class E2EBuildType(
 	var enableCommitStatusPublisher: Boolean = false,
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
+	var addWpcomVcsRoot: Boolean = false,
+	var buildSteps: BuildSteps.() -> Unit = {}
 
 ): BuildType() {
 	init {
@@ -68,6 +71,7 @@ open class E2EBuildType(
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
 		val params = params
+		val buildSteps = buildSteps
 
 		id( buildId )
 		uuid = buildUuid
@@ -137,8 +141,17 @@ open class E2EBuildType(
 					cd test/e2e
 					mkdir temp
 
+					# Disable exit on error to support retries.
+					set +o errexit
+
 					# Run suite.
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup
+
+					# Restore exit on error.
+					set -o errexit
+
+					# Retry failed tests only.
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures
 				"""
 				dockerImage = "%docker_image_e2e%"
 				dockerRunParameters = "-u %env.UID% --shm-size=4g"
@@ -161,6 +174,7 @@ open class E2EBuildType(
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
+			buildSteps()
 		}
 
 		features {
@@ -191,6 +205,9 @@ open class E2EBuildType(
 			executionTimeoutMin = 20
 			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 			nonZeroExitCode = false
+
+			// Support retries using the --onlyFailures flag in Jest.
+			supportTestRetry = true
 
 			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
 			failOnMetricChange {

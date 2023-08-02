@@ -1,11 +1,11 @@
 /*
     Global styles for Stepper framework
 */
-@import "@wordpress/components/build-style/style";
 @import "@automattic/calypso-color-schemes";
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/onboarding/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 /**
  * General onboarding styling
@@ -53,7 +53,8 @@ button {
 }
 
 .accessible-focus {
-	.site-setup {
+	.site-setup,
+	.import-focused {
 		.button.is-primary:focus {
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
@@ -63,16 +64,20 @@ button {
 /**
  * Site Setup
  */
+.onboarding-media,
+.new-hosted-site,
+.import-hosted-site,
 .site-setup,
 .import-focused,
 .plugin-bundle,
 .newsletter-setup,
+.newsletter-goals,
 .newsletter-post-setup,
 .plans,
 .domains,
 .patterns,
-.link-in-bio-setup,
 .link-in-bio-post-setup,
+.link-in-bio,
 .anchor-fm,
 .subscribers,
 .ecommerce,
@@ -83,6 +88,10 @@ button {
 .free-post-setup,
 .free,
 .with-theme-assembler,
+.setup-blog,
+.celebration-step,
+.use-my-domain,
+.domain-transfer,
 .update-design {
 	padding: 60px 0 0;
 	box-sizing: border-box;
@@ -152,8 +161,6 @@ button {
  	 * Step Container
  	 */
 	.step-container {
-		--color-accent: #117ac9;
-		--color-accent-60: #0e64a5;
 
 		.form-fieldset {
 			label {
@@ -161,10 +168,52 @@ button {
 			}
 		}
 	}
+
+	// While we don't standardize all Calypso interfaces, we need to override this for onboarding flows #79851
+	.components-button.is-primary {
+		border-radius: 4px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		justify-content: center;
+
+		&[disabled],
+		&:disabled,
+		&.disabled {
+			color: #fff;
+			background-color: var(--studio-blue-20);
+			border-color: var(--studio-blue-20);
+		}
+	}
+
+	.components-button.is-link {
+		color: var(--color-accent);
+
+		&:hover:not(:disabled):not(.disabled),
+		&:focus:not(:disabled):not(.disabled) {
+			color: var(--color-neutral-70);
+		}
+	}
+
+	// WordPress.org components no longer use blue-50 as the primary color.
+	// This changes the primary color to blue-50 to conform to the WordPress.com colors.
+	--color-accent: var(--studio-blue-50);
+	--color-accent-60: var(--studio-blue-60);
+}
+
+.import-focused .step-container.site-picker {
+	max-width: 1280px;
+	padding: 1.5rem;
+}
+
+.is-section-stepper {
+	.search-filters__popover {
+		--color-accent: #117ac9 !important;
+		--color-accent-60: #0e64a5 !important;
+	}
 }
 
 .intro {
-	.signup-header {
+	&:not(.newsletter).signup-header {
 		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
 }
@@ -194,18 +243,36 @@ button {
 	}
 }
 
+/*
+ * Override font sizes for all newsletter onboarding screens
+ */
+.newsletter,
+.newsletter:not(.domains) {
+	.step-container {
+		.step-container__content h1,
+		.step-container__header h1.formatted-header__title {
+			font-size: rem(32px); //typography-exception
+			line-height: rem(40px); //typography-exception
+
+			@include break-medium {
+				font-size: rem(44px); //typography-exception
+				line-height: rem(52px); //typography-exception
+			}
+		}
+		.step-container__header .formatted-header .formatted-header__subtitle {
+			font-size: rem(16px); //typography-exception
+			line-height: rem(24px); //typography-exception
+			font-family: $font-sf-pro-display;
+		}
+	}
+}
+
 .store-profiler__form,
 .newsletter,
 .link-in-bio,
 .link-in-bio-tld,
 .setup-form__form {
 	button {
-		&[type="submit"] {
-			font-size: $font-body-small;
-			background-color: var(--studio-blue-50);
-			font-weight: 500;
-		}
-
 		&.site-icon-with-picker__upload-button {
 			border-radius: 4px;
 			border: 1px solid rgba($color: #000, $alpha: 0.2);
@@ -318,15 +385,6 @@ button {
 	}
 }
 
-
-@media ( max-width: 660px ) {
-	body.is-section-stepper .wpcom-site {
-		.inline-help {
-			bottom: 74px;
-		}
-	}
-}
-
 .wooexpress,
 .copy-site,
 .ecommerce {
@@ -385,14 +443,24 @@ button {
 	}
 	.loading-bar {
 		background-color: var(--studio-woocommerce-purple-5);
-		width: 520px;
+		width: 590px;
 		max-width: 100%;
 		margin-left: auto;
 		margin-right: auto;
+
+		@media screen and (max-width: 640px) {
+			width: 100%;
+		}
+	}
+	.processing-step {
+		width: 100%;
+		max-width: 640px;
+		box-sizing: border-box;
 	}
 	p.processing-step__subtitle {
 		font-family: "SF Pro Text", $sans;
 		font-weight: 400;
+		letter-spacing: initial;
 
 		.woo-inline-purple-heart {
 			width: 18px;

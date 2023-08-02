@@ -14,8 +14,6 @@ body.edit__body-white.theme-default.color-scheme {
 
 .settings-header {
 	&__container {
-		margin-bottom: 24px;
-
 		&-title {
 			display: flex;
 			flex-wrap: wrap;
@@ -44,7 +42,7 @@ body.edit__body-white.theme-default.color-scheme {
 			}
 
 			@include breakpoint-deprecated( "<660px" ) {
-				margin: 0 16px 24px;
+				margin: 8px 16px 24px;
 			}
 		}
 

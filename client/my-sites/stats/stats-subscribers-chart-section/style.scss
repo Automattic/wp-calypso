@@ -1,0 +1,68 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
+.subscribers-section {
+	margin: 1em 0;
+}
+
+// Add right margin in small viewports to let the y-series legend label breathe.
+.calypso-uplot-chart-container {
+	@media (max-width: $break-small) {
+		margin-right: 0.5em;
+	}
+}
+
+.subscribers-section-heading {
+	align-content: center;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 16px;
+	box-shadow: none; // override .highlight-cards styling
+	background-color: transparent;
+
+	> .highlight-cards-heading {
+		margin-bottom: 0;
+	}
+
+	// Overflow legend onto its own row when below $break-xlarge.
+	@media (max-width: $break-xlarge) {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+.subscribers-section-legend {
+	display: flex;
+
+	@media ( max-width: $custom-mobile-breakpoint ) {
+		margin-left: $font-body-small;
+		margin-right: $font-body-small;
+
+		.u-series > th {
+			padding-left: 0;
+		}
+	}
+
+	.u-legend {
+		display: flex;
+		justify-content: right;
+	}
+}
+
+.subscribers-section-duration-control-with-legend > .stats__period-header {
+	margin: 8px 0;
+}
+
+.subscribers-section__no-data {
+	margin: 3em auto;
+	text-align: center;
+}
+
+.subscribers-section-heading__chart-controls {
+	display: flex;
+}
+
+.subscribers-section-heading__chart-controls--arrows {
+	align-self: flex-start;
+	margin: 12px 6px;
+}

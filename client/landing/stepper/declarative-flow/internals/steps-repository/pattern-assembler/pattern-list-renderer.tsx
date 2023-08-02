@@ -22,6 +22,7 @@ interface PatternListRendererProps {
 	patterns: Pattern[];
 	shownPatterns: Pattern[];
 	selectedPattern: Pattern | null;
+	selectedPatterns?: Pattern[];
 	activeClassName: string;
 	emptyPatternText?: string;
 	composite?: Record< string, unknown >;
@@ -94,6 +95,7 @@ const PatternListRenderer = ( {
 	patterns,
 	shownPatterns,
 	selectedPattern,
+	selectedPatterns,
 	activeClassName,
 	emptyPatternText,
 	composite,
@@ -116,7 +118,9 @@ const PatternListRenderer = ( {
 					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
 					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
-						[ activeClassName ]: pattern.ID === selectedPattern?.ID,
+						[ activeClassName ]:
+							pattern.ID === selectedPattern?.ID ||
+							selectedPatterns?.find( ( { ID } ) => ID === pattern.ID ),
 					} ) }
 					isFirst={ index === 0 }
 					isShown={ shownPatterns.includes( pattern ) }

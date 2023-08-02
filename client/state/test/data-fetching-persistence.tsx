@@ -1,29 +1,29 @@
 /**
  * @jest-environment jsdom
  */
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { render, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider, useQuery, setLogger } from 'react-query';
-import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
-import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 import { shouldDehydrateQuery } from '../should-dehydrate-query';
 
-const queryClient = new QueryClient();
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
+// https://github.com/tannerlinsley/react-query/blob/2771a15403cb2e7c70022b850e8c54c6d2b3d8a0/docs/src/pages/guides/testing.md#turn-off-network-error-logging
+const logger = {
+	error: noop,
+	log: noop,
+	warn: noop,
+};
+
+const queryClient = new QueryClient( { logger } );
 
 const PERSISTENCE_KEY = 'REACT_QUERY_OFFLINE_CACHE';
 
 const queryKey = '123';
 
 const data = 'Hello, World!';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
-// https://github.com/tannerlinsley/react-query/blob/2771a15403cb2e7c70022b850e8c54c6d2b3d8a0/docs/src/pages/guides/testing.md#turn-off-network-error-logging
-setLogger( {
-	error: noop,
-	log: noop,
-	warn: noop,
-} );
 
 class Storage {
 	cache: Map< string, string >;
@@ -33,7 +33,7 @@ class Storage {
 	}
 
 	getItem( key: string ) {
-		return this.cache.get( key );
+		return this.cache.get( key ) ?? null;
 	}
 
 	setItem( key: string, value: string ) {
@@ -59,9 +59,9 @@ class Storage {
 
 const storage = new Storage();
 
-const getOfflinePersistence = () => JSON.parse( storage.getItem( PERSISTENCE_KEY ) );
+const getOfflinePersistence = () => JSON.parse( storage.getItem( PERSISTENCE_KEY ) ?? '' );
 
-const offlinePersistor = createWebStoragePersistor( {
+const offlinePersister = createSyncStoragePersister( {
 	storage,
 	key: PERSISTENCE_KEY,
 	throttleTime: 0,
@@ -76,7 +76,9 @@ const DataFetchingComponent = < T, >( {
 	queryFn,
 	persistencePredicate,
 }: DataFetchingComponentProps< T > ) => {
-	const { status } = useQuery( [ queryKey ], queryFn, {
+	const { status } = useQuery( {
+		queryKey: [ queryKey ],
+		queryFn,
 		retry: false,
 		meta: {
 			persist: persistencePredicate != null ? persistencePredicate : undefined,
@@ -98,7 +100,7 @@ describe( 'shouldDehydrateQuery', () => {
 	beforeAll( async () => {
 		await persistQueryClient( {
 			queryClient,
-			persistor: offlinePersistor,
+			persister: offlinePersister,
 			dehydrateOptions: {
 				shouldDehydrateQuery,
 			},

@@ -46,6 +46,7 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all',
+					size: 2,
 				},
 			} );
 		} );
@@ -58,6 +59,7 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all',
+					size: 2,
 					posts: [
 						{
 							ID: 1,
@@ -77,6 +79,7 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all',
+					size: 2,
 				},
 			} );
 		} );
@@ -106,6 +109,7 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all',
+					size: 2,
 				},
 			} );
 		} );
@@ -118,6 +122,7 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all',
+					size: 2,
 					posts: [],
 				},
 			} );
@@ -131,6 +136,7 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all',
+					size: 2,
 					error: expect.any( Error ),
 				},
 				error: true,

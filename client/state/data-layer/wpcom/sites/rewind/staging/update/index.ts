@@ -3,6 +3,7 @@ import {
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST,
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST_FAILURE,
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST_SUCCESS,
+	JETPACK_BACKUP_STAGING_SET,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -21,7 +22,7 @@ const updateStagingFlag = ( action: UpdateStagingFlagRequestActionType ) =>
 		action
 	);
 
-const updateStagingFlagSuccess = ( { siteId }: UpdateStagingFlagRequestActionType ) => [
+const updateStagingFlagSuccess = ( { siteId, staging }: UpdateStagingFlagRequestActionType ) => [
 	{
 		type: JETPACK_BACKUP_STAGING_UPDATE_REQUEST_SUCCESS,
 		siteId,
@@ -30,6 +31,11 @@ const updateStagingFlagSuccess = ( { siteId }: UpdateStagingFlagRequestActionTyp
 		duration: 5000,
 		isPersistent: true,
 	} ),
+	{
+		type: JETPACK_BACKUP_STAGING_SET,
+		siteId,
+		staging,
+	},
 ];
 
 const updateStagingFlagError = (

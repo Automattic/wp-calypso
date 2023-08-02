@@ -2,12 +2,12 @@ import { throttle } from 'lodash';
 import { useRef, useEffect, useState } from 'react';
 import * as React from 'react';
 
-type NullableDOMRect = ClientRect | DOMRect | null;
+export type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;
 
 export const THROTTLE_RATE = 200;
 
-function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
+export function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	if ( prevRect === null ) {
 		return nextRect === null;
 	}
@@ -26,7 +26,7 @@ function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	);
 }
 
-function rectIsZero( rect: NullableDOMRect ) {
+export function rectIsZero( rect: NullableDOMRect ) {
 	if ( rect === null ) {
 		return null;
 	}

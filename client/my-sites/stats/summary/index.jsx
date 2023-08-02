@@ -1,15 +1,14 @@
-import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMedia from 'calypso/components/data/query-media';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -17,6 +16,7 @@ import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
+import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
@@ -142,6 +142,20 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
+						<div className="stats-module__footer-actions--summary-tall">
+							<UpsellNudge
+								title={ translate( 'Add Google Analytics' ) }
+								description={ translate(
+									'Upgrade to a Premium Plan for Google Analytics integration.'
+								) }
+								event="googleAnalytics-stats-countries"
+								feature={ FEATURE_GOOGLE_ANALYTICS }
+								plan={ PLAN_PREMIUM }
+								tracksImpressionName="calypso_upgrade_nudge_impression"
+								tracksClickName="calypso_upgrade_nudge_cta_click"
+								showIcon={ true }
+							/>
+						</div>
 					</>
 				);
 				break;
@@ -320,14 +334,6 @@ class StatsSummary extends Component {
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
-		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
-			'stats/horizontal-bars-everywhere'
-		);
-
-		const cardParentClassName = classNames( 'stats-summary-view', {
-			'stats-summary__positioned': isHorizontalBarComponentEnabledEverywhere,
-		} );
-
 		return (
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
@@ -336,7 +342,7 @@ class StatsSummary extends Component {
 				/>
 				<FixedNavigationHeader navigationItems={ navigationItems } />
 
-				<div id="my-stats-content" className={ cardParentClassName }>
+				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					{ summaryViews }
 					<JetpackColophon />
 				</div>

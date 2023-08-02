@@ -1,12 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
 import ExternalLink from 'calypso/components/external-link';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { preventWidows } from 'calypso/lib/formatting';
 import { JETPACK_SUPPORT_CONNECTION_ISSUES } from 'calypso/lib/url/support';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';

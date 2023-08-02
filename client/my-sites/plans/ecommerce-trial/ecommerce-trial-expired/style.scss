@@ -41,4 +41,19 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 			margin-top: 16px;
 		}
 	}
+
+	.ecommerce-trial-expired__footer {
+		border-top: 1px solid var(--color-border-subtle);
+		display: flex;
+		flex-direction: column;
+		gap: 2em;
+		justify-content: center;
+		margin: auto;
+		max-width: 800px;
+		padding-top: 1.5em;
+
+		@media ( min-width: $break-small ) {
+			flex-direction: row;
+		}
+	}
 }

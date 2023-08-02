@@ -21,7 +21,7 @@
 }
 
 .featured-item-card--hero {
-	min-height: 175px;
+	min-height: 200px;
 	position: relative;
 	width: 100%;
 
@@ -38,7 +38,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding: 16px;
+	padding: 1rem;
 	width: 100%;
 
 	@include break-mobile {
@@ -52,6 +52,7 @@
 }
 
 .featured-item-card--title {
+	color: var(--gray-100);
 	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 1;
@@ -62,12 +63,12 @@
 }
 
 .featured-item-card--price {
-	margin-top: 4px;
-	margin-bottom: 8px;
+	margin-top: 0.25rem;
+	margin-bottom: 0.5rem;
 }
 
 .featured-item-card--desc {
-	color: var(--gray-70);
+	color: var(--gray-80);
 	line-height: 1.5;
 
 	p {
@@ -82,15 +83,18 @@
 }
 
 .featured-item-card--footer {
-	align-items: center;
 	display: flex;
-	justify-content: flex-start;
-	margin-top: 24px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	margin-top: 0.5rem;
 }
 
 .featured-item-card--cta {
 	min-width: 5.7em;
 	border-width: 0;
+	margin-top: 1.5rem;
+
 	.gridicon.gridicons-checkmark {
 		transform: rotate(-8.37deg);
 		margin-right: 11.46px;

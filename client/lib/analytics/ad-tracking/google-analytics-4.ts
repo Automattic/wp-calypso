@@ -1,3 +1,4 @@
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GaPurchase } from '../utils/cart-to-ga-purchase';
 import { GaItem } from '../utils/product-to-ga-item';
@@ -24,6 +25,9 @@ export function setup( params: Gtag.ConfigParams ) {
 	if ( isJetpackCloud() ) {
 		window.gtag( 'config', TRACKING_IDS.jetpackGoogleGA4Gtag, params );
 	}
+	if ( isAkismetCheckout() ) {
+		window.gtag( 'config', TRACKING_IDS.akismetGoogleGA4Gtag, params );
+	}
 }
 
 export function fireEcommercePurchase( purchase: GaPurchase, ga4PropertyGtag: Ga4PropertyGtag ) {
@@ -35,7 +39,7 @@ export function fireEcommercePurchase( purchase: GaPurchase, ga4PropertyGtag: Ga
 
 export function fireEcommerceAddToCart( item: GaItem, ga4PropertyGtag: Ga4PropertyGtag ) {
 	window.gtag( 'event', 'add_to_cart', {
-		send_to: Ga4PropertyGtag[ ga4PropertyGtag ],
+		send_to: ga4Properties[ ga4PropertyGtag ],
 		value: item.price,
 		currency: 'USD',
 		items: [ item ],

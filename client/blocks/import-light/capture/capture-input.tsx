@@ -102,9 +102,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton type="submit" size={ 0 }>
-				{ translate( 'Continue' ) }
-			</NextButton>
+			<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
 		</form>
 	);
 };

@@ -1,0 +1,68 @@
+{
+	"name": "@automattic/blaze-dashboard",
+	"version": "0.1.0",
+	"description": "Blaze dashboard served within wp-admin via the Jetpack plugin",
+	"main": "dist/build.min.js",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/blaze-dashboard"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "NODE_ENV=production yarn dev",
+		"build:stats": "calypso-build",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/blaze-dashboard/v1",
+		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build",
+		"translate": "rm -rf dist/strings && mkdirp dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/blaze-dashboard-strings.pot' && node bin/build-languages.js"
+	},
+	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
+		"@automattic/calypso-polyfills": "workspace:^",
+		"@automattic/calypso-url": "workspace:^",
+		"@tanstack/react-query": "^4.29.1",
+		"calypso": "workspace:^",
+		"classnames": "^2.3.1",
+		"debug": "^4.3.4",
+		"moment": "^2.26.0",
+		"page": "^1.11.5",
+		"prop-types": "^15.8.1",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-redux": "^8.0.7",
+		"redux": "^4.2.1",
+		"redux-thunk": "^2.4.2",
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-babel-config": "workspace:^",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/languages": "workspace:^",
+		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
+		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
+		"@automattic/wp-babel-makepot": "workspace:^",
+		"@wordpress/dependency-extraction-webpack-plugin": "^4.21.0",
+		"autoprefixer": "^10.2.5",
+		"gettext-parser": "^6.0.0",
+		"html-webpack-plugin": "^5.0.0-beta.4",
+		"lodash": "^4.17.21",
+		"mkdirp": "^1.0.4",
+		"node-fetch": "^2.6.6",
+		"path-browserify": "^1.0.1",
+		"postcss": "^8.3.11",
+		"webpack": "^5.68.0",
+		"webpack-bundle-analyzer": "^4.5.0"
+	}
+}

@@ -10,9 +10,11 @@ import {
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
+	redirectIfCantStartSiteOwnerTransfer,
 	redirectToGeneral,
 	redirectToTraffic,
 	startOver,
+	startSiteOwnerTransfer,
 } from 'calypso/my-sites/site-settings/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 
@@ -94,6 +96,17 @@ export default function () {
 		navigation,
 		setScroll,
 		manageConnection,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/settings/start-site-transfer/:site_id',
+		siteSelection,
+		redirectIfCantStartSiteOwnerTransfer,
+		navigation,
+		setScroll,
+		startSiteOwnerTransfer,
 		makeLayout,
 		clientRender
 	);

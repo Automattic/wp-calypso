@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { capitalize } from 'lodash';
 import { ImporterPlatform } from './types';
 
@@ -77,6 +78,10 @@ export function getWpComOnboardingUrl(
 
 		case 'stepper':
 		default:
+			if ( platform === 'wordpress' && isEnabled( 'onboarding/import-redesign' ) ) {
+				route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&option=everything&run=true';
+				break;
+			}
 			route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&run=true';
 			break;
 	}

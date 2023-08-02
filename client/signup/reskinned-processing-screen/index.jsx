@@ -1,3 +1,4 @@
+import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -33,6 +34,9 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Making you cookies' ) },
 				{ title: __( 'Planning the next chess move' ) },
 			];
+			break;
+		case HOSTING_LP_FLOW:
+			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
 		default:
 			steps = [

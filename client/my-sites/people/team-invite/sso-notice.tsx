@@ -1,14 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, ReactChildren } from 'react';
-import { useDispatch } from 'react-redux';
+import { ReactNode } from 'react';
 import FeatureExample from 'calypso/components/feature-example';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useDispatch } from 'calypso/state';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 
 interface Props {
 	siteId: number;
-	children?: ReactChild | ReactChildren;
+	children?: ReactNode;
 }
 export default function SsoNotice( props: Props ) {
 	const translate = useTranslate();

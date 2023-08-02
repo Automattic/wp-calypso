@@ -11,6 +11,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	ctaAriaLabel,
 	description,
 	hero,
+	moreInfoLink,
 	isCtaDisabled,
 	isCtaExternal,
 	isProductInCart,
@@ -32,6 +33,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					<div className="featured-item-card--desc">{ description }</div>
 				</div>
 				<div className="featured-item-card--footer">
+					{ moreInfoLink }
 					<Button
 						className="featured-item-card--cta"
 						primary={ ctaAsPrimary }

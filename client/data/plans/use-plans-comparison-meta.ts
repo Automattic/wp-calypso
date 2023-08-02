@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export type PlansComparisonMetaData = {
@@ -8,14 +8,14 @@ export type PlansComparisonMetaData = {
 };
 
 export default function usePlansComparisonMeta( currency: string ) {
-	return useQuery< unknown, unknown, PlansComparisonMetaData >(
-		[ 'plans-comparison-meta', currency ],
-		() =>
+	return useQuery< unknown, unknown, PlansComparisonMetaData >( {
+		queryKey: [ 'plans-comparison-meta', currency ],
+		queryFn: () =>
 			wpcom.req.get(
 				{
 					path: '/plans-comparison-meta',
 				},
 				{ apiVersion: '1.2' }
-			)
-	);
+			),
+	} );
 }

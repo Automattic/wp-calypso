@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
 import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useDispatch, useSelector } from 'calypso/state';
 import {
 	getRewindBytesAvailable,
 	getRewindBytesUsed,

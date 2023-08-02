@@ -1,7 +1,7 @@
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 

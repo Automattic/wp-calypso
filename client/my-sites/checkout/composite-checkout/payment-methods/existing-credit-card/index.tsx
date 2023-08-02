@@ -5,13 +5,13 @@ import {
 	useFormStatus,
 	PaymentLogo,
 } from '@automattic/composite-checkout';
-import styled from '@emotion/styled';
+import { styled } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
-import { useDispatch } from 'react-redux';
+import MaterialIcon from 'calypso/components/material-icon';
 import {
 	TaxInfoArea,
 	usePaymentMethodTaxInfo,
@@ -21,6 +21,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
@@ -108,8 +109,6 @@ function formatDate( cardExpiry: string ): string {
 
 const CardDetails = styled.span`
 	display: inline-block;
-	margin-right: 8px;
-
 	.rtl & {
 		margin-right: 0;
 		margin-left: 8px;
@@ -120,6 +119,11 @@ const CardHolderName = styled.span`
 	display: block;
 `;
 
+const CardInfo = styled.span`
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 1em;
+`;
 function ExistingCardLabel( {
 	last4,
 	cardExpiry,
@@ -146,16 +150,18 @@ function ExistingCardLabel( {
 		<Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
-				<CardDetails>{ maskedCardDetails }</CardDetails>
-				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
-				{ allowEditingTaxInfo && (
-					<TaxInfoArea
-						last4={ last4 }
-						brand={ brand }
-						storedDetailsId={ storedDetailsId }
-						paymentPartnerProcessorId={ paymentPartnerProcessorId }
-					/>
-				) }
+				<CardInfo>
+					<CardDetails>{ maskedCardDetails }</CardDetails>
+					<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
+					{ allowEditingTaxInfo && (
+						<TaxInfoArea
+							last4={ last4 }
+							brand={ brand }
+							storedDetailsId={ storedDetailsId }
+							paymentPartnerProcessorId={ paymentPartnerProcessorId }
+						/>
+					) }
+				</CardInfo>
 			</div>
 			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
@@ -234,6 +240,21 @@ function ExistingCardPayButton( {
 	);
 }
 
+const CreditCardPayButtonWrapper = styled[ 'span' ]`
+	display: inline-flex;
+	align-items: flex-end;
+`;
+
+const StyledMaterialIcon = styled( MaterialIcon )`
+	fill: ${ ( { theme } ) => theme.colors.surface };
+	margin-right: 0.7em;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 0.7em;
+	}
+`;
+
 function ButtonContents( {
 	formStatus,
 	total,
@@ -244,12 +265,30 @@ function ButtonContents( {
 	activeButtonText?: string;
 } ) {
 	const { __ } = useI18n();
+	const isPurchaseFree = total.amount.value === 0;
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
 	}
-	if ( formStatus === FormStatus.READY ) {
+	if ( formStatus === FormStatus.READY && isPurchaseFree ) {
+		const defaultText = (
+			<CreditCardPayButtonWrapper>{ __( 'Complete Checkout' ) }</CreditCardPayButtonWrapper>
+		);
 		/* translators: %s is the total to be paid in localized currency */
-		return <>{ activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
+		return <>{ activeButtonText || defaultText }</>;
+	}
+	if ( formStatus === FormStatus.READY ) {
+		const defaultText = (
+			<CreditCardPayButtonWrapper>
+				<StyledMaterialIcon icon="credit_card" />
+				{ sprintf(
+					/* translators: %s is the total to be paid in localized currency */
+					__( 'Pay %s now' ),
+					total.amount.displayValue
+				) }
+			</CreditCardPayButtonWrapper>
+		);
+		/* translators: %s is the total to be paid in localized currency */
+		return <>{ activeButtonText || defaultText }</>;
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }

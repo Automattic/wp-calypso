@@ -1,7 +1,6 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { isPaymentAgreement } from 'calypso/lib/checkout/payment-methods';
 import wp from 'calypso/lib/wp';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { ComponentType } from 'react';
@@ -10,21 +9,15 @@ export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';
 
 export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
 
-const fetchPaymentMethods = ( {
-	type,
-	expired,
-}: {
-	type?: PaymentMethodRequestType;
-	expired?: boolean;
-} ): StoredPaymentMethod[] =>
-	wp.req.get(
-		{
-			path: `/me/payment-methods?type=${ type ?? 'all' }&expired=${
-				expired ? 'include' : 'exclude'
-			}`,
-		},
-		{ apiVersion: '1.2' }
-	);
+const fetchPaymentMethods = (
+	type: PaymentMethodRequestType,
+	expired: boolean
+): StoredPaymentMethod[] =>
+	wp.req.get( '/me/payment-methods', {
+		type,
+		expired: expired ? 'include' : 'exclude',
+		apiVersion: '1.2',
+	} );
 
 const requestPaymentMethodDeletion = ( id: StoredPaymentMethod[ 'stored_details_id' ] ) =>
 	wp.req.post( { path: '/me/stored-cards/' + id + '/delete' } );
@@ -57,9 +50,9 @@ export function withStoredPaymentMethods< P >(
 }
 
 export function useStoredPaymentMethods( {
-	type,
-	expired,
-	isLoggedOut,
+	type = 'all',
+	expired = false,
+	isLoggedOut = false,
 }: {
 	/**
 	 * If there is no logged-in user, we will not try to fetch anything.
@@ -84,13 +77,11 @@ export function useStoredPaymentMethods( {
 
 	const queryKey = [ storedPaymentMethodsQueryKey, type, expired ];
 
-	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >(
+	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >( {
 		queryKey,
-		() => fetchPaymentMethods( { type, expired } ),
-		{
-			enabled: ! isLoggedOut,
-		}
-	);
+		queryFn: () => fetchPaymentMethods( type, expired ),
+		enabled: ! isLoggedOut,
+	} );
 
 	const translate = useTranslate();
 	const isDataValid = Array.isArray( data );
@@ -100,9 +91,10 @@ export function useStoredPaymentMethods( {
 		StoredPaymentMethod[ 'stored_details_id' ],
 		Error,
 		StoredPaymentMethod[ 'stored_details_id' ]
-	>( ( id ) => requestPaymentMethodDeletion( id ), {
+	>( {
+		mutationFn: ( id ) => requestPaymentMethodDeletion( id ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( storedPaymentMethodsQueryKey );
+			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
 		},
 	} );
 
@@ -118,37 +110,6 @@ export function useStoredPaymentMethods( {
 		[ mutation ]
 	);
 
-	const deletePaymentMethodAndSimilar = useCallback<
-		StoredPaymentMethodsState[ 'deletePaymentMethod' ]
-	>(
-		async ( id ) => {
-			const matchingPaymentMethod = data?.find( ( method ) => method.stored_details_id === id );
-			if ( ! matchingPaymentMethod ) {
-				return Promise.reject(
-					new Error(
-						translate( 'There was a problem deleting that payment method.', { textOnly: true } )
-					)
-				);
-			}
-
-			if ( isPaymentAgreement( matchingPaymentMethod ) ) {
-				const similarPaymentAgreements =
-					data?.filter(
-						( method ) =>
-							method.email === matchingPaymentMethod.email && isPaymentAgreement( method )
-					) ?? [];
-				return Promise.all(
-					similarPaymentAgreements.map( ( method ) =>
-						deletePaymentMethod( method.stored_details_id )
-					)
-				).then( () => Promise.resolve() );
-			}
-
-			return deletePaymentMethod( id );
-		},
-		[ translate, data, deletePaymentMethod ]
-	);
-
 	const errorMessage = ( () => {
 		if ( mutation.error ) {
 			return mutation.error.message;
@@ -156,7 +117,7 @@ export function useStoredPaymentMethods( {
 		if ( error ) {
 			return error.message;
 		}
-		if ( ! isDataValid ) {
+		if ( data !== undefined && ! isDataValid ) {
 			return translate( 'There was a problem loading your stored payment methods.', {
 				textOnly: true,
 			} );
@@ -166,9 +127,9 @@ export function useStoredPaymentMethods( {
 
 	return {
 		paymentMethods,
-		isLoading,
+		isLoading: isLoggedOut ? false : isLoading,
 		isDeleting: mutation.isLoading,
 		error: errorMessage,
-		deletePaymentMethod: deletePaymentMethodAndSimilar,
+		deletePaymentMethod,
 	};
 }

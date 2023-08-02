@@ -135,32 +135,4 @@ describe( 'Logged In Landing Page', () => {
 
 		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
 	} );
-
-	test( 'user who opts in but only has 1 site does not go to sites page', async () => {
-		const state = {
-			currentUser: {
-				id: 1,
-				capabilities: { 1: { edit_posts: true } },
-				user: { primary_blog: 1, site_count: 1 },
-			},
-			preferences: {
-				localValues: {
-					'sites-landing-page': { useSitesAsLandingPage: true, updatedAt: 1111 },
-				},
-			},
-			sites: {
-				items: {
-					1: {
-						ID: 1,
-						URL: 'https://test.wordpress.com',
-					},
-				},
-			},
-		};
-		const { page } = initRouter( { state } );
-
-		page( '/' );
-
-		await waitFor( () => expect( page.current ).toBe( '/home/test.wordpress.com' ) );
-	} );
 } );

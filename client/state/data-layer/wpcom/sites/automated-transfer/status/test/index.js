@@ -1,4 +1,4 @@
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { SITE_REQUEST } from 'calypso/state/action-types';
 import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
@@ -44,23 +44,21 @@ describe( 'receiveStatus', () => {
 	test( 'should dispatch set status action', () => {
 		const dispatch = jest.fn();
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
-		expect( dispatch ).toBeCalledTimes( 3 );
+		expect( dispatch ).toBeCalledTimes( 2 );
 		expect( dispatch ).toBeCalledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
 		);
 	} );
 
-	test( 'should dispatch tracks event if complete', () => {
-		const dispatch = jest.fn();
+	test( 'should refetch the site if complete', () => {
+		const dispatch = jest.fn( ( thunkDispatch ) => {
+			if ( thunkDispatch instanceof Function ) {
+				thunkDispatch( dispatch );
+			}
+		} );
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
 		expect( dispatch ).toBeCalledTimes( 3 );
-		expect( dispatch ).toBeCalledWith(
-			recordTracksEvent( 'calypso_automated_transfer_complete', {
-				context: 'plugin_upload',
-				transfer_id: 1,
-				uploaded_plugin_slug: 'hello-dolly',
-			} )
-		);
+		expect( dispatch ).toHaveBeenLastCalledWith( { type: SITE_REQUEST, siteId } );
 	} );
 
 	test( 'should request status again if not complete', () => {

@@ -1,12 +1,17 @@
-import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
+import {
+	isAnyHostingFlow,
+	isNewsletterOrLinkInBioFlow,
+	isSenseiFlow,
+	isWooExpressFlow,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
@@ -18,6 +23,7 @@ import { useSite } from '../../hooks/use-site';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
+import { getAssemblerSource } from './analytics/record-design';
 import recordStepStart from './analytics/record-step-start';
 import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
@@ -43,6 +49,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
@@ -50,9 +57,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
+	const design = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+
+	const urlQueryParams = useQuery();
 
 	const site = useSite();
-	const ref = useQuery().get( 'ref' ) || '';
+	const ref = urlQueryParams.get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
@@ -117,7 +130,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useEffect( () => {
 		if ( isFlowStart() ) {
 			recordSignupStart( flow.name, ref );
-			recordFullStoryEvent( `calypso_signup_start_${ flow.name }`, { flow: flow.name } );
 		}
 	}, [ flow, ref, isFlowStart ] );
 
@@ -132,7 +144,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const isReEnteringStep =
 			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
 		if ( ! isReEnteringStep ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
+				intent,
+				is_in_hosting_flow: isAnyHostingFlow( flow.name ),
+				...( design && { assembler_source: getAssemblerSource( design ) } ),
+			} );
 		}
 
 		// Also record page view for data and analytics
@@ -145,7 +161,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow.name, currentStepRoute ] );
 
-	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
+	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
+		state: AssertConditionState.SUCCESS,
+	};
 
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
@@ -154,7 +172,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
-				throw new Error( assertCondition.message ?? 'An error has occurred.' );
+				return <></>;
 		}
 
 		const StepComponent = 'asyncComponent' in step ? lazy( step.asyncComponent ) : step.component;
@@ -173,6 +191,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const getDocumentHeadTitle = () => {
 		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
 			return flow.title;
+		} else if ( isSenseiFlow( flow.name ) ) {
+			return __( 'Course Creator' );
 		}
 	};
 
@@ -207,7 +227,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				<Route
 					path="*"
 					element={
-						<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+						<Navigate
+							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` }
+							replace
+						/>
 					}
 				/>
 			</Routes>

@@ -7,6 +7,8 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_AI_PRODUCTS,
+	JETPACK_STATS_PRODUCTS,
 } from '@automattic/calypso-products';
 import { SelectorProduct } from '../../types';
 
@@ -14,14 +16,16 @@ const setProductsInPosition = ( slugs: ReadonlyArray< string >, position: number
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: position } ), {} );
 
 const DISPLAYABLE_PRODUCT_POSITION_MAP: Record< string, number > = {
-	...setProductsInPosition( JETPACK_BACKUP_PRODUCTS, 1 ),
-	...setProductsInPosition( JETPACK_VIDEOPRESS_PRODUCTS, 2 ),
-	...setProductsInPosition( JETPACK_SOCIAL_PRODUCTS, 3 ),
-	...setProductsInPosition( JETPACK_BOOST_PRODUCTS, 4 ),
-	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 5 ),
+	...setProductsInPosition( JETPACK_AI_PRODUCTS, 1 ),
+	...setProductsInPosition( JETPACK_BACKUP_PRODUCTS, 2 ),
+	...setProductsInPosition( JETPACK_BOOST_PRODUCTS, 3 ),
+	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 4 ),
+	...setProductsInPosition( JETPACK_SOCIAL_PRODUCTS, 5 ),
 	...setProductsInPosition( JETPACK_ANTI_SPAM_PRODUCTS, 6 ),
-	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 7 ),
+	...setProductsInPosition( JETPACK_VIDEOPRESS_PRODUCTS, 7 ),
 	...setProductsInPosition( JETPACK_CRM_PRODUCTS, 8 ),
+	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 9 ),
+	...setProductsInPosition( JETPACK_STATS_PRODUCTS, 10 ),
 };
 
 const sortByProductPosition = ( productA: SelectorProduct, productB: SelectorProduct ) => {

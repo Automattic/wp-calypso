@@ -1,6 +1,9 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "./keyframes";
 
 .pattern-large-preview {
+	--viewport-scale: 1;
 	flex: 1;
 	position: relative;
 	height: 100vh;
@@ -9,6 +12,15 @@
 	margin-inline-start: 10px;
 	box-sizing: border-box;
 	z-index: 1;
+	transition: margin-inline-start 0.2s ease-out;
+
+	.pattern-assembler__pattern-panel-list--is-open & {
+		margin-inline-start: 360px;
+
+		@include break-wide {
+			margin-inline-start: 365px;
+		}
+	}
 }
 
 .pattern-large-preview__patterns {
@@ -44,6 +56,9 @@
 		background-color: #fff;
 		opacity: 0;
 		z-index: 1;
+		// Scale up the action bar in fixed viewport
+		transform: scale(calc(1 / var(--viewport-scale)));
+		transform-origin: top left;
 
 		> .pattern-action-bar__action {
 			position: relative;
@@ -64,20 +79,15 @@
 				bottom: -6px;
 			}
 		}
-
-		.pattern-assembler__pattern-panel-list--is-open & {
-			left: unset;
-			right: 16px;
-		}
 	}
 
 	&::after {
 		content: "";
 		position: absolute;
-		left: 2px;
-		right: 2px;
-		top: 2px;
-		bottom: 2px;
+		left: 1px;
+		right: 1px;
+		top: 1px;
+		bottom: 1px;
 		border-radius: 2px;
 	}
 
@@ -99,7 +109,8 @@
 		}
 
 		&::after {
-			box-shadow: 0 0 0 2px var(--studio-blue-50);
+			// Scale up the border of a hovered pattern in fixed viewport
+			border: calc(2px * (1 / var(--viewport-scale))) solid var(--color-primary-light);
 		}
 	}
 }
@@ -114,20 +125,36 @@
 	background: #f8f8f8;
 
 	.pattern-large-preview__placeholder-icon {
-		margin-bottom: 28px;
-		fill: #c9c9c9;
+		margin-bottom: 24px;
+		fill: var(--studio-gray-10);
 	}
 
 	h2 {
-		color: var(--studio-gray-100);
-		margin-bottom: 5px;
+		color: #000;
+		margin-bottom: 4px;
 		font-size: $font-title-small;
 		font-weight: 500;
 	}
 
 	span {
-		max-width: 600px;
+		color: #000;
 		font-size: $font-body;
+		max-width: 600px;
 		text-align: center;
+		padding: 0 60px;
+	}
+
+	button {
+		border: 1px solid var(--studio-gray-10);
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+		background-color: #fff;
+		color: var(--studio-gray-100);
+		font-size: $font-body-small;
+		font-weight: 500;
+		letter-spacing: -0.15px;
+		line-height: 20px;
+		margin-top: 24px;
+		padding: 10px 24px;
 	}
 }

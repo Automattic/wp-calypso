@@ -31,11 +31,11 @@ export default function JetpackCancellationSurvey( {
 		},
 		{
 			id: 'want-to-downgrade',
-			answerText: translate( "I'd like to downgrade to another plan." ),
+			answerText: translate( 'I’d like to downgrade to another plan.' ),
 		},
 		{
 			id: 'upgrade-by-mistake',
-			answerText: translate( "This upgrade didn't include what I needed." ),
+			answerText: translate( 'This upgrade didn’t include what I needed.' ),
 		},
 		{
 			id: 'could-not-activate',
@@ -44,6 +44,10 @@ export default function JetpackCancellationSurvey( {
 		{
 			id: 'dont-need-website',
 			answerText: translate( 'I no longer need a website.' ),
+		},
+		{
+			id: 'could-not-get-support',
+			answerText: translate( 'I couldn’t get the support I needed.' ),
 		},
 		{
 			id: 'another-reason',

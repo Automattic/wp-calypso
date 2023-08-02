@@ -1,4 +1,4 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type {
 	APIError,
@@ -19,8 +19,8 @@ function mutationToggleActivateMonitor( {
 export default function useToggleActivateMonitorMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, APIError, ToggleActivateMonitorArgs, TContext >
 ): UseMutationResult< APIResponse, APIError, ToggleActivateMonitorArgs, TContext > {
-	return useMutation< APIResponse, APIError, ToggleActivateMonitorArgs, TContext >(
-		mutationToggleActivateMonitor,
-		options
-	);
+	return useMutation< APIResponse, APIError, ToggleActivateMonitorArgs, TContext >( {
+		...options,
+		mutationFn: mutationToggleActivateMonitor,
+	} );
 }

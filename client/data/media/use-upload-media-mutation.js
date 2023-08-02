@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import {
 	failMediaItemRequest,
@@ -12,26 +12,24 @@ import { isFileList } from 'calypso/state/media/utils/is-file-list';
 export const useUploadMediaMutation = ( queryOptions = {} ) => {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
-	const mutation = useMutation(
-		( { file, siteId, postId, uploader } ) => uploader( file, siteId, postId ),
-		{
-			onSuccess( { media: [ uploadedMedia ], found }, { siteId, transientMedia } ) {
-				const uploadedMediaWithTransientId = {
-					...uploadedMedia,
-					transientId: transientMedia.ID,
-				};
+	const mutation = useMutation( {
+		mutationFn: ( { file, siteId, postId, uploader } ) => uploader( file, siteId, postId ),
+		onSuccess( { media: [ uploadedMedia ], found }, { siteId, transientMedia } ) {
+			const uploadedMediaWithTransientId = {
+				...uploadedMedia,
+				transientId: transientMedia.ID,
+			};
 
-				dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
-				dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
+			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
+			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
-				queryClient.invalidateQueries( [ 'media-storage', siteId ] );
-			},
-			onError( error, { siteId, transientMedia } ) {
-				dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
-			},
-			...queryOptions,
-		}
-	);
+			queryClient.invalidateQueries( [ 'media-storage', siteId ] );
+		},
+		onError( error, { siteId, transientMedia } ) {
+			dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
+		},
+		...queryOptions,
+	} );
 
 	const { mutateAsync } = mutation;
 
@@ -45,9 +43,10 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 			}
 
 			const uploadedItems = [];
-
-			const uploads = dispatch( createTransientMediaItems( files, site ) );
+			const transientItems = dispatch( createTransientMediaItems( files, site ) );
 			const { ID: siteId } = site;
+
+			const uploads = files.map( ( _, i ) => [ files[ i ], transientItems[ i ] ] );
 
 			for await ( const [ file, transientMedia ] of uploads ) {
 				if ( ! transientMedia ) {

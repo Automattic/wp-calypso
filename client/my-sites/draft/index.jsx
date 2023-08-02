@@ -1,4 +1,3 @@
-import url from 'url';
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -50,12 +49,12 @@ class Draft extends Component {
 		}
 
 		if ( this.props.postImages && this.props.postImages.canonical_image ) {
-			image = url.parse( this.props.postImages.canonical_image.uri, true );
+			image = new URL( this.props.postImages.canonical_image.uri );
 			imageUrl = '//' + image.hostname + image.pathname + '?w=680px';
 		}
 
 		if ( post && post.canonical_image ) {
-			image = url.parse( post.canonical_image.uri, true );
+			image = new URL( post.canonical_image.uri );
 
 			if ( image.hostname.indexOf( 'files.wordpress.com' ) > 0 ) {
 				imageUrl = '//' + image.hostname + image.pathname + '?w=680px';

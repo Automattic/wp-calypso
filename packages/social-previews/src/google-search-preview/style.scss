@@ -1,0 +1,82 @@
+/*
+ * CSS values in this file are specific and
+ * designed to match the CSS on external sites,
+ * such as Google and Facebook. Therefore there
+ * will be exceptions to our CSS guidelines here
+ * but please do not "update" this file to
+ * conform.
+ *
+ * @blame: dmsnell
+*/
+
+@import "../variables.scss";
+
+.search-preview__display {
+	border: 1px solid var(--color-neutral-0);
+	font-family: arial, sans-serif;
+	padding: 10px 20px;
+	word-wrap: break-word;
+}
+
+.search-preview__header {
+	display: flex;
+	align-items: flex-end;
+	gap: 0.5rem;
+}
+
+.search-preview__menu {
+	height: 18px;
+	width: 18px;
+	color: #4d5156;
+	position: relative;
+}
+
+.search-preview__branding {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+}
+
+.search-preview__site--title {
+	color: #202124; // matching Google results
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.search-preview__icon {
+	width: 1.75rem;
+	height: 1.75rem;
+}
+
+.search-preview__title {
+	color: #1a0dab; // matching Google results
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 20px;
+	line-height: 1.3;
+	max-width: 616px;
+	margin-top: 8px;
+	margin-bottom: 7px;
+
+	&:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+}
+
+.search-preview__url {
+	color: #4d5156; // matching Google results
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 12px;
+	line-height: 1.3;
+	max-width: 616px;
+}
+
+.search-preview__description {
+	color: #4d5156; // matching Google results
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.5;// matching Google results
+	max-width: 616px;
+}

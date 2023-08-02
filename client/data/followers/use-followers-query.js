@@ -1,8 +1,8 @@
 import { uniqueBy } from '@automattic/js-utils';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-const MAX_FOLLOWERS = 10; // means pages (= 1000 followers);
+const MAX_FOLLOWERS = 100; // means pages (= 10000 followers);
 const defaults = {
 	max: 100,
 };

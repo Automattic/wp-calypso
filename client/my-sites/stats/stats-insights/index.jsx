@@ -9,19 +9,17 @@ import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AllTimelHighlightsSection from '../all-time-highlights-section';
+import AllTimeHighlightsSection from '../all-time-highlights-section';
 import AllTimeViewsSection from '../all-time-views-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import PostingActivity from '../post-trends';
 import Comments from '../stats-comments';
-import Followers from '../stats-followers';
 import StatsModule from '../stats-module';
 import StatsPageHeader from '../stats-page-header';
-import Reach from '../stats-reach';
+import PageViewTracker from '../stats-page-view-tracker';
 import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
 
@@ -53,33 +51,31 @@ const StatsInsights = ( props ) => {
 					page="insights"
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
+				{ siteId && (
+					<div>
+						<DomainTip
+							siteId={ siteId }
+							event="stats_insights_domain"
+							vendor={ getSuggestionsVendor() }
+						/>
+					</div>
+				) }
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
-				<AllTimelHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
+				<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
-				{ siteId && (
-					<DomainTip
-						siteId={ siteId }
-						event="stats_insights_domain"
-						vendor={ getSuggestionsVendor() }
-					/>
-				) }
 				<div className={ statsModuleListClass }>
 					<StatsModule
 						path="tags-categories"
 						moduleStrings={ moduleStrings.tags }
 						statType="statsTags"
 						hideSummaryLink
-						//hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 					/>
 					<Comments path="comments" />
 
 					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
 					{ ! isJetpack && <StatShares siteId={ siteId } /> }
-
-					<Followers path="followers" />
-					<Reach />
 				</div>
 				<JetpackColophon />
 			</div>

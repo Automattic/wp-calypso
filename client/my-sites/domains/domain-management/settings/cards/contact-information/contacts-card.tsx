@@ -17,6 +17,7 @@ import {
 	redactDomainContactInfo,
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
+import { IAppState } from 'calypso/state/types';
 import type { ContactsCardPassedProps, ContactsCardProps } from './types';
 
 const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
@@ -147,7 +148,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent } = props;
+	const { selectedDomainName, canManageConsent, currentRoute } = props;
 
 	return (
 		<div>
@@ -159,7 +160,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 							href={ domainManagementEditContactInfo(
 								props.selectedSite.slug,
 								props.selectedDomainName,
-								props.currentRoute as undefined
+								currentRoute
 							) }
 						>
 							{ translate( 'Edit' ) }
@@ -169,7 +170,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 								href={ domainManagementManageConsent(
 									props.selectedSite.slug,
 									props.selectedDomainName,
-									props.currentRoute as undefined
+									currentRoute
 								) }
 							>
 								{ translate( 'Manage consent' ) }
@@ -188,7 +189,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 };
 
 export default connect(
-	( state, ownProps: ContactsCardPassedProps ) => ( {
+	( state: IAppState, ownProps: ContactsCardPassedProps ) => ( {
 		currentRoute: getCurrentRoute( state ),
 		isUpdatingPrivacy: isUpdatingDomainPrivacy(
 			state,

@@ -90,7 +90,7 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 	const classNames = cx( 'nudge-container', props.className, `is-${ slugify( props.path ) }` );
 
 	return (
-		<Container path={ props.path } className={ classNames }>
+		<Container path={ props.path } className={ classNames } role="status">
 			{ messages.map( ( msg ) => (
 				<Message key={ msg.id } isPlansStep={ props.path === 'signup/plans' }>
 					<Text path={ props.path }>{ msg.text }</Text>

@@ -1,5 +1,5 @@
+import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 import { GITHUB_CONNECTION_QUERY_KEY } from '../use-github-connection-query';
@@ -15,32 +15,30 @@ export const useGithubDisconnectRepoMutation = (
 	options: UseMutationOptions< unknown, MutationError, unknown > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async () =>
+	const mutation = useMutation( {
+		mutationFn: async () =>
 			wp.req.post( {
 				method: 'DELETE',
 				path: `/sites/${ siteId }/hosting/github/connection`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			...options,
-			onSuccess: async ( ...args ) => {
-				await Promise.all( [
-					queryClient.invalidateQueries( [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId ] ),
-					queryClient.invalidateQueries( [
-						GITHUB_INTEGRATION_QUERY_KEY,
-						siteId,
-						GITHUB_CONNECTION_QUERY_KEY,
-					] ),
-				] );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess: async ( ...args ) => {
+			await Promise.all( [
+				queryClient.invalidateQueries( [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId ] ),
+				queryClient.invalidateQueries( [
+					GITHUB_INTEGRATION_QUERY_KEY,
+					siteId,
+					GITHUB_CONNECTION_QUERY_KEY,
+				] ),
+			] );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate, isLoading } = mutation;
 
-	const disconnectRepo = useCallback( ( args ) => mutate( args ), [ mutate ] );
+	const disconnectRepo = useCallback( ( siteId: number | null ) => mutate( siteId ), [ mutate ] );
 
 	return { disconnectRepo, isLoading };
 };

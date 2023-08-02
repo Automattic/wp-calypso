@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useQuery } from 'react-query';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -18,11 +18,11 @@ interface Site {
 }
 
 function useSiteQuery( siteId: string | number ) {
-	return useQuery< Site >(
-		[ 'unauthorized-site', siteId ],
-		() => wpcom.req.get( { path: `/sites/${ siteId }`, apiVersion: '1.2' } ),
-		{ meta: { persist: false } }
-	);
+	return useQuery< Site >( {
+		queryKey: [ 'unauthorized-site', siteId ],
+		queryFn: () => wpcom.req.get( { path: `/sites/${ siteId }`, apiVersion: '1.2' } ),
+		meta: { persist: false },
+	} );
 }
 
 export default function GiftThankYou( { site }: { site: number | string } ) {
@@ -94,7 +94,7 @@ export default function GiftThankYou( { site }: { site: number | string } ) {
 						width: '63px',
 					} }
 					thankYouTitle={ translate( 'All done! Thank you for supporting %(siteName)s.', {
-						args: { siteName },
+						args: { siteName: siteName ?? translate( 'this website' ) },
 					} ) }
 					thankYouHeaderBody={
 						<div className="gift-thank-you__header-body">

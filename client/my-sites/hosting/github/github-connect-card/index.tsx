@@ -3,11 +3,11 @@ import { ExternalLink } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { ComponentProps, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Image from 'calypso/components/image';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -78,7 +78,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 			<div>
 				<p>
 					{ __( 'Changes pushed to the selected branch will be automatically deployed. ' ) }
-					<ExternalLink href="#" target="_blank" rel="noopener noreferrer">
+					<ExternalLink href="#" rel="noopener noreferrer">
 						{ __( 'Learn more' ) }
 					</ExternalLink>
 				</p>

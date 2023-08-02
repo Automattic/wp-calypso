@@ -1,6 +1,6 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

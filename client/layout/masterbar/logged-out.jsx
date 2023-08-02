@@ -32,6 +32,63 @@ class MasterbarLoggedOut extends Component {
 		title: '',
 	};
 
+	renderTagsItem() {
+		const { translate } = this.props;
+
+		const tagsUrl = '/tags';
+		// TODO - renable adding locale once we enable locales for these pages.
+		// if ( ! isDefaultLocale( locale ) ) {
+		// 	tagsUrl = addLocaleToPath( tagsUrl, locale );
+		// }
+
+		return (
+			<Item url={ tagsUrl }>
+				{ translate( 'Popular Tags', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~15 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderSearchItem() {
+		const { translate } = this.props;
+
+		const searchUrl = '/read/search';
+		// TODO - renable adding locale once we enable locales for these pages.
+		// if ( ! isDefaultLocale( locale ) ) {
+		// 	searchUrl = addLocaleToPath( searchUrl, locale );
+		// }
+
+		return (
+			<Item url={ searchUrl }>
+				{ translate( 'Search', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderDiscoverItem() {
+		const { translate } = this.props;
+
+		const discoverUrl = '/discover';
+		// TODO - renable adding locale once we enable locales for these pages.
+		// if ( ! isDefaultLocale( locale ) ) {
+		// 	discoverUrl = addLocaleToPath( discoverUrl, locale );
+		// }
+
+		return (
+			<Item url={ discoverUrl }>
+				{ translate( 'Discover', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
+
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
 		if ( sectionName === 'login' ) {
@@ -134,6 +191,22 @@ class MasterbarLoggedOut extends Component {
 		);
 	}
 
+	renderWordPressItem() {
+		const { locale } = this.props;
+
+		let homeUrl = '/';
+		if ( ! isDefaultLocale( locale ) ) {
+			homeUrl = addLocaleToPath( homeUrl, locale );
+		}
+
+		return (
+			<Item url={ homeUrl } className="masterbar__item-logo masterbar__item--always-show-content">
+				<WordPressLogo className="masterbar__wpcom-logo" />
+				<WordPressWordmark className="masterbar__wpcom-wordmark" />
+			</Item>
+		);
+	}
+
 	render() {
 		const { title, isCheckout, isCheckoutPending } = this.props;
 
@@ -149,15 +222,15 @@ class MasterbarLoggedOut extends Component {
 		}
 
 		return (
-			<Masterbar>
-				<Item className="masterbar__item-logo masterbar__item--always-show-content">
-					<WordPressLogo className="masterbar__wpcom-logo" />
-					<WordPressWordmark className="masterbar__wpcom-wordmark" />
-				</Item>
+			<Masterbar className="masterbar__loggedout">
+				{ this.renderWordPressItem() }
 				<Item className="masterbar__item-title">{ title }</Item>
 				<div className="masterbar__login-links">
-					{ this.renderSignupItem() }
+					{ this.renderDiscoverItem() }
+					{ this.renderTagsItem() }
+					{ this.renderSearchItem() }
 					{ this.renderLoginItem() }
+					{ this.renderSignupItem() }
 				</div>
 			</Masterbar>
 		);

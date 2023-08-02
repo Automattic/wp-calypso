@@ -12,9 +12,6 @@ import { PLANS_STORE } from '../stores';
 import type { CTAVariation, PopularBadgeVariation } from './types';
 import type { DomainSuggestions, Plans, PlansSelect } from '@automattic/data-stores';
 
-// TODO: remove when all needed core types are available
-/*#__PURE__*/ import '../types-patch';
-
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const ChevronDown = (
@@ -205,7 +202,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
-									isPrimary
+									variant="primary"
 									disabled={ !! disabledLabel }
 								>
 									<span>{ disabledLabel ?? normalCtaLabelFallback }</span>
@@ -219,7 +216,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
-									isPrimary={ isPopular }
+									variant={ isPopular ? 'primary' : undefined }
 									disabled={ !! disabledLabel }
 								>
 									<span>
@@ -256,7 +253,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			</div>
 
 			{ isPopular && ! isDesktop && (
-				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
+				<Button
+					onClick={ onToggleExpandAll }
+					className="plan-item__mobile-expand-all-plans"
+					variant="link"
+				>
 					{ allPlansExpanded ? expandToggleLabelExpanded : expandToggleLabelCollapsed }
 				</Button>
 			) }

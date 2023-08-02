@@ -5,6 +5,7 @@
 	from {
 		transform: translateY(32px);
 	}
+
 	to {
 		transform: translateY(0);
 	}
@@ -16,18 +17,38 @@
 	color: var(--studio-gray-50);
 }
 
-.notification-settings__sub-title {
-	@extend .notification-settings-title-light;
-	position: absolute;
-	inset-block-start: 50px;
-
-}
-
 .notification-settings__content {
 	margin-block-start: -16px;
+	padding-block-end: 120px;
+
+	@include break-mobile {
+		padding-block-end: 0;
+	}
+}
+
+.notification-settings__content-heading-with-beta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.notification-settings__beta-tag {
+	background: var(--studio-gray-30);
+	border-radius: 4px;
+	font-style: normal;
+	font-weight: 700;
+	font-size: 0.75rem;
+	line-height: 17px;
+	display: flex;
+	color: var(--studio-white);
+	padding: 0 5px;
+	margin-block-end: 8px;
 }
 
 .notification-settings__content-heading {
+	display: flex;
+	gap: 4px;
+	align-items: center;
 	font-size: 0.875rem;
 	line-height: 17px;
 	margin-block-end: 8px;
@@ -42,55 +63,20 @@
 	position: relative;
 }
 
-.notification-settings__link {
-	text-decoration: underline;
+.notification-settings__content-block .select-dropdown__item.is-disabled {
+	opacity: 1;
+
+	.select-dropdown__item-text {
+		color: var(--studio-gray-20);
+	}
 }
 
-.notification-settings__footer {
-	margin-block-end: 32px;
-	width: calc(100% - 64px); // reducing the left and right padding
-	display: flex;
-	justify-content: flex-start;
-	flex-direction: column;
-	position: absolute;
-	bottom: 0;
+.notification-settings__content-block .select-dropdown__item .badge {
+	margin-inline-start: 4px;
+}
 
-	.notification-settings__footer-buttons {
-		display: flex;
-		flex-direction: column;
-	}
-
-	button {
-		height: 36px;
-		line-height: 18px;
-
-		&:nth-child(2) {
-			margin-block-start: 16px;
-		}
-	}
-
-	@include break-mobile {
-		position: static;
-		justify-content: right;
-		flex-direction: initial;
-		margin-block-start: 32px;
-		margin-block-end: 0;
-		width: auto;
-
-		.notification-settings__footer-buttons {
-			justify-content: end;
-			width: 100%;
-			flex-direction: initial;
-		}
-
-		button {
-			&:nth-child(2) {
-				margin-inline-start: 12px;
-				margin-block-start: 0;
-			}
-		}
-	}
-
+.notification-settings__link {
+	text-decoration: underline;
 }
 
 .select-dropdown .select-dropdown__container {
@@ -104,7 +90,6 @@
 	width: 20px;
 }
 
-
 .notification-settings__toggle {
 	width: 15%;
 	display: inline-flex;
@@ -112,10 +97,6 @@
 
 	.components-form-toggle {
 		margin-right: 0 !important;
-	}
-
-	@include break-mobile {
-		justify-content: unset;
 	}
 }
 
@@ -130,11 +111,6 @@
 	width: 480px;
 	animation: components-modal__appear-animation 0.1s ease-out;
 	animation-fill-mode: forwards;
-
-	@include break-mobile {
-		width: 450px;
-		margin: auto;
-	}
 }
 
 .notification-settings__email-container {
@@ -152,10 +128,6 @@
 	.token-field__input-container {
 		cursor: default;
 	}
-
-	@include break-mobile {
-		margin-block-start: 4px;
-	}
 }
 
 .notification-settings__email-condition {
@@ -168,29 +140,19 @@
 	display: inline-flex;
 	flex-direction: row-reverse;
 	width: 100%;
+}
 
-	@include break-mobile {
-		display: block;
-	}
+.notification-settings__toggle-container .components-base-control__field .components-flex {
+	display: inline-flex;
+	flex-direction: row-reverse;
 }
 
 .notification-settings__large-screen {
 	display: none;
-	@include break-mobile {
-		display: inherit;
-	}
 }
 
 .notification-settings__small-screen {
-	@include break-mobile {
-		display: none;
-	}
-}
-
-.notification-settings__footer-validation-error {
-	@extend .notification-settings-title-light;
-	color: var(--color-scary-40);
-	margin-block-end: 16px;
+	display: inherit;
 }
 
 .notification-settings__warning {
@@ -202,5 +164,26 @@
 		position: relative;
 		top: 2px;
 		margin-right: 7px;
+	}
+}
+
+// Visually hide the toggle control label by positioning
+// it far off-screen, making it effectively invisible.
+// It will be used by screen readers
+.notification-settings__toggle-control label {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+.notification-settings__sms-counter {
+	color: var(--studio-gray-50);
+	font-size: 0.75rem;
+	margin-block-start: 8px;
+
+	&.notification-settings__sms-counter-limit-reached {
+		color: var(--color-scary-40);
 	}
 }

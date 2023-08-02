@@ -83,7 +83,8 @@ function Export( { list, listItems } ) {
 			<ReaderExportButton
 				exportType={ READER_EXPORT_TYPE_LIST }
 				listId={ list.ID }
-				disabled={ ! listItems || listItems.length === 0 }
+				disabled={ ! listItems?.length }
+				variant="primary"
 			/>
 		</Card>
 	);

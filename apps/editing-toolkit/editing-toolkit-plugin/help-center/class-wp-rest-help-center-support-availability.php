@@ -44,6 +44,26 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 				'permission_callback' => array( $this, 'permission_callback' ),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/messaging',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_messaging_support_eligibility' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'args'                => array(
+					'group'       => array(
+						'type'     => 'string',
+						'required' => true,
+					),
+					'environment' => array(
+						'type'     => 'string',
+						'required' => true,
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -84,6 +104,27 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 			}
 			$response = json_decode( wp_remote_retrieve_body( $body ) );
 		}
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Should return messaging eligibility
+	 *
+	 * @param \WP_REST_Request $request    The request sent to the API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_messaging_support_eligibility( \WP_REST_Request $request ) {
+		$query_parameters = array(
+			'group'       => $request['group'],
+			'environment' => $request['environment'],
+		);
+		$body             = Client::wpcom_json_api_request_as_user( 'help/messaging/is-available?' . http_build_query( $query_parameters ) );
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		return rest_ensure_response( $response );
 	}

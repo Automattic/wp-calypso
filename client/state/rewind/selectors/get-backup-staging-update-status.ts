@@ -10,7 +10,7 @@ import 'calypso/state/rewind/init';
  * @returns The the status of the request.
  */
 const getBackupStagingUpdateRequestStatus = ( state: AppState, siteId: number ): string =>
-	state.rewind[ siteId ]?.updateStagingFlagRequestStatus ??
+	state.rewind[ siteId ]?.staging?.updateStagingFlagRequestStatus ??
 	BACKUP_STAGING_UPDATE_REQUEST.UNSUBMITTED;
 
 export default getBackupStagingUpdateRequestStatus;

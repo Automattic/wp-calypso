@@ -1,7 +1,7 @@
 import { Button, Card, Spinner } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

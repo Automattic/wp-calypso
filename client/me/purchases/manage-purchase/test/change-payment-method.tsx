@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
 	stripeConfiguration,

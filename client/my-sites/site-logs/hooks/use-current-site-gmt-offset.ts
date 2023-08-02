@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 

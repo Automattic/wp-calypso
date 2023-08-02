@@ -5,12 +5,12 @@ import {
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
+import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

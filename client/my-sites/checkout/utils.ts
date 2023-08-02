@@ -1,3 +1,4 @@
+import { doesStringResembleDomain } from '@automattic/onboarding';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -92,25 +93,6 @@ export function getProductSlugFromContext( context: PageJS.Context ): string | u
 	}
 
 	return '';
-}
-
-function doesStringResembleDomain( domainOrProduct: string ): boolean {
-	try {
-		// Domain names should all contain a dot.
-		const hasDot = domainOrProduct.includes( '.' );
-		if ( ! hasDot ) {
-			return false;
-		}
-
-		// Subdomain site slugs contain the install path after two colons.
-		const domainBeforeColons = domainOrProduct.split( '::' )[ 0 ];
-
-		// Domains should be able to become a valid URL.
-		// eslint-disable-next-line no-new
-		new URL( 'http://' + domainBeforeColons );
-		return true;
-	} catch {}
-	return false;
 }
 
 /**

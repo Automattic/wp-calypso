@@ -22,12 +22,6 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 
 	const { setIntent } = useDispatch( ONBOARD_STORE );
 
-	// example usage
-	// const site = useSite();
-	// const hasSimplePayments = useSelect(
-	//	( select ) => site && select( SITE_STORE ).siteHasFeature( site?.ID, 'simple-payments' )
-	//);
-
 	const intents = useIntents();
 	const site = useSite();
 	const canImport = Boolean( site?.capabilities?.manage_options );

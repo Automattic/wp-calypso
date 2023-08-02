@@ -8,13 +8,13 @@ import {
 	QueryKey,
 	QueryFunction,
 	useQuery,
-} from 'react-query';
-import { useSelector } from 'react-redux';
+} from '@tanstack/react-query';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	extractSearchInformation,
 	getPreinstalledPremiumPluginsVariations,
 } from 'calypso/lib/plugins/utils';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
 import { search, searchBySlug } from './search-api';
@@ -88,26 +88,30 @@ export const getESPluginQueryParams = (
 	slug: string,
 	locale: string,
 	fields?: Array< string >
-): [ QueryKey, QueryFunction< { plugins: Plugin[]; pagination: { page: number } }, QueryKey > ] => {
-	const cacheKey = `es-plugin-slug-${ slug }`;
-	const fetchFn = () =>
+): {
+	queryKey: QueryKey;
+	queryFn: QueryFunction< { plugins: Plugin[]; pagination: { page: number } }, QueryKey >;
+} => {
+	const queryKey = [ 'es-plugin', slug ];
+	const queryFn = () =>
 		searchBySlug( slug, locale, { fields } )
 			.then( ( { data }: { data: { results: ESHits } } ) =>
 				mapIndexResultsToPluginData( data.results )
 			)
 			.then( ( plugins: Plugin[] ) => plugins?.[ 0 ] || null );
-	return [ [ cacheKey ], fetchFn ];
+	return { queryKey, queryFn };
 };
 
 const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 export const useESPlugin = (
 	slug: string,
 	fields?: Array< string >,
-	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
-	return useQuery( ...getESPluginQueryParams( slug, locale, fields ), {
+	return useQuery( {
+		...getESPluginQueryParams( slug, locale, fields ),
 		enabled,
 		staleTime,
 		refetchOnMount,
@@ -117,15 +121,15 @@ export const useESPlugin = (
 export const getESPluginsInfiniteQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
-): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
+): { queryKey: QueryKey; queryFn: QueryFunction< ESResponse, QueryKey > } => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
-	const cacheKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
+	const queryKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
 	const groupId =
 		config.isEnabled( 'marketplace-jetpack-plugin-search' ) && options.category !== 'popular'
 			? 'marketplace'
 			: 'wporg';
-	const fetchFn = ( { pageParam = 1 } ) =>
+	const queryFn = ( { pageParam = 1 } ) =>
 		search( {
 			query: searchTerm,
 			author,
@@ -135,16 +139,17 @@ export const getESPluginsInfiniteQueryParams = (
 			pageSize,
 			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
 		} );
-	return [ cacheKey, fetchFn ];
+	return { queryKey, queryFn };
 };
 
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
-	return useInfiniteQuery( ...getESPluginsInfiniteQueryParams( options, locale ), {
+	return useInfiniteQuery( {
+		...getESPluginsInfiniteQueryParams( options, locale ),
 		select: ( data: InfiniteData< ESResponse > ) => {
 			return {
 				...data,
@@ -157,7 +162,7 @@ export const useESPluginsInfinite = (
 			};
 		},
 		getNextPageParam: ( lastPage ) => {
-			return lastPage.data.page_handle || undefined;
+			return lastPage?.data?.page_handle;
 		},
 		enabled,
 		staleTime,

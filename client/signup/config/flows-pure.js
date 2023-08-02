@@ -13,19 +13,19 @@ export function generateFlows( {
 	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
 	getWithThemeDestination = noop,
+	getWithPluginDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
-	getHomeDestination = noop,
+	getHostingFlowDestination = noop,
 } = {} ) {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'plans-hosting', 'user-hosting', 'domains' ],
-			destination: getHomeDestination,
-			description:
-				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
-			lastModified: '2023-02-09',
+			steps: [ 'user-hosting' ],
+			destination: getHostingFlowDestination,
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
 		},
 		{
@@ -33,11 +33,13 @@ export function generateFlows( {
 			steps: [ 'user' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2020-08-12',
+			lastModified: '2023-06-16',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'business',
@@ -89,10 +91,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-theme',
-			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
+			steps: [ 'user', 'domains-theme-preselected', 'plans-theme-preselected' ],
 			destination: getWithThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2022-11-28',
+			lastModified: '2023-04-27',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'theme' ],
 			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
@@ -106,18 +108,13 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'design-first',
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'site-title',
-				'domains',
-				'plans',
-			],
-			destination: getChecklistThemeDestination,
-			description: 'Start with one of our template-first (Gutenberg) themes.',
-			lastModified: '2019-10-16',
+			name: 'with-plugin',
+			steps: [ 'user', 'domains', 'plans-business' ],
+			destination: getWithPluginDestination,
+			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
+			lastModified: '2023-07-19',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
 		},
 		{
 			name: 'onboarding',
@@ -141,13 +138,35 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'domain-transfer',
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans' ]
+				: [ 'user', 'domains', 'plans' ],
+			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
+			description:
+				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
+			lastModified: '2023-06-19',
+			showRecaptcha: true,
+		},
+		{
 			name: 'onboarding-pm',
 			steps: [ 'user', 'domains', 'plans-pm' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
-			lastModified: '2023-01-10',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
+		},
+		{
+			name: 'onboarding-media',
+			steps: [ 'user' ],
+			destination: getRedirectDestination,
+			description:
+				'The intermittent user step for the GF foundation version of the paid media flow.',
+			lastModified: '2023-06/17',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'import',
@@ -255,20 +274,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
-		},
-		{
-			name: 'ecommerce-design-first',
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'domains',
-				'plans-ecommerce',
-			],
-			destination: getSignupDestination,
-			description:
-				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
-			lastModified: '2019-11-27',
 		},
 		{
 			name: 'ecommerce-monthly',

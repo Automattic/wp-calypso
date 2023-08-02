@@ -223,13 +223,14 @@ export function disableInviteLinks( siteId ) {
 	};
 }
 
-export function acceptInvite( invite ) {
+export function acceptInvite( invite, emailVerificationSecret ) {
 	return async ( dispatch ) => {
 		try {
 			const data = await wpcom.req.get(
 				`/sites/${ invite.site.ID }/invites/${ invite.inviteKey }/accept`,
 				{
 					activate: invite.activationKey,
+					email_verification_secret: emailVerificationSecret,
 					include_domain_only: true,
 					apiVersion: '1.3',
 				}

@@ -59,9 +59,12 @@ const initialState = {
 	jetpack: {},
 };
 
-function renderWithRedux( ui ) {
+function renderWithRedux( ui, customInitialState = {} ) {
 	return renderWithProvider( ui, {
-		initialState,
+		initialState: {
+			...initialState,
+			...customInitialState,
+		},
 		reducers: {
 			editor: editorReducer,
 			media: mediaReducer,
@@ -75,6 +78,7 @@ function renderWithRedux( ui ) {
 
 const props = {
 	site: {
+		ID: 1234,
 		plan: { product_slug: PLAN_FREE },
 		domain: 'example.wordpress.com',
 	},
@@ -102,7 +106,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
+						site={ { ID: 1234, plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
@@ -116,7 +120,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
+						site={ { ID: 1234, plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
@@ -125,7 +129,11 @@ describe( 'SiteSettingsFormGeneral', () => {
 		} );
 
 		test( 'No UpsellNudge for jetpack plans', () => {
-			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } /> );
+			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } />, {
+				ui: {
+					selectedSiteId: 1234,
+				},
+			} );
 			expect( screen.queryByTestId( 'upsell-nudge' ) ).not.toBeInTheDocument();
 		} );
 	} );
@@ -342,7 +350,12 @@ describe( 'SiteSettingsFormGeneral', () => {
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
+				<SiteSettingsFormGeneral { ...testProps } />,
+				{
+					ui: {
+						selectedSiteId: 1234,
+					},
+				}
 			);
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
@@ -541,7 +554,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			testProps = {
 				...props,
 				siteIsJetpack: false,
-				site: { plan: { product_slug: PLAN_PERSONAL }, domain: 'example.wordpress.com' },
+				site: { ID: 1234, plan: { product_slug: PLAN_PERSONAL }, domain: 'example.wordpress.com' },
 				fields: {
 					blog_public: 1,
 					wpcom_coming_soon: 0,
@@ -776,6 +789,66 @@ describe( 'SiteSettingsFormGeneral', () => {
 
 				expect( container.querySelectorAll( '#site-privacy-settings' ) ).toHaveLength( 0 );
 			} );
+		} );
+	} );
+
+	describe( 'Built By Upsell', () => {
+		const testProps = {
+			...props,
+			site: {
+				ID: 1234,
+				domain: 'example.wordpress.com',
+				options: {
+					created_at: '2023-06-14T04:37:53+00:00',
+				},
+			},
+			isUnlaunchedSite: true,
+			siteDomains: [ 'example.wordpress.com' ],
+		};
+
+		it( 'Should not show the upsell for launched sites', () => {
+			const { container } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } isUnlaunchedSite={ false } />
+			);
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 0 );
+		} );
+
+		it( 'Should not show the upsell for sites without created_at', () => {
+			const testPropsWithoutCreatedAt = {
+				...testProps,
+				site: {
+					...testProps.site,
+					options: {
+						created_at: null,
+					},
+				},
+			};
+
+			const { container } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testPropsWithoutCreatedAt } />
+			);
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 0 );
+		} );
+
+		it( 'Should not show the upsell for sites newer than 4 days', () => {
+			jest
+				.useFakeTimers()
+				.setSystemTime( Date.parse( '2023-06-14T04:37:53+00:00' ) + 3 * 24 * 60 * 60 * 1000 );
+
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+			jest.setSystemTime( jest.getRealSystemTime() );
+			jest.useRealTimers();
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 0 );
+		} );
+
+		it( 'Should show the upsell for unlaunched sites older than 4 days', () => {
+			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+			expect( container.querySelectorAll( '.site-settings__built-by-upsell' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

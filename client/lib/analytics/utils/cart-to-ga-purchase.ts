@@ -9,6 +9,7 @@ export type GaPurchase = {
 	transaction_id: string;
 	coupon: string;
 	items: GaItem[];
+	contains_yearly_or_higher_wpcom_plan?: boolean;
 };
 
 const parseCartInfo = ( cartInfo: WpcomJetpackCartInfo ) => ( {
@@ -45,6 +46,15 @@ export function cartToGaPurchase(
 ): GaPurchase {
 	const cartInfoType = getCartInfoType( cartInfo );
 
+	// When using gtag.js, we can't access the `items` array to make custom events in GA4.
+	// To get around this limitation, we need to set this property on the top level purcahse object.
+	const containsYearlyOrHigherWPcomPlan = cartInfo.wpcomProducts?.some( ( product ) => {
+		if ( ! product.months_per_bill_period ) {
+			return false;
+		}
+		return product.months_per_bill_period >= 12;
+	} );
+
 	const { value, items } = parseCartInfo( cartInfo )[ cartInfoType ];
 	return {
 		transaction_id: orderId,
@@ -52,5 +62,8 @@ export function cartToGaPurchase(
 		currency: 'USD', // we track all prices in USD
 		value,
 		items: items.map( ( product ) => productToGaItem( product, cart.currency ) ),
+		...( 'wpcom' === cartInfoType
+			? { contains_yearly_or_higher_wpcom_plan: containsYearlyOrHigherWPcomPlan }
+			: {} ),
 	};
 }

@@ -87,6 +87,7 @@ describe( 'ActionButtons', () => {
 		const rewindId = 'test';
 		render( <ActionButtons rewindId={ rewindId } /> );
 		const downloadButton = screen.getByRole( 'link', { name: /download/i } );
+		downloadButton.onclick = jest.fn( ( event ) => event.preventDefault() );
 
 		await user.click( downloadButton );
 
@@ -103,6 +104,8 @@ describe( 'ActionButtons', () => {
 		render( <ActionButtons rewindId={ rewindId } /> );
 
 		const restoreButton = screen.getByRole( 'link', { name: /restore/i } );
+		restoreButton.onclick = jest.fn( ( event ) => event.preventDefault() );
+
 		await user.click( restoreButton );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_restore', {

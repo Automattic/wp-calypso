@@ -6,9 +6,10 @@
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import {
-	FacebookPreview as Facebook,
-	TwitterPreview as Twitter,
-	SearchPreview as Search,
+	FacebookLinkPreview as Facebook,
+	TwitterPostPreview as Twitter,
+	TwitterPreviews,
+	GoogleSearchPreview as Search,
 } from '../src';
 import { formatTweetDate } from '../src/helpers';
 
@@ -128,9 +129,19 @@ describe( 'Twitter previews', () => {
 		urls: [],
 	};
 
+	const dummyProps = {
+		title: 'test',
+		description: 'test',
+		image: 'https://s1.wp.com/wp-content/themes/h4/i/automattic-2x.png',
+		url: 'https://wordpress.com/',
+	};
+
 	it( 'should display an untruncated title', () => {
 		const { container } = render(
-			<Twitter title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
+			<Twitter
+				{ ...dummyProps }
+				title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral."
+			/>
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
@@ -144,7 +155,10 @@ describe( 'Twitter previews', () => {
 
 	it( 'should display a truncated description', () => {
 		const { container } = render(
-			<Twitter description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			<Twitter
+				{ ...dummyProps }
+				description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			/>
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
@@ -159,7 +173,10 @@ describe( 'Twitter previews', () => {
 
 	it( 'should strip html tags from the description', () => {
 		const { container } = render(
-			<Twitter description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			<Twitter
+				{ ...dummyProps }
+				description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			/>
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
@@ -174,12 +191,12 @@ describe( 'Twitter previews', () => {
 	it( 'should display image only when provided', () => {
 		const { container } = render(
 			<>
-				<Twitter />
-				<Twitter image={ IMAGE_SRC_FIXTURE } />
+				<Twitter { ...dummyProps } image="" />
+				<Twitter { ...dummyProps } image={ IMAGE_SRC_FIXTURE } />
 			</>
 		);
 
-		const twitterPreviews = container.querySelectorAll( '.twitter-preview' );
+		const twitterPreviews = container.querySelectorAll( '.twitter-preview__wrapper' );
 		const tweetWrapperNoImage = twitterPreviews[ 0 ];
 		const tweetWrapperWithImage = twitterPreviews[ 1 ];
 
@@ -196,9 +213,10 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
-		const { container } = render( <Twitter url="https://wordpress.com" /> );
+		const { container } = render( <Twitter { ...dummyProps } url="https://wordpress.com" /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+
 		const urlEl = tweetWrapper.querySelector( '.twitter-preview__card-url' );
 
 		expect( urlEl ).toBeVisible();
@@ -207,7 +225,7 @@ describe( 'Twitter previews', () => {
 
 	describe( 'Styling hooks', () => {
 		it( 'should append a classname with the correct "type" to the root element when provided', () => {
-			const { container } = render( <Twitter type="article" /> );
+			const { container } = render( <Twitter { ...dummyProps } cardType="article" title="test" /> );
 
 			const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 			const innerEl = tweetWrapper.querySelector( '.twitter-preview__card > div' );
@@ -221,17 +239,14 @@ describe( 'Twitter previews', () => {
 		const name = 'WordPress';
 		const screenName = '@WordPress';
 		const date = Date.now();
-		const tweets = [
-			{
-				...emptyTweet,
-				profileImage,
-				name,
-				screenName,
-				date,
-			},
-		];
-
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const tweet = {
+			...emptyTweet,
+			profileImage,
+			name,
+			screenName,
+			date,
+		};
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -250,14 +265,12 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should replace URLs with hyperlinks', () => {
-		const tweets = [
-			{
-				...emptyTweet,
-				text: 'This text https://jetpack.com/ has https://wordpress.com/ some https://jetpack.com/ URLs https://wordpress.org/.',
-			},
-		];
+		const tweet = {
+			...emptyTweet,
+			text: 'This text https://jetpack.com/ has https://wordpress.com/ some https://jetpack.com/ URLs https://wordpress.org/.',
+		};
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -272,14 +285,12 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should replace hashtags with hyperlinks', () => {
-		const tweets = [
-			{
-				...emptyTweet,
-				text: '#hashtag here\n\nsome #otherHashtag here\n#hashtag on a new line',
-			},
-		];
+		const tweet = {
+			...emptyTweet,
+			text: '#hashtag here\n\nsome #otherHashtag here\n#hashtag on a new line',
+		};
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -294,15 +305,13 @@ describe( 'Twitter previews', () => {
 	} );
 
 	it( 'should render a quoted tweet', () => {
-		const tweet = 'https://twitter.com/GaryPendergast/status/934003415507546112';
-		const tweets = [
-			{
-				...emptyTweet,
-				tweet,
-			},
-		];
+		const quoteTweet = 'https://twitter.com/GaryPendergast/status/934003415507546112';
+		const tweet = {
+			...emptyTweet,
+			tweet: quoteTweet,
+		};
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <Twitter { ...tweet } /> );
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
@@ -312,7 +321,7 @@ describe( 'Twitter previews', () => {
 
 		expect( quoteEl ).toBeVisible();
 		expect( quoteEl.children.item( 0 ).contentWindow.document.body ).toContainHTML(
-			`<blockquote class="twitter-tweet" data-conversation="none" data-dnt="true"><a href="${ tweet }"></a></blockquote>`
+			`<blockquote class="twitter-tweet" data-conversation="none" data-dnt="true"><a href="${ quoteTweet }"></a></blockquote>`
 		);
 	} );
 
@@ -327,11 +336,11 @@ describe( 'Twitter previews', () => {
 				text: 'tweet-2',
 			},
 		];
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <TwitterPreviews tweets={ tweets } /> );
 
 		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
-		expect( tweetWrappers ).toHaveLength( 2 );
+		expect( tweetWrappers ).toHaveLength( 2 + 1 ); // 1 for link preview
 
 		expect( tweetWrappers.item( 0 ).querySelector( '.twitter-preview__text' ) ).toHaveTextContent(
 			'tweet-1'
@@ -466,13 +475,17 @@ describe( 'Twitter previews', () => {
 			],
 		];
 
-		const { container } = render( <Twitter tweets={ tweets } /> );
+		const { container } = render( <TwitterPreviews tweets={ tweets } /> );
 
 		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
-		expect( tweetWrappers ).toHaveLength( tweets.length );
+		expect( tweetWrappers ).toHaveLength( tweets.length + 1 ); // 1 for link preview
 
-		tweetWrappers.forEach( ( tweet, index ) => {
+		tweetWrappers.forEach( ( tweet, index, list ) => {
+			// If it's the last tweet, it's the link preview.
+			if ( index === list.length - 1 ) {
+				return;
+			}
 			const mediaEl = tweet.querySelector( '.twitter-preview__media' );
 
 			if ( expected[ index ].length === 0 ) {
@@ -505,7 +518,7 @@ describe( 'Twitter previews', () => {
 	} );
 } );
 
-describe( 'Search previews', () => {
+describe( 'Google Search previews', () => {
 	describe( 'Title truncation', () => {
 		it( 'should display entire title if short enough', () => {
 			const { container } = render(
@@ -615,8 +628,6 @@ describe( 'Search previews', () => {
 	} );
 
 	it( 'should display truncated url', () => {
-		const downArrowChar = '▾';
-
 		const { container } = render(
 			<Search url="https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtobequitelongtomakethathappen" />
 		);
@@ -625,13 +636,8 @@ describe( 'Search previews', () => {
 
 		expect( urlEl ).toBeVisible();
 		expect( urlEl ).toHaveTextContent(
-			'wordpress.com › alongpathnameheretoensuretruncationoccursbutitdoesne' +
-				'…' +
-				' ' +
-				downArrowChar
+			'https://wordpress.com › alongpathnameheretoensuretruncationoccursbut…'
 		);
-		expect(
-			urlEl.textContent.replace( '…', '' ).replace( downArrowChar, '' ).trimEnd()
-		).toHaveLength( 68 );
+		expect( urlEl.textContent.replace( '…', '' ).trimEnd() ).toHaveLength( 68 );
 	} );
 } );

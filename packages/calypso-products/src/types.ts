@@ -24,6 +24,7 @@ import type {
 	FEATURE_GROUP_PAYMENTS,
 	FEATURE_GROUP_MARKETING_EMAIL,
 	FEATURE_GROUP_SHIPPING,
+	WOOCOMMERCE_PRODUCTS,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
@@ -40,7 +41,10 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: () => string;
+	getPlanTagline?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getNewsletterTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getLinkInBioTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getBlogOnboardingTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -55,6 +59,9 @@ export interface WPComPlan extends Plan {
 	getLinkInBioDescription?: () => string;
 	getLinkInBioSignupFeatures?: () => Feature[];
 	getLinkInBioHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -81,6 +88,9 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
+// WooCommerce
+export type WooCommerceProductSlug = ( typeof WOOCOMMERCE_PRODUCTS )[ number ];
+
 export type SelectorProductFeaturesItem = {
 	slug: string;
 	icon?:
@@ -100,6 +110,13 @@ export interface JetpackTag {
 	tag: string;
 	label: TranslateResult;
 }
+
+export interface FAQ {
+	id: string;
+	question: TranslateResult;
+	answer: TranslateResult;
+}
+
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
@@ -116,7 +133,7 @@ export type IncompleteJetpackPlan = Partial< JetpackPlan > &
 export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ number ];
 
 // All
-export type ProductSlug = WPComProductSlug | JetpackProductSlug;
+export type ProductSlug = WPComProductSlug | JetpackProductSlug | WooCommerceProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
 
@@ -187,7 +204,7 @@ export type Plan = BillingTerm & {
 	 * this feature list will be ignored in the plans comparison table only.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+	get2023PricingGridSignupWpcomFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
@@ -215,7 +232,10 @@ export type Plan = BillingTerm & {
 	 */
 	get2023PlanComparisonConditionalFeatures?: () => Feature[];
 
-	get2023PricingGridSignupStorageOptions?: () => Feature[];
+	get2023PricingGridSignupStorageOptions?: (
+		showLegacyStorageFeature?: boolean,
+		isCurrentPlan?: boolean
+	) => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
@@ -248,10 +268,19 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getNewsletterSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getLinkInBioSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getBlogOnboardingSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };
 export type WithCamelCaseSlug = { productSlug: string };
+
+export type WithSlugAndAmount = ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
+	amount: number;
+};
 
 export interface PlanMatchesQuery {
 	term?: string;

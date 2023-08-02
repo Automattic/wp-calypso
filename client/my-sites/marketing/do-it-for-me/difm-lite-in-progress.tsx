@@ -1,17 +1,18 @@
 import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 import SiteBuildInProgressIllustration from 'calypso/assets/images/difm/site-build-in-progress.svg';
 import WebsiteContentRequiredIllustration from 'calypso/assets/images/difm/website-content-required.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useCurrentRoute } from 'calypso/components/route';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -63,18 +64,18 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 				/>
 			),
 		},
-		args: {
-			contentSubmissionDueDate: contentSubmissionDueDate
-				? moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' )
-				: null,
-		},
 	};
 
 	const lineText = contentSubmissionDueDate
 		? translate(
 				'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.{{br}}{{/br}}' +
 					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
-				lineTextTranslateOptions
+				{
+					...lineTextTranslateOptions,
+					args: {
+						contentSubmissionDueDate: moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' ),
+					},
+				}
 		  )
 		: translate(
 				'Click the button below to provide the content we need to build your site.{{br}}{{/br}}' +
@@ -98,6 +99,7 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { currentRoute } = useCurrentRoute();
 
 	const domainName = primaryDomain.name;
 	const hasEmailWithUs = hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain );
@@ -134,7 +136,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 				}
 			) }
 			action={ translate( 'Manage domain' ) }
-			actionURL={ domainManagementList( siteSlug ) }
+			actionURL={ domainManagementList( siteSlug, currentRoute ) }
 			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
 			secondaryActionURL={ emailManagement( siteSlug, null ) }
 			secondaryActionCallback={ recordEmailClick }

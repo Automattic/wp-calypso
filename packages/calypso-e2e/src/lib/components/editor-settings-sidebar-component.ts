@@ -1,5 +1,6 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import envVariables from '../../env-variables';
+import { EditorComponent } from './editor-component';
 import type {
 	ArticlePublishSchedule,
 	EditorSidebarTab,
@@ -10,9 +11,6 @@ import type {
 const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
-	// Close button for mobile
-	mobileCloseSidebarButton: `${ panel } [aria-label="Close settings"]:visible`,
-
 	// Tab
 	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button[data-label="${ tabName }"]`,
 	activeTabButton: ( tabName: EditorSidebarTab ) =>
@@ -49,15 +47,15 @@ const selectors = {
  */
 export class EditorSettingsSidebarComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -69,9 +67,9 @@ export class EditorSettingsSidebarComponent {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			return;
 		}
-
-		const locator = this.editor.locator( selectors.mobileCloseSidebarButton );
-		await locator.click();
+		const editorParent = await this.editor.parent();
+		const closeButton = editorParent.getByRole( 'button', { name: 'Close Settings' } );
+		await closeButton.click();
 	}
 
 	/**
@@ -81,10 +79,13 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
-		const locator = this.editor.locator( selectors.tabButton( tabName ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.tabButton( tabName ) );
 		await locator.click();
 
-		const activeTabLocator = this.editor.locator( `${ selectors.tabButton( tabName ) }.is-active` );
+		const activeTabLocator = editorParent.locator(
+			`${ selectors.tabButton( tabName ) }.is-active`
+		);
 		await activeTabLocator.waitFor();
 	}
 
@@ -104,10 +105,11 @@ export class EditorSettingsSidebarComponent {
 		// Avoid the wpcalypso/staging banner.
 		await this.scrollToBottomOfSidebar();
 
-		const sectionLocator = this.editor.locator( selectors.section( name ) );
+		const editorParent = await this.editor.parent();
+		const sectionLocator = editorParent.locator( selectors.section( name ) );
 		await sectionLocator.click();
 
-		const expandedLocator = this.editor.locator(
+		const expandedLocator = editorParent.locator(
 			`${ selectors.section( name ) }[aria-expanded="true"]`
 		);
 		await expandedLocator.waitFor();
@@ -124,7 +126,8 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
 	private async targetIsOpen( selector: string ): Promise< boolean > {
-		const locator = this.editor.locator( selector );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selector );
 		const state = await locator.getAttribute( 'aria-expanded' );
 
 		return state === 'true';
@@ -144,10 +147,11 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.visibilityButton );
+		const editorParent = await this.editor.parent();
+		const buttonLocator = editorParent.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
-		const expandedLocator = this.editor.locator(
+		const expandedLocator = editorParent.locator(
 			`${ selectors.visibilityButton }[aria-expanded="true"]`
 		);
 		await expandedLocator.waitFor();
@@ -165,10 +169,11 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.visibilityButton );
+		const editorParent = await this.editor.parent();
+		const buttonLocator = editorParent.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
-		const closedLocator = this.editor.locator(
+		const closedLocator = editorParent.locator(
 			`${ selectors.visibilityButton }[aria-expanded="false"]`
 		);
 		await closedLocator.waitFor();
@@ -186,14 +191,15 @@ export class EditorSettingsSidebarComponent {
 		visibility: ArticlePrivacyOptions,
 		{ password }: { password?: string } = {}
 	): Promise< void > {
-		const optionLocator = this.editor.locator( selectors.visibilityOption( visibility ) );
+		const editorParent = await this.editor.parent();
+		const optionLocator = editorParent.locator( selectors.visibilityOption( visibility ) );
 		await optionLocator.click();
 
 		if ( visibility === 'Private' ) {
 			// Private articles are posted immediately and thus we must break the
 			// single responsibility principle for this case.
 			// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-			const dialogConfirmLocator = this.editor.locator(
+			const dialogConfirmLocator = editorParent.locator(
 				`div[role="dialog"] button:has-text("OK")`
 			);
 			await dialogConfirmLocator.click();
@@ -214,7 +220,8 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} password Password to be used.
 	 */
 	private async setPostPassword( password: string ): Promise< void > {
-		const inputLocator = this.editor.locator( selectors.postPasswordInput );
+		const editorParent = await this.editor.parent();
+		const inputLocator = editorParent.locator( selectors.postPasswordInput );
 		await inputLocator.fill( password );
 	}
 
@@ -228,7 +235,8 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.scheduleButton );
+		const editorParent = await this.editor.parent();
+		const buttonLocator = editorParent.locator( selectors.scheduleButton );
 		await buttonLocator.click();
 	}
 
@@ -245,7 +253,8 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.scheduleButton );
+		const editorParent = await this.editor.parent();
+		const buttonLocator = editorParent.locator( selectors.scheduleButton );
 		await buttonLocator.click();
 	}
 
@@ -255,12 +264,13 @@ export class EditorSettingsSidebarComponent {
 	 * @param {ArticlePublishSchedule} date Date of the article to be scheduled.
 	 */
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
+		const editorParent = await this.editor.parent();
 		let key: keyof ArticlePublishSchedule;
 
 		for ( key in date ) {
 			if ( key === 'meridian' ) {
 				// am/pm is a button.
-				const meridianButtonLocator = this.editor.locator(
+				const meridianButtonLocator = editorParent.locator(
 					selectors.scheduleMeridianButton( date[ key ] )
 				);
 				await meridianButtonLocator.click();
@@ -269,18 +279,18 @@ export class EditorSettingsSidebarComponent {
 			if ( key === 'month' ) {
 				// For month numbers less than 10, pad the digit to be
 				// 2 digits as required by the select.
-				const monthSelectLocator = this.editor.locator( selectors.scheduleInput( 'month' ) );
+				const monthSelectLocator = editorParent.locator( selectors.scheduleInput( 'month' ) );
 				await monthSelectLocator.selectOption( ( date[ key ] + 1 ).toString().padStart( 2, '0' ) );
 				continue;
 			}
 			if ( key === 'date' ) {
-				const daySelector = this.editor.locator( selectors.scheduleInput( 'day' ) );
+				const daySelector = editorParent.locator( selectors.scheduleInput( 'day' ) );
 				await daySelector.fill( date[ key ].toString() );
 				continue;
 			}
 
 			// Regular input fields.
-			const inputLocator = this.editor.locator( selectors.scheduleInput( key ) );
+			const inputLocator = editorParent.locator( selectors.scheduleInput( key ) );
 			await inputLocator.fill( date[ key ].toString() );
 		}
 	}
@@ -291,7 +301,8 @@ export class EditorSettingsSidebarComponent {
 	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
 	 */
 	async showRevisions(): Promise< void > {
-		const locator = this.editor.locator( selectors.showRevisionButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.showRevisionButton );
 		await locator.click();
 	}
 
@@ -302,8 +313,9 @@ export class EditorSettingsSidebarComponent {
 	 * @throws {Error} If requested cateogry is not found.
 	 */
 	async checkCategory( name: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
 		//TODO: Categories can be slow because we never do any cleanup. Remove extended timeout once we start doing cleanup.
-		const locator = this.editor.locator( selectors.categoryCheckbox( name ) );
+		const locator = editorParent.locator( selectors.categoryCheckbox( name ) );
 
 		try {
 			await locator.click( { timeout: 60 * 1000 } );
@@ -322,11 +334,12 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} name Tag name to enter.
 	 */
 	async enterTag( name: string ): Promise< void > {
-		const inputLocator = this.editor.locator( selectors.tagInput );
+		const editorParent = await this.editor.parent();
+		const inputLocator = editorParent.locator( selectors.tagInput );
 		await inputLocator.fill( name );
 		await this.page.keyboard.press( 'Enter' );
 
-		const addedTagLocator = this.editor.locator( selectors.addedTag( name ) );
+		const addedTagLocator = editorParent.locator( selectors.addedTag( name ) );
 		await addedTagLocator.waitFor();
 	}
 
@@ -336,9 +349,10 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} slug URL slug to set.
 	 */
 	async enterUrlSlug( slug: string ) {
-		await this.editor.getByRole( 'button', { name: /Change URL:/ } ).click();
-		await this.editor.getByLabel( 'Permalink' ).fill( slug );
-		await this.editor.getByRole( 'button', { name: 'Close', exact: true } ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'button', { name: /Change URL:/ } ).click();
+		await editorParent.getByLabel( 'Permalink' ).fill( slug );
+		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 
 	/**
@@ -347,7 +361,8 @@ export class EditorSettingsSidebarComponent {
 	 * Useful to work around the wpcalypso/staging banner (for proxied users).
 	 */
 	private async scrollToBottomOfSidebar(): Promise< void > {
-		const locator = this.editor.locator( selectors.section( 'Discussion' ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.section( 'Discussion' ) );
 		await locator.scrollIntoViewIfNeeded();
 	}
 }

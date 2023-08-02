@@ -7,8 +7,8 @@
 Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import { useSelector } from 'react-redux';
 import QueryBackupStagingSitesList from 'calypso/components/data/query-backup-staging-sites-list';
+import { useSelector } from 'calypso/state';
 export { isFetchingStagingSitesList } from 'calypso/state/rewind/selectors/is-fetching-staging-sites-list';
 export { hasFetchedStagingSitesList } from 'calypso/state/rewind/selectors/has-fetched-staging-sites-list';
 export { getBackupStagingSites } from 'calypso/state/rewind/selectors/get-backup-staging-sites';

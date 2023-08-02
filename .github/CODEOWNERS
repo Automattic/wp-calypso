@@ -82,13 +82,6 @@
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
 
-# Framework
-/client/boot @Automattic/team-calypso-frameworks
-/client/controller @Automattic/team-calypso-frameworks
-/client/layout @Automattic/team-calypso-frameworks
-/client/server @Automattic/team-calypso-frameworks
-/packages/js-utils @Automattic/team-calypso-frameworks
-
 # Jetpack Search
 /client/my-sites/jetpack-search @Automattic/jetpack-search
 
@@ -153,13 +146,27 @@
 /packages/wpcom.js/src/lib/domain.js @Automattic/nomado
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
-#Plans
-/client/signup/steps/plans @Automattic/martech-autobots
-/client/lib/plans @Automattic/martech-autobots
-/client/my-sites/plan-features-comparison @Automattic/martech-autobots
-/client/my-sites/plan-features @Automattic/martech-autobots
-/client/my-sites/plans-comparison @Automattic/martech-autobots
-/client/my-sites/plans-features-main @Automattic/martech-autobots
-/client/my-sites/plan-price @Automattic/martech-autobots
-/packages/calypso-products/src/plans-list.tsx @Automattic/martech-autobots
+# Plans
 /client/my-sites/plan-features-2023-grid @Automattic/martech-decepticons
+
+# Importing
+/client/my-sites/importer @Automattic/caribou
+/client/blocks/import @Automattic/caribou
+/client/blocks/import-light @Automattic/caribou
+/client/blocks/importer @Automattic/caribou
+/client/my-sites/migrate @Automattic/caribou
+/client/landing/stepper/declarative-flow/import-flow.ts @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/import @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/import-list @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-not @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-preview @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-wpcom @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/importer @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/importer-blogger @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/importer-medium @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/importer-squarespace @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/importer-wix @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/importer-wordpress @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/migration-handler @Automattic/caribou
+/client/landing/stepper/declarative-flow/internals/steps-repository/site-picker @Automattic/caribou

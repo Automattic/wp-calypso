@@ -19,9 +19,9 @@ import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isBlazeEnabled from 'calypso/state/ui/selectors/is-blaze-enabled';
 
 import './style.scss';
 
@@ -123,7 +123,7 @@ const connectComponent = connect( ( state ) => {
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
-	const shouldShowAdvertisingOption = isBlazeEnabled( state );
+	const shouldShowAdvertisingOption = isBlazeEnabled( state, siteId );
 
 	return {
 		siteId,

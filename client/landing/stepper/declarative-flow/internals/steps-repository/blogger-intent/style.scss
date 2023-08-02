@@ -1,0 +1,120 @@
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "jetpack-connect/colors.scss";
+
+.blog.blogger-intent {
+	.step-container__header {
+		margin: 0;
+	}
+
+	.wordpress-logo {
+		position: absolute;
+		inset-block-start: 20px;
+		inset-inline-start: 24px;
+		fill: var(--color-text);
+		transform-origin: 0 0;
+	}
+
+	.flow-progress {
+		display: none;
+	}
+
+	.step-container__content {
+		min-height: calc(100vh - 170px);
+	}
+
+	.blogger-intent__container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-left: 20px;
+		margin-right: 20px;
+
+		margin-top: 104px;
+		@include break-small {
+			margin-top: 0;
+			min-height: calc(100vh - 100px);
+		}
+	}
+
+	.blogger-intent__heading {
+		@include onboarding-heading-title;
+	}
+
+	.blogger-intent__content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		margin: 32px 0 0 0;
+
+		@include break-small {
+			min-width: 456px;
+		}
+
+		hr {
+			background-color: var(--studio-gray-5);
+			width: 100%;
+			margin-bottom: 6px;
+		}
+	}
+
+	.blogger-intent__row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 20px;
+		width: 100%;
+		flex-wrap: wrap;
+
+		.blogger-intent__row-text {
+			display: flex;
+			align-items: center;
+			color: var(--color-neutral-100);
+			margin-top: 24px;
+			margin-right: 40px;
+			margin-left: 5px;
+			font-size: rem(20px);
+
+			@include break-mobile {
+				margin-left: 0;
+				margin-right: 0;
+			}
+
+			.blogger-intent__icon {
+				margin-right: 22px;
+				@include break-mobile {
+					margin-right: 26px;
+				}
+			}
+		}
+
+		.blogger-intent__button {
+			margin-top: 24px;
+			margin-left: 52px;
+			background-color: var(--studio-blue-50);
+			border: none;
+			border-radius: 4px;
+			font-weight: 500;
+			min-width: 136px;
+
+			&.disabled,
+			&.disabled:focus,
+			&.disabled:hover,
+			&:disabled {
+				background: var(--studio-blue-20);
+				cursor: default;
+			}
+			&:focus {
+				box-shadow: none;
+				outline: 2px solid var(--studio-blue-60);
+				outline-offset: 1px;
+				background: var(--studio-blue-60);
+			}
+			&:hover {
+				background-color: var(--wp-admin-theme-color-darker-10);
+			}
+		}
+	}
+}

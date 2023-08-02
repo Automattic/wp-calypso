@@ -1,4 +1,5 @@
-import { Locator } from 'playwright';
+import { Page, Locator } from 'playwright';
+import { EditorComponent } from '../components';
 
 const coverStylesArray = [ 'Default', 'Bottom Wave', 'Top Wave' ] as const;
 export type coverStyles = ( typeof coverStylesArray )[ number ];
@@ -10,18 +11,18 @@ export class CoverBlock {
 	static blockName = 'Cover';
 	static blockEditorSelector = '[aria-label="Block: Cover"]';
 	static coverStyles = coverStylesArray;
+	private editor: EditorComponent;
 	block: Locator;
-	editor: Locator;
 
 	/**
 	 * Constructs an instance of this block.
 	 *
-	 * @param {Locator} editor Editor window.
+	 * @param {Page} page The underlying page object.
 	 * @param {Locator} block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
-	constructor( editor: Locator, block: Locator ) {
-		this.editor = editor;
+	constructor( page: Page, block: Locator ) {
 		this.block = block;
+		this.editor = new EditorComponent( page );
 	}
 
 	/**
@@ -38,7 +39,8 @@ export class CoverBlock {
 
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		await this.editor
+		const editorParent = await this.editor.parent();
+		await editorParent
 			.locator( CoverBlock.blockEditorSelector )
 			.click( { position: { x: 1, y: 1 } } );
 	}
@@ -58,7 +60,8 @@ export class CoverBlock {
 	 * @param {'Settings'|'Styles'} name Supported tabs.
 	 */
 	async activateTab( name: 'Settings' | 'Styles' ) {
-		await this.editor.locator( `[aria-label="${ name }"]` ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.locator( `[aria-label="${ name }"]` ).click();
 	}
 
 	/**
@@ -67,12 +70,13 @@ export class CoverBlock {
 	 * @param {coverStyles} style The title of one of the Cover style buttons
 	 */
 	async setCoverStyle( style: coverStyles ): Promise< void > {
-		await this.editor.locator( `button[aria-label="${ style }"]` ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.locator( `button[aria-label="${ style }"]` ).click();
 
 		const blockId = await this.block.getAttribute( 'data-block' );
 		const styleSelector = `.is-style-${ style.toLowerCase().replace( ' ', '-' ) }`;
 		const blockSelector = `[data-block="${ blockId }"]`;
 
-		await this.editor.locator( blockSelector + styleSelector ).waitFor();
+		await editorParent.locator( blockSelector + styleSelector ).waitFor();
 	}
 }

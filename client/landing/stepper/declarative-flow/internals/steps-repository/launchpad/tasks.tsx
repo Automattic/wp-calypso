@@ -1,21 +1,20 @@
-import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { LaunchpadFlowTaskList, Task } from './types';
 
 export const DOMAIN_UPSELL = 'domain_upsell';
 
+/**
+ * Task definitions will soon be fetched through a WordPress REST API, making this file
+ * redundant. We're doing this because it will allow us to access checklist and task
+ * information outside of the Calypso client.
+ *
+ * Please DO NOT add any new tasks or checklists to this file. Instead, add it to the
+ * jetpack mu wpcom plugin.
+ */
+
 export const tasks: Task[] = [
 	{
-		id: 'setup_newsletter',
-		completed: true,
-		disabled: false,
-	},
-	{
 		id: 'plan_selected',
-		completed: true,
-		disabled: false,
-	},
-	{
-		id: 'subscribers_added',
 		completed: true,
 		disabled: false,
 	},
@@ -25,122 +24,28 @@ export const tasks: Task[] = [
 		disabled: false,
 	},
 	{
-		id: 'first_post_published_newsletter',
+		id: 'setup_blog',
 		completed: false,
 		disabled: false,
 	},
 	{
-		id: 'design_selected',
-		completed: true,
-		disabled: true,
-	},
-	{
-		id: 'setup_link_in_bio',
-		completed: true,
-		disabled: false,
-	},
-	{
-		id: 'links_added',
+		id: 'blog_launched',
 		completed: false,
 		disabled: false,
-	},
-	{
-		id: 'link_in_bio_launched',
-		completed: false,
-		disabled: true,
-	},
-	{
-		id: 'videopress_setup',
-		completed: true,
-		disabled: false,
-	},
-	{
-		id: 'videopress_upload',
-		completed: false,
-		disabled: false,
-	},
-	{
-		id: 'videopress_launched',
-		completed: false,
-		disabled: true,
-	},
-	{
-		id: 'setup_free',
-		completed: true,
-		disabled: false,
-	},
-	{
-		id: 'setup_general',
-		completed: true,
-		disabled: true,
-	},
-	{
-		id: 'design_edited',
-		completed: false,
-		disabled: false,
-	},
-	{
-		id: 'site_launched',
-		completed: false,
-		disabled: false,
-	},
-	{
-		id: 'setup_write',
-		completed: true,
-		disabled: true,
 	},
 	{
 		id: DOMAIN_UPSELL,
 		completed: false,
 		disabled: false,
 	},
-	{
-		id: 'verify_email',
-		completed: false,
-		disabled: true,
-	},
-];
-
-const linkInBioTaskList = [
-	'design_selected',
-	'setup_link_in_bio',
-	'plan_selected',
-	'links_added',
-	'link_in_bio_launched',
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
-	newsletter: [
-		'setup_newsletter',
-		'plan_selected',
-		'subscribers_added',
-		'verify_email',
-		'first_post_published_newsletter',
-	],
-	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
-	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
-	free: [
-		'setup_free',
-		'design_selected',
-		DOMAIN_UPSELL,
-		'first_post_published',
-		'design_edited',
-		'site_launched',
-	],
-	build: [
-		'setup_general',
-		'design_selected',
-		'first_post_published',
-		'design_edited',
-		'site_launched',
-	],
-	write: [ 'setup_write', 'design_selected', 'first_post_published', 'site_launched' ],
-	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 	[ START_WRITING_FLOW ]: [
 		'first_post_published',
-		'setup_free',
+		'setup_blog',
 		DOMAIN_UPSELL,
 		'plan_selected',
-		'site_launched',
+		'blog_launched',
 	],
 };

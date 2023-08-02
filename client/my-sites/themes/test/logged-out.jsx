@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
@@ -21,10 +21,9 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: () => false,
-} ) );
+jest.mock( 'calypso/components/data/query-themes', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
 

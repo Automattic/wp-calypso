@@ -10,6 +10,7 @@ const ActionBox = ( {
 	label,
 	materialIcon,
 	gridicon,
+	iconComponent,
 	hideLinkIndicator,
 } ) => {
 	const buttonAction = { href, onClick, target };
@@ -20,6 +21,10 @@ const ActionBox = ( {
 
 		if ( gridicon ) {
 			return <Gridicon className="quick-links__action-box-icon" icon={ gridicon } />;
+		}
+
+		if ( iconComponent ) {
+			return iconComponent;
 		}
 
 		return <img className="quick-links__action-box-icon" src={ iconSrc } alt="" />;

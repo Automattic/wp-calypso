@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__most-popular {
-	margin-top: 3em;
+	margin-top: 3rem;
 }
 
 .jetpack-product-store__most-popular--heading {
@@ -27,6 +27,7 @@
 
 	@media only screen and (min-width: 821px) {
 		grid-template-columns: 1fr 1fr;
+		justify-items: space-between;
 		margin: 32px auto 0;
 		gap: 24px;
 	}
@@ -78,8 +79,9 @@
 	margin-bottom: 8px;
 
 	.amount-saved--text {
+		font-size: $font-body-small;
 		font-weight: 600;
-		color: var(--studio-gray-70);
+		color: var(--studio-black);
 		display: flex;
 		align-items: center;
 		gap: 4px;

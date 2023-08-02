@@ -17,6 +17,8 @@ type TracksGoalsSelectEventProperties = {
 	combo: string;
 	total: number;
 	write?: number;
+	'paid-subscribers'?: number;
+	'import-subscribers'?: number;
 	promote?: number;
 	sell?: number;
 	difm?: number;

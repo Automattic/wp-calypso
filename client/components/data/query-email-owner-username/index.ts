@@ -1,10 +1,10 @@
 import { isTitanMail, isGoogleWorkspace } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { InfiniteData } from 'react-query';
+import type { InfiniteData } from '@tanstack/react-query';
 
 type User = {
 	ID: number;
@@ -44,7 +44,7 @@ export function useEmailOwnerUserName(
 	}
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
-	const ownerUser = teams.users?.find(
+	const ownerUser = teams?.users?.find(
 		( user ) => ( user.linked_user_ID ?? user.ID ) === emailSubscription?.userId
 	);
 

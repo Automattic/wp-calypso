@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+import { useDispatch } from 'calypso/state';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,

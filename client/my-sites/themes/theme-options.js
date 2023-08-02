@@ -1,9 +1,13 @@
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
-import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import {
+	appendStyleVariationToThemesPath,
+	localizeThemesPath,
+} from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
@@ -22,7 +26,6 @@ import {
 	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
-	getThemePurchaseUrl,
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
@@ -32,6 +35,8 @@ import {
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
+	getLivePreviewUrl,
+	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
@@ -47,7 +52,16 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme',
 		} ),
-		getUrl: getThemePurchaseUrl,
+		getUrl: ( state, themeId, siteId, styleVariation ) => {
+			const slug = getSiteSlug( state, siteId );
+			const redirectTo = encodeURIComponent(
+				addQueryArgs( `/theme/${ themeId }/${ slug }`, {
+					style_variation: styleVariation?.slug,
+				} )
+			);
+
+			return `/checkout/${ slug }/value_bundle?redirect_to=${ redirectTo }`;
+		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
@@ -92,8 +106,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: ( state, themeId, siteId ) =>
-			getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
+		getUrl: ( state, themeId, siteId, styleVariation ) =>
+			appendStyleVariationToThemesPath(
+				getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
+				styleVariation
+			),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
@@ -116,12 +133,17 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: ( state, themeId, siteId ) => {
+		getUrl: ( state, themeId, siteId, styleVariation ) => {
 			const { origin = 'https://wordpress.com' } =
 				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
+
 			const redirectTo = encodeURIComponent(
-				`${ origin }/setup/site-setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
+				addQueryArgs( `${ origin }/setup/site-setup/designSetup`, {
+					siteSlug: slug,
+					theme: themeId,
+					style_variation: styleVariation?.slug,
+				} )
 			);
 
 			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
@@ -189,7 +211,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 
 	const customize = {
 		icon: 'customize',
-		getUrl: ( state, themeId, siteId ) => getCustomizeUrl( state, themeId, siteId, isFSEActive ),
+		getUrl: ( state, themeId, siteId, styleVariation ) =>
+			addQueryArgs( getCustomizeUrl( state, themeId, siteId, isFSEActive ), {
+				style_variation: styleVariation?.slug,
+			} ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
@@ -217,7 +242,18 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		} ),
 		action: tryAndCustomizeAction,
 		hideForTheme: ( state, themeId, siteId ) =>
+			// Hide the Try & Customize when the Live Preview is supported.
+			getIsLivePreviewSupported( state, themeId, siteId ) ||
 			! shouldShowTryAndCustomize( state, themeId, siteId ),
+	};
+
+	const livePreview = {
+		label: translate( 'Live Preview', {
+			comment: 'label for previewing a block theme',
+		} ),
+		getUrl: ( state, themeId, siteId ) => getLivePreviewUrl( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId ) =>
+			! getIsLivePreviewSupported( state, themeId, siteId ),
 	};
 
 	const preview = {
@@ -239,7 +275,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	const signup = {
 		label: signupLabel,
 		extendedLabel: signupLabel,
-		getUrl: getThemeSignupUrl,
+		getUrl: ( state, themeId, siteId, styleVariation ) =>
+			addQueryArgs( getThemeSignupUrl( state, themeId ), {
+				style_variation: styleVariation?.slug,
+			} ),
 		hideForTheme: ( state ) => isUserLoggedIn( state ),
 	};
 
@@ -252,11 +291,16 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for displaying the theme info sheet',
 		} ),
 		icon: 'info',
-		getUrl: getThemeDetailsUrl,
+		getUrl: ( state, themeId, siteId, styleVariation ) =>
+			appendStyleVariationToThemesPath(
+				getThemeDetailsUrl( state, themeId, siteId ),
+				styleVariation
+			),
 	};
 
 	return {
 		customize,
+		livePreview,
 		preview,
 		purchase,
 		subscribe,
@@ -281,12 +325,12 @@ const connectOptionsHoc = connect(
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {
-			mapGetUrl = ( getUrl ) => ( t ) =>
-				localizeThemesPath( getUrl( state, t, siteId ), locale, isLoggedOut );
+			mapGetUrl = ( getUrl ) => ( t, styleVariation ) =>
+				localizeThemesPath( getUrl( state, t, siteId, styleVariation ), locale, isLoggedOut );
 			mapHideForTheme = ( hideForTheme ) => ( t ) => hideForTheme( state, t, siteId, origin );
 		} else {
-			mapGetUrl = ( getUrl ) => ( t, s ) =>
-				localizeThemesPath( getUrl( state, t, s ), locale, isLoggedOut );
+			mapGetUrl = ( getUrl ) => ( t, s, styleVariation ) =>
+				localizeThemesPath( getUrl( state, t, s, styleVariation ), locale, isLoggedOut );
 			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 

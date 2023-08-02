@@ -1,7 +1,6 @@
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { urlToSlug } from 'calypso/lib/url';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
@@ -14,6 +13,7 @@ interface Props {
 	hasSelectedColorVariation?: boolean;
 	hasSelectedFontVariation?: boolean;
 	onCheckout?: () => void;
+	onUpgradeLater?: () => void;
 	recordTracksEvent: ( eventName: string, eventProps?: { [ key: string ]: unknown } ) => void;
 }
 
@@ -23,33 +23,20 @@ const useGlobalStylesUpgradeModal = ( {
 	hasSelectedColorVariation = false,
 	hasSelectedFontVariation = false,
 	onCheckout,
+	onUpgradeLater,
 	recordTracksEvent,
 }: Props ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ isDismissed, setIsDismissed ] = useState( false );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
-	const translate = useTranslate();
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
+	);
 	const { goToCheckout } = useCheckout();
-
-	const customizeDescription = ( description: JSX.Element ) => {
-		return (
-			<>
-				<p>
-					{ translate( "You've selected a premium color or font for your site." ) }
-					&nbsp;
-					{ description }
-				</p>
-				<p>
-					{ translate(
-						'You can also continue with your selected color or font and upgrade later.'
-					) }
-				</p>
-			</>
-		);
-	};
+	const numOfSelectedGlobalStyles = [ hasSelectedColorVariation, hasSelectedFontVariation ].filter(
+		Boolean
+	).length;
 
 	const openModal = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_SHOW );
@@ -73,7 +60,7 @@ const useGlobalStylesUpgradeModal = ( {
 			stepName,
 			siteSlug: siteUrl,
 			destination: redirectUrl,
-			plan: 'premium',
+			plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
 		} );
 
 		setIsOpen( false );
@@ -83,18 +70,15 @@ const useGlobalStylesUpgradeModal = ( {
 		recordTracksEvent(
 			PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_UPGRADE_LATER_BUTTON_CLICK
 		);
-		setIsDismissed( true );
+		onUpgradeLater?.();
 		setIsOpen( false );
 	};
 
 	return {
-		isDismissed,
-		shouldUnlockGlobalStyles:
-			( hasSelectedColorVariation || hasSelectedFontVariation ) && shouldLimitGlobalStyles,
+		shouldUnlockGlobalStyles: numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles,
 		globalStylesUpgradeModalProps: {
 			isOpen,
-			tryItOutText: translate( 'Upgrade later' ),
-			customizeDescription,
+			numOfSelectedGlobalStyles,
 			closeModal,
 			checkout,
 			tryStyle: upgradeLater,

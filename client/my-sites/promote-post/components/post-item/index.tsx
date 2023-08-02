@@ -4,13 +4,13 @@ import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
+import { useDispatch } from 'calypso/state';
 
 export type Post = {
 	ID: number;
@@ -83,7 +83,7 @@ export default function PostItem( { post }: Props ) {
 
 			<div className="post-item__promote-link">
 				<Button
-					isPrimary={ true }
+					variant="primary"
 					isBusy={ loading }
 					disabled={ loading }
 					onClick={ onClickPromote }

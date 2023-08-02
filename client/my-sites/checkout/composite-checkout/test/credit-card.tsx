@@ -9,9 +9,11 @@ import {
 	makeSuccessResponse,
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
 	createCreditCardPaymentMethodStore,
@@ -49,11 +51,18 @@ const customerName = 'Human Person';
 const cardNumber = '4242424242424242';
 const cardExpiry = '05/99';
 const cardCvv = '123';
-const activePayButtonText = 'Pay 0';
+const activePayButtonText = 'Complete Checkout';
 function getPaymentMethod( store: CardStoreType, additionalArgs = {} ) {
 	return createCreditCardMethod( {
 		store,
 		...additionalArgs,
+	} );
+}
+
+function ResetCreditCardStoreFields() {
+	const { resetFields } = useDispatch( 'wpcom-credit-card' );
+	useEffect( () => {
+		resetFields();
 	} );
 }
 
@@ -113,6 +122,9 @@ describe( 'Credit card payment method', () => {
 				useForAllSubscriptions: false,
 			} );
 		} );
+
+		// Manually reset the `wpcom-credit-card` store fields.
+		render( <ResetCreditCardStoreFields /> );
 	} );
 
 	it( 'does not submit the data to the processor when the submit button is pressed if fields are missing', async () => {

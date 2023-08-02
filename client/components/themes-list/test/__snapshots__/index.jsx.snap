@@ -11,6 +11,37 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
     <div
       data-testid="theme-2"
     />
+    <div
+      class="pattern-assembler-cta-wrapper"
+    >
+      <div
+        class="pattern-assembler-cta__image-wrapper"
+      >
+        <img
+          alt="Blank Canvas"
+          class="pattern-assembler-cta__image"
+          src="blank-canvas-cta.svg"
+        />
+      </div>
+      <h3
+        class="pattern-assembler-cta__title"
+      >
+        Design your own
+      </h3>
+      <p
+        class="pattern-assembler-cta__subtitle"
+      >
+        Can’t find something you like?
+        <br />
+        Jump right into the editor to design your homepage from scratch.
+      </p>
+      <button
+        class="button pattern-assembler-cta__button is-primary"
+        type="button"
+      >
+        Open the editor
+      </button>
+    </div>
     <div />
   </div>
 </div>

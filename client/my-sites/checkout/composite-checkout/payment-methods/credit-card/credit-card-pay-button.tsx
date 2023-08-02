@@ -1,17 +1,20 @@
 import { useStripe } from '@automattic/calypso-stripe';
 import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import MaterialIcon from 'calypso/components/material-icon';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
 import type { ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { ReactNode } from 'react';
 
-const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
+const debug = debugFactory( 'calypso:credit-card' );
 
 export default function CreditCardPayButton( {
 	disabled,
@@ -24,7 +27,7 @@ export default function CreditCardPayButton( {
 	onClick?: ProcessPayment;
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
-	activeButtonText?: string;
+	activeButtonText?: ReactNode;
 } ) {
 	const { __ } = useI18n();
 	const total = useTotal();
@@ -114,6 +117,21 @@ export default function CreditCardPayButton( {
 	);
 }
 
+const CreditCardPayButtonWrapper = styled[ 'span' ]`
+	display: inline-flex;
+	align-items: flex-end;
+`;
+
+const StyledMaterialIcon = styled( MaterialIcon )`
+	fill: ${ ( { theme } ) => theme.colors.surface };
+	margin-right: 0.7em;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 0.7em;
+	}
+`;
+
 function ButtonContents( {
 	formStatus,
 	total,
@@ -121,15 +139,33 @@ function ButtonContents( {
 }: {
 	formStatus: FormStatus;
 	total: LineItem;
-	activeButtonText?: string;
+	activeButtonText?: ReactNode;
 } ) {
 	const { __ } = useI18n();
+	const isPurchaseFree = total.amount.value === 0;
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
 	}
-	if ( formStatus === FormStatus.READY ) {
+	if ( formStatus === FormStatus.READY && isPurchaseFree ) {
+		const defaultText = (
+			<CreditCardPayButtonWrapper>{ __( 'Complete Checkout' ) }</CreditCardPayButtonWrapper>
+		);
 		/* translators: %s is the total to be paid in localized currency */
-		return <>{ activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
+		return <>{ activeButtonText || defaultText }</>;
+	}
+	if ( formStatus === FormStatus.READY ) {
+		const defaultText = (
+			<CreditCardPayButtonWrapper>
+				<StyledMaterialIcon icon="credit_card" />
+				{ sprintf(
+					/* translators: %s is the total to be paid in localized currency */
+					__( 'Pay %s now' ),
+					total.amount.displayValue
+				) }
+			</CreditCardPayButtonWrapper>
+		);
+
+		return <>{ activeButtonText || defaultText } </>;
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }

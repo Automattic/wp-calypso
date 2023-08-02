@@ -1,8 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Design, DesignOptions } from '@automattic/design-picker/src/types';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { PLACEHOLDER_SITE_ID } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -10,7 +9,9 @@ import {
 	AtomicSoftwareStatusError,
 	AtomicSoftwareInstallError,
 	GlobalStyles,
+	AssembleSiteOptions,
 } from './types';
+import { createCustomHomeTemplateContent } from './utils';
 import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
@@ -32,6 +33,8 @@ import type {
 	CurrentTheme,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
+import type { RequestTemplate } from '../templates';
+import type { Design, DesignOptions } from '@automattic/design-picker/src/types'; // Import from a specific file directly to avoid the circular dependencies
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -363,12 +366,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setThemeOnSite(
-		siteSlug: string,
-		theme: string,
-		styleVariationSlug?: string,
-		keepHomepage = true
-	) {
+	function* setThemeOnSite( siteSlug: string, theme: string, options: DesignOptions = {} ) {
+		const { keepHomepage = true, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
@@ -379,7 +378,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			method: 'POST',
 		} );
 
-		if ( styleVariationSlug ) {
+		// @todo Always use the global styles for consistency
+		if ( styleVariation?.slug ) {
 			const variations: GlobalStyles[] = yield getGlobalStylesVariations(
 				siteSlug,
 				activatedTheme.stylesheet
@@ -387,7 +387,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			const currentVariation = variations.find(
 				( variation ) =>
 					variation.title &&
-					variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariationSlug
+					variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariation?.slug
 			);
 
 			if ( currentVariation ) {
@@ -399,37 +399,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				);
 			}
 		}
+
+		if ( globalStyles ) {
+			yield setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
+		}
+
 		return activatedTheme;
-	}
-
-	function createCustomHomeTemplateContent(
-		stylesheet: string,
-		hasHeader: boolean,
-		hasFooter: boolean,
-		hasSections: boolean
-	) {
-		const content: string[] = [];
-		if ( hasHeader ) {
-			content.push(
-				`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
-			);
-		}
-
-		if ( hasSections ) {
-			content.push( `
-	<!-- wp:group {"tagName":"main"} -->
-		<main class="wp-block-group">
-		</main>
-	<!-- /wp:group -->` );
-		}
-
-		if ( hasFooter ) {
-			content.push(
-				`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
-			);
-		}
-
-		return content.join( '\n' );
 	}
 
 	function* runThemeSetupOnSite(
@@ -437,7 +412,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		selectedDesign: Design,
 		options?: DesignOptions
 	) {
-		const { recipe, verticalizable } = selectedDesign;
+		const { recipe } = selectedDesign;
 
 		/*
 		 * Anchor themes are set up directly via Headstart on the server side
@@ -456,10 +431,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
 		}
 
-		if ( verticalizable ) {
-			themeSetupOptions.vertical_id = options?.verticalId;
-		}
-
 		if ( recipe?.pattern_ids ) {
 			themeSetupOptions.pattern_ids = recipe?.pattern_ids;
 		}
@@ -473,7 +444,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 
 		const response: { blog: string } = yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup/?_locale=user`,
 			apiNamespace: 'wpcom/v2',
 			body: themeSetupOptions,
 			method: 'POST',
@@ -486,7 +457,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		const theme = yield* setThemeOnSite(
 			siteSlug,
 			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
-			options?.styleVariation?.slug
+			options
 		);
 
 		yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
@@ -531,8 +502,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* applyThemeWithPatterns(
 		siteSlug: string,
 		design: Design,
-		globalStyles: GlobalStyles | null,
-		sourceSiteId: number
+		globalStyles: GlobalStyles | null = null,
+		sourceSiteId: number = PLACEHOLDER_SITE_ID
 	) {
 		const stylesheet = design?.recipe?.stylesheet || '';
 		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
@@ -540,9 +511,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		// We have to switch theme first. Otherwise, the unique suffix might append to
 		// the slug of newly created Home template if the current activated theme has
 		// modified Home template.
-		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, undefined, false );
+		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, {
+			keepHomepage: false,
+		} );
 
-		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) && globalStyles ) {
+		if ( globalStyles ) {
 			yield setGlobalStyles( siteSlug, stylesheet, globalStyles, activatedTheme );
 		}
 
@@ -564,6 +537,58 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 
 		return activatedTheme;
+	}
+
+	function* assembleSite(
+		siteSlug: string,
+		stylesheet = '',
+		{
+			homeHtml,
+			headerHtml,
+			footerHtml,
+			globalStyles,
+			shouldResetContent,
+			siteSetupOption,
+		}: AssembleSiteOptions = {}
+	) {
+		const templates = [
+			{
+				type: 'wp_template' as const,
+				slug: 'home',
+				title: __( 'Home' ),
+				content: createCustomHomeTemplateContent(
+					stylesheet,
+					!! headerHtml,
+					!! footerHtml,
+					!! homeHtml,
+					homeHtml
+				),
+			},
+			headerHtml && {
+				type: 'wp_template_part' as const,
+				slug: 'header',
+				title: __( 'Header' ),
+				content: headerHtml,
+			},
+			footerHtml && {
+				type: 'wp_template_part' as const,
+				slug: 'footer',
+				title: __( 'Footer' ),
+				content: footerHtml,
+			},
+		].filter( Boolean ) as RequestTemplate[];
+
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-assembler`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				templates,
+				global_styles: globalStyles,
+				should_reset_content: shouldResetContent,
+				site_setup_option: siteSetupOption,
+			},
+			method: 'POST',
+		} );
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {
@@ -611,9 +636,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 					? {
 							body: {
 								software_set: encodeURIComponent( softwareSet ),
+								context: softwareSet,
 							},
 					  }
-					: {} ),
+					: {
+							body: {
+								context: 'unknown',
+							},
+					  } ),
 			} );
 			yield atomicTransferSuccess( siteId, softwareSet );
 		} catch ( _ ) {
@@ -767,6 +797,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		setDesignOnSite,
 		createCustomTemplate,
 		applyThemeWithPatterns,
+		assembleSite,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,

@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import QueryMedia from 'calypso/components/data/query-media';
+import { useSelector } from 'calypso/state';
 import getMediaFound from 'calypso/state/selectors/get-media-found';
 
 interface Props {

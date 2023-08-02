@@ -1,8 +1,9 @@
-import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
 import {
+	EditorComponent,
 	EditorPublishPanelComponent,
 	EditorNavSidebarComponent,
 	EditorToolbarComponent,
@@ -14,9 +15,10 @@ import {
 	EditorSidebarBlockInserterComponent,
 	EditorWelcomeTourComponent,
 	EditorBlockToolbarComponent,
+	EditorTemplateModalComponent,
+	TemplateCategory,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
-import type { SiteType } from '../../lib/utils';
 import type {
 	EditorPreviewOptions,
 	EditorSidebarTab,
@@ -25,11 +27,7 @@ import type {
 } from '../components/types';
 
 const selectors = {
-	// iframe and editor
-	editorFrame: 'iframe.is-loaded', // Gutenframe/Calypsofy iframe, only on Simple sites.
-	editor: 'body.block-editor-page',
-	editorCanvasFrame: 'iframe[name="editor-canvas"]', // Editor canvas (inner) iframe introduced in Gutenberg 14.9.1 for block-based themes.
-
+	// Editor
 	editorTitle: '.editor-post-title__input',
 
 	// Within the editor body.
@@ -41,17 +39,13 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
-export const EXTENDED_EDITOR_WAIT_TIMEOUT = 20 * 1000;
-export const EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT = 60 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
 export class EditorPage {
 	private page: Page;
-	private editorWindow: Locator;
-	private editorCanvas: Locator;
-	private target: SiteType;
+	private editor: EditorComponent;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
@@ -62,73 +56,35 @@ export class EditorPage {
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
+	private editorTemplateModalComponent: EditorTemplateModalComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param param0 Keyed object parameter.
-	 * @param param0.target Target editor type. Defaults to 'simple'.
-	 * @param param0.blockTheme Whether block-based theme is used. Defaults to 'false'.
 	 */
-	constructor(
-		page: Page,
-		{ target = 'simple', blockTheme = false }: { target?: SiteType; blockTheme?: boolean } = {}
-	) {
-		// The first step is to determine whether the test site is running a
-		// Gutenframe, otherwise known as a Calypsofy iframe.
-		// Typically, a Gutenframe is found on Simple sites and encapsulates the
-		// entire editor window.
-		// Atomic sites typically do not feature a Gutenframe and thus the editor
-		// window is exposed in the DOM.
-		// For both Simple and Atomic, the relevant `body` root element is used when resolving
-		// the Locator. This is to present a unified behavior when other methods reference the
-		// `editorWindow`.
-		if ( target === 'atomic' ) {
-			this.editorWindow = page.locator( selectors.editor );
-		} else {
-			this.editorWindow = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
-		}
-
-		// The second step is to locate the iframe that exists within the
-		// editor canvas as of Gutenberg 14.9.1 when using newer block-based themes.
-		// If the parameter `blockTheme` is true, the editor canvas is hidden inside a new
-		// iframe and must be pierced to be visible.
-		if ( blockTheme ) {
-			this.editorCanvas = this.editorWindow
-				.frameLocator( selectors.editorCanvasFrame )
-				.locator( 'body' );
-		} else {
-			this.editorCanvas = this.editorWindow;
-		}
-
+	constructor( page: Page ) {
 		this.page = page;
-		this.target = target;
 
-		// Instantiate the subcomponent classes that build up the editor experience.
-		this.editorGutenbergComponent = new EditorGutenbergComponent(
-			page,
-			this.editorWindow,
-			this.editorCanvas
-		);
-		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editorWindow );
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
-			page,
-			this.editorWindow
-		);
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editorWindow );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editorWindow );
-		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editorWindow );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editorWindow );
-		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editorWindow );
+		this.editor = new EditorComponent( page );
+
+		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editor );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
-			this.editorWindow
+			this.editor
 		);
 		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
 			page,
-			this.editorWindow
+			this.editor
 		);
+		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -148,73 +104,36 @@ export class EditorPage {
 
 	/**
 	 * Initialization steps to ensure the page is fully loaded.
-	 *
-	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		const timeout =
-			this.target === 'atomic' ? EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT : EXTENDED_EDITOR_WAIT_TIMEOUT;
-
 		// In a typical loading scenario, this request is one of the last to fire.
 		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
 		// it is a fairly good stand-in.
 		await Promise.all( [
 			this.page.waitForURL( /(post|page|post-new.php)/ ),
-			this.page.waitForResponse( /.*posts.*/, { timeout: timeout } ),
+			this.page.waitForResponse( /.*posts.*/, { timeout: 60 * 1000 } ),
 		] );
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 	}
 
-	// TODO: in the future, this should replace the handle method above, as everything should be based on locators.
 	/**
-	 * Get a pointer to the top-level editor locator.
-	 * This allows you a frame-safe way to start creating locators for other actions with the editor.
-	 *
-	 * @returns A pointer to frame-safe, top-level locator within the editor.
+	 * Resolves with the Editor parent element locator.
 	 */
-	getEditorWindowLocator(): Locator {
-		return this.editorWindow;
+	async getEditorParent() {
+		return await this.editor.parent();
 	}
 
 	/**
-	 * Returns the locator to the editor canvas.
+	 * Resolves with the Editor canvas element locator.
 	 *
-	 * Editor canvas here refers only to the visible block editor portion.
-	 * The editor canvas may be accessible directly (non-block-based theme) or
-	 * may be wrapped inside an iframe (block-based theme).
-	 *
-	 * @returns {Locator} Locator to the Editor Canvas.
+	 * You *must* use this method if you want to select an element inside the canvas
+	 * iframe. This already takes into account the parent wrapper element, so
+	 * there's *no* need to to chain `getEditorParent()` before calling it.
 	 */
-	getEditorCanvasLocator(): Locator {
-		return this.editorCanvas;
-	}
-
-	/**
-	 * Returns a locator to the element specified by the selector.
-	 *
-	 * This method first looks into the editor window for a matching element
-	 * to the selector. If no elements are found, this method then looks into
-	 * the editor canvas.
-	 *
-	 * If no elements matching the selector is found anywhere, this method
-	 * returns null.
-	 *
-	 * The distinction of editor window and editor canvas exists due to the
-	 * presence of inner iframes for block-based themes as of Gutenberg 14.9.1.
-	 *
-	 * @param {string} selector Selector to an element.
-	 * @returns {Promise<Locator|null>} Locator if this method finds a match. null otherwise.
-	 */
-	async getLocatorToSelector( selector: string ): Promise< Locator | null > {
-		if ( await this.editorWindow.locator( selector ).count() ) {
-			return this.editorWindow.locator( selector );
-		}
-		if ( await this.editorCanvas.locator( selector ).count() ) {
-			return this.editorCanvas.locator( selector );
-		}
-		return null;
+	async getEditorCanvas() {
+		return await this.editor.canvas();
 	}
 
 	/**
@@ -233,19 +152,34 @@ export class EditorPage {
 		] );
 	}
 
-	/**
-	 * Returns a locator to the provided selector.
-	 *
-	 * @param {string} selector Element selector.
-	 * @returns {Locator} Locator corresponding to the selector.
-	 */
-	getLocator( selector: string ): Locator {
-		return this.editorWindow.locator( selector );
-	}
-
 	//#endregion
 
 	//#region Basic Entry
+
+	/**
+	 * Selects blank template from the template modal.
+	 */
+	async selectBlankPageTemplate() {
+		return await this.editorTemplateModalComponent.selectBlankPage();
+	}
+
+	/**
+	 * Select a template category from the sidebar of options.
+	 *
+	 * @param {TemplateCategory} category Name of the category to select.
+	 */
+	async selectTemplateCategory( category: TemplateCategory ) {
+		return await this.editorTemplateModalComponent.selectTemplateCategory( category );
+	}
+
+	/**
+	 * Select a template from the grid of options.
+	 *
+	 * @param {string} label Label for the template (the string underneath the preview).
+	 */
+	async selectTemplate( label: string ) {
+		return await this.editorTemplateModalComponent.selectTemplate( label );
+	}
 
 	/**
 	 * Enters the text into the title block and verifies the result.
@@ -368,7 +302,7 @@ export class EditorPage {
 		openInlineInserter: OpenInlineInserter
 	): Promise< ElementHandle > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( this.editorWindow );
+		await openInlineInserter( await this.editor.canvas() );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
@@ -445,9 +379,11 @@ export class EditorPage {
 		patternName: string,
 		inserter: BlockInserter
 	): Promise< void > {
+		const editorParent = await this.editor.parent();
+
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
-		const insertConfirmationToastLocator = this.editorWindow.locator(
+		const insertConfirmationToastLocator = editorParent.locator(
 			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
@@ -647,21 +583,24 @@ export class EditorPage {
 		const [ response ] = await Promise.all( [
 			// First URL matches Atomic requests while the second matches Simple requests.
 			Promise.race( [
-				this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ),
-				this.page.waitForResponse( /.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ),
+				this.page.waitForResponse(
+					async ( response ) =>
+						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
+						response.request().method() === 'POST'
+				),
+				this.page.waitForResponse(
+					async ( response ) =>
+						/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
+						response.request().method() === 'PUT'
+				),
 			] ),
 			...actionsArray,
 		] );
 
 		const json = await response.json();
-
 		// AT and Simple sites have slightly differing response from the API.
-		let publishedURL: string;
-		if ( json.link ) {
-			publishedURL = json.link;
-		} else if ( json.body.link ) {
-			publishedURL = json.body.link;
-		} else {
+		const publishedURL = json.link || json.body?.link;
+		if ( ! publishedURL ) {
 			throw new Error( 'No published article URL found in response.' );
 		}
 
@@ -693,12 +632,13 @@ export class EditorPage {
 	 * Unpublishes the post or page by switching to draft.
 	 */
 	async unpublish(): Promise< void > {
-		await this.editorToolbarComponent.switchToDraft();
+		const editorParent = await this.editor.parent();
 
+		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await this.editorWindow.getByRole( 'button' ).getByText( 'OK' ).click();
+		await editorParent.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await this.editorWindow.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
 
 	/**
@@ -711,7 +651,8 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const toastLocator = this.editorWindow.locator( selectors.toastViewPostLink );
+		const editorParent = await this.editor.parent();
+		const toastLocator = editorParent.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );
 	}

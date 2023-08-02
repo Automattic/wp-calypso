@@ -210,7 +210,7 @@ describe( 'Site Actions', () => {
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					path: `/sites/${ siteId }/atomic/transfers`,
-					body: { software_set: softwareSet },
+					body: { software_set: softwareSet, context: 'woo-on-plans' },
 				},
 				type: 'WPCOM_REQUEST',
 			};
@@ -242,7 +242,7 @@ describe( 'Site Actions', () => {
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					path: `/sites/${ siteId }/atomic/transfers`,
-					body: { software_set: softwareSet },
+					body: { software_set: softwareSet, context: 'woo-on-plans' },
 				},
 				type: 'WPCOM_REQUEST',
 			};
@@ -448,7 +448,7 @@ describe( 'Site Actions', () => {
 		const createMockedThemeSetupApiRequest = ( payload ) => ( {
 			type: 'WPCOM_REQUEST',
 			request: {
-				path: `/sites/${ siteSlug }/theme-setup`,
+				path: `/sites/${ siteSlug }/theme-setup/?_locale=user`,
 				apiNamespace: 'wpcom/v2',
 				body: payload,
 				method: 'POST',
@@ -466,58 +466,6 @@ describe( 'Site Actions', () => {
 				createMockedThemeSwitchApiRequest( {
 					theme: 'zoologist',
 					dont_change_homepage: true,
-				} )
-			);
-		} );
-
-		it( 'should not send vertical_id to theme-setup API if the design is not verticalizable', () => {
-			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const generator = setDesignOnSite( siteSlug, {
-				...mockedDesign,
-				verticalizable: false,
-			} );
-
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSwitchApiRequest( {
-					theme: 'zoologist',
-					dont_change_homepage: true,
-				} )
-			);
-
-			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSetupApiRequest( {
-					trim_content: true,
-				} )
-			);
-		} );
-
-		it( 'should send vertical_id to theme-setup API if the design is verticalizable and vertical id is passed', () => {
-			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const mockedSiteVerticalId = '1';
-			const generator = setDesignOnSite(
-				siteSlug,
-				{
-					...mockedDesign,
-					verticalizable: true,
-				},
-				{ verticalId: mockedSiteVerticalId }
-			);
-
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSwitchApiRequest( {
-					theme: 'zoologist',
-					dont_change_homepage: true,
-				} )
-			);
-
-			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSetupApiRequest( {
-					trim_content: true,
-					vertical_id: mockedSiteVerticalId,
 				} )
 			);
 		} );

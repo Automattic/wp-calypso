@@ -40,7 +40,7 @@ Our security policy can be read in full [here](./SECURITY.md).
 
 ## Browser Support
 
-We support the latest two versions of all major browsers, except IE, where we currently only support 11 and Edge. (see [Browse Happy](https://browsehappy.com/) for current latest versions).
+We support the latest two versions of all major browsers. (see [Browse Happy](https://browsehappy.com/) for current latest versions).
 
 ## Troubleshooting
 

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 
-type LocaleData = Record< string, any >;
+type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
 	| ( TranslateOptions & { original: string } )
 	| ( TranslateOptions & {
@@ -12,7 +12,11 @@ type NormalizedTranslateArgs =
 			count: number;
 	  } );
 
-export type Substitution = string | number | React.ReactFragment;
+// This type represents things that React can render, but which also exist. (E.g.
+// not nullable, not undefined, etc.)
+type ExistingReactNode = React.ReactElement | string | number;
+
+export type Substitution = ExistingReactNode;
 
 export type Substitutions =
 	| Substitution
@@ -25,7 +29,7 @@ export interface ComponentInterpolations {
 
 export interface TranslateOptions {
 	/**
-	 * Arguments you would pass into sprintf to be run against the text for string substitution.
+	 * Arguments you would pass into `sprintf` to be run against the text for string substitution. Each substitution must exist. If a substitution shouldn't exist in some cases, pass an empty string to make the substitution explicit.
 	 */
 	args?: Substitutions;
 
@@ -56,7 +60,7 @@ export type TranslateOptionsPluralText = TranslateOptionsPlural & { textOnly: tr
 
 // Translate hooks, like component interpolation or highlighting untranslated strings,
 // force us to declare the return type as a generic React node, not as just string.
-export type TranslateResult = React.ReactChild;
+export type TranslateResult = ExistingReactNode;
 
 export interface NumberFormatOptions {
 	decimals?: number;
@@ -65,21 +69,30 @@ export interface NumberFormatOptions {
 }
 
 export type TranslateHook = (
-	translation: React.ReactChild,
+	translation: ExistingReactNode,
 	options: NormalizedTranslateArgs
-) => React.ReactChild;
+) => ExistingReactNode;
 
 export type ComponentUpdateHook = ( ...args: any ) => any;
 
 export type EventListener = ( ...payload: any ) => any;
 
 export interface I18N {
-	translate( options: DeprecatedTranslateOptions ): React.ReactChild;
+	/**
+	 * Translate a string.
+	 *
+	 * @example translate( "Hello, %(name)s", { args: { name: "World" } } );
+	 * @param original The original string to translate.
+	 * @param options Options for the translation. Note that substutions must exist.
+	 * If a substitution really should result in a blank string, pass an empty
+	 * string to make that explicit.
+	 */
+	translate( options: DeprecatedTranslateOptions ): ExistingReactNode;
 	translate( original: string ): string;
-	translate( original: string ): React.ReactChild;
-	translate( original: string, options: TranslateOptions ): React.ReactChild;
+	translate( original: string ): ExistingReactNode;
+	translate( original: string, options: TranslateOptions ): ExistingReactNode;
 	translate( original: string, options: TranslateOptionsText ): string;
-	translate( original: string, plural: string, options: TranslateOptionsPlural ): React.ReactChild;
+	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;
 	translate( original: string, plural: string, options: TranslateOptionsPluralText ): string;
 
 	numberFormat( number: number, numberOfDecimalPlaces: number ): string;
@@ -131,19 +144,17 @@ export interface LocalizeProps {
 	numberFormat: typeof numberFormat;
 }
 
-// Infers prop type from component C
-export type GetProps< C > = C extends React.ComponentType< infer P > ? P : never;
-
 export type WithoutLocalizedProps< OrigProps > = Pick<
 	OrigProps,
 	Exclude< keyof OrigProps, keyof LocalizeProps >
 >;
 
-export type LocalizedComponent< C > = React.ComponentClass<
-	WithoutLocalizedProps< GetProps< C > >
->;
+export type LocalizedComponent< C extends React.JSXElementConstructor< any > > =
+	React.ComponentClass< WithoutLocalizedProps< React.ComponentPropsWithRef< C > > >;
 
-export function localize< C >( component: C ): LocalizedComponent< C >;
+export function localize< C extends React.JSXElementConstructor< any > >(
+	component: C
+): LocalizedComponent< C >;
 export function useTranslate(): typeof translate & { localeSlug: string | undefined };
 export function useRtl(): boolean;
 

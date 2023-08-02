@@ -1,5 +1,5 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import type { VatDetails } from '@automattic/wpcom-checkout';
 
@@ -58,8 +58,12 @@ const emptyVatDetails = {};
 
 export default function useVatDetails(): VatDetailsManager {
 	const queryClient = useQueryClient();
-	const query = useQuery< VatDetails, FetchError >( [ 'vat-details' ], fetchVatDetails );
-	const mutation = useMutation< VatDetails, UpdateError, VatDetails >( setVatDetails, {
+	const query = useQuery< VatDetails, FetchError >( {
+		queryKey: [ 'vat-details' ],
+		queryFn: fetchVatDetails,
+	} );
+	const mutation = useMutation< VatDetails, UpdateError, VatDetails >( {
+		mutationFn: setVatDetails,
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( [ 'vat-details' ], data );
 		},

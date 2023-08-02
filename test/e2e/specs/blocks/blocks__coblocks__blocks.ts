@@ -48,7 +48,7 @@ describe( 'CoBlocks: Blocks', function () {
 		page = await browser.newPage();
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );
@@ -62,7 +62,7 @@ describe( 'CoBlocks: Blocks', function () {
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
-		pricingTableBlock = new PricingTableBlock( blockHandle );
+		pricingTableBlock = new PricingTableBlock( page, blockHandle );
 		await pricingTableBlock.enterPrice( 1, pricingTableBlockPrices[ 0 ] );
 		await pricingTableBlock.enterPrice( 2, pricingTableBlockPrices[ 1 ] );
 	} );

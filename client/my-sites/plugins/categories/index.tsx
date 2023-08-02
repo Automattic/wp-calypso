@@ -1,6 +1,6 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
 import page from 'page';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 import { useGetCategoryUrl } from './use-get-category-url';

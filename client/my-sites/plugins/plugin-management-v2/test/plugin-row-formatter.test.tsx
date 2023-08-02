@@ -12,7 +12,7 @@ import siteConnection from 'calypso/state/site-connection/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PluginRowFormatter from '../plugin-row-formatter';
-import { site, plugin } from './utils/constants';
+import { site, plugin, paidPlugin } from './utils/constants';
 
 const initialReduxState = {
 	siteConnection: { items: { [ site.ID ]: true } },
@@ -159,6 +159,14 @@ describe( '<PluginRowFormatter>', () => {
 		const { getAllByText } = render( <PluginRowFormatter { ...props } /> );
 
 		const [ autoManagedSite ] = getAllByText( `Install` );
+		expect( autoManagedSite ).toBeInTheDocument();
+	} );
+
+	test( 'should render correctly and show disabled upgrade button', () => {
+		props.columnKey = 'install';
+		const { getAllByText } = render( <PluginRowFormatter { ...props } item={ paidPlugin } /> );
+
+		const [ autoManagedSite ] = getAllByText( `Upgrade disabled` );
 		expect( autoManagedSite ).toBeInTheDocument();
 	} );
 } );

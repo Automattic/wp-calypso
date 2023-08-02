@@ -41,6 +41,19 @@ function suggestionsFromTags( count, tags ) {
 	return null;
 }
 
+/**
+ * Maps trending tags to tags
+ *
+ * @param {Array} trendingTags Trending tag results from the API.
+ * @returns {Array} An array of tag objects
+ */
+function trendingTagsToTags( trendingTags ) {
+	return map( trendingTags, ( tag ) => ( {
+		displayName: tag.tag.display_name,
+		slug: tag.tag.slug,
+	} ) );
+}
+
 function suggestionsFromPicks( count ) {
 	const lang = getLocaleSlug().split( '-' )[ 0 ];
 	if ( suggestions[ lang ] ) {
@@ -64,8 +77,11 @@ function suggestionWithRailcar( text, ui_algo, position ) {
 	};
 }
 
-function getSuggestions( count, tags ) {
-	const tagSuggestions = suggestionsFromTags( count, tags );
+function getSuggestions( count, tags, trendingTags ) {
+	// trendingTags will be requested if the user is logged out
+	const tagSuggestions = tags
+		? suggestionsFromTags( count, tags )
+		: suggestionsFromTags( count, trendingTagsToTags( trendingTags ) );
 
 	// return null to suppress showing any suggestions until tag subscriptions load.
 	if ( tagSuggestions === null ) {
@@ -73,7 +89,6 @@ function getSuggestions( count, tags ) {
 	}
 
 	const newSuggestions = tagSuggestions.length ? tagSuggestions : suggestionsFromPicks( count );
-
 	return newSuggestions;
 }
 
@@ -85,7 +100,11 @@ const SuggestionsProvider = ( Element, count = 3 ) =>
 		getFirstSuggestions = ( state ) =>
 			this.memoizedSuggestions
 				? this.memoizedSuggestions
-				: ( this.memoizedSuggestions = getSuggestions( count, getReaderFollowedTags( state ) ) );
+				: ( this.memoizedSuggestions = getSuggestions(
+						count,
+						getReaderFollowedTags( state ),
+						this.props.trendingTags
+				  ) );
 
 		componentWillUnmount() {
 			// when unmounted, let the suggestions refresh

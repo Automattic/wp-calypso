@@ -1,15 +1,15 @@
+import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import Main from 'calypso/components/main';
 import LicenseBundleCardDescription from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card-description';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import { useSelector } from 'calypso/state';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import Layout from '../../layout';
+import LayoutHeader from '../../layout/header';
 
 import './style.scss';
 
@@ -23,6 +23,14 @@ export default function Prices() {
 		const userYearlyProduct = Object.values( userProducts ).find(
 			( p ) => p.product_id === product.product_id
 		);
+
+		if ( userYearlyProduct === undefined ) {
+			return null;
+		}
+
+		const dailyAgencyPrice = ( product.amount * 12 ) / 365;
+		const dailyUserYearlyPrice = userYearlyProduct.cost / 365;
+
 		const userMonthlyProduct =
 			userYearlyProduct &&
 			Object.values( userProducts ).find(
@@ -30,10 +38,9 @@ export default function Prices() {
 					p.billing_product_slug === userYearlyProduct.billing_product_slug &&
 					p.product_term === 'month'
 			);
-
-		const dailyAgencyPrice = ( product.amount * 12 ) / 365;
-		const dailyUserMonthlyPrice = userMonthlyProduct ? ( userMonthlyProduct.cost * 12 ) / 365 : 0;
-		const dailyUserYearlyPrice = userYearlyProduct ? userYearlyProduct.cost / 365 : 0;
+		const dailyUserMonthlyPrice = userMonthlyProduct
+			? ( userMonthlyProduct.cost * 12 ) / 365
+			: undefined;
 
 		return (
 			<tr key={ product.product_id }>
@@ -42,48 +49,60 @@ export default function Prices() {
 					<LicenseBundleCardDescription product={ product } />
 				</td>
 				<td>
-					<div className="prices__mobile-description">
-						<div>{ translate( 'Jetpack.com Pricing' ) }</div>
-						<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
-					</div>
-					<div>
-						{ translate( '%(price)s/day', {
-							args: {
-								price: formatCurrency( dailyUserMonthlyPrice, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
-					<div>
-						{ translate( '%(price)s/month', {
-							args: {
-								price:
-									userMonthlyProduct &&
-									formatCurrency( userMonthlyProduct.cost, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
+					{ userMonthlyProduct && dailyUserMonthlyPrice && (
+						<>
+							<div className="prices__mobile-description">
+								<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+								<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
+							</div>
+							<div>
+								{ translate( '%(price)s/day', {
+									args: {
+										price: formatCurrency( dailyUserMonthlyPrice, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+							<div>
+								{ translate( '%(price)s/month', {
+									args: {
+										price: formatCurrency( userMonthlyProduct.cost, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+						</>
+					) }
 				</td>
 				<td>
 					<div className="prices__mobile-description">
 						<div>{ translate( 'Jetpack.com Pricing' ) }</div>
 						<span className="prices__th-detail">{ translate( 'billed yearly' ) }</span>
 					</div>
-					<div>
-						{ translate( '%(price)s/day', {
-							args: {
-								price: formatCurrency( dailyUserYearlyPrice, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
-					<div>
-						{ translate( '%(price)s/year', {
-							args: {
-								price:
-									userYearlyProduct &&
-									formatCurrency( userYearlyProduct.cost, 'USD', currencyFormatOptions ),
-							},
-						} ) }
-					</div>
+
+					{ /* If monthly and yearly prices are equal we're going to assume there is no yearly plan
+					  and hide the yearly price. Currently this is the case with the Jetpack AI Assistant product.
+					  */ }
+					{ userYearlyProduct.cost !== userMonthlyProduct?.cost && (
+						<>
+							<div>
+								{ translate( '%(price)s/day', {
+									args: {
+										price: formatCurrency( dailyUserYearlyPrice, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+							<div>
+								{ translate( '%(price)s/year', {
+									args: {
+										price:
+											userYearlyProduct &&
+											formatCurrency( userYearlyProduct.cost, 'USD', currencyFormatOptions ),
+									},
+								} ) }
+							</div>
+						</>
+					) }
+
+					{ userYearlyProduct.cost === userMonthlyProduct?.cost && <Gridicon icon="minus" /> }
 				</td>
 				<td>
 					<div className="prices__mobile-description">
@@ -103,19 +122,16 @@ export default function Prices() {
 	} );
 
 	return (
-		<Main wideLayout className="prices">
-			<QueryProductsList type="jetpack" />
+		<Layout className="prices" title={ translate( 'Prices' ) } wide>
+			<QueryProductsList type="jetpack" currency="USD" />
 
-			<DocumentHead title={ translate( 'Prices' ) } />
-			<SidebarNavigation />
-
-			<div className="prices__header">
+			<LayoutHeader>
 				<CardHeading size={ 36 }>
 					{ translate( 'Jetpack Agency & Pro Partner Program Product Pricing' ) }
 				</CardHeading>
 
 				<SelectPartnerKeyDropdown />
-			</div>
+			</LayoutHeader>
 
 			<div className="prices__description">
 				<p>
@@ -127,7 +143,18 @@ export default function Prices() {
 
 			<table className="prices__table">
 				<thead>
-					<tr>
+					<tr className="prices__head-row" style={ { backgroundColor: 'transparent' } }>
+						<th colSpan={ 3 }></th>
+						<th className="prices__column-highlight">
+							<div className="prices__column-highlight-content">
+								<Gridicon icon="star" size={ 18 } className="prices__column-highlight-icon" />
+								<span className="prices__column-highlight-label">
+									{ translate( 'Your Price' ) }
+								</span>
+							</div>
+						</th>
+					</tr>
+					<tr className="prices__head-row">
 						<th></th>
 						<th>
 							<div>{ translate( 'Jetpack.com Pricing' ) }</div>
@@ -145,6 +172,6 @@ export default function Prices() {
 				</thead>
 				<tbody>{ productRows }</tbody>
 			</table>
-		</Main>
+		</Layout>
 	);
 }

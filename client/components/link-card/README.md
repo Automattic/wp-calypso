@@ -23,8 +23,8 @@ function render() {
 ## Props
 
 - `background` (`string`) - A background color variable name.
-- `label` (`ReactChild`) - The string rendered in the top card with the smaller size, it can also be a component.
-- `title` (`ReactChild`) - The string rendered in the middle of the card with the larger size, it can also be a component.
-- `cta` (`ReactChild`) - The string rendered in the bottom of the card with the middle size, it can also be a component.
+- `label` (`ReactNode`) - The string rendered in the top card with the smaller size, it can also be a component.
+- `title` (`ReactNode`) - The string rendered in the middle of the card with the larger size, it can also be a component.
+- `cta` (`ReactNode`) - The string rendered in the bottom of the card with the middle size, it can also be a component.
 - `url` (`string`) - The url the component points to.
 - `onClick` (`() => void`) - The callback called when the card is clicked.

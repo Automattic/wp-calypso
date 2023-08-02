@@ -4,8 +4,8 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
+import { useSelector } from 'calypso/state';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**

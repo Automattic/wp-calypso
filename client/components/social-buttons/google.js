@@ -69,6 +69,14 @@ class GoogleSocialButton extends Component {
 	async initializeGoogleSignIn() {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
+		if ( ! googleSignIn ) {
+			this.setState( {
+				error: this.props.translate( 'Something went wrong while trying to load Google sign-in.' ),
+			} );
+
+			return;
+		}
+
 		this.client = googleSignIn.initCodeClient( {
 			client_id: this.props.clientId,
 			scope: this.props.scope,
@@ -94,7 +102,12 @@ class GoogleSocialButton extends Component {
 
 	async loadGoogleIdentityServicesAPI() {
 		if ( ! window.google?.accounts?.oauth2 ) {
-			await loadScript( 'https://accounts.google.com/gsi/client' );
+			try {
+				await loadScript( 'https://accounts.google.com/gsi/client' );
+			} catch {
+				// It's safe to ignore loading errors because if Google is blocked in some way the the button will be disabled.
+				return null;
+			}
 		}
 
 		return window.google.accounts.oauth2;

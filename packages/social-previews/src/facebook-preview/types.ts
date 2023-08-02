@@ -1,12 +1,18 @@
-import { TYPE_WEBSITE, TYPE_ARTICLE } from '../constants';
-import type { PreviewProps } from '../types';
+import { TYPE_WEBSITE, TYPE_ARTICLE, LANDSCAPE_MODE, PORTRAIT_MODE } from '../constants';
+import type { MediaItem, SocialPreviewBaseProps } from '../types';
+
+export type ImageMode = typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE;
 
 export type FacebookUser = {
 	displayName: string;
 	avatarUrl?: string;
 };
 
-export type FacebookPreviewProps = PreviewProps & {
+export type FacebookPreviewProps = SocialPreviewBaseProps & {
 	user?: FacebookUser;
 	type?: typeof TYPE_WEBSITE | typeof TYPE_ARTICLE;
+	customText?: string;
+	customImage?: string;
+	imageMode?: ImageMode;
+	media?: Array< MediaItem >;
 };

@@ -462,6 +462,13 @@ export default function buildFallbackResponse( {
 				},
 				{
 					parent: 'users.php',
+					slug: 'subscribers',
+					title: translate( 'Subscribers' ),
+					type: 'submenu-item',
+					url: `/subscribers/${ siteDomain }`,
+				},
+				{
+					parent: 'users.php',
 					slug: 'users-my-profile',
 					title: translate( 'My Profile' ),
 					type: 'submenu-item',
@@ -511,7 +518,7 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
-				...( config.isEnabled( 'woa-logging' ) && showSiteLogs
+				...( showSiteLogs
 					? [
 							{
 								parent: 'tools.php',

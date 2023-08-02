@@ -150,11 +150,14 @@ class ThemePreview extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
+		const { globalStylesInPersonalPlan } = this.props;
+		const plan = globalStylesInPersonalPlan ? 'personal' : 'premium';
+
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
+		page( `/checkout/${ this.props.siteSlug || '' }/${ plan }?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -207,9 +210,14 @@ class ThemePreview extends Component {
 	};
 
 	renderUnlockStyleButton = () => {
+		const primaryOption = this.getPrimaryOption();
+		if ( ! primaryOption ) {
+			return;
+		}
+
 		return (
 			<Button primary onClick={ this.onUnlockStyleButtonClick }>
-				{ this.props.translate( 'Unlock this style' ) }
+				{ primaryOption.label }
 			</Button>
 		);
 	};
@@ -262,8 +270,16 @@ class ThemePreview extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
-		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+		const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
+			useSiteGlobalStylesStatus( siteId );
+
+		return (
+			<Wrapped
+				{ ...props }
+				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+				globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
+			/>
+		);
 	},
 	'withSiteGlobalStylesStatus'
 );

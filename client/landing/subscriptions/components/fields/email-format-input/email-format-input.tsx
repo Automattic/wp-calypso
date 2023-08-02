@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { Reader } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { FormEventHandler } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -6,10 +7,8 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import './styles.scss';
 
-export type EmailFormatType = 'html' | 'text';
-
 type EmailFormatInputProps = {
-	value: EmailFormatType;
+	value: Reader.EmailFormatType;
 	onChange: FormEventHandler< HTMLSelectElement >;
 };
 

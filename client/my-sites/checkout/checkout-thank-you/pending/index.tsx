@@ -5,7 +5,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
@@ -15,12 +14,14 @@ import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { convertErrorToString } from '../../composite-checkout/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
@@ -298,6 +299,7 @@ function triggerPostRedirectNotices( {
 
 	reduxDispatch(
 		successNotice( translate( 'Your purchase has been completed!' ), {
+			id: 'checkout-thank-you-success',
 			displayOnNextPage: true,
 		} )
 	);
@@ -353,7 +355,7 @@ const logCheckoutError = ( error: Error ) => {
 		extra: {
 			env: config( 'env_id' ),
 			type: 'checkout_pending',
-			message: error.message + '; Stack: ' + error.stack,
+			message: convertErrorToString( error ),
 		},
 	} );
 };

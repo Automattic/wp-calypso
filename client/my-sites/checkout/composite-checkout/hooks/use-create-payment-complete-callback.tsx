@@ -3,7 +3,6 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
@@ -13,6 +12,7 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
@@ -30,6 +30,7 @@ import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
+import type { FailedResponse } from '../lib/normalize-transaction-response';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -67,7 +68,7 @@ export default function useCreatePaymentCompleteCallback( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
 	redirectTo?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	feature?: string | undefined;
 	isInModal?: boolean;
 	isComingFromUpsell?: boolean;
@@ -99,27 +100,28 @@ export default function useCreatePaymentCompleteCallback( {
 	const domains = useSiteDomains( siteId ?? undefined );
 
 	return useCallback(
-		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
+		async ( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ) => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
 
 			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
 			// created site in the Thank You page URL.
 			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
-			let jetpackTemporarySiteId;
+			let jetpackTemporarySiteId: string | undefined;
 			if (
 				sitelessCheckoutType === 'jetpack' &&
 				! siteSlug &&
-				[ 'no-user', 'no-site' ].includes( String( responseCart.cart_key ) )
+				[ 'no-user', 'no-site' ].includes( String( responseCart.cart_key ) ) &&
+				'purchases' in transactionResult &&
+				transactionResult.purchases
 			) {
-				jetpackTemporarySiteId =
-					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
+				jetpackTemporarySiteId = Object.keys( transactionResult.purchases ).pop();
 			}
 
 			const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 				siteSlug: siteSlug || undefined,
 				adminUrl,
-				receiptId: transactionResult.receipt_id,
+				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 				redirectTo,
 				purchaseId,
 				feature,
@@ -139,7 +141,7 @@ export default function useCreatePaymentCompleteCallback( {
 			debug( 'getThankYouUrl returned', url );
 
 			try {
-				recordPaymentCompleteAnalytics( {
+				await recordPaymentCompleteAnalytics( {
 					paymentMethodId,
 					transactionResult,
 					redirectUrl: url,
@@ -159,7 +161,10 @@ export default function useCreatePaymentCompleteCallback( {
 				);
 			}
 
-			const receiptId = transactionResult?.receipt_id;
+			const receiptId =
+				transactionResult && 'receipt_id' in transactionResult
+					? transactionResult.receipt_id
+					: undefined;
 			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
@@ -172,7 +177,12 @@ export default function useCreatePaymentCompleteCallback( {
 				clearSignupDestinationCookie();
 			}
 
-			if ( receiptId && transactionResult?.purchases ) {
+			if (
+				receiptId &&
+				transactionResult &&
+				'purchases' in transactionResult &&
+				transactionResult.purchases
+			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
 			}
@@ -204,8 +214,8 @@ export default function useCreatePaymentCompleteCallback( {
 				// log-in page which we don't want.
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
-					orderId: transactionResult.order_id,
-					receiptId: transactionResult.receipt_id,
+					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
+					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 				} );
 				return;
 			}
@@ -215,8 +225,8 @@ export default function useCreatePaymentCompleteCallback( {
 			if ( isURL( url ) || url.includes( '/setup/' ) ) {
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
-					orderId: transactionResult.order_id,
-					receiptId: transactionResult.receipt_id,
+					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
+					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 				} );
 				return;
 			}
@@ -226,8 +236,8 @@ export default function useCreatePaymentCompleteCallback( {
 			} );
 			redirectThroughPending( url, {
 				siteSlug,
-				orderId: transactionResult.order_id,
-				receiptId: transactionResult.receipt_id,
+				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
+				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 			} );
 		},
 		[
@@ -255,7 +265,7 @@ export default function useCreatePaymentCompleteCallback( {
 	);
 }
 
-function recordPaymentCompleteAnalytics( {
+async function recordPaymentCompleteAnalytics( {
 	paymentMethodId,
 	transactionResult,
 	redirectUrl,
@@ -265,7 +275,7 @@ function recordPaymentCompleteAnalytics( {
 	sitePlanSlug,
 }: {
 	paymentMethodId: string | null;
-	transactionResult: WPCOMTransactionEndpointResponse | undefined;
+	transactionResult: WPCOMTransactionEndpointResponse | FailedResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
@@ -288,9 +298,12 @@ function recordPaymentCompleteAnalytics( {
 	);
 
 	try {
-		recordPurchase( {
+		await recordPurchase( {
 			cart: responseCart,
-			orderId: transactionResult?.receipt_id,
+			orderId:
+				transactionResult && 'receipt_id' in transactionResult
+					? transactionResult.receipt_id
+					: undefined,
 			sitePlanSlug,
 		} );
 	} catch ( err ) {

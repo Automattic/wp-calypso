@@ -13,15 +13,28 @@ export class JetpackHeader extends PureComponent {
 	static propTypes = {
 		darkColorScheme: PropTypes.bool,
 		partnerSlug: PropTypes.string,
-		isWoo: PropTypes.bool,
+		isWooOnboarding: PropTypes.bool,
+		isWooCoreProfiler: PropTypes.bool,
 		isWooDna: PropTypes.bool,
 		width: PropTypes.number,
 	};
 
 	renderLogo() {
-		const { darkColorScheme, partnerSlug, width, isWoo, isWooDna, translate } = this.props;
+		const {
+			darkColorScheme,
+			partnerSlug,
+			width,
+			isWooOnboarding,
+			isWooCoreProfiler,
+			isWooDna,
+			translate,
+		} = this.props;
 
-		if ( isWoo ) {
+		if ( isWooCoreProfiler ) {
+			return null;
+		}
+
+		if ( isWooOnboarding ) {
 			// @todo Implement WooCommerce + partner co-branding in the future.
 			return (
 				<JetpackPartnerLogoGroup

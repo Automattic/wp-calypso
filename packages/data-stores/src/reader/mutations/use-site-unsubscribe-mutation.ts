@@ -1,44 +1,67 @@
-import { useMutation, useQueryClient } from 'react-query';
-import { applyCallbackToPages, callApi } from '../helpers';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { buildQueryKey, callApi, getSubscriptionMutationParams, isValidId } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
 import {
-	PagedQueryResult,
-	SiteSubscription,
+	SiteSubscriptionsPages,
 	SubscriptionManagerSubscriptionsCount,
+	SiteSubscriptionDetails,
 } from '../types';
 
 type UnsubscribeParams = {
-	blog_id: number | string;
+	subscriptionId?: number;
+	url?: string;
+	blog_id?: number | string;
+	doNotInvalidateSiteSubscriptions?: boolean;
+	emailId?: string;
 };
 
 type UnsubscribeResponse = {
-	success: boolean;
-	subscribed: boolean;
-	subscription: null;
+	success?: boolean;
+	subscribed?: boolean;
+	subscription?: null;
+};
+
+const buildSiteSubscriptionDetailsQueryKey = (
+	blogId: number | string,
+	isLoggedIn: boolean,
+	userId?: number
+) => {
+	return buildQueryKey(
+		[ 'read', 'site-subscription-details', String( blogId ) ],
+		isLoggedIn,
+		userId
+	);
 };
 
 const useSiteUnsubscribeMutation = () => {
-	const { isLoggedIn } = useIsLoggedIn();
+	const { isLoggedIn, id: userId } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
 	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
-	return useMutation(
-		async ( params: UnsubscribeParams ) => {
-			if ( ! params.blog_id ) {
-				throw new Error(
-					// reminder: translate this string when we add it to the UI
-					'Something went wrong while unsubscribing.'
-				);
-			}
+	return useMutation( {
+		mutationFn: async ( params: UnsubscribeParams ) => {
+			const { path, apiVersion, body } = getSubscriptionMutationParams(
+				'delete',
+				isLoggedIn,
+				params.blog_id,
+				params.url,
+				params.emailId
+			);
 
 			const response = await callApi< UnsubscribeResponse >( {
-				path: `/read/site/${ params.blog_id }/post_email_subscriptions/delete`,
+				path,
 				method: 'POST',
 				isLoggedIn,
-				apiVersion: '1.2',
+				apiVersion,
+				body,
 			} );
-			if ( ! response.success ) {
+			if (
+				'success' in response &&
+				response.success === false &&
+				'subscribed' in response &&
+				response.subscribed === true
+			) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
 					'Something went wrong while unsubscribing.'
@@ -47,69 +70,118 @@ const useSiteUnsubscribeMutation = () => {
 
 			return response;
 		},
-		{
-			onMutate: async ( params ) => {
-				await queryClient.cancelQueries( siteSubscriptionsCacheKey );
-				await queryClient.cancelQueries( subscriptionsCountCacheKey );
+		onMutate: async ( params ) => {
+			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+			await queryClient.cancelQueries( subscriptionsCountCacheKey );
 
-				const previousSiteSubscriptions =
-					queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
-						siteSubscriptionsCacheKey
-					);
-				// remove blog from site subscriptions
-				if ( previousSiteSubscriptions ) {
-					const mutatedSiteSubscriptions = applyCallbackToPages<
-						'subscriptions',
-						SiteSubscription
-					>( previousSiteSubscriptions, ( page ) => {
+			const previousSiteSubscriptions =
+				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+			// remove blog from site subscriptions
+			if ( previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, {
+					...previousSiteSubscriptions,
+					pages: previousSiteSubscriptions.pages.map( ( page ) => {
 						return {
 							...page,
-							subscriptions: page.subscriptions.filter(
-								( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
-							),
+							total_subscriptions: page.total_subscriptions - 1,
+							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
+								...siteSubscription,
+								isDeleted:
+									Number( siteSubscription.ID ) === params.subscriptionId ||
+									( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
+										? true
+										: siteSubscription.isDeleted,
+							} ) ),
 						};
+					} ),
+				} );
+			}
+
+			const previousSubscriptionsCount =
+				queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >(
+					subscriptionsCountCacheKey
+				);
+
+			// decrement the blog count
+			if ( previousSubscriptionsCount ) {
+				queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
+					subscriptionsCountCacheKey,
+					{
+						...previousSubscriptionsCount,
+						blogs: previousSubscriptionsCount?.blogs ? previousSubscriptionsCount?.blogs - 1 : null,
+					}
+				);
+			}
+
+			let previousSiteSubscriptionDetails: SiteSubscriptionDetails | undefined;
+			if ( isValidId( params.blog_id ) ) {
+				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsQueryKey(
+					params.blog_id,
+					isLoggedIn,
+					userId
+				);
+
+				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+
+				previousSiteSubscriptionDetails = queryClient.getQueryData(
+					siteSubscriptionDetailsCacheKey
+				);
+
+				if ( previousSiteSubscriptionDetails ) {
+					queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
+						...previousSiteSubscriptionDetails,
+						subscriber_count: previousSiteSubscriptionDetails.subscriber_count - 1,
 					} );
-					queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 				}
+			}
 
-				const previousSubscriptionsCount =
-					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >(
-						subscriptionsCountCacheKey
-					);
+			return {
+				previousSiteSubscriptions,
+				previousSubscriptionsCount,
+				previousSiteSubscriptionDetails,
+			};
+		},
+		onError: ( error, params, context ) => {
+			if ( context?.previousSiteSubscriptions ) {
+				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
+			}
+			if ( context?.previousSubscriptionsCount ) {
+				queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
+					subscriptionsCountCacheKey,
+					context.previousSubscriptionsCount
+				);
+			}
+			if ( context?.previousSiteSubscriptionDetails && isValidId( params.blog_id ) ) {
+				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsQueryKey(
+					params.blog_id,
+					isLoggedIn,
+					userId
+				);
+				queryClient.setQueryData(
+					siteSubscriptionDetailsCacheKey,
+					context.previousSiteSubscriptionDetails
+				);
+			}
+		},
+		onSettled: ( _data, _error, params ) => {
+			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
+				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+			}
 
-				// decrement the blog count
-				if ( previousSubscriptionsCount ) {
-					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						subscriptionsCountCacheKey,
-						{
-							...previousSubscriptionsCount,
-							blogs: previousSubscriptionsCount?.blogs
-								? previousSubscriptionsCount?.blogs - 1
-								: null,
-						}
-					);
-				}
+			if ( isValidId( params.blog_id ) ) {
+				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsQueryKey(
+					params.blog_id,
+					isLoggedIn,
+					userId
+				);
+				queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey, { refetchType: 'none' } );
+				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
+			}
 
-				return { previousSiteSubscriptions, previousSubscriptionsCount };
-			},
-			onError: ( error, variables, context ) => {
-				if ( context?.previousSiteSubscriptions ) {
-					queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
-				}
-				if ( context?.previousSubscriptionsCount ) {
-					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						subscriptionsCountCacheKey,
-						context.previousSubscriptionsCount
-					);
-				}
-			},
-			onSettled: () => {
-				// pass in more minimal keys, everything to the right will be invalidated
-				queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-				queryClient.invalidateQueries( [ 'read', 'subscriptions-count' ] );
-			},
-		}
-	);
+			queryClient.invalidateQueries( subscriptionsCountCacheKey );
+			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
+		},
+	} );
 };
 
 export default useSiteUnsubscribeMutation;

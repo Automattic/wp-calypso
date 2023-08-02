@@ -92,6 +92,7 @@ function getSiteFilters( siteId ) {
 			title: i18n.translate( 'Subscribers' ),
 			path: '/stats/subscribers/' + siteId,
 			id: 'stats-subscribers',
+			period: 'day', // default period for Subscribers
 		},
 		{
 			title: i18n.translate( 'Days' ),
@@ -263,11 +264,14 @@ export function subscribers( context, next ) {
 		);
 	} );
 
+	// moment and rangeOfPeriod format needed for summary page link for email mdule
+	const date = moment().locale( 'en' );
+
 	context.primary = (
 		<AsyncLoad
-			require="calypso/my-sites/stats/stats-subscribers-page"
+			require="calypso/my-sites/stats/stats-subscribers"
 			placeholder={ PageLoading }
-			period={ activeFilter.period } // TODO: investigate rangeOfPeriod() for date changes
+			period={ rangeOfPeriod( activeFilter.period, date ) }
 		/>
 	);
 	next();
@@ -633,5 +637,16 @@ export function emailSummary( context, next ) {
 
 	context.primary = <StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />;
 
+	next();
+}
+
+export function purchase( context, next ) {
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-purchase"
+			placeholder={ PageLoading }
+			query={ context.query }
+		/>
+	);
 	next();
 }

@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,6 +14,7 @@ import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';

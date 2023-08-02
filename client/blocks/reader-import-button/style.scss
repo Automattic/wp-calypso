@@ -1,12 +1,20 @@
 .reader-import-button {
 	cursor: pointer;
-}
 
-.reader-import-button__icon {
-	vertical-align: middle;
-}
+	&__icon {
+		vertical-align: middle;
+	}
 
-.reader-import-button__label {
-	font-size: $font-body-small;
-	padding-left: 4px;
+	svg {
+		min-width: 20px;
+	}
+
+	&__label {
+		padding-left: 4px;
+	}
+
+	.file-picker {
+		width: 100%;
+		text-align: left;
+	}
 }

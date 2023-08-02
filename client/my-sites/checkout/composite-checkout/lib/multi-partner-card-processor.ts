@@ -1,15 +1,20 @@
-import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
+import { createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
+	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
+import existingCardProcessor from './existing-card-processor';
+import getContactDetailsType from './get-contact-details-type';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
+import { doesTransactionResponseRequire3DS, handle3DSChallenge } from './stripe-3ds';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
@@ -19,6 +24,7 @@ import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
+import type { LocalizeProps } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 
@@ -129,34 +135,44 @@ async function stripeCardProcessor(
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
+	let paymentIntentId: string | undefined = undefined;
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
 		.then( async ( stripeResponse ) => {
-			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
-				// 3DS authentication required
-				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
-				// If this fails, it will reject (throw) and we'll end up in the catch block below.
-				await confirmStripePaymentIntent(
+				paymentIntentId = stripeResponse.message.payment_intent_id;
+				await handle3DSChallenge(
+					reduxDispatch,
 					submitData.stripe,
-					stripeResponse?.message?.payment_intent_client_secret
+					stripeResponse.message.payment_intent_client_secret,
+					paymentIntentId
 				);
-				// We must return the original authentication response in order to have
-				// access to the order_id so that we can display a pending page while
-				// we wait for Stripe to send a webhook to complete the purchase.
+				// We must return the original authentication response in order
+				// to have access to the order_id so that we can display a
+				// pending page while we wait for Stripe to send a webhook to
+				// complete the purchase so we do not return the result of
+				// confirming the payment intent and instead fall through.
 			}
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			if (
-				stripeResponse?.redirect_url &&
-				! stripeResponse?.message?.payment_intent_client_secret
-			) {
+			if ( stripeResponse.redirect_url && ! doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
 			return makeSuccessResponse( stripeResponse );
 		} )
 		.catch( ( error ) => {
 			debug( 'transaction failed' );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
+					payment_intent_id: paymentIntentId ?? '',
+				} )
+			);
+			logStashEvent( 'calypso_checkout_card_transaction_failed', {
+				payment_intent_id: paymentIntentId ?? '',
+				tags: [ `payment_intent_id:${ paymentIntentId }` ],
+			} );
+
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.
 			return makeErrorResponse( error.message );
@@ -225,13 +241,89 @@ async function ebanxCardProcessor(
 		} );
 }
 
+export interface FreePurchaseData {
+	translate: LocalizeProps[ 'translate' ];
+}
+
 export default async function multiPartnerCardProcessor(
 	submitData: unknown,
-	dataForProcessor: PaymentProcessorOptions
+	dataForProcessor: PaymentProcessorOptions,
+	freePurchaseData?: FreePurchaseData
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidMultiPartnerTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
+
+	// For free purchases we cannot use the regular processor because it requires
+	// making a charge. Instead, we will create a new card, then use the
+	// existingCardProcessor because it works for free purchases.
+	const isPurchaseFree =
+		dataForProcessor.responseCart.total_cost_integer === 0 &&
+		dataForProcessor.responseCart.products.length > 0;
+	if ( isPurchaseFree ) {
+		if ( ! isValidStripeCardTransactionData( submitData ) ) {
+			throw new Error( 'Required purchase data is missing' );
+		}
+		if ( submitData.paymentPartner === 'ebanx' ) {
+			throw new Error( 'Cannot use Ebanx for free purchases' );
+		}
+		if ( ! freePurchaseData?.translate ) {
+			throw new Error( 'Required free purchase data is missing' );
+		}
+
+		const contactDetailsType = getContactDetailsType( dataForProcessor.responseCart );
+		const submitDataWithContactInfo =
+			contactDetailsType === 'none'
+				? submitData
+				: {
+						...submitData,
+						// In `PaymentMethodSelector` which is used for adding new cards, the
+						// stripe payment method is passed `shouldShowTaxFields` which causes
+						// it to show required tax location fields in the payment method
+						// itself; that data is then submitted to the `assignNewCardProcessor`
+						// to send to Stripe as part of saving the card. However, in checkout
+						// we normally do not display those fields since they are already included in
+						// the billing details step. Therefore we must pass in the tax location
+						// data explicitly here so we can use `assignNewCardProcessor`.
+						countryCode: dataForProcessor.contactDetails?.countryCode?.value,
+						postalCode: getPostalCode( dataForProcessor.contactDetails ),
+						state: dataForProcessor.contactDetails?.state?.value,
+						city: dataForProcessor.contactDetails?.city?.value,
+						organization: dataForProcessor.contactDetails?.organization?.value,
+						address: dataForProcessor.contactDetails?.address1?.value,
+				  };
+		const newCardResponse = await assignNewCardProcessor(
+			{
+				purchase: undefined,
+				translate: freePurchaseData.translate,
+				stripe: dataForProcessor.stripe,
+				stripeConfiguration: dataForProcessor.stripeConfiguration,
+				cardNumberElement: submitData.cardNumberElement,
+				reduxDispatch: dataForProcessor.reduxDispatch,
+				isCheckout: true,
+				eventSource: '/checkout',
+			},
+			submitDataWithContactInfo
+		);
+		if ( newCardResponse.type === PaymentProcessorResponseType.ERROR ) {
+			return newCardResponse;
+		}
+
+		const storedCard = newCardResponse.payload;
+		if ( ! isValidNewCardResponseData( storedCard ) ) {
+			throw new Error( 'New card was not saved' );
+		}
+		return existingCardProcessor(
+			{
+				...submitData,
+				storedDetailsId: storedCard.stored_details_id,
+				paymentMethodToken: storedCard.mp_ref,
+				paymentPartnerProcessorId: storedCard.payment_partner,
+			},
+			dataForProcessor
+		);
+	}
+
 	const paymentPartner = submitData.paymentPartner;
 	if ( paymentPartner === 'stripe' ) {
 		return stripeCardProcessor( submitData, dataForProcessor );
@@ -274,6 +366,20 @@ function isValidEbanxCardTransactionData(
 	const data = submitData as EbanxCardTransactionRequest;
 	if ( ! data ) {
 		throw new Error( 'Transaction requires data and none was provided' );
+	}
+	return true;
+}
+
+interface NewCardResponseData {
+	stored_details_id: string;
+	mp_ref: string;
+	payment_partner: string;
+}
+
+function isValidNewCardResponseData( submitData: unknown ): submitData is NewCardResponseData {
+	const data = submitData as NewCardResponseData;
+	if ( ! data || ! data.stored_details_id || ! data.mp_ref || ! data.payment_partner ) {
+		throw new Error( 'New card was not saved' );
 	}
 	return true;
 }

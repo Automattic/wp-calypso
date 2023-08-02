@@ -1,24 +1,22 @@
+import { useLaunchpad } from '@automattic/data-stores';
 import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
-import { launchpadFlowTasks } from './tasks';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -35,12 +33,13 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
+	const siteIntentOption = site?.options?.site_intent;
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const {
 		isError: launchpadFetchError,
-		data: { launchpad_screen: launchpadScreenOption, checklist_statuses, site_intent },
-	} = useLaunchpad( siteSlug );
-	const isSiteLaunched = site?.launch_status === 'launched' || false;
-	const recordSignupComplete = useRecordSignupComplete( flow );
+		data: { launchpad_screen: launchpadScreenOption, checklist: launchpadChecklist } = {},
+	} = useLaunchpad( siteSlug, siteIntentOption );
+
 	const dispatch = useDispatch();
 	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -65,14 +64,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		redirectToSiteHome( siteSlug, flow );
 	}
 
-	if (
-		areLaunchpadTasksCompleted(
-			site_intent,
-			launchpadFlowTasks,
-			checklist_statuses,
-			isSiteLaunched
-		)
-	) {
+	if ( areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched ) ) {
 		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
 		redirectToSiteHome( siteSlug, flow );
 	}
@@ -95,10 +87,9 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	useEffect( () => {
 		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
-			recordSignupComplete();
 			localStorage.setItem( 'launchpad_siteSlug', siteSlug );
 		}
-	}, [ recordSignupComplete, siteSlug, site ] );
+	}, [ siteSlug, site ] );
 
 	return (
 		<>
@@ -106,9 +97,9 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 			<StepContainer
 				stepName="launchpad"
 				goNext={ navigation.goNext }
-				isWideLayout={ true }
-				skipLabelText={ translate( 'Skip to dashboard' ) }
-				skipButtonAlign="bottom"
+				isFullLayout={ true }
+				skipLabelText={ translate( 'Skip for now' ) }
+				skipButtonAlign="top"
 				hideBack={ true }
 				stepContent={
 					<StepContent

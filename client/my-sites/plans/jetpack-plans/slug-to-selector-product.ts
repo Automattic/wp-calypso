@@ -18,6 +18,7 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SITE_PRODUCTS_WITH_FEATURES,
+	WOOCOMMERCE_EXTENSIONS_PRODUCTS,
 	objectIsProduct,
 	Plan,
 	Product,
@@ -26,14 +27,24 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	getJetpackProductWhatIsIncluded,
+	getJetpackProductWhatIsIncludedComingSoon,
 	getJetpackProductBenefits,
+	getJetpackProductBenefitsComingSoon,
+	getJetpackProductFAQs,
 	getJetpackProductRecommendedFor,
+	getJetpackPlanAlsoIncludedFeatures,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
+import {
+	getHelpLink,
+	getSupportLink,
+} from 'calypso/my-sites/plans-features-main/components/jetpack-faq';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
+	INDIRECT_CHECKOUT_PRODUCTS_LIST,
+	INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
@@ -49,6 +60,10 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 	return (
 		[ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ] as ReadonlyArray< string >
 	 ).includes( slug );
+}
+
+function slugIsWooCommerceProductSlug( slug: string ) {
+	return slug in WOOCOMMERCE_EXTENSIONS_PRODUCTS;
 }
 
 function objectIsSelectorProduct(
@@ -70,8 +85,16 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]();
 	}
 
+	if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( slug ) ) {
+		return INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP[ slug ]();
+	}
+
 	if ( slugIsJetpackProductSlug( slug ) ) {
 		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
+	}
+
+	if ( slugIsWooCommerceProductSlug( slug ) ) {
+		return ( WOOCOMMERCE_EXTENSIONS_PRODUCTS as Record< string, Product > )[ slug ];
 	}
 
 	if ( slugIsJetpackPlanSlug( slug ) ) {
@@ -164,7 +187,10 @@ function itemToSelectorProduct(
 			lightboxDescription: getLightboxProductDescription( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
 			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
+			whatIsIncludedComingSoon: getJetpackProductWhatIsIncludedComingSoon( item ),
 			benefits: getJetpackProductBenefits( item ),
+			benefitsComingSoon: getJetpackProductBenefitsComingSoon( item ),
+			faqs: getJetpackProductFAQs( item.product_slug, getHelpLink, getSupportLink ),
 			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
 			term: item.term,
@@ -206,7 +232,9 @@ function itemToSelectorProduct(
 			whatIsIncluded: item.getWhatIsIncluded
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
+			alsoIncluded: getJetpackPlanAlsoIncludedFeatures( productSlug ),
 			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			faqs: getJetpackProductFAQs( productSlug, getHelpLink, getSupportLink ),
 			recommendedFor: item.getRecommendedFor
 				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],

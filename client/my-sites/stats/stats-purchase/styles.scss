@@ -1,0 +1,292 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-purchase-page__loader {
+	display: flex;
+	justify-content: center;
+}
+
+.stats-purchase-wizard {
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-white: #fff;
+	--jp-green-50: #008710;
+	display: flex;
+	justify-content: center;
+
+	@media (max-width: $break-wide) {
+		justify-content: left;
+
+		> div {
+			flex: 1 0 auto;
+		}
+	}
+
+	.stats-purchase-wizard__card-parent {
+		border-radius: 4px;
+	}
+
+	.stats-purchase-wizard__card {
+		display: flex;
+	}
+
+	.stats-purchase-wizard__card-inner--left {
+		padding: 64px;
+		min-width: 500px;
+		max-width: 700px;
+		box-sizing: border-box;
+	}
+
+	.stats-purchase-wizard__card-inner--right {
+		display: flex;
+		align-items: center;
+		width: 456px;
+		background: #f9f9f6;
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+
+		> * {
+			z-index: 2;
+		}
+	}
+
+	.stats-purchase-wizard__card-inner--right-background {
+		position: absolute;
+		overflow: hidden;
+		width: 100%;
+		height: 100%;
+		z-index: 0;
+		display: flex;
+		align-items: center;
+	}
+
+	.stats-purchase-wizard__average-price {
+		margin-bottom: 3em;
+		color: #2c3338;
+		text-align: center;
+	}
+
+	.stats-purchase-wizard__benefits {
+		ul {
+			margin: 0 0 40px;
+		}
+
+		li {
+			margin-bottom: 8px;
+			padding-left: 28px;
+			background: no-repeat 0 50%;
+		}
+	}
+
+	.stats-purchase-wizard__benefits--included li {
+		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNCIgeD0iMyIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Im04Ljc1NyAxNS45LTQuMTgtNC4yLTEuMzkzIDEuNCA1LjU3MyA1LjYgMTEuOTQxLTEyLTEuMzkzLTEuNEw4Ljc1NyAxNS45WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjMDY5RTA4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
+	}
+
+	.stats-purchase-wizard__benefits--not-included li {
+		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNCIgeD0iNCIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xOC45MDcgNi40MSAxNy41MDQgNWwtNS41NjMgNS41OUw2LjM4IDUgNC45NzUgNi40MSAxMC41MzggMTJsLTUuNTYzIDUuNTlMNi4zOCAxOWw1LjU2Mi01LjU5TDE3LjUwNCAxOWwxLjQwMy0xLjQxTDEzLjM0NCAxMmw1LjU2My01LjU5WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjRDYzNjM4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
+	}
+
+	.stats-purchase-wizard__persnal-checklist {
+		margin-bottom: 24px;
+	}
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.stats-purchase-wizard__qualifications {
+		li {
+			margin-bottom: 8px;
+		}
+	}
+
+	.stats-purchase-wizard__celebrate {
+		position: absolute;
+		z-index: 1;
+	}
+
+	.stats-purchase-wizard__biggest-supporters {
+		position: absolute;
+		width: 100%;
+		top: 10px;
+		left: 50%;
+		font-weight: 500;
+		text-align: center;
+		transform: translateX(-50%);
+		backdrop-filter: blur(2px);
+	}
+
+	h3 {
+		margin: 0;
+	}
+
+	.stats-purchase-wizard__pricing {
+		margin-bottom: 1.5rem;
+
+		.stats-purchase-wizard__pricing-value {
+			display: flex;
+			align-items: flex-start;
+			gap: 2px;
+			margin-bottom: -1em;
+		}
+
+		.stats-purchase-wizard__pricing-currency {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 24px;
+			line-height: 60px;
+		}
+
+		.stats-purchase-wizard__pricing-amount {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 54px;
+			font-weight: 700;
+		}
+
+		.stats-purchase-wizard__pricing-cadency {
+			color: #787c82;
+		}
+	}
+
+	.stats-purchase-wizard__card-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: 16px 32px;
+	}
+
+	.stats-purchase-wizard__card-panel {
+		border: 0;
+
+		> div {
+			border: 0;
+		}
+
+		h2 {
+			font-weight: 700;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 36px;
+		}
+
+		.components-panel__body-title {
+			button {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 20px;
+				font-weight: 500;
+			}
+		}
+	}
+
+	.stats-purchase-wizard__card-grid-header--left,
+	.stats-purchase-wizard__card-grid-header--right {
+		font-weight: 600;
+		font-size: var(--font-body);
+	}
+
+	.stats-purchase-wizard__card-grid-action--left,
+	.stats-purchase-wizard__card-grid-action--right {
+		.components-button {
+			width: 100%;
+			justify-content: center;
+		}
+	}
+
+	.stats-purchase-wizard__card-title-indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		min-width: 24px;
+		height: 24px;
+		margin-right: 8px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 14px;
+		border: 1.5px solid var(--jp-black);
+		border-radius: 50%;
+
+		&.active {
+			color: var(--jp-white);
+			background: var(--jp-green-50);
+			border-color: var(--jp-green-50);
+		}
+	}
+
+	.components-button {
+		&.is-primary {
+			border-radius: 4px;
+			color: var(--jp-white);
+			background-color: #1a1a1a;
+			border-color: #1a1a1a;
+			transition: all 0.25s ease-out;
+			font-size: var(--font-body);
+			line-height: 24px;
+			padding: 8px 12px;
+			height: auto;
+
+			&:hover,
+			&:active,
+			&:focus {
+				background: #2c3338;
+				border-color: #2c3338;
+			}
+
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				opacity: 0.3;
+			}
+		}
+
+		&.is-link {
+			color: var(--jp-green-50);
+			font-size: inherit;
+			display: inline;
+		}
+	}
+
+	// override panel
+	.components-panel__body > .components-panel__body-title:hover {
+		background-color: transparent;
+	}
+
+	.components-panel__body-toggle.components-button {
+		padding: 16px;
+
+		.components-panel__arrow {
+			display: none;
+		}
+	}
+
+	.components-base-control__field {
+		display: flex;
+		align-items: center;
+
+		// add label wrapping
+		label {
+			display: flex;
+			width: calc(100% - 32px); // 32px - checkbox width
+			max-width: calc(100% - 32px);
+		}
+	}
+
+	.stats-purchase-wizard__notice {
+		padding: 8px 12px;
+		background: #f5e6b3;
+		border-radius: 4px;
+
+		.is-link {
+			color: var(--jp-black);
+		}
+	}
+
+	.stats-purchase-wizard__slider {
+		padding: 32px 0 16px;
+	}
+
+	.stats-purchase-wizard__notice--green {
+		background-color: #d0e6b8;
+	}
+
+	.stats-purchase-wizard__control--checkbox {
+		font-size: var(--font-body);
+	}
+}

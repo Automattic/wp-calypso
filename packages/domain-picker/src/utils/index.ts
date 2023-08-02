@@ -1,4 +1,10 @@
-import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import {
+	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	ECOMMERCE_FLOW,
+	WOOEXPRESS_FLOW,
+} from '@automattic/onboarding';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 export function mockDomainSuggestion(
@@ -35,7 +41,12 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
-	flowName?: typeof NEWSLETTER_FLOW | typeof LINK_IN_BIO_FLOW | typeof LINK_IN_BIO_TLD_FLOW;
+	flowName?:
+		| typeof NEWSLETTER_FLOW
+		| typeof LINK_IN_BIO_FLOW
+		| typeof LINK_IN_BIO_TLD_FLOW
+		| typeof ECOMMERCE_FLOW
+		| typeof WOOEXPRESS_FLOW;
 }
 type DomainSuggestionsVendor =
 	| 'variation2_front'
@@ -43,7 +54,8 @@ type DomainSuggestionsVendor =
 	| 'variation8_front'
 	| 'link-in-bio'
 	| 'link-in-bio-tld'
-	| 'newsletter';
+	| 'newsletter'
+	| 'ecommerce';
 
 export function getDomainSuggestionsVendor(
 	options: DomainSuggestionsVendorOptions = {}
@@ -56,6 +68,9 @@ export function getDomainSuggestionsVendor(
 	}
 	if ( options.flowName === NEWSLETTER_FLOW ) {
 		return 'newsletter';
+	}
+	if ( options.flowName === ECOMMERCE_FLOW || options.flowName === WOOEXPRESS_FLOW ) {
+		return 'ecommerce';
 	}
 	if ( options.isSignup && ! options.isDomainOnly ) {
 		return 'variation4_front';

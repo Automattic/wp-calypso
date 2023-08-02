@@ -5,39 +5,10 @@ $display-type-font: $sans;
 $display-type-weight: 400;
 $display-type-line-height: 40px;
 
-$emerald-hover-color: #414141;
-
 // Manual styling override mixin for Jetpack.
 @mixin stats-section-header-for-jetpack {
 	font-family: $display-type-font;
 	font-size: $font-size-header;
 	font-weight: $display-type-weight;
 	line-height: $display-type-line-height;
-}
-
-@mixin emerald-button-style {
-	cursor: pointer;
-	padding: 4px 8px;
-	appearance: none;
-	text-align: center;
-
-	color: var(--studio-white);
-	background: var(--studio-black);
-	font-size: $font-body-extra-small;
-	font-weight: 600;
-	text-decoration: none;
-	line-height: 20px;
-
-	border: 1px solid var(--studio-black);
-	border-radius: 4px;
-
-	&:hover {
-		border-color: $emerald-hover-color;
-		background: $emerald-hover-color;
-	}
-
-	&:disabled {
-		color: var(--studio-gray-20);
-		background-color: var(--studio-gray-60);
-	}
 }

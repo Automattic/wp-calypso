@@ -1,7 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import { MouseEvent, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain, getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
@@ -23,6 +22,7 @@ import {
 import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
 import { FIELD_PASSWORD_RESET_EMAIL } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';

@@ -1,12 +1,12 @@
 import { ProgressBar } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSelector } from 'calypso/state';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';

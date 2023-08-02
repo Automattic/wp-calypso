@@ -9,15 +9,10 @@ const RadioButtonWrapper = styled.div<
 >`
 	position: relative;
 	display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
-	margin-top: 8px;
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
 	outline: ${ getOutline };
-
-	:first-of-type {
-		margin: 0;
-	}
 
 	::before {
 		display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
@@ -27,8 +22,9 @@ const RadioButtonWrapper = styled.div<
 		top: 0;
 		left: 0;
 		content: '';
-		border: ${ getBorderWidth } solid ${ getBorderColor };
-		border-radius: 3px;
+		border: ${ ( props ) => ( props.checked ? '1px solid ' + getBorderColor( props ) : 'none' ) };
+		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
+		border-radius: ${ ( props ) => ( props.checked ? '3px' : '0px' ) };
 		box-sizing: border-box;
 
 		.rtl & {
@@ -96,24 +92,27 @@ const Radio = styled.input`
 interface LabelProps {
 	disabled?: boolean;
 	checked?: boolean;
-	isFixedHeight?: boolean;
 }
 
+/**
+ * This is the label used by radio buttons. It includes a before/after which
+ * are fake radio button dots whereas the actual radio button dots are hidden.
+ */
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
-	padding: 16px 14px 16px 40px;
+	padding: 16px 14px 16px 56px;
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: space-between;
-	align-items: ${ ( props ) => ( props.isFixedHeight ? 'center' : 'flex-start' ) };
+	align-items: center;
+	align-content: center;
 	font-size: 14px;
-	height: ${ ( props ) => ( props.isFixedHeight ? '72px' : 'auto' ) };
+	height: 72px;
 
 	.rtl & {
-		padding: 16px 40px 16px 14px;
+		padding: 16px 56px 16px 14px;
 	}
 
 	:hover {
@@ -127,8 +126,8 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		content: '';
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
-		top: ${ ( props ) => ( props.isFixedHeight ? '28px' : '19px' ) };
-		left: 16px;
+		top: 28px;
+		left: 24px;
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
@@ -146,8 +145,8 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		height: 8px;
 		content: '';
 		border-radius: 100%;
-		top: ${ ( props ) => ( props.isFixedHeight ? '32px' : '23px' ) };
-		left: 20px;
+		top: 32px;
+		left: 28px;
 		position: absolute;
 		background: ${ getRadioColor };
 		box-sizing: border-box;
@@ -158,6 +157,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 			left: auto;
 		}
 	}
+}
 
 	${ handleLabelDisabled };
 `;
@@ -178,7 +178,6 @@ export default function RadioButton( {
 	disabled,
 	hidden,
 	id,
-	isFixedHeight,
 	ariaLabel,
 	...otherProps
 }: RadioButtonProps ) {
@@ -209,12 +208,7 @@ export default function RadioButton( {
 				aria-label={ ariaLabel }
 				{ ...otherProps }
 			/>
-			<Label
-				checked={ checked }
-				htmlFor={ id }
-				disabled={ disabled }
-				isFixedHeight={ isFixedHeight }
-			>
+			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -232,7 +226,6 @@ interface RadioButtonProps {
 	value: string;
 	onChange?: () => void;
 	ariaLabel?: string;
-	isFixedHeight?: boolean;
 	children?: React.ReactNode;
 }
 
@@ -300,10 +293,6 @@ function getBorderColor( { checked, theme }: { checked?: boolean; theme: Theme }
 
 function getRadioColor( { checked, theme }: { checked?: boolean; theme: Theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.surface;
-}
-
-function getBorderWidth( { checked }: { checked?: boolean } ) {
-	return checked ? '3px' : '1px';
 }
 
 function getGrayscaleValue( { checked }: { checked?: boolean } ) {

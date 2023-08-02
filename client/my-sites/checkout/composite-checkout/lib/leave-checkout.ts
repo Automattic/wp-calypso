@@ -34,7 +34,7 @@ export const leaveCheckout = ( {
 
 	const signupFlowName = getSignupCompleteFlowName();
 	const redirectToParam = getQueryArg( window.location.href, 'redirect_to' );
-	const launchpadURLRegex = /setup\/(.*)\/launchpad\b/g;
+	const launchpadURLRegex = /^\/setup\/[a-z][a-z\-_]*[a-z]\/launchpad\b/g;
 	const launchpadURLRegexMatch = redirectToParam?.toString().match( launchpadURLRegex );
 
 	if ( isTailoredSignupFlow( signupFlowName ) ) {

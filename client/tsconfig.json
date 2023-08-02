@@ -4,6 +4,7 @@
 		"rootDir": ".",
 		"noEmit": true,
 		"types": [ "node", "@types/gtag.js" ],
+		"jsxImportSource": "@emotion/react",
 		"paths": {
 			"calypso/*": [ "./*" ],
 
@@ -21,7 +22,8 @@
 		"./lib/domains/tlds/wpcom-multi-level-tlds.json",
 		"./__mocks__/lib/json-schema-draft-04.json",
 		"./package.json",
-		"./state/data-layer/wpcom/sites/jitm/schema.json"
+		"./state/data-layer/wpcom/sites/jitm/schema.json",
+		"./declarations.d.ts"
 	],
 	"exclude": [
 		"./**/node_modules/**/*",

@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { decodeEntities } from 'calypso/lib/formatting';
 import wp from 'calypso/lib/wp';
 
@@ -107,18 +107,16 @@ const selectFromCards = ( response: {
 export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaByTag | null > => {
 	const tag_recs_per_card = 10;
 	const site_recs_per_card = 5;
-	return useQuery(
-		[ 'related-meta-by-tag-' + tag_recs_per_card + '-' + site_recs_per_card, tag ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'related-meta-by-tag', tag_recs_per_card, site_recs_per_card, tag ],
+		queryFn: () =>
 			wp.req.get( {
 				path: `/read/tags/${ encodeURIComponent(
 					tag
 				) }/cards?tag_recs_per_card=${ tag_recs_per_card }&site_recs_per_card=${ site_recs_per_card }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			staleTime: 3600000, // 1 hour
-			select: selectFromCards,
-		}
-	);
+		staleTime: 3600000,
+		select: selectFromCards,
+	} );
 };

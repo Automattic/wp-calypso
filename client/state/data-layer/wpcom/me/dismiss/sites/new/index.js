@@ -1,12 +1,10 @@
-/**
- */
-
 import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'calypso/state/reader/action-types';
+import { dismissedRecommendedSite } from 'calypso/state/reader/recommended-sites/actions';
 
 export function requestSiteDismiss( action ) {
 	return http(
@@ -27,10 +25,16 @@ export function fromApi( response ) {
 	return response;
 }
 
-export function receiveSiteDismiss() {
-	return successNotice( translate( "We won't recommend this site to you again." ), {
-		duration: 5000,
-	} );
+export function receiveSiteDismiss( { payload, seed } = {} ) {
+	return [
+		dismissedRecommendedSite( {
+			siteId: payload?.siteId,
+			seed,
+		} ),
+		successNotice( translate( "We won't recommend this site to you again." ), {
+			duration: 5000,
+		} ),
+	];
 }
 
 export function receiveSiteDismissError() {

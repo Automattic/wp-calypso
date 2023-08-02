@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { Reader } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { FormEventHandler, useCallback } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -6,14 +7,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import './styles.scss';
-import type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-} from '@automattic/data-stores/src/reader/types';
 
 type DeliveryWindowInputProps = {
-	dayValue: DeliveryWindowDayType;
-	hourValue: DeliveryWindowHourType;
+	dayValue: Reader.DeliveryWindowDayType;
+	hourValue: Reader.DeliveryWindowHourType;
 	onDayChange: FormEventHandler< HTMLSelectElement >;
 	onHourChange: FormEventHandler< HTMLSelectElement >;
 };
@@ -28,7 +25,7 @@ const DeliveryWindowInput = ( {
 	const moment = useLocalizedMoment();
 
 	const getLabel = useCallback(
-		( hour ) =>
+		( hour: number ) =>
 			translate( '%(fromHour)s - %(toHour)s', {
 				context: 'Hour range between which subscriptions are delivered',
 				args: {

@@ -1,9 +1,20 @@
 #!/usr/bin/env node
-import util from 'util';
+import util from 'node:util';
 import glob from 'glob';
 import runTask from './teamcity-task-runner.mjs';
 
 const globPromise = util.promisify( glob );
+
+// Promise.allSettled with some extra code to throw an error.
+async function completeTasks( promises ) {
+	const results = await Promise.allSettled( promises );
+	const exitCodes = results
+		.filter( ( { status } ) => status === 'rejected' )
+		.map( ( { reason } ) => reason );
+	if ( exitCodes.length ) {
+		throw exitCodes[ 0 ];
+	}
+}
 
 function withTscInfo( { cmd, id } ) {
 	return {
@@ -49,6 +60,8 @@ const testClient = withUnitTestInfo( 'test-client --maxWorkers=8' );
 const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4' );
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4' );
 const testBuildTools = withUnitTestInfo( 'test-build-tools --maxWorkers=4' );
+// Includes ETK and Odyssey Stats, migrated here from their individual builds.
+const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1' );
 
 const testWorkspaces = {
 	name: 'yarn',
@@ -75,7 +88,7 @@ try {
 	const tscTasks = ( async () => {
 		// This task is a prerequisite for the other tsc tasks, so it must run separately.
 		await runTask( tscPackages );
-		await Promise.all( tscCommands.map( runTask ) );
+		await completeTasks( tscCommands.map( runTask ) );
 	} )();
 
 	// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
@@ -84,10 +97,11 @@ try {
 		await runTask( testServer );
 		await runTask( testBuildTools );
 		await runTask( testWorkspaces );
+		await runTask( testApps );
 	} )();
 
-	await Promise.all( [ testClientTask, tscTasks, otherTestTasks ] );
+	await completeTasks( [ testClientTask, tscTasks, otherTestTasks ] );
 } catch ( exitCode ) {
-	console.log( `A task failed with exit code ${ exitCode }` );
+	console.error( 'One or more tasks failed.' );
 	process.exit( exitCode );
 }

@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const CheckboxWrapper = styled.div`
@@ -37,19 +37,23 @@ export default function AssignToAllPaymentMethods( {
 				disabled={ isDisabled }
 				checked={ isChecked }
 				onChange={ handleChangeEvent }
-				label={ translate(
-					'Use this payment method for all subscriptions on my account. {{link}}Learn more.{{/link}}',
-					{
-						components: {
-							link: (
-								<InlineSupportLink
-									supportContext="payment_method_all_subscriptions"
-									showIcon={ false }
-								/>
-							),
-						},
-					}
-				) }
+				label={
+					translate(
+						'Use this payment method for all subscriptions on my account. {{link}}Learn more.{{/link}}',
+						{
+							components: {
+								link: (
+									<InlineSupportLink
+										supportContext="payment_method_all_subscriptions"
+										showIcon={ false }
+									/>
+								),
+							},
+						}
+						// As far as I can tell, label will correctly render the
+						// component, so we cast to string to make the types work.
+					) as string
+				}
 			/>
 		</CheckboxWrapper>
 	);

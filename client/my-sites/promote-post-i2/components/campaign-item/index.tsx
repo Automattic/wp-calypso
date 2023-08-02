@@ -1,26 +1,29 @@
 import { safeImageUrl } from '@automattic/calypso-url';
+import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
-import React, { useMemo } from 'react';
-import Badge from 'calypso/components/badge';
+import page from 'page';
+import { Fragment, useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	campaignStatus,
 	formatCents,
 	formatNumber,
+	getAdvertisingDashboardPath,
 	getCampaignBudgetData,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
-	isCampaignFinished,
 } from '../../utils';
+import './style.scss';
 
 interface Props {
 	campaign: Campaign;
 }
-
 const getCampaignEndText = ( localizedMomentInstance: any, status: string, end_date: string ) => {
 	if (
 		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
@@ -41,16 +44,19 @@ export default function CampaignItem( props: Props ) {
 		name,
 		content_config,
 		display_name,
-		status,
+		ui_status,
 		end_date,
 		budget_cents,
-		impressions_total,
-		clicks_total,
-		spent_budget_cents,
 		start_date,
+		campaign_stats,
 	} = campaign;
 
+	const clicks_total = campaign_stats?.clicks_total ?? 0;
+	const spent_budget_cents = campaign_stats?.spent_budget_cents ?? 0;
+	const impressions_total = campaign_stats?.impressions_total ?? 0;
+
 	const moment = useLocalizedMoment();
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
@@ -62,32 +68,108 @@ export default function CampaignItem( props: Props ) {
 
 	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
 	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
+	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 
-	const campaignContainsData = isCampaignFinished( status );
+	const statusBadge = (
+		<Badge type={ getCampaignStatusBadgeColor( ui_status ) }>
+			{ getCampaignStatus( ui_status ) }
+		</Badge>
+	);
+	const openCampaignURL = getAdvertisingDashboardPath(
+		`/campaigns/${ campaign.campaign_id }/${ selectedSiteSlug }`
+	);
+
+	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLElement > ) => {
+		event.stopPropagation();
+		page.show( openCampaignURL );
+	};
+
+	function getMobileStats() {
+		const statElements = [];
+		if ( impressions_total > 0 ) {
+			statElements[ statElements.length ] = sprintf(
+				// translators: %s is formatted number of views
+				_n( '%s impression', '%s impressions', impressions_total ),
+				formatNumber( impressions_total )
+			);
+		}
+
+		if ( clicks_total > 0 ) {
+			statElements[ statElements.length ] = sprintf(
+				// translators: %s is formatted number of clicks
+				_n( '%s click', '%s clicks', clicks_total ),
+				formatNumber( clicks_total )
+			);
+		}
+
+		if ( budgetStringMobile ) {
+			statElements[ statElements.length ] = budgetStringMobile;
+		}
+
+		return statElements.map( ( value, index ) => {
+			if ( index < statElements.length - 1 ) {
+				return (
+					<Fragment key={ index }>
+						<span>{ value }</span>
+						<span className="blazepress-mobile-stats-mid-dot">&#183;</span>
+					</Fragment>
+				);
+			}
+
+			return <span key={ index }>{ value }</span>;
+		} );
+	}
 
 	return (
-		<tr>
-			<td>
-				<div className="promote-post__campaign-item-wrapper">
-					{ adCreativeUrl && (
-						<div className="campaign-item__header-image">
-							<img src={ adCreativeUrl } alt="" />
+		<tr onClick={ navigateToDetailsPage }>
+			<td className="campaign-item__data">
+				<div className="campaign-item__data-row">
+					<div className="promote-post-i2__campaign-item-wrapper">
+						{ adCreativeUrl && (
+							<div className="campaign-item__header-image">
+								<img src={ adCreativeUrl } alt="" />
+							</div>
+						) }
+						<div className="campaign-item__title-row">
+							<div className="campaign-item__title">{ name }</div>
+							<div className="campaign-item__status-mobile">{ statusBadge }</div>
 						</div>
-					) }
-					{ name }
+					</div>
+				</div>
+				<div className="campaign-item__data-row campaign-item__data-row-mobile">
+					<div className="campaign-item__stats-mobile">{ getMobileStats() }</div>
+					<div className="campaign-item__actions-mobile">
+						<Button
+							onClick={ navigateToDetailsPage }
+							variant="link"
+							className="campaign-item__view-link"
+						>
+							{ __( 'Open details' ) }
+						</Button>
+					</div>
 				</div>
 			</td>
-			<td>{ display_name }</td>
-			<td>
-				<Badge type={ getCampaignStatusBadgeColor( status ) }>
-					{ getCampaignStatus( status ) }
-				</Badge>
+			<td className="campaign-item__user">
+				<div>{ display_name }</div>
 			</td>
-			<td>{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }</td>
-			<td>{ budgetString }</td>
-			<td>{ formatNumber( impressions_total ) }</td>
-			<td>{ formatNumber( clicks_total ) }</td>
-			<td>{ campaignContainsData && <Button icon={ chevronRight } /> }</td>
+			<td className="campaign-item__status">
+				<div>{ statusBadge }</div>
+			</td>
+			<td className="campaign-item__ends">
+				<div>{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }</div>
+			</td>
+			<td className="campaign-item__budget">
+				<div>{ budgetString }</div>
+			</td>
+			<td className="campaign-item__impressions">
+				<div>{ formatNumber( impressions_total ) }</div>
+			</td>
+			<td className="campaign-item__clicks">
+				<div>{ formatNumber( clicks_total ) }</div>
+			</td>
+			<td className="campaign-item__action">
+				<Button onClick={ navigateToDetailsPage } variant="link" icon={ chevronRight } />
+			</td>
 		</tr>
 	);
 }

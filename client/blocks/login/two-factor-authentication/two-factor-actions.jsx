@@ -11,6 +11,7 @@ import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import Divider from '../divider';
 import './two-factor-actions.scss';
 
@@ -101,7 +102,9 @@ export default connect(
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+		isWoo:
+			isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
+			isWooCommerceCoreProfilerFlow( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{

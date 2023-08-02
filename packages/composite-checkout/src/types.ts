@@ -14,6 +14,7 @@ export interface CheckoutStepProps {
 	isCompleteCallback: IsCompleteCallback;
 	activeStepContent?: React.ReactNode;
 	activeStepFooter?: React.ReactNode;
+	activeStepHeader?: React.ReactNode;
 	completeStepContent?: React.ReactNode;
 	className?: string;
 	editButtonText?: string;
@@ -282,6 +283,7 @@ export interface LineItemsState {
 export interface LineItemsProviderProps {
 	items: LineItem[];
 	total: LineItem;
+	children?: React.ReactNode;
 }
 
 export type StepIdMap = Record< string, number >;

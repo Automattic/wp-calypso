@@ -20,6 +20,13 @@
 	width: auto;
 }
 
+.memberships__module-content {
+	max-height: 520px;
+	overflow-y: scroll;
+	margin-top: -24px;
+	border-bottom: 1px solid var(--color-neutral-5);
+}
+
 .memberships__onboarding-wrapper {
 	display: flex;
 	flex-direction: row;
@@ -283,6 +290,7 @@
 	margin-left: -5px;
 }
 .memberships__earnings-breakdown-notes {
+	display: block;
 	clear: both;
 	color: var(--color-neutral-30);
 	padding-bottom: 12px;
@@ -291,9 +299,9 @@
 	line-height: 1.6;
 	font-style: italic;
 	text-align: center;
-}
-.memberships__earnings-breakdown-notes em {
-	font-weight: 600;
+	em {
+		font-weight: 600;
+	}
 }
 .memberships__subscriber-actions {
 	float: right;
@@ -307,6 +315,46 @@
 .memberships__dialog-sections {
 	display: grid;
 	grid-template: "item" 1fr / 1fr;
+
+	* {
+		font-size: $font-body-small;
+	}
+
+	@include break-medium {
+		min-width: 580px;
+	}
+	.memberships__dialog-advanced-options {
+		width: 100%;
+		box-shadow: none;
+		.foldable-card__header {
+			padding: 0;
+		}
+		&.foldable-card.is-expanded {
+			margin: 0;
+			.foldable-card__content {
+				border-top: none;
+				padding: 0;
+			}
+		}
+		.foldable-card__main {
+			display: block;
+			font-weight: 600;
+			.foldable-card__action {
+				right: unset;
+			}
+		}
+		fieldset {
+			margin-bottom: 0;
+		}
+
+		.foldable-card__expand .gridicon {
+			fill: var(--color-text);
+		}
+	}
+
+	.notice__content {
+		max-width: 500px;
+	}
 }
 
 .memberships__dialog-section {
@@ -322,6 +370,28 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 1.5em;
+}
+
+.memberships__dialog-sections-price {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
+}
+
+.memberships__dialog-sections-price-field-container {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 25px;
+
+	@include break-medium {
+		margin-bottom: 0;
+		margin-right: 35px;
+		max-width: 200px;
+	}
 }
 
 /**

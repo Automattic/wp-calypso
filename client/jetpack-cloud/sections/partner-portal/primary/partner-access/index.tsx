@@ -1,10 +1,10 @@
 import { Button, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isFetchingPartner,

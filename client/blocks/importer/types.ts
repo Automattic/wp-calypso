@@ -12,11 +12,13 @@ export type StepNavigator = {
 	goToIntentPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;
+	goToDashboardPage?: () => void;
 	goToCheckoutPage?: () => void;
 	goToWpAdminImportPage?: () => void;
 	goToWpAdminWordPressPluginPage?: () => void;
 	navigate?: ( path: string ) => void;
 	goToAddDomainPage?: () => void;
+	goToSitePickerPage?: () => void;
 };
 
 export interface ImportError {
@@ -62,7 +64,7 @@ export interface ImporterBaseProps {
 	site: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
-	urlData: UrlData;
+	urlData?: UrlData;
 	importSite: ( params: ImportJobParams ) => void;
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;

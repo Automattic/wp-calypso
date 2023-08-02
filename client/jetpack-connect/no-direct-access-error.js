@@ -6,7 +6,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Main from 'calypso/components/main';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import JetpackConnectHappychatButton from './happychat-button';
 import HelpButton from './help-button';
 
 class NoDirectAccessError extends PureComponent {
@@ -27,9 +26,7 @@ class NoDirectAccessError extends PureComponent {
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
-					<JetpackConnectHappychatButton eventName="calypso_jpc_noqueryarguments_chat_initiated">
-						<HelpButton />
-					</JetpackConnectHappychatButton>
+					<HelpButton />
 				</LoggedOutFormLinks>
 			</Main>
 		);

@@ -10,6 +10,11 @@ import Sidebar from '../index';
 describe( '<Sitebar>', () => {
 	test( 'should render correctly', () => {
 		const initialState = {
+			userSettings: {
+				settings: {
+					is_dev_account: false,
+				},
+			},
 			currentUser: {
 				capabilities: {},
 				user: {

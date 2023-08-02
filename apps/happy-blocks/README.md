@@ -10,6 +10,15 @@ This package contains the source code for the blocks used on WordPress.com sites
 ## Deployment
 
 1. Deploy the entire Calypso project following the usual deployment process.
+2. Deploy happy blocks to wpcom using the install-plugin.sh script in a wpcom sandbox.
+```
+# Prep the latest trunk build for release
+install-plugin.sh happy-blocks --release
+# Alternatively, load changes from a branch (e.g. to test a PR.)
+install-plugin.sh happy-blocks $brach_name
+```
+
+see PCYsg-OT6-p2
 
 ## Blocks
 

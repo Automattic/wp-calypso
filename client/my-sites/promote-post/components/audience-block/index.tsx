@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { AudienceList } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { AudienceList } from 'calypso/data/promote-post/types';
 
 interface Props {
 	audienceList: AudienceList;

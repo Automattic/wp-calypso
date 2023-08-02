@@ -2,9 +2,9 @@ import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch, useSelector } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import SiteDeleteConfirmationDialog from './site-delete-confirmation-dialog';
@@ -59,7 +59,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 			components: {
 				SupportLink: <a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />,
 				NewSiteLink: (
-					<Button isLink={ true } className="subtitle-link" onClick={ onNewSiteClicked } />
+					<Button variant="link" className="subtitle-link" onClick={ onNewSiteClicked } />
 				),
 			},
 		}

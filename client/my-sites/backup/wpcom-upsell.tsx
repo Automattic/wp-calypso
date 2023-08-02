@@ -1,7 +1,6 @@
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -14,6 +13,7 @@ import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

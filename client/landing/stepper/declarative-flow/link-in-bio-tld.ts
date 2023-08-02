@@ -13,10 +13,10 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
 import LaunchPad from './internals/steps-repository/launchpad';
 import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
-import PatternsStep from './internals/steps-repository/patterns';
 import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
@@ -31,7 +31,7 @@ const linkInBio: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'patterns', component: PatternsStep },
+			{ slug: 'patterns', component: DesignCarousel },
 			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
 			{ slug: 'plans', component: PlansStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },

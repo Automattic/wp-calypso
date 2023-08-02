@@ -1,51 +1,49 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
-import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 type Props = {
 	type: 'campaigns' | 'posts';
 };
 
-export const PromoteTypes = {
-	campaigns: 'campaigns',
-	posts: 'posts',
-};
-
-type PromoteStrings = {
-	[ key in keyof typeof PromoteTypes ]: {
-		title: string;
-		body: string;
-		linkTitle?: string;
-		linkUrl?: string;
-	};
-};
-
-const strings: PromoteStrings = {
-	campaigns: {
-		title: __( 'There are no campaigns yet.' ),
-		body: __(
-			'Start promoting a post or page from the list of content ready to promote or find your post or a page, then from the ellipsis, select promote.'
-		),
-		linkTitle: __( 'Learn how to start a campaign' ),
-		linkUrl: '',
-	},
-	posts: {
-		title: __( 'You have no posts or pages.' ),
-		body: __( "Start by creating a post or a page and start promoting it once it's ready." ),
-	},
-};
-
 export default function EmptyPromotionList( props: Props ) {
 	const { type } = props;
+
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const translate = useTranslate();
+
+	let title;
+	let subtitle;
+
+	if ( type === 'campaigns' ) {
+		title = translate( 'You have no campaigns' );
+		subtitle = translate(
+			'You have not created any campaigns Click {{learnMoreLink}}Promote{{/learnMoreLink}} to get started.',
+			{
+				components: {
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="advertising"
+							showIcon={ false }
+							showSupportModal={ ! isRunningInJetpack }
+						/>
+					),
+				},
+			}
+		);
+	} else if ( type === 'posts' ) {
+		title = translate( 'You have content to promote' );
+		subtitle = translate(
+			'You have not published any posts, pages or products yet. Make sure your content is published and come back to promote it.'
+		);
+	}
+
 	return (
 		<div className="empty-promotion-list__container">
-			<h3 className="empty-promotion-list__title">{ strings[ type ].title }</h3>
-			<p className="empty-promotion-list__body">{ strings[ type ].body }</p>
-
-			{ strings[ type ].linkUrl && (
-				<p className="empty-promotion-list__link">
-					<a href={ strings[ type ].linkUrl }>{ strings[ type ].linkTitle }</a>
-				</p>
-			) }
+			<h3 className="empty-promotion-list__title wp-brand-font">{ title }</h3>
+			<p className="empty-promotion-list__body">{ subtitle }</p>
 		</div>
 	);
 }

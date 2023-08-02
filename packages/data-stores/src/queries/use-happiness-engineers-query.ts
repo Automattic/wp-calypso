@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
 export const useHappinessEngineersQuery = () =>
@@ -8,11 +8,10 @@ export const useHappinessEngineersQuery = () =>
 			name: string;
 			avatar_URL: string;
 		}[]
-	>(
-		[ 'happinessEngineers' ],
-		async () => await wpcomRequest( { path: '/meta/happiness-engineers/', apiVersion: '1.1' } ),
-		{
-			refetchOnWindowFocus: false,
-			staleTime: Infinity,
-		}
-	);
+	>( {
+		queryKey: [ 'happinessEngineers' ],
+		queryFn: async () =>
+			await wpcomRequest( { path: '/meta/happiness-engineers/', apiVersion: '1.1' } ),
+		refetchOnWindowFocus: false,
+		staleTime: Infinity,
+	} );

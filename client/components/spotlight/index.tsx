@@ -1,5 +1,7 @@
 import { Button } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 
 const SpotlightContainer = styled.div`
 	background: white;
@@ -14,6 +16,7 @@ const SpotlightContainer = styled.div`
 const SpotlightContent = styled.div`
 	display: flex;
 	align-items: center;
+	flex-grow: 1;
 `;
 
 const SpotlightIllustration = styled.img`
@@ -22,6 +25,7 @@ const SpotlightIllustration = styled.img`
 
 const SpotlightTextContainer = styled.div`
 	margin-left: 20px;
+	flex-grow: 1;
 `;
 
 const SpotlightTitle = styled.div`
@@ -29,6 +33,7 @@ const SpotlightTitle = styled.div`
 	color: var( --color-neutral-50 );
 	font-weight: 600;
 	font-size: 0.75rem;
+	margin-bottom: 5px;
 `;
 
 const SpotlightTagline = styled.div`
@@ -45,16 +50,50 @@ const SpotlightCta = styled.div`
 
 	max-height: 32px;
 `;
+
+const placeholderText = css`
+	color: transparent;
+	background-color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+	border: none;
+	width: 50%;
+
+	@media ( max-width: 960px ) {
+		width: 100%;
+	}
+`;
+
+const placeholderImg = css`
+	width: 75px;
+	height: 75px;
+	margin: 0;
+`;
+
 interface SpotlightProps {
 	onClick: () => void;
 	taglineText: string;
 	illustrationSrc: string;
 	titleText: string;
 	ctaText: string;
+	isPlaceholder?: boolean;
 }
 
 const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightProps ) => {
-	const { taglineText, illustrationSrc, onClick, titleText, ctaText } = props;
+	const { taglineText, illustrationSrc, onClick, titleText, ctaText, isPlaceholder } = props;
+
+	if ( isPlaceholder ) {
+		return (
+			<SpotlightContainer className="spotlight">
+				<SpotlightContent>
+					<PluginIcon isPlaceholder={ true } css={ placeholderImg } />
+					<SpotlightTextContainer>
+						<SpotlightTitle css={ placeholderText }>...</SpotlightTitle>
+						<SpotlightTagline css={ placeholderText }>...</SpotlightTagline>
+					</SpotlightTextContainer>
+				</SpotlightContent>
+			</SpotlightContainer>
+		);
+	}
 
 	return (
 		<SpotlightContainer onClick={ onClick } className="spotlight">

@@ -118,6 +118,12 @@
 	}
 }
 
+.import__onboarding-page--redesign {
+	.components-button.action-buttons__next.is-primary {
+		padding: 10px 20px;
+	}
+}
+
 [dir="rtl"] {
 	.import__details-list {
 		svg {

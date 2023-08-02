@@ -13,7 +13,7 @@ import './style.scss';
 
 type Props = {
 	className?: string;
-	user: {
+	user?: {
 		display_name?: string;
 		name?: string;
 		avatar_URL?: string;

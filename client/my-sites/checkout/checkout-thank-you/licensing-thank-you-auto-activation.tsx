@@ -3,13 +3,13 @@ import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
 import { FC, useState, useCallback, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
@@ -93,7 +93,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
 
 	const onContinue = useCallback(
-		( e ) => {
+		( e: React.MouseEvent ) => {
 			e.preventDefault();
 			setError( false );
 			if ( selectedSite === 'activate-license-manually' ) {
@@ -152,7 +152,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								strong: <strong />,
 							},
 							args: {
-								productName,
+								productName: productName as string,
 								selectedSite: urlToSlug( selectedSite ),
 								incompatibleProductName,
 							},
@@ -171,7 +171,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								a: <a href={ manualActivationUrl } />,
 							},
 							args: {
-								productName,
+								productName: productName as string,
 								selectedSite: urlToSlug( selectedSite ),
 							},
 						}
@@ -281,7 +281,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 						<br />
 						{ translate( 'Select the site you want %(productName)s on:', {
 							args: {
-								productName,
+								productName: productName as string,
 							},
 						} ) }
 					</p>

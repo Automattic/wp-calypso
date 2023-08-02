@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Progress, SenseiStepProgress } from '../components/sensei-step-progress';

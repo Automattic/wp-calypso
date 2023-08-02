@@ -3,13 +3,13 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-schedule.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useGetDisplayDate } from './hooks';
 

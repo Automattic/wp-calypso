@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { ReactChild } from 'react';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
 interface FeatureItemProps {
-	header: ReactChild;
-	children: ReactChild;
+	header: ReactNode;
+	children: ReactNode;
 	dark?: boolean;
 }
 

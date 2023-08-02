@@ -1,9 +1,9 @@
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import accept from 'calypso/lib/accept';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { useDispatch, useSelector } from 'calypso/state';
 import { deleteInvites } from 'calypso/state/invites/actions';
 import { getAcceptedInvitesForSite, isDeletingAnyInvite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

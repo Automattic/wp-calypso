@@ -55,6 +55,17 @@
 	.components-notice.is-info {
 		background: var(--studio-gray-0);
 	}
+
+	.add-subscriber__form-skip-link-wrapper {
+		display: flex;
+		justify-content: flex-start;
+		padding: 1rem 0;
+		.add-subscriber__form-skip-link {
+			color: var(--color-primary);
+			font-weight: 500;
+			cursor: pointer;
+		}
+	}
 }
 
 .add-subscriber .add-subscriber__title-container {
@@ -194,6 +205,7 @@
 		line-height: 1.25;
 		color: var(--studio-gray-50);
 		margin-top: 1.5rem;
+		margin-bottom: 1.5rem;
 
 		a,
 		button {

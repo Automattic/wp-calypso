@@ -3,8 +3,8 @@ import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useHasSeenSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-has-seen-seller-celebration-modal';
-import useHasSelectedPaymentBlockOnce from '../../../dotcom-fse/lib/seller-celebration-modal/use-has-selected-payment-block-once';
+import { useHasSeenSellerCelebrationModal } from '../../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
+import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import NuxModal from '../nux-modal';
 import contentSubmittedImage from './images/product-published.svg';
@@ -42,78 +42,48 @@ const SellerCelebrationModalInner = () => {
 
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
-	const hasSelectedPaymentsOnce = useHasSelectedPaymentBlockOnce();
 
-	const { hasSeenSellerCelebrationModal, updateHasSeenSellerCelebrationModal } =
-		useHasSeenSellerCelebrationModal();
+	const { updateHasSeenSellerCelebrationModal } = useHasSeenSellerCelebrationModal();
 
-	const { isEditorSaving, hasPaymentsBlock, linkUrl } = useSelect( ( select ) => {
+	const linkUrl = useSelect( ( select ) => {
 		if ( isSiteEditor ) {
+			const page = select( 'core/edit-site' ).getPage();
+			const pageId = parseInt( page?.context?.postId );
+			const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
+			return pageEntity?.link;
+		}
+		const currentPost = select( 'core/editor' ).getCurrentPost();
+		return currentPost.link;
+	} );
+
+	const shouldShowSellerCelebrationModal = useShouldShowSellerCelebrationModal();
+
+	const isEditorSaving = useSelect( ( select ) => {
+		if ( isSiteEditor ) {
+			const page = select( 'core/edit-site' ).getPage();
+			const pageId = parseInt( page?.context?.postId );
 			const isSavingSite =
 				select( 'core' ).isSavingEntityRecord( 'root', 'site' ) &&
 				! select( 'core' ).isAutosavingEntityRecord( 'root', 'site' );
-			const page = select( 'core/edit-site' ).getPage();
-			const pageId = parseInt( page?.context?.postId );
 			const isSavingEntity =
 				select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId ) &&
 				! select( 'core' ).isAutosavingEntityRecord( 'postType', 'page', pageId );
-			const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
 
-			let paymentsBlock = false;
-			// Only check for payment blocks if we haven't seen the celebration modal text yet
-			if ( ! hasSeenSellerCelebrationModal ) {
-				const didCountRecurringPayments =
-					select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/recurring-payments' ) > 0;
-				const didCountSimplePayments =
-					select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/simple-payments' ) > 0;
-				paymentsBlock =
-					( pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/recurring-payments -->' ) ||
-						pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/simple-payments -->' ) ||
-						didCountRecurringPayments ||
-						didCountSimplePayments ) ??
-					false;
-			}
-
-			return {
-				isEditorSaving: isSavingSite || isSavingEntity,
-				hasPaymentsBlock: paymentsBlock,
-				linkUrl: pageEntity?.link,
-			};
+			return isSavingSite || isSavingEntity;
 		}
-
 		const currentPost = select( 'core/editor' ).getCurrentPost();
 		const isSavingEntity =
 			select( 'core' ).isSavingEntityRecord( 'postType', currentPost?.type, currentPost?.id ) &&
 			! select( 'core' ).isAutosavingEntityRecord( 'postType', currentPost?.type, currentPost?.id );
-
-		let paymentBlockCount = 0;
-		// Only check for payment blocks if we haven't seen the celebration modal yet
-		if ( ! hasSeenSellerCelebrationModal ) {
-			paymentBlockCount += select( 'core/block-editor' ).getGlobalBlockCount(
-				'jetpack/recurring-payments'
-			);
-			paymentBlockCount +=
-				select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/simple-payments' );
-		}
-
-		return {
-			isEditorSaving: isSavingEntity,
-			hasPaymentsBlock: paymentBlockCount > 0,
-			linkUrl: currentPost.link,
-		};
+		return isSavingEntity;
 	} );
-
-	const { siteIntent: intent } = useSiteIntent();
 
 	useEffect( () => {
 		if (
 			! isEditorSaving &&
 			previousIsEditorSaving.current &&
 			! hasDisplayedModal &&
-			intent === 'sell' &&
-			hasPaymentsBlock &&
-			hasSelectedPaymentsOnce &&
-			! hasSeenSellerCelebrationModal
+			shouldShowSellerCelebrationModal
 		) {
 			setIsModalOpen( true );
 			setHasDisplayedModal( true );
@@ -123,10 +93,7 @@ const SellerCelebrationModalInner = () => {
 	}, [
 		isEditorSaving,
 		hasDisplayedModal,
-		intent,
-		hasPaymentsBlock,
-		hasSelectedPaymentsOnce,
-		hasSeenSellerCelebrationModal,
+		shouldShowSellerCelebrationModal,
 		updateHasSeenSellerCelebrationModal,
 	] );
 
@@ -148,7 +115,7 @@ const SellerCelebrationModalInner = () => {
 			actionButtons={
 				<>
 					<Button onClick={ closeModal }>{ __( 'Continue editing', 'full-site-editing' ) }</Button>
-					<Button isPrimary href={ linkUrl } target="__blank" rel="noopener noreferrer">
+					<Button isPrimary href={ linkUrl } target="_blank" rel="noopener noreferrer">
 						{ __( 'View your product', 'full-site-editing' ) }
 					</Button>
 				</>

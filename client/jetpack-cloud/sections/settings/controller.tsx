@@ -6,6 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import HasSitePurchasesSwitch from 'calypso/components/has-site-purchases-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import JetpackStagingSitesManagement from 'calypso/components/jetpack-staging-sites-management';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
@@ -65,6 +66,12 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 						loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
 					/>
 				}
+				loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
+			/>
+			<HasSiteCredentialsSwitch
+				siteId={ siteId }
+				trueComponent={ <JetpackStagingSitesManagement /> }
+				falseComponent={ null }
 				loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
 			/>
 		</Main>

@@ -1,6 +1,9 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "calypso/my-sites/plan-features-2023-grid/media-queries";
 
+$table-cell-max-width: 344px;
+$mobile-card-max-width: 440px;
+
 .plan-features--loading-container {
 	margin-top: 300px;
 }
@@ -12,7 +15,7 @@
 			font-weight: 500;
 			line-height: 20px;
 			border-radius: 4px;
-			padding: 10px 14px;
+			padding: 10px 12px;
 			border: unset;
 
 			&:hover {
@@ -170,13 +173,29 @@
 }
 
 .is-2023-pricing-grid .plans-wrapper {
-	margin: 0 auto;
-	padding: 28px 0 10px;
-	transform: translateY(-20px);
+	margin: 0 20px;
+	padding: 0 0 10px;
 	overflow-x: visible;
 
 	@include plans-2023-break-small {
-		padding-top: 64px;
+		padding-top: 35px; // enough to cover `plan-features-2023-grid__popular-badge` repositioning (top: -35px)
+		margin: 0;
+	}
+
+	@include plans-2023-break-medium {
+		margin: 0 20px;
+	}
+
+	@include plans-section-break-medium {
+		margin: 0;
+	}
+
+	@include plans-2023-break-medium {
+		margin: 0 20px;
+	}
+
+	@include plans-section-break-medium {
+		margin: 0;
 	}
 }
 
@@ -201,6 +220,11 @@
 	}
 
 	.plan-features-2023-grid__mobile-view {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 20px;
+		margin: 0 auto;
+		max-width: $mobile-card-max-width;
 
 		.plan-features-2023-grid__mobile-plan-card {
 			background-color: var(--studio-white);
@@ -208,7 +232,6 @@
 			/* stylelint-disable-next-line */
 			border-radius: 5px;
 			padding: 38px 0 20px 0;
-			margin: 20px;
 
 			@include plans-section-custom-mobile-breakpoint {
 				margin-left: 0;
@@ -303,13 +326,25 @@
 		border: 1px solid #e0e0e0;
 		border-radius: 5px; /* stylelint-disable-line */
 		background-color: #fff;
-		margin: 0;
+		margin: 0 auto;
 		border-spacing: 0;
 		width: 100%;
-	}
 
-	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
-		border-top-left-radius: 0;
+		&.has-1-cols {
+			max-width: $table-cell-max-width;
+		}
+
+		&.has-2-cols {
+			max-width: $table-cell-max-width * 2;
+		}
+
+		&.has-3-cols {
+			max-width: $table-cell-max-width * 3;
+		}
+
+		&.has-4-cols {
+			max-width: $table-cell-max-width * 4;
+		}
 	}
 
 	.plan-features-2023-grid__header-title {
@@ -370,16 +405,58 @@
 		}
 	}
 
+	.plan-features-2023-grid__desktop-view,
+	.plan-features-2023-grid__tablet-view {
+		.plan-features-2023-grid__table-item {
+			max-width: $table-cell-max-width;
+		}
+	}
+
+	.plan-features-2023-grid__plan-spotlight {
+		.plan-features-2023-grid__plan-spotlight-card {
+			max-width: 100%;
+			margin-bottom: 64px;
+			border: 1px solid #e0e0e0;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 0 0 5px 5px;
+			div.plan-features-2023-grid__table-item {
+				border: none;
+				&.is-top-buttons {
+					position: absolute;
+					top: 46px;
+					right: 0;
+					border-left: 0;
+				}
+
+				&.plan-features-2023-grid__header-billing-info {
+					padding-bottom: 32px;
+				}
+
+				&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
+					padding-bottom: 23px;
+				}
+
+				.plan-features-2023-grid__header-title {
+					margin-top: 24px;
+				}
+
+				.plan-features-2023-grid__header-tagline {
+					min-height: 0;
+					padding-bottom: 16px;
+				}
+
+				.plan-features-2023-grid__header-logo {
+					display: none;
+				}
+			}
+		}
+	}
+
 	.plan-features-2023-grid__header-annual-discount {
 		color: var(--studio-green-60);
 		&-is-loading {
 			@include placeholder();
 		}
-	}
-
-	.is-placeholder {
-		width: 60%;
-		margin: 5px auto;
 	}
 
 	.plan-features-2023-grid__item-info {
@@ -468,7 +545,6 @@
 
 .plan-features-2023-grid__content {
 	.plans-features-main__group.is-scrollable & {
-		margin: -16px 0 0;
 		padding-top: $plan-features-header-banner-height;
 	}
 
@@ -528,7 +604,6 @@ body.is-section-signup.is-white-signup,
 				margin-bottom: 24px;
 				width: 100%;
 				background: #fff;
-				z-index: 999999;
 				color: #fff;
 				padding: 0 0 17px;
 
@@ -683,58 +758,6 @@ body.is-section-signup.is-white-signup,
 	}
 }
 
-.plans-features-main.is-pricing-grid-2023-plans-features-main  ul.segmented-control.price-toggle,
-body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup__step .segmented-control.price-toggle,
-#primary .is-pricing-grid-2023-plans-features-main .segmented-control.price-toggle {
-	background-color: #f2f2f2;
-	width: 414px; // width of mobile plans grid
-	margin: 0 auto;
-
-	@include plans-2023-break-small {
-		max-width: fit-content;
-		width: auto;
-	}
-
-	.segmented-control__link {
-		padding: 6px 11px;
-	}
-
-	li.segmented-control__item:not(.is-selected) {
-		border: 6px;
-		padding: 2px;
-		font-weight: 500;
-
-		& a.segmented-control__link {
-			border: 1px solid #f2f2f2;
-			border-radius: 5px; /* stylelint-disable-line scales/radii */
-
-			&:hover {
-				border-color: rgba(0, 0, 0, 0.04);
-				background: rgba(255, 255, 255, 0.3) !important;
-			}
-			&:focus {
-				box-shadow: 0 0 0 1px var(--studio-gray-90);
-				outline: none;
-			}
-		}
-
-		&.is-selected .segmented-control__link {
-			border: 0.5px solid rgba(0, 0, 0, 0.04);
-			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
-
-			background-color: #fff;
-
-			&:hover {
-				background-color: #fff;
-				border-color: rgba(0, 0, 0, 0.04);
-			}
-		}
-
-		.segmented-control__text {
-			color: var(--studio-gray-90);
-		}
-	}
-}
 
 .plan-comparison-grid {
 	.plan-features-2023-gridrison__actions-buttons {
@@ -747,6 +770,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		justify-content: flex-start;
 		padding-top: 46px;
 		padding-bottom: 20px;
+		min-width: 0;
 
 		@include plans-2023-break-small {
 			padding-top: 34px;
@@ -973,6 +997,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	}
 
 	.plan-comparison-grid__billing-info {
+		flex-basis: 50px;
 		color: var(--studio-gray-50);
 		font-weight: 400;
 		font-size: $font-body-extra-small;
@@ -1051,6 +1076,18 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
  */
 .is-section-plans .plan-features-2023-grid__plan-comparison-grid-container {
 	scroll-margin-top: $plan-features-header-banner-height + 24px;
+	margin: auto;
+	@include plan-comparison-grid-breakpoints-with-sidebar;
+}
+
+.is-section-signup .plan-features-2023-grid__plan-comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
+}
+
+.is-section-stepper .plan-features-2023-grid__plan-comparison-grid-container {
+	margin: auto;
+	@include plan-comparison-grid-breakpoints;
 }
 
 .formatted-header {
@@ -1070,6 +1107,14 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	padding-top: 8px;
 	font-size: $font-body-extra-small;
 	line-height: 16px;
+
+	&.is-personal-plan {
+		color: var(--studio-blue-60);
+	}
+
+	&.is-premium-plan {
+		color: #004687;
+	}
 
 	&.is-business-plan {
 		color: #7f54b3;

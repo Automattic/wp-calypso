@@ -1,0 +1,20 @@
+
+.license-lightbox-link {
+	font-size: 0.875rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.5rem;
+	color: var(--studio-gray-100);
+	text-decoration: underline;
+	text-align: left;
+	cursor: pointer;
+}
+
+.license-lightbox-link__text {
+	white-space: initial;
+}
+
+.license-lightbox-link-icon {
+	display: inline-block;
+	margin-bottom: -5px;
+	margin-inline-start: 2px;
+}

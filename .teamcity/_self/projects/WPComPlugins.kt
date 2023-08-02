@@ -32,10 +32,9 @@ object WPComPlugins : Project({
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
 	buildType(OdysseyStats)
+	buildType(BlazeDashboard)
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
-	buildType(Happychat)
-	buildType(InlineHelp)
 	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
@@ -50,6 +49,7 @@ object WPComPlugins : Project({
 				withTags = anyOf(
 					"notifications-release-build",
 					"odyssey-stats-release-build",
+					"blaze-dashboard-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
@@ -144,24 +144,16 @@ private object EditingToolkit : WPComPluginBuild(
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 			"""
 		}
-		bashNodeScript {
-			name = "Run JS tests"
-			scriptContent = """
-				cd apps/editing-toolkit
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
-			"""
-		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
 		bashNodeScript {
 			name = "Run PHP Lint"
 			scriptContent = """
 				cd apps/editing-toolkit
-				if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
-					echo "Newspack blocks were not built correctly."
-					exit 1
-				fi
 				yarn lint:php
+
+				# Do some extra checks on the textdomain, since we're manually changing it for the newspack blocks.
+				./bin/verify-textdomain.sh
 			"""
 		}
 	},
@@ -177,24 +169,6 @@ private object WpcomBlockEditor : WPComPluginBuild(
 	archiveDir = "./dist/",
 	buildEnv = "development",
 	docsLink = "PCYsg-l4k-p2",
-)
-
-private object Happychat : WPComPluginBuild(
-	buildId = "WPComPlugins_Happychat",
-	buildName = "Happychat",
-	pluginSlug = "happychat",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
-)
-
-private object InlineHelp : WPComPluginBuild(
-	buildId = "WPComPlugins_InlineHelp",
-	buildName = "Inline Help",
-	pluginSlug = "inline-help",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
 )
 
 private object Notifications : WPComPluginBuild(
@@ -242,21 +216,34 @@ private object OdysseyStats : WPComPluginBuild(
 	docsLink = "PejTkB-3N-p2",
 	buildSteps = {
 		bashNodeScript {
-			name = "Translate Odyssey Stats"
-			scriptContent = """
-				cd apps/odyssey-stats
-
-				# generate language files
-				yarn translate
-			"""
-		}
-		bashNodeScript {
-			name = "Run Unit Tests"
+			name = "Run Size Test"
 			scriptContent = """
 				cd apps/odyssey-stats
 
 				# run unit tests
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
+				yarn test:size
+			"""
+		}
+
+	}
+)
+
+private object BlazeDashboard : WPComPluginBuild(
+	buildId = "WPComPlugins_BlazeDashboard",
+	buildName = "Blaze Dashboard",
+	pluginSlug = "blaze-dashboard",
+	archiveDir = "./dist/",
+	withPRNotify = "false",
+	// TODO: Update doc link when the doc is released
+	docsLink = "TODO",
+	buildSteps = {
+		bashNodeScript {
+			name = "Translate Blaze Dashboard"
+			scriptContent = """
+				cd apps/blaze-dashboard
+
+				# generate language files
+				yarn translate
 			"""
 		}
 	}
@@ -307,7 +294,7 @@ private object HappyBlocks : WPComPluginBuild(
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
 	init {
 		name = "Upload Source Maps";
-		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-comment by a WPCOM post-deploy job.";
+		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-commit by a WPCOM post-deploy job.";
 
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 

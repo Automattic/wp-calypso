@@ -43,6 +43,7 @@ class SelectDropdown extends Component {
 		isLoading: PropTypes.bool,
 		ariaLabel: PropTypes.string,
 		showSelectedOption: PropTypes.bool,
+		children: PropTypes.node,
 	};
 
 	static defaultProps = {

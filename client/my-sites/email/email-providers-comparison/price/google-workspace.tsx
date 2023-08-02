@@ -5,7 +5,6 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
@@ -13,6 +12,7 @@ import PriceInformation from 'calypso/my-sites/email/email-providers-comparison/
 import useGetDomainIntroductoryOfferEligibilities from 'calypso/my-sites/email/email-providers-comparison/price/use-get-domain-introductory-offer-eligibilities';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -118,13 +118,13 @@ const GoogleWorkspacePrice = ( {
 					{ isEligibleForIntroductoryOffer
 						? translate( 'Extra %(discount)d%% off', {
 								args: {
-									discount: product?.sale_coupon?.discount,
+									discount: product?.sale_coupon?.discount as number,
 								},
 								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
 						  } )
 						: translate( 'Limited time: %(discount)d%% off', {
 								args: {
-									discount: product?.sale_coupon?.discount,
+									discount: product?.sale_coupon?.discount as number,
 								},
 								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
 						  } ) }

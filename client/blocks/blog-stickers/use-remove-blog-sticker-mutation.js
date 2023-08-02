@@ -1,11 +1,11 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 export const useRemoveBlogStickerMutation = ( options = {} ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		async ( { blogId, stickerName } ) => {
+	const mutation = useMutation( {
+		mutationFn: async ( { blogId, stickerName } ) => {
 			const response = await wp.req.post(
 				`/sites/${ blogId }/blog-stickers/remove/${ stickerName }`
 			);
@@ -16,15 +16,13 @@ export const useRemoveBlogStickerMutation = ( options = {} ) => {
 
 			return response;
 		},
-		{
-			...options,
-			onSuccess( ...args ) {
-				const [ , { blogId } ] = args;
-				queryClient.invalidateQueries( [ `blog-stickers`, blogId ] );
-				options.onSuccess?.( ...args );
-			},
-		}
-	);
+		...options,
+		onSuccess( ...args ) {
+			const [ , { blogId } ] = args;
+			queryClient.invalidateQueries( [ `blog-stickers`, blogId ] );
+			options.onSuccess?.( ...args );
+		},
+	} );
 
 	const { mutate } = mutation;
 

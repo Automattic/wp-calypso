@@ -2,10 +2,12 @@ import { CompactCard as Card } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import Gravatar from 'calypso/components/gravatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
@@ -20,7 +22,7 @@ import './style.scss';
 
 const noop = () => {};
 
-function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
+function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowToggle } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const siteName = ( site && site.title ) || post.site_name;
 	const authorName = get( post, 'author.name', '' );
@@ -57,6 +59,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 				railcar={ post.railcar }
 				followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
 				followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+				onFollowToggle={ onFollowToggle }
 			/>
 		</div>
 	);
@@ -99,9 +102,18 @@ export function RelatedPostCard( {
 	onSiteClick = noop,
 	followSource,
 } ) {
+	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
+
+	const openSuggestedFollowsModal = ( followClicked ) => {
+		setIsSuggestedFollowsModalOpen( followClicked );
+	};
+
+	const onCloseSuggestedFollowModal = () => {
+		setIsSuggestedFollowsModalOpen( false );
+	};
 
 	const postLink = getPostUrl( post );
 	const classes = classnames( 'reader-related-card', {
@@ -147,6 +159,7 @@ export function RelatedPostCard( {
 				site={ site }
 				onSiteClick={ siteClickTracker }
 				followSource={ followSource }
+				onFollowToggle={ openSuggestedFollowsModal }
 			/>
 			{ featuredAsset }
 			<a
@@ -161,6 +174,13 @@ export function RelatedPostCard( {
 					</div>
 				</div>
 			</a>
+			{ post.site_ID && (
+				<ReaderSuggestedFollowsDialog
+					onClose={ onCloseSuggestedFollowModal }
+					siteId={ +post.site_ID }
+					isVisible={ isSuggestedFollowsModalOpen }
+				/>
+			) }
 		</Card>
 	);
 }

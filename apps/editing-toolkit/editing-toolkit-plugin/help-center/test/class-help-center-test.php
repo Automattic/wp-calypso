@@ -23,7 +23,7 @@ class WPCOM_Help_Center_Test extends WP_UnitTestCase {
 	/**
 	 * Pre-test setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->help_center = $this->createPartialMock(

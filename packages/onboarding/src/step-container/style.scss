@@ -103,6 +103,10 @@
 				margin-top: 16px;
 				line-height: 24px;
 
+				&.is-center-align {
+					text-align: center;
+				}
+
 				@include break-small {
 					margin-top: 8px;
 				}
@@ -252,12 +256,13 @@
 	}
 
 	/**
-	 * Jetpack Powered and VideoPress Powered
+	 * Jetpack, Sensei and VideoPress Powered
 	 */
 	.step-container__jetpack-powered,
 	.step-container__header-jetpack-powered,
 	.step-container__woocommerce-powered,
 	.step-container__header-woocommerce-powered,
+	.step-container__sensei-powered,
 	.step-container__videopress-powered {
 		display: flex;
 		justify-content: center;
@@ -282,11 +287,18 @@
 	.step-container__header-jetpack-powered {
 		position: absolute;
 		top: 32px;
-		right: 32px;
 		visibility: hidden;
 
 		@include break-small {
 			visibility: visible;
+		}
+	}
+
+	.step-container__sensei-powered {
+		padding-bottom: 24px;
+
+		svg {
+			margin-inline-end: 8px;
 		}
 	}
 }

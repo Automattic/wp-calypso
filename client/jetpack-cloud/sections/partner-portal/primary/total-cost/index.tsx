@@ -1,6 +1,6 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getTotalSelectedCost } from 'calypso/state/partner-portal/products/selectors';
 import { PartnerPortalStore } from 'calypso/state/partner-portal/types';

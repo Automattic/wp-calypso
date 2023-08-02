@@ -1,8 +1,9 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { mayWeTrackByTracker } from '../tracker-buckets';
+import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
 import { getGaGtag } from '../utils/get-ga-gtag';
 import {
 	debug,
@@ -16,6 +17,7 @@ import {
 	QUORA_SCRIPT_URL,
 	OUTBRAIN_SCRIPT_URL,
 	PINTEREST_SCRIPT_URL,
+	GOOGLE_GTM_SCRIPT_URL,
 } from './constants';
 
 // Ensure setup has run.
@@ -96,6 +98,10 @@ function getTrackingScriptsToLoad() {
 
 	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		scripts.push( PINTEREST_SCRIPT_URL );
+	}
+
+	if ( mayWeInitTracker( 'googleTagManager' ) && isAkismetCheckout() ) {
+		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.akismetGoogleTagManagerId );
 	}
 
 	return scripts;

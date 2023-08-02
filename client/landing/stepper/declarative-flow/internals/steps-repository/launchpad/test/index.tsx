@@ -3,10 +3,10 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
+import * as ReactQuery from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import React from 'react';
-import * as ReactQuery from 'react-query';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createReduxStore } from 'calypso/state';
@@ -33,8 +33,8 @@ jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
-	usePremiumGlobalStyles: () => ( {
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
 	} ),
@@ -48,11 +48,6 @@ declare global {
 		initialReduxState: object;
 	}
 }
-const savedWindow = window;
-global.window = Object.create( window );
-Object.defineProperty( window, 'location', {
-	value: { replace: replaceMock },
-} );
 
 const siteSlug = `testlinkinbio.wordpress.com`;
 const user = {
@@ -95,6 +90,7 @@ function renderLaunchpad(
 }
 
 describe( 'Launchpad', () => {
+	let savedLocation;
 	const props = {
 		siteSlug,
 		/* eslint-disable @typescript-eslint/no-empty-function */
@@ -105,6 +101,13 @@ describe( 'Launchpad', () => {
 		},
 		/* eslint-enable @typescript-eslint/no-empty-function */
 	};
+
+	beforeAll( () => {
+		savedLocation = window.location;
+		Object.defineProperty( window, 'location', {
+			value: { replace: replaceMock },
+		} );
+	} );
 
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -123,7 +126,9 @@ describe( 'Launchpad', () => {
 	} );
 
 	afterAll( () => {
-		global.window = savedWindow;
+		Object.defineProperty( window, 'location', {
+			value: savedLocation,
+		} );
 	} );
 
 	describe( 'when loading the Launchpad view', () => {

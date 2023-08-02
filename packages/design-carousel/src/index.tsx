@@ -1,9 +1,9 @@
-import { useStarterDesignsQuery } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
+import { Gridicon } from '@automattic/components';
+import { MShotsOptions } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Swiper from 'swiper';
 import { Item } from './item';
 import 'swiper/dist/css/swiper.css';
@@ -11,35 +11,21 @@ import type { Design } from '@automattic/design-picker/src/types';
 
 type DesignCarouselProps = {
 	onPick: ( design: Design ) => void;
-	selectedDesignSlugs?: string[];
+	selectedDesigns: Design[] | null | undefined;
+	onlyDisplayMobileCarousel?: boolean;
+	carouselDesktopOptions?: MShotsOptions;
+	carouselMobileOptions?: MShotsOptions;
 };
 
-export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignCarouselProps ) {
+export default function DesignCarousel( {
+	onPick,
+	selectedDesigns,
+	onlyDisplayMobileCarousel = false,
+	carouselDesktopOptions = { w: 1280, vpw: 1920, vph: 1280, format: 'png' },
+	carouselMobileOptions = { w: 400, vpw: 400, vph: 872, format: 'png' },
+}: DesignCarouselProps ) {
 	const { __ } = useI18n();
-
 	const swiperInstance = useRef< Swiper | null >( null );
-
-	const locale = useLocale();
-
-	const { data: allDesigns } = useStarterDesignsQuery( {
-		_locale: locale,
-	} );
-
-	let selectedDesigns = allDesigns?.designs;
-
-	if ( selectedDesigns && selectedDesignSlugs ) {
-		// If we have a restricted set of designs, filter out all unwanted designs
-		const filteredDesigns = selectedDesigns.filter( ( design ) =>
-			selectedDesignSlugs.includes( design.slug )
-		);
-
-		// Now order the filtered set based on the supplied slugs.
-		selectedDesigns = selectedDesignSlugs
-			.map( ( selectedDesignSlug ) =>
-				filteredDesigns.find( ( design ) => design.slug === selectedDesignSlug )
-			)
-			.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
-	}
 
 	useEffect( () => {
 		if ( selectedDesigns ) {
@@ -71,13 +57,28 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 		<div className="design-carousel">
 			<div className="design-carousel__carousel swiper-container">
 				<div className="swiper-wrapper">
-					{ selectedDesigns.map( ( design ) => (
-						<div
-							className="design-carousel__slide swiper-slide"
-							key={ `${ design.slug }-slide-item` }
-						>
-							<Item design={ design } type="desktop" className="design-carousel__item-desktop" />
-							<Item design={ design } type="mobile" className="design-carousel__item-mobile" />
+					{ selectedDesigns.map( ( design, key ) => (
+						<div className="design-carousel__slide swiper-slide" key={ key }>
+							{ ! onlyDisplayMobileCarousel ? (
+								<>
+									<Item
+										design={ design }
+										options={ carouselDesktopOptions }
+										className="design-carousel__item-desktop"
+									/>
+									<Item
+										design={ design }
+										options={ carouselMobileOptions }
+										className="design-carousel__item-mobile"
+									/>
+								</>
+							) : (
+								<Item
+									design={ design }
+									options={ carouselMobileOptions }
+									className="design-carousel__item-mobile-only"
+								/>
+							) }
 						</div>
 					) ) }
 				</div>
@@ -93,7 +94,7 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 			<div className="design-carousel__cta">
 				<Button
 					className="design-carousel__select"
-					isPrimary
+					variant="primary"
 					onClick={ () => {
 						if ( swiperInstance.current && selectedDesigns ) {
 							onPick( selectedDesigns[ swiperInstance.current?.activeIndex ] );
@@ -101,6 +102,7 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 					} }
 				>
 					<span>{ __( 'Continue' ) }</span>
+					<Gridicon icon="heart" size={ 18 } />
 				</Button>
 			</div>
 		</div>

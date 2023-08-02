@@ -1,0 +1,14 @@
+@import "../../style.scss";
+
+
+.promote-post-ad-preview__loading {
+	border-radius: 4px;
+	display: inline-block;
+	height: 250px;
+	overflow: hidden;
+	position: relative;
+	min-height: 16px;
+	width: 300px;
+
+	@include blazepress-animated-skeleton;
+}

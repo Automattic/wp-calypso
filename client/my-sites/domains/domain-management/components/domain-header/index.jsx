@@ -27,7 +27,6 @@ const DomainHeader = ( { items, mobileItem, buttons = null, mobileButtons = null
 			>
 				{ renderButtons() }
 			</FixedNavigationHeader>
-			<div className="domain-header__spacer"></div>
 		</>
 	);
 };

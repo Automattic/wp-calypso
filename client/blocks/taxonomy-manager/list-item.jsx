@@ -146,12 +146,18 @@ class TaxonomyManagerListItem extends Component {
 					tabIndex={ 0 }
 					onKeyUp={ onKeyUp }
 					onClick={ onClick }
+					aria-label={ name }
 				>
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
-				{ /* FIXME: jsx-a11y issues */ }
-				{ /* eslint-disable-next-line */ }
-				<span className="taxonomy-manager__label" onClick={ onClick }>
+				<span
+					className="taxonomy-manager__label"
+					role="button"
+					tabIndex={ 0 }
+					onKeyUp={ onKeyUp }
+					onClick={ onClick }
+					aria-label={ name }
+				>
 					<span>{ name }</span>
 					{ isDefault && (
 						<span className="taxonomy-manager__default-label">

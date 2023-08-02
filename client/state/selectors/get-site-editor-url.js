@@ -1,23 +1,22 @@
-import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe';
-import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Retrieves url for site editor.
  *
  * @param {Object} state  Global state tree
- * @param {number} siteId Site ID
+ * @param {?number} siteId Site ID
+ * @param {?Object} queryArgs The query arguments append to the Url
  * @returns {string} Url of site editor instance for calypso or wp-admin.
  */
-export const getSiteEditorUrl = ( state, siteId ) => {
+export const getSiteEditorUrl = ( state, siteId, queryArgs = {} ) => {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
-	if ( ! shouldLoadGutenframe( state, siteId ) ) {
-		return `${ siteAdminUrl }site-editor.php`;
+	// Only add the origin if it's not wordpress.com.
+	if ( typeof window !== 'undefined' && window.location.origin !== 'https://wordpress.com' ) {
+		queryArgs.calypso_origin = window.location.origin;
 	}
-
-	const siteSlug = getSiteSlug( state, siteId );
-
-	return `/site-editor/${ siteSlug }`;
+	return addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
 };
 
 export default getSiteEditorUrl;

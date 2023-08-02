@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
+import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';

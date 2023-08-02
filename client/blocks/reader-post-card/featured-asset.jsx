@@ -9,7 +9,7 @@ const FeaturedAsset = ( {
 	allowVideoPlaying,
 	onVideoThumbnailClick,
 	isVideoExpanded,
-	isTagPost,
+	isCompactPost,
 } ) => {
 	if ( ! canonicalMedia ) {
 		return null;
@@ -23,7 +23,7 @@ const FeaturedAsset = ( {
 				allowPlaying={ allowVideoPlaying }
 				onThumbnailClick={ onVideoThumbnailClick }
 				isExpanded={ isVideoExpanded }
-				isTagPost={ isTagPost }
+				isCompactPost={ isCompactPost }
 			/>
 		);
 	}
@@ -33,7 +33,7 @@ const FeaturedAsset = ( {
 			post={ post }
 			postUrl={ postUrl }
 			canonicalMedia={ canonicalMedia }
-			isTagPost={ isTagPost }
+			isCompactPost={ isCompactPost }
 		/>
 	);
 };

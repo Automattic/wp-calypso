@@ -26,7 +26,6 @@ open class WPComPluginBuild(
 	var buildSteps: BuildSteps.() -> Unit = {},
 	var buildParams: ParametrizedWithType.() -> Unit = {},
 ) : BuildType() {
-
 	init {
 		// This block allows us to use variable names without having to prefix them with `this.@WPComPluginBuild.`
 		val workingDir = "apps/$pluginSlug"
@@ -54,12 +53,22 @@ open class WPComPluginBuild(
 		artifactRules = "$pluginSlug.zip"
 		buildNumberPattern = "%build.prefix%.%build.counter%"
 
+		failureConditions {
+			executionTimeoutMin = 6
+		}
+
 		triggers {
 			vcs {
 				branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
+					+:*
+					-:pull*
+				""".trimIndent()
+				triggerRules = """
+					-:test/e2e/**
+					-:docs/**.md
+					-:comment=stress test:**
+					-:packages/calypso-e2e/**
+				""".trimIndent()
 			}
 		}
 

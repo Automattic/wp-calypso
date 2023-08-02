@@ -15,10 +15,54 @@ import {
 	findSavingSource,
 } from './utils';
 
+const INSERTERS = {
+	HEADER_INSERTER: 'header-inserter',
+	SLASH_INSERTER: 'slash-inserter',
+	QUICK_INSERTER: 'quick-inserter',
+	BLOCK_SWITCHER: 'block-switcher',
+	PAYMENTS_INTRO_BLOCK: 'payments-intro-block',
+	PATTERNS_EXPLORER: 'patterns-explorer',
+	PATTERN_SELECTION_MODAL: 'pattern-selection-modal',
+};
+
+const SELECTORS = {
+	/**
+	 * Explore all patterns modal
+	 */
+	PATTERNS_EXPLORER: '.block-editor-block-patterns-explorer',
+	PATTERNS_EXPLORER_SELECTED_CATEGORY:
+		'.block-editor-block-patterns-explorer__sidebar__categories-list__item.is-pressed',
+	PATTERNS_EXPLORER_SEARCH_INPUT: '.block-editor-block-patterns-explorer__search input',
+
+	/**
+	 * Pattern Inserter
+	 */
+	PATTERN_INSERTER_SELECTED_CATEGORY: '.block-editor-inserter__patterns-selected-category',
+	PATTERN_INSERTER_SEARCH_INPUT: '.block-editor-inserter__search input',
+
+	/**
+	 * Pattern Selection Modal
+	 */
+	PATTERN_SELECTION_MODAL: '.block-library-query-pattern__selection-modal',
+	PATTERN_SELECTION_MODAL_SEARCH_INPUT: '.block-library-query-pattern__selection-search input',
+
+	/**
+	 * Quick Inserter
+	 */
+	QUICK_INSERTER: '.block-editor-inserter__quick-inserter',
+	QUICK_INSERTER_SEARCH_INPUT: '.block-editor-inserter__quick-inserter input',
+
+	/**
+	 * Legacy block inserter
+	 */
+	LEGACY_BLOCK_INSERTER: '.block-editor-inserter__block-list',
+};
+
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
 const noop = () => {};
+
 let ignoreNextReplaceBlocksAction = false;
 
 /**
@@ -71,10 +115,15 @@ const getTypeForBlockId = ( blockId ) => {
  * Guess which inserter was used to insert/replace blocks.
  *
  * @param {string[]|string} originalBlockIds ids or blocks that are being replaced
- * @returns {'header-inserter'|'slash-inserter'|'quick-inserter'|'block-switcher'|'payments-intro-block'|undefined} ID representing the insertion method that was used
+ * @returns {'header-inserter'|'slash-inserter'|'quick-inserter'|'block-switcher'|'payments-intro-block'|'patterns-explorer'|'pattern-selection-modal'|undefined} ID representing the insertion method that was used
  */
 const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	const clientIds = Array.isArray( originalBlockIds ) ? originalBlockIds : [ originalBlockIds ];
+
+	if ( document.querySelector( SELECTORS.PATTERNS_EXPLORER ) ) {
+		return INSERTERS.PATTERNS_EXPLORER;
+	}
+
 	// Check if the main inserter (opened using the [+] button in the header) is open.
 	// If it is then the block was inserted using this menu. This inserter closes
 	// automatically when the user tries to use another form of block insertion
@@ -87,14 +136,14 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 			.querySelector( '.customize-widgets-layout__inserter-panel' )
 			?.contains( document.activeElement )
 	) {
-		return 'header-inserter';
+		return INSERTERS.HEADER_INSERTER;
 	}
 
 	// The block switcher open state is not stored in Redux, it's component state
 	// inside a <Dropdown>, so we can't access it. Work around this by checking if
 	// the DOM elements are present on the page while the block is being replaced.
 	if ( clientIds.length && document.querySelector( '.block-editor-block-switcher__container' ) ) {
-		return 'block-switcher';
+		return INSERTERS.BLOCK_SWITCHER;
 	}
 
 	// Inserting a block using a slash command is always a block replacement of
@@ -108,7 +157,7 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 		select( 'core/block-editor' ).getBlockName( clientIds[ 0 ] ) === 'core/paragraph' &&
 		select( 'core/block-editor' ).getBlockAttributes( clientIds[ 0 ] ).content.startsWith( '/' )
 	) {
-		return 'slash-inserter';
+		return INSERTERS.SLASH_INSERTER;
 	}
 
 	// The quick inserter open state is not stored in Redux, it's component state
@@ -116,11 +165,11 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// the DOM elements are present on the page while the block is being inserted.
 	if (
 		// The new quick-inserter UI, marked as __experimental
-		document.querySelector( '.block-editor-inserter__quick-inserter' ) ||
+		document.querySelector( SELECTORS.QUICK_INSERTER ) ||
 		// Legacy block inserter UI
-		document.querySelector( '.block-editor-inserter__block-list' )
+		document.querySelector( SELECTORS.LEGACY_BLOCK_INSERTER )
 	) {
-		return 'quick-inserter';
+		return INSERTERS.QUICK_INSERTER;
 	}
 
 	// This checks validates if we are inserting a block from the Payments Inserter block.
@@ -128,10 +177,41 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 		clientIds.length === 1 &&
 		select( 'core/block-editor' ).getBlockName( clientIds[ 0 ] ) === 'jetpack/payments-intro'
 	) {
-		return 'payments-intro-block';
+		return INSERTERS.PAYMENTS_INTRO_BLOCK;
+	}
+
+	if ( document.querySelector( SELECTORS.PATTERN_SELECTION_MODAL ) ) {
+		return INSERTERS.PATTERN_SELECTION_MODAL;
 	}
 
 	return undefined;
+};
+
+/**
+ * Get the search term from the inserter.
+ *
+ * @param {string} inserter
+ * @returns {string} The search term
+ */
+const getBlockInserterSearchTerm = ( inserter ) => {
+	let searchInput;
+
+	switch ( inserter ) {
+		case INSERTERS.PATTERNS_EXPLORER:
+			searchInput = document.querySelector( SELECTORS.PATTERNS_EXPLORER_SEARCH_INPUT );
+			break;
+		case INSERTERS.HEADER_INSERTER:
+			searchInput = document.querySelector( SELECTORS.PATTERN_INSERTER_SEARCH_INPUT );
+			break;
+		case INSERTERS.QUICK_INSERTER:
+			searchInput = document.querySelector( SELECTORS.QUICK_INSERTER_SEARCH_INPUT );
+			break;
+		case INSERTERS.PATTERN_SELECTION_MODAL:
+			searchInput = document.querySelector( SELECTORS.PATTERN_SELECTION_MODAL_SEARCH_INPUT );
+			break;
+	}
+
+	return searchInput ? searchInput.value : '';
 };
 
 /**
@@ -252,15 +332,7 @@ const getBlocksTracker = ( eventName ) => ( blockIds, fromRootClientId, toRootCl
  * @returns {Object|null} The inserted pattern with its name and category if available.
  */
 const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
-	const SELECTORS = {
-		// The selected category from the “Explore all patterns modal”
-		PATTERN_EXPLORER_SELECTED_CATEGORY:
-			'.block-editor-block-patterns-explorer__sidebar__categories-list__item.is-pressed',
-		// The selected category from the pattern inserter
-		PATTERN_INSERTER_SELECTED_CATEGORY: '.block-editor-inserter__patterns-selected-category',
-	};
-
-	const { rootClientId, blocks_replaced, insert_method } = additionalData;
+	const { rootClientId, blocks_replaced, insert_method, search_term } = additionalData;
 	const context = getBlockEventContextProperties( rootClientId );
 	const {
 		__experimentalBlockPatterns: patterns,
@@ -283,7 +355,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 
 	if ( patternName ) {
 		const categoryElement =
-			document.querySelector( SELECTORS.PATTERN_EXPLORER_SELECTED_CATEGORY ) ||
+			document.querySelector( SELECTORS.PATTERNS_EXPLORER_SELECTED_CATEGORY ) ||
 			document.querySelector( SELECTORS.PATTERN_INSERTER_SELECTED_CATEGORY );
 
 		const patternCategory = patternCategories.find(
@@ -295,6 +367,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 			pattern_category: patternCategory?.name,
 			blocks_replaced,
 			insert_method,
+			search_term,
 			...context,
 		} );
 
@@ -317,10 +390,12 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 const trackBlockInsertion = ( blocks, ...args ) => {
 	const [ , rootClientId ] = args;
 	const insert_method = getBlockInserterUsed();
+	const search_term = getBlockInserterSearchTerm( insert_method );
 	const insertedPattern = maybeTrackPatternInsertion( args, {
 		rootClientId,
 		blocks_replaced: false,
 		insert_method,
+		search_term,
 	} );
 	const context = getBlockEventContextProperties( rootClientId );
 
@@ -330,6 +405,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
 		pattern_name: insertedPattern?.name,
 		pattern_category: insertedPattern?.categoryName,
 		insert_method,
+		search_term,
 		...context,
 	} ) );
 };
@@ -369,10 +445,12 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 		Array.isArray( originalBlockIds ) ? originalBlockIds[ 0 ] : originalBlockIds
 	);
 	const insert_method = getBlockInserterUsed( originalBlockIds );
+	const search_term = getBlockInserterSearchTerm( insert_method );
 	const insertedPattern = maybeTrackPatternInsertion( args, {
 		rootClientId,
 		blocks_replaced: true,
 		insert_method,
+		search_term,
 	} );
 	const context = getBlockEventContextProperties( rootClientId );
 
@@ -382,6 +460,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 		pattern_name: insertedPattern?.name,
 		pattern_category: insertedPattern?.categoryName,
 		insert_method,
+		search_term,
 		...context,
 	} ) );
 };
@@ -808,6 +887,10 @@ const REDUX_TRACKING = {
  */
 const EVENT_TYPES = [ 'keyup', 'click' ];
 
+// Store original and rewritten redux actions locally so we can return the same references when
+// needed.
+const rewrittenActions = {};
+const originalActions = {};
 // Registering tracking handlers.
 if (
 	undefined === window ||
@@ -824,29 +907,48 @@ if (
 			const actions = { ...registry.dispatch( namespaceName ) };
 			const trackers = REDUX_TRACKING[ namespaceName ];
 
+			// Initialize namespace level objects if not yet done.
+			if ( ! rewrittenActions[ namespaceName ] ) {
+				rewrittenActions[ namespaceName ] = {};
+			}
+			if ( ! originalActions[ namespaceName ] ) {
+				originalActions[ namespaceName ] = {};
+			}
+
 			if ( trackers ) {
 				Object.keys( trackers ).forEach( ( actionName ) => {
 					const originalAction = actions[ actionName ];
 					const tracker = trackers[ actionName ];
-					actions[ actionName ] = ( ...args ) => {
-						debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
-						// We use a try-catch here to make sure the `originalAction`
-						// is always called. We don't want to break the original
-						// behaviour when our tracking throws an error.
-						try {
-							if ( typeof tracker === 'string' ) {
-								// Simple track - just based on the event name.
-								tracksRecordEvent( tracker );
-							} else if ( typeof tracker === 'function' ) {
-								// Advanced tracking - call function.
-								tracker( ...args );
+					// If we havent stored the originalAction, or it is no longer the same as the
+					// one we last wrote a corresponding rewrittenAction for, we need to update.
+					if (
+						! originalActions[ namespaceName ][ actionName ] ||
+						originalActions[ namespaceName ][ actionName ] !== originalAction
+					) {
+						// Save the originalAction and rewrittenAction for future reference.
+						originalActions[ namespaceName ][ actionName ] = originalAction;
+						rewrittenActions[ namespaceName ][ actionName ] = ( ...args ) => {
+							debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
+							// We use a try-catch here to make sure the `originalAction`
+							// is always called. We don't want to break the original
+							// behaviour when our tracking throws an error.
+							try {
+								if ( typeof tracker === 'string' ) {
+									// Simple track - just based on the event name.
+									tracksRecordEvent( tracker );
+								} else if ( typeof tracker === 'function' ) {
+									// Advanced tracking - call function.
+									tracker( ...args );
+								}
+							} catch ( err ) {
+								// eslint-disable-next-line no-console
+								console.error( err );
 							}
-						} catch ( err ) {
-							// eslint-disable-next-line no-console
-							console.error( err );
-						}
-						return originalAction( ...args );
-					};
+							return originalAction( ...args );
+						};
+					}
+					// Replace the action in the registry with the rewrittenAction.
+					actions[ actionName ] = rewrittenActions[ namespaceName ][ actionName ];
 				} );
 			}
 			return actions;

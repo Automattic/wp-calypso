@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import useStorageStatusText from './use-storage-status-text';
@@ -10,7 +10,7 @@ type OwnProps = {
 	usageLevel: StorageUsageLevelName;
 	href?: string;
 	upsellSlug: SelectorProduct | null;
-	storage: React.ReactChild;
+	storage: TranslateResult;
 	onClick?: React.MouseEventHandler;
 	price: JSX.Element;
 	daysOfBackupsSaved: number;

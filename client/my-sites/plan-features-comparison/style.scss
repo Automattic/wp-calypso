@@ -303,59 +303,6 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.notouch .signup__step .segmented-control.price-toggle,
-.notouch .plans .segmented-control.price-toggle {
-	background-color: var(--studio-gray-5);
-	border-color: var(--studio-gray-5);
-	border-radius: 6px; /* stylelint-disable-line scales/radii */
-	color: var(--color-text);
-	margin-top: 16px;
-
-	.segmented-control__item {
-		border: 1px solid;
-		border-radius: 6px; /* stylelint-disable-line scales/radii */
-		border-color: var(--studio-gray-5);
-
-		&.is-selected {
-			padding: 1px 0 0 1px;
-		}
-
-		&:hover:not(.is-selected) {
-			border-color: var(--studio-gray-30);
-		}
-
-		&:first-child {
-			margin-right: 5px;
-		}
-
-		& .segmented-control__link {
-			color: var(--color-text);
-			padding: 10px 20px;
-
-			&:hover {
-				background-color: unset;
-			}
-		}
-
-		&.is-selected .segmented-control__link {
-			border-radius: 5px; /* stylelint-disable-line scales/radii */
-			background-color: var(--studio-white);
-			border-color: var(--studio-white);
-			box-shadow:
-				0 4px 4px rgba(0, 0, 0, 0.25),
-				0 3px 8px rgba(0, 0, 0, 0.12),
-				inset 0 0 0 rgba(0, 0, 0, 0.2);
-			border: 0.5px solid rgba(0, 0, 0, 0.07);
-			padding: 11px 20px;
-			color: var(--color-text);
-
-			&:hover {
-				background-color: var(--studio-white);
-			}
-		}
-	}
-}
-
 .plan-features__actions-button {
 	border-radius: 4px;
 }
@@ -431,41 +378,6 @@ body.is-section-signup.is-white-signup {
 		.plan-features-comparison__item-annual-plan-container
 		.plan-features-comparison__item-annual-plan {
 			color: var(--studio-orange-40);
-		}
-	}
-}
-
-.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle,
-.notouch body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle {
-	background-color: #f2f2f2;
-	margin-top: 0;
-
-	.segmented-control__link {
-		padding: 6px 11px;
-	}
-
-	.segmented-control__item {
-		border: 6px;
-		padding: 2px;
-
-		& .segmented-control__link {
-			border: 1px solid #f2f2f2;
-			&:hover {
-				border: 1px solid var(--studio-gray-10);
-				background-color: unset;
-				border-radius: 5px; /* stylelint-disable-line scales/radii */
-			}
-		}
-
-		&.is-selected .segmented-control__link {
-			border: 0.5px solid rgba(0, 0, 0, 0.04);
-			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
-			border-radius: 5px; /* stylelint-disable-line scales/radii */
-
-			&:hover {
-				background-color: #fff;
-				border-color: rgba(0, 0, 0, 0.04);
-			}
 		}
 	}
 }

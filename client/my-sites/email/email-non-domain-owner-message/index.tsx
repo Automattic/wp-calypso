@@ -96,7 +96,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		},
 		args: {
 			ownerUserName,
-			selectedDomainName: domain?.name,
+			selectedDomainName: domain?.name ?? '',
 		},
 	};
 

@@ -116,6 +116,7 @@ import {
 	FEATURE_SHIPPING_CARRIERS,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_SITE_BACKUPS_AND_RESTORE,
+	FEATURE_SITE_STAGING_SITES,
 	FEATURE_SITE_STATS,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_SPAM_BLOCK_V2,
@@ -136,6 +137,7 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
+	FEATURE_JETPACK_1GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
@@ -165,9 +167,9 @@ import {
 	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
+	FEATURE_THE_READER,
 	WPCOM_FEATURES_NO_ADVERTS,
 	FEATURE_BEAUTIFUL_THEMES,
 	FEATURE_PAGES,
@@ -228,8 +230,10 @@ import {
 	FEATURE_PLUGIN_AUTOUPDATE_JP,
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
+	FEATURE_DONATIONS_AND_TIPS_JP,
+	FEATURE_PAYPAL_JP,
+	FEATURE_PAYMENT_BUTTONS_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
-	is2023PricingGridEnabled,
 	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
 	FEATURE_CART_ABANDONMENT_EMAILS,
 	FEATURE_REFERRAL_PROGRAMS,
@@ -264,11 +268,34 @@ import {
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_10,
+	FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0,
+	FEATURE_PREMIUM_STORE_THEMES,
+	FEATURE_STORE_DESIGN,
+	FEATURE_UNLIMITED_PRODUCTS,
+	FEATURE_DISPLAY_PRODUCTS_BRAND,
+	FEATURE_PRODUCT_ADD_ONS,
+	FEATURE_ASSEMBLED_KITS,
+	FEATURE_MIN_MAX_QTY,
+	FEATURE_STOCK_NOTIFS,
+	FEATURE_DYNAMIC_UPSELLS,
+	FEATURE_LOYALTY_PROG,
+	FEATURE_CUSTOM_MARKETING_AUTOMATION,
+	FEATURE_BULK_DISCOUNTS,
+	FEATURE_INVENTORY_MGMT,
+	FEATURE_STREAMLINED_CHECKOUT,
+	FEATURE_SELL_60_COUNTRIES,
+	FEATURE_SHIPPING_INTEGRATIONS,
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
 	isBusinessPlan,
 	isFreePlan,
+	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -279,8 +306,6 @@ import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
-
-const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 export type FeatureObject = {
 	getSlug: () => string;
@@ -294,6 +319,7 @@ export type FeatureObject = {
 	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
+	getFeatureGroup?: () => string;
 };
 export type FeatureList = {
 	[ key: string ]: FeatureObject;
@@ -610,7 +636,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
 		getTitle: ( domainName?: string ) => {
 			if ( domainName ) {
-				return i18n.translate( 'The domain %(domainName)s is free for the first year', {
+				return i18n.translate( '%(domainName)s is included', {
 					args: { domainName },
 				} );
 			}
@@ -626,30 +652,12 @@ export const FEATURES_LIST: FeatureList = {
 					args: domainName,
 				} );
 			}
-			if ( is2023OnboardingPricingGrid ) {
-				return i18n.translate(
-					'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
-					{
-						components: {
-							i: <i />,
-						},
-					}
-				);
-			}
+
 			return i18n.translate(
-				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
-					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
-					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
+				'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
 				{
 					components: {
-						a: (
-							<a
-								href={ localizeUrl( DOMAIN_PRICING_AND_AVAILABLE_TLDS ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						br: <br />,
+						i: <i />,
 					},
 				}
 			);
@@ -867,7 +875,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_50GB_STORAGE ]: {
 		getSlug: () => FEATURE_50GB_STORAGE,
 		getTitle: () => i18n.translate( '50 GB storage space' ),
-
+		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
@@ -936,9 +944,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () =>
-			is2023OnboardingPricingGrid
-				? i18n.translate( 'Realtime help and guidance from professional WordPress experts.' )
-				: i18n.translate( 'Live chat support to help you get started with Jetpack.' ),
+			i18n.translate( 'Realtime help and guidance from professional WordPress experts.' ),
 	},
 
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
@@ -1569,6 +1575,10 @@ export const FEATURES_LIST: FeatureList = {
 	},
 
 	/* START - Jetpack tiered product-specific features */
+	[ FEATURE_JETPACK_1GB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_1GB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( 'Starts with 1GB of storage' ),
+	},
 	[ FEATURE_JETPACK_10GB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 		getTitle: () => i18n.translate( 'Starts with 10GB of storage' ),
@@ -1644,7 +1654,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLIMITED_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_SUBSCRIBERS,
-		getTitle: () => i18n.translate( 'Unlimited subscribers' ),
+		getTitle: () => i18n.translate( 'Import unlimited subscribers' ),
 	},
 	[ FEATURE_IMPORT_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_IMPORT_SUBSCRIBERS,
@@ -1692,12 +1702,72 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO ]: {
 		getSlug: () => FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-		getTitle: () =>
-			i18n.translate( 'Monetize your Link in Bio with payments, subscriptions, and donations' ),
+		getTitle: () => i18n.translate( 'Charge for premium content' ),
 	},
-	[ FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
+	[ FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE ]: {
+		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+		getTitle: () => i18n.translate( 'Import up to 100 subscribers' ),
+	},
+	[ FEATURE_GROUP_PAYMENT_TRANSACTION_FEES ]: {
+		getSlug: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+		getTitle: () => i18n.translate( 'Transaction fees for payments' ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
+				args: { commission: 10 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '10%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
+				args: { commission: 8 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '8%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
+				args: { commission: 4 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '4%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
+				args: { commission: 2 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '2%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
@@ -1713,6 +1783,14 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			),
+	},
+	[ FEATURE_THE_READER ]: {
+		getSlug: () => FEATURE_THE_READER,
+		getTitle: () => i18n.translate( 'The Reader' ),
+		getDescription: () =>
+			i18n.translate(
+				'Discover new reads and catch up on posts, comments, and replies from the sites you subscribe to.'
 			),
 	},
 
@@ -1877,9 +1955,14 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => i18n.translate( 'SFTP-SSH, WP-CLI, Git tools' ),
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+	},
+	[ FEATURE_SITE_STAGING_SITES ]: {
+		getSlug: () => FEATURE_SITE_STAGING_SITES,
+		getTitle: () => i18n.translate( 'Free staging site' ),
+		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 	[ FEATURE_WP_UPDATES ]: {
 		getSlug: () => FEATURE_WP_UPDATES,
@@ -1889,7 +1972,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MULTI_SITE ]: {
 		getSlug: () => FEATURE_MULTI_SITE,
-		getTitle: () => i18n.translate( 'Centralized Site Management' ),
+		getTitle: () => i18n.translate( 'Centralized site management' ),
 		getDescription: () =>
 			i18n.translate( 'Seamlessly switch between 2, 20, or 200 sites. All from one place.' ),
 	},
@@ -2080,19 +2163,17 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Limited shares in social media' ),
+		getTitle: () => i18n.translate( 'Limited automatic shares in social media' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get 30 social shares per month to promote your posts on Facebook, Twitter, Tumblr, and more.'
+				'Get 30 social shares per month to promote your posts on Facebook, Tumblr, and more.'
 			),
 	},
 	[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		getTitle: () => i18n.translate( 'Shares on social media' ),
 		getDescription: () =>
-			i18n.translate(
-				'Automatically share your latest post on Facebook, Twitter, Tumblr, and more.'
-			),
+			i18n.translate( 'Automatically share your latest post on Facebook, Tumblr, and more.' ),
 		getConditionalTitle: ( planSlug ) => {
 			if ( ! planSlug ) {
 				return '';
@@ -2124,7 +2205,16 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => i18n.translate( 'Premium content gating' ),
+		getTitle: () => {
+			const localeSlug = i18n.getLocaleSlug();
+			const shouldShowNewString =
+				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
+				i18n.hasTranslation( 'Paid content gating' );
+
+			return shouldShowNewString
+				? i18n.translate( 'Paid content gating' )
+				: i18n.translate( 'Gated content' );
+		},
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
@@ -2135,7 +2225,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_UNLTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Unlimited shares in social media' ),
+		getTitle: () => i18n.translate( 'Unlimited automatic shares in social media' ),
 		getDescription: () =>
 			i18n.translate( 'Share your latest posts to your social channels, without limits.' ),
 	},
@@ -2192,6 +2282,185 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
+	},
+	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
+		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
+		getTitle: () => i18n.translate( 'Donations and tips' ),
+		getDescription: () =>
+			i18n.translate( 'Allow your audience to support your work easily with donations and tips.' ),
+	},
+	[ FEATURE_PAYPAL_JP ]: {
+		getSlug: () => FEATURE_PAYPAL_JP,
+		getTitle: () => i18n.translate( 'Pay with PayPal' ),
+		getDescription: () => i18n.translate( 'Collect payments with PayPal.' ),
+	},
+	[ FEATURE_PAYMENT_BUTTONS_JP ]: {
+		getSlug: () => FEATURE_PAYMENT_BUTTONS_JP,
+		getTitle: () => i18n.translate( 'Payment buttons' ),
+		getDescription: () =>
+			i18n.translate(
+				'Collect payments from credit/debit cards securely from anywhere with Stripe.'
+			),
+	},
+	[ FEATURE_PREMIUM_STORE_THEMES ]: {
+		getSlug: () => FEATURE_PREMIUM_STORE_THEMES,
+		getTitle: () => i18n.translate( 'Premium store themes' ),
+		getDescription: () =>
+			i18n.translate( 'Jumpstart your store’s design with a professionally designed theme.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_STORE_DESIGN ]: {
+		getSlug: () => FEATURE_STORE_DESIGN,
+		getTitle: () => i18n.translate( 'Powerful store design tools' ),
+		getDescription: () =>
+			i18n.translate(
+				'Fine-tune your store’s design with on-brand styles and drag and drop layout editing.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_UNLIMITED_PRODUCTS ]: {
+		getSlug: () => FEATURE_UNLIMITED_PRODUCTS,
+		getTitle: () => i18n.translate( 'Unlimited products' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add unlimited products and services.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: {
+		getSlug: () => FEATURE_DISPLAY_PRODUCTS_BRAND,
+		getTitle: () => i18n.translate( 'Display products by brand' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Create, assign and list brands for products, and allow customers to view by brand.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_PRODUCT_ADD_ONS ]: {
+		getSlug: () => FEATURE_PRODUCT_ADD_ONS,
+		getTitle: () => i18n.translate( 'Product add-ons' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_ASSEMBLED_KITS ]: {
+		getSlug: () => FEATURE_ASSEMBLED_KITS,
+		getTitle: () => i18n.translate( 'Assembled products and kits' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Give customers the freedom to build their own products utilizing your existing items.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_MIN_MAX_QTY ]: {
+		getSlug: () => FEATURE_MIN_MAX_QTY,
+		getTitle: () => i18n.translate( 'Min/max order quantities' ),
+
+		getDescription: () =>
+			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_STOCK_NOTIFS ]: {
+		getSlug: () => FEATURE_STOCK_NOTIFS,
+		getTitle: () => i18n.translate( 'Back-in-stock notifications' ),
+
+		getDescription: () =>
+			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_DYNAMIC_UPSELLS ]: {
+		getSlug: () => FEATURE_DYNAMIC_UPSELLS,
+		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Earn more revenue with automated upsell and cross-sell product recommendations.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_LOYALTY_PROG ]: {
+		getSlug: () => FEATURE_LOYALTY_PROG,
+		getTitle: () => i18n.translate( 'Referral and loyalty programs' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_CUSTOM_MARKETING_AUTOMATION ]: {
+		getSlug: () => FEATURE_CUSTOM_MARKETING_AUTOMATION,
+		getTitle: () => i18n.translate( 'Custom marketing automation' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Advanced email marketing functionality, including subscriber segmentation, advanced analytics, and automation.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_BULK_DISCOUNTS ]: {
+		getSlug: () => FEATURE_BULK_DISCOUNTS,
+		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
+
+		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_INVENTORY_MGMT ]: {
+		getSlug: () => FEATURE_INVENTORY_MGMT,
+		getTitle: () => i18n.translate( 'Inventory management' ),
+
+		getDescription: () =>
+			i18n.translate( 'Keep inventory up-to-date with POS integrations and real-time tracking.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_STREAMLINED_CHECKOUT ]: {
+		getSlug: () => FEATURE_STREAMLINED_CHECKOUT,
+		getTitle: () => i18n.translate( 'Streamlined checkout' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Remove the friction from checkout by giving your customers multiple ways to pay.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_SELL_60_COUNTRIES ]: {
+		getSlug: () => FEATURE_SELL_60_COUNTRIES,
+		getTitle: () => i18n.translate( 'Sell in 60+ countries' ),
+
+		getDescription: () => i18n.translate( 'Grow globally by accepting 135+ currencies.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_SHIPPING_INTEGRATIONS ]: {
+		getSlug: () => FEATURE_SHIPPING_INTEGRATIONS,
+		getTitle: () => i18n.translate( 'Integrations with top shipping carriers' ),
+
+		getDescription: () =>
+			i18n.translate(
+				'Get real-time shipping prices, print labels and give your customers tracking codes.'
+			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 

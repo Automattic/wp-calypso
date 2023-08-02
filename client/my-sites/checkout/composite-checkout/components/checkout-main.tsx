@@ -8,7 +8,6 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -25,6 +24,7 @@ import {
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -43,7 +43,7 @@ import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
-import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
+import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -55,9 +55,15 @@ import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
+import { OnChangeItemVariant } from './item-variation-picker';
+import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type {
+	CheckoutPageErrorCallback,
+	PaymentEventCallbackArguments,
+} from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	CountryListItem,
@@ -66,7 +72,37 @@ import type {
 } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
-const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
+const debug = debugFactory( 'calypso:checkout-main' );
+
+export interface CheckoutMainProps {
+	siteSlug: string | undefined;
+	siteId: number | undefined;
+	productAliasFromUrl?: string | undefined;
+	productSourceFromUrl?: string;
+	overrideCountryList?: CountryListItem[];
+	redirectTo?: string | undefined;
+	feature?: string | undefined;
+	plan?: string | undefined;
+	purchaseId?: number | string | undefined;
+	couponCode?: string | undefined;
+	isComingFromUpsell?: boolean;
+	isLoggedOutCart?: boolean;
+	isNoSiteCart?: boolean;
+	isGiftPurchase?: boolean;
+	isInModal?: boolean;
+	infoMessage?: JSX.Element;
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
+	onAfterPaymentComplete?: () => void;
+	disabledThankYouPage?: boolean;
+	sitelessCheckoutType?: SitelessCheckoutType;
+	akismetSiteSlug?: string;
+	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
+	isUserComingFromLoginForm?: boolean;
+	customizedPreviousPath?: string;
+}
 
 export default function CheckoutMain( {
 	siteSlug,
@@ -93,39 +129,9 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
-	useVariantPickerRadioButtons,
-}: {
-	siteSlug: string | undefined;
-	siteId: number | undefined;
-	productAliasFromUrl?: string | undefined;
-	productSourceFromUrl?: string;
-	overrideCountryList?: CountryListItem[];
-	redirectTo?: string | undefined;
-	feature?: string | undefined;
-	plan?: string | undefined;
-	purchaseId?: number | undefined;
-	couponCode?: string | undefined;
-	isComingFromUpsell?: boolean;
-	isLoggedOutCart?: boolean;
-	isNoSiteCart?: boolean;
-	isGiftPurchase?: boolean;
-	isInModal?: boolean;
-	infoMessage?: JSX.Element;
-	// IMPORTANT NOTE: This will not be called for redirect payment methods like
-	// PayPal. They will redirect directly to the post-checkout page decided by
-	// `getThankYouUrl`.
-	onAfterPaymentComplete?: () => void;
-	disabledThankYouPage?: boolean;
-	sitelessCheckoutType?: SitelessCheckoutType;
-	akismetSiteSlug?: string;
-	jetpackSiteSlug?: string;
-	jetpackPurchaseToken?: string;
-	isUserComingFromLoginForm?: boolean;
-	customizedPreviousPath?: string;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
-} ) {
+}: CheckoutMainProps ) {
 	const translate = useTranslate();
+
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
@@ -153,7 +159,7 @@ export default function CheckoutMain( {
 	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
-		( error ) => {
+		( error: string ) => {
 			debug( 'error', error );
 			const message = error && error.toString ? error.toString() : error;
 			reduxDispatch(
@@ -179,6 +185,7 @@ export default function CheckoutMain( {
 		productsForCart,
 		isLoading: areCartProductsPreparing,
 		error: cartProductPrepError,
+		addingRenewals,
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
@@ -218,6 +225,7 @@ export default function CheckoutMain( {
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
+		addingRenewals,
 	} );
 
 	useRecordCartLoaded( {
@@ -333,6 +341,7 @@ export default function CheckoutMain( {
 	} );
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
+		contactDetailsType,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -375,7 +384,7 @@ export default function CheckoutMain( {
 		checkoutFlow
 	);
 
-	const changePlanLength = useCallback(
+	const changePlanLength = useCallback< OnChangeItemVariant >(
 		( uuidToReplace, newProductSlug, newProductId ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
@@ -449,7 +458,9 @@ export default function CheckoutMain( {
 				webPayProcessor( 'google-pay', transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
-				multiPartnerCardProcessor( transactionData, dataForProcessor ),
+				multiPartnerCardProcessor( transactionData, dataForProcessor, {
+					translate,
+				} ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -473,7 +484,7 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ dataForProcessor ]
+		[ dataForProcessor, translate ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
@@ -491,25 +502,34 @@ export default function CheckoutMain( {
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
 	// This variable determines if we see the loading page or if checkout can
-	// render its steps. Note that this does not prevent everything inside
-	// `CheckoutProvider` from rendering, only everything inside
-	// `CheckoutStepGroup`. This is because this variable is used to set the
-	// `FormStatus` to `FormStatus::LOADING`. Be careful what you add to this
-	// variable because it will slow down checkout's load time.
-	const isCheckoutPageLoading: boolean =
-		isInitialCartLoading ||
-		arePaymentMethodsLoading ||
-		paymentMethods.length < 1 ||
-		responseCart.products.length < 1 ||
-		countriesList.length < 1;
+	// render its steps.
+	//
+	// Note that this does not prevent everything inside `CheckoutProvider` from
+	// rendering, only everything inside `CheckoutStepGroup`. This is because
+	// this variable is used to set the `FormStatus` to `FormStatus::LOADING`.
+	//
+	// These conditions do not need to be true if the cart is empty. The empty
+	// cart page will show itself based on `shouldShowEmptyCartPage()` which has
+	// its own set of conditions and is not affected by this list.
+	//
+	// Be careful what you add to this variable because it will slow down
+	// checkout's apparent load time. If something can be loaded async inside
+	// checkout, do that instead.
+	const checkoutLoadingConditions: Array< { name: string; isLoading: boolean } > = [
+		{ name: translate( 'Loading cart' ), isLoading: isInitialCartLoading },
+		{ name: translate( 'Loading saved payment methods' ), isLoading: arePaymentMethodsLoading },
+		{ name: translate( 'Initializing payment methods' ), isLoading: paymentMethods.length < 1 },
+		{
+			name: translate( 'Preparing products for cart' ),
+			isLoading: responseCart.products.length < 1,
+		},
+		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
+	];
+	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
+		( condition ) => condition.isLoading
+	);
 	if ( isCheckoutPageLoading ) {
-		debug( 'still loading because one of these is true', {
-			isInitialCartLoading,
-			paymentMethods: paymentMethods.length < 1,
-			arePaymentMethodsLoading: arePaymentMethodsLoading,
-			items: responseCart.products.length < 1,
-			countriesList: countriesList.length < 1,
-		} );
+		debug( 'still loading because one of these is true', checkoutLoadingConditions );
 	} else {
 		debug( 'no longer loading' );
 	}
@@ -544,7 +564,7 @@ export default function CheckoutMain( {
 			}
 			reduxDispatch(
 				recordTracksEvent( errorTypeToTracksEventName( errorType ), {
-					error_message: error.message + '; Stack: ' + error.stack,
+					error_message: convertErrorToString( error ),
 					...errorData,
 				} )
 			);
@@ -613,7 +633,7 @@ export default function CheckoutMain( {
 	// PayPal. They will redirect directly to the post-checkout page decided by
 	// `getThankYouUrl`.
 	const handlePaymentComplete = useCallback(
-		( args ) => {
+		( args: PaymentEventCallbackArguments ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
 			reduxDispatch(
@@ -710,7 +730,9 @@ export default function CheckoutMain( {
 				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
-					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
+					loadingContent={
+						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
+					}
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }
@@ -727,13 +749,20 @@ export default function CheckoutMain( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 				/>
+				{
+					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+					<JetpackProRedirectModal
+						redirectTo={ redirectTo }
+						productSourceFromUrl={ productSourceFromUrl }
+					/>
+				}
 			</CheckoutProvider>
 		</Fragment>
 	);
 }
 
 function getAnalyticsPath(
-	purchaseId: number | undefined,
+	purchaseId: number | string | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,

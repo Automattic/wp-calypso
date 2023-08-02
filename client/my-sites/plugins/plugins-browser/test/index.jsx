@@ -57,6 +57,11 @@ jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
 	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
 );
 
+jest.mock( 'calypso/lib/route/path', () => ( {
+	...jest.requireActual( 'calypso/lib/route/path' ),
+	getMessagePathForJITM: jest.fn( () => '/plugins/' ),
+} ) );
+
 import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,

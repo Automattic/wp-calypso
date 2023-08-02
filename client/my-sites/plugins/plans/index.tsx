@@ -1,12 +1,6 @@
-import {
-	getPlan,
-	PLAN_BUSINESS,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,6 +13,7 @@ import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
+import { useDispatch, useSelector } from 'calypso/state';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -29,14 +24,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
-
 	const dispatch = useDispatch();
-
-	const currentPlanSlug = selectedSite?.plan?.product_slug;
-	let currentPlanType = null;
-	if ( currentPlanSlug ) {
-		currentPlanType = getPlan( currentPlanSlug )?.type;
-	}
 
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
@@ -107,13 +95,10 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			<div className="plans">
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
-					showFAQ={ false }
-					site={ selectedSite }
+					siteId={ selectedSite?.ID }
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
-					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
-					isInMarketplace
-					shouldShowPlansFeatureComparison
+					intent="plans-plugins"
 					isReskinned
 				/>
 			</div>

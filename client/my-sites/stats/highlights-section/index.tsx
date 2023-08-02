@@ -1,10 +1,27 @@
-import { WeeklyHighlightCards } from '@automattic/components';
-import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import config from '@automattic/calypso-config';
+import {
+	WeeklyHighlightCards,
+	PAST_THIRTY_DAYS,
+	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
+	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
+} from '@automattic/components';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import version_compare from 'calypso/lib/version-compare';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
 import { getHighlights } from 'calypso/state/stats/highlights/selectors';
+import { updateModuleSettings } from 'calypso/state/stats/module-settings/actions';
 
-export default function HighlightsSection( { siteId }: { siteId: number } ) {
+export default function HighlightsSection( {
+	siteId,
+	currentPeriod,
+}: {
+	siteId: number;
+	currentPeriod: string;
+} ) {
 	const dispatch = useDispatch();
 
 	// Request new highlights whenever site ID changes.
@@ -12,25 +29,66 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 		dispatch( requestHighlights( siteId ) );
 	}, [ dispatch, siteId ] );
 
+	const onUpdatePeriod = ( period: string ) => {
+		dispatch(
+			updateModuleSettings( siteId, {
+				traffic: { highlights: { period_in_days: period === PAST_THIRTY_DAYS ? 30 : 7 } },
+			} )
+		);
+	};
+
 	const highlights = useSelector( ( state ) => getHighlights( state, siteId ) );
 	const counts = useMemo(
 		() => ( {
-			comments: highlights?.past_seven_days?.comments ?? null,
-			likes: highlights?.past_seven_days?.likes ?? null,
-			views: highlights?.past_seven_days?.views ?? null,
-			visitors: highlights?.past_seven_days?.visitors ?? null,
+			comments: highlights[ currentPeriod ]?.comments ?? null,
+			likes: highlights[ currentPeriod ]?.likes ?? null,
+			views: highlights[ currentPeriod ]?.views ?? null,
+			visitors: highlights[ currentPeriod ]?.visitors ?? null,
 		} ),
-		[ highlights ]
+		[ highlights, currentPeriod ]
 	);
-	const previousCounts = useMemo(
-		() => ( {
-			comments: highlights?.between_past_eight_and_fifteen_days?.comments ?? null,
-			likes: highlights?.between_past_eight_and_fifteen_days?.likes ?? null,
-			views: highlights?.between_past_eight_and_fifteen_days?.views ?? null,
-			visitors: highlights?.between_past_eight_and_fifteen_days?.visitors ?? null,
-		} ),
-		[ highlights ]
+	const previousCounts = useMemo( () => {
+		const comparePeriod =
+			currentPeriod === PAST_THIRTY_DAYS
+				? BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS
+				: BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS;
+		return {
+			comments: highlights[ comparePeriod ]?.comments ?? null,
+			likes: highlights[ comparePeriod ]?.likes ?? null,
+			views: highlights[ comparePeriod ]?.views ?? null,
+			visitors: highlights[ comparePeriod ]?.visitors ?? null,
+		};
+	}, [ highlights, currentPeriod ] );
+
+	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+		siteId,
+		'traffic_page_highlights_module_settings'
 	);
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'traffic_page_highlights_module_settings'
+	);
+	const [ settingsTooltipDismissed, setSettingsTooltipDismissed ] = useState(
+		!! localStorage.getItem( 'notices_dismissed__traffic_page_highlights_module_settings' )
+	);
+
+	const dismissSettingsTooltip = useCallback( () => {
+		if ( settingsTooltipDismissed || ! showSettingsTooltip ) {
+			return;
+		}
+		setSettingsTooltipDismissed( true );
+		localStorage.setItem( 'notices_dismissed__traffic_page_highlights_module_settings', '1' );
+		return mutateNoticeVisbilityAsync().finally( refetchNotices );
+	}, [ settingsTooltipDismissed, showSettingsTooltip ] );
+
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	// Highlights settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
+	const isHighlightsSettingsSupported =
+		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
+		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
 
 	return (
 		<WeeklyHighlightCards
@@ -42,6 +100,11 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 			onClickLikes={ () => null }
 			onClickViews={ () => null }
 			onClickVisitors={ () => null }
+			onTogglePeriod={ onUpdatePeriod }
+			currentPeriod={ currentPeriod }
+			showSettingsTooltip={ !! showSettingsTooltip && ! settingsTooltipDismissed }
+			onSettingsTooltipDismiss={ dismissSettingsTooltip }
+			isHighlightsSettingsSupported={ isHighlightsSettingsSupported }
 		/>
 	);
 }

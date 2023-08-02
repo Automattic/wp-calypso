@@ -30,6 +30,7 @@ export interface InitiateTransfer {
 	pluginSlug?: string;
 	pluginFile?: File;
 	themeFile?: File;
+	context?: string;
 }
 
 /**

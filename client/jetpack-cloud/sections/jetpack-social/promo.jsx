@@ -15,7 +15,7 @@ import './promo.scss';
 export const Promo = ( { isSocialActive, adminUrl, translate } ) => {
 	const titleHeader = translate( 'Social', { context: 'Jetpack product name' } );
 	const features = [
-		translate( 'Connect with Twitter, Facebook, LinkedIn and Tumblr' ),
+		translate( 'Connect with Facebook, LinkedIn and Tumblr' ),
 		translate( 'Select the social media to share posts while publishing' ),
 		translate( 'Publish custom messages' ),
 	];

@@ -6,7 +6,6 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
@@ -32,6 +31,7 @@ import {
 	useTranslatedPageTitles,
 } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -388,7 +388,7 @@ function DIFMPagePicker( props: StepProps ) {
 							),
 					},
 					args: {
-						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
 						extraPagePrice: formatCurrency(
 							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
 							effectiveCurrencyCode ?? '',
@@ -413,7 +413,7 @@ function DIFMPagePicker( props: StepProps ) {
 							),
 					},
 					args: {
-						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
 						extraPagePrice: formatCurrency(
 							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
 							effectiveCurrencyCode ?? '',

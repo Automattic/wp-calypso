@@ -1,9 +1,9 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getUserLicenses, getUserLicensesCounts } from 'calypso/state/user-licensing/selectors';
@@ -69,7 +69,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	const instructions = (
 		<>
 			<b>
-				{ hasOneDetachedLicense
+				{ hasOneDetachedLicense && detachedUserLicense?.product
 					? translate(
 							'You have a %(productName)s license available. You can activate it now if you want.',
 							{

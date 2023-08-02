@@ -1,5 +1,8 @@
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -10,14 +13,16 @@ import {
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	JETPACK_AI_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_STATS_PRODUCTS,
 	getPlan,
 } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import slugToSelectorProduct from './slug-to-selector-product';
@@ -56,6 +61,9 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	const backupProductsToShow: string[] = [];
 
+	const ownsBackupT0 =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T0_YEARLY ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T0_MONTHLY );
 	const ownsBackupT1 =
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_MONTHLY );
@@ -63,9 +71,9 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
 
-	// If neither T1 or T2 backups are owned, then show T1 backups.
+	// If neither T0 or T1 or T2 backups are owned, then show T1 backups.
 	// Otherwise the one owned will be displayed via purchasedProducts.
-	if ( ! ownsBackupT1 && ! ownsBackupT2 ) {
+	if ( ! ownsBackupT0 && ! ownsBackupT1 && ! ownsBackupT2 ) {
 		backupProductsToShow.push(
 			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 			PRODUCT_JETPACK_BACKUP_T1_MONTHLY
@@ -116,6 +124,16 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		availableProducts = [ ...availableProducts, ...JETPACK_BOOST_PRODUCTS ];
 	}
 
+	// If Jetpack Stats is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		config.isEnabled( 'stats/paid-stats' ) &&
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_STATS_PRODUCTS ];
+	}
+
 	const socialProductsToShow: string[] = [];
 
 	const ownsSocialBasic =
@@ -135,6 +153,15 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	availableProducts = [ ...availableProducts, ...socialProductsToShow ];
+
+	// If the user does not own the AI product, include it in available products
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_AI_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_AI_PRODUCTS ];
+	}
 
 	return {
 		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],

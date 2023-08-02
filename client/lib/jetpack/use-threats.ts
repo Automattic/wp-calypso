@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fixAllThreats, fixThreat, ignoreThreat } from 'calypso/state/jetpack-scan/threats/actions';
 import getSiteScanUpdatingThreats from 'calypso/state/selectors/get-site-scan-updating-threats';

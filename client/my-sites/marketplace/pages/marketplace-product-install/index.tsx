@@ -4,7 +4,6 @@ import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -20,13 +19,18 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/actions';
-import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSite,
+	getStatusForPlugin,
+	isPluginActive,
+} from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -36,7 +40,6 @@ import {
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
-import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -55,11 +58,6 @@ import {
 import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
-
-interface InstalledPlugin {
-	slug?: string;
-	id?: number;
-}
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -88,7 +86,7 @@ const MarketplaceProductInstall = ( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPlugin = useSelector( ( state: DefaultRootState ): InstalledPlugin | undefined =>
+	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>
@@ -213,10 +211,10 @@ const MarketplaceProductInstall = ( {
 			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
 				if ( wpOrgTheme ) {
-					dispatch( initiateAtomicTransfer( siteId, { themeSlug } ) );
+					dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
 				} else {
 					setAtomicFlow( true );
-					dispatch( initiateTransfer( siteId, null, pluginSlug ) );
+					dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
 				}
 
 				triggerInstallFlow();
@@ -461,7 +459,7 @@ const MarketplaceProductInstall = ( {
 		// Catch the rest of the error cases.
 		if (
 			pluginUploadError ||
-			pluginInstallStatus.error ||
+			pluginInstallStatus?.error ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return (

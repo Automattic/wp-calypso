@@ -18,6 +18,7 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementTransfer,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -25,6 +26,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { requestSites } from 'calypso/state/sites/actions';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import TransferConfirmationDialog from './confirmation-dialog';
@@ -57,7 +59,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! isWpcomStagingSite &&
 			! ( site?.options?.is_domain_only ?? false ) &&
-			site.ID !== this.props.selectedSite.ID
+			site.ID !== this.props.selectedSite?.ID
 		);
 	};
 
@@ -72,7 +74,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		targetSite: TransferDomainToOtherSiteProps[ 'selectedSite' ],
 		closeDialog: () => void
 	): void => {
-		const { selectedDomainName, selectedSite } = this.props;
+		const { selectedDomainName, selectedSite, currentRoute } = this.props;
 		const targetSiteTitle = targetSite.title;
 		const successMessage = this.props.translate(
 			'%(selectedDomainName)s has been transferred to site: %(targetSiteTitle)s',
@@ -88,7 +90,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		this.setState( { disableDialogButtons: true } );
 		wpcom.req
 			.post(
-				`/sites/${ selectedSite.ID }/domains/${ selectedDomainName }/transfer-to-site/${ targetSite.ID }`
+				`/sites/${ selectedSite?.ID }/domains/${ selectedDomainName }/transfer-to-site/${ targetSite.ID }`
 			)
 			.then(
 				() => {
@@ -96,9 +98,9 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 					if ( this.props.isDomainOnly ) {
 						this.props.requestSites();
 						const transferedTo = this.props.sites.find( ( site ) => site.ID === targetSite.ID );
-						page( domainManagementList( transferedTo?.slug ?? '' ) );
+						page( domainManagementList( transferedTo?.slug ?? '', currentRoute ) );
 					} else {
-						page( domainManagementList( this.props.selectedSite.slug ) );
+						page( domainManagementList( this.props.selectedSite?.slug, currentRoute ) );
 					}
 				},
 				( error: Error ) => {
@@ -119,14 +121,14 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 		return translate(
-			"Transfer {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
+			"Connect {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
 			translateArgs
 		);
 	}
 
 	render() {
 		const { selectedSite, selectedDomainName, currentRoute, translate } = this.props;
-		const { slug } = selectedSite;
+		const slug = selectedSite?.slug;
 		const componentClassName = 'transfer-domain-to-other-site';
 		if ( ! this.isDataReady() ) {
 			return (
@@ -148,7 +150,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				<FormattedHeader
 					hasScreenOptions={ false }
 					brandFont
-					headerText={ translate( 'Transfer to another WordPress.com site' ) }
+					headerText={ translate( 'Connect to another WordPress.com site' ) }
 					align="left"
 				/>
 				<div className={ `${ componentClassName }__container` }>
@@ -163,23 +165,29 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
+				href: domainManagementList(
+					selectedSite?.slug,
+					selectedDomainName,
+					selectedSite?.options?.is_domain_only
+				),
 			},
 			{
 				label: selectedDomainName,
-				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
-				label: translate( 'Transfer' ),
-				href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+				label: translate( 'Connect' ),
+				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{ label: translate( 'To another WordPress.com site' ) },
 		];
 
 		const mobileItem = {
 			label: translate( 'Back to Transfer' ),
-			href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -240,7 +248,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 }
 
 export default connect(
-	( state, ownProps: TransferDomainToOtherSitePassedProps ) => {
+	( state: IAppState, ownProps: TransferDomainToOtherSitePassedProps ) => {
 		let domain;
 		if ( ! ownProps.isRequestingSiteDomains ) {
 			domain = getSelectedDomain( ownProps );

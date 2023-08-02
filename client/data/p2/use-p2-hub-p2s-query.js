@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -10,9 +10,9 @@ const useP2HubP2sQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	// For sites that are not P2 Hubs, we don't need to make the query.
 	const requestUnnecessary = ! isWPForTeamsSite || ! isP2Hub;
 
-	return useQuery(
-		[ 'p2-hub-p2s', siteId, fetchOptions ],
-		() =>
+	return useQuery( {
+		queryKey: [ 'p2-hub-p2s', siteId, fetchOptions ],
+		queryFn: () =>
 			wpcom.req.get(
 				{
 					path: `/p2/workspace/sites/all`,
@@ -23,12 +23,10 @@ const useP2HubP2sQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 					...fetchOptions,
 				}
 			),
-		{
-			...queryOptions,
-			enabled: !! siteId && ! requestUnnecessary,
-			retryDelay: 3000,
-		}
-	);
+		...queryOptions,
+		enabled: !! siteId && ! requestUnnecessary,
+		retryDelay: 3000,
+	} );
 };
 
 export default useP2HubP2sQuery;

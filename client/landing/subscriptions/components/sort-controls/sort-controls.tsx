@@ -4,13 +4,16 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useMemo } from 'react';
 import './styles.scss';
 
-export type Option = {
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
+export type Option< T > = {
 	label: string;
-	value: string;
+	value: T;
 };
 
 type SortControlsProps< T > = {
-	options: Option[];
+	options: Option< T >[];
 	value: T;
 	onChange: ( sortOrder: T ) => void;
 };
@@ -25,6 +28,10 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 		() => options.find( ( option ) => option.value === value )?.label,
 		[ options, value ]
 	);
+
+	if ( ! sortingLabel ) {
+		throw new Error( 'In SortControl, props.value must exist in props.options.' );
+	}
 
 	return (
 		<Dropdown
@@ -59,6 +66,7 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 							onClose();
 						} }
 						choices={ options }
+						onHover={ noop }
 					/>
 				</NavigableMenu>
 			) }

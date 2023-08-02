@@ -10,24 +10,31 @@ import {
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
-import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
+import {
+	Icon,
+	page as pageIcon,
+	arrowRight,
+	chevronRight,
+	external as externalIcon,
+} from '@wordpress/icons';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDebounce } from 'use-debounce';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
+import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
-interface SearchResultsSection {
+interface SearchResultsSectionProps {
 	type: string;
 	title: string;
 	results: SearchResult[];
@@ -73,7 +80,7 @@ const filterManagePurchaseLink = ( hasPurchases: boolean, isPurchasesSection: bo
 	) => article.post_id !== 111349;
 };
 
-interface HelpSearchResults {
+interface HelpSearchResultsProps {
 	externalLinks?: boolean;
 	onSelect: (
 		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
@@ -94,7 +101,7 @@ function HelpSearchResults( {
 	placeholderLines,
 	openAdminInNewTab = false,
 	location = 'inline-help-popover',
-}: HelpSearchResults ) {
+}: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
 
 	const { hasPurchases, sectionName, adminResults } = useSelector( ( state ) => {
@@ -117,7 +124,15 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery, locale );
+
+	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
+
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
+		debouncedQuery,
+		locale,
+		{},
+		sectionName
+	);
 
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
@@ -147,7 +162,7 @@ function HelpSearchResults( {
 		result: SearchResult,
 		type: string
 	) => {
-		const { link } = result;
+		const { link, post_id, blog_id, source } = result;
 		// check and catch admin section links.
 		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
@@ -170,10 +185,29 @@ function HelpSearchResults( {
 			return;
 		}
 
+		dispatch(
+			recordTracksEvent( 'calypso_inlinehelp_article_select', {
+				link,
+				post_id,
+				blog_id,
+				source,
+				search_term: searchQuery,
+				location,
+				section: sectionName,
+			} )
+		);
+
 		onSelect( event, result );
 	};
 
-	const renderHelpLink = ( result: SearchResult, type: string, index: number ) => {
+	type HelpLinkProps = {
+		result: SearchResult;
+		type: string;
+		index: number;
+	};
+
+	const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
+		const { result, type, index } = props;
 		const { link, title, icon } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
@@ -209,6 +243,11 @@ function HelpSearchResults( {
 						>
 							<LinkIcon />
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
+							<Icon
+								width={ 20 }
+								height={ 20 }
+								icon={ result.post_id ? chevronRight : externalIcon }
+							/>
 						</a>
 					</div>
 				</li>
@@ -221,7 +260,7 @@ function HelpSearchResults( {
 		title,
 		results,
 		condition,
-	}: SearchResultsSection ) => {
+	}: SearchResultsSectionProps ) => {
 		const id = `inline-search--${ type }`;
 
 		return condition ? (
@@ -231,8 +270,18 @@ function HelpSearchResults( {
 						{ title }
 					</h3>
 				) : null }
-				<ul className="help-center-search-results__list" aria-labelledby={ title ? id : undefined }>
-					{ results.map( ( result, index ) => renderHelpLink( result, type, index ) ) }
+				<ul
+					className="help-center-search-results__list help-center-articles__list"
+					aria-labelledby={ title ? id : undefined }
+				>
+					{ results.map( ( result, index ) => (
+						<HelpLink
+							key={ `${ id }-${ index }` }
+							result={ result }
+							type={ type }
+							index={ index }
+						/>
+					) ) }
 				</ul>
 			</Fragment>
 		) : null;

@@ -1,14 +1,57 @@
-import { LANDSCAPE_MODE, PORTRAIT_MODE } from './constants';
+import type { SectionHeadingProps } from './shared/section-heading';
 
-export type ImageMode = typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE;
-
-export type PreviewProps = {
+export interface SocialPreviewBaseProps {
+	/**
+	 * The URL of the post/page to preview.
+	 */
 	url: string;
+
+	/**
+	 * The title of the post/page to preview.
+	 */
 	title: string;
-	description?: string;
-	customText?: string;
+
+	/**
+	 * The description of the post/page to preview.
+	 */
+	description: string;
+
+	/**
+	 * The URL of the image to use in the post/page preview.
+	 */
 	image?: string;
-	customImage?: string;
-	headingsLevel?: number;
-	imageMode?: ImageMode;
+}
+
+export interface SocialPreviewsBaseProps {
+	/**
+	 * The heading level to use for the preview section title
+	 */
+	headingLevel?: SectionHeadingProps[ 'level' ];
+
+	/**
+	 * Whether to hide the "Your post" section
+	 */
+	hidePostPreview?: boolean;
+
+	/**
+	 * Whether to hide the "Link preview" section
+	 */
+	hideLinkPreview?: boolean;
+}
+
+export type MediaItem = {
+	/**
+	 * The alt text for the image.
+	 */
+	alt?: string;
+
+	/**
+	 * The mime type of the media
+	 */
+	type: string;
+
+	/**
+	 * The URL of the media.
+	 */
+	url: string;
 };

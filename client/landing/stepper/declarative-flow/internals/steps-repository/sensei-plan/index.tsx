@@ -2,9 +2,10 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,15 +13,17 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepError } from '../components/sensei-step-error';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
 import { PlansIntervalToggle } from './components';
-import { features, Status } from './constants';
+import { useFeatures, Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { NewSiteBlogDetails, OnboardSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -30,7 +33,9 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< PlanBillingPeriod >( 'ANNUALLY' );
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
 	const locale = useLocale();
-	const { hasTranslation } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const translate = useTranslate();
+	const features = useFeatures();
 
 	const domain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
@@ -47,11 +52,10 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const { createAndConfigureSite, progress } = useCreateSenseiSite();
 
 	const createCheckoutCart = useCallback(
-		async ( site ) => {
-			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( site?.site_slug as string );
+		async ( site?: NewSiteBlogDetails ) => {
+			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( site?.site_slug ?? '' );
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const productsToAdd: any[] = [
+			const productsToAdd: MinimalRequestCartProduct[] = [
 				{
 					product_slug: businessPlan.productSlug,
 					extra: {
@@ -69,7 +73,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			if ( domain && domain.product_slug ) {
 				const registration = domainRegistration( {
 					domain: domain.domain_name,
-					productSlug: domain.product_slug as string,
+					productSlug: domain.product_slug,
 					extra: { privacy_available: domain.supports_privacy },
 				} );
 
@@ -105,7 +109,6 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const currencyCode = senseiProPlan.currencyCode;
 	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
 	const price = businessPlan.price + senseiProPlan.price;
-	const priceStr = formatCurrency( price, currencyCode, { stripZeros: true } );
 	const monthlyPrice = businessPlan.monthlyPrice + senseiProPlan.monthlyPrice;
 	const annualPrice = businessPlan.yearlyPrice + senseiProPlan.yearlyPrice;
 	const annualPriceStr = formatCurrency( annualPrice, currencyCode, { stripZeros: true } );
@@ -125,8 +128,12 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			? sprintf( newPlanItemPriceLabelAnnually, annualPriceStr )
 			: fallbackPlanItemPriceLabelAnnually;
 
-	const planItemPriceLabelMonthly = __( 'per month, billed monthly' );
-	const title = __( 'Sensei Pro Bundle' );
+	const planItemPriceLabelMonthly = sprintf(
+		// translators: %s is the annual savings
+		__( 'Save %s by paying annually' ),
+		annualSavingsStr
+	);
+	const title = __( 'Sensei Bundle' );
 
 	return (
 		<SenseiStepContainer
@@ -135,7 +142,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			formattedHeader={
 				status === Status.Initial && (
 					<FormattedHeader
-						headerText={ __( 'Choose Monthly or Annually' ) }
+						headerText={ __( "There's a plan for you." ) }
 						subHeaderText={ __(
 							'Sensei + WooCommerce + Jetpack + WordPress.com in the ultimate Course Bundle'
 						) }
@@ -152,49 +159,58 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 						maxMonthlyDiscountPercentage={ annualDiscount }
 					/>
 
-					<div
-						className={ classnames( 'plan-item plan-item--sensei', {
-							'plan-item--is-loading': isLoading,
-						} ) }
-					>
-						<div tabIndex={ 0 } role="button" className="plan-item__summary">
-							<div className="plan-item__heading">
-								<div className="plan-item__name">{ title }</div>
-							</div>
-							<div className="plan-item__price">
-								<div className="plan-item__price-amount">{ ! isLoading && priceStr }</div>
-							</div>
-						</div>
-						<div className="plan-item__price-note">
-							{ ! isLoading && billingPeriod === 'ANNUALLY'
-								? planItemPriceLabelAnnually
-								: planItemPriceLabelMonthly }
-						</div>
+					<div className="plan-item-wrapper">
 						<div
-							className={ classnames( 'plan-item__price-discount', {
-								'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
+							className={ classnames( 'plan-item plan-item--sensei', {
+								'plan-item--is-loading': isLoading,
 							} ) }
 						>
-							{ ! isLoading &&
-								sprintf(
-									// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
-									__( `You're saving %s by paying annually` ),
-									annualSavingsStr
-								) }
+							<div tabIndex={ 0 } role="button" className="plan-item__summary">
+								<div className="plan-item__heading">
+									<div className="plan-item__name">{ title }</div>
+								</div>
+								<div className="plan-item__price">
+									{ ! isLoading && (
+										<PlanPrice rawPrice={ price ?? undefined } currencyCode={ currencyCode } />
+									) }
+								</div>
+							</div>
+							<div className="plan-item__price-note">
+								{ ! isLoading && billingPeriod === 'ANNUALLY'
+									? planItemPriceLabelAnnually
+									: planItemPriceLabelMonthly }
+							</div>
 						</div>
+						<PlanItem
+							allPlansExpanded
+							slug="business"
+							domain={ domain }
+							CTAVariation="NORMAL"
+							features={ features }
+							billingPeriod={ billingPeriod }
+							name={ title }
+							onSelect={ onPlanSelect }
+							onPickDomainClick={ goToDomainStep }
+							CTAButtonLabel={ __( 'Get Sensei Pro Bundle' ) }
+						/>
 					</div>
-					<PlanItem
-						allPlansExpanded
-						slug="business"
-						domain={ domain }
-						CTAVariation="NORMAL"
-						features={ features }
-						billingPeriod={ billingPeriod }
-						name={ title }
-						onSelect={ onPlanSelect }
-						onPickDomainClick={ goToDomainStep }
-						CTAButtonLabel={ __( 'Get Sensei Pro Bundle' ) }
-					/>
+
+					<footer className="footer">
+						<p>
+							{ translate( 'Hosting by {{a}}WordPress.com{{/a}}', {
+								components: {
+									a: <a href="https://wordpress.com/" target="_blank" rel="noreferrer" />,
+								},
+							} ) }
+						</p>
+						<p>
+							{ translate( 'Course creation and LMS tools powered by {{a}}SenseiLMS.com{{/a}}', {
+								components: {
+									a: <a href="https://senseilms.com/" target="_blank" rel="noreferrer" />,
+								},
+							} ) }
+						</p>
+					</footer>
 				</>
 			) }
 			{ status === Status.Bundling && <SenseiStepProgress progress={ progress } /> }

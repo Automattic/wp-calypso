@@ -1,10 +1,9 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { onboardingUrl } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/url';
+import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -21,19 +20,14 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 		dispatch( recordTracksEvent( event ) );
 	}, [ dispatch ] );
 
+	const addNewSiteUrl = useAddNewSiteUrl( {
+		ref: 'site-selector',
+		source: isJetpackCloud() ? 'jetpack-cloud' : 'my-home',
+		siteSlug,
+	} );
+
 	return (
-		<Button
-			primary
-			href={ addQueryArgs(
-				{
-					ref: 'calypso-selector',
-					source: 'my-home',
-					siteSlug,
-				},
-				onboardingUrl()
-			) }
-			onClick={ recordAddNewSite }
-		>
+		<Button primary href={ addNewSiteUrl } onClick={ recordAddNewSite }>
 			{ translate( 'Add new site' ) }
 		</Button>
 	);

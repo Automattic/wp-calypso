@@ -1,8 +1,11 @@
-import { DOMAIN_UPSELL_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import {
+	DOMAIN_UPSELL_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	ONBOARDING_PM_FLOW,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -17,6 +20,7 @@ import {
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useQuery } from '../../../../hooks/use-query';
@@ -196,7 +200,7 @@ export function DomainFormControl( {
 			return false;
 		}
 
-		return [ DOMAIN_UPSELL_FLOW ].includes( flow );
+		return [ DOMAIN_UPSELL_FLOW, ONBOARDING_PM_FLOW ].includes( flow );
 	};
 
 	const renderDomainForm = () => {

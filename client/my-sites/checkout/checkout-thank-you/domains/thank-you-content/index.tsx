@@ -1,8 +1,8 @@
 import { translate } from 'i18n-calypso';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
-import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
-import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
-import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
+import domainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
+import domainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
+import domainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagementInbox,
@@ -17,9 +17,9 @@ import type {
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
 const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGetter > = {
-	MAPPING: DomainMappingProps,
-	TRANSFER: DomainTransferProps,
-	REGISTRATION: DomainRegistrationThankYouProps,
+	MAPPING: domainMappingProps,
+	TRANSFER: domainTransferProps,
+	REGISTRATION: domainRegistrationThankYouProps,
 };
 
 export default thankYouContentGetter;
@@ -64,7 +64,10 @@ export function buildDomainStepForProfessionalEmail(
 		hideProfessionalEmailStep,
 		selectedSiteSlug,
 		domain,
-	}: DomainThankYouParams,
+	}: Pick<
+		DomainThankYouParams,
+		'email' | 'hasProfessionalEmail' | 'hideProfessionalEmailStep' | 'selectedSiteSlug' | 'domain'
+	>,
 	domainType: DomainThankYouType,
 	primary: boolean
 ): ThankYouNextStepProps | null {
@@ -114,6 +117,7 @@ export function buildDomainStepForLaunchpadNextSteps(
 	launchpadScreen: string,
 	selectedSiteSlug: string,
 	domainType: DomainThankYouType,
+	redirectTo: string,
 	primary: boolean
 ): ThankYouNextStepProps | null {
 	if ( launchpadScreen !== 'full' || ! siteIntent || ! selectedSiteSlug ) {
@@ -127,11 +131,13 @@ export function buildDomainStepForLaunchpadNextSteps(
 		),
 		stepCta: (
 			<FullWidthButton
-				onClick={ () =>
-					window.location.replace(
-						`/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`
-					)
-				}
+				onClick={ () => {
+					const redirectUrl =
+						redirectTo === 'home'
+							? `/home/${ selectedSiteSlug }`
+							: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`;
+					window.location.replace( redirectUrl );
+				} }
 				className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 				primary={ primary }
 				busy={ false }

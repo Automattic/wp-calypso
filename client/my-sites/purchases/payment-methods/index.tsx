@@ -1,15 +1,10 @@
 import config from '@automattic/calypso-config';
-import {
-	StripeHookProvider,
-	StripeSetupIntentIdProvider,
-	useStripe,
-} from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
@@ -28,7 +23,9 @@ import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
+import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
@@ -43,7 +40,7 @@ function useLogPaymentMethodsError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_payment_methods',
-					message: error.message + '; Stack: ' + error.stack,
+					message: convertErrorToString( error ),
 				},
 			} );
 		},
@@ -169,9 +166,7 @@ export function SiteLevelAddNewPaymentMethod( props: { siteSlug: string } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
-				<SiteLevelAddNewPaymentMethodForm { ...props } />
-			</StripeSetupIntentIdProvider>
+			<SiteLevelAddNewPaymentMethodForm { ...props } />
 		</StripeHookProvider>
 	);
 }

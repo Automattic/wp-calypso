@@ -237,6 +237,10 @@ describe( 'calculatePlanCredits', () => {
 	} );
 } );
 
+/**
+ * @deprecated these tests are to be removed in favour of the PlanNotice component.
+ * @module calypso/my-sites/plans-features-main/components/plan-notice
+ */
 describe( 'PlanFeatures.renderCreditNotice', () => {
 	const noticeText = 'Foo bar';
 	const baseProps = {

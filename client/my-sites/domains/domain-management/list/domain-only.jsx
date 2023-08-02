@@ -5,19 +5,26 @@ import { connect } from 'react-redux';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
-import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import { domainManagementEdit, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import './domain-only.scss';
 
-const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, translate } ) => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+const DomainOnly = ( {
+	currentRoute,
+	primaryDomain,
+	hasNotice,
+	recordTracks,
+	siteId,
+	slug,
+	translate,
+} ) => {
 	if ( ! primaryDomain ) {
 		return (
 			<div>
@@ -29,8 +36,6 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 
 	const hasEmailWithUs = hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain );
 	const domainName = primaryDomain.name;
-	const canCreateSite = canCurrentUserCreateSiteFromDomainOnly( primaryDomain );
-	const createSiteUrl = createSiteFromDomainOnly( slug, siteId );
 
 	const recordEmailClick = () => {
 		const tracksName = hasEmailWithUs
@@ -45,14 +50,8 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 		<div>
 			<EmptyContent
 				title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
-				line={
-					canCreateSite &&
-					translate( 'Start a site now to unlock everything WordPress.com can offer.' )
-				}
-				action={ canCreateSite && translate( 'Create site' ) }
-				actionURL={ canCreateSite && createSiteUrl }
-				secondaryAction={ translate( 'Manage domain' ) }
-				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
+				action={ translate( 'Manage domain' ) }
+				actionURL={ domainManagementEdit( slug, domainName, currentRoute ) }
 				illustration={ Illustration }
 			>
 				<Button
@@ -86,6 +85,7 @@ DomainOnly.propTypes = {
 export default connect(
 	( state, ownProps ) => {
 		return {
+			currentRoute: getCurrentRoute( state ),
 			slug: getSiteSlug( state, ownProps.siteId ),
 			primaryDomain: getPrimaryDomainBySiteId( state, ownProps.siteId ),
 		};

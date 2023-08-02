@@ -16,13 +16,13 @@ const request =
 		dispatch( requestProductsList( props ) );
 	};
 
-export function useQueryProductsList( { type = 'all', persist } = {} ) {
+export function useQueryProductsList( { type = 'all', currency, persist } = {} ) {
 	const dispatch = useDispatch();
 
 	// Only runs on mount.
 	useEffect( () => {
-		dispatch( request( { type, persist } ) );
-	}, [ dispatch, type, persist ] );
+		dispatch( request( { type, currency, persist } ) );
+	}, [ dispatch, type, persist, currency ] );
 
 	return null;
 }
@@ -32,9 +32,10 @@ export function useQueryProductsList( { type = 'all', persist } = {} ) {
  * @param {Object} props 			The list of component props.
  * @param {string} [props.type] 	The type of products to request:
  *									"jetpack" for Jetpack products only, or undefined for all products.
+ * @param {string} [props.currency] The currency code to override the currency used on the account.
  * @param {boolean} [props.persist] Set to true to persist the products list in the store.
  * @returns {null} 					No visible output.
  */
-export default function QueryProductsList( { type = 'all', persist } ) {
-	return useQueryProductsList( { type, persist } );
+export default function QueryProductsList( { type = 'all', currency, persist } ) {
+	return useQueryProductsList( { type, currency, persist } );
 }

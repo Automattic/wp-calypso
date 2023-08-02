@@ -1,5 +1,5 @@
+import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import { stringify } from 'qs';
-import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { StarterDesigns } from './types';
 import type {
@@ -9,13 +9,12 @@ import type {
 	SoftwareSet,
 	StyleVariation,
 	PreviewData,
+	DesignType,
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
 	seed?: string;
 	_locale: string;
-	include_virtual_designs?: boolean;
-	include_pattern_virtual_designs?: boolean;
 }
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
@@ -39,13 +38,16 @@ interface StarterDesign {
 	software_sets?: SoftwareSet[];
 	is_virtual: boolean;
 	preview_data: PreviewData | null;
+	design_type?: DesignType;
 }
 
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
 	{ select, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
-	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
+	return useQuery( {
+		queryKey: [ 'starter-designs', queryParams ],
+		queryFn: () => fetchStarterDesigns( queryParams ),
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
 				filters: {
@@ -83,6 +85,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		style_variations,
 		software_sets,
 		preview_data,
+		design_type,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -101,7 +104,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		is_bundled_with_woo_commerce,
 		price,
 		software_sets,
-		design_type: is_premium ? 'premium' : 'standard',
+		design_type: design_type ?? ( is_premium ? 'premium' : 'standard' ),
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
 		...( preview_data && { preview_data } ),

@@ -17,8 +17,7 @@ export default function () {
 		page(
 			'/help/contact',
 			helpController.loggedOut,
-			sidebar,
-			helpController.contact,
+			helpController.contactRedirect,
 			makeLayout,
 			clientRender
 		);
@@ -32,4 +31,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/me/chat', sidebar, helpController.contactRedirect, makeLayout, clientRender );
 }

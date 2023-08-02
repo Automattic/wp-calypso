@@ -1,8 +1,8 @@
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
-import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import getIsRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';

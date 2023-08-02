@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { IAppState } from 'calypso/state/types';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import ProxiedImage, { ProxiedImageProps, RenderedComponent } from './proxied-image';
@@ -15,9 +17,9 @@ export interface MediaFileProps extends Omit< ProxiedImageProps, 'placeholder' >
 	component: RenderedComponent;
 	proxiedComponent?: RenderedComponent;
 
-	onLoad: () => any;
-	useProxy: boolean;
-	dispatch: any;
+	onLoad?: () => void;
+	useProxy?: boolean;
+	dispatch?: Dispatch;
 }
 
 const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
@@ -28,9 +30,9 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	useProxy = false,
 	placeholder = null,
 	maxSize,
-	dispatch,
-	component: Component,
+	component: Component = 'img',
 	proxiedComponent,
+	dispatch, // Destructure to avoid passing to children
 	...rest
 } ) {
 	if ( useProxy ) {
@@ -47,22 +49,16 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 		);
 	}
 
-	/* eslint-disable-next-line jsx-a11y/alt-text */
 	return <Component src={ src } { ...rest } />;
 };
 
-MediaFile.defaultProps = {
-	placeholder: null,
-	component: 'img',
-};
-
-export default connect( ( state, { src }: Pick< MediaFileProps, 'src' > ) => {
+export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src' > ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state ) as string;
 	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
 	const isPrivate = !! isPrivateSite( state, siteId ?? 0 );
 	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-	const useProxy = ( isAtomic && isPrivate && filePath && isRelativeToSiteRoot ) as boolean;
+	const useProxy = Boolean( isAtomic && isPrivate && filePath && isRelativeToSiteRoot );
 
 	return {
 		query,

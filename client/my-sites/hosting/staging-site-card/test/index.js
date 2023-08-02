@@ -9,7 +9,6 @@ import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { StagingSiteCard } from '..';
-import { useHasSiteAccess } from '../use-has-site-access';
 
 const addStagingSiteBtnName = 'Add staging site';
 const manageStagingBtnName = 'Manage staging site';
@@ -28,9 +27,9 @@ jest.mock( 'react-redux', () => ( {
 	useDispatch: () => mockUseDispatch,
 } ) );
 
-jest.mock( 'react-query', () => ( {
+jest.mock( '@tanstack/react-query', () => ( {
 	__esModule: true,
-	...jest.requireActual( 'react-query' ),
+	...jest.requireActual( '@tanstack/react-query' ),
 	useQueryClient: () => ( {
 		invalidateQueries: jest.fn(),
 	} ),
@@ -86,11 +85,6 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-site', () => 
 	useStagingSite: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-has-site-access', () => ( {
-	__esModule: true,
-	useHasSiteAccess: jest.fn( () => true ),
-} ) );
-
 const defaultProps = {
 	disabled: false,
 	siteId: 1,
@@ -118,7 +112,11 @@ describe( 'StagingSiteCard component', () => {
 	it( 'shows a loading state when we still loading.', () => {
 		useStagingSite.mockReturnValue( { data: null, isLoading: true } );
 
-		render( <StagingSiteCard { ...defaultProps } /> );
+		render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 		expect( useStagingSite ).toHaveBeenCalledWith( defaultProps.siteId, {
 			enabled: true,
 			onError: expect.any( Function ),
@@ -130,14 +128,18 @@ describe( 'StagingSiteCard component', () => {
 	it( 'shows the add staging buttons, if we dont have any staging sites', () => {
 		useStagingSite.mockReturnValue( { data: [], isLoading: false } );
 
-		render( <StagingSiteCard { ...defaultProps } /> );
+		render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		expect( screen.getByText( addStagingSiteBtnName ) ).toBeVisible();
 	} );
 
 	it( 'shows the manage staging site button, in case we have one available', () => {
 		useStagingSite.mockReturnValue( {
-			data: [ { id: 2, url: 'https://staging.example.com' } ],
+			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: true } ],
 			isLoading: false,
 		} );
 		useCheckStagingSiteStatus.mockReturnValue( 'complete' );
@@ -153,7 +155,7 @@ describe( 'StagingSiteCard component', () => {
 
 	it( 'shows transferring message when we creating a staging site', async () => {
 		useStagingSite.mockReturnValue( {
-			data: [ { id: 2, url: 'https://staging.example.com' } ],
+			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: true } ],
 			isLoading: false,
 		} );
 
@@ -181,12 +183,20 @@ describe( 'StagingSiteCard component', () => {
 	it( 'shows quota exceeded error message', async () => {
 		useStagingSite.mockReturnValue( { data: [], isLoading: false } );
 
-		const { rerender } = render( <StagingSiteCard { ...defaultProps } /> );
+		const { rerender } = render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		expect( screen.queryByTestId( 'quota-message' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( addStagingSiteBtnName ) ).not.toBeDisabled();
 		useHasValidQuotaQuery.mockReturnValueOnce( { data: false } );
-		rerender( <StagingSiteCard { ...defaultProps } /> );
+		rerender(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		expect( screen.getByTestId( 'quota-message' ) ).toBeVisible();
 	} );
@@ -198,7 +208,11 @@ describe( 'StagingSiteCard component', () => {
 			isLoading: false,
 		} );
 
-		render( <StagingSiteCard { ...defaultProps } /> );
+		render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		fireEvent.click( screen.getByText( addStagingSiteBtnName ) );
 		expect( useAddStagingSiteMutation().addStagingSite ).toHaveBeenCalled();
@@ -207,8 +221,15 @@ describe( 'StagingSiteCard component', () => {
 	} );
 
 	it( 'show access site error', () => {
-		useHasSiteAccess.mockReturnValue( false );
-		render( <StagingSiteCard { ...defaultProps } /> );
+		useStagingSite.mockReturnValue( {
+			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: false } ],
+			isLoading: false,
+		} );
+		render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 		expect( screen.queryByTestId( 'staging-sites-access-message' ) ).toBeVisible();
 		expect( screen.queryByText( addStagingSiteBtnName ) ).not.toBeInTheDocument();
 	} );

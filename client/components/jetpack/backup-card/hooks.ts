@@ -1,9 +1,9 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useSelector } from 'calypso/state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';

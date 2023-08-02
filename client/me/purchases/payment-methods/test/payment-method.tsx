@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import PaymentMethodList from '../payment-method-list';

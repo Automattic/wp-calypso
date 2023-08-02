@@ -1,11 +1,8 @@
 import { JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { TranslateResult, translate } from 'i18n-calypso';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-import type { ReactChild } from 'react';
-
-type TranslateReturnType = ReactChild | string;
 
 export interface CancellationReasonBase {
 	/**
@@ -16,7 +13,7 @@ export interface CancellationReasonBase {
 	/**
 	 * A string that will be displayed to the user.
 	 */
-	label: TranslateReturnType;
+	label: TranslateResult;
 
 	/**
 	 * Whether this option is disabled.
@@ -28,7 +25,7 @@ export interface CancellationReason extends CancellationReasonBase {
 	/**
 	 * placeholder text for the additional input
 	 */
-	textPlaceholder?: TranslateReturnType;
+	textPlaceholder?: TranslateResult;
 
 	/**
 	 * Default value for the sub category select
@@ -38,7 +35,7 @@ export interface CancellationReason extends CancellationReasonBase {
 	/**
 	 * Default label for the sub category select
 	 */
-	selectLabel?: TranslateReturnType;
+	selectLabel?: TranslateResult;
 
 	/**
 	 * Options for the sub category select

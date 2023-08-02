@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import ProgressEvent from 'progress-event';
 import { v4 as uuidv4 } from 'uuid';
 import WPError from 'wp-error';
 
@@ -12,11 +11,6 @@ const debug = debugFactory( 'wpcom-proxy-request' );
  * WordPress.com REST API base endpoint.
  */
 const proxyOrigin = 'https://public-api.wordpress.com';
-
-/**
- * "Origin" of the current HTML page.
- */
-const origin = window.location.protocol + '//' + window.location.host;
 
 let onStreamRecord = null;
 
@@ -83,14 +77,6 @@ let buffered;
 const requests = {};
 
 /**
- * Are HTML5 XMLHttpRequest2 "progress" events supported?
- * See: http://goo.gl/xxYf6D
- */
-const supportsProgress = !! window.ProgressEvent && !! window.FormData;
-
-debug( 'using "origin": %o', origin );
-
-/**
  * Performs a "proxied REST API request". This happens by calling
  * `iframe.postMessage()` on the proxy iframe instance, which from there
  * takes care of WordPress.com user authentication (via the currently
@@ -115,7 +101,7 @@ const makeRequest = ( originalParams, fn ) => {
 	params.callback = id;
 	params.supports_args = true; // supports receiving variable amount of arguments
 	params.supports_error_obj = true; // better Error object info
-	params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
+	params.supports_progress = true; // supports receiving XHR "progress" events
 
 	// force uppercase "method" since that's what the <iframe> is expecting
 	params.method = String( params.method || 'GET' ).toUpperCase();
@@ -221,6 +207,22 @@ export function requestAllBlogsAccess() {
  */
 
 function submitRequest( params ) {
+	// Sometimes the `iframe.contentWindow` is `null` even though the `iframe` has been correctly
+	// loaded. Can happen when some other buggy script removes it from the document.
+	if ( ! iframe.contentWindow ) {
+		debug( 'proxy iframe is not present in the document' );
+		// Look up the issuing XHR request and make it fail
+		const id = params.callback;
+		const xhr = requests[ id ];
+		delete requests[ id ];
+		reject(
+			xhr,
+			WPError( { status_code: 500, error_description: 'proxy iframe element is not loaded' } ),
+			{}
+		);
+		return;
+	}
+
 	debug( 'sending API request to proxy <iframe> %o', params );
 
 	// `formData` needs to be patched if it contains `File` objects to work around
@@ -307,6 +309,9 @@ function install() {
 
 	// create the <iframe>
 	iframe = document.createElement( 'iframe' );
+
+	const origin = window.location.origin;
+	debug( 'using "origin": %o', origin );
 
 	// set `src` and hide the iframe
 	iframe.src = proxyOrigin + '/wp-admin/rest-proxy/?v=2.0#' + origin;
@@ -472,7 +477,7 @@ function onprogress( data ) {
 	debug( 'got "progress" event: %o', data );
 	const xhr = requests[ data.callbackId ];
 	if ( xhr ) {
-		const prog = new ProgressEvent( 'progress', data );
+		const prog = new window.ProgressEvent( 'progress', data );
 		const target = data.upload ? xhr.upload : xhr;
 		target.dispatchEvent( prog );
 	}
@@ -486,7 +491,7 @@ function onprogress( data ) {
  */
 
 function resolve( xhr, body, headers ) {
-	const e = new ProgressEvent( 'load' );
+	const e = new window.ProgressEvent( 'load' );
 	e.data = e.body = e.response = body;
 	e.headers = headers;
 	xhr.dispatchEvent( e );
@@ -500,7 +505,7 @@ function resolve( xhr, body, headers ) {
  */
 
 function reject( xhr, err, headers ) {
-	const e = new ProgressEvent( 'error' );
+	const e = new window.ProgressEvent( 'error' );
 	e.error = e.err = err;
 	e.headers = headers;
 	xhr.dispatchEvent( e );

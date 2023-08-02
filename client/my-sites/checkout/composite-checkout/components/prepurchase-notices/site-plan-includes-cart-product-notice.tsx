@@ -1,7 +1,7 @@
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
 import type { Product } from '@automattic/calypso-products';

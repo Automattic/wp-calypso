@@ -1,6 +1,14 @@
 # Release Notes
 
-## Unreleased
+## 3.1.1
+
+- Republish unbuilt version.
+
+## 3.1.0
+
+- Updated colors for checkout.
+- Added a new color for Nextdoor.
+- Added `root-only` entry point.
 
 ## 3.0.0
 

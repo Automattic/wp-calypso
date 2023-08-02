@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { baseDomain, firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
-import { CardProps } from './types';
+import { TwitterCardProps } from './types';
 
 const DESCRIPTION_LENGTH = 200;
 
@@ -9,16 +9,17 @@ const twitterDescription = firstValid(
 	hardTruncation( DESCRIPTION_LENGTH )
 );
 
-export const Card: React.FC< CardProps > = ( { card } ) => {
-	if ( ! card ) {
-		return null;
-	}
-
-	const { description, image, title, type, url } = card;
-
-	const cardClassNames = classnames( `twitter-preview__card-${ type }`, {
+export const Card: React.FC< TwitterCardProps > = ( {
+	description,
+	image,
+	title,
+	cardType,
+	url,
+} ) => {
+	const cardClassNames = classnames( `twitter-preview__card-${ cardType }`, {
 		'twitter-preview__card-has-image': !! image,
 	} );
+
 	return (
 		<div className="twitter-preview__card">
 			<div className={ cardClassNames }>

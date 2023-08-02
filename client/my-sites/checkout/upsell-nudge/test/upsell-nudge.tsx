@@ -7,11 +7,11 @@ import {
 	getEmptyResponseCart,
 	ShoppingCartProvider,
 } from '@automattic/shopping-cart';
-import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import page from 'page';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { mockCartEndpoint } from 'calypso/my-sites/checkout/composite-checkout/test/util';
 import { createReduxStore } from 'calypso/state';
@@ -343,7 +343,10 @@ describe( 'UpsellNudge', () => {
 		);
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
 		expect( screen.findByText( mockProducts.wp_titan_mail_monthly.product_name ) ).toNeverAppear();
-		expect( page ).toHaveBeenCalledWith( `/checkout/example.com` );
+		await waitFor( () => {
+			expect( page ).toHaveBeenCalledWith( `/checkout/example.com` );
+		} );
+
 		expect(
 			shoppingCartClient
 				.forCartKey( siteId )

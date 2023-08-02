@@ -53,6 +53,11 @@ export function requestThemes( siteId, query = {}, locale ) {
 							// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
 							// User can be redirected to PatternAssembler flow using the PatternAssemblerCTA on theme-list
 							include_blankcanvas_theme: null,
+							// Include retired themes when searching. This is useful when a theme exists in both wpcom and wporg.
+							// The theme will show up in the theme listing as wporg, but it cannot be activated
+							// since it's a retired wpcom theme (take precedence).
+							// See: https://github.com/Automattic/wp-calypso/pull/78231
+							...( query.search && !! query.search.length ? { retired: true } : null ),
 						},
 						locale ? { locale } : null
 					)

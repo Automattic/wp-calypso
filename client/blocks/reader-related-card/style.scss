@@ -410,6 +410,7 @@
 .reader-related-card__meta.is-placeholder {
 	.reader-related-card__byline-author,
 	.reader-related-card__byline-site {
+		width: 100%;
 		@include placeholder();
 
 		// Clobber the long-content-fade

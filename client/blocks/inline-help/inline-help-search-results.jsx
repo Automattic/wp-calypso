@@ -13,7 +13,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
+import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -67,6 +67,7 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(
@@ -74,9 +75,15 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
 
-	const searchResults = searchData?.wordpress_support_links ?? [];
+	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery(
+		searchQuery,
+		'',
+		{},
+		sectionName
+	);
+
+	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {

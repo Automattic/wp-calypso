@@ -79,9 +79,9 @@ export interface UseStripeJs {
 }
 
 export type GetStripeConfigurationArgs = { country?: string };
-export type GetStripeSetupIntentId = ( requestArgs: {
-	needs_intent?: boolean;
-} ) => Promise< { setup_intent_id: StripeSetupIntentId | undefined } >;
+export type GetStripeSetupIntentId = () => Promise< {
+	setup_intent_id: StripeSetupIntentId | undefined;
+} >;
 export type GetStripeConfiguration = (
 	requestArgs: GetStripeConfigurationArgs & { needs_intent?: boolean }
 ) => Promise< StripeConfiguration & { setup_intent_id: StripeSetupIntentId | undefined } >;
@@ -424,8 +424,6 @@ function useStripeConfiguration(
 	return { stripeConfiguration, stripeConfigurationError };
 }
 
-const setupIntentRequestArgs = { needs_intent: true };
-
 /**
  * React custom Hook for loading a Stripe setup intent id
  *
@@ -435,7 +433,10 @@ const setupIntentRequestArgs = { needs_intent: true };
  * since a Setup Intent may need to be recreated. You can force the
  * configuration to reload by calling `reload()`.
  */
-function useFetchSetupIntentId( fetchStripeConfiguration: GetStripeSetupIntentId ): {
+function useFetchSetupIntentId(
+	fetchStripeSetupIntentId: GetStripeSetupIntentId,
+	{ isDisabled }: { isDisabled?: boolean }
+): {
 	setupIntentId: StripeSetupIntentId | undefined;
 	error: undefined | Error;
 	reload: ReloadSetupIntentId;
@@ -446,9 +447,15 @@ function useFetchSetupIntentId( fetchStripeConfiguration: GetStripeSetupIntentId
 	const reload = useCallback( () => setReloadCount( ( count ) => count + 1 ), [] );
 
 	useEffect( () => {
-		debug( 'loading stripe setup intent id' );
 		let isSubscribed = true;
-		fetchStripeConfiguration( setupIntentRequestArgs )
+		if ( isDisabled ) {
+			debug( 'not loading stripe setup intent id because it is disabled' );
+			return () => {
+				isSubscribed = false;
+			};
+		}
+		debug( 'loading stripe setup intent id' );
+		fetchStripeSetupIntentId()
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
@@ -468,7 +475,7 @@ function useFetchSetupIntentId( fetchStripeConfiguration: GetStripeSetupIntentId
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ stripeReloadCount, fetchStripeConfiguration ] );
+	}, [ stripeReloadCount, fetchStripeSetupIntentId, isDisabled ] );
 	return { setupIntentId, error, reload };
 }
 
@@ -484,11 +491,13 @@ function areRequestArgsEqual(
 
 export function StripeSetupIntentIdProvider( {
 	children,
-	fetchStipeSetupIntentId,
+	fetchStripeSetupIntentId,
+	isDisabled,
 }: PropsWithChildren< {
-	fetchStipeSetupIntentId: GetStripeSetupIntentId;
+	fetchStripeSetupIntentId: GetStripeSetupIntentId;
+	isDisabled?: boolean;
 } > ) {
-	const setupIntentData = useFetchSetupIntentId( fetchStipeSetupIntentId );
+	const setupIntentData = useFetchSetupIntentId( fetchStripeSetupIntentId, { isDisabled } );
 
 	return (
 		<StripeSetupIntentContext.Provider value={ setupIntentData }>

@@ -1,9 +1,9 @@
-@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
 
 $theme-card-info-height: 48px;
 $theme-card-info-margin-top: 16px;
 
-.theme-card {
+.card.theme-card {
 	background: none;
 	border-radius: 2px;
 	box-shadow: none;
@@ -28,18 +28,14 @@ $theme-card-info-margin-top: 16px;
 			margin-top: 0;
 			padding: 8px 24px;
 
-			.theme__more-button,
-			.theme-card__info-options {
+			.theme-card__info-options,
+			.theme-card__info-options .theme__more-button {
 				position: relative;
 			}
 		}
 
 		.theme-card__info-title {
 			color: var(--color-text-inverted);
-
-			&::before {
-				@include long-content-fade( $color: var( --color-primary-rgb ) );
-			}
 		}
 	}
 
@@ -58,7 +54,7 @@ $theme-card-info-margin-top: 16px;
 
 .theme-card__image-container {
 	border: 1px solid rgba(0, 0, 0, 0.1);
-	filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
+	box-shadow: 0 15px 25px rgba(0, 0, 0, 0.05);
 	overflow: hidden;
 	padding-top: 74%;
 	position: relative;
@@ -112,6 +108,7 @@ $theme-card-info-margin-top: 16px;
 		display: block;
 		height: auto;
 		left: 0;
+		min-height: 100%;
 		padding: 0;
 		position: absolute;
 		right: 0;
@@ -220,8 +217,8 @@ $theme-card-info-margin-top: 16px;
 	-webkit-font-smoothing: antialiased;
 
 	&:not(&--has-style-variations) {
-		.theme__more-button,
-		.theme-card__info-options {
+		.theme-card__info-options,
+		.theme-card__info-options .theme__more-button {
 			top: 0;
 		}
 	}
@@ -271,41 +268,7 @@ $theme-card-info-margin-top: 16px;
 	overflow: hidden;
 	position: relative;
 	white-space: nowrap;
-
-	&::before {
-		@include long-content-fade();
-	}
-}
-
-.theme-card__info-pricing {
-	display: flex;
-	flex-basis: 100%;
-	font-size: 0;
-	gap: 10px;
-	line-height: 20px;
-	padding: 0;
-
-	> span {
-		color: var(--color-neutral-60);
-		font-size: $font-body-small;
-		line-height: 20px;
-	}
-
-	.premium-badge,
-	.woocommerce-bundled-badge {
-		margin: 0;
-		vertical-align: middle;
-
-		svg {
-			padding: 0;
-			transform: none;
-			width: auto;
-		}
-	}
-
-	.premium-badge svg {
-		height: auto;
-	}
+	width: 0;
 }
 
 .theme-card__info-style-variations {
@@ -323,8 +286,8 @@ $theme-card-info-margin-top: 16px;
 	}
 }
 
-.theme__more-button,
-.theme-card__info-options {
+.theme-card__info-options,
+.theme-card__info-options .theme__more-button {
 	border: 0;
 	bottom: 0;
 	display: flex;

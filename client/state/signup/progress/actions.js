@@ -25,12 +25,19 @@ function addProvidedDependencies( step, providedDependencies ) {
 	return { ...step, providedDependencies };
 }
 
+// These properties are never recorded in the tracks event for security reasons.
+const EXCLUDED_DEPENDENCIES = [ 'bearer_token', 'token', 'password', 'password_confirm' ];
+
 function recordSubmitStep( flow, stepName, providedDependencies, optionalProps ) {
 	// Transform the keys since tracks events only accept snaked prop names.
 	// And anonymize personally identifiable information.
 	const inputs = reduce(
 		providedDependencies,
 		( props, propValue, propName ) => {
+			if ( EXCLUDED_DEPENDENCIES.includes( propName ) ) {
+				return props;
+			}
+
 			propName = snakeCase( propName );
 
 			if ( stepName === 'from-url' && propName === 'site_preview_image_blob' ) {
@@ -46,6 +53,10 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 
 			// Ensure we don't capture identifiable user data we don't need.
 			if ( propName === 'email' ) {
+				propName = `user_entered_${ propName }`;
+				propValue = !! propValue;
+			}
+			if ( propName === 'username' ) {
 				propName = `user_entered_${ propName }`;
 				propValue = !! propValue;
 			}
@@ -86,6 +97,7 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 	);
 
 	const device = resolveDeviceTypeByViewPort();
+
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
 		flow,
@@ -107,14 +119,19 @@ export function saveSignupStep( step ) {
 	};
 }
 
-export function submitSignupStep( step, providedDependencies ) {
+export function submitSignupStep( step, providedDependencies, optionalProps ) {
 	assertValidDependencies( step.stepName, providedDependencies );
 	return ( dispatch, getState ) => {
 		const lastKnownFlow = getCurrentFlowName( getState() );
 		const lastUpdated = Date.now();
 		const { intent } = getSignupDependencyStore( getState() );
 
-		dispatch( recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, { intent } ) );
+		dispatch(
+			recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, {
+				intent,
+				...optionalProps,
+			} )
+		);
 
 		dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,

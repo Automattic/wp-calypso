@@ -10,19 +10,27 @@
 	margin: 10px 0 0;
 }
 
+.reader-post-actions:not(.has-views) .reader-post-actions__item {
+	&.reader-post-actions__visit {
+		flex: 1;
+	}
+}
+
 .reader-post-actions .reader-post-actions__item {
 	height: 20px;
 	margin-right: 24px;
 
 	&.reader-post-actions__visit {
-		flex: 1;
-
 		.reader-visit-link {
 			align-items: center;
 			box-sizing: border-box;
 			display: flex;
 			gap: 4px;
 		}
+	}
+
+	&.reader-post-actions__views {
+		flex: 1;
 	}
 
 	&:last-child {
@@ -46,5 +54,9 @@
 
 	.follow-button__label {
 		display: none;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-right: 18px;
 	}
 }

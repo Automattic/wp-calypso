@@ -1,20 +1,175 @@
-.promote-post__search-bar-wrapper {
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+$font-sf-pro-display: "SF Pro Display", $sans;
+
+@mixin blazepress-campaign-filter-item {
+	font-family: $font-sf-pro-display;
+	font-size: 0.875rem;
+	font-weight: 500;
+	letter-spacing: 0.16px;
+	line-height: 1.42;
+}
+
+.promote-post-i2__search-bar-wrapper {
 	margin-bottom: 20px;
 	flex-wrap: wrap;
 	display: grid;
-	grid-template-columns: 70% 30%;
+	grid-template-columns: 1fr auto;
 
-	.promote-post__search-bar-dropdown {
-		&.select-dropdown {
-			height: 50px;
+	.promote-post-i2__search-bar-options {
+		display: flex;
+
+		.promote-post-i2__search-bar-dropdown {
+
+			&.select-dropdown {
+				&.order-by .select-dropdown__container {
+					min-width: 200px;
+				}
+				&.post-type .select-dropdown__container {
+					min-width: 160px;
+				}
+			}
+		}
+	}
+
+	.segmented-control {
+		border-radius: 4px;
+		height: 44px;
+
+		.segmented-control__item,
+		&.is-primary .segmented-control__item.is-selected {
+			background-color: var(--studio-gray-0);
 		}
 
-		.select-dropdown__container {
+		.segmented-control__item .segmented-control__link {
+			border: none;
+			height: 34px;
+			margin: 5px 0;
+			padding: 0 16px;
+
+			.segmented-control__text {
+				@include blazepress-campaign-filter-item;
+
+				color: var(--studio-gray-60);
+			}
+		}
+
+		&.is-primary {
+			.segmented-control__item.is-selected {
+				.segmented-control__link {
+					background-color: #fff !important;
+					border: none;
+					border-radius: 2px;
+					box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+					height: 20px;
+					margin: 4px 0;
+					padding: 8px 16px;
+
+					.segmented-control__text {
+						@include blazepress-campaign-filter-item;
+
+						color: var(--studio-gray-100);
+					}
+				}
+			}
+
+			// Add extra 4px margin to the left/right for the first/last item respectively.
+			.segmented-control__item.is-selected,
+			.segmented-control__item {
+				&:first-child {
+					.segmented-control__link {
+						margin-left: 4px;
+					}
+				}
+
+				&:last-child {
+					.segmented-control__link {
+						margin-right: 4px;
+					}
+				}
+			}
+
+			.segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
+				border-left: none;
+			}
+		}
+	}
+
+	.notouch .segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link:hover {
+		background-color: #fff; // Remove hover from active filter item
+	}
+}
+
+@mixin blazepress-search-bar-mobile {
+	.main.promote-post-i2 .promote-post-i2__search-bar-wrapper {
+		display: flex;
+		position: relative;
+
+		.promote-post-i2__search-bar-search.search-component {
+			margin-bottom: 12px;
+		}
+
+		.promote-post-i2__search-bar-options {
 			width: 100%;
+			justify-content: space-between;
 		}
 
-		.select-dropdown__header {
-			height: 50px;
+		.promote-post-i2__search-bar-dropdown {
+			margin: 0;
+
+			.select-dropdown__header {
+				background: transparent;
+
+				&-text {
+					margin-right: 12px;
+				}
+			}
+
+			.select-dropdown__options {
+				border: 1px solid var(--color-neutral-10);
+			}
 		}
+	}
+
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) .main.promote-post-i2 {
+		.promote-post-i2__search-bar-wrapper .segmented-control.is-primary .segmented-control__item.is-selected {
+			margin: 0;
+		}
+
+		.promote-post-i2__search-bar-wrapper .segmented-control.is-compact .segmented-control__link {
+			padding: 0 16px;
+		}
+	}
+
+	.segmented-control {
+		.segmented-control__item,
+		.segmented-control__item.is-selected {
+			.segmented-control__link {
+				height: 12px;
+				margin: 0;
+			}
+		}
+	}
+}
+
+// Show Mobile view for screens if window width <= 782px
+@media screen and (max-width: $break-medium) {
+	@include blazepress-search-bar-mobile;
+}
+
+// Show Mobile view if sidebar is collapsed and main content width <= 782px
+$break-medium-collapsed-menu: $break-medium + 36px;
+@media screen and (max-width: $break-medium-collapsed-menu) {
+	body.is-section-promote-post-i2.is-sidebar-collapsed {
+		@include blazepress-search-bar-mobile;
+	}
+}
+
+// Show Mobile view if sidebar is expanded and main content width <= 782px
+$break-medium-expanded-menu: $break-medium + 272px;
+@media screen and (max-width: $break-medium-expanded-menu) {
+	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
+		@include blazepress-search-bar-mobile;
 	}
 }

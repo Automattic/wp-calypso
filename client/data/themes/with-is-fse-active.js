@@ -9,7 +9,7 @@ const withIsFSEActive = createHigherOrderComponent(
 		const siteId = useSelector( getSelectedSiteId );
 		const userLoggedIn = useSelector( isUserLoggedIn );
 		const { data, isLoading } = useActiveThemeQuery( siteId, userLoggedIn );
-		const isFSEActive = data?.[ 0 ]?.theme_supports?.[ 'block-templates' ] ?? false;
+		const isFSEActive = data?.[ 0 ]?.is_block_theme ?? false;
 
 		return <Wrapped { ...props } isFSEActiveLoading={ isLoading } isFSEActive={ isFSEActive } />;
 	},

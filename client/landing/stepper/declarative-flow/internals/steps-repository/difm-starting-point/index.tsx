@@ -36,6 +36,7 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 				isHorizontalLayout={ true }
 				isWideLayout={ true }
 				isLargeSkipLayout={ false }
+				skipLabelText={ translate( 'No Thanks, I’ll Build It' ) }
 				stepContent={
 					<DIFMLanding
 						onSubmit={ onSubmit }

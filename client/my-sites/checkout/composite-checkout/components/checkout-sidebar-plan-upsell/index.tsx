@@ -1,4 +1,4 @@
-import { isPlan } from '@automattic/calypso-products';
+import { isJetpackProduct, isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -6,10 +6,10 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useDispatch } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
@@ -28,7 +28,9 @@ export function CheckoutSidebarPlanUpsell() {
 	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
+	const plan = responseCart.products.find(
+		( product ) => isPlan( product ) || isJetpackProduct( product )
+	);
 	const variants = useGetProductVariants( plan );
 
 	if ( ! plan ) {
@@ -90,6 +92,12 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
+	const isComparisonWithIntroOffer =
+		biennialVariant.introductoryInterval === 2 &&
+		biennialVariant.introductoryTerm === 'year' &&
+		currentVariant.introductoryInterval === 1 &&
+		currentVariant.introductoryTerm === 'year';
+
 	const cardTitle = createInterpolateElement(
 		sprintf(
 			// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
@@ -102,14 +110,27 @@ export function CheckoutSidebarPlanUpsell() {
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
+				{ isComparisonWithIntroOffer && (
+					<>
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
+						<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+							<strong>{ __( 'Two-year cost' ) }</strong>
+						</div>
+					</>
+				) }
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ currentVariant.variantLabel }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ formatCurrency( currentVariant.priceInteger, currentVariant.currency, {
-						stripZeros: true,
-						isSmallestUnit: true,
-					} ) }
+					{ formatCurrency(
+						currentVariant.priceInteger +
+							( isComparisonWithIntroOffer ? currentVariant.priceBeforeDiscounts : 0 ),
+						currentVariant.currency,
+						{
+							stripZeros: true,
+							isSmallestUnit: true,
+						}
+					) }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ biennialVariant.variantLabel }
@@ -133,7 +154,7 @@ export function CheckoutSidebarPlanUpsell() {
 				cta={ {
 					disabled: isFormLoading,
 					busy: isFormLoading,
-					text: __( 'Switch to a two year plan' ),
+					text: __( 'Switch to a two-year plan' ),
 					action: onUpgradeClick,
 				} }
 			/>

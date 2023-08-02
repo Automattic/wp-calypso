@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, type FunctionComponent } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
-import type { FunctionComponent } from 'react';
 
 type PluginAnnualSavingLabelProps = {
 	isSelected: boolean;
@@ -53,6 +53,22 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly' );
 	const annualLabel = translate( 'Annually' );
+
+	const searchParams = new URLSearchParams( document.location.search );
+	const billingIntervalParam = searchParams.get( 'interval' );
+
+	/**
+	 * Change the billing period based on query params, if passed
+	 */
+	useEffect( () => {
+		if ( billingIntervalParam === 'monthly' ) {
+			onChange( IntervalLength.MONTHLY );
+		}
+
+		if ( billingIntervalParam === 'annually' ) {
+			onChange( IntervalLength.ANNUALLY );
+		}
+	}, [ onChange, billingIntervalParam ] );
 
 	return (
 		<BillingIntervalSwitcherContainer>

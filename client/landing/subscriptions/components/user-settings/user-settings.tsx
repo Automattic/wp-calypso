@@ -1,21 +1,18 @@
 import { Button } from '@automattic/components';
-import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
-import { EmailFormatInput, EmailFormatType } from '../fields';
+import { EmailFormatInput } from '../fields';
 import { BlockEmailsSetting } from '../fields/block-emails-setting';
 import { DeliveryWindowInput } from '../fields/delivery-window-input';
-import { Notice } from '../notice';
+import { Notice, NoticeState, NoticeType } from '../notice';
 import './styles.scss';
 
-type DeliveryWindowDayType = Reader.DeliveryWindowDayType;
-type DeliveryWindowHourType = Reader.DeliveryWindowHourType;
-
 type SubscriptionUserSettings = Partial< {
-	mail_option: EmailFormatType;
-	delivery_day: DeliveryWindowDayType;
-	delivery_hour: DeliveryWindowHourType;
+	mail_option: Reader.EmailFormatType;
+	delivery_day: Reader.DeliveryWindowDayType;
+	delivery_hour: Reader.DeliveryWindowHourType;
 	blocked: boolean;
 	email: string;
 } >;
@@ -24,18 +21,12 @@ type UserSettingsProps = {
 	value?: SubscriptionUserSettings;
 };
 
-type NoticeProps = {
-	type: 'success' | 'warning' | 'error';
-	message: string;
-};
-
 const DEFAULT_VALUE = {};
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
 const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 	const [ formState, setFormState ] = useState( value );
 	const { mutate, isLoading, isSuccess, error } = SubscriptionManager.useUserSettingsMutation();
-	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
+	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 
 	useEffect( () => {
 		// check if formState is empty object
@@ -46,10 +37,10 @@ const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			setNotice( { type: 'success', message: translate( 'Settings saved' ) as string } );
+			setNotice( { type: NoticeType.Success, message: translate( 'Settings saved' ) as string } );
 		}
 		if ( error ) {
-			setNotice( { type: 'error', message: error.message } );
+			setNotice( { type: NoticeType.Error, message: error.message } );
 		}
 	}, [ error, isSuccess ] );
 
@@ -70,7 +61,7 @@ const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 			<EmailFormatInput
 				value={ formState.mail_option ?? 'html' }
 				onChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
-					onChange?.( { mail_option: evt.currentTarget.value as EmailFormatType } )
+					onChange?.( { mail_option: evt.currentTarget.value as Reader.EmailFormatType } )
 				}
 			/>
 			<DeliveryWindowInput
@@ -78,12 +69,12 @@ const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
 				hourValue={ formState.delivery_hour ?? 0 }
 				onDayChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
 					onChange?.( {
-						delivery_day: parseInt( evt.currentTarget.value ) as DeliveryWindowDayType,
+						delivery_day: parseInt( evt.currentTarget.value ) as Reader.DeliveryWindowDayType,
 					} )
 				}
 				onHourChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
 					onChange?.( {
-						delivery_hour: parseInt( evt.currentTarget.value ) as DeliveryWindowHourType,
+						delivery_hour: parseInt( evt.currentTarget.value ) as Reader.DeliveryWindowHourType,
 					} )
 				}
 			/>

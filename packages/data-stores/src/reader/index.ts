@@ -1,49 +1,67 @@
-import { useSubscriberEmailAddress } from './hooks';
+import { SiteSubscriptionsQueryPropsProvider, useSiteSubscriptionsQueryProps } from './contexts';
+import { useCacheKey, useIsLoggedIn, useSubscriberEmailAddress } from './hooks';
 import {
-	usePostUnsubscribeMutation,
-	useSiteDeliveryFrequencyMutation,
-	useSiteUnsubscribeMutation,
-	useUserSettingsMutation,
-	usePendingSiteConfirmMutation,
-	usePendingSiteDeleteMutation,
 	usePendingPostConfirmMutation,
 	usePendingPostDeleteMutation,
+	usePendingSiteConfirmMutation,
+	usePendingSiteDeleteMutation,
+	usePostUnsubscribeMutation,
+	useSiteDeliveryFrequencyMutation,
+	useSiteEmailMeNewCommentsMutation,
+	useSiteEmailMeNewPostsMutation,
+	useSiteNotifyMeOfNewPostsMutation,
+	useSiteSubscribeMutation,
+	useSiteUnsubscribeMutation,
+	useUserSettingsMutation,
 } from './mutations';
 import {
-	PostSubscriptionsSortBy,
-	SiteSubscriptionsSortBy,
-	useSiteSubscriptionsQuery,
+	siteSubscriptionsQueryKeyPrefix,
+	usePendingPostSubscriptionsQuery,
+	usePendingSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
+	useSiteSubscriptionDetailsQuery,
+	useSiteSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useUserSettingsQuery,
-	usePendingSiteSubscriptionsQuery,
-	usePendingPostSubscriptionsQuery,
 } from './queries';
 
 export const SubscriptionManager = {
-	PostSubscriptionsSortBy,
-	SiteSubscriptionsSortBy,
-	usePostUnsubscribeMutation,
-	useSiteDeliveryFrequencyMutation,
-	useSiteSubscriptionsQuery,
-	usePostSubscriptionsQuery,
-	useSiteUnsubscribeMutation,
-	useSubscriptionsCountQuery,
-	useSubscriberEmailAddress,
-	useUserSettingsQuery,
-	useUserSettingsMutation,
-	usePendingSiteSubscriptionsQuery,
+	SiteSubscriptionsQueryPropsProvider,
+	siteSubscriptionsQueryKeyPrefix,
+	useCacheKey,
+	useIsLoggedIn,
+	usePendingPostConfirmMutation,
+	usePendingPostDeleteMutation,
 	usePendingPostSubscriptionsQuery,
 	usePendingSiteConfirmMutation,
 	usePendingSiteDeleteMutation,
-	usePendingPostConfirmMutation,
-	usePendingPostDeleteMutation,
+	usePendingSiteSubscriptionsQuery,
+	usePostSubscriptionsQuery,
+	usePostUnsubscribeMutation,
+	useSiteDeliveryFrequencyMutation,
+	useSiteEmailMeNewCommentsMutation,
+	useSiteEmailMeNewPostsMutation,
+	useSiteNotifyMeOfNewPostsMutation,
+	useSiteSubscribeMutation,
+	useSiteSubscriptionDetailsQuery,
+	useSiteSubscriptionsQuery,
+	useSiteSubscriptionsQueryProps,
+	useSiteUnsubscribeMutation,
+	useSubscriberEmailAddress,
+	useSubscriptionsCountQuery,
+	useUserSettingsMutation,
+	useUserSettingsQuery,
 };
 
-// Types
-export type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-	EmailFormatType,
-	SubscriptionManagerUserSettings,
-} from './types';
+export {
+	EmailDeliveryFrequency,
+	PostSubscriptionsSortBy,
+	SiteSubscriptionsFilterBy,
+	SiteSubscriptionsSortBy,
+} from './constants';
+export { isErrorResponse, isValidId } from './helpers';
+export { UnsubscribedFeedsSearchProvider, useUnsubscribedFeedsSearch } from './contexts';
+export { useReadFeedSearchQuery, useReadFeedSiteQuery, useReadFeedQuery } from './queries';
+
+export * from './types';
+export type { FeedItem } from './queries';

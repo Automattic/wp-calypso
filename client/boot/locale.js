@@ -10,7 +10,7 @@ import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-lo
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setLocale } from 'calypso/state/ui/language/actions';
 
-function getLocaleFromPathname() {
+export function getLocaleFromPathname() {
 	const pathname = window.location.pathname.replace( /\/$/, '' );
 	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
 	const pathLocaleSlug =
@@ -20,7 +20,7 @@ function getLocaleFromPathname() {
 	return pathLocaleSlug;
 }
 
-function getLocaleFromQueryParam() {
+export function getLocaleFromQueryParam() {
 	const query = new URLSearchParams( window.location.search );
 	return query.get( 'locale' );
 }

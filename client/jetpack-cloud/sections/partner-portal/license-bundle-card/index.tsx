@@ -1,54 +1,109 @@
 import { Button } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import LicenseBundleCardDescription from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card-description';
+import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
-import { getProductTitle } from '../utils';
+import { useProductDescription, useURLQueryParams } from '../hooks';
+import LicenseLightbox from '../license-lightbox';
+import LicenseLightboxLink from '../license-lightbox-link';
+import ProductPriceWithDiscount from '../primary/product-price-with-discount-info';
+import { getProductTitle, LICENSE_INFO_MODAL_ID } from '../utils';
 
 import './style.scss';
 
-interface Props {
+type Props = {
+	isBusy: boolean;
+	isDisabled: boolean;
 	tabIndex: number;
 	product: APIProductFamilyProduct;
-	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
-}
+	onSelectProduct?: ( value: APIProductFamilyProduct ) => void;
+};
 
-export default function LicenseBundleCard( props: Props ) {
-	const { tabIndex, product, onSelectProduct } = props;
-	const productTitle = getProductTitle( product.name );
+const LicenseBundleCard = ( {
+	isBusy = false,
+	isDisabled = false,
+	tabIndex,
+	product,
+	onSelectProduct,
+}: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const onSelect = () => {
-		onSelectProduct( product );
-	};
+	const productTitle = getProductTitle( product.name );
+	const { description: productDescription } = useProductDescription( product.slug );
+
+	const { setParams, resetParams, getParamValue } = useURLQueryParams();
+	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
+	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
+	const onShowLightbox = useCallback(
+		( e: React.MouseEvent< HTMLElement > ) => {
+			e.stopPropagation();
+
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_bundle_product_view', {
+					product: product.slug,
+				} )
+			);
+
+			setParams( [
+				{
+					key: LICENSE_INFO_MODAL_ID,
+					value: product.slug,
+				},
+			] );
+			setShowLightbox( true );
+		},
+		[ dispatch, product.slug, setParams ]
+	);
+
+	const onHideLightbox = useCallback( () => {
+		resetParams( [ LICENSE_INFO_MODAL_ID ] );
+		setShowLightbox( false );
+	}, [ resetParams ] );
+
+	const onSelect = useCallback( () => {
+		onSelectProduct?.( product );
+	}, [ onSelectProduct, product ] );
 
 	return (
-		<div className="license-bundle-card">
-			<div className="license-bundle-card__details">
-				<h3 className="license-bundle-card__title">{ productTitle }</h3>
-				<LicenseBundleCardDescription product={ product } />
-				<div className="license-bundle-card__pricing">
-					<div className="license-bundle-card__price">
-						{ formatCurrency( product.amount, product.currency ) }
+		<>
+			<div className="license-bundle-card">
+				<div className="license-bundle-card__details">
+					<h3 className="license-bundle-card__title">{ productTitle }</h3>
+
+					<div className="license-bundle-card__description">{ productDescription }</div>
+
+					<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
+				</div>
+
+				<div className="license-bundle-card__footer">
+					<div className="license-bundle-card__pricing">
+						<ProductPriceWithDiscount product={ product } />
 					</div>
-					<div className="license-bundle-card__price-interval">
-						{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
-						{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
-					</div>
+					<Button
+						primary
+						busy={ isBusy }
+						disabled={ isDisabled }
+						className="license-bundle-card__select-license"
+						onClick={ onSelect }
+						tabIndex={ tabIndex }
+					>
+						{ translate( 'Select' ) }
+					</Button>
 				</div>
 			</div>
-			<Button
-				primary
-				className="license-bundle-card__select-license"
-				onClick={ onSelect }
-				tabIndex={ tabIndex }
-			>
-				{ translate( 'Select' ) }
-			</Button>
-		</div>
-	);
-}
 
-LicenseBundleCard.defaultProps = {
-	onSelectProduct: null,
+			{ showLightbox && (
+				<LicenseLightbox
+					product={ product }
+					ctaLabel={ translate( 'Select License' ) }
+					onActivate={ onSelect }
+					onClose={ onHideLightbox }
+				/>
+			) }
+		</>
+	);
 };
+
+export default LicenseBundleCard;

@@ -2,11 +2,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
+import { useSelector } from 'calypso/state';
 import { getJetpackStorageUpgradeUrl } from 'calypso/state/plans/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
@@ -56,7 +56,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 
 	const upsellRef = useTrackUpsellView( siteId );
 
-	if ( ! Number.isInteger( visibleDays ) ) {
+	if ( visibleDays == null || ! Number.isInteger( visibleDays ) ) {
 		return null;
 	}
 
@@ -81,7 +81,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 							'Restore backups older than %(retentionDays)d day',
 							'Restore backups older than %(retentionDays)d days',
 							{
-								count: visibleDays as number,
+								count: visibleDays,
 								args: { retentionDays: visibleDays },
 							}
 						)
@@ -93,7 +93,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 							'Your activity log spans more than %(retentionDays)d day. Upgrade your backup storage to access activity older than %(retentionDays)d day.',
 							'Your activity log spans more than %(retentionDays)d days. Upgrade your backup storage to access activity older than %(retentionDays)d days.',
 							{
-								count: visibleDays as number,
+								count: visibleDays,
 								args: { retentionDays: visibleDays },
 							}
 						)

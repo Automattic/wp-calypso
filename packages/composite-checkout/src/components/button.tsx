@@ -7,21 +7,16 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 	display: block;
 	width: ${ ( props: CallToActionProps ) => ( props.fullWidth ? '100%' : 'auto' ) };
 	font-size: 16px;
-	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '2px' ) };
+	border-radius: 4px;
 	padding: ${ ( props ) => ( props.buttonType === 'text-button' ? '0' : '10px 15px' ) };
-	border: ${ ( props ) =>
-		! props.buttonType || ( props.disabled && props.buttonType !== 'text-button' )
-			? '1px solid ' + props.theme.colors.borderColor
-			: '0' };
 	background: ${ getBackgroundColor };
 	color: ${ getTextColor };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
+	font-weight: ${ ( props ) =>
+		props.buttonType === 'primary' ? props.theme.weights.bold : props.theme.weights.normal };
 	text-decoration: ${ getTextDecoration };
 
 	:hover {
 		background: ${ getRollOverColor };
-		border-color: ${ ( props ) =>
-			! props.buttonType ? props.theme.colors.borderColorDark : 'inherit' };
 		text-decoration: none;
 		color: ${ getTextColor };
 		cursor: ${ ( props ) => ( props.disabled ? 'not-allowed' : 'pointer' ) };

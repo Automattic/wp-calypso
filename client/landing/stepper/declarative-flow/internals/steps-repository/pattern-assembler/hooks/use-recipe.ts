@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
 import { keyBy } from '@automattic/js-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -31,9 +30,13 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		font_variation_title = '',
 	} = selectedDesign?.recipe || {};
 
-	const colorVariations = useColorPaletteVariations( siteId, stylesheet );
+	const colorVariations = useColorPaletteVariations( siteId, stylesheet, {
+		enabled: !! color_variation_title,
+	} );
 
-	const fontVariations = useFontPairingVariations( siteId, stylesheet );
+	const fontVariations = useFontPairingVariations( siteId, stylesheet, {
+		enabled: !! font_variation_title,
+	} );
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
@@ -62,13 +65,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 	 * Initialize the default value from the recipe of the selected design when both patterns and categories are ready
 	 */
 	useEffect( () => {
-		if (
-			patterns.length === 0 ||
-			categories.length === 0 ||
-			! selectedDesignRef.current?.recipe ||
-			// Avoid adding the preselected patterns from the virtual theme for now
-			( selectedDesignRef.current?.is_virtual && ! isEnabled( 'pattern-assembler/dotcompatterns' ) )
-		) {
+		if ( patterns.length === 0 || categories.length === 0 || ! selectedDesignRef.current?.recipe ) {
 			return;
 		}
 
@@ -99,7 +96,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 					};
 				} )
 		);
-	}, [ patterns.length, categories ] );
+	}, [ patterns.length, categories.length ] );
 
 	useEffect( () => {
 		if ( ! colorVariations || ! color_variation_title ) {

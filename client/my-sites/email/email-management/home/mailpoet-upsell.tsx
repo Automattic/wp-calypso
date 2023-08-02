@@ -1,9 +1,9 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import mailpoetSymbol from 'calypso/assets/images/email-providers/mailpoet-symbol.svg';
 import Banner from 'calypso/components/banner';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import { useSelector } from 'calypso/state';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

@@ -3,11 +3,11 @@ import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useMemo, useState } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useSelector } from 'calypso/state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -19,7 +19,7 @@ import type { Activity } from './types';
 
 import './style.scss';
 
-const useToggleContent = (): [ boolean, () => void ] => {
+export const useToggleContent = (): [ boolean, () => void ] => {
 	const [ isVisible, setVisible ] = useState( false );
 
 	const toggle = () => {

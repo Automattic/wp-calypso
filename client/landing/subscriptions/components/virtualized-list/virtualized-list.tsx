@@ -27,11 +27,18 @@ const cellMeasureCache = new CellMeasurerCache( {
 	keyMapper: () => 1,
 } );
 
+type RowRenderProps = {
+	index: number;
+	key: string;
+	style: React.CSSProperties;
+	parent: unknown;
+};
+
 const VirtualizedList = < T, >( { width, items, children }: VirtualizedListProps< T > ) => {
 	const windowScrollerRef = useRef();
 
 	const rowRenderer = useCallback(
-		( { index, key, style, parent } ) => {
+		( { index, key, style, parent }: RowRenderProps ) => {
 			const item = items?.[ index ];
 			return item ? (
 				<CellMeasurer

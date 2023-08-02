@@ -2,18 +2,18 @@ import { TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 
 export type ThankYouNextStepProps = {
-	stepCta?: React.ReactNode | React.ReactFragment;
-	stepSection?: TranslateResult | React.ReactElement;
-	stepDescription?: TranslateResult | React.ReactElement;
+	stepCta?: React.ReactNode;
+	stepSection?: TranslateResult;
+	stepDescription?: TranslateResult;
 	stepKey: string;
 	stepTitle?: TranslateResult;
 	stepIcon?: React.ReactNode;
 };
 
 export type ThankYouNoticeProps = {
-	noticeTitle: React.ReactNode | React.ReactFragment;
+	noticeTitle: React.ReactNode;
 	noticeIcon?: string;
-	noticeIconCustom?: React.ReactNode | React.ReactFragment;
+	noticeIconCustom?: React.ReactNode;
 };
 
 export type ThankYouSectionProps = {
@@ -61,7 +61,8 @@ export type ThankYouData = [
 	string,
 	string,
 	string[],
-	boolean
+	boolean,
+	React.ReactElement | null
 ];
 
 export type ThankYouSteps = { steps: string[]; additionalSteps: string[] };

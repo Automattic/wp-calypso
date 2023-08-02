@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 

@@ -20,8 +20,8 @@ const useFocusHandler = ( ref: React.MutableRefObject< null | HTMLElement > ): b
 	}, [ ref ] );
 
 	const handleMousedown = useCallback(
-		( event ) => {
-			if ( ref.current?.contains( event.target ) ) {
+		( event: MouseEvent ) => {
+			if ( ref.current?.contains( event.target as Node ) ) {
 				setHasFocus( true );
 			} else {
 				setHasFocus( false );
@@ -31,9 +31,9 @@ const useFocusHandler = ( ref: React.MutableRefObject< null | HTMLElement > ): b
 	);
 
 	const handleKeyup = useCallback(
-		( event ) => {
+		( event: KeyboardEvent ) => {
 			if ( event.key === 'Tab' ) {
-				if ( ref.current?.contains( event.target ) ) {
+				if ( ref.current?.contains( event.target as Node ) ) {
 					setHasFocus( true );
 				} else {
 					setHasFocus( false );

@@ -1,18 +1,23 @@
+import { AKISMET_PRODUCTS_LIST, isAkismetProduct } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useMemo, useState } from 'react';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
+import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import type { FunctionComponent } from 'react';
 
 interface AkismetCheckoutThankYouProps {
@@ -27,7 +32,9 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 	const productName = useSelector( ( state ) =>
 		hasProduct ? getProductName( state, productSlug ) : null
 	);
-	const isLoading = useSelector( isProductsListFetching );
+	const isLoading = useSelector(
+		( state ) => isProductsListFetching( state ) || isFetchingUserPurchases( state )
+	);
 
 	const onManagePurchaseClick = () => {
 		dispatch(
@@ -36,6 +43,78 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 			} )
 		);
 	};
+
+	const userActivePurchases = useSelector(
+		( state ) => getUserPurchases( state )?.filter( ( purchase ) => purchase.active ) ?? []
+	);
+
+	const { overlapMessage, thanksHeadline, thanksMessage } = useMemo( () => {
+		const akismetProducts = AKISMET_PRODUCTS_LIST as ReadonlyArray< string >;
+		const akismetPurchases = userActivePurchases.filter(
+			( purchase ) => isAkismetProduct( purchase ) && isAkismetTemporarySitePurchase( purchase )
+		);
+		const purchaseHasAPILimit =
+			akismetProducts.indexOf( productSlug ) >= akismetProducts.indexOf( 'ak_plus_monthly_1' );
+
+		let thanksHeadline = (
+			<>
+				{ /* the single space literal below is intentional for rendering purposes */ }
+				{ __( 'Let the spam-blocking party begin!', 'akismet-thank-you' ) }{ ' ' }
+				<span className="akismet-checkout-thank-you__emoji">
+					{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
+				</span>
+			</>
+		);
+		let overlapMessage = null;
+		let thanksMessage = createInterpolateElement(
+			sprintf(
+				// translators: %s is the product name
+				__(
+					'Thanks for your purchase. We have sent you an email with your receipt and further instructions on how to activate <strong>%s</strong>.',
+					'akismet-thank-you'
+				),
+				productName
+			),
+			{ strong: <strong /> }
+		);
+
+		// If the user already has another Akismet product, adjust the messaging.
+		if ( akismetPurchases.length > 1 ) {
+			thanksHeadline = (
+				<>
+					{ /* the single space literal below is intentional for rendering purposes */ }
+					{ __( 'Congrats on your shiny new spam-blocking upgrade.', 'akismet-thank-you' ) }
+				</>
+			);
+			thanksMessage = createInterpolateElement(
+				sprintf(
+					// translators: %s is the product name
+					__(
+						'Thanks for your purchase. We have sent you an email with your receipt for <strong>%s</strong>.',
+						'akismet-thank-you'
+					),
+					productName
+				),
+				{ strong: <strong /> }
+			);
+
+			if ( purchaseHasAPILimit ) {
+				overlapMessage = createInterpolateElement(
+					__(
+						'You’ve supercharged your spam protection by increasing your API limit! Make sure to cancel any existing plans that you don’t need on your <a>account page</a>.',
+						'akismet-thank-you'
+					),
+					{ a: <ExternalLink href="https://akismet.com/account/" children={ null } /> }
+				);
+			}
+		}
+
+		return {
+			overlapMessage,
+			thanksHeadline,
+			thanksMessage,
+		};
+	}, [ productSlug, productName, userActivePurchases ] );
 
 	return (
 		<Main className="akismet-checkout-thank-you">
@@ -49,13 +128,16 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 			<Card className="akismet-checkout-thank-you__card">
 				{ /* This product query takes a while to load, an improvment here would be to add a type filter on wpcom like jetpack has. See: 2f832-pb/ */ }
 				{ hasProduct && <QueryProducts /> }
+				<QueryUserPurchases />
 
-				<h2 className="akismet-checkout-thank-you__main-message">
-					{ /* the single space literal below is intentional for rendering purposes */ }
-					{ __( 'Let the spam-blocking party begin!', 'akismet-thank-you' ) }{ ' ' }
-					<span className="akismet-checkout-thank-you__emoji">
-						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
-					</span>
+				<h2
+					className={
+						isLoading
+							? 'akismet-checkout-thank-you__main-message-loading'
+							: 'akismet-checkout-thank-you__main-message'
+					}
+				>
+					{ thanksHeadline }
 				</h2>
 
 				<p
@@ -65,18 +147,12 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 							: 'akismet-checkout-thank-you__email-message'
 					}
 				>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: %s is the product name
-							__(
-								'Thanks for your purchase. We have sent you an email with your receipt and further instructions on how to activate <strong>%s</strong>.',
-								'akismet-thank-you'
-							),
-							productName
-						),
-						{ strong: <strong /> }
-					) }
+					{ thanksMessage }
 				</p>
+
+				{ overlapMessage && (
+					<p className="akismet-checkout-thank-you__overlap-notice">{ overlapMessage }</p>
+				) }
 
 				<ThankYouAPIKeyClipboard />
 

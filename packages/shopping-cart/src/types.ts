@@ -353,6 +353,8 @@ export interface ResponseCartProduct {
 	product_id: number;
 	currency: string;
 
+	product_name_en: string;
+
 	/**
 	 * The cart item's original price in the currency's smallest unit.
 	 *
@@ -488,6 +490,19 @@ export interface ResponseCartProduct {
 	 */
 	is_renewal?: boolean;
 
+	/**
+	 * True if the product is a renewal and the subscription will auto-renew.
+	 *
+	 * A subscription will auto-renew if it both can auto-renew (it's a recurring subscription,
+	 * has a payment method, isn't blocked, etc.) and the user has auto-renew enabled.
+	 */
+	is_renewal_and_will_auto_renew?: boolean;
+
+	/**
+	 * True if the product will not renew.
+	 */
+	is_one_time_purchase?: boolean;
+
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
 
@@ -569,7 +584,7 @@ export interface ResponseCartProductExtra {
 	 */
 	is_marketplace_product?: boolean;
 	product_slug?: string;
-	product_type?: 'marketplace_plugin' | 'marketplace_theme';
+	product_type?: 'marketplace_plugin' | 'marketplace_theme' | 'saas_plugin';
 }
 
 export interface ResponseCartGiftDetails {
@@ -590,6 +605,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
+	import_dns_records?: boolean;
 	signup?: boolean;
 	headstart_theme?: string;
 }

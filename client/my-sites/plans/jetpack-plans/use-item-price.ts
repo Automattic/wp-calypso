@@ -1,10 +1,11 @@
 import {
 	JETPACK_CRM_PRODUCTS,
+	JETPACK_STATS_PRODUCTS,
 	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
 	getProductSaleCouponDiscount,
@@ -189,6 +190,17 @@ const useItemPrice = (
 	if (
 		item &&
 		JETPACK_CRM_PRODUCTS.includes( item.productSlug as ( typeof JETPACK_CRM_PRODUCTS )[ number ] )
+	) {
+		discountedPrice = item.displayPrice || -1;
+		originalPrice = item.displayPrice || -1;
+	}
+
+	// TODO: Fetch the price from the API when it's available.
+	if (
+		item &&
+		JETPACK_STATS_PRODUCTS.includes(
+			item.productSlug as ( typeof JETPACK_STATS_PRODUCTS )[ number ]
+		)
 	) {
 		discountedPrice = item.displayPrice || -1;
 		originalPrice = item.displayPrice || -1;

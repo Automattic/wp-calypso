@@ -1,8 +1,8 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { ReadyAlreadyOnWPCOMStep } from 'calypso/blocks/import/ready';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { ImportWrapper } from '../import';
 import { BASE_ROUTE } from '../import/config';

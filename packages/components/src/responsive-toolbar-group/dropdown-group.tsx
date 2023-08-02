@@ -2,7 +2,7 @@ import { ToolbarGroup, ToolbarButton, Dropdown, MenuItem, MenuGroup } from '@wor
 import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import './style.scss';
 
@@ -19,7 +19,7 @@ export default function DropdownGroup( {
 	onClick = () => null,
 	initialActiveIndex = -1,
 }: {
-	children: ReactChild[];
+	children: ReactNode[];
 	className?: string;
 	hideRatio?: number;
 	showRatio?: number;

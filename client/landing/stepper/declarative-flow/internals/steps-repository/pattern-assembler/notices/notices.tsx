@@ -1,56 +1,89 @@
-import { SnackbarList, withNotices, NoticeList } from '@wordpress/components';
+import { Notice, SnackbarList } from '@wordpress/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import i18n from 'i18n-calypso';
-import { useEffect } from 'react';
+import { ComponentType, ReactNode, ReactElement, useState } from 'react';
 import type { Pattern } from '../types';
 import './notices.scss';
 
 const NOTICE_TIMEOUT = 5000;
 
-type Notice = NoticeList.Notice & {
+type Notice = Omit< React.ComponentProps< typeof Notice >, 'children' > & {
 	timer?: ReturnType< typeof setTimeout >;
+	id: string;
+	content: string;
 };
 
-const Notices = ( {
-	noticeList,
-	noticeOperations,
-}: Pick< withNotices.Props, 'noticeList' | 'noticeOperations' > ) => {
-	const onRemoveNotice = ( id: string ) => {
-		const notice = noticeList.find( ( notice ) => id === notice.id ) as Notice;
-		if ( notice?.timer ) {
-			clearTimeout( notice.timer );
-			delete notice.timer;
-		}
-		noticeOperations.removeNotice( id );
-	};
+interface NoticeOperationsProps {
+	showPatternInsertedNotice: ( pattern: Pattern ) => void;
+	showPatternRemovedNotice: ( pattern: Pattern ) => void;
+}
 
-	useEffect( () => {
-		const lastNotice = noticeList[ noticeList.length - 1 ] as Notice;
+export interface NoticesProps {
+	noticeOperations: NoticeOperationsProps;
+	noticeUI: ReactNode;
+}
 
-		if ( lastNotice?.id && ! lastNotice?.timer ) {
-			lastNotice.timer = setTimeout(
-				() => noticeOperations.removeNotice( lastNotice.id ),
-				NOTICE_TIMEOUT
-			);
-		}
-	}, [ noticeList, noticeOperations ] );
+const withNotices = createHigherOrderComponent(
+	< OuterProps, >( InnerComponent: ComponentType< OuterProps > ) => {
+		return ( props: OuterProps & NoticesProps ) => {
+			const [ noticeList, setNoticeList ] = useState< Notice[] >( [] );
 
-	return <SnackbarList notices={ noticeList } onRemove={ onRemoveNotice } />;
-};
+			const removeNotice = ( id: string ) => {
+				setNoticeList( ( current ) => current.filter( ( notice ) => notice.id !== id ) );
+			};
 
-export const getNoticeContent = ( action: string, pattern: Pattern ) => {
-	const actions: { [ key: string ]: any } = {
-		add: i18n.translate( 'Block pattern "%(patternName)s" inserted.', {
-			args: { patternName: pattern.title },
-		} ),
-		replace: i18n.translate( 'Block pattern "%(patternName)s" replaced.', {
-			args: { patternName: pattern.title },
-		} ),
-		remove: i18n.translate( 'Block pattern "%(patternName)s" removed.', {
-			args: { patternName: pattern.title },
-		} ),
-	};
+			const createNotice = ( id: string, content: ReactElement | string | number ) => {
+				const existingNoticeWithSameId = noticeList.find( ( notice ) => notice.id === id );
+				if ( existingNoticeWithSameId?.timer ) {
+					clearTimeout( existingNoticeWithSameId.timer );
+					delete existingNoticeWithSameId.timer;
+				}
 
-	return actions[ action ];
-};
+				const newNotice = {
+					id,
+					content,
+					timer: setTimeout( () => {
+						removeNotice( id );
+					}, NOTICE_TIMEOUT ),
+				};
 
-export default Notices;
+				setNoticeList(
+					( current ) =>
+						[ ...current.filter( ( notice ) => notice.id !== id ), newNotice ] as Notice[]
+				);
+			};
+
+			const noticeOperations: NoticeOperationsProps = {
+				showPatternInsertedNotice: ( pattern: Pattern ) => {
+					createNotice(
+						'pattern-inserted',
+						i18n.translate( 'Block pattern "%(patternName)s" inserted.', {
+							args: { patternName: pattern.title },
+						} )
+					);
+				},
+				showPatternRemovedNotice: ( pattern: Pattern ) => {
+					createNotice(
+						'pattern-removed',
+						i18n.translate( 'Block pattern "%(patternName)s" removed.', {
+							args: { patternName: pattern.title },
+						} )
+					);
+				},
+			};
+
+			const noticeUI = <SnackbarList notices={ noticeList } onRemove={ removeNotice } />;
+
+			const propsWithNotices = {
+				...props,
+				noticeOperations,
+				noticeUI,
+			};
+
+			return <InnerComponent { ...propsWithNotices } />;
+		};
+	},
+	'withNotices'
+);
+
+export default withNotices;

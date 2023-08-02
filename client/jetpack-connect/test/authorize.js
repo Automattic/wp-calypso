@@ -7,7 +7,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
-import happychatReducer from 'calypso/state/happychat/reducer';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -90,7 +89,6 @@ function renderWithRedux( ui ) {
 			ui: uiReducer,
 			documentHead: documentHeadReducer,
 			purchases: purchasesReducer,
-			happychat: happychatReducer,
 			siteConnection: siteConnectionReducer,
 		},
 	} );
@@ -535,6 +533,86 @@ describe( 'JetpackAuthorize', () => {
 			const target = global.window.location.href;
 
 			expect( target ).toBe( `${ JPC_PATH_PLANS_COMPLETE }/${ SITE_SLUG }` );
+		} );
+	} );
+
+	describe( 'handleSignIn', () => {
+		let originalWindowLocation;
+
+		beforeEach( () => {
+			originalWindowLocation = global.window.location;
+			delete global.window.location;
+			global.window.location = {
+				href: 'http://wwww.example.com',
+				origin: 'http://www.example.com',
+			};
+		} );
+
+		afterEach( () => {
+			global.window.location = originalWindowLocation;
+		} );
+
+		test( 'should redirect to url that returns from props.logoutUser', async () => {
+			const redirectTo = 'http://www.example.com/redirect';
+			const logoutUser = jest.fn().mockResolvedValue( {
+				redirect_to: redirectTo,
+			} );
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					isAlreadyOnSitesList
+					isFetchingSites
+					logoutUser={ logoutUser }
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Sign in as a different user' ) );
+			expect( global.window.location.href ).toBe( redirectTo );
+			expect( logoutUser ).toHaveBeenCalled();
+		} );
+
+		test( 'should redirect to jetpack login page for woo onboarding', async () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+						from: 'woocommerce-onboarding',
+					} }
+					isAlreadyOnSitesList
+					isFetchingSites
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Sign in as a different user' ) );
+			expect( global.window.location.href ).toBe(
+				'https://example.com/log-in/jetpack?redirect_to=http%3A%2F%2Fwwww.example.com&from=woocommerce-onboarding'
+			);
+		} );
+
+		test( 'should redirect to jetpack login page for woo core profiler', async () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+						from: 'woocommerce-core-profiler',
+					} }
+					isAlreadyOnSitesList
+					isFetchingSites
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Sign in as a different user' ) );
+			expect( global.window.location.href ).toBe(
+				'https://example.com/log-in/jetpack?redirect_to=http%3A%2F%2Fwwww.example.com&from=woocommerce-core-profiler'
+			);
 		} );
 	} );
 } );

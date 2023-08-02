@@ -1,12 +1,12 @@
 import config from '@automattic/calypso-config';
-import { translate } from 'i18n-calypso';
+import { TranslateResult, translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 export interface ImporterOptionalURL {
-	title: React.ReactChild;
-	description: React.ReactChild;
-	invalidDescription: React.ReactChild;
+	title: TranslateResult;
+	description: TranslateResult;
+	invalidDescription: TranslateResult;
 }
 
 export interface ImporterConfig {
@@ -15,8 +15,8 @@ export interface ImporterConfig {
 	type: 'file' | 'url';
 	title: string;
 	icon: string;
-	description: React.ReactChild;
-	uploadDescription: React.ReactChild;
+	description: TranslateResult;
+	uploadDescription: TranslateResult;
 	weight: number;
 	overrideDestination?: string;
 	optionalUrl?: ImporterOptionalURL;
@@ -32,11 +32,7 @@ interface ImporterConfigArgs {
 	isJetpack?: boolean;
 }
 
-function getConfig(
-	args: ImporterConfigArgs = { siteTitle: '', isAtomic: false, isJetpack: false }
-): {
-	[ key: string ]: ImporterConfig;
-} {
+function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
@@ -48,7 +44,7 @@ function getConfig(
 		description: translate(
 			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args,
+				args: { siteTitle },
 				components: {
 					b: <strong />,
 				},
@@ -84,7 +80,7 @@ function getConfig(
 			{
 				args: {
 					importerName: 'Blogger',
-					siteTitle: args.siteTitle,
+					siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -121,7 +117,7 @@ function getConfig(
 			'Import posts, tags, images, and videos ' +
 				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args,
+				args: { siteTitle },
 				components: {
 					b: <strong />,
 				},
@@ -158,7 +154,7 @@ function getConfig(
 			{
 				args: {
 					importerName: 'Substack',
-					siteTitle: args.siteTitle,
+					siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -205,7 +201,7 @@ function getConfig(
 			{
 				args: {
 					importerName: 'Squarespace',
-					siteTitle: args.siteTitle,
+					siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -241,7 +237,7 @@ function getConfig(
 		description: translate(
 			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args,
+				args: { siteTitle },
 				components: {
 					b: <strong />,
 				},
@@ -259,14 +255,15 @@ function getConfig(
 		weight: 0,
 	};
 
-	// For Jetpack sites, we don't support migration as destination,
-	// so we remove the override here.
-	if ( config.isEnabled( 'importer/unified' ) && args.isJetpack && ! args.isAtomic ) {
+	const hasUnifiedImporter = config.isEnabled( 'importer/unified' );
+
+	// For Jetpack sites, we don't support migration as destination, so we remove the override here.
+	if ( hasUnifiedImporter && isJetpack && ! isAtomic ) {
 		delete importerConfig.wordpress.overrideDestination;
 	}
 
-	// Filter out all importers except the WordPress ones for Atomic sites.
-	if ( ! config.isEnabled( 'importer/unified' ) && args.isAtomic ) {
+	// For atomic sites filter out all importers except the WordPress ones if the Unified Importer is disabled.
+	if ( ! hasUnifiedImporter && isAtomic ) {
 		importerConfig = { wordpress: importerConfig.wordpress };
 	}
 

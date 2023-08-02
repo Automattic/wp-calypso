@@ -31,9 +31,14 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	SCREEN_CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
 
 	/**
+	 * Screen Activation
+	 */
+	SCREEN_ACTIVATION_ACTIVATE_CLICK:
+		'calypso_signup_pattern_assembler_screen_activation_activate_click',
+
+	/**
 	 * Pattern Panels
 	 */
-	PATTERN_ADD_CLICK: 'calypso_signup_pattern_assembler_pattern_add_click',
 	PATTERN_SELECT_CLICK: 'calypso_signup_pattern_assembler_pattern_select_click',
 	PATTERN_SELECT_BACK_CLICK: 'calypso_signup_pattern_assembler_pattern_select_back_click',
 	PATTERN_SELECT_DONE_CLICK: 'calypso_signup_pattern_assembler_pattern_select_done_click',
@@ -45,6 +50,8 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	PATTERN_MOVEDOWN_CLICK: 'calypso_signup_pattern_assembler_pattern_movedown_click',
 	PATTERN_REPLACE_CLICK: 'calypso_signup_pattern_assembler_pattern_replace_click',
 	PATTERN_DELETE_CLICK: 'calypso_signup_pattern_assembler_pattern_delete_click',
+	PATTERN_SHUFFLE_CLICK: 'calypso_signup_pattern_assembler_pattern_shuffle_click',
+
 	PREVIEW_DEVICE_CLICK: 'calypso_signup_pattern_assembler_preview_device_click',
 
 	/**

@@ -1,10 +1,10 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { login } from 'calypso/lib/paths';
 import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import ContactComponent from './help-contact';
 import CoursesComponent from './help-courses';
 import HelpComponent from './main';
 
@@ -55,12 +55,6 @@ export function courses( context, next ) {
 	next();
 }
 
-export function contact( context, next ) {
-	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
-		window.scrollTo( 0, 0 );
-	}
-
-	context.primary = <ContactComponent />;
-	next();
+export function contactRedirect() {
+	page.redirect( '/help' );
 }

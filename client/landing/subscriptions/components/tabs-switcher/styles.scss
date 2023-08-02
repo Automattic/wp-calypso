@@ -1,109 +1,142 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
+@mixin tab-text {
+	font-family: "SF Pro Text", $sans;
+	font-weight: 400;
+	color: $studio-gray-60;
+}
+
+@mixin tab-text-selected-override {
+	font-weight: 500;
+	color: $studio-gray-100;
+}
+
+%count {
+	background: $studio-gray-5;
+	border: none;
+	border-radius: 2px;
+	color: $studio-gray-80;
+	margin-left: 10px;
+	padding: 0 8px;
+}
 
 .section-nav.subscription-manager-tab-switcher {
 	box-shadow: none;
-	margin-bottom: 32px;
 
-	.section-nav-tabs {
-		display: flex;
-
-		.section-nav-tabs__list {
-			box-shadow: inset 0 -1px 0 rgba($studio-black, 0.05);
-			gap: 16px;
-			flex-basis: fit-content;
-
+	.section-nav__panel {
+		.section-nav-group {
 			.section-nav-tab {
 				border: none;
 
 				&.is-selected {
 					.section-nav-tab__link {
 						border-bottom-color: $studio-gray-100;
+						background-color: unset;
 					}
 
 					.section-nav-tab__text {
-						color: $studio-gray-100;
+						@include tab-text-selected-override;
 					}
 				}
 
-				&:hover:not(.is-selected) .section-nav-tab__link {
-					border-bottom-color: $studio-gray-40;
-				}
 
 				.section-nav-tab__link {
-					border-bottom: solid 2px transparent;
-					color: $studio-gray-60;
-					padding: 8px 0;
+					border-bottom: solid 2px $studio-gray-5;
+					padding: 8px;
 					transition: border-bottom-color ease-in-out 0.1s, color ease-in-out 0.1s;
 
 					&:hover {
 						background-color: transparent;
 					}
+
+					&:focus {
+						box-shadow: inset 0 0 0 2px var(--color-primary-light);
+					}
+				}
+
+				&:hover:not(.is-selected) .section-nav-tab__link,
+				&:active:not(.is-selected) .section-nav-tab__link {
+					border-bottom-color: $studio-gray-40;
 				}
 
 				.section-nav-tab__text {
-					color: $studio-gray-60;
-					font-size: 1rem;
-					line-height: 24px;
+					@include tab-text;
 				}
 
 				.count {
-					background: $studio-gray-5;
-					border: none;
-					border-radius: 2px;
-					color: $studio-gray-80;
-					font-size: 0.75rem;
-					line-height: 20px;
-					margin-left: 10px;
-					padding: 0 8px;
+					@extend %count;
 				}
 			}
 		}
 	}
 }
 
-@media screen and ( max-width: $break-medium ) {
+// Mobile view only
+@media screen and ( max-width: $break-mobile ) {
 	.section-nav.subscription-manager-tab-switcher {
 		margin-bottom: 22px;
-	}
-}
 
-@media screen and ( max-width: $break-medium ) {
-	.section-nav.subscription-manager-tab-switcher {
 		.section-nav__mobile-header {
-			display: none;
-		}
+			padding-left: 0;
+			padding-right: 0;
 
-		.section-nav-group {
-			display: flex;
+			.section-nav__mobile-header-text {
+				@include tab-text;
+				@include tab-text-selected-override;
+			}
 		}
 
 		.section-nav__panel {
-			display: flex;
-			align-items: center;
-		}
+			padding: 0;
 
-		.section-nav-tab__text {
-			display: inline;
-			width: auto;
-			text-align: center;
-			flex-grow: 0;
-			font-weight: 400;
+			.section-nav-group {
+				margin: 0;
+				.section-nav-tab__link {
+					border-bottom: solid 2px $studio-gray-5;
+				}
+			}
 		}
+	}
+}
 
-		.section-nav-tab__link {
-			display: block;
-			font-weight: 400;
-			background-color: transparent;
-		}
+// Large screen view only
+@media screen and ( min-width: $break-mobile ) {
+	.section-nav.subscription-manager-tab-switcher {
+		margin-bottom: 32px;
 
 		.section-nav-tabs {
-			flex-grow: 1;
-			flex-shrink: 0;
-		}
-
-		.section-nav-tabs__list {
 			display: flex;
+
+			.section-nav-tabs__list {
+				box-shadow: inset 0 -1px 0 rgba($studio-black, 0.05);
+				gap: 16px;
+				flex-basis: fit-content;
+
+				.section-nav-tab {
+					.section-nav-tab__link {
+						border-bottom: solid 2px transparent;
+						color: $studio-gray-60;
+						padding: 8px 0;
+						transition: border-bottom-color ease-in-out 0.1s, color ease-in-out 0.1s;
+
+						&:hover {
+							background-color: transparent;
+						}
+					}
+
+					.section-nav-tab__text {
+						font-size: $font-body;
+						line-height: $font-title-medium;
+					}
+
+					.count {
+						font-size: $font-body-extra-small;
+						line-height: $font-title-small;
+					}
+				}
+			}
 		}
 	}
 }

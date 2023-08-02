@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { PropsWithChildren, useCallback, useContext } from 'react';
-import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import {
@@ -13,6 +12,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { internalToPublicLicenseSortField } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/route';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
@@ -82,7 +82,9 @@ export default function LicenseListHeader() {
 
 	return (
 		<LicenseListItem header className="license-list__header">
-			<h2>{ translate( 'License state' ) }</h2>
+			<h2>{ translate( 'Product' ) }</h2>
+
+			<h2>{ translate( 'Site' ) }</h2>
 
 			<SortButton
 				sortField={ LicenseSortField.IssuedAt }

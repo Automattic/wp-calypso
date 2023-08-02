@@ -36,7 +36,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile # Not needed when restoring from cache.
+        run: yarn install --immutable # Not needed when restoring from cache.
 
       - name: Build packages
         if: steps.cache.outputs.cache-hit == 'true'

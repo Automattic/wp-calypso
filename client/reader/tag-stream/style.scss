@@ -6,10 +6,40 @@
 	margin-bottom: 10px;
 }
 
+.reader__content .tag-stream__header {
+	border-bottom: 1px solid #e9e9ea;
+	margin-bottom: 0;
+	padding-bottom: 55px;
+}
+
+.reader__content .tag-stream__header.has-description {
+	padding-bottom: 16px;
+}
+
+.tag-stream__header-title-group {
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: 6px;
+}
+
 .tag-stream__header-title {
+	font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
 	font-size: 2rem;
 	text-transform: capitalize;
 	font-weight: 600;
+	line-height: 24px;
+	margin-bottom: 4px;
+}
+
+.has-description .tag-stream__header-title {
+	font-size: $font-title-small;
+}
+
+.tag-stream__header-description {
+	font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-size: $font-headline-small;
+	font-weight: 600;
+	line-height: 48px;
 }
 
 // Back button in Tag streams
@@ -18,17 +48,6 @@
 	box-shadow: none;
 	padding: 0;
 	position: relative;
-	left: -3px;
-	top: 8px;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		left: 13px;
-		top: 20px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		top: 14px;
-	}
 
 	.button.header-cake__back {
 		padding: 0;
@@ -39,23 +58,25 @@
 	margin-top: 15px;
 }
 
-// Overrides default 720px width
-.is-reader-page .tag-stream__main.main {
-	max-width: 800px;
-}
-
-// specific rule to override existing rules
-.layout.has-header-section.is-section-reader .layout__header-section-content .tag-stream__page-header {
-	text-align: center;
-
-	h2 {
-		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		font-weight: 500;
-		margin-bottom: 10px;
+// Tag page only shows site titles in the sidebar, so spacing needs to be tighter
+.tag-stream__main {
+	.stream__two-column .reader__content::before {
+		content: "";
+		background-color: #e9e9ea;
+		position: absolute;
+		right: -56px;
+		top: 0;
+		height: calc(100% + 180px);
+		margin-top: -200px;
+		width: 1px;
 	}
 
-	h1 {
-		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		font-weight: 500;
+	.stream__two-column .stream__right-column {
+		margin-top: 0;
+	}
+
+	.reader-sidebar-site_link {
+		align-items: center;
+		margin-bottom: 12px;
 	}
 }

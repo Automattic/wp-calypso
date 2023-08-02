@@ -1,20 +1,11 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 
-const selectors = {
-	// Notifications panel (including sub-panels)
-	activeSingleViewPanel: '.wpnc__single-view.wpnc__current',
-	notification: ( text: string ) => `.wpnc__comment:has-text("${ text }")`,
-
-	// Comment actions
-	commentAction: ( action: string ) => `button.wpnc__action-link:has-text("${ action }"):visible`,
-	undoLocator: '.wpnc__undo-item',
-	undoLink: '.wpnc__undo-link',
-};
 /**
  * Component representing the notifications panel and notifications themselves.
  */
 export class NotificationsComponent {
 	private page: Page;
+	private anchor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -23,6 +14,8 @@ export class NotificationsComponent {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		// There is no accessible locator for this panel.
+		this.anchor = page.locator( 'div[id=wpnc-panel]' );
 	}
 
 	/**
@@ -31,8 +24,8 @@ export class NotificationsComponent {
 	 * @param {string} text Text contained in the notification.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickNotification( text: string ): Promise< void > {
-		await this.page.click( selectors.notification( text ) );
+	async openNotification( text: string ): Promise< void > {
+		await this.anchor.getByText( text ).click();
 	}
 
 	/**
@@ -40,42 +33,20 @@ export class NotificationsComponent {
 	 *
 	 * eg. 'Trash' -> Clicks on the 'Trash' button when viewing a single notification.
 	 *
-	 * @param {string} action Predefined list of strings that are accepted.
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} action Action to perform on the notification.
 	 */
 	async clickNotificationAction( action: string ): Promise< void > {
-		// we need to make sure we're in a specific notification view before proceeding with the individual action
-		const elementHandle = await this.page.waitForSelector( selectors.activeSingleViewPanel );
-		await elementHandle.waitForElementState( 'stable' );
-		await this.page.click( selectors.commentAction( action ) );
+		await this.anchor
+			.getByRole( 'list' )
+			.getByRole( 'button', { name: action, exact: true } )
+			.click();
 	}
 
 	/**
 	 * Clicks the undo link to undo the previous action.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async clickUndo(): Promise< void > {
-		await this.waitForUndoMessage();
-		await this.page.click( selectors.undoLink );
-	}
-
-	/**
-	 * Waits for undo message to appear
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async waitForUndoMessage(): Promise< void > {
-		await this.page.waitForSelector( selectors.undoLocator );
-	}
-
-	/**
-	 * Waits for undo message to disappear
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async waitForUndoMessageToDisappear(): Promise< void > {
-		await this.waitForUndoMessage();
-		await this.page.waitForSelector( selectors.undoLocator, { state: 'hidden' } );
+		await this.anchor.getByRole( 'button', { name: 'Undo', exact: true } ).click();
+		await this.anchor.getByText( 'Comment trashed' ).waitFor( { state: 'detached' } );
 	}
 }

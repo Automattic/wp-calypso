@@ -2,12 +2,12 @@
 
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import PriceInformation from 'calypso/my-sites/email/email-providers-comparison/price/price-information';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';

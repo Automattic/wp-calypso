@@ -1,7 +1,8 @@
+import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { resemblesUrl } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
 
@@ -11,6 +12,7 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
+		config( 'hostname' ),
 		...( ( siteSlug && [ siteSlug ] ) || [] ),
 	];
 
@@ -24,7 +26,9 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undefined => {
 	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug as string | null ) );
-	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const jetpackSite = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 	return useMemo( () => {
 		if ( ! checkoutBackUrl ) {
 			// For akismet specific checkout, if navigated with direct link

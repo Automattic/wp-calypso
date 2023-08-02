@@ -1,22 +1,25 @@
 import config from '@automattic/calypso-config';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { captureException } from 'calypso/lib/sentry';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner';
 import Recaptcha from 'calypso/signup/recaptcha';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
+import { convertErrorToString } from './composite-checkout/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
+	captureException( error.cause ? error.cause : error );
 	logToLogstash( {
 		feature: 'calypso_client',
 		message: 'composite checkout load error',
@@ -24,11 +27,14 @@ const logCheckoutError = ( error: Error ) => {
 		extra: {
 			env: config( 'env_id' ),
 			type: 'checkout_system_decider',
-			message: error.message + '; Stack: ' + error.stack,
+			message: convertErrorToString( error ),
 		},
 	} );
-	captureException( error );
 };
+
+const CheckoutMainWrapperStyles = styled.div`
+	background-color: ${ colorStudio.colors[ 'White' ] };
+`;
 
 export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
@@ -98,14 +104,13 @@ export default function CheckoutMainWrapper( {
 	}
 
 	return (
-		<>
+		<CheckoutMainWrapperStyles>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-						<CheckoutOrderBanner />
 						<CheckoutMain
 							siteSlug={ siteSlug }
 							siteId={ selectedSiteId }
@@ -130,6 +135,6 @@ export default function CheckoutMainWrapper( {
 				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
-		</>
+		</CheckoutMainWrapperStyles>
 	);
 }

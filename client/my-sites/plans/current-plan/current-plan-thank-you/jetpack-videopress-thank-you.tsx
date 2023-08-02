@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYou, { ThankYouCtaType } from './thank-you';
 

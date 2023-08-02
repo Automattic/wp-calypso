@@ -43,7 +43,6 @@ export const listListing = ( context, next ) => {
 			streamKey={ streamKey }
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
-			showPrimaryFollowButtonOnCards={ false }
 			trackScrollPage={ trackScrollPage.bind(
 				null,
 				basePath,

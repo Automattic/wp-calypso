@@ -15,11 +15,13 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
 import { useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
+import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
@@ -32,7 +34,6 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DataCenterPicker from './data-center-picker';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
@@ -147,7 +148,7 @@ export const EligibilityWarnings = ( {
 
 	const monthlyCost = useSelector( ( state ) =>
 		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
-	);
+	) as string;
 
 	return (
 		<div className={ classes }>
@@ -211,7 +212,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showDataCenterPicker && (
+			{ showDataCenterPicker && isEligible && ! hasBlockingHold( listHolds ) && (
 				<CompactCard className="eligibility-warnings__data-center-picker">
 					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
 					<DataCenterPicker

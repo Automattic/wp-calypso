@@ -1,0 +1,20 @@
+.site-settings-popover {
+	.site-settings {
+		.delivery-frequency-input:not(.is-logged-in) {
+			margin-bottom: 24px;
+		}
+
+		.setting-item.email-me-new-comments-toggle {
+			margin-bottom: 24px;
+		}
+	}
+
+	.subscriptions__separator {
+		margin-bottom: 24px;
+	}
+
+	.unsubscribe-button {
+		display: flex;
+		width: 100%;
+	}
+}

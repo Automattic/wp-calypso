@@ -9,8 +9,8 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	FEATURE_LEGACY_STORAGE_200GB,
 } from '@automattic/calypso-products';
-import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
@@ -18,7 +18,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -37,13 +37,15 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -147,7 +149,7 @@ class Plans extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
 		redirectToAddDomainFlow: PropTypes.bool,
-		domainAndPlanPackage: PropTypes.string,
+		domainAndPlanPackage: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
@@ -232,13 +234,7 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const {
-			currentPlan,
-			selectedSite,
-			isWPForTeamsSite,
-			currentPlanIntervalType,
-			is2023PricingGridVisible,
-		} = this.props;
+		const { currentPlan, selectedSite, isWPForTeamsSite, currentPlanIntervalType } = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -257,12 +253,14 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
-
+		const hideFreePlan = this.props.isDomainAndPlanPackageFlow;
+		// The Jetpack mobile app only wants to display two plans -- personal and premium
+		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
 			( ! this.props.isDomainUpsell ||
 				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
+
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
@@ -275,11 +273,12 @@ class Plans extends Component {
 				redirectTo={ this.props.redirectTo }
 				withDiscount={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
-				site={ selectedSite }
+				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
-				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
-				is2023PricingGridVisible={ is2023PricingGridVisible }
+				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
+				intent={ plansIntent }
+				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
 			/>
 		);
 	}
@@ -342,13 +341,14 @@ class Plans extends Component {
 			canAccessPlans,
 			currentPlan,
 			domainAndPlanPackage,
-			is2023PricingGridVisible,
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
 			isDomainUpsell,
 			isDomainUpsellSuggested,
 			isFreePlan,
 			currentPlanIntervalType,
+			domainFromHomeUpsellFlow,
+			jetpackAppPlans,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -398,14 +398,23 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
+				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
+					<DomainUpsellDialog domain={ selectedSite.slug } />
+				) }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader subHeaderText={ subHeaderText } /> }
+						{ ! isDomainAndPlanPackageFlow && (
+							<PlansHeader
+								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
+								subHeaderText={ subHeaderText }
+							/>
+						) }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
-									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+									{ ! jetpackAppPlans && (
+										<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+									) }
 
 									<FormattedHeader brandFont headerText={ headline } align="center" />
 
@@ -420,10 +429,7 @@ class Plans extends Component {
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
-							<Main
-								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
-								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
-							>
+							<Main fullWidthLayout={ ! isEcommerceTrial } wideLayout={ isEcommerceTrial }>
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
@@ -444,9 +450,8 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state, props ) => {
+const ConnectedPlans = connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
-
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
@@ -460,10 +465,7 @@ const ConnectedPlans = connect( ( state, props ) => {
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
-		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023PricingGridVisible:
-			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 		isDomainUpsell:
@@ -471,10 +473,25 @@ const ConnectedPlans = connect( ( state, props ) => {
 			!! getCurrentQueryArguments( state )?.domain,
 		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
 		isFreePlan: isFreePlanProduct( currentPlan ),
+		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
+		siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
 export default function PlansWrapper( props ) {
+	const { sendNudge } = useOdieAssistantContext();
+
+	useEffect( () => {
+		if ( props.intervalType === 'monthly' ) {
+			sendNudge( {
+				nudge: 'monthly-plan',
+				initialMessage:
+					'I see you are sitting on a monthly plan. I can recommend you to switch to an annual plan, so you can save some money.',
+				context: { plan: 'monthly' },
+			} );
+		}
+	}, [ props.intervalType ] );
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans { ...props } />

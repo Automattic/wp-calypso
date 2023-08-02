@@ -1,15 +1,18 @@
 import { isWpcomEnterpriseGridPlan, PlanSlug } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 import PlanPrice from 'calypso/my-sites/plan-price';
-import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { usePlanPricesDisplay } from '../hooks/use-plan-prices-display';
 import type { PlanProperties } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planProperties: PlanProperties;
-	is2023OnboardingPricingGrid: boolean;
 	isLargeCurrency: boolean;
+	isPlanUpgradeCreditEligible: boolean;
+	currentSitePlanSlug?: string | null;
+	siteId?: number | null;
 }
 
 const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
@@ -18,6 +21,21 @@ const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
 	flex-direction: ${ ( props ) => ( props.isLargeCurrency ? 'column' : 'row-reverse' ) };
 	align-items: ${ ( props ) => ( props.isLargeCurrency ? 'flex-start' : 'flex-end' ) };
 	gap: 4px;
+`;
+
+const Badge = styled.div`
+	text-align: center;
+	white-space: nowrap;
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.2px;
+	line-height: 1.25rem;
+	padding: 0 12px;
+	border-radius: 4px;
+	height: 21px;
+	background-color: var( --studio-green-0 );
+	display: inline-block;
+	color: var( --studio-green-40 );
 `;
 
 const HeaderPriceContainer = styled.div`
@@ -85,7 +103,7 @@ const HeaderPriceContainer = styled.div`
 	.plan-price.is-discounted {
 		color: var( --color-neutral-70 );
 
-		.plan-price__integer-fraction {
+		.plans-grid-2023__html-price-display-wrapper {
 			color: inherit;
 		}
 	}
@@ -100,22 +118,28 @@ const HeaderPriceContainer = styled.div`
 			}
 		}
 	}
+	.plan-features-2023-grid__badge {
+		margin-bottom: 10px;
+	}
 `;
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planProperties,
-	is2023OnboardingPricingGrid,
 	isLargeCurrency,
+	isPlanUpgradeCreditEligible,
+	currentSitePlanSlug,
+	siteId,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
-	const { planName, showMonthlyPrice } = planProperties;
+	const translate = useTranslate();
+	const { planName } = planProperties;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const planPrices = usePlanPrices( {
+	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
-		returnMonthly: showMonthlyPrice,
+		returnMonthly: true,
+		currentSitePlanSlug,
+		siteId,
 	} );
-	const shouldShowDiscountedPrice = Boolean(
-		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
-	);
+	const shouldShowDiscountedPrice = Boolean( planPrices.discountedPrice );
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
@@ -124,32 +148,39 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	return (
 		<HeaderPriceContainer>
 			{ shouldShowDiscountedPrice && (
-				<PricesGroup isLargeCurrency={ isLargeCurrency }>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ planPrices.rawPrice }
-						displayPerMonthNotation={ false }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-						isLargeCurrency={ isLargeCurrency }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
-						displayPerMonthNotation={ false }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-						isLargeCurrency={ isLargeCurrency }
-						discounted
-					/>
-				</PricesGroup>
+				<>
+					<Badge className="plan-features-2023-grid__badge">
+						{ isPlanUpgradeCreditEligible
+							? translate( 'Credit applied' )
+							: translate( 'One time discount' ) }
+					</Badge>
+					<PricesGroup isLargeCurrency={ isLargeCurrency }>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ planPrices.originalPrice }
+							displayPerMonthNotation={ false }
+							isLargeCurrency={ isLargeCurrency }
+							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							original
+						/>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ planPrices.discountedPrice }
+							displayPerMonthNotation={ false }
+							isLargeCurrency={ isLargeCurrency }
+							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							discounted
+						/>
+					</PricesGroup>
+				</>
 			) }
 			{ ! shouldShowDiscountedPrice && (
 				<PlanPrice
 					currencyCode={ currencyCode }
-					rawPrice={ planPrices.rawPrice }
+					rawPrice={ planPrices.originalPrice }
 					displayPerMonthNotation={ false }
-					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isLargeCurrency={ isLargeCurrency }
+					priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 				/>
 			) }
 		</HeaderPriceContainer>

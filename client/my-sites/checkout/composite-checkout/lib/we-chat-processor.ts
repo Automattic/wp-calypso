@@ -1,4 +1,3 @@
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import {
 	makeRedirectResponse,
 	makeManualResponse,
@@ -38,40 +37,31 @@ export default async function weChatProcessor(
 		contactDetails,
 	} = options;
 	const paymentMethodId = 'wechat';
+
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
-	const { protocol, hostname, port, pathname } = parseUrl(
-		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
-		true
+
+	const baseURL = new URL(
+		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com'
 	);
-	const cancelUrlQuery = {};
-	const redirectToSuccessUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: getThankYouUrl(),
-	} );
-	const successUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`,
-		query: { redirectTo: redirectToSuccessUrl },
-	} );
-	const cancelUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname,
-		query: cancelUrlQuery,
-	} );
+
+	const redirectToSuccessUrl = new URL( baseURL );
+	redirectToSuccessUrl.pathname = getThankYouUrl();
+
+	const successUrl = new URL( baseURL );
+	successUrl.pathname = `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`;
+	successUrl.searchParams.set( 'redirectTo', redirectToSuccessUrl.toString() );
+
+	// Clear all query params from the base URL:
+	const cancelUrl = new URL( baseURL );
+	cancelUrl.search = '';
 
 	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,
 		{
 			...submitData,
 			name: submitData.name ?? '',
-			successUrl,
-			cancelUrl,
+			successUrl: successUrl.toString(),
+			cancelUrl: cancelUrl.toString(),
 			couponId: responseCart.coupon,
 			country: contactDetails?.countryCode?.value ?? '',
 			postalCode: getPostalCode( contactDetails ),

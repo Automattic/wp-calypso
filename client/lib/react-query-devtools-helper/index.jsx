@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useEffect, useState } from 'react';
 import ReactDom from 'react-dom';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 
 import './style.scss';

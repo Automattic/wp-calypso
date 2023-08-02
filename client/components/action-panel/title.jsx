@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 
-const ActionPanelTitle = ( { children, className } ) => {
+const ActionPanelTitle = ( { children, className = '' } ) => {
 	return <h2 className={ classnames( 'action-panel__title', className ) }>{ children }</h2>;
 };
 

@@ -13,6 +13,7 @@ export type RenderedPattern = {
 	title: string;
 	html: string;
 	styles: RenderedStyle[];
+	scripts: string;
 };
 
 export type RenderedPatterns = {

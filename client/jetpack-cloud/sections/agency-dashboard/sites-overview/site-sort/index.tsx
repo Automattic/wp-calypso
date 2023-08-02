@@ -1,7 +1,7 @@
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { updateSort } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { defaultSortIcon, ascendingSortIcon, descendingSortIcon } from '../../icons';
 import SitesOverviewContext from '../context';

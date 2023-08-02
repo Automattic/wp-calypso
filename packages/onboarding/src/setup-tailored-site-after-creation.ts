@@ -1,9 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Onboard } from '@automattic/data-stores';
-import { select } from '@wordpress/data';
+import { Onboard, Site, OnboardSelect, SiteActions } from '@automattic/data-stores';
+import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
 	isLinkInBioFlow,
+	isNewsletterFlow,
 	isNewsletterOrLinkInBioFlow,
 	LINK_IN_BIO_FLOW,
 	FREE_FLOW,
@@ -11,6 +12,8 @@ import {
 } from './utils';
 
 const ONBOARD_STORE = Onboard.register();
+// `client_id` and `client_secret` are only needed when signing up users.
+const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
 export const base64ImageToBlob = ( base64String: string ) => {
 	// extract content type and base64 payload from original string
@@ -41,10 +44,11 @@ interface SetupOnboardingSiteOptions {
 
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
 	// const { resetOnboardStore } = dispatch( ONBOARD_STORE );
-	const selectedPatternContent = select( ONBOARD_STORE ).getPatternContent();
-	const siteTitle = select( ONBOARD_STORE ).getSelectedSiteTitle();
-	const siteDescription = select( ONBOARD_STORE ).getSelectedSiteDescription();
-	const siteLogo = select( ONBOARD_STORE ).getSelectedSiteLogo();
+	const goals = ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals();
+	const selectedDesign = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign();
+	const siteTitle = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle();
+	const siteDescription = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription();
+	const siteLogo = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteLogo();
 
 	if ( siteId && flowName ) {
 		const formData: ( string | File )[][] = [];
@@ -52,28 +56,33 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			blogname: string;
 			blogdescription: string;
 			launchpad_screen?: string;
+			site_goals?: Array< string >;
 			site_intent?: string;
 		} = {
 			blogname: siteTitle,
 			blogdescription: siteDescription,
 		};
 
+		const promises = [];
+
 		if ( isNewsletterOrLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
 			// link-in-bio and link-in-bio-tld are considered the same intent.
 			if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
 				settings.site_intent = isLinkInBioFlow( flowName ) ? LINK_IN_BIO_FLOW : FREE_FLOW;
-				if ( selectedPatternContent ) {
-					const pattern = {
-						content: selectedPatternContent,
-						template: 'blank',
-					};
-					formData.push( [ 'pattern', JSON.stringify( pattern ) ] );
+				if ( selectedDesign && selectedDesign.is_virtual ) {
+					const { applyThemeWithPatterns } = dispatch( SITE_STORE ) as SiteActions;
+					promises.push( applyThemeWithPatterns( String( siteId ), selectedDesign ) );
 				}
 			} else {
 				settings.site_intent = flowName;
 			}
 
 			settings.launchpad_screen = 'full';
+		}
+
+		// Newsletter flow sets "paid-newsletter" goal as an indication to setup paid newsletter later on
+		if ( isNewsletterFlow( flowName ) && goals && goals.length > 0 ) {
+			settings.site_goals = Array.from( goals );
 		}
 
 		formData.push( [ 'settings', JSON.stringify( settings ) ] );
@@ -85,23 +94,27 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			] );
 		}
 
-		return wpcomRequest< { updated: object } >( {
-			path: `/sites/${ siteId }/onboarding-customization`,
-			method: 'POST',
-			apiNamespace: 'wpcom/v2',
-			apiVersion: '2',
-			formData,
-		} ).then( () => {
-			recordTracksEvent( 'calypso_signup_site_options_submit', {
-				has_site_title: !! siteTitle,
-				has_tagline: !! siteDescription,
-			} );
-			/**
-			 * We need to wait the site being created, then go to checkout and wait for the user
-			 * to buy the plan before we can set a premium theme to the site. If we reset the store
-			 * here we loose this information.
-			 */
-			// resetOnboardStore();
-		} );
+		promises.push(
+			wpcomRequest< { updated: object } >( {
+				path: `/sites/${ siteId }/onboarding-customization`,
+				method: 'POST',
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				formData,
+			} ).then( () => {
+				recordTracksEvent( 'calypso_signup_site_options_submit', {
+					has_site_title: !! siteTitle,
+					has_tagline: !! siteDescription,
+				} );
+				/**
+				 * We need to wait the site being created, then go to checkout and wait for the user
+				 * to buy the plan before we can set a premium theme to the site. If we reset the store
+				 * here we loose this information.
+				 */
+				// resetOnboardStore();
+			} )
+		);
+
+		return Promise.all( promises );
 	}
 }

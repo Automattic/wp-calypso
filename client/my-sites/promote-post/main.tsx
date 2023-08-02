@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -21,6 +20,7 @@ import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-li
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
+import { useSelector } from 'calypso/state';
 import {
 	getSitePost,
 	getPostsForQuery,
@@ -32,7 +32,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PostType } from 'calypso/types';
-import { unifyCampaigns } from './utils';
+import { getAdvertisingDashboardPath, unifyCampaigns } from './utils';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -81,6 +81,8 @@ const today = moment().locale( 'en' );
 const period = 'year';
 const topPostsQuery = memoizedQuery( period, 'month', 20, today.format( 'YYYY-MM-DD' ), -1 );
 
+const allowedPostTypes = [ 'post', 'page', 'product' ];
+
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
@@ -95,12 +97,16 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postAndPagesByComments = useSelector( ( state ) => {
 		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments );
-		return postsAndPages?.filter( ( product: any ) => ! product.password );
+		return postsAndPages?.filter(
+			( product: any ) => ! product.password && allowedPostTypes.includes( product.type )
+		);
 	} );
 
 	const postAndPagesByIDs = useSelector( ( state ) => {
 		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByIDs );
-		return postsAndPages?.filter( ( product: any ) => ! product.password );
+		return postsAndPages?.filter(
+			( product: any ) => ! product.password && allowedPostTypes.includes( product.type )
+		);
 	} );
 
 	const isLoadingProducts = useSelector( ( state ) =>
@@ -264,7 +270,10 @@ export default function PromotedPosts( { tab }: Props ) {
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (
 				<>
-					<PageViewTracker path="/advertising/:site/campaigns" title="Advertising > Campaigns" />
+					<PageViewTracker
+						path={ getAdvertisingDashboardPath( '/campaigns/:site' ) }
+						title="Advertising > Campaigns"
+					/>
 					<CampaignsList
 						hasLocalUser={ hasLocalUser }
 						isError={ isError }
@@ -275,7 +284,10 @@ export default function PromotedPosts( { tab }: Props ) {
 					/>
 				</>
 			) : (
-				<PageViewTracker path="/advertising/:site/posts" title="Advertising > Ready to Blaze" />
+				<PageViewTracker
+					path={ getAdvertisingDashboardPath( '/posts/:site' ) }
+					title="Advertising > Ready to Blaze"
+				/>
 			) }
 
 			<QuerySiteStats siteId={ selectedSiteId } statType="statsTopPosts" query={ topPostsQuery } />

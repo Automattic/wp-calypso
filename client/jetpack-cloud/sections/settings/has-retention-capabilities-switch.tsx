@@ -1,8 +1,8 @@
 import { FunctionComponent, ReactNode, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindSize from 'calypso/components/data/query-rewind-size';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import { useSelector } from 'calypso/state';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getRewindSizeRequestStatus from 'calypso/state/rewind/selectors/get-rewind-size-request-status';

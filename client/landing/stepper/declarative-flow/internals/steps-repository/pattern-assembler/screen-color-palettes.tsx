@@ -1,9 +1,10 @@
 import { Button } from '@automattic/components';
 import { ColorPaletteVariations } from '@automattic/global-styles';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import NavigatorHeader from './navigator-header';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import NavigatorTitle from './navigator-title';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
 interface Props {
@@ -24,24 +25,13 @@ const ScreenColorPalettes = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Colors' ) }
-				description={
-					hasEnTranslation(
-						'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-					)
-						? translate(
-								'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
-						  )
-						: translate(
-								'Select from our curated color palettes or tweak to your heart’s content when you upgrade to the Premium plan or higher.'
-						  )
-				}
-				isPremium
+				title={ <NavigatorTitle title={ translate( 'Colors' ) } /> }
+				description={ translate( 'Discover your ideal color blend, from free to custom styles.' ) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
@@ -50,6 +40,7 @@ const ScreenColorPalettes = ( {
 					stylesheet={ stylesheet }
 					selectedColorPaletteVariation={ selectedColorPaletteVariation }
 					onSelect={ onSelect }
+					limitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 			</div>
 			<div className="screen-container__footer">
@@ -59,7 +50,7 @@ const ScreenColorPalettes = ( {
 					onClick={ onDoneClick }
 					primary
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save colors' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

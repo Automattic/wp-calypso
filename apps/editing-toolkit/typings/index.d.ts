@@ -23,5 +23,11 @@ declare global {
 			launchpadScreenOption: 'full' | 'off' | 'minimized';
 			siteIntentOption: string;
 		};
+		sharingModalOptions: {
+			isDismissed: boolean;
+		};
+		wpcomGutenberg?: {
+			blogPublic?: string;
+		};
 	}
 }

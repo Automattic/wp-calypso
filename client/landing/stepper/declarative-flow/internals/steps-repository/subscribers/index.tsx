@@ -20,9 +20,19 @@ const Subscribers: Step = function ( { navigation } ) {
 		submit?.();
 	};
 
+	const isSiteOnFreePlan = !! site?.plan?.is_free;
+
+	const subtitleText = isSiteOnFreePlan
+		? translate(
+				'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
+		  )
+		: translate(
+				'Bring your subscribers with you — or add some individually — to start spreading the news.'
+		  );
+
 	const submitButtonText = isImportValid
 		? translate( 'Add and continue' )
-		: translate( 'Continue' );
+		: translate( 'Add subscribers' );
 
 	return (
 		<StepContainer
@@ -37,25 +47,21 @@ const Subscribers: Step = function ( { navigation } ) {
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
-							isSiteOnFreePlan={ !! site?.plan?.is_free }
+							isSiteOnFreePlan={ isSiteOnFreePlan }
 							flowName="onboarding_subscribers"
 							submitBtnName={ submitButtonText }
 							onImportFinished={ handleSubmit }
+							onSkipBtnClick={ handleSubmit }
 							onChangeIsImportValid={ ( isValid ) => setIsImportValid( isValid ) }
-							allowEmptyFormSubmit={ true }
+							allowEmptyFormSubmit={ false }
 							manualListEmailInviting={ ! isUserEligibleForSubscriberImporter }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							titleText={ translate( 'Ready to add your first subscribers?' ) }
-							subtitleText={ translate(
-								'Add your first subscribers — or import 100 for free — to start spreading the news.'
-							) }
+							subtitleText={ subtitleText }
 							showSubtitle={ true }
-							emailPlaceholders={ [
-								'sue@email.com',
-								'thomaswhigginson@email.com',
-								'ed.dickinson@email.com',
-							] }
+							showSkipLink={ true }
+							submitBtnAlwaysEnable={ false }
 						/>
 					) }
 				</div>

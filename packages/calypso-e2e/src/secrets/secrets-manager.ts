@@ -13,6 +13,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'gutenbergSimpleSiteEdgeUser',
 	'gutenbergAtomicSiteUser',
 	'gutenbergAtomicSiteEdgeUser',
+	'gutenbergAtomicSiteEdgeNightliesUser',
 	'coBlocksSimpleSiteEdgeUser',
 	'coBlocksAtomicSiteEdgeUser',
 	'siteEditorSimpleSiteUser',
@@ -113,7 +114,7 @@ export class SecretsManager {
 							'This also may mean the typings for the secrets are stale and need updating.\n\n' +
 							'Details:\n' +
 							`\tInvalid or missing key: ${ fullKeyPath }\n` +
-							`\tExpected type: ${ typeof reference[ key ] }`
+							`\tExpected type: ${ typeof reference[ key ] }, got ${ typeof target[ key ] }`
 					);
 				}
 
@@ -176,6 +177,7 @@ export class SecretsManager {
 				gutenbergSimpleSiteEdgeUser: { ...fakeAccount },
 				gutenbergAtomicSiteUser: { ...fakeAccount },
 				gutenbergAtomicSiteEdgeUser: { ...fakeAccount },
+				gutenbergAtomicSiteEdgeNightliesUser: { ...fakeAccount },
 				coBlocksSimpleSiteEdgeUser: { ...fakeAccount },
 				coBlocksAtomicSiteEdgeUser: { ...fakeAccount },
 				siteEditorSimpleSiteUser: { ...fakeAccount },

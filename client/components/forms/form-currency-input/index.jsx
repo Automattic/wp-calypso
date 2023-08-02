@@ -64,7 +64,6 @@ function FormCurrencyInput( {
 	return (
 		<FormTextInputWithAffixes
 			{ ...props }
-			type="number"
 			className={ classes }
 			prefix={ prefix }
 			suffix={ suffix }

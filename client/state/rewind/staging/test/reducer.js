@@ -2,6 +2,7 @@ import {
 	JETPACK_BACKUP_STAGING_GET_REQUEST,
 	JETPACK_BACKUP_STAGING_GET_REQUEST_SUCCESS,
 	JETPACK_BACKUP_STAGING_GET_REQUEST_FAILURE,
+	JETPACK_BACKUP_STAGING_SET,
 } from 'calypso/state/action-types';
 import { BACKUP_STAGING_UPDATE_REQUEST } from '../constants';
 import { stagingSitesList, updateStagingFlagRequestStatus, site } from '../reducer';
@@ -123,5 +124,28 @@ describe( 'fetch site staging info', () => {
 
 		expect( siteReducer.hasFetched ).toBe( false );
 		expect( siteReducer.isFetching ).toBe( false );
+	} );
+} );
+
+describe( 'set staging flag after updating', () => {
+	test( 'should return the new staging flag after dispatching JETPACK_BACKUP_STAGING_SET action', () => {
+		const previousState = {
+			isFetching: false,
+			hasFetched: true,
+			info: {
+				blog_id: 222222,
+				domain: 'test1.jurassic.ninja',
+				siteurl: 'https://test1.jurassic.ninja',
+				staging: false,
+			},
+		};
+
+		const action = {
+			type: JETPACK_BACKUP_STAGING_SET,
+			siteId: 222222,
+			staging: true,
+		};
+
+		expect( site( previousState, action ).info.staging ).toBe( true );
 	} );
 } );

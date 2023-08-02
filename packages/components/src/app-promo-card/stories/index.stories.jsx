@@ -2,7 +2,7 @@ import AppPromoCard from '..';
 
 export default {
 	component: AppPromoCard,
-	title: 'App Promo Card',
+	title: 'packages/components/App Promo Card',
 };
 
 const Template = ( args ) => <AppPromoCard { ...args } />;

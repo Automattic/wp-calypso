@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
 import jetpackCredentials from 'calypso/assets/images/jetpack/jetpack-icon-key.svg';
 import Banner from 'calypso/components/banner';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import '../style.scss';

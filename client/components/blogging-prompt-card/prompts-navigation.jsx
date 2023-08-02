@@ -95,6 +95,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 		return (
 			<div className="blogging-prompt__prompt-navigation">
 				<Button
+					aria-label={ translate( 'Show previous prompt' ) }
 					borderless={ false }
 					className={ buttonClasses }
 					onClick={ () => navigatePrompts( 'back' ) }
@@ -104,6 +105,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 				</Button>
 				<div className="blogging-prompt__prompt-text">{ getPrompt()?.text }</div>
 				<Button
+					aria-label={ translate( 'Show next prompt' ) }
 					borderless={ false }
 					className={ buttonClasses }
 					onClick={ () => navigatePrompts( 'forward' ) }

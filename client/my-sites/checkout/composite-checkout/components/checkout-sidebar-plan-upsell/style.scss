@@ -1,5 +1,6 @@
 .checkout-sidebar-plan-upsell {
 	margin-top: 24px;
+	margin-bottom: 24px;
 }
 
 .promo-card.checkout-sidebar-plan-upsell {
@@ -17,7 +18,7 @@
 .checkout-sidebar-plan-upsell__plan-grid {
 	display: grid;
 	grid-template-rows: 1fr 1fr;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr 3fr;
 }
 
 .checkout-sidebar-plan-upsell__plan-grid > div:nth-child(even) {

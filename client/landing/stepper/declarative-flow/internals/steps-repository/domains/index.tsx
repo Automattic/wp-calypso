@@ -7,20 +7,19 @@ import {
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
 	DOMAIN_UPSELL_FLOW,
+	ONBOARDING_PM_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -38,16 +37,14 @@ import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
-	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
-	const flowToReturnTo = useQuery().get( 'flowToReturnTo' );
-	const siteSlug = useSiteSlug();
 
-	const { submit, exitFlow } = navigation;
+	const { submit, exitFlow, goBack } = navigation;
 
 	const submitDomainStepSelection = ( suggestion: DomainSuggestion, section: string ) => {
 		let domainType = 'domain_reg';
@@ -90,7 +87,19 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		suggestion: DomainSuggestion | undefined,
 		shouldHideFreePlan = false
 	) => {
-		if ( suggestion ) {
+		if ( ! suggestion ) {
+			setHideFreePlan( false );
+			setDomainCartItem( undefined );
+			setDomain( undefined );
+			return submit?.();
+		}
+
+		setDomain( suggestion );
+
+		if ( suggestion?.is_free ) {
+			setHideFreePlan( false );
+			setDomainCartItem( undefined );
+		} else {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
@@ -99,11 +108,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
-		} else {
-			setDomainCartItem( undefined );
 		}
 
-		submit?.();
+		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
 	const handleSkip = ( _googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
@@ -160,6 +167,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
 			case DOMAIN_UPSELL_FLOW:
+			case ONBOARDING_PM_FLOW:
 				return __( 'Enter some descriptive keywords to get started' );
 			default:
 				return createInterpolateElement(
@@ -239,26 +247,26 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		/>
 	);
 
-	const handleGoBack = () => {
+	const handleGoBack = ( goBack: ( () => void ) | undefined ) => {
 		if ( showUseYourDomain ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			return exitFlow?.( `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }` );
+		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
+			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( [ DOMAIN_UPSELL_FLOW, ONBOARDING_PM_FLOW ].includes( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );
@@ -274,7 +282,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
-			goBack={ handleGoBack }
+			goBack={ () => handleGoBack( goBack ) }
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader

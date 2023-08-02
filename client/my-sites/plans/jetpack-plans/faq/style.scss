@@ -41,3 +41,11 @@
 .jetpack-faq__section button:focus-visible {
 	outline: thin dotted;
 }
+
+a.jetpack-faq__learn-more-link {
+	display: inline-block;
+	font-size: 1rem;
+	text-decoration: underline;
+	margin-top: 0.5rem;
+	color: var(--studio-gray-60);
+}

@@ -36,6 +36,9 @@ export const actions = {
 	touchAllFields(): CardStoreAction {
 		return { type: 'TOUCH_ALL_FIELDS' };
 	},
+	resetFields(): CardStoreAction {
+		return { type: 'RESET_FIELDS' };
+	},
 };
 
 export const selectors = {
@@ -104,6 +107,9 @@ export function createCreditCardPaymentMethodStore( {
 					},
 					{}
 				);
+			}
+			case 'RESET_FIELDS': {
+				return {};
 			}
 			default:
 				return state;

@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -48,7 +48,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			description: translate(
 				'Manage features and monitor your clients’ sites by adding them to your Jetpack Pro Dashboard. To do so, connect the sites to Jetpack using your {{strong}}%(userEmail)s{{/strong}} user account.',
 				{
-					args: { userEmail: user?.email },
+					args: { userEmail: user?.email ?? '' },
 					components: {
 						strong: <strong />,
 					},

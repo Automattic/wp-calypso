@@ -1,3 +1,6 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/components/src/styles/typography";
+
 @import "../style";
 .subscribers {
 	.add-subscriber__title-container {
@@ -7,7 +10,7 @@
 			margin: 36px auto 58px auto !important;
 		}
 	}
-	.step-container {
+	.step-container.subscribers {
 		.subscribers {
 			padding-top: 0;
 		}
@@ -24,7 +27,8 @@
 
 			.onboarding-subtitle {
 				margin-bottom: 1.5rem;
-				font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+				font-size: rem(16px); //typography-exception
+				line-height: rem(24px); //typography-exception
 			}
 		}
 
@@ -35,7 +39,7 @@
 		.add-subscriber__form--container {
 			input {
 				&::placeholder {
-					color: var(--studio-gray-50);
+					color: var(--studio-gray-30);
 				}
 			}
 		}
@@ -44,6 +48,16 @@
 			display: block;
 			width: 100%;
 			margin: 2rem 0;
+			&:disabled {
+				color: var(--studio-white);
+			}
+		}
+
+		.add-subscriber__form-skip-link-wrapper {
+			justify-content: center;
+			.add-subscriber__form-skip-link {
+				color: var(--studio-blue-50);
+			}
 		}
 
 		.add-subscriber__form--container .form-input-validation.is-error.is-file-validation {

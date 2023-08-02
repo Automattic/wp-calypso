@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient, UseMutationResult } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { fetchHomeLayout, getCacheKey } from './use-home-layout-query';
 import { useHomeLayoutQueryParams } from './use-home-layout-query-params';
@@ -20,13 +20,17 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 	const queryClient = useQueryClient();
 	const query = useHomeLayoutQueryParams();
 
-	const mutation = useMutation< TData, TError, Variables >(
-		async ( { reminder, card } ) => {
+	const mutation = useMutation< TData, TError, Variables >( {
+		mutationFn: async ( { reminder, card } ) => {
 			const data = await queryClient.fetchQuery(
 				getCacheKey( siteId ),
 				() => fetchHomeLayout( siteId, query ),
 				{ staleTime: Infinity }
 			);
+
+			const view_name = ( data as any ).view_name;
+			const multipleCardViews = [ 'VIEW_POST_LAUNCH', 'VIEW_SITE_SETUP' ];
+			const isSingleCardView = multipleCardViews.indexOf( view_name ) === -1;
 
 			return await wp.req.post(
 				{
@@ -35,19 +39,18 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 				},
 				{ query },
 				{
-					view: ( data as any ).view_name,
-					// temporarily prevent single card views from returning themself after skipping
-					card: ( data as any ).view_name === 'VIEW_POST_LAUNCH' ? card : undefined,
+					// Single card views are skipped by skipping the "view".
+					view: isSingleCardView ? view_name : undefined,
+					// Prevents single card views from returning themself after skipping
+					card: isSingleCardView ? undefined : card,
 					...( reminder && { reminder } ),
 				}
 			);
 		},
-		{
-			onSuccess( data ) {
-				queryClient.setQueryData( getCacheKey( siteId ), data );
-			},
-		}
-	);
+		onSuccess( data ) {
+			queryClient.setQueryData( getCacheKey( siteId ), data );
+		},
+	} );
 
 	const { mutate } = mutation;
 
@@ -57,7 +60,7 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 	);
 
 	const skipCard = useCallback(
-		( card, reminder?: ReminderDuration ) => mutate( { reminder: reminder ?? null, card } ),
+		( card: string, reminder?: ReminderDuration ) => mutate( { reminder: reminder ?? null, card } ),
 		[ mutate ]
 	);
 

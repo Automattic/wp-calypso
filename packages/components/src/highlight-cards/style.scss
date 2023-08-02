@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
@@ -53,6 +54,43 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	@include stats-section-header;
 
 	margin-bottom: $header-margin-bottom;
+	display: flex;
+	align-items: center;
+
+	.highlight-cards-heading__description {
+		display: flex;
+		align-items: flex-end;
+		height: 31px;
+		font-family: $font-sf-pro-text;
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var(--studio-gray-60);
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
+	.highlight-cards-heading__tooltip {
+		margin-left: 6px;
+	}
+
+	.highlight-cards-heading__settings {
+		margin-left: auto;
+	}
+
+	.highlight-cards-heading__settings-action {
+		width: 24px;
+		height: 24px;
+		cursor: pointer;
+
+		&:focus {
+			outline: 2px solid #3057dc;
+			border-radius: 2px;
+		}
+
+		svg {
+			fill: $gray-900;
+		}
+	}
 
 	small {
 		font-family: $highlight-card-heading-font;
@@ -60,6 +98,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		line-height: 1.5;
 		color: var(--studio-gray-50);
 		font-weight: 400;
+		margin-left: 12px;
 
 		@media ( max-width: $break-mobile ) {
 			display: block;
@@ -67,7 +106,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 
 	svg {
-		fill: var(--studio-gray-50);
+		fill: var(--studio-gray-30);
 	}
 }
 
@@ -171,14 +210,129 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		margin-bottom: $header-margin-bottom;
 	}
 }
-.tooltip.popover.highlight-card-tooltip { // overload tooltip's styles
-	.popover__inner {
-		padding: 16px 24px;
-		width: 244px;
-		box-sizing: border-box;
-		border-radius: 5px; // stylelint-disable-line scales/radii
+.tooltip.popover {
+	// @TODO: Refactor styling into the Popover component for more extensive usage. E.g., tooltip and popover in StatsNavigation.
+	&.highlight-card-tooltip,
+	&.highlight-card-popover { // overload tooltip's styles
+		.popover__inner {
+			padding: 16px 24px;
+			width: 244px;
+			box-sizing: border-box;
+			border-radius: 5px; // stylelint-disable-line scales/radii
+		}
+	}
+
+	// Modules settings popover
+	&.page-modules-settings-popover {
+		// Make the popover under `#header.masterbar` of z-index: 180.
+		z-index: z-index("root", ".tooltip.popover.page-modules-settings-popover");
+		.popover__inner {
+			padding: 14px 16px;
+		}
+	}
+
+	&.highlight-card__settings-tooltip {
+		// Make the popover under `.page-modules-settings-popover` of z-index: 175.
+		z-index: z-index("root", ".tooltip.popover.highlight-card__settings-tooltip");
+	}
+
+	// @TODO: Introduce the support for the border of white background arrows in the popover component.
+	// Set the border of the white background bottom arrows.
+	&.highlight-card-popover {
+		&.is-bottom,
+		&.is-bottom-left,
+		&.is-bottom-right {
+			.popover__arrow {
+				border-bottom-color: var(--studio-white);
+
+				&::before {
+					display: block;
+					position: absolute;
+					content: "";
+					border: 6px solid var(--studio-gray-5);
+					border-top: 0;
+					border-left-color: transparent;
+					border-right-color: transparent;
+					left: 4px;
+					top: 0;
+				}
+
+				&::after {
+					display: block;
+					position: absolute;
+					content: "";
+					border: 6px solid var(--studio-white);
+					border-top: 0;
+					border-left-color: transparent;
+					border-right-color: transparent;
+					left: -6px;
+					top: 1px;
+				}
+			}
+		}
+
+		.popover__inner {
+			background-color: var(--studio-white);
+			color: var(--studio-gray-50);
+			border: 1px solid var(--studio-gray-5);
+			box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+			font-family: $font-sf-pro-text;
+			font-weight: 500;
+			font-size: $font-body-small;
+			line-height: 24px;
+			letter-spacing: -0.02em;
+
+			// Modules settings controls
+			.page-modules-settings-toggle-wrapper {
+				color: var(--studio-gray-80);
+				margin-top: 10px;
+
+				.page-modules-settings-toggle {
+					display: flex;
+					align-items: center;
+					justify-content: flex-start;
+
+					&:not(:first-child) {
+						margin-top: 12px;
+					}
+
+					svg {
+						margin-right: 14px;
+					}
+				}
+
+				.page-modules-settings-toggle-control {
+					line-height: 18px;
+					margin-left: auto;
+				}
+			}
+
+			// Highlights settings controls
+			& > button {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				cursor: pointer;
+				color: var(--studio-gray-80);
+				font-family: $font-sf-pro-text;
+				font-weight: 500;
+				font-size: $font-body-small;
+				line-height: 24px;
+				letter-spacing: -0.02em;
+
+				svg {
+					fill: var(--studio-gray-30);
+				}
+
+				&:not(:first-child) {
+					margin-top: 12px;
+				}
+			}
+		}
 	}
 }
+
 .highlight-card-tooltip-content {
 	display: flex;
 	align-items: center;
@@ -187,6 +341,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	font-weight: 500;
 	line-height: 20px;
 	font-family: $highlight-card-tooltip-font;
+	letter-spacing: -0.24px;
 
 	&.comparing-info {
 		display: block;
@@ -225,6 +380,29 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		fill: var(--studio-white);
 		display: flex;
 		padding-right: 8px;
+	}
+}
+
+.highlight-card__settings-tooltip {
+	.highlight-card-tooltip-content {
+		flex-direction: column;
+		align-items: flex-end;
+
+		p {
+			margin-bottom: 24px;
+		}
+
+		button {
+			font-family: $font-sf-pro-text;
+			font-weight: 600;
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+			color: var(--studio-black);
+			padding: 4px 8px;
+			background-color: var(--studio-white);
+			border-radius: 4px;
+			cursor: pointer;
+		}
 	}
 }
 

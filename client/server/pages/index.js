@@ -8,6 +8,7 @@ import {
 	isTranslatedIncompletely,
 	isDefaultLocale,
 	getLanguageSlugs,
+	localizeUrl,
 } from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -392,10 +393,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
 						res.redirect(
-							'https://' +
-								req.context.lang +
-								'.search.wordpress.com/?q=' +
-								encodeURIComponent( searchParam )
+							'https://wordpress.com/read/search?q=' + encodeURIComponent( searchParam )
 						);
 						return;
 					}
@@ -688,24 +686,9 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/discover', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
-			res.redirect( config( 'discover_logged_out_redirect_url' ) );
-		} else {
-			next();
-		}
-	} );
+	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
+		const locale = req.params?.locale;
 
-	// redirect logged-out searches to en.search.wordpress.com
-	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
-			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
-		} else {
-			next();
-		}
-	} );
-
-	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
@@ -715,12 +698,18 @@ function wpcomPages( app ) {
 					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 				);
 			} else {
-				const pricingPageUrl = ref
-					? `https://wordpress.com/pricing/?ref=${ ref }`
-					: 'https://wordpress.com/pricing/';
+				const pricingPage = 'https://wordpress.com/pricing/';
+				const refQuery = ref ? `?ref=${ ref }` : '';
+				const pricingPageUrl = localizeUrl( `${ pricingPage }${ refQuery }`, locale );
 				res.redirect( pricingPageUrl );
 			}
 		} else {
+			if ( locale ) {
+				const queryParams = new URLSearchParams( req.query );
+				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
+				res.redirect( `/plans${ queryString }` );
+				return;
+			}
 			next();
 		}
 	} );
@@ -830,18 +819,25 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( req.context.isLoggedIn ) {
-			// We want to show the old subscriptions management portal to the logged-in users, until new one in reader is developped for them
-			return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
-		}
-
-		if ( req.cookies.subkey ) {
-			// If the user is logged out, and has a subkey cookie, they are authorized to view the page
+		if ( req.cookies.subkey || req.context.isLoggedIn || calypsoEnv !== 'production' ) {
+			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
 			return next();
 		}
 
 		// Otherwise, show them email subscriptions external landing page
 		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
+
+	// Redirects from the /start/domain-transfer flow to the new /setup/domain-transfer.
+	app.get( [ '/start/domain-transfer', '/start/domain-transfer/*' ], function ( req, res ) {
+		const redirectUrl = '/setup/domain-transfer';
+		res.redirect( 301, redirectUrl );
+	} );
+
+	// Redirects from /help/courses to https://wordpress.com/learn/courses.
+	app.get( '/help/courses', function ( req, res ) {
+		const redirectUrl = 'https://wordpress.com/learn/courses';
+		res.redirect( 301, redirectUrl );
 	} );
 }
 
@@ -919,10 +915,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
-
-	if ( config.isEnabled( 'subscription-management' ) ) {
-		handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
-	}
+	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {

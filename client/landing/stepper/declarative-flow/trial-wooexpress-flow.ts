@@ -1,5 +1,8 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
+import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -38,7 +41,16 @@ const wooexpress: Flow = {
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const flowName = this.name;
-		const locale = useLocale();
+
+		// There is a race condition where useLocale is reporting english,
+		// despite there being a locale in the URL so we need to look it up manually.
+		// We also need to support both query param and path suffix localized urls
+		// depending on where the user is coming from.
+		const useLocaleSlug = useLocale();
+		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
+		const queryLocaleSlug = getLocaleFromQueryParam();
+		const pathLocaleSlug = getLocaleFromPathname();
+		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
@@ -74,9 +86,19 @@ const wooexpress: Flow = {
 			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 		};
 
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/wooexpress/siteCreationStep route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				const logInUrl = getStartUrl();
+				window.location.assign( logInUrl );
+			}
+		}, [] );
+
 		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'wooexpress-trial requires a logged in user',
@@ -99,7 +121,10 @@ const wooexpress: Flow = {
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 		setStepProgress( flowProgress );
 
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const { getSiteIdBySlug, getSiteOption } = useSelect(
+			( select ) => select( SITE_STORE ) as SiteSelect,
+			[]
+		);
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -109,6 +134,7 @@ const wooexpress: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
+			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
 				case 'siteCreationStep': {
@@ -129,7 +155,8 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						return exitFlow( `/home/${ siteSlug }` );
+						recordGTMDatalayerEvent( currentStep );
+						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
 					return navigate( 'assignTrialPlan', { siteSlug } );

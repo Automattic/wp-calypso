@@ -4,7 +4,7 @@ import {
 	TERM_MONTHLY,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { IAppState } from 'calypso/state/types';

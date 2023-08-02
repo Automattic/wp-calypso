@@ -1,12 +1,12 @@
 import { Button, Card } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
 import type { FunctionComponent } from 'react';
 
@@ -22,11 +22,11 @@ interface Site {
 }
 
 function useSiteQuery( siteId: string | number ) {
-	return useQuery< Site >(
-		[ 'unauthorized-site', siteId ],
-		() => wpcom.req.get( { path: `/sites/${ siteId }`, apiVersion: '1.2' } ),
-		{ meta: { persist: false } }
-	);
+	return useQuery< Site >( {
+		queryKey: [ 'unauthorized-site', siteId ],
+		queryFn: () => wpcom.req.get( { path: `/sites/${ siteId }`, apiVersion: '1.2' } ),
+		meta: { persist: false },
+	} );
 }
 
 const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
@@ -75,8 +75,8 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 					>
 						{ translate( '%(productName)s was added to your site %(siteName)s.', {
 							args: {
-								productName,
-								siteName,
+								productName: productName as string, // We know this exists via hasProductInfo
+								siteName: siteName ?? '',
 							},
 						} ) }
 					</p>

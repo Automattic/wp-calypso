@@ -7,8 +7,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { warningNotice } from 'calypso/state/notices/actions';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AccountDialogAccount from './account-dialog-account';
-
 import './account-dialog.scss';
 
 class AccountDialog extends Component {
@@ -20,6 +21,7 @@ class AccountDialog extends Component {
 		service: PropTypes.object,
 		translate: PropTypes.func,
 		warningNotice: PropTypes.func,
+		hasMultiConnections: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -28,6 +30,7 @@ class AccountDialog extends Component {
 		onAccountSelected: () => {},
 		service: Object.freeze( {} ),
 		warningNotice: () => {},
+		hasMultiConnections: false,
 	};
 
 	state = {
@@ -89,6 +92,11 @@ class AccountDialog extends Component {
 	}
 
 	areAccountsConflicting( account, otherAccount ) {
+		// If we support multiple connections, accounts should never conflict.
+		if ( this.props.hasMultiConnections ) {
+			return false;
+		}
+
 		return (
 			account.keyringConnectionId === otherAccount.keyringConnectionId &&
 			account.ID !== otherAccount.ID
@@ -221,4 +229,11 @@ class AccountDialog extends Component {
 	}
 }
 
-export default connect( null, { warningNotice } )( localize( AccountDialog ) );
+const mapStateToProps = ( state ) => ( {
+	hasMultiConnections: siteHasFeature(
+		state,
+		getSelectedSiteId( state ),
+		'social-multi-connections'
+	),
+} );
+export default connect( mapStateToProps, { warningNotice } )( localize( AccountDialog ) );

@@ -1,12 +1,12 @@
 import { Button, Ribbon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs, isUserOnTitanFreeTrial } from 'calypso/lib/titan';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagement, emailManagementEdit } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 

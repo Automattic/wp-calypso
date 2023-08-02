@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';

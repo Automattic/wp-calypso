@@ -2,6 +2,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
 /**
@@ -36,6 +37,28 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
 	const postUrl = !! post && post.feed_URL;
 
 	return siteUrl || feedUrl || postUrl;
+};
+
+/**
+ * getSiteDomain function extracts the domain of a website from the provided `site` and `feed` objects.
+ * It returns the domain of the site if available, otherwise, it extracts the domain from the site URL.
+ *
+ * @param {Object} param0 - An object containing `feed` and `site` objects.
+ * @param {Object|undefined} param0.feed - An object representing the feed data.
+ * @param {Object} param0.site - An object representing the site data. If it has a `domain` property and it is a string, that will be returned directly.
+ * @returns {string} - The domain of the site. If the `site` object has a `domain` property that is a string,
+ *                      it returns that. Otherwise, it gets the URL of the site from the `feed` and `site` objects,
+ *                      extracts the hostname from the URL, and returns it. If the hostname is an empty string,
+ *                      it returns the site URL. If the hostname starts with "www.", it removes the "www." and returns the rest.
+ */
+export const getSiteDomain = ( { feed, site } = {} ) => {
+	if ( typeof site?.domain === 'string' ) {
+		return site.domain;
+	}
+
+	const siteUrl = getSiteUrl( { feed, site } );
+	const hostname = getUrlParts( siteUrl ).hostname;
+	return formatUrlForDisplay( hostname === '' ? siteUrl : hostname );
 };
 
 /**
@@ -165,4 +188,23 @@ export const getFeaturedImageAlt = ( post ) => {
 	}
 
 	return featuredImageAlt;
+};
+
+/**
+ * Get the follower count from a site/feed.
+ *
+ * @param {Object} feed Feed object.
+ * @param {Object} site Site object.
+ * @returns {number|null}
+ */
+export const getFollowerCount = ( feed, site ) => {
+	if ( site && site.subscribers_count ) {
+		return site.subscribers_count;
+	}
+
+	if ( feed && feed.subscribers_count > 0 ) {
+		return feed.subscribers_count;
+	}
+
+	return null;
 };

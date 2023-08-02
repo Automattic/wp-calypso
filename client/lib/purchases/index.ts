@@ -12,6 +12,7 @@ import {
 	isTitanMail,
 	isConciergeSession,
 	getJetpackProductsDisplayNames,
+	getStorageAddOnDisplayName,
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -20,11 +21,12 @@ import {
 	isDIFMProduct,
 	isJetpackSearchFree,
 	isAkismetProduct,
+	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
+import i18n, { TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -39,7 +41,6 @@ import type {
 	MembershipSubscriptionsSite,
 } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { ReactChild } from 'react';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -239,11 +240,18 @@ export function getName( purchase: Purchase ): string {
 	return purchase.productName;
 }
 
-export function getDisplayName( purchase: Purchase ): ReactChild | string | undefined {
+export function getDisplayName( purchase: Purchase ): TranslateResult {
+	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
+
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
-	if ( jetpackProductsDisplayNames[ purchase.productSlug ] ) {
-		return jetpackProductsDisplayNames[ purchase.productSlug ];
+	if ( jetpackProductsDisplayNames[ productSlug ] ) {
+		return jetpackProductsDisplayNames[ productSlug ];
 	}
+
+	if ( isTieredVolumeSpaceAddon( purchase ) ) {
+		return getStorageAddOnDisplayName( productName, purchaseRenewalQuantity );
+	}
+
 	return getName( purchase );
 }
 
@@ -623,7 +631,7 @@ export function isRechargeable( purchase: Purchase ): boolean {
  * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
  */
 export function isRefundable( purchase: Purchase ): boolean {
-	return purchase.isRefundable;
+	return purchase.isRefundable && purchase.productType !== 'saas_plugin';
 }
 
 /**
@@ -850,10 +858,14 @@ export function purchaseType( purchase: Purchase ) {
 		return purchase.productName;
 	}
 
+	if ( isAkismetProduct( purchase ) ) {
+		return null;
+	}
+
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
 			args: {
-				domain: purchase.meta,
+				domain: purchase.meta as string,
 			},
 		} );
 	}
@@ -861,7 +873,7 @@ export function purchaseType( purchase: Purchase ) {
 	if ( isTitanMail( purchase ) ) {
 		return i18n.translate( 'Mailboxes at %(domain)s', {
 			args: {
-				domain: purchase.meta,
+				domain: purchase.meta as string,
 			},
 		} );
 	}

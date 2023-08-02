@@ -2,7 +2,7 @@ import { firstValid, hardTruncation, shortEnough, stripHtmlTags, Formatter } fro
 
 const TITLE_LENGTH = 110;
 const DESCRIPTION_LENGTH = 200;
-const CUSTOM_TEXT_LENGTH = 440;
+export const CUSTOM_TEXT_LENGTH = 440;
 
 export const baseDomain: Formatter = ( url ) =>
 	url
@@ -20,9 +20,3 @@ export const facebookDescription: Formatter = ( text ) =>
 		shortEnough( DESCRIPTION_LENGTH ),
 		hardTruncation( DESCRIPTION_LENGTH )
 	)( stripHtmlTags( text ) ) || '';
-
-export const facebookCustomText: Formatter = ( text, options ) =>
-	firstValid(
-		shortEnough( CUSTOM_TEXT_LENGTH ),
-		hardTruncation( CUSTOM_TEXT_LENGTH )
-	)( stripHtmlTags( text, options?.allowedTags ) ) || '';

@@ -11,7 +11,6 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { useExperiment } from 'calypso/lib/explat';
@@ -21,6 +20,7 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
@@ -122,7 +122,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		[ rootUrl, siteSlug ]
 	);
 	const onCtaClick = useCallback(
-		( productSlug, isUpsell = false ) => {
+		( productSlug: string, isUpsell = false ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_upsell_page_product_click', {
 					site_id: siteId || undefined,
@@ -175,7 +175,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 						<h1 className="jetpack-upsell__heading">
 							{ translate( 'Nice choice, we added %(productName)s to your cart.', {
 								args: {
-									productName,
+									productName: productName as string,
 								},
 							} ) }
 							<br />
@@ -251,7 +251,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								>
 									{ translate( 'Upgrade to %(productName)s', {
 										args: {
-											productName: upsellName,
+											productName: upsellName as string,
 										},
 									} ) }
 								</Button>
@@ -262,7 +262,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								>
 									{ translate( 'No thanks, proceed with %(productName)s', {
 										args: {
-											productName,
+											productName: productName as string,
 										},
 									} ) }
 								</a>

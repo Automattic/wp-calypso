@@ -31,14 +31,6 @@
 				padding-left: 21px;
 			}
 		}
-
-		&--is-detached.card.is-compact {
-			border-left: 3px solid var(--studio-orange-40);
-		}
-
-		&--is-revoked.card.is-compact {
-			border-left: 3px solid var(--studio-red-60);
-		}
 	}
 
 	&__no-value {
@@ -136,6 +128,13 @@
 	&--placeholder &__label + div,
 	&--placeholder &__copy-license-key {
 		@include placeholder( --color-neutral-10 );
+	}
+
+	&__assign-button {
+		font-size: 0.75rem;
+		font-weight: 400;
+		text-decoration: underline;
+		margin-left: 10px;
 	}
 }
 

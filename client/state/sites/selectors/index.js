@@ -71,3 +71,4 @@ export { default as getJetpackSearchCustomizeUrl } from './get-jetpack-search-cu
 export { default as getJetpackSearchDashboardUrl } from './get-jetpack-search-dashboard-url';
 export { default as getJetpackVersion } from './get-jetpack-version';
 export { default as isSimpleSite } from './is-simple-site';
+export { default as getJetpackStatsAdminVersion } from './get-jetpack-stats-admin-version';

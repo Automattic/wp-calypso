@@ -3,23 +3,9 @@
 @import "@wordpress/base-styles/mixins";
 
 body .customer-home__layout .domain-upsell__card {
-	background-color: #f6f7f7;
 	padding: 16px 16px 20px;
 	@include break-small {
 		padding: 40px 46px;
-	}
-}
-
-.profile .domain-upsell__card {
-	h3 {
-		font-size: rem(16px);
-		font-family: $sans;
-		font-style: normal;
-		font-weight: bold;
-	}
-
-	.card {
-		background-color: #f6f7f7;
 	}
 }
 
@@ -51,47 +37,43 @@ body .customer-home__layout .domain-upsell__card {
 
 	}
 
-	.suggested-domain-name {
-		span {
-			font-size: rem(14px);
-			color: var(--studio-gray-80);
-			line-height: 20px;
-			word-break: break-all;
-			flex-direction: column;
-			display: flex;
-			flex: 1;
-		}
-
-		.badge {
-			border-radius: 4px;
-			font-size: rem(12px);
-			color: var(--studio-gray-80);
-			font-weight: 500;
-			flex-direction: column;
-			display: flex;
-		}
-
-		.card {
-			margin-bottom: 5px;
-			box-shadow: none;
-			padding: 8px 16px;
-			min-height: 40px;
-			overflow-x: auto;
-			flex-direction: row;
-			display: flex;
-			align-items: center;
-		}
-
-		.badge--success {
-			background-color: var(--studio-green-5);
-		}
-	}
-
 	.domain-upsell-actions {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		justify-content: right;
 		padding: 28px 0 0;
 		gap: 16px;
+		@media (min-width: ( $break-large + 1 )) {
+			flex-direction: row-reverse;
+		}
+	}
+
+	.domain-upsell-illustration {
+		position: relative;
+
+		width: 100%;
+		padding: 0;
+
+		img {
+			width: 100%;
+		}
+
+		svg {
+			position: absolute;
+			top: 27%;
+			left: 15%;
+			height: 30%;
+			width: 70%;
+		}
+	}
+
+}
+
+html[dir="rtl"] {
+	.domain-upsell-illustration {
+		&,
+		text {
+			transform: scale(-1, 1);
+		}
 	}
 }

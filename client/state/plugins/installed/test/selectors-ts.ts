@@ -14,6 +14,7 @@ import {
 	getPluginOnSite,
 	getPluginOnSites,
 	getPluginsOnSite,
+	getPluginsWithUpdates,
 	getSiteObjectsWithPlugin,
 	getSitesWithPlugin,
 	getSitesWithoutPlugin,
@@ -23,6 +24,7 @@ import {
 	isPluginActionStatus,
 	isPluginActionInProgress,
 	getPluginStatusesByType,
+	isPluginActive,
 } from '../selectors-ts';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
@@ -310,6 +312,18 @@ describe( 'getFilteredAndSortedPlugins', () => {
 	} );
 } );
 
+describe( 'getPluginsWithUpdates', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		const plugins = getPluginsWithUpdates( state, [ nonExistingSiteId1 ] );
+		expect( plugins ).toHaveLength( 0 );
+	} );
+
+	test( 'Should get a plugin list with the Jetpack site with "type: plugin" on it', () => {
+		const plugins = getPluginsWithUpdates( state, [ siteOneId, siteTwoId ] );
+		expect( plugins ).toEqual( [ { ...jetpackWithSites, type: 'plugin' } ] );
+	} );
+} );
+
 describe( 'getPluginsOnSites', () => {
 	it( 'returns an object with plugins that are on the specified sites', () => {
 		const plugins = [ jetpackWithSites, akismetWithSites ];
@@ -582,5 +596,27 @@ describe( 'getPluginStatusesByType', () => {
 
 	test( 'Should return an empty array if there are no matching statuses of that type.', () => {
 		expect( getPluginStatusesByType( state, 'someOtherType' ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'isPluginActive', () => {
+	test( 'Should return false if the plugin is not found', () => {
+		expect( isPluginActive( state, siteOneId, 'not' ) ).toEqual( false );
+	} );
+
+	test( 'Should return false if the site is not found', () => {
+		expect( isPluginActive( state, nonExistingSiteId1, 'akismet' ) ).toEqual( false );
+	} );
+
+	test( 'Should return false if the plugin is not found on the site', () => {
+		expect( isPluginActive( state, siteTwoId, 'akismet' ) ).toEqual( false );
+	} );
+
+	test( 'Should return true if the plugin is active', () => {
+		expect( isPluginActive( state, siteOneId, 'akismet' ) ).toEqual( true );
+	} );
+
+	test( 'Should return false if the plugin is not active', () => {
+		expect( isPluginActive( state, siteOneId, 'hello-dolly' ) ).toEqual( false );
 	} );
 } );

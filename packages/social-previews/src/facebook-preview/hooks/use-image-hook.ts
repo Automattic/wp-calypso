@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import { LANDSCAPE_MODE, PORTRAIT_MODE } from '../../constants';
-import type { ImageMode } from '../../types';
+import type { ImageMode } from '../types';
 
 type ImageEventHandler = ( event: React.SyntheticEvent< HTMLImageElement > ) => void;
 type ImgProps = {
@@ -15,10 +15,11 @@ const useImage: UseImage = ( { mode: initialMode } ) => {
 	const [ mode, setMode ] = useState< ImageMode | undefined >( initialMode );
 	const [ isLoadingImage, setLoadingImage ] = useState< boolean >( true );
 
-	const onLoad = useCallback(
+	const onLoad = useCallback< ImageEventHandler >(
 		( { target } ) => {
 			if ( ! mode ) {
-				setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
+				const image = target as HTMLImageElement;
+				setMode( image.naturalWidth > image.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
 			}
 			setLoadingImage( false );
 		},
@@ -30,7 +31,7 @@ const useImage: UseImage = ( { mode: initialMode } ) => {
 		mode,
 		isLoadingImage,
 		{
-			alt: __( 'Facebook Preview Thumbnail', 'facebook-preview' ),
+			alt: __( 'Facebook Preview Thumbnail', 'social-previews' ),
 			onLoad,
 			onError,
 		},

@@ -1,11 +1,11 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { useThreats } from 'calypso/lib/jetpack/use-threats';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getSelectedSite,
@@ -33,7 +33,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
 
 	const openDialog = useCallback(
-		( threat ) => {
+		( threat: Threat ) => {
 			dispatch( trackOpenThreatDialog( siteId ?? 0, threat.signature ) );
 			setSelectedThreat( threat );
 			setShowThreatDialog( true );

@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { useSelector } from 'calypso/state';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,

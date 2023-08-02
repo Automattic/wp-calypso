@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { commentAuthorAvatar, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -12,6 +12,27 @@ const year = { value: 'year', label: translate( 'Years' ) };
 
 export const intervals = [ day, week, month, year ];
 export const emailIntervals = [ hour, day ];
+
+export const AVAILABLE_PAGE_MODULES = {
+	traffic: [
+		{
+			key: 'authors',
+			get label() {
+				return translate( 'Authors' );
+			},
+			icon: commentAuthorAvatar,
+			defaultValue: true,
+		},
+		{
+			key: 'videos',
+			get label() {
+				return translate( 'Videos' );
+			},
+			icon: video,
+			defaultValue: true,
+		},
+	],
+};
 
 /**
  * Nav items
@@ -34,7 +55,9 @@ const insights = {
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
-	label: translate( 'Subscribers' ),
+	get label() {
+		return translate( 'Subscribers' );
+	},
 	path: '/stats/subscribers',
 	showIntervals: false,
 } as NavItem;
@@ -67,14 +90,11 @@ const assembleNavItems = () => {
 	const navItems = {
 		traffic,
 		insights,
+		subscribers,
 		store,
 		wordads,
 		googleMyBusiness,
 	} as NavItems;
-
-	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		navItems.subscribers = subscribers;
-	}
 
 	return navItems;
 };

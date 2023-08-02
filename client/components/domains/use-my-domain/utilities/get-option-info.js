@@ -1,5 +1,6 @@
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import page from 'page';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
@@ -48,6 +49,7 @@ export function getOptionInfo( {
 	domain,
 	isSignupStep,
 	onConnect,
+	onSkip,
 	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
@@ -107,7 +109,7 @@ export function getOptionInfo( {
 						__(
 							"We don't support transfers for domains ending with <strong>.%s</strong>, but you can connect it instead."
 						),
-						getTld( domain )
+						availability.tld || getTld( domain )
 					),
 					{ strong: createElement( 'strong' ) }
 				),
@@ -172,6 +174,38 @@ export function getOptionInfo( {
 			onSelect: onConnect,
 			pricing: mappingPricing,
 		};
+
+		// We currently aren't handling ownership verification for mapped domains during sign-up or for free
+		// sites without a plan. See https://github.com/Automattic/nomado-issues/issues/136 for more context
+		if (
+			availability.ownership_verification_type !== 'no_verification_required' &&
+			! siteIsOnPaidPlan
+		) {
+			const action = isSignupStep ? () => onSkip() : () => page( `/plans/${ selectedSite?.slug }` );
+
+			connectContent = {
+				...connectContent,
+				benefits: [],
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to connect */
+						__(
+							"We need to verify you are the owner of <strong>%s</strong> before connecting it, but we're not able to do that without a plan.<br /><br />Please <a>purchase a plan</a> first in order to connect your domain."
+						),
+						domain
+					),
+					{
+						strong: createElement( 'strong' ),
+						br: createElement( 'br' ),
+						a: createElement( 'a', { onClick: action } ),
+					}
+				),
+				pricing: null,
+				learnMoreLink: null,
+				onSelect: action,
+				onSelectText: __( 'Purchase a plan' ),
+			};
+		}
 	} else {
 		switch ( availability.status ) {
 			case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:

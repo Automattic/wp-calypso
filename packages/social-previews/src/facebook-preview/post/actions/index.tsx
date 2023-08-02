@@ -9,17 +9,17 @@ const FacebookPostActions: React.FC = () => (
 			{
 				icon: 'like',
 				// translators: Facebook "Like" action
-				label: __( 'Like', 'facebook-preview' ),
+				label: __( 'Like', 'social-previews' ),
 			},
 			{
 				icon: 'comment',
 				// translators: Facebook "Comment" action
-				label: __( 'Comment', 'facebook-preview' ),
+				label: __( 'Comment', 'social-previews' ),
 			},
 			{
 				icon: 'share',
 				// translators: Facebook "Share" action
-				label: __( 'Share', 'facebook-preview' ),
+				label: __( 'Share', 'social-previews' ),
 			},
 		].map( ( { icon, label } ) => (
 			<li key={ icon }>

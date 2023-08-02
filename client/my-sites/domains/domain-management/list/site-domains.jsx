@@ -1,6 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -43,7 +45,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import DomainOnly from './domain-only';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { filterDomainsByOwner } from './helpers';
@@ -129,6 +130,7 @@ export class SiteDomains extends Component {
 				label: translate( 'Status' ),
 				isSortable: true,
 				initialSortOrder: -1,
+				supportsOrderSwitching: true,
 				sortFunctions: [
 					( first, second, sortOrder ) => {
 						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus(
@@ -177,7 +179,24 @@ export class SiteDomains extends Component {
 
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
-				<div className="domain-management-list__items">
+				{ wpcomDomain && (
+					<FreeDomainItem
+						key="wpcom-domain-item"
+						isAtomicSite={ isAtomicSite }
+						currentRoute={ currentRoute }
+						domain={ wpcomDomain }
+						disabled={ disabled }
+						isBusy={ settingPrimaryDomain }
+						site={ selectedSite }
+						onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
+					/>
+				) }
+
+				<div
+					className={ classnames( 'domain-management-list__items', {
+						[ 'has-no-wpcom-domain' ]: ! wpcomDomain,
+					} ) }
+				>
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
 					</div>
@@ -196,7 +215,6 @@ export class SiteDomains extends Component {
 						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
-
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
@@ -214,26 +232,15 @@ export class SiteDomains extends Component {
 					/>
 				) }
 
-				<DomainToPlanNudge />
+				{ ! this.isLoading() && this.renderManageDomainsSection( nonWpcomDomains ) }
 
-				{ wpcomDomain && (
-					<FreeDomainItem
-						key="wpcom-domain-item"
-						isAtomicSite={ isAtomicSite }
-						currentRoute={ currentRoute }
-						domain={ wpcomDomain }
-						disabled={ disabled }
-						isBusy={ settingPrimaryDomain }
-						site={ selectedSite }
-						onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
-					/>
-				) }
+				<DomainToPlanNudge />
 			</>
 		);
 	}
 
 	renderDomainTableFilterButton() {
-		const { selectedSite, domains, context, translate } = this.props;
+		const { selectedSite, domains, context, translate, currentRoute } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = filterOutWpcomDomains( domains );
@@ -242,31 +249,26 @@ export class SiteDomains extends Component {
 			{
 				label: translate( 'Site domains' ),
 				value: '',
-				path: domainManagementList( selectedSite?.slug ),
+				path: domainManagementList( selectedSite?.slug, currentRoute ),
 				count: nonWpcomDomains?.length,
 			},
 			{
 				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path:
-					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
+					domainManagementList( selectedSite?.slug, currentRoute ) +
+					'?' +
+					stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
 				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path:
-					domainManagementList( selectedSite?.slug ) +
+					domainManagementList( selectedSite?.slug, currentRoute ) +
 					'?' +
 					stringify( { filter: 'owned-by-others' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
-			},
-			null,
-			{
-				label: translate( 'All my domains' ),
-				value: 'all-my-domains',
-				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
-				count: null,
 			},
 		];
 
@@ -317,6 +319,34 @@ export class SiteDomains extends Component {
 		);
 	}
 
+	renderManageDomainsSection( nonWpcomDomains ) {
+		const { dispatch, translate } = this.props;
+
+		const handleClick = () => {
+			dispatch( recordTracksEvent( 'calypso_domain_management_see_all_domains_link_click' ) );
+		};
+
+		return (
+			<div
+				className={ classnames( 'domain-management__all-domains-section', {
+					separator: nonWpcomDomains.length === 0,
+				} ) }
+			>
+				<p css={ { marginBottom: '1rem', textAlign: 'center' } }>
+					{ translate( 'Manage all the domains you own on WordPress.com' ) }
+				</p>
+				<Button
+					className="domain-management__all-domains-link"
+					href={ domainManagementRoot() }
+					key="breadcrumb_see_all_domains_link"
+					onClick={ handleClick }
+				>
+					{ translate( 'Manage all domains' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
 			if ( this.props.renderAllSites ) {
@@ -342,15 +372,8 @@ export class SiteDomains extends Component {
 
 		if ( this.props.isDomainOnly ) {
 			if ( ! this.props.renderAllSites ) {
-				return (
-					<Main>
-						<DocumentHead title={ this.props.translate( 'Settings' ) } />
-						<DomainOnly
-							hasNotice={ this.isFreshDomainOnlyRegistration() }
-							siteId={ this.props.selectedSite.ID }
-						/>
-					</Main>
-				);
+				page.redirect( domainManagementRoot() );
+				return null;
 			}
 
 			if ( filterOutWpcomDomains( this.props.domains ).length === 0 ) {
@@ -389,7 +412,7 @@ export class SiteDomains extends Component {
 
 	async setPrimaryDomain( domainName ) {
 		await this.props.dispatch( setPrimaryDomain( this.props.selectedSite.ID, domainName ) );
-		page.redirect( domainManagementList( this.props.selectedSite.slug ) );
+		page.redirect( domainManagementList( this.props.selectedSite.slug, this.props.currentRoute ) );
 	}
 
 	handleUpdatePrimaryDomainWpcom = ( domainName ) => {

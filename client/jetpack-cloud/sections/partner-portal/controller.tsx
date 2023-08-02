@@ -5,7 +5,6 @@ import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
-import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
@@ -151,10 +150,9 @@ export function pricesContext( context: PageJS.Context, next: () => void ): void
 	next();
 }
 
-export function landingPageContext( context: PageJS.Context, next: () => void ): void {
-	context.header = <Header />;
-	context.primary = <LandingPage />;
-	next();
+export function landingPageContext() {
+	page.redirect( '/partner-portal/licenses' );
+	return;
 }
 
 /**

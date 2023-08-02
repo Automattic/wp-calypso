@@ -1,0 +1,23 @@
+@import "@automattic/typography/styles/variables";
+
+%row-title-label {
+	display: inline-block;
+	height: 20px;
+	color: $studio-green-0;
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	border-radius: 4px;
+	margin-left: 8px;
+	line-height: 20px;
+	padding: 0 10px;
+}
+
+%p2-label {
+	@extend %row-title-label;
+	background: var(--p2-color-link);
+}
+
+%paid-label {
+	@extend %row-title-label;
+	background: $studio-green-50;
+}

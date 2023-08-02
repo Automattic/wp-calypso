@@ -1,71 +1,38 @@
-import { localize } from 'i18n-calypso';
+import { TumblrPreviews } from '@automattic/social-previews';
 import { PureComponent } from 'react';
-import { truncateArticleContent } from '../helpers';
-
-import './style.scss';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 export class TumblrSharePreview extends PureComponent {
 	render() {
 		const {
 			externalProfilePicture,
-			externalProfileUrl,
+			externalProfileURL,
 			externalName,
-			message,
 			articleUrl,
 			articleTitle,
 			articleContent,
 			imageUrl,
-			translate,
+			message,
+			hidePostPreview,
 		} = this.props;
 
-		const summary = truncateArticleContent( 396, articleContent );
+		const username = externalProfileURL?.match( /[^/]+$/ )?.[ 0 ];
+
 		return (
-			<div className="tumblr-share-preview">
-				<div className="tumblr-share-preview__content">
-					<div className="tumblr-share-preview__profile-picture-part">
-						<img
-							alt="Preview of Tumblr profile"
-							className="tumblr-share-preview__profile-picture"
-							src={ externalProfilePicture }
-						/>
-					</div>
-					<div className="tumblr-share-preview__content-part">
-						<div className="tumblr-share-preview__profile-line">
-							<a className="tumblr-share-preview__profile-name" href={ externalProfileUrl }>
-								{ externalName }
-							</a>
-							<span className="tumblr-share-preview__profile-wp">{ translate( 'WordPress' ) }</span>
-						</div>
-						<div className="tumblr-share-preview__post-title-part">
-							<div className="tumblr-share-preview__post-title">{ articleTitle }</div>
-						</div>
-						<div className="tumblr-share-preview__message">
-							<a className="tumblr-share-preview__message-link" href={ articleUrl }>
-								{ message }
-							</a>
-						</div>
-						{ imageUrl && (
-							<div className="tumblr-share-preview__image-wrapper">
-								<img
-									alt="Preview when shared to Tumblr"
-									className="tumblr-share-preview__image"
-									src={ imageUrl }
-								/>
-							</div>
-						) }
-						<div className="tumblr-share-preview__summery-part">
-							<blockquote className="tumblr-share-preview__summery">{ summary }</blockquote>
-						</div>
-						<div className="tumblr-share-preview__article-link-line">
-							<a className="tumblr-share-preview__article-link" href={ articleUrl }>
-								{ translate( 'View On WordPress' ) }
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
+			<TumblrPreviews
+				url={ articleUrl }
+				title={ decodeEntities( articleTitle ) }
+				description={ decodeEntities( articleContent ) }
+				customText={ decodeEntities( message ) }
+				image={ imageUrl }
+				user={ {
+					displayName: externalName === 'Untitled' && username ? username : externalName,
+					avatarUrl: externalProfilePicture,
+				} }
+				hidePostPreview={ hidePostPreview }
+			/>
 		);
 	}
 }
 
-export default localize( TumblrSharePreview );
+export default TumblrSharePreview;

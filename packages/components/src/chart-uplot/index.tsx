@@ -1,64 +1,47 @@
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
-import throttle from 'lodash/throttle';
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import useResize from './hooks/use-resize';
+import useScaleGradient from './hooks/use-scale-gradient';
+import getDateFormat from './lib/get-date-format';
+import getGradientFill from './lib/get-gradient-fill';
+import getPeriodDateFormat from './lib/get-period-date-format';
 
 import './style.scss';
 
-// NOTE: Do not include this component in the package entry bundle!
-// Doing so will unnecessarily bloat the package bundle size.
+// NOTE: Do not include this component in the package entry bundle.
+//       Doing so will cause tests of the consumer package to break due to uPlot's reliance on matchMedia.
+//       https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom.
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
 	width: 1224,
 };
 
-const THROTTLE_DURATION = 400; // in ms
-
-function useResize(
-	uplotRef: React.RefObject< uPlot >,
-	containerRef: React.RefObject< HTMLDivElement >
-) {
-	useEffect( () => {
-		if ( ! uplotRef.current || ! containerRef.current ) {
-			return;
-		}
-
-		const resizeChart = throttle( () => {
-			// Repeat the check since resize can happen much later than event registration.
-			if ( ! uplotRef.current || ! containerRef.current ) {
-				return;
-			}
-
-			// Only update width, not height.
-			uplotRef.current.setSize( {
-				height: uplotRef.current.height,
-				width: containerRef.current.clientWidth,
-			} );
-		}, THROTTLE_DURATION );
-		resizeChart();
-		window.addEventListener( 'resize', resizeChart );
-
-		// Cleanup on unmount.
-		return () => window.removeEventListener( 'resize', resizeChart );
-	}, [ uplotRef, containerRef ] );
-}
-
 interface UplotChartProps {
 	data: uPlot.AlignedData;
+	fillColor?: string;
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
+	solidFill?: boolean;
+	period?: string;
 }
 
 export default function UplotChart( {
 	data,
-	options: propOptions,
+	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
+	options: propOptions,
+	solidFill = false,
+	period,
 }: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
+	const { spline } = uPlot.paths;
+
+	const scaleGradient = useScaleGradient( fillColor );
 
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
@@ -67,6 +50,13 @@ export default function UplotChart( {
 				...DEFAULT_DIMENSIONS,
 				// Set incoming dates as UTC.
 				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+				fmtDate: ( chartDateStringTemplate: string ) => {
+					// first it cycles through all possible templates in case they are substitues
+
+					// the date for a specific point
+					return ( date ) =>
+						getDateFormat( chartDateStringTemplate, date, getLocaleSlug() || 'en' );
+				},
 				axes: [
 					{
 						// x-axis
@@ -86,7 +76,7 @@ export default function UplotChart( {
 						space: 40,
 						size: 50,
 						grid: {
-							stroke: '#DCDCDE',
+							stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
 							width: 1,
 						},
 						ticks: {
@@ -97,26 +87,42 @@ export default function UplotChart( {
 				cursor: {
 					x: false,
 					y: false,
+					points: {
+						size: ( u, seriesIdx ) => ( u.series[ seriesIdx ].points?.size || 1 ) * 2,
+						width: ( u, seriesIdx, size ) => size / 4,
+						stroke: ( u, seriesIdx ) => {
+							const stroke = u.series[ seriesIdx ]?.points?.stroke;
+							return typeof stroke === 'function'
+								? ( stroke( u, seriesIdx ) as CanvasRenderingContext2D[ 'strokeStyle' ] )
+								: ( stroke as CanvasRenderingContext2D[ 'strokeStyle' ] );
+						},
+						fill: () => '#fff',
+					},
 				},
 				series: [
 					{
 						label: translate( 'Date' ),
 						value: ( self: uPlot, rawValue: number ) => {
+							// outputs legend content - value available when mouse is hovering the chart
 							if ( ! rawValue ) {
 								return '-';
 							}
 
-							return new Date( rawValue * 1000 ).toLocaleDateString( getLocaleSlug() ?? 'en', {
-								month: 'long',
-								year: 'numeric',
-							} );
+							return getPeriodDateFormat(
+								period,
+								new Date( rawValue * 1000 ),
+								getLocaleSlug() || 'en'
+							);
 						},
 					},
 					{
-						fill: 'rgba(48, 87, 220, 0.075)',
+						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
 						label: translate( 'Subscribers' ),
 						stroke: '#3057DC',
 						width: 2,
+						paths: ( u, seriesIdx, idx0, idx1 ) => {
+							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+						},
 						points: {
 							show: false,
 						},
@@ -143,7 +149,7 @@ export default function UplotChart( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [ legendContainer, propOptions, translate ] )
+		}, [ fillColor, legendContainer, propOptions, scaleGradient, solidFill, spline, translate ] )
 	);
 
 	useResize( uplot, uplotContainer );

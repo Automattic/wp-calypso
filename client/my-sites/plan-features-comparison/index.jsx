@@ -36,10 +36,6 @@ import {
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import {
-	getPlanDiscountedRawPrice,
-	getSitePlanRawPrice,
-} from 'calypso/state/sites/plans/selectors';
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesItem } from './item';
@@ -312,22 +308,6 @@ PlanFeaturesComparison.defaultProps = {
 	onUpgradeClick: noop,
 	busyOnUpgradeClick: false,
 };
-
-export const calculatePlanCredits = ( state, siteId, planProperties ) =>
-	planProperties
-		.map( ( { planName, availableForPurchase } ) => {
-			if ( ! availableForPurchase ) {
-				return 0;
-			}
-			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName );
-			const annualRawPrice = getSitePlanRawPrice( state, siteId, planName );
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualRawPrice !== 'number' ) {
-				return 0;
-			}
-
-			return annualRawPrice - annualDiscountPrice;
-		} )
-		.reduce( ( max, credits ) => Math.max( max, credits ), 0 );
 
 const hasPlaceholders = ( planProperties ) =>
 	planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;

@@ -35,7 +35,7 @@
 	&:disabled,
 	&.disabled {
 		color: var(--color-neutral-20);
-		background-color: var(--color-surface);
+		background-color: var(--color-neutral-5);
 		border-color: var(--color-neutral-5);
 	}
 }

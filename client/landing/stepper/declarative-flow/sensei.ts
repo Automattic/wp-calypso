@@ -1,9 +1,13 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { SENSEI_FLOW, useFlowProgress } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { ONBOARD_STORE } from '../stores';
+import { redirect } from './internals/steps-repository/import/util';
+import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SenseiDomain from './internals/steps-repository/sensei-domain';
 import SenseiLaunch from './internals/steps-repository/sensei-launch';
@@ -11,16 +15,22 @@ import SenseiPlan from './internals/steps-repository/sensei-plan';
 import SenseiPurpose from './internals/steps-repository/sensei-purpose';
 import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { AssertConditionState, Flow } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
 import './internals/sensei.scss';
+
+function getStartUrl( step: string, locale: string ) {
+	return locale && locale !== 'en'
+		? `/start/account/user/${ locale }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`
+		: `/start/account/user?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`;
+}
 
 const sensei: Flow = {
 	name: SENSEI_FLOW,
 	get title() {
-		return translate( 'Sensei' );
+		return translate( 'Course Creator' );
 	},
 	useSteps() {
 		return [
+			{ slug: 'intro', component: Intro },
 			{ slug: 'senseiSetup', component: SenseiSetup },
 			{ slug: 'senseiDomain', component: SenseiDomain },
 			{ slug: 'senseiPlan', component: SenseiPlan },
@@ -32,18 +42,28 @@ const sensei: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
+		const locale = useLocale();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		const siteSlug = useSiteSlug();
+		const isLoggedIn = useSelector( isUserLoggedIn );
+
 		setStepProgress( flowProgress );
 
 		const submit = ( deps: any, stepResult?: string ) => {
 			if ( stepResult ) {
 				return navigate( stepResult );
 			}
+
 			switch ( _currentStep ) {
+				case 'intro':
+					return navigate( 'senseiSetup' );
 				case 'senseiSetup':
-					return navigate( 'senseiDomain' );
+					if ( isLoggedIn ) {
+						return navigate( 'senseiDomain' );
+					}
+
+					return redirect( getStartUrl( 'senseiDomain', locale ) );
 				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
 				case 'senseiPurpose':
@@ -62,25 +82,20 @@ const sensei: Flow = {
 	},
 
 	useAssertConditions() {
-		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
+		const currentPath = window.location.pathname;
+		const isLoggedIn = useSelector( isUserLoggedIn );
+		const isPlanStep = currentPath.endsWith( `setup/${ this.name }/senseiPlan` );
 		const locale = useLocale();
-		const logInUrl =
-			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/?flow=${ flowName }`
-				: `/start/account/user?redirect_to=/setup/?flow=${ flowName }`;
-		if ( ! userIsLoggedIn ) {
-			window.location.assign( logInUrl );
-			return {
-				state: AssertConditionState.FAILURE,
-			};
+
+		let result = { state: AssertConditionState.SUCCESS };
+
+		if ( isPlanStep && ! isLoggedIn ) {
+			redirect( getStartUrl( 'senseiPlan', locale ) );
+
+			result = { state: AssertConditionState.FAILURE };
 		}
-		return {
-			state: AssertConditionState.SUCCESS,
-		};
+
+		return result;
 	},
 };
 

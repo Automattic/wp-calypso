@@ -15,11 +15,6 @@ import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
-import Intro from './internals/steps-repository/intro';
-import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
-import PatternsStep from './internals/steps-repository/patterns';
-import Processing from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -49,11 +44,23 @@ const linkInBioDomain: Flow = {
 	},
 	useSteps() {
 		return [
-			{ slug: 'intro', component: Intro },
-			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
-			{ slug: 'patterns', component: PatternsStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: Processing },
+			{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+			{
+				slug: 'linkInBioSetup',
+				asyncComponent: () => import( './internals/steps-repository/link-in-bio-setup' ),
+			},
+			{
+				slug: 'patterns',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
+			{
+				slug: 'siteCreationStep',
+				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
@@ -83,7 +90,9 @@ const linkInBioDomain: Flow = {
 			}
 		);
 
-		const redirectTo = `/setup/${ variantSlug }/patterns?domain=${ domain }`;
+		const redirectTo = encodeURIComponent(
+			`/setup/${ variantSlug }/patterns?domain=${ domain }&provider=${ provider }`
+		);
 		const logInUrl =
 			locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ variantSlug }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`
@@ -91,7 +100,8 @@ const linkInBioDomain: Flow = {
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, variantSlug, {
-				provider: provider,
+				domain,
+				provider,
 			} );
 
 			switch ( _currentStepSlug ) {

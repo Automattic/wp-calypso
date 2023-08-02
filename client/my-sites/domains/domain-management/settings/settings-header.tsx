@@ -1,14 +1,15 @@
+import { Badge } from '@automattic/components';
 import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useCurrentRoute } from 'calypso/components/route';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
+import { useDispatch } from 'calypso/state';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -26,6 +27,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { currentRoute } = useCurrentRoute();
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
@@ -77,7 +79,9 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	};
 
 	const renderStatusBadge = ( domain: ResponseDomain ) => {
-		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch );
+		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch, {
+			currentRoute,
+		} );
 
 		if ( status ) {
 			return statusClass === 'status-success'
@@ -114,6 +118,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 			{
 				siteSlug: site.slug,
 				getMappingErrors: true,
+				currentRoute,
 			}
 		);
 

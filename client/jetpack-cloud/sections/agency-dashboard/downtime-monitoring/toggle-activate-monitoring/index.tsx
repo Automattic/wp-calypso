@@ -1,14 +1,17 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { ReactNode, useState, useRef } from 'react';
+import alertIcon from 'calypso/assets/images/jetpack/alert-icon.svg';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
+import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent, useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
+import UpgradePopover from '../upgrade-popover';
 import type { AllowedStatusTypes, MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
@@ -17,7 +20,7 @@ interface Props {
 	site: Site;
 	status: AllowedStatusTypes | string;
 	settings: MonitorSettings | undefined;
-	tooltip: ReactChild | undefined;
+	tooltip: ReactNode;
 	tooltipId: string;
 	siteError: boolean;
 	isLargeScreen?: boolean;
@@ -41,18 +44,17 @@ export default function ToggleActivateMonitoring( {
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 	const [ showTooltip, setShowTooltip ] = useState( false );
 
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	// TODO: Need to figure out if current site has no existing paid version of downtime monitoring.
+	const shouldDisplayUpgradePopover = status === 'success' && isPaidTierEnabled;
+
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
 	};
 	const handleHideTooltip = () => {
 		setShowTooltip( false );
 	};
-
-	const ToggleControl = OriginalToggleControl as React.ComponentType<
-		OriginalToggleControl.Props & {
-			disabled?: boolean;
-		}
-	>;
 
 	function handleToggleActivateMonitoring( checked: boolean ) {
 		recordEvent( checked ? 'enable_monitor_click' : 'disable_monitor_click' );
@@ -70,6 +72,7 @@ export default function ToggleActivateMonitoring( {
 
 	const isChecked = status !== 'disabled';
 	const isLoading = statuses?.[ site.blog_id ] === 'loading';
+	const smsLimitReached = false; // TODO: Get the sms limit reached status from the API.
 
 	const currentSettings = () => {
 		const minutes = settings?.monitor_deferment_time;
@@ -129,7 +132,11 @@ export default function ToggleActivateMonitoring( {
 						) as string
 					}
 				>
-					<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />
+					{ smsLimitReached ? (
+						<img src={ alertIcon } alt={ translate( 'Alert' ) } />
+					) : (
+						<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />
+					) }
 					<span>{ currentDurationText }</span>
 				</Button>
 			</div>
@@ -153,28 +160,24 @@ export default function ToggleActivateMonitoring( {
 		);
 	}
 
-	return (
-		<>
-			<span
-				ref={ statusContentRef }
-				role="button"
-				tabIndex={ 0 }
-				onMouseEnter={ handleShowTooltip }
-				onMouseLeave={ handleHideTooltip }
-				onMouseDown={ handleHideTooltip }
-				className="toggle-activate-monitoring__toggle-button"
-			>
-				{ toggleContent }
-			</span>
-			{ showNotificationSettings && (
-				<NotificationSettings
-					onClose={ handleToggleNotificationSettings }
-					sites={ [ site ] }
-					settings={ settings }
-					isLargeScreen={ isLargeScreen }
+	const onHoverContent = () => {
+		if ( shouldDisplayUpgradePopover && ! smsLimitReached ) {
+			return (
+				<UpgradePopover
+					context={ statusContentRef.current }
+					isVisible={ showTooltip }
+					position="bottom left"
+					onClose={ handleHideTooltip }
+					dismissibleWithPreference
 				/>
-			) }
-			{ tooltip && (
+			);
+		}
+		let tooltipText = tooltip;
+		if ( isPaidTierEnabled && smsLimitReached && status === 'success' ) {
+			tooltipText = translate( 'You have reached the SMS limit' );
+		}
+		if ( tooltipText ) {
+			return (
 				<Tooltip
 					id={ tooltipId }
 					context={ statusContentRef.current }
@@ -182,8 +185,37 @@ export default function ToggleActivateMonitoring( {
 					position="bottom"
 					className="sites-overview__tooltip"
 				>
-					{ tooltip }
+					{ tooltipText }
 				</Tooltip>
+			);
+		}
+	};
+
+	return (
+		<>
+			<span
+				className="toggle-activate-monitoring__toggle-button"
+				// We don't want to hide the tooltip when the user clicks on the
+				// upgrade popover since it has buttons that user can interact with.
+				onMouseDown={ shouldDisplayUpgradePopover ? undefined : handleHideTooltip }
+				onMouseEnter={ handleShowTooltip }
+				onMouseLeave={ handleHideTooltip }
+				ref={ statusContentRef }
+				role="button"
+				tabIndex={ 0 }
+			>
+				{ toggleContent }
+
+				{ onHoverContent() }
+			</span>
+
+			{ showNotificationSettings && (
+				<NotificationSettings
+					onClose={ handleToggleNotificationSettings }
+					sites={ [ site ] }
+					settings={ settings }
+					isLargeScreen={ isLargeScreen }
+				/>
 			) }
 		</>
 	);

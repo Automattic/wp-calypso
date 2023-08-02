@@ -1,12 +1,17 @@
 {
 	"name": "automattic/wp-calypso",
-	"require": {
-		"wp-phpunit/wp-phpunit": "^5.4",
-		"automattic/jetpack-codesniffer": "^2.1"
-	},
 	"config": {
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"platform": {
+			"php": "8.2"
 		}
+	},
+	"require-dev": {
+		"automattic/jetpack-codesniffer": "^2.1",
+		"phpunit/phpunit": "^9",
+		"yoast/phpunit-polyfills": "^1.0",
+		"phpcsstandards/phpcsextra": "^1.0"
 	}
 }

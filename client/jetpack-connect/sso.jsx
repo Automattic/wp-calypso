@@ -24,7 +24,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { validateSSONonce, authorizeSSO } from 'calypso/state/jetpack-connect/actions';
 import { getSSO } from 'calypso/state/jetpack-connect/selectors';
-import JetpackConnectHappychatButton from './happychat-button';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { persistSsoApproved } from './persistence-utils';
@@ -451,12 +450,7 @@ class JetpackSsoForm extends Component {
 						>
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
-						<JetpackConnectHappychatButton
-							eventName="calypso_jpc_sso_chat_initiated"
-							label={ translate( 'Chat with Jetpack support' ) }
-						>
-							<HelpButton />
-						</JetpackConnectHappychatButton>
+						<HelpButton />
 					</LoggedOutFormLinks>
 				</div>
 

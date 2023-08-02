@@ -26,7 +26,6 @@ import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
-
 import './style.scss';
 
 function UseMyDomain( props ) {
@@ -40,6 +39,7 @@ function UseMyDomain( props ) {
 		transferDomainUrl,
 		initialMode,
 		onNextStep,
+		onSkip,
 	} = props;
 
 	const { __ } = useI18n();
@@ -272,6 +272,7 @@ function UseMyDomain( props ) {
 						? showOwnershipVerificationFlow
 						: onConnect
 				}
+				onSkip={ onSkip }
 				onTransfer={ onTransfer ?? showTransferDomainFlow }
 				transferDomainUrl={ transferDomainUrl }
 			/>
@@ -396,6 +397,7 @@ UseMyDomain.propTypes = {
 	analyticsSection: PropTypes.string,
 	basePath: PropTypes.string,
 	initialMode: PropTypes.string,
+	onSkip: PropTypes.func,
 };
 
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(

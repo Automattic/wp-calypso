@@ -1,4 +1,3 @@
-import { InitialEntry } from '@remix-run/router';
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
@@ -8,6 +7,25 @@ import type { Reducer } from 'redux';
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW':
+			return action.show;
+	}
+	return state;
+};
+
+const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER':
+			return action.show;
+	}
+	return state;
+};
+
+const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET':
 			return action.show;
 	}
 	return state;
@@ -68,15 +86,6 @@ const message: Reducer< string | undefined, HelpCenterAction > = ( state, action
 	return state;
 };
 
-const chatTag: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
-		return undefined;
-	} else if ( action.type === 'HELP_CENTER_SET_CHAT_TAG' ) {
-		return action.chatTag;
-	}
-	return state;
-};
-
 const userDeclaredSiteUrl: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -98,19 +107,7 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'HELP_CENTER_SET_IFRAME' ) {
-		return action.iframe;
-	} else if ( action.type === 'HELP_CENTER_RESET_IFRAME' ) {
-		return undefined;
-	}
-	return state;
-};
-
-const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( state, action ) => {
+const initialRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_INITIAL_ROUTE' ) {
 		return action.route;
 	}
@@ -119,16 +116,16 @@ const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( st
 
 const reducer = combineReducers( {
 	showHelpCenter,
+	showMessagingLauncher,
+	showMessagingWidget,
 	site,
 	subject,
 	message,
-	chatTag,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
 	hasSeenWhatsNewModal,
 	isMinimized,
 	unreadCount,
-	iframe,
 	initialRoute,
 } );
 

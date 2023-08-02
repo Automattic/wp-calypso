@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -7,7 +7,6 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
@@ -38,6 +37,7 @@ class DomainRegistrationSuggestion extends Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
 		isCartPendingUpdate: PropTypes.bool,
+		isCartPendingUpdateDomain: PropTypes.object,
 		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
@@ -132,6 +132,7 @@ class DomainRegistrationSuggestion extends Component {
 			translate,
 			pendingCheckSuggestion,
 			premiumDomain,
+			isCartPendingUpdateDomain,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -168,9 +169,15 @@ class DomainRegistrationSuggestion extends Component {
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
 			} );
-		} else if ( pendingCheckSuggestion?.domain_name === domain ) {
+		} else if (
+			pendingCheckSuggestion?.domain_name === domain ||
+			( this.props.isCartPendingUpdate && isCartPendingUpdateDomain?.domain_name === domain )
+		) {
 			buttonStyles = { ...buttonStyles, busy: true, disabled: true };
-		} else if ( pendingCheckSuggestion || this.props.isCartPendingUpdate ) {
+		} else if (
+			pendingCheckSuggestion ||
+			( this.props.isCartPendingUpdate && isCartPendingUpdateDomain?.domain_name !== domain )
+		) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 		return {

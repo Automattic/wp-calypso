@@ -1,9 +1,9 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackInstructionList from './jetpack-instruction-list';
 import JetpackLicenseKeyClipboard from './jetpack-license-key-clipboard';

@@ -6,7 +6,7 @@
 // This is styling common parts of stepper page
 .launchpad {
 	.flow-progress,
-	.step-container__header {
+	.step-container .step-container__header {
 		display: none;
 	}
 
@@ -29,6 +29,8 @@
 	}
 
 	.step-container__content {
+		margin-bottom: 50px;
+
 		@include break-large {
 			height: 100vh;
 		}
@@ -141,7 +143,8 @@
 }
 
 // Launchpad - Sidebar heading text
-
+.start-writing,
+.design-first,
 .newsletter,
 .link-in-bio.launchpad,
 .link-in-bio-tld:not(.domains),
@@ -152,17 +155,17 @@
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
 			color: var(--studio-gray-100);
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 28px;
+			font-family: $brand-serif;
+			font-size: $font-title-large;
 			font-weight: 400;
-			line-height: 1.1;
+			line-height: rem(40px);
 			margin: 0 0 10px;
 			padding: 0;
 			letter-spacing: -0.32px;
 
 			@include break-large {
-				font-size: $font-headline-medium;
+				font-size: rem(44px);
+				line-height: rem(52px);
 			}
 		}
 	}
@@ -179,7 +182,7 @@
 }
 
 .launchpad__sidebar-header-flow-name {
-	font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-family: $brand-serif;
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-large;
@@ -211,6 +214,7 @@
 		align-items: center;
 		flex-grow: 1;
 		width: 0;
+		margin-right: 6px;
 	}
 
 	.launchpad__url-box-domain-text {
@@ -218,21 +222,20 @@
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 4px 0;
-		padding-right: 8px;
+		padding-right: 6px;
 		letter-spacing: -0.24px;
 		font-size: $font-body-small;
 	}
 
-	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		opacity: 1;
-	}
-
-	.launchpad__clipboard-button:focus {
-		opacity: 1;
-	}
-
 	.launchpad__clipboard-button {
 		opacity: 0;
+		margin-top: 2px;
+		flex-shrink: 0;
+	}
+
+	.launchpad__url-box-domain:hover > .launchpad__clipboard-button,
+	.launchpad__clipboard-button:focus {
+		opacity: 1;
 	}
 }
 
@@ -256,10 +259,20 @@
 }
 
 .launchpad__domain-upgrade-badge {
+	margin-left: auto;
+	background-color: var(--studio-blue-5);
+	color: var(--studio-blue-80);
+	font-size: $font-body-extra-small;
+
 	&:hover {
 		background: var(--studio-blue-10);
 	}
 
+}
+
+.start-writing .launchpad__sidebar-admin-link,
+.design-first .launchpad__sidebar-admin-link {
+	display: none;
 }
 
 .launchpad__sidebar-admin-link {
@@ -282,167 +295,6 @@
 	@include break-large {
 		display: block;
 	}
-}
-
-// Launchpad - Checklist
-
-.launchpad__checklist {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-
-	@include break-large {
-		margin: 20px auto;
-	}
-
-	&-primary-button {
-		width: 100%;
-		font-weight: 500;
-		padding: 11px;
-		margin-top: 12px;
-		background-color: var(--color-primary);
-		border-color: var(--color-primary);
-		color: var(--color-text-inverted);
-
-		&:hover:not([disabled]) {
-			background-color: var(--color-primary-60);
-			border-color: var(--color-primary-60);
-			color: var(--color-text-inverted);
-		}
-
-		&[disabled] {
-			background-color: var(--color-primary-10);
-			border-color: var(--color-primary-10);
-			color: var(--color-text-inverted);
-		}
-	}
-}
-
-.launchpad__checklist-item {
-	align-items: flex-start;
-	background-color: transparent;
-	border-bottom: 1px solid var(--studio-gray-5);
-	border-left: none;
-	border-right: none;
-	border-top: none;
-	display: flex;
-	padding: 16px;
-	width: 100%;
-	margin: 0;
-	color: var(--color-text);
-}
-
-.button.launchpad__checklist-item:hover:not([disabled]),
-.button.launchpad__checklist-item:focus:not([disabled]) {
-	fill: var(--studio-blue-50);
-	color: var(--studio-blue-50);
-	border-bottom: 1px solid var(--studio-gray-5);
-}
-
-.launchpad__checklist-item .badge,
-.launchpad__domain-upgrade-badge {
-	background-color: var(--studio-blue-5);
-	color: var(--studio-blue-80);
-	font-size: $font-body-extra-small;
-}
-
-.launchpad__checklist-item[disabled],
-.launchpad__checklist-item[disabled]:focus {
-	background-color: transparent;
-	pointer-events: none;
-}
-
-.launchpad__checklist-item[data-task="verify_email"] {
-	color: var(--color-text);
-}
-
-.launchpad__checklist-item-checkmark-container,
-.launchpad__checklist-item-warning-container {
-	margin-right: 8px;
-	width: 20px;
-
-	.launchpad__checklist-item-checkmark,
-	.launchpad__checklist-item-warning {
-		top: 2px;
-		vertical-align: text-bottom;
-	}
-}
-.launchpad__checklist-item-warning {
-	fill: var(--color-warning);
-}
-
-// general styles
-.launchpad__checklist-item-text-container {
-	flex-grow: 1;
-	font-size: $font-body-small;
-	line-height: 20px;
-	text-align: left;
-}
-.launchpad__checklist-item-text {
-	font-weight: 600;
-}
-
-.launchpad__task:nth-last-child(2) {
-	// remove bottom border for last checklist item before the primary button
-	.launchpad__checklist-item,
-	.launchpad__checklist-item:hover,
-	.launchpad__checklist-item:focus {
-		border-bottom: none;
-	}
-}
-
-// completed tasks (both enabled and disabled)
-.launchpad__task.completed.disabled,
-.launchpad__task.completed.enabled {
-	.launchpad__checklist-item-text {
-		color: var(--studio-gray-50);
-		font-weight: 400;
-		text-decoration: line-through;
-	}
-
-	.launchpad__checklist-item-chevron,
-	.launchpad__checklist-item-checkmark {
-		fill: var(--studio-gray-50);
-	}
-}
-
-// pending tasks and completed enabled
-.launchpad__task.completed.enabled:hover,
-.launchpad__task.pending:hover,
-.launchpad__task.completed.enabled > a:focus,
-.launchpad__task.pending > a:focus {
-	.launchpad__checklist-item-text {
-		color: var(--studio-blue-50);
-	}
-
-	.launchpad__checklist-item-chevron,
-	.launchpad__checklist-item-checkmark {
-		fill: var(--studio-blue-50);
-	}
-
-	// change badge color on hover (Choose a Plan step)
-	.badge {
-		background: var(--studio-blue-10);
-	}
-}
-
-// pending disabled tasks
-.launchpad__task.pending.disabled {
-	.launchpad__checklist-item-text {
-		color: inherit;
-	}
-}
-
-.launchpad__checklist-item-chevron {
-	display: flex;
-	line-height: 20px;
-	text-align: left;
-	width: 30px;
-}
-
-.gridicon.launchpad__checklist-item-chevron {
-	top: 0;
-	margin-top: 0;
 }
 
 // Launchpad Site Preview Component
@@ -490,6 +342,12 @@
 		}
 	}
 
+	.is-tablet .web-preview__placeholder {
+		@include break-large {
+			max-width: 783px;
+		}
+	}
+
 	.web-preview__placeholder {
 		overflow-y: visible;
 		max-width: 100%;
@@ -516,13 +374,6 @@
 		@include break-large {
 			margin: 0 auto;
 		}
-
-		.web-preview__frame-edit-overlay {
-			@include break-large {
-				border-radius: 40px; /* stylelint-disable-line scales/radii */
-			}
-		}
-
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -531,36 +382,6 @@
 		padding: 0;
 		background-color: transparent;
 		position: relative;
-
-
-		.web-preview__frame-edit-overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			border-radius: 40px;  /* stylelint-disable-line scales/radii */
-
-			display: flex;
-			justify-content: center;
-			align-items: center;
-
-			@include break-large {
-				border-radius: 20px; /* stylelint-disable-line scales/radii */
-			}
-
-			.web-preview__frame-edit-button {
-				font-size: 14px;  /* stylelint-disable-line declaration-property-unit-allowed-list */
-				line-height: 20px;
-				padding: 10px 24px;
-				color: #000;
-				background: #fff;
-				border-radius: 4px;
-				border-color: #c3c4c7;
-				border-width: 2px;
-				cursor: pointer;
-			}
-		}
 	}
 
 	.web-preview__frame {
@@ -586,8 +407,6 @@
 	.spinner-line {
 		display: none;
 	}
-
-
 }
 
 // Launchpad - Processing Screens
@@ -602,8 +421,8 @@
 		height: 100%;
 		background-color: #d0cce3;
 		background-image:
-			url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
-			url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+			url(calypso/assets/images/onboarding/link-in-bio-processing-left.webp),
+			url(calypso/assets/images/onboarding/link-in-bio-processing-right.webp);
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
 		background-size: auto 30%, auto 30%;
@@ -613,8 +432,8 @@
 		@include break-huge {
 			background-size: auto 50%, auto 50%;
 			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
-				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.webp),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.webp);
 		}
 	}
 

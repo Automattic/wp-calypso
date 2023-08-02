@@ -7,7 +7,7 @@ import Placeholders from './placeholder-lines';
 // import './style.scss';
 import './help-center-article-content.scss';
 
-interface ArticleContent {
+interface ArticleContentProps {
 	content: string;
 	title: string;
 	link: string;
@@ -33,7 +33,7 @@ const ContentWithExternalLinks = ( { content, className }: ContentWithExternalLi
 	return <div ref={ contentRef } className={ className } />;
 };
 
-const ArticleContent = ( { content, title, link, isLoading = false }: ArticleContent ) => {
+const ArticleContent = ( { content, title, link, isLoading = false }: ArticleContentProps ) => {
 	const post = { title: title, url: link };
 	return (
 		<article className="help-center-article-content__story">

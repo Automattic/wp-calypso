@@ -1,6 +1,13 @@
-import { Design, StyleVariation } from '@automattic/design-picker/src';
+import {
+	Design,
+	StyleVariation,
+	isAssemblerDesign,
+	shouldGoToAssembler,
+} from '@automattic/design-picker';
+import { getVariationTitle, getVariationType } from '@automattic/global-styles';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 export function recordPreviewedDesign( {
 	flow,
@@ -52,7 +59,8 @@ export function recordSelectedDesign( {
 
 export function getDesignTypeProps( design?: Design ) {
 	return {
-		goes_to_assembler_step: design?.design_type === 'assembler',
+		goes_to_assembler_step: isAssemblerDesign( design ) && shouldGoToAssembler(),
+		assembler_source: getAssemblerSource( design ),
 	};
 }
 
@@ -61,14 +69,18 @@ export function getDesignEventProps( {
 	intent,
 	design,
 	styleVariation,
+	colorVariation,
+	fontVariation,
 }: {
 	flow: string | null;
 	intent: string;
 	design: Design;
 	styleVariation?: StyleVariation;
+	colorVariation?: GlobalStylesObject | null;
+	fontVariation?: GlobalStylesObject | null;
 } ) {
 	const is_style_variation = styleVariation && styleVariation.slug !== 'default';
-	const variationSlugSuffix = is_style_variation ? `-${ styleVariation.slug }` : '';
+	const variationSlugSuffix = is_style_variation ? `-${ styleVariation?.slug }` : '';
 
 	return {
 		flow,
@@ -81,6 +93,14 @@ export function getDesignEventProps( {
 		is_premium: design.is_premium,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
 		is_style_variation: is_style_variation,
+		...( colorVariation && {
+			color_variation_title: getVariationTitle( colorVariation ),
+			color_variation_type: getVariationType( colorVariation ),
+		} ),
+		...( fontVariation && {
+			font_variation_title: getVariationTitle( fontVariation ),
+			font_variation_type: getVariationType( fontVariation ),
+		} ),
 	};
 }
 
@@ -89,4 +109,30 @@ export function getVirtualDesignProps( design: Design ) {
 		is_virtual: design.is_virtual,
 		slug: design.is_virtual ? design.recipe?.slug : design.slug,
 	};
+}
+
+/**
+ * Tracks prop
+ *  name: assembler_source
+ *  values:
+ *		• virtual-theme
+ *		• blank-canvas-theme
+ * 		• standard
+ * 		• premium
+ * 		• default
+ */
+export function getAssemblerSource( design?: Design ) {
+	const { design_type, is_virtual } = design ?? {};
+
+	if ( is_virtual ) {
+		return 'virtual-theme';
+	}
+
+	if ( design_type === 'assembler' ) {
+		// blank-canvas-theme
+		return 'design-your-own';
+	}
+
+	// Standard, premium, default...
+	return design?.design_type;
 }

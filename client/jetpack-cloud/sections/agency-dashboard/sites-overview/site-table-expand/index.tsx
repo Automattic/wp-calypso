@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { DASHBOARD_PREFERENCE_NAMES } from '../utils';

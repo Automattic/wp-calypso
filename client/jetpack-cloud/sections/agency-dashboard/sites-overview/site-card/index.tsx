@@ -2,8 +2,8 @@ import { Card, Gridicon, Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getSelectedLicenses,

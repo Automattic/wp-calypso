@@ -238,6 +238,16 @@ export default function () {
 		);
 	}
 
+	// Use `noSite` instead of the `siteSelection` middleware for the no-site route.
+	page(
+		'/checkout/offer-professional-email/:domain/:receiptId/no-site',
+		redirectLoggedOut,
+		noSite,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/checkout/offer-professional-email/:domain/:receiptId/:site?',
 		redirectLoggedOut,
@@ -278,8 +288,16 @@ export default function () {
 		clientRender
 	);
 
-	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
-	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
+	// A renewal link without a site is not allowed, but we send the user to
+	// checkout anyway so they can see a helpful error message.
+	page(
+		'/checkout/:product/renew/:purchaseId',
+		redirectLoggedOut,
+		noSite,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',

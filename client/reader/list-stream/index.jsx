@@ -18,6 +18,8 @@ import ListStreamHeader from './header';
 import ListMissing from './missing';
 import './style.scss';
 
+const emptyContent = () => <EmptyContent />;
+
 class ListStream extends Component {
 	constructor( props ) {
 		super( props );
@@ -52,7 +54,6 @@ class ListStream extends Component {
 	render() {
 		const list = this.props.list;
 		const shouldShowFollow = list && ! list.is_owner;
-		const emptyContent = <EmptyContent />;
 		const listStreamIconClasses = 'gridicon gridicon__list';
 
 		if ( list ) {

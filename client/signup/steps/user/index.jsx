@@ -26,6 +26,7 @@ import flows from 'calypso/signup/config/flows';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
+	getFlowDestination,
 	getFlowSteps,
 	getNextStepName,
 	getPreviousStepName,
@@ -48,6 +49,9 @@ function getRedirectToAfterLoginUrl( {
 	oauth2Signup,
 	initialContext,
 	flowName,
+	localeSlug,
+	progress,
+	signupDependencies,
 	stepName,
 	userLoggedIn,
 } ) {
@@ -58,13 +62,31 @@ function getRedirectToAfterLoginUrl( {
 	) {
 		return initialContext.query.oauth2_redirect;
 	}
-	if ( initialContext?.canonicalPath?.startsWith( '/start/account' ) ) {
+	if (
+		initialContext?.canonicalPath?.startsWith( '/start/account' ) ||
+		initialContext?.canonicalPath?.startsWith( '/start/videopress-account' )
+	) {
 		return initialContext.query.redirect_to;
 	}
 
 	const stepAfterRedirect =
 		getNextStepName( flowName, stepName, userLoggedIn ) ||
 		getPreviousStepName( flowName, stepName, userLoggedIn );
+
+	if ( ! stepAfterRedirect ) {
+		// This is the only step in the flow
+		const goesThroughCheckout = !! progress?.plans?.cartItem;
+		const destination = getFlowDestination(
+			flowName,
+			userLoggedIn,
+			signupDependencies,
+			localeSlug,
+			goesThroughCheckout
+		);
+		if ( destination ) {
+			return destination;
+		}
+	}
 
 	return (
 		window.location.origin +
@@ -140,22 +162,10 @@ export class UserStep extends Component {
 		}
 	}
 
-	getSubHeaderText() {
-		const {
-			flowName,
-			oauth2Client,
-			positionInFlow,
-			translate,
-			userLoggedIn,
-			wccomFrom,
-			isReskinned,
-			sectionName,
-			from,
-			locale,
-		} = this.props;
+	getLoginUrl() {
+		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = this.props;
 
-		let subHeaderText = this.props.subHeaderText;
-		const loginUrl = login( {
+		return login( {
 			isJetpack: 'jetpack-connect' === sectionName,
 			from,
 			redirectTo: getRedirectToAfterLoginUrl( this.props ),
@@ -165,6 +175,21 @@ export class UserStep extends Component {
 			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
+	}
+
+	getSubHeaderText() {
+		const {
+			flowName,
+			oauth2Client,
+			positionInFlow,
+			translate,
+			userLoggedIn,
+			wccomFrom,
+			isReskinned,
+		} = this.props;
+
+		let subHeaderText = this.props.subHeaderText;
+		const loginUrl = this.getLoginUrl();
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
@@ -193,7 +218,13 @@ export class UserStep extends Component {
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
-							a: <a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 							br: <br />,
 						},
 					}
@@ -393,8 +424,12 @@ export class UserStep extends Component {
 	getHeaderText() {
 		const { flowName, oauth2Client, translate, headerText, wccomFrom } = this.props;
 
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up for Crowdsignal' );
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up for %(clientTitle)s', {
+				args: { clientTitle: oauth2Client.title },
+				comment:
+					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Crowdsignal' or 'Gravatar')",
+			} );
 		}
 
 		if ( isWooOAuth2Client( oauth2Client ) ) {
@@ -460,8 +495,9 @@ export class UserStep extends Component {
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
-		if ( isWooOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
+		if ( isWooOAuth2Client( oauth2Client ) || isGravatar ) {
 			isSocialSignupEnabled = true;
 		}
 
@@ -495,6 +531,7 @@ export class UserStep extends Component {
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
+					loginUrl={ isGravatar ? this.getLoginUrl() : undefined }
 				/>
 				<div id="g-recaptcha"></div>
 			</>

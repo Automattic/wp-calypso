@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSearch from '../people-section-nav/people-search';
 
@@ -22,11 +22,6 @@ function PeopleSectionNavCompact( props: Props ) {
 			id: 'team',
 			title: translate( 'Team' ),
 			path: '/people/team/' + site?.slug,
-		},
-		{
-			id: 'subscribers',
-			title: translate( 'Subscribers' ),
-			path: '/people/subscribers/' + site?.slug,
 		},
 	];
 

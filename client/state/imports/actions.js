@@ -5,6 +5,7 @@ import {
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
+	IMPORTS_IMPORT_RECEIVED_RESET,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_IMPORT_START,
 	IMPORTS_IMPORT_UNLOCK,
@@ -92,6 +93,8 @@ export const unlockImport = ( importerId ) => ( {
 	type: IMPORTS_IMPORT_UNLOCK,
 	importerId,
 } );
+
+export const resetImportReceived = () => ( { type: IMPORTS_IMPORT_RECEIVED_RESET } );
 
 export const receiveImporterStatus = ( importerStatus ) => ( dispatch, getState ) => {
 	const isLocked = isImporterLocked( getState(), importerStatus.importId );

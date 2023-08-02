@@ -1,8 +1,8 @@
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';

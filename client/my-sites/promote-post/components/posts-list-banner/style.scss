@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .promote-post {
 	.posts-list-banner__container {
 		padding: 30px;
@@ -28,6 +30,10 @@
 
 	.posts-list-banner__learn-more {
 		margin-top: 10px;
+
+		@media screen and (max-width: $break-mobile) {
+			display: none;
+		}
 	}
 
 }

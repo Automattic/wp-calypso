@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { setRoute } from 'calypso/state/route/actions';
 import 'calypso/state/route/init';
 

@@ -6,12 +6,16 @@ export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
 	if ( object && object[ propName ] ) {
 		const urlParts = getUrlParts( object[ propName ] );
 		if ( baseURL && ! urlParts.hostname ) {
-			const { pathname: basePath } = getUrlParts( baseURL );
+			const {
+				pathname: basePath,
+				protocol: baseProtocol,
+				hostname: baseHostname,
+			} = getUrlParts( baseURL );
 			const resolvedPath = resolveRelativePath( basePath, object[ propName ] );
 			object[ propName ] = getUrlFromParts( {
 				...urlParts,
-				protocol: baseURL.protocol,
-				hostname: baseURL.hostname,
+				protocol: baseProtocol,
+				hostname: baseHostname,
 				pathname: resolvedPath,
 			} ).href;
 		}

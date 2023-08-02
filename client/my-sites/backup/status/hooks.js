@@ -40,13 +40,13 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { data, isLoading } = useRewindableActivityLogQuery( siteId, filter, {
+	const { data, isInitialLoading } = useRewindableActivityLogQuery( siteId, filter, {
 		enabled: isValidRequest && enabled,
 		refetchOnWindowFocus: false,
 	} );
 
 	return {
-		isLoading,
+		isInitialLoading,
 		deltas: getDeltaActivitiesByType( data ?? [] ),
 	};
 };
@@ -142,7 +142,9 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 
 	return {
 		isLoading:
-			lastBackupBeforeDate.isLoading || lastAttemptOnDate.isLoading || backupDeltas.isLoading,
+			lastBackupBeforeDate.isLoading ||
+			lastAttemptOnDate.isLoading ||
+			backupDeltas.isInitialLoading,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
 		lastBackupAttemptOnDate: lastAttemptOnDate.backupAttempt,
 		deltas: backupDeltas.deltas,

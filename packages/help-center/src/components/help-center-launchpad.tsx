@@ -2,13 +2,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
+import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
-// import { useLaunchpadChecklist } from '../hooks/use-launchpad';
 import { SITE_STORE } from '../stores';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -44,12 +44,10 @@ export const HelpCenterLaunchpad = () => {
 		siteSlug = window?.location?.host;
 	}
 
-	// We are commenting this out temporarily while we wait
-	// for new endpoint in jetpack-mu-wpcom to be deployed.
-	// const { data } = useLaunchpadChecklist( siteSlug, siteIntent || '' );
-	// const totalLaunchpadSteps = data?.checklist?.length || 4;
-	// const completeLaunchpadSteps =
-	// 	data?.checklist?.filter( ( checklistItem ) => checklistItem.completed ).length || 1;
+	const { data } = useLaunchpad( siteSlug, siteIntent );
+	const totalLaunchpadSteps = data?.checklist?.length || 4;
+	const completeLaunchpadSteps =
+		data?.checklist?.filter( ( checklistItem ) => checklistItem.completed ).length || 1;
 
 	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 	const sectionName = useSelector( ( state ) => getSectionName( state ) );
@@ -77,7 +75,11 @@ export const HelpCenterLaunchpad = () => {
 					handleLaunchpadHelpLinkClick();
 				} }
 			>
-				<CircularProgressBar size={ 32 } currentStep={ 1 } numberOfSteps={ 4 } />
+				<CircularProgressBar
+					size={ 32 }
+					currentStep={ completeLaunchpadSteps }
+					numberOfSteps={ totalLaunchpadSteps }
+				/>
 				<span className="inline-help-launchpad-link-text">
 					{ __( 'Continue setting up your site with these next steps.' ) }
 				</span>

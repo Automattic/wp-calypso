@@ -1,5 +1,9 @@
 import { ProgressBar } from '@automattic/components';
-import { SITE_SETUP_FLOW } from '@automattic/onboarding';
+import {
+	CONNECT_DOMAIN_FLOW,
+	isTransferringHostedSiteCreationFlow,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import classnames from 'classnames';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -22,14 +26,18 @@ const StepRoute = ( {
 	progressBarExtraStyle,
 	showWooLogo,
 	renderStep,
-}: StepRouteProps ) => (
-	<div
-		className={ classnames( flow.name, flow.variantSlug, flow.classnames, kebabCase( step.slug ) ) }
-	>
-		{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
-		{ flow.name !== SITE_SETUP_FLOW && (
-			// The progress bar is removed from the site-setup due to its fragility.
-			// See https://github.com/Automattic/wp-calypso/pull/73653
+}: StepRouteProps ) => {
+	const renderProgressBar = () => {
+		// The progress bar is removed from the site-setup due to its fragility.
+		// See https://github.com/Automattic/wp-calypso/pull/73653
+		if (
+			[ SITE_SETUP_FLOW, CONNECT_DOMAIN_FLOW ].includes( flow.name ) ||
+			isTransferringHostedSiteCreationFlow( flow.name )
+		) {
+			return null;
+		}
+
+		return (
 			<ProgressBar
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				className="flow-progress"
@@ -37,10 +45,24 @@ const StepRoute = ( {
 				total={ 100 }
 				style={ progressBarExtraStyle }
 			/>
-		) }
-		<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
-		{ renderStep( step ) }
-	</div>
-);
+		);
+	};
+
+	return (
+		<div
+			className={ classnames(
+				flow.name,
+				flow.variantSlug,
+				flow.classnames,
+				kebabCase( step.slug )
+			) }
+		>
+			{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
+			{ renderProgressBar() }
+			<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
+			{ renderStep( step ) }
+		</div>
+	);
+};
 
 export default StepRoute;

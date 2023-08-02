@@ -12,22 +12,15 @@ import * as Subscriber from './subscriber';
 import * as User from './user';
 import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
-export { useHas3PC } from './queries/use-has-3rd-party-cookies';
-export { useSiteAnalysis } from './queries/use-site-analysis';
-export { useUserSites } from './queries/use-user-sites';
-export type { AnalysisReport } from './queries/use-site-analysis';
 export { useSiteIntent } from './queries/use-site-intent';
-export { useSupportAvailability } from './support-queries/use-support-availability';
-export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
-export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export * from './starter-designs-queries';
-export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './user/types';
+export * from './queries/use-launchpad';
 
 const { SubscriptionManager } = Reader;
 
@@ -53,9 +46,11 @@ export {
  */
 export * from './mapped-types';
 export { getContextResults } from './contextual-help/contextual-help';
+export type { Section } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
 export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
-export type { OnboardSelect } from './onboard';
+export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
+export type { SiteActions } from './site';

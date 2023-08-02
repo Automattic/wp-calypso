@@ -1,14 +1,14 @@
+import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import { useIsMutating, useMutation, useQueryClient } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
 import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use-get-domains-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { UseMutationOptions } from 'react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 
 type AddMailboxFormData = {
 	destination: string;
@@ -54,7 +54,7 @@ export default function useAddEmailForwardMutation(
 	const suppliedOnMutate = mutationOptions.onMutate;
 	const suppliedOnError = mutationOptions.onError;
 
-	mutationOptions.mutationKey = MUTATION_KEY;
+	mutationOptions.mutationKey = [ MUTATION_KEY ];
 
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
@@ -167,7 +167,7 @@ export default function useAddEmailForwardMutation(
 				{
 					args: {
 						emailAddress: variables.mailbox,
-						message: error,
+						message: error as string,
 					},
 					components: noticeComponents,
 				}
@@ -177,12 +177,12 @@ export default function useAddEmailForwardMutation(
 		dispatch( errorNotice( errorMessage ) );
 	};
 
-	return useMutation< any, unknown, AddMailboxFormData, Context >(
-		( { mailbox, destination } ) =>
+	return useMutation< any, unknown, AddMailboxFormData, Context >( {
+		mutationFn: ( { mailbox, destination } ) =>
 			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/new`, {
 				mailbox,
 				destination,
 			} ),
-		mutationOptions
-	);
+		...mutationOptions,
+	} );
 }

@@ -8,9 +8,10 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -19,39 +20,29 @@ import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
-import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { ResponseCart, RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
-	margin-top: -10px;
+	margin-top: 0px;
 	word-break: break-word;
 
 	.is-summary & {
 		margin-bottom: 10px;
 	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		margin-top: -8px;
+	}
 `;
 
 const CouponLinkWrapper = styled.div`
 	font-size: 14px;
-	margin: 10px 0 20px;
-
-	.is-summary & {
-		margin-bottom: 0;
-	}
 `;
 
-const CouponField = styled( Coupon )`
-	margin: 20px 30px 20px 0;
-
-	.rtl & {
-		margin: 20px 0 20px 30px;
-	}
-
-	.is-summary & {
-		margin: 10px 0 0;
-	}
-`;
+const CouponField = styled( Coupon )``;
 
 const CouponEnableButton = styled.button`
 	cursor: pointer;
@@ -72,7 +63,6 @@ export default function WPCheckoutOrderReview( {
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
-	useVariantPickerRadioButtons,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -81,8 +71,6 @@ export default function WPCheckoutOrderReview( {
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
-	// This is just for unit tests.
-	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -117,18 +105,8 @@ export default function WPCheckoutOrderReview( {
 
 	const selectedSiteData = useSelector( getSelectedSite );
 
-	const primaryDomain = selectedSiteData?.options?.is_mapped_domain
-		? selectedSiteData?.domain
-		: null;
-	const firstDomainProduct = responseCart.products.find(
-		( product ) =>
-			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
-	);
-	const domainUrl =
-		primaryDomain ??
-		firstDomainProduct?.meta ??
-		responseCart?.gift_details?.receiver_blog_url ??
-		siteUrl;
+	// This is what will be displayed at the top of checkout prefixed by "Site: ".
+	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
 
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
@@ -147,9 +125,7 @@ export default function WPCheckoutOrderReview( {
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
-			{ ! planIsP2Plus && domainUrl && 'no-user' !== domainUrl && (
-				<SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary>
-			) }
+			{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
 			{ planIsP2Plus && selectedSiteData?.name && (
 				<SiteSummary>
 					{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
@@ -163,7 +139,6 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					onChangePlanLength={ onChangePlanLength }
@@ -177,13 +152,15 @@ export default function WPCheckoutOrderReview( {
 				/>
 			</WPOrderReviewSection>
 
-			<CouponFieldArea
-				isCouponFieldVisible={ isCouponFieldVisible }
-				setCouponFieldVisible={ setCouponFieldVisible }
-				isPurchaseFree={ isPurchaseFree }
-				couponStatus={ couponStatus }
-				couponFieldStateProps={ couponFieldStateProps }
-			/>
+			{ ! isAkismetCheckout() && (
+				<CouponFieldArea
+					isCouponFieldVisible={ isCouponFieldVisible }
+					setCouponFieldVisible={ setCouponFieldVisible }
+					isPurchaseFree={ isPurchaseFree }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			) }
 		</div>
 	);
 }
@@ -238,4 +215,64 @@ function CouponFieldArea( {
 			</CouponEnableButton>
 		</CouponLinkWrapper>
 	);
+}
+
+function getDomainToDisplayInCheckoutHeader(
+	responseCart: ResponseCart,
+	selectedSiteData: SiteDetails | undefined | null,
+	sitelessCheckoutSlug: string | undefined
+): string | undefined {
+	if ( hasP2PlusPlan( responseCart ) ) {
+		return undefined;
+	}
+
+	const primaryDomainForMapping = selectedSiteData?.options?.is_mapped_domain
+		? selectedSiteData?.domain
+		: undefined;
+	if ( primaryDomainForMapping ) {
+		return primaryDomainForMapping;
+	}
+
+	const domainUrl = getDomainProductUrlToDisplayInCheckoutHeader( responseCart, selectedSiteData );
+	if ( domainUrl ) {
+		return domainUrl;
+	}
+
+	if ( responseCart.gift_details?.receiver_blog_url ) {
+		return responseCart.gift_details.receiver_blog_url;
+	}
+
+	if (
+		sitelessCheckoutSlug &&
+		sitelessCheckoutSlug !== 'no-user' &&
+		sitelessCheckoutSlug !== 'no-site'
+	) {
+		return sitelessCheckoutSlug;
+	}
+
+	return undefined;
+}
+
+function getDomainProductUrlToDisplayInCheckoutHeader(
+	responseCart: ResponseCart,
+	selectedSiteData: SiteDetails | undefined | null
+): string | undefined {
+	const domainProducts = responseCart.products.filter(
+		( product ) =>
+			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
+	);
+
+	const firstDomainProduct = domainProducts.length > 0 ? domainProducts[ 0 ] : undefined;
+
+	const isPurchaseSiteless = ! selectedSiteData;
+
+	if ( ! firstDomainProduct?.meta ) {
+		return undefined;
+	}
+
+	if ( isPurchaseSiteless && domainProducts.length > 1 ) {
+		return undefined;
+	}
+
+	return firstDomainProduct.meta;
 }

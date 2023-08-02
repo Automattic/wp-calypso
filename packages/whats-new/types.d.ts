@@ -1,25 +1,8 @@
-declare module '@wordpress/notices' {
-	export type Status = 'error' | 'info' | 'success' | 'warning';
+// TODO: Attempt removing after https://github.com/Automattic/wp-calypso/pull/78711
+// Fixed node_modules/@wordpress/components/build-types/dropdown-menu/types.d.ts(43,24): error TS2339: Property 'role' does not exist on type 'HTMLElement'.
+interface HTMLElement {
+	role: string;
 }
-
-declare module '@wordpress/rich-text' {
-	interface Format {
-		type: string;
-		attributes?: Record< string, string > | undefined;
-		unregisteredAttributes?: Record< string, string > | undefined;
-		object?: boolean | undefined;
-	}
-
-	export interface Value {
-		activeFormats?: readonly Format[] | undefined;
-		end?: number | undefined;
-		formats: ReadonlyArray< Format[] | undefined >;
-		replacements: ReadonlyArray< Format[] | undefined >;
-		start?: number | undefined;
-		text: string;
-	}
-}
-
 declare module '@automattic/whats-new' {
 	type FunctionProps = {
 		onClose: () => void;

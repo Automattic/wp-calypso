@@ -28,6 +28,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getCtaAriaLabel,
 		getIsDeprecated,
 		getIsExternal,
+		getIsIndirectCheckout,
 		getIsIncludedInPlan,
 		getIsIncludedInPlanOrSuperseded,
 		getIsMultisiteCompatible,
@@ -56,6 +57,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const isSuperseded = getIsSuperseded( item );
 					const isDeprecated = getIsDeprecated( item );
 					const isExternal = getIsExternal( item );
+					const isIndirectCheckout = getIsIndirectCheckout( item );
 					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
 					const isIncludedInPlan = getIsIncludedInPlan( item );
 					const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( item );
@@ -88,6 +90,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 									onClick={ onClickMoreInfoFactory( item ) }
 									item={ item }
 									isExternal={ isExternal }
+									externalLink={ isIndirectCheckout ? getCheckoutURL( item ) : '' }
 								/>
 							) }
 						</>
@@ -129,7 +132,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 								description={ description }
 								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 								isCtaDisabled={ isCtaDisabled }
-								isCtaExternal={ isExternal }
+								isCtaExternal={ isExternal && ! isIndirectCheckout }
 								onClickCta={ onClickCta }
 								isProductInCart={ isProductInCart }
 								price={ price }

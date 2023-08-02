@@ -86,6 +86,9 @@ import './style.scss';
 
 const noop = () => {};
 
+/**
+ * @deprecated This component is to be removed / cleaned up as part of PlanFeatures2023Grid p2-pdgrnI-24E
+ */
 export class PlanFeatures extends Component {
 	isMounted = false;
 
@@ -891,6 +894,10 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 	( planMatches( currentPlan, { type: TYPE_FREE, group: GROUP_WPCOM } ) &&
 		planMatches( plan, { type: TYPE_P2_PLUS, group: GROUP_WPCOM } ) );
 
+/**
+ * @deprecated Use the {@link useCalculateMaxPlanUpgradeCredit} hook instead, to be cleaned up with Plan
+ * @module calypso/my-sites/plan-features-2023-grid/hooks/useCalculateMaxPlanUpgradeCredit
+ */
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
 		.map( ( { planName, availableForPurchase } ) => {

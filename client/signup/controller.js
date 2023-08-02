@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
+import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
@@ -13,8 +14,6 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -290,12 +289,17 @@ export default {
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;
+		// Set plugin parameter in signup dependency store so we can retrieve it in getWithPluginDestination().
+		const pluginParameter = query && query.plugin;
+		const pluginBillingPeriod = query && query.billing_period;
 
 		const additionalDependencies = {
 			...( refParameter && { refParameter } ),
 			...( themeParameter && { themeParameter } ),
 			...( themeType && { themeType } ),
 			...( styleVariation && { styleVariation } ),
+			...( pluginParameter && { pluginParameter } ),
+			...( pluginBillingPeriod && { pluginBillingPeriod } ),
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
@@ -349,7 +353,7 @@ export default {
 			// Fetch the site by siteIdOrSlug and then try to select again
 			dispatch( requestSite( siteIdOrSlug ) )
 				.catch( () => {
-					next();
+					notFound( context, next );
 					return null;
 				} )
 				.then( () => {
@@ -370,15 +374,5 @@ export default {
 					next();
 				} );
 		}
-	},
-	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
-		const state = signupStore.getState();
-		const siteType = getSiteType( state );
-
-		if ( ! siteType && query.site_type ) {
-			signupStore.dispatch( setSiteType( query.site_type ) );
-		}
-
-		next();
 	},
 };

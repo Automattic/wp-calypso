@@ -41,5 +41,6 @@ export const authorizeQueryDataSchema = {
 		woodna_help_url: { type: 'string' },
 		skip_user: { type: 'string' }, // deprecated, to be removed soon
 		allow_site_connection: { type: 'string' }, // '1' if true
+		installed_ext_success: { type: 'string' }, // '1' if true
 	},
 };

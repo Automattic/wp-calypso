@@ -36,6 +36,7 @@ export class Notice extends Component {
 		onDismissClick: noop,
 		status: null,
 		text: null,
+		isReskinned: false,
 	};
 
 	static propTypes = {
@@ -49,6 +50,7 @@ export class Notice extends Component {
 		status: PropTypes.oneOf( [ 'is-error', 'is-info', 'is-success', 'is-warning', 'is-plain' ] ),
 		text: PropTypes.node,
 		translate: PropTypes.func.isRequired,
+		isReskinned: PropTypes.bool,
 	};
 
 	dismissTimeout = null;
@@ -109,11 +111,13 @@ export class Notice extends Component {
 			status,
 			text,
 			translate,
+			isReskinned,
 		} = this.props;
 		const classes = classnames( 'notice', status, className, {
 			'is-compact': isCompact,
 			'is-loading': isLoading,
 			'is-dismissable': showDismiss,
+			'is-reskinned': isReskinned,
 		} );
 
 		const iconName = icon || this.getIcon();

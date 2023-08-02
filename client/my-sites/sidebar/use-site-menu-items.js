@@ -7,6 +7,7 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -25,6 +26,8 @@ const useSiteMenuItems = () => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const locale = useLocale();
+	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
+	const isAllDomainsView = '/domains/manage' === currentRoute;
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -62,7 +65,7 @@ const useSiteMenuItems = () => {
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
-	if ( ! siteDomain ) {
+	if ( ! siteDomain || isAllDomainsView ) {
 		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
 	}
 

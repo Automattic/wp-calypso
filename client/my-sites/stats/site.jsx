@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PAST_SEVEN_DAYS, PAST_THIRTY_DAYS } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -11,6 +12,7 @@ import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { AVAILABLE_PAGE_MODULES } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,7 +23,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	recordGoogleEvent,
@@ -29,10 +30,14 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
+import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
+import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -44,14 +49,20 @@ import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import StatsPageHeader from './stats-page-header';
+import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 import { getPathWithUpdatedQueryString } from './utils';
 
+// Sync hidable modules with StatsNavigation.
+const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+	return module.key;
+} );
+
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
-	date: endOf.format( 'YYYY-MM-DD' ),
+	date: endOf,
 } ) );
 
 const CHART_VIEWS = {
@@ -140,14 +151,42 @@ class StatsSite extends Component {
 		}
 	};
 
+	isModuleHidden( moduleName ) {
+		// Determine which modules are hidden.
+		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
+		if (
+			HIDDABLE_MODULES.includes( moduleName ) &&
+			this.props.moduleToggles[ moduleName ] === false
+		) {
+			return true;
+		}
+	}
+
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats, context } = this.props;
+		const {
+			date,
+			siteId,
+			slug,
+			isJetpack,
+			isSitePrivate,
+			isOdysseyStats,
+			context,
+			moduleSettings,
+		} = this.props;
+
+		let defaultPeriod = PAST_SEVEN_DAYS;
+
+		// Set the current period based on the module settings.
+		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
+		if ( moduleSettings?.highlights?.period_in_days === 30 ) {
+			defaultPeriod = PAST_THIRTY_DAYS;
+		}
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 
-		const query = memoizedQuery( period, endOf );
+		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
 		// For period option links
 		const traffic = {
@@ -162,6 +201,18 @@ class StatsSite extends Component {
 		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
+
+		const moduleListClasses = classNames(
+			'is-events',
+			'stats__module-list',
+			'stats__module-list--traffic',
+			'stats__module--unified',
+			// @TODO: Refactor hidden modules with a more flexible layout (e.g., Flexbox) to fit mass configuration to moduels in the future.
+			{
+				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
+				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
+			}
+		);
 
 		return (
 			<div className="stats">
@@ -187,8 +238,12 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-				<HighlightsSection siteId={ siteId } />
+				<StatsNotices
+					siteId={ siteId }
+					isOdysseyStats={ isOdysseyStats }
+					statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
+				/>
+				<HighlightsSection siteId={ siteId } currentPeriod={ defaultPeriod } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						<StatsPeriodHeader>
@@ -226,7 +281,7 @@ class StatsSite extends Component {
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
-					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+					<div className={ moduleListClasses }>
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
@@ -251,15 +306,18 @@ class StatsSite extends Component {
 							summary={ false }
 						/>
 
-						<StatsModule
-							path="authors"
-							moduleStrings={ moduleStrings.authors }
-							period={ this.props.period }
-							query={ query }
-							statType="statsTopAuthors"
-							className="stats__author-views"
-							showSummaryLink
-						/>
+						{ ! this.isModuleHidden( 'authors' ) && (
+							<StatsModule
+								path="authors"
+								moduleStrings={ moduleStrings.authors }
+								period={ this.props.period }
+								query={ query }
+								statType="statsTopAuthors"
+								className="stats__author-views"
+								showSummaryLink
+							/>
+						) }
+
 						<StatsModule
 							path="searchterms"
 							moduleStrings={ moduleStrings.search }
@@ -277,15 +335,17 @@ class StatsSite extends Component {
 							statType="statsClicks"
 							showSummaryLink
 						/>
-						<StatsModule
-							path="videoplays"
-							moduleStrings={ moduleStrings.videoplays }
-							period={ this.props.period }
-							query={ query }
-							statType="statsVideoPlays"
-							showSummaryLink
-						/>
-						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
+						{ ! this.isModuleHidden( 'videos' ) && (
+							<StatsModule
+								path="videoplays"
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								statType="statsVideoPlays"
+								showSummaryLink
+							/>
+						) }
+						{ ! isOdysseyStats && (
 							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
@@ -327,17 +387,52 @@ class StatsSite extends Component {
 			<EmptyContent
 				illustration={ illustration404 }
 				title={ translate( 'Looking for stats?' ) }
-				line={ translate(
-					'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
-				) }
+				line={
+					<p>
+						{ translate(
+							'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
+						) }
+					</p>
+				}
 				action={ translate( 'Enable Jetpack Stats' ) }
 				actionCallback={ this.enableStatsModule }
 			/>
 		);
 	}
 
+	componentDidMount() {
+		// TODO: Migrate to a query component pattern (i.e. <QueryStatsModuleSettings siteId={siteId} />).
+		this.props.requestModuleSettings( this.props.siteId );
+	}
+
+	renderInsufficientPermissionsPage() {
+		return (
+			<EmptyContent
+				illustration={ illustration404 }
+				title={ translate( 'Looking for stats?' ) }
+				line={
+					<p>
+						<div>
+							{ translate( "We're sorry, but you do not have permission to access this page." ) }
+						</div>
+						<div>{ translate( "Please contact your site's administrator for access." ) }</div>
+					</p>
+				}
+			/>
+		);
+	}
+
+	renderBody() {
+		if ( ! this.props.canUserViewStats ) {
+			return this.renderInsufficientPermissionsPage();
+		} else if ( this.props.showEnableStatsModule ) {
+			return this.renderEnableStatsModule();
+		}
+		return this.renderStats();
+	}
+
 	render() {
-		const { isJetpack, siteId, showEnableStatsModule, isOdysseyStats } = this.props;
+		const { isJetpack, siteId, isOdysseyStats } = this.props;
 		const { period } = this.props.period;
 
 		// Track the last viewed tab.
@@ -360,7 +455,7 @@ class StatsSite extends Component {
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				{ showEnableStatsModule ? this.renderEnableStatsModule() : this.renderStats() }
+				{ this.renderBody() }
 			</Main>
 		);
 	}
@@ -379,15 +474,27 @@ const enableJetpackStatsModule = ( siteId, path ) =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-		// Odyssey: if Stats is not enabled, the page will not be rendered.
+
+		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
 			! isOdysseyStats &&
 			siteId &&
 			isJetpack &&
-			isJetpackModuleActive( state, siteId, 'stats' ) === false;
+			isJetpackModuleActive( state, siteId, 'stats' ) === false &&
+			canUserManageOptions;
+
+		// Odyssey Stats: Access control is done in PHP, so skip capability check here.
+		// TODO: Fix incorrect view_stats permission on Calypso.
+		//       If the user's role is missing from the site's stats dashboard access allowlist (fetched via getJetpackSettings.role),
+		//       then it should be reflected in the user's view_stats capability.
+		const canUserViewStats =
+			isOdysseyStats || canUserManageOptions || canCurrentUser( state, siteId, 'view_stats' );
+
 		return {
+			canUserViewStats,
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
@@ -395,7 +502,9 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
+			moduleSettings: getModuleSettings( state, siteId, 'traffic' ),
+			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
+	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent, requestModuleSettings }
 )( localize( StatsSite ) );

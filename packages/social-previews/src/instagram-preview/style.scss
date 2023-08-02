@@ -1,0 +1,102 @@
+
+
+.instagram-preview {
+	&__wrapper {
+		padding: 20px;
+		background-color: #fff;
+		margin-inline: auto;
+		max-width: clamp(200px, 100%, 555px);
+	}
+
+	// When the preview is in a section of all previews
+	&__section &__wrapper {
+		padding: 0;
+	}
+
+	&__section.social-preview__section {
+		width: clamp(200px, 100%, 555px);
+	}
+
+	&__container {
+
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+		overflow: hidden;
+	}
+
+	&__header {
+
+		padding: 0.5rem 1rem;
+		display: flex;
+		gap: 0.5rem;
+
+		&--avatar {
+			display: flex;
+			align-items: center;
+			max-width: 32px;
+			max-height: 32px;
+		}
+
+		&--avatar img {
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+		}
+
+		&--profile {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-grow: 1;
+		}
+
+		&--profile-name {
+			font-weight: 700;
+		}
+	}
+
+	&__media {
+		display: flex;
+
+		&--image {
+			width: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 0.5rem 1rem;
+
+		a {
+			text-decoration: none;
+			color: rgb(0, 55, 107);
+		}
+
+		&--actions {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		&--actions-primary {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+
+		&--name {
+			font-weight: 600;
+			display: inline;
+		}
+
+		&--text {
+			display: inline;
+		}
+
+		&--footer {
+			font-weight: 400;
+			color: rgb(115, 115, 115);
+		}
+	}
+}

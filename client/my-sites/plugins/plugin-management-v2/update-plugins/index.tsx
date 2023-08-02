@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import acceptDialog from 'calypso/lib/accept';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getPlugins, getPluginsOnSites } from 'calypso/state/plugins/installed/selectors';
@@ -68,23 +68,18 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 	}
 
 	function updateAllPluginsNotice() {
-		let pluginName;
-		const hasOnePlugin = pluginUpdateCount === 1;
+		let heading = translate( 'Update %(pluginUpdateCount)d plugins', {
+			args: { pluginUpdateCount },
+		} );
 
-		if ( hasOnePlugin ) {
+		if ( pluginUpdateCount === 1 ) {
 			const [ { name, slug } ] = pluginsWithUpdates;
-			pluginName = name || slug;
+			heading = translate( 'Update %(pluginName)s', { args: { pluginName: name || slug } } );
 		}
 
 		const dialogOptions = {
 			additionalClassNames: 'plugins__confirmation-modal',
 		};
-
-		const heading = hasOnePlugin
-			? translate( 'Update %(pluginName)s', { args: { pluginName } } )
-			: translate( 'Update %(pluginUpdateCount)d plugins', {
-					args: { pluginUpdateCount },
-			  } );
 
 		acceptDialog(
 			getPluginActionDailogMessage( allSites, pluginsWithUpdates, heading, 'update' ),

@@ -6,18 +6,16 @@ import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
-import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
+import { showActivationModal } from 'calypso/state/themes/actions/theme-activation-modal';
 import {
 	getTheme,
-	hasAutoLoadingHomepageModalAccepted,
-	themeHasAutoLoadingHomepage,
+	hasActivationModalAccepted,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
-	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
-
 import 'calypso/state/themes/init';
+import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -38,13 +36,7 @@ export function activate(
 	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
-		let showModalCondition =
-			! isJetpackSite( getState(), siteId ) && ! isSiteAtomic( getState(), siteId );
-
-		if ( isEnabled( 'themes/atomic-homepage-replace' ) ) {
-			showModalCondition =
-				! isJetpackSite( getState(), siteId ) || isSiteAtomic( getState(), siteId );
-		} else {
+		if ( ! isEnabled( 'themes/atomic-homepage-replace' ) ) {
 			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
 			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
 		}
@@ -63,16 +55,10 @@ export function activate(
 		}
 
 		/**
-		 * Let's check if the theme will change the homepage of the site,
-		 * before to definitely start the theme-activating process,
-		 * allowing cancel it if it's desired.
+		 * Check whether the user has confirmed the activation.
 		 */
-		if (
-			themeHasAutoLoadingHomepage( getState(), themeId, siteId ) &&
-			showModalCondition &&
-			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
-		) {
-			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
+		if ( ! hasActivationModalAccepted( getState(), themeId ) ) {
+			return dispatch( showActivationModal( themeId ) );
 		}
 
 		/**
@@ -85,26 +71,19 @@ export function activate(
 		 *
 		 * Currently a feature flag check is also being applied.
 		 */
-		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
-		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
-		if (
-			isEnabled( 'themes/display-thank-you-page' ) &&
-			isDotComTheme &&
-			! isWooTheme &&
-			! isExternallyManaged
-		) {
-			dispatchActivateAction(
-				dispatch,
-				getState,
-				siteId,
-				themeId,
-				source,
-				purchased,
-				keepCurrentHomepage
-			);
+		const siteSlug = getSiteSlug( getState(), siteId );
+		const dispatchActivateAction = activateOrInstallThenActivate(
+			themeId,
+			siteId,
+			source,
+			purchased,
+			keepCurrentHomepage
+		);
 
-			const siteSlug = getSiteSlug( getState(), siteId );
+		if ( shouldRedirectToThankYouPage( getState(), themeId ) ) {
+			dispatchActivateAction( dispatch, getState );
+
 			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
 		}
 
@@ -113,41 +92,42 @@ export function activate(
 		 */
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		if ( isDotOrgTheme && ! isDotComTheme ) {
-			const siteSlug = getSiteSlug( getState(), siteId );
-
 			dispatch( productToBeInstalled( themeId, siteSlug ) );
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
-		return dispatchActivateAction(
-			dispatch,
-			getState,
-			siteId,
-			themeId,
-			source,
-			purchased,
-			keepCurrentHomepage
-		);
+		return dispatchActivateAction( dispatch, getState );
 	};
 }
 
-function dispatchActivateAction(
-	dispatch,
-	getState,
-	siteId,
+/**
+ * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
+ * Otherwise, activate the theme directly
+ *
+ * @param  {string}   themeId   Theme ID
+ * @param  {number}   siteId    Site ID
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
+ * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
+ * @returns {Function}          Action thunk
+ */
+export function activateOrInstallThenActivate(
 	themeId,
-	source,
-	purchased,
-	keepCurrentHomepage
+	siteId,
+	source = 'unknown',
+	purchased = false,
+	keepCurrentHomepage = false
 ) {
-	if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-		const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
-		// If theme is already installed, installation will silently fail,
-		// and it will just be activated.
-		return dispatch(
-			installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
-		);
-	}
+	return ( dispatch, getState ) => {
+		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+			// If theme is already installed, installation will silently fail,
+			// and it will just be activated.
+			return dispatch(
+				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
+			);
+		}
 
-	return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+	};
 }

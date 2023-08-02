@@ -90,7 +90,7 @@ export const SiteLogsToolbar = ( {
 				<Button
 					disabled={ isDownloading }
 					isBusy={ isDownloading }
-					isPrimary
+					variant="primary"
 					onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
 				>
 					{ translate( 'Download logs' ) }

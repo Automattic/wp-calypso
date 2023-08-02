@@ -1,12 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSelect, useDispatch } from '@wordpress/data';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { addQueryArgs } from 'calypso/lib/route';
+import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
@@ -143,7 +143,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	return (
 		<>
 			{ ( () => {
-				if ( isNotAtomicJetpack() || ! hasAllSitesFetched ) {
+				if (
+					isNotAtomicJetpack() ||
+					! hasAllSitesFetched ||
+					( WPImportOption.EVERYTHING === option && ! siteItem )
+				) {
 					return <LoadingEllipsis />;
 				} else if ( undefined === option && fromSite ) {
 					return (
@@ -166,6 +170,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							stepNavigator={ stepNavigator }
 							isMigrateFromWp={ isMigrateFromWp }
 							showConfirmDialog={ showConfirmDialog }
+							onContentOnlySelection={ switchToContentUploadScreen }
 						/>
 					);
 				} else if ( WPImportOption.CONTENT_ONLY === option ) {

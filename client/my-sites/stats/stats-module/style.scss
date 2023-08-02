@@ -23,6 +23,7 @@
 .card.stats-module {
 	padding: 0;
 	margin-bottom: 10px;
+	overflow-x: auto;
 }
 // Site sections
 .stats__module-list {
@@ -372,13 +373,6 @@ ul.module-header-actions {
 	}
 }
 
-.tab-email-followers .tab-content.email-followers,
-.tab-wpcom-followers .tab-content.wpcom-followers,
-.tab-top-authors .tab-content.top-authors,
-.tab-top-content .tab-content.top-content {
-	display: block;
-}
-
 // Module Content Table
 .stats-detail__row-label {
 	font-weight: 600;
@@ -716,6 +710,10 @@ ul.module-header-actions {
 }
 
 .stats-module__footer-actions--summary {
+	padding-top: 24px;
+}
+
+.stats-module__footer-actions--summary-tall {
 	padding-top: 24px;
 }
 

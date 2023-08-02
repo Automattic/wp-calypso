@@ -1,28 +1,25 @@
 /**
  * @group gutenberg
+ * @group calypso-pr
+ * @group calypso-release
  */
 
 import {
 	DataHelper,
 	ElementHelper,
-	EditorPage,
 	PublishedPostPage,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	RestAPIClient,
+	PostResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-/**
- * Constants
- */
-const quote =
-	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
-
-describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
+describe( 'Likes: Post', function () {
 	const features = envToFeatureKey( envVariables );
 	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
 	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
@@ -35,35 +32,34 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	] );
 
 	const postingUser = new TestAccount( accountName );
-	const likeUser = new TestAccount( 'defaultUser' );
+	const otherUser = new TestAccount( 'defaultUser' );
 	let page: Page;
-	let publishedURL: URL;
-	let publishedPostPage: PublishedPostPage;
+	let restAPIClient: RestAPIClient;
 
-	describe( 'As the posting user', function () {
-		let editorPage: EditorPage;
+	let newPost: PostResponse;
 
-		beforeAll( async () => {
-			page = await browser.newPage();
-			editorPage = new EditorPage( page, { target: features.siteType } );
-			await postingUser.authenticate( page );
-		} );
+	beforeAll( async () => {
+		page = await browser.newPage();
+		await postingUser.authenticate( page );
+	} );
 
-		it( 'Go to the new post page', async function () {
-			await editorPage.visit( 'post' );
-		} );
+	it( 'Setup the test', async function () {
+		restAPIClient = new RestAPIClient( postingUser.credentials );
+		newPost = await restAPIClient.createPost(
+			postingUser.credentials.testSites?.primary.id as number,
+			{
+				title: DataHelper.getRandomPhrase(),
+			}
+		);
+	} );
 
-		it( 'Enter post title', async function () {
-			const title = DataHelper.getRandomPhrase();
-			await editorPage.enterTitle( title );
-		} );
+	describe( 'While authenticated', function () {
+		let publishedPostPage: PublishedPostPage;
 
-		it( 'Enter post text', async function () {
-			await editorPage.enterText( quote );
-		} );
-
-		it( 'Publish and visit post', async function () {
-			publishedURL = await editorPage.publish( { visit: true } );
+		it( 'View post', async function () {
+			await ElementHelper.reloadAndRetry( page, async () => {
+				await page.goto( newPost.URL, { timeout: 20 * 1000 } );
+			} );
 		} );
 
 		it( 'Like post', async function () {
@@ -81,24 +77,38 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 	} );
 
-	describe( 'As the liking user', function () {
+	describe( 'While unauthenticated', function () {
+		let newPage: Page;
+		let publishedPostPage: PublishedPostPage;
+
 		beforeAll( async () => {
-			page = await browser.newPage();
+			newPage = await browser.newPage();
 		} );
 
 		it( 'Go to the published post page', async () => {
-			await page.goto( publishedURL.href );
+			await ElementHelper.reloadAndRetry( newPage, async () => {
+				await newPage.goto( newPost.URL, { timeout: 20 * 1000 } );
+			} );
 		} );
 
 		it( 'Login via popup to like the post', async function () {
-			page.on( 'popup', async ( popup ) => {
-				await likeUser.logInViaPopupPage( popup );
+			newPage.on( 'popup', async ( popup ) => {
+				await otherUser.logInViaPopupPage( popup );
 			} );
 
-			await ElementHelper.reloadAndRetry( page, async () => {
-				publishedPostPage = new PublishedPostPage( page );
-				await publishedPostPage.likePost();
-			} );
+			publishedPostPage = new PublishedPostPage( newPage );
+			await publishedPostPage.likePost();
 		} );
+	} );
+
+	afterAll( async function () {
+		if ( ! newPost ) {
+			return;
+		}
+
+		await restAPIClient.deletePost(
+			postingUser.credentials.testSites?.primary.id as number,
+			newPost.ID
+		);
 	} );
 } );

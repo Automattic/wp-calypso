@@ -1,18 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button as OriginalButton } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { store } from '../../store';
 import SiteIcon from '../site-icon';
 import './style.scss';
-
-const Button = ( {
-	children,
-	...rest
-}: OriginalButton.Props & { icon?: unknown; iconSize?: number; showTooltip?: boolean } ) => (
-	<OriginalButton { ...rest }>{ children }</OriginalButton>
-);
 
 export default function ToggleSidebarButton() {
 	const { toggleSidebar } = useDispatch( store );

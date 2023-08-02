@@ -8,6 +8,7 @@ import {
 } from 'calypso/reader/controller-helper';
 import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 import { recordTrack } from 'calypso/reader/stats';
+import renderHeaderSection from '../lib/header-section';
 
 const analyticsPageTitle = 'Reader';
 
@@ -29,13 +30,11 @@ const exported = {
 		const { sort = 'relevance', q, show = SEARCH_TYPES.POSTS } = context.query;
 		const searchSlug = q;
 
-		let streamKey;
+		let streamKey = 'custom_recs_sites_with_images';
 		let isQuerySuggestion = false;
 		if ( searchSlug ) {
 			streamKey = 'search:' + JSON.stringify( { sort, q } );
 			isQuerySuggestion = context.query.isSuggestion === '1';
-		} else {
-			streamKey = 'custom_recs_posts_with_images';
 		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -57,6 +56,7 @@ const exported = {
 		function reportSortChange( newSort ) {
 			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
 		}
+		context.renderHeaderSection = renderHeaderSection;
 
 		context.primary = (
 			<AsyncLoad
@@ -75,11 +75,11 @@ const exported = {
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showBack={ false }
-				showPrimaryFollowButtonOnCards={ false }
 				autoFocusInput={ autoFocusInput }
 				onQueryChange={ reportQueryChange }
 				onSortChange={ reportSortChange }
 				searchType={ show }
+				trendingTags={ context.params.trendingTags }
 			/>
 		);
 		next();

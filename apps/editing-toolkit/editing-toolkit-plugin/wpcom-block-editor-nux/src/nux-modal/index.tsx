@@ -42,7 +42,6 @@ const NuxModal: React.FC< Props > = ( {
 	return (
 		<Modal
 			className={ classnames( 'wpcom-block-editor-nux-modal', className ) }
-			open={ isOpen }
 			title=""
 			onRequestClose={ onRequestClose }
 		>

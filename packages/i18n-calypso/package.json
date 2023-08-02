@@ -20,23 +20,23 @@
 		"@automattic/interpolate-components": "workspace:^",
 		"@babel/runtime": "^7.17.2",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^5.20.0",
+		"@wordpress/compose": "^6.15.0",
 		"debug": "^4.3.3",
 		"events": "^3.0.0",
 		"hash.js": "^1.1.5",
 		"lodash": "^4.17.21",
 		"lru": "^3.1.0",
 		"tannin": "^1.1.1",
-		"use-subscription": "^1.5.1"
+		"use-subscription": "1.6.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2",
-		"react-test-renderer": "^17.0.2"
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-test-renderer": "^18.2.0"
 	},
 	"peerDependencies": {
-		"react": "^17.0.2"
+		"react": "^18.2.0"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",

@@ -22,7 +22,10 @@
 	.is-trash {
 		color: var(--color-error);
 	}
-	.is-private {
+	.is-private,
+	.is-newsletter-everybody,
+	.is-newsletter-subscribers,
+	.is-newsletter-paid-subcribers {
 		color: var(--color-primary-dark);
 	}
 }

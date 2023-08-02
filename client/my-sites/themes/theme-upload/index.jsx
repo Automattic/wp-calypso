@@ -29,7 +29,7 @@ import Main from 'calypso/components/main';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 // Necessary for ThanksModal
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
@@ -274,7 +274,10 @@ class Upload extends Component {
 
 		const { showEligibility } = this.state;
 
-		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
+		const uploadAction = ( siteId, file ) =>
+			isJetpack
+				? this.props.uploadTheme( siteId, file )
+				: this.props.initiateThemeTransfer( siteId, file, '', '', 'theme_upload' );
 		const isDisabled =
 			! isStandaloneJetpack && ( ! canUploadThemesOrPlugins || ( ! isAtomic && showEligibility ) );
 
@@ -337,7 +340,7 @@ class Upload extends Component {
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal source="upload" />
-				<AutoLoadingHomepageModal source="upload" />
+				<ActivationModal source="upload" />
 
 				<ThemesHeader
 					description={ translate(

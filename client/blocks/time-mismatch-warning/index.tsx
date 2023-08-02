@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useSelector, useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';

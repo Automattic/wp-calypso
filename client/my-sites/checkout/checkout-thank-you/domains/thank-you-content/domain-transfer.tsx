@@ -31,7 +31,7 @@ const domainTransferThankYouProps = ( {
 						{
 							components: { i: <i /> },
 							args: {
-								email,
+								email: email as string,
 							},
 						}
 					),

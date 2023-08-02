@@ -59,7 +59,6 @@ exports[`JetpackAuthorize renders as expected 1`] = `
               >
                 Create an account to set up Jetpack
                  
-                
               </h1>
               <p
                 class="formatted-header__subtitle"
@@ -188,28 +187,26 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           >
             Create a new account
           </a>
-          <div>
-            <a
-              class="logged-out-form__link-item jetpack-connect__help-button"
-              href="https://jetpack.com/contact-support?hpi=1"
-              rel="noopener noreferrer"
-              target="_blank"
+          <a
+            class="logged-out-form__link-item jetpack-connect__help-button"
+            href="https://jetpack.com/contact-support?hpi=1"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <svg
+              class="gridicon gridicons-help-outline needs-offset"
+              height="18"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <svg
-                class="gridicon gridicons-help-outline needs-offset"
-                height="18"
-                viewBox="0 0 24 24"
-                width="18"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <use
-                  xlink:href="gridicons.svg#gridicons-help-outline"
-                />
-              </svg>
-               
-              Get help setting up Jetpack
-            </a>
-          </div>
+              <use
+                xlink:href="gridicons.svg#gridicons-help-outline"
+              />
+            </svg>
+             
+            Get help setting up Jetpack
+          </a>
         </div>
       </div>
     </div>

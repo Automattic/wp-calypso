@@ -7,6 +7,9 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -23,6 +26,8 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_JETPACK_SEARCH_FREE,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
@@ -32,6 +37,8 @@ import {
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_AI_YEARLY,
 	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_ALL_SITES,
 	JETPACK_TAG_FOR_BLOGGERS,
@@ -51,8 +58,17 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
+	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
+	PRODUCT_WOOCOMMERCE_BOOKINGS,
+	PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+	PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
 } from './constants';
-import type { SelectorProductFeaturesItem } from './types';
+import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // Translatable strings
@@ -81,6 +97,8 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 				},
 			}
 		),
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'VaultPress Backup' ),
@@ -124,6 +142,8 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
 			context: 'Jetpack product name',
 		} ),
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI' ),
+		[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'AI' ),
 	};
 };
 
@@ -142,9 +162,11 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 			} ) }
 		</>
 	);
-	const backupT1 = translate( 'VaultPress Backup' );
-	const backupT2 = translate( 'VaultPress Backup' );
+	const backup = translate( 'VaultPress Backup' );
 	const search = translate( 'Site Search' );
+	const stats = translate( 'Stats (Personal)' );
+	const statsFree = translate( 'Stats (Free)' );
+	const statsCommercial = translate( 'Stats (Commercial)' );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
 		<>
@@ -156,6 +178,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
+	const aiAssistant = translate( 'AI' );
 	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
@@ -216,20 +239,27 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupT1,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backup,
 		[ PRODUCT_JETPACK_BOOST ]: boost,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
 		[ PRODUCT_JETPACK_SEARCH ]: search,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_WPCOM_SEARCH ]: search,
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercial,
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: stats,
+		[ PRODUCT_JETPACK_STATS_FREE ]: statsFree,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
@@ -270,8 +300,7 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 			} ) }
 		</>
 	);
-	const backupT1 = translate( 'Get VaultPress Backup' );
-	const backupT2 = translate( 'Get VaultPress Backup' );
+	const backup = translate( 'Get VaultPress Backup' );
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
 	const videoPress = translate( 'Get VideoPress' );
@@ -281,17 +310,22 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Get Boost' );
+	const aiAssistant = translate( 'Get AI' );
 	const social = translate( 'Get Social' );
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupT1,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backup,
 		[ PRODUCT_JETPACK_BOOST ]: boost,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
 		[ PRODUCT_JETPACK_SEARCH ]: search,
@@ -318,7 +352,17 @@ export const getJetpackProductsTaglines = (): Record<
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
 	const boostTagLine = translate( "Improve your site's performance" );
 	const boostOwnedTagLine = translate( 'Your site is optimized with Boost' );
+	// TODO: may need copy update
+	const aiAssistantTagLine = translate(
+		'Experience the ease of crafting content with intuitive and powerful AI.'
+	);
+	const aiAssistantOwnedTagLine = translate(
+		'Your site is equipped with our intuitive and powerful AI.'
+	);
 	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
+	const statsTagline = translate(
+		'With Jetpack Stats, you don’t need to be a data scientist to see how your site is performing.'
+	);
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
@@ -337,6 +381,14 @@ export const getJetpackProductsTaglines = (): Record<
 		'Your site has additional storage for Jetpack VaultPress Backup.'
 	);
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: {
+			default: aiAssistantTagLine,
+			owned: aiAssistantOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_AI_YEARLY ]: {
+			default: aiAssistantTagLine,
+			owned: aiAssistantOwnedTagLine,
+		},
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 			default: backupDailyTagline,
 			owned: backupOwnedTagline,
@@ -354,6 +406,18 @@ export const getJetpackProductsTaglines = (): Record<
 			owned: backupOwnedTagline,
 		},
 		// TODO: get taglines specifically for the new Jetpack Backup products
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
@@ -382,6 +446,9 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: { default: statsTagline },
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: { default: statsTagline },
+		[ PRODUCT_JETPACK_STATS_FREE ]: { default: statsTagline },
 		[ PRODUCT_JETPACK_SCAN ]: {
 			default: scanTagline,
 			owned: scanOwnedTagline,
@@ -451,17 +518,8 @@ export const getJetpackProductDisclaimers = (
 		return <a href={ link } target="_blank" rel="noreferrer"></a>;
 	};
 
-	const backupT1Disclaimer = doesProductHaveCompatibleSlug( backupDisclaimerFeatureSlugs ) ? (
-		translate( '* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
-			components: {
-				link: getLink(),
-			},
-		} )
-	) : (
-		<></>
-	);
-	const backupT2Disclaimer = doesProductHaveCompatibleSlug( backupDisclaimerFeatureSlugs ) ? (
-		translate( '* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
+	const backupDisclaimer = doesProductHaveCompatibleSlug( backupDisclaimerFeatureSlugs ) ? (
+		translate( 'Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
 			components: {
 				link: getLink(),
 			},
@@ -471,14 +529,16 @@ export const getJetpackProductDisclaimers = (
 	);
 
 	return {
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupT1Disclaimer,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1Disclaimer,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2Disclaimer,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2Disclaimer,
-		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupT1Disclaimer,
-		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupT1Disclaimer,
-		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupT2Disclaimer,
-		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupT2Disclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupDisclaimer,
 	};
 };
 
@@ -489,11 +549,12 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
 	);
-	const backupT1Description = translate(
+	const backupDescription = translate(
 		'Save every change with real-time backups and get back online quickly with one-click restores.'
 	);
-	const backupT2Description = translate(
-		'Save every change with real-time backups and get back online quickly with one-click restores.'
+	// TODO: may need copy update
+	const aiAssistantDescription = translate(
+		'Experience the ease of crafting content with intuitive and powerful AI.'
 	);
 	const boostDescription = translate(
 		"One-click optimizations that supercharge your WordPress site's performance and improve web vitals scores for better SEO."
@@ -524,14 +585,18 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	);
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeDescription,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupT1Description,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1Description,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2Description,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2Description,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupDescription,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDescription,
 		[ PRODUCT_JETPACK_BOOST ]: boostDescription,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchDescription,
@@ -558,13 +623,21 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const backupRealtimeShortDescription = translate(
 		'Real-time cloud backups with one-click restores.'
 	);
-	const backupT1ShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
-	const backupT2ShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
+	const backupShortDescription = translate(
+		'Real-time cloud backups with one-click restores. Starts with %(amount)s.',
+		{
+			args: { amount: '10GB' },
+			comment: '%s is a storage amount like 1TB or 10GB',
+		}
+	);
+	const aiAssistantShortDescription = translate(
+		'Experience the ease of crafting content with intuitive and powerful AI.'
+	);
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
 	);
 	const searchShortDescription = translate( 'Help your site visitors find answers instantly.' );
-	const scanShortDescription = translate( 'Automatic malware scanning with one-click fixes.' );
+	const scanShortDescription = translate( '24/7 protection: WAF and automatic malware scanning.' );
 	const videoPressShortDescription = translate(
 		'High-quality, ad-free video built specifically for WordPress.'
 	);
@@ -576,14 +649,18 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const socialAdvancedShortDescription = translate( 'Write once, post everywhere.' );
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantShortDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeShortDescription,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupT1ShortDescription,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1ShortDescription,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2ShortDescription,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2ShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupShortDescription,
 		[ PRODUCT_JETPACK_BOOST ]: boostShortDescription,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostShortDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchShortDescription,
@@ -622,6 +699,10 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	const searchFeaturedText = translate(
 		'Instant search helps your visitors actually find what they need and improves conversion.'
 	);
+	// TODO: may need alternate copy here
+	const aiAssistantFeaturedText = translate(
+		'Utilizing the potential of artificial intelligence, Jetpack AI brings a supportive layer to your content creation process.'
+	);
 	const boostFeaturedText = translate(
 		'Instant speed and SEO boost. Get the same advantages as the top sites, no developer required.'
 	);
@@ -634,10 +715,14 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	);
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantFeaturedText,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFeaturedText,
@@ -674,10 +759,13 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Automatically clear spam from your comments and forms.'
 	);
 	const scanLightboxDescription = translate(
-		'Keep your site or store ahead of security threats with automated malware scanning; including one-click fixes.'
+		'Keep your site or store ahead of security threats with our WAF and automated malware scanning, including one-click fixes.'
 	);
 	const searchLightboxDescription = translate(
 		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content - right when they need it.'
+	);
+	const aiAssistantLightboxDescription = translate(
+		'Utilizing the potential of artificial intelligence, Jetpack AI brings a supportive layer to your content creation process.'
 	);
 	const boostLightboxDescription = translate(
 		'Jetpack Boost gives your site the same performance advantages as the world’s leading websites, no developer required.'
@@ -689,11 +777,36 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
 	);
 
+	// WooCommerce Products
+	const woocommerceBookingsLightboxDescription = translate(
+		'Allow customers to book appointments, make reservations or rent equipment without leaving your site.'
+	);
+	const woocommerceSubscriptionsLightboxDescription = translate(
+		'Let customers subscribe to your products or services and pay on a weekly, monthly, or annual basis.'
+	);
+	const woocommerceProductBundlesLightboxDescription = translate(
+		'Offer personalized product bundles, bulk discount packages, and assembled products.'
+	);
+	const woocommerceProductAddOnsLightboxDescription = translate(
+		'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
+	);
+
+	const woocommerceMinMaxQuantitiesLightboxDescription = translate(
+		'Minimum and maximum quantity rules for products, orders, and categories.'
+	);
+	const woocommerceAutomateWooLightboxDescription = translate(
+		'Powerful marketing automation for WooCommerce. AutomateWoo has the tools you need to grow your store and make more money.'
+	);
+
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupLightboxDescription,
@@ -714,6 +827,12 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooLightboxDescription,
 	};
 };
 
@@ -724,6 +843,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const cloudBackups = translate( 'Redundant cloud backups on our global network' );
 	const prioritySupport = translate( 'Priority support' );
 
+	const backupIncludesInfoT0Storage = translate( '1GB of cloud storage' );
 	const backupIncludesInfoT1Storage = translate( '10GB of cloud storage' );
 	const backupIncludesInfoT2Storage = translate(
 		'{{strong}}1TB (1,000GB){{/strong}} of cloud storage',
@@ -752,6 +872,13 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	);
 
 	const otherIncludes = [ orderBackups, cloudBackups, prioritySupport ];
+	const backupIncludesInfoT0 = [
+		realTimeBackup,
+		backupIncludesInfoT0Storage,
+		backupIncludesInfoT1Log,
+		oneClickRestoreT1,
+		...otherIncludes,
+	];
 	const backupIncludesInfoT1 = [
 		realTimeBackup,
 		backupIncludesInfoT1Storage,
@@ -783,7 +910,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Flexible API that works with any type of site' ),
 	];
 	const scanIncludesInfo = [
-		translate( 'Website firewall (WAF beta)' ),
+		translate( 'Website firewall (WAF)' ),
 		translate( 'Automated daily scanning' ),
 		translate( 'One-click fixes for most issues' ),
 		translate( 'Instant email threat notifications' ),
@@ -813,7 +940,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -821,15 +948,114 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
-		translate( 'Coming soon: Image generator' ),
-		translate( 'Coming soon: Multi-image sharing' ),
-		translate( 'Coming soon: Video sharing' ),
+		translate( 'Image generator' ),
+	];
+	const aiAssistantIncludesInfo = [
+		translate( 'Prompt-based content generation' ),
+		translate( 'Text, table, and list generation' ),
+		translate( 'Adaptive tone adjustment' ),
+		translate( 'Superior spelling and grammar correction' ),
+		translate( 'Title and summary generation' ),
+	];
+
+	// WooCommerce Extensions
+	const woocommerceBookingsIncludesInfo = [
+		translate(
+			'Flexible online booking system - book classes, schedule appointments, or reserve items'
+		),
+		translate( 'Support for one-on-one appointments or multi-person events' ),
+		translate( 'The ability to offer special pricing for groups, days, or individuals' ),
+		translate( 'Support for all timezones' ),
+		translate( 'The ability to require confirmations or offer free cancellations' ),
+		translate( 'Reminder notifications' ),
+		translate( 'Sync with Google Calendar' ),
+		translate( 'Support for add-ons to customize the experience' ),
+	];
+	const woocommerceSubscriptionsIncludesInfo = [
+		translate( 'Free Trials & Sign-Up Fees' ),
+		translate( 'Variable Subscriptions' ),
+		translate( 'Subscription Management' ),
+		translate( 'Subscriber Account Management' ),
+		translate( 'Synchronized Payments' ),
+		translate( 'Upgrades/Downgrades' ),
+		translate( 'Flexible Product Options' ),
+		translate( 'Multiple Subscriptions' ),
+		translate( 'Subscription Coupons' ),
+		translate( 'Customer Emails' ),
+	];
+	const woocommerceProductBundlesIncludesInfo = [
+		translate( 'Create bulk discount packages' ),
+		translate( 'Offer personalized boxes' ),
+		translate( 'Create assembled products' ),
+		translate( 'Recommend add-ons and essentials' ),
+		translate( 'Offer more engaging upsells' ),
+	];
+	const woocommerceProductAddOnsIncludesInfo = [
+		translate( 'Image-based selections - customers can see what they’re getting before they buy.' ),
+		translate(
+			'Flat fees - charge customers a flat fee regardless of how many products they ordered.'
+		),
+		translate(
+			'Percentage fees - charge a fee for the add-on based on a percent of the total price.'
+		),
+		translate(
+			'Text input - Let your customers enter custom text to create a custom t-shirt, add a monogram or personalize a card.'
+		),
+		translate(
+			'Dropdown - customers can choose between a few pre-defined options with a drop-down field for your add-on.'
+		),
+		translate( 'Checkboxes - make customization as easy and satisfying as checking a checkbox.' ),
+		translate(
+			'Custom price - let your customers name their price, perfect for tips, donations, and gratuity.'
+		),
+	];
+	const woocommerceMinMaxQuantitiesIncludesInfo = [
+		translate( 'The ability to set quantity rules for products, orders, and categories.' ),
+	];
+	const woocommerceAutomateWooIncludesInfo = [
+		translate(
+			'Follow-up Emails – Automatically email customers who buy specific products, ask for a review, or suggest other products they might like.'
+		),
+		translate(
+			'Abandoned Cart – Remind customers who left items in their cart using emails at set intervals.'
+		),
+		translate(
+			'Win Back Inactive Customers – Target inactive customers with email marketing campaigns. Include special offers and recommendations.'
+		),
+		translate(
+			'SMS Notifications – Send SMS notifications to customers or admins for any of AutomateWoo’s wide range of triggers.'
+		),
+		translate(
+			'Review Rewards – Encourage more product reviews by offering discounts. Limit the discount based on number of reviews posted and the rating given.'
+		),
+		translate(
+			'Wishlist Marketing – Send timed wishlist reminder emails and notify when a wished product goes on sale. Integrates with WooCommerce Wishlists or YITH Wishlists.'
+		),
+		translate(
+			'Card Expiry Notifications – Notify customers before a saved credit or debit card expires. This can reduce failed payments and churn when selling subscriptions.'
+		),
+		translate(
+			'Personalized Coupons – Generate dynamically customized coupons for customers to raise purchase rates.'
+		),
+		translate(
+			'Subscriptions Automation – Action WooCommerce Subscription events such as status changes, failed payments, and renewal reminders.'
+		),
+		translate(
+			'Bookings Automations – Send emails on WooCommerce Bookings events such as booking confirmation or completion.'
+		),
+		translate(
+			'Automatic VIP – Reward your best customers with VIP status based on different spending requirements.'
+		),
 	];
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupIncludesInfoT1,
@@ -852,6 +1078,24 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasicIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooIncludesInfo,
+	};
+};
+
+export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialAdvancedIncludesInfo = [ translate( 'Multi-image sharing' ) ];
+
+	return {
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 	};
@@ -912,26 +1156,91 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
-	//TODO: fill in the actual values.
 	const socialAdvancedBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
 		translate( 'Unlock your growth potential by building a following on social media' ),
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
 		translate( 'Enhance social media engagement with personalized posts' ),
+		translate( 'Upload & automatically share images and videos to social media' ),
+		translate( 'Automatically create custom images, saving you hours of tedious work' ),
 		translate( 'Repurpose, reuse or republish already published content' ),
+	];
+
+	const aiAssistantBenefits = [
+		translate( 'Harness AI power directly from your editor' ),
+		translate( 'Unlock high-quality, tailored content at your command' ),
+		translate( 'Maintain professional standards with ease' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+
+	// WooCommerce Extensions benefits
+	const woocommerceBookingsBenefits = [
 		translate(
-			'Coming soon: Automatically create custom images, saving you hours of tedious work'
+			'Let your customers book reservations, appointments, or rentals independently – no phone calls are required.'
 		),
-		translate( 'Coming soon: Share multiple images at once on social media platforms' ),
-		translate( 'Coming soon: Upload and share videos to your social platforms' ),
+		translate(
+			'Offer discounts for groups or people booking multiple slots, show lower prices for early birds, higher prices on weekends, or special prices for kids.'
+		),
+		translate( 'Your customers see availability in their time zone' ),
+		translate( 'Reduce no-shows with reminder notifications' ),
+		translate( 'An intelligent booking system to avoid double-bookings' ),
+		translate( 'Boost your bookings with a range of add-ons' ),
+	];
+	const woocommerceSubscriptionsBenefits = [
+		translate( 'Multiple billing schedules available to suit your store’s needs' ),
+		translate( 'Integration with over 25 payment gateways for automatic recurring payments' ),
+		translate(
+			'Supports manual renewal payments through any WooCommerce payment gateway, along with automatic email invoices and receipts'
+		),
+		translate( 'Supports automatic rebilling on failed subscription payments' ),
+		translate( 'Give subscribers the ability to manage their own plan' ),
+		translate( 'Built-in renewal notifications and automatic emails' ),
+		translate(
+			'Detailed reports allow you to keep track of recurring revenue, the number of active subscribers, and more'
+		),
+	];
+	const woocommerceProductBundlesBenefits = [
+		translate( 'Sell more by creating discounted bundles or personalized boxes' ),
+		translate( 'Create product offerings made from multiple inventory-managed parts.' ),
+		translate(
+			'Boost your average order value by adding recommendations to popular products, and use discounts to maximize their impact.'
+		),
+	];
+	const woocommerceProductAddOnsBenefits = [
+		translate( 'You can offer special options to your customers.' ),
+		translate(
+			'Enable your customers to personalize products while they are shopping on your online store'
+		),
+	];
+	const woocommerceMinMaxQuantitiesBenefits = [
+		translate( 'Specify minimum and maximum quantity limits per product/variation or order.' ),
+		translate(
+			'Require specific products, or product categories, to be purchased in predefined quantity multiples.'
+		),
+		translate(
+			'Prevent overstocking or stockouts, maintain optimal inventory levels, and reduce storage costs.'
+		),
+	];
+	const woocommerceAutomateWooBenefits = [
+		translate( 'Effortless setup and management right from your WordPress backend' ),
+		translate( 'Send targeted, multi-step campaigns and offer customer incentives' ),
+		translate( 'Measure the success of your campaigns' ),
+		translate( 'Unlimited email sends' ),
+		translate( 'AutomateWoo is 100% extendable' ),
+		translate( 'Multilingual support. AutomateWoo has support for the popular WPML plugin' ),
+		translate( 'AutomateWoo integrates with your favorite plugins and services' ),
 	];
 
 	return {
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupBenefits,
@@ -952,6 +1261,126 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsBenefits,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsBenefits,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesBenefits,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooBenefits,
+	};
+};
+
+export const getJetpackProductsBenefitsComingSoon = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialAdvancedBenefits = [ translate( 'Share multiple images to social media' ) ];
+
+	return {
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+	};
+};
+
+export const getJetpackProductsFAQs = (
+	getHelpLink: ( context: unknown ) => JSX.Element,
+	getSupportLink: ( context: unknown ) => JSX.Element
+): Record< string, Array< FAQ > > => {
+	const cancellationPolicyFAQ = {
+		id: 'cancellation-policy',
+		question: translate( 'What is your cancellation policy?' ),
+		answer: translate(
+			'If you are dissatisfied for any reason, we offer full refunds within %(annualDays)d days for yearly plans, and within %(monthlyDays)d days for monthly plans. If you have a question about our paid plans, {{helpLink}}please let us know{{/helpLink}}!',
+			{
+				args: { annualDays: 14, monthlyDays: 7 },
+				components: { helpLink: getHelpLink( 'cancellation' ) },
+			}
+		),
+	};
+
+	const backupFAQs: Array< FAQ > = [
+		{
+			id: 'backup-storage-limits',
+			question: translate( 'How do backup storage limits work?' ),
+			answer: translate(
+				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',
+				{
+					args: { monthlyDays: 7 },
+				}
+			),
+		},
+		cancellationPolicyFAQ,
+	];
+
+	const scanFAQs: Array< FAQ > = [
+		{
+			id: 'scan-infected-sites',
+			question: translate( 'Can I use Jetpack Scan to fix a site that is already infected?' ),
+			answer: translate(
+				'Jetpack Protect (Scan) detects and prevents attacks, but is not designed to fully clean up sites infected before it was active. If your site has malware, take immediate action to clean it up and remove the malicious code. {{br/}} To clean up your site, we suggest using a malware removal tool, or if possible restore from a backup taken before the infection. We recommend using Jetpack VaultPress Backup in conjunction with Jetpack Scan to secure your website. {{br/}} {{JetpackScanLearnMoreLink}}Learn more about cleaning your site{{/JetpackScanLearnMoreLink}}.',
+				{
+					components: {
+						br: <br />,
+						JetpackScanLearnMoreLink: getSupportLink( 'how-to-clean-your-hacked-wordpress-site' ),
+					},
+				}
+			),
+		},
+		cancellationPolicyFAQ,
+	];
+
+	return {
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupFAQs,
+		[ PLAN_JETPACK_COMPLETE ]: backupFAQs,
+		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_SCAN ]: scanFAQs,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanFAQs,
+	};
+};
+
+export const getJetpackPlansAlsoIncludedFeatures = (): Record<
+	string,
+	Array< TranslateResult >
+> => {
+	const socialFree = [ translate( 'Social (free tier)' ) ];
+	const videoPressFree = [ translate( 'VideoPress (free tier)' ) ];
+	const freeBundleFeatures = [
+		translate( 'Brute force attack protection' ),
+		translate( 'Downtime monitoring' ),
+		translate( 'CDN (Content Delivery Networks)' ),
+		translate( 'Stats' ),
+	];
+
+	return {
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_COMPLETE ]: [ ...freeBundleFeatures ],
+		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: [ ...freeBundleFeatures ],
 	};
 };
 
@@ -1047,6 +1476,7 @@ export const useJetpackTbStorageAmountText = ( amount: number ): TranslateResult
 export const useJetpackStorageAmountTextByProductSlug = (): ( (
 	slug: string
 ) => TranslateResult | undefined ) => {
+	const ONE_GIGABYTE = useJetpackGbStorageAmountText( 1 );
 	const TEN_GIGABYTES = useJetpackGbStorageAmountText( 10 );
 	const HUNDRED_GIGABYTES = useJetpackGbStorageAmountText( 100 );
 	const ONE_TERABYTE = useJetpackTbStorageAmountText( 1 );
@@ -1056,6 +1486,8 @@ export const useJetpackStorageAmountTextByProductSlug = (): ( (
 	return useCallback(
 		( productSlug ) =>
 			( {
+				[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: ONE_GIGABYTE,
+				[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: ONE_GIGABYTE,
 				[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: ONE_TERABYTE,
@@ -1071,6 +1503,6 @@ export const useJetpackStorageAmountTextByProductSlug = (): ( (
 				[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: ONE_TERABYTE,
 			}[ productSlug ] ),
-		[ TEN_GIGABYTES, HUNDRED_GIGABYTES, ONE_TERABYTE, THREE_TERABYTE, FIVE_TERABYTE ]
+		[ ONE_GIGABYTE, TEN_GIGABYTES, HUNDRED_GIGABYTES, ONE_TERABYTE, THREE_TERABYTE, FIVE_TERABYTE ]
 	);
 };

@@ -1,9 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
+import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConfirmationTask from './confirmation-task';
@@ -15,8 +18,14 @@ import './style.scss';
 const TrialUpgradeConfirmation = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
-
-	const tasks = getConfirmationTasks( { translate } );
+	const siteId = selectedSite?.ID;
+	const hasWCPay = useSelector(
+		( state ) => siteId && isPluginActive( state, siteId, 'woocommerce-payments' )
+	) as boolean;
+	const tasks = useMemo(
+		() => getConfirmationTasks( { translate, hasWCPay } ),
+		[ translate, hasWCPay ]
+	);
 
 	const taskActionUrlProps = {
 		siteName: selectedSite?.name ?? '',
@@ -38,6 +47,7 @@ const TrialUpgradeConfirmation = () => {
 		<>
 			<BodySectionCssClass bodyClass={ [ 'ecommerce-trial-upgraded' ] } />
 			<QuerySitePlans siteId={ selectedSite?.ID ?? 0 } />
+			<QueryJetpackPlugins siteIds={ [ selectedSite?.ID ?? 0 ] } />
 			<Main wideLayout>
 				<PageViewTracker
 					path="/plans/my-plan/trial-upgraded/:site"

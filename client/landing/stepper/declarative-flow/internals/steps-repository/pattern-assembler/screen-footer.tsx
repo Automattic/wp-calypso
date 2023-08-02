@@ -1,10 +1,10 @@
 import { Button } from '@automattic/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import PatternSelector from './pattern-selector';
-import { useFooterPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 interface Props {
@@ -25,7 +25,6 @@ const ScreenFooter = ( {
 	patterns,
 }: Props ) => {
 	const translate = useTranslate();
-	const footerPatterns = useFooterPatterns( patterns );
 	useEffect( () => {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
@@ -33,15 +32,15 @@ const ScreenFooter = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Footer' ) }
+				title={ <NavigatorTitle title={ translate( 'Add footer' ) } /> }
 				description={ translate(
-					'Your footer will be added to all pages and can be used to show information or links that will help visitors take the next step.'
+					'Pick the footer that appears at the bottom of every page and shows useful links and contact information.'
 				) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					patterns={ footerPatterns }
+					patterns={ patterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern, 'footer' ) }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Footer' ) }
@@ -54,7 +53,7 @@ const ScreenFooter = ( {
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save footer' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

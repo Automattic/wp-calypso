@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -35,19 +35,19 @@ export const ProviderWrappedLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
-	headerSection,
+	renderHeaderSection,
 	redirectUri,
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } headerSection={ headerSection } />
+		<Layout primary={ primary } secondary={ secondary } />
 	) : (
 		<LayoutLoggedOut
 			primary={ primary }
 			secondary={ secondary }
 			redirectUri={ redirectUri }
-			headerSection={ headerSection }
+			renderHeaderSection={ renderHeaderSection }
 		/>
 	);
 

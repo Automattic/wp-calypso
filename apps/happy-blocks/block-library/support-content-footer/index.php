@@ -18,74 +18,60 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 	<div class="support-content-cta">
 		<div class="support-content-cta-left">
 			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Let us build your website', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Your site, built for you', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Our professional website-building service can create the site of your dreams, no matter the scope of your project - from small websites and personal blogs to large-scale custom development and migrations.', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Sit back as our Built by WordPress.com team of experts builds a site you\'ll fall in love with. From single page sites to full stores, they\'ll help you make it happen.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>">
-						<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
-					</a>
-				</p>
+				<a href="<?php echo esc_url( 'https://wordpress.com/website-design-service/?ref=banner-learn' ); ?>">
+					<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 
 		<div class="support-content-cta-right">
-			<figure><img src="<?php echo esc_url( $image_dir . '/let-us-build-your-website.png' ); ?>" alt=""/></figure>
+			<img src="<?php echo esc_url( $image_dir . '/let-us-build-your-website.png' ); ?>" alt=""/>
 		</div>
 	</div>
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
 		<div class="support-content-resource">
-			<h4 class="support-content-resource__title has-recoleta-font-family">
-				<?php esc_html_e( 'Upgrade now', 'happy-blocks' ); ?>
+			<h4 class="support-content-resource__title">
+				<?php esc_html_e( 'Go further', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-			<?php esc_html_e( 'Unlock tools, expert help, and community for your brand\'s growth and success.', 'happy-blocks' ); ?>
+			<?php esc_html_e( 'Upgrade and unlock features, tools, and expert help with a paid plan.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="https://www.youtube.com/wordpressdotcom">
-						<?php esc_html_e( 'Upgrade your plan', 'happy-blocks' ); ?>
-						<figure>
-							<img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/>
-						</figure>
-					</a>
-				</p>
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/pricing' ) ); ?>">
+					<?php esc_html_e( 'View plans', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<h4 class="support-content-resource__title has-recoleta-font-family">
-				<?php esc_html_e( 'Forums', 'happy-blocks' ); ?>
+			<h4 class="support-content-resource__title">
+				<?php esc_html_e( 'Join the forum', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Connect with other WordPress customers around the world.', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Connect and learn with the WordPress.com community.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/forums/' ) ); ?>">
-						<?php esc_html_e( 'Ask the Community', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
-					</a>
-				</p>
+				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/forums/' ) ); ?>">
+					<?php esc_html_e( 'Join the Community', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<h4 class="support-content-resource__title has-recoleta-font-family">
-				<?php esc_html_e( 'Support Guides', 'happy-blocks' ); ?>
+			<h4 class="support-content-resource__title">
+				<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Find the answer to the questions you know you have about WordPress.com.', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Find and follow step-by-step guides for every WordPress.com question.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
-						<?php esc_html_e( 'Subscribe now', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
-					</a>
-				</p>
+				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
+					<?php esc_html_e( 'Visit support guides', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -111,9 +97,9 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			</p>
 		</div>
 		<div class="support-content-subscribe">
-			<p><?php esc_html_e( 'Sign up for educational resources updates:', 'happy-blocks' ); ?></p>
+			<p><?php esc_html_e( 'Get the latest learning in your inbox::', 'happy-blocks' ); ?></p>
 			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" data-blog="<?php echo get_current_blog_id(); ?>" data-post_access_level="everybody" id="subscribe-blog">
-				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Enter your best email', 'happy-blocks' ); ?>"  id="subscribe-field">
+				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Type your email', 'happy-blocks' ); ?>"  id="subscribe-field">
 				<input type="hidden" name="action" value="subscribe">
 				<input type="hidden" name="blog_id" value="<?php echo get_current_blog_id(); ?>">
 				<input type="hidden" name="sub-type" value="subscribe-block">

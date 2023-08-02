@@ -32,7 +32,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );

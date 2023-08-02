@@ -4,12 +4,18 @@ import { MoreInfoLinkProps } from '../types';
 
 import './style.scss';
 
-export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick, isExternal } ) => {
+export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( {
+	item,
+	onClick,
+	isExternal,
+	externalLink,
+} ) => {
 	const translate = useTranslate();
 
-	const isExternalLink = isExternal && item.externalUrl;
+	// TODO: Refactor the external link with indirect checkout logic.
+	const isExternalLink = ( isExternal && item.externalUrl ) || !! externalLink;
 
-	const href = isExternalLink ? item.externalUrl : `#${ item.productSlug }`;
+	const href = isExternalLink ? externalLink || item.externalUrl : `#${ item.productSlug }`;
 
 	const target = isExternalLink ? '_blank' : undefined;
 

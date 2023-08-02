@@ -12,6 +12,7 @@ import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
+import { IAppState } from 'calypso/state/types';
 import type { Language, LocalizedLanguageNames } from '@automattic/language-picker';
 import type { I18n } from '@wordpress/i18n';
 
@@ -164,11 +165,11 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	const buttons = [
 		<>{ checkboxes }</>,
 		<div className="language-picker__modal-buttons">
-			<Button isLink onClick={ onClose }>
+			<Button variant="link" onClick={ onClose }>
 				{ __( 'Cancel' ) }
 			</Button>
 			<Button
-				isSecondary
+				variant="secondary"
 				onClick={ () => {
 					onClose();
 					if ( selectedLanguage ) {
@@ -204,6 +205,6 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	);
 };
 
-export default connect( ( state ) => ( {
+export default connect( ( state: IAppState ) => ( {
 	localizedLanguageNames: getLocalizedLanguageNames( state ) as LocalizedLanguageNames,
 } ) )( LanguagePickerModal );

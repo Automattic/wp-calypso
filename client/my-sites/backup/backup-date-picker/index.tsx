@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo, FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -132,7 +132,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	}, [ canGoToNextDate, dispatch, onDateChange, nextDate ] );
 
 	const goToCalendarDate = useCallback(
-		( selectedDate ) => {
+		( selectedDate: Moment ) => {
 			if ( ! canGoToDate( selectedDate ) ) {
 				return false;
 			}

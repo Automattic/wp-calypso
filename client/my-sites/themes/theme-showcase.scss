@@ -42,8 +42,10 @@
 		}
 
 		.page-sub-header {
-			font-size: 1rem;
-			max-width: 640px;
+			font-size: $font-body-large;
+			line-height: 26px;
+			margin-bottom: 8px;
+			max-width: 680px;
 		}
 	}
 
@@ -138,6 +140,10 @@
 		margin-bottom: 0;
 		padding: 24px 30px;
 		border-radius: 4px;
+
+		&.is-wooexpress-or-free-trial-plan {
+			margin-bottom: 32px;
+		}
 
 		&.is-dismissible {
 			.dismissible-card__close-button {

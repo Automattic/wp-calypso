@@ -32,7 +32,7 @@ class WPCOM_Block_Editor_NUX {
 	 * @return \A8C\FSE\WPCOM_Block_Editor_NUX
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -95,6 +95,10 @@ class WPCOM_Block_Editor_NUX {
 		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-video-celebration-modal-controller.php';
 		$video_celebration_modal_controller = new WP_REST_WPCOM_Block_Editor_Video_Celebration_Modal_Controller();
 		$video_celebration_modal_controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-sharing-modal-controller.php';
+		$sharing_modal_controller = new WP_REST_WPCOM_Block_Editor_Sharing_Modal_Controller();
+		$sharing_modal_controller->register_rest_route();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\WPCOM_Block_Editor_NUX', 'init' ) );

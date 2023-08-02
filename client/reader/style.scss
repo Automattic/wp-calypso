@@ -13,7 +13,8 @@
 
 .is-reader-page .recommended-for-you.main,
 .is-reader-page .following.main,
-.is-reader-page .tag-stream__main.main {
+.is-reader-page .tag-stream__main.main,
+.is-reader-page .search-stream__with-sites.main {
 	margin: 30px auto;
 	@include breakpoint-deprecated( "<660px" ) {
 		margin: 30px;
@@ -364,7 +365,6 @@
 }
 
 .layout.has-header-section.is-section-reader {
-
 	.layout__header-section {
 		color: var(--studio-white);
 		background-color: #021827;
@@ -374,7 +374,7 @@
 	}
 
 	.layout__header-section-content {
-		padding: 24px 24px 36px;
+		padding: 0 24px 36px;
 		@include break-medium {
 			padding: 24px 108px 36px;
 		}
@@ -384,13 +384,16 @@
 		border-bottom: none;
 		background: transparent;
 		color: var(--studio-white);
-	}
+		position: static;
 
-	// logged in master bar
-	header.masterbar {
-		padding: 16px 16px;
-		height: 78px;
-		position: relative;
+		@include breakpoint-deprecated( "<480px" ) {
+			.masterbar__item {
+				padding: 0 4px;
+				&:last-child {
+					padding-right: 20px;
+				}
+			}
+		}
 	}
 
 	// logged out master bar
@@ -425,5 +428,21 @@
 				background: transparent !important;
 			}
 		}
+	}
+}
+
+// specific rule to override existing rules
+.layout.has-header-section.is-section-reader .layout__header-section-content .logged-out-reader-header {
+	text-align: center;
+
+	h2 {
+		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 500;
+		margin-bottom: 10px;
+	}
+
+	h1 {
+		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 500;
 	}
 }

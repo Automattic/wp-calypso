@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { localize, useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,11 +21,13 @@ import {
 	billingHistory,
 } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
+import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { getVatVendorInfo } from './billing-history/vat-vendor-details';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import ManagePurchase from './manage-purchase';
+import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesList from './purchases-list';
 import titles from './titles';
 import VatInfoPage from './vat-info';
@@ -41,7 +43,7 @@ function useLogPurchasesError( message ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'account_level_purchases',
-					message: error.message + '; Stack: ' + error.stack,
+					message: convertErrorToString( error ),
 				},
 			} );
 		},
@@ -148,15 +150,18 @@ export function vatDetails( context, next ) {
 		const translate = useTranslate();
 		const { data: geoData } = useGeoLocationQuery();
 		const { vatDetails: vatDetailsFromServer } = useVatDetails();
-		const vendorInfo = getVatVendorInfo(
-			vatDetailsFromServer.country ?? geoData?.country_short ?? 'GB',
-			'now',
-			translate
-		);
+		const taxName = useTaxName( vatDetailsFromServer.country ?? geoData?.country_short ?? 'GB' );
+		const genericTaxName =
+			/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+			translate( 'tax (VAT/GST/CT)' );
+		const fallbackTaxName =
+			getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
+				? genericTaxName
+				: translate( 'VAT', { textOnly: true } );
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 		const title = translate( 'Add %s details', {
 			textOnly: true,
-			args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+			args: [ taxName ?? fallbackTaxName ],
 		} );
 
 		return (
@@ -202,18 +207,34 @@ export function managePurchase( context, next ) {
 	next();
 }
 
+export function managePurchaseByOwnership( context, next ) {
+	const ManagePurchasesByOwnershipWrapper = localize( () => {
+		const classes = 'manage-purchase';
+
+		return (
+			<PurchasesWrapper title={ titles.managePurchase }>
+				<Main wideLayout className={ classes }>
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<PageViewTracker
+						path="/me/purchases/:ownershipId"
+						title="Purchases > Manage Purchase by Ownership"
+					/>
+					<ManagePurchaseByOwnership ownershipId={ parseInt( context.params.ownershipId, 10 ) } />
+				</Main>
+			</PurchasesWrapper>
+		);
+	} );
+
+	context.primary = <ManagePurchasesByOwnershipWrapper />;
+	next();
+}
+
 export function addNewPaymentMethod( context, next ) {
 	context.primary = <AddNewPaymentMethod />;
 	next();
 }
 
 export function changePaymentMethod( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' );
-	}
-
 	const ChangePaymentMethodWrapper = () => {
 		const translate = useTranslate();
 		const logPurchasesError = useLogPurchasesError(

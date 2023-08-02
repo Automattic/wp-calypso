@@ -8,12 +8,12 @@ import {
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
-import ManagePurchase from '../index.jsx';
+import ManagePurchase from '../index';
 
 const purchase = {
 	ID: '19823155',
@@ -99,7 +99,6 @@ function createMockReduxStoreForPurchase( purchaseForRedux ) {
 	return createReduxStore(
 		{
 			currentUser: { id: Number( purchaseForRedux.user_id ) },
-			happychat: { chat: { status: '' } },
 			plans: { items: [] },
 			purchases: {
 				data: [ purchaseForRedux ],

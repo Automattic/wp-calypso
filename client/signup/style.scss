@@ -626,7 +626,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			$breakpoint-mobile: 660px;
 			$separator-style: 1px solid #eaeaeb;
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
 			flex-wrap: wrap;
 			margin-top: 40px;
 			justify-content: center;
@@ -643,26 +643,10 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			.signup-form__social {
 				background-color: #fdfdfd;
 				width: unset;
-				max-width: 408px;
+				max-width: var(--signup-form-column-max-width);
 				padding: 0 16px;
 				box-shadow: none;
 				margin: 0;
-
-				@include break-mobile {
-					max-width: 600px;
-				}
-
-				@include break-small {
-					max-width: 408px;
-				}
-
-				@include break-medium {
-					max-width: 350px;
-				}
-
-				@include break-large {
-					max-width: 408px;
-				}
 			}
 
 			.logged-out-form {
@@ -899,16 +883,81 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
+}
 
-	.inline-help {
-		@include breakpoint-deprecated( "<660px" ) {
-			bottom: 74px;
+body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
+	.signup__step.is-user .signup-form.is-horizontal {
+		p.signup-form__social-buttons-tos {
+			font-size: 0.875rem;
+		}
+
+		@include break-small {
+			.signup-form__social {
+				position: relative;
+				display: flex;
+				justify-content: center;
+				width: 100%;
+				padding-bottom: 62px;
+			}
+
+			.social-buttons__button {
+				text-align: unset;
+			}
+
+			p.signup-form__social-buttons-tos {
+				position: absolute;
+				left: 0;
+				bottom: 0;
+			}
+		}
+
+		@include break-medium {
+			.signup-form__social {
+				justify-content: start;
+				padding-bottom: 0;
+			}
+
+			.signup-form__social-buttons {
+				transform: translateY(40px);
+			}
+
+			p.signup-form__social-buttons-tos {
+				position: unset;
+			}
+		}
+
+		@include break-large {
+			.signup-form__social-buttons {
+				transform: translateY(30px);
+			}
 		}
 	}
 }
 
-body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
-	.formatted-header__title {
-		font-size: 1.75rem;
+:root {
+	--signup-form-column-max-width: 408px;
+}
+
+@include break-mobile {
+	:root {
+		--signup-form-column-max-width: 600px;
+	}
+}
+
+@include break-small {
+	:root {
+		--signup-form-column-max-width: 408px;
+	}
+}
+
+@include break-medium {
+	:root {
+		--signup-form-column-max-width: 350px;
+	}
+}
+
+@include break-large {
+	:root {
+		--signup-form-column-max-width: 408px;
 	}
 }

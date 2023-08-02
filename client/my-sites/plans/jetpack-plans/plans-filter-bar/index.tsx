@@ -100,6 +100,7 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 							className="plans-filter-bar__toggle-control"
 							checked={ durationChecked }
 							onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
+							label={ undefined }
 						/>
 						<span className="plans-filter-bar__toggle-on-label">
 							{ translate( 'Bill yearly' ) }

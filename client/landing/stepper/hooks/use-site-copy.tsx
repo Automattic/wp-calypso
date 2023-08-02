@@ -3,10 +3,10 @@ import { COPY_SITE_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useCallback } from 'react';
-import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	hasLoadedUserPurchasesFromServer,

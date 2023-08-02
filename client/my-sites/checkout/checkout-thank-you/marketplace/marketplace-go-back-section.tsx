@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MasterbarStyled from './masterbar-styled';
 import { hasMultipleProductTypes } from './utils';

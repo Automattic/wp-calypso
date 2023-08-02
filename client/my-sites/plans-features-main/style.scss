@@ -13,6 +13,16 @@
 	}
 }
 
+.notice.plan-features-main__notice {
+	margin: 0 20px 24px;
+	width: unset;
+
+	@include plans-section-custom-mobile-breakpoint {
+		margin: 0 0 24px;
+		width: 100%;
+	}
+}
+
 /*TODO: Remove the section below when the 2023 pricing grid is live to all locales */
 .plans-features-main__group.is-scrollable:not(.is-2023-pricing-grid) {
 	position: relative;
@@ -50,7 +60,7 @@
 	}
 }
 
-.plans-features-main__group.is-2023-pricing-grid {
+.is-2023-pricing-grid .plan-features-2023-grid__content {
 	position: relative;
 	margin: auto;
 
@@ -75,6 +85,11 @@
 
 }
 
+.plans-features-main__group.is-wpcom.is-2023-pricing-grid {
+	padding-top: 19px;
+	margin-top: 24px;
+}
+
 .plans-features-main__group.is-wpcom:not(.is-2023-pricing-grid) {
 	padding-top: 26px;
 
@@ -83,23 +98,7 @@
 	}
 }
 
-.plans-features-main__group.is-wpcom.is-2023-pricing-grid {
-	padding-top: 19px;
-}
-
 // Required additional specificity
-.plans-features-main .plans-features-main__happychat-button {
-	color: var(--color-primary);
-	font-weight: 400;
-	padding: 0;
-	text-decoration: underline;
-
-	&:hover,
-	&:focus {
-		color: var(--color-primary);
-	}
-}
-
 .plans-features-main__banner {
 	text-align: center;
 	padding: 5px 0;

@@ -1,11 +1,11 @@
 import { Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
+import { useSelector } from 'calypso/state';
 import {
 	isFetchingPartner,
 	getCurrentPartner,

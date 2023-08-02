@@ -1,8 +1,8 @@
 import { Button, Card, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import useGetInvitesQuery from 'calypso/data/invites/use-get-invites-query';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { useSelector } from 'calypso/state';
 import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';

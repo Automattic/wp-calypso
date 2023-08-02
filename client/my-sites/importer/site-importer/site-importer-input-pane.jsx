@@ -1,4 +1,3 @@
-import url from 'url'; // eslint-disable-line no-restricted-imports
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight, trim, sortBy } from 'lodash';
@@ -148,22 +147,14 @@ class SiteImporterInputPane extends Component {
 			return;
 		}
 
-		const { hostname, pathname } = url.parse(
-			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
-		);
-
-		if ( ! hostname ) {
-			return;
-		}
-
 		const errorMessage = validateImportUrl( siteURL );
-
 		if ( errorMessage ) {
 			return this.props.setValidationError( errorMessage );
 		}
 
-		// normalized URL
-		const urlForImport = hostname + pathname;
+		// normalized URL -- validateImportUrl already checks that new URL creation works.
+		const importUrl = new URL( siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL );
+		const urlForImport = importUrl.hostname + importUrl.pathname;
 
 		return this.props.validateSiteIsImportable( {
 			params: {

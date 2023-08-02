@@ -98,6 +98,7 @@ export type ResponseDomain = {
 	isSubdomain: boolean;
 	isWPCOMDomain: boolean;
 	isWpcomStagingDomain: boolean;
+	lastTransferError?: string | null;
 	manualTransferRequired: boolean;
 	mustRemovePrivacyBeforeContactUpdate: boolean;
 	name: string;

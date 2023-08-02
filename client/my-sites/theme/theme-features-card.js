@@ -4,7 +4,8 @@ import { get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import SectionHeader from 'calypso/components/section-header';
-import { isValidThemeFilterTerm } from 'calypso/state/themes/selectors';
+import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors';
+import { isDelistedTaxonomyTermSlug } from 'calypso/state/themes/utils';
 
 const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onClick } ) => {
 	if ( isEmpty( features ) ) {
@@ -37,10 +38,15 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 };
 
 export default connect( ( state, { taxonomies } ) => {
-	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const features = get( taxonomies, 'theme_feature', [] ).map( ( { name, slug } ) => {
-		const term = isValidThemeFilterTerm( state, slug ) ? slug : `feature:${ slug }`;
-		return { name, slug, term };
-	} );
+	const features = get( taxonomies, 'theme_feature', [] )
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		.filter( ( { slug } ) => ! isDelistedTaxonomyTermSlug( slug ) )
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		.map( ( { name, slug } ) => ( {
+			name,
+			slug,
+			term: isAmbiguousThemeFilterTerm( state, slug ) ? `feature:${ slug }` : slug,
+		} ) );
+
 	return { features };
 } )( localize( ThemeFeaturesCard ) );

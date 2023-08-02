@@ -3,10 +3,11 @@ import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/com
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
+import { useSelector } from 'calypso/state';
 import { getThemeFilters } from 'calypso/state/themes/selectors';
+import { filterDelistedTaxonomyTermSlugs } from 'calypso/state/themes/utils';
 import { allowSomeThemeFilters, computeEditedSearchElement, insertSuggestion } from './utils';
 import type { ThemeFilters } from './types';
 import './style.scss';
@@ -23,8 +24,11 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	const suggestionsRef = useRef< KeyedSuggestions | null >( null );
 	const translate = useTranslate();
 	const filters = useSelector( ( state ) =>
-		allowSomeThemeFilters( getThemeFilters( state ) as ThemeFilters )
+		filterDelistedTaxonomyTermSlugs(
+			allowSomeThemeFilters( getThemeFilters( state ) as ThemeFilters )
+		)
 	);
+
 	const [ searchInput, setSearchInput ] = useState( query );
 	const [ cursorPosition, setCursorPosition ] = useState( 0 );
 	const [ editedSearchElement, setEditedSearchElement ] = useState( '' );

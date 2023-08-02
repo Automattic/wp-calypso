@@ -19,7 +19,10 @@ const hasLinkInBioSite = ( sites: SiteExcerptData[] ) => {
 export const LinkInBioBanner = ( props: Props ) => {
 	const { displayMode } = props;
 	const isMobile = useMobileBreakpoint();
-	const { data: sites = [], isLoading } = useSiteExcerptsQuery();
+	const { data: sites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only
+	);
 	const siteCount = sites.length;
 	const doesNotAlreadyHaveALinkInBioSite = ! hasLinkInBioSite( sites );
 	const showBanner = ! isLoading && doesNotAlreadyHaveALinkInBioSite && siteCount < 3;

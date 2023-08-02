@@ -53,6 +53,7 @@
 }
 
 .signup-form__social-buttons {
+	a.social-buttons__button,
 	button {
 		display: block;
 		margin: 0 auto 15px;
@@ -96,6 +97,22 @@
 	a {
 		color: var(--studio-blue-5);
 		text-decoration: underline;
+	}
+}
+
+// Uses the width of the columns to calculate how wide an element that spans all columns needs to be
+// The width variable is set in signup/style.scss and changes according to break points
+.signup-form__span-columns {
+	box-sizing: border-box;
+	margin-left: 16px;
+	margin-right: 16px;
+
+	// 32px is the column margins
+	width: calc(var(--signup-form-column-max-width) - 32px);
+
+	@include break-medium {
+		// 2 columns + the 60px wide "or" element
+		width: calc(var(--signup-form-column-max-width) * 2 + 60px - 32px);
 	}
 }
 

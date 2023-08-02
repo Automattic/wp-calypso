@@ -7,8 +7,9 @@ const ClipboardButtonExample = () => {
 	const text = 'Code is Poetry';
 	return (
 		<ClipboardButton
+			// @ts-expect-error The button props are passed into a Button component internally, but the types don't account that.
+			variant="primary"
 			text={ text }
-			isPrimary
 			onCopy={ () => setCopied( true ) }
 			onFinishCopy={ () => setCopied( false ) }
 		>

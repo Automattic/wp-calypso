@@ -25,6 +25,12 @@ import '@automattic/calypso-color-schemes';
 
 And this will give you the CSS.
 
+If you want only the `:root` rules without all the schemes, you can do
+
+```js
+import '@automattic/calypso-color-schemes/root-only';
+```
+
 ### Using the JS output
 
 Sometimes, `calypso-color-schemes` properties are consumed in JavaScript. To avoid parsing CSS syntax on your own, or to help `postcss-custom-properties` use them without parsing the CSS (much faster), use the JS output as follows:

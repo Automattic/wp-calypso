@@ -3,12 +3,13 @@ export interface Task {
 	completed: boolean;
 	disabled: boolean;
 	title?: string;
-	subtitle?: string;
-	badgeText?: string;
+	subtitle?: string | React.ReactNode | null;
+	badge_text?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
-	warning?: boolean;
 }
+
+export type LaunchpadChecklist = Task[];
 
 export interface LaunchpadFlowTaskList {
 	[ string: string ]: string[];
@@ -28,6 +29,7 @@ export interface LaunchpadStatuses {
 	first_post_published?: boolean;
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
+	plan_selected?: boolean;
 	plan_completed?: boolean;
 	domain_upsell_deferred?: boolean;
 }

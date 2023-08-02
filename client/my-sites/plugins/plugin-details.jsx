@@ -8,6 +8,7 @@ import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -21,6 +22,7 @@ import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
+import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
@@ -303,12 +305,13 @@ function PluginDetails( props ) {
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Plugins > Plugin Details"
-				properties={ { is_logged_in: isLoggedIn } }
+				properties={ { is_logged_in: isLoggedIn, plugin_slug: props.pluginSlug } }
 			/>
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
+			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
@@ -333,6 +336,7 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
+			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">

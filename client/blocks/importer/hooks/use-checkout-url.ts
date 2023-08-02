@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { useSelector } from 'calypso/state';
 
 export function useCheckoutUrl(
 	siteId: number | undefined | null,

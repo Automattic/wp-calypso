@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { captureException } from 'calypso/lib/sentry';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -8,11 +9,11 @@ import {
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
-function convertErrorToString( error: Error ): string {
+export function convertErrorToString( error: Error ): string {
 	if ( error.cause ) {
-		return `${ error.message }; Cause: ${ error.cause }; Stack: ${ error.stack }`;
+		return `${ error }; Cause: ${ error.cause }; Stack: ${ error.stack }`;
 	}
-	return `${ error.message }; Stack: ${ error.stack }`;
+	return `${ error }; Stack: ${ error.stack }`;
 }
 
 export function logStashLoadErrorEvent(
@@ -20,6 +21,7 @@ export function logStashLoadErrorEvent(
 	error: Error,
 	additionalData: Record< string, string | number | undefined > = {}
 ): Promise< void > {
+	captureException( error.cause ? error.cause : error );
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
@@ -27,9 +29,11 @@ export function logStashLoadErrorEvent(
 	} );
 }
 
+export type DataForLog = Record< string, string | string[] > & { tags?: string[] };
+
 export function logStashEvent(
 	message: string,
-	dataForLog: Record< string, string > = {},
+	dataForLog: DataForLog,
 	severity: 'error' | 'warning' | 'info' = 'error'
 ): Promise< void > {
 	return logToLogstash( {
@@ -40,6 +44,7 @@ export function logStashEvent(
 			env: config( 'env_id' ),
 			...dataForLog,
 		},
+		tags: dataForLog.tags ?? [],
 	} );
 }
 

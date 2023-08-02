@@ -5,10 +5,10 @@ import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/curr
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
-import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
@@ -16,18 +16,15 @@ import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
-import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
-import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
@@ -42,16 +39,11 @@ declare const window: AppWindow;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
-	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
 	reduxStore.dispatch( requestSites() );
 }
 
 function determineFlow() {
-	if ( isAnchorFmFlow() ) {
-		return availableFlows[ 'anchor-fm-flow' ];
-	}
-
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
@@ -100,7 +92,6 @@ window.AppBoot = async () => {
 
 	setupWpDataDebug();
 	addHotJarScript();
-	retargetFullStory();
 
 	// Add accessible-focus listener.
 	accessibleFocus();
@@ -140,8 +131,8 @@ window.AppBoot = async () => {
 							id="notices"
 						/>
 					</BrowserRouter>
-					{ config.isEnabled( 'signup/inline-help' ) && (
-						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
+					{ 'development' === process.env.NODE_ENV && (
+						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
 				</QueryClientProvider>
 			</Provider>

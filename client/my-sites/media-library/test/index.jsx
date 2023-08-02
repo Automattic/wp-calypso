@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import media from 'calypso/state/media/reducer';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MediaLibrary from '..';
 
 jest.mock( 'calypso/components/data/query-preferences', () =>
@@ -21,7 +22,7 @@ jest.mock( 'calypso/my-sites/media-library/filter-bar', () =>
 	require( 'calypso/components/empty-component' )
 );
 jest.mock( 'calypso/state/sharing/keyring/actions', () => ( {
-	requestKeyringConnections: jest.fn(),
+	requestKeyringConnections: jest.fn().mockImplementation( () => () => ( {} ) ),
 } ) );
 jest.mock( 'calypso/state/sharing/keyring/selectors', () => ( {
 	getKeyringConnections: () => null,
@@ -29,33 +30,18 @@ jest.mock( 'calypso/state/sharing/keyring/selectors', () => ( {
 } ) );
 
 describe( 'MediaLibrary', () => {
-	const store = {
-		getState: () => ( {
-			media: {
-				errors: {},
-				queries: {},
-				selectedItems: {},
-			},
-			sites: [],
-		} ),
-		dispatch: () => false,
-		subscribe: () => false,
-	};
-
-	const site = {
-		ID: 123,
-	};
-
 	const props = {
-		site,
-		store,
+		site: { ID: 123 },
 	};
 
-	const getItem = ( source ) => render( <MediaLibrary { ...props } source={ source } /> );
+	const getItem = ( source ) =>
+		renderWithProvider( <MediaLibrary { ...props } source={ source } />, {
+			reducers: { media },
+		} );
 
 	describe( 'keyring request', () => {
 		afterEach( () => {
-			requestStub.mockReset();
+			requestStub.mockClear();
 		} );
 
 		test( 'is issued when component mounted and viewing an external source', () => {

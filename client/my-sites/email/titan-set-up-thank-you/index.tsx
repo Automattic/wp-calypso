@@ -2,7 +2,6 @@ import { isFreePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
@@ -16,6 +15,7 @@ import {
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
+import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 

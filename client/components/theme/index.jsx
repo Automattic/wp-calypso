@@ -1,34 +1,22 @@
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
-import { PremiumBadge, ThemeCard, WooCommerceBundledBadge } from '@automattic/design-picker';
-import { Button as LinkButton } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
-import classNames from 'classnames';
+import {
+	DesignPreviewImage,
+	ThemeCard,
+	isDefaultGlobalStylesVariationSlug,
+} from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import {
-	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
-	getMarketplaceThemeSubscriptionPrices,
-	isExternallyManagedTheme as getIsExternallyManagedTheme,
-	isMarketplaceThemeSubscribed,
-	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
-	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
-	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
-	isThemePremium as getIsThemePremium,
-	isThemePurchased,
-	isWporgTheme as getIsWporgTheme,
-} from 'calypso/state/themes/selectors';
+import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -94,6 +82,8 @@ export class Theme extends Component {
 		isUpdated: PropTypes.bool,
 		errorOnUpdate: PropTypes.bool,
 		softLaunched: PropTypes.bool,
+		selectedStyleVariation: PropTypes.object,
+		shouldLimitGlobalStyles: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -153,8 +143,9 @@ export class Theme extends Component {
 	}
 
 	renderScreenshot() {
-		const { index, theme } = this.props;
+		const { isExternallyManagedTheme, selectedStyleVariation, theme } = this.props;
 		const { description, screenshot } = theme;
+
 		if ( ! screenshot ) {
 			return (
 				<div className="theme__no-screenshot">
@@ -163,12 +154,28 @@ export class Theme extends Component {
 			);
 		}
 
+		// mShots don't work well with SSR, since it shows a placeholder image by default
+		// the snapshot request is completed.
+		//
+		// With that in mind, we only use mShots for non-default style variations to ensure
+		// that there is no flash of image transition from static image to mShots on page load.
+		if (
+			! isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug ) &&
+			! isExternallyManagedTheme
+		) {
+			const { id: themeId, stylesheet } = theme;
+
+			return (
+				<DesignPreviewImage
+					design={ { slug: themeId, recipe: { stylesheet } } }
+					styleVariation={ selectedStyleVariation }
+				/>
+			);
+		}
+
 		const fit = '479,360';
 		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
-
-		// for performance testing
-		const screenshotID = index === 0 ? 'theme__firstscreenshot' : null;
 
 		return (
 			<img
@@ -176,7 +183,6 @@ export class Theme extends Component {
 				className="theme__img"
 				src={ themeImgSrc }
 				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-				id={ screenshotID }
 			/>
 		);
 	}
@@ -258,266 +264,8 @@ export class Theme extends Component {
 		);
 	};
 
-	goToCheckout = ( plan = 'premium' ) => {
-		const { siteSlug } = this.props;
-
-		if ( siteSlug ) {
-			const params = new URLSearchParams();
-			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
-
-			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlug
-			) }/${ plan }?${ params.toString() }`;
-		}
-	};
-
-	parseThemePrice = ( price ) => {
-		/*
-		theme.price on "Recommended" themes tab
-		Premium theme: "$50"
-		Free theme:    undefined
-
-		theme.price on Trending themes tab
-		Premium theme: { value: 50, currency: "USD", display: "<abbr title=\"United States Dollars\">US$</abbr>50" }
-		Free theme:    { value: 0, currency: "USD", display: "Free" }
-
-		Try to correctly parse the price for both cases.
-		*/
-		if ( typeof price === 'object' && 'display' in price ) {
-			let parsedThemePrice = price.display;
-			// Remove all html tags from the price string
-			parsedThemePrice = parsedThemePrice.replace( /(<([^>]+)>)/gi, '' );
-			return parsedThemePrice;
-		}
-		return price;
-	};
-
-	getUpsellMessage = () => {
-		const {
-			didPurchaseTheme,
-			doesThemeBundleSoftwareSet,
-			hasMarketplaceThemeSubscription,
-			hasPremiumThemesFeature,
-			theme,
-			translate,
-			isSiteEligibleForBundledSoftware,
-			isExternallyManagedTheme,
-			isSiteEligibleForManagedExternalThemes,
-			isWporgTheme,
-			themeSubscriptionPrices,
-		} = this.props;
-
-		// Premium themes (non-bundled): Only require premium themes feature (Premium or higher plans)
-		// Bundled themes: Require premium themes, atomic, and woop features (Business or higher plans)
-		const isUsablePremiumTheme = ! doesThemeBundleSoftwareSet && hasPremiumThemesFeature;
-		const isUsableBundledTheme =
-			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
-
-		if (
-			didPurchaseTheme &&
-			! isUsablePremiumTheme &&
-			! isUsableBundledTheme &&
-			! isExternallyManagedTheme
-		) {
-			return translate( 'You have purchased this theme.' );
-		} else if ( isExternallyManagedTheme && hasMarketplaceThemeSubscription ) {
-			if ( isSiteEligibleForManagedExternalThemes ) {
-				return translate(
-					'You have a subscription for this theme, and it will be usable as long as you keep a Business plan or higher on your site.'
-				);
-			}
-			return createInterpolateElement(
-				translate(
-					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
-				),
-				{
-					link: <LinkButton isLink onClic={ () => this.goToCheckout( 'business' ) } />,
-				}
-			);
-		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
-			// This is a third-party theme but the user doesn't have an eligible plan.
-			return createInterpolateElement(
-				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
-				translate(
-					'This premium theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
-					{
-						args: {
-							annualPrice: themeSubscriptionPrices?.year ?? '',
-							monthlyPrice: themeSubscriptionPrices?.month ?? '',
-						},
-					}
-				),
-				{
-					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
-				}
-			);
-		} else if ( isExternallyManagedTheme && isSiteEligibleForManagedExternalThemes ) {
-			// This is a third-party theme and the user has an eligible plan.
-			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
-			return translate(
-				'This premium theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
-				{
-					args: {
-						annualPrice: themeSubscriptionPrices?.year ?? '',
-						monthlyPrice: themeSubscriptionPrices?.month ?? '',
-					},
-				}
-			);
-		} else if ( isUsablePremiumTheme ) {
-			return translate( 'This premium theme is included in your plan.' );
-		} else if ( isUsableBundledTheme ) {
-			return translate( 'This WooCommerce theme is included in your plan.' );
-		} else if ( doesThemeBundleSoftwareSet ) {
-			return createInterpolateElement(
-				translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
-				{
-					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
-				}
-			);
-		} else if ( isWporgTheme ) {
-			return createInterpolateElement(
-				translate(
-					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
-				),
-				{
-					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
-				}
-			);
-		}
-
-		return createInterpolateElement(
-			sprintf(
-				/* translators: the "price" is the price of the theme, example: US$50; */
-				translate(
-					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s.'
-				),
-				{
-					price: this.parseThemePrice( theme.price ),
-				}
-			),
-			{
-				Link: <LinkButton isLink onClick={ this.goToCheckout } />,
-			}
-		);
-	};
-
-	getUpsellHeader = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgTheme, translate } =
-			this.props;
-
-		if ( isWporgTheme ) {
-			return translate( 'Community theme', {
-				context: 'This theme is developed and supported by a community',
-				textOnly: true,
-			} );
-		}
-
-		if ( isExternallyManagedTheme ) {
-			return translate( 'Paid theme' );
-		}
-
-		if ( doesThemeBundleSoftwareSet ) {
-			return translate( 'WooCommerce theme' );
-		}
-
-		return translate( 'Premium theme' );
-	};
-
-	getUpsellPopoverContent = () => {
-		const { theme } = this.props;
-
-		return (
-			<>
-				<TrackComponentView
-					eventName="calypso_upgrade_nudge_impression"
-					eventProperties={ { cta_name: 'theme-upsell-popup', theme: theme.id } }
-				/>
-				<div>
-					<div data-testid="upsell-header" className="theme__upsell-header">
-						{ this.getUpsellHeader() }
-					</div>
-					<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
-				</div>
-			</>
-		);
-	};
-
-	getPremiumThemeBadge = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgTheme, translate } =
-			this.props;
-
-		const commonProps = {
-			className: 'theme__upsell-popover',
-			tooltipClassName: 'theme__upsell-popover info-popover__tooltip',
-			tooltipContent: this.getUpsellPopoverContent(),
-			tooltipPosition: 'top',
-		};
-
-		if ( isWporgTheme ) {
-			return (
-				<PremiumBadge
-					{ ...commonProps }
-					className={ classNames( commonProps.className, 'badge--info' ) }
-					labelText={ translate( 'Community', {
-						context: 'This theme is developed and supported by a community',
-						textOnly: true,
-					} ) }
-					shouldHideIcon
-				/>
-			);
-		}
-
-		if ( isExternallyManagedTheme ) {
-			return (
-				<PremiumBadge
-					{ ...commonProps }
-					className={ classNames( commonProps.className, 'theme__marketplace-theme' ) }
-					labelText={ translate( 'Paid', {
-						context: 'Refers to paid service, such as paid theme',
-						textOnly: true,
-					} ) }
-				/>
-			);
-		}
-
-		if ( doesThemeBundleSoftwareSet ) {
-			return <WooCommerceBundledBadge { ...commonProps } />;
-		}
-
-		return <PremiumBadge { ...commonProps } />;
-	};
-
-	renderUpsell = () => {
-		const { theme } = this.props;
-
-		return (
-			<>
-				<TrackComponentView
-					eventName="calypso_upgrade_nudge_impression"
-					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
-				/>
-				{ this.getPremiumThemeBadge() }
-			</>
-		);
-	};
-
-	renderPricingBadge = () => {
-		const { active, isExternallyManagedTheme, isPremiumTheme, isWporgTheme, translate } =
-			this.props;
-		if ( active ) {
-			return null;
-		}
-
-		if ( isExternallyManagedTheme || isPremiumTheme || isWporgTheme ) {
-			return this.renderUpsell();
-		}
-
-		return <span>{ translate( 'Free' ) }</span>;
-	};
-
 	renderMoreButton = () => {
-		const { active, buttonContents, index, theme, onMoreButtonClick, onMoreButtonItemClick } =
-			this.props;
+		const { active, buttonContents, index, theme } = this.props;
 		if ( isEmpty( buttonContents ) ) {
 			return null;
 		}
@@ -528,15 +276,29 @@ export class Theme extends Component {
 				themeId={ theme.id }
 				themeName={ theme.name }
 				active={ active }
-				onMoreButtonClick={ onMoreButtonClick }
-				onMoreButtonItemClick={ onMoreButtonItemClick }
+				onMoreButtonClick={ this.props.onMoreButtonClick }
+				onMoreButtonItemClick={ this.props.onMoreButtonItemClick }
 				options={ buttonContents }
 			/>
 		);
 	};
 
+	renderBadge = () => {
+		const isLockedStyleVariation =
+			this.props.shouldLimitGlobalStyles &&
+			! isDefaultGlobalStylesVariationSlug( this.props.selectedStyleVariation?.slug );
+		return (
+			<ThemeTypeBadge
+				siteId={ this.props.siteId }
+				siteSlug={ this.props.siteSlug }
+				themeId={ this.props.theme.id }
+				isLockedStyleVariation={ isLockedStyleVariation }
+			/>
+		);
+	};
+
 	render() {
-		const { theme } = this.props;
+		const { selectedStyleVariation, theme } = this.props;
 		const { name, description, style_variations = [] } = theme;
 		const themeDescription = decodeEntities( description );
 
@@ -553,8 +315,9 @@ export class Theme extends Component {
 				imageClickUrl={ this.props.screenshotClickUrl }
 				imageActionLabel={ this.props.actionLabel }
 				banner={ this.renderUpdateAlert() }
-				badge={ this.renderPricingBadge() }
+				badge={ this.renderBadge() }
 				styleVariations={ style_variations }
+				selectedStyleVariation={ selectedStyleVariation }
 				optionsMenu={ this.renderMoreButton() }
 				isActive={ this.props.active }
 				isInstalling={ this.props.installing }
@@ -569,42 +332,26 @@ export class Theme extends Component {
 	}
 }
 
-export default connect(
-	( state, { theme, siteId, hasPremiumThemesFeature } ) => {
+const ConnectedTheme = connect(
+	( state, { theme, siteId } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
 		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme.id );
-		const themeSubscriptionPrices = isExternallyManagedTheme
-			? getMarketplaceThemeSubscriptionPrices( state, theme?.id )
-			: {};
-		const hasMarketplaceThemeSubscription = isExternallyManagedTheme
-			? isMarketplaceThemeSubscribed( state, theme?.id, siteId )
-			: false;
 
 		return {
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
-			isPremiumTheme: getIsThemePremium( state, theme.id ),
-			isWporgTheme: getIsWporgTheme( state, theme.id ),
-			hasPremiumThemesFeature:
-				hasPremiumThemesFeature?.() ||
-				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
-			doesThemeBundleSoftwareSet: getDoesThemeBundleSoftwareSet( state, theme.id ),
-			isSiteEligibleForBundledSoftware: getIsSiteEligibleForBundledSoftware( state, siteId ),
-			siteSlug: getSiteSlug( state, siteId ),
-			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
-			hasMarketplaceThemeSubscription,
-			isPremiumThemeAvailable: getIsPremiumThemeAvailable( state, theme.id, siteId ),
 			isExternallyManagedTheme,
-			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
-				state,
-				siteId
-			),
-			themeSubscriptionPrices,
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
 )( localize( Theme ) );
+
+export default ( props ) => {
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( props.siteId );
+	return <ConnectedTheme { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+};

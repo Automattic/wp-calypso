@@ -9,7 +9,7 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -25,6 +25,7 @@ import {
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
@@ -35,7 +36,9 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
@@ -76,8 +79,14 @@ const Settings = ( {
 		}
 	}, [ contactInformation, selectedDomainName ] );
 
+	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
+
 	const renderBreadcrumbs = () => {
-		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
+		const previousPath = domainManagementList(
+			selectedSite?.slug,
+			currentRoute,
+			selectedSite?.options?.is_domain_only
+		);
 
 		const items = [
 			{
@@ -105,6 +114,13 @@ const Settings = ( {
 		if ( ! isSecuredWithUs( domain ) ) {
 			return null;
 		}
+		if (
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.type === domainTypes.TRANSFER ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC
+		) {
+			return null;
+		}
 
 		return (
 			<Accordion
@@ -123,7 +139,11 @@ const Settings = ( {
 	};
 
 	const renderStatusSection = () => {
-		if ( ! ( domain && selectedSite.options?.is_domain_only ) ) {
+		if (
+			! ( domain && selectedSite?.options?.is_domain_only ) ||
+			! hasConnectableSites ||
+			domain.type === domainTypes.TRANSFER
+		) {
 			return null;
 		}
 
@@ -148,7 +168,7 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded={ ! selectedSite.options?.is_domain_only }
+					expanded={ ! selectedSite?.options?.is_domain_only }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }
@@ -265,7 +285,12 @@ const Settings = ( {
 	};
 
 	const renderDnsRecords = () => {
-		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT ) {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
+		) {
 			return null;
 		}
 
@@ -380,7 +405,7 @@ const Settings = ( {
 				<Button
 					onClick={ handleTransferDomainClick }
 					href={ domainUseMyDomain(
-						selectedSite.slug,
+						selectedSite?.slug,
 						domain.name,
 						useMyDomainInputMode.transferDomain
 					) }
@@ -403,7 +428,9 @@ const Settings = ( {
 		}
 
 		const contactInformationUpdateLink =
-			selectedSite && domain && domainManagementEditContactInfo( selectedSite.slug, domain.name );
+			selectedSite &&
+			domain &&
+			domainManagementEditContactInfo( selectedSite?.slug, domain.name, currentRoute );
 
 		return (
 			<Accordion
@@ -460,7 +487,7 @@ const Settings = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
@@ -470,7 +497,7 @@ const Settings = ( {
 };
 
 export default connect(
-	( state, ownProps: SettingsPageProps ): SettingsPageConnectedProps => {
+	( state: IAppState, ownProps: SettingsPageProps ): SettingsPageConnectedProps => {
 		const domain = ownProps.domains && getSelectedDomain( ownProps );
 		const subscriptionId = domain && domain.subscriptionId;
 		const currentUserId = getCurrentUserId( state );

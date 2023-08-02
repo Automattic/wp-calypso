@@ -68,7 +68,7 @@ class DomainProductPrice extends Component {
 			return domainPriceElement( translate( 'Included in paid plans' ) );
 		}
 
-		const message = translate( '{{span}}Free for the first year{{/span}}', {
+		const message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
 			components: { span: <span className="domain-product-price__free-price" /> },
 		} );
 

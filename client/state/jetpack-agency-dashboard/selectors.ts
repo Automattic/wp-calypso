@@ -13,13 +13,22 @@ export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE =
 export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE =
 	'jetpack-dashboard-welcome-banner-preference-home-page';
 
+export const JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE =
+	'jetpack-dashboard-agency-program-survey-banner-preference';
+
+export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE =
+	'jetpack-dashboard-agency-program-downtime-monitoring-upgrade-banner-preference';
+
+export const JETPACK_DASHBOARD_CHECKOUT_REDIRECT_MODAL_DISMISSED =
+	'agency-program-checkout-redirect-modal-dismissed';
+
+export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_TOOLTIP_PREFERENCE =
+	'jetpack-dashboard-agency-program-downtime-monitoring-upgrade-tooltip-preference';
+
 /**
- * Returns preference associated with the welcome banner.
+ * Returns preference associated with the key provided.
  */
-export function getJetpackDashboardWelcomeBannerPreference(
-	state: AppState,
-	key: string
-): Preference {
+export function getJetpackDashboardPreference( state: AppState, key: string ): Preference {
 	const preference = getPreference( state, key );
 	return preference;
 }

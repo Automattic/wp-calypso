@@ -3,7 +3,6 @@ import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useMemo, useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
@@ -12,6 +11,7 @@ import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
@@ -92,7 +92,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	);
 
 	const addSelectedPurchasesToCart = useCallback(
-		( purchases ) => {
+		( purchases: Purchase[] ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
 					selected: purchases.length,
@@ -114,7 +114,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	}, [ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ] );
 
 	const onConfirm = useCallback(
-		( selectedPurchases ) => {
+		( selectedPurchases: Purchase[] ) => {
 			addSelectedPurchasesToCart( selectedPurchases );
 			setUpcomingRenewalsDialogVisible( false );
 		},

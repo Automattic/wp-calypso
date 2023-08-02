@@ -1,10 +1,10 @@
+import { Reader } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import PendingPostRow from './pending-post-row';
 import '../styles.scss';
-import type { PendingPostSubscription } from '@automattic/data-stores/src/reader/types';
 
 type PendingPostListProps = {
-	pendingPosts?: PendingPostSubscription[];
+	pendingPosts?: Reader.PendingPostSubscription[];
 };
 
 export default function PendingPostList( { pendingPosts }: PendingPostListProps ) {

@@ -1,0 +1,33 @@
+@import "../style";
+
+$font-family: "SF Pro Text", $sans;
+
+.setup-blog {
+	.step-container .step-container__content {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 30px;
+		min-height: unset;
+	}
+
+	.components-base-control__label {
+		text-transform: none;
+	}
+
+	.step-container .step-container__header {
+		margin-bottom: 32px;
+	}
+
+	.site-icon-with-picker__site-icon {
+		display: none;
+	}
+
+	.step-container__jetpack-powered {
+		margin-top: 128px;
+		margin-bottom: 60px;
+
+		@include break-small {
+			margin-top: 198px;
+		}
+	}
+}

@@ -14,6 +14,7 @@ import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { addDns, updateDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ARecord from './a-record';
 import CnameRecord from './cname-record';
@@ -118,9 +119,10 @@ class DnsAddNew extends React.Component {
 	}
 
 	getFieldsForType( type ) {
-		const dnsRecord = find( this.dnsRecords, ( record ) => {
-			return includes( record.types, type );
-		} );
+		const dnsRecord =
+			find( this.dnsRecords, ( record ) => {
+				return includes( record.types, type );
+			} ) ?? this.dnsRecords[ 0 ];
 
 		return {
 			...dnsRecord.initialFields,
@@ -208,9 +210,9 @@ class DnsAddNew extends React.Component {
 	};
 
 	handleSuccess = ( message ) => {
-		const { selectedSite, selectedDomainName } = this.props;
+		const { currentRoute, selectedSite, selectedDomainName } = this.props;
 
-		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
+		page( domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute ) );
 		this.props.successNotice( message, { duration: 3000 } );
 	};
 
@@ -302,7 +304,8 @@ class DnsAddNew extends React.Component {
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
-		return { selectedSite };
+		const currentRoute = getCurrentRoute( state );
+		return { selectedSite, currentRoute };
 	},
 	{
 		addDns,

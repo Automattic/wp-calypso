@@ -5,8 +5,8 @@ import {
 	NEWSLETTER_FLOW,
 	BUILD_FLOW,
 	WRITE_FLOW,
-	isNewsletterFlow,
 	START_WRITING_FLOW,
+	DESIGN_FIRST_FLOW,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -14,7 +14,6 @@ import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
 import { isVideoPressFlow } from 'calypso/signup/utils';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 import type { Device } from '@automattic/components';
 
@@ -27,12 +26,14 @@ const LaunchpadSitePreview = ( {
 } ) => {
 	const translate = useTranslate();
 	const site = useSite();
-	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
 	const isInVideoPressFlow = isVideoPressFlow( flow );
-	const enableEditOverlay = ! isNewsletterFlow( flow );
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
-	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
+	const devicesToShow: Device[] = [
+		DEVICE_TYPES.COMPUTER,
+		DEVICE_TYPES.TABLET,
+		DEVICE_TYPES.PHONE,
+	];
 	let defaultDevice = getSitePreviewDefaultDevice( flow );
 	let loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 		components: { strong: <strong /> },
@@ -75,21 +76,17 @@ const LaunchpadSitePreview = ( {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: ! isInVideoPressFlow,
-			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	}
 
 	function getSitePreviewDefaultDevice( flow: string | null ) {
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case FREE_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case BUILD_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case WRITE_FLOW:
-				return DEVICE_TYPES.COMPUTER;
 			case START_WRITING_FLOW:
+			case DESIGN_FIRST_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			default:
 				return DEVICE_TYPES.PHONE;
@@ -116,7 +113,6 @@ const LaunchpadSitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
-				enableEditOverlay={ enableEditOverlay }
 			/>
 		</div>
 	);

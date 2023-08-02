@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN,
 	BEST_VALUE_PLANS,
@@ -41,59 +40,3 @@ export function getTermDuration( term: string ): number | undefined {
 }
 
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
-
-/**
- * Returns if the 2023 Pricing grid feature has been enabled.
- * Currently this depends on the feature flag.
- *
- */
-export const is2023PricingGridEnabled = (): boolean => {
-	return isEnabled( 'onboarding/2023-pricing-grid' );
-};
-
-/**
- * This function specifically checks if a given route path will display the pricing grid or not.
- * However the pricing grid needs to be enabled in the first place for this function to return true.
- *
- * @param browserWindow Current browser window
- * @returns true if the pricing grid maybe shown in a given page
- */
-export const is2023PricingGridActivePage = (
-	browserWindow?: Window & typeof globalThis,
-	pathname?: string
-): boolean => {
-	const currentRoutePath = pathname ?? browserWindow?.location.pathname ?? '';
-	const isPricingGridEnabled = is2023PricingGridEnabled();
-
-	// Is this the internal plans page /plans/<site-slug> ?
-	if ( currentRoutePath.startsWith( '/plans' ) ) {
-		return isPricingGridEnabled;
-	}
-
-	// Is this the onboarding flow?
-	if ( currentRoutePath.startsWith( '/start/plans' ) ) {
-		return isPricingGridEnabled;
-	}
-
-	// Is this the hosting flow?
-	if ( currentRoutePath.startsWith( '/start/hosting' ) ) {
-		return isPricingGridEnabled;
-	}
-
-	// Is this the domain-only flow?
-	if ( currentRoutePath.startsWith( '/start/domain' ) ) {
-		return isPricingGridEnabled;
-	}
-
-	// Is this the launch site flow?
-	if ( currentRoutePath.startsWith( '/start/launch-site/plans-launch' ) ) {
-		return isPricingGridEnabled;
-	}
-
-	// Is this the stepper domain upsell flow?
-	if ( currentRoutePath.startsWith( '/setup/domain-upsell' ) ) {
-		return isPricingGridEnabled;
-	}
-
-	return false;
-};

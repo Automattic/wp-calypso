@@ -12,7 +12,7 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 	const backUrl = `/hosting-config/${ siteSlug }`;
 
 	const transferInitiate = ( { geo_affinity = '' } ) => {
-		initiateTransfer( siteId, null, null, geo_affinity );
+		initiateTransfer( siteId, null, null, geo_affinity, 'hosting' );
 		page( backUrl );
 	};
 

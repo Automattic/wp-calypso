@@ -1,0 +1,79 @@
+@import "@automattic/components/src/styles/typography";
+
+$thumb-height: 40px;
+$track-height: 8px;
+$thumb-vertical-padding: 8px;
+$thumb-horizontal-padding: 16px;
+
+@mixin adjust-track-rail-styles {
+	height: $track-height;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+}
+
+// CSS variables
+// Subset of https://github.com/Automattic/jetpack/blob/trunk/projects/js-packages/base-styles/root-variables.scss.
+.jp-components-pricing-slider {
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-white: #fff;
+	--jp-gray: #dcdcde;
+	--jp-green-40: #069e08;
+	--jp-green-50: #008710;
+}
+
+// On holding thumb styling
+.jp-components-pricing-slider--is-holding {
+	.jp-components-pricing-slider__thumb {
+		box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 3px rgba(6, 158, 8, 0.25);
+	}
+}
+
+.jp-components-pricing-slider__control {
+	width: 100%;
+	height: $thumb-height;
+}
+
+.jp-components-pricing-slider__track {
+	@include adjust-track-rail-styles;
+	top: calc(($thumb-height / 2) - ($track-height / 2));
+	background: var(--jp-gray);
+
+	&.jp-components-pricing-slider__track-0 {
+		background: var(--jp-green-40);
+	}
+
+	&.jp-components-pricing-slider__track-1 {
+		background: var(--jp-gray);
+	}
+}
+
+.jp-components-pricing-slider__thumb {
+	box-sizing: border-box;
+	align-items: center;
+	background-color: var(--jp-white);
+	border-radius: 4px;
+	border: 1.5px solid var(--jp-green-50);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 8px rgba(0, 0, 0, 0.08);
+	color: var(--jp-black);
+	cursor: pointer;
+	display: flex;
+	font-family: $font-sf-pro-text;
+	font-size: var(--font-body);
+	font-style: normal;
+	font-weight: 600;
+	height: $thumb-height;
+	justify-content: center;
+	letter-spacing: -0.02em;
+	line-height: 24px;
+	padding: $thumb-vertical-padding $thumb-horizontal-padding;
+	white-space: nowrap;
+
+	&.jp-components-pricing-slider__thumb--is-active {
+		// On focus styling
+		outline: none;
+	}
+
+	&[aria-valuenow="0"] {
+		border-color: var(--jp-gray);
+	}
+}

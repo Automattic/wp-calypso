@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -14,6 +13,7 @@ import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { trailingslashit } from 'calypso/lib/route';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
@@ -24,7 +24,7 @@ import useUserMenu from './use-user-menu';
 
 import './style.scss';
 
-export const MAIN_CONTENT_ID = 'content';
+export const MAIN_CONTENT_ID = 'pricing-content';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 
@@ -101,6 +101,16 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						href: `${ JETPACK_COM_BASE_URL }/features/growth/`,
 						items: [
 							{
+								label: translate( 'AI Assistant', { context: 'Jetpack product name' } ),
+								tagline: translate( 'Write smarter, not harder' ),
+								href: `${ JETPACK_COM_BASE_URL }/ai/`,
+							},
+							{
+								label: translate( 'Stats', { context: 'Jetpack product name' } ),
+								tagline: translate( 'Simple, yet powerful analytics' ),
+								href: `${ JETPACK_COM_BASE_URL }/stats/`,
+							},
+							{
 								label: translate( 'Social', { context: 'Jetpack product name' } ),
 								tagline: translate( 'Write once, post everywhere' ),
 								href: `${ JETPACK_COM_BASE_URL }/social/`,
@@ -115,6 +125,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								tagline: translate( 'Advertise your best content' ),
 								href: `${ JETPACK_COM_BASE_URL }/blaze/`,
 							},
+							{
+								label: translate( 'Newsletter' ),
+								tagline: translate( 'Write once, reach all' ),
+								href: `${ JETPACK_COM_BASE_URL }/newsletter/`,
+							},
 						],
 					},
 				],
@@ -124,8 +139,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 				href: `${ JETPACK_COM_BASE_URL }/pricing/`,
 			},
 			{
-				label: translate( 'Agencies' ),
-				href: `${ JETPACK_COM_BASE_URL }/for/agencies/`,
+				label: translate( 'Partners' ),
+				href: `${ JETPACK_COM_BASE_URL }/jetpack-partners/`,
 			},
 			{
 				label: translate( 'Support' ),
@@ -182,7 +197,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
 	} );
 
-	const onLinkClick = useCallback( ( e ) => {
+	const onLinkClick = useCallback( ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
 			nav_item: e.currentTarget
 				.getAttribute( 'href' )

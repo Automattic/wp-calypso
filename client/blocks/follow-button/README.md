@@ -40,3 +40,4 @@ function render() {
 
 - `following`: (default: false) a boolean indicating if the current user is currently following the site URL
 - `disabled`: (default: false) a boolean indicating if the button is currently disabled
+- `hasButtonStyle`: (default: false) a boolean indicating if the button should use a style with a button shape/border

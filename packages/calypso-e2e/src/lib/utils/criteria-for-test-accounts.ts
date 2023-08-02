@@ -22,8 +22,10 @@ const defaultCriteria: FeatureCriteria[] = [
 		siteType: 'simple',
 		accountName: 'coBlocksSimpleSiteEdgeUser',
 	},
+	// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
+	// Like in simple, we have one definition for each gutenberg version, to
+	// ignore gutenberg in this case.
 	{
-		// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
 		coblocks: 'edge',
 		gutenberg: 'stable',
 		siteType: 'atomic',
@@ -35,6 +37,13 @@ const defaultCriteria: FeatureCriteria[] = [
 		siteType: 'atomic',
 		accountName: 'coBlocksAtomicSiteEdgeUser',
 	},
+	{
+		coblocks: 'edge',
+		gutenberg: 'nightly',
+		siteType: 'atomic',
+		accountName: 'coBlocksAtomicSiteEdgeUser',
+	},
+	// End of criteria for CoBlocks on Atomic.
 	{
 		gutenberg: 'stable',
 		siteType: 'simple',
@@ -55,6 +64,12 @@ const defaultCriteria: FeatureCriteria[] = [
 	},
 	{
 		gutenberg: 'edge',
+		siteType: 'atomic',
+		variant: 'siteEditor',
+		accountName: 'siteEditorAtomicSiteEdgeUser',
+	},
+	{
+		gutenberg: 'nightly',
 		siteType: 'atomic',
 		variant: 'siteEditor',
 		accountName: 'siteEditorAtomicSiteEdgeUser',
@@ -98,6 +113,12 @@ const defaultCriteria: FeatureCriteria[] = [
 		gutenberg: 'stable',
 		jetpackTarget: 'remote-site',
 		accountName: 'jetpackRemoteSiteUser',
+	},
+	// Atomic GB nightly tests
+	{
+		siteType: 'atomic',
+		gutenberg: 'nightly',
+		accountName: 'gutenbergAtomicSiteEdgeNightliesUser',
 	},
 
 	// They aren't run in atomic.

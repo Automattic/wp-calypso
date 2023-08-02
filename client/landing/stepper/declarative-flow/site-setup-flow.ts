@@ -1,13 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design, isAssemblerDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/route';
+import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -46,7 +46,6 @@ import PatternAssembler from './internals/steps-repository/pattern-assembler/laz
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteOptions from './internals/steps-repository/site-options';
-import SiteVertical from './internals/steps-repository/site-vertical';
 import StoreAddress from './internals/steps-repository/store-address';
 import WooConfirm from './internals/steps-repository/woo-confirm';
 import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
@@ -61,7 +60,6 @@ import {
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
-const SiteGoal = Onboard.SiteGoal;
 
 function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
@@ -87,7 +85,6 @@ const siteSetupFlow: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'goals', component: GoalsStep },
-			{ slug: 'vertical', component: SiteVertical },
 			{ slug: 'intent', component: IntentStep },
 			{ slug: 'options', component: SiteOptions },
 			{ slug: 'designSetup', component: DesignSetup },
@@ -271,8 +268,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const _selectedDesign = providedDependencies?.selectedDesign as Design;
-					if ( _selectedDesign?.design_type === 'assembler' ) {
+					const { selectedDesign: _selectedDesign, shouldGoToAssembler } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && shouldGoToAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -289,7 +286,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( isBlankCanvasDesign( selectedDesign ) ) {
+					if ( isAssemblerDesign( selectedDesign ) ) {
 						const params = new URLSearchParams( {
 							canvas: 'edit',
 							assembler: '1',
@@ -360,15 +357,17 @@ const siteSetupFlow: Flow = {
 				case 'goals': {
 					const { intent } = providedDependencies;
 
-					if ( intent === SiteIntent.Import ) {
-						return navigate( 'import' );
+					switch ( intent ) {
+						case SiteIntent.Import:
+							return navigate( 'import' );
+						case SiteIntent.DIFM:
+							return navigate( 'difmStartingPoint' );
+						case SiteIntent.Write:
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						default:
+							return navigate( 'designSetup' );
 					}
-
-					if ( intent === SiteIntent.DIFM ) {
-						return navigate( 'difmStartingPoint' );
-					}
-
-					return navigate( 'vertical' );
 				}
 
 				case 'intent': {
@@ -439,20 +438,6 @@ const siteSetupFlow: Flow = {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
 
-				case 'vertical': {
-					if ( goals.includes( SiteGoal.Import ) ) {
-						return navigate( 'import' );
-					}
-
-					switch ( intent ) {
-						case SiteIntent.Write:
-						case SiteIntent.Sell:
-							return navigate( 'options' );
-						default:
-							return navigate( 'designSetup' );
-					}
-				}
-
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 
@@ -494,9 +479,6 @@ const siteSetupFlow: Flow = {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
 
-				case 'intent':
-					return navigate( 'vertical' );
-
 				case 'storeAddress':
 					return navigate( 'options' );
 
@@ -510,17 +492,16 @@ const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'designSetup':
-					if ( intent === 'sell' ) {
-						return navigate( 'options' );
-					} else if ( intent === 'write' ) {
-						// this means we came from write => blogger staring point => choose a design
-						return navigate( 'bloggerStartingPoint' );
-					} else if ( intent === 'import' ) {
-						// this means we came from non-WP transfers => complete screen => click Pick a design button, we go back to goals
-						return navigate( 'goals' );
+					switch ( intent ) {
+						case SiteIntent.DIFM:
+							return navigate( 'difmStartingPoint' );
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						case SiteIntent.Write:
+							return navigate( 'bloggerStartingPoint' );
+						default:
+							return navigate( 'goals' );
 					}
-
-					return navigate( 'vertical' );
 
 				case 'patternAssembler':
 					return navigate( 'designSetup' );
@@ -551,14 +532,8 @@ const siteSetupFlow: Flow = {
 				case 'importerWordpress':
 					return navigate( 'import' );
 
-				case 'vertical':
-					if ( intent === 'difm' ) {
-						return navigate( 'difmStartingPoint' );
-					}
-					return navigate( 'goals' );
-
 				case 'options':
-					return navigate( 'vertical' );
+					return navigate( 'goals' );
 
 				case 'import':
 					return navigate( 'goals' );
@@ -587,15 +562,11 @@ const siteSetupFlow: Flow = {
 					setIntent( SiteIntent.Build );
 					return exitFlow( `/home/${ siteSlug }` );
 
-				case 'vertical':
-					return exitFlow( `/home/${ siteSlug }` );
-
 				case 'import':
 					return navigate( 'importList' );
 
-				case 'difmStartingPoint': {
-					return navigate( 'vertical' );
-				}
+				case 'difmStartingPoint':
+					return navigate( 'designSetup' );
 
 				default:
 					return navigate( 'intent' );

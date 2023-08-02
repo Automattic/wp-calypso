@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
+import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
-import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';

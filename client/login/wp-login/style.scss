@@ -152,7 +152,7 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-login:not(.is-jetpack-woocommerce-flow):not(.is-wccom-oauth-flow) {
+.layout.is-jetpack-login:not(.is-jetpack-woocommerce-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
 }
 
@@ -162,7 +162,7 @@ $image-height: 47px;
 	@include woocommerce-colors();
 }
 
-.layout.is-jetpack-login {
+.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
 
 	.login__form input:focus,
 	.logged-out-form input:focus {
@@ -543,10 +543,6 @@ $image-height: 47px;
 }
 
 .layout.is-gravatar {
-	.wp-login__main {
-		max-width: 640px;
-	}
-
 	.login__form-gutenboarding-wordpress-logo {
 		display: none;
 	}

@@ -57,13 +57,13 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
-		className: 'width-fit-content',
+		className: 'fixed-site-column',
 		isExpandable: true,
 	},
 	{
 		key: 'scan',
 		title: translate( 'Scan' ),
-		className: 'width-fit-content',
+		className: 'fixed-site-column',
 	},
 	{
 		key: 'monitor',
@@ -95,6 +95,14 @@ export const actionEventNames: ActionEventNames = {
 	visit_wp_admin: {
 		large_screen: 'calypso_jetpack_agency_dashboard_visit_wp_admin_large_screen',
 		small_screen: 'calypso_jetpack_agency_dashboard_visit_wp_admin_small_screen',
+	},
+	clone_site: {
+		large_screen: 'calypso_jetpack_agency_dashboard_clone_site_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_clone_site_small_screen',
+	},
+	site_settings: {
+		large_screen: 'calypso_jetpack_agency_dashboard_site_settings_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_site_settings_small_screen',
 	},
 };
 
@@ -474,6 +482,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 export const getProductSlugFromProductType = ( type: string ): string | undefined => {
 	const slugs: Record< string, string > = {
 		backup: 'jetpack-backup-t1',
+		boost: 'jetpack-boost',
 		scan: 'jetpack-scan',
 	};
 
@@ -481,6 +490,11 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 };
 
 export const availableNotificationDurations = [
+	{
+		time: 1,
+		label: translate( 'After 1 minute' ),
+		isPaid: true,
+	},
 	{
 		time: 5,
 		label: translate( 'After 5 minutes' ),
@@ -606,7 +620,7 @@ export const DASHBOARD_LICENSE_TYPES: { [ key: string ]: AllowedTypes } = {
 	BACKUP: 'backup',
 };
 
-export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
+export const getMonitorDowntimeText = ( downtime: number | undefined ): string => {
 	if ( ! downtime ) {
 		return translate( 'Downtime' );
 	}
@@ -628,7 +642,7 @@ export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
 			time: time.trim(),
 		},
 		comment: '%(time) is the downtime, e.g. "2d 5h 30m", "5h 30m", "55m"',
-	} );
+	} ) as string;
 };
 
 export const DASHBOARD_PREFERENCE_NAMES = {

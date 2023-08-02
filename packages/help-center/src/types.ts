@@ -1,4 +1,4 @@
-import type { HelpCenterSite } from '@automattic/data-stores';
+import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 export interface Container {
@@ -16,14 +16,13 @@ export interface Header {
 }
 
 export interface SitePicker {
+	ownershipResult: AnalysisReport;
+	setSitePickerChoice: any;
+	sitePickerChoice: string;
 	currentSite: HelpCenterSite | undefined;
-	onSelect: ( siteId: number | string ) => void;
 	siteId: string | number | null | undefined;
-	enabled: boolean;
+	sitePickerEnabled: boolean;
 }
-
-// ended means the user closed the popup or reloaded the iframe
-export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';
 
 export interface Article {
 	title: string;
@@ -42,11 +41,12 @@ export interface FeatureFlags {
 
 export interface SearchResult {
 	link: string;
-	title: string | React.ReactChild;
+	title: string;
 	content?: string;
 	icon?: string;
 	post_id?: number;
 	blog_id?: number;
+	source?: string;
 }
 
 export interface SupportTicket {
@@ -59,3 +59,70 @@ export interface SupportTicket {
 	url: string;
 	when: string;
 }
+
+export interface MessagingAuth {
+	user: {
+		jwt: string;
+	};
+}
+
+export interface MessagingAvailability {
+	is_available: boolean;
+}
+
+export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
+
+interface Availability {
+	presale: boolean;
+	precancellation: boolean;
+}
+
+export interface ChatAvailability {
+	locale: string;
+	is_user_eligible: boolean;
+	supportLevel:
+		| 'free'
+		| 'personal'
+		| 'personal-with-legacy-chat'
+		| 'starter'
+		| 'premium'
+		| 'pro'
+		| 'business'
+		| 'ecommerce'
+		| 'jetpack-paid'
+		| 'p2-plus';
+	nickname: string;
+	availability: Availability;
+	is_presales_chat_open: boolean;
+	is_precancellation_chat_open: boolean;
+}
+
+export interface OtherSupportAvailability {
+	is_user_eligible_for_upwork: boolean;
+	is_user_eligible_for_tickets: boolean;
+	is_user_eligible_for_chat: boolean;
+}
+
+export interface SupportActivity {
+	id: number;
+	status: string;
+	subject: string;
+	timestamp: number;
+	channel: string;
+}
+
+type ResultType =
+	| 'DISABLED'
+	| 'LOADING'
+	| 'OWNED_BY_USER'
+	| 'WPORG'
+	| 'UNKNOWN'
+	| 'NOT_OWNED_BY_USER'
+	| 'UNKNOWN';
+
+export type AnalysisReport = {
+	result: ResultType;
+	site?: SiteDetails | HelpCenterSite;
+	siteURL: string | undefined;
+	isWpcom: boolean;
+};

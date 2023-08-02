@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import {
@@ -16,7 +16,7 @@ export default function SelectPartnerKeyDropdown() {
 	const partner = useSelector( getCurrentPartner );
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 	const onKeySelect = useCallback(
-		( option ) => {
+		( option: ( typeof options )[ number ] ) => {
 			dispatch( setActivePartnerKey( parseInt( option.value ) ) );
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_select_partner_key_dropdown_option_select' )
@@ -25,17 +25,15 @@ export default function SelectPartnerKeyDropdown() {
 		[ dispatch ]
 	);
 
-	const options =
-		partner &&
-		partner.keys.map( ( key ) => ( {
-			value: key.id.toString(),
-			label: key.name,
-			isLabel: false,
-		} ) );
-
-	if ( ! options || options.length <= 1 ) {
+	if ( ! partner?.keys?.length ) {
 		return null;
 	}
+
+	const options = partner.keys.map( ( key ) => ( {
+		value: key.id.toString(),
+		label: key.name,
+		isLabel: false,
+	} ) );
 
 	options?.unshift( { label: translate( 'Partner Key' ) as string, value: '', isLabel: true } );
 

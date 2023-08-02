@@ -7,6 +7,7 @@ export type Pattern = {
 	categories: Record< string, Category | undefined >;
 	key?: string;
 	pattern_meta?: Record< string, boolean | undefined >;
+	html?: string;
 };
 
 export interface NavigatorLocation {

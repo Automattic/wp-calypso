@@ -13,6 +13,13 @@ const SitesOverviewContext = createContext< SitesOverviewContextInterface >( {
 	setSelectedSites: () => {
 		return undefined;
 	},
+	currentLicenseInfo: null,
+	showLicenseInfo: () => {
+		return undefined;
+	},
+	hideLicenseInfo: () => {
+		return undefined;
+	},
 	sort: {
 		field: 'url',
 		direction: 'asc',
