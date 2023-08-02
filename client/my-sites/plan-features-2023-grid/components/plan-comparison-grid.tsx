@@ -32,13 +32,14 @@ import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { PlanProperties } from '../types';
-import { usePricingBreakpoint } from '../util';
+import { getStorageStringFromFeature, usePricingBreakpoint } from '../util';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
-import type { PlanActionOverrides, StorageOption } from '../types';
+import type { PlanActionOverrides } from '../types';
+import type { StorageOption } from '@automattic/calypso-products';
 
 function DropdownIcon() {
 	return (
@@ -587,7 +588,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
 					<StorageButton className="plan-features-2023-grid__storage-button" key={ planName }>
-						{ storageOption?.featureObject?.getCompareTitle?.() }
+						{ getStorageStringFromFeature( storageOption?.slug || '' ) }
 					</StorageButton>
 				</>
 			) : (
