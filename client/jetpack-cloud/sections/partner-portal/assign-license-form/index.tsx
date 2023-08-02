@@ -14,7 +14,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { areLicenseKeysAssignableToMultisite } from '../utils';
+import { areLicenseKeysAssignableToMultisite, isWooCommerceProduct } from '../utils';
 import './style.scss';
 
 function setPage( pageNumber: number ): void {
@@ -127,6 +127,19 @@ export default function AssignLicenseForm( {
 
 		dispatch( resetSite() );
 		dispatch( setPurchasedLicense( assignLicensesResult ) );
+
+		const goToDownloadStep = licenseKeysArray.some( ( licenseKey ) =>
+			isWooCommerceProduct( licenseKey )
+		);
+
+		if ( goToDownloadStep ) {
+			return page.redirect(
+				addQueryArgs(
+					{ products: licenseKeysArray },
+					partnerPortalBasePath( '/download-products' )
+				)
+			);
+		}
 
 		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 		if ( fromDashboard ) {
