@@ -13,10 +13,10 @@ import StatsPurchaseSVG from './stats-purchase-svg';
 import './styles.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-wizard';
-export const SCREEN_TYPE_SELECTION = 0;
-export const SCREEN_PURCHASE = 1;
-export const TYPE_PERSONAL = 'Personal';
-export const TYPE_COMMERCIAL = 'Commercial';
+const SCREEN_TYPE_SELECTION = 0;
+const SCREEN_PURCHASE = 1;
+const TYPE_PERSONAL = 'Personal';
+const TYPE_COMMERCIAL = 'Commercial';
 
 const DEFAULT_STARTING_FRACTION = 0.6;
 const UI_EMOJI_HEART_TIER_THRESHOLD = 0.5;
@@ -250,4 +250,12 @@ const StatsPurchaseWizard = ( {
 	);
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, MIN_STEP_SPLITS };
+export {
+	StatsPurchaseWizard as default,
+	COMPONENT_CLASS_NAME,
+	MIN_STEP_SPLITS,
+	SCREEN_TYPE_SELECTION,
+	SCREEN_PURCHASE,
+	TYPE_PERSONAL,
+	TYPE_COMMERCIAL,
+};
