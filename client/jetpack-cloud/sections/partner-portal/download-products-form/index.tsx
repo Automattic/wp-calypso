@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import WooProductDownload from 'calypso/jetpack-cloud/sections/partner-portal/download-products-form/woo-product-download';
 import {
 	getProductSlugFromKey,
@@ -23,7 +23,8 @@ export default function DownloadProductsForm() {
 	const licenseKeys = getQueryArg( window.location.href, 'products' ) as string;
 	const source = getQueryArg( window.location.href, 'source' ) as string;
 
-	const site = sites.find( ( site ) => site.ID === parseInt( attachedSiteId ) );
+	const site = sites.find( ( site ) => site?.ID === parseInt( attachedSiteId, 10 ) );
+	const siteDomain = site ? site.domain : null;
 
 	const wooKeys =
 		licenseKeys && licenseKeys.split( ',' ).filter( ( key ) => isWooCommerceProduct( key ) );
@@ -33,7 +34,7 @@ export default function DownloadProductsForm() {
 
 	const jetpackProducts =
 		jetpackKeys &&
-		jetpackKeys.map( ( licenseKey ) => {
+		jetpackKeys.map( ( licenseKey: string ) => {
 			const productSlug = getProductSlugFromKey( licenseKey );
 			const product =
 				allProducts && allProducts.find( ( product ) => product.slug === productSlug );
@@ -48,7 +49,7 @@ export default function DownloadProductsForm() {
 
 	const wooProducts =
 		wooKeys &&
-		wooKeys.map( ( licenseKey ) => (
+		wooKeys.map( ( licenseKey: string ) => (
 			<WooProductDownload
 				key={ licenseKey }
 				licenseKey={ licenseKey }
@@ -56,13 +57,11 @@ export default function DownloadProductsForm() {
 			/>
 		) );
 
-	const onNavigate = () => {
+	const onNavigate = useCallback( () => {
 		return page.redirect(
-			'dashboard' === source
-				? page.redirect( '/dashboard' )
-				: page.redirect( partnerPortalBasePath( '/licenses' ) )
+			'dashboard' === source ? '/dashboard' : partnerPortalBasePath( '/licenses' )
 		);
-	};
+	}, [ source ] );
 
 	// redirect if licenseKeys does not contain a valid product
 	useEffect( () => {
@@ -85,11 +84,10 @@ export default function DownloadProductsForm() {
 			<div className="download-products-form__top">
 				<p className="download-products-form__description">
 					{ translate(
-						'Your license has been applied to {{strong}}%(siteUrl)s{{/strong}}, but more action is required.',
-						'Your licenses have been applied to {{strong}}%(siteUrl)s{{/strong}}, but more action is required.',
+						'Your license has been applied to %(siteUrl)s, but more action is required.',
+						'Your licenses have been applied to %(siteUrl)s, but more action is required.',
 						{
-							args: { siteUrl: site && site.domain },
-							components: { strong: <strong /> },
+							args: { siteUrl: <strong>{ siteDomain }</strong> },
 							count: licenseKeys.split( ',' ).length,
 						}
 					) }

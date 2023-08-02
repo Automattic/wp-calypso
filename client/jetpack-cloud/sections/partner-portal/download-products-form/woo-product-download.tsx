@@ -5,8 +5,14 @@ import useLicenseDownloadUrlMutation from 'calypso/components/data/query-jetpack
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
-export default function WooProductDownload( { licenseKey, allProducts } ) {
+interface WooProductDownloadProps {
+	licenseKey: string;
+	allProducts: APIProductFamilyProduct[] | undefined;
+}
+
+export default function WooProductDownload( { licenseKey, allProducts }: WooProductDownloadProps ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const productSlug = licenseKey.split( '_' )[ 0 ];
@@ -24,8 +30,7 @@ export default function WooProductDownload( { licenseKey, allProducts } ) {
 	return (
 		<div className="download-products-list">
 			<ActionCard
-				className="download-products-list__woo-license"
-				headerText={ product.name }
+				headerText={ product?.name ?? '' }
 				mainText={ licenseKey }
 				buttonText={ translate( 'Download' ) }
 				buttonOnClick={ download }
