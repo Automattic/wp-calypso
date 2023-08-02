@@ -322,10 +322,9 @@ export type FeatureObject = {
 	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
-	isAddOn?: boolean;
 	getFeatureGroup?: () => string;
-	getQuantity?: () => number;
-	getUnitProductSlug?: () => string;
+	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
+	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
 };
 export type FeatureList = {
 	[ key: string ]: FeatureObject;

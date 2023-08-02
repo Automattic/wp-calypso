@@ -1092,22 +1092,13 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
-				const storageFeatures =
+				const storageOptions =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
 						planConstantObj.get2023PricingGridSignupStorageOptions(
 							showLegacyStorageFeature,
 							isCurrentPlan
 						) ) ||
 					[];
-				const storageOptions = storageFeatures.map( ( featureSlug ) => {
-					const featureObject = getPlanFeaturesObject( [ featureSlug ] )[ 0 ] || [];
-
-					return {
-						slug: featureSlug,
-						isAddOn: Boolean( featureObject?.isAddOn ),
-						featureObject: featureObject,
-					};
-				} );
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 

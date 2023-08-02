@@ -194,6 +194,11 @@ export type FeatureGroup = {
 };
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
+export type StorageOption = {
+	slug: string;
+	isAddOn: boolean;
+};
+
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
 	type: string;
@@ -237,7 +242,7 @@ export type Plan = BillingTerm & {
 	get2023PricingGridSignupStorageOptions?: (
 		showLegacyStorageFeature?: boolean,
 		isCurrentPlan?: boolean
-	) => Feature[];
+	) => StorageOption[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
