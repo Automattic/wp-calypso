@@ -167,6 +167,7 @@ export default function CompanyDetailsForm( {
 						checked={ companyType === 'Agency' }
 						onChange={ () => setCompanyType( 'Agency' ) }
 						disabled={ isLoading }
+						className={ undefined }
 					/>
 					<FormRadio
 						label={ translate( 'Freelancer/Pro' ) }
@@ -174,6 +175,7 @@ export default function CompanyDetailsForm( {
 						checked={ companyType === 'Freelancer/Pro' }
 						onChange={ () => setCompanyType( 'Freelancer/Pro' ) }
 						disabled={ isLoading }
+						className={ undefined }
 					/>
 					<FormRadio
 						label={ translate( 'A business with multiple sites' ) }
@@ -181,6 +183,7 @@ export default function CompanyDetailsForm( {
 						checked={ companyType === 'A business with multiple sites' }
 						onChange={ () => setCompanyType( 'A business with multiple sites' ) }
 						disabled={ isLoading }
+						className={ undefined }
 					/>
 				</FormFieldset>
 
