@@ -32,8 +32,8 @@ export function calculateTimeRange( selectedOption ) {
 			end = now;
 			break;
 		default:
-			// Default to 6 hours in case of invalid selection
-			start = moment().subtract( 6, 'hours' ).unix();
+			// Default to 24 hours in case of invalid selection
+			start = moment().subtract( 24, 'hours' ).unix();
 			end = now;
 			break;
 	}
@@ -43,7 +43,7 @@ export function calculateTimeRange( selectedOption ) {
 
 export const TimeDateChartPicker = ( { onTimeRangeChange } ) => {
 	const translate = useTranslate();
-	const [ selectedOption, setSelectedOption ] = useState( '1' ); // Default selected option is '1'
+	const [ selectedOption, setSelectedOption ] = useState( '1' ); // Default selected option is '1' (24 hours)
 
 	// Event handler to handle changes in the dropdown selection
 	const handleSelectChange = ( event ) => {

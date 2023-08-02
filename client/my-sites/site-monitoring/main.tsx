@@ -16,7 +16,7 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 		setSelectedTimeRange( timeRange );
 	};
 
-	// Call the `calculateTimeRange` function with the default selected option '1'
+	// Call the `calculateTimeRange` function with the default selected option '1' (24 hours)
 	const defaultTimeRange = calculateTimeRange( '1' );
 
 	// Calculate the startTime and endTime using useMemo to memoize the result
