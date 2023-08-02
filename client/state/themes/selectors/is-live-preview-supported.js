@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import {
@@ -83,6 +84,11 @@ const isNotCompatibleThemes = ( themeId ) => {
  */
 export const isLivePreviewSupported = ( state, themeId, siteId ) => {
 	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
+		return false;
+	}
+
+	// The "Live" Preview does not make sense for logged out users.
+	if ( ! isUserLoggedIn( state ) ) {
 		return false;
 	}
 
