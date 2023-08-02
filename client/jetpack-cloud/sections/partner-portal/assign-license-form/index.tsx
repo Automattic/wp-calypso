@@ -135,7 +135,7 @@ export default function AssignLicenseForm( {
 		if ( goToDownloadStep ) {
 			return page.redirect(
 				addQueryArgs(
-					{ products: licenseKeysArray },
+					{ products: licenseKeysArray, attachedSiteId: selectedSite?.ID },
 					partnerPortalBasePath( '/download-products' )
 				)
 			);

@@ -18,7 +18,7 @@ export default function DownloadProductsForm() {
 	const sites = useSelector( getSites );
 	const { data: allProducts } = useProductsQuery();
 
-	const attachedSiteId = getQueryArg( window.location.href, 'attachedSiteId' ) as number;
+	const attachedSiteId = getQueryArg( window.location.href, 'attachedSiteId' ) as string;
 	const licenseKeys = getQueryArg( window.location.href, 'products' ) as string;
 	const source = getQueryArg( window.location.href, 'source' ) as string;
 
