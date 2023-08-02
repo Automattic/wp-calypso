@@ -125,10 +125,10 @@ function LazyDisplayText( {
 /**
  * Adds a dialog to the free plan selection flow that explains the benefits of the paid plan
  * The FreeFreeDialog can be read as the modal to show when you
- * 1 - Select the free subdomain
+ * 1 - Select the free subdomain (Or does not select a domain at all)
  * 2 - Select the free plan
  */
-export function FreeFreeDialog( {
+export function FreePlanFreeDomainDialog( {
 	freeSubdomain,
 	onFreePlanSelected,
 	onPlanSelected,

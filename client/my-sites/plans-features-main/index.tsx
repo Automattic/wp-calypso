@@ -37,7 +37,7 @@ import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import usePlansWithIntent, {
 	GridPlan,
 } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
-import { FreeFreeDialog } from './components/free-free-dialog';
+import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
@@ -466,7 +466,7 @@ const PlansFeaturesMain = ( {
 				/>
 			) }
 			{ isFreeFreeUpsellOpen && (
-				<FreeFreeDialog
+				<FreePlanFreeDomainDialog
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					freeSubdomain={ resolvedSubdomainName }
 					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
