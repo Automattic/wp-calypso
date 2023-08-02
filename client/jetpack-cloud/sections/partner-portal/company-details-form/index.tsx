@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
@@ -33,6 +34,7 @@ interface Props {
 		name?: string;
 		contactPerson?: string;
 		companyWebsite?: string;
+		companyType?: string;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -63,6 +65,7 @@ export default function CompanyDetailsForm( {
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
+	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
@@ -77,6 +80,7 @@ export default function CompanyDetailsForm( {
 			name,
 			contactPerson,
 			companyWebsite,
+			companyType,
 			city,
 			line1,
 			line2,
@@ -89,6 +93,7 @@ export default function CompanyDetailsForm( {
 			name,
 			contactPerson,
 			companyWebsite,
+			companyType,
 			city,
 			line1,
 			line2,
@@ -150,6 +155,31 @@ export default function CompanyDetailsForm( {
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 							setCompanyWebsite( event.target.value )
 						}
+						disabled={ isLoading }
+					/>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel>{ translate( 'Which answer below best describes your company:' ) }</FormLabel>
+					<FormRadio
+						label={ translate( 'Agency' ) }
+						value="Agency"
+						checked={ companyType === 'Agency' }
+						onChange={ () => setCompanyType( 'Agency' ) }
+						disabled={ isLoading }
+					/>
+					<FormRadio
+						label={ translate( 'Freelancer/Pro' ) }
+						value="Freelancer/Pro"
+						checked={ companyType === 'Freelancer/Pro' }
+						onChange={ () => setCompanyType( 'Freelancer/Pro' ) }
+						disabled={ isLoading }
+					/>
+					<FormRadio
+						label={ translate( 'A business with multiple sites' ) }
+						value="A business with multiple sites"
+						checked={ companyType === 'A business with multiple sites' }
+						onChange={ () => setCompanyType( 'A business with multiple sites' ) }
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
