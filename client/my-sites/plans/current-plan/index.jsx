@@ -15,6 +15,7 @@ import {
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 	isFreePlan,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
@@ -53,6 +54,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getJetpackSearchCustomizeUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import BusinessTrialCurrentPlan from './business-trial';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -198,6 +200,10 @@ class CurrentPlan extends Component {
 		return <ECommerceTrialCurrentPlan />;
 	}
 
+	renderBusinessTrialPage() {
+		return <BusinessTrialCurrentPlan />;
+	}
+
 	render() {
 		const {
 			domains,
@@ -214,7 +220,6 @@ class CurrentPlan extends Component {
 		} = this.props;
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
-		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
@@ -231,6 +236,15 @@ class CurrentPlan extends Component {
 			page.redirect( `/plans/${ selectedSite.slug }` );
 
 			return null;
+		}
+
+		let mainContent = null;
+		if ( currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ) {
+			mainContent = this.renderEcommerceTrialPage();
+		} else if ( currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ) {
+			mainContent = this.renderBusinessTrialPage();
+		} else {
+			mainContent = this.renderMain();
 		}
 
 		return (
@@ -295,7 +309,7 @@ class CurrentPlan extends Component {
 								</Notice>
 							) }
 
-							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
+							{ mainContent }
 
 							<TrackComponentView eventName="calypso_plans_my_plan_view" />
 						</Main>
