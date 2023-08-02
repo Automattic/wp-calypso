@@ -1,23 +1,23 @@
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { PlanSelectedStorage } from '..';
 import { getStorageStringFromFeature } from '../util';
-import type { PlanSlug, StorageOption } from '@automattic/calypso-products';
 
 type StorageAddOnDropdownProps = {
-	planSlug: PlanSlug;
-	storageOptions: StorageOption[];
-	selectedStorage: PlanSelectedStorage;
-	setSelectedStorage: ( selectedStorage: PlanSelectedStorage ) => void;
+	planSlug: string;
+	storageOptions: { slug: string; isAddOn: boolean }[];
 };
 
-const StorageAddOnDropdown = ( {
-	planSlug,
-	storageOptions,
-	selectedStorage,
-	setSelectedStorage,
-}: StorageAddOnDropdownProps ) => {
+export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
+	const { setStorageAddOnForPlan } = useDispatch( WpcomPlansUI.store );
+	const selectedStorage = useSelect(
+		( select ) => {
+			return select( WpcomPlansUI.store ).getStorageAddOnForPlan()( planSlug );
+		},
+		[ planSlug ]
+	);
 
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce( ( acc, storageOption ) => {
@@ -33,7 +33,7 @@ const StorageAddOnDropdown = ( {
 	}, [] as { key: string; name: TranslateResult }[] );
 
 	const defaultStorageOption = storageOptions.find( ( storageOption ) => ! storageOption?.isAddOn );
-	const selectedOptionKey = selectedStorage[ planSlug ] || defaultStorageOption?.slug || '';
+	const selectedOptionKey = selectedStorage || defaultStorageOption?.slug || '';
 	const selectedOption = {
 		key: selectedOptionKey,
 		name: getStorageStringFromFeature( selectedOptionKey ),
@@ -43,13 +43,9 @@ const StorageAddOnDropdown = ( {
 			label={ translate( 'Storage' ) }
 			options={ selectControlOptions }
 			value={ selectedOption }
-			onChange={ ( { selectedItem }: { selectedItem: { key?: string } } ) => {
-				const updatedSelectedStorage = {
-					[ planSlug ]: selectedItem?.key || '',
-				} as PlanSelectedStorage;
-
-				setSelectedStorage( updatedSelectedStorage );
-			} }
+			onChange={ ( { selectedItem }: { selectedItem: { key?: string } } ) =>
+				setStorageAddOnForPlan( { addOnSlug: selectedItem?.key || '', plan: planSlug } )
+			}
 		/>
 	);
 };

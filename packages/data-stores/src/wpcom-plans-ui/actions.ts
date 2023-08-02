@@ -9,4 +9,19 @@ export const resetStore = () =>
 		type: 'WPCOM_PLANS_UI_RESET_STORE',
 	} as const );
 
-export type WpcomPlansUIAction = ReturnType< typeof setShowDomainUpsellDialog | typeof resetStore >;
+export const setStorageAddOnForPlan = ( {
+	addOnSlug,
+	plan,
+}: {
+	addOnSlug: string;
+	plan: string;
+} ) =>
+	( {
+		type: 'WPCOM_PLANS_UI_SET_STORAGE_ADD_ON_FOR_PLAN',
+		addOnSlug,
+		plan,
+	} as const );
+
+export type WpcomPlansUIAction = ReturnType<
+	typeof setShowDomainUpsellDialog | typeof resetStore | typeof setStorageAddOnForPlan
+>;

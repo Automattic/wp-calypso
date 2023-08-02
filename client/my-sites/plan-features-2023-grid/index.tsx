@@ -75,8 +75,6 @@ type PlanRowOptions = {
 	isStuck?: boolean;
 };
 
-export type PlanSelectedStorage = { [ key: string ]: WPComStorageAddOnSlug | null };
-
 const Container = (
 	props: (
 		| React.HTMLAttributes< HTMLDivElement >
@@ -224,10 +222,6 @@ export class PlanFeatures2023Grid extends Component<
 	observer: IntersectionObserver | null = null;
 	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
 
-	state: PlanFeatures2023GridState = {
-		selectedStorage: {},
-	};
-
 	componentDidMount() {
 		this.observer = new IntersectionObserver( ( entries ) => {
 			entries.forEach( ( entry ) => {
@@ -248,15 +242,6 @@ export class PlanFeatures2023Grid extends Component<
 			this.observer.disconnect();
 		}
 	}
-
-	setSelectedStorage = ( updatedSelectedStorage: PlanSelectedStorage ) => {
-		this.setState( ( { selectedStorage } ) => ( {
-			selectedStorage: {
-				...selectedStorage,
-				...updatedSelectedStorage,
-			},
-		} ) );
-	};
 
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
@@ -788,7 +773,6 @@ export class PlanFeatures2023Grid extends Component<
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const { translate, intervalType, showUpgradeableStorage } = this.props;
-		const { selectedStorage } = this.state;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -803,12 +787,7 @@ export class PlanFeatures2023Grid extends Component<
 				storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
 
 			const storageJSX = canUpgradeStorageForPlan ? (
-				<StorageAddOnDropdown
-					planSlug={ planSlug }
-					storageOptions={ storageOptions }
-					selectedStorage={ selectedStorage }
-					setSelectedStorage={ this.setSelectedStorage }
-				/>
+				<StorageAddOnDropdown planSlug={ planSlug } storageOptions={ storageOptions } />
 			) : (
 				storageOptions.map( ( storageOption ) => {
 					if ( ! storageOption?.isAddOn ) {
