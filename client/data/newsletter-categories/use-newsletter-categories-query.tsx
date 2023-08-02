@@ -1,45 +1,15 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
+import {
+	NewsletterCategories,
+	NewsletterCategoryQueryProps,
+	NewsletterCategoryResponse,
+} from './types';
 
-type NewsletterCategoryQueryProps = {
-	blogId: number;
-};
-
-type NewsletterCategoryQueryResponse = {
-	newsletter_categories: NewsletterCategoryResponse[];
-};
-
-type NewsletterCategories = {
-	newsletterCategories: NewsletterCategory[];
-};
-
-type NewsletterCategoryResponse = {
-	term_id: number;
-	name: string;
-	description: string;
-	order: number;
-};
-
-type NewsletterCategory = {
-	termId: number;
-	name: string;
-	description: string;
-	order: number;
-};
-
-const convertNewsletterCategoryResponse = ( response: NewsletterCategoryQueryResponse ) => {
-	return {
-		newsletterCategories: response.newsletter_categories.map(
-			( { term_id, name, description, order }: NewsletterCategoryResponse ) => {
-				return {
-					termId: term_id,
-					name,
-					description,
-					order,
-				};
-			}
-		),
-	};
+const convertNewsletterCategoryResponse = (
+	response: NewsletterCategoryResponse
+): NewsletterCategories => {
+	return { newsletterCategories: response.newsletter_categories };
 };
 
 const useNewsletterCategories = ( {
@@ -48,7 +18,7 @@ const useNewsletterCategories = ( {
 	return useQuery( {
 		queryKey: [ `newsletter-categories-${ blogId }` ],
 		queryFn: () =>
-			request< NewsletterCategoryQueryResponse >( {
+			request< NewsletterCategoryResponse >( {
 				path: `/sites/${ blogId }/newsletter-categories?http_envelope=1`,
 				apiVersion: '2',
 			} ).then( convertNewsletterCategoryResponse ),

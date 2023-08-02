@@ -37,8 +37,8 @@ describe( 'useNewsletterCategories', () => {
 	it( 'should return expected data when successful', async () => {
 		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
 			newsletter_categories: [
-				{ term_id: 1, name: 'Category 1', description: 'Description 1', order: 1 },
-				{ term_id: 2, name: 'Category 2', description: 'Description 2', order: 2 },
+				{ id: 1, name: 'Category 1', slug: 'Slug 1', description: 'Description 1', parent: 1 },
+				{ id: 2, name: 'Category 2', slug: 'Slug 2', description: 'Description 2', parent: 2 },
 			],
 		} );
 
@@ -48,8 +48,8 @@ describe( 'useNewsletterCategories', () => {
 
 		expect( result.current.data ).toEqual( {
 			newsletterCategories: [
-				{ termId: 1, name: 'Category 1', description: 'Description 1', order: 1 },
-				{ termId: 2, name: 'Category 2', description: 'Description 2', order: 2 },
+				{ id: 1, name: 'Category 1', slug: 'Slug 1', description: 'Description 1', parent: 1 },
+				{ id: 2, name: 'Category 2', slug: 'Slug 2', description: 'Description 2', parent: 2 },
 			],
 		} );
 	} );
