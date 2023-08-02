@@ -67,29 +67,6 @@ const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps
 		return null;
 	}
 
-	const noticeArgs = {
-		components: {
-			p: <p />,
-			jetpackStatsProductLink: (
-				<button
-					type="button"
-					className="notice-banner__action-button"
-					onClick={ gotoJetpackStatsProduct }
-				/>
-			),
-			learnMoreLink: (
-				<a
-					className="notice-banner__action-link"
-					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
-					target="_blank"
-					rel="noreferrer"
-				/>
-			),
-			learnMoreLinkText: <span />,
-			externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
-		},
-	};
-
 	const noPurchaseTitle = translate( 'Do you love Jetpack Stats?' );
 	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
 
@@ -106,7 +83,28 @@ const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps
 			>
 				{ translate(
 					'{{p}}Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
-					noticeArgs
+					{
+						components: {
+							p: <p />,
+							jetpackStatsProductLink: (
+								<button
+									type="button"
+									className="notice-banner__action-button"
+									onClick={ gotoJetpackStatsProduct }
+								/>
+							),
+							learnMoreLink: (
+								<a
+									className="notice-banner__action-link"
+									href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+							learnMoreLinkText: <span />,
+							externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
+						},
+					}
 				) }
 			</NoticeBanner>
 		</div>
