@@ -56,9 +56,17 @@ export default function DownloadProductsForm() {
 			/>
 		) );
 
+	const onNavigate = () => {
+		return page.redirect(
+			'dashboard' === source
+				? page.redirect( '/dashboard' )
+				: page.redirect( partnerPortalBasePath( '/licenses' ) )
+		);
+	};
+
 	// redirect if licenseKeys does not contain a valid product
 	useEffect( () => {
-		if ( ! licenseKeys || ! allProducts ) {
+		if ( ! licenseKeys || ! allProducts || ! site ) {
 			return;
 		}
 
@@ -68,21 +76,9 @@ export default function DownloadProductsForm() {
 		} );
 
 		if ( invalidKeys.length ) {
-			page.redirect(
-				'dashboard' === source
-					? page.redirect( '/dashboard' )
-					: page.redirect( partnerPortalBasePath( '/licenses' ) )
-			);
+			onNavigate();
 		}
-	}, [ licenseKeys, allProducts, source ] );
-
-	const onNavigate = () => {
-		return page.redirect(
-			'dashboard' === source
-				? page.redirect( '/dashboard' )
-				: page.redirect( partnerPortalBasePath( '/licenses' ) )
-		);
-	};
+	}, [ licenseKeys, allProducts, site, onNavigate ] );
 
 	return (
 		<div className="download-products-form">
