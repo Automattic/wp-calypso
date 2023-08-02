@@ -389,6 +389,13 @@ export const FEATURE_INVENTORY_MGMT = 'inventory-mgmt';
 export const FEATURE_STREAMLINED_CHECKOUT = 'streamlined-checkout';
 export const FEATURE_SELL_60_COUNTRIES = 'sell-60-countries';
 export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
+export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
+export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
+
+export const WPCOM_STORAGE_ADD_ONS = <const>[
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
+];
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store

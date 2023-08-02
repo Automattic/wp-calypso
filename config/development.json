@@ -144,6 +144,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plans/updated-storage-labels": true,
+		"plans/upgradeable-storage": true,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
