@@ -1,9 +1,24 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
-import { campaignDetails } from 'calypso/my-sites/promote-post-i2/controller';
+import {
+	campaignDetails,
+	checkValidTabInNavigation,
+} from 'calypso/my-sites/promote-post-i2/controller';
 import { promoteWidget, promotedPosts, redirectToPrimarySite } from './controller';
 import { getAdvertisingDashboardPath } from './utils';
+
+const promotePage = ( url, controller ) => {
+	page(
+		url,
+		redirectToPrimarySite,
+		siteSelection,
+		navigation,
+		controller,
+		makeLayout,
+		clientRender
+	);
+};
 
 export default () => {
 	page(
@@ -15,17 +30,8 @@ export default () => {
 	);
 
 	page(
-		getAdvertisingDashboardPath( '/:site?/promote/:item?' ),
-		redirectToPrimarySite,
-		siteSelection,
-		navigation,
-		promoteWidget,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		getAdvertisingDashboardPath( '/:site?/:tab?' ),
+		getAdvertisingDashboardPath( '/:tab?/:site?' ),
+		checkValidTabInNavigation,
 		redirectToPrimarySite,
 		siteSelection,
 		navigation,
@@ -34,23 +40,9 @@ export default () => {
 		clientRender
 	);
 
-	page(
-		getAdvertisingDashboardPath( '/:site?/:tab?/promote/:item?' ),
-		redirectToPrimarySite,
-		siteSelection,
-		navigation,
-		promoteWidget,
-		makeLayout,
-		clientRender
-	);
+	promotePage( getAdvertisingDashboardPath( '/campaigns/:campaignId/:site?' ), campaignDetails );
 
-	page(
-		'/advertising/:site?/campaigns/:campaignId',
-		redirectToPrimarySite,
-		siteSelection,
-		navigation,
-		campaignDetails,
-		makeLayout,
-		clientRender
-	);
+	promotePage( getAdvertisingDashboardPath( '/promote/:item?/:site?' ), promoteWidget );
+
+	promotePage( getAdvertisingDashboardPath( '/:tab?/promote/:item?/:site?' ), promoteWidget );
 };

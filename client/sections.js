@@ -601,7 +601,7 @@ const sections = [
 	},
 	{
 		name: 'promote-post',
-		paths: [ '/advertising', '/advertising/[^\\/]+', '/advertising/[^\\/]+/[^\\/]+/promote' ],
+		paths: [ '/advertising' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
 	},

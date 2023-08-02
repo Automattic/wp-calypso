@@ -1,5 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
@@ -13,26 +11,18 @@ const BulkDomainTransferFooter = () => {
 				description={ __(
 					'Check your inbox for an email from your current domain provider for instructions on how to speed up the transfer process.'
 				) }
-				buttonText={ __( 'Learn about expediting domain transfers' ) }
-				href={ localizeUrl( 'https://wordpress.com/support/domains/incoming-domain-transfer/' ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
-						destination: '/support/domains/incoming-domain-transfer/',
-					} )
-				}
+				buttonText={ null }
+				href={ null }
+				onClick={ null }
 			/>
 			<PurchaseDetail
-				title={ __( 'Dive into domain essentials' ) }
+				title={ __( 'Will my email continue to work?' ) }
 				description={ __(
-					"Unlock the domain world's secrets. Dive into our comprehensive resource to learn the basics of domains, from registration to management."
+					"We'll automatically import any MX, TXT, and A records for your domain, so your email will transfer seamlessly."
 				) }
-				buttonText={ __( 'Master the domain basics' ) }
-				href={ localizeUrl( 'https://wordpress.com/support/domains/' ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
-						destination: '/support/domains',
-					} )
-				}
+				buttonText={ null }
+				href={ null }
+				onClick={ null }
 			/>
 		</div>
 	);

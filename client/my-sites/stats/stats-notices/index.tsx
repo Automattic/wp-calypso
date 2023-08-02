@@ -1,4 +1,6 @@
 import config from '@automattic/calypso-config';
+import page from 'page';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
@@ -45,40 +47,61 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
 
-	const showPaidStatsNotice =
-		// Show the notice if the site is Jetpack or it is Odyssey Stats.
-		( ( config.isEnabled( 'stats/paid-stats' ) && ( isOdysseyStats || isSiteJetpackNotAtomic ) ) ||
-			// Gate notices for WPCOM sites behind a flag.
-			( config.isEnabled( 'stats/paid-wpcom-stats' ) &&
-				isWpcom &&
-				! isVip &&
-				! isP2 &&
-				! isOwnedByTeam51 ) ) &&
+	// Gate notices for WPCOM sites behind a flag.
+	const showUpgradeNoticeForWpcomSites =
+		config.isEnabled( 'stats/paid-wpcom-stats' ) &&
+		isWpcom &&
+		! isVip &&
+		! isP2 &&
+		! isOwnedByTeam51;
+	// Show the notice if the site is Jetpack or it is Odyssey Stats.
+	const showUpgradeNoticeOnOdyssey = config.isEnabled( 'stats/paid-stats' ) && isOdysseyStats;
+	const showUpgradeNoticeForJetpackNotAtomic =
+		config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
+
+	const showDoYouLoveJetpackStatsNotice =
+		( showUpgradeNoticeOnOdyssey ||
+			showUpgradeNoticeForJetpackNotAtomic ||
+			showUpgradeNoticeForWpcomSites ) &&
 		// Show the notice if the site has not purchased the paid stats product.
 		! hasPaidStats &&
 		hasLoadedPurchases;
 
 	return (
 		<>
-			{ showPaidStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
+			{ showDoYouLoveJetpackStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
 		</>
 	);
 };
 
-const PostPurchaseNotices = ( { siteId, statsPurchaseSuccess }: StatsNoticesProps ) => {
+const PostPurchaseNotices = ( {
+	siteId,
+	statsPurchaseSuccess,
+	isOdysseyStats,
+}: StatsNoticesProps ) => {
 	// Check if the GET param is passed to show the Free or Paid plan purchase notices
 	const showFreePlanPurchaseSuccessNotice = statsPurchaseSuccess === 'free';
 	const showPaidPlanPurchaseSuccessNotice = statsPurchaseSuccess === 'paid';
 
+	const [ paramRemoved, setParamRemoved ] = useState( false );
+
 	const removeParam = () => {
-		if ( ! statsPurchaseSuccess ) {
+		if ( ! statsPurchaseSuccess || paramRemoved ) {
 			return;
 		}
-		const newUrl = removeStatsPurchaseSuccessParam( window.location.href );
+		// Ensure it runs only once.
+		setParamRemoved( true );
+		const newUrlObj = removeStatsPurchaseSuccessParam( window.location.href, !! isOdysseyStats );
 		// Odyssey would try to hack the URL on load to remove duplicate params. We need to wait for that to finish.
-		setTimeout( () => window.history.replaceState( null, '', newUrl ), 300 );
+		setTimeout( () => {
+			window.history.replaceState( null, '', newUrlObj.toString() );
+			if ( isOdysseyStats ) {
+				// We need to update the page base if it changed. Otherwise, pagejs won't be able to find the routes.
+				page.base( `${ newUrlObj.pathname }${ newUrlObj.search }` );
+			}
+		}, 300 );
 	};
 
 	return (
@@ -115,7 +138,11 @@ export default function StatsNotices( {
 
 	return supportNewStatsNotices ? (
 		<>
-			<PostPurchaseNotices siteId={ siteId } statsPurchaseSuccess={ statsPurchaseSuccess } />
+			<PostPurchaseNotices
+				siteId={ siteId }
+				statsPurchaseSuccess={ statsPurchaseSuccess }
+				isOdysseyStats={ isOdysseyStats }
+			/>
 			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 		</>
 	) : (

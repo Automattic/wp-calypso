@@ -1717,7 +1717,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments', {
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
 				args: { commission: 10 },
 			} ),
 		getDescription: () =>
@@ -1728,7 +1728,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments', {
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
 				args: { commission: 8 },
 			} ),
 		getDescription: () =>
@@ -1739,7 +1739,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments', {
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
 				args: { commission: 4 },
 			} ),
 		getDescription: () =>
@@ -1750,7 +1750,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments', {
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
 				args: { commission: 2 },
 			} ),
 		getDescription: () =>
@@ -1761,7 +1761,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
-			i18n.translate( '%(commission)d% transaction fee for payments', {
+			i18n.translate( '%(commission)d%% transaction fee for payments', {
 				args: { commission: 0 },
 			} ),
 		getDescription: () =>
