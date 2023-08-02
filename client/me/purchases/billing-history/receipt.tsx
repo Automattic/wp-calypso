@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -173,25 +173,6 @@ export function ReceiptBody( {
 				</div>
 			</Card>
 		</div>
-	);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function ReceiptExternalLink( { transaction }: { transaction: BillingTransaction } ) {
-	const translate = useTranslate();
-	const externalTaxlink =
-		'https://invoicestaxamo.s3.amazonaws.com/' + transaction.tax_external_id + '/invoice.html';
-	const labelContent = translate( 'View tax invoice' );
-
-	return (
-		<CompactCard
-			href={ externalTaxlink }
-			rel="noopener noreferrer"
-			target="_blank"
-			className="billing-history__tax-receipt-link"
-		>
-			{ labelContent }
-		</CompactCard>
 	);
 }
 
