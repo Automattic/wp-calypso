@@ -293,10 +293,7 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName
 	);
-	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
-		flowName,
-		signupFlowSubdomain
-	);
+	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain( flowName );
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
