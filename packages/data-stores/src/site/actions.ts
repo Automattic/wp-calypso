@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { PLACEHOLDER_SITE_ID } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -503,7 +502,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteSlug: string,
 		design: Design,
 		globalStyles: GlobalStyles | null = null,
-		sourceSiteId: number = PLACEHOLDER_SITE_ID
+		sourceSiteId?: number
 	) {
 		const stylesheet = design?.recipe?.stylesheet || '';
 		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
