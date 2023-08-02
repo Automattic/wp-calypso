@@ -15,6 +15,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportT
 import jetbrains.buildServer.configs.kotlin.v2019_2.Triggers
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
 
@@ -227,12 +228,8 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 
 	val triggers: Triggers.() -> Unit = {
 		if (jetpackTarget == "wpcom-staging") {
-			vcs {
-				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
-				triggerRules = """
-					+:root=wpcom:**/mu-plugins/jetpack*-plugin/moon/*
-					+:root=wpcom:**/mu-plugins/jetpack*-plugin/sun/*
-				""".trimIndent()
+			finishBuildTrigger {
+				buildType = "JetpackStaging_JetpackSunMoonUpdated"
 			}
 		} else {
 			// For remote-site tests and production, we are just running daily for now.
@@ -267,8 +264,7 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 			param("env.JETPACK_TARGET", jetpackTarget)
 		},
 		buildFeatures = {},
-		buildTriggers = triggers,
-		addWpcomVcsRoot = true
+		buildTriggers = triggers
 	)
 }
 

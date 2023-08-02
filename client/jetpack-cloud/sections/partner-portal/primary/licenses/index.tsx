@@ -3,8 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalLicenseCounts from 'calypso/components/data/query-jetpack-partner-portal-license-counts';
 import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
-import SiteSurveyBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-survey-banner';
-import SiteWelcomeBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-welcome-banner';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
@@ -25,6 +23,7 @@ import Layout from '../../layout';
 import LayoutHeader from '../../layout/header';
 import LicenseSearch from '../../license-search';
 import OnboardingWidget from '../onboarding-widget';
+import Banners from './banners';
 
 import './style.scss';
 
@@ -68,12 +67,7 @@ export default function Licenses( {
 		<Layout className="licenses" title={ translate( 'Licenses' ) } wide>
 			<QueryJetpackPartnerPortalLicenseCounts />
 
-			{ isAgencyUser && (
-				<div>
-					<SiteSurveyBanner />
-					<SiteWelcomeBanner bannerKey="licenses-page" />
-				</div>
-			) }
+			{ isAgencyUser && <Banners /> }
 			<SiteAddLicenseNotification />
 
 			<LicenseListContext.Provider value={ context }>

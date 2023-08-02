@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { JETPACK_STATS_PRODUCT_LANDING_PAGE_URL } from '@automattic/calypso-products';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -94,7 +93,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 							learnMoreLink: (
 								<a
 									className="notice-banner__action-link"
-									href={ JETPACK_STATS_PRODUCT_LANDING_PAGE_URL }
+									href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
 									target="_blank"
 									rel="noreferrer"
 								/>
