@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
 import { getIsLivePreviewSupported, getLivePreviewUrl } from 'calypso/state/themes/selectors';
 
 /**
@@ -8,18 +8,14 @@ import { getIsLivePreviewSupported, getLivePreviewUrl } from 'calypso/state/them
  *
  * @see pbxlJb-3Uv-p2
  */
-const _LivePreviewButton = ( { isLivePreviewSupported, translate, livePreviewUrl } ) => {
+export const LivePreviewButton = ( { themeId, siteId } ) => {
+	const translate = useTranslate();
+	const isLivePreviewSupported = useSelector( ( state ) =>
+		getIsLivePreviewSupported( state, themeId, siteId )
+	);
+	const livePreviewUrl = useSelector( ( state ) => getLivePreviewUrl( state, themeId, siteId ) );
 	if ( ! isLivePreviewSupported ) {
 		return null;
 	}
 	return <Button href={ livePreviewUrl }>{ translate( 'Live Preview' ) }</Button>;
 };
-
-export const LivePreviewButton = connect( ( state, { themeId, siteId } ) => {
-	const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
-	const livePreviewUrl = getLivePreviewUrl( state, themeId, siteId );
-	return {
-		isLivePreviewSupported,
-		livePreviewUrl,
-	};
-} )( localize( _LivePreviewButton ) );
