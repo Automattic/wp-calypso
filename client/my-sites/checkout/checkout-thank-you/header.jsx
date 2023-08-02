@@ -107,7 +107,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 						{ preventWidows(
 							_n(
 								"We've got it from here. Your domain is being transferred with no downtime.",
-								"We've got it from here! Your domain is being transferred with no downtime.",
+								"We've got it from here! Your domains are being transferred with no downtime.",
 								purchases?.length
 							)
 						) }
