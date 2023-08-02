@@ -531,7 +531,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		);
 
 		yield runThemeSetupOnSite( siteSlug, design, {
-			trimContent: false,
+			// trimContent true ensures that the starter content is trimmed in case sourceSiteId is defined
+			// For instance only a max of three posts will be added to the user site
+			trimContent: true,
 			posts_source_site_id: sourceSiteId,
 		} );
 
