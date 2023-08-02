@@ -1,10 +1,14 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
-import {
-	NewsletterCategories,
-	NewsletterCategoryQueryProps,
-	NewsletterCategoryResponse,
-} from './types';
+import { NewsletterCategories, NewsletterCategory } from './types';
+
+type NewsletterCategoryQueryProps = {
+	blogId: number;
+};
+
+type NewsletterCategoryResponse = {
+	newsletter_categories: NewsletterCategory[];
+};
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
@@ -19,7 +23,7 @@ const useNewsletterCategories = ( {
 		queryKey: [ `newsletter-categories-${ blogId }` ],
 		queryFn: () =>
 			request< NewsletterCategoryResponse >( {
-				path: `/sites/${ blogId }/newsletter-categories?http_envelope=1`,
+				path: `/sites/${ blogId }/newsletter-categories`,
 				apiVersion: '2',
 			} ).then( convertNewsletterCategoryResponse ),
 	} );

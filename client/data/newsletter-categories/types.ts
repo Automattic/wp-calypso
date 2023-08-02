@@ -1,11 +1,3 @@
-export type NewsletterCategoryQueryProps = {
-	blogId: number;
-};
-
-export type NewsletterCategoryResponse = {
-	newsletter_categories: NewsletterCategory[];
-};
-
 export type NewsletterCategories = {
 	newsletterCategories: NewsletterCategory[];
 };
