@@ -43,14 +43,10 @@ interface Step {
 interface Props {
 	currentStep: StepKey;
 	selectedSite?: SiteDetails | null;
-	showDownloadStep?: boolean | null;
+	showDownloadStep?: boolean;
 }
 
-export default function AssignLicenseStepProgress( {
-	currentStep,
-	selectedSite,
-	showDownloadStep,
-}: Props ) {
+const AssignLicenseStepProgress = ( { currentStep, selectedSite, showDownloadStep }: Props ) => {
 	const translate = useTranslate();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
@@ -100,4 +96,10 @@ export default function AssignLicenseStepProgress( {
 			) ) }
 		</div>
 	);
-}
+};
+
+AssignLicenseStepProgress.defaultProps = {
+	showDownloadStep: false,
+};
+
+export default AssignLicenseStepProgress;
