@@ -3,7 +3,7 @@ import '../campaigns-table/style.scss';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import { Experiment } from 'calypso/lib/explat';
 import PostItem from 'calypso/my-sites/promote-post-i2/components/post-item';
-import PostItemExperiment from 'calypso/my-sites/promote-post-i2/components/post-item-experiment';
+import PostItemV02 from 'calypso/my-sites/promote-post-i2/components/post-item-v02';
 import { ItemsLoading, SingleItemLoading } from '../campaigns-table';
 import PostsListHeader from '../posts-list/header';
 
@@ -17,7 +17,7 @@ export default function PostsTable( props: Props ) {
 	const { posts, isLoading, isFetchingPageResults } = props;
 
 	const DefaultItem = posts.map( ( post: BlazablePost ) => {
-		return <PostItemExperiment key={ `post-id${ post.ID }` } post={ post } />;
+		return <PostItemV02 key={ `post-id${ post.ID }` } post={ post } />;
 	} );
 
 	const ExperimentItem = posts.map( ( post: BlazablePost ) => {

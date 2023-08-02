@@ -11,7 +11,7 @@ import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
 import { formatNumber } from '../../utils';
 import RelativeTime from '../relative-time';
 
-export default function PostItemExperiment( { post }: { post: BlazablePost } ) {
+export default function PostItemV02( { post }: { post: BlazablePost } ) {
 	const [ loading ] = useState( false );
 
 	const onClickPromote = useOpenPromoteWidget( {
@@ -121,7 +121,7 @@ export default function PostItemExperiment( { post }: { post: BlazablePost } ) {
 							isBusy={ loading }
 							disabled={ loading }
 							onClick={ onClickPromote }
-							className="post-item__post-promote-button-experiment"
+							className="post-item__post-promote-button"
 						>
 							{ __( 'Promote' ) }
 						</Button>
@@ -145,7 +145,7 @@ export default function PostItemExperiment( { post }: { post: BlazablePost } ) {
 					isBusy={ loading }
 					disabled={ loading }
 					onClick={ onClickPromote }
-					className="post-item__post-promote-button-experiment"
+					className="post-item__post-promote-button"
 				>
 					{ __( 'Promote' ) }
 				</Button>
