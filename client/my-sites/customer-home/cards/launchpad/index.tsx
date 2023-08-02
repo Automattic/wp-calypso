@@ -1,5 +1,5 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import { useLaunchpad } from '@automattic/data-stores';
+import { updateLaunchpadSettings, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -81,7 +81,12 @@ const CustomerHomeLaunchpad = ( {
 							className="themes__activation-modal-close-icon"
 							borderless
 							onClick={ () => {
-								alert( 1 );
+								updateLaunchpadSettings( siteSlug, {
+									is_checklist_visible: {
+										slug: checklistSlug,
+										is_visible: false,
+									},
+								} );
 							} }
 						>
 							<Gridicon icon="cross" size={ 12 } />
