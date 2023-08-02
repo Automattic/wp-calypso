@@ -3,6 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
 interface Props {
@@ -11,6 +13,7 @@ interface Props {
 
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
 		useState( false );
@@ -22,6 +25,14 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			},
 		} );
 
+	const handleJetpackConnectionHealthLinkClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_connection_health_issue_click', {
+				type: 'default',
+			} )
+		);
+	};
+
 	if (
 		isLoadingJetpackConnectionHealth ||
 		isErrorCheckJetpackConnectionHealth ||
@@ -29,6 +40,12 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	) {
 		return;
 	}
+
+	dispatch(
+		recordTracksEvent( 'calypso_jetpack_connection_health_issue_view', {
+			type: 'default',
+		} )
+	);
 
 	return (
 		<Notice
@@ -41,8 +58,9 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
 				external
+				onClick={ handleJetpackConnectionHealthLinkClick }
 			>
-				Attempt reconnection
+				{ translate( 'Learn how to fix' ) }
 			</NoticeAction>
 		</Notice>
 	);
