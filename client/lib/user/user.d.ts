@@ -19,7 +19,6 @@ export type OptionalUserData = {
 	display_name: string;
 	email: string;
 	email_verified: boolean;
-	blaze_credits_enabled: boolean;
 	has_unseen_notes: boolean;
 	is_new_reader: boolean;
 	is_valid_google_apps_country: boolean;
