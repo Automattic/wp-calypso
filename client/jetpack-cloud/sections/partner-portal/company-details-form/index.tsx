@@ -189,7 +189,6 @@ export default function CompanyDetailsForm( {
 						className={ undefined }
 					/>
 				</FormFieldset>
-				ß
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
