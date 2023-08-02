@@ -33,6 +33,7 @@ import './style.scss';
 interface PreMigrationProps {
 	targetSite: SiteDetails;
 	startImport: ( props?: StartImportTrackingProps ) => void;
+	initImportRun?: boolean;
 	isTargetSitePlanCompatible: boolean;
 	onContentOnlyClick: () => void;
 	isMigrateFromWp: boolean;
@@ -43,6 +44,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 ) => {
 	const {
 		startImport,
+		initImportRun,
 		targetSite,
 		isTargetSitePlanCompatible,
 		onContentOnlyClick,

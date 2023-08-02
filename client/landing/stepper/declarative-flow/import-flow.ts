@@ -201,6 +201,11 @@ const importFlow: Flow = {
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'importer':
+							// This param init the migration process
+							urlQueryParams.set( 'run', 'true' );
+
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 						default:
 							return;
 					}
