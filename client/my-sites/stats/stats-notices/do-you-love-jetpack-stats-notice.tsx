@@ -18,7 +18,7 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 	return `https://wordpress.com${ purchasePath }`;
 };
 
-const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
+const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
@@ -67,43 +67,59 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 		return null;
 	}
 
+	const noticeArgs = {
+		components: {
+			p: <p />,
+			jetpackStatsProductLink: (
+				<button
+					type="button"
+					className="notice-banner__action-button"
+					onClick={ gotoJetpackStatsProduct }
+				/>
+			),
+			learnMoreLink: (
+				<a
+					className="notice-banner__action-link"
+					href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
+					target="_blank"
+					rel="noreferrer"
+				/>
+			),
+			learnMoreLinkText: <span />,
+			externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
+		},
+	};
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
 				! isOdysseyStats && 'inner-notice-container--calypso'
 			}` }
 		>
-			<NoticeBanner
-				level="info"
-				title={ translate( 'Do you love Jetpack Stats?' ) }
-				onClose={ dismissNotice }
-			>
-				{ translate(
-					'{{p}}Upgrade Jetpack Stats to unlock upcoming features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
-					{
-						components: {
-							p: <p />,
-							jetpackStatsProductLink: (
-								<button
-									type="button"
-									className="notice-banner__action-button"
-									onClick={ gotoJetpackStatsProduct }
-								/>
-							),
-							learnMoreLink: (
-								<a
-									className="notice-banner__action-link"
-									href="https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing"
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-							learnMoreLinkText: <span />,
-							externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
-						},
-					}
-				) }
-			</NoticeBanner>
+			{ ! hasFreeStats && (
+				<NoticeBanner
+					level="info"
+					title={ translate( 'Do you love Jetpack Stats?' ) }
+					onClose={ dismissNotice }
+				>
+					{ translate(
+						'{{p}}Upgrade Jetpack Stats to unlock upcoming features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+						noticeArgs
+					) }
+				</NoticeBanner>
+			) }
+			{ hasFreeStats && (
+				<NoticeBanner
+					level="info"
+					title={ translate( 'Want to get the most out of Jetpack Stats?' ) }
+					onClose={ dismissNotice }
+				>
+					{ translate(
+						'{{p}}Upgrade Jetpack Stats to unlock all of the upcoming premium features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+						noticeArgs
+					) }
+				</NoticeBanner>
+			) }
 		</div>
 	);
 };
