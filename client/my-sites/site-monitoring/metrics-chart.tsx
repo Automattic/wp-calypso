@@ -23,6 +23,12 @@ interface UplotChartProps {
 	period?: string;
 }
 
+export function formatChatHour( date: Date ): string {
+	const hours = String( date.getHours() ).padStart( 2, '0' );
+	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
+	return `${ hours }:${ minutes }`;
+}
+
 export default function UplotChartMetrics( {
 	data,
 	fillColor = 'rgba(48, 87, 220, 0.4)',
@@ -44,6 +50,12 @@ export default function UplotChartMetrics( {
 				...DEFAULT_DIMENSIONS,
 				// Set incoming dates as UTC.
 				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+				fmtDate: () => {
+					return ( date ) => {
+						const chatHour = formatChatHour( date );
+						return `${ chatHour }`;
+					};
+				},
 				axes: [
 					{
 						// x-axis
