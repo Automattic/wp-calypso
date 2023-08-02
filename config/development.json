@@ -84,6 +84,7 @@
 		"jetpack/backup-contents-page": true,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-retention-settings": true,
+		"jetpack/backup-granular": true,
 		"jetpack/cancel-through-main-flow": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,

@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { FunctionComponent, useState } from 'react';
+import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
 
@@ -21,16 +23,28 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 		hasChildren: true,
 	};
 
+	const controls: FileBrowserCheckTracker = {
+		showCheckbox: false,
+		includedFiles: [],
+		excludedFiles: [],
+	};
+
+	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
+
 	return (
-		<FileBrowserNode
-			siteId={ siteId }
-			rewindId={ rewindId }
-			item={ rootItem }
-			path="/"
-			isAlternate={ true }
-			setActiveNodePath={ handleClick }
-			activeNodePath={ activeNodePath }
-		/>
+		<div>
+			{ isGranularEnabled && <FileBrowserHeader controls={ controls } /> }
+			<FileBrowserNode
+				siteId={ siteId }
+				rewindId={ rewindId }
+				item={ rootItem }
+				path="/"
+				isAlternate={ true }
+				setActiveNodePath={ handleClick }
+				activeNodePath={ activeNodePath }
+				showCheckbox={ controls.showCheckbox }
+			/>
+		</div>
 	);
 };
 
