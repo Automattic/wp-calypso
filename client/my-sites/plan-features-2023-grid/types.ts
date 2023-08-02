@@ -1,16 +1,11 @@
 import { applyTestFiltersToPlansList, PlanSlug } from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
+import type { StorageOption } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
-};
-
-export type StorageOption = {
-	slug: string;
-	isAddOn: boolean;
-	featureObject: FeatureObject;
 };
 
 export type PlanProperties = {

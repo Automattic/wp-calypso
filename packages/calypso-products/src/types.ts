@@ -196,6 +196,8 @@ export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
 export type StorageOption = {
 	slug: string;
+	// Determines if the storage option is an add-on that can be purchased. There are a mixture of patterns
+	// to identify add-ons for now, and we're temporarily adding one more
 	isAddOn: boolean;
 };
 
