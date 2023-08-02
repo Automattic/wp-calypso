@@ -90,36 +90,25 @@ const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps
 		},
 	};
 
+	const noPurchaseTitle = translate( 'Do you love Jetpack Stats?' );
+	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
 				! isOdysseyStats && 'inner-notice-container--calypso'
 			}` }
 		>
-			{ ! hasFreeStats && (
-				<NoticeBanner
-					level="info"
-					title={ translate( 'Do you love Jetpack Stats?' ) }
-					onClose={ dismissNotice }
-				>
-					{ translate(
-						'{{p}}Upgrade Jetpack Stats to unlock upcoming features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
-						noticeArgs
-					) }
-				</NoticeBanner>
-			) }
-			{ hasFreeStats && (
-				<NoticeBanner
-					level="info"
-					title={ translate( 'Want to get the most out of Jetpack Stats?' ) }
-					onClose={ dismissNotice }
-				>
-					{ translate(
-						'{{p}}Upgrade Jetpack Stats to unlock all of the upcoming premium features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
-						noticeArgs
-					) }
-				</NoticeBanner>
-			) }
+			<NoticeBanner
+				level="info"
+				title={ hasFreeStats ? freeTitle : noPurchaseTitle }
+				onClose={ dismissNotice }
+			>
+				{ translate(
+					'{{p}}Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+					noticeArgs
+				) }
+			</NoticeBanner>
 		</div>
 	);
 };
