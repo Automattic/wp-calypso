@@ -206,7 +206,7 @@ export function DomainCodePair( {
 				<div>
 					<Button
 						href={ localizeUrl(
-							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-unlock-your-domain-and-obtain-your-auth-code'
 						) }
 						target="_blank"
 						variant="link"
