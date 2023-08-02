@@ -4,6 +4,8 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_200GB_STORAGE,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,8 +20,14 @@ export const getStorageStringFromFeature = ( storageFeature: string ) => {
 			return translate( '13 GB' );
 		case FEATURE_50GB_STORAGE:
 			return translate( '50 GB' );
+		// TODO: Remove when upgradeable storage is released in plans 2023
 		case FEATURE_200GB_STORAGE:
 			return translate( '200 GB' );
+		// Displayed string is the Add On + default 50GB storage
+		case FEATURE_50GB_STORAGE_ADD_ON:
+			return translate( '100 GB' );
+		case FEATURE_100GB_STORAGE_ADD_ON:
+			return translate( '150 GB' );
 		default:
 			return null;
 	}

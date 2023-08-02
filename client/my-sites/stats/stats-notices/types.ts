@@ -5,6 +5,7 @@ export interface PaidPlanPurchaseSuccessJetpackStatsNoticeProps {
 export interface StatsNoticeProps {
 	siteId: number | null;
 	onNoticeViewed?: () => void;
+	hasFreeStats?: boolean;
 }
 
 export interface NoticeBodyProps {
