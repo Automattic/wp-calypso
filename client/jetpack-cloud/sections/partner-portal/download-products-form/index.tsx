@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { useEffect } from 'react';
 import WooProductDownload from 'calypso/jetpack-cloud/sections/partner-portal/download-products-form/woo-product-download';
 import {
 	getProductSlugFromKey,
@@ -54,6 +55,26 @@ export default function DownloadProductsForm() {
 				allProducts={ allProducts }
 			/>
 		) );
+
+	// redirect if licenseKeys does not contain a valid product
+	useEffect( () => {
+		if ( ! licenseKeys || ! allProducts ) {
+			return;
+		}
+
+		const invalidKeys = licenseKeys.split( ',' ).filter( ( key ) => {
+			const productSlug = getProductSlugFromKey( key );
+			return ! allProducts.find( ( product ) => product.slug === productSlug );
+		} );
+
+		if ( invalidKeys.length ) {
+			page.redirect(
+				'dashboard' === source
+					? page.redirect( '/dashboard' )
+					: page.redirect( partnerPortalBasePath( '/licenses' ) )
+			);
+		}
+	}, [ licenseKeys, allProducts, source ] );
 
 	const onNavigate = () => {
 		return page.redirect(
