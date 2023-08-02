@@ -236,7 +236,6 @@ const StatsPurchaseWizard = ( {
 	initialStep,
 	initialSiteType,
 } ) => {
-	// redirectTo is a relative URI.
 	return (
 		<ProductCard
 			siteSlug={ siteSlug }
