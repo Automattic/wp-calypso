@@ -299,25 +299,28 @@ export class PluginsMain extends Component {
 	}
 
 	getEmptyContentData() {
-		const { translate } = this.props;
-		let emptyContentData = {
-			illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
-		};
-
-		switch ( this.props.filter ) {
-			case 'active':
-				emptyContentData.title = translate( 'No plugins are active.', { textOnly: true } );
-				break;
-			case 'inactive':
-				emptyContentData.title = translate( 'No plugins are inactive.', { textOnly: true } );
-				break;
-			case 'updates':
-				emptyContentData = this.getEmptyContentUpdateData();
-				break;
-			default:
-				return null;
+		const { filter } = this.props;
+		if ( filter === 'update' ) {
+			return this.getEmptyContentUpdateData();
 		}
-		return emptyContentData;
+
+		const { translate } = this.props;
+		const illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
+		if ( filter === 'active' ) {
+			return {
+				title: translate( 'No plugins are active.', { textOnly: true } ),
+				illustration,
+			};
+		}
+
+		if ( filter === 'inactive' ) {
+			return {
+				title: translate( 'No plugins are inactive.', { textOnly: true } ),
+				illustration,
+			};
+		}
+
+		return null;
 	}
 
 	getUpdatesTabVisibility() {
