@@ -27,11 +27,11 @@ import {
 	LineItem as LineItemType,
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { CheckoutUpgradeCreditsInfoDialog } from './checkout-upgrade-credits-info-dialog';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
@@ -124,6 +124,9 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
 	justify-content: flex-start;
 	gap: 4px;
+	.gridicon {
+		fill: ${ ( props ) => props.theme.colors.textColorLight };
+	}
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
@@ -779,15 +782,25 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-const UpgradeCreditHelpIconLink = () => (
-	<a
-		href={ localizeUrl( 'https://wordpress.com/support/manage-purchases/#upgrade-credit' ) }
-		target="_blank"
-		rel="help noreferrer"
-	>
-		<Gridicon icon="help-outline" size={ 18 } />
-	</a>
-);
+const UpgradeCreditHelpIconLink = () => {
+	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
+
+	function toggleIsDialogOpen() {
+		setIsDialogOpen( ( isDialogOpen ) => ! isDialogOpen );
+	}
+
+	return (
+		<>
+			<button type="button" onClick={ toggleIsDialogOpen }>
+				<Gridicon icon="help-outline" size={ 18 } />
+			</button>
+			<CheckoutUpgradeCreditsInfoDialog
+				isDialogOpen={ isDialogOpen }
+				onClose={ toggleIsDialogOpen }
+			/>
+		</>
+	);
+};
 
 function UpgradeCreditInformation( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
