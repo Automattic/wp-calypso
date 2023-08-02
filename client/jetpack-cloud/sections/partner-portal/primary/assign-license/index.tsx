@@ -24,9 +24,7 @@ export default function AssignLicense( {
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const products = getQueryArg( window.location.href, 'products' ) as string;
 	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
-	const showDownloadStep = licenseKeysArray.some( ( licenseKey ) =>
-		isWooCommerceProduct( licenseKey )
-	);
+	const showDownloadStep = licenseKeysArray.some( isWooCommerceProduct );
 
 	const scrollToTop = () => {
 		window.scrollTo( 0, 0 );

@@ -56,8 +56,7 @@ export default function IssueMultipleLicensesForm( {
 
 	const bundles =
 		allProducts?.filter(
-			( { family_slug }: { family_slug: string } ) =>
-				family_slug === 'jetpack-packs' && ! isWooCommerceProduct( family_slug )
+			( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
 		) || [];
 	const backupAddons =
 		allProducts
@@ -68,7 +67,9 @@ export default function IssueMultipleLicensesForm( {
 	const products =
 		allProducts?.filter(
 			( { family_slug }: { family_slug: string } ) =>
-				family_slug !== 'jetpack-packs' && ! isWooCommerceProduct( family_slug )
+				family_slug !== 'jetpack-packs' &&
+				family_slug !== 'jetpack-backup-storage' &&
+				! isWooCommerceProduct( family_slug )
 		) || [];
 	const wooExtensions =
 		allProducts?.filter( ( { family_slug }: { family_slug: string } ) =>
