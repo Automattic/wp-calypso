@@ -34,7 +34,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryTheme from 'calypso/components/data/query-theme';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
 import HeaderCake from 'calypso/components/header-cake';
@@ -64,13 +63,12 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getSiteSlug, isJetpackSite, isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
 import {
-	canUseTheme as getCanUseTheme,
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
@@ -89,12 +87,10 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
-	isFullSiteEditingTheme as getIsFullSiteEditingTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getTheme } from '../../state/themes/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
@@ -543,24 +539,16 @@ class ThemeSheet extends Component {
 	renderHeader = () => {
 		const {
 			author,
+			isLoggedIn,
+			isWpcomTheme,
 			isWPForTeamsSite,
+			isWporg,
 			name,
 			retired,
+			siteId,
 			softLaunched,
-			translate,
-			siteSlug,
-			stylesheet,
-			isAtomic,
-			isActive,
-			showTryAndCustomize,
-			isExternallyManagedTheme,
-			isWporg,
-			isLoggedIn,
-			canUseTheme,
-			isFullSiteEditingTheme,
-			isSimple,
-			isThemeInstalledOnAtomicSite,
 			themeId,
+			translate,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -588,23 +576,15 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						{ config.isEnabled( 'themes/block-theme-previews' ) && (
-							<LivePreviewButton
-								canUseTheme={ canUseTheme }
-								isActive={ isActive }
-								isAtomic={ isAtomic }
-								isExternallyManagedTheme={ isExternallyManagedTheme }
-								isFullSiteEditingTheme={ isFullSiteEditingTheme }
-								isSimple={ isSimple }
-								isThemeInstalledOnAtomicSite={ isThemeInstalledOnAtomicSite }
-								isWporg={ isWporg }
-								showTryAndCustomize={ showTryAndCustomize }
-								siteSlug={ siteSlug }
-								stylesheet={ stylesheet }
-								themeId={ themeId }
-								translate={ translate }
-							></LivePreviewButton>
-						) }
+						<LivePreviewButton
+							siteId={ siteId }
+							/**
+							 * Pass the siteId that QueryCanonicalTheme component will use to fetch the theme.
+							 * This avoids LivePreviewButton appearing a moment later.
+							 */
+							sourceSiteId={ ( isWpcomTheme && 'wpcom' ) || ( isWporg && 'wporg' ) || siteId }
+							themeId={ themeId }
+						/>
 						{ this.shouldRenderPreviewButton() && (
 							<Button
 								onClick={ ( e ) => {
@@ -1308,7 +1288,6 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
-				<QueryTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
 				{
@@ -1495,12 +1474,6 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
-		const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
-
-		const isFullSiteEditingTheme = config.isEnabled( 'themes/block-theme-previews' )
-			? getIsFullSiteEditingTheme( state, themeId )
-			: undefined;
-
 		return {
 			...theme,
 			themeId,
@@ -1518,19 +1491,15 @@ export default connect(
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
 			isAtomic,
-			isFullSiteEditingTheme,
 			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, themeId ),
-			isThemeInstalledOnAtomicSite,
 			isThemePurchased: isPremiumThemeAvailable( state, themeId, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, themeId ),
-			isSimple: isSimpleSite( state, siteId ),
 			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, themeId, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, themeId, siteId ),
-			canUseTheme: getCanUseTheme( state, siteId, themeId ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
