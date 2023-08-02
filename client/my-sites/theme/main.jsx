@@ -646,11 +646,12 @@ class ThemeSheet extends Component {
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
 						<LivePreviewButton
+							siteId={ siteId }
 							/**
 							 * Pass the siteId that QueryCanonicalTheme component will use to fetch the theme.
 							 * This avoids LivePreviewButton appearing a moment later.
 							 */
-							siteId={ ( isWpcomTheme && 'wpcom' ) || ( isWporg && 'wporg' ) || siteId }
+							sourceSiteId={ ( isWpcomTheme && 'wpcom' ) || ( isWporg && 'wporg' ) || siteId }
 							themeId={ themeId }
 						/>
 						{ this.shouldRenderPreviewButton() && (

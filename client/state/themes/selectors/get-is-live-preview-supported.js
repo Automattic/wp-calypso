@@ -82,7 +82,7 @@ const isNotCompatibleThemes = ( themeId ) => {
  *
  * @see pbxlJb-3Uv-p2
  */
-export const getIsLivePreviewSupported = ( state, themeId, siteId ) => {
+export const getIsLivePreviewSupported = ( state, themeId, siteId, sourceSiteId ) => {
 	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
 		return false;
 	}
@@ -98,7 +98,7 @@ export const getIsLivePreviewSupported = ( state, themeId, siteId ) => {
 	}
 
 	// A theme should be FullSiteEditing compatible to use Block Theme Previews.
-	if ( ! isFullSiteEditingTheme( state, themeId, siteId ) ) {
+	if ( ! isFullSiteEditingTheme( state, themeId, sourceSiteId ) ) {
 		return false;
 	}
 
@@ -114,7 +114,7 @@ export const getIsLivePreviewSupported = ( state, themeId, siteId ) => {
 
 	// Block Theme Previews need the theme installed on Atomic sites.
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
+	const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, sourceSiteId, themeId );
 	if ( isAtomic && ! isThemeInstalledOnAtomicSite ) {
 		return false;
 	}

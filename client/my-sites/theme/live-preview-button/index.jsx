@@ -8,10 +8,10 @@ import { getIsLivePreviewSupported, getLivePreviewUrl } from 'calypso/state/them
  *
  * @see pbxlJb-3Uv-p2
  */
-export const LivePreviewButton = ( { themeId, siteId } ) => {
+export const LivePreviewButton = ( { themeId, siteId, sourceSiteId } ) => {
 	const translate = useTranslate();
 	const isLivePreviewSupported = useSelector( ( state ) =>
-		getIsLivePreviewSupported( state, themeId, siteId )
+		getIsLivePreviewSupported( state, themeId, siteId, sourceSiteId )
 	);
 	const livePreviewUrl = useSelector( ( state ) => getLivePreviewUrl( state, themeId, siteId ) );
 	if ( ! isLivePreviewSupported ) {
