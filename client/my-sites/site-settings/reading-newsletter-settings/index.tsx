@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -81,7 +80,7 @@ export const NewsletterSettingsSection = ( {
 					disabled={ disabled }
 				/>
 			</Card>
-			{ isEnabled( 'newsletter/subscribe-modal' ) && isNewsletterSite && (
+			{ isNewsletterSite && (
 				<Card className="site-settings__card">
 					<SubscribeModalSetting
 						value={ sm_enabled }

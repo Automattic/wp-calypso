@@ -110,7 +110,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 					<div className="post-item__actions-mobile">
 						<a
 							href={ post.post_url }
-							className="post-item__view-link"
+							className="button post-item__view-link"
 							target="_blank"
 							rel="noreferrer"
 						>

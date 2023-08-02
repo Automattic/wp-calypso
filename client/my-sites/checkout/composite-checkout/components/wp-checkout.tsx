@@ -65,11 +65,11 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
-import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import { GoogleDomainsCopy } from './google-transfers-copy';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
@@ -415,7 +415,6 @@ export default function WPCheckout( {
 									addItemToCart={ addItemToCart }
 									isCartPendingUpdate={ isCartPendingUpdate }
 								/>
-								<CheckoutHelpLink />
 								<CheckoutNextSteps responseCart={ responseCart } />
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
@@ -551,6 +550,7 @@ export default function WPCheckout( {
 						/>
 					) }
 					<PaymentMethodStep
+						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
 						activeStepFooter={
 							<>
 								<PaymentMethodStepContent />
@@ -861,7 +861,11 @@ const WPCheckoutMainContent = styled.div`
 const WPCheckoutSidebarContent = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
-	margin-top: var( --masterbar-checkout-height );
+	margin-top: var( --masterbar-height );
+
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		margin-top: var( --masterbar-checkout-height );
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;

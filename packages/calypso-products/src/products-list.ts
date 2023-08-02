@@ -33,6 +33,7 @@ import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
 	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_AI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -82,9 +83,21 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
+	PRODUCT_WOOCOMMERCE_BOOKINGS,
+	PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+	PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
-import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
+import type {
+	ProductSlug,
+	JetpackProductSlug,
+	WPComProductSlug,
+	Product,
+	WooCommerceProductSlug,
+} from './types';
 
 const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();
 
@@ -102,6 +115,17 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getFeatures: () => [],
 		getProductId: () => 2450,
 		getStoreSlug: () => PRODUCT_JETPACK_AI_MONTHLY,
+	},
+	[ PRODUCT_JETPACK_AI_YEARLY ]: {
+		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_AI_YEARLY ],
+		product_slug: PRODUCT_JETPACK_AI_YEARLY,
+		type: PRODUCT_JETPACK_AI_YEARLY,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [],
+		getProductId: () => 2451,
+		getStoreSlug: () => PRODUCT_JETPACK_AI_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_JETPACK_BACKUP_DAILY ],
@@ -632,8 +656,78 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 	},
 };
 
+export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< WooCommerceProductSlug, Product > = {
+	[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: {
+		product_name: translate( 'WooCommerce Bookings' ),
+		product_slug: PRODUCT_WOOCOMMERCE_BOOKINGS,
+		type: PRODUCT_WOOCOMMERCE_BOOKINGS,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [],
+		getProductId: () => 2700,
+		getStoreSlug: () => PRODUCT_WOOCOMMERCE_BOOKINGS,
+	},
+	[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: {
+		product_name: translate( 'WooCommerce Subscriptions' ),
+		product_slug: PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+		type: PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [],
+		getProductId: () => 2701,
+		getStoreSlug: () => PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+	},
+	[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: {
+		product_name: translate( 'WooCommerce Product Bundles' ),
+		product_slug: PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+		type: PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [],
+		getProductId: () => 2702,
+		getStoreSlug: () => PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+	},
+	[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: {
+		product_name: translate( 'WooCommerce Product Add-Ons' ),
+		product_slug: PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+		type: PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [],
+		getProductId: () => 2703,
+		getStoreSlug: () => PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+	},
+	[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: {
+		product_name: translate( 'WooCommerce Min/Max Quantities' ),
+		product_slug: PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+		type: PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [],
+		getProductId: () => 2704,
+		getStoreSlug: () => PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+	},
+	[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: {
+		product_name: translate( 'WooCommerce AutomateWoo' ),
+		product_slug: PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
+		type: PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [],
+		getProductId: () => 2705,
+		getStoreSlug: () => PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
+	},
+};
+
 export const PRODUCTS_LIST: Record< ProductSlug, Product > = {
 	...JETPACK_SITE_PRODUCTS_WITH_FEATURES,
+	...WOOCOMMERCE_EXTENSIONS_PRODUCTS,
 	[ PRODUCT_WPCOM_SEARCH ]: {
 		product_name: PRODUCT_SHORT_NAMES[ PRODUCT_WPCOM_SEARCH ],
 		product_slug: PRODUCT_WPCOM_SEARCH,

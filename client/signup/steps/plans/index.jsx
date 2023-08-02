@@ -74,22 +74,33 @@ export class PlansStep extends Component {
 		return 'personal';
 	}
 
-	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
-		if ( freeDomainSuggestion?.product_slug ) {
-			return;
-		}
+	removePaidDomain = () => {
 		const domainItem = undefined;
-		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
 
 		this.props.submitSignupStep(
 			{
 				stepName: 'domains',
 				domainItem,
 				isPurchasingItem: false,
-				siteUrl,
 				stepSectionName: undefined,
 			},
 			{ domainItem }
+		);
+	};
+
+	setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				siteUrl,
+			},
+			{}
 		);
 	};
 
@@ -168,7 +179,8 @@ export class PlansStep extends Component {
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
 					showBiennialToggle={ this.props.showBiennialToggle }
-					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
+					removePaidDomain={ this.removePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 				/>
 			</div>
 		);

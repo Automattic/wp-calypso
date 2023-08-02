@@ -125,9 +125,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			</div>
 		);
 	};
-	const replacePaidDomainWithFreeDomain = ( freeDomainSuggestion: DomainSuggestion ) => {
-		setDomain( freeDomainSuggestion );
+
+	const removePaidDomain = () => {
 		setDomainCartItem( null );
+	};
+
+	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: DomainSuggestion ) => {
+		setDomain( freeDomainSuggestion );
 	};
 
 	const plansFeaturesList = () => {
@@ -153,7 +157,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
-					replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
+					removePaidDomain={ removePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 				/>
 				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>

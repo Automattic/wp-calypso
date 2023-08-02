@@ -452,7 +452,7 @@ export class JetpackAuthorize extends Component {
 				window.location.href = e.target.href;
 				break;
 			case this.isWooCoreProfiler():
-				recordTracksEvent( 'calypso_jpc_different_user_click' );
+				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
 				window.location.href = e.target.href;
 				break;
 			default:
@@ -530,6 +530,10 @@ export class JetpackAuthorize extends Component {
 
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+		}
+
+		if ( 'woocommerce-core-profiler' === from ) {
+			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
 		}
 
 		return this.authorize();

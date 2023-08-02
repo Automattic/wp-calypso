@@ -18,6 +18,7 @@ import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
+import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
@@ -55,6 +56,7 @@ const importFlow: Flow = {
 			{ slug: 'migrationHandler', component: MigrationHandler },
 			{ slug: 'sitePicker', component: SitePickerStep },
 			{ slug: 'error', component: MigrationError },
+			{ slug: 'verifyEmail', component: ImportVerifyEmail },
 		];
 	},
 
@@ -196,6 +198,10 @@ const importFlow: Flow = {
 				case 'error':
 					return navigate( providedDependencies?.url as string );
 
+				case 'verifyEmail':
+					// TODO: handle verify email submission, navigate to the next step
+					return;
+
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {
 						case 'update-query': {
@@ -265,6 +271,9 @@ const importFlow: Flow = {
 						return navigate( `sitePicker?from=${ fromParam }` );
 					}
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
+
+				case 'verifyEmail':
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 			}
 		};
 

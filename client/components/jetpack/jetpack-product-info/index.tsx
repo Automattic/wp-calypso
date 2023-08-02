@@ -1,6 +1,8 @@
+import classnames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useIncludedProductDescriptionMap } from 'calypso/components/jetpack/jetpack-product-info/hooks/use-included-product-description-map';
+import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -10,7 +12,6 @@ import JetpackProductInfoProductList from './product-list';
 import JetpackProductInfoRecommendationTags from './recommendation-tags';
 import JetpackProductInfoRegularList from './regular-list';
 import JetpackProductInfoSection from './section';
-
 import './style.scss';
 
 type JetpackProductInfoProps = {
@@ -42,13 +43,17 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
+	const iconStyles = classnames( {
+		'jetpack-product-info__product-icon': true,
+		'jetpack-product-info__product-icon-woocommerce': isWooCommerceProduct( productSlug ),
+	} );
 
 	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
 
 	return (
 		<div className="jetpack-product-info">
 			<div className="jetpack-product-info__header">
-				<div className="jetpack-product-info__product-icon">
+				<div className={ iconStyles }>
 					<img alt="" src={ icon } />
 				</div>
 				<h2>{ title }</h2>

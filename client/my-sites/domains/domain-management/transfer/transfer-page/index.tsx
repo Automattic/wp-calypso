@@ -59,6 +59,10 @@ import './style.scss';
 type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
 const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
 
+type ErrResponse = {
+	error?: string;
+};
+
 const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
@@ -216,9 +220,13 @@ const TransferPage = ( props: TransferPageProps ) => {
 					getNoticeOptions( selectedDomainName )
 				)
 			);
-		} catch ( { error } ) {
+		} catch ( error ) {
 			dispatch(
-				errorNotice( getDomainTransferCodeError( error ), getNoticeOptions( selectedDomainName ) )
+				errorNotice(
+					// Note: getDomainTransferCodeError handles undefined error codes.
+					getDomainTransferCodeError( ( error as ErrResponse )?.error ),
+					getNoticeOptions( selectedDomainName )
+				)
 			);
 		} finally {
 			setIsRequestingTransferCode( false );

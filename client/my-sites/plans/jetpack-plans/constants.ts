@@ -161,23 +161,10 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct >
 
 // Jetpack Stats
 
-// TODO: We'll need to internationalize currencies like we did for the purchase page.
-const STATS_COMMERCIAL_PRICE = 10;
-const STATS_COMMERCIAL_CURRENCY = 'USD';
-
-export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
-	productSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	term: TERM_MONTHLY,
-	displayTerm: TERM_ANNUALLY,
+export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct => ( {
 	type: ITEM_TYPE_PRODUCT,
-	costProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	monthlyProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
 	iconSlug: 'jetpack_stats',
-	displayName: translate( 'Stats' ),
-	shortName: translate( 'Stats' ),
 	tagline: translate( 'Simple, yet powerful analytics' ),
-	displayPrice: STATS_COMMERCIAL_PRICE,
-	displayCurrency: STATS_COMMERCIAL_CURRENCY,
 	description: translate(
 		'With Jetpack Stats, you don’t need to be a data scientist to see how your site is performing.'
 	),
@@ -189,19 +176,46 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
 	hidePrice: true,
 	// TODO: Refactor the checkout URL.
 	externalUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
+
+	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
+	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
+	displayName: translate( 'Stats' ),
+	shortName: translate( 'Stats' ),
+	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	term: TERM_ANNUALLY,
+
+	// Set the price directly with the translated string.
+	displayPriceText: translate( 'Varies', {
+		comment:
+			'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+	} ),
 } );
 
-export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct => ( {
-	...INDIRECT_CHECKOUT_PRODUCT_STATS(),
-	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	term: TERM_ANNUALLY,
-	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+// TODO: We'll need to internationalize currencies like we did for the purchase page.
+const STATS_COMMERCIAL_PRICE = 10;
+const STATS_COMMERCIAL_CURRENCY = 'USD';
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
+	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
+	displayName: translate( 'Stats (Commercial)' ),
+	shortName: translate( 'Stats (Commercial)' ),
+	productSlug: PRODUCT_JETPACK_STATS_MONTHLY,
+	costProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
+	term: TERM_MONTHLY,
+	displayTerm: TERM_ANNUALLY,
+	monthlyProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
+	displayPrice: STATS_COMMERCIAL_PRICE,
+	displayCurrency: STATS_COMMERCIAL_CURRENCY,
 } );
 
 export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
 	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
-	isFree: true,
+	displayName: translate( 'Stats (Free)' ),
+	shortName: translate( 'Stats (Free)' ),
 	productSlug: PRODUCT_JETPACK_STATS_FREE,
+	costProductSlug: PRODUCT_JETPACK_STATS_FREE,
+	isFree: true,
 } );
 
 // List of products showcased in the Plans grid but not sold via checkout URL directly.

@@ -10,7 +10,9 @@ import {
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 import FeatureRestrictionBadge from '../feature-restriction-badge';
+import SMSCounter from '../notification-settings/form-content/sms-counter';
 import { RestrictionType } from '../types';
+import UpgradeLink from '../upgrade-link';
 import ContactListItem from './item';
 import { getContactActionEventName, getContactItemValue } from './utils';
 
@@ -64,6 +66,8 @@ export default function ContactList( {
 		}
 	}, [ items.length, type ] );
 
+	const showSMSCounter = false;
+
 	return (
 		<>
 			{ type === 'sms' && ! items.length && (
@@ -102,11 +106,13 @@ export default function ContactList( {
 					</div>
 				) }
 
-				{ showAddButton && restriction === 'upgrade_required' && (
+				{ showAddButton && restriction === 'upgrade_required' && type === 'email' && (
 					<div className="contact-list__upgrade-message">
 						{ translate( 'Multiple email recipients is part of the Basic plan.' ) }
+						<UpgradeLink isInline />
 					</div>
 				) }
+				{ showSMSCounter && type === 'sms' && <SMSCounter /> }
 			</div>
 		</>
 	);

@@ -50,7 +50,12 @@ const sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/me/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
+		paths: [
+			'/me/purchases',
+			'/me/purchases-by-owner',
+			'/me/billing',
+			'/payment-methods/add-credit-card',
+		],
 		module: 'calypso/me/purchases',
 		group: 'me',
 	},
@@ -596,7 +601,7 @@ const sections = [
 	},
 	{
 		name: 'promote-post',
-		paths: [ '/advertising', '/advertising/[^\\/]+', '/advertising/[^\\/]+/[^\\/]+/promote' ],
+		paths: [ '/advertising' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
 	},
@@ -604,6 +609,12 @@ const sections = [
 		name: 'site-logs',
 		paths: [ '/site-logs' ],
 		module: 'calypso/my-sites/site-logs',
+		group: 'sites',
+	},
+	{
+		name: 'site-monitoring',
+		paths: [ '/site-monitoring' ],
+		module: 'calypso/my-sites/site-monitoring',
 		group: 'sites',
 	},
 ];

@@ -15,24 +15,21 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	margin-bottom: 20px;
 	flex-wrap: wrap;
 	display: grid;
-	grid-template-columns: 1fr 480px;
+	grid-template-columns: 1fr auto;
 
-	&.wide {
-		grid-template-columns: 1fr 220px;
-	}
+	.promote-post-i2__search-bar-options {
+		display: flex;
 
-	.promote-post-i2__search-bar-dropdown {
-		&.select-dropdown {
-			height: 50px;
-		}
+		.promote-post-i2__search-bar-dropdown {
 
-		.select-dropdown__container {
-			max-width: 220px;
-			width: 100%;
-		}
-
-		.select-dropdown__header {
-			height: 50px;
+			&.select-dropdown {
+				&.order-by .select-dropdown__container {
+					min-width: 200px;
+				}
+				&.post-type .select-dropdown__container {
+					min-width: 160px;
+				}
+			}
 		}
 	}
 
@@ -105,15 +102,21 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 }
 
 @mixin blazepress-search-bar-mobile {
-	.promote-post-i2__search-bar-wrapper {
+	.main.promote-post-i2 .promote-post-i2__search-bar-wrapper {
 		display: flex;
 		position: relative;
 
+		.promote-post-i2__search-bar-search.search-component {
+			margin-bottom: 12px;
+		}
+
+		.promote-post-i2__search-bar-options {
+			width: 100%;
+			justify-content: space-between;
+		}
+
 		.promote-post-i2__search-bar-dropdown {
-			position: absolute;
-			right: 0;
-			top: 3rem;
-			z-index: 100; // Search dropdown should be above the post list.
+			margin: 0;
 
 			.select-dropdown__header {
 				background: transparent;

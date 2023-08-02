@@ -6,6 +6,7 @@ import {
 	getPlanPath,
 	PLAN_PERSONAL,
 	PlanSlug,
+	getPlanClass,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -36,6 +37,7 @@ import usePlansWithIntent, {
 } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
+import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -48,7 +50,7 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type {
 	PlanActionOverrides,
-	SingleFreeDomainSuggestion,
+	DataResponse,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
@@ -68,7 +70,8 @@ export interface PlansFeaturesMainProps {
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
 	flowName?: string | null;
-	replacePaidDomainWithFreeDomain?: ( freeDomainSuggestion: DomainSuggestion ) => void;
+	removePaidDomain?: () => void;
+	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
 	intervalType?: IntervalType;
 	planTypeSelector?: 'customer' | 'interval';
 	withDiscount?: string;
@@ -87,6 +90,7 @@ export interface PlansFeaturesMainProps {
 	showBiennialToggle?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
+	isSpotlightOnCurrentPlan?: boolean;
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
@@ -96,7 +100,8 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	intent?: PlansIntent;
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
+	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -140,7 +145,9 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		sitePlanSlug,
 		siteSlug,
 		intent,
+		isCustomDomainAllowedOnFreePlan,
 		showLegacyStorageFeature,
+		isSpotlightOnCurrentPlan,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -167,6 +174,13 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		};
 	}
 
+	let spotlightPlanSlug: PlanSlug | undefined;
+	if ( sitePlanSlug && isSpotlightOnCurrentPlan ) {
+		spotlightPlanSlug = Object.keys( planRecords ).find(
+			( planSlug ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
+		) as PlanSlug | undefined;
+	}
+
 	const asyncProps: PlanFeatures2023GridProps = {
 		paidDomainName,
 		wpcomFreeDomainSuggestion,
@@ -186,8 +200,10 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		currentSitePlanSlug: sitePlanSlug,
 		planActionOverrides,
 		intent,
+		isCustomDomainAllowedOnFreePlan,
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		showLegacyStorageFeature,
+		spotlightPlanSlug,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -213,7 +229,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 const PlansFeaturesMain = ( {
 	paidDomainName,
 	flowName,
-	replacePaidDomainWithFreeDomain,
+	removePaidDomain,
+	setSiteUrlAsFreeDomainSuggestion,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectToAddDomainFlow,
@@ -243,6 +260,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
+	isSpotlightOnCurrentPlan,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
@@ -257,6 +275,10 @@ const PlansFeaturesMain = ( {
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
+	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
+		flowName,
+		paidDomainName
+	);
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -399,12 +421,20 @@ const PlansFeaturesMain = ( {
 					paidDomainName={ paidDomainName }
 					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 					suggestedPlanSlug={ PLAN_PERSONAL }
+					isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 					onClose={ toggleIsFreePlanPaidDomainDialogOpen }
 					onFreePlanSelected={ () => {
+						if ( isCustomDomainAllowedOnFreePlan.isLoading ) {
+							return;
+						}
+
+						if ( ! isCustomDomainAllowedOnFreePlan.result ) {
+							removePaidDomain?.();
+						}
 						// Since this domain will not be available after it is selected, invalidate the cache.
 						invalidateDomainSuggestionCache();
-						wpcomFreeDomainSuggestion.entry &&
-							replacePaidDomainWithFreeDomain?.( wpcomFreeDomainSuggestion.entry );
+						wpcomFreeDomainSuggestion.result &&
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
 						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {
@@ -454,7 +484,9 @@ const PlansFeaturesMain = ( {
 						sitePlanSlug={ sitePlanSlug }
 						siteSlug={ siteSlug }
 						intent={ intent }
+						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
+						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
 					/>
 				</>
 			) }

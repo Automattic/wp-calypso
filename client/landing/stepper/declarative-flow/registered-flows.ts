@@ -11,6 +11,7 @@ import {
 	ONBOARDING_PM_FLOW,
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
+	GOOGLE_TRANSFER,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -108,6 +109,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
+
+	[ GOOGLE_TRANSFER ]: () =>
+		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),

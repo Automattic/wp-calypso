@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import CommercialPurchase from './stats-purchase-commercial';
@@ -60,11 +61,15 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
 
 	const setPersonalSite = () => {
+		recordTracksEvent( `calypso_stats_personal_plan_selected` );
+
 		setSiteType( TYPE_PERSONAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	const setCommercialSite = () => {
+		recordTracksEvent( `calypso_stats_commercial_plan_selected` );
+
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
@@ -81,6 +86,8 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = ( e ) => {
 		e.preventDefault();
+		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
+
 		setCommercialSite();
 	};
 

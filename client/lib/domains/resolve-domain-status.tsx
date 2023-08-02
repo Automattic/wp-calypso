@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
@@ -480,24 +481,46 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
+				const hasTranslation =
+					englishLocales.includes( String( getLocaleSlug() ) ) ||
+					i18n.hasTranslation(
+						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{a}}point it to WordPress.com name servers.{{/a}}'
+					);
+
+				const oldCopy = translate(
+					'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need {{a}}point it to WordPress.com name servers.{{/a}}',
+					{
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+								/>
+							),
+						},
+					}
+				);
+
+				const newCopy = translate(
+					'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{a}}point it to WordPress.com name servers.{{/a}}',
+					{
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+								/>
+							),
+						},
+					}
+				);
+
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-success',
 					status: translate( 'Active' ),
 					icon: 'info',
-					noticeText: translate(
-						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need {{a}}point it to WordPress.com name servers.{{/a}}',
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
-									/>
-								),
-							},
-						}
-					),
+					noticeText: hasTranslation ? newCopy : oldCopy,
 					listStatusWeight: 600,
 				};
 			}
@@ -560,6 +583,28 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.TRANSFER:
+			if ( domain.lastTransferError ) {
+				return {
+					statusText: translate( 'Complete setup' ),
+					statusClass: 'status-warning',
+					status: translate( 'Complete setup' ),
+					icon: 'info',
+					noticeText: translate(
+						'There was an error when initiating your domain transfer. Please {{a}}see the details or retry{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+									/>
+								),
+							},
+						}
+					),
+					listStatusWeight: 600,
+				};
+			}
+
 			if ( domain.transferStatus === transferStatus.PENDING_START ) {
 				return {
 					statusText: translate( 'Complete setup' ),

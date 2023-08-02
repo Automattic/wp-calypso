@@ -262,8 +262,10 @@ class DomainsStep extends Component {
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		const suggestion = this.props.step.suggestion;
+		const { step } = this.props;
+		const { lastDomainSearched } = step.domainForm ?? {};
 
+		const { suggestion } = step;
 		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
 
 		const siteUrl =
@@ -305,7 +307,9 @@ class DomainsStep extends Component {
 				{ domainItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem,
-				signupDomainOrigin ? { signupDomainOrigin } : {}
+				signupDomainOrigin ? { signupDomainOrigin } : {},
+				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				lastDomainSearched ? { lastDomainSearched } : {}
 			)
 		);
 
@@ -338,9 +342,14 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem, {
-				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
-			} )
+			Object.assign(
+				{ domainItem },
+				useThemeHeadstartItem,
+				{
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+				},
+				{ siteUrl: domain }
+			)
 		);
 
 		this.props.goToNextStep();
@@ -374,7 +383,7 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			Object.assign( { domainItem }, useThemeHeadstartItem, { siteUrl: domain } )
 		);
 
 		this.props.goToNextStep();

@@ -197,7 +197,7 @@ $theme-sheet-content-max-width: 1462px;
 			width: 100%;
 		}
 
-		button {
+		.button {
 			border-radius: 4px;
 
 			@include breakpoint-deprecated( "<960px" ) {

@@ -20,12 +20,10 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
-		isDevAccount: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		locale: 'en',
-		isDevAccount: false,
 	};
 
 	state = {
@@ -82,7 +80,6 @@ class PasswordlessSignupForm extends Component {
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
-				is_dev_account: this.props.isDevAccount,
 			} );
 			this.createAccountCallback( null, response );
 		} catch ( err ) {

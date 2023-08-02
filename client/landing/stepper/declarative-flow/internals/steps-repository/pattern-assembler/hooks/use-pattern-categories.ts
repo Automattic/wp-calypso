@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
@@ -25,9 +24,6 @@ const usePatternCategories = (
 			...queryOptions.meta,
 		},
 		select: ( data: Category[] ) => {
-			if ( ! isEnabled( 'pattern-assembler/all-patterns-category' ) ) {
-				return data;
-			}
 			return data.map( ( category ) => {
 				if ( 'featured' === category.name ) {
 					return {
