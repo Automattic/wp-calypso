@@ -197,12 +197,20 @@ const importFlow: Flow = {
 					return handleMigrationRedirects( providedDependencies );
 				}
 
+				case 'migrationTrial': {
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						default:
+							return;
+					}
+				}
+
 				case 'error':
 					return navigate( providedDependencies?.url as string );
 
 				case 'verifyEmail':
-					// TODO: handle verify email submission, navigate to the next step
-					return;
+					return navigate( `migrationTrial?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {

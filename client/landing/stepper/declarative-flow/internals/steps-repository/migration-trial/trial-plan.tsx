@@ -7,13 +7,29 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
 import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
+import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { UserData } from 'calypso/lib/user/user';
 
-const TrialPlan = function TrialPlan() {
+interface Props {
+	user: UserData;
+	site: SiteDetails;
+	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+}
+const TrialPlan = function TrialPlan( props: Props ) {
 	const { __ } = useI18n();
+	const { user, site, submit } = props;
 	const [ showPlanFeaturesModal, setShowPlanFeaturesModal ] = useState( false );
 
 	const unsupportedTrialFeatureList = useUnsupportedTrialFeatureList();
 	const plan = getPlan( PLAN_BUSINESS );
+
+	const onStartTrialClick = () => {
+		if ( ! user?.email_verified ) {
+			submit?.( { action: 'verify-email' } );
+		} else {
+			// TODO: Trigger the trial start
+		}
+	};
 
 	return (
 		<>
@@ -73,7 +89,9 @@ const TrialPlan = function TrialPlan() {
 					</div>
 				</div>
 
-				<NextButton>{ __( 'Start the trial and migrate' ) }</NextButton>
+				<NextButton onClick={ onStartTrialClick }>
+					{ __( 'Start the trial and migrate' ) }
+				</NextButton>
 			</div>
 		</>
 	);
