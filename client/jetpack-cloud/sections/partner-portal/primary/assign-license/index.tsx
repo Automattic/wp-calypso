@@ -8,7 +8,6 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import Layout from '../../layout';
 
 import './styles.scss';
 
@@ -49,31 +48,23 @@ export default function AssignLicense( {
 	}, [] );
 
 	return (
-		<Layout
-			className="assign-license"
-			title={ translate( 'Assign your license', 'Assign your licenses', {
-				count: licenseKeysArray.length,
-			} ) }
-			wide
-		>
-			<Main wideLayout className="assign-license">
-				<AssignLicenseStepProgress
-					currentStep="assignLicense"
-					showDownloadStep={ showDownloadStep }
-				/>
-				<DocumentHead
-					title={ translate( 'Assign your license', 'Assign your licenses', {
-						count: licenseKeysArray.length,
-					} ) }
-				/>
-				<SidebarNavigation />
-				<CardHeading size={ 36 }>
-					{ translate( 'Assign your license', 'Assign your licenses', {
-						count: licenseKeysArray.length,
-					} ) }
-				</CardHeading>
-				<AssignLicenseForm sites={ sites } currentPage={ currentPage } search={ search } />
-			</Main>
-		</Layout>
+		<Main wideLayout className="assign-license">
+			<AssignLicenseStepProgress
+				currentStep="assignLicense"
+				showDownloadStep={ showDownloadStep }
+			/>
+			<DocumentHead
+				title={ translate( 'Assign your license', 'Assign your licenses', {
+					count: licenseKeysArray.length,
+				} ) }
+			/>
+			<SidebarNavigation />
+			<CardHeading size={ 36 }>
+				{ translate( 'Assign your license', 'Assign your licenses', {
+					count: licenseKeysArray.length,
+				} ) }
+			</CardHeading>
+			<AssignLicenseForm sites={ sites } currentPage={ currentPage } search={ search } />
+		</Main>
 	);
 }
