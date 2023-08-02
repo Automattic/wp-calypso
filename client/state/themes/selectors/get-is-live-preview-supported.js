@@ -9,7 +9,7 @@ import {
 	getTheme,
 	isExternallyManagedTheme,
 	canUseTheme,
-} from '../selectors';
+} from '.';
 
 /**
  * Hardcoded list of themes that are not compatible with Block Theme Previews.
