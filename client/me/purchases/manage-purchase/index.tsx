@@ -66,6 +66,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDomainRegistrationAgreementUrl,
@@ -120,14 +121,15 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
-import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { hasLoadedSiteDomains, getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { IAppState } from 'calypso/state/types';
+import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
@@ -199,6 +201,9 @@ export interface ManagePurchaseConnectedProps {
 	site?: SiteDetails | null;
 	siteId?: number | null;
 	theme: false | 0 | Theme | null | undefined;
+	domainsDetails: Record< string, ResponseDomain[] >;
+	currentRoute?: string;
+	dispatch: CalypsoDispatch;
 
 	// Actions
 
@@ -971,10 +976,27 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isDomainTransfer( purchase ) ) {
-			return translate(
-				'Transfers an existing domain from another provider to WordPress.com, ' +
-					'helping you manage your site and domain in one place.'
+			const { currentRoute, site, translate, dispatch } = this.props;
+
+			const transferDomain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
+				( domain ) => domain.domain === purchase.meta
 			);
+
+			if ( transferDomain ) {
+				const { noticeText } = resolveDomainStatus( transferDomain, null, translate, dispatch, {
+					siteSlug: site?.slug,
+					getMappingErrors: true,
+					currentRoute,
+				} );
+				if ( noticeText ) {
+					return noticeText;
+				}
+
+				return translate(
+					'Transfers an existing domain from another provider to WordPress.com, ' +
+						'helping you manage your site and domain in one place.'
+				);
+			}
 		}
 
 		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
@@ -1472,8 +1494,11 @@ export default connect(
 			? getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug ) ?? 0
 			: 0;
 		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
+		const currentRoute = getCurrentRoute( state );
 
 		return {
+			currentRoute,
+			domainsDetails: getAllDomains( state ),
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			hasLoadedDomains,
 			hasLoadedPurchasesFromServer: props.isSiteLevel
