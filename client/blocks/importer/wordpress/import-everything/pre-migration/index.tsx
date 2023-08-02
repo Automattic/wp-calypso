@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
@@ -35,8 +34,9 @@ interface PreMigrationProps {
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	initImportRun?: boolean;
 	isTargetSitePlanCompatible: boolean;
-	onContentOnlyClick: () => void;
 	isMigrateFromWp: boolean;
+	onContentOnlyClick: () => void;
+	onFreeTrialClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -47,8 +47,9 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		initImportRun,
 		targetSite,
 		isTargetSitePlanCompatible,
-		onContentOnlyClick,
 		isMigrateFromWp,
+		onContentOnlyClick,
+		onFreeTrialClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -108,7 +109,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
 
-	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+	const { isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			setQueryTargetSitePlanStatus( 'fetching' );
 		},
@@ -137,9 +138,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledStatus();
 	};
 
-	const onFreeTrialClick = () => {
-		addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
-	};
+	// Initiate the migration if initImportRun is set
+	useEffect( () => {
+		initImportRun && startImport( { type: 'without-credentials' } );
+	}, [] );
 
 	useEffect( () => {
 		if ( isTargetSitePlanCompatible && sourceSiteId ) {

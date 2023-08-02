@@ -174,8 +174,11 @@ export class ImportEverything extends SectionMigrate {
 					initImportRun={ this.props.initImportRun }
 					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 					targetSite={ targetSite }
-					onContentOnlyClick={ onContentOnlySelection }
 					isMigrateFromWp={ isMigrateFromWp }
+					onContentOnlyClick={ onContentOnlySelection }
+					onFreeTrialClick={ () => {
+						stepNavigator?.navigate( `migrationTrial${ window.location.search }` );
+					} }
 				/>
 			);
 		}
