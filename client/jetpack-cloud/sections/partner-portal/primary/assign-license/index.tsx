@@ -9,7 +9,6 @@ import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/ass
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Layout from '../../layout';
-import LayoutHeader from '../../layout/header';
 
 import './styles.scss';
 
@@ -57,26 +56,17 @@ export default function AssignLicense( {
 			} ) }
 			wide
 		>
-			<AssignLicenseStepProgress currentStep="assignLicense" />
-
-			<LayoutHeader>
-				<CardHeading size={ 36 }>
-					{ translate( 'Assign your license', 'Assign your licenses', {
-						count: licenseKeysArray.length,
-					} ) }
-				</CardHeading>
-			</LayoutHeader>
 			<Main wideLayout className="assign-license">
+				<AssignLicenseStepProgress
+					currentStep="assignLicense"
+					showDownloadStep={ showDownloadStep }
+				/>
 				<DocumentHead
 					title={ translate( 'Assign your license', 'Assign your licenses', {
 						count: licenseKeysArray.length,
 					} ) }
 				/>
 				<SidebarNavigation />
-				<AssignLicenseStepProgress
-					currentStep="assignLicense"
-					showDownloadStep={ showDownloadStep }
-				/>
 				<CardHeading size={ 36 }>
 					{ translate( 'Assign your license', 'Assign your licenses', {
 						count: licenseKeysArray.length,
