@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
@@ -41,27 +42,27 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return;
 	}
 
-	dispatch(
-		recordTracksEvent( 'calypso_jetpack_connection_health_issue_view', {
-			type: 'default',
-		} )
-	);
-
 	return (
-		<Notice
-			status="is-error"
-			showDismiss={ false }
-			text={ translate( 'Jetpack connection failed.' ) }
-		>
-			<NoticeAction
-				href={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
-				) }
-				external
-				onClick={ handleJetpackConnectionHealthLinkClick }
+		<>
+			<TrackComponentView
+				eventName="calypso_jetpack_connection_health_issue_view"
+				eventProperties={ { type: 'default' } }
+			/>
+			<Notice
+				status="is-error"
+				showDismiss={ false }
+				text={ translate( 'Jetpack connection failed.' ) }
 			>
-				{ translate( 'Learn how to fix' ) }
-			</NoticeAction>
-		</Notice>
+				<NoticeAction
+					href={ localizeUrl(
+						'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
+					) }
+					external
+					onClick={ handleJetpackConnectionHealthLinkClick }
+				>
+					{ translate( 'Learn how to fix' ) }
+				</NoticeAction>
+			</Notice>
+		</>
 	);
 };
