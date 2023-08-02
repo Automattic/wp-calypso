@@ -1783,7 +1783,6 @@ export const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
-		isAddOn: true,
 	},
 	[ FEATURE_100GB_STORAGE_ADD_ON ]: {
 		getSlug: () => FEATURE_100GB_STORAGE_ADD_ON,
@@ -1793,7 +1792,6 @@ export const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '100 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
-		isAddOn: true,
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
