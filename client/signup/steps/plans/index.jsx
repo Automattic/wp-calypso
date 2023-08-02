@@ -164,7 +164,7 @@ export class PlansStep extends Component {
 					paidDomainName={ paidDomainName }
 					freeSubdomain={ ! domainItem ? siteUrl : undefined }
 					siteTitle={ siteTitle }
-					username={ username }
+					signupFlowUserName={ username }
 					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }

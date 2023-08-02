@@ -1,6 +1,5 @@
 import { domainProductSlugs, getPlan, PlanSlug } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
-import { DomainSuggestion } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -131,14 +130,12 @@ function LazyDisplayText( {
  */
 export function FreeFreeDialog( {
 	freeSubdomain,
-	wpcomFreeDomainSuggestion,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 	suggestedPlanSlug,
 }: {
-	freeSubdomain?: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
+	freeSubdomain: DataResponse< string >;
 	onClose: () => void;
 	onFreePlanSelected: () => void;
 	onPlanSelected: () => void;
@@ -202,10 +199,8 @@ export function FreeFreeDialog( {
 										strong: <strong></strong>,
 										subdomain: (
 											<LazyDisplayText
-												displayText={
-													freeSubdomain ?? wpcomFreeDomainSuggestion.result?.domain_name
-												}
-												isLoading={ wpcomFreeDomainSuggestion.isLoading }
+												displayText={ freeSubdomain?.result }
+												isLoading={ freeSubdomain?.isLoading }
 											/>
 										),
 									},
@@ -256,7 +251,7 @@ export function FreeFreeDialog( {
 				<TextBox>
 					{ planTitle &&
 						translate(
-							'Unlock {{strong}}all of{{/strong}} these features with a %(planTitle)s plan,starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
+							'Unlock {{strong}}all of{{/strong}} these features with a %(planTitle)s plan, starting at just %(planPrice)s/month, {{break}}{{/break}} with a 14-day money back guarantee.',
 							{
 								args: {
 									planTitle,
@@ -289,6 +284,7 @@ export function FreeFreeDialog( {
 
 				<ButtonRow>
 					<StyledButton
+						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
 						primary
 						onClick={ () => {
 							onPlanSelected();
@@ -303,6 +299,7 @@ export function FreeFreeDialog( {
 					</StyledButton>
 
 					<StyledButton
+						disabled={ freeSubdomain.isLoading || ! freeSubdomain.result }
 						onClick={ () => {
 							onFreePlanSelected();
 						} }

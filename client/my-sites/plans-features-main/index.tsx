@@ -26,6 +26,7 @@ import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-ite
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -74,7 +75,7 @@ export interface PlansFeaturesMainProps {
 	paidDomainName?: string;
 	freeSubdomain?: string;
 	siteTitle?: string;
-	username?: string;
+	signupFlowUserName?: string;
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
@@ -234,9 +235,9 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 
 const PlansFeaturesMain = ( {
 	paidDomainName,
-	freeSubdomain,
+	freeSubdomain: signupFlowSubdomain,
 	siteTitle,
-	username,
+	signupFlowUserName,
 	flowName,
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
@@ -402,9 +403,17 @@ const PlansFeaturesMain = ( {
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
 		hidePlanSelector = true;
 	}
-
+	const currentUserName = useSelector( getCurrentUserName );
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
-		useGetFreeSubdomainSuggestion( paidDomainName || siteTitle || username || 'wpsite' );
+		useGetFreeSubdomainSuggestion(
+			paidDomainName || siteTitle || signupFlowUserName || currentUserName
+		);
+	const resolvedSubdomainName: DataResponse< string > = {
+		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
+		result: signupFlowSubdomain
+			? signupFlowSubdomain
+			: wpcomFreeDomainSuggestion.result?.domain_name,
+	};
 
 	const planTypeSelectorProps = {
 		basePlansPath,
@@ -459,21 +468,22 @@ const PlansFeaturesMain = ( {
 			{ isFreeFreeUpsellOpen && (
 				<FreeFreeDialog
 					suggestedPlanSlug={ PLAN_PERSONAL }
-					freeSubdomain={ freeSubdomain }
-					wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+					freeSubdomain={ resolvedSubdomainName }
 					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
 					onFreePlanSelected={ () => {
-						onUpgradeClick?.( null );
-						if ( ! freeSubdomain && wpcomFreeDomainSuggestion.result ) {
+						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
 						}
+						invalidateDomainSuggestionCache();
+						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {
-						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
-						onUpgradeClick?.( cartItemForPlan );
-						if ( ! freeSubdomain && wpcomFreeDomainSuggestion.result ) {
+						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
 						}
+						invalidateDomainSuggestionCache();
+						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+						onUpgradeClick?.( cartItemForPlan );
 					} }
 				/>
 			) }
