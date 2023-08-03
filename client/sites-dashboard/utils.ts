@@ -1,3 +1,4 @@
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 
 export const TRACK_SOURCE_NAME = 'sites-dashboard';
@@ -48,6 +49,10 @@ export const isP2Site = ( site: SiteExcerptNetworkData ) => {
 
 export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
 	return site?.is_wpcom_staging_site;
+};
+
+export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
