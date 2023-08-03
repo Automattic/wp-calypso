@@ -20,7 +20,7 @@ on:
           - extract
   schedule:
     # Every two hours.
-    - cron: '0 0/2 * * *'
+    - cron: '0,30 * * * *'
   pull_request:
     paths:
       - '.github/workflows/renovate.yml'
