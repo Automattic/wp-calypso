@@ -51,7 +51,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<Notice
 				status="is-error"
 				showDismiss={ false }
-				text={ translate( 'Jetpack connection failed.' ) }
+				text={ translate( 'Jetpack is unable to communicate with your site.' ) }
 			>
 				<NoticeAction
 					href={ localizeUrl(
