@@ -15,6 +15,13 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 		client: config( 'client_slug' ),
 	};
 
+	if ( typeof window !== 'undefined' ) {
+		Object.assign( superProps, {
+			vph: window.innerHeight,
+			vpw: window.innerWidth,
+		} );
+	}
+
 	const path = eventProperties.path ?? getCurrentRoute( state );
 
 	const omitSelectedSite = ! eventProperties.force_site_id && shouldReportOmitBlogId( path );
