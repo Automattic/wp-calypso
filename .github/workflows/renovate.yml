@@ -35,9 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      #   with:
-      #     path: monorepo
-      # - run: mv monorepo /tmp/monorepo
       - name: Check rate limit pre-run
         env:
           TOKEN: ${{ secrets.RENOVATE_TOKEN }}
