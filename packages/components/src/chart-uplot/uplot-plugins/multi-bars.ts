@@ -126,8 +126,6 @@ export default function seriesBarsPlugin(
 							rect( fill, lft, top, barWid, barHgt );
 						}
 
-						console.log( 'drawing', { fill, lft, top, barWid, barHgt } );
-
 						const x = ori === 0 ? Math.round( lft - xOff ) : Math.round( top - yOff );
 						const y = ori === 0 ? Math.round( top - yOff ) : Math.round( lft - xOff );
 						const w = ori === 0 ? barWid : barHgt;
