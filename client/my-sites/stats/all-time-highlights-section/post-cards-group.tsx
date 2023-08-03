@@ -69,10 +69,9 @@ const getStatsTopPostsData = createSelector(
 			topPage,
 		};
 	},
-	// Refresh memoized data from createSelector with the loading flag
-	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => [
+	( state, siteId, topPostsQuery ) => [
 		topPostsQuery,
-		isTopViewedPostRequesting,
+		getSiteOption( state, siteId, 'gmt_offset' ),
 	]
 );
 
