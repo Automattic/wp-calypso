@@ -47,6 +47,7 @@ export const Plans2023Tooltip = (
 	}
 
 	const getMobileActiveTooltip = () => {
+		// Close tooltip if the user clicks on an open tooltip.
 		if ( activeTooltipId === id ) {
 			return '';
 		}

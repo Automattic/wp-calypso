@@ -37,6 +37,8 @@ const PlanFeatures: React.FC< {
 		if ( isDesktop ) {
 			return;
 		}
+
+		// Close all toolltips in mobile if the user clicks anywhere on the plan card.
 		const closeAllTooltips = ( event: TouchEvent ) => {
 			if ( ! event.target?.classList.contains( 'plans-2023-tooltip__hover-area-container' ) ) {
 				setActiveTooltipId( '' );
