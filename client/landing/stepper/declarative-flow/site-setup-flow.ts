@@ -10,7 +10,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
@@ -58,7 +57,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect, SiteDetails } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -142,13 +141,9 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
 			[]
 		);
+		const siteId = useSiteIdParam();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
-		const isDomainOnlySite = useSelect(
-			( select ) =>
-				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'is_domain_only' ),
-			[ site ]
-		);
 		const currentUser = useSelector( getCurrentUser );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
@@ -244,25 +239,6 @@ const siteSetupFlow: Flow = {
 							apiNamespace: 'wpcom/v2',
 							apiVersion: '2',
 							formData,
-						} ).then( () => {
-							if ( ! siteId || ! isDomainOnlySite ) {
-								return;
-							}
-							// The request above also converts domain-only sites to regular sites.
-							// In this case, we need to fetch its data again to get the updated slug.
-							return new Promise( ( resolve ) => {
-								resolve( dispatch( requestSite( siteId ) ) );
-							} )
-								.catch( () => {
-									// Silently fails if we couldn't fetch the site data.
-									return;
-								} )
-								.then( ( site ) => {
-									redirectionUrl = addQueryArgs(
-										{ siteSlug: new URL( ( site as SiteDetails ).URL ).host },
-										to
-									);
-								} );
 						} )
 					);
 
@@ -356,9 +332,12 @@ const siteSetupFlow: Flow = {
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
-						return exitFlow( `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }` );
+						const url = siteId
+							? `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`
+							: `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+						return exitFlow( url );
 					}
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
 				case 'bloggerStartingPoint': {
@@ -371,7 +350,7 @@ const siteSetupFlow: Flow = {
 							return navigate( 'courses' );
 						}
 						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteSlug }` );
+							return exitFlow( `/home/${ siteId ?? siteSlug }` );
 						}
 						default: {
 							return navigate( intent );
@@ -399,7 +378,7 @@ const siteSetupFlow: Flow = {
 					const submittedIntent = params[ 0 ];
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
-							return exitFlow( `https://wordpress.com/home/${ siteSlug }` );
+							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
 						}
 						case 'build': {
 							return navigate( 'designSetup' );
@@ -580,12 +559,12 @@ const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'intent':
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 
 				case 'goals':
 					// Skip to dashboard must have been pressed
 					setIntent( SiteIntent.Build );
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 
 				case 'import':
 					return navigate( 'importList' );

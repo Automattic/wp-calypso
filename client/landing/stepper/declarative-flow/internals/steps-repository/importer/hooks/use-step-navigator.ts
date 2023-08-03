@@ -32,7 +32,7 @@ export function useStepNavigator(
 	function goToSiteViewPage() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/view/${ siteSlug || '' }`,
+			url: `/view/${ siteId || siteSlug || '' }`,
 		} );
 	}
 
