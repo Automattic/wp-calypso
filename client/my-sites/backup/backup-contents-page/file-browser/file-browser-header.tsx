@@ -1,28 +1,44 @@
 import { Button } from '@wordpress/components';
-import { FunctionComponent, useState } from '@wordpress/element';
-import { FileBrowserCheckTracker } from './types';
+import { FunctionComponent } from '@wordpress/element';
+import { close } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 
 interface FileBrowserHeaderProps {
-	controls: FileBrowserCheckTracker;
+	setShowCheckboxes: ( enabled: boolean ) => void;
+	showCheckboxes: boolean;
 }
 
-const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { controls } ) => {
-	const displayButtonLabel = () => {
-		return controls.showCheckbox ? 'Disable Select' : 'Enable Select';
+const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
+	setShowCheckboxes,
+	showCheckboxes,
+} ) => {
+	const translate = useTranslate();
+	const onSelectClick = () => {
+		setShowCheckboxes( true );
 	};
-
-	const [ buttonLabel, setButtonLabel ] = useState< string >( displayButtonLabel() );
-
-	const onButtonClick = () => {
-		controls.showCheckbox = ! controls.showCheckbox;
-		setButtonLabel( displayButtonLabel() );
+	const onCancelClick = () => {
+		setShowCheckboxes( false );
 	};
 
 	return (
 		<div className="file-browser-header">
-			<Button className="file-browser-header__select-button" onClick={ onButtonClick } isSecondary>
-				{ buttonLabel }
-			</Button>
+			{ ! showCheckboxes && (
+				<Button
+					className="file-browser-header__select-button"
+					onClick={ onSelectClick }
+					isSecondary
+				>
+					{ translate( 'Select' ) }
+				</Button>
+			) }
+			{ showCheckboxes && (
+				<Button
+					className="file-browser-header__cancel-button"
+					icon={ close }
+					onClick={ onCancelClick }
+					isSecondary
+				/>
+			) }
 		</div>
 	);
 };
