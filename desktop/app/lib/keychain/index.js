@@ -1,26 +1,30 @@
-const keytar = require( 'keytar' );
+const electron = require( 'electron' );
+const electronStore = require( 'electron-store' );
 
 const keychainService = 'WordPress.com';
+const store = new electronStore.Store( {
+	name: keychainService,
+	watch: true,
+} );
 
 async function write( key, value ) {
-	return keytar.setPassword( keychainService, key, JSON.stringify( value ) );
+	if ( ! electron.safeStorage.isEncryptionAvailable() ) {
+		return;
+	}
+	const buffer = electron.safeStorage.encryptString( value );
+	store.set( key, buffer.toString( 'latin1' ) );
 }
 
 async function read( key ) {
-	let value = await keytar.getPassword( keychainService, key );
-	if ( value ) {
-		value = JSON.parse( value );
+	if ( store.has( key ) ) {
+		const buffer = store.get( key );
+		return electron.safeStorage.decryptString( Buffer.from( buffer, 'latin1' ) );
 	}
-	return value;
+	return null;
 }
 
 async function clear() {
-	const credentials = await keytar.findCredentials( keychainService );
-	if ( credentials && Array.isArray( credentials ) && credentials.length > 0 ) {
-		await Promise.all(
-			credentials.map( ( { account: key } ) => keytar.deletePassword( keychainService, key ) )
-		);
-	}
+	store.clear();
 }
 
 module.exports = {

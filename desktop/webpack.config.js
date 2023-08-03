@@ -35,6 +35,6 @@ module.exports = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ 'node_modules' ],
 	},
-	externals: [ 'keytar', 'superagent', 'ws' ],
+	externals: [ 'superagent', 'ws' ],
 	mode: DEVELOPMENT ? 'development' : 'production',
 };
