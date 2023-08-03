@@ -47,8 +47,8 @@ const ProductCard = ( {
 	pwywProduct,
 	redirectUri,
 	from,
-	initialStep,
-	initialSiteType,
+	initialStep = SCREEN_TYPE_SELECTION,
+	initialSiteType = TYPE_PERSONAL,
 } ) => {
 	const maxSliderPrice = commercialProduct.cost;
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
