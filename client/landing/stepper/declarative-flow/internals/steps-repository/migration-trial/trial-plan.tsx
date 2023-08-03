@@ -6,6 +6,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
@@ -44,6 +45,10 @@ const TrialPlan = function TrialPlan( props: Props ) {
 		} else {
 			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 		}
+	}
+
+	if ( isAddingTrial ) {
+		return <LoadingEllipsis />;
 	}
 
 	return (
