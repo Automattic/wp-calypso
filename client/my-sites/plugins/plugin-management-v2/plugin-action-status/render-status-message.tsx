@@ -1,8 +1,7 @@
 import classNames from 'classnames';
-import { CurrentSiteStatus, PluginActionStatus } from '../types';
-import { getPluginActionStatusMessages } from './get-plugin-action-status-messages';
+import useStatusMessageText from './use-status-message-text';
+import type { CurrentSiteStatus, PluginActionStatus } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-
 import './style.scss';
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 	hasOneStatus: boolean;
 }
 
-export default function RenderStatusMessage( {
+export default function StatusMessage( {
 	selectedSite,
 	currentStatus,
 	groupedStatues,
@@ -21,15 +20,15 @@ export default function RenderStatusMessage( {
 	const currentGroupStatuses = groupedStatues[ currentStatus ];
 	const currentStatusAction = currentGroupStatuses[ 0 ].action;
 
-	const statusMessages = getPluginActionStatusMessages(
-		currentGroupStatuses.length,
+	const message = useStatusMessageText( {
+		action: currentStatusAction,
+		status: currentStatus,
+		hasSelectedSite: !! selectedSite,
+		siteCount: currentGroupStatuses.length,
 		hasOneStatus,
-		selectedSite
-	);
+	} );
 
-	const currentStatusMessage = statusMessages?.[ currentStatusAction ]?.[ currentStatus ];
-
-	if ( ! currentStatusMessage ) {
+	if ( ! message ) {
 		return null;
 	}
 
@@ -37,7 +36,7 @@ export default function RenderStatusMessage( {
 		<span
 			className={ classNames( 'plugin-action-status', `plugin-action-status-${ currentStatus }` ) }
 		>
-			{ currentStatusMessage }
+			{ message }
 		</span>
 	);
 }
