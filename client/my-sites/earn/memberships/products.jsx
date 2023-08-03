@@ -20,7 +20,7 @@ import { bumpStat } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import {
 	getConnectedAccountIdForSiteId,
-	getconnectedAccountMinimumCurrencyForSiteId
+	getconnectedAccountMinimumCurrencyForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
@@ -144,7 +144,6 @@ class MembershipsProductsSection extends Component {
 					this.props.connectedAccountMinimumCurrency && (
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ this.closeDialog }
-							currencyList={ Object.keys( this.props.connectedAccountMinimumCurrency ).map( ( code ) => ( {code} ) ) }
 							connectedAccountMinimumCurrency={ this.props.connectedAccountMinimumCurrency }
 							product={ Object.assign( this.state.product ?? {}, {
 								subscribe_as_site_subscriber: subscribe_as_site_subscriber,

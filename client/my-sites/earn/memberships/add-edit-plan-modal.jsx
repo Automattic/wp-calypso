@@ -19,10 +19,7 @@ import {
 	requestAddProduct,
 	requestUpdateProduct,
 } from 'calypso/state/memberships/product-list/actions';
-import {
-	getconnectedAccountDefaultCurrencyForSiteId,
-	getconnectedAccountMinimumCurrencyForSiteId,
-} from 'calypso/state/memberships/settings/selectors';
+import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
@@ -34,7 +31,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @param {string} connectedAccountDefaultCurrency - Default currency of the current account
  * @returns {number} Minimum transaction amount for given currency.
  */
-function minimumCurrencyTransactionAmount( currency_min, currency, connectedAccountDefaultCurrency ) {
+function minimumCurrencyTransactionAmount(
+	currency_min,
+	currency,
+	connectedAccountDefaultCurrency
+) {
 	if ( connectedAccountDefaultCurrency.toUpperCase() === currency.toUpperCase() ) {
 		return currency_min[ currency ];
 	}
@@ -54,10 +55,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	updateProduct,
 	connectedAccountDefaultCurrency,
 	connectedAccountMinimumCurrency,
-	currencyList,
 } ) => {
-	// connectedAccountMinimumCurrency is supposed not to be null
-
+	const currencyList = Object.keys( connectedAccountMinimumCurrency );
 	const translate = useTranslate();
 	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
 		product?.welcome_email_content ?? ''
@@ -73,12 +72,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 
 	const defaultCurrency = useMemo( () => {
-		const flatCurrencyList = currencyList.map( ( e ) => e.code );
 		if ( product?.currency ) {
 			return product?.currency;
 		}
 		// Return the Stripe currency if supported. Otherwise default to USD
-		if ( flatCurrencyList.includes( connectedAccountDefaultCurrency ) ) {
+		if ( currencyList.includes( connectedAccountDefaultCurrency ) ) {
 			return connectedAccountDefaultCurrency;
 		}
 		return 'USD';
@@ -87,7 +85,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const [ currentPrice, setCurrentPrice ] = useState(
 		product?.price ??
-			minimumCurrencyTransactionAmount(  connectedAccountMinimumCurrency, currentCurrency, connectedAccountDefaultCurrency )
+			minimumCurrencyTransactionAmount(
+				connectedAccountMinimumCurrency,
+				currentCurrency,
+				connectedAccountDefaultCurrency
+			)
 	);
 
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
@@ -99,9 +101,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const [ editedPrice, setEditedPrice ] = useState( false );
 
-
 	const isValidCurrencyAmount = ( currency, price ) =>
-		price >= minimumCurrencyTransactionAmount( connectedAccountMinimumCurrency, currency, connectedAccountDefaultCurrency );
+		price >=
+		minimumCurrencyTransactionAmount(
+			connectedAccountMinimumCurrency,
+			currency,
+			connectedAccountDefaultCurrency
+		);
 
 	const isFormValid = ( field ) => {
 		if (
@@ -301,7 +307,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							onChange={ handlePriceChange }
 							currencySymbolPrefix={ currentCurrency }
 							onCurrencyChange={ handleCurrencyChange }
-							currencyList={ currencyList }
+							currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 							placeholder="0.00"
 							noWrap
 						/>
