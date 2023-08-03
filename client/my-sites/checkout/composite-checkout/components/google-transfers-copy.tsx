@@ -30,11 +30,11 @@ export function GoogleDomainsCopy( { responseCart }: { responseCart: ResponseCar
 		if (
 			englishLocales.includes( locale ) ||
 			hasTranslation(
-				'We’re paying to add an additional year on your domain registrations. We’ll use the payment information below to renew your domains when they’re back up for renewal.'
+				'We’re paying to extend your registration for an additional year. We’ll use the payment information below to renew your domain before it expires.'
 			)
 		) {
 			couponText = __(
-				'We’re paying to add an additional year on your domain registrations. We’ll use the payment information below to renew your domains when they’re back up for renewal.'
+				'We’re paying to extend your registration for an additional year. We’ll use the payment information below to renew your domain before it expires.'
 			);
 		}
 
