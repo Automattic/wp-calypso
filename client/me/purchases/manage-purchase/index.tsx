@@ -46,6 +46,7 @@ import {
 	ProductIcon,
 	Gridicon,
 } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
@@ -94,6 +95,7 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
+import { DOMAIN_CANCEL, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { PreCancellationDialog } from 'calypso/me/purchases/pre-cancellation-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -1078,9 +1080,40 @@ class ManagePurchase extends Component<
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
+		const helpOptions = {
+			components: {
+				strong: <strong />,
+				a: <a href={ localizeUrl( SUPPORT_ROOT ) } rel="noopener noreferrer" target="_blank" />,
+			},
+		};
+
+		const cancelOptions = {
+			components: {
+				strong: <strong />,
+				a: <a href={ localizeUrl( DOMAIN_CANCEL ) } rel="noopener noreferrer" target="_blank" />,
+			},
+		};
+		const supportText = translate(
+			' Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
+			helpOptions
+		);
+
+		const cancelText = translate(
+			' Cancel Domain and Refund? Please {{a}}click here.{{/a}}',
+			cancelOptions
+		);
+
+		const domainTransferDuration = translate(
+			' Domain transfers can take anywhere from five to seven days to complete'
+		);
 		return (
 			<div className="manage-purchase__content">
-				<span className="manage-purchase__description">{ this.getPurchaseDescription() }</span>
+				<span className="manage-purchase__description">
+					{ this.getPurchaseDescription() }
+					{ purchase.productType === 'domain_transfer' && supportText }
+					{ purchase.productType === 'domain_transfer' && cancelText }
+					{ purchase.productType === 'domain_transfer' && domainTransferDuration }
+				</span>
 
 				<span className="manage-purchase__settings-link">
 					{ ! isJetpackCloud() && site && (
