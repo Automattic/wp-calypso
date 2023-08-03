@@ -59,7 +59,6 @@
 		"marketplace-domain-bundle": false,
 		"marketplace-test": false,
 		"oauth": false,
-		"onboarding-pm/free-free-modal": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
