@@ -115,5 +115,12 @@
 	"reviewers": [ "team:team-calypso-platform" ],
 	"stabilityDays": 10,
 	"prCreation": "not-pending",
-	"timezone": "America/Los_Angeles"
+	"timezone": "America/Los_Angeles",
+	"branchPrefix": "renovate/",
+	"allowPlugins": true,
+	"allowScripts": true,
+	"ignoreScripts": false,
+	"gitAuthor": "Renovate Bot (self-hosted) <bot@renovateapp.com>",
+	"platform": "github",
+	"repositories": [ "Automattic/wp-calypso" ]
 }
