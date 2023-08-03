@@ -1,6 +1,8 @@
 import announcementImage from 'calypso/assets/images/marketplace/notice-special-20-coupon.svg';
 import { NOTICE_SPECIAL_20_COUPON } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const NoticeSpecial20Coupon = () => {
 	const description = (
@@ -10,12 +12,14 @@ const NoticeSpecial20Coupon = () => {
 		</>
 	);
 
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	return (
 		<Task
 			title="20% off all annual plans for 48 hours"
 			description={ description }
 			actionText="Check out our paid plans"
-			actionUrl="https://wordpress.com/website-design-service/?ref=my-home-card"
+			actionUrl={ `https://wordpress.com/plans/${ siteSlug }` }
 			illustration={ announcementImage }
 			customClass="notice-offer-coupon"
 			taskId={ NOTICE_SPECIAL_20_COUPON }
