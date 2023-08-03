@@ -26,44 +26,6 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
- * @typedef {[string, number] CurrencyMinimum
- *
- *
- * Stripe Currencies also supported by WordPress.com with minimum transaction amounts.
- *
- * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
- * @type { [currency: string]: number }
- */
-const STRIPE_MINIMUM_CURRENCY_AMOUNT = {
-	USD: 0.5,
-	AUD: 0.5,
-	BRL: 0.5,
-	CAD: 0.5,
-	CHF: 0.5,
-	DKK: 2.5,
-	EUR: 0.5,
-	GBP: 0.3,
-	HKD: 4.0,
-	INR: 0.5,
-	JPY: 50,
-	MXN: 10,
-	NOK: 3.0,
-	NZD: 0.5,
-	PLN: 2.0,
-	SEK: 3.0,
-	SGD: 0.5,
-};
-
-const currency_min = getconnectedAccountMinimumCurrencyForSiteId( getSelectedSiteId( state ) );
-console.log( 'currency_min', currency_min );
-
-/**
- * @type Array<{ code: string }>
- */
-const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
-// const currencyList = Object.keys( currency_min ).map( ( code ) => ( { code } ) );
-
-/**
  * Return the minimum transaction amount for a currency.
  * If the defaultCurrency is not the same as the current currency, return the double, in order to prevent issues with Stripe minimum amounts
  * See https://wp.me/p81Rsd-1hN
@@ -72,7 +34,7 @@ const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code )
  * @param {string} connectedAccountDefaultCurrency - Default currency of the current account
  * @returns {number} Minimum transaction amount for given currency.
  */
-function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency ) {
+function minimumCurrencyTransactionAmount( currency_min, currency, connectedAccountDefaultCurrency ) {
 	if ( connectedAccountDefaultCurrency.toUpperCase() === currency.toUpperCase() ) {
 		return currency_min[ currency ];
 	}
@@ -91,7 +53,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	siteId,
 	updateProduct,
 	connectedAccountDefaultCurrency,
+	connectedAccountMinimumCurrency,
+	currencyList,
 } ) => {
+	// connectedAccountMinimumCurrency is supposed not to be null
+
 	const translate = useTranslate();
 	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
 		product?.welcome_email_content ?? ''
@@ -121,7 +87,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const [ currentPrice, setCurrentPrice ] = useState(
 		product?.price ??
-			minimumCurrencyTransactionAmount( currentCurrency, connectedAccountDefaultCurrency )
+			minimumCurrencyTransactionAmount(  connectedAccountMinimumCurrency, currentCurrency, connectedAccountDefaultCurrency )
 	);
 
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
@@ -133,8 +99,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const [ editedPrice, setEditedPrice ] = useState( false );
 
+
 	const isValidCurrencyAmount = ( currency, price ) =>
-		price >= minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency );
+		price >= minimumCurrencyTransactionAmount( connectedAccountMinimumCurrency, currency, connectedAccountDefaultCurrency );
 
 	const isFormValid = ( field ) => {
 		if (
@@ -394,10 +361,6 @@ export default connect(
 	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 		connectedAccountDefaultCurrency: getconnectedAccountDefaultCurrencyForSiteId(
-			state,
-			getSelectedSiteId( state )
-		),
-		connectedAccountMinimumCurrency: getconnectedAccountMinimumCurrencyForSiteId(
 			state,
 			getSelectedSiteId( state )
 		),

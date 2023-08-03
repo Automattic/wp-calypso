@@ -18,7 +18,10 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
+import {
+	getConnectedAccountIdForSiteId,
+	getconnectedAccountMinimumCurrencyForSiteId
+} from 'calypso/state/memberships/settings/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSelectedSite,
@@ -137,9 +140,12 @@ class MembershipsProductsSection extends Component {
 				{ this.props.hasLoaded &&
 					this.state.showAddEditDialog &&
 					this.props.hasStripeFeature &&
-					this.props.connectedAccountId && (
+					this.props.hasStripeFeature &&
+					this.props.connectedAccountMinimumCurrency && (
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ this.closeDialog }
+							currencyList={ Object.keys( this.props.connectedAccountMinimumCurrency ).map( ( code ) => ( {code} )}
+							connectedAccountMinimumCurrency={ this.props.connectedAccountMinimumCurrency }
 							product={ Object.assign( this.state.product ?? {}, {
 								subscribe_as_site_subscriber: subscribe_as_site_subscriber,
 							} ) }
@@ -173,6 +179,10 @@ export default connect(
 			site,
 			siteId,
 			hasLoaded,
+			connectedAccountMinimumCurrency: getconnectedAccountMinimumCurrencyForSiteId(
+				state,
+				getSelectedSiteId( state )
+			),
 			siteSlug: getSelectedSiteSlug( state ),
 			products: getProductsForSiteId( state, siteId ),
 			connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
