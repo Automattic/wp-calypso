@@ -50,6 +50,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	const isRequestingSiteProducts = useSelector( isRequestingSites );
 
 	// Determine whether a product is owned.
+	// TODO we need to do plan check as well, because Stats products would be built into other plans.
 	const isFreeOwned = useMemo( () => {
 		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_FREE );
 	}, [ siteProducts ] );
