@@ -1,6 +1,7 @@
 {
 	"extends": [ "config:recommended", "default:pinDigestsDisabled" ],
 	"packageRules": [
+		{ "matchPackagePatterns": [ "*" ], "enabled": false },
 		{
 			"extends": [ "monorepo:wordpress" ],
 			"separateMajorMinor": false,
@@ -74,8 +75,7 @@
 			"groupName": "dev dependencies",
 			"matchPackageNames": [ "yargs", "commander", "chalk", "colors" ],
 			"prPriority": 1
-		},
-		{ "matchPackagePatterns": [ "*" ], "enabled": false }
+		}
 	],
 	"major": { "schedule": [ "on the first day of the month" ] },
 	"schedule": [ "every weekend" ],
