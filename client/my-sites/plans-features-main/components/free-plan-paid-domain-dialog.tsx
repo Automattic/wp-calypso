@@ -169,7 +169,7 @@ type DomainPlanDialogProps = {
 };
 
 // See p2-pbxNRc-2Ri#comment-4703 for more context
-const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
+export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
 function DialogPaidPlanIsRequired( {
 	paidDomainName,

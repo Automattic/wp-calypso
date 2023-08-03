@@ -82,8 +82,11 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
-						<video autoPlay loop>
-							<source src="https://cldup.com/bYWgYH_hoP.mp4" type="video/mp4" />
+						<video autoPlay loop width={ 1188 } height={ 720 } style={ { aspectRatio: '1.65' } }>
+							<source
+								src="https://videos.files.wordpress.com/BoWqyRoi/step-03-720p.mp4"
+								type="video/mp4"
+							/>
 						</video>
 					</details>
 					<details open={ 3 === focusedStep || 4 === focusedStep }>
@@ -94,8 +97,17 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
-						<video autoPlay loop>
-							<source src="https://cldup.com/IM6wEuLIbc.mp4" type="video/mp4" />
+						<video
+							autoPlay
+							loop
+							width={ 1184 }
+							height={ 720 }
+							style={ { aspectRatio: '1.64444444' } }
+						>
+							<source
+								src="https://videos.files.wordpress.com/dZY2deS5/step-04-720p.mp4"
+								type="video/mp4"
+							/>
 							<track />
 						</video>
 					</details>
