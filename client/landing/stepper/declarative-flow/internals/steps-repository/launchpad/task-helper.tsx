@@ -49,7 +49,7 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
-	stripeConnectUrl?: string | null
+	stripeConnectUrl?: string
 ) {
 	if ( ! tasks ) {
 		return [];
