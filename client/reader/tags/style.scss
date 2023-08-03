@@ -35,7 +35,7 @@
 	}
 }
 
-.is-section-reader.has-no-sidebar .layout__content {
+.is-section-reader.has-no-sidebar:not(.is-reader-stream) .layout__content {
 	padding-left: 24px;
 	padding-right: 24px;
 	max-width: 1140px;
