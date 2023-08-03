@@ -25,7 +25,7 @@ export function GoogleDomainsCopy( { responseCart }: { responseCart: ResponseCar
 		return (
 			<GoogleDomainsCopyStyle>
 				{ __(
-					"We're paying the first year of your domain transfer. We'll use the payment information below to renew your domain transfer starting next year."
+					'We’re paying to add an additional year on your domain registrations. We’ll use the payment information below to renew your domains when they’re back up for renewal.'
 				) }
 			</GoogleDomainsCopyStyle>
 		);
