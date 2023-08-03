@@ -3,6 +3,7 @@ import { PostStatsCard, ComponentSwapper } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
@@ -20,6 +21,7 @@ import {
 	getTopPostAndPage,
 	hasSiteStatsForQueryFinished,
 } from 'calypso/state/stats/lists/selectors';
+import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import LatestPostCard from './latest-post-card';
 
 const POST_STATS_CARD_TITLE_LIMIT = 60;
@@ -108,6 +110,11 @@ export default function PostCardsGroup( {
 	const mostPopularPost = useSelector( ( state ) =>
 		getSitePost( state, siteId, topViewedPost?.id )
 	);
+
+	const mostPopularPostViewCount = useSelector(
+		( state ) => getPostStat( state, siteId, topViewedPost?.id, 'views' ) || 0
+	);
+
 	const mostPopularPostData = {
 		date: mostPopularPost?.date,
 		post_thumbnail: mostPopularPost?.post_thumbnail?.URL || null,
@@ -115,7 +122,7 @@ export default function PostCardsGroup( {
 			stripHTML( textTruncator( mostPopularPost?.title, POST_STATS_CARD_TITLE_LIMIT ) )
 		),
 		likeCount: mostPopularPost?.like_count,
-		viewCount: topViewedPost?.views,
+		viewCount: mostPopularPostViewCount,
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
 
@@ -172,6 +179,7 @@ export default function PostCardsGroup( {
 			{ siteId && topViewedPost && (
 				<>
 					<QueryPosts siteId={ siteId } postId={ topViewedPost.id } query={ {} } />
+					<QueryPostStats siteId={ siteId } postId={ topViewedPost.id } />
 				</>
 			) }
 
