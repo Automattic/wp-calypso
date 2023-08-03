@@ -469,6 +469,7 @@ export function getEnhancedTasks(
 					break;
 				case 'set_up_payments':
 					taskData = {
+						badge_text: task.completed ? translate( 'Connected' ) : null,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							stripeConnectUrl

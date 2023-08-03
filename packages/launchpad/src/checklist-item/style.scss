@@ -62,6 +62,11 @@
 	color: var(--color-text);
 }
 
+.checklist-item__task-content[data-task="set_up_payments"] .badge {
+	background-color: var(--studio-green-5);
+	cursor: default;
+}
+
 .checklist-item__checkmark-container {
 	margin-right: 8px;
 	width: 20px;
@@ -157,6 +162,10 @@
 	// change badge color on hover (Choose a Plan step)
 	.badge {
 		background: var(--studio-blue-10);
+	}
+
+	.checklist-item__task-content[data-task="set_up_payments"] .badge {
+		background-color: var(--studio-green-5);
 	}
 }
 
