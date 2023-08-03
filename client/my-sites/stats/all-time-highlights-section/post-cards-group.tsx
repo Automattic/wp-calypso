@@ -18,7 +18,6 @@ import {
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getTopPostAndPage,
-	isRequestingSiteStatsForQuery,
 	hasSiteStatsForQueryFinished,
 } from 'calypso/state/stats/lists/selectors';
 import LatestPostCard from './latest-post-card';
@@ -60,9 +59,9 @@ const getStatsQueries = createSelector(
 	( state, siteId ) => getSiteOption( state, siteId, 'gmt_offset' )
 );
 
-const getStatsData = createSelector(
+const getStatsTopPostsData = createSelector(
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => {
+	( state, siteId, topPostsQuery, hasTopViewedPostQueryFinished ) => {
 		const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
 
 		return {
@@ -99,11 +98,11 @@ export default function PostCardsGroup( {
 
 	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
 	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
-	const isTopViewedPostRequesting = useSelector( ( state ) =>
-		isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery )
+	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
+		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
 	);
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
-		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
+		getStatsTopPostsData( state, siteId, topPostsQuery, hasTopViewedPostQueryFinished )
 	);
 
 	// Prepare the most popular post card.
@@ -122,9 +121,6 @@ export default function PostCardsGroup( {
 	};
 
 	// Check if the most popular post is ready to be displayed.
-	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
-		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
-	);
 	const isRequestingMostPopularPost = useSelector( ( state ) =>
 		isRequestingSitePost( state, siteId, topViewedPost?.id )
 	);
