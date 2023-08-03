@@ -1,10 +1,12 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import ActionCard from 'calypso/components/action-card';
 import useLicenseDownloadUrlMutation from 'calypso/components/data/query-jetpack-partner-portal-licenses/use-license-download-url-mutation';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 interface WooProductDownloadProps {
@@ -27,11 +29,30 @@ export default function WooProductDownload( { licenseKey, allProducts }: WooProd
 		dispatch( recordTracksEvent( 'calypso_partner_portal_download_from_assign' ) );
 	}, [ dispatch, downloadUrl ] );
 
+	const onCopyLicense = useCallback( () => {
+		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_download_copy_license_key' ) );
+	}, [ dispatch, translate ] );
+
 	return (
 		<div className="download-products-list">
 			<ActionCard
 				headerText={ product?.name ?? '' }
-				mainText={ licenseKey }
+				mainText={
+					<div className="license-key">
+						<code className="license-details__license-key">{ licenseKey }</code>
+
+						<ClipboardButton
+							text={ licenseKey }
+							className="license-details__clipboard-button"
+							borderless
+							compact
+							onCopy={ onCopyLicense }
+						>
+							<Gridicon icon="clipboard" />
+						</ClipboardButton>
+					</div>
+				}
 				buttonText={ translate( 'Download' ) }
 				buttonOnClick={ download }
 				buttonDisabled={ downloadUrl.isLoading }
