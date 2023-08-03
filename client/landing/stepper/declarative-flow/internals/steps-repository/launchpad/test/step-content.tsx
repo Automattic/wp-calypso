@@ -22,8 +22,6 @@ const mockSite = {
 	},
 };
 
-const mockStripeUrl = 'https://connect.stripe.com';
-
 const siteSlug = 'testlinkinbio.wordpress.com';
 
 const stepContentProps = {
@@ -91,10 +89,6 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-stripe-connect-url', () => ( {
-	useStripeConnectUrl: () => mockStripeUrl,
-} ) );
-
 jest.mock( 'react-router-dom', () => ( {
 	...( jest.requireActual( 'react-router-dom' ) as object ),
 	useLocation: jest.fn().mockImplementation( () => ( {
@@ -107,7 +101,7 @@ jest.mock( 'react-router-dom', () => ( {
 
 jest.mock( '@automattic/data-stores', () => ( {
 	...( jest.requireActual( '@automattic/data-stores' ) as object ),
-	useLaunchpad: ( siteSlug, siteIntentOption ) => {
+	useLaunchpad: ( siteSlug, siteIntentOption ): LaunchpadResponse => {
 		let checklist = [];
 
 		switch ( siteIntentOption ) {
@@ -249,6 +243,14 @@ describe( 'StepContent', () => {
 					isWPCOMDomain: true,
 				} )
 			);
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/211078228/memberships/status?source=launchpad` )
+			.reply( 200, {
+				connect_url: 'https://connect.stripe.com',
+				connected_account_default_currency: '',
+				connected_account_description: '',
+				connected_account_id: '',
+			} );
 	} );
 
 	afterEach( () => {
