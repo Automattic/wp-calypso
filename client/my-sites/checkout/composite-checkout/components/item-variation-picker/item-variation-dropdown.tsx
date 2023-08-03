@@ -1,3 +1,4 @@
+import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -98,16 +99,12 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
-	// WIP | We need a way to differentiate between products that have the same product_slug but different volumes such as domain_reg
-	const isDomainReg = selectedItem.product_id === 6 || selectedItem.product_id === 76;
-
-	const selectedVariantIndexRaw = variants.findIndex( ( variant ) => {
-		if ( isDomainReg ) {
-			return variant.volume === selectedItem.volume;
-		}
-
-		return variant.productId === selectedItem.product_id;
-	} );
+	// Multi year domain products have the same slug but different volume
+	const selectedVariantIndexRaw = variants.findIndex( ( variant ) =>
+		isMultiYearDomainProduct( selectedItem )
+			? selectedItem.volume === variant.volume
+			: selectedItem.product_id === variant.productId
+	);
 	// findIndex returns -1 if it fails and we want null.
 	const selectedVariantIndex = selectedVariantIndexRaw > -1 ? selectedVariantIndexRaw : null;
 
