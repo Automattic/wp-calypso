@@ -185,6 +185,15 @@ button {
 		}
 	}
 
+	.components-button.is-link {
+		color: var(--color-accent);
+
+		&:hover:not(:disabled):not(.disabled),
+		&:focus:not(:disabled):not(.disabled) {
+			color: var(--color-neutral-70);
+		}
+	}
+
 	// WordPress.org components no longer use blue-50 as the primary color.
 	// This changes the primary color to blue-50 to conform to the WordPress.com colors.
 	--color-accent: var(--studio-blue-50);

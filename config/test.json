@@ -69,6 +69,7 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"onboarding-pm/free-free-modal": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
@@ -107,6 +108,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true
+		"yolo/hosting-metrics-i1": true,
+		"yolo/jetpack-error-ux-i1": true
 	}
 }

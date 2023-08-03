@@ -3,8 +3,10 @@ import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { calculateTimeRange, TimeDateChartControls } from './date-time-charts-picker';
 import UplotChartMetrics from './metrics-chart';
-import { MetricsType, useSiteMetricsQuery } from './use-metrics-query';
+import { MetricsType, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
+
 import './style.scss';
+
 
 export function useSiteMetricsData( metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
@@ -32,11 +34,11 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 	} );
 
 	// Function to get the dimension value for a specific key and period
-	const getDimensionValue = ( period: { timestamp?: number; dimension?: any } ) => {
-		if ( period && Array.isArray( period?.dimension ) ) {
+	const getDimensionValue = ( period: PeriodData ) => {
+		if ( Array.isArray( period?.dimension ) ) {
 			// If the dimension is an array, return 0
 			return 0;
-		} else if ( period && period.dimension && typeof period?.dimension === 'object' ) {
+		} else if ( typeof period?.dimension === 'object' ) {
 			// If the dimension is an object, try to find and return the dimension value
 			const firstKey = Object.keys( period.dimension )[ 0 ];
 			return firstKey ? period.dimension[ firstKey ] : null;
@@ -45,7 +47,7 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 		return null;
 	};
 
-	// Process the data and set the formattedData state without using useMemo
+	// Process the data in the format accepted by uPlot
 	const formattedData =
 		data?.data?.periods?.reduce(
 			( acc, period ) => {
@@ -53,8 +55,8 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 				acc[ 1 ].push( getDimensionValue( period ) );
 				return acc;
 			},
-			[ [], [] ] as [ number[], unknown[] ] // Define the correct initial value type
-		) || ( [ [], [] ] as [ number[], unknown[] ] ); // Return a default value when data is not available yet
+			[ [], [] ] as Array< Array< number | null > > // Define the correct initial value type
+		) || ( [ [], [] ] as Array< Array< number | null > > ); // Return a default value when data is not available yet
 
 	return {
 		formattedData,

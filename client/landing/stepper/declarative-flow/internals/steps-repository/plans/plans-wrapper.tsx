@@ -166,11 +166,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if (
-			flowName === DOMAIN_UPSELL_FLOW ||
-			isNewHostedSiteCreationFlow( flowName ) ||
-			isOnboardingPMFlow( flowName )
-		) {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return __( 'The right plan for the right project' );
+		}
+
+		if ( flowName === DOMAIN_UPSELL_FLOW || isOnboardingPMFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
@@ -205,7 +205,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'Welcome to the best place for your WordPress website.' );
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
 		}
 
 		if ( ! hideFreePlan ) {

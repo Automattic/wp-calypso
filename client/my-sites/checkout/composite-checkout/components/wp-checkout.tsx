@@ -69,6 +69,7 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import { GoogleDomainsCopy } from './google-transfers-copy';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
@@ -549,6 +550,7 @@ export default function WPCheckout( {
 						/>
 					) }
 					<PaymentMethodStep
+						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
 						activeStepFooter={
 							<>
 								<PaymentMethodStepContent />

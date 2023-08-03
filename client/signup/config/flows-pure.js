@@ -109,7 +109,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-plugin',
-			steps: [ 'user', 'domains', 'plans-business' ],
+			steps: [ 'user', 'domains', 'plans-business-with-plugin' ],
 			destination: getWithPluginDestination,
 			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
 			lastModified: '2023-07-19',

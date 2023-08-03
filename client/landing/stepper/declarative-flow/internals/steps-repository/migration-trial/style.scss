@@ -1,0 +1,147 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.trial-plan--container {
+	max-width: 692px;
+	margin: auto;
+	padding: 1rem;
+	text-align: center;
+
+	.onboarding-title {
+		margin-bottom: 0.5rem;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 2.5rem;
+	}
+
+	.action-buttons__next {
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+	}
+
+	p {
+		color: var(--studio-gray-100);
+		margin-bottom: 2.5rem;
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	.trial-plan--details {
+		display: flex;
+		text-align: initial;
+		flex-direction: column;
+		border: solid var(--studio-gray-5) 1px;
+		border-radius: 4px;
+		padding: 1.75em;
+		margin-bottom: 2.5rem;
+		gap: 1.5rem;
+
+		@include break-medium {
+			flex-direction: row;
+		}
+	}
+
+	.trial-plan--details-name,
+	.trial-plan--details-features {
+		display: flex;
+	}
+
+	.trial-plan--details-name {
+		min-width: 150px;
+		flex-direction: column;
+
+		.plan-title {
+			font-weight: 500;
+			font-size: 1.25rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 1.25rem;
+			color: var(--studio-gray-60);
+		}
+
+		.plan-duration {
+			@include onboarding-font-recoleta;
+			font-weight: 500;
+			font-size: 2rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 3rem;
+		}
+	}
+
+	.trial-plan--details-features {
+		flex-basis: 100%;
+
+		ul {
+			width: 100%;
+			margin: 0;
+			list-style: none;
+			column-count: 1;
+			column-gap: 2rem;
+
+			@include break-small {
+				column-count: 2;
+			}
+		}
+
+		li + li {
+			margin-top: 0.85rem;
+		}
+
+		li {
+			font-size: 0.875rem;
+			color: var(--studio-gray-40);
+
+			&::before {
+				content: "\2022";
+				color: var(--studio-blue-20);
+				font-weight: bold;
+				display: inline-block;
+				width: 1rem;
+				position: relative;
+				top: -1px;
+			}
+		}
+	}
+}
+
+.trial-plan-features-modal {
+	.components-modal__header {
+		padding: 1rem 1.5rem !important;
+	}
+
+	.components-modal__content {
+		padding: 0 1.5rem 1rem 1.5rem !important;
+	}
+
+	ul {
+		margin-top: 0;
+	}
+
+	li {
+		color: var(--studio-gray-40);
+
+		svg {
+			fill: var(--color-success);
+		}
+	}
+
+	.button-container {
+		width: 100%;
+		position: relative;
+		left: -1.5rem;
+		right: -1.5rem;
+		bottom: -1rem;
+		padding: 1rem 1.5rem;
+		text-align: end;
+		border-top: 1px solid var(--studio-gray-5);
+
+		.action_buttons__button {
+			min-width: 120px;
+			border-radius: 4px;
+		}
+	}
+}

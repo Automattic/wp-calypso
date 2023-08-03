@@ -75,6 +75,8 @@
 // general styles
 .checklist-item__text {
 	font-weight: 600;
+	flex-grow: 1;
+	text-align: left;
 }
 
 .checklist-item__subtext {
@@ -131,6 +133,11 @@
 	.checklist-item__checkmark {
 		fill: var(--studio-gray-50);
 	}
+	.checklist-item__counter {
+		color: var(--studio-gray-50);
+		font-weight: 400;
+		margin-right: 0;
+	}
 }
 
 // pending tasks and completed enabled
@@ -163,14 +170,17 @@
 .checklist-item__chevron {
 	display: flex;
 	line-height: 20px;
-	text-align: left;
 	width: 30px;
-	margin-left: auto;
 }
 
 .gridicon.checklist-item__chevron {
-	top: 0;
+	top: 2px;
 	margin-top: 0;
+}
+
+.checklist-item__counter {
+	margin-right: 1em;
+	font-weight: 600;
 }
 
 .checklist-item__checklist-primary-button {

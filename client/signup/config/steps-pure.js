@@ -81,8 +81,19 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
-			providesDependencies: [ 'domainItem', 'shouldHideFreePlan', 'signupDomainOrigin', 'siteUrl' ],
-			optionalDependencies: [ 'shouldHideFreePlan', 'signupDomainOrigin', 'siteUrl' ],
+			providesDependencies: [
+				'domainItem',
+				'shouldHideFreePlan',
+				'signupDomainOrigin',
+				'siteUrl',
+				'lastDomainSearched',
+			],
+			optionalDependencies: [
+				'shouldHideFreePlan',
+				'signupDomainOrigin',
+				'siteUrl',
+				'lastDomainSearched',
+			],
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
@@ -290,6 +301,17 @@ export function generateSteps( {
 			stepName: 'plans-business',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-business-with-plugin': {
+			stepName: 'plans-business-with-plugin',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
@@ -372,12 +394,14 @@ export function generateSteps( {
 				'isManageSiteFlow',
 				'signupDomainOrigin',
 				'siteUrl',
+				'lastDomainSearched',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
 				'isManageSiteFlow',
 				'signupDomainOrigin',
 				'siteUrl',
+				'lastDomainSearched',
 			],
 			props: {
 				isDomainOnly: false,
@@ -404,8 +428,15 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem', 'signupDomainOrigin' ], // note: siteId, siteSlug are not provided when used in domain flow
-			optionalDependencies: [ 'signupDomainOrigin', 'siteUrl' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'siteUrl',
+				'domainItem',
+				'signupDomainOrigin',
+				'lastDomainSearched',
+			], // note: siteId, siteSlug are not provided when used in domain flow
+			optionalDependencies: [ 'signupDomainOrigin', 'siteUrl', 'lastDomainSearched' ],
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -415,8 +446,15 @@ export function generateSteps( {
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem', 'siteUrl' ],
-			optionalDependencies: [ 'siteUrl' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'siteUrl',
+				'lastDomainSearched',
+			],
+			optionalDependencies: [ 'siteUrl', 'lastDomainSearched' ],
 			props: {
 				isDomainOnly: false,
 				forceDesignType: 'store',
@@ -436,12 +474,14 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'signupDomainOrigin',
 				'siteUrl',
+				'lastDomainSearched',
 			],
 			optionalDependencies: [
 				'shouldHideFreePlan',
 				'useThemeHeadstart',
 				'signupDomainOrigin',
 				'siteUrl',
+				'lastDomainSearched',
 			],
 			props: {
 				isDomainOnly: false,
