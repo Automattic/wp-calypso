@@ -144,7 +144,7 @@ class MembershipsProductsSection extends Component {
 					this.props.connectedAccountMinimumCurrency && (
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ this.closeDialog }
-							currencyList={ Object.keys( this.props.connectedAccountMinimumCurrency ).map( ( code ) => ( {code} )}
+							currencyList={ Object.keys( this.props.connectedAccountMinimumCurrency ).map( ( code ) => ( {code} ) ) }
 							connectedAccountMinimumCurrency={ this.props.connectedAccountMinimumCurrency }
 							product={ Object.assign( this.state.product ?? {}, {
 								subscribe_as_site_subscriber: subscribe_as_site_subscriber,
