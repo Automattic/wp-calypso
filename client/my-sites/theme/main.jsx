@@ -540,9 +540,7 @@ class ThemeSheet extends Component {
 		const {
 			author,
 			isLoggedIn,
-			isWpcomTheme,
 			isWPForTeamsSite,
-			isWporg,
 			name,
 			retired,
 			siteId,
@@ -576,15 +574,7 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						<LivePreviewButton
-							siteId={ siteId }
-							/**
-							 * Pass the siteId that QueryCanonicalTheme component will use to fetch the theme.
-							 * This avoids LivePreviewButton appearing a moment later.
-							 */
-							sourceSiteId={ ( isWpcomTheme && 'wpcom' ) || ( isWporg && 'wporg' ) || siteId }
-							themeId={ themeId }
-						/>
+						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
 						{ this.shouldRenderPreviewButton() && (
 							<Button
 								onClick={ ( e ) => {
