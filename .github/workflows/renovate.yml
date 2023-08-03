@@ -1,0 +1,55 @@
+name: Renovate
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        type: choice
+        default: debug
+        options:
+          - debug
+          - trace
+      dryRun:
+        description: 'Dry run?'
+        type: choice
+        default: 'no'
+        options:
+          - 'no'
+          - full
+          - lookup
+          - extract
+  schedule:
+    # Every two hours.
+    - cron: '0 0/2 * * *'
+concurrency:
+  group: renovate-${{ github.ref }}
+
+jobs:
+  renovate:
+    name: Renovate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      #   with:
+      #     path: monorepo
+      # - run: mv monorepo /tmp/monorepo
+      - name: Check rate limit pre-run
+        env:
+          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+        run: |
+          curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
+      - uses: renovatebot/github-action@v39.0.1
+        with:
+          configurationFile: renovate.json
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          mount-docker-socket: true
+          renovate-version: 36.31.0
+        env:
+          LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
+          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
+      - name: Check rate limit post-run
+        env:
+          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+        run: |
+          echo "Note any difference between this number and the one from the previous step may also include API uses from elsewhere that happened to occur at the same time."
+          curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
