@@ -27,6 +27,7 @@ import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { isRouteForReaderStream } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
@@ -246,15 +247,7 @@ export default withCurrentRoute(
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
-		// routeWithoutLeadingLocale is useful for pages that render in logged out with locale added
-		// at the beginning of the route. (Ex. /es/read/search )
-		const routeWithoutLeadingLocale = removeLocaleFromPathLocaleInFront( currentRoute );
-		const isReaderStream =
-			( routeWithoutLeadingLocale.startsWith( '/read' ) &&
-				! routeWithoutLeadingLocale.startsWith( '/read/notifications' ) ) ||
-			routeWithoutLeadingLocale.startsWith( '/discover' ) ||
-			routeWithoutLeadingLocale.startsWith( '/activities/likes' ) ||
-			routeWithoutLeadingLocale.startsWith( '/tag/' );
+		const isReaderStream = isRouteForReaderStream( currentRoute );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
