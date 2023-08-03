@@ -34,6 +34,7 @@ export default function WooProductDownload( { licenseKey, allProducts }: WooProd
 				mainText={ licenseKey }
 				buttonText={ translate( 'Download' ) }
 				buttonOnClick={ download }
+				buttonDisabled={ downloadUrl.isLoading }
 			/>
 		</div>
 	);
