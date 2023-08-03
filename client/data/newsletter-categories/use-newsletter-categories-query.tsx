@@ -3,7 +3,7 @@ import request from 'wpcom-proxy-request';
 import { NewsletterCategories, NewsletterCategory } from './types';
 
 type NewsletterCategoryQueryProps = {
-	blogId: number;
+	blogId?: number;
 };
 
 type NewsletterCategoryResponse = {
@@ -25,7 +25,9 @@ const useNewsletterCategories = ( {
 			request< NewsletterCategoryResponse >( {
 				path: `/sites/${ blogId }/newsletter-categories`,
 				apiVersion: '2',
+				apiNamespace: 'wpcom/v2',
 			} ).then( convertNewsletterCategoryResponse ),
+		enabled: !! blogId,
 	} );
 };
 
