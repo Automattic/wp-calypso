@@ -17,6 +17,7 @@ interface PersonalPurchaseProps {
 	siteSlug: string;
 	sliderSettings: {
 		sliderStepPrice: number;
+		minSliderPrice: number;
 		maxSliderPrice: number;
 		uiEmojiHeartTier: number;
 		uiImageCelebrationTier: number;
@@ -42,8 +43,13 @@ const PersonalPurchase = ( {
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
-	const { sliderStepPrice, maxSliderPrice, uiEmojiHeartTier, uiImageCelebrationTier } =
-		sliderSettings;
+	const {
+		sliderStepPrice,
+		minSliderPrice,
+		maxSliderPrice,
+		uiEmojiHeartTier,
+		uiImageCelebrationTier,
+	} = sliderSettings;
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
@@ -93,6 +99,7 @@ const PersonalPurchase = ( {
 				renderThumb={ sliderLabel }
 				onChange={ setSubscriptionValue }
 				maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
+				minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
