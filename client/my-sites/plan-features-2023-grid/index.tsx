@@ -15,7 +15,6 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 	WPComStorageAddOnSlug,
-	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import {
 	JetpackLogo,
@@ -65,13 +64,13 @@ import PopularBadge from './components/popular-badge';
 import { StorageAddOnDropdown } from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
-import useAddOns from './hooks/use-add-ons';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject, DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { PlansIntent } from './grid-context';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { PlanActionOverrides } from './types';
+import type { AddOnMeta } from '../add-ons/hooks/use-add-ons';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
@@ -122,6 +121,7 @@ export type PlanFeatures2023GridProps = {
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
+	storageAddOns: ( AddOnMeta | null )[];
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -913,7 +913,6 @@ export class PlanFeatures2023Grid extends Component<
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate, intervalType, showUpgradeableStorage } = this.props;
 		const { selectedStorage } = this.state;
-
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
@@ -1152,17 +1151,11 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 		props.visiblePlans
 	);
 
-	// TODO: Can move this into a high order component
-	const storageAddOns = useAddOns( props.siteId as number ).filter(
-		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
-	);
-
 	if ( props.isInSignup ) {
 		return (
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				storageAddOns={ storageAddOns }
 			/>
 		);
 	}
@@ -1172,7 +1165,6 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 			<ConnectedPlanFeatures2023Grid
 				{ ...props }
 				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
-				storageAddOns={ storageAddOns }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
