@@ -52,6 +52,7 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
@@ -1502,74 +1503,81 @@ function PurchasesQueryComponent( {
 	return <QueryUserPurchases />;
 }
 
-export default connect(
-	( state: IAppState, props: ManagePurchaseProps ) => {
-		const purchase = getByPurchaseId( state, props.purchaseId );
+export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
+	const purchase = getByPurchaseId( state, props.purchaseId );
 
-		const purchaseAttachedTo =
-			purchase && purchase.attachedToPurchaseId
-				? getByPurchaseId( state, purchase.attachedToPurchaseId )
-				: null;
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteId = purchase?.siteId ?? null;
-		const purchases = purchase && getSitePurchases( state, purchase.siteId );
-		const userId = getCurrentUserId( state );
-		const isProductOwner = purchase && purchase.userId === userId;
-		const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
-		const isPurchasePlan = purchase && isPlan( purchase );
-		const isPurchaseTheme = purchase && isThemePurchase( purchase );
-		const productsList = getProductsList( state );
-		const site = getSite( state, siteId ?? undefined );
-		const hasLoadedSites = ! isRequestingSites( state );
-		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
-		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
-		const relatedMonthlyPlanPrice = siteId
-			? getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug ) ?? 0
-			: 0;
-		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
-		const currentRoute = getCurrentRoute( state );
+	const purchaseAttachedTo =
+		purchase && purchase.attachedToPurchaseId
+			? getByPurchaseId( state, purchase.attachedToPurchaseId )
+			: null;
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteId = purchase?.siteId ?? null;
+	const purchases = purchase && getSitePurchases( state, purchase.siteId );
+	const userId = getCurrentUserId( state );
+	const isProductOwner = purchase && purchase.userId === userId;
+	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
+	const isPurchasePlan = purchase && isPlan( purchase );
+	const isPurchaseTheme = purchase && isThemePurchase( purchase );
+	const productsList = getProductsList( state );
+	const site = getSite( state, siteId ?? undefined );
+	const hasLoadedSites = ! isRequestingSites( state );
+	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
+	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
+	const relatedMonthlyPlanPrice = siteId
+		? getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug ) ?? 0
+		: 0;
+	const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
+	const currentRoute = getCurrentRoute( state );
 
-		return {
-			currentRoute,
-			domainsDetails: getAllDomains( state ),
-			hasCustomPrimaryDomain: hasCustomDomain( site ),
-			hasLoadedDomains,
-			hasLoadedPurchasesFromServer: props.isSiteLevel
-				? hasLoadedSitePurchasesFromServer( state )
-				: hasLoadedUserPurchasesFromServer( state ),
-			hasLoadedSites,
-			hasNonPrimaryDomainsFlag: getCurrentUser( state )
-				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-				: false,
-			hasSetupAds: Boolean(
-				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
-			),
-			isAtomicSite: isSiteAtomic( state, siteId ),
-			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			isProductOwner,
-			isPurchaseTheme,
-			plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
-			primaryDomain: primaryDomain,
-			productsList,
-			purchase,
-			purchaseAttachedTo,
-			purchases,
-			relatedMonthlyPlanPrice,
-			relatedMonthlyPlanSlug,
-			renewableSitePurchases,
-			selectedSiteId,
-			site,
-			siteId,
-			theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
-		};
-	},
-	{
-		handleRenewNowClick,
-		handleRenewMultiplePurchasesClick,
-		errorNotice,
-		successNotice,
-	}
-)( localize( ManagePurchase ) );
+	return {
+		currentRoute,
+		domainsDetails: getAllDomains( state ),
+		hasCustomPrimaryDomain: hasCustomDomain( site ),
+		hasLoadedDomains,
+		hasLoadedPurchasesFromServer: props.isSiteLevel
+			? hasLoadedSitePurchasesFromServer( state )
+			: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedSites,
+		hasNonPrimaryDomainsFlag: getCurrentUser( state )
+			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			: false,
+		hasSetupAds: Boolean(
+			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+		),
+		isAtomicSite: isSiteAtomic( state, siteId ),
+		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
+		isProductOwner,
+		isPurchaseTheme,
+		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
+		primaryDomain: primaryDomain,
+		productsList,
+		purchase,
+		purchaseAttachedTo,
+		purchases,
+		relatedMonthlyPlanPrice,
+		relatedMonthlyPlanSlug,
+		renewableSitePurchases,
+		selectedSiteId,
+		site,
+		siteId,
+		theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
+	};
+}, mapDispatchToProps )( localize( ManagePurchase ) );
+
+function mapDispatchToProps( dispatch: CalypsoDispatch ) {
+	return {
+		dispatch,
+		...bindActionCreators(
+			{
+				handleRenewNowClick,
+				handleRenewMultiplePurchasesClick,
+				errorNotice,
+				successNotice,
+			},
+			dispatch
+		),
+	};
+}
 
 function getCancelPurchaseNavText(
 	purchase: Purchase,
