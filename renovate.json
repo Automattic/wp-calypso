@@ -93,8 +93,8 @@
 			"prPriority": 1
 		},
 		{
-			"groupName": "d3",
-			"matchPackagePrefixes": [ "d3-" ]
+			"packagePatterns": [ "*" ],
+			"enabled": false
 		}
 	],
 	"major": {
