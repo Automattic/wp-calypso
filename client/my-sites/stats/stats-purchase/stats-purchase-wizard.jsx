@@ -47,6 +47,7 @@ const ProductCard = ( {
 	pwywProduct,
 	redirectUri,
 	from,
+	disableFreeProduct = false,
 	initialStep = SCREEN_TYPE_SELECTION,
 	initialSiteType = TYPE_PERSONAL,
 } ) => {
@@ -182,6 +183,7 @@ const ProductCard = ( {
 											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
 											sliderSettings={ {
+												minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
 												sliderStepPrice,
 												maxSliderPrice,
 												uiEmojiHeartTier,
@@ -233,6 +235,7 @@ const StatsPurchaseWizard = ( {
 	pwywProduct,
 	redirectUri,
 	from,
+	disableFreeProduct,
 	initialStep,
 	initialSiteType,
 } ) => {
@@ -244,6 +247,7 @@ const StatsPurchaseWizard = ( {
 			pwywProduct={ pwywProduct }
 			redirectUri={ redirectUri }
 			from={ from }
+			disableFreeProduct={ disableFreeProduct }
 			initialStep={ initialStep }
 			initialSiteType={ initialSiteType }
 		/>
