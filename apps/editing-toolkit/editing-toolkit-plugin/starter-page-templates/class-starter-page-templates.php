@@ -104,6 +104,18 @@ class Starter_Page_Templates {
 			},
 		);
 		register_meta( 'post', '_starter_page_template', $args );
+
+		$args = array(
+			'type'           => 'string',
+			'description'    => 'Selected category',
+			'single'         => true,
+			'show_in_rest'   => true,
+			'object_subtype' => 'page',
+			'auth_callback'  => function () {
+				return current_user_can( 'edit_posts' );
+			},
+		);
+		register_meta( 'post', '_wp_layout_category', $args );
 	}
 
 	/**
