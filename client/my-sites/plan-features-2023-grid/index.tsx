@@ -921,14 +921,14 @@ export class PlanFeatures2023Grid extends Component<
 					return null;
 				}
 
-				const { planName, storageFeatures, storageAddOns } = properties;
+				const { planName, storageOptions, hasStorageAddOns } = properties;
 
 				const shouldRenderStorageTitle =
-					! storageAddOns ||
-					( intervalType !== 'yearly' && storageFeatures.length > 0 ) ||
-					( ! showUpgradeableStorage && storageFeatures.length > 0 );
+					storageOptions.length === 1 ||
+					( intervalType !== 'yearly' && storageOptions.length > 0 ) ||
+					( ! showUpgradeableStorage && storageOptions.length > 0 );
 				const canUpgradeStorageForPlan =
-					storageAddOns.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+					hasStorageAddOns && intervalType === 'yearly' && showUpgradeableStorage;
 
 				const storageJSX = canUpgradeStorageForPlan ? (
 					<StorageAddOnDropdown
@@ -937,14 +937,14 @@ export class PlanFeatures2023Grid extends Component<
 						setSelectedStorage={ this.setSelectedStorage }
 					/>
 				) : (
-					storageFeatures.map( ( storageFeature: string ) => {
-						// if ( ! storageOption?.isAddOn ) {
-						return (
-							<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-								{ getStorageStringFromFeature( storageFeature ) }
-							</div>
-						);
-						// }
+					storageOptions.map( ( storageOption ) => {
+						if ( ! storageOption?.isAddOn ) {
+							return (
+								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
+									{ getStorageStringFromFeature( storageOption.slug ) }
+								</div>
+							);
+						}
 					} )
 				);
 
@@ -1095,13 +1095,14 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 						? planConstantObj.getPathSlug()
 						: planObject?.product_name_short ?? '';
-				const storageFeatures =
+				const storageOptions =
 					( planConstantObj.get2023PricingGridSignupStorageOptions &&
 						planConstantObj.get2023PricingGridSignupStorageOptions(
 							showLegacyStorageFeature,
 							isCurrentPlan
 						) ) ||
 					[];
+				const hasStorageAddOns = storageOptions.some( ( option ) => option.isAddOn );
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 
@@ -1116,7 +1117,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isMonthlyPlan,
 					tagline,
 					storageAddOns: ownProps.storageAddOns,
-					storageFeatures,
+					hasStorageAddOns,
+					storageOptions,
 					cartItemForPlan: getCartItemForPlan( plan ),
 					current: isCurrentPlan,
 					isVisible: visiblePlans.indexOf( plan ) !== -1,

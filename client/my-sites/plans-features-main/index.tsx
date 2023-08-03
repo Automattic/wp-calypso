@@ -8,6 +8,7 @@ import {
 	isPersonalPlan,
 	PlanSlug,
 	PLAN_PERSONAL,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -34,6 +35,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import useAddOns from '../add-ons/hooks/use-add-ons';
 import usePlansWithIntent, {
 	GridPlan,
 } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
@@ -57,7 +59,6 @@ import type {
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 export interface PlansFeaturesMainProps {
@@ -159,6 +160,9 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		showUpgradeableStorage,
 	} = props;
 	const translate = useTranslate();
+	const storageAddOns = useAddOns( props.siteId as number ).filter(
+		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
+	);
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showDomainUpsellDialog = useCallback( () => {
@@ -214,6 +218,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		showLegacyStorageFeature,
 		spotlightPlanSlug,
 		showUpgradeableStorage,
+		storageAddOns,
 	};
 
 	const asyncPlanFeatures2023Grid = (
