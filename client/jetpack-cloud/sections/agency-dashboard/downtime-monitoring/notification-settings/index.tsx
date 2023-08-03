@@ -101,8 +101,8 @@ export default function NotificationSettings( {
 
 	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
-	// TODO: Need to figure out if current site or one of the sites selected is on a free tier.
-	const hasPaidLicenses = false;
+	// Check if current site or all sites selected has a paid license.
+	const hasPaidLicenses = ! sites.find( ( site ) => ! site.has_paid_agency_monitor );
 
 	let restriction: RestrictionType = 'none';
 
