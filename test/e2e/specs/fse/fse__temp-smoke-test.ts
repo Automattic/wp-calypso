@@ -123,7 +123,6 @@ function run( iteration: number ) {
 
 		it( 'Editor endpoint loads', async function () {
 			await page.waitForURL( /site-editor/ );
-			throw new Error( 'Boom' );
 		} );
 
 		it( 'Open the Page template', async function () {
