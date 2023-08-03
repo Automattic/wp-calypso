@@ -2,7 +2,7 @@ import formatCurrency from '@automattic/format-currency';
 import { useSelector } from 'calypso/state';
 import { getProductCurrencyCode, getProductBySlug } from 'calypso/state/products-list/selectors';
 
-const useAddOnMonthlyCost = ( productSlug: string, quantity?: number ) => {
+const useAddOnCost = ( productSlug: string, quantity?: number ) => {
 	return useSelector( ( state ) => {
 		const product = getProductBySlug( state, productSlug );
 		let cost = product?.cost;
@@ -25,15 +25,25 @@ const useAddOnMonthlyCost = ( productSlug: string, quantity?: number ) => {
 			cost = priceTier?.maximum_price / 100;
 		}
 
-		cost = product?.product_term === 'month' ? cost : cost / 12;
+		let monthlyCost = cost / 12;
+		let yearlyCost = cost;
+
+		if ( product?.product_term === 'month' ) {
+			monthlyCost = cost;
+			yearlyCost = cost * 12;
+		}
 
 		return {
-			rawCost: cost,
-			formattedCost: formatCurrency( cost, currencyCode, {
+			monthlyCost,
+			yearlyCost,
+			formattedMonthlyCost: formatCurrency( monthlyCost, currencyCode, {
+				stripZeros: true,
+			} ),
+			formattedYearlyCost: formatCurrency( yearlyCost, currencyCode, {
 				stripZeros: true,
 			} ),
 		};
 	} );
 };
 
-export default useAddOnMonthlyCost;
+export default useAddOnCost;

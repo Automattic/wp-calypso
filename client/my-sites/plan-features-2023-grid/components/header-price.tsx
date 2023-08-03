@@ -137,7 +137,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const storageAddOnCost = storageAddOns.find( ( addOn ) => {
 		return addOn.featureSlugs.includes( storageForPlan );
-	} )?.monthlyCost?.rawCost;
+	} )?.costData?.monthlyCost;
 	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: true,

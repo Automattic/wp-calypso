@@ -1,12 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import useAddOnMonthlyCost from './use-add-on-monthly-cost';
+import useAddOnCost from './use-add-on-cost';
 
 const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 	const translate = useTranslate();
-	const costData = useAddOnMonthlyCost( productSlug, quantity );
-	const formattedCost = costData?.formattedCost || '';
+	const costData = useAddOnCost( productSlug, quantity );
+	const formattedCost = costData?.formattedMonthlyCost || '';
 
 	return useSelector( ( state ) => {
 		const product = getProductBySlug( state, productSlug );

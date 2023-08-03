@@ -24,7 +24,7 @@ export const StorageAddOnDropdown = ( {
 			// TODO: Fix typescript errors
 			const cost = storageAddOns.find( ( addOn ) => {
 				return addOn.featureSlugs.includes( storageOption.slug );
-			} )?.monthlyCost?.formattedCost;
+			} )?.costData?.formattedMonthlyCost;
 
 			const name = `${ title } ${ cost ? cost : '' }`;
 			if ( title ) {

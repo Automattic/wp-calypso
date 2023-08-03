@@ -24,6 +24,7 @@ interface Props {
 	isMonthlyPlan: boolean;
 	currentSitePlanSlug?: string | null;
 	siteId?: number | null;
+	storageForPlan: string;
 	storageAddOns: [];
 }
 
@@ -38,15 +39,18 @@ function usePerMonthDescription( {
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const storageAddOnCost = storageAddOns.find( ( addOn ) => {
-		return addOn.featureSlugs.includes( storageForPlan );
-	} )?.monthlyCost?.rawCost;
+	// We don't support monthly terms for storage add ons
+	const storageAddOnCost = ! isMonthlyPlan
+		? storageAddOns.find( ( addOn ) => {
+				return addOn.featureSlugs.includes( storageForPlan );
+		  } )?.costData?.yearlyCost
+		: 0;
 	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
 		currentSitePlanSlug,
 		siteId,
-		addOnCosts: [ isMonthlyPlan ? storageAddOnCost : storageAddOnCost * 12 ],
+		addOnCosts: [ storageAddOnCost ],
 	} );
 
 	// We want `planYearlyVariantPricesPerMonth` to be the raw price the user
