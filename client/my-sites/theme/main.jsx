@@ -34,6 +34,7 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryTheme from 'calypso/components/data/query-theme';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
 import HeaderCake from 'calypso/components/header-cake';
@@ -540,9 +541,7 @@ class ThemeSheet extends Component {
 		const {
 			author,
 			isLoggedIn,
-			isWpcomTheme,
 			isWPForTeamsSite,
-			isWporg,
 			name,
 			retired,
 			siteId,
@@ -576,15 +575,7 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						<LivePreviewButton
-							siteId={ siteId }
-							/**
-							 * Pass the siteId that QueryCanonicalTheme component will use to fetch the theme.
-							 * This avoids LivePreviewButton appearing a moment later.
-							 */
-							sourceSiteId={ ( isWpcomTheme && 'wpcom' ) || ( isWporg && 'wporg' ) || siteId }
-							themeId={ themeId }
-						/>
+						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
 						{ this.shouldRenderPreviewButton() && (
 							<Button
 								onClick={ ( e ) => {
@@ -1288,6 +1279,19 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
+
+				{ /* 
+					FIXME: 
+					This is for showing the Live Preview button 
+					when the site is on Atomic AND the theme is installed.
+					We need to query a theme with the siteId to always know if it's installed on the site or not
+					(e.g. If a user go to the Theme Detail page directly).
+					This can be removed once we addressed https://github.com/Automattic/wp-calypso/issues/80089.
+				*/ }
+				{ config.isEnabled( 'themes/block-theme-previews' ) && (
+					<QueryTheme themeId={ this.props.themeId } siteId={ siteId } />
+				) }
+
 				<QueryProductsList />
 				<QueryUserPurchases />
 				{
