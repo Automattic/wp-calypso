@@ -12,6 +12,7 @@ interface Props {
 	siteId?: number | null;
 	currentSitePlanSlug?: string | null;
 	withoutProRatedCredits?: boolean;
+	addOnCosts?: number[];
 }
 
 /**
@@ -25,10 +26,12 @@ export function usePlanPricesDisplay( {
 	siteId,
 	currentSitePlanSlug,
 	withoutProRatedCredits,
+	addOnCosts = [],
 }: Props ): {
 	originalPrice: number;
 	discountedPrice: number;
 } {
+	const totalAddOnCosts = addOnCosts.reduce( ( acc, cost ) => acc + cost, 0 ) || 0;
 	const planPrices = useSelector( ( state ) =>
 		getPlanPrices( state, { planSlug, siteId: siteId || null, returnMonthly } )
 	);
@@ -62,7 +65,7 @@ export function usePlanPricesDisplay( {
 		: planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice;
 
 	return {
-		originalPrice: planPrices.rawPrice,
-		discountedPrice,
+		originalPrice: planPrices.rawPrice + totalAddOnCosts,
+		discountedPrice: discountedPrice !== 0 ? discountedPrice + totalAddOnCosts : 0,
 	};
 }

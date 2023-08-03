@@ -15,17 +15,22 @@ export const StorageAddOnDropdown = ( {
 	selectedStorage,
 	setSelectedStorage,
 }: StorageAddOnDropdownProps ) => {
-	const { planName, storageOptions } = planProperties;
+	const { planName, storageOptions, storageAddOns } = planProperties;
 	const translate = useTranslate();
-
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce(
 		( acc: { key: string; name: TranslateResult }[], storageOption ) => {
 			const title = getStorageStringFromFeature( storageOption.slug );
+			// TODO: Fix typescript errors
+			const cost = storageAddOns.find( ( addOn ) => {
+				return addOn.featureSlugs.includes( storageOption.slug );
+			} )?.monthlyCost?.formattedCost;
+
+			const name = `${ title } ${ cost ? cost : '' }`;
 			if ( title ) {
 				acc.push( {
 					key: storageOption.slug,
-					name: title,
+					name: name,
 				} );
 			}
 

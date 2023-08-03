@@ -29,6 +29,7 @@ import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
+import useAddOnMonthlyCost from './use-add-on-monthly-cost';
 
 export interface AddOnMeta {
 	productSlug: string;
@@ -39,8 +40,10 @@ export interface AddOnMeta {
 	quantity?: number; // used for determining checkout costs for quantity based products
 	description: string | null;
 	displayCost: TranslateResult | null;
+	// TODO: Check plans page for purchased plans
 	purchased?: boolean;
 	isLoading?: boolean;
+	monthlyCost?: number;
 }
 
 // some memoization. executes far too many times
@@ -81,7 +84,8 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			icon: spaceUpgradeIcon,
 			quantity: 50,
 			name: translate( '50 GB Storage' ),
-			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE ),
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+			monthlyCost: useAddOnMonthlyCost( PRODUCT_1GB_SPACE, 50 ),
 			description: translate(
 				'Make more space for high-quality photos, videos, and other media. '
 			),
@@ -94,7 +98,8 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			icon: spaceUpgradeIcon,
 			quantity: 100,
 			name: translate( '100 GB Storage' ),
-			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE ),
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+			monthlyCost: useAddOnMonthlyCost( PRODUCT_1GB_SPACE, 100 ),
 			description: translate(
 				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 			),

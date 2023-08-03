@@ -555,6 +555,7 @@ export class PlanFeatures2023Grid extends Component<
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
 				const { planName, rawPrice } = properties;
+				const { selectedStorage } = this.state;
 				const isWooExpressPlus = isWooExpressPlusPlan( planName );
 				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 					'has-border-top': ! isReskinned,
@@ -575,6 +576,7 @@ export class PlanFeatures2023Grid extends Component<
 								isLargeCurrency={ isLargeCurrency }
 								currentSitePlanSlug={ currentSitePlanSlug }
 								siteId={ siteId }
+								storageForPlan={ selectedStorage[ planName ] ? selectedStorage[ planName ] : null }
 							/>
 						) }
 						{ isWooExpressPlus && (
@@ -1116,6 +1118,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					isMonthlyPlan,
 					tagline,
 					storageAddOns: ownProps.storageAddOns,
+					// TODO: Remove hasStorageAddOns
 					hasStorageAddOns,
 					storageOptions,
 					cartItemForPlan: getCartItemForPlan( plan ),

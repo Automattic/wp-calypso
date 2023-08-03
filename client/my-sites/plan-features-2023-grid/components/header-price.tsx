@@ -13,6 +13,7 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	isPlanUpgradeCreditEligible: boolean;
 	currentSitePlanSlug?: string | null;
 	siteId?: number | null;
+	storageForPlan?: string | null;
 }
 
 const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
@@ -129,15 +130,21 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	isPlanUpgradeCreditEligible,
 	currentSitePlanSlug,
 	siteId,
+	storageForPlan,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
-	const { planName } = planProperties;
+	const { planName, storageAddOns } = planProperties;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const storageAddOnCost = storageAddOns.find( ( addOn ) => {
+		// console.log( { addOn, storageForPlan } );
+		return addOn.featureSlugs.includes( storageForPlan );
+	} )?.monthlyCost?.rawCost;
 	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: true,
 		currentSitePlanSlug,
 		siteId,
+		addOnCosts: [ storageAddOnCost ],
 	} );
 	const shouldShowDiscountedPrice = Boolean( planPrices.discountedPrice );
 
