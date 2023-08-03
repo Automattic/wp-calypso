@@ -24,6 +24,7 @@ interface Props {
 	isMonthlyPlan: boolean;
 	currentSitePlanSlug?: string | null;
 	siteId?: number | null;
+	storageAddOns: [];
 }
 
 function usePerMonthDescription( {
@@ -32,14 +33,20 @@ function usePerMonthDescription( {
 	billingPeriod,
 	currentSitePlanSlug,
 	siteId,
+	storageAddOns,
+	storageForPlan,
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const storageAddOnCost = storageAddOns.find( ( addOn ) => {
+		return addOn.featureSlugs.includes( storageForPlan );
+	} )?.monthlyCost?.rawCost;
 	const planPrices = usePlanPricesDisplay( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
 		currentSitePlanSlug,
 		siteId,
+		addOnCosts: [ isMonthlyPlan ? storageAddOnCost : storageAddOnCost * 12 ],
 	} );
 
 	// We want `planYearlyVariantPricesPerMonth` to be the raw price the user
@@ -52,6 +59,7 @@ function usePerMonthDescription( {
 		currentSitePlanSlug,
 		siteId,
 		withoutProRatedCredits: true,
+		addOnCosts: [ storageAddOnCost ],
 	} );
 
 	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {

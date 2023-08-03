@@ -591,10 +591,12 @@ export class PlanFeatures2023Grid extends Component<
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { currentSitePlanSlug, siteId } = this.props;
+		const { selectedStorage } = this.state;
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
-				const { planConstantObj, planName, isMonthlyPlan, billingPeriod } = properties;
+				const { planConstantObj, planName, isMonthlyPlan, billingPeriod, storageAddOns } =
+					properties;
 
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
@@ -610,6 +612,8 @@ export class PlanFeatures2023Grid extends Component<
 							billingPeriod={ billingPeriod }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							siteId={ siteId }
+							storageAddOns={ storageAddOns }
+							storageForPlan={ selectedStorage[ planName ] ? selectedStorage[ planName ] : null }
 						/>
 					</Container>
 				);
