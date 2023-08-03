@@ -10,8 +10,7 @@
 
 .search-stream .search {
 	margin-bottom: 0;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
 	.search__icon-navigation {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
@@ -127,6 +126,17 @@
 	margin: 0;
 	padding: 20px 0;
 	width: 100%;
+
+	&.is-placeholder {
+		padding: 0;
+		border-bottom: 1px solid #e9e9ea;
+		margin-bottom: 16px;
+
+		.reader-related-card.is-placeholder {
+			padding: 16px;
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
+		}
+	}
 
 
 	.reader-related-card__post {
