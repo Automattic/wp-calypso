@@ -99,7 +99,7 @@ export default function seriesBarsPlugin(
 
 				walkTwo( sidx - 1, numGroups, barsPerGroup, xDim, null, ( ix, x0, wid ) => {
 					const lft = Math.round( xOff + ( _dir === 1 ? x0 : xDim - x0 - wid ) );
-					const barWid = Math.round( wid );
+					const barWid = Math.round( wid ) - 2;
 
 					const dataYIX = dataY[ ix ];
 					if ( dataYIX !== null ) {
@@ -119,7 +119,14 @@ export default function seriesBarsPlugin(
 							);
 						}
 
-						rect( fill, lft, top, barWid, barHgt );
+						if ( barHgt === 0 ) {
+							const minHeight = 12;
+							rect( fill, lft, y0Pos - minHeight, barWid, minHeight );
+						} else {
+							rect( fill, lft, top, barWid, barHgt );
+						}
+
+						console.log( 'drawing', { fill, lft, top, barWid, barHgt } );
 
 						const x = ori === 0 ? Math.round( lft - xOff ) : Math.round( top - yOff );
 						const y = ori === 0 ? Math.round( top - yOff ) : Math.round( lft - xOff );
