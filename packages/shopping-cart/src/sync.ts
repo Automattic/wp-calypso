@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { cloneDeep } from 'lodash';
 import {
 	convertResponseCartToRequestCart,
 	convertRawResponseCartToResponseCart,
@@ -36,19 +35,6 @@ export function createCartSyncManager(
 		return getCart( cartKey );
 	};
 
-	function mockResponse( response ) {
-		const mockedResponse = cloneDeep( response );
-		for ( const product of mockedResponse.products ) {
-			if ( product.is_domain_registration ) {
-				for ( const variant of product.product_variants ) {
-					variant.volume = variant.bill_period_in_months / 12;
-				}
-			}
-		}
-
-		return mockedResponse;
-	}
-
 	return {
 		syncPendingCartToServer(
 			state: ShoppingCartState,
@@ -62,7 +48,7 @@ export function createCartSyncManager(
 					debug( 'update cart request complete', requestCart, '; updated cart is', response );
 					dispatch( {
 						type: 'RECEIVE_UPDATED_RESPONSE_CART',
-						updatedResponseCart: convertRawResponseCartToResponseCart( mockResponse( response ) ),
+						updatedResponseCart: convertRawResponseCartToResponseCart( response ),
 					} );
 				} )
 				.catch( ( error ) => {
@@ -81,10 +67,7 @@ export function createCartSyncManager(
 			getServerCart()
 				.then( ( response ) => {
 					debug( 'initialized cart is', response );
-					const initialResponseCart = convertRawResponseCartToResponseCart(
-						// WIP | Temporary mock the response from the BE until we have a working Diff
-						mockResponse( response )
-					);
+					const initialResponseCart = convertRawResponseCartToResponseCart( response );
 					dispatch( {
 						type: 'RECEIVE_INITIAL_RESPONSE_CART',
 						initialResponseCart,
