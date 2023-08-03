@@ -19,7 +19,10 @@ import {
 	requestAddProduct,
 	requestUpdateProduct,
 } from 'calypso/state/memberships/product-list/actions';
-import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
+import {
+	getconnectedAccountDefaultCurrencyForSiteId,
+	getconnectedAccountMinimumCurrencyForSiteId,
+} from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
@@ -51,10 +54,14 @@ const STRIPE_MINIMUM_CURRENCY_AMOUNT = {
 	SGD: 0.5,
 };
 
+const currency_min = getconnectedAccountMinimumCurrencyForSiteId( getSelectedSiteId( state ) );
+console.log( 'currency_min', currency_min );
+
 /**
  * @type Array<{ code: string }>
  */
 const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
+// const currencyList = Object.keys( currency_min ).map( ( code ) => ( { code } ) );
 
 /**
  * Return the minimum transaction amount for a currency.
@@ -66,11 +73,10 @@ const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code )
  * @returns {number} Minimum transaction amount for given currency.
  */
 function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency ) {
-	if ( connectedAccountDefaultCurrency === currency.toUpperCase() ) {
-		return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ];
+	if ( connectedAccountDefaultCurrency.toUpperCase() === currency.toUpperCase() ) {
+		return currency_min[ currency ];
 	}
-
-	return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ] * 2;
+	return currency_min[ currency ] * 2;
 }
 
 /**
@@ -388,6 +394,10 @@ export default connect(
 	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 		connectedAccountDefaultCurrency: getconnectedAccountDefaultCurrencyForSiteId(
+			state,
+			getSelectedSiteId( state )
+		),
+		connectedAccountMinimumCurrency: getconnectedAccountMinimumCurrencyForSiteId(
 			state,
 			getSelectedSiteId( state )
 		),
