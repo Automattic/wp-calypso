@@ -57,24 +57,6 @@
 			"extends": [ "packages:unitTest" ],
 			"groupName": "unit test packages",
 			"prPriority": 2
-		},
-		{
-			"groupName": "dev dependencies",
-			"matchDepTypes": [ "devDependencies" ],
-			"excludePackagePatterns": [
-				"babel",
-				"typescript",
-				"@types/",
-				"webpack",
-				"storybook",
-				"eslint"
-			],
-			"prPriority": 1
-		},
-		{
-			"groupName": "dev dependencies",
-			"matchPackageNames": [ "yargs", "commander", "chalk", "colors" ],
-			"prPriority": 1
 		}
 	],
 	"major": { "schedule": [ "on the first day of the month" ] },
