@@ -2,8 +2,11 @@
 
 import { useRef } from 'react';
 import UplotChart from '../';
+import UplotBarChart from '../bar';
 
 export default { title: 'packages/components/Chart (uPlot)' };
+
+// Line chart
 
 const SAMPLE_DATA = [
 	[
@@ -37,5 +40,25 @@ export const ExternalLegendMount = () => {
 			</div>
 			<Variant legendContainer={ legendRef } />
 		</>
+	);
+};
+
+// Bar chart
+
+const barChartData = [
+	[ 'HTTP 200', 'HTTP 401', 'HTTP 400', 'HTTP 404', 'HTTP 500' ],
+	[ 2000, 1000, 800, 1400, 1200, 2100, 1800 ],
+	[ 0, 0, 0, 0, 0, 0, 0 ],
+	[ 0, 0, 0, 0, 0, 0, 0 ],
+	[ 138, 112, 98, 84, 70, 56, 42 ],
+	[ 0, 0, 0, 0, 70, 0, 0 ],
+];
+
+export const BarChartUplot = () => {
+	return (
+		<UplotBarChart
+			data={ barChartData }
+			fillColors={ [ '#68B3E8', '#A7AAAD', '#F2D76B', '#09B585', '#F283AA' ] }
+		/>
 	);
 };
