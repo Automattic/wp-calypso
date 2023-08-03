@@ -34,23 +34,24 @@ export const Plans2023Tooltip = (
 	} >
 ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
+	const { activeTooltipId, setActiveTooltipId, id } = props;
 	const tooltipRef = useRef< HTMLDivElement >( null );
 	const isDesktop = useDesktopBreakpoint();
 
 	useEffect( () => {
-		props.activeTooltipId === props.id ? setIsVisible( true ) : setIsVisible( false );
-	}, [ props.activeTooltipId, props.id ] );
+		activeTooltipId === id ? setIsVisible( true ) : setIsVisible( false );
+	}, [ activeTooltipId, id ] );
 
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
 	}
 
 	const getMobileActiveTooltip = () => {
-		if ( props.activeTooltipId === props.id ) {
+		if ( activeTooltipId === id ) {
 			return '';
 		}
 
-		return props.id;
+		return id;
 	};
 
 	return (
@@ -58,9 +59,10 @@ export const Plans2023Tooltip = (
 			<HoverAreaContainer
 				className="plans-2023-tooltip__hover-area-container"
 				ref={ tooltipRef }
-				onMouseEnter={ () => isDesktop && props.setActiveTooltipId( props.id ) }
-				onMouseLeave={ () => isDesktop && props.setActiveTooltipId( '' ) }
-				onTouchStart={ () => ! isDesktop && props.setActiveTooltipId( getMobileActiveTooltip() ) }
+				onMouseEnter={ () => isDesktop && setActiveTooltipId( id ) }
+				onMouseLeave={ () => isDesktop && setActiveTooltipId( '' ) }
+				onTouchStart={ () => ! isDesktop && setActiveTooltipId( getMobileActiveTooltip() ) }
+				id={ props.id }
 			>
 				{ props.children }
 			</HoverAreaContainer>

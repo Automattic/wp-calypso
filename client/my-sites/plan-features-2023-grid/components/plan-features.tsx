@@ -1,6 +1,7 @@
 import { JetpackLogo } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PlanFeatures2023GridFeatures from '../components/features';
 import { PlanProperties, DataResponse } from '../types';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
@@ -15,7 +16,9 @@ const PlanFeatures: React.FC< {
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
-	Container: HTMLDivElement | HTMLTableElement;
+	Container: (
+		props: React.HTMLAttributes< HTMLDivElement > | React.HTMLAttributes< HTMLTableCellElement >
+	) => JSX.Element;
 } > = ( {
 	planProperties,
 	paidDomainName,
@@ -28,6 +31,24 @@ const PlanFeatures: React.FC< {
 	Container,
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const isDesktop = useDesktopBreakpoint();
+
+	useEffect( () => {
+		if ( isDesktop ) {
+			return;
+		}
+		const closeAllTooltips = ( event: TouchEvent ) => {
+			if ( ! event.target?.classList.contains( 'plans-2023-tooltip__hover-area-container' ) ) {
+				setActiveTooltipId( '' );
+			}
+		};
+
+		document.addEventListener( 'touchstart', closeAllTooltips );
+
+		return () => {
+			document.removeEventListener( 'touchstart', closeAllTooltips );
+		};
+	}, [ isDesktop ] );
 
 	return planProperties
 		.filter( ( { isVisible } ) => isVisible )
