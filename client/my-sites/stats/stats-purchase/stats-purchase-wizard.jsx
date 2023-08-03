@@ -48,6 +48,8 @@ const ProductCard = ( {
 	redirectUri,
 	from,
 	disableFreeProduct = false,
+	initialStep = SCREEN_TYPE_SELECTION,
+	initialSiteType = TYPE_PERSONAL,
 } ) => {
 	const maxSliderPrice = commercialProduct.cost;
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
@@ -59,8 +61,8 @@ const ProductCard = ( {
 	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
 	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
-	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
-	const [ siteType, setSiteType ] = useState( null );
+	const [ wizardStep, setWizardStep ] = useState( initialStep );
+	const [ siteType, setSiteType ] = useState( initialSiteType );
 	const translate = useTranslate();
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -234,8 +236,9 @@ const StatsPurchaseWizard = ( {
 	redirectUri,
 	from,
 	disableFreeProduct,
+	initialStep,
+	initialSiteType,
 } ) => {
-	// redirectTo is a relative URI.
 	return (
 		<ProductCard
 			siteSlug={ siteSlug }
@@ -245,8 +248,18 @@ const StatsPurchaseWizard = ( {
 			redirectUri={ redirectUri }
 			from={ from }
 			disableFreeProduct={ disableFreeProduct }
+			initialStep={ initialStep }
+			initialSiteType={ initialSiteType }
 		/>
 	);
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, MIN_STEP_SPLITS };
+export {
+	StatsPurchaseWizard as default,
+	COMPONENT_CLASS_NAME,
+	MIN_STEP_SPLITS,
+	SCREEN_TYPE_SELECTION,
+	SCREEN_PURCHASE,
+	TYPE_PERSONAL,
+	TYPE_COMMERCIAL,
+};
