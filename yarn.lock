@@ -631,7 +631,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.2.1
-    swiper: ^4.5.1
+    swiper: ^6.0.0
     tslib: ^2.3.0
     typescript: ^5.1.6
     utility-types: ^3.10.0
@@ -13791,12 +13791,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom7@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "dom7@npm:2.1.3"
+"dom7@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "dom7@npm:3.0.0"
   dependencies:
-    ssr-window: ^1.0.1
-  checksum: 90d099314eede55214f8f8cc431a0551d2abb725dc00d2bc733ff0d8fbff51494efe31a06dbce16de0ff14d04992d00eb7f43bcf103286ea4cfd6f528a793b58
+    ssr-window: ^3.0.0-alpha.1
+  checksum: c64c64e8ed99a6e1e9a8754b37c8effa5e5e3f192b275e7853cb06bf3c670fd6595fc61c87e75553773f350a04b9d45e2964c9b7b62b8fec867766c1a3b6df41
   languageName: node
   linkType: hard
 
@@ -27844,10 +27844,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ssr-window@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "ssr-window@npm:1.0.1"
-  checksum: 760d43afdebcf0a697185e7293e71ef30a7cae2917130718f029a16fbe7721a7299ecf9af981b281fb281eb0f320fd516fe5608c82058f8425e7ec2244adb359
+"ssr-window@npm:^3.0.0, ssr-window@npm:^3.0.0-alpha.1":
+  version: 3.0.0
+  resolution: "ssr-window@npm:3.0.0"
+  checksum: d60efa4bf1e8de03c2410ba81976dfec02a084a44a8f952d9cac794e806e87dc7dcd6033f26fdd35430851bd358f39e8d9625404683b8a1792b46711fc1eb382
   languageName: node
   linkType: hard
 
@@ -28576,13 +28576,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "swiper@npm:4.5.1"
+"swiper@npm:^6.0.0":
+  version: 6.8.4
+  resolution: "swiper@npm:6.8.4"
   dependencies:
-    dom7: ^2.1.3
-    ssr-window: ^1.0.1
-  checksum: 823a63cb3708edc1958f068756b77fae19b4d4ea873802c3642bd7ae4e37a6753540797dfe148bb2483da0c1d62ded06a9bfe4ba364ecc8be12f7bdaf5636591
+    dom7: ^3.0.0
+    ssr-window: ^3.0.0
+  checksum: bb5ca4ffd2ccfb0447c03f823d0191aecf5c589588c0cdb7ee452b6a187a765f00f8d3d45c5683dd50eda891c8687c6696e0323a9b4ac06e5bcb74ad4324b62e
   languageName: node
   linkType: hard
 
