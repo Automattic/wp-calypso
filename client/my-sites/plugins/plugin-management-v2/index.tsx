@@ -1,13 +1,10 @@
-import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useEffect } from 'react';
-import ButtonGroup from 'calypso/components/button-group';
-import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useDispatch } from 'calypso/state';
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import BulkActionsHeader from './bulk-actions-header';
 import PluginsList from './plugins-list';
-import UpdatePlugins from './update-plugins';
 import { pluginsEmptyMessage } from './utils/get-plugins-empty-message';
 import type { PluginComponentProps } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -50,23 +47,6 @@ export default function PluginManagementV2( {
 		};
 	}, [ dispatch ] );
 
-	const renderBulkActionsHeader = () => {
-		if ( isLoading ) {
-			return <TextPlaceholder />;
-		}
-
-		return (
-			<div className="plugin-common-table__bulk-actions">
-				{ isJetpackCloud && <UpdatePlugins plugins={ plugins } /> }
-				<ButtonGroup className="plugin-management-v2__table-button-group">
-					<Button compact onClick={ toggleBulkManagement }>
-						{ translate( 'Edit All', { context: 'button label' } ) }
-					</Button>
-				</ButtonGroup>
-			</div>
-		);
-	};
-
 	const columns = [
 		{
 			key: 'plugin',
@@ -107,7 +87,14 @@ export default function PluginManagementV2( {
 			  ] ),
 		{
 			key: 'bulk-actions',
-			header: renderBulkActionsHeader(),
+			header: (
+				<BulkActionsHeader
+					isLoading={ isLoading }
+					showUpdatePlugins={ isJetpackCloud }
+					plugins={ plugins }
+					onClickEditAll={ toggleBulkManagement }
+				/>
+			),
 			colSpan: 3,
 		},
 	];
