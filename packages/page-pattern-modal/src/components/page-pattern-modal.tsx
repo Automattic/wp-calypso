@@ -20,7 +20,7 @@ interface PagePatternModalProps {
 	instanceId: string | number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
-	savePatternChoice: ( name: string ) => void;
+	savePatternChoice: ( name: string, selectedCategory: string ) => void;
 	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
@@ -131,7 +131,8 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	setPattern = ( name: string ) => {
 		// Track selection and mark post as using a pattern in its postmeta.
 		trackSelection( name );
-		this.props.savePatternChoice( name );
+		const { selectedCategory } = this.state;
+		this.props.savePatternChoice( name, selectedCategory );
 
 		// Check to see if this is a blank pattern selection
 		// and reset the pattern if so.

@@ -62,13 +62,14 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	}, [] );
 
 	const savePatternChoice = useCallback(
-		( name: string ) => {
+		( name: string, selectedCategory: string ) => {
 			// Save selected pattern slug in meta.
 			const currentMeta = getMeta() as Record< string, unknown >;
 			editPost( {
 				meta: {
 					...currentMeta,
 					_starter_page_template: name,
+					_wp_layout_category: selectedCategory,
 				},
 			} );
 		},
