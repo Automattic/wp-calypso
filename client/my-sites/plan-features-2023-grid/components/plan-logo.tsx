@@ -26,7 +26,9 @@ const PlanLogo: React.FunctionComponent< {
 	renderedPlans: PlanSlug[];
 	isTableCell?: boolean;
 	planIndex: number;
-	Container: HTMLDivElement | HTMLTableElement;
+	Container: (
+		props: React.HTMLAttributes< HTMLDivElement > | React.HTMLAttributes< HTMLTableCellElement >
+	) => JSX.Element;
 } > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, Container, planIndex } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const translate = useTranslate();
