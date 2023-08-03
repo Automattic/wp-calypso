@@ -5,7 +5,8 @@
 		{
 			"extends": [ "monorepo:wordpress" ],
 			"separateMajorMinor": false,
-			"prPriority": 3
+			"prPriority": 3,
+			"schedule": [ "every day" ]
 		},
 		{ "extends": [ "monorepo:babel" ], "prPriority": 2 },
 		{ "extends": [ "monorepo:lodash" ], "prPriority": 2 },
@@ -59,7 +60,6 @@
 			"prPriority": 2
 		}
 	],
-	"major": { "schedule": [ "on the first day of the month" ] },
 	"schedule": [ "every weekend" ],
 	"dependencyDashboardTitle": "Renovate Dependency Updates",
 	"rangeStrategy": "bump",
