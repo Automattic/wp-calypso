@@ -2,8 +2,9 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import UplotChartMetrics from './metrics-chart';
-import { MetricsType, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
+import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
 
 export function useSiteMetricsData( start?: number, end?: number, metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
@@ -47,12 +48,68 @@ export function useSiteMetricsData( start?: number, end?: number, metric?: Metri
 		formattedData,
 	};
 }
+
+export function useAggregateSiteMetricsData(
+	start?: number,
+	end?: number,
+	metric?: MetricsType,
+	dimension?: DimensionParams
+) {
+	const siteId = useSelector( getSelectedSiteId );
+
+	// Calculate the startTime and endTime using useMemo
+	const startTime = useMemo( () => start || moment().subtract( 24, 'hours' ).unix(), [ start ] );
+	const endTime = useMemo( () => end || moment().unix(), [ end ] );
+
+	const { data } = useSiteMetricsQuery( siteId, {
+		start: startTime,
+		end: endTime,
+		metric: metric || 'requests_persec',
+		dimension: dimension || 'http_status',
+	} );
+
+	const formattedData = {};
+	data?.data?.periods?.forEach( ( period ) => {
+		Object.keys( period.dimension ).forEach( ( key ) => {
+			if ( ! formattedData[ key ] ) {
+				formattedData[ key ] = 0;
+			}
+			formattedData[ key ] += period.dimension[ key ];
+		} );
+	} );
+
+	return {
+		formattedData,
+	};
+}
+
+function getFormattedDataForPieChart( data: Record< string, number > ) {
+	return Object.keys( data ).map( ( key ) => {
+		return {
+			name: key,
+			value: data[ key ],
+			description: undefined,
+		};
+	} );
+}
+
 export function SiteMetrics() {
 	const { formattedData } = useSiteMetricsData();
+	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
+		undefined,
+		undefined,
+		'requests_persec',
+		'page_is_cached'
+	);
+
 	return (
 		<>
 			<h2>Atomic site</h2>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
+			<SiteMonitoringPieChart
+				title="Cache hit/miss"
+				data={ getFormattedDataForPieChart( cacheHitMissFormattedData ) }
+			></SiteMonitoringPieChart>
 		</>
 	);
 }
