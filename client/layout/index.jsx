@@ -373,7 +373,8 @@ export default withCurrentRoute(
 			( currentRoute.startsWith( '/read' ) &&
 				! currentRoute.startsWith( '/read/notifications' ) ) ||
 			currentRoute.startsWith( '/discover' ) ||
-			currentRoute.startsWith( '/activities/likes' );
+			currentRoute.startsWith( '/activities/likes' ) ||
+			currentRoute.startsWith( '/tag/' );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );

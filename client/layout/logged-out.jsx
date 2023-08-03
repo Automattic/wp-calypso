@@ -62,6 +62,7 @@ const LayoutLoggedOut = ( {
 	showGdprBanner,
 	isPartnerSignup,
 	isPartnerSignupStart,
+	isReaderStream,
 	isWooCoreProfilerFlow,
 	locale,
 } ) => {
@@ -102,6 +103,7 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
+		'is-reader-stream': isReaderStream,
 		'is-gravatar': isGravatar,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 	};
@@ -244,6 +246,15 @@ export default withCurrentRoute(
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		// routeWithoutLeadingLocale is useful for pages that render in logged out with locale added
+		// at the beginning of the route. (Ex. /es/read/search )
+		const routeWithoutLeadingLocale = removeLocaleFromPathLocaleInFront( currentRoute );
+		const isReaderStream =
+			( routeWithoutLeadingLocale.startsWith( '/read' ) &&
+				! routeWithoutLeadingLocale.startsWith( '/read/notifications' ) ) ||
+			routeWithoutLeadingLocale.startsWith( '/discover' ) ||
+			routeWithoutLeadingLocale.startsWith( '/activities/likes' ) ||
+			routeWithoutLeadingLocale.startsWith( '/tag/' );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
@@ -275,6 +286,7 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isP2Login,
+			isReaderStream,
 			isGravatar,
 			wccomFrom,
 			masterbarIsHidden,
