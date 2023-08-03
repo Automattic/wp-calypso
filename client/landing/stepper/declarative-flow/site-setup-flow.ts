@@ -10,6 +10,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
@@ -57,7 +58,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect, UserSelect, SiteDetails } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -143,6 +144,11 @@ const siteSetupFlow: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
+		const isDomainOnlySite = useSelect(
+			( select ) =>
+				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'is_domain_only' ),
+			[ site ]
+		);
 		const currentUser = useSelector( getCurrentUser );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
@@ -238,6 +244,25 @@ const siteSetupFlow: Flow = {
 							apiNamespace: 'wpcom/v2',
 							apiVersion: '2',
 							formData,
+						} ).then( () => {
+							if ( ! siteId || ! isDomainOnlySite ) {
+								return;
+							}
+							// The request above also converts domain-only sites to regular sites.
+							// In this case, we need to fetch its data again to get the updated slug.
+							return new Promise( ( resolve ) => {
+								resolve( dispatch( requestSite( siteId ) ) );
+							} )
+								.catch( () => {
+									// Silently fails if we couldn't fetch the site data.
+									return;
+								} )
+								.then( ( site ) => {
+									redirectionUrl = addQueryArgs(
+										{ siteSlug: new URL( ( site as SiteDetails ).URL ).host },
+										to
+									);
+								} );
 						} )
 					);
 
