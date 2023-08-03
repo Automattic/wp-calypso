@@ -1,9 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormSelect from 'calypso/components/forms/form-select';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 export function calculateTimeRange( selectedOption ) {
 	const now = moment().unix();
@@ -41,13 +39,12 @@ export function calculateTimeRange( selectedOption ) {
 	return { start, end };
 }
 
-export const TimeDateChartPicker = ( { onTimeRangeChange } ) => {
+export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( '1' ); // Default selected option is '1' (24 hours)
 
-	// Event handler to handle changes in the dropdown selection
-	const handleSelectChange = ( event ) => {
-		const newSelectedOption = event.target.value;
+	// Event handler to handle changes in the SegmentedControl selection
+	const handleOptionClick = ( newSelectedOption ) => {
 		setSelectedOption( newSelectedOption );
 
 		// Calculate the time range and pass it back to the parent component
@@ -56,27 +53,35 @@ export const TimeDateChartPicker = ( { onTimeRangeChange } ) => {
 	};
 
 	return (
-		<FormFieldset>
-			<FormLabel htmlFor="date_time_chart_picker">{ translate( 'Time range' ) }</FormLabel>
-			<FormSelect
-				name="date_time_chart_picker"
-				id="date_time_chart_picker"
-				onChange={ handleSelectChange }
-				value={ selectedOption }
+		<SegmentedControl compact primary>
+			<SegmentedControl.Item
+				value="0"
+				selected={ selectedOption === '0' }
+				onClick={ () => handleOptionClick( '0' ) }
 			>
-				<option value="0">
-					{ translate( '6 hours', { context: 'Time range for site metrics' } ) }
-				</option>
-				<option value="1">
-					{ translate( '24 hours', { context: 'Time range for site metrics' } ) }
-				</option>
-				<option value="2">
-					{ translate( '3 days', { context: 'Time range for site metrics' } ) }
-				</option>
-				<option value="3">
-					{ translate( '7 days', { context: 'Time range for site metrics' } ) }
-				</option>
-			</FormSelect>
-		</FormFieldset>
+				{ ( translate( '6 hours' ), { context: 'Time range for site metrics' } ) }
+			</SegmentedControl.Item>
+			<SegmentedControl.Item
+				value="1"
+				selected={ selectedOption === '1' }
+				onClick={ () => handleOptionClick( '1' ) }
+			>
+				{ ( translate( '24 hours' ), { context: 'Time range for site metrics' } ) }
+			</SegmentedControl.Item>
+			<SegmentedControl.Item
+				value="2"
+				selected={ selectedOption === '2' }
+				onClick={ ( () => handleOptionClick( '2' ), { context: 'Time range for site metrics' } ) }
+			>
+				{ translate( '3 days' ) }
+			</SegmentedControl.Item>
+			<SegmentedControl.Item
+				value="3"
+				selected={ selectedOption === '3' }
+				onClick={ () => handleOptionClick( '3' ) }
+			>
+				{ ( translate( '7 days' ), { context: 'Time range for site metrics' } ) }
+			</SegmentedControl.Item>
+		</SegmentedControl>
 	);
 };

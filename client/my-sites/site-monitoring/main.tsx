@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { TimeDateChartPicker, calculateTimeRange } from './date-time-charts-picker';
+import { calculateTimeRange, TimeDateChartControls } from './date-time-charts-picker';
 import UplotChartMetrics from './metrics-chart';
 import { MetricsType, useSiteMetricsQuery } from './use-metrics-query';
 
@@ -66,7 +66,7 @@ export function SiteMetrics() {
 	return (
 		<>
 			<h2>Atomic site</h2>
-			<TimeDateChartPicker onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartPicker>
+			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 		</>
 	);
