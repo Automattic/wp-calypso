@@ -83,15 +83,16 @@ export default function DownloadProductsForm() {
 		<div className="download-products-form">
 			<div className="download-products-form__top">
 				<p className="download-products-form__description">
-					{ translate(
-						'Your license has been applied to {{strong}}%(siteUrl)s{{/strong}}, but more action is required.',
-						'Your licenses have been applied to {{strong}}%(siteUrl)s{{/strong}}, but more action is required.',
-						{
-							components: { strong: <strong /> },
-							args: { siteUrl: siteDomain || '' },
-							count: licenseKeys.split( ',' ).length,
-						}
-					) }
+					{ siteDomain &&
+						translate(
+							'Your license has been applied to {{strong}}%(siteUrl)s{{/strong}}, but more action is required.',
+							'Your licenses have been applied to {{strong}}%(siteUrl)s{{/strong}}, but more action is required.',
+							{
+								components: { strong: <strong /> },
+								args: { siteUrl: siteDomain || '' },
+								count: licenseKeys.split( ',' ).length,
+							}
+						) }
 				</p>
 				<div className="download-products-form__controls">
 					<Button primary className="download-products-form__navigate" onClick={ onNavigate }>
