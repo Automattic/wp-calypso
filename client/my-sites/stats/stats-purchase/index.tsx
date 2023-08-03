@@ -111,6 +111,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 							siteId={ siteId }
 							redirectUri={ query.redirect_uri ?? '' }
 							from={ query.from ?? '' }
+							disableFreeProduct={ isFreeOwned && ! isCommercialOwned && ! isPWYWOwned }
 						/>
 					</>
 				) }

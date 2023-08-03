@@ -40,7 +40,15 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 	);
 };
 
-const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
+const ProductCard = ( {
+	siteSlug,
+	siteId,
+	commercialProduct,
+	pwywProduct,
+	redirectUri,
+	from,
+	disableFreeProduct = false,
+} ) => {
 	const maxSliderPrice = commercialProduct.cost;
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
@@ -173,6 +181,7 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
 											sliderSettings={ {
+												minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
 												sliderStepPrice,
 												maxSliderPrice,
 												uiEmojiHeartTier,
@@ -224,6 +233,7 @@ const StatsPurchaseWizard = ( {
 	pwywProduct,
 	redirectUri,
 	from,
+	disableFreeProduct,
 } ) => {
 	// redirectTo is a relative URI.
 	return (
@@ -234,6 +244,7 @@ const StatsPurchaseWizard = ( {
 			pwywProduct={ pwywProduct }
 			redirectUri={ redirectUri }
 			from={ from }
+			disableFreeProduct={ disableFreeProduct }
 		/>
 	);
 };
