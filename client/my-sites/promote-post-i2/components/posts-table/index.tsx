@@ -34,7 +34,7 @@ export default function PostsTable( props: Props ) {
 				) : (
 					<>
 						<Experiment
-							name="experiment_name"
+							name="dsp_blaze_open_widget_button_202308"
 							defaultExperience={ DefaultItem }
 							treatmentExperience={ ExperimentItem }
 							loadingExperience={ <></> }
