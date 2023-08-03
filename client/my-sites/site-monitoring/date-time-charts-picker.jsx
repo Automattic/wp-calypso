@@ -53,25 +53,25 @@ export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 	};
 
 	return (
-		<SegmentedControl compact primary>
+		<SegmentedControl primary>
 			<SegmentedControl.Item
 				value="0"
 				selected={ selectedOption === '0' }
 				onClick={ () => handleOptionClick( '0' ) }
 			>
-				{ ( translate( '6 hours' ), { context: 'Time range for site metrics' } ) }
+				{ translate( '6 hours' ) }
 			</SegmentedControl.Item>
 			<SegmentedControl.Item
 				value="1"
 				selected={ selectedOption === '1' }
 				onClick={ () => handleOptionClick( '1' ) }
 			>
-				{ ( translate( '24 hours' ), { context: 'Time range for site metrics' } ) }
+				{ translate( '24 hours' ) }
 			</SegmentedControl.Item>
 			<SegmentedControl.Item
 				value="2"
 				selected={ selectedOption === '2' }
-				onClick={ ( () => handleOptionClick( '2' ), { context: 'Time range for site metrics' } ) }
+				onClick={ () => handleOptionClick( '2' ) }
 			>
 				{ translate( '3 days' ) }
 			</SegmentedControl.Item>
@@ -80,7 +80,7 @@ export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 				selected={ selectedOption === '3' }
 				onClick={ () => handleOptionClick( '3' ) }
 			>
-				{ ( translate( '7 days' ), { context: 'Time range for site metrics' } ) }
+				{ translate( '7 days' ) }
 			</SegmentedControl.Item>
 		</SegmentedControl>
 	);
