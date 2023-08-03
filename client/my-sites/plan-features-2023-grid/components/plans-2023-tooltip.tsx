@@ -25,14 +25,16 @@ const StyledTooltip = styled( Tooltip )`
 	}
 `;
 
-export const Plans2023Tooltip = (
-	props: PropsWithChildren< {
-		text?: TranslateResult;
-		setActiveTooltipId: Dispatch< SetStateAction< string > >;
-		activeTooltipId: string;
-		id: string;
-	} >
-) => {
+export const Plans2023Tooltip = ( {
+	showOnMobile = true,
+	...props
+}: PropsWithChildren< {
+	text?: TranslateResult;
+	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	activeTooltipId: string;
+	id: string;
+	showOnMobile?: boolean;
+} > ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const { activeTooltipId, setActiveTooltipId, id } = props;
 	const tooltipRef = useRef< HTMLDivElement >( null );
@@ -72,7 +74,7 @@ export const Plans2023Tooltip = (
 				position="top"
 				context={ tooltipRef.current }
 				hideArrow
-				showOnMobile
+				showOnMobile={ showOnMobile }
 			>
 				{ props.text }
 			</StyledTooltip>

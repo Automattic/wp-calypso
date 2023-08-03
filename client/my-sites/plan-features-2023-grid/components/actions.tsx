@@ -325,6 +325,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				text={ translate( 'Please contact support to downgrade your plan.' ) }
 				setActiveTooltipId={ setActiveTooltipId }
 				activeTooltipId={ activeTooltipId }
+				showOnMobile={ false }
 			>
 				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
 				{ isMobile() && (
