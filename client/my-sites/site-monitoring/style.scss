@@ -30,3 +30,22 @@
 .uplot {
 	border: 1px solid #dcdcde;
 }
+
+.time-chart__controls {
+	max-width: 329px;
+	flex-grow: 1;
+}
+
+.time-chart__container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-bottom: 28px;
+}
+
+.time-chart__heading {
+	margin-right: 10px; /* Adjust the spacing between heading and controls */
+	font-weight: 400;
+	font-size: 14;
+	line-height: 20px;
+}

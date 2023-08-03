@@ -53,35 +53,38 @@ export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 	};
 
 	return (
-		<SegmentedControl primary>
-			<SegmentedControl.Item
-				value="0"
-				selected={ selectedOption === '0' }
-				onClick={ () => handleOptionClick( '0' ) }
-			>
-				{ translate( '6 hours' ) }
-			</SegmentedControl.Item>
-			<SegmentedControl.Item
-				value="1"
-				selected={ selectedOption === '1' }
-				onClick={ () => handleOptionClick( '1' ) }
-			>
-				{ translate( '24 hours' ) }
-			</SegmentedControl.Item>
-			<SegmentedControl.Item
-				value="2"
-				selected={ selectedOption === '2' }
-				onClick={ () => handleOptionClick( '2' ) }
-			>
-				{ translate( '3 days' ) }
-			</SegmentedControl.Item>
-			<SegmentedControl.Item
-				value="3"
-				selected={ selectedOption === '3' }
-				onClick={ () => handleOptionClick( '3' ) }
-			>
-				{ translate( '7 days' ) }
-			</SegmentedControl.Item>
-		</SegmentedControl>
+		<div className="time-chart__container">
+			<div className="time-chart__heading">{ translate( 'Time range' ) }</div>
+			<SegmentedControl primary className="time-chart__controls">
+				<SegmentedControl.Item
+					value="0"
+					selected={ selectedOption === '0' }
+					onClick={ () => handleOptionClick( '0' ) }
+				>
+					{ translate( '6 hours' ) }
+				</SegmentedControl.Item>
+				<SegmentedControl.Item
+					value="1"
+					selected={ selectedOption === '1' }
+					onClick={ () => handleOptionClick( '1' ) }
+				>
+					{ translate( '24 hours' ) }
+				</SegmentedControl.Item>
+				<SegmentedControl.Item
+					value="2"
+					selected={ selectedOption === '2' }
+					onClick={ () => handleOptionClick( '2' ) }
+				>
+					{ translate( '3 days' ) }
+				</SegmentedControl.Item>
+				<SegmentedControl.Item
+					value="3"
+					selected={ selectedOption === '3' }
+					onClick={ () => handleOptionClick( '3' ) }
+				>
+					{ translate( '7 days' ) }
+				</SegmentedControl.Item>
+			</SegmentedControl>
+		</div>
 	);
 };

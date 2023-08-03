@@ -4,6 +4,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { calculateTimeRange, TimeDateChartControls } from './date-time-charts-picker';
 import UplotChartMetrics from './metrics-chart';
 import { MetricsType, useSiteMetricsQuery } from './use-metrics-query';
+import './style.scss';
 
 export function useSiteMetricsData( metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
