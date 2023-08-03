@@ -1670,6 +1670,7 @@ __metadata:
     "@wordpress/keycodes": ^3.38.0
     "@wordpress/react-i18n": ^3.36.0
     classnames: ^2.3.1
+    typescript: ^5.1.6
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
