@@ -15,8 +15,17 @@ import {
 	PLUGIN_INSTALLATION_IN_PROGRESS,
 	PLUGIN_INSTALLATION_UP_TO_DATE,
 } from 'calypso/state/plugins/installed/status/constants';
-import { PluginActionStatusMessage } from '../types';
+import type { PluginActionTypes } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+
+type PluginActionStatusMessage = {
+	[ key in PluginActionTypes ]: {
+		[ PLUGIN_INSTALLATION_IN_PROGRESS ]: ReactNode;
+		[ PLUGIN_INSTALLATION_COMPLETED ]?: ReactNode;
+		[ PLUGIN_INSTALLATION_ERROR ]: ReactNode;
+		[ PLUGIN_INSTALLATION_UP_TO_DATE ]?: ReactNode;
+	};
+};
 
 /**
  * Returns an object with all the plugin action status messages.

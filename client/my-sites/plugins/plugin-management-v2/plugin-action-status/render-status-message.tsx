@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { CurrentSiteStatus, PluginActionStatus } from '../types';
-import { getPluginActionStatusMessages } from '../utils/get-plugin-action-status-messages';
+import { getPluginActionStatusMessages } from './get-plugin-action-status-messages';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
