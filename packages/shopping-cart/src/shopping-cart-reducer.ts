@@ -1,3 +1,4 @@
+import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import {
 	removeItemFromResponseCart,
@@ -188,8 +189,8 @@ function shoppingCartReducer(
 					uuid: uuidToReplace,
 					...action.productPropertiesToChange,
 				} ) &&
-				// WIP | Temporary bypass that logic for the domain registration product to allow updating the product by volume instead of product id
-				action.productPropertiesToChange.product_id !== 6
+				// Multi year domain products have the same slug but different volume
+				! isMultiYearDomainProduct( action.productPropertiesToChange )
 			) {
 				debug( `variant is already in cart; not submitting again` );
 				return state;
