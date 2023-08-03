@@ -1,7 +1,12 @@
 .site-monitoring-pie-chart {
+	.pie-chart__chart-drawing {
+		height: 250px;
+		width: 250px;
+	}
 	.pie-chart__legend {
 		margin-top: 24px;
 		flex-direction: row;
+		justify-content: center;
 		.legend-item__title-sample-drawing {
 			margin-right: 4px;
 		}

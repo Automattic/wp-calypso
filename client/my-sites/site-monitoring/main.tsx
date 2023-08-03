@@ -105,19 +105,35 @@ export function SiteMetrics() {
 		'requests_persec',
 		'page_is_cached'
 	);
+	const { formattedData: phpVsStaticFormattedData } = useAggregateSiteMetricsData(
+		undefined,
+		undefined,
+		'requests_persec',
+		'page_renderer'
+	);
 
 	return (
 		<>
 			<h2>Atomic site</h2>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
-			<SiteMonitoringPieChart
-				title="Cache hit/miss"
-				className="site-monitoring-cache-pie-chart"
-				data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
-					0: 'Cache miss',
-					1: 'Cache hit',
-				} ) }
-			></SiteMonitoringPieChart>
+			<div class="site-monitoring__pie-charts">
+				<SiteMonitoringPieChart
+					title="Cache hit/miss"
+					className="site-monitoring-cache-pie-chart"
+					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
+						0: 'Cache miss',
+						1: 'Cache hit',
+					} ) }
+				></SiteMonitoringPieChart>
+				<SiteMonitoringPieChart
+					title="PHP vs. static content served"
+					className="site-monitoring-php-static-pie-chart"
+					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
+						php: 'PHP',
+						static: 'Static',
+					} ) }
+				></SiteMonitoringPieChart>
+			</div>
 		</>
 	);
 }

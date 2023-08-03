@@ -18,6 +18,14 @@
 	color: var(--studio-gray-90);
 }
 
+.site-monitoring__pie-charts {
+	display: flex;
+	gap: 16px;
+	.site-monitoring__chart {
+		flex-grow: 1;
+	}
+}
+
 .site-monitoring-cache-pie-chart {
 	.pie-chart__chart-section-0,
 	.pie-chart__legend-sample-0 {
@@ -26,6 +34,17 @@
 	.pie-chart__chart-section-1,
 	.pie-chart__legend-sample-1 {
 		fill: var(--studio-blue-30);
+	}
+}
+
+.site-monitoring-php-static-pie-chart {
+	.pie-chart__chart-section-0,
+	.pie-chart__legend-sample-0 {
+		fill: var(--studio-green-30);
+	}
+	.pie-chart__chart-section-1,
+	.pie-chart__legend-sample-1 {
+		fill: var(--studio-green-5);
 	}
 }
 
