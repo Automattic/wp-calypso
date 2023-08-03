@@ -68,13 +68,17 @@ export function useAggregateSiteMetricsData(
 		dimension: dimension || 'http_status',
 	} );
 
-	const formattedData = {};
+	const formattedData: Record< string, number > = {};
 	data?.data?.periods?.forEach( ( period ) => {
+		if ( Array.isArray( period.dimension ) ) {
+			return;
+		}
+		const dimension = period.dimension;
 		Object.keys( period.dimension ).forEach( ( key ) => {
 			if ( ! formattedData[ key ] ) {
 				formattedData[ key ] = 0;
 			}
-			formattedData[ key ] += period.dimension[ key ];
+			formattedData[ key ] += dimension[ key ];
 		} );
 	} );
 
@@ -116,7 +120,7 @@ export function SiteMetrics() {
 		<>
 			<h2>Atomic site</h2>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
-			<div class="site-monitoring__pie-charts">
+			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
 					title="Cache hit/miss"
 					className="site-monitoring-cache-pie-chart"
