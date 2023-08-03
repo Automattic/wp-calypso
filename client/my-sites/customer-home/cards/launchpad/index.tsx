@@ -86,6 +86,11 @@ const CustomerHomeLaunchpad = ( {
 										is_visible: false,
 									},
 								} );
+
+								recordTracksEvent( 'calypso_launchpad_dismiss_guide', {
+									checklist_slug: checklistSlug,
+									context: 'customer-home',
+								} );
 							} }
 						>
 							<div> { translate( 'Dismiss guide' ) } </div>
