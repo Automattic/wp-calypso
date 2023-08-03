@@ -636,6 +636,14 @@ class AllDomains extends Component {
 
 		const item = {
 			label: translate( 'All Domains' ),
+			subtitle: translate(
+				'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+					},
+				}
+			),
 			helpBubble: translate(
 				'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 				{
@@ -659,7 +667,14 @@ class AllDomains extends Component {
 			? []
 			: [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList /> ];
 
-		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
+		return (
+			<DomainHeader
+				items={ [ item ] }
+				buttons={ buttons }
+				mobileButtons={ mobileButtons }
+				isRedesign2023Aug
+			/>
+		);
 	}
 
 	renderContent() {

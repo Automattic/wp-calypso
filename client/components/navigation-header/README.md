@@ -1,13 +1,13 @@
-# FixedNavigationHeader (TSX)
+# NavigationHeader (TSX)
 
-Note: This will eventually be replaced by NavigationHeader.
+Note: This will eventually replace FixedNavigationHeader.
 This component displays a header with a breadcrumb.
 It can also include children items which will be positioned to the far right.
 
 ## How to use
 
 ```js
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 
 const navigationItems = [
 	{ label: 'Plugins', href: `/plugins` },
@@ -15,9 +15,7 @@ const navigationItems = [
 ];
 
 function render() {
-	return (
-		<FixedNavigationHeader navigationItems={ navigationItems }>Children Item</FixedNavigationHeader>
-	);
+	return <NavigationHeader navigationItems={ navigationItems }>Children Item</NavigationHeader>;
 }
 ```
 

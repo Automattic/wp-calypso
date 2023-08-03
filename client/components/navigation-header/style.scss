@@ -1,0 +1,46 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.navigation-header__header {
+	box-sizing: border-box;
+	width: 100%;
+	background-color: var(--studio-white);
+	padding: 0 16px;
+
+	@include break-small {
+		margin-top: 0;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		margin-top: calc(-1 * var(--masterbar-height) + 20px);
+	}
+
+	@include break-medium {
+		margin-top: calc(-1 * var(--masterbar-height) - 7px);
+	}
+
+	@include break-large {
+		margin-top: calc(-1 * var(--masterbar-height) - 16px);
+		padding: 24px 0;
+	}
+}
+
+.navigation-header__main {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 70px;
+
+	.formatted-header__title {
+		font-size: $font-title-small;
+		font-weight: 500;
+		margin: 0;
+	}
+	.formatted-header__subtitle {
+		margin: 0;
+	}
+}
+
+#primary header.navigation-header__header header.formatted-header {
+	margin: 0;
+}

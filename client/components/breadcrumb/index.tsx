@@ -90,16 +90,20 @@ interface Props {
 	items: Item[];
 	mobileItem?: Item;
 	compact?: boolean;
+	hideWhenOnlyOneLevel?: boolean;
 }
 
 const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { items, mobileItem, compact = false } = props;
+	const { items, mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
 
 	if ( items.length === 1 ) {
+		if ( hideWhenOnlyOneLevel ) {
+			return null;
+		}
 		const [ item ] = items;
 		return (
-			<StyledItem>
+			<StyledItem className="breadcrumbs-single">
 				<StyledRootLabel>{ item.label }</StyledRootLabel>
 				{ renderHelpBubble( item ) }
 			</StyledItem>
@@ -119,7 +123,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 
 	if ( items.length > 1 ) {
 		return (
-			<StyledUl>
+			<StyledUl className="breadcrumbs">
 				{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
 					<StyledLi key={ index }>
 						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
