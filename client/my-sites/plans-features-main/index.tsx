@@ -41,7 +41,7 @@ import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dia
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
-import { useIsPlanUpsellEnabledOnFreeDomain } from './hooks/use-is-plan-upsell-enabled-on-free-domain';
+import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -294,7 +294,10 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName
 	);
-	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain( flowName );
+	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
+		flowName,
+		!! paidDomainName
+	);
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,

@@ -166,7 +166,7 @@ export function FreePlanFreeDomainDialog( {
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
-			dialog_type: 'paid_plan_is_required',
+			dialog_type: 'free_plan_free_domain',
 		} );
 	}, [] );
 
