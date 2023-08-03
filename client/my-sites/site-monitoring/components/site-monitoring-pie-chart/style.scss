@@ -1,4 +1,12 @@
 .site-monitoring-pie-chart {
-	height: 400px;
-	width: 400px;
+	.pie-chart__legend {
+		margin-top: 24px;
+		flex-direction: row;
+		.legend-item__title-sample-drawing {
+			margin-right: 4px;
+		}
+		.legend-item:not(:first-child) {
+			margin-top: auto;
+		}
+	}
 }

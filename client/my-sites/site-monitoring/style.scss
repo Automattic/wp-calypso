@@ -1,5 +1,34 @@
 @import "uplot/dist/uPlot.min.css";
 
+.site-monitoring__chart {
+	padding: 24px;
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 3px; /* stylelint-disable-line scales/radii */
+}
+
+.site-monitoring__chart-header {
+	margin-bottom: 24px;
+}
+
+.site-monitoring__chart-title {
+	font-family: "SF Pro Text", $sans;
+	font-size: rem(14px);
+	line-height: rem(20px);
+	font-weight: 500;
+	color: var(--studio-gray-90);
+}
+
+.site-monitoring-cache-pie-chart {
+	.pie-chart__chart-section-0,
+	.pie-chart__legend-sample-0 {
+		fill: var(--studio-blue-5);
+	}
+	.pie-chart__chart-section-1,
+	.pie-chart__legend-sample-1 {
+		fill: var(--studio-blue-30);
+	}
+}
+
 .u-legend {
 	color: var(--studio-gray-100);
 

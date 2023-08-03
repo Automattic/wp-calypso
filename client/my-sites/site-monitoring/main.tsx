@@ -83,10 +83,14 @@ export function useAggregateSiteMetricsData(
 	};
 }
 
-function getFormattedDataForPieChart( data: Record< string, number > ) {
+function getFormattedDataForPieChart(
+	data: Record< string, number >,
+	labels: Record< string, string >
+) {
 	return Object.keys( data ).map( ( key ) => {
+		const name = labels[ key ] || key;
 		return {
-			name: key,
+			name,
 			value: data[ key ],
 			description: undefined,
 		};
@@ -108,7 +112,11 @@ export function SiteMetrics() {
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 			<SiteMonitoringPieChart
 				title="Cache hit/miss"
-				data={ getFormattedDataForPieChart( cacheHitMissFormattedData ) }
+				className="site-monitoring-cache-pie-chart"
+				data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
+					0: 'Cache miss',
+					1: 'Cache hit',
+				} ) }
 			></SiteMonitoringPieChart>
 		</>
 	);
