@@ -36,12 +36,10 @@
 			"prPriority": 2
 		},
 		{
-			"packageName": "typescript",
-			"prPriority": 2
-		},
-		{
-			"groupName": "Type definitions",
-			"matchPackagePatterns": [ "^@types/" ],
+			"groupName": "typescript-related packages",
+			"matchPackagePatterns": [ "typescript-eslint" ],
+			"matchPackageNames": [ "typescript" ],
+
 			"prPriority": 2
 		},
 		{
