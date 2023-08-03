@@ -76,8 +76,11 @@ class MembershipsSection extends Component {
 	}
 	navigateToLaunchpad() {
 		const shouldGoToLaunchpad = this.props?.query?.stripe_connect_success === 'launchpad';
+		const siteIntent = this.props.site?.options?.site_intent;
 		if ( shouldGoToLaunchpad ) {
-			window.location.assign( `/setup/newsletter/launchpad?siteSlug=${ this.props.siteSlug }` );
+			window.location.assign(
+				`/setup/${ siteIntent }/launchpad?siteSlug=${ this.props.siteSlug }`
+			);
 		}
 	}
 	renderEarnings() {
@@ -714,7 +717,7 @@ const getSource = () => {
 		return 'earn-newsletter';
 	}
 	if ( window.location.hash === LAUNCHPAD_HASH ) {
-		return 'launchpad';
+		return 'full-launchpad';
 	}
 	return 'calypso';
 };
