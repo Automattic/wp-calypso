@@ -316,25 +316,3 @@
 		border-top: 1px solid var(--studio-gray-5);
 	}
 }
-
-.is-section-domains main.main {
-	padding-top: 59px;
-}
-
-@include breakpoint-deprecated( ">660px" ) {
-	.is-section-domains main.main {
-		padding-top: 45px;
-	}
-}
-
-@include breakpoint-deprecated( ">800px" ) {
-	.is-section-domains main.main {
-		padding-top: 32px;
-	}
-}
-
-@include breakpoint-deprecated( ">960px" ) {
-	.is-section-domains main.main {
-		padding-top: 24px;
-	}
-}
