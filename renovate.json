@@ -1,21 +1,15 @@
 {
-	"extends": [ "config:base", "default:pinDigestsDisabled" ],
+	"extends": [ "config:recommended", "default:pinDigestsDisabled" ],
 	"packageRules": [
 		{
-			"extends": "monorepo:wordpress",
+			"extends": [ "monorepo:wordpress" ],
 			"separateMajorMinor": false,
 			"prPriority": 3
 		},
+		{ "extends": [ "monorepo:babel" ], "prPriority": 2 },
+		{ "extends": [ "monorepo:lodash" ], "prPriority": 2 },
 		{
-			"extends": "monorepo:babel",
-			"prPriority": 2
-		},
-		{
-			"extends": "monorepo:lodash",
-			"prPriority": 2
-		},
-		{
-			"extends": "monorepo:react",
+			"extends": [ "monorepo:react" ],
 			"prPriority": 2,
 			"ignorePaths": [ "packages/interpolate-components" ]
 		},
@@ -39,11 +33,10 @@
 			"groupName": "typescript-related packages",
 			"matchPackagePatterns": [ "typescript-eslint" ],
 			"matchPackageNames": [ "typescript" ],
-
 			"prPriority": 2
 		},
 		{
-			"groupName": [ "webpack packages" ],
+			"groupName": "webpack packages",
 			"matchPackageNames": [
 				"style-loader",
 				"html-loader",
@@ -56,21 +49,11 @@
 			"excludePackagePatterns": [ "^@storybook" ],
 			"prPriority": 2
 		},
+		{ "matchPackageNames": [ "tinymce" ], "allowedVersions": "^4" },
+		{ "extends": [ "monorepo:storybook" ], "prPriority": 2 },
+		{ "extends": [ "packages:linters" ], "groupName": "linters", "prPriority": 2 },
 		{
-			"packageName": "tinymce",
-			"allowedVersions": "^4"
-		},
-		{
-			"extends": "monorepo:storybook",
-			"prPriority": 2
-		},
-		{
-			"extends": "packages:linters",
-			"groupName": "linters",
-			"prPriority": 2
-		},
-		{
-			"extends": "packages:unitTest",
+			"extends": [ "packages:unitTest" ],
 			"groupName": "unit test packages",
 			"prPriority": 2
 		},
@@ -92,14 +75,9 @@
 			"matchPackageNames": [ "yargs", "commander", "chalk", "colors" ],
 			"prPriority": 1
 		},
-		{
-			"packagePatterns": [ "*" ],
-			"enabled": false
-		}
+		{ "matchPackagePatterns": [ "*" ], "enabled": false }
 	],
-	"major": {
-		"schedule": [ "on the first day of the month" ]
-	},
+	"major": { "schedule": [ "on the first day of the month" ] },
 	"schedule": [ "every weekend" ],
 	"dependencyDashboardTitle": "Renovate Dependency Updates",
 	"rangeStrategy": "bump",
@@ -108,10 +86,10 @@
 	"postUpdateOptions": [ "yarnDedupeHighest" ],
 	"prConcurrentLimit": 18,
 	"prHourlyLimit": 10,
-	"semanticCommits": true,
+	"semanticCommits": "enabled",
 	"semanticCommitType": "chore",
 	"reviewers": [ "team:team-calypso-platform" ],
-	"stabilityDays": 10,
+	"minimumReleaseAge": "10 days",
 	"prCreation": "immediate",
 	"branchPrefix": "renovate/",
 	"allowPlugins": true,
