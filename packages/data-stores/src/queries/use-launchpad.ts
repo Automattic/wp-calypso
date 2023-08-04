@@ -41,9 +41,9 @@ interface LaunchpadResponse {
 
 type LaunchpadUpdateSettings = {
 	checklist_statuses?: Record< string, boolean >;
-	is_checklist_visible?: {
+	is_checklist_dismissed?: {
 		slug: string;
-		is_visible: boolean;
+		is_dismissed: boolean;
 	};
 };
 

@@ -81,9 +81,9 @@ const CustomerHomeLaunchpad = ( {
 							borderless
 							onClick={ () => {
 								updateLaunchpadSettings( siteSlug, {
-									is_checklist_visible: {
+									is_checklist_dismissed: {
 										slug: checklistSlug,
-										is_visible: false,
+										is_dismissed: true,
 									},
 								} );
 
