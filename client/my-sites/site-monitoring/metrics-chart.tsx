@@ -7,8 +7,6 @@ import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 
-import './style.scss';
-
 const DEFAULT_DIMENSIONS = {
 	height: 300,
 	width: 1224,

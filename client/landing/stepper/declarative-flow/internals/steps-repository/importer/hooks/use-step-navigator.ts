@@ -72,7 +72,7 @@ export function useStepNavigator(
 			siteSlug: siteSlug,
 			from: fromSite,
 			option: WPImportOption.EVERYTHING,
-			run: true,
+			run: false,
 			...extraArgs,
 		};
 

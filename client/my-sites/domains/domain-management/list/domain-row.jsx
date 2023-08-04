@@ -200,6 +200,7 @@ class DomainRow extends PureComponent {
 				<AutoRenewToggle
 					planName={ site.plan.product_name_short }
 					siteDomain={ site.domain }
+					siteSlug={ site.slug }
 					purchase={ purchase }
 					shouldDisable={ isManagingAllSites && showCheckbox }
 					withTextStatus={ false }

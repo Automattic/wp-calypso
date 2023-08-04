@@ -71,8 +71,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 						className="action-buttons__borderless"
 						onClick={ onFreeTrialClick }
 					>
-						{ /* Untranslated until we've confirmed the design */ }
-						Try for free
+						{ translate( 'Try it for free' ) }
 					</Button>
 				) }
 				<Button

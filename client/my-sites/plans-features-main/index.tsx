@@ -12,7 +12,7 @@ import {
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useLayoutEffect, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -41,6 +41,7 @@ import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dia
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
+import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -190,6 +191,44 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		) as PlanSlug | undefined;
 	}
 
+	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
+
+	/**
+	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
+	 * for the sticky CTA bar.
+	 */
+	useLayoutEffect( () => {
+		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
+
+		if ( ! masterbarElement ) {
+			return;
+		}
+
+		if ( ! window.ResizeObserver ) {
+			setMasterbarHeight( masterbarElement.offsetHeight );
+			return;
+		}
+
+		let lastHeight = masterbarElement.offsetHeight;
+
+		const observer = new ResizeObserver(
+			( [ masterbar ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
+				const currentHeight = masterbar.contentRect.height;
+
+				if ( currentHeight !== lastHeight ) {
+					setMasterbarHeight( currentHeight );
+					lastHeight = currentHeight;
+				}
+			}
+		);
+
+		observer.observe( masterbarElement );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
+
 	const asyncProps: PlanFeatures2023GridProps = {
 		paidDomainName,
 		wpcomFreeDomainSuggestion,
@@ -214,6 +253,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		showLegacyStorageFeature,
 		spotlightPlanSlug,
 		showUpgradeableStorage,
+		stickyRowOffset: masterbarHeight,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -293,8 +333,10 @@ const PlansFeaturesMain = ( {
 		flowName,
 		paidDomainName
 	);
-
-	const isFreeDomainFreePlanModalEnabled = config.isEnabled( 'onboarding-pm/free-free-modal' );
+	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
+		flowName,
+		!! paidDomainName
+	);
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -330,11 +372,25 @@ const PlansFeaturesMain = ( {
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
 		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
-		if ( ( 'onboarding' === flowName || 'onboarding-pm' === flowName ) && ! cartItemForPlan ) {
+		if ( ! cartItemForPlan ) {
+			/**
+			 * Delay showing modal until the experiments have loaded
+			 */
+			if (
+				isCustomDomainAllowedOnFreePlan.isLoading ||
+				isPlanUpsellEnabledOnFreeDomain.isLoading
+			) {
+				return;
+			}
+
+			/**
+			 * After the experiments are loaded now open the relevant modal based on previous step parameters
+			 */
 			if ( paidDomainName ) {
 				toggleIsFreePlanPaidDomainDialogOpen();
 				return;
-			} else if ( isFreeDomainFreePlanModalEnabled ) {
+			}
+			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
 				setIsFreeFreeUpsellOpen( true );
 				return;
 			}
