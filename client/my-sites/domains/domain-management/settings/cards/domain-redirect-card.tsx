@@ -1,5 +1,4 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -11,11 +10,6 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import { withoutHttp } from 'calypso/lib/url';
 import { SITE_REDIRECT } from 'calypso/lib/url/support';
 import { domainManagementSiteRedirect } from 'calypso/my-sites/domains/paths';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
 import {
 	closeSiteRedirectNotice,
 	fetchSiteRedirect,
@@ -35,6 +29,11 @@ const noticeOptions = {
 };
 
 export default function DomainRedirectCard() {
+	const selectedSite = useSelector( getSelectedSite );
+	const location = useSelector( ( state ) =>
+		getSiteRedirectLocation( state, selectedSite?.domain )
+	);
+
 	return null;
 }
 
@@ -106,20 +105,6 @@ class SiteRedirectCard extends Component {
 		}
 	};
 
-	handleFocus = () => {
-		this.props.recordLocationFocus( this.props.selectedDomainName );
-	};
-
-	getNoticeStatus( notice ) {
-		if ( notice?.error ) {
-			return 'is-error';
-		}
-		if ( notice?.success ) {
-			return 'is-success';
-		}
-		return 'is-info';
-	}
-
 	render() {
 		const { location, translate } = this.props;
 		const { isUpdating, isFetching } = location;
@@ -132,7 +117,6 @@ class SiteRedirectCard extends Component {
 						name="destination"
 						noWrap
 						onChange={ this.handleChange }
-						onFocus={ this.handleFocus }
 						prefix="http://"
 						value={ this.state.redirectUrl }
 						id="site-redirect__input"
@@ -170,57 +154,7 @@ class SiteRedirectCard extends Component {
 	}
 }
 
-const recordCancelClick = ( domainName ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Cancel" Button in Site Redirect',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_domain_management_site_redirect_cancel_click', {
-			domain_name: domainName,
-		} )
-	);
-
-const recordLocationFocus = ( domainName ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Focused On "Location" Input in Site Redirect',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_domain_management_site_redirect_location_focus', {
-			domain_name: domainName,
-		} )
-	);
-
-const recordUpdateSiteRedirectClick = ( domainName, location, success ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Update Site Redirect" Button in Site Redirect',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_domain_management_site_redirect_update_site_redirect_click', {
-			domain_name: domainName,
-			location,
-			success,
-		} )
-	);
-
-const withLocationAsKey = createHigherOrderComponent( ( Wrapped ) => ( props ) => {
-	const selectedSite = useSelector( getSelectedSite );
-	const location = useSelector( ( state ) =>
-		getSiteRedirectLocation( state, selectedSite?.domain )
-	);
-
-	return <Wrapped { ...props } key={ `redirect-${ location.value }` } />;
-} );
-
-export default connect(
+export const SiteRedirectCardConnected = connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const location = getSiteRedirectLocation( state, selectedSite?.domain );
@@ -232,10 +166,7 @@ export default connect(
 		fetchSiteDomains,
 		updateSiteRedirect,
 		closeSiteRedirectNotice,
-		recordCancelClick,
-		recordLocationFocus,
-		recordUpdateSiteRedirectClick,
 		successNotice,
 		errorNotice,
 	}
-)( localize( withLocationAsKey( SiteRedirectCard ) ) );
+)( localize( SiteRedirectCard ) );
