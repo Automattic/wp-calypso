@@ -1,26 +1,53 @@
-import moment from 'moment';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
+import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import UplotChartMetrics from './metrics-chart';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
 
 import './style.scss';
 
-export function useSiteMetricsData( start?: number, end?: number, metric?: MetricsType ) {
+interface TimeRange {
+	start: number;
+	end: number;
+}
+
+export function useTimeRange() {
+	// State to store the selected time range
+	const [ selectedTimeRange, setSelectedTimeRange ] = useState( null as TimeRange | null );
+
+	// Function to handle the time range selection
+	const handleTimeRangeChange = ( timeRange: TimeRange ) => {
+		setSelectedTimeRange( timeRange );
+	};
+
+	// Call the `calculateTimeRange` function with the default selected option
+	const defaultTimeRange = calculateTimeRange( '24-hours' );
+
+	// Calculate the startTime and endTime using useMemo to memoize the result
+	const { start, end } = useMemo( () => {
+		return selectedTimeRange || defaultTimeRange;
+	}, [ defaultTimeRange, selectedTimeRange ] );
+
+	return {
+		start,
+		end,
+		handleTimeRangeChange,
+	};
+}
+
+export function useSiteMetricsData( metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
-	// Calculate the startTime and endTime using useMemo
-	const startTime = useMemo( () => start || moment().subtract( 24, 'hours' ).unix(), [ start ] );
-	const endTime = useMemo( () => end || moment().unix(), [ end ] );
+	// Use the custom hook for time range selection
+	const { start, end, handleTimeRangeChange } = useTimeRange();
 
 	const { data } = useSiteMetricsQuery( siteId, {
-		start: startTime,
-		end: endTime,
+		start,
+		end,
 		metric: metric || 'requests_persec',
 	} );
-
 	// Function to get the dimension value for a specific key and period
 	const getDimensionValue = ( period: PeriodData ) => {
 		if ( Array.isArray( period?.dimension ) ) {
@@ -48,24 +75,19 @@ export function useSiteMetricsData( start?: number, end?: number, metric?: Metri
 
 	return {
 		formattedData,
+		handleTimeRangeChange,
 	};
 }
 
-export function useAggregateSiteMetricsData(
-	start?: number,
-	end?: number,
-	metric?: MetricsType,
-	dimension?: DimensionParams
-) {
+export function useAggregateSiteMetricsData( metric?: MetricsType, dimension?: DimensionParams ) {
 	const siteId = useSelector( getSelectedSiteId );
 
-	// Calculate the startTime and endTime using useMemo
-	const startTime = useMemo( () => start || moment().subtract( 24, 'hours' ).unix(), [ start ] );
-	const endTime = useMemo( () => end || moment().unix(), [ end ] );
+	// Use the custom hook for time range selection
+	const { start, end, handleTimeRangeChange } = useTimeRange();
 
 	const { data } = useSiteMetricsQuery( siteId, {
-		start: startTime,
-		end: endTime,
+		start,
+		end,
 		metric: metric || 'requests_persec',
 		dimension: dimension || 'http_status',
 	} );
@@ -86,6 +108,7 @@ export function useAggregateSiteMetricsData(
 
 	return {
 		formattedData,
+		handleTimeRangeChange,
 	};
 }
 
@@ -104,16 +127,12 @@ function getFormattedDataForPieChart(
 }
 
 export function SiteMetrics() {
-	const { formattedData } = useSiteMetricsData();
+	const { formattedData, handleTimeRangeChange } = useSiteMetricsData();
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
-		undefined,
-		undefined,
 		'requests_persec',
 		'page_is_cached'
 	);
 	const { formattedData: phpVsStaticFormattedData } = useAggregateSiteMetricsData(
-		undefined,
-		undefined,
 		'requests_persec',
 		'page_renderer'
 	);
@@ -121,6 +140,7 @@ export function SiteMetrics() {
 	return (
 		<div className="site-monitoring">
 			<h2>Atomic site</h2>
+			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
