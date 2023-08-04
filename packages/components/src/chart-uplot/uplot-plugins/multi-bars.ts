@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-use-before-define, no-unused-vars, no-shadow, no-nested-ternary */
+/* eslint-disable @typescript-eslint/no-use-before-define, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-use-before-define, no-unused-vars, no-shadow, no-nested-ternary */
 import uPlot from 'uplot';
 import distr from '../lib/distr';
 import Quadtree from '../lib/quadtree';
@@ -13,11 +13,12 @@ function pointWithin(
 ) {
 	return px >= rlft && px <= rrgt && py >= rtop && py <= rbtm;
 }
+
 /**
  * @see https://github.com/leeoniya/uPlot/blob/f2804d0787f493f472be1d4f718ac8940c093c04/demos/grouped-bars.js
  */
 export default function seriesBarsPlugin(
-	opts: { labels: any; ori?: any; dir?: any },
+	opts: { labels: any; ori?: any; dir?: any; padding?: any },
 	spaceBetween = 1
 ) {
 	const pxRatio = devicePixelRatio;
@@ -197,8 +198,18 @@ export default function seriesBarsPlugin(
 		return [ 0, max ];
 	}
 
-	let qt;
-	let hovered = null;
+	let qt: {
+		add: ( arg0: { x: number; y: number; w: number; h: number; sidx: number; didx: any } ) => void;
+		clear: () => void;
+		get: (
+			arg0: number,
+			arg1: number,
+			arg2: number,
+			arg3: number,
+			arg4: ( o: any ) => void
+		) => void;
+	};
+	let hovered: boolean | null = null;
 
 	const barMark = document.createElement( 'div' );
 	barMark.classList.add( 'bar-mark' );
@@ -217,7 +228,7 @@ export default function seriesBarsPlugin(
 				u.root.querySelector( '.u-over' ).appendChild( barMark );
 			},
 			drawClear: ( u: { bbox: { width: any; height: any }; series: any[] } ) => {
-				qt = qt || new Quadtree( 0, 0, u.bbox.width, u.bbox.height );
+				qt = qt || new Quadtree( 0, 0, u.bbox.width, u.bbox.height, null );
 
 				qt.clear();
 
@@ -226,7 +237,7 @@ export default function seriesBarsPlugin(
 					s._paths = null;
 				} );
 			},
-			setCursor: ( u ) => {
+			setCursor: ( u: { cursor: { left: number; top: number } } ) => {
 				let found = null;
 				const cx = u.cursor.left * pxRatio;
 				const cy = u.cursor.top * pxRatio;
@@ -237,22 +248,13 @@ export default function seriesBarsPlugin(
 					}
 				} );
 
-				if ( found ) {
-					if ( found !== hovered ) {
-						barMark.style.display = null;
-						barMark.style.left = found.x / pxRatio + 'px';
-						barMark.style.top = found.y / pxRatio + 'px';
-						barMark.style.width = found.w / pxRatio + 'px';
-						barMark.style.height = found.h / pxRatio + 'px';
-						hovered = found;
-					}
-				} else if ( hovered !== null ) {
+				if ( hovered !== null ) {
 					hovered = null;
 					barMark.style.display = 'none';
 				}
 			},
 		},
-		opts: ( u, opts ) => {
+		opts: ( u: any, opts: uPlot.Options ) => {
 			const yScaleOpts = {
 				range,
 				ori: ori === 0 ? 1 : 0,
@@ -284,21 +286,34 @@ export default function seriesBarsPlugin(
 				opts.padding = [ 0, null, 0, null ];
 			}
 
-			uPlot.assign( opts.axes[ 0 ], {
-				splits: ( u, axisIdx ) => {
+			uPlot.assign( opts.axes?.[ 0 ] || {}, {
+				splits: (
+					u: {
+						bbox: { width: any; height: any };
+						data: string | any[];
+						posToVal: ( arg0: number, arg1: string ) => any;
+					},
+					axisIdx: any
+				) => {
 					const dim = ori === 0 ? u.bbox.width : u.bbox.height;
 					const _dir = dir * ( ori === 0 ? 1 : -1 );
 
-					const splits = [];
+					const splits: any[] = [];
 
-					distr( u.data.length + 1, groupWidth, groupDistr, null, ( di, lftPct, widPct ) => {
-						const groupLftPx = ( dim * lftPct ) / pxRatio;
-						const groupWidPx = ( dim * widPct ) / pxRatio;
+					distr(
+						u.data.length + 1,
+						groupWidth,
+						groupDistr,
+						null,
+						( di: any, lftPct: number, widPct: number ) => {
+							const groupLftPx = ( dim * lftPct ) / pxRatio;
+							const groupWidPx = ( dim * widPct ) / pxRatio;
 
-						const groupCenterPx = groupLftPx + groupWidPx / 2;
+							const groupCenterPx = groupLftPx + groupWidPx / 2;
 
-						splits.push( u.posToVal( groupCenterPx, 'x' ) );
-					} );
+							splits.push( u.posToVal( groupCenterPx, 'x' ) );
+						}
+					);
 
 					return _dir === 1 ? splits : splits.reverse();
 				},
