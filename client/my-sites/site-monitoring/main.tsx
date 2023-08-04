@@ -7,9 +7,9 @@ import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
 import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
+import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
-import UplotChartMetrics from './metrics-chart';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
 
 import './style.scss';
@@ -163,7 +163,10 @@ export function SiteMetrics() {
 				className="site-monitoring__formatted-header"
 			></FormattedHeader>
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
-			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
+			<SiteMonitoringLineChart
+				title={ __( 'Requests per minute & average response time' ) }
+				data={ formattedData as uPlot.AlignedData }
+			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
 					title="Cache hit/miss"
