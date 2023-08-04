@@ -1,16 +1,41 @@
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { ReactElement, useEffect, useMemo } from 'react';
 import { useDispatch } from 'calypso/state';
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import BulkActionsHeader from './bulk-actions-header';
 import PluginsList from './plugins-list';
-import { pluginsEmptyMessage } from './utils/get-plugins-empty-message';
 import type { PluginComponentProps } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { PluginFilter } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
+
+export const useEmptyMessage = (
+	searchTerm: string,
+	filter: PluginFilter
+): TranslateResult | undefined => {
+	const translate = useTranslate();
+
+	return useMemo( () => {
+		if ( searchTerm ) {
+			return translate( 'No results found. Please try refining your search.' );
+		}
+
+		const getMessage = (
+			{
+				all: ( translate ) => translate( 'No plugins found.' ),
+				active: ( translate ) => translate( 'No plugins are active.' ),
+				inactive: ( translate ) => translate( 'No plugins are inactive.' ),
+				updates: ( translate ) => translate( 'All plugins are up to date.' ),
+			} as Partial<
+				Record< PluginFilter, ( translate: ReturnType< typeof useTranslate > ) => TranslateResult >
+			>
+		 )[ filter ];
+
+		return getMessage?.( translate );
+	}, [ searchTerm, translate, filter ] );
+};
 
 interface Props {
 	plugins: Array< PluginComponentProps >;
@@ -40,6 +65,7 @@ export default function PluginManagementV2( {
 }: Props ): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const emptyMessage = useEmptyMessage( searchTerm, filter );
 
 	useEffect( () => {
 		return () => {
@@ -103,11 +129,8 @@ export default function PluginManagementV2( {
 		if ( requestError ) {
 			return null;
 		}
-		let emptyStateMessage = pluginsEmptyMessage?.[ filter ];
-		if ( searchTerm ) {
-			emptyStateMessage = translate( 'No results found. Please try refining your search.' );
-		}
-		return <div className="plugin-management-v2__no-sites">{ emptyStateMessage }</div>;
+
+		return <div className="plugin-management-v2__no-sites">{ emptyMessage }</div>;
 	}
 
 	return (
