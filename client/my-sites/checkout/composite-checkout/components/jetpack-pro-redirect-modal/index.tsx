@@ -63,6 +63,8 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		return null;
 	}
 
+	dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_show' ) );
+
 	return (
 		<Modal onRequestClose={ dismissAndRecordEvent } title="" className="jetpack-pro-redirect-modal">
 			<div className="jetpack-pro-redirect-modal__container">
