@@ -27,14 +27,14 @@ export function formatChatHour( date: Date ): string {
 	return `${ hours }:${ minutes }`;
 }
 
-export default function UplotChartMetrics( {
+export const SiteMonitoringLineChart = ( {
 	data,
 	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
 	options: propOptions,
 	solidFill = false,
 	period,
-}: UplotChartProps ) {
+}: UplotChartProps ) => {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
@@ -170,4 +170,4 @@ export default function UplotChartMetrics( {
 			/>
 		</div>
 	);
-}
+};
