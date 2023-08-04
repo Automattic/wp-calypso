@@ -38,9 +38,7 @@ const TrialCurrentPlan = () => {
 
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
-	const bodyClass = isEcommerceTrial
-		? [ 'is-ecommerce-trial-plan' ]
-		: [ 'is-migration-trial-plan' ];
+	const bodyClass = isEcommerceTrial ? [ 'is-ecommerce-trial-plan' ] : [ 'is-business-trial-plan' ];
 
 	const targetPlan = isEcommerceTrial ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : PLAN_BUSINESS_MONTHLY;
 	const trackEvent = isEcommerceTrial
