@@ -315,6 +315,7 @@ export class SiteDomains extends Component {
 				mobileItem={ item }
 				buttons={ buttons }
 				mobileButtons={ mobileButtons }
+				isRedesign2023Aug
 			/>
 		);
 	}
