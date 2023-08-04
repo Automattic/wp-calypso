@@ -351,39 +351,33 @@ jobs:
       - run:
           name: Install Desktop Dependencies
           command: yarn
-      - when:
-          condition: << pipeline.git.tag >>
-          steps:
-            - run:
-                name: Build Appx
-                command: |
-                  # Use make (not yarn/npm directly) for bash-like environment variable substitution
-                  make -f desktop/Makefile build-main WINDOWS_STORE=1
-                  # Note: Windows Store build should be unsigned
-                  make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
-            - run:
-                name: Clean Up Appx
-                command: |
-                  set +e
-                  rm -rf desktop/config
-                  rm desktop/release/*.yml
-                  rm -rf desktop/release/win-unpacked
-                  rm -rf desktop/release/win-ia32-unpacked
-                  rm desktop/release/builder-debug.yml || true
-                shell: bash.exe
-      - when:
-          condition: << pipeline.git.tag >>
-          steps:
-            - run:
-                name: Import Codesigning Certificate
-                command: |
-                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
-                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
-                  #
-                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
-                  # package.json's `certificateSubjectName` to find the imported cert.
-                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
-                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      - run:
+          name: Build Appx
+          command: |
+            # Use make (not yarn/npm directly) for bash-like environment variable substitution
+            make -f desktop/Makefile build-main WINDOWS_STORE=1
+            # Note: Windows Store build should be unsigned
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
+      - run:
+          name: Clean Up Appx
+          command: |
+            set +e
+            rm -rf desktop/config
+            rm desktop/release/*.yml
+            rm -rf desktop/release/win-unpacked
+            rm -rf desktop/release/win-ia32-unpacked
+            rm desktop/release/builder-debug.yml || true
+          shell: bash.exe
+      - run:
+          name: Import Codesigning Certificate
+          command: |
+            # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+            # Ref: https://travis-ci.community/t/codesigning-on-windows/
+            #
+            # Fix: Import .p12 into the local certificate store. Sign Tool will use
+            # package.json's `certificateSubjectName` to find the imported cert.
+            $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+            Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
           name: Build NSIS
           command: |
