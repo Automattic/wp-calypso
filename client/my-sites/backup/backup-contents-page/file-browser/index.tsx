@@ -14,6 +14,17 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
 	const [ showCheckboxes, setShowCheckboxes ] = useState< boolean >( false );
 
+	// Temporary values and logic for laying out header
+	const [ currentlySelected, setCurrentlySelected ] = useState< number >( 0 );
+	const totalElements = 10;
+	const onToggleAll = ( checkedState ) => {
+		if ( checkedState ) {
+			setCurrentlySelected( totalElements );
+		} else {
+			setCurrentlySelected( 0 );
+		}
+	};
+
 	const handleClick = ( path: string ) => {
 		setActiveNodePath( path );
 	};
@@ -32,6 +43,9 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 				<FileBrowserHeader
 					showCheckboxes={ showCheckboxes }
 					setShowCheckboxes={ setShowCheckboxes }
+					currentlySelected={ currentlySelected }
+					totalElements={ totalElements }
+					onToggleAll={ onToggleAll }
 				/>
 			) }
 			<FileBrowserNode
