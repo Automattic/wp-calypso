@@ -357,7 +357,7 @@ object ValidateRenovateConfig : BuildType({
 	triggers {
 		vcs {
 			// Only trigger on changes to the renovate configuration file.
-			triggerRules = "+:root=${Settings.WpCalypso.id}:renovate.json"
+			triggerRules = "+:root=${Settings.WpCalypso.id}:renovate.json5"
 			branchFilter = """
 				+:*
 				-:pull*

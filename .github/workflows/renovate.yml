@@ -24,7 +24,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/renovate.yml'
-      - 'renovate.json'
+      - 'renovate.json5'
 
 concurrency:
   group: renovate-${{ github.ref }}
@@ -42,7 +42,7 @@ jobs:
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
       - uses: renovatebot/github-action@v39.0.1
         with:
-          configurationFile: renovate.json
+          configurationFile: renovate.json5
           token: ${{ secrets.RENOVATE_TOKEN }}
           mount-docker-socket: true
           renovate-version: 36.31.0

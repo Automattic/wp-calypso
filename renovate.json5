@@ -8,8 +8,8 @@
 			"prPriority": 3,
 			"schedule": [ "every day" ]
 		},
-		{ "extends": [ "monorepo:babel" ], "prPriority": 2 },
-		{ "extends": [ "monorepo:lodash" ], "prPriority": 2 },
+		{ "extends": [ "monorepo:babel" ], "prPriority": 1 },
+		{ "extends": [ "monorepo:lodash" ], "prPriority": 1 },
 		{
 			"extends": [ "monorepo:react" ],
 			"prPriority": 2,
@@ -23,7 +23,7 @@
 		{
 			"groupName": "react-related packages",
 			"matchPackagePatterns": [ "react" ],
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"groupName": "redux-related packages",
