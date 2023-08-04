@@ -1,88 +1,94 @@
 {
-	"extends": [ "config:recommended", "default:pinDigestsDisabled" ],
-	"packageRules": [
+	extends: [ 'config:recommended', 'default:pinDigestsDisabled' ],
+	packageRules: [
 		// Disable renovate for everything by default, enabling our own groups as needed.
 		// This must be first, or it will overwrite any group that preceeds it.
-		{ "matchPackagePatterns": [ "*" ], "enabled": false },
+		{ matchPackagePatterns: [ '*' ], enabled: false },
 		{
-			"extends": [ "monorepo:wordpress" ],
-			"separateMajorMinor": false,
-			"prPriority": 3,
-			"schedule": [ "daily" ]
+			extends: [ 'monorepo:wordpress', 'schedule:daily' ],
+			separateMajorMinor: false,
+			prPriority: 3,
 		},
 		{
-			"extends": [ "monorepo:react" ],
-			"prPriority": 2,
-			"ignorePaths": [ "packages/interpolate-components" ]
+			extends: [ 'monorepo:react' ],
+			prPriority: 2,
+			ignorePaths: [ 'packages/interpolate-components' ],
 		},
 		// Disable updating the peer dependency field of this package; it nedes to
 		// suport lower versions of React.
 		{
-			"extends": [ "monorepo:react", ":disablePeerDependencies" ],
-			"prPriority": 2,
-			"includePaths": [ "packages/interpolate-components" ]
+			extends: [ 'monorepo:react', ':disablePeerDependencies' ],
+			prPriority: 2,
+			includePaths: [ 'packages/interpolate-components' ],
 		},
 		{
-			"groupName": "react-related packages",
-			"matchPackagePatterns": [ "react" ],
-			"prPriority": 2
+			groupName: 'react-related packages',
+			matchPackagePatterns: [ 'react' ],
+			prPriority: 2,
 		},
 		{
-			"groupName": "redux-related packages",
-			"matchPackagePatterns": [ "redux" ],
-			"matchPackageNames": [ "react-redux" ],
-			"prPriority": 2
+			groupName: 'redux-related packages',
+			matchPackagePatterns: [ 'redux' ],
+			matchPackageNames: [ 'react-redux' ],
+			prPriority: 2,
 		},
 		{
-			"groupName": "typescript-related packages",
-			"matchPackagePatterns": [ "typescript-eslint" ],
-			"matchPackageNames": [ "typescript" ],
-			"prPriority": 2
+			groupName: 'typescript-related packages',
+			matchPackagePatterns: [ 'typescript-eslint' ],
+			matchPackageNames: [ 'typescript' ],
+			prPriority: 2,
 		},
 		{
-			"groupName": "webpack packages",
-			"matchPackageNames": [
-				"style-loader",
-				"html-loader",
-				"exports-loader",
-				"loader-utils",
-				"postcss-loader",
-				"css-loader"
+			groupName: 'webpack packages',
+			matchPackageNames: [
+				'style-loader',
+				'html-loader',
+				'exports-loader',
+				'loader-utils',
+				'postcss-loader',
+				'css-loader',
 			],
-			"matchPackagePatterns": [ "webpack", "terser" ],
-			"excludePackagePatterns": [ "^@storybook" ],
-			"prPriority": 2
+			matchPackagePatterns: [ 'webpack', 'terser' ],
+			excludePackagePatterns: [ '^@storybook' ],
+			prPriority: 2,
 		},
-		{ "extends": [ "monorepo:storybook" ], "prPriority": 2 },
-		{ "extends": [ "packages:linters" ], "groupName": "linters", "prPriority": 2 },
+		{ extends: [ 'monorepo:storybook' ], prPriority: 2 },
+		{ extends: [ 'packages:linters' ], groupName: 'linters', prPriority: 2 },
 		{
-			"extends": [ "packages:unitTest" ],
-			"groupName": "unit test packages",
-			"prPriority": 2
+			extends: [ 'packages:unitTest' ],
+			groupName: 'unit test packages',
+			prPriority: 2,
 		},
-		{ "extends": [ "monorepo:babel" ], "prPriority": 1 },
-		{ "extends": [ "monorepo:lodash" ], "prPriority": 1 },
+		{ extends: [ 'monorepo:babel' ], prPriority: 1 },
+		{ extends: [ 'monorepo:lodash' ], prPriority: 1 },
 		// Essentially pins this to a low version -- we don't really want to update it.
-		{ "matchPackageNames": [ "tinymce" ], "allowedVersions": "^4" },
+		{ matchPackageNames: [ 'tinymce' ], allowedVersions: '^4' },
+		// NodeJS group:
+		{
+			commitMessageTopic: 'Node.js',
+			matchDatasources: [ 'docker' ],
+			matchDepNames: [ 'node' ],
+			matchPackagePatterns: [ '/node$' ],
+		},
 	],
-	"schedule": [ "every weekend" ],
-	"dependencyDashboardTitle": "Renovate Dependency Updates",
-	"rangeStrategy": "bump",
-	"ignoreDeps": [ "electron-builder" ],
-	"labels": [ "Framework", "[Type] Task" ],
-	"postUpdateOptions": [ "yarnDedupeHighest" ],
-	"prConcurrentLimit": 18,
-	"prHourlyLimit": 10,
-	"semanticCommits": "enabled",
-	"semanticCommitType": "chore",
-	"reviewers": [ "team:team-calypso-platform" ],
-	"minimumReleaseAge": "10 days",
-	"prCreation": "immediate",
-	"branchPrefix": "renovate/",
-	"allowPlugins": true,
-	"allowScripts": true,
-	"ignoreScripts": false,
-	"gitAuthor": "Renovate Bot (self-hosted) <bot@renovateapp.com>",
-	"platform": "github",
-	"repositories": [ "Automattic/wp-calypso" ]
+	schedule: [ 'every weekend' ],
+	dependencyDashboardTitle: 'Renovate Dependency Updates',
+	rangeStrategy: 'bump',
+	ignoreDeps: [ 'electron-builder' ],
+	labels: [ 'Framework', '[Type] Task' ],
+	postUpdateOptions: [ 'yarnDedupeHighest' ],
+	prConcurrentLimit: 18,
+	prHourlyLimit: 10,
+	semanticCommits: 'enabled',
+	semanticCommitType: 'chore',
+	reviewers: [ 'team:team-calypso-platform' ],
+	minimumReleaseAge: '10 days',
+	prCreation: 'immediate',
+	branchPrefix: 'renovate/',
+	allowPlugins: true,
+	allowScripts: true,
+	ignoreScripts: false,
+	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
+	platform: 'github',
+	repositories: [ 'Automattic/wp-calypso' ],
 }
