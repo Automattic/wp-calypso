@@ -20,7 +20,6 @@ export type PlanProperties = {
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
 	planName: PlanSlug;
 	productNameShort: string;
-	rawPrice: number | null;
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: StorageOption[];

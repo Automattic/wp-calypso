@@ -158,7 +158,7 @@ describe( 'selectors', () => {
 			).toEqual( {
 				rawPrice: 27,
 				discountedRawPrice: 25,
-				planDiscountedRawPrice: 0,
+				planDiscountedRawPrice: null,
 			} );
 		} );
 
