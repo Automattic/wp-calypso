@@ -74,7 +74,8 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: spamProtection,
 			showButton: true,
 			buttonText: translate( 'Keep your site safe' ),
-			buttonClick: () => ( location.href = siteAdminUrl + 'admin.php?page=akismet-key-config' ),
+			buttonClick: () =>
+				( location.href = localizeUrl( 'https://jetpack.com/blog/what-is-spam/' ) ),
 		},
 		{
 			title: translate( 'SEO tools' ),
