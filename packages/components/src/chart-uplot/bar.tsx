@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -15,14 +14,12 @@ const DEFAULT_DIMENSIONS = {
 	width: 1224,
 };
 
-interface UplotChartProps {
-	data: uPlot.AlignedData;
+export interface UplotChartProps {
+	data: [ string[], ...number[][] ];
 	fillColors: string[];
 	labels: string[];
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
-	solidFill?: boolean;
-	period?: string;
 }
 
 export default function UplotBarChart( {
@@ -32,7 +29,6 @@ export default function UplotBarChart( {
 	legendContainer,
 	options: propOptions,
 }: UplotChartProps ) {
-	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
 
@@ -75,14 +71,14 @@ export default function UplotBarChart( {
 			...defaultOptions,
 			...( typeof propOptions === 'object' ? propOptions : {} ),
 		};
-	}, [ data, fillColors, legendContainer, propOptions ] );
+	}, [ data, fillColors, labels, legendContainer, propOptions ] );
 
 	useResize( uplot, uplotContainer );
 
 	return (
 		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
 			<UplotReact
-				data={ data }
+				data={ data as unknown as uPlot.AlignedData }
 				onCreate={ ( chart ) => ( uplot.current = chart ) }
 				options={ options }
 			/>
