@@ -384,19 +384,26 @@ export default function CheckoutMain( {
 		checkoutFlow
 	);
 
-	// WIP | Since this function will handle both plans and domains, we should change the name or have another function
-	const changePlanLength = useCallback< OnChangeItemVariant >(
+	const changeSelection = useCallback< OnChangeItemVariant >(
 		( uuidToReplace, newProductSlug, newProductId, newProductVolume ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
 					new_product_slug: newProductSlug,
 				} )
 			);
-			replaceProductInCart( uuidToReplace, {
+
+			const propsToChange = {
 				product_slug: newProductSlug,
 				product_id: newProductId,
 				volume: newProductVolume,
-			} ).catch( () => {
+			};
+
+			// only set volume if it's defined
+			if ( ! newProductVolume ) {
+				delete propsToChange.volume;
+			}
+
+			replaceProductInCart( uuidToReplace, propsToChange ).catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
@@ -740,7 +747,7 @@ export default function CheckoutMain( {
 					areThereErrors={ areThereErrors }
 					isInitialCartLoading={ isInitialCartLoading }
 					addItemToCart={ addItemAndLog }
-					changePlanLength={ changePlanLength }
+					changeSelection={ changeSelection }
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }

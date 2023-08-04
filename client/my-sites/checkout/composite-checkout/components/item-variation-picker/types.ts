@@ -29,5 +29,5 @@ export type OnChangeItemVariant = (
 	uuid: string,
 	productSlug: WPCOMProductSlug,
 	productId: number,
-	volume: number
+	volume?: number
 ) => void;
