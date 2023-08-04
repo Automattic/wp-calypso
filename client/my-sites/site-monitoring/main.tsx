@@ -41,7 +41,7 @@ function useTimeRange() {
 	};
 }
 
-function useSiteMetricsData( metric?: MetricsType ) {
+export function useSiteMetricsData( metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Use the custom hook for time range selection
