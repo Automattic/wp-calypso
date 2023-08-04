@@ -48,6 +48,7 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				{
 					method: 'POST',
 					path: `/sites/${ siteId }/memberships/product`,
+					apiNamespace: 'wpcom/v2',
 				},
 				product
 			)
@@ -55,7 +56,7 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				if ( newProduct.error ) {
 					throw new Error( newProduct.error );
 				}
-				const membershipProduct = membershipProductFromApi( newProduct.product );
+				const membershipProduct = membershipProductFromApi( newProduct );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				dispatch(
 					successNotice( noticeText, {
