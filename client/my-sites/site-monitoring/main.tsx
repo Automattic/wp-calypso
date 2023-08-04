@@ -157,7 +157,6 @@ export function SiteMetrics() {
 				align="left"
 				className="site-monitoring__formatted-header"
 			></FormattedHeader>
-			<h2>Atomic site</h2>
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 			<div className="site-monitoring__pie-charts">
