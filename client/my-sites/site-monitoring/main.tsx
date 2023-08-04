@@ -13,7 +13,7 @@ interface TimeRange {
 	end: number;
 }
 
-export function useTimeRange() {
+function useTimeRange() {
 	// State to store the selected time range
 	const [ selectedTimeRange, setSelectedTimeRange ] = useState( null as TimeRange | null );
 
@@ -37,7 +37,7 @@ export function useTimeRange() {
 	};
 }
 
-export function useSiteMetricsData( metric?: MetricsType ) {
+function useSiteMetricsData( metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Use the custom hook for time range selection
@@ -79,7 +79,7 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 	};
 }
 
-export function useAggregateSiteMetricsData( metric?: MetricsType, dimension?: DimensionParams ) {
+function useAggregateSiteMetricsData( metric?: MetricsType, dimension?: DimensionParams ) {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Use the custom hook for time range selection
