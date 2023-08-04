@@ -184,7 +184,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
-							{ isTrialSite && <SitesMigrationTrialBadge>Trial</SitesMigrationTrialBadge> }
+							{ isTrialSite && (
+								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
+							) }
 						</ListTileTitle>
 					}
 					subtitle={

@@ -157,7 +157,9 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						<div className={ badges }>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
-							{ isTrialSite && <SitesMigrationTrialBadge>Trial</SitesMigrationTrialBadge> }
+							{ isTrialSite && (
+								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
+							) }
 							{ getSiteLaunchStatus( site ) !== 'public' && (
 								<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 							) }
