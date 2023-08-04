@@ -323,6 +323,25 @@ const Settings = ( {
 		);
 	};
 
+	const renderRedirectSection = () => {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+		return (
+			<Accordion
+				title={ translate( 'Redirect Domain', { textOnly: true } ) }
+				subtitle={ translate( 'Redirect from your domain to another' ) }
+			>
+				<SiteRedirectCard selectedSite={ selectedSite } selectedDomainName={ selectedDomainName } />
+			</Accordion>
+		);
+	};
+
 	const renderSetAsPrimaryDomainSection = () => {
 		if ( ! domain ) {
 			return null;
@@ -469,6 +488,7 @@ const Settings = ( {
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
+				{ renderRedirectSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
