@@ -9,8 +9,9 @@ const store = new ElectronStore( {
 
 async function write( key, value ) {
 	if ( ! safeStorage.isEncryptionAvailable() ) {
-		return;
+		throw new Error( 'Encryption is not avaialble.' );
 	}
+
 	const buffer = safeStorage.encryptString( value );
 	store.set( key, buffer.toString( 'latin1' ) );
 }
@@ -20,7 +21,7 @@ async function read( key ) {
 		const buffer = store.get( key );
 		return safeStorage.decryptString( Buffer.from( buffer, 'latin1' ) );
 	}
-	return null;
+	throw new Error( 'Requested value not found.' );
 }
 
 async function clear() {
