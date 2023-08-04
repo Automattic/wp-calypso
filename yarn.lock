@@ -9195,7 +9195,7 @@ __metadata:
     electron-updater: ^4.2.5
     jest: ^29.6.1
     js-yaml: ^4.0.0
-    keytar: ^7.7.0
+    keytar: 7.9.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
     playwright: ^1.34
@@ -13272,15 +13272,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decompress-response@npm:^4.2.0":
-  version: 4.2.1
-  resolution: "decompress-response@npm:4.2.1"
-  dependencies:
-    mimic-response: ^2.0.0
-  checksum: 5e4821be332e80e3639acee2441c41d245fc07ac3ee85a6f28893c10c079d66d9bf09e8d84bffeae5656a4625e09e9b93fb4a5705adbe6b07202eea64fae1c8d
-  languageName: node
-  linkType: hard
-
 "decompress-response@npm:^6.0.0":
   version: 6.0.0
   resolution: "decompress-response@npm:6.0.0"
@@ -13549,6 +13540,13 @@ __metadata:
   bin:
     detect-libc: ./bin/detect-libc.js
   checksum: 4da0deae9f69e13bc37a0902d78bf7169480004b1fed3c19722d56cff578d16f0e11633b7fbf5fb6249181236c72e90024cbd68f0b9558ae06e281f47326d50d
+  languageName: node
+  linkType: hard
+
+"detect-libc@npm:^2.0.0":
+  version: 2.0.2
+  resolution: "detect-libc@npm:2.0.2"
+  checksum: a9f4ffcd2701525c589617d98afe5a5d0676c8ea82bcc4ed6f3747241b79f781d36437c59a5e855254c864d36a3e9f8276568b6b531c28d6e53b093a15703f11
   languageName: node
   linkType: hard
 
@@ -20005,14 +20003,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keytar@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "keytar@npm:7.7.0"
+"keytar@npm:7.9.0":
+  version: 7.9.0
+  resolution: "keytar@npm:7.9.0"
   dependencies:
-    node-addon-api: ^3.0.0
+    node-addon-api: ^4.3.0
     node-gyp: latest
-    prebuild-install: ^6.0.0
-  checksum: 0fee71a327ff06577252673103085329a8e760e741d55cb061fbee62b3634f199a22a2c1c8148ee0098a40be3eea99ca5535e9dee14211a8638aaea49a9d76db
+    prebuild-install: ^7.0.1
+  checksum: a3f987ffc82b8c028c59451f9e50f71620b5455d9d356564d9c825df5bc36c47661caf21df0026795a5fbe0013c18c8e4bedff4da34bb20c9683ef20b685fee3
   languageName: node
   linkType: hard
 
@@ -21514,13 +21512,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mimic-response@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "mimic-response@npm:2.1.0"
-  checksum: 717475c840f20deca87a16cb2f7561f9115f5de225ea2377739e09890c81aec72f43c81fd4984650c4044e66be5a846fa7a517ac7908f01009e1e624e19864d5
-  languageName: node
-  linkType: hard
-
 "mimic-response@npm:^3.1.0":
   version: 3.1.0
   resolution: "mimic-response@npm:3.1.0"
@@ -22078,15 +22069,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:3.1.0":
-  version: 3.1.0
-  resolution: "node-addon-api@npm:3.1.0"
-  dependencies:
-    node-gyp: latest
-  checksum: 991b65f3bac4934f0fe8aa72b3fd4df4be5cc1483fe7d5c4b80c7091a3e4bcf50756444363c33723ec449ced349d6d677daab4ea63cfd91c198c24a0208a0960
-  languageName: node
-  linkType: hard
-
 "node-addon-api@npm:^1.6.3":
   version: 1.7.2
   resolution: "node-addon-api@npm:1.7.2"
@@ -22102,6 +22084,15 @@ __metadata:
   dependencies:
     node-gyp: latest
   checksum: 41f21c9d12318875a2c429befd06070ce367065a3ef02952cfd4ea17ef69fa14012732f510b82b226e99c254da8d671847ea018cad785f839a5366e02dd56302
+  languageName: node
+  linkType: hard
+
+"node-addon-api@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "node-addon-api@npm:4.3.0"
+  dependencies:
+    node-gyp: latest
+  checksum: 5febe94d58cdef319bc96a357b43d7a13776c93ee3f2edb374000f16454e65cec06035497947d5fdaa50db1cc7ab8e3a30ca8669bb07a1b159f0307dc2c1ccdf
   languageName: node
   linkType: hard
 
@@ -22428,7 +22419,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npmlog@npm:^4.0.1, npmlog@npm:^4.1.2":
+"npmlog@npm:^4.1.2":
   version: 4.1.2
   resolution: "npmlog@npm:4.1.2"
   dependencies:
@@ -24134,26 +24125,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prebuild-install@npm:^6.0.0":
-  version: 6.1.3
-  resolution: "prebuild-install@npm:6.1.3"
+"prebuild-install@npm:^7.0.1":
+  version: 7.1.1
+  resolution: "prebuild-install@npm:7.1.1"
   dependencies:
-    detect-libc: ^1.0.3
+    detect-libc: ^2.0.0
     expand-template: ^2.0.3
     github-from-package: 0.0.0
     minimist: ^1.2.3
     mkdirp-classic: ^0.5.3
     napi-build-utils: ^1.0.1
-    node-abi: ^2.21.0
-    npmlog: ^4.0.1
+    node-abi: ^3.3.0
     pump: ^3.0.0
     rc: ^1.2.7
-    simple-get: ^3.0.3
+    simple-get: ^4.0.0
     tar-fs: ^2.0.0
     tunnel-agent: ^0.6.0
   bin:
     prebuild-install: bin.js
-  checksum: 0b9fe15bbc9a074bcd9437f7be0a8f13ef7bd5c459cfcb7b4552755b7fd03c60cb0eaac7d08da03489ab6eb9c324d7ab236877aff27e81f4b299c063e891d336
+  checksum: 6dc70f36b0f4adcb2fe0ed38d874ab28b571fb1a9725d769e8ba3f64a15831e58462de09f3e6e64569bcc4a3e03b9328b56faa0d45fe10ae1574478814536c76
   languageName: node
   linkType: hard
 
@@ -27364,14 +27354,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-get@npm:^3.0.3":
-  version: 3.1.0
-  resolution: "simple-get@npm:3.1.0"
+"simple-get@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "simple-get@npm:4.0.1"
   dependencies:
-    decompress-response: ^4.2.0
+    decompress-response: ^6.0.0
     once: ^1.3.1
     simple-concat: ^1.0.0
-  checksum: e26ade66a146f0c9440922c17e9b13c02c772c8bcf977affd467792a5b49ebe756d5338d04bff7d9fc5e5ed9845c5d6f79dd5a41f0e62d97380ce48874de4a15
+  checksum: b0649a581dbca741babb960423248899203165769747142033479a7dc5e77d7b0fced0253c731cd57cf21e31e4d77c9157c3069f4448d558ebc96cf9e1eebcf0
   languageName: node
   linkType: hard
 
