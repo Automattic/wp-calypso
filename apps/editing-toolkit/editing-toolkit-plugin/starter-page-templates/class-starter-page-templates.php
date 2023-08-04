@@ -119,7 +119,7 @@ class Starter_Page_Templates {
 			'single'            => true,
 			'object_subtype'    => 'page',
 			'auth_callback'     => function () {
-				return current_user_can( 'edit_posts' );
+				return current_user_can( 'edit_pages' );
 			},
 			'sanitize_callback' => function ( $meta_value ) {
 				if ( ! is_array( $meta_value ) ) {
