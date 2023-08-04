@@ -1,6 +1,8 @@
 {
 	"extends": [ "config:recommended", "default:pinDigestsDisabled" ],
 	"packageRules": [
+		// Disable renovate for everything by default, enabling our own groups as needed.
+		// This must be first, or it will overwrite any group that preceeds it.
 		{ "matchPackagePatterns": [ "*" ], "enabled": false },
 		{
 			"extends": [ "monorepo:wordpress" ],
@@ -8,13 +10,13 @@
 			"prPriority": 3,
 			"schedule": [ "daily" ]
 		},
-		{ "extends": [ "monorepo:babel" ], "prPriority": 1 },
-		{ "extends": [ "monorepo:lodash" ], "prPriority": 1 },
 		{
 			"extends": [ "monorepo:react" ],
 			"prPriority": 2,
 			"ignorePaths": [ "packages/interpolate-components" ]
 		},
+		// Disable updating the peer dependency field of this package; it nedes to
+		// suport lower versions of React.
 		{
 			"extends": [ "monorepo:react", ":disablePeerDependencies" ],
 			"prPriority": 2,
@@ -51,14 +53,17 @@
 			"excludePackagePatterns": [ "^@storybook" ],
 			"prPriority": 2
 		},
-		{ "matchPackageNames": [ "tinymce" ], "allowedVersions": "^4" },
 		{ "extends": [ "monorepo:storybook" ], "prPriority": 2 },
 		{ "extends": [ "packages:linters" ], "groupName": "linters", "prPriority": 2 },
 		{
 			"extends": [ "packages:unitTest" ],
 			"groupName": "unit test packages",
 			"prPriority": 2
-		}
+		},
+		{ "extends": [ "monorepo:babel" ], "prPriority": 1 },
+		{ "extends": [ "monorepo:lodash" ], "prPriority": 1 },
+		// Essentially pins this to a low version -- we don't really want to update it.
+		{ "matchPackageNames": [ "tinymce" ], "allowedVersions": "^4" },
 	],
 	"schedule": [ "every weekend" ],
 	"dependencyDashboardTitle": "Renovate Dependency Updates",
