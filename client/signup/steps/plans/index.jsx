@@ -243,8 +243,9 @@ export class PlansStep extends Component {
 	}
 
 	shouldHideEcommercePlan() {
-		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan
-		return isSiteAssemblerFlow( this.props.flowName );
+		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan.
+		// We also hide the plan if the flag is set - currently it's only set for the `site-selected` flow.
+		return isSiteAssemblerFlow( this.props.flowName ) || this.props.hideEcommercePlan;
 	}
 
 	plansFeaturesSelection() {
