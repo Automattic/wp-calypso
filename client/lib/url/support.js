@@ -57,6 +57,7 @@ export const REGISTER_DOMAIN = `${ root }/domains/register-domain/`;
 export const SETTING_PRIMARY_DOMAIN = `${ root }/domains/set-a-primary-address/`;
 export const SETTING_UP_PREMIUM_SERVICES = `${ root }/setting-up-premium-services/`;
 export const SITE_REDIRECT = `${ root }/site-redirect/`;
+export const DOMAIN_REDIRECT = `${ root }/domain-redirect/`; // todo - page doesn't exist yet
 export const SUPPORT_ROOT = `${ root }/`;
 export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registration/`;
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;
