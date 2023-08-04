@@ -60,6 +60,11 @@
 		{ extends: [ 'monorepo:lodash' ], prPriority: 1 },
 		// Essentially pins this to a low version -- we don't really want to update it.
 		{ matchPackageNames: [ 'tinymce' ], allowedVersions: '^4' },
+		// Disable maven -- it only exists because of TeamCity, and we don't need to perform updates to that.
+		{
+			matchManagers: [ 'maven' ],
+			enabled: false,
+		},
 	],
 	schedule: [ 'every weekend' ],
 	dependencyDashboardTitle: 'Renovate Dependency Updates',
