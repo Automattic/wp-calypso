@@ -99,7 +99,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
-	// Multi year domain products have the same slug but different volume
+	// Multi-year domain products must be compared by volume because they have the same product id.
 	const selectedVariantIndexRaw = variants.findIndex( ( variant ) =>
 		isMultiYearDomainProduct( selectedItem )
 			? selectedItem.volume === variant.volume

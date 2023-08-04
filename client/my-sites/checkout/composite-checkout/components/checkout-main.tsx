@@ -392,18 +392,12 @@ export default function CheckoutMain( {
 				} )
 			);
 
-			const propsToChange = {
+			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
-				volume: newProductVolume,
-			};
-
-			// only set volume if it's defined
-			if ( ! newProductVolume ) {
-				delete propsToChange.volume;
-			}
-
-			replaceProductInCart( uuidToReplace, propsToChange ).catch( () => {
+				// Since volume is optional, only add it if it's defined
+				...( newProductVolume && { volume: newProductVolume } ),
+			} ).catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
