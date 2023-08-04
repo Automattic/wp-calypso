@@ -19,14 +19,13 @@ interface Props {
 	translate: typeof translate;
 	displayAll: boolean;
 }
-const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
+const BusinessTrialIncluded: FunctionComponent< Props > = ( props ) => {
 	const { translate, displayAll = true } = props;
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
-	// TODO: translate when final copy is available
 	const allIncludedFeatures = [
 		{
 			title: translate( 'Beautiful themes' ),
@@ -125,4 +124,4 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default localize( MigrationTrialIncluded );
+export default localize( BusinessTrialIncluded );

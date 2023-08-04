@@ -14,9 +14,9 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
+import BusinessTrialIncluded from './business-trial-included';
 import EcommerceTrialIncluded from './ecommerce-trial-included';
 import EcommerceTrialNotIncluded from './ecommerce-trial-not-included';
-import MigrationTrialIncluded from './migration-trial-included';
 
 import './trial-current-plan.scss';
 
@@ -78,7 +78,7 @@ const TrialCurrentPlan = () => {
 			return <EcommerceTrialIncluded displayAll={ displayAllIncluded } />;
 		}
 
-		return <MigrationTrialIncluded displayAll={ displayAllIncluded } />;
+		return <BusinessTrialIncluded displayAll={ displayAllIncluded } />;
 	};
 
 	return (
