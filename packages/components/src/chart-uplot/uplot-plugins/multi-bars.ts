@@ -291,7 +291,7 @@ export default function seriesBarsPlugin(
 
 					const splits = [];
 
-					distr( u.data[ 0 ].length, groupWidth, groupDistr, null, ( di, lftPct, widPct ) => {
+					distr( u.data.length + 1, groupWidth, groupDistr, null, ( di, lftPct, widPct ) => {
 						const groupLftPx = ( dim * lftPct ) / pxRatio;
 						const groupWidPx = ( dim * widPct ) / pxRatio;
 

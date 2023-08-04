@@ -17,7 +17,8 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	data: uPlot.AlignedData;
-	fillColors?: string[];
+	fillColors: string[];
+	labels: string[];
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
@@ -26,6 +27,7 @@ interface UplotChartProps {
 
 export default function UplotBarChart( {
 	data,
+	labels,
 	fillColors = [],
 	legendContainer,
 	options: propOptions,
@@ -55,7 +57,7 @@ export default function UplotBarChart( {
 			],
 			plugins: [
 				seriesBarsPlugin( {
-					labels: () => data[ 0 ],
+					labels: () => labels,
 				} ),
 			],
 			legend: {

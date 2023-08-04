@@ -54,10 +54,13 @@ const barChartData = [
 	[ 0, 0, 0, 0, 70, 0, 0 ],
 ];
 
+const barChartLabels = [ '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00' ];
+
 export const BarChartUplot = () => {
 	return (
 		<UplotBarChart
 			data={ barChartData }
+			labels={ barChartLabels }
 			fillColors={ [ '#68B3E8', '#A7AAAD', '#F2D76B', '#09B585', '#F283AA' ] }
 		/>
 	);
