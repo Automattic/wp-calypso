@@ -5,6 +5,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
+import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import UplotChartMetrics from './metrics-chart';
@@ -12,7 +14,7 @@ import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from '.
 
 import './style.scss';
 
-interface TimeRange {
+export interface TimeRange {
 	start: number;
 	end: number;
 }
@@ -132,9 +134,8 @@ function getFormattedDataForPieChart(
 
 export function SiteMetrics() {
 	const { __ } = useI18n();
-
 	const titleHeader = __( 'Site Monitoring' );
-
+	const timeRange = useTimeRange();
 	const { formattedData, handleTimeRangeChange } = useSiteMetricsData();
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		'requests_persec',
@@ -144,6 +145,10 @@ export function SiteMetrics() {
 		'requests_persec',
 		'page_renderer'
 	);
+	const statusCodeRequestsProps = useMetricsBarChartData( {
+		siteId: useSelector( getSelectedSiteId ),
+		timeRange,
+	} );
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>
@@ -177,6 +182,10 @@ export function SiteMetrics() {
 					} ) }
 				></SiteMonitoringPieChart>
 			</div>
+			<SiteMonitoringBarChart
+				title={ __( 'Requests by HTTP Response Code' ) }
+				{ ...statusCodeRequestsProps }
+			/>
 		</Main>
 	);
 }
