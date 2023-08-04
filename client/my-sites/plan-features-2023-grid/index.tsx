@@ -61,6 +61,7 @@ import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
+import { StickyContainer } from './components/sticky-container';
 import { StorageAddOnDropdown } from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
@@ -76,6 +77,7 @@ import './style.scss';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;
+	isStuck?: boolean;
 };
 
 export type PlanSelectedStorage = { [ key: string ]: WPComStorageAddOnSlug | null };
@@ -120,6 +122,7 @@ export type PlanFeatures2023GridProps = {
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
+	stickyRowOffset: number;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -356,7 +359,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTable( planProperties: PlanProperties[] ) {
-		const { translate, spotlightPlanSlug } = this.props;
+		const { translate, spotlightPlanSlug, stickyRowOffset, isInSignup } = this.props;
 
 		// Do not render the spotlight plan if it exists
 		const planPropertiesToRender = planProperties.filter(
@@ -379,7 +382,16 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanTagline( planPropertiesToRender, { isTableCell: true } ) }</tr>
 					<tr>{ this.renderPlanPrice( planPropertiesToRender, { isTableCell: true } ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesToRender, { isTableCell: true } ) }</tr>
-					<tr>{ this.renderTopButtons( planPropertiesToRender, { isTableCell: true } ) }</tr>
+					<StickyContainer
+						stickyClass="is-sticky-top-buttons-row"
+						element="tr"
+						stickyOffset={ stickyRowOffset }
+						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
+					>
+						{ ( isStuck: boolean ) =>
+							this.renderTopButtons( planPropertiesToRender, { isTableCell: true, isStuck } )
+						}
+					</StickyContainer>
 					<tr>{ this.maybeRenderRefundNotice( planPropertiesToRender, { isTableCell: true } ) }</tr>
 					<tr>
 						{ this.renderPreviousFeaturesIncludedTitle( planPropertiesToRender, {
@@ -701,12 +713,14 @@ export class PlanFeatures2023Grid extends Component<
 			selectedSiteSlug,
 			translate,
 			planActionOverrides,
+			siteId,
+			isLargeCurrency,
 		} = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, planConstantObj, current } = properties;
+				const { planName, planConstantObj, current, currencyCode } = properties;
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
 					'is-top-buttons',
@@ -742,13 +756,18 @@ export class PlanFeatures2023Grid extends Component<
 							isLaunchPage={ isLaunchPage }
 							onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 							planName={ planConstantObj.getTitle() }
-							planType={ planName }
+							planSlug={ planName }
 							flowName={ flowName }
 							current={ current ?? false }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							selectedSiteSlug={ selectedSiteSlug }
 							buttonText={ buttonText }
 							planActionOverrides={ planActionOverrides }
+							showMonthlyPrice={ true }
+							siteId={ siteId }
+							isStuck={ options?.isStuck || false }
+							isLargeCurrency={ isLargeCurrency }
+							currencyCode={ currencyCode || 'USD' }
 						/>
 					</Container>
 				);
