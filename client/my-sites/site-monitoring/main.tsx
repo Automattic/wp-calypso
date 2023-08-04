@@ -6,6 +6,8 @@ import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import UplotChartMetrics from './metrics-chart';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
 
+import './style.scss';
+
 export function useSiteMetricsData( start?: number, end?: number, metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -117,7 +119,7 @@ export function SiteMetrics() {
 	);
 
 	return (
-		<>
+		<div className="site-monitoring">
 			<h2>Atomic site</h2>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
 			<div className="site-monitoring__pie-charts">
@@ -138,6 +140,6 @@ export function SiteMetrics() {
 					} ) }
 				></SiteMonitoringPieChart>
 			</div>
-		</>
+		</div>
 	);
 }
