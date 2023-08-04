@@ -54,7 +54,7 @@ const MigrationTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			illustration: newsletters,
 			showButton: true,
 			buttonText: translate( 'Setup a newsletter' ),
-			buttonClick: () => page.redirect( `/setup/newsletter/intro?siteSlug=${ siteSlug }` ),
+			buttonClick: () => ( location.href = `/setup/newsletter/intro?siteSlug=${ siteSlug }` ),
 		},
 		{
 			title: translate( 'Jetpack backups and restores' ),
