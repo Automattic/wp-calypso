@@ -87,7 +87,7 @@ fun FailureConditions.defaultE2eFailureConditions() {
 	}
 }
 
-fun defaulE2eArtifactRules(): String = """
+fun defaultE2eArtifactRules(): String = """
     logs => logs.tgz
     screenshots => screenshots
     trace => trace

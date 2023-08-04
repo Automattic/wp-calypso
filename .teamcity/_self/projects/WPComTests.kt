@@ -222,7 +222,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
 		
-		artifactRules = defaulE2eArtifactRules();
+		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
 			root(Settings.WpCalypso)
