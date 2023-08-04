@@ -1,5 +1,9 @@
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
@@ -127,6 +131,10 @@ function getFormattedDataForPieChart(
 }
 
 export function SiteMetrics() {
+	const { __ } = useI18n();
+
+	const titleHeader = __( 'Site Monitoring' );
+
 	const { formattedData, handleTimeRangeChange } = useSiteMetricsData();
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		'requests_persec',
@@ -138,7 +146,17 @@ export function SiteMetrics() {
 	);
 
 	return (
-		<div className="site-monitoring">
+		<Main className="site-monitoring" fullWidthLayout>
+			<DocumentHead title={ titleHeader } />
+			<FormattedHeader
+				brandFont
+				headerText={ titleHeader }
+				subHeaderText={ __(
+					'Real time information to troubleshoot or debug problems with your site.'
+				) }
+				align="left"
+				className="site-monitoring__formatted-header"
+			></FormattedHeader>
 			<h2>Atomic site</h2>
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
@@ -160,6 +178,6 @@ export function SiteMetrics() {
 					} ) }
 				></SiteMonitoringPieChart>
 			</div>
-		</div>
+		</Main>
 	);
 }
