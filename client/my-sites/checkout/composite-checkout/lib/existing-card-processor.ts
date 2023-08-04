@@ -115,6 +115,7 @@ export default async function existingCardProcessor(
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
 					payment_intent_id: paymentIntentId ?? '',
+					error: error.message,
 				} )
 			);
 			logStashEvent(
@@ -122,6 +123,7 @@ export default async function existingCardProcessor(
 				{
 					payment_intent_id: paymentIntentId ?? '',
 					tags: [ `payment_intent_id:${ paymentIntentId }` ],
+					error: error.message,
 				},
 				'info'
 			);
