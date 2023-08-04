@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
-import { FunctionComponent } from '@wordpress/element';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 
 interface FileBrowserHeaderProps {
 	setShowCheckboxes: ( enabled: boolean ) => void;
@@ -26,7 +26,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 				<Button
 					className="file-browser-header__select-button"
 					onClick={ onSelectClick }
-					isSecondary
+					variant="secondary"
 				>
 					{ translate( 'Select' ) }
 				</Button>
@@ -36,7 +36,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 					className="file-browser-header__cancel-button"
 					icon={ close }
 					onClick={ onCancelClick }
-					isSecondary
+					variant="secondary"
 				/>
 			) }
 		</div>
