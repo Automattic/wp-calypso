@@ -88,7 +88,7 @@ export default async function webPayProcessor(
 					error: error.message,
 				} )
 			);
-			logStashEvent( 'calypso_checkout__transaction_failed', {
+			logStashEvent( 'calypso_checkout_web_pay_transaction_failed', {
 				payment_intent_id: paymentIntentId ?? '',
 				tags: [ `payment_intent_id:${ paymentIntentId }` ],
 				error: error.message,
