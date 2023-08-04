@@ -115,7 +115,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 
 	// wrapper around onChangeItemVariant to close up dropdown on change
 	const handleChange = useCallback(
-		( uuid: string, productSlug: string, productId: number, volume: number ) => {
+		( uuid: string, productSlug: string, productId: number, volume?: number ) => {
 			onChangeItemVariant( uuid, productSlug, productId, volume );
 			setOpen( false );
 		},
@@ -229,7 +229,7 @@ function ItemVariantOptionList( {
 	variants: WPCOMProductVariant[];
 	highlightedVariantIndex: number | null;
 	selectedItem: ResponseCartProduct;
-	handleChange: ( uuid: string, productSlug: string, productId: number, volume: number ) => void;
+	handleChange: ( uuid: string, productSlug: string, productId: number, volume?: number ) => void;
 } ) {
 	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
