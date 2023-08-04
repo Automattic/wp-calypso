@@ -2,6 +2,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.step-container.migration-trial {
+	.wpcom__loading-ellipsis {
+		display: block;
+		margin: 25vh auto auto;
+	}
+}
+
 .trial-plan--container {
 	max-width: 692px;
 	margin: auto;
