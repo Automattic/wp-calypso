@@ -23,8 +23,8 @@ export const initialStateForDomain = {
 	isFetching: false,
 	isUpdating: false,
 	notice: null,
-	targetHost: '',
-	targetPath: '',
+	targetHost: null,
+	targetPath: null,
 	forwardPaths: false,
 	secure: true,
 };

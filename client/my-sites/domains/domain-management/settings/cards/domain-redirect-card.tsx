@@ -1,26 +1,23 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { withoutHttp } from 'calypso/lib/url';
-import { SITE_REDIRECT } from 'calypso/lib/url/support';
-import { domainManagementSiteRedirect } from 'calypso/my-sites/domains/paths';
+import { DOMAIN_REDIRECT } from 'calypso/lib/url/support';
 import {
-	closeSiteRedirectNotice,
-	fetchSiteRedirect,
-	updateSiteRedirect,
-} from 'calypso/state/domains/site-redirect/actions';
-import { getSiteRedirectLocation } from 'calypso/state/domains/site-redirect/selectors';
+	closeDomainRedirectNotice,
+	fetchDomainRedirect,
+	updateDomainRedirect,
+} from 'calypso/state/domains/domain-redirects/actions';
+import { getDomainRedirect } from 'calypso/state/domains/domain-redirects/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const noticeOptions = {
@@ -28,42 +25,25 @@ const noticeOptions = {
 	id: `site-redirect-update-notification`,
 };
 
-export default function DomainRedirectCard() {
-	const selectedSite = useSelector( getSelectedSite );
-	const location = useSelector( ( state ) =>
-		getSiteRedirectLocation( state, selectedSite?.domain )
-	);
-
-	return null;
-}
-
-class SiteRedirectCard extends Component {
+class DomainRedirectCard extends Component {
 	static propTypes = {
-		location: PropTypes.object.isRequired,
-		redesign: PropTypes.bool,
-		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		redirect: PropTypes.object.isRequired,
+		domainName: PropTypes.string.isRequired,
+		targetUrl: PropTypes.string.isRequired,
+		currentRoute: PropTypes.string.isRequired,
 	};
 
 	state = {
-		redirectUrl: this.props.location.value ?? '',
+		redirectUrl: this.props.targetUrl ?? '',
 	};
 
 	componentDidMount() {
-		if ( this.props.selectedSite ) {
-			this.props.fetchSiteRedirect( this.props.selectedSite.domain );
-		}
+		this.props.fetchDomainRedirect( this.props.domainName );
 	}
 
 	componentWillUnmount() {
-		this.closeRedirectNotice();
+		this.props.closeDomainRedirectNotice( this.props.domainName );
 	}
-
-	closeRedirectNotice = () => {
-		if ( this.props.selectedSite ) {
-			this.props.closeSiteRedirectNotice( this.props.selectedSite.domain );
-		}
-	};
 
 	handleChange = ( event ) => {
 		const redirectUrl = withoutHttp( event.target.value );
@@ -74,40 +54,25 @@ class SiteRedirectCard extends Component {
 	handleClick = () => {
 		if ( this.props.selectedSite ) {
 			this.props
-				.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
+				.updateDomainRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
 				.then( ( success ) => {
-					this.props.recordUpdateSiteRedirectClick(
-						this.props.selectedDomainName,
-						this.state.redirectUrl,
-						success
-					);
-
 					if ( success ) {
-						this.props.fetchSiteDomains( this.props.selectedSite.ID );
-						this.props.fetchSiteRedirect( this.state.redirectUrl.replace( /\/+$/, '' ).trim() );
-
-						page(
-							domainManagementSiteRedirect(
-								this.props.selectedSite.slug,
-								this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
-								this.props.currentRoute
-							)
-						);
+						this.props.fetchDomainRedirect( this.state.redirectUrl.replace( /\/+$/, '' ).trim() );
 
 						this.props.successNotice(
 							this.props.translate( 'Site redirect updated successfully.' ),
 							noticeOptions
 						);
 					} else {
-						this.props.errorNotice( this.props.location.notice.text );
+						this.props.errorNotice( this.props.redirect.notice.text );
 					}
 				} );
 		}
 	};
 
 	render() {
-		const { location, translate } = this.props;
-		const { isUpdating, isFetching } = location;
+		const { redirect, translate } = this.props;
+		const { isUpdating, isFetching } = redirect;
 
 		return (
 			<form>
@@ -119,18 +84,18 @@ class SiteRedirectCard extends Component {
 						onChange={ this.handleChange }
 						prefix="http://"
 						value={ this.state.redirectUrl }
-						id="site-redirect__input"
+						id="domain-redirect__input"
 					/>
 
-					<p className="site-redirect-card__explanation">
+					<p className="domain-redirect-card__explanation">
 						{ translate(
-							'All domains on this site will redirect here as long as this domain is set as your primary domain. ' +
+							'Requests to your domain will receive an HTTP redirect here. ' +
 								'{{learnMoreLink}}Learn more{{/learnMoreLink}}',
 							{
 								components: {
 									learnMoreLink: (
 										<a
-											href={ localizeUrl( SITE_REDIRECT ) }
+											href={ localizeUrl( DOMAIN_REDIRECT ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -143,7 +108,7 @@ class SiteRedirectCard extends Component {
 
 				<FormButton
 					disabled={
-						isFetching || isUpdating || this.props.location.value === this.state.redirectUrl
+						isFetching || isUpdating || this.props.redirect.value === this.state.redirectUrl
 					}
 					onClick={ this.handleClick }
 				>
@@ -154,19 +119,32 @@ class SiteRedirectCard extends Component {
 	}
 }
 
-export const SiteRedirectCardConnected = connect(
+export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
-		const location = getSiteRedirectLocation( state, selectedSite?.domain );
 		const currentRoute = getCurrentRoute( state );
-		return { selectedSite, location, currentRoute };
+		const redirect = getDomainRedirect( state, selectedSite?.domain );
+		let targetUrl = '';
+		try {
+			const url = new URL(
+				redirect?.targetPath ?? '/',
+				redirect?.targetHost ?? 'https://_invalid_.domain'
+			);
+			if ( url.origin !== 'https://_invalid_.domain' ) {
+				targetUrl = url.hostname + url.pathname + url.search + url.hash;
+			}
+		} catch ( e ) {
+			console.log( e ); // todo: replace with `// ignore`, wip: still working out what we get from backend and how much we need to guard this code
+		}
+
+		return { selectedSite, redirect, currentRoute, targetUrl };
 	},
 	{
-		fetchSiteRedirect,
+		fetchDomainRedirect,
 		fetchSiteDomains,
-		updateSiteRedirect,
-		closeSiteRedirectNotice,
+		updateDomainRedirect,
+		closeDomainRedirectNotice,
 		successNotice,
 		errorNotice,
 	}
-)( localize( SiteRedirectCard ) );
+)( localize( DomainRedirectCard ) );

@@ -12,14 +12,14 @@ import {
 
 import 'calypso/state/domains/init';
 
-export function closeSiteRedirectNotice( domain ) {
+export function closeDomainRedirectNotice( domain ) {
 	return {
 		type: DOMAINS_REDIRECT_NOTICE_CLOSE,
 		domain,
 	};
 }
 
-export const fetchSiteRedirect = ( domain ) => ( dispatch ) => {
+export const fetchDomainRedirect = ( domain ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_REDIRECT_FETCH, domain } );
 
 	wpcom.req.get( { path: '/sites/all/domain/' + domain + '/redirects' } ).then(
@@ -47,7 +47,7 @@ export const fetchSiteRedirect = ( domain ) => ( dispatch ) => {
 	);
 };
 
-export const updateSiteRedirect =
+export const updateDomainRedirect =
 	( domain, targetHost, targetPath, forwardPaths, secure ) => ( dispatch ) => {
 		dispatch( { type: DOMAINS_REDIRECT_UPDATE, domain } );
 
