@@ -81,7 +81,7 @@ const Settings = ( {
 
 	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
 
-	const renderBreadcrumbs = () => {
+	const renderHeader = () => {
 		const previousPath = domainManagementList(
 			selectedSite?.slug,
 			currentRoute,
@@ -104,7 +104,18 @@ const Settings = ( {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader
+				items={ items }
+				mobileItem={ mobileItem }
+				isRedesign2023Aug
+				titleOverride={
+					domain ? (
+						<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+					) : null
+				}
+			/>
+		);
 	};
 
 	const renderSecurityAccordion = () => {
@@ -481,7 +492,7 @@ const Settings = ( {
 
 	if ( ! domain ) {
 		// TODO: Update this placeholder
-		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
+		return <DomainMainPlaceholder breadcrumbs={ renderHeader } />;
 	}
 
 	return (
@@ -489,8 +500,7 @@ const Settings = ( {
 		<Main wideLayout className="domain-settings-page">
 			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+			{ renderHeader() }
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

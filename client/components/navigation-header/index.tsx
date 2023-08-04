@@ -34,7 +34,7 @@ interface Props {
 	navigationItems: TBreadcrumbItem[];
 	mobileItem?: TBreadcrumbItem;
 	compactBreadcrumb?: boolean;
-	title?: string;
+	title?: string | ReactNode;
 	subtitle?: string | ReactNode;
 }
 

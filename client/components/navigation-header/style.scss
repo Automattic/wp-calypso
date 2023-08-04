@@ -13,6 +13,7 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: calc(-1 * var(--masterbar-height) + 20px);
+		padding: 0;
 	}
 
 	@include break-medium {
@@ -30,6 +31,12 @@
 	justify-content: space-between;
 	align-items: center;
 	min-height: 70px;
+	box-sizing: border-box;
+	padding: 24px 0;
+
+	> .formatted-header {
+		flex: 1;
+	}
 
 	.formatted-header__title {
 		font-size: $font-title-small;
