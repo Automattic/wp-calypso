@@ -25,7 +25,7 @@ const CustomerHomeLaunchpad = ( {
 
 	const translate = useTranslate();
 	const {
-		data: { checklist, is_visible: isChecklistVisible },
+		data: { checklist, is_dismissed: isChecklistDismissed },
 	} = useLaunchpad( siteSlug, checklistSlug );
 
 	const numberOfSteps = checklist?.length || 0;
@@ -54,8 +54,8 @@ const CustomerHomeLaunchpad = ( {
 		} );
 	}, [ checklist, checklistSlug, completedSteps, numberOfSteps, tasklistCompleted ] );
 
-	// return nothing if the launchpad is not visible
-	if ( ! isChecklistVisible ) {
+	// return nothing if the launchpad is dismissed
+	if ( isChecklistDismissed ) {
 		return <></>;
 	}
 
