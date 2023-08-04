@@ -50,7 +50,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		subtitle,
 	} = props;
 	return (
-		<header id={ id } className={ 'navigation-header__header ' + className } ref={ ref }>
+		<header id={ id } className={ 'navigation-header ' + className } ref={ ref }>
 			<Container>
 				<Breadcrumb
 					items={ navigationItems }

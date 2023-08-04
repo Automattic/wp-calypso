@@ -103,7 +103,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		}
 		const [ item ] = items;
 		return (
-			<StyledItem className="breadcrumbs-single">
+			<StyledItem>
 				<StyledRootLabel>{ item.label }</StyledRootLabel>
 				{ renderHelpBubble( item ) }
 			</StyledItem>
@@ -114,7 +114,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		const urlBack = mobileItem?.href ?? items[ items.length - 2 ].href;
 		const label = mobileItem?.label ?? translate( 'Back' );
 		return (
-			<StyledBackLink href={ urlBack }>
+			<StyledBackLink className="breadcrumbs-back" href={ urlBack }>
 				<Gridicon icon="chevron-left" size={ 18 } />
 				{ label }
 			</StyledBackLink>

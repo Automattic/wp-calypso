@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.navigation-header__header {
+.navigation-header {
 	box-sizing: border-box;
 	width: 100%;
 	background-color: var(--studio-white);
@@ -23,6 +23,10 @@
 	@include break-large {
 		margin-top: calc(-1 * var(--masterbar-height) - 16px);
 		padding: 24px 0;
+	}
+
+	.breadcrumbs-back {
+		margin-top: 24px;
 	}
 }
 
@@ -48,6 +52,6 @@
 	}
 }
 
-#primary header.navigation-header__header header.formatted-header {
+#primary header.navigation-header header.formatted-header {
 	margin: 0;
 }
