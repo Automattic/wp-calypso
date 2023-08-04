@@ -1,23 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
 
-type useSetNewsletterCategoryMutationParams = {
-	siteId: number;
-};
-
-type SetNewsletterCategoryParams = {
-	id: number;
-};
-
 type SetNewsletterCategoryResponse = {
 	success: boolean;
 };
 
-const useSetNewsletterCategoryMutation = ( { siteId }: useSetNewsletterCategoryMutationParams ) => {
+const useSetNewsletterCategoryMutation = ( siteId: string | number ) => {
 	const queryClient = useQueryClient();
 	const cacheKey = [ `newsletter-categories-${ siteId }` ];
 	return useMutation( {
-		mutationFn: async ( { id }: SetNewsletterCategoryParams ) => {
+		mutationFn: async ( id: number ) => {
 			if ( ! id ) {
 				throw new Error( 'ID is missing.' );
 			}

@@ -10,6 +10,7 @@ describe( 'useSetNewsletterCategoryMutation', () => {
 	let queryClient: QueryClient;
 	let wrapper: any;
 	const siteId = 123;
+	const categoryId = 1;
 
 	beforeEach( () => {
 		( request as jest.MockedFunction< typeof request > ).mockReset();
@@ -36,12 +37,12 @@ describe( 'useSetNewsletterCategoryMutation', () => {
 			success: true,
 		} );
 
-		const { result, waitFor } = renderHook( () => useSetNewsletterCategoryMutation( { siteId } ), {
+		const { result, waitFor } = renderHook( () => useSetNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
 		act( () => {
-			result.current.mutate( { id: 1 } );
+			result.current.mutate( categoryId );
 		} );
 
 		await waitFor( () => expect( request ).toHaveBeenCalled() );
@@ -60,20 +61,19 @@ describe( 'useSetNewsletterCategoryMutation', () => {
 		} );
 
 		const invalidateQueriesSpy = jest.spyOn( queryClient, 'invalidateQueries' );
-		const { result } = renderHook( () => useSetNewsletterCategoryMutation( { siteId } ), {
+		const { result } = renderHook( () => useSetNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
-		const params = { id: 1 };
 
 		await act( async () => {
-			await result.current.mutateAsync( params );
+			await result.current.mutateAsync( categoryId );
 		} );
 
 		expect( invalidateQueriesSpy ).toHaveBeenCalledWith( [ `newsletter-categories-123` ] );
 	} );
 
 	it( 'should throw an error when ID is missing', async () => {
-		const { result, waitFor } = renderHook( () => useSetNewsletterCategoryMutation( { siteId } ), {
+		const { result, waitFor } = renderHook( () => useSetNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
@@ -82,7 +82,7 @@ describe( 'useSetNewsletterCategoryMutation', () => {
 
 		act( () => {
 			// @ts-expect-error The mutation doesn't expect category id to be undefined, but we want to test this case.
-			result.current.mutate( {} );
+			result.current.mutate();
 		} );
 
 		await waitFor( () => expect( result.current.error ).toEqual( Error( 'ID is missing.' ) ) );
@@ -93,7 +93,7 @@ describe( 'useSetNewsletterCategoryMutation', () => {
 	it( 'should throw an error when API response is unsuccessful', async () => {
 		( request as jest.Mock ).mockResolvedValue( { success: false } );
 
-		const { result, waitFor } = renderHook( () => useSetNewsletterCategoryMutation( { siteId } ), {
+		const { result, waitFor } = renderHook( () => useSetNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
@@ -101,7 +101,7 @@ describe( 'useSetNewsletterCategoryMutation', () => {
 		console.error = jest.fn();
 
 		act( () => {
-			result.current.mutate( { id: 1 } );
+			result.current.mutate( categoryId );
 		} );
 
 		await waitFor( () =>
