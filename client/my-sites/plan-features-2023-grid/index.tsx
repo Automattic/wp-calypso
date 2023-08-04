@@ -96,7 +96,8 @@ const Container = (
 
 export type PlanFeatures2023GridProps = {
 	gridPlansForFeaturesGrid: GridPlan[];
-	gridPlansForComparisonGrid: GridPlan[]; // We need all the plans in order to show the correct features in the plan comparison table
+	gridPlansForComparisonGrid: GridPlan[];
+	gridPlanForSpotlight?: GridPlan;
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
 	isInSignup?: boolean;
@@ -120,7 +121,6 @@ export type PlanFeatures2023GridProps = {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
-	spotlightPlanSlug?: PlanSlug;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
@@ -269,11 +269,11 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTable( renderedGridPlans: GridPlan[] ) {
-		const { translate, spotlightPlanSlug, stickyRowOffset, isInSignup } = this.props;
+		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
 		// Do not render the spotlight plan if it exists
-		const gridPlansWithoutSpotlight = renderedGridPlans.filter(
-			( { planSlug } ) => ! spotlightPlanSlug || spotlightPlanSlug !== planSlug
-		);
+		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
+			? renderedGridPlans
+			: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ gridPlansWithoutSpotlight.length }-cols`
@@ -323,10 +323,12 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTabletView() {
-		const { gridPlansForFeaturesGrid, spotlightPlanSlug } = this.props;
-		const gridPlansWithoutSpotlight = gridPlansForFeaturesGrid.filter(
-			( { planSlug } ) => ! spotlightPlanSlug || spotlightPlanSlug !== planSlug
-		);
+		const { gridPlansForFeaturesGrid, gridPlanForSpotlight } = this.props;
+		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
+			? gridPlansForFeaturesGrid
+			: gridPlansForFeaturesGrid.filter(
+					( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug
+			  );
 		const numberOfPlansToShowOnTop = 4 === gridPlansWithoutSpotlight.length ? 2 : 3;
 		const plansForTopRow = gridPlansWithoutSpotlight.slice( 0, numberOfPlansToShowOnTop );
 		const plansForBottomRow = gridPlansWithoutSpotlight.slice( numberOfPlansToShowOnTop );
@@ -349,36 +351,34 @@ export class PlanFeatures2023Grid extends Component<
 	 * Similar to `renderMobileView` above.
 	 */
 	renderSpotlightPlan() {
-		const { spotlightPlanSlug, gridPlansForFeaturesGrid } = this.props;
-		const spotlightGridPlan = gridPlansForFeaturesGrid.find(
-			( { planSlug } ) => spotlightPlanSlug && spotlightPlanSlug === planSlug
-		);
+		const { gridPlanForSpotlight } = this.props;
 
-		if ( ! spotlightGridPlan ) {
-			return;
+		if ( ! gridPlanForSpotlight ) {
+			return null;
 		}
 
 		const spotlightPlanClasses = classNames(
 			'plan-features-2023-grid__plan-spotlight-card',
-			getPlanClass( spotlightGridPlan.planSlug )
+			getPlanClass( gridPlanForSpotlight.planSlug )
 		);
 
 		return (
 			<div className="plan-features-2023-grid__plan-spotlight">
 				<div className={ spotlightPlanClasses }>
-					{ this.renderPlanLogos( [ spotlightGridPlan ] ) }
-					{ this.renderPlanHeaders( [ spotlightGridPlan ] ) }
-					{ this.renderPlanTagline( [ spotlightGridPlan ] ) }
-					{ this.renderPlanPrice( [ spotlightGridPlan ] ) }
-					{ this.renderBillingTimeframe( [ spotlightGridPlan ] ) }
-					{ this.renderTopButtons( [ spotlightGridPlan ] ) }
+					{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
+					{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
+					{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
+					{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
+					{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
+					{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
 				</div>
 			</div>
 		);
 	}
 
 	renderMobileView() {
-		const { translate, selectedFeature, gridPlansForFeaturesGrid, spotlightPlanSlug } = this.props;
+		const { translate, selectedFeature, gridPlansForFeaturesGrid, gridPlanForSpotlight } =
+			this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
 		) => {
@@ -395,7 +395,7 @@ export class PlanFeatures2023Grid extends Component<
 		return gridPlansForFeaturesGrid
 			.reduce( ( acc, griPlan ) => {
 				// Bring the spotlight plan to the top
-				if ( spotlightPlanSlug && spotlightPlanSlug === griPlan.planSlug ) {
+				if ( gridPlanForSpotlight?.planSlug === griPlan.planSlug ) {
 					return [ griPlan ].concat( acc );
 				}
 				return acc.concat( griPlan );
@@ -875,6 +875,14 @@ export class PlanFeatures2023Grid extends Component<
 		return (
 			<div className="plans-wrapper">
 				<QueryActivePromotions />
+				<PlansGridContextProvider
+					intent={ intent }
+					gridPlans={ gridPlansForFeaturesGrid }
+					usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+					allFeaturesList={ allFeaturesList }
+				>
+					{ this.renderSpotlightPlan() }
+				</PlansGridContextProvider>
 				<div className="plan-features">
 					<PlansGridContextProvider
 						intent={ intent }

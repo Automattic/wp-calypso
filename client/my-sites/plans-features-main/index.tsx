@@ -192,11 +192,11 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		};
 	}
 
-	let spotlightPlanSlug: PlanSlug | undefined;
+	let gridPlanForSpotlight: GridPlan | undefined;
 	if ( sitePlanSlug && isSpotlightOnCurrentPlan ) {
-		spotlightPlanSlug = gridPlansForFeaturesGrid.find(
+		gridPlanForSpotlight = gridPlansForFeaturesGrid.find(
 			( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
-		) as PlanSlug | undefined;
+		);
 	}
 
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
@@ -259,7 +259,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		gridPlansForFeaturesGrid,
 		gridPlansForComparisonGrid,
 		showLegacyStorageFeature,
-		spotlightPlanSlug,
+		gridPlanForSpotlight,
 		showUpgradeableStorage,
 		stickyRowOffset: masterbarHeight,
 		usePricingMetaForGridPlans,
