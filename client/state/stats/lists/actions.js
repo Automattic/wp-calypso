@@ -118,41 +118,63 @@ export function requestSiteStats( siteId, statType, query ) {
 
 		if ( subpath ) {
 			const path = siteId === ALL_SITES_ID ? `${ subpath }` : `/sites/${ siteId }/${ subpath }`;
-			requestStats = wpcom.req.get(
-				{
-					path,
-					apiNamespace,
-				},
-				options
-			);
-		} else {
-			requestStats = wpcom
-				.site( siteId )
-				[ statType ](
-					options,
-					'statsVideo' === statType ? { statType: query.statType, period: query.period } : {}
+			requestStats = ( extraOptions ) =>
+				wpcom.req.get(
+					{
+						path,
+						apiNamespace,
+					},
+					{ ...options, ...extraOptions }
 				);
+		} else {
+			requestStats = ( extraOptions ) =>
+				wpcom
+					.site( siteId )
+					[ statType ](
+						{ ...options, ...extraOptions },
+						'statsVideo' === statType ? { statType: query.statType, period: query.period } : {}
+					);
 		}
 
-		return requestStats
-			.then( ( data ) => {
-				if ( siteId === ALL_SITES_ID ) {
-					let dispatchedStatType = statType;
-					if ( statType === 'allSitesStatsSummary' ) {
-						dispatchedStatType = 'statsSummary';
+		const MAX_RECURSION_DEPTH = 50; // Shouldn't be needed; but a failsafe to make sure we don't DDOS ourselves after an endpoint bug.
+
+		const fetchPage = ( extraOptions, depth = 0 ) =>
+			requestStats( extraOptions )
+				.then( ( data ) => {
+					if ( siteId === ALL_SITES_ID ) {
+						let dispatchedStatType = statType;
+						if ( statType === 'allSitesStatsSummary' ) {
+							dispatchedStatType = 'statsSummary';
+						}
+						dispatch( receiveAllSitesStats( dispatchedStatType, query, data, Date.now() ) );
+						if (
+							data.has_more &&
+							data.next_site_offset &&
+							data.next_site_limit &&
+							depth < MAX_RECURSION_DEPTH
+						) {
+							return fetchPage(
+								{
+									...extraOptions,
+									site_offset: data.next_site_offset,
+									site_limit: data.next_site_limit,
+								},
+								depth + 1
+							);
+						}
+						return;
 					}
-					return dispatch( receiveAllSitesStats( dispatchedStatType, query, data, Date.now() ) );
-				}
-				return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: SITE_STATS_REQUEST_FAILURE,
-					statType,
-					siteId,
-					query,
-					error,
+					return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
+				} )
+				.catch( ( error ) => {
+					dispatch( {
+						type: SITE_STATS_REQUEST_FAILURE,
+						statType,
+						siteId,
+						query,
+						error,
+					} );
 				} );
-			} );
+		return fetchPage( query );
 	};
 }
