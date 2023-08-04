@@ -151,7 +151,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				previousPlan = planSlug;
 			}
 			return planFeatureMap;
-		}, [ allFeaturesList, planFeaturesForGridPlans, planSlugs ] );
+		}, [ allFeaturesList, isGlobalStylesOnPersonal, planFeaturesForGridPlans, planSlugs ] );
 
 		return restructuredFeatures;
 	};

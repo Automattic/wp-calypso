@@ -469,36 +469,45 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
-	const filteredPlansForPlanFeatures =
-		useFilterPlansForPlanFeatures( {
-			plans: gridPlans,
-			isDisplayingPlansNeededForFeature: isDisplayingPlansNeededForFeature(),
-			selectedPlan,
-			hideFreePlan,
-			hidePersonalPlan,
-			hidePremiumPlan,
-			hideBusinessPlan,
-			hideEcommercePlan,
-		} ) || null;
+	const filteredPlansForPlanFeatures = useFilterPlansForPlanFeatures( {
+		plans: gridPlans,
+		isDisplayingPlansNeededForFeature: isDisplayingPlansNeededForFeature(),
+		selectedPlan,
+		hideFreePlan,
+		hidePersonalPlan,
+		hidePremiumPlan,
+		hideBusinessPlan,
+		hideEcommercePlan,
+	} );
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-		return [
-			...acc,
-			...( gridPlan.isVisible
-				? [ { ...gridPlan, features: planFeaturesForComparisonGrid[ gridPlan.planSlug ] } ]
-				: [] ),
-		];
+		if ( gridPlan.isVisible ) {
+			return [
+				...acc,
+				{
+					...gridPlan,
+					features: planFeaturesForComparisonGrid[ gridPlan.planSlug ],
+				},
+			];
+		}
+
+		return acc;
 	}, [] as GridPlan[] );
 
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGrid = filteredPlansForPlanFeatures.reduce( ( acc, gridPlan ) => {
-		return [
-			...acc,
-			...( gridPlan.isVisible
-				? [ { ...gridPlan, features: planFeaturesForFeaturesGrid[ gridPlan.planSlug ] } ]
-				: [] ),
-		];
+		if ( gridPlan.isVisible ) {
+			return [
+				...acc,
+				{
+					...gridPlan,
+					features: planFeaturesForFeaturesGrid[ gridPlan.planSlug ],
+				},
+			];
+		}
+
+		return acc;
 	}, [] as GridPlan[] );
 
 	// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others

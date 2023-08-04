@@ -117,24 +117,14 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 			} );
 		}
 
-		const storageOptions =
-			( planConstantObj.get2023PricingGridSignupStorageOptions &&
-				getPlanFeaturesObject(
-					allFeaturesList,
-					planConstantObj.get2023PricingGridSignupStorageOptions( showLegacyStorageFeature )
-				).map( ( feature ) => ( {
-					...feature,
-					availableOnlyForAnnualPlans: false,
-					availableForCurrentPlan: true,
-				} ) ) ) ||
-			[];
-
 		return {
 			...acc,
 			[ planSlug ]: {
 				wpcomFeatures: wpcomFeaturesTransformed,
 				jetpackFeatures: jetpackFeaturesTransformed,
-				storageOptions,
+				storageOptions:
+					planConstantObj.get2023PricingGridSignupStorageOptions?.( showLegacyStorageFeature ) ??
+					[],
 			},
 		};
 	}, {} as { [ planSlug: string ]: PlanFeaturesForGridPlan } );

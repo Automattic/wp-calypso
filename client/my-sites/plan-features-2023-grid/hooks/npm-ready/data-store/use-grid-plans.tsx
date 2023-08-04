@@ -77,12 +77,12 @@ export type GridPlan = {
 	features: {
 		wpcomFeatures: TransformedFeatureObject[];
 		jetpackFeatures: TransformedFeatureObject[];
-		storageOptions: TransformedFeatureObject[];
+		storageOptions: StorageOption[];
 		conditionalFeatures?: FeatureObject[];
 	};
 	tagline: string;
 	availableForPurchase: boolean;
-	product_name_short?: string | null;
+	productNameShort?: string | null;
 	current?: boolean;
 	isMonthlyPlan?: boolean;
 	cartItemForPlan?: {

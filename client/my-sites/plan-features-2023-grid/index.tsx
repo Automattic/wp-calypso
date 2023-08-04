@@ -57,7 +57,7 @@ import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
 import { StickyContainer } from './components/sticky-container';
-import { StorageAddOnDropdown } from './components/storage-add-on-dropdown';
+import StorageAddOnDropdown from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
@@ -815,7 +815,8 @@ export class PlanFeatures2023Grid extends Component<
 
 			const storageJSX = canUpgradeStorageForPlan ? (
 				<StorageAddOnDropdown
-					gridPlan={ gridPlan }
+					planSlug={ planSlug }
+					storageOptions={ storageOptions }
 					selectedStorage={ selectedStorage }
 					setSelectedStorage={ this.setSelectedStorage }
 				/>
