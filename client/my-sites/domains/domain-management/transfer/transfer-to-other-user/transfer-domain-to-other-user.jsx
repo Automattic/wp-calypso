@@ -5,7 +5,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -141,7 +140,7 @@ class TransferDomainToOtherUser extends Component {
 		return first_name && last_name ? `${ first_name } ${ last_name } (${ nice_name })` : nice_name;
 	}
 
-	renderBreadcrumbs() {
+	renderHeader() {
 		const { translate, selectedSite, selectedDomainName, currentRoute } = this.props;
 
 		const items = [
@@ -172,7 +171,7 @@ class TransferDomainToOtherUser extends Component {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } isRedesign2023Aug />;
 	}
 
 	render() {
@@ -184,18 +183,10 @@ class TransferDomainToOtherUser extends Component {
 				</>
 			);
 		}
-
-		const { translate } = this.props;
-
 		return (
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'transfer-to-other-user' ] } />
-				{ this.renderBreadcrumbs() }
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Transfer to another user' ) }
-					align="left"
-				/>
+				{ this.renderHeader() }
 				<div className="transfer-to-other-user__container">
 					<div className="transfer-to-other-user__main">{ this.renderSection() }</div>
 				</div>
