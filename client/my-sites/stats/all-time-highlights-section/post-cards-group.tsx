@@ -108,6 +108,8 @@ export default function PostCardsGroup( {
 		getSitePost( state, siteId, topViewedPost?.id )
 	);
 
+	// Determine the most popular post in the past year by the `stats/top-posts` API.
+	// Align the most popular post views count with the Post Details page by the `stats/post` API to avoid confusion.
 	const mostPopularPostViewCount = useSelector(
 		( state ) => getPostStat( state, siteId, topViewedPost?.id, 'views' ) || 0
 	);
