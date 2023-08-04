@@ -36,12 +36,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 		<div className="file-browser-header">
 			{ ! showCheckboxes && (
 				<div className="file-browser-header__select">
-					<Button
-						className="file-browser-header__select-button"
-						onClick={ onSelectClick }
-						secondary
-						compact
-					>
+					<Button className="file-browser-header__select-button" onClick={ onSelectClick } compact>
 						{ translate( 'Select' ) }
 					</Button>
 					<div className="file-browser-header__select-info">
@@ -63,7 +58,6 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 					<Button
 						className="file-browser-header__download-button"
 						onClick={ onDownloadClick }
-						secondary
 						compact
 						disabled={ currentlySelected === 0 }
 					>
@@ -72,7 +66,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 					<Button
 						className="file-browser-header__restore-button"
 						onClick={ onRestoreClick }
-						secondary
+						primary
 						compact
 						disabled={ currentlySelected === 0 }
 					>

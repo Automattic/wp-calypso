@@ -226,6 +226,12 @@
 			.button {
 				margin-left: 8px;
 				color: #000;
+				&.is-primary {
+					&:disabled {
+						color: #000;
+					}
+					color: #fff;
+				}
 			}
 		}
 	}
