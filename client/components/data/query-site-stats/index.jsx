@@ -3,7 +3,11 @@ import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { requestSiteStats } from 'calypso/state/stats/lists/actions';
+import {
+	requestSiteStats,
+	requestAllSiteStats,
+	ALL_SITES_ID,
+} from 'calypso/state/stats/lists/actions';
 import { isRequestingSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { DEFAULT_HEARTBEAT } from './constants';
@@ -36,7 +40,12 @@ class QuerySiteStats extends Component {
 			return;
 		}
 
-		this.props.requestSiteStats( siteId, statType, query );
+		if ( siteId === ALL_SITES_ID ) {
+			this.props.requestAllSiteStats( statType, query );
+		} else {
+			this.props.requestSiteStats( siteId, statType, query );
+		}
+
 		this.clearInterval();
 		if ( heartbeat && isAutoRefreshAllowedForQuery( query ) ) {
 			this.interval = setInterval( this.heartbeatRequest, heartbeat );
@@ -46,7 +55,11 @@ class QuerySiteStats extends Component {
 	heartbeatRequest = () => {
 		const { requesting, siteId, statType, query } = this.props;
 		if ( ! requesting ) {
-			this.props.requestSiteStats( siteId, statType, query );
+			if ( siteId === ALL_SITES_ID ) {
+				this.props.requestAllSiteStats( statType, query );
+			} else {
+				this.props.requestSiteStats( siteId, statType, query );
+			}
 		}
 	};
 
@@ -67,6 +80,7 @@ QuerySiteStats.propTypes = {
 	query: PropTypes.object,
 	requesting: PropTypes.bool.isRequired,
 	requestSiteStats: PropTypes.func.isRequired,
+	requestAllSiteStats: PropTypes.func.isRequired,
 	heartbeat: PropTypes.number,
 };
 
@@ -79,5 +93,5 @@ export default connect(
 	( state, { siteId, statType, query } ) => ( {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 	} ),
-	{ requestSiteStats }
+	{ requestSiteStats, requestAllSiteStats }
 )( QuerySiteStats );

@@ -86,9 +86,6 @@ export function requestSiteStats( siteId, statType, query ) {
 		} else if ( wpcomV2Endpoints.hasOwnProperty( statType ) ) {
 			subpath = wpcomV2Endpoints[ statType ];
 			apiNamespace = 'wpcom/v2';
-		} else if ( siteId === ALL_SITES_ID && wpcomV2AllSitesEndpoints.hasOwnProperty( statType ) ) {
-			subpath = wpcomV2AllSitesEndpoints[ statType ];
-			apiNamespace = 'wpcom/v2';
 		}
 
 		const options = ( () => {
@@ -114,57 +111,92 @@ export function requestSiteStats( siteId, statType, query ) {
 			}
 		} )();
 
-		let requestStats;
-
-		if ( subpath ) {
-			const path = siteId === ALL_SITES_ID ? `${ subpath }` : `/sites/${ siteId }/${ subpath }`;
-			requestStats = ( extraOptions ) =>
-				wpcom.req.get(
+		const requestStats = subpath
+			? wpcom.req.get(
 					{
-						path,
+						path: `/sites/${ siteId }/${ subpath }`,
 						apiNamespace,
 					},
-					{ ...options, ...extraOptions }
-				);
-		} else {
-			requestStats = ( extraOptions ) =>
-				wpcom
+					options
+			  )
+			: wpcom
 					.site( siteId )
 					[ statType ](
-						{ ...options, ...extraOptions },
+						options,
 						'statsVideo' === statType ? { statType: query.statType, period: query.period } : {}
 					);
+
+		return requestStats
+			.then( ( data ) => {
+				return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: SITE_STATS_REQUEST_FAILURE,
+					statType,
+					siteId,
+					query,
+					error,
+				} );
+			} );
+	};
+}
+
+export function requestAllSiteStats( statType, query ) {
+	const siteId = ALL_SITES_ID;
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_STATS_REQUEST,
+			statType,
+			siteId,
+			query,
+		} );
+
+		let path;
+		let apiNamespace;
+		if ( wpcomV2AllSitesEndpoints.hasOwnProperty( statType ) ) {
+			path = wpcomV2AllSitesEndpoints[ statType ];
+			apiNamespace = 'wpcom/v2';
 		}
+
+		if ( ! path ) {
+			return;
+		}
+
+		const requestStats = ( extraOptions ) =>
+			wpcom.req.get(
+				{
+					path,
+					apiNamespace,
+				},
+				{ ...query, ...extraOptions }
+			);
 
 		const MAX_RECURSION_DEPTH = 50; // Shouldn't be needed; but a failsafe to make sure we don't DDOS ourselves after an endpoint bug.
 
 		const fetchPage = ( extraOptions, depth = 0 ) =>
 			requestStats( extraOptions )
 				.then( ( data ) => {
-					if ( siteId === ALL_SITES_ID ) {
-						let dispatchedStatType = statType;
-						if ( statType === 'allSitesStatsSummary' ) {
-							dispatchedStatType = 'statsSummary';
-						}
-						dispatch( receiveAllSitesStats( dispatchedStatType, query, data, Date.now() ) );
-						if (
-							data.has_more &&
-							data.next_site_offset &&
-							data.next_site_limit &&
-							depth < MAX_RECURSION_DEPTH
-						) {
-							return fetchPage(
-								{
-									...extraOptions,
-									site_offset: data.next_site_offset,
-									site_limit: data.next_site_limit,
-								},
-								depth + 1
-							);
-						}
-						return;
+					let dispatchedStatType = statType;
+					if ( statType === 'allSitesStatsSummary' ) {
+						dispatchedStatType = 'statsSummary';
 					}
-					return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
+					dispatch( receiveAllSitesStats( dispatchedStatType, query, data, Date.now() ) );
+					if (
+						data.has_more &&
+						data.next_site_offset &&
+						data.next_site_limit &&
+						depth < MAX_RECURSION_DEPTH
+					) {
+						return fetchPage(
+							{
+								...extraOptions,
+								site_offset: data.next_site_offset,
+								site_limit: data.next_site_limit,
+							},
+							depth + 1
+						);
+					}
 				} )
 				.catch( ( error ) => {
 					dispatch( {
