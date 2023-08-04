@@ -3,6 +3,8 @@ import moment from 'moment';
 import { useState } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
+import './style.scss';
+
 export function calculateTimeRange( selectedOption ) {
 	const now = moment().unix();
 	let start;
@@ -53,9 +55,11 @@ export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 	};
 
 	return (
-		<div className="time-chart__container">
-			<div className="time-chart__heading">{ translate( 'Time range' ) }</div>
-			<SegmentedControl primary className="time-chart__controls">
+		<div className="site-monitoring-time-range-picker__container">
+			<div className="site-monitoring-time-range-picker__heading">
+				{ translate( 'Time range' ) }
+			</div>
+			<SegmentedControl primary className="site-monitoring-time-range-picker__controls">
 				<SegmentedControl.Item
 					value="0"
 					selected={ selectedOption === '0' }
