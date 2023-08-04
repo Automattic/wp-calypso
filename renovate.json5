@@ -6,17 +6,14 @@
 			separateMajorMinor: false,
 			prPriority: 3,
 		},
-		// Disable updating the peer dependency field of interpolate-components;
-		// it nedes to suport lower versions of React.
 		{
-			extends: [ 'monorepo:react' ],
+			extends: [ 'group:nodeJs' ],
 			prPriority: 2,
-			ignorePaths: [ 'packages/interpolate-components' ],
 		},
 		{
-			extends: [ 'monorepo:react', ':disablePeerDependencies' ],
+			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
 			prPriority: 2,
-			includePaths: [ 'packages/interpolate-components' ],
+			ignorePaths: [ 'packages/interpolate-components' ],
 		},
 		{
 			groupName: 'redux-related packages',
@@ -58,7 +55,6 @@
 			matchManagers: [ 'maven' ],
 			enabled: false,
 		},
-
 	],
 	schedule: [ 'every weekend' ],
 	dependencyDashboardTitle: 'Renovate Dependency Updates',
