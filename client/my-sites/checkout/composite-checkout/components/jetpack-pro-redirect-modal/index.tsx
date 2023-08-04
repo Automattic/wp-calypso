@@ -37,6 +37,11 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_redirect' ) );
 	};
 
+	// Function to record the event when the modal is displayed.
+	const recordShowEvent = () => {
+		dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_show' ) );
+	};
+
 	// Features list of Agency/Pro Dashboard.
 	const features = [
 		translate( 'Up to 60% off our products and bundles.' ),
@@ -63,7 +68,7 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		return null;
 	}
 
-	dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_show' ) );
+	recordShowEvent();
 
 	return (
 		<Modal onRequestClose={ dismissAndRecordEvent } title="" className="jetpack-pro-redirect-modal">
