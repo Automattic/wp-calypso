@@ -58,7 +58,7 @@ class SiteOrDomain extends Component {
 			choices.push( {
 				key: 'domain',
 				title: buyADomainTitle,
-				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
+				description: translate( 'Add a site later.' ),
 				icon: globe,
 				value: 'domain',
 				actionText: translate( 'Get domain' ),
@@ -120,7 +120,7 @@ class SiteOrDomain extends Component {
 				type: 'domain',
 				label: buyADomainTitle,
 				image: <DomainImage />,
-				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
+				description: translate( 'Add a site later.' ),
 			} );
 		}
 
