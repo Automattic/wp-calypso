@@ -181,9 +181,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																									</span>
 																									{ label }
 																								</span>
-																								<span className="header__submenu-tagline">
-																									{ tagline }
-																								</span>
+																								{ tagline && (
+																									<span className="header__submenu-tagline">
+																										{ tagline }
+																									</span>
+																								) }
 																							</ExternalLink>
 																							<ul className="header__submenu-links-list">
 																								{ Array.from( Object.values( items ) )
@@ -198,9 +200,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																												<span className="header__submenu-label">
 																													{ label }
 																												</span>
-																												<span className="header__submenu-tagline">
-																													{ tagline }
-																												</span>
+																												{ tagline && (
+																													<span className="header__submenu-tagline">
+																														{ tagline }
+																													</span>
+																												) }
 																											</ExternalLink>
 																										</li>
 																									) ) }
@@ -232,9 +236,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																										<span className="header__submenu-label">
 																											{ label }
 																										</span>
-																										<span className="header__submenu-tagline">
-																											{ tagline }
-																										</span>
+																										{ tagline && (
+																											<span className="header__submenu-tagline">
+																												{ tagline }
+																											</span>
+																										) }
 																									</ExternalLink>
 																								</li>
 																							) ) }
