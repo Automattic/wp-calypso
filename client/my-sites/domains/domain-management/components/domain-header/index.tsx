@@ -1,6 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { ReactNode } from 'react';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 
 import './style.scss';
@@ -16,7 +15,6 @@ type DomainHeaderProps = {
 	mobileItem: NavigationItem;
 	buttons?: Array< ReactNode > | null;
 	mobileButtons?: Array< ReactNode > | null;
-	isRedesign2023Aug?: boolean;
 	titleOverride?: ReactNode | null;
 	subtitleOverride?: ReactNode | null;
 };
@@ -26,8 +24,6 @@ const DomainHeader = ( {
 	mobileItem,
 	buttons = null,
 	mobileButtons = null,
-	// NOTE: temp flag to test the new header design
-	isRedesign2023Aug = false,
 	titleOverride = null,
 	subtitleOverride = null,
 }: DomainHeaderProps ) => {
@@ -47,27 +43,15 @@ const DomainHeader = ( {
 	);
 
 	return (
-		<>
-			{ isRedesign2023Aug ? (
-				<NavigationHeader
-					compactBreadcrumb={ ! isWide }
-					navigationItems={ items }
-					mobileItem={ mobileItem }
-					title={ titleOverride || items[ items.length - 1 ].label }
-					subtitle={ subtitleOverride || items[ items.length - 1 ].subtitle }
-				>
-					{ renderButtons() }
-				</NavigationHeader>
-			) : (
-				<FixedNavigationHeader
-					compactBreadcrumb={ ! isWide }
-					navigationItems={ items }
-					mobileItem={ mobileItem }
-				>
-					{ renderButtons() }
-				</FixedNavigationHeader>
-			) }
-		</>
+		<NavigationHeader
+			compactBreadcrumb={ ! isWide }
+			navigationItems={ items }
+			mobileItem={ mobileItem }
+			title={ titleOverride || items[ items.length - 1 ].label }
+			subtitle={ subtitleOverride || items[ items.length - 1 ].subtitle }
+		>
+			{ renderButtons() }
+		</NavigationHeader>
 	);
 };
 

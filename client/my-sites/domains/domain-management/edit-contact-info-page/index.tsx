@@ -83,7 +83,7 @@ const EditContactInfoPage = ( {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } isRedesign2023Aug />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	const renderContent = () => {

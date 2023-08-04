@@ -108,7 +108,6 @@ const Settings = ( {
 			<DomainHeader
 				items={ items }
 				mobileItem={ mobileItem }
-				isRedesign2023Aug
 				titleOverride={
 					domain ? (
 						<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />

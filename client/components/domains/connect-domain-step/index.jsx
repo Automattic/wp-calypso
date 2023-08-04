@@ -268,12 +268,7 @@ function ConnectDomainStep( {
 		}
 
 		return (
-			<DomainHeader
-				items={ items }
-				mobileItem={ mobileItem }
-				isRedesign2023Aug
-				titleOverride={ renderTitle() }
-			/>
+			<DomainHeader items={ items } mobileItem={ mobileItem } titleOverride={ renderTitle() } />
 		);
 	};
 

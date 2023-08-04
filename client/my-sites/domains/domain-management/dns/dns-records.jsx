@@ -100,7 +100,6 @@ class DnsRecords extends Component {
 				mobileItem={ mobileItem }
 				buttons={ buttons }
 				mobileButtons={ mobileButtons }
-				isRedesign2023Aug
 			/>
 		);
 	};

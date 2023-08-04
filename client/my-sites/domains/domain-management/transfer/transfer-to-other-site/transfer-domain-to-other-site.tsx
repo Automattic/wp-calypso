@@ -191,7 +191,6 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			<DomainHeader
 				items={ items }
 				mobileItem={ mobileItem }
-				isRedesign2023Aug
 				titleOverride={
 					<FormattedHeader
 						hasScreenOptions={ false }

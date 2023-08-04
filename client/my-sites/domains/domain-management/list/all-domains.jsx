@@ -667,14 +667,7 @@ class AllDomains extends Component {
 			? []
 			: [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList /> ];
 
-		return (
-			<DomainHeader
-				items={ [ item ] }
-				buttons={ buttons }
-				mobileButtons={ mobileButtons }
-				isRedesign2023Aug
-			/>
-		);
+		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
 
 	renderContent() {

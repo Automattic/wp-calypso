@@ -171,7 +171,7 @@ class TransferDomainToOtherUser extends Component {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } isRedesign2023Aug />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	}
 
 	render() {

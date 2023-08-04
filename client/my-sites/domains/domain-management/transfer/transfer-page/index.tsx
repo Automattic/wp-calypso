@@ -111,7 +111,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } isRedesign2023Aug />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	const renderTransferOptions = () => {
