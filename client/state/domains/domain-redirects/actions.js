@@ -22,7 +22,7 @@ export function closeSiteRedirectNotice( domain ) {
 export const fetchSiteRedirect = ( domain ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_REDIRECT_FETCH, domain } );
 
-	wpcom.req.get( { path: '/domains/' + domain + '/redirect' } ).then(
+	wpcom.req.get( { path: '/sites/all/domain/' + domain + '/redirects' } ).then(
 		( { targetHost, targetPath, forwardPaths, secure } ) => {
 			dispatch( {
 				type: DOMAINS_REDIRECT_FETCH_COMPLETED,
@@ -53,7 +53,7 @@ export const updateSiteRedirect =
 
 		return wpcom.req
 			.post(
-				{ path: '/domains/' + domain + '/redirect' },
+				{ path: '/sites/all/domain/' + domain + '/redirects' },
 				{ targetHost, targetPath, forwardPaths, secure }
 			)
 			.then(
