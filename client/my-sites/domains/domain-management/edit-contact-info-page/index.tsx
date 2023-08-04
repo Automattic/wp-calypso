@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import ExternalLink from 'calypso/components/external-link';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -46,7 +45,7 @@ const EditContactInfoPage = ( {
 		);
 	};
 
-	const renderBreadcrumbs = () => {
+	const renderHeader = () => {
 		if ( ! selectedSite ) {
 			return null;
 		}
@@ -72,7 +71,10 @@ const EditContactInfoPage = ( {
 				label: selectedDomainName,
 				href: previousPath,
 			},
-			{ label: translate( 'Edit contact infomation' ) },
+			{
+				label: translate( 'Edit contact infomation' ),
+				subtitle: translate( 'Domain owners are required to provide correct contact information.' ),
+			},
 		];
 
 		const mobileItem = {
@@ -81,7 +83,7 @@ const EditContactInfoPage = ( {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } isRedesign2023Aug />;
 	};
 
 	const renderContent = () => {
@@ -183,15 +185,7 @@ const EditContactInfoPage = ( {
 	return (
 		<Main className="edit-contact-info-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Edit contact information' ) }
-				subHeaderText={ translate(
-					'Domain owners are required to provide correct contact information.'
-				) }
-				align="left"
-			/>
+			{ renderHeader() }
 			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 		</Main>
 	);
