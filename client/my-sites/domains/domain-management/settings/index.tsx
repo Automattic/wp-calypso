@@ -224,7 +224,7 @@ const Settings = ( {
 			return (
 				<Accordion
 					title={ translate( 'Redirect settings', { textOnly: true } ) }
-					subtitle="Update your site redirect"
+					subtitle={ translate( 'Update your site redirect' ) }
 					key="main"
 					expanded
 				>
