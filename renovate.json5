@@ -6,7 +6,7 @@
 			"extends": [ "monorepo:wordpress" ],
 			"separateMajorMinor": false,
 			"prPriority": 3,
-			"schedule": [ "every day" ]
+			"schedule": [ "daily" ]
 		},
 		{ "extends": [ "monorepo:babel" ], "prPriority": 1 },
 		{ "extends": [ "monorepo:lodash" ], "prPriority": 1 },
