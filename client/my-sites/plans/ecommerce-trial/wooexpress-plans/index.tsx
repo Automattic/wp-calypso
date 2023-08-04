@@ -12,7 +12,7 @@ import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
-import { getECommerceTrialCheckoutUrl } from 'calypso/lib/trials/get-ecommerce-trial-checkout-url';
+import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
 import { useSelector } from 'calypso/state';
@@ -104,7 +104,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 			const planPath = getPlanPath( upgradePlanSlug ) ?? '';
 
 			const checkoutUrl = isWooExpressPlan( upgradePlanSlug )
-				? getECommerceTrialCheckoutUrl( { productSlug: planPath, siteSlug } )
+				? getTrialCheckoutUrl( { productSlug: planPath, siteSlug } )
 				: `/checkout/${ siteSlug }/${ planPath }`;
 
 			page( checkoutUrl );

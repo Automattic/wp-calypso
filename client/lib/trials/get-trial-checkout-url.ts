@@ -1,14 +1,14 @@
 import { addQueryArgs } from 'calypso/lib/url';
 
-interface MigrationTrialCheckoutUrlArguments {
+interface TrialCheckoutUrlArguments {
 	productSlug: string;
 	siteSlug: string;
 }
 
-export function getMigrationTrialCheckoutUrl( {
+export function getTrialCheckoutUrl( {
 	productSlug,
 	siteSlug,
-}: MigrationTrialCheckoutUrlArguments ): string {
+}: TrialCheckoutUrlArguments ): string {
 	return addQueryArgs(
 		{ redirect_to: `/plans/my-plan/trial-upgraded/${ siteSlug }` },
 		`/checkout/${ siteSlug }/${ productSlug }`

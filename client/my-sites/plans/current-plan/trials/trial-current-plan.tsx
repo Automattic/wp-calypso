@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getECommerceTrialCheckoutUrl } from 'calypso/lib/trials/get-ecommerce-trial-checkout-url';
+import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
@@ -57,7 +57,7 @@ const TrialCurrentPlan = () => {
 			cta_position: ctaPosition,
 		} );
 
-		const checkoutUrl = getECommerceTrialCheckoutUrl( {
+		const checkoutUrl = getTrialCheckoutUrl( {
 			productSlug: targetPlan,
 			siteSlug: selectedSite?.slug ?? '',
 		} );
