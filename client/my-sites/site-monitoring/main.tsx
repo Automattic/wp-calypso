@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
-import { calculateTimeRange, TimeDateChartControls } from './date-time-charts-picker';
+import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import UplotChartMetrics from './metrics-chart';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
 
