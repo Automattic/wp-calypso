@@ -46,7 +46,7 @@
 		"jetpack/pro-dashboard-monitor-multiple-email-recipients": true,
 		"jetpack/pro-dashboard-monitor-paid-tier": true,
 		"jetpack/pro-dashboard-monitor-sms-notification": true,
-		"jetpack/pro-dashboard-woo-extensions": false,
+		"jetpack/pro-dashboard-woo-extensions": true,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
