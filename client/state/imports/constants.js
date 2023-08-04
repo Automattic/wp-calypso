@@ -16,3 +16,5 @@ export const appStates = Object.freeze( {
 	UPLOADING: 'importer-uploading',
 	IMPORT_CLEAR: 'importer-clear',
 } );
+
+export const MAX_FILE_SIZE = 100000; // 100mb
