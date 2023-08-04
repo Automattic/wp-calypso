@@ -19,7 +19,7 @@ on:
           - lookup
           - extract
   schedule:
-    # Every two hours.
+    # Run every 30 minutes:
     - cron: '0,30 * * * *'
   pull_request:
     paths:
