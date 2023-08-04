@@ -73,20 +73,10 @@ export async function loadDSPWidgetJS(): Promise< void > {
 	await import( './string' );
 }
 
-const ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON = '22.9.rc-1';
-
-type DeviceInfo = {
-	device: string;
-	version: string;
-};
-
 const shouldHideGoToCampaignButton = () => {
-	// Android versions higher or equal than 22.9.rc-1 should hide the button
-	const deviceInfo = getMobileDeviceInfo() as DeviceInfo;
-	return (
-		deviceInfo.device.includes( 'android' ) &&
-		versionCompare( deviceInfo?.version, ANDROID_VERSION_HIDE_CAMPAIGNS_BUTTON, '>=' )
-	);
+	// App versions higher or equal than 22.9.rc-1 should hide the button
+	const deviceInfo = getMobileDeviceInfo();
+	return versionCompare( deviceInfo?.version, '22.9.rc-1', '>=' );
 };
 
 const getWidgetOptions = () => {
