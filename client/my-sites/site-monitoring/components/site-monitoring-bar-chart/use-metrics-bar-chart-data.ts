@@ -63,15 +63,11 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 	const secondsWindow = useSecondsWindow( timeRange );
 	const { dataForBarChart, labels } = useGroupByTime( data?.data?.periods || [], secondsWindow );
 
-	if ( ! siteId ) {
-		return {
-			formattedData: [],
-			labels: [],
-		};
-	}
-
 	return {
-		data: [ STATUS_CODES.map( ( code ) => `HTTP ${ code }` ), ...dataForBarChart ],
+		data: [ STATUS_CODES.map( ( code ) => `HTTP ${ code }` ), ...dataForBarChart ] as [
+			string[],
+			...number[][]
+		],
 		labels: labels.map( ( timeSeconds ) => new Date( timeSeconds * 1000 ).toLocaleTimeString() ),
 		fillColors: FILL_COLORS,
 	};
