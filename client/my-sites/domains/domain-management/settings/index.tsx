@@ -43,6 +43,7 @@ import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
+import DomainRedirectCard from './cards/domain-redirect-card';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
@@ -337,7 +338,7 @@ const Settings = ( {
 				title={ translate( 'Redirect Domain', { textOnly: true } ) }
 				subtitle={ translate( 'Redirect from your domain to another' ) }
 			>
-				<SiteRedirectCard selectedSite={ selectedSite } selectedDomainName={ selectedDomainName } />
+				<DomainRedirectCard domain={ selectedDomainName } />
 			</Accordion>
 		);
 	};
