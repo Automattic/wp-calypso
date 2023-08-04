@@ -1,4 +1,6 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import BulkSelect from 'calypso/components/bulk-select';
@@ -78,7 +80,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 						borderless
 						compact
 					>
-						<Gridicon icon="cross" />
+						<Icon icon={ close } />
 					</Button>
 				</div>
 			) }
