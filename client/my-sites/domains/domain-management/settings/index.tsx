@@ -338,7 +338,8 @@ const Settings = ( {
 				title={ translate( 'Redirect Domain', { textOnly: true } ) }
 				subtitle={ translate( 'Redirect from your domain to another' ) }
 			>
-				<DomainRedirectCard domain={ selectedDomainName } />
+				{ /* <DomainRedirectCard domain={ selectedDomainName } /> */ }
+				<SiteRedirectCard selectedSite={ selectedSite } selectedDomainName={ selectedDomainName } />
 			</Accordion>
 		);
 	};
