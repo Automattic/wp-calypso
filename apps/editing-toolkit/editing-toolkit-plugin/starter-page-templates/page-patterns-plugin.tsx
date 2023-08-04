@@ -62,7 +62,7 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	}, [] );
 
 	const savePatternChoice = useCallback(
-		( name: string, selectedCategory?: string ) => {
+		( name: string, selectedCategory: string | null ) => {
 			// Save selected pattern slug in meta.
 			const currentMeta = getMeta() as Record< string, unknown >;
 			const currentCategory =

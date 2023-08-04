@@ -20,7 +20,7 @@ interface PagePatternModalProps {
 	instanceId: string | number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
-	savePatternChoice: ( name: string, selectedCategory?: string ) => void;
+	savePatternChoice: ( name: string, selectedCategory: string | null ) => void;
 	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
