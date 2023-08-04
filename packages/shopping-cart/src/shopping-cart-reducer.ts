@@ -1,4 +1,3 @@
-import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import {
 	removeItemFromResponseCart,
@@ -188,9 +187,7 @@ function shoppingCartReducer(
 				doesResponseCartContainProductMatching( state.responseCart, {
 					uuid: uuidToReplace,
 					...action.productPropertiesToChange,
-				} ) &&
-				// Multi-year domain products have the same slug but different volume so it would be detected as matching products already in the cart
-				! isMultiYearDomainProduct( action.productPropertiesToChange )
+				} )
 			) {
 				debug( `variant is already in cart; not submitting again` );
 				return state;
