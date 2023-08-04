@@ -164,6 +164,7 @@ export function SiteMetrics() {
 			></FormattedHeader>
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<SiteMonitoringLineChart
+				title={ __( 'Requests per minute & average response time' ) }
 				data={ formattedData as uPlot.AlignedData }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
