@@ -6,6 +6,7 @@ import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
+	MonitorSettings,
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
@@ -28,6 +29,7 @@ export type Props = {
 	type: AllowedMonitorContactTypes;
 	verifiedItemKey?: string;
 	restriction?: RestrictionType;
+	settings?: MonitorSettings;
 };
 
 export default function ContactList( {
@@ -37,6 +39,7 @@ export default function ContactList( {
 	type,
 	verifiedItemKey,
 	restriction = 'none',
+	settings,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -66,7 +69,7 @@ export default function ContactList( {
 		}
 	}, [ items.length, type ] );
 
-	const showSMSCounter = false;
+	const showSMSCounter = type === 'sms' && items.length > 0 && !! settings;
 
 	return (
 		<>
@@ -112,7 +115,7 @@ export default function ContactList( {
 						<UpgradeLink isInline />
 					</div>
 				) }
-				{ showSMSCounter && type === 'sms' && <SMSCounter /> }
+				{ showSMSCounter && <SMSCounter settings={ settings } /> }
 			</div>
 		</>
 	);
