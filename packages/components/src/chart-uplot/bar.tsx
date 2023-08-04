@@ -54,7 +54,7 @@ export default function UplotBarChart( {
 			plugins: [
 				seriesBarsPlugin( {
 					labels: () => labels,
-				} ),
+				} ) as uPlot.Plugin,
 			],
 			legend: {
 				live: false,

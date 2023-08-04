@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-use-before-define, no-unused-vars, no-shadow, no-nested-ternary */
 import uPlot from 'uplot';
-import distr from '../lib/distr';
-import Quadtree from '../lib/quadtree';
+import Quadtree, { distr } from '../lib/quadtree';
 
 function pointWithin(
 	px: number,
