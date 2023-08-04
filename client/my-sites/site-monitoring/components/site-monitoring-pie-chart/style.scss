@@ -7,6 +7,10 @@
 		margin-top: 24px;
 		flex-direction: row;
 		justify-content: center;
+		gap: 16px;
+		.legend-item {
+			flex-direction: row;
+		}
 		.legend-item__title-sample-drawing {
 			margin-right: 4px;
 		}
