@@ -100,13 +100,19 @@ describe( 'useUnsetNewsletterCategoryMutation', () => {
 		const consoleError = console.error;
 		console.error = jest.fn();
 
+		let mutation;
+
 		act( () => {
-			result.current.mutate( categoryId );
+			mutation = result.current.mutate( categoryId );
+		} );
+
+		await act( async () => {
+			await mutation;
 		} );
 
 		await waitFor( () =>
 			expect( result.current.error ).toEqual(
-				Error( 'Something went wrong while setting category as newsletter category.' )
+				Error( 'Something went wrong while removing category as newsletter category.' )
 			)
 		);
 
