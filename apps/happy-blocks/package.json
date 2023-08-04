@@ -18,6 +18,7 @@
 		"build:universal-footer": "calypso-build --env block='universal-footer'",
 		"build:support-content-footer": "calypso-build --env block='support-content-footer'",
 		"build:education-header": "calypso-build --env block='education-header'",
+		"build:support-content-links": "calypso-build --env block='support-content-links'",
 		"build-translations-manifest": "yarn run build-calypso-strings && node bin/build-translations-manifest.js",
 		"clean": "rm -r release-files block-library/*/build || true",
 		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks"
