@@ -65,11 +65,15 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 		( name: string, selectedCategory?: string ) => {
 			// Save selected pattern slug in meta.
 			const currentMeta = getMeta() as Record< string, unknown >;
+			const currentCategory =
+				( Array.isArray( currentMeta._wpcom_template_layout_category ) &&
+					currentMeta._wpcom_template_layout_category ) ||
+				[];
 			editPost( {
 				meta: {
 					...currentMeta,
 					_starter_page_template: name,
-					_wp_layout_category: selectedCategory,
+					_wpcom_template_layout_category: [ ...currentCategory, selectedCategory ],
 				},
 			} );
 		},
