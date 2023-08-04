@@ -61,6 +61,10 @@ object WPComTests : Project({
 	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
 	buildType(jetpackSimpleDeploymentE2eBuildType("mobile", "ccfe7d2c-8f04-406b-8b83-3db6c8475661"));
 
+	// E2E Tests for Jetpack Atomic Deployment
+	// Just desktop to start
+	buildType(jetpackAtomicDeploymentE2eBuildType("desktop", "81015cf6-27e7-40bd-a52d-df6bd19ffb01"));
+
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
@@ -216,6 +220,8 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 }
 
 fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
+
 	return BuildType({
 		id("WPComTests_jetpack_simple_deployment_e2e_$targetDevice")
 		uuid = buildUuid
@@ -240,6 +246,70 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			finishBuildTrigger {
 				buildType = "JetpackStaging_JetpackSunMoonUpdated"
 			}
+		}
+
+		steps {
+			prepareE2eEnvironment()
+
+			atomicVariations.forEach { variation ->
+				runE2eTestsWithRetry(
+					testGroup = "jetpack-wpcom-integration",
+					additionalEnvVars = mapOf(
+						"ATOMIC_VARIATION" to variation,
+						"E2E_RUN_ID" to "atomic-$variation"
+					),
+					stepName = "Run Atomic Jetpack E2E Tests: $variation",
+				)
+			}
+
+			collectE2eResults()
+		}
+
+		features {
+			perfmon {}
+
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#jetpack-alerts"
+					messageFormat = verboseMessageFormat {
+						addStatusText = true
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailedToStart = true
+				buildFailed = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
+			}
+		}
+
+		failureConditions {
+			defaultE2eFailureConditions()
+		}
+	});
+}
+
+fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	return BuildType({
+		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
+		uuid = buildUuid
+		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
+		description = "Runs E2E tests validating the deployment of Jetpack on Atomic sites on $targetDevice viewport"
+		
+		artifactRules = defaultE2eArtifactRules();
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			defaultE2eParams()
+			calypsoBaseUrlParam()
+			param("env.VIEWPORT_NAME", "$targetDevice")
+			param("env.JETPACK_TARGET", "wpcom-deployment")
+			param("env.TEST_ON_ATOMIC", "true")
 		}
 
 		steps {
