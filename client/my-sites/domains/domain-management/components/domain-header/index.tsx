@@ -7,7 +7,7 @@ import './style.scss';
 
 type NavigationItem = {
 	label: string;
-	subtitle?: string;
+	subtitle?: string | ReactNode;
 	href?: string;
 };
 

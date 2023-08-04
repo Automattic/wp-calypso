@@ -127,13 +127,13 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	}
 
 	render() {
-		const { selectedSite, selectedDomainName, currentRoute, translate } = this.props;
+		const { selectedSite, selectedDomainName, currentRoute } = this.props;
 		const slug = selectedSite?.slug;
 		const componentClassName = 'transfer-domain-to-other-site';
 		if ( ! this.isDataReady() ) {
 			return (
 				<DomainMainPlaceholder
-					breadcrumbs={ this.renderBreadcrumbs }
+					breadcrumbs={ this.renderHeader }
 					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				/>
 			);
@@ -146,13 +146,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 					group={ componentClassName }
 					section={ componentClassName }
 				/>
-				{ this.renderBreadcrumbs() }
-				<FormattedHeader
-					hasScreenOptions={ false }
-					brandFont
-					headerText={ translate( 'Connect to another WordPress.com site' ) }
-					align="left"
-				/>
+				{ this.renderHeader() }
 				<div className={ `${ componentClassName }__container` }>
 					<div className={ `${ componentClassName }__main` }>{ this.renderSection() }</div>
 				</div>
@@ -160,7 +154,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		);
 	}
 
-	renderBreadcrumbs = () => {
+	renderHeader = () => {
 		const { translate, selectedSite, selectedDomainName, currentRoute } = this.props;
 
 		const items = [
@@ -182,7 +176,9 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				label: translate( 'Connect' ),
 				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
-			{ label: translate( 'To another WordPress.com site' ) },
+			{
+				label: translate( 'To another WordPress.com site' ),
+			},
 		];
 
 		const mobileItem = {
@@ -191,7 +187,20 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader
+				items={ items }
+				mobileItem={ mobileItem }
+				isRedesign2023Aug
+				titleOverride={
+					<FormattedHeader
+						hasScreenOptions={ false }
+						headerText={ translate( 'Connect to another WordPress.com site' ) }
+						align="left"
+					/>
+				}
+			/>
+		);
 	};
 
 	renderSection() {
