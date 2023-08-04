@@ -25,6 +25,7 @@ on:
     paths:
       - '.github/workflows/renovate.yml'
       - 'renovate.json5'
+      - 'renovate.json'
 
 concurrency:
   group: renovate-${{ github.ref }}
