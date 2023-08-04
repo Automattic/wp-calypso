@@ -8,17 +8,22 @@ import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from '.
 
 import './style.scss';
 
+interface TimeRange {
+	start: number;
+	end: number;
+}
+
 export function useTimeRange() {
 	// State to store the selected time range
-	const [ selectedTimeRange, setSelectedTimeRange ] = useState( null );
+	const [ selectedTimeRange, setSelectedTimeRange ] = useState( null as TimeRange | null );
 
 	// Function to handle the time range selection
-	const handleTimeRangeChange = ( timeRange ) => {
+	const handleTimeRangeChange = ( timeRange: TimeRange ) => {
 		setSelectedTimeRange( timeRange );
 	};
 
-	// Call the `calculateTimeRange` function with the default selected option '1' (24 hours)
-	const defaultTimeRange = calculateTimeRange( '1' );
+	// Call the `calculateTimeRange` function with the default selected option
+	const defaultTimeRange = calculateTimeRange( '24-hours' );
 
 	// Calculate the startTime and endTime using useMemo to memoize the result
 	const { start, end } = useMemo( () => {
