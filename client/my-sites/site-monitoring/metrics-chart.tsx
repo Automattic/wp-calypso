@@ -6,6 +6,7 @@ import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import useSiteChartTimezone from './use-site-timezone-for-chart';
 
 import './style.scss';
 
@@ -41,6 +42,7 @@ export default function UplotChartMetrics( {
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
 	const { spline } = uPlot.paths;
+	const timezone = useSiteChartTimezone();
 
 	const scaleGradient = useScaleGradient( fillColor );
 
@@ -49,7 +51,7 @@ export default function UplotChartMetrics( {
 			class: 'calypso-uplot-chart',
 			...DEFAULT_DIMENSIONS,
 			// Set incoming dates as UTC.
-			tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+			tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), timezone ),
 			fmtDate: () => {
 				return ( date ) => {
 					const chatHour = formatChatHour( date );
