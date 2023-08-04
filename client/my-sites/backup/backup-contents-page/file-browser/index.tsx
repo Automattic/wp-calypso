@@ -17,7 +17,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 	// Temporary values and logic for laying out header
 	const [ currentlySelected, setCurrentlySelected ] = useState< number >( 0 );
 	const totalElements = 10;
-	const onToggleAll = ( checkedState ) => {
+	const onToggleAll = ( checkedState?: boolean ) => {
 		if ( checkedState ) {
 			setCurrentlySelected( totalElements );
 		} else {
