@@ -189,7 +189,7 @@ function shoppingCartReducer(
 					uuid: uuidToReplace,
 					...action.productPropertiesToChange,
 				} ) &&
-				// Multi-year domain products have the same slug but different volume
+				// Multi-year domain products have the same slug but different volume so it would be detected as matching products already in the cart
 				! isMultiYearDomainProduct( action.productPropertiesToChange )
 			) {
 				debug( `variant is already in cart; not submitting again` );
