@@ -62,8 +62,7 @@ const getStatsQueries = createSelector(
 );
 
 const getStatsTopPostsData = createSelector(
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	( state, siteId, topPostsQuery, hasTopViewedPostQueryFinished ) => {
+	( state, siteId, topPostsQuery ) => {
 		const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
 
 		return {
@@ -71,7 +70,7 @@ const getStatsTopPostsData = createSelector(
 			topPage,
 		};
 	},
-	( state, siteId, topPostsQuery ) => [ topPostsQuery ]
+	( state, siteId, topPostsQuery ) => [ state, siteId, topPostsQuery ]
 );
 
 export default function PostCardsGroup( {
@@ -96,11 +95,8 @@ export default function PostCardsGroup( {
 
 	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
 	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
-	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
-		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
-	);
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
-		getStatsTopPostsData( state, siteId, topPostsQuery, hasTopViewedPostQueryFinished )
+		getStatsTopPostsData( state, siteId, topPostsQuery )
 	);
 
 	// Prepare the most popular post card.
@@ -128,6 +124,9 @@ export default function PostCardsGroup( {
 	// Check if the most popular post is ready to be displayed.
 	const isRequestingMostPopularPost = useSelector( ( state ) =>
 		isRequestingSitePost( state, siteId, topViewedPost?.id )
+	);
+	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
+		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
 	);
 	const isPreparingMostPopularPost = ! hasTopViewedPostQueryFinished || isRequestingMostPopularPost;
 
