@@ -97,13 +97,13 @@ const defaultCriteria: FeatureCriteria[] = [
 	// Jetpack users
 	{
 		siteType: 'simple',
-		jetpackTarget: 'wpcom-staging',
+		jetpackTarget: 'wpcom-deployment',
 		gutenberg: 'stable',
 		accountName: 'jetpackStagingUser',
 	},
 	{
 		siteType: 'simple',
-		jetpackTarget: 'wpcom-staging',
+		jetpackTarget: 'wpcom-deployment',
 		gutenberg: 'stable',
 		variant: 'siteEditor',
 		accountName: 'jetpackStagingFseUser',
