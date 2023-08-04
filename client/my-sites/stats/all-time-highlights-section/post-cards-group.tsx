@@ -71,10 +71,7 @@ const getStatsTopPostsData = createSelector(
 			topPage,
 		};
 	},
-	( state, siteId, topPostsQuery ) => [
-		topPostsQuery,
-		getSiteOption( state, siteId, 'gmt_offset' ),
-	]
+	( state, siteId, topPostsQuery ) => [ topPostsQuery ]
 );
 
 export default function PostCardsGroup( {
