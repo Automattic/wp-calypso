@@ -3,6 +3,7 @@ import { CheckoutCheckIcon } from '@automattic/composite-checkout';
 import { Modal } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -37,11 +38,6 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 		dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_redirect' ) );
 	};
 
-	// Function to record the event when the modal is displayed.
-	const recordShowEvent = () => {
-		dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_show' ) );
-	};
-
 	// Features list of Agency/Pro Dashboard.
 	const features = [
 		translate( 'Up to 60% off our products and bundles.' ),
@@ -53,6 +49,24 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 	const redirectURLPage = getQueryArg( redirectTo ?? '', 'page' );
 
 	const isAgencyPartner = useSelector( isAgencyUser );
+
+	// Function to record the event when the modal is displayed.
+	// It is in a separate useEffect to avoid unecessary re-renders.
+	useEffect( () => {
+		const recordShowEvent = () => {
+			dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_show' ) );
+		};
+
+		if (
+			isAgencyPartner &&
+			! isDismissed &&
+			( productSourceFromUrl === 'jetpack-plans' ||
+				redirectURLPage === 'my-jetpack' ||
+				redirectURLPage === 'jetpack' )
+		) {
+			recordShowEvent();
+		}
+	}, [ isAgencyPartner, isDismissed, productSourceFromUrl, redirectURLPage, dispatch ] );
 
 	// Show the banner only if the user is agency partner, has not dismissed the banner and
 	// is coming from the Jetpack Plans page or Jetpack page in WP.com
@@ -67,8 +81,6 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 	) {
 		return null;
 	}
-
-	recordShowEvent();
 
 	return (
 		<Modal onRequestClose={ dismissAndRecordEvent } title="" className="jetpack-pro-redirect-modal">
