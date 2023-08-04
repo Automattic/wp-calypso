@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
-	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -40,7 +40,7 @@ const TrialCurrentPlan = () => {
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 	const bodyClass = isEcommerceTrial ? [ 'is-ecommerce-trial-plan' ] : [ 'is-business-trial-plan' ];
 
-	const targetPlan = isEcommerceTrial ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : PLAN_BUSINESS_MONTHLY;
+	const targetPlan = isEcommerceTrial ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : PLAN_BUSINESS;
 	const trackEvent = isEcommerceTrial
 		? 'calypso_wooexpress_my_plan_cta'
 		: 'calypso_migration_my_plan_cta';
