@@ -1,35 +1,42 @@
 import i18n from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
-	DOMAINS_SITE_REDIRECT_FETCH,
-	DOMAINS_SITE_REDIRECT_FETCH_COMPLETED,
-	DOMAINS_SITE_REDIRECT_FETCH_FAILED,
-	DOMAINS_SITE_REDIRECT_NOTICE_CLOSE,
-	DOMAINS_SITE_REDIRECT_UPDATE,
-	DOMAINS_SITE_REDIRECT_UPDATE_COMPLETED,
-	DOMAINS_SITE_REDIRECT_UPDATE_FAILED,
+	DOMAINS_REDIRECT_FETCH,
+	DOMAINS_REDIRECT_FETCH_COMPLETED,
+	DOMAINS_REDIRECT_FETCH_FAILED,
+	DOMAINS_REDIRECT_NOTICE_CLOSE,
+	DOMAINS_REDIRECT_UPDATE,
+	DOMAINS_REDIRECT_UPDATE_COMPLETED,
+	DOMAINS_REDIRECT_UPDATE_FAILED,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/domains/init';
 
-export function closeSiteRedirectNotice( siteId ) {
+export function closeSiteRedirectNotice( domain ) {
 	return {
-		type: DOMAINS_SITE_REDIRECT_NOTICE_CLOSE,
-		siteId,
+		type: DOMAINS_REDIRECT_NOTICE_CLOSE,
+		domain,
 	};
 }
 
-export const fetchSiteRedirect = ( siteId ) => ( dispatch ) => {
-	dispatch( { type: DOMAINS_SITE_REDIRECT_FETCH, siteId } );
+export const fetchSiteRedirect = ( domain ) => ( dispatch ) => {
+	dispatch( { type: DOMAINS_REDIRECT_FETCH, domain } );
 
-	wpcom.req.get( { path: '/sites/' + siteId + '/domains/redirect' } ).then(
-		( { location } ) => {
-			dispatch( { type: DOMAINS_SITE_REDIRECT_FETCH_COMPLETED, siteId, location } );
+	wpcom.req.get( { path: '/domains/' + domain + '/redirect' } ).then(
+		( { targetHost, targetPath, forwardPaths, secure } ) => {
+			dispatch( {
+				type: DOMAINS_REDIRECT_FETCH_COMPLETED,
+				domain,
+				targetHost,
+				targetPath,
+				forwardPaths,
+				secure,
+			} );
 		},
 		( error ) => {
 			dispatch( {
-				type: DOMAINS_SITE_REDIRECT_FETCH_FAILED,
-				siteId,
+				type: DOMAINS_REDIRECT_FETCH_FAILED,
+				domain,
 				error: error
 					? error.message
 					: i18n.translate(
@@ -40,37 +47,46 @@ export const fetchSiteRedirect = ( siteId ) => ( dispatch ) => {
 	);
 };
 
-export const updateSiteRedirect = ( siteId, location ) => ( dispatch ) => {
-	dispatch( { type: DOMAINS_SITE_REDIRECT_UPDATE, siteId } );
+export const updateSiteRedirect =
+	( domain, targetHost, targetPath, forwardPaths, secure ) => ( dispatch ) => {
+		dispatch( { type: DOMAINS_REDIRECT_UPDATE, domain } );
 
-	return wpcom.req.post( { path: '/sites/' + siteId + '/domains/redirect' }, { location } ).then(
-		( data ) => {
-			if ( data.success ) {
-				dispatch( {
-					type: DOMAINS_SITE_REDIRECT_UPDATE_COMPLETED,
-					siteId,
-					location,
-					success: i18n.translate( 'The redirect settings were updated successfully.' ),
-				} );
-				return true;
-			}
+		return wpcom.req
+			.post(
+				{ path: '/domains/' + domain + '/redirect' },
+				{ targetHost, targetPath, forwardPaths, secure }
+			)
+			.then(
+				( data ) => {
+					if ( data.success ) {
+						dispatch( {
+							type: DOMAINS_REDIRECT_UPDATE_COMPLETED,
+							domain,
+							targetHost,
+							targetPath,
+							forwardPaths,
+							secure,
+							success: i18n.translate( 'The redirect settings were updated successfully.' ),
+						} );
+						return true;
+					}
 
-			dispatch( {
-				type: DOMAINS_SITE_REDIRECT_UPDATE_FAILED,
-				siteId,
-				error: i18n.translate(
-					'There was a problem updating the redirect settings. Please try again later or contact support.'
-				),
-			} );
-			return false;
-		},
-		( error ) => {
-			dispatch( {
-				type: DOMAINS_SITE_REDIRECT_UPDATE_FAILED,
-				siteId,
-				error: error.message,
-			} );
-			return false;
-		}
-	);
-};
+					dispatch( {
+						type: DOMAINS_REDIRECT_UPDATE_FAILED,
+						domain,
+						error: i18n.translate(
+							'There was a problem updating the redirect settings. Please try again later or contact support.'
+						),
+					} );
+					return false;
+				},
+				( error ) => {
+					dispatch( {
+						type: DOMAINS_REDIRECT_UPDATE_FAILED,
+						domain,
+						error: error.message,
+					} );
+					return false;
+				}
+			);
+	};

@@ -1,7 +1,7 @@
-import { initialStateForSite } from './reducer';
+import { initialStateForDomain } from './reducer';
 
 import 'calypso/state/domains/init';
 
-export function getSiteRedirectLocation( state, siteId ) {
-	return state.domains.siteRedirect[ siteId ] || initialStateForSite;
+export function getDomainRedirect( state, domain ) {
+	return state.domains.domainRedirect[ domain ] || initialStateForDomain;
 }
