@@ -3,7 +3,7 @@ import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-s
 import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
 import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 
@@ -144,6 +144,7 @@ export default function UplotChartMetrics( {
 					},
 				},
 			};
+
 			return {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),

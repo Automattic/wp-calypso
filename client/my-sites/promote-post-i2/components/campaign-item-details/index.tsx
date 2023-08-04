@@ -20,7 +20,6 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query-new';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
@@ -143,11 +142,11 @@ export default function CampaignItemDetails( props: Props ) {
 	const navigationItems = [
 		{
 			label: translate( 'Advertising' ),
-			href: getAdvertisingDashboardPath( `/${ selectedSiteSlug }/campaigns` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ),
 		},
 		{
 			label: campaignTitleFormatted || '',
-			href: getAdvertisingDashboardPath( `${ selectedSiteSlug }/campaigns/${ campaignId }` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ selectedSiteSlug }` ),
 		},
 	];
 
@@ -629,7 +628,10 @@ export default function CampaignItemDetails( props: Props ) {
 												{ cancelCampaignButtonText }
 											</Button>
 										) }
-										<Button href={ CALYPSO_CONTACT } target="_blank">
+										<Button
+											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+											target="_blank"
+										>
 											{ icon }
 											{ translate( 'Contact Support' ) }
 										</Button>

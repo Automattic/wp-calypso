@@ -14,11 +14,11 @@ import { LoadingPlaceHolder } from './loading-placeholder';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
-const DialogContainer = styled.div`
+export const DialogContainer = styled.div`
 	padding: 24px;
 `;
 
-const Heading = styled.div`
+export const Heading = styled.div`
 	font-family: Recoleta;
 	color: var( --studio-gray-100 );
 	font-size: 22px;
@@ -31,7 +31,7 @@ const Heading = styled.div`
 	}
 `;
 
-const SubHeading = styled.div`
+export const SubHeading = styled.div`
 	margin-top: 8px;
 	font-family: 'SF Pro Text', sans-serif;
 	color: var( --studio-gray-60 );
@@ -92,7 +92,7 @@ const FreeDomainText = styled.div`
 	margin-top: 4px;
 `;
 
-const StyledButton = styled( Button )`
+export const StyledButton = styled( Button )`
 	padding: 10px 24px;
 	border-radius: 4px;
 	font-weight: 500;

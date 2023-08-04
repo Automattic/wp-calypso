@@ -4,6 +4,7 @@ import type {
 	GROUP_WPCOM,
 	WPCOM_PRODUCTS,
 	WPCOM_PLANS,
+	WPCOM_STORAGE_ADD_ONS,
 	PLAN_JETPACK_FREE,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_LEGACY_PLANS,
@@ -24,6 +25,7 @@ import type {
 	FEATURE_GROUP_PAYMENTS,
 	FEATURE_GROUP_MARKETING_EMAIL,
 	FEATURE_GROUP_SHIPPING,
+	WOOCOMMERCE_PRODUCTS,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
@@ -34,6 +36,7 @@ export type Feature = string;
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
+export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
 
 export interface WPComPlan extends Plan {
 	getAudience?: () => TranslateResult;
@@ -87,6 +90,9 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
+// WooCommerce
+export type WooCommerceProductSlug = ( typeof WOOCOMMERCE_PRODUCTS )[ number ];
+
 export type SelectorProductFeaturesItem = {
 	slug: string;
 	icon?:
@@ -129,7 +135,7 @@ export type IncompleteJetpackPlan = Partial< JetpackPlan > &
 export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ number ];
 
 // All
-export type ProductSlug = WPComProductSlug | JetpackProductSlug;
+export type ProductSlug = WPComProductSlug | JetpackProductSlug | WooCommerceProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
 
@@ -188,6 +194,13 @@ export type FeatureGroup = {
 };
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
+export type StorageOption = {
+	slug: string;
+	// Determines if the storage option is an add-on that can be purchased. There are a mixture of patterns
+	// to identify add-ons for now, and we're temporarily adding one more
+	isAddOn: boolean;
+};
+
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
 	type: string;
@@ -231,7 +244,7 @@ export type Plan = BillingTerm & {
 	get2023PricingGridSignupStorageOptions?: (
 		showLegacyStorageFeature?: boolean,
 		isCurrentPlan?: boolean
-	) => Feature[];
+	) => StorageOption[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;

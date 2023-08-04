@@ -1,4 +1,4 @@
-import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
+import { createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
@@ -9,11 +9,12 @@ import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
 import existingCardProcessor from './existing-card-processor';
 import getContactDetailsType from './get-contact-details-type';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
+import { doesTransactionResponseRequire3DS, handle3DSChallenge } from './stripe-3ds';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
@@ -134,41 +135,44 @@ async function stripeCardProcessor(
 		paymentPartnerProcessorId: transactionOptions.stripeConfiguration?.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
+	let paymentIntentId: string | undefined = undefined;
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
 		.then( async ( stripeResponse ) => {
-			if (
-				stripeResponse &&
-				'message' in stripeResponse &&
-				typeof stripeResponse.message !== 'string' &&
-				stripeResponse.message?.payment_intent_client_secret
-			) {
+			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
-				// 3DS authentication required
-				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
-				// If this fails, it will reject (throw) and we'll end up in the catch block below.
-				await confirmStripePaymentIntent(
+				paymentIntentId = stripeResponse.message.payment_intent_id;
+				await handle3DSChallenge(
+					reduxDispatch,
 					submitData.stripe,
-					stripeResponse.message.payment_intent_client_secret
+					stripeResponse.message.payment_intent_client_secret,
+					paymentIntentId
 				);
-				// We must return the original authentication response in order to have
-				// access to the order_id so that we can display a pending page while
-				// we wait for Stripe to send a webhook to complete the purchase.
+				// We must return the original authentication response in order
+				// to have access to the order_id so that we can display a
+				// pending page while we wait for Stripe to send a webhook to
+				// complete the purchase so we do not return the result of
+				// confirming the payment intent and instead fall through.
 			}
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			const hasPaymentIntent =
-				stripeResponse &&
-				'message' in stripeResponse &&
-				typeof stripeResponse.message !== 'string' &&
-				stripeResponse?.message?.payment_intent_client_secret;
-			if ( stripeResponse.redirect_url && ! hasPaymentIntent ) {
+			if ( stripeResponse.redirect_url && ! doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
 			return makeSuccessResponse( stripeResponse );
 		} )
 		.catch( ( error ) => {
 			debug( 'transaction failed' );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
+					payment_intent_id: paymentIntentId ?? '',
+				} )
+			);
+			logStashEvent( 'calypso_checkout_card_transaction_failed', {
+				payment_intent_id: paymentIntentId ?? '',
+				tags: [ `payment_intent_id:${ paymentIntentId }` ],
+			} );
+
 			// Errors here are "expected" errors, meaning that they (hopefully) come
 			// from the endpoint and not from some bug in the frontend code.
 			return makeErrorResponse( error.message );

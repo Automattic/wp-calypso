@@ -15,10 +15,8 @@ export type BaseButton = {
 	target?: string;
 };
 
-export type Button = ReactElement | BaseButton;
-
 type Props = {
-	buttons?: Button[];
+	buttons?: ( ReactElement | BaseButton )[];
 	baseClassName: string;
 	onButtonClick: ( button: BaseButton ) => void;
 };
@@ -33,7 +31,7 @@ const ButtonBar: FunctionComponent< Props > = ( { buttons, baseClassName, onButt
 			{ buttons.map( ( button, index ) => {
 				const key = index;
 
-				if ( isValidElement( button ) ) {
+				if ( isElement( button ) ) {
 					return cloneElement( button, { key } );
 				}
 
@@ -59,5 +57,11 @@ const ButtonBar: FunctionComponent< Props > = ( { buttons, baseClassName, onButt
 		</div>
 	);
 };
+
+// Note: a bug in TypeScript doesn't narrow ReactElement properly, but the wrapper
+// helps it work. See https://github.com/microsoft/TypeScript/issues/53178#issuecomment-1659301034
+function isElement( element: ReactElement | BaseButton ): element is ReactElement {
+	return isValidElement( element );
+}
 
 export default ButtonBar;

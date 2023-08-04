@@ -2,9 +2,12 @@ import { useTranslate } from 'i18n-calypso';
 import SiteSelector from 'calypso/components/site-selector';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 const ReaderReblogSelection = ( props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const buildQuerystringForPost = ( post, comment ) => {
 		const args = {};
@@ -22,9 +25,12 @@ const ReaderReblogSelection = ( props ) => {
 	};
 
 	const pickSiteToShareTo = ( slug ) => {
-		stats.recordAction( 'share_wordpress' );
-		stats.recordGaEvent( 'Clicked on Share to WordPress' );
-		stats.recordTrack( 'calypso_reader_share_to_site' );
+		// Add 'comment' specificity to stats and tracks names if this is for a comment.
+		stats.recordAction( `share_wordpress${ props.comment ? '_comment' : '' }` );
+		stats.recordGaEvent( `Clicked on Share${ props.comment ? ' Comment' : '' } to WordPress` );
+		dispatch(
+			recordReaderTracksEvent( `calypso_reader_share${ props.comment ? '_comment' : '' }_to_site` )
+		);
 		window.open(
 			`/post/${ slug }?${ buildQuerystringForPost( props.post, props.comment ) }`,
 			'reblog post',

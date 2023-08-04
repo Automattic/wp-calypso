@@ -1,5 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export type SiteMetricsAPIResponse = {
@@ -59,17 +58,6 @@ export function useSiteMetricsQuery(
 	siteId: number | null | undefined,
 	params: SiteMetricsParams
 ) {
-	const queryClient = useQueryClient();
-	const [ previousSiteId, setPreviousSiteId ] = useState( siteId );
-
-	if ( previousSiteId !== siteId ) {
-		queryClient.removeQueries( {
-			queryKey: buildPartialQueryKey( previousSiteId ),
-		} );
-
-		setPreviousSiteId( siteId );
-	}
-
 	const queryResult = useQuery< SiteMetricsAPIResponse >( {
 		queryKey: buildQueryKey( siteId, params ),
 		queryFn: () => {
@@ -87,6 +75,7 @@ export function useSiteMetricsQuery(
 		meta: {
 			persist: false,
 		},
+		staleTime: Infinity,
 	} );
 
 	const { refetch, ...remainingQueryResults } = queryResult;
@@ -95,13 +84,10 @@ export function useSiteMetricsQuery(
 		...remainingQueryResults,
 	};
 
-	function buildPartialQueryKey( siteId: number | null | undefined ) {
-		return [ siteId ];
-	}
-
 	function buildQueryKey( siteId: number | null | undefined, params: SiteMetricsParams ) {
 		return [
-			...buildPartialQueryKey( siteId ),
+			'SITE_MONITORING_METRICS_QUERY',
+			siteId,
 			params.start,
 			params.end,
 			params.metric,

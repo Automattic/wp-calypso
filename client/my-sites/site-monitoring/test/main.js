@@ -103,4 +103,32 @@ describe( 'useSiteMetrics test', () => {
 
 		expect( formattedData ).toEqual( [ [ 1685577600 ], [ 0.0030000000000000005 ] ] );
 	} );
+
+	it( 'should return formattedData for the case with dimension being an array and an object', () => {
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+						{ timestamp: 1685577800, dimension: [] },
+					],
+				},
+			},
+		} );
+
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useSiteMetricsData(), { wrapper } );
+
+		const { formattedData } = result.current;
+
+		expect( formattedData ).toEqual( [
+			[ 1685577600, 1685577800 ],
+			[ 0.0030000000000000005, 0 ],
+		] );
+	} );
 } );

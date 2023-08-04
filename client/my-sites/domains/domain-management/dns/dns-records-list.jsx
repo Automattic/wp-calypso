@@ -115,8 +115,8 @@ class DnsRecordsList extends Component {
 			domainManagementDnsEditRecord(
 				selectedSite.slug,
 				selectedDomainName,
-				record.id,
-				currentRoute
+				currentRoute,
+				record.id
 			)
 		);
 	};

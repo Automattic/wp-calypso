@@ -1,5 +1,5 @@
 import { getProductFromSlug } from './get-product-from-slug';
-import type { JetpackProductSlug } from './types';
+import type { ProductSlug } from './types';
 
 export interface Query {
 	term?: string;
@@ -18,7 +18,7 @@ export interface Query {
  * > productMatches( PRODUCT_JETPACK_BACKUP_DAILY, { term: TERM_BIENNIALLY } );
  * false
  */
-export function productMatches( productSlug: JetpackProductSlug, query: Query = {} ): boolean {
+export function productMatches( productSlug: ProductSlug, query: Query = {} ): boolean {
 	const acceptedKeys = [ 'type', 'term' ];
 	const unknownKeys = Object.keys( query ).filter( ( key ) => ! acceptedKeys.includes( key ) );
 	if ( unknownKeys.length ) {

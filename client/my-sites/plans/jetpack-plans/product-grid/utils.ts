@@ -1,6 +1,5 @@
 import {
 	JETPACK_RESET_PLANS,
-	JETPACK_MONTHLY_ONLY_PRODUCTS,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
@@ -95,14 +94,7 @@ export const getProductsToDisplay = ( {
 		// Remove add-on products
 		.filter( removeAddons )
 		// Remove products that don't match the selected duration
-		// However, allow products that ONLY have a monthly term to come through in either view
-		.filter(
-			( product ): product is SelectorProduct =>
-				product?.term === duration ||
-				( JETPACK_MONTHLY_ONLY_PRODUCTS as ReadonlyArray< string > ).includes(
-					product?.productSlug
-				)
-		)
+		.filter( ( product ): product is SelectorProduct => product?.term === duration )
 		// TODO: Identify a suitable Stats plan according to the site classification.
 		.filter( ( product ) => {
 			if (
