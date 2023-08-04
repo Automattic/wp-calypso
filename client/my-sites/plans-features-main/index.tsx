@@ -61,6 +61,8 @@ import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
+const SPOTLIGHT_VISIBLE_PLANS_COUNT = 6;
+
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -449,6 +451,7 @@ const PlansFeaturesMain = ( {
 			hideBusinessPlan,
 			hideEcommercePlan,
 		} ) || null;
+
 	// merge/update default plans with plans with intent
 	const gridPlanRecords = {
 		...defaultPlanRecords,
@@ -491,7 +494,8 @@ const PlansFeaturesMain = ( {
 	};
 
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
-
+	const isSpotlightOnCurrentPlanAllowed =
+		Object.keys( visiblePlans ).length === SPOTLIGHT_VISIBLE_PLANS_COUNT;
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -591,7 +595,7 @@ const PlansFeaturesMain = ( {
 						intent={ intent }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
-						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
+						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlanAllowed && isSpotlightOnCurrentPlan }
 						showUpgradeableStorage={ showUpgradeableStorage }
 					/>
 				</>
