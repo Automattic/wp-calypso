@@ -19,11 +19,6 @@
 			includePaths: [ 'packages/interpolate-components' ],
 		},
 		{
-			groupName: 'react-related packages',
-			matchPackagePatterns: [ 'react' ],
-			prPriority: 2,
-		},
-		{
 			groupName: 'redux-related packages',
 			matchPackagePatterns: [ 'redux' ],
 			matchPackageNames: [ 'react-redux' ],
