@@ -78,7 +78,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			);
 			buttonText = translate( 'Claim your free domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
-		} else if ( hasCustomDomain ) {
+		} else if ( isPaidPlan && hasCustomDomain ) {
 			return null;
 		}
 

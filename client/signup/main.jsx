@@ -843,7 +843,7 @@ class Signup extends Component {
 		}
 
 		// siteDomains is sometimes empty, so we need to force update.
-		if ( isDomainsForSiteEmpty && ! isImportingFlow && this.props.siteId ) {
+		if ( isDomainsForSiteEmpty && ! isImportingFlow ) {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}

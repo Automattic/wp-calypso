@@ -3,7 +3,6 @@ import {
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
 	MARKETPLACE_THEME,
-	// eslint-disable-next-line import/named
 	shouldGoToAssembler,
 } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
@@ -72,7 +71,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) 
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug, siteId };
+	let queryParam = { siteSlug };
 	if ( domainItem ) {
 		// If the user is purchasing a domain then the site's primary url might change from
 		// `siteSlug` to something else during the checkout process, which means the
