@@ -3,6 +3,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_STATS_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
@@ -59,6 +60,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		const crmDescription = translate(
 			'Manage your sales funnel. Entrepreneur plan with 30 extensions.'
 		);
+		const statsDescription = translate( 'Simple, yet powerful stats to grow your site.' );
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, ProductDescription > = {
 			...setProductDescription(
@@ -103,6 +105,10 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, ProductDescription > = {
 			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
+
+			...setProductDescription( [ PRODUCT_JETPACK_STATS_MONTHLY ], {
+				value: statsDescription,
+			} ),
 
 			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
 				value: antiSpamDescription,
