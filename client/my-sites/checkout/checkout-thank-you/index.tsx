@@ -71,6 +71,7 @@ import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
@@ -167,6 +168,7 @@ export interface CheckoutThankYouConnectedProps {
 		purchased?: boolean,
 		keepCurrentHomepage?: boolean
 	) => void;
+	requestSite: ( siteSlug: string ) => SiteDetails | null;
 }
 
 interface CheckoutThankYouState {
@@ -638,14 +640,15 @@ export class CheckoutThankYou extends Component<
 			);
 
 			const emailFallback = email ? email : this.props.user?.email ?? '';
-
+			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }
 					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
 					hasProfessionalEmail={ wasTitanEmailProduct }
 					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }
-					selectedSiteSlug={ this.props.selectedSiteSlug ?? '' }
+					selectedSiteSlug={ siteSlug ?? '' }
+					isDomainOnly={ this.props.domainOnlySiteFlow }
 					type={ purchaseType as DomainThankYouType }
 				/>
 			);
@@ -949,6 +952,7 @@ export default connect(
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
 		requestThenActivate,
+		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
 

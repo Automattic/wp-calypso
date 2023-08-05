@@ -25,6 +25,7 @@ interface DomainThankYouContainerProps {
 	hideProfessionalEmailStep: boolean;
 	selectedSiteSlug: string;
 	type: DomainThankYouType;
+	isDomainOnly: boolean;
 }
 
 const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
@@ -34,6 +35,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	selectedSiteSlug,
 	hideProfessionalEmailStep,
 	type,
+	isDomainOnly,
 } ) => {
 	const {
 		data: { is_enabled: isLaunchpadIntentBuildEnabled },
