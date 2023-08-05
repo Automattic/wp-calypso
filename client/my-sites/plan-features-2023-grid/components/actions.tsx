@@ -425,9 +425,13 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		);
 	}
 
-	const priceString = formatCurrency( discountedPrice || originalPrice, currencyCode || 'USD', {
-		stripZeros: true,
-	} );
+	const priceString = formatCurrency(
+		discountedPrice.monthly || originalPrice.monthly,
+		currencyCode || 'USD',
+		{
+			stripZeros: true,
+		}
+	);
 
 	if ( isLaunchPage ) {
 		return (

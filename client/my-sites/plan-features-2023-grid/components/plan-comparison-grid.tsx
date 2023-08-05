@@ -1,6 +1,4 @@
 import {
-	Feature,
-	FeatureGroup,
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
@@ -10,7 +8,6 @@ import {
 	getPlanFeaturesGrouped,
 	getWooExpressFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	PlanSlug,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
 } from '@automattic/calypso-products';
@@ -23,11 +20,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
-import PlanTypeSelector, {
-	PlanTypeSelectorProps,
-} from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { usePlansGridContext } from '../grid-context';
-import { GridPlan, TransformedFeatureObject } from '../hooks/npm-ready/data-store/use-grid-plans';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
 import { sortPlans } from '../lib/sort-plan-properties';
@@ -38,8 +32,13 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
+import type {
+	GridPlan,
+	TransformedFeatureObject,
+} from '../hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from '../types';
-import type { FeatureObject } from '@automattic/calypso-products';
+import type { FeatureObject, Feature, FeatureGroup, PlanSlug } from '@automattic/calypso-products';
+import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 
 function DropdownIcon() {
 	return (
