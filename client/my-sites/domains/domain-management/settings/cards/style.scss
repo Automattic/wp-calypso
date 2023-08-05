@@ -127,6 +127,17 @@
 	}
 }
 
+.domain-redirect-card__fields {
+	.form-text-input-with-affixes__prefix {
+		padding: 0;
+		border: 0;
+
+		.form-select {
+			border-right: 0;
+		}
+	}
+}
+
 .ownership-verification-card {
 	div {
 		margin-bottom: 24px;

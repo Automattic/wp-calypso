@@ -23,14 +23,14 @@ export const fetchDomainRedirect = ( domain ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_REDIRECT_FETCH, domain } );
 
 	wpcom.req.get( { path: '/sites/all/domain/' + domain + '/redirects' } ).then(
-		( { targetHost, targetPath, forwardPaths, secure } ) => {
+		( { target_host, target_path, forward_paths, secure } ) => {
 			dispatch( {
 				type: DOMAINS_REDIRECT_FETCH_COMPLETED,
 				domain,
-				targetHost,
-				targetPath,
-				forwardPaths,
-				secure,
+				targetHost: target_host,
+				targetPath: target_path,
+				forwardPaths: forward_paths,
+				secure: secure ? true : false,
 			} );
 		},
 		( error ) => {
@@ -54,7 +54,7 @@ export const updateDomainRedirect =
 		return wpcom.req
 			.post(
 				{ path: '/sites/all/domain/' + domain + '/redirects' },
-				{ targetHost, targetPath, forwardPaths, secure }
+				{ target_host: targetHost, target_path: targetPath, forward_paths: forwardPaths, secure }
 			)
 			.then(
 				( data ) => {
