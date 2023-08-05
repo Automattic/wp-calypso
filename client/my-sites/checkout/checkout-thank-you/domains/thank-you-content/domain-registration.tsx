@@ -5,7 +5,7 @@ import {
 	buildDomainStepForLaunchpadNextSteps,
 	buildDomainStepForProfessionalEmail,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type {
 	DomainThankYouParams,
@@ -43,6 +43,21 @@ const domainRegistrationThankYouProps = ( {
 		true
 	);
 
+	const createSiteStep = {
+		stepKey: 'domain_registration_whats_next_create-site',
+		stepTitle: translate( 'Add a site' ),
+		stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+		stepCta: (
+			<FullWidthButton
+				href={ createSiteFromDomainOnly( domain, null ) }
+				busy={ false }
+				disabled={ false }
+			>
+				{ translate( 'Create a site' ) }
+			</FullWidthButton>
+		),
+	};
+
 	const viewDomainsStep = {
 		stepKey: 'domain_registration_whats_next_view_domains',
 		stepTitle: selectedSiteSlug
@@ -75,7 +90,11 @@ const domainRegistrationThankYouProps = ( {
 				sectionTitle: translate( 'What’s next?' ),
 				nextSteps: launchpadNextSteps
 					? [ launchpadNextSteps ]
-					: [ ...( professionalEmail ? [ professionalEmail ] : [] ), viewDomainsStep ],
+					: [
+							...( professionalEmail ? [ professionalEmail ] : [] ),
+							...( ! selectedSiteSlug ? [ createSiteStep ] : [] ),
+							viewDomainsStep,
+					  ],
 			},
 		],
 		thankYouImage: {

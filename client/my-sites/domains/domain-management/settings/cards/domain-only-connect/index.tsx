@@ -1,7 +1,10 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { domainManagementTransferToOtherSite } from 'calypso/my-sites/domains/paths';
+import {
+	createSiteFromDomainOnly,
+	domainManagementTransferToOtherSite,
+} from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { IAppState } from 'calypso/state/types';
 import type { DomainOnlyConnectCardProps } from './types';
@@ -18,6 +21,10 @@ const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ) => {
 				<p>{ translate( 'Your domain is not associated with a WordPress.com site.' ) }</p>
 			</div>
 			<div className="domain-only-connect__card-button-container">
+				<Button href={ createSiteFromDomainOnly( selectedDomainName, selectedSite.ID ) } primary>
+					{ translate( 'Create a site' ) }
+				</Button>
+
 				<Button
 					href={ domainManagementTransferToOtherSite(
 						selectedSite.slug,
