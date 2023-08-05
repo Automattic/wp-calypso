@@ -107,7 +107,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			props: {
 				hideFreePlan: true,
 				hideEnterprisePlan: true,
@@ -124,10 +124,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected-legacy',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			props: {
-				hideEcommercePlan: true,
-			},
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 		},
 
 		site: {

@@ -8,7 +8,6 @@ import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { PLANS_STORE, SITE_STORE, USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
@@ -62,7 +61,6 @@ const videopress: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
-		const siteId = useSiteIdParam();
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -282,7 +280,7 @@ const videopress: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.replace( `/view/${ siteId ?? _siteSlug }` );
+					return window.location.replace( `/view/${ _siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

@@ -10,7 +10,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -45,7 +44,6 @@ const linkInBio: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
-		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -100,7 +98,7 @@ const linkInBio: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
+							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
@@ -138,7 +136,7 @@ const linkInBio: Flow = {
 		const goNext = () => {
 			switch ( _currentStepSlug ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
+					return window.location.assign( `/view/${ siteSlug }` );
 
 				default:
 					return navigate( 'intro' );
