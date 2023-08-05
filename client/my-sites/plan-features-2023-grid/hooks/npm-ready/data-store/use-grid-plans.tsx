@@ -270,7 +270,7 @@ const useGridPlans = ( {
 			tagline = planConstantObj.getPlanTagline?.( isGlobalStylesOnPersonal ) ?? '';
 		}
 
-		const product_name_short =
+		const productNameShort =
 			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
 				? planConstantObj.getPathSlug()
 				: planObject?.product_name_short ?? null;
@@ -289,7 +289,7 @@ const useGridPlans = ( {
 			planConstantObj,
 			tagline,
 			availableForPurchase,
-			product_name_short,
+			productNameShort,
 			current: sitePlanSlug === planSlug,
 			isMonthlyPlan,
 			cartItemForPlan,

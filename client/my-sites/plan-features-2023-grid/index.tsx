@@ -725,7 +725,7 @@ export class PlanFeatures2023Grid extends Component<
 				getPlanClass( planSlug )
 			);
 			const rowspanProp =
-				! options?.isTableCell && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
+				options?.isTableCell && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
 			return (
 				<Container
 					key={ planSlug }
