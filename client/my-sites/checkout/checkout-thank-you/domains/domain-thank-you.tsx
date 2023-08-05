@@ -14,7 +14,7 @@ import {
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { useSiteOption } from 'calypso/state/sites/hooks';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 import './style.scss';
@@ -27,6 +27,7 @@ interface DomainThankYouContainerProps {
 	selectedSiteSlug: string;
 	type: DomainThankYouType;
 	isDomainOnly: boolean;
+	selectedSiteId?: number;
 }
 
 const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
@@ -37,6 +38,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	hideProfessionalEmailStep,
 	type,
 	isDomainOnly,
+	selectedSiteId,
 } ) => {
 	const {
 		data: { is_enabled: isLaunchpadIntentBuildEnabled },
@@ -44,7 +46,9 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
-	const selectedSite = useSelector( ( state ) => getSiteBySlug( state, selectedSiteSlug ) );
+	const isDomainOnlySiteOption = useSelector( ( state ) =>
+		Boolean( getSiteOption( state, selectedSiteId, 'is_domain_only' ) )
+	);
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
 		return propsGetter( {
@@ -56,8 +60,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			siteIntent,
 			launchpadScreen,
 			redirectTo,
-			isDomainOnly,
-			selectedSiteId: selectedSite?.ID,
+			isDomainOnly: isDomainOnly && isDomainOnlySiteOption,
+			selectedSiteId,
 		} );
 	}, [
 		type,
@@ -70,7 +74,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		launchpadScreen,
 		redirectTo,
 		isDomainOnly,
-		selectedSite,
+		selectedSiteId,
+		isDomainOnlySiteOption,
 	] );
 	const dispatch = useDispatch();
 	const isLaunchpadEnabled = launchpadScreen === 'full';
