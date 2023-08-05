@@ -12,8 +12,9 @@ import {
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { useSiteOption } from 'calypso/state/sites/hooks';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 import './style.scss';
@@ -43,6 +44,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
+	const selectedSite = useSelector( ( state ) => getSiteBySlug( state, selectedSiteSlug ) );
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
 		return propsGetter( {
@@ -54,6 +56,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			siteIntent,
 			launchpadScreen,
 			redirectTo,
+			isDomainOnly,
+			selectedSiteId: selectedSite?.ID,
 		} );
 	}, [
 		type,
@@ -65,6 +69,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		siteIntent,
 		launchpadScreen,
 		redirectTo,
+		isDomainOnly,
+		selectedSite,
 	] );
 	const dispatch = useDispatch();
 	const isLaunchpadEnabled = launchpadScreen === 'full';
