@@ -348,7 +348,10 @@ class PostCommentList extends Component {
 		let mostRecentByDate;
 		for ( const key in commentsTree ) {
 			const currentObject = commentsTree[ key ];
-			if ( ! mostRecentByDate || currentObject.data?.date > mostRecentByDate.data?.date ) {
+			if (
+				( ! mostRecentByDate && currentObject.data?.date ) ||
+				currentObject.data?.date > mostRecentByDate?.data?.date
+			) {
 				mostRecentByDate = currentObject;
 			}
 		}
