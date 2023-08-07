@@ -56,7 +56,7 @@ describe( 'useSiteMetrics test', () => {
 	it( 'should return formattedData for the case with an empty array for dimension', () => {
 		useSiteMetricsQuery.mockReturnValueOnce( {
 			data: {
-				data: { periods: [ { timestamp: 1685577600, dimension: [] } ] },
+				data: { periods: [ { timestamp: 1685577600, dimension: {} } ] },
 			},
 		} );
 
@@ -110,7 +110,7 @@ describe( 'useSiteMetrics test', () => {
 				data: {
 					periods: [
 						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
-						{ timestamp: 1685577800, dimension: [] },
+						{ timestamp: 1685577800, dimension: {} },
 					],
 				},
 			},
