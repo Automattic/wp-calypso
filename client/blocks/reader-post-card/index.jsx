@@ -291,12 +291,12 @@ class ReaderPostCard extends Component {
 						showNestingReplyArrow={ true }
 						expandableView={ true }
 						commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-						showConversationFollowButton={ true }
 						shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
 						shouldHighlightNew={ true }
 						initialSize={ 10 }
 						pageSize={ 25 }
 						maxDepth={ 2 }
+						showCommentCount={ false }
 					/>
 				</div>
 			);

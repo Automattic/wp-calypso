@@ -4,12 +4,17 @@
 	clear: both;
 	margin: 36px 0;
 	padding-top: 11px;
+	cursor: default;
 
 	&.is-loading {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		gap: 6px;
+	}
+
+	.comments__toggle-expand {
+		cursor: pointer;
 	}
 
 	.segmented-control {

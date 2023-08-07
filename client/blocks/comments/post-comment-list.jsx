@@ -502,7 +502,7 @@ class PostCommentList extends Component {
 								) }
 							</div>
 						</div>
-						{ showViewMoreComments && (
+						{ ! this.props.expandableView && showViewMoreComments && (
 							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 									args: {
@@ -549,7 +549,7 @@ class PostCommentList extends Component {
 					</SegmentedControl>
 				) }
 				{ this.renderCommentsList( displayedComments ) }
-				{ showViewMoreComments && this.props.startingCommentId && (
+				{ ! this.props.expandableView && showViewMoreComments && this.props.startingCommentId && (
 					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
