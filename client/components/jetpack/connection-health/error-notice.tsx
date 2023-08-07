@@ -16,6 +16,7 @@ interface Props {
 export const ErrorNotice = ( {
 	eventViewName,
 	eventClickName,
+	eventType,
 	errorText,
 	noticeActionHref,
 	noticeActionText,
