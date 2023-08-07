@@ -50,35 +50,24 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 
 	const isAgencyPartner = useSelector( isAgencyUser );
 
+	const isJetpackSource =
+		productSourceFromUrl === 'jetpack-plans' ||
+		redirectURLPage === 'my-jetpack' ||
+		redirectURLPage === 'jetpack';
+
 	// Function to record the event when the modal is displayed.
 	// It is in a separate useEffect to avoid unecessary re-renders.
 	useEffect( () => {
-		const recordShowEvent = () => {
+		if ( isAgencyPartner && ! isDismissed && isJetpackSource ) {
 			dispatch( recordTracksEvent( 'jetpack_dashboard_agency_checkout_redirect_modal_show' ) );
-		};
-
-		if (
-			isAgencyPartner &&
-			! isDismissed &&
-			( productSourceFromUrl === 'jetpack-plans' ||
-				redirectURLPage === 'my-jetpack' ||
-				redirectURLPage === 'jetpack' )
-		) {
-			recordShowEvent();
 		}
-	}, [ isAgencyPartner, isDismissed, productSourceFromUrl, redirectURLPage, dispatch ] );
+		// We only want to run this once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Show the banner only if the user is agency partner, has not dismissed the banner and
 	// is coming from the Jetpack Plans page or Jetpack page in WP.com
-	if (
-		! isAgencyPartner ||
-		isDismissed ||
-		! (
-			productSourceFromUrl === 'jetpack-plans' ||
-			redirectURLPage === 'my-jetpack' ||
-			redirectURLPage === 'jetpack'
-		)
-	) {
+	if ( ! isAgencyPartner || isDismissed || ! isJetpackSource ) {
 		return null;
 	}
 
