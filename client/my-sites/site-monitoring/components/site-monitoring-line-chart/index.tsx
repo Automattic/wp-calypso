@@ -23,6 +23,7 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
+	legendLabelLine1: string;
 }
 
 export function formatChatHour( date: Date ): string {
@@ -40,6 +41,7 @@ export const SiteMonitoringLineChart = ( {
 	options: propOptions,
 	solidFill = false,
 	period,
+	legendLabelLine1 = 'Default text for line 1',
 }: UplotChartProps ) => {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
@@ -122,7 +124,7 @@ export const SiteMonitoringLineChart = ( {
 					},
 					{
 						fill: 'rgba(6, 117, 196, 0.1)',
-						label: translate( 'HTTP requests per sec' ),
+						label: legendLabelLine1,
 						stroke: '#0675C4',
 						width: 2,
 						paths: ( u, seriesIdx, idx0, idx1 ) => {
