@@ -18,11 +18,6 @@ import { getDomainRedirect } from 'calypso/state/domains/domain-redirects/select
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
-const noticeOptions = {
-	duration: 5000,
-	id: `site-redirect-update-notification`,
-};
-
 class DomainRedirectCard extends Component {
 	static propTypes = {
 		redirect: PropTypes.object.isRequired,
@@ -64,7 +59,10 @@ class DomainRedirectCard extends Component {
 
 						this.props.successNotice(
 							this.props.translate( 'Site redirect updated successfully.' ),
-							noticeOptions
+							{
+								duration: 5000,
+								id: `site-redirect-update-notification`,
+							}
 						);
 					} else {
 						this.props.errorNotice( this.props.redirect.notice.text );
