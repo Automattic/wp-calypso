@@ -26,7 +26,7 @@ class DomainRedirectCard extends Component {
 	};
 
 	state = {
-		targetUrl: this.props.targetUrl,
+		targetUrl: '',
 		protocol: this.props.redirect.secure ? 'https' : 'http',
 	};
 
@@ -114,7 +114,7 @@ class DomainRedirectCard extends Component {
 						noWrap
 						onChange={ this.handleChange }
 						prefix={ prefix }
-						value={ this.state.targetUrl }
+						value={ this.state.targetUrl || this.props.targetUrl }
 						id="domain-redirect__input"
 					/>
 
@@ -156,11 +156,12 @@ export default connect(
 		const redirect = getDomainRedirect( state, ownProps.domainName );
 		let targetUrl = '';
 		try {
-			const url = new URL(
-				redirect?.targetPath ?? '/',
-				redirect?.targetHost ?? 'https://_invalid_.domain'
-			);
-			if ( url.origin !== 'https://_invalid_.domain' ) {
+			const path = redirect?.targetPath ?? '';
+			const origin =
+				( redirect?.secure === false ? 'http://' : 'https://' ) +
+				( redirect?.targetHost ?? '_invalid_.domain' );
+			const url = new URL( path, origin );
+			if ( url.hostname !== '_invalid_.domain' ) {
 				targetUrl = url.hostname + url.pathname + url.search + url.hash;
 			}
 		} catch ( e ) {
