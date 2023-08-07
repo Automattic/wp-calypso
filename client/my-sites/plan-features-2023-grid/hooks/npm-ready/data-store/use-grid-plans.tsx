@@ -111,7 +111,6 @@ interface Props {
 	// API plans will be ported to data store and be queried from there
 	usePricedAPIPlans: UsePricedAPIPlans;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	withoutProRatedCreditsForPricing?: boolean;
 	selectedFeature?: string | null;
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	intent?: PlansIntent;
@@ -206,7 +205,6 @@ const usePlanTypesWithIntent = ( {
 const useGridPlans = ( {
 	usePricedAPIPlans,
 	usePricingMetaForGridPlans,
-	withoutProRatedCreditsForPricing,
 	term = TERM_MONTHLY,
 	intent,
 	selectedPlan,
@@ -248,10 +246,7 @@ const useGridPlans = ( {
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
 
-	const pricingMeta = usePricingMetaForGridPlans( {
-		planSlugs: availablePlanSlugs,
-		withoutProRatedCredits: withoutProRatedCreditsForPricing,
-	} );
+	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
 
 	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
