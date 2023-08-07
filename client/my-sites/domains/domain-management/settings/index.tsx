@@ -159,7 +159,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Connect a WordPress.com site', { textOnly: true } ) }
+				title={ translate( 'Create a WordPress.com site', { textOnly: true } ) }
 				key="status"
 				expanded
 			>
