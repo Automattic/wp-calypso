@@ -218,6 +218,7 @@ export interface DashboardDataContextInterface {
 		refetchIfFailed: () => void;
 	};
 	products: APIProductFamilyProduct[];
+	isLargeScreen: boolean;
 }
 
 export type AgencyDashboardFilterOption =
