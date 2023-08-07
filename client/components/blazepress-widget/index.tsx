@@ -168,13 +168,18 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						}
 					>
 						<Dialog
+							showCloseIcon={ true }
 							additionalOverlayClassNames="blazepress-widget"
 							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
 						>
 							<h1>{ translate( 'Are you sure you want to quit?' ) }</h1>
-							<p>{ translate( 'All progress in this session will be lost.' ) }</p>
+							<p>
+								{ translate(
+									'If quit, all of the work that has been done during this session will be lost.'
+								) }
+							</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
 						<div className="blazepress-widget__widget-container" ref={ widgetContainer }></div>
