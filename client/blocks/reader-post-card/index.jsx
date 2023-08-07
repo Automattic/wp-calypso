@@ -17,7 +17,7 @@ import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { requestPostComments } from 'calypso/state/comments/actions';
-import { getPostCommentItems } from 'calypso/state/comments/selectors';
+import { commentsFetchingStatus } from 'calypso/state/comments/selectors';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -273,14 +273,13 @@ class ReaderPostCard extends Component {
 			if ( ! post.discussion?.comments_open ) {
 				return;
 			}
+			const fetchStatus = this.props.commentsFetchingStatus;
+			const hasFetchedComments = fetchStatus.hasReceivedBefore || fetchStatus.hasReceivedAfter;
 
 			// Request comments if they have not been set in state.
-			if ( ! this.props.commentItems ) {
+			if ( ! hasFetchedComments ) {
 				this.props.requestPostComments( { siteId: post.site_ID, postId: post.ID } );
 			}
-
-			// TODO? - loading state if still fetching? - maybe do this further down in component
-			// chain?
 
 			return (
 				// Stop propagation on clicking of comment area, as the event will bubble to the
@@ -297,7 +296,7 @@ class ReaderPostCard extends Component {
 						shouldHighlightNew={ true }
 						initialSize={ 10 }
 						pageSize={ 25 }
-						maxDepth={ 1 }
+						maxDepth={ 2 }
 					/>
 				</div>
 			);
@@ -318,7 +317,11 @@ class ReaderPostCard extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		currentRoute: getCurrentRoute( state ),
-		commentItems: getPostCommentItems( state, ownProps.post.site_ID, ownProps.post.ID ),
+		commentsFetchingStatus: commentsFetchingStatus(
+			state,
+			ownProps.post.site_ID,
+			ownProps.post.ID
+		),
 		isWPForTeamsItem:
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||

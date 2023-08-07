@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Spinner } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay } from 'lodash';
@@ -464,6 +464,18 @@ class PostCommentList extends Component {
 			shouldShowConversationFollowButton( this.props.post );
 
 		const showManageCommentsButton = this.props.canUserModerateComments && commentCount > 0;
+
+		const { hasReceivedBefore, hasReceivedAfter } = this.props.commentsFetchingStatus;
+		const hasFetched = hasReceivedBefore || hasReceivedAfter;
+
+		if ( ! hasFetched && this.props.expandableView ) {
+			return (
+				<div className="comments__comment-list is-loading">
+					<Spinner />
+					{ translate( 'Loading comments…' ) }
+				</div>
+			);
+		}
 
 		return (
 			<div
