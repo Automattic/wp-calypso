@@ -45,13 +45,10 @@ export default function UplotBarChart( {
 				},
 			],
 			padding: [ null, 0, null, 0 ],
-			series: [
-				{},
-				...( data[ 0 ].map( ( label, i ) => ( {
-					label,
-					fill: fillColors[ i ],
-				} ) ) as uPlot.Series[] ),
-			],
+			series: data[ 0 ].map( ( label, i ) => ( {
+				label,
+				fill: fillColors[ i ],
+			} ) ) as uPlot.Series[],
 			plugins: [
 				seriesBarsPlugin( {
 					labels: () => labels,

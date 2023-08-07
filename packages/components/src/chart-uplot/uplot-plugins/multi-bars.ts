@@ -324,13 +324,11 @@ export default function seriesBarsPlugin(
 				ticks: { show: false },
 				side: ori === 0 ? 2 : 3,
 			} );
-
+			opts.series = [ {}, ...opts.series ];
 			opts.series.forEach( ( s, i ) => {
 				if ( i > 0 ) {
 					uPlot.assign( s, {
 						width: 0,
-						// pxAlign: false,
-						// stroke: 'rgba(255,0,0,0)',
 						paths: drawBars,
 						points: {
 							show: false, // drawPoints,
