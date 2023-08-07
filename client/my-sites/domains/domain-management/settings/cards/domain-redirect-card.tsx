@@ -21,7 +21,6 @@ import './style.scss';
 class DomainRedirectCard extends Component {
 	static propTypes = {
 		redirect: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
 		domainName: PropTypes.string.isRequired,
 		targetUrl: PropTypes.string.isRequired,
 	};
@@ -40,19 +39,33 @@ class DomainRedirectCard extends Component {
 	}
 
 	handleChange = ( event ) => {
-		const targetHost = withoutHttp( event.target.value );
-		this.setState( { targetHost } );
+		const targetUrl = withoutHttp( event.target.value );
+		this.setState( { targetUrl } );
 	};
 
 	handleSubmit = ( event ) => {
 		event.preventDefault();
+		let targetHost = '';
+		let targetPath = '';
+		let secure = true;
+		try {
+			const url = new URL( this.state.targetUrl, 'https://_invalid_.domain' );
+			if ( url.origin !== 'https://_invalid_.domain' ) {
+				targetHost = url.hostname;
+				targetPath = url.pathname + url.search + url.hash;
+				secure = url.protocol === 'https:';
+			}
+		} catch ( e ) {
+			// ignore
+		}
+
 		this.props
 			.updateDomainRedirect(
 				this.props.domainName,
-				this.state.targetUrl, // tofix
-				null,
-				null,
-				this.state.secure
+				targetHost,
+				targetPath,
+				null, // forwardPaths not supported yet
+				secure
 			)
 			.then( ( success ) => {
 				if ( success ) {
@@ -98,7 +111,7 @@ class DomainRedirectCard extends Component {
 						noWrap
 						onChange={ this.handleChange }
 						prefix={ prefix }
-						value={ this.state.targetHost || '' }
+						value={ this.state.targetUrl }
 						id="domain-redirect__input"
 					/>
 
@@ -124,8 +137,8 @@ class DomainRedirectCard extends Component {
 					disabled={
 						isFetching ||
 						isUpdating ||
-						( this.props.redirect?.targetHost === this.state.targetHost &&
-							( this.props.redirect.secure ? 'https' : 'http' ) === this.state.protcol )
+						( this.props.redirect?.targetUrl === this.state.targetUrl &&
+							( this.props.redirect?.secure ? 'https' : 'http' ) === this.state.protcol )
 					}
 				>
 					{ translate( 'Update' ) }
@@ -148,7 +161,7 @@ export default connect(
 				targetUrl = url.hostname + url.pathname + url.search + url.hash;
 			}
 		} catch ( e ) {
-			console.log( e ); // todo: replace with `// ignore`, wip: still working out what we get from backend and how much we need to guard this code
+			// ignore
 		}
 
 		return { redirect, targetUrl };
