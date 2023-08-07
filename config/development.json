@@ -208,7 +208,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"user-management-revamp": true,
-		"videopress-tv": false,
+		"videopress-tv": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
