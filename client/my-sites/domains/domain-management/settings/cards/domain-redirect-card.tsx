@@ -16,7 +16,6 @@ import {
 } from 'calypso/state/domains/domain-redirects/actions';
 import { getDomainRedirect } from 'calypso/state/domains/domain-redirects/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const noticeOptions = {
@@ -28,6 +27,7 @@ class DomainRedirectCard extends Component {
 	static propTypes = {
 		redirect: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
+		domainName: PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -36,11 +36,11 @@ class DomainRedirectCard extends Component {
 	};
 
 	componentDidMount() {
-		this.props.fetchDomainRedirect( this.props.selectedSite.domain );
+		this.props.fetchDomainRedirect( this.props.domainName );
 	}
 
 	componentWillUnmount() {
-		this.props.closeDomainRedirectNotice( this.props.selectedSite.domain );
+		this.props.closeDomainRedirectNotice( this.props.domainName );
 	}
 
 	handleChange = ( event ) => {
@@ -52,7 +52,7 @@ class DomainRedirectCard extends Component {
 		if ( this.props.selectedSite ) {
 			this.props
 				.updateDomainRedirect(
-					this.props.selectedSite.domain,
+					this.props.domainName,
 					this.state.targetHost,
 					null,
 					null,
@@ -60,7 +60,7 @@ class DomainRedirectCard extends Component {
 				)
 				.then( ( success ) => {
 					if ( success ) {
-						this.props.fetchDomainRedirect( this.props.selectedSite.domain );
+						this.props.fetchDomainRedirect( this.props.domainName );
 
 						this.props.successNotice(
 							this.props.translate( 'Site redirect updated successfully.' ),
@@ -141,9 +141,8 @@ class DomainRedirectCard extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const selectedSite = getSelectedSite( state );
-		const redirect = getDomainRedirect( state, selectedSite?.domain );
+	( state, ownProps ) => {
+		const redirect = getDomainRedirect( state, ownProps.domainName );
 		return { selectedSite, redirect };
 	},
 	{
