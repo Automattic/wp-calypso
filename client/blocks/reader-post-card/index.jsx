@@ -17,6 +17,7 @@ import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { requestPostComments } from 'calypso/state/comments/actions';
+import { getPostCommentItems } from 'calypso/state/comments/selectors';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -269,21 +270,23 @@ class ReaderPostCard extends Component {
 		}
 
 		const postCardComments = () => {
-			if ( ! post.discussion?.comments_open ) {
+			if ( ! post.discussion?.comments_open || compact ) {
 				return;
 			}
-			// TODO - check if we already have them before requesting?
-			this.props.requestPostComments( { siteId: post.site_ID, postId: post.ID } );
 
-			// TODO? - loading state if still fetching?
+			// Request comments if they have not been set in state.
+			if ( ! this.props.commentItems ) {
+				this.props.requestPostComments( { siteId: post.site_ID, postId: post.ID } );
+			}
 
-			// Find a way to only show most recent comment and make expandable.
-			// Lets denote this with a 'expandableView' prop.
+			// TODO? - loading state if still fetching? - maybe do this further down in component
+			// chain?
+
 			return (
 				<PostComments
 					post={ post }
 					showNestingReplyArrow={ true }
-					expandableView
+					expandableView={ true }
 					commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 					showConversationFollowButton={ true }
 					shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
@@ -310,6 +313,7 @@ class ReaderPostCard extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		currentRoute: getCurrentRoute( state ),
+		commentItems: getPostCommentItems( state, ownProps.post.site_ID, ownProps.post.ID ),
 		isWPForTeamsItem:
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
