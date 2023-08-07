@@ -43,11 +43,11 @@ function useTimeRange() {
 	};
 }
 
-export function useSiteMetricsData( metric?: MetricsType ) {
+export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType ) {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Use the custom hook for time range selection
-	const { start, end, handleTimeRangeChange } = useTimeRange();
+	const { start, end } = timeRange;
 
 	const { data } = useSiteMetricsQuery( siteId, {
 		start,
@@ -81,15 +81,18 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 
 	return {
 		formattedData,
-		handleTimeRangeChange,
 	};
 }
 
-function useAggregateSiteMetricsData( metric?: MetricsType, dimension?: DimensionParams ) {
+function useAggregateSiteMetricsData(
+	timeRange: TimeRange,
+	metric?: MetricsType,
+	dimension?: DimensionParams
+) {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Use the custom hook for time range selection
-	const { start, end, handleTimeRangeChange } = useTimeRange();
+	const { start, end } = timeRange;
 
 	const { data } = useSiteMetricsQuery( siteId, {
 		start,
@@ -114,7 +117,6 @@ function useAggregateSiteMetricsData( metric?: MetricsType, dimension?: Dimensio
 
 	return {
 		formattedData,
-		handleTimeRangeChange,
 	};
 }
 
@@ -136,12 +138,15 @@ export function SiteMetrics() {
 	const { __ } = useI18n();
 	const titleHeader = __( 'Site Monitoring' );
 	const timeRange = useTimeRange();
-	const { formattedData, handleTimeRangeChange } = useSiteMetricsData();
+	const { handleTimeRangeChange } = timeRange;
+	const { formattedData } = useSiteMetricsData( timeRange );
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
+		timeRange,
 		'requests_persec',
 		'page_is_cached'
 	);
 	const { formattedData: phpVsStaticFormattedData } = useAggregateSiteMetricsData(
+		timeRange,
 		'requests_persec',
 		'page_renderer'
 	);
