@@ -34,7 +34,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 		return () => {
 			props.closeDomainRedirectNotice( props.domainName );
 		};
-	}, [ props.domainName ] );
+	}, [ props ] );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
