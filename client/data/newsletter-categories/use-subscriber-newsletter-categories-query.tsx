@@ -23,9 +23,11 @@ const useSubscriberNewsletterCategories = ( {
 		queryKey: [ `newsletter-categories-${ blogId }` ],
 		queryFn: () =>
 			request< NewsletterCategoryResponse >( {
-				path: `/sites/${ blogId }/newsletter-categories/subscription/mine`,
+				path: `/sites/${ blogId }/newsletter-categories/subscriptions`,
 				apiVersion: '2',
+				apiNamespace: 'wpcom/v2',
 			} ).then( convertNewsletterCategoryResponse ),
+		enabled: !! blogId,
 	} );
 };
 
