@@ -80,7 +80,7 @@ const ScreenCategoryList = ( {
 								'Replace the selected pattern by choosing from the list of categories below.'
 						  )
 						: translate(
-								'Find the right section patterns for your homepage by exploring the categories below.'
+								'Find the section patterns for your homepage by exploring the categories below.'
 						  )
 				}
 				onBack={ onBack }
