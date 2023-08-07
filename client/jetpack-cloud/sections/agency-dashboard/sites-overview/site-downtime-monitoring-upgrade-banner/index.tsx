@@ -4,6 +4,7 @@ import { useCallback, useContext, useEffect } from 'react';
 import CelebrationIcon from 'calypso/assets/images/jetpack/celebration-icon.svg';
 import Banner from 'calypso/components/banner';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE,
 	getJetpackDashboardPreference as getPreference,
@@ -41,7 +42,9 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 	useEffect( () => {
 		if ( isDowntimeMonitoringPaidTierEnabled && ! isDismissed && ! viewDate ) {
 			savePreferenceType( 'view_date', Date.now() );
-			// TODO: We need to record event here
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_agency_dashboard_monitor_upgrade_banner_view' )
+			);
 		}
 		// We only want to run this once
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,10 +54,9 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 		return null;
 	}
 
-	const dismissAndRecordEvent = () => {
+	const dismissAndRecordEvent = ( eventName: string ) => {
 		savePreferenceType( 'dismiss', true );
-
-		// TODO: We need to record event here
+		dispatch( recordTracksEvent( `calypso_jetpack_agency_dashboard_${ eventName }` ) );
 		showLicenseInfo( 'monitor' );
 	};
 
@@ -71,8 +73,8 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 			callToAction={ translate( 'Explore' ) }
 			dismissWithoutSavingPreference
 			href="" // TODO: We will need to provide link to the info modal here
-			onClick={ () => dismissAndRecordEvent() }
-			onDismiss={ () => dismissAndRecordEvent() }
+			onClick={ () => dismissAndRecordEvent( 'monitor_upgrade_banner_accept' ) }
+			onDismiss={ () => dismissAndRecordEvent( 'monitor_upgrade_banner_dismiss' ) }
 		/>
 	);
 }
