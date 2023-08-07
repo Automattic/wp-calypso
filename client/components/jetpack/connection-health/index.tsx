@@ -1,6 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { ErrorNotice } from './error-notice';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
@@ -10,6 +12,7 @@ interface Props {
 
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
 		useState( false );
@@ -27,6 +30,21 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		jetpackConnectionHealth?.is_healthy
 	) {
 		return;
+	}
+
+	if ( jetpackConnectionHealth?.error === 'dns_error' ) {
+		return (
+			<ErrorNotice
+				eventViewName="calypso_jetpack_connection_health_issue_view"
+				eventClickName="calypso_jetpack_connection_health_issue_click"
+				eventType="dns"
+				errorText={ translate(
+					"Your domain is not properly set up to point to your site. Reset your domain's A records in the Domains section to fix this."
+				) }
+				noticeActionHref={ `/domains/manage/${ siteSlug }` }
+				noticeActionText={ translate( 'Manage domain' ) }
+			/>
+		);
 	}
 
 	return (
