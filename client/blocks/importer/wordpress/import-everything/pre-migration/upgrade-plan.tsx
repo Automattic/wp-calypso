@@ -3,11 +3,15 @@ import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { Tooltip } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import { useSiteEligibleMigrationTrialPlan } from '../../../hooks/use-site-eligible-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
 import type { URL } from 'calypso/types';
 
@@ -24,6 +28,7 @@ interface Props {
 export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
+	const isEligibleForTrialPlan = useSiteEligibleMigrationTrialPlan();
 	const {
 		sourceSiteSlug,
 		sourceSiteUrl,
@@ -44,6 +49,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
 			} ) }
 		>
+			<QueryReaderTeams />
 			<div className="import__heading-title">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
@@ -71,13 +77,34 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					{ translate( 'Upgrade and migrate' ) }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
-					<Button
-						borderless={ true }
-						className="action-buttons__borderless"
-						onClick={ onFreeTrialClick }
-					>
-						{ translate( 'Try it for free' ) }
-					</Button>
+					<>
+						{ isEligibleForTrialPlan && (
+							<Button
+								busy={ isBusy }
+								borderless={ true }
+								className="action-buttons__borderless"
+								onClick={ onFreeTrialClick }
+							>
+								{ translate( 'Try it for free' ) }
+							</Button>
+						) }
+						{ ! isEligibleForTrialPlan && (
+							<Tooltip
+								delay={ 0 }
+								position="top center"
+								text={ createInterpolateElement(
+									translate(
+										'You are not eligible for a free trial<br/>since you have already used it.'
+									),
+									{ br: <br /> }
+								) }
+							>
+								<Button borderless={ true } className="action-buttons__borderless">
+									{ translate( 'Try it for free' ) }
+								</Button>
+							</Tooltip>
+						) }
+					</>
 				) }
 				{ ! isEligibleForTrialPlan && (
 					<Button
