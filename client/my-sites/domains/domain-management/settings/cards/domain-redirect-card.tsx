@@ -23,10 +23,11 @@ class DomainRedirectCard extends Component {
 		redirect: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		domainName: PropTypes.string.isRequired,
+		targetUrl: PropTypes.string.isRequired,
 	};
 
 	state = {
-		targetHost: this.props.redirect.targetHost,
+		targetUrl: this.props.targetUrl,
 		protocol: this.props.redirect.secure ? 'https' : 'http',
 	};
 
@@ -48,7 +49,7 @@ class DomainRedirectCard extends Component {
 			this.props
 				.updateDomainRedirect(
 					this.props.domainName,
-					this.state.targetHost,
+					this.state.targetUrl, //tofix
 					null,
 					null,
 					this.state.secure
@@ -141,7 +142,20 @@ class DomainRedirectCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const redirect = getDomainRedirect( state, ownProps.domainName );
-		return { selectedSite, redirect };
+		let targetUrl = '';
+		try {
+			const url = new URL(
+				redirect?.targetPath ?? '/',
+				redirect?.targetHost ?? 'https://_invalid_.domain'
+			);
+			if ( url.origin !== 'https://_invalid_.domain' ) {
+				targetUrl = url.hostname + url.pathname + url.search + url.hash;
+			}
+		} catch ( e ) {
+			console.log( e ); // todo: replace with `// ignore`, wip: still working out what we get from backend and how much we need to guard this code
+		}
+
+		return { redirect, targetUrl };
 	},
 	{
 		fetchDomainRedirect,
