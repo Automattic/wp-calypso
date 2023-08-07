@@ -9,9 +9,8 @@ import {
 	DOMAINS_REDIRECT_UPDATE_FAILED,
 } from 'calypso/state/action-types';
 
-function updateStateForSite( state, domain, data ) {
+function updateStateForDomain( state, domain, data ) {
 	const command = state[ domain ] ? '$merge' : '$set';
-
 	return update( state, {
 		[ domain ]: {
 			[ command ]: data,
@@ -32,19 +31,19 @@ export const initialStateForDomain = {
 export default function reducer( state = {}, action ) {
 	switch ( action.type ) {
 		case DOMAINS_REDIRECT_NOTICE_CLOSE:
-			state = updateStateForSite( state, action.domain, {
+			state = updateStateForDomain( state, action.domain, {
 				notice: null,
 			} );
 			break;
 
 		case DOMAINS_REDIRECT_FETCH:
-			state = updateStateForSite( state, action.domain, {
+			state = updateStateForDomain( state, action.domain, {
 				isFetching: true,
 			} );
 			break;
 
 		case DOMAINS_REDIRECT_FETCH_COMPLETED:
-			state = updateStateForSite( state, action.domain, {
+			state = updateStateForDomain( state, action.domain, {
 				isFetching: false,
 				notice: null,
 				targetHost: action.targetHost,
@@ -55,7 +54,7 @@ export default function reducer( state = {}, action ) {
 			break;
 
 		case DOMAINS_REDIRECT_FETCH_FAILED:
-			state = updateStateForSite( state, action.domain, {
+			state = updateStateForDomain( state, action.domain, {
 				isFetching: false,
 				notice: {
 					error: true,
@@ -65,13 +64,13 @@ export default function reducer( state = {}, action ) {
 			break;
 
 		case DOMAINS_REDIRECT_UPDATE:
-			state = updateStateForSite( state, action.domain, {
+			state = updateStateForDomain( state, action.domain, {
 				isUpdating: true,
 			} );
 			break;
 
 		case DOMAINS_REDIRECT_UPDATE_COMPLETED:
-			state = updateStateForSite( state, action.domain, {
+			state = updateStateForDomain( state, action.domain, {
 				isUpdating: false,
 				notice: {
 					success: true,
@@ -85,7 +84,7 @@ export default function reducer( state = {}, action ) {
 			break;
 
 		case DOMAINS_REDIRECT_UPDATE_FAILED:
-			state = updateStateForSite( state, action.domain, {
+			state = updateStateForDomain( state, action.domain, {
 				isUpdating: false,
 				notice: {
 					error: true,
