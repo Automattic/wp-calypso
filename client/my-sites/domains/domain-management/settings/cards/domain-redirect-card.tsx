@@ -19,8 +19,8 @@ import './style.scss';
 
 interface DomainRedirectCardProps {
 	domainName: string;
-	redirect: ReturnType< typeof getDomainRedirect >;
-	targetUrl: string;
+	redirect?: ReturnType< typeof getDomainRedirect >;
+	targetUrl?: string;
 }
 
 type PropsFromRedux = ConnectedProps< typeof connector >;
