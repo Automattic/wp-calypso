@@ -562,6 +562,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				intent,
 				design: _selectedDesign,
 				styleVariation: selectedStyleVariation,
+				colorVariation: selectedColorVariation,
+				fontVariation: selectedFontVariation,
 				optionalProps,
 			} );
 		}

@@ -73,16 +73,16 @@ export function getWpComOnboardingUrl(
 	let route;
 	switch ( framework ) {
 		case 'signup':
-			route = '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}&run=true';
+			route = '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}';
 			break;
 
 		case 'stepper':
 		default:
 			if ( platform === 'wordpress' && isEnabled( 'onboarding/import-redesign' ) ) {
-				route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&option=everything&run=true';
+				route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&option=everything';
 				break;
 			}
-			route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&run=true';
+			route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}';
 			break;
 	}
 

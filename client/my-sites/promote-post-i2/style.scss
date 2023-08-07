@@ -397,6 +397,10 @@ body.is-section-promote-post-i2 {
 }
 
 .is-mobile-app-view {
+
+	.blazepress-widget__content {
+		margin-top: 0 !important;
+	}
 	.layout {
 		&.has-no-masterbar.is-group-sites.is-section-promote-post-i2 .layout__content {
 			padding-top: 0;
@@ -409,8 +413,13 @@ body.is-section-promote-post-i2 {
 			.promote-post-i2 .posts-list-banner__container,
 			.promote-post-i2 .section-nav,
 			.promote-post-i2 .post-item__view-link,
+			.promote-post-i2 .campaign-item-breadcrumb,
 			.promote-post-i2 .campaign-item-details__support-buttons {
 				display: none;
+			}
+
+			.campaign-item-header {
+				margin-top: 8px;
 			}
 
 			.main {

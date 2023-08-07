@@ -1,6 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, PureComponent } from 'react';
@@ -101,6 +101,7 @@ class LikeButton extends PureComponent {
 					onClick: ! isLink ? this.toggleLiked : null,
 					onMouseEnter,
 					onMouseLeave,
+					title: this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
 				},
 				( prop ) => prop === null
 			),

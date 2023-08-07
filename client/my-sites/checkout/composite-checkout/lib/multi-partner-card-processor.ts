@@ -166,11 +166,13 @@ async function stripeCardProcessor(
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
 					payment_intent_id: paymentIntentId ?? '',
+					error: error.message,
 				} )
 			);
 			logStashEvent( 'calypso_checkout_card_transaction_failed', {
 				payment_intent_id: paymentIntentId ?? '',
 				tags: [ `payment_intent_id:${ paymentIntentId }` ],
+				error: error.message,
 			} );
 
 			// Errors here are "expected" errors, meaning that they (hopefully) come

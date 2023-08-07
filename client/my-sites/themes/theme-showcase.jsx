@@ -195,8 +195,8 @@ class ThemeShowcase extends Component {
 
 		tiers.push( {
 			value: 'marketplace',
-			label: this.props.translate( 'Paid', {
-				context: 'Refers to paid service, such as paid theme',
+			label: this.props.translate( 'Partner', {
+				context: 'This theme is developed and supported by a theme partner',
 			} ),
 		} );
 

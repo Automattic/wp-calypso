@@ -25,10 +25,9 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 interface Props {
 	job?: ImportJob;
+	run?: boolean;
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
@@ -46,7 +45,15 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	const [ option, setOption ] = useState< WPImportOption | undefined >(
 		getValidOptionParam( queryParams.get( 'option' ) )
 	);
-	const { job, fromSite, siteSlug, siteId, stepNavigator, showConfirmDialog } = props;
+	const {
+		job,
+		run: initImportRun,
+		fromSite,
+		siteSlug,
+		siteId,
+		stepNavigator,
+		showConfirmDialog,
+	} = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteItem = useSelector( ( state ) =>
 		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
@@ -171,6 +178,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							isMigrateFromWp={ isMigrateFromWp }
 							showConfirmDialog={ showConfirmDialog }
 							onContentOnlySelection={ switchToContentUploadScreen }
+							initImportRun={ initImportRun }
 						/>
 					);
 				} else if ( WPImportOption.CONTENT_ONLY === option ) {

@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import ButtonGroup from 'calypso/components/button-group';
-import acceptDialog from 'calypso/lib/accept';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
@@ -11,11 +11,9 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	getPluginActionDailogMessage,
-	handleUpdatePlugins,
-	siteObjectsToSiteIds,
-} from '../../utils';
+import { PluginActions } from '../../hooks/types';
+import useShowPluginActionDialog from '../../hooks/use-show-plugin-action-dialog';
+import { handleUpdatePlugins, siteObjectsToSiteIds } from '../../utils';
 import type { PluginComponentProps } from '../types';
 import type { ReactElement } from 'react';
 
@@ -41,7 +39,11 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 			'updates'
 		)
 	);
-	const allSites = useSelector( getSites );
+
+	// We don't want null or undefined "sites"
+	const allSites = useSelector( ( state ) =>
+		getSites( state ).filter( ( s ): s is SiteDetails => Boolean( s ) )
+	);
 
 	const pluginsOnSites = useSelector( ( state ) => getPluginsOnSites( state, plugins ) );
 	const selectedSite = useSelector( getSelectedSite );
@@ -67,26 +69,14 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 		}
 	}
 
+	const showPluginActionDialog = useShowPluginActionDialog();
+
 	function updateAllPluginsNotice() {
-		let heading = translate( 'Update %(pluginUpdateCount)d plugins', {
-			args: { pluginUpdateCount },
-		} );
-
-		if ( pluginUpdateCount === 1 ) {
-			const [ { name, slug } ] = pluginsWithUpdates;
-			heading = translate( 'Update %(pluginName)s', { args: { pluginName: name || slug } } );
-		}
-
-		const dialogOptions = {
-			additionalClassNames: 'plugins__confirmation-modal',
-		};
-
-		acceptDialog(
-			getPluginActionDailogMessage( allSites, pluginsWithUpdates, heading, 'update' ),
-			( accepted: boolean ) => updateAllPlugins( accepted ),
-			heading,
-			null,
-			dialogOptions
+		showPluginActionDialog(
+			PluginActions.UPDATE,
+			pluginsWithUpdates,
+			allSites,
+			( accepted: boolean ) => updateAllPlugins( accepted )
 		);
 	}
 

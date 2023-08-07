@@ -32,13 +32,14 @@ import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { PlanProperties } from '../types';
-import { usePricingBreakpoint } from '../util';
+import { getStorageStringFromFeature, usePricingBreakpoint } from '../util';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
 import type { PlanActionOverrides } from '../types';
+import type { StorageOption } from '@automattic/calypso-products';
 
 function DropdownIcon() {
 	return (
@@ -342,7 +343,7 @@ type PlanComparisonGridHeaderProps = {
 type RestructuredFeatures = {
 	featureMap: Record< string, Set< string > >;
 	conditionalFeatureMap: Record< string, Set< string > >;
-	planStorageOptionsMap: Record< string, string >;
+	planStorageOptionsMap: Record< string, StorageOption | undefined >;
 };
 
 type RestructuredFootnotes = {
@@ -466,11 +467,14 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planName={ planConstantObj.getTitle() }
-				planType={ planName }
+				planSlug={ planName }
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }
 				onUpgradeClick={ () => onUpgradeClick( planProperties ) }
 				planActionOverrides={ planActionOverrides }
+				currencyCode=""
+				showMonthlyPrice={ false }
+				isStuck={ false }
 			/>
 		</Cell>
 	);
@@ -559,9 +563,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const hasConditionalFeature = featureSlug
 		? restructuredFeatures.conditionalFeatureMap[ planName ].has( featureSlug )
 		: false;
-	const [ storageFeature ] = getPlanFeaturesObject( [
-		restructuredFeatures.planStorageOptionsMap[ planName ],
-	] );
+	const storageOption = restructuredFeatures.planStorageOptionsMap[ planName ];
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
@@ -589,7 +591,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
 					<StorageButton className="plan-features-2023-grid__storage-button" key={ planName }>
-						{ storageFeature?.getCompareTitle?.() }
+						{ getStorageStringFromFeature( storageOption?.slug || '' ) }
 					</StorageButton>
 				</>
 			) : (
@@ -854,7 +856,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
 		const conditionalFeatureMap: Record< string, Set< string > > = {};
-		const planStorageOptionsMap: Record< string, string > = {};
+		const planStorageOptionsMap: Record< string, StorageOption | undefined > = {};
 
 		for ( const plan of planProperties ?? [] ) {
 			const { planName } = plan;
@@ -890,8 +892,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				] );
 			}
 			previousPlan = planName;
-			const [ storageOption ] =
-				planObject.get2023PricingGridSignupStorageOptions?.( showLegacyStorageFeature ) ?? [];
+			const storageOption = plan.storageOptions.find( ( option ) => ! option.isAddOn );
 			planStorageOptionsMap[ planName ] = storageOption;
 
 			conditionalFeatureMap[ planName ] = new Set(

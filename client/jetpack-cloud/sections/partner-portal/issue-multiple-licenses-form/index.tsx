@@ -7,7 +7,10 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
-import { isJetpackBundle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import {
+	isJetpackBundle,
+	isWooCommerceProduct,
+} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -61,17 +64,16 @@ export default function IssueMultipleLicensesForm( {
 				( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-backup-storage'
 			)
 			.sort( ( a, b ) => a.product_id - b.product_id ) || [];
-	const wooExtensions =
-		allProducts?.filter(
-			( { family_slug }: { family_slug: string } ) =>
-				family_slug.substring( 0, 'woocommerce-'.length ) === 'woocommerce-'
-		) || [];
 	const products =
 		allProducts?.filter(
 			( { family_slug }: { family_slug: string } ) =>
 				family_slug !== 'jetpack-packs' &&
 				family_slug !== 'jetpack-backup-storage' &&
-				family_slug.substring( 0, 'woocommerce-'.length ) !== 'woocommerce-'
+				! isWooCommerceProduct( family_slug )
+		) || [];
+	const wooExtensions =
+		allProducts?.filter( ( { family_slug }: { family_slug: string } ) =>
+			isWooCommerceProduct( family_slug )
 		) || [];
 
 	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
