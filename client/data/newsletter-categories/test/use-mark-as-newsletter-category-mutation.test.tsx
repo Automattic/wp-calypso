@@ -2,11 +2,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react-hooks';
 import React from 'react';
 import request from 'wpcom-proxy-request';
-import useUnsetNewsletterCategoryMutation from '../use-unset-newsletter-category-mutation';
+import useMarkAsNewsletterCategoryMutation from '../use-mark-as-newsletter-category-mutation';
 
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
-describe( 'useUnsetNewsletterCategoryMutation', () => {
+describe( 'useMarkAsNewsletterCategoryMutation', () => {
 	let queryClient: QueryClient;
 	let wrapper: any;
 	const siteId = 123;
@@ -37,7 +37,7 @@ describe( 'useUnsetNewsletterCategoryMutation', () => {
 			success: true,
 		} );
 
-		const { result, waitFor } = renderHook( () => useUnsetNewsletterCategoryMutation( siteId ), {
+		const { result, waitFor } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
@@ -49,7 +49,7 @@ describe( 'useUnsetNewsletterCategoryMutation', () => {
 
 		expect( request ).toHaveBeenCalledWith( {
 			path: `/sites/123/newsletter-categories/1`,
-			method: 'DELETE',
+			method: 'POST',
 			apiVersion: '2',
 			apiNamespace: 'wpcom/v2',
 		} );
@@ -61,7 +61,7 @@ describe( 'useUnsetNewsletterCategoryMutation', () => {
 		} );
 
 		const invalidateQueriesSpy = jest.spyOn( queryClient, 'invalidateQueries' );
-		const { result } = renderHook( () => useUnsetNewsletterCategoryMutation( siteId ), {
+		const { result } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
@@ -73,7 +73,7 @@ describe( 'useUnsetNewsletterCategoryMutation', () => {
 	} );
 
 	it( 'should throw an error when ID is missing', async () => {
-		const { result, waitFor } = renderHook( () => useUnsetNewsletterCategoryMutation( siteId ), {
+		const { result, waitFor } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
@@ -93,26 +93,20 @@ describe( 'useUnsetNewsletterCategoryMutation', () => {
 	it( 'should throw an error when API response is unsuccessful', async () => {
 		( request as jest.Mock ).mockResolvedValue( { success: false } );
 
-		const { result, waitFor } = renderHook( () => useUnsetNewsletterCategoryMutation( siteId ), {
+		const { result, waitFor } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
 		const consoleError = console.error;
 		console.error = jest.fn();
 
-		let mutation;
-
 		act( () => {
-			mutation = result.current.mutate( categoryId );
-		} );
-
-		await act( async () => {
-			await mutation;
+			result.current.mutate( categoryId );
 		} );
 
 		await waitFor( () =>
 			expect( result.current.error ).toEqual(
-				Error( 'Something went wrong while removing category as newsletter category.' )
+				Error( 'Something went wrong while marking category as newsletter category.' )
 			)
 		);
 

@@ -1,29 +1,28 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
 
-type UnsetNewsletterCategoryResponse = {
+type MarkAsNewsletterCategoryResponse = {
 	success: boolean;
 };
 
-const useUnsetNewsletterCategoryMutation = ( siteId: string | number ) => {
+const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 	const queryClient = useQueryClient();
 	const cacheKey = [ `newsletter-categories-${ siteId }` ];
-
 	return useMutation( {
 		mutationFn: async ( id: number ) => {
 			if ( ! id ) {
 				throw new Error( 'ID is missing.' );
 			}
 
-			const response = await request< UnsetNewsletterCategoryResponse >( {
+			const response = await request< MarkAsNewsletterCategoryResponse >( {
 				path: `/sites/${ siteId }/newsletter-categories/${ id }`,
-				method: 'DELETE',
+				method: 'POST',
 				apiVersion: '2',
 				apiNamespace: 'wpcom/v2',
 			} );
 
 			if ( ! response.success ) {
-				throw new Error( 'Something went wrong while removing category as newsletter category.' );
+				throw new Error( 'Something went wrong while marking category as newsletter category.' );
 			}
 
 			return response;
@@ -37,4 +36,4 @@ const useUnsetNewsletterCategoryMutation = ( siteId: string | number ) => {
 	} );
 };
 
-export default useUnsetNewsletterCategoryMutation;
+export default useMarkAsNewsletterCategoryMutation;
