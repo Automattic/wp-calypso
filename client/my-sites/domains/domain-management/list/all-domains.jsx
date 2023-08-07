@@ -636,6 +636,14 @@ class AllDomains extends Component {
 
 		const item = {
 			label: translate( 'All Domains' ),
+			subtitle: translate(
+				'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+					},
+				}
+			),
 			helpBubble: translate(
 				'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 				{

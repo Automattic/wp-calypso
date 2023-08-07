@@ -6,6 +6,21 @@
 	gap: 16px;
 }
 
+.site-monitoring__formatted-header {
+	position: relative;
+	& ::before {
+		content: "";
+		display: block;
+		position: absolute;
+		background: var(--studio-white);
+		top: -47px;
+		right: -32px;
+		bottom: 20px;
+		left: -33px;
+		z-index: -1;
+	}
+}
+
 .site-monitoring__chart {
 	padding: 24px;
 	border: 1px solid var(--studio-gray-5);
@@ -35,7 +50,7 @@
 .site-monitoring-cache-pie-chart {
 	.pie-chart__chart-section-0,
 	.pie-chart__legend-sample-0 {
-		fill: #a7e8d3;
+		fill: #bae0f9;
 
 	}
 	.pie-chart__chart-section-1,
@@ -80,8 +95,4 @@
 			vertical-align: baseline;
 		}
 	}
-}
-
-.uplot {
-	border: 1px solid var(--studio-gray-5);
 }

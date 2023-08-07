@@ -66,3 +66,9 @@ export interface FileBrowserItemInfo {
 	dataType?: number;
 	manifestFilter?: string;
 }
+
+export interface FileBrowserCheckTracker {
+	showCheckBoxes: boolean;
+	includedFiles: string[];
+	excludedFiles: string[];
+}

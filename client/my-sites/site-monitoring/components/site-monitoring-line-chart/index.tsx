@@ -2,6 +2,7 @@ import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
 import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
 import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
+import classnames from 'classnames';
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
@@ -14,6 +15,8 @@ const DEFAULT_DIMENSIONS = {
 };
 
 interface UplotChartProps {
+	title?: string;
+	className?: string;
 	data: uPlot.AlignedData;
 	fillColor?: string;
 	options?: Partial< uPlot.Options >;
@@ -28,14 +31,16 @@ export function formatChatHour( date: Date ): string {
 	return `${ hours }:${ minutes }`;
 }
 
-export default function UplotChartMetrics( {
+export const SiteMonitoringLineChart = ( {
+	title,
+	className,
 	data,
 	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
 	options: propOptions,
 	solidFill = false,
 	period,
-}: UplotChartProps ) {
+}: UplotChartProps ) => {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
@@ -164,13 +169,23 @@ export default function UplotChartMetrics( {
 
 	useResize( uplot, uplotContainer );
 
+	const classes = [ 'site-monitoring-line-chart', 'site-monitoring__chart' ];
+	if ( className ) {
+		classes.push( className );
+	}
+
 	return (
-		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
-			<UplotReact
-				data={ data }
-				onCreate={ ( chart ) => ( uplot.current = chart ) }
-				options={ options }
-			/>
+		<div className={ classnames( classes ) }>
+			<header className="site-monitoring__chart-header">
+				<h2 className="site-monitoring__chart-title">{ title }</h2>
+			</header>
+			<div ref={ uplotContainer }>
+				<UplotReact
+					data={ data }
+					onCreate={ ( chart ) => ( uplot.current = chart ) }
+					options={ options }
+				/>
+			</div>
 		</div>
 	);
-}
+};
