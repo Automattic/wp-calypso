@@ -332,10 +332,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'site-selected',
-			steps: [ 'themes-site-selected', 'plans-site-selected-legacy' ],
-			destination: getSiteDestination,
+			steps: [ 'plans-site-selected-legacy' ],
+			destination: getSignupDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
-			optionalDependenciesInQuery: [ 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
 		},

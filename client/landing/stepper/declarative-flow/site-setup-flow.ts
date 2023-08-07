@@ -145,6 +145,7 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
 			[]
 		);
+		const siteId = useSiteIdParam();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
@@ -335,9 +336,12 @@ const siteSetupFlow: Flow = {
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
-						return exitFlow( `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }` );
+						const url = siteId
+							? `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`
+							: `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+						return exitFlow( url );
 					}
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
 				case 'bloggerStartingPoint': {
@@ -350,7 +354,7 @@ const siteSetupFlow: Flow = {
 							return navigate( 'courses' );
 						}
 						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteSlug }` );
+							return exitFlow( `/home/${ siteId ?? siteSlug }` );
 						}
 						default: {
 							return navigate( intent );
@@ -378,7 +382,7 @@ const siteSetupFlow: Flow = {
 					const submittedIntent = params[ 0 ];
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
-							return exitFlow( `https://wordpress.com/home/${ siteSlug }` );
+							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
 						}
 						case 'build': {
 							return navigate( 'designSetup' );
@@ -577,12 +581,12 @@ const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'intent':
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 
 				case 'goals':
 					// Skip to dashboard must have been pressed
 					setIntent( SiteIntent.Build );
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 
 				case 'import':
 					return navigate( 'importList' );
