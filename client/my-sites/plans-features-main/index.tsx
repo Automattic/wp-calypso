@@ -61,6 +61,8 @@ import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
+const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
+
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -449,6 +451,7 @@ const PlansFeaturesMain = ( {
 			hideBusinessPlan,
 			hideEcommercePlan,
 		} ) || null;
+
 	// merge/update default plans with plans with intent
 	const gridPlanRecords = {
 		...defaultPlanRecords,
@@ -491,6 +494,16 @@ const PlansFeaturesMain = ( {
 	};
 
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+
+	/**
+	 * The spotlight in smaller grids looks broken.
+	 * So for now we only allow the spotlight in the default grid plans grid where we display all 6 plans.
+	 * In order to accommodate this for other variations with lesser number of plans the design needs to be reworked.
+	 * Or else the intent needs to be explicitly allow the spotlight to be shown in this relevant intent.
+	 * Eventually once the spotlight card is made responsive this flag can be removed.
+	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
+	 */
+	const isSpotlightOnCurrentPlanAllowed = SPOTLIGHT_ENABLED_INTENTS.includes( intent );
 
 	return (
 		<div
@@ -591,7 +604,7 @@ const PlansFeaturesMain = ( {
 						intent={ intent }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
-						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
+						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlanAllowed && isSpotlightOnCurrentPlan }
 						showUpgradeableStorage={ showUpgradeableStorage }
 					/>
 				</>

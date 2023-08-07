@@ -408,6 +408,10 @@ $masterbar-color-secondary: #101517;
 	padding-left: 0;
 	text-transform: uppercase;
 
+	@include breakpoint-deprecated( "<480px" ) {
+		display: none;
+	}
+
 	.masterbar__item-content {
 		display: block;
 
@@ -625,8 +629,10 @@ $masterbar-color-secondary: #101517;
 		padding-left: 0;
 	}
 
-	.masterbar__item:last-child {
-		margin-right: 20px;
+	@include breakpoint-deprecated( ">480px" ) {
+		.masterbar__item:last-child {
+			margin-right: 20px;
+		}
 	}
 }
 

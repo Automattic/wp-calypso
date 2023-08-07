@@ -442,6 +442,9 @@ $mobile-card-max-width: 440px;
 
 				&.plan-features-2023-grid__header-billing-info {
 					padding-bottom: 32px;
+					@include plans-2023-break-small {
+						padding-bottom: 32px;
+					}
 				}
 
 				&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {

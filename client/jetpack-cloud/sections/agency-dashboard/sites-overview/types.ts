@@ -91,6 +91,7 @@ export interface Site {
 	jetpack_boost_scores: BoostData;
 	php_version_num: number;
 	is_connected: boolean;
+	has_paid_agency_monitor: boolean;
 }
 export interface SiteNode {
 	value: Site;

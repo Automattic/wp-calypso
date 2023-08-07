@@ -46,8 +46,8 @@ export default function ToggleActivateMonitoring( {
 
 	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
-	// TODO: Need to figure out if current site has no existing paid version of downtime monitoring.
-	const shouldDisplayUpgradePopover = status === 'success' && isPaidTierEnabled;
+	const shouldDisplayUpgradePopover =
+		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );

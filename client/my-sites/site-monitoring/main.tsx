@@ -5,14 +5,16 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
+import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
+import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
-import UplotChartMetrics from './metrics-chart';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
 
 import './style.scss';
 
-interface TimeRange {
+export interface TimeRange {
 	start: number;
 	end: number;
 }
@@ -132,9 +134,8 @@ function getFormattedDataForPieChart(
 
 export function SiteMetrics() {
 	const { __ } = useI18n();
-
 	const titleHeader = __( 'Site Monitoring' );
-
+	const timeRange = useTimeRange();
 	const { formattedData, handleTimeRangeChange } = useSiteMetricsData();
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		'requests_persec',
@@ -144,6 +145,10 @@ export function SiteMetrics() {
 		'requests_persec',
 		'page_renderer'
 	);
+	const statusCodeRequestsProps = useMetricsBarChartData( {
+		siteId: useSelector( getSelectedSiteId ),
+		timeRange,
+	} );
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>
@@ -158,7 +163,10 @@ export function SiteMetrics() {
 				className="site-monitoring__formatted-header"
 			></FormattedHeader>
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
-			<UplotChartMetrics data={ formattedData as uPlot.AlignedData }></UplotChartMetrics>
+			<SiteMonitoringLineChart
+				title={ __( 'Requests per minute & average response time' ) }
+				data={ formattedData as uPlot.AlignedData }
+			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
 					title="Cache hit/miss"
@@ -177,6 +185,10 @@ export function SiteMetrics() {
 					} ) }
 				></SiteMonitoringPieChart>
 			</div>
+			<SiteMonitoringBarChart
+				title={ __( 'Requests by HTTP Response Code' ) }
+				{ ...statusCodeRequestsProps }
+			/>
 		</Main>
 	);
 }
