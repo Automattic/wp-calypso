@@ -49,11 +49,18 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 	// Use the custom hook for time range selection
 	const { start, end, handleTimeRangeChange } = useTimeRange();
 
-	const { data } = useSiteMetricsQuery( siteId, {
+	const { data: requestsData } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric: metric || 'requests_persec',
 	} );
+
+	const { data: responseTimeData } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'response_time_average',
+	} );
+
 	// Function to get the dimension value for a specific key and period
 	const getDimensionValue = ( period: PeriodData ) => {
 		if ( typeof period?.dimension === 'object' && Object.keys( period.dimension ).length === 0 ) {
@@ -70,15 +77,28 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 
 	// Process the data in the format accepted by uPlot
 	const formattedData =
-		data?.data?.periods?.reduce(
-			( acc, period ) => {
-				acc[ 0 ].push( period.timestamp );
-				acc[ 1 ].push( getDimensionValue( period ) );
+		requestsData?.data?.periods?.reduce(
+			( acc, period, index ) => {
+				const timestamp = period.timestamp;
+
+				// Check if the timestamp is already in the arrays, if not, push it
+				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
+					acc[ 0 ].push( timestamp );
+					acc[ 1 ].push( getDimensionValue( period ) ); // Blue line data
+
+					// Add response time data as a green line
+					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
+						//	acc[ 2 ].push( timestamp );
+						acc[ 2 ].push( getDimensionValue( responseTimeData.data.periods[ index ] ) );
+					}
+				}
+
 				return acc;
 			},
-			[ [], [] ] as Array< Array< number | null > > // Define the correct initial value type
-		) || ( [ [], [] ] as Array< Array< number | null > > ); // Return a default value when data is not available yet
+			[ [], [], [] ] as Array< Array< number | null > > // Adjust the initial value with placeholders for both lines
+		) || ( [ [], [], [] ] as Array< Array< number | null > > ); // Return default value when data is not available yet
 
+	console.log( formattedData );
 	return {
 		formattedData,
 		handleTimeRangeChange,

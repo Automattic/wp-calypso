@@ -2,12 +2,11 @@ import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
 import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
 import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
-import classnames from 'classnames';
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
-import useSiteChartTimezone from './use-site-timezone-for-chart';
+import useSiteChartTimezone from './components/site-monitoring-line-chart/use-site-timezone-for-chart';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -15,8 +14,6 @@ const DEFAULT_DIMENSIONS = {
 };
 
 interface UplotChartProps {
-	title?: string;
-	className?: string;
 	data: uPlot.AlignedData;
 	fillColor?: string;
 	options?: Partial< uPlot.Options >;
@@ -31,16 +28,14 @@ export function formatChatHour( date: Date ): string {
 	return `${ hours }:${ minutes }`;
 }
 
-export const SiteMonitoringLineChart = ( {
-	title,
-	className,
+export default function UplotChartMetrics( {
 	data,
 	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
 	options: propOptions,
 	solidFill = false,
 	period,
-}: UplotChartProps ) => {
+}: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
@@ -55,7 +50,7 @@ export const SiteMonitoringLineChart = ( {
 				class: 'calypso-uplot-chart',
 				...DEFAULT_DIMENSIONS,
 				// Set incoming dates as UTC.
-				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), timezone ),
 				fmtDate: () => {
 					return ( date ) => {
 						const chatHour = formatChatHour( date );
@@ -139,6 +134,25 @@ export const SiteMonitoringLineChart = ( {
 							return numberFormat( rawValue, 0 );
 						},
 					},
+					{
+						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
+						label: translate( 'Average response time' ),
+						stroke: '#00FF00',
+						width: 2,
+						paths: ( u, seriesIdx, idx0, idx1 ) => {
+							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+						},
+						points: {
+							show: false,
+						},
+						value: ( self: uPlot, rawValue: number ) => {
+							if ( ! rawValue ) {
+								return '-';
+							}
+
+							return numberFormat( rawValue, 0 );
+						},
+					},
 				],
 				legend: {
 					isolate: true,
@@ -169,23 +183,13 @@ export const SiteMonitoringLineChart = ( {
 
 	useResize( uplot, uplotContainer );
 
-	const classes = [ 'site-monitoring-line-chart', 'site-monitoring__chart' ];
-	if ( className ) {
-		classes.push( className );
-	}
-
 	return (
-		<div className={ classnames( classes ) }>
-			<header className="site-monitoring__chart-header">
-				<h2 className="site-monitoring__chart-title">{ title }</h2>
-			</header>
-			<div ref={ uplotContainer }>
-				<UplotReact
-					data={ data }
-					onCreate={ ( chart ) => ( uplot.current = chart ) }
-					options={ options }
-				/>
-			</div>
+		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
+			<UplotReact
+				data={ data }
+				onCreate={ ( chart ) => ( uplot.current = chart ) }
+				options={ options }
+			/>
 		</div>
 	);
-};
+}
