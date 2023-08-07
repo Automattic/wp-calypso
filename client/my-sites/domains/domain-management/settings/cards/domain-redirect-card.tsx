@@ -44,32 +44,29 @@ class DomainRedirectCard extends Component {
 		this.setState( { targetHost } );
 	};
 
-	handleClick = () => {
-		if ( this.props.selectedSite ) {
-			this.props
-				.updateDomainRedirect(
-					this.props.domainName,
-					this.state.targetUrl, //tofix
-					null,
-					null,
-					this.state.secure
-				)
-				.then( ( success ) => {
-					if ( success ) {
-						this.props.fetchDomainRedirect( this.props.domainName );
+	handleSubmit = ( event ) => {
+		event.preventDefault();
+		this.props
+			.updateDomainRedirect(
+				this.props.domainName,
+				this.state.targetUrl, // tofix
+				null,
+				null,
+				this.state.secure
+			)
+			.then( ( success ) => {
+				if ( success ) {
+					this.props.fetchDomainRedirect( this.props.domainName );
 
-						this.props.successNotice(
-							this.props.translate( 'Site redirect updated successfully.' ),
-							{
-								duration: 5000,
-								id: `site-redirect-update-notification`,
-							}
-						);
-					} else {
-						this.props.errorNotice( this.props.redirect.notice.text );
-					}
-				} );
-		}
+					this.props.successNotice( this.props.translate( 'Site redirect updated successfully.' ), {
+						duration: 5000,
+						id: `site-redirect-update-notification`,
+					} );
+				} else {
+					this.props.errorNotice( this.props.redirect.notice.text );
+				}
+			} );
+		return false;
 	};
 
 	handleChangeSecure = ( event ) => {
@@ -93,7 +90,7 @@ class DomainRedirectCard extends Component {
 			</>
 		);
 		return (
-			<form>
+			<form onSubmit={ this.handleSubmit }>
 				<FormFieldset className="domain-redirect-card__fields">
 					<FormTextInputWithAffixes
 						disabled={ isFetching || isUpdating }
@@ -130,7 +127,6 @@ class DomainRedirectCard extends Component {
 						( this.props.redirect?.targetHost === this.state.targetHost &&
 							( this.props.redirect.secure ? 'https' : 'http' ) === this.state.protcol )
 					}
-					onClick={ this.handleClick }
 				>
 					{ translate( 'Update' ) }
 				</FormButton>
