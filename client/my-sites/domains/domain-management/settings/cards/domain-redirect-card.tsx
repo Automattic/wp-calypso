@@ -49,7 +49,10 @@ class DomainRedirectCard extends Component {
 		let targetPath = '';
 		let secure = true;
 		try {
-			const url = new URL( this.state.targetUrl, 'https://_invalid_.domain' );
+			const url = new URL(
+				this.state.protocol + '://' + this.state.targetUrl,
+				'https://_invalid_.domain'
+			);
 			if ( url.origin !== 'https://_invalid_.domain' ) {
 				targetHost = url.hostname;
 				targetPath = url.pathname + url.search + url.hash;
