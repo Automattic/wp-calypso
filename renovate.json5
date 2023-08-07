@@ -1,10 +1,13 @@
 {
-	extends: [ 'config:recommended', 'default:pinDigestsDisabled' ],
+	extends: [ 'config:recommended', 'default:pinDigestsDisabled', 'mergeConfidence:all-badges' ],
+	// --- Individual dependency settings ---
 	packageRules: [
 		{
 			extends: [ 'monorepo:wordpress', 'schedule:daily' ],
 			separateMajorMinor: false,
 			prPriority: 3,
+			// We want to update these ASAP, so we don't want to wait for the minimum release age.
+			minimumReleaseAge: '0 days',
 		},
 		{
 			extends: [ 'group:nodeJs' ],
@@ -50,29 +53,45 @@
 		},
 		{ extends: [ 'monorepo:babel' ], prPriority: 1 },
 		{ extends: [ 'monorepo:lodash' ], prPriority: 1 },
-		// Disable maven -- it only exists because of TeamCity, and we don't need to perform updates to that.
+		// Disable maven -- it only exists because of TeamCity, which we don't update.
 		{
 			matchManagers: [ 'maven' ],
 			enabled: false,
 		},
 	],
-	schedule: [ 'every weekend' ],
-	dependencyDashboardTitle: 'Renovate Dependency Updates',
-	rangeStrategy: 'bump',
 	ignoreDeps: [ 'electron-builder' ],
-	labels: [ 'Framework', '[Type] Task' ],
+
+	// --- Update & schedule settings ---
+	rangeStrategy: 'bump',
 	postUpdateOptions: [ 'yarnDedupeHighest' ],
+	minimumReleaseAge: '10 days',
+	// Note that security PRs are opened immediately regardless of how many other
+	// renovate PRs are open. This keeps our queue of deps to update more manageable.
 	prConcurrentLimit: 10,
+	// Avoid overwhelming reviewers with a constant stream of updates. We'll get
+	// some new updates to handle each weekend, but throughout the week, any new
+	// PR notifications should always be actionable.
+	schedule: [ 'every weekend' ],
+	// Create PRs immediately. Extra branches we don't see still consume CI resources
+	// when they are created/rebased, so we want visibility into them quickly.
+	prCreation: 'immediate',
+	internalChecksFilter: 'strict',
+	// Don't rebase PRs constantly, to avoid using too much CI.
+	rebaseWhen: 'conflicted',
+
+	// --- Metadata settings for git ---
+	labels: [ 'Framework', '[Type] Task' ],
+	reviewers: [ 'team:team-calypso-platform' ],
+	branchPrefix: 'renovate/',
+	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
+	platform: 'github',
 	semanticCommits: 'enabled',
 	semanticCommitType: 'chore',
-	reviewers: [ 'team:team-calypso-platform' ],
-	minimumReleaseAge: '10 days',
-	prCreation: 'immediate',
-	branchPrefix: 'renovate/',
+	repositories: [ 'Automattic/wp-calypso' ],
+
+	// --- Misc Settings ---
 	allowPlugins: true,
 	allowScripts: true,
 	ignoreScripts: false,
-	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
-	platform: 'github',
-	repositories: [ 'Automattic/wp-calypso' ],
+	dependencyDashboardTitle: 'Renovate Dependency Updates',
 }
