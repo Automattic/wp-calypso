@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import useResize from './hooks/use-resize';
@@ -30,12 +30,13 @@ export default function UplotBarChart( {
 	options: propOptions,
 }: UplotChartProps ) {
 	const uplot = useRef< uPlot | null >( null );
-	const uplotContainer = useRef( null );
+	const uplotContainer = useRef< HTMLDivElement | null >( null );
+	const [ chartDimensions, setChartDimensions ] = useState( DEFAULT_DIMENSIONS );
 
 	const options: uPlot.Options = useMemo( () => {
 		const defaultOptions: uPlot.Options = {
 			class: 'calypso-uplot-bar-chart',
-			...DEFAULT_DIMENSIONS,
+			...chartDimensions,
 			axes: [
 				{},
 				{
@@ -71,9 +72,19 @@ export default function UplotBarChart( {
 			...defaultOptions,
 			...( typeof propOptions === 'object' ? propOptions : {} ),
 		};
-	}, [ data, fillColors, labels, legendContainer, propOptions ] );
+	}, [ chartDimensions, data, fillColors, labels, legendContainer, propOptions ] );
 
 	useResize( uplot, uplotContainer );
+
+	useEffect( () => {
+		// Need extra check for container resize due to `seriesBarsPlugin`
+		if ( uplotContainer.current ) {
+			const { width, height } = uplotContainer.current.getBoundingClientRect();
+			if ( width !== chartDimensions.width || height !== chartDimensions.height ) {
+				setChartDimensions( { width, height } );
+			}
+		}
+	}, [ chartDimensions, data ] );
 
 	return (
 		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
