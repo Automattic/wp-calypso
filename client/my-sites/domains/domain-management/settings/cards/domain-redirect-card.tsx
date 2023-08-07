@@ -1,9 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -142,16 +141,6 @@ class DomainRedirectCard extends Component {
 	}
 }
 
-const withRedirectAsKey = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const selectedSite = useSelector( getSelectedSite );
-		const redirect = useSelector( ( state ) => getDomainRedirect( state, selectedSite?.domain ) );
-
-		return <Wrapped { ...props } key={ `redirect-${ redirect.targetHost }` } />;
-	},
-	'withRedirectAsKey'
-);
-
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
@@ -165,4 +154,4 @@ export default connect(
 		successNotice,
 		errorNotice,
 	}
-)( localize( withRedirectAsKey( DomainRedirectCard ) ) );
+)( localize( DomainRedirectCard ) );
