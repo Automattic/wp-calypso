@@ -24,12 +24,13 @@ export const STYLES_PATHS = [ NAVIGATOR_PATHS.COLOR_PALETTES, NAVIGATOR_PATHS.FO
  *  - don't exist in Dotcompatterns source site
  */
 export const PATTERN_CATEGORIES = [
+	'featured', // Reused for "All" category
 	'about',
 	//'buttons', -- Not exist
 	//'banner', -- Not exist
 	//'query', -- Not exist
-	//'posts', -- Not exist
 	'blog',
+	'posts', // Reused as "Blog Posts"
 	'call-to-action',
 	//'columns', -- Not exist
 	//'coming-soon', -- Hidden
