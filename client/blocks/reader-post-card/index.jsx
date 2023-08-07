@@ -270,7 +270,7 @@ class ReaderPostCard extends Component {
 		}
 
 		const postCardComments = () => {
-			if ( ! post.discussion?.comments_open || compact ) {
+			if ( ! post.discussion?.comments_open ) {
 				return;
 			}
 
@@ -283,18 +283,23 @@ class ReaderPostCard extends Component {
 			// chain?
 
 			return (
-				<PostComments
-					post={ post }
-					showNestingReplyArrow={ true }
-					expandableView={ true }
-					commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-					showConversationFollowButton={ true }
-					shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-					shouldHighlightNew={ true }
-					initialSize={ 10 }
-					pageSize={ 25 }
-					maxDepth={ 1 }
-				/>
+				// Stop propagation on clicking of comment area, as the event will bubble to the
+				// card's onClick and redirect the page.
+				//  eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+				<div onClick={ ( ev ) => ev.stopPropagation() }>
+					<PostComments
+						post={ post }
+						showNestingReplyArrow={ true }
+						expandableView={ true }
+						commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+						showConversationFollowButton={ true }
+						shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+						shouldHighlightNew={ true }
+						initialSize={ 10 }
+						pageSize={ 25 }
+						maxDepth={ 1 }
+					/>
+				</div>
 			);
 		};
 
