@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { DNS_ERROR } from './constants';
 import { ErrorNotice } from './error-notice';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
@@ -32,7 +33,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return;
 	}
 
-	if ( jetpackConnectionHealth?.error === 'dns_error' ) {
+	if ( jetpackConnectionHealth?.error === DNS_ERROR ) {
 		return (
 			<ErrorNotice
 				eventViewName="calypso_jetpack_connection_health_issue_view"
