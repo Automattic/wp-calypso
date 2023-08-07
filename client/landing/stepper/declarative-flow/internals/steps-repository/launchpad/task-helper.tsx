@@ -18,6 +18,7 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { Dispatch, SetStateAction } from 'react';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
@@ -50,7 +51,8 @@ export function getEnhancedTasks(
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
-	stripeConnectUrl?: string
+	stripeConnectUrl?: string,
+	setShowPlansModal?: Dispatch< SetStateAction< boolean > >
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -510,9 +512,11 @@ export function getEnhancedTasks(
 						disabled: ! isStripeConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign(
-								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
-							);
+							setShowPlansModal
+								? setShowPlansModal( true )
+								: window.location.assign(
+										`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+								  );
 						},
 					};
 					break;

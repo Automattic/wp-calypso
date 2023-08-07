@@ -14,6 +14,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import wpcom from 'calypso/lib/wp';
+import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/memberships/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -65,6 +66,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ stripeConnectUrl, setStripeConnectUrl ] = useState< string >( '' );
 
+	const [ showPlansModal, setShowPlansModal ] = useState( false );
+
 	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
 		useSiteGlobalStylesStatus( site?.ID );
 
@@ -108,7 +111,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			checklistStatuses,
 			getPlanCartItem(),
 			getDomainCartItem(),
-			stripeConnectUrl
+			stripeConnectUrl,
+			setShowPlansModal
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
@@ -240,6 +244,12 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					taskFilter={ () => enhancedTasks || [] }
 					makeLastTaskPrimaryAction={ true }
 				/>
+				{ showPlansModal && (
+					<RecurringPaymentsPlanAddEditModal
+						closeDialog={ () => setShowPlansModal( false ) }
+						product={ null }
+					/>
+				) }
 			</div>
 		</div>
 	);
