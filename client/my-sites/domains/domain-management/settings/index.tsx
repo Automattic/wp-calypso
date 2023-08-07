@@ -151,7 +151,6 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			! hasConnectableSites ||
 			domain.type === domainTypes.TRANSFER
 		) {
 			return null;
@@ -163,7 +162,11 @@ const Settings = ( {
 				key="status"
 				expanded
 			>
-				<DomainOnlyConnectCard selectedDomainName={ domain.domain } selectedSite={ selectedSite } />
+				<DomainOnlyConnectCard
+					selectedDomainName={ domain.domain }
+					selectedSite={ selectedSite }
+					hasConnectableSites={ hasConnectableSites }
+				/>
 			</Accordion>
 		);
 	};

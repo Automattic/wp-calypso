@@ -13,7 +13,7 @@ import './style.scss';
 
 const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ) => {
 	const translate = useTranslate();
-	const { selectedSite, selectedDomainName, currentRoute } = props;
+	const { selectedSite, selectedDomainName, currentRoute, hasConnectableSites } = props;
 
 	return (
 		<div className="domain-only-connect__card">
@@ -29,15 +29,17 @@ const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ) => {
 					{ translate( 'Add a new site' ) }
 				</Button>
 
-				<Button
-					href={ domainManagementTransferToOtherSite(
-						selectedSite.slug,
-						selectedDomainName,
-						currentRoute
-					) }
-				>
-					{ translate( 'Connect to an existing site' ) }
-				</Button>
+				{ hasConnectableSites && (
+					<Button
+						href={ domainManagementTransferToOtherSite(
+							selectedSite.slug,
+							selectedDomainName,
+							currentRoute
+						) }
+					>
+						{ translate( 'Connect to an existing site' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	);
