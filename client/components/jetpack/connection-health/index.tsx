@@ -29,7 +29,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const handleJetpackConnectionHealthLinkClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_connection_health_issue_click', {
-				type: 'default',
+				error_type: 'default',
 			} )
 		);
 	};
@@ -46,7 +46,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		<>
 			<TrackComponentView
 				eventName="calypso_jetpack_connection_health_issue_view"
-				eventProperties={ { type: 'default' } }
+				eventProperties={ { error_type: 'default' } }
 			/>
 			<Notice
 				status="is-error"
