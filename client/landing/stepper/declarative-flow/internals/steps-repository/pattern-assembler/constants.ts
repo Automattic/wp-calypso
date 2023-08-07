@@ -16,3 +16,37 @@ export const NAVIGATOR_PATHS = {
 };
 
 export const STYLES_PATHS = [ NAVIGATOR_PATHS.COLOR_PALETTES, NAVIGATOR_PATHS.FONT_PAIRINGS ];
+
+/* Category list of the patterns fetched via PTK API from Dotcompatterns
+ *
+ * The categories that are commented are not fetched because they
+ *  - are hidden intentionaly in the Assembler only
+ *  - don't exist in Dotcompatterns source site
+ */
+export const PATTERN_CATEGORIES = [
+	'about',
+	//'buttons', -- Not exist
+	//'banner', -- Not exist
+	//'query', -- Not exist
+	//'posts', -- Not exist
+	'blog',
+	'call-to-action',
+	//'columns', -- Not exist
+	//'coming-soon', -- Hidden
+	'contact',
+	'footer',
+	'forms',
+	'gallery',
+	'header',
+	//'link-in-bio', -- Hidden
+	//'media', -- Not exist
+	'newsletter',
+	'podcast',
+	'portfolio',
+	'quotes',
+	'services',
+	'store',
+	//'team', -- Not exist
+	'testimonials',
+	'text',
+];
