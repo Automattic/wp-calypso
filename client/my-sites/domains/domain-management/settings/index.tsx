@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -489,7 +490,7 @@ const Settings = ( {
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
-				{ renderRedirectSection() }
+				{ config.isEnabled( 'domains/redirect' ) && renderRedirectSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
