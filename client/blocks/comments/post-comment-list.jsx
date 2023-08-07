@@ -348,11 +348,7 @@ class PostCommentList extends Component {
 		let mostRecentByDate;
 		for ( const key in commentsTree ) {
 			const currentObject = commentsTree[ key ];
-			if (
-				( ! mostRecentByDate || currentObject.data?.date > mostRecentByDate.data?.date ) &&
-				// TODO - can we/should we show pending items if user viewing is moderator?
-				currentObject.data?.status === 'approved'
-			) {
+			if ( ! mostRecentByDate || currentObject.data?.date > mostRecentByDate.data?.date ) {
 				mostRecentByDate = currentObject;
 			}
 		}

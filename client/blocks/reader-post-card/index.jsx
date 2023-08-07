@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localeRegexString } from '@automattic/i18n-utils';
 import classnames from 'classnames';
@@ -8,6 +9,7 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import PostComments from 'calypso/blocks/comments';
+import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -279,9 +281,16 @@ class ReaderPostCard extends Component {
 			// Lets denote this with a 'expandableView' prop.
 			return (
 				<PostComments
-					post={ { ID: post.ID, site_ID: site?.ID } }
-					shouldPollForNewComments
-					expandableView={ true }
+					post={ post }
+					showNestingReplyArrow={ true }
+					expandableView
+					commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+					showConversationFollowButton={ true }
+					shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+					shouldHighlightNew={ true }
+					initialSize={ 10 }
+					pageSize={ 25 }
+					maxDepth={ 1 }
 				/>
 			);
 		};
