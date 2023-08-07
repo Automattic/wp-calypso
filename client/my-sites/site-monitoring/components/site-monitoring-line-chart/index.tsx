@@ -121,9 +121,28 @@ export const SiteMonitoringLineChart = ( {
 						},
 					},
 					{
-						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
+						fill: 'rgba(6, 117, 196, 0.1)',
 						label: translate( 'HTTP requests per sec' ),
 						stroke: '#0675C4',
+						width: 2,
+						paths: ( u, seriesIdx, idx0, idx1 ) => {
+							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+						},
+						points: {
+							show: false,
+						},
+						value: ( self: uPlot, rawValue: number ) => {
+							if ( ! rawValue ) {
+								return '-';
+							}
+
+							return numberFormat( rawValue, 0 );
+						},
+					},
+					{
+						fill: 'rgba(0, 135, 99, 0.2)',
+						label: translate( 'Average response time' ),
+						stroke: '#008763',
 						width: 2,
 						paths: ( u, seriesIdx, idx0, idx1 ) => {
 							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;

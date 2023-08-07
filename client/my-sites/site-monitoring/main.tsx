@@ -88,7 +88,6 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 
 					// Add response time data as a green line
 					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
-						//	acc[ 2 ].push( timestamp );
 						acc[ 2 ].push( getDimensionValue( responseTimeData.data.periods[ index ] ) );
 					}
 				}
@@ -98,9 +97,51 @@ export function useSiteMetricsData( metric?: MetricsType ) {
 			[ [], [], [] ] as Array< Array< number | null > > // Adjust the initial value with placeholders for both lines
 		) || ( [ [], [], [] ] as Array< Array< number | null > > ); // Return default value when data is not available yet
 
-	console.log( formattedData );
 	return {
 		formattedData,
+		handleTimeRangeChange,
+	};
+}
+
+export function useSiteMetricsData400vs500( metric?: MetricsType, dimension?: DimensionParams ) {
+	const siteId = useSelector( getSelectedSiteId );
+
+	// Use the custom hook for time range selection
+	const { start, end, handleTimeRangeChange } = useTimeRange();
+
+	const { data } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'requests_persec',
+		dimension: dimension || 'http_status',
+	} );
+
+	const formattedDataHTTP = data?.data?.periods?.reduce(
+		( acc, period ) => {
+			const timestamp = period.timestamp;
+
+			// Check if the timestamp is already in the arrays, if not, push it
+			if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
+				acc[ 0 ].push( timestamp );
+
+				// Check if the dimension object contains values for 400 and 500 status codes
+				if ( period.dimension && ( period.dimension[ '400' ] || period.dimension[ '500' ] ) ) {
+					// Push values for 400 and 500 status codes into separate arrays
+					acc[ 1 ].push( period.dimension[ '400' ] || 0 ); // Array for 400 status code, use 0 as default
+					acc[ 2 ].push( period.dimension[ '500' ] || 0 ); // Array for 500 status code, use 0 as default
+				} else {
+					acc[ 1 ].push( 0 );
+					acc[ 2 ].push( 0 );
+				}
+			}
+
+			return acc;
+		},
+		[ [], [], [] ] as Array< Array< number > > // Remove null type since we're using 0 as default
+	) || [ [], [], [] ]; // Return default value when data is not available yet
+
+	return {
+		formattedDataHTTP,
 		handleTimeRangeChange,
 	};
 }
@@ -156,6 +197,7 @@ export function SiteMetrics() {
 	const { __ } = useI18n();
 	const titleHeader = __( 'Site Monitoring' );
 	const timeRange = useTimeRange();
+	const { formattedDataHTTP } = useSiteMetricsData400vs500();
 	const { formattedData, handleTimeRangeChange } = useSiteMetricsData();
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		'requests_persec',
@@ -209,6 +251,10 @@ export function SiteMetrics() {
 				title={ __( 'Requests by HTTP Response Code' ) }
 				{ ...statusCodeRequestsProps }
 			/>
+			<SiteMonitoringLineChart
+				title={ __( '400 vs 500 HTTP responses' ) }
+				data={ formattedDataHTTP as uPlot.AlignedData }
+			></SiteMonitoringLineChart>
 		</Main>
 	);
 }
