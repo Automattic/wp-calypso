@@ -121,6 +121,16 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
 }
 
 /**
+ * Return a specifier for a route param to match anything that looks like a language code, whether it is valid or not.
+ * This is useful for routes that need to match any language, including unsupported ones.
+ *
+ * @returns {string} Router param specifier string
+ */
+export function getAnyLanguageRouteParam() {
+	return ':lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
+}
+
+/**
  * Matches and returns language from config.languages based on the given localeSlug
  *
  * @param   {string} langSlug locale slug of the language to match
