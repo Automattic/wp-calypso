@@ -12,7 +12,7 @@ export function sortPlans(
 	// Try to find the current paid plan in the plans list
 	if ( currentSitePlanProductSlug && ! isFreePlan( currentSitePlanProductSlug ) ) {
 		firstPlanIndex = gridPlans.findIndex( ( gridPlan ) => {
-			return gridPlan?.planSlug === currentSitePlanProductSlug;
+			return gridPlan.planSlug === currentSitePlanProductSlug;
 		} );
 	}
 

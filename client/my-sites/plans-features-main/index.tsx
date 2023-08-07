@@ -347,7 +347,6 @@ const PlansFeaturesMain = ( {
 		flowName,
 		!! paidDomainName
 	);
-	const isFreeDomainFreePlanModalEnabled = config.isEnabled( 'onboarding-pm/free-free-modal' );
 	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 
 	let _customerType = chooseDefaultCustomerType( {

@@ -57,7 +57,7 @@ describe( 'useIsLargeCurrency', () => {
 
 	test( 'should return true for large values', () => {
 		expect(
-			useIsLargeCurrency( { gridPlans: gridPlans as GridPlan[], returnMonthly: felse } )
+			useIsLargeCurrency( { gridPlans: gridPlans as GridPlan[], returnMonthly: false } )
 		).toEqual( true );
 	} );
 } );
