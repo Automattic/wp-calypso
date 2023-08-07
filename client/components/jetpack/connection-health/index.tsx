@@ -36,8 +36,6 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	if ( jetpackConnectionHealth?.error === DNS_ERROR ) {
 		return (
 			<ErrorNotice
-				eventViewName="calypso_jetpack_connection_health_issue_view"
-				eventClickName="calypso_jetpack_connection_health_issue_click"
 				eventType="dns"
 				errorText={ translate(
 					"Your domain is not properly set up to point to your site. Reset your domain's A records in the Domains section to fix this."
@@ -50,8 +48,6 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 
 	return (
 		<ErrorNotice
-			eventViewName="calypso_jetpack_connection_health_issue_view"
-			eventClickName="calypso_jetpack_connection_health_issue_click"
 			eventType="default"
 			errorText={ translate( 'Jetpack is unable to communicate with your site.' ) }
 			noticeActionHref={ localizeUrl(
