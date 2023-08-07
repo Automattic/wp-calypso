@@ -119,6 +119,7 @@ class ReaderShare extends Component {
 					onMouseEnter={ preloadEditor }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
+					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
 				>
 					{ ! this.props.isReblogSelection ? (
 						ReaderShareIcon( {
