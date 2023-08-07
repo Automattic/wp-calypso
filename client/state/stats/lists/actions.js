@@ -127,9 +127,7 @@ export function requestSiteStats( siteId, statType, query ) {
 					);
 
 		return requestStats
-			.then( ( data ) => {
-				return dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) );
-			} )
+			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
 			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_STATS_REQUEST_FAILURE,
