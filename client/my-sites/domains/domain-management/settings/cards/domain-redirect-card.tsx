@@ -82,7 +82,7 @@ class DomainRedirectCard extends Component {
 		return false;
 	};
 
-	handleChangeSecure = ( event ) => {
+	handleChangeProtocol = ( event ) => {
 		this.setState( { protocol: event.target.value } );
 	};
 
@@ -95,10 +95,10 @@ class DomainRedirectCard extends Component {
 					name="protocol"
 					id="protocol-type"
 					value={ this.state.protocol }
-					onChange={ this.handleChangeSecure }
+					onChange={ this.handleChangeProtocol }
 				>
-					<option value="https">{ translate( 'https://' ) }</option>
-					<option value="http">{ translate( 'http://' ) }</option>
+					<option value="https">https://</option>
+					<option value="http">http://</option>
 				</FormSelect>
 			</>
 		);
