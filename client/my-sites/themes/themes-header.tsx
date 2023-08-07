@@ -1,3 +1,4 @@
+import NavigationHeader from 'calypso/components/navigation-header';
 import './themes-header.scss';
 
 interface Props {
@@ -8,13 +9,9 @@ interface Props {
 
 const ThemesHeader = ( { title, description, children }: Props ) => {
 	return (
-		<div className="themes__header">
-			<div className="themes__page-heading">
-				<h1>{ title }</h1>
-				<p className="page-sub-header">{ description }</p>
-			</div>
+		<NavigationHeader title={ title } subtitle={ description }>
 			{ children }
-		</div>
+		</NavigationHeader>
 	);
 };
 

@@ -31,7 +31,7 @@ interface Props {
 	id?: string;
 	className?: string;
 	children?: ReactNode;
-	navigationItems: TBreadcrumbItem[];
+	navigationItems?: TBreadcrumbItem[];
 	mobileItem?: TBreadcrumbItem;
 	compactBreadcrumb?: boolean;
 	title?: string | ReactNode;
@@ -52,12 +52,14 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 	return (
 		<header id={ id } className={ 'navigation-header ' + className } ref={ ref }>
 			<Container>
-				<Breadcrumb
-					items={ navigationItems }
-					mobileItem={ mobileItem }
-					compact={ compactBreadcrumb }
-					hideWhenOnlyOneLevel
-				/>
+				{ navigationItems && (
+					<Breadcrumb
+						items={ navigationItems }
+						mobileItem={ mobileItem }
+						compact={ compactBreadcrumb }
+						hideWhenOnlyOneLevel
+					/>
+				) }
 				<div className="navigation-header__main">
 					<FormattedHeader align="left" headerText={ title } subHeaderText={ subtitle } />
 					<ActionsContainer>{ children }</ActionsContainer>
