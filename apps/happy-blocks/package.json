@@ -57,6 +57,6 @@
 		"webpack": "^5.68.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^8.0.0"
+		"@wordpress/data": "^9.8.0"
 	}
 }
