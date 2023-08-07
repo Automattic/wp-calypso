@@ -306,13 +306,18 @@ class PostCommentList extends Component {
 	renderCommentsList = ( commentIds ) => {
 		return (
 			<>
-				{ this.props.expandableView && (
-					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
-						{ this.state.isExpanded
-							? translate( 'View less comments' )
-							: translate( 'View more comments' ) }
-					</button>
-				) }
+				{
+					// Only show expand toggle if we are on that view and there is more than 1
+					// comment in the tree. We check "> 2" because the comment tree will also have a
+					// children key aside from all the commentID keys.
+					Object.keys( this.props.commentsTree ).length > 2 && this.props.expandableView && (
+						<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
+							{ this.state.isExpanded
+								? translate( 'View less comments' )
+								: translate( 'View more comments' ) }
+						</button>
+					)
+				}
 				<ol className="comments__list is-root">
 					{ commentIds.map( ( commentId ) => this.renderComment( commentId ) ) }
 				</ol>
