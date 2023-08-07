@@ -3,6 +3,7 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
+import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../../sites-overview/context';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import './style.scss';
@@ -11,7 +12,8 @@ export default function UpgradeLink( { isInline = false } ) {
 	const translate = useTranslate();
 	const { showLicenseInfo } = useContext( SitesOverviewContext );
 
-	const { products } = useContext( DashboardDataContext );
+	const { products, isLargeScreen } = useContext( DashboardDataContext );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, isLargeScreen );
 
 	const monthlyProduct = products.find(
 		( product ) => product.slug === 'jetpack-monitor' && product.price_interval === 'month'
@@ -20,7 +22,7 @@ export default function UpgradeLink( { isInline = false } ) {
 	const price = monthlyProduct && formatCurrency( monthlyProduct.amount, monthlyProduct.currency );
 
 	const handleOnClick = () => {
-		// TODO: Add event tracking here
+		recordEvent( 'downtime_monitoring_upgrade_link_click' );
 		showLicenseInfo( 'monitor' );
 	};
 
