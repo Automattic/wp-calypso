@@ -95,6 +95,7 @@ class PostCommentList extends Component {
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
 		commentText: '',
+		isExpanded: false,
 	};
 
 	shouldFetchInitialComment = () => {
@@ -295,11 +296,27 @@ class PostCommentList extends Component {
 		this.setActiveReplyComment( null );
 	};
 
+	toggleExpanded = ( ev ) => {
+		if ( this.props.expandableView ) {
+			ev.stopPropagation();
+			this.setState( { isExpanded: ! this.state.isExpanded } );
+		}
+	};
+
 	renderCommentsList = ( commentIds ) => {
 		return (
-			<ol className="comments__list is-root">
-				{ commentIds.map( ( commentId ) => this.renderComment( commentId ) ) }
-			</ol>
+			<>
+				{ this.props.expandableView && (
+					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
+						{ this.state.isExpanded
+							? translate( 'View less comments' )
+							: translate( 'View more comments' ) }
+					</button>
+				) }
+				<ol className="comments__list is-root">
+					{ commentIds.map( ( commentId ) => this.renderComment( commentId ) ) }
+				</ol>
+			</>
 		);
 	};
 
@@ -354,7 +371,7 @@ class PostCommentList extends Component {
 			return null;
 		}
 
-		if ( this.props.expandableView ) {
+		if ( this.props.expandableView && ! this.state.isExpanded ) {
 			const mostRecentComment = this.getMostRecentComment( this.props.commentsTree );
 
 			return {
