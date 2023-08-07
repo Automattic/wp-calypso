@@ -300,7 +300,7 @@ export default function seriesBarsPlugin(
 					const splits: any[] = [];
 
 					distr(
-						u.data.length + 1,
+						u.data?.[ 1 ]?.length,
 						groupWidth,
 						groupDistr,
 						null,
