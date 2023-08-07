@@ -31,7 +31,7 @@ function SubscribersTeam( props: Props ) {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
-		isJetpackConnectionProblem( state, site?.ID )
+		isJetpackConnectionProblem( state, site?.ID as number )
 	);
 	const pendingInvites = useSelector( ( state ) =>
 		getPendingInvitesForSite( state, site?.ID as number )
