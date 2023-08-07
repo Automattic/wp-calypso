@@ -66,6 +66,10 @@ class PostCommentList extends Component {
 		commentsFilter: PropTypes.string,
 		followSource: PropTypes.string,
 
+		// To show only the most recent comment by default, and allow expanding to see the longer
+		// list.
+		expandableView: PropTypes.bool,
+
 		// To display comments with a different status but not fetch them
 		// e.g. Reader full post view showing unapproved comments made to a moderated site
 		commentsFilterDisplay: PropTypes.string,
@@ -85,6 +89,7 @@ class PostCommentList extends Component {
 		maxDepth: Infinity,
 		showNestingReplyArrow: false,
 		showConversationFollowButton: false,
+		expandableView: false,
 	};
 
 	state = {
@@ -317,6 +322,27 @@ class PostCommentList extends Component {
 	};
 
 	/**
+	 * Gets most recent comment from a commentTree
+	 *
+	 * @param {Object<Object>} commentsTree The tree of comment objects.
+	 * @returns {Object} The most recent comment.
+	 */
+	getMostRecentComment = ( commentsTree ) => {
+		let mostRecentByDate;
+		for ( const key in commentsTree ) {
+			const currentObject = commentsTree[ key ];
+			if (
+				( ! mostRecentByDate || currentObject.data?.date > mostRecentByDate.data?.date ) &&
+				// TODO - can we/should we show pending items if user viewing is moderator?
+				currentObject.data?.status === 'approved'
+			) {
+				mostRecentByDate = currentObject;
+			}
+		}
+		return mostRecentByDate;
+	};
+
+	/**
 	 * Gets comments for display
 	 *
 	 * @param {Array<number>} commentIds The top level commentIds to take from
@@ -326,6 +352,15 @@ class PostCommentList extends Component {
 	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {
 			return null;
+		}
+
+		if ( this.props.expandableView ) {
+			const mostRecentComment = this.getMostRecentComment( this.props.commentsTree );
+
+			return {
+				displayedComments: mostRecentComment ? [ mostRecentComment.data.ID ] : [],
+				displayedCommentsCount: mostRecentComment ? 1 : 0,
+			};
 		}
 
 		const displayedComments = numberToTake ? commentIds.slice( numberToTake * -1 ) : [];

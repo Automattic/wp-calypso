@@ -266,14 +266,24 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const commentGoo = () => {
+		const postCardComments = () => {
 			if ( ! post.discussion?.comments_open ) {
 				return;
 			}
 			// TODO - check if we already have them before requesting?
 			this.props.requestPostComments( { siteId: post.site_ID, postId: post.ID } );
+
+			// TODO? - loading state if still fetching?
+
 			// Find a way to only show most recent comment and make expandable.
-			return <PostComments post={ { ID: post.ID, site_ID: site?.ID } } shouldPollForNewComments />;
+			// Lets denote this with a 'expandableView' prop.
+			return (
+				<PostComments
+					post={ { ID: post.ID, site_ID: site?.ID } }
+					shouldPollForNewComments
+					expandableView={ true }
+				/>
+			);
 		};
 
 		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
@@ -282,7 +292,7 @@ class ReaderPostCard extends Component {
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
-				{ commentGoo() }
+				{ ! isConversations && postCardComments() }
 			</Card>
 		);
 	}
