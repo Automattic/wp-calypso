@@ -54,7 +54,7 @@ const useCampaignsQueryNew = ( siteId: number, campaignId: number, queryOptions 
 	return useQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, campaignId ],
 		queryFn: async () => {
-			const campaign = await requestDSPHandleErrors(
+			const campaign = await requestDSPHandleErrors< CampaignResponse >(
 				siteId,
 				`/sites/${ siteId }/campaigns/${ campaignId }`
 			);

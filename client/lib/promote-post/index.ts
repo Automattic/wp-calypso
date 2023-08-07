@@ -21,6 +21,10 @@ type NewDSPUserResult = {
 	new_dsp_user: boolean;
 };
 
+type DSPError = {
+	errorCode: string;
+};
+
 declare global {
 	interface Window {
 		BlazePress?: {
@@ -213,9 +217,9 @@ export const requestDSP = async < T >(
 };
 
 const handleDSPError = async < T >(
-	error: any,
+	error: DSPError,
 	siteId: number,
-	callerURl: string
+	currentURL: string
 ): Promise< T > => {
 	if ( error.errorCode === DSP_ERROR_NO_LOCAL_USER ) {
 		const createUserQuery = await requestDSP< NewDSPUserResult >(
@@ -224,7 +228,7 @@ const handleDSPError = async < T >(
 		);
 		if ( createUserQuery.new_dsp_user ) {
 			// then we should retry the original query
-			return await requestDSP< T >( siteId, callerURl );
+			return await requestDSP< T >( siteId, currentURL );
 		}
 	}
 	throw error;
@@ -234,7 +238,7 @@ export const requestDSPHandleErrors = async < T >( siteId: number, url: string )
 	try {
 		return await requestDSP( siteId, url );
 	} catch ( e ) {
-		return await handleDSPError( e, siteId, url );
+		return await handleDSPError( e as DSPError, siteId, url );
 	}
 };
 
