@@ -1095,25 +1095,31 @@ class ManagePurchase extends Component<
 			},
 		};
 		const supportText = translate(
-			' Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
+			'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
 			helpOptions
 		);
 
 		const cancelText = translate(
-			' Cancel Domain and Refund? Please {{a}}click here.{{/a}}',
+			'Cancel Domain and Refund? Please {{a}}click here.{{/a}}',
 			cancelOptions
 		);
 
 		const domainTransferDuration = translate(
-			' Domain transfers can take anywhere from five to seven days to complete'
+			'Domain transfers can take anywhere from five to seven days to complete.'
 		);
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">
-					{ this.getPurchaseDescription() }
-					{ purchase.productType === 'domain_transfer' && supportText }
-					{ purchase.productType === 'domain_transfer' && cancelText }
-					{ purchase.productType === 'domain_transfer' && domainTransferDuration }
+					<div className="manage-purchase__content-domain-description">
+						{ this.getPurchaseDescription() }
+					</div>
+					<div className="manage-purchase__content-domain-description">
+						{ purchase.productType === 'domain_transfer' && cancelText }
+						{ purchase.productType === 'domain_transfer' && ' ' + domainTransferDuration }
+					</div>
+					<div className="manage-purchase__content-domain-description">
+						{ purchase.productType === 'domain_transfer' && supportText }
+					</div>
 				</span>
 
 				<span className="manage-purchase__settings-link">
