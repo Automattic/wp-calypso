@@ -229,6 +229,7 @@ export function SiteMetrics() {
 				title={ __( 'Requests per minute & average response time' ) }
 				data={ formattedData as uPlot.AlignedData }
 				legendLabelLine1={ __( 'Requests per minute' ) }
+				legendLabelLine2={ __( 'Average response time (ms)' ) }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
@@ -256,6 +257,11 @@ export function SiteMetrics() {
 				title={ __( '400 vs 500 HTTP responses' ) }
 				data={ formattedDataHTTP as uPlot.AlignedData }
 				legendLabelLine1={ __( 'HTTP 400: Bad Request' ) }
+				legendLabelLine2={ __( 'HTTP 500: Internal server error' ) }
+				fillLine1="rgba(242, 215, 107, 0.1)"
+				fillLine2="rgba(235, 101, 148, 0.1)"
+				strokeLine1="rgba(242, 215, 107, 1)"
+				strokeLine2="rgba(235, 101, 148, 1)"
 			></SiteMonitoringLineChart>
 		</Main>
 	);

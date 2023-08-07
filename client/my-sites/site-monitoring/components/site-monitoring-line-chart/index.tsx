@@ -24,6 +24,11 @@ interface UplotChartProps {
 	solidFill?: boolean;
 	period?: string;
 	legendLabelLine1: string;
+	legendLabelLine2: string;
+	fillLine1?: string;
+	fillLine2?: string;
+	strokeLine1?: string;
+	strokeLine2?: string;
 }
 
 export function formatChatHour( date: Date ): string {
@@ -39,9 +44,14 @@ export const SiteMonitoringLineChart = ( {
 	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
 	options: propOptions,
+	fillLine1 = 'rgba(6, 117, 196, 0.1)',
+	fillLine2 = 'rgba(0, 135, 99, 0.2)',
 	solidFill = false,
 	period,
 	legendLabelLine1 = 'Default text for line 1',
+	legendLabelLine2 = 'Default text for line 2',
+	strokeLine1 = '#0675C4',
+	strokeLine2 = '#008763',
 }: UplotChartProps ) => {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
@@ -123,9 +133,9 @@ export const SiteMonitoringLineChart = ( {
 						},
 					},
 					{
-						fill: 'rgba(6, 117, 196, 0.1)',
+						fill: fillLine1,
 						label: legendLabelLine1,
-						stroke: '#0675C4',
+						stroke: strokeLine1,
 						width: 2,
 						paths: ( u, seriesIdx, idx0, idx1 ) => {
 							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
@@ -142,9 +152,9 @@ export const SiteMonitoringLineChart = ( {
 						},
 					},
 					{
-						fill: 'rgba(0, 135, 99, 0.2)',
-						label: translate( 'Average response time' ),
-						stroke: '#008763',
+						fill: fillLine2,
+						label: legendLabelLine2,
+						stroke: strokeLine2,
 						width: 2,
 						paths: ( u, seriesIdx, idx0, idx1 ) => {
 							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
@@ -177,13 +187,16 @@ export const SiteMonitoringLineChart = ( {
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
 		}, [
-			fillColor,
+			fillLine1,
+			fillLine2,
 			legendContainer,
+			legendLabelLine1,
+			legendLabelLine2,
 			period,
 			propOptions,
-			scaleGradient,
-			solidFill,
 			spline,
+			strokeLine1,
+			strokeLine2,
 			translate,
 		] )
 	);
