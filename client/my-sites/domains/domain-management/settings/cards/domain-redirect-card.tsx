@@ -32,7 +32,7 @@ class DomainRedirectCard extends Component {
 
 	state = {
 		targetHost: this.props.redirect.targetHost,
-		secure: this.props.redirect.secure ? 1 : 0,
+		protocol: this.props.redirect.secure ? 'https' : 'http',
 	};
 
 	componentDidMount() {
@@ -74,8 +74,7 @@ class DomainRedirectCard extends Component {
 	};
 
 	handleChangeSecure = ( event ) => {
-		const isSecure = event.target.value;
-		this.setState( { secure: isSecure } );
+		this.setState( { protocol: event.target.value } );
 	};
 
 	render() {
@@ -86,11 +85,11 @@ class DomainRedirectCard extends Component {
 				<FormSelect
 					name="protocol"
 					id="protocol-type"
-					value={ this.state.secure }
+					value={ this.state.protocol }
 					onChange={ this.handleChangeSecure }
 				>
-					<option value="0">{ translate( 'http://' ) }</option>
-					<option value="1">{ translate( 'https://' ) }</option>
+					<option value="https">{ translate( 'https://' ) }</option>
+					<option value="http">{ translate( 'http://' ) }</option>
 				</FormSelect>
 			</>
 		);
@@ -130,7 +129,7 @@ class DomainRedirectCard extends Component {
 						isFetching ||
 						isUpdating ||
 						( this.props.redirect?.targetHost === this.state.targetHost &&
-							( this.props.redirect.secure ? 1 : 0 ) === this.state.secure )
+							( this.props.redirect.secure ? 'https' : 'http' ) === this.state.protcol )
 					}
 					onClick={ this.handleClick }
 				>
