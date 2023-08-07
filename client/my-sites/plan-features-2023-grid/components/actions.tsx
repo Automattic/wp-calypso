@@ -426,7 +426,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	}
 
 	const priceString = formatCurrency(
-		discountedPrice.monthly || originalPrice.monthly,
+		( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
 		currencyCode || 'USD',
 		{
 			stripZeros: true,
