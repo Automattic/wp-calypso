@@ -302,7 +302,6 @@ export class PlanFeatures2023Grid extends Component<
 							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
 						}
 					</StickyContainer>
-					<tr>{ this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true } ) }</tr>
 					<tr>
 						{ this.maybeRenderRefundNotice( gridPlansWithoutSpotlight, { isTableCell: true } ) }
 					</tr>
