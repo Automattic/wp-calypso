@@ -7,6 +7,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { calculateTimeRange } from '../components/time-range-picker';
 import { useSiteMetricsData } from '../main';
 import { useSiteMetricsQuery } from '../use-metrics-query';
 
@@ -33,6 +34,7 @@ const INITIAL_STATE = {
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
 const queryClient = new QueryClient();
+const timeRange = calculateTimeRange( '24-hours' );
 
 describe( 'useSiteMetrics test', () => {
 	beforeAll( () => {
@@ -68,7 +70,7 @@ describe( 'useSiteMetrics test', () => {
 		);
 
 		// Call the useSiteMetricsData function directly within the test
-		const { result } = renderHook( () => useSiteMetricsData(), { wrapper } );
+		const { result } = renderHook( () => useSiteMetricsData( timeRange ), { wrapper } );
 
 		// Get the formattedData from the hook's result
 		const { formattedData } = result.current;
@@ -97,10 +99,38 @@ describe( 'useSiteMetrics test', () => {
 			</QueryClientProvider>
 		);
 
-		const { result } = renderHook( () => useSiteMetricsData(), { wrapper } );
+		const { result } = renderHook( () => useSiteMetricsData( timeRange ), { wrapper } );
 
 		const { formattedData } = result.current;
 
 		expect( formattedData ).toEqual( [ [ 1685577600 ], [ 0.0030000000000000005 ] ] );
+	} );
+
+	it( 'should return formattedData for the case with dimension being an array and an object', () => {
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+						{ timestamp: 1685577800, dimension: [] },
+					],
+				},
+			},
+		} );
+
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useSiteMetricsData( timeRange ), { wrapper } );
+
+		const { formattedData } = result.current;
+
+		expect( formattedData ).toEqual( [
+			[ 1685577600, 1685577800 ],
+			[ 0.0030000000000000005, 0 ],
+		] );
 	} );
 } );

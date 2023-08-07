@@ -107,6 +107,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plans/updated-storage-labels": true,
+		"plans/upgradeable-storage": false,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
@@ -174,7 +175,8 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/hosting-metrics-i1": false
+		"yolo/hosting-metrics-i1": false,
+		"yolo/jetpack-error-ux-i1": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

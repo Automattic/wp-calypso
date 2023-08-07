@@ -18,7 +18,7 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 	return `https://wordpress.com${ purchasePath }`;
 };
 
-const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
+const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
@@ -67,6 +67,9 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 		return null;
 	}
 
+	const noPurchaseTitle = translate( 'Do you love Jetpack Stats?' );
+	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
@@ -75,11 +78,11 @@ const DoYouLoveJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
 		>
 			<NoticeBanner
 				level="info"
-				title={ translate( 'Do you love Jetpack Stats?' ) }
+				title={ hasFreeStats ? freeTitle : noPurchaseTitle }
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					'{{p}}Upgrade Jetpack Stats to unlock upcoming features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+					'{{p}}Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,

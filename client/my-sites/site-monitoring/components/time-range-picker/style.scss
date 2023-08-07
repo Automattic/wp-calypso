@@ -1,0 +1,18 @@
+.site-monitoring-time-range-picker__controls {
+	max-width: 329px;
+	flex-grow: 1;
+}
+
+.site-monitoring-time-range-picker__container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-bottom: 28px;
+}
+
+.site-monitoring-time-range-picker__heading {
+	margin-right: 10px; /* Adjust the spacing between heading and controls */
+	font-weight: 400;
+	font-size: 0.875rem;
+	line-height: 20px;
+}

@@ -14,6 +14,7 @@ import {
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import {
 	JetpackLogo,
@@ -60,6 +61,8 @@ import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
+import { StickyContainer } from './components/sticky-container';
+import { StorageAddOnDropdown } from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
@@ -74,7 +77,10 @@ import './style.scss';
 
 type PlanRowOptions = {
 	isTableCell?: boolean;
+	isStuck?: boolean;
 };
+
+export type PlanSelectedStorage = { [ key: string ]: WPComStorageAddOnSlug | null };
 
 const Container = (
 	props: (
@@ -115,6 +121,8 @@ export type PlanFeatures2023GridProps = {
 	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 	spotlightPlanSlug?: PlanSlug;
+	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
+	stickyRowOffset: number;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -137,6 +145,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
+	selectedStorage: PlanSelectedStorage;
 };
 
 const PlanLogo: React.FunctionComponent< {
@@ -214,8 +223,9 @@ export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
-	state = {
+	state: PlanFeatures2023GridState = {
 		showPlansComparisonGrid: false,
+		selectedStorage: {},
 	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
@@ -229,6 +239,15 @@ export class PlanFeatures2023Grid extends Component<
 	toggleShowPlansComparisonGrid = () => {
 		this.setState( ( { showPlansComparisonGrid } ) => ( {
 			showPlansComparisonGrid: ! showPlansComparisonGrid,
+		} ) );
+	};
+
+	setSelectedStorage = ( updatedSelectedStorage: PlanSelectedStorage ) => {
+		this.setState( ( { selectedStorage } ) => ( {
+			selectedStorage: {
+				...selectedStorage,
+				...updatedSelectedStorage,
+			},
 		} ) );
 	};
 
@@ -340,7 +359,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTable( planProperties: PlanProperties[] ) {
-		const { translate, spotlightPlanSlug } = this.props;
+		const { translate, spotlightPlanSlug, stickyRowOffset, isInSignup } = this.props;
 
 		// Do not render the spotlight plan if it exists
 		const planPropertiesToRender = planProperties.filter(
@@ -363,7 +382,16 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanTagline( planPropertiesToRender, { isTableCell: true } ) }</tr>
 					<tr>{ this.renderPlanPrice( planPropertiesToRender, { isTableCell: true } ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesToRender, { isTableCell: true } ) }</tr>
-					<tr>{ this.renderTopButtons( planPropertiesToRender, { isTableCell: true } ) }</tr>
+					<StickyContainer
+						stickyClass="is-sticky-top-buttons-row"
+						element="tr"
+						stickyOffset={ stickyRowOffset }
+						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
+					>
+						{ ( isStuck: boolean ) =>
+							this.renderTopButtons( planPropertiesToRender, { isTableCell: true, isStuck } )
+						}
+					</StickyContainer>
 					<tr>{ this.maybeRenderRefundNotice( planPropertiesToRender, { isTableCell: true } ) }</tr>
 					<tr>
 						{ this.renderPreviousFeaturesIncludedTitle( planPropertiesToRender, {
@@ -685,12 +713,14 @@ export class PlanFeatures2023Grid extends Component<
 			selectedSiteSlug,
 			translate,
 			planActionOverrides,
+			siteId,
+			isLargeCurrency,
 		} = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
-				const { planName, planConstantObj, current } = properties;
+				const { planName, planConstantObj, current, currencyCode } = properties;
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
 					'is-top-buttons',
@@ -726,13 +756,18 @@ export class PlanFeatures2023Grid extends Component<
 							isLaunchPage={ isLaunchPage }
 							onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 							planName={ planConstantObj.getTitle() }
-							planType={ planName }
+							planSlug={ planName }
 							flowName={ flowName }
 							current={ current ?? false }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							selectedSiteSlug={ selectedSiteSlug }
 							buttonText={ buttonText }
 							planActionOverrides={ planActionOverrides }
+							showMonthlyPrice={ true }
+							siteId={ siteId }
+							isStuck={ options?.isStuck || false }
+							isLargeCurrency={ isLargeCurrency }
+							currencyCode={ currencyCode || 'USD' }
 						/>
 					</Container>
 				);
@@ -892,7 +927,9 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
+		const { translate, intervalType, showUpgradeableStorage } = this.props;
+		const { selectedStorage } = this.state;
+
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
@@ -901,16 +938,31 @@ export class PlanFeatures2023Grid extends Component<
 				}
 
 				const { planName, storageOptions } = properties;
-				const storageJSX = storageOptions.map( ( storageFeature: string ) => {
-					if ( storageFeature.length <= 0 ) {
-						return;
-					}
-					return (
-						<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-							{ getStorageStringFromFeature( storageFeature ) }
-						</div>
-					);
-				} );
+
+				const shouldRenderStorageTitle =
+					storageOptions.length === 1 ||
+					( intervalType !== 'yearly' && storageOptions.length > 0 ) ||
+					( ! showUpgradeableStorage && storageOptions.length > 0 );
+				const canUpgradeStorageForPlan =
+					storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+
+				const storageJSX = canUpgradeStorageForPlan ? (
+					<StorageAddOnDropdown
+						planProperties={ properties }
+						selectedStorage={ selectedStorage }
+						setSelectedStorage={ this.setSelectedStorage }
+					/>
+				) : (
+					storageOptions.map( ( storageOption ) => {
+						if ( ! storageOption?.isAddOn ) {
+							return (
+								<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
+									{ getStorageStringFromFeature( storageOption?.slug ) }
+								</div>
+							);
+						}
+					} )
+				);
 
 				return (
 					<Container
@@ -918,7 +970,7 @@ export class PlanFeatures2023Grid extends Component<
 						className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
 						isTableCell={ options?.isTableCell }
 					>
-						{ storageOptions.length ? (
+						{ shouldRenderStorageTitle ? (
 							<div className="plan-features-2023-grid__storage-title">
 								{ translate( 'Storage' ) }
 							</div>
@@ -1066,7 +1118,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 							isCurrentPlan
 						) ) ||
 					[];
-
 				const availableForPurchase =
 					isInSignup || ( siteId ? isPlanAvailableForPurchase( state, siteId, plan ) : false );
 

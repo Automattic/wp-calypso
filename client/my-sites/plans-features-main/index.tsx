@@ -1,17 +1,18 @@
+import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	getPlan,
+	getPlanClass,
+	getPlanPath,
 	isFreePlan,
 	isPersonalPlan,
-	getPlanPath,
-	PLAN_PERSONAL,
 	PlanSlug,
-	getPlanClass,
+	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useLayoutEffect, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -25,6 +26,7 @@ import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-ite
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -35,26 +37,31 @@ import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import usePlansWithIntent, {
 	GridPlan,
 } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
+import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
+import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import usePlanUpgradeabilityCheck from './hooks/use-plan-upgradeability-check';
-import useSuggestedFreeDomainFromPaidDomain from './hooks/use-suggested-free-domain-from-paid-domain';
+import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type { IntervalType } from './types';
 import type { PlansIntent } from '../plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type {
-	PlanActionOverrides,
 	DataResponse,
+	PlanActionOverrides,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
+
 import './style.scss';
+
+const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
 
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
@@ -69,6 +76,9 @@ export interface PlansFeaturesMainProps {
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
+	freeSubdomain?: string;
+	siteTitle?: string;
+	signupFlowUserName?: string;
 	flowName?: string | null;
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: DomainSuggestion ) => void;
@@ -94,6 +104,7 @@ export interface PlansFeaturesMainProps {
 }
 
 type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
+	showUpgradeableStorage: boolean;
 	visiblePlans: PlanSlug[];
 	planRecords: Record< PlanSlug, GridPlan >;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
@@ -148,6 +159,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isCustomDomainAllowedOnFreePlan,
 		showLegacyStorageFeature,
 		isSpotlightOnCurrentPlan,
+		showUpgradeableStorage,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -181,6 +193,44 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		) as PlanSlug | undefined;
 	}
 
+	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
+
+	/**
+	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
+	 * for the sticky CTA bar.
+	 */
+	useLayoutEffect( () => {
+		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
+
+		if ( ! masterbarElement ) {
+			return;
+		}
+
+		if ( ! window.ResizeObserver ) {
+			setMasterbarHeight( masterbarElement.offsetHeight );
+			return;
+		}
+
+		let lastHeight = masterbarElement.offsetHeight;
+
+		const observer = new ResizeObserver(
+			( [ masterbar ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
+				const currentHeight = masterbar.contentRect.height;
+
+				if ( currentHeight !== lastHeight ) {
+					setMasterbarHeight( currentHeight );
+					lastHeight = currentHeight;
+				}
+			}
+		);
+
+		observer.observe( masterbarElement );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
+
 	const asyncProps: PlanFeatures2023GridProps = {
 		paidDomainName,
 		wpcomFreeDomainSuggestion,
@@ -204,6 +254,8 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		showLegacyStorageFeature,
 		spotlightPlanSlug,
+		showUpgradeableStorage,
+		stickyRowOffset: masterbarHeight,
 	};
 
 	const asyncPlanFeatures2023Grid = (
@@ -228,6 +280,9 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 
 const PlansFeaturesMain = ( {
 	paidDomainName,
+	freeSubdomain: signupFlowSubdomain,
+	siteTitle,
+	signupFlowUserName,
 	flowName,
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
@@ -263,6 +318,7 @@ const PlansFeaturesMain = ( {
 	isSpotlightOnCurrentPlan,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
+	const [ isFreeFreeUpsellOpen, setIsFreeFreeUpsellOpen ] = useState( false );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -278,6 +334,10 @@ const PlansFeaturesMain = ( {
 	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
 		flowName,
 		paidDomainName
+	);
+	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
+		flowName,
+		!! paidDomainName
 	);
 
 	let _customerType = chooseDefaultCustomerType( {
@@ -314,13 +374,28 @@ const PlansFeaturesMain = ( {
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
 		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
-		if (
-			( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
-			paidDomainName &&
-			! cartItemForPlan
-		) {
-			toggleIsFreePlanPaidDomainDialogOpen();
-			return;
+		if ( ! cartItemForPlan ) {
+			/**
+			 * Delay showing modal until the experiments have loaded
+			 */
+			if (
+				isCustomDomainAllowedOnFreePlan.isLoading ||
+				isPlanUpsellEnabledOnFreeDomain.isLoading
+			) {
+				return;
+			}
+
+			/**
+			 * After the experiments are loaded now open the relevant modal based on previous step parameters
+			 */
+			if ( paidDomainName ) {
+				toggleIsFreePlanPaidDomainDialogOpen();
+				return;
+			}
+			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
+				setIsFreeFreeUpsellOpen( true );
+				return;
+			}
 		}
 
 		if ( onUpgradeClick ) {
@@ -376,6 +451,7 @@ const PlansFeaturesMain = ( {
 			hideBusinessPlan,
 			hideEcommercePlan,
 		} ) || null;
+
 	// merge/update default plans with plans with intent
 	const gridPlanRecords = {
 		...defaultPlanRecords,
@@ -389,9 +465,17 @@ const PlansFeaturesMain = ( {
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
 		hidePlanSelector = true;
 	}
-
+	const currentUserName = useSelector( getCurrentUserName );
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
-		useSuggestedFreeDomainFromPaidDomain( paidDomainName );
+		useGetFreeSubdomainSuggestion(
+			paidDomainName || siteTitle || signupFlowUserName || currentUserName
+		);
+	const resolvedSubdomainName: DataResponse< string > = {
+		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
+		result: signupFlowSubdomain
+			? signupFlowSubdomain
+			: wpcomFreeDomainSuggestion.result?.domain_name,
+	};
 
 	const planTypeSelectorProps = {
 		basePlansPath,
@@ -408,6 +492,18 @@ const PlansFeaturesMain = ( {
 		kind: planTypeSelector,
 		plans: Object.keys( visiblePlans ),
 	};
+
+	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+
+	/**
+	 * The spotlight in smaller grids looks broken.
+	 * So for now we only allow the spotlight in the default grid plans grid where we display all 6 plans.
+	 * In order to accommodate this for other variations with lesser number of plans the design needs to be reworked.
+	 * Or else the intent needs to be explicitly allow the spotlight to be shown in this relevant intent.
+	 * Eventually once the spotlight card is made responsive this flag can be removed.
+	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
+	 */
+	const isSpotlightOnCurrentPlanAllowed = SPOTLIGHT_ENABLED_INTENTS.includes( intent );
 
 	return (
 		<div
@@ -438,6 +534,28 @@ const PlansFeaturesMain = ( {
 						onUpgradeClick?.( null );
 					} }
 					onPlanSelected={ () => {
+						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+						onUpgradeClick?.( cartItemForPlan );
+					} }
+				/>
+			) }
+			{ isFreeFreeUpsellOpen && (
+				<FreePlanFreeDomainDialog
+					suggestedPlanSlug={ PLAN_PERSONAL }
+					freeSubdomain={ resolvedSubdomainName }
+					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
+					onFreePlanSelected={ () => {
+						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+						}
+						invalidateDomainSuggestionCache();
+						onUpgradeClick?.( null );
+					} }
+					onPlanSelected={ () => {
+						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
+							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
+						}
+						invalidateDomainSuggestionCache();
 						const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
 						onUpgradeClick?.( cartItemForPlan );
 					} }
@@ -486,7 +604,8 @@ const PlansFeaturesMain = ( {
 						intent={ intent }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						showLegacyStorageFeature={ showLegacyStorageFeature }
-						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlan }
+						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlanAllowed && isSpotlightOnCurrentPlan }
+						showUpgradeableStorage={ showUpgradeableStorage }
 					/>
 				</>
 			) }

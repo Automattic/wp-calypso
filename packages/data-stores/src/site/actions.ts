@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { PLACEHOLDER_SITE_ID } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -503,7 +502,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteSlug: string,
 		design: Design,
 		globalStyles: GlobalStyles | null = null,
-		sourceSiteId: number = PLACEHOLDER_SITE_ID
+		sourceSiteId?: number
 	) {
 		const stylesheet = design?.recipe?.stylesheet || '';
 		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
@@ -532,7 +531,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		);
 
 		yield runThemeSetupOnSite( siteSlug, design, {
-			trimContent: false,
+			// trimContent true ensures that the starter content is trimmed in case sourceSiteId is defined
+			// For instance only a max of three posts will be added to the user site
+			trimContent: true,
 			posts_source_site_id: sourceSiteId,
 		} );
 

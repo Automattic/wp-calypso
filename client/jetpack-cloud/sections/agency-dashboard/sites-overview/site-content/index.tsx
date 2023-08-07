@@ -8,10 +8,7 @@ import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { addQueryArgs } from 'calypso/lib/url';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
-import {
-	useDashboardShowLargeScreen,
-	useJetpackAgencyDashboardRecordTrackEvent,
-} from '../../hooks';
+import useJetpackAgencyDashboardRecordTrackEvent from '../../hooks/use-jetpack-agency-dashboard-record-track-event';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
@@ -19,7 +16,7 @@ import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
 import { formatSites, getProductSlugFromProductType, siteColumns } from '../utils';
-
+import useDashboardShowLargeScreen from './use-dashboard-show-large-screen';
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {

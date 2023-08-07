@@ -28,28 +28,11 @@ body.dns__body-white {
 }
 
 .dns-records {
-	.formatted-header {
-		&.is-left-align,
-		&.is-right-align {
-			margin-bottom: 4px;
-
-			h1.formatted-header__title {
-				color: $gray-900;
-				font-size: $font-title-medium;
-
-				@include break-mobile {
-					font-size: $font-title-large;
-				}
-			}
-		}
-	}
-
 	.dns__details {
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
 		margin: 4px 16px;
 		@include break-mobile {
-			margin: 0;
 			max-width: 677px;
 		}
 	}
@@ -74,7 +57,7 @@ body.dns__body-white {
 			}
 
 			@include break-mobile {
-				padding: 16px 0;
+				padding: 16px;
 				border-top: none;
 				border-bottom: 1px solid $gray-5;
 			}

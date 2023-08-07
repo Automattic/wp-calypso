@@ -7,7 +7,7 @@ export type EnvVariables = {
 
 export type ViewportName = string;
 export type TestLocales = string[];
-export type JetpackTarget = 'remote-site' | 'wpcom-production' | 'wpcom-staging';
+export type JetpackTarget = 'remote-site' | 'wpcom-production' | 'wpcom-deployment';
 
 export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;

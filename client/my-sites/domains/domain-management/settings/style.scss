@@ -25,24 +25,6 @@ body.edit__body-white.theme-default.color-scheme {
 			header.settings-header__title {
 				margin: 8px 0;
 				text-transform: lowercase;
-
-				.formatted-header__title {
-					font-weight: 400;
-					margin: 0;
-					line-height: 100%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-
-					@include break-zoomed-in {
-						font-size: $font-title-medium;
-					}
-
-					@include break-small {
-						font-size: $font-title-large;
-					}
-				}
-			}
-
-			@include breakpoint-deprecated( "<660px" ) {
-				margin: 8px 16px 24px;
 			}
 		}
 
