@@ -17,6 +17,15 @@ body.is-section-promote-post-i2 {
 
 	.post-item__row {
 		width: 100%;
+
+		&_experimental { // A/B testing "dsp_blaze_open_widget_button_202308"
+			.post-item__post-promote .components-button.is-primary {
+				color: var(--color-accent);
+				background-color: var(--color-accent-0);
+				border-radius: 4px;
+			}
+		}
+
 	}
 
 	.post-item__post {
@@ -228,6 +237,13 @@ body.is-section-promote-post-i2 {
 			height: 40px;
 			margin-left: 8px;
 		}
+
+		.post-item__post-data .post-item__row_experimental .post-item__actions-mobile button.post-item__post-promote-button {
+			color: var(--color-accent);
+			background-color: var(--color-accent-0);
+		}
+
+
 	}
 }
 

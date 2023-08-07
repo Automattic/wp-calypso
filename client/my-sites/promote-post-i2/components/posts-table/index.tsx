@@ -1,9 +1,8 @@
 import '../campaigns-table/style.scss';
-
+import { useState, useEffect } from 'react';
 import { BlazablePost } from 'calypso/data/promote-post/types';
-import { Experiment } from 'calypso/lib/explat';
+// import { useExperiment } from 'calypso/lib/explat';
 import PostItem from 'calypso/my-sites/promote-post-i2/components/post-item';
-import PostItemV02 from 'calypso/my-sites/promote-post-i2/components/post-item-v02';
 import { ItemsLoading, SingleItemLoading } from '../campaigns-table';
 import PostsListHeader from '../posts-list/header';
 
@@ -16,13 +15,28 @@ interface Props {
 export default function PostsTable( props: Props ) {
 	const { posts, isLoading, isFetchingPageResults } = props;
 
-	const DefaultItem = posts.map( ( post: BlazablePost ) => {
-		return <PostItemV02 key={ `post-id${ post.ID }` } post={ post } />;
-	} );
+	// const testExperimentName = 'wpcom_gf_website_builder_lp_aa_test_v2';
+	// const [ isLoadingExperimentAssignment, experimentAssignment ] =
+	// 	useExperiment( testExperimentName );
 
-	const ExperimentItem = posts.map( ( post: BlazablePost ) => {
-		return <PostItem key={ `post-id${ post.ID }` } post={ post } />;
-	} );
+	// const isLoadingExperimentAssignment = true;
+	const isLoadingExperimentAssignment = false;
+	const experimentAssignment = {
+		// variationName: undefined,
+		// variationName: null, // control group
+		variationName: 'treatment', // treatment group
+	};
+
+	const postClassPrefix = 'post-item__row_experimental_experiment';
+	const [ postClassName, setPostClassName ] = useState( `${ postClassPrefix }-loading` );
+
+	useEffect( () => {
+		if ( ! isLoadingExperimentAssignment && undefined !== experimentAssignment?.variationName ) {
+			const className =
+				experimentAssignment?.variationName === 'treatment' ? 'post-item__row_experimental' : '';
+			setPostClassName( className );
+		}
+	}, [ isLoadingExperimentAssignment ] );
 
 	return (
 		<table className="promote-post-i2__table">
@@ -33,12 +47,11 @@ export default function PostsTable( props: Props ) {
 					<ItemsLoading />
 				) : (
 					<>
-						<Experiment
-							name="dsp_blaze_open_widget_button_202308"
-							defaultExperience={ DefaultItem }
-							treatmentExperience={ ExperimentItem }
-							loadingExperience={ <></> }
-						/>
+						{ posts.map( ( post: BlazablePost ) => {
+							return (
+								<PostItem key={ `post-id${ post.ID }` } post={ post } className={ postClassName } />
+							);
+						} ) }
 						{ isFetchingPageResults && <SingleItemLoading /> }
 					</>
 				) }
