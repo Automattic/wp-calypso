@@ -1,6 +1,6 @@
 import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -54,11 +54,16 @@ class SiteOrDomain extends Component {
 
 		const choices = [];
 
+		const buyADomainDescription =
+			i18n.getLocaleSlug() === 'en' || i18n.hasTranslation( 'Add a site later.' )
+				? translate( 'Add a site later.' )
+				: translate( 'Show a "coming soon" notice on your domain. Add a site later.' );
+
 		if ( isReskinned ) {
 			choices.push( {
 				key: 'domain',
 				title: buyADomainTitle,
-				description: translate( 'Add a site later.' ),
+				description: buyADomainDescription,
 				icon: globe,
 				value: 'domain',
 				actionText: translate( 'Get domain' ),
@@ -120,7 +125,7 @@ class SiteOrDomain extends Component {
 				type: 'domain',
 				label: buyADomainTitle,
 				image: <DomainImage />,
-				description: translate( 'Add a site later.' ),
+				description: buyADomainDescription,
 			} );
 		}
 
