@@ -426,7 +426,7 @@ class DomainRow extends PureComponent {
 						</PopoverMenuItem>
 					) }
 					{ site.options?.is_domain_only && domain.type !== domainTypes.TRANSFER && (
-						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.siteId ) }>
+						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.ID ) }>
 							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Create site' ) }
 						</PopoverMenuItem>
