@@ -8,6 +8,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
@@ -30,6 +31,7 @@ const TEAM51_OWNER_ID = 70055110;
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
+	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
 	const isVip = useSelector(
 		( state ) =>
@@ -69,7 +71,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 
 	return (
 		<>
-			{ showDoYouLoveJetpackStatsNotice && <DoYouLoveJetpackStatsNotice siteId={ siteId } /> }
+			{ showDoYouLoveJetpackStatsNotice && (
+				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
+			) }
 			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
 			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
 		</>
@@ -143,7 +147,9 @@ export default function StatsNotices( {
 				statsPurchaseSuccess={ statsPurchaseSuccess }
 				isOdysseyStats={ isOdysseyStats }
 			/>
-			<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+			{ ! statsPurchaseSuccess && (
+				<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
+			) }
 		</>
 	) : (
 		<LegacyStatsNotices siteId={ siteId } />

@@ -271,6 +271,13 @@ export class CheckoutThankYou extends Component<
 				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
 				window.fbq && window.fbq( ...params );
 			}
+
+			// Custom conversion for Twitter Ads.
+			if ( mayWeTrackByTracker( 'twitter' ) ) {
+				const params = [ 'event', 'tw-nvzbs-ofqri', {} ];
+				debug( 'recordOrder: [Twitter], BulkDomainTransfer', params );
+				window.twq( ...params );
+			}
 		}
 
 		recordTracksEvent( 'calypso_checkout_thank_you_view' );

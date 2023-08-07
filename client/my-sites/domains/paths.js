@@ -156,7 +156,12 @@ export function domainManagementDnsAddRecord( siteName, domainName, relativeTo =
 	return domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo );
 }
 
-export function domainManagementDnsEditRecord( siteName, domainName, recordId, relativeTo = null ) {
+export function domainManagementDnsEditRecord(
+	siteName,
+	domainName,
+	relativeTo = null,
+	recordId = null
+) {
 	let path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
 	if ( recordId ) {
 		path += '?recordId=' + encodeURI( recordId );

@@ -114,7 +114,7 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 			const supportedValues: JetpackTarget[] = [
 				'remote-site',
 				'wpcom-production',
-				'wpcom-staging',
+				'wpcom-deployment',
 			];
 			if ( ! supportedValues.includes( output as JetpackTarget ) ) {
 				throw new Error(

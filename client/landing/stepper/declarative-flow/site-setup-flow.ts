@@ -36,12 +36,14 @@ import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
+import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import IntentStep from './internals/steps-repository/intent-step';
+import MigrationTrial from './internals/steps-repository/migration-trial';
 import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -105,6 +107,8 @@ const siteSetupFlow: Flow = {
 			{ slug: 'importerMedium', component: ImporterMedium },
 			{ slug: 'importerSquarespace', component: ImporterSquarespace },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
+			{ slug: 'verifyEmail', component: ImportVerifyEmail },
+			{ slug: 'migrationTrial', component: MigrationTrial },
 			{ slug: 'businessInfo', component: BusinessInfo },
 			{ slug: 'storeAddress', component: StoreAddress },
 			{ slug: 'processing', component: ProcessingStep },
@@ -468,6 +472,20 @@ const siteSetupFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 				}
 
+				case 'migrationTrial': {
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'importer':
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						default:
+							return;
+					}
+				}
+
+				case 'verifyEmail':
+					return navigate( `migrationTrial?${ urlQueryParams.toString() }` );
+
 				case 'difmStartingPoint': {
 					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 				}
@@ -537,6 +555,10 @@ const siteSetupFlow: Flow = {
 
 				case 'import':
 					return navigate( 'goals' );
+
+				case 'verifyEmail':
+				case 'migrationTrial':
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'difmStartingPoint':
 					return navigate( 'goals' );

@@ -6,7 +6,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import ExternalLink from 'calypso/components/external-link';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
@@ -40,9 +39,16 @@ class AddDnsRecord extends Component {
 		return recordId ? dns.records?.find( ( record ) => recordId === record.id ) : null;
 	}
 
-	renderBreadcrumbs() {
+	renderHeader() {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
 		const recordBeingEdited = this.getRecordBeingEdited();
+		const dnsSupportPageLink = (
+			<ExternalLink
+				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
+				target="_blank"
+				icon={ false }
+			/>
+		);
 
 		const items = [
 			{
@@ -66,7 +72,15 @@ class AddDnsRecord extends Component {
 			{
 				label: recordBeingEdited
 					? translate( 'Edit record', { comment: 'DNS record' } )
-					: translate( 'Add a record', { comment: 'DNS record' } ),
+					: translate( 'Add a new DNS record', { comment: 'DNS record' } ),
+				subtitle: translate(
+					'Add a new DNS record to your site. {{supportLink}}Learn more{{/supportLink}}',
+					{
+						components: {
+							supportLink: dnsSupportPageLink,
+						},
+					}
+				),
 			},
 		];
 
@@ -95,14 +109,6 @@ class AddDnsRecord extends Component {
 				icon={ false }
 			/>
 		);
-		const mobileSubtitleText = translate(
-			'Add a new DNS record to your site. {{supportLink}}Learn more{{/supportLink}}',
-			{
-				components: {
-					supportLink: dnsSupportPageLink,
-				},
-			}
-		);
 		const explanationText = translate(
 			'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. {{supportLink}}Learn more{{/supportLink}}.',
 			{
@@ -112,18 +118,11 @@ class AddDnsRecord extends Component {
 			}
 		);
 		const recordBeingEdited = this.getRecordBeingEdited();
-		const headerText = recordBeingEdited
-			? translate( 'Edit DNS record' )
-			: translate( 'Add a new DNS record' );
 
 		return (
 			<Main wideLayout className="add-dns-record">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-				<div className="add-dns-record__fullwidth">
-					{ this.renderBreadcrumbs() }
-					<FormattedHeader brandFont headerText={ headerText } align="left" />
-					<p className="add-dns-record__mobile-subtitle">{ mobileSubtitleText }</p>
-				</div>
+				<div className="add-dns-record__fullwidth">{ this.renderHeader() }</div>
 				<div className="add-dns-record__main">
 					<DnsAddNew
 						isSubmittingForm={ dns.isSubmittingForm }
