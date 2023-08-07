@@ -79,7 +79,7 @@ const Settings = ( {
 		if ( ! contactInformation ) {
 			requestWhois( selectedDomainName );
 		}
-	}, [ contactInformation, selectedDomainName ] );
+	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
 	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
 
