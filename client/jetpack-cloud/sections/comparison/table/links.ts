@@ -18,9 +18,8 @@ export const links = {
 	galleries_and_slideshows: 'https://jetpack.com/features/design/galleries-and-slideshows/',
 	google_analytics: 'https://jetpack.com/features/growth/google-analytics/',
 	lazy_image_loading: 'https://jetpack.com/lazy-loading-images-for-wordpress/',
-	mobile_app: localizeUrl(
-		'https://apps.wordpress.com/get?utm_source=jetpack-com-comparison-tables&amp;utm_medium=direct&amp;utm_campaign=get-apps-promo'
-	),
+	mobile_app:
+		'https://apps.wordpress.com/get?utm_source=jetpack-com-comparison-tables&amp;utm_medium=direct&amp;utm_campaign=get-apps-promo',
 	newsletter: localizeUrl( 'https://jetpack.com/newsletter/' ),
 	paid_newsletter: 'https://jetpack.com/support/paid-newsletters/',
 	payments_block: 'https://jetpack.com/support/jetpack-blocks/payments-block/',
