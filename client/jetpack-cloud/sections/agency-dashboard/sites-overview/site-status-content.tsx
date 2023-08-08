@@ -14,15 +14,11 @@ import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboar
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from './context';
+import useRowMetadata from './hooks/use-row-metadata';
 import SiteBackupStaging from './site-backup-staging';
 import SiteSelectCheckbox from './site-select-checkbox';
 import SiteSetFavorite from './site-set-favorite';
-import {
-	getRowMetaData,
-	getProductSlugFromProductType,
-	getBoostRating,
-	getBoostRatingClass,
-} from './utils';
+import { getProductSlugFromProductType, getBoostRating, getBoostRatingClass } from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
@@ -50,7 +46,7 @@ export default function SiteStatusContent( {
 		siteDown,
 		eventName,
 		...metadataRest
-	} = getRowMetaData( rows, type, isLargeScreen );
+	} = useRowMetadata( rows, type, isLargeScreen );
 
 	let { tooltip } = metadataRest;
 

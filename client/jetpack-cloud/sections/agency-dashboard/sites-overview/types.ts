@@ -1,3 +1,4 @@
+import { TranslateResult } from 'i18n-calypso';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 // All types based on which the data is populated on the agency dashboard table rows
@@ -161,7 +162,7 @@ export interface RowMetaData {
 	};
 	link: string;
 	isExternalLink: boolean;
-	tooltip?: string;
+	tooltip?: TranslateResult;
 	tooltipId: string;
 	siteDown?: boolean;
 	eventName: string | undefined;
