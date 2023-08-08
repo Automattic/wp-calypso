@@ -242,6 +242,22 @@ export function isTranslatedIncompletely( locale: string ) {
 }
 
 /**
+ * Adds a locale slug infront of the current path.
+ *
+ * Will replace existing locale slug, if present.
+ *
+ * @param path - original path
+ * @param locale - locale slug (eg: 'fr')
+ * @returns original path with new locale slug
+ */
+export function addLocaleToPathLocaleInFront( path: string, locale: string ) {
+	const urlParts = getUrlParts( path );
+	const queryString = urlParts.search || '';
+
+	return `/${ locale }` + removeLocaleFromPathLocaleInFront( urlParts.pathname ) + queryString;
+}
+
+/**
  * Removes the locale slug in the start of the path, if it is present.
  * '/en/themes' => '/themes', '/themes' => '/themes', '/fr/plugins' => '/plugins'
  *
