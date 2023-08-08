@@ -13,7 +13,7 @@ import type { Moment } from 'moment';
 
 type LogType = 'php' | 'web';
 
-export const LogsTab = ( logType: LogType ) => {
+export const LogsTab = ( { logType }: { logType: LogType } ) => {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
