@@ -351,7 +351,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tag' ],
+		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,
