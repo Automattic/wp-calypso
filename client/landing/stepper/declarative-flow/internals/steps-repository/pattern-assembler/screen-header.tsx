@@ -34,7 +34,7 @@ const ScreenHeader = ( {
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Add header' ) } /> }
 				description={ translate(
-					'The header lives at the top area and typically shows your site logo, title, and navigation.'
+					'The header pattern lives at the top of your homepage and typically shows your site logo, title, and navigation.'
 				) }
 				onBack={ onBack }
 			/>
