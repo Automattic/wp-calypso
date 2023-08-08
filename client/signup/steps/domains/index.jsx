@@ -26,6 +26,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
@@ -280,6 +281,17 @@ class DomainsStep extends Component {
 					productSlug: suggestion.product_slug,
 			  } )
 			: undefined;
+
+		/**
+		 * If we do not select a paid domain.
+		 * We want to pre load an experiment to show a plan upsell modal in the plans step
+		 */
+		if ( ! isPurchasingItem ) {
+			loadExperimentAssignment( 'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v2' );
+			loadExperimentAssignment(
+				'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v2'
+			);
+		}
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
