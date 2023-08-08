@@ -28,13 +28,14 @@ type PropsFromRedux = ConnectedProps< typeof connector >;
 const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) => {
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( props.redirect.secure ? 'https' : 'http' );
+	const { domainName, fetchDomainRedirect, closeDomainRedirectNotice } = props;
 
 	useEffect( () => {
-		props.fetchDomainRedirect( props.domainName );
+		fetchDomainRedirect( domainName );
 		return () => {
-			props.closeDomainRedirectNotice( props.domainName );
+			closeDomainRedirectNotice( domainName );
 		};
-	}, [ props ] );
+	}, [ domainName, fetchDomainRedirect, closeDomainRedirectNotice ] );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
