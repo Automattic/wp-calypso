@@ -64,7 +64,7 @@ describe( 'useCategoriesQuery', () => {
 	it( 'should return expected data when successful', async () => {
 		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( mockResponse );
 
-		const { result } = renderHook( () => useCategoriesQuery( { blogId: 123 } ), { wrapper } );
+		const { result } = renderHook( () => useCategoriesQuery( 123 ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
 
@@ -74,7 +74,7 @@ describe( 'useCategoriesQuery', () => {
 	it( 'should handle empty response', async () => {
 		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( [] );
 
-		const { result } = renderHook( () => useCategoriesQuery( { blogId: 123 } ), { wrapper } );
+		const { result } = renderHook( () => useCategoriesQuery( 123 ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
 
