@@ -35,7 +35,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ DNS_ERROR }
 				errorText={ translate(
-					"Your domain is not properly set up to point to your site. Reset your domain's A records in the Domains section to fix this."
+					"Jetpack is unable to connect to your domain. Please update your domain's DNS records so they're pointed properly to your site."
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-domain-name'
