@@ -126,6 +126,7 @@ body.is-section-promote-post-i2 {
 		}
 	}
 
+	// TODO: Reorder styles
 	.post-item__post-thumbnail-wrapper {
 		display: block;
 		position: relative;
@@ -136,6 +137,7 @@ body.is-section-promote-post-i2 {
 		border: 1px solid #eee;
 		border-radius: 4px;
 		overflow: hidden;
+		background-position: 50% 50%;
 		background-size: cover;
 		background-repeat: no-repeat;
 
