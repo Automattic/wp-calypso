@@ -10,6 +10,7 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	FEATURE_LEGACY_STORAGE_200GB,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -52,6 +53,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
+import BusinessTrialPlansPage from './business-trial-plans-page';
 import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
@@ -346,12 +348,15 @@ class Plans extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
+	renderMainContent( { isEcommerceTrial, isMigrationTrial, isWooExpressPlan } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
 		if ( isWooExpressPlan ) {
 			return this.renderWooExpressPlansPage();
+		}
+		if ( isMigrationTrial ) {
+			return this.renderBusinessTrialPage();
 		}
 		return this.renderPlansMain();
 	}
@@ -379,6 +384,7 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isMigrationTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
 		const isWooExpressPlan = [
 			PLAN_WOOEXPRESS_MEDIUM,
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -455,7 +461,11 @@ class Plans extends Component {
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
-								{ this.renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) }
+								{ this.renderMainContent( {
+									isEcommerceTrial,
+									isMigrationTrial,
+									isWooExpressPlan,
+								} ) }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>
