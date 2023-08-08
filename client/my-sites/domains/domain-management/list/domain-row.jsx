@@ -1,5 +1,5 @@
 import { Badge, Button, Spinner } from '@automattic/components';
-import { Icon, home, info, redo } from '@wordpress/icons';
+import { Icon, home, info, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -31,6 +31,7 @@ import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
+	createSiteFromDomainOnly,
 	domainManagementDns,
 	domainManagementEditContactInfo,
 	domainUseMyDomain,
@@ -422,6 +423,12 @@ class DomainRow extends PureComponent {
 						>
 							<Icon icon={ redo } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Transfer to WordPress.com' ) }
+						</PopoverMenuItem>
+					) }
+					{ site.options?.is_domain_only && domain.type !== domainTypes.TRANSFER && (
+						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.ID ) }>
+							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ translate( 'Create site' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>
