@@ -1,3 +1,4 @@
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
