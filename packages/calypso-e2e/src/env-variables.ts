@@ -29,6 +29,8 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	CALYPSO_BASE_URL: 'https://wordpress.com',
 	BROWSER_NAME: 'chromium',
 	ALLURE_RESULTS_PATH: '',
+	RUN_ID: '',
+	RETRY_COUNT: 0,
 };
 
 /**

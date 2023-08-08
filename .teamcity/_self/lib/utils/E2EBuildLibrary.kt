@@ -123,7 +123,7 @@ fun BuildSteps.runE2eTestsWithRetry(
             set -o errexit
 
             # Retry failed tests only.
-            E2E_RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures
+            RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures
         """.trimIndent()
         dockerImage = "%docker_image_e2e%"
     }

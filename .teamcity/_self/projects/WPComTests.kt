@@ -220,8 +220,6 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 }
 
 fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
-
 	return BuildType({
 		id("WPComTests_jetpack_simple_deployment_e2e_$targetDevice")
 		uuid = buildUuid
@@ -251,16 +249,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		steps {
 			prepareE2eEnvironment()
 
-			atomicVariations.forEach { variation ->
-				runE2eTestsWithRetry(
-					testGroup = "jetpack-wpcom-integration",
-					additionalEnvVars = mapOf(
-						"ATOMIC_VARIATION" to variation,
-						"E2E_RUN_ID" to "atomic-$variation"
-					),
-					stepName = "Run Atomic Jetpack E2E Tests: $variation",
-				)
-			}
+			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
 
 			collectE2eResults()
 		}
@@ -291,6 +280,8 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 }
 
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
+	
 	return BuildType({
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
 		uuid = buildUuid
@@ -315,30 +306,15 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		steps {
 			prepareE2eEnvironment()
 
-			bashNodeScript {
-				name = "Run tests"
-				scriptContent = """
-					# Configure bash shell.
-					shopt -s globstar
-					set -x
-
-					# Enter testing directory.
-					cd test/e2e
-					mkdir temp
-
-					# Disable exit on error to support retries.
-					set +o errexit
-
-					# Run suite.
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=jetpack-wpcom-integration
-
-					# Restore exit on error.
-					set -o errexit
-
-					# Retry failed tests only.
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=jetpack-wpcom-integration --onlyFailures
-				"""
-				dockerImage = "%docker_image_e2e%"
+			atomicVariations.forEach { variation ->
+				runE2eTestsWithRetry(
+					testGroup = "jetpack-wpcom-integration",
+					additionalEnvVars = mapOf(
+						"ATOMIC_VARIATION" to variation,
+						"RUN_ID" to "Atomic: $variation"
+					),
+					stepName = "Run Atomic Jetpack E2E Tests: $variation",
+				)
 			}
 
 			collectE2eResults()

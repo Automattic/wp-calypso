@@ -35,4 +35,6 @@ export interface SupportedEnvVariables extends EnvVariables {
 	CALYPSO_BASE_URL: string;
 	BROWSER_NAME: string;
 	ALLURE_RESULTS_PATH: string;
+	RUN_ID: string;
+	RETRY_COUNT: number;
 }
