@@ -13,11 +13,18 @@ import type { Moment } from 'moment';
 
 type LogType = 'php' | 'web';
 
-export const LogsTab = ( { logType }: { logType: LogType } ) => {
+const DEFAULT_PAGE_SIZE = 50;
+
+export const LogsTab = ( {
+	logType,
+	pageSize = DEFAULT_PAGE_SIZE,
+}: {
+	logType: LogType;
+	pageSize?: number;
+} ) => {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
-	const pageSize = 50;
 
 	const getLatestDateRange = useCallback( () => {
 		const startTime = moment().subtract( 7, 'd' );
