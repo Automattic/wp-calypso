@@ -13,8 +13,8 @@ import {
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { useDispatch, useSelector } from 'calypso/state';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
-import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 import './style.scss';
@@ -46,8 +46,9 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	const launchpadScreen = useSiteOption( 'launchpad_screen' );
 	const redirectTo = isLaunchpadIntentBuildEnabled ? 'home' : 'setup';
 	const siteIntent = useSiteOption( 'site_intent' );
-	const isDomainOnlySiteOption = useSelector( ( state ) =>
-		Boolean( getSiteOption( state, selectedSiteId, 'is_domain_only' ) )
+	const isDomainOnlySiteOption = useSelector(
+		( state ) =>
+			selectedSiteId !== undefined && Boolean( isDomainOnlySite( state, selectedSiteId ) )
 	);
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
