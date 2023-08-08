@@ -10,7 +10,7 @@
 			minimumReleaseAge: '0 days',
 		},
 		{
-			extends: [ 'group:nodeJs' ],
+			matchDepNames: [ 'node' ],
 			prPriority: 2,
 		},
 		{
