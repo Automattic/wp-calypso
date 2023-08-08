@@ -148,7 +148,7 @@ export const MetricsTab = () => {
 		timeRange,
 	} );
 	return (
-		<>
+		<div className="site-monitoring-metrics-tab">
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<SiteMonitoringLineChart
 				title={ __( 'Requests per minute & average response time' ) }
@@ -176,6 +176,6 @@ export const MetricsTab = () => {
 				title={ __( 'Requests by HTTP Response Code' ) }
 				{ ...statusCodeRequestsProps }
 			/>
-		</>
+		</div>
 	);
 };

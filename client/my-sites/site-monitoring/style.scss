@@ -1,9 +1,6 @@
 @import "uplot/dist/uPlot.min.css";
 
 .site-monitoring {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
 	position: relative;
 
 	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
@@ -37,6 +34,12 @@
 		left: -33px;
 		z-index: -1;
 	}
+}
+
+.site-monitoring-metrics-tab {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }
 
 .site-monitoring__chart {
