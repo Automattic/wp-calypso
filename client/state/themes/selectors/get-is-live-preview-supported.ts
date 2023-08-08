@@ -126,8 +126,7 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 		 * Disable Live Preview for 3rd party themes, as Block Theme Previews need a theme installed.
 		 * Note that BTP works on Atomic sites if a theme is installed.
 		 */
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if ( isExternallyManagedTheme( state, themeId ) || isWporgTheme( state, themeId as any ) ) {
+		if ( isExternallyManagedTheme( state, themeId ) || isWporgTheme( state, themeId ) ) {
 			return false;
 		}
 
