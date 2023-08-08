@@ -9,7 +9,6 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useSiteEligibleMigrationTrialPlan } from '../../../hooks/use-site-eligible-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
@@ -49,7 +48,6 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				'import__import-everything--redesign': isEnabled( 'onboarding/import-redesign' ),
 			} ) }
 		>
-			<QueryReaderTeams />
 			<div className="import__heading-title">
 				<Title>{ translate( 'Upgrade your plan' ) }</Title>
 				<SubTitle>
