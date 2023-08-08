@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
-import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTable } from './components/site-logs-table';
@@ -46,17 +45,6 @@ export const LogsTab = ( logType: LogType ) => {
 		pageIndex: currentPageIndex,
 	} );
 
-	const [ autoRefresh, setAutoRefresh ] = useState( () => {
-		const { startTime, endTime } = getDateRangeQueryParam( moment );
-		return ! startTime && ! endTime;
-	} );
-
-	const autoRefreshCallback = useCallback( () => {
-		setDateRange( getLatestDateRange() );
-		setCurrentPageIndex( 0 );
-	}, [ getLatestDateRange ] );
-	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
-
 	const handlePageClick = ( nextPageNumber: number ) => {
 		if ( isInitialLoading ) {
 			return;
@@ -71,8 +59,6 @@ export const LogsTab = ( logType: LogType ) => {
 		) {
 			setCurrentPageIndex( currentPageIndex + 1 );
 		}
-
-		setAutoRefresh( false );
 	};
 
 	const paginationText =
@@ -94,7 +80,6 @@ export const LogsTab = ( logType: LogType ) => {
 		}
 
 		setDateRange( { startTime, endTime } );
-		setAutoRefresh( false );
 		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
