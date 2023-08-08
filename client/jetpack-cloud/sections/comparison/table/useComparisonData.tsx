@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Checkmark from 'calypso/assets/images/checkbox-icons/checkmark-jetpack.svg';
 import DesignIcon from 'calypso/assets/images/jetpack/jetpack-icon-design.svg';
+import EarnIcon from 'calypso/assets/images/jetpack/jetpack-icon-earn.svg';
 import GrowthIcon from 'calypso/assets/images/jetpack/jetpack-icon-growth.svg';
 import LockIcon from 'calypso/assets/images/jetpack/jetpack-icon-lock.svg';
 import MobileAppIcon from 'calypso/assets/images/jetpack/jetpack-icon-mobile-app.svg';
@@ -265,26 +266,15 @@ export const useComparisonData = () => {
 						},
 					},
 					{
-						id: 'payments_block',
-						name: translate( 'Collect payments' ),
-						url: links.payments_block,
-						info: {
-							COMPLETE: { content: <CheckIcon /> },
-						},
-					},
-					{
-						id: 'ad_network',
-						name: translate( 'Ad network' ),
-						url: links.ad_network,
-						info: {
-							SECURITY: { content: <CheckIcon /> },
-							COMPLETE: { content: <CheckIcon /> },
-						},
-					},
-					{
 						id: 'stats',
 						name: translate( 'Stats' ),
 						url: links.stats,
+						info: allChecked,
+					},
+					{
+						id: 'newsletter',
+						name: translate( 'Newsletter' ),
+						url: links.newsletter,
 						info: allChecked,
 					},
 					{
@@ -296,6 +286,44 @@ export const useComparisonData = () => {
 						} ),
 						url: links.seo,
 						info: allChecked,
+					},
+				],
+			},
+			{
+				sectionId: 'earn',
+				sectionName: translate( 'Earn' ),
+				icon: EarnIcon,
+				features: [
+					{
+						id: 'ad_network',
+						name: translate( 'Ad network' ),
+						url: links.ad_network,
+						info: {
+							SECURITY: { content: <CheckIcon /> },
+							COMPLETE: { content: <CheckIcon /> },
+						},
+					},
+					{
+						id: 'paid_newsletter',
+						name: translate( 'Paid Newsletter' ),
+						url: links.paid_newsletter,
+						info: allChecked,
+					},
+					{
+						id: 'payments_block',
+						name: translate( 'Collect payments' ),
+						url: links.payments_block,
+						info: allChecked,
+					},
+					{
+						id: 'transaction_fees',
+						name: translate( 'Transaction fees' ),
+						url: links.transaction_fees,
+						info: {
+							FREE: { content: translate( '10% + Stripe fees' ) },
+							SECURITY: { content: translate( '4% + Stripe fees' ) },
+							COMPLETE: { content: translate( '2% + Stripe fees' ) },
+						},
 					},
 				],
 			},
@@ -324,12 +352,6 @@ export const useComparisonData = () => {
 						id: 'galleries_and_slideshows',
 						name: translate( 'Gallery and slideshow tools' ),
 						url: links.galleries_and_slideshows,
-						info: allChecked,
-					},
-					{
-						id: 'subscriptions',
-						name: translate( 'Subscriptions' ),
-						url: links.subscriptions,
 						info: allChecked,
 					},
 					{
