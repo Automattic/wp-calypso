@@ -2,7 +2,7 @@ import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { IntervalType } from 'calypso/my-sites/plans-features-main/types';
-import ECommerceTrialBanner from '../ecommerce-trial/ecommerce-trial-banner';
+import TrialBanner from '../trial-banner';
 import type { Site } from 'calypso/my-sites/scan/types';
 
 import './style.scss';
@@ -26,7 +26,7 @@ const BusinessTrialPlansPage = ( props: BusinessTrialPlansPageProps ) => {
 			<BodySectionCssClass bodyClass={ [ 'is-migration-trial-plan' ] } />
 
 			<div className="migration-trial-plans__banner-wrapper">
-				<ECommerceTrialBanner />
+				<TrialBanner />
 			</div>
 
 			<PlansFeaturesMain

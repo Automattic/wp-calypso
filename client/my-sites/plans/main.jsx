@@ -53,11 +53,11 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
-import BusinessTrialPlansPage from './business-trial-plans-page';
 import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
