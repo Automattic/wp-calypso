@@ -53,11 +53,14 @@ const videopressTvPurchase: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 			[]
 		);
-		const siteData =
-			useSelect(
-				( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( _siteSlug || '' ),
-				[]
-			) || {};
+		const siteData = useSelect(
+			( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( _siteSlug || '' ),
+			[]
+		) || {
+			plan: null,
+			site_owner: null,
+			ID: null,
+		};
 		const getPlanProduct = useSelect(
 			( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct,
 			[]
