@@ -1,35 +1,29 @@
-import { PLAN_BUSINESS, getPlanPath } from '@automattic/calypso-products';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { SiteDetails } from '@automattic/data-stores';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
-import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { BusinessTrialPlans } from '../business-trial-plans';
 import TrialBanner from '../trial-banner';
 
 import './style.scss';
 
 interface BusinessTrialPlansPageProps {
-	siteId: number | null;
-	siteSlug: string;
-	triggerTracksEvent?: ( planSlug: string ) => void;
+	currentPlan: SitePlanData;
+	interval?: 'monthly' | 'yearly';
+	selectedSite: SiteDetails;
+	// siteId: number | null;
 }
 
 const BusinessTrialPlansPage = ( props: BusinessTrialPlansPageProps ) => {
-	const { siteId, siteSlug, triggerTracksEvent } = props;
+	const { selectedSite } = props;
 
-	const onUpgradeClick = useCallback(
-		( cartItem?: MinimalRequestCartProduct | null ) => {
-			const upgradePlanSlug = cartItem?.product_slug ?? PLAN_BUSINESS;
-
-			triggerTracksEvent?.( upgradePlanSlug );
-
-			const planPath = getPlanPath( upgradePlanSlug ) ?? '';
-			const checkoutUrl = getTrialCheckoutUrl( { productSlug: planPath, siteSlug } );
-
-			page( checkoutUrl );
-		},
-		[ siteSlug, triggerTracksEvent ]
-	);
+	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
+		recordTracksEvent( 'calypso_business_trial_plans_page_upgrade_cta_clicked', {
+			location: 'plans_grid',
+			plan_slug: planSlug,
+		} );
+	}, [] );
 
 	return (
 		<>
@@ -38,15 +32,10 @@ const BusinessTrialPlansPage = ( props: BusinessTrialPlansPageProps ) => {
 			<div className="migration-trial-plans__banner-wrapper">
 				<TrialBanner />
 			</div>
-
-			<PlansFeaturesMain
-				siteId={ siteId }
-				onUpgradeClick={ onUpgradeClick }
-				intervalType="yearly"
-				hidePlanTypeSelector={ true }
-				hideUnavailableFeatures={ true }
-				selectedPlan={ PLAN_BUSINESS }
-				intent="plans-business-trial"
+			<BusinessTrialPlans
+				siteId={ selectedSite.ID }
+				siteSlug={ selectedSite.slug }
+				triggerTracksEvent={ triggerPlansGridTracksEvent }
 			/>
 		</>
 	);

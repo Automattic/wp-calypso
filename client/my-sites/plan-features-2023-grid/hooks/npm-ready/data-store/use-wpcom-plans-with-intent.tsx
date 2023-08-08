@@ -125,7 +125,6 @@ const useWpcomPlansWithIntent = ( {
 		case 'plans-business-trial':
 			planTypes = [
 				TYPE_BUSINESS,
-				TYPE_ECOMMERCE,
 				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 			];
 			break;

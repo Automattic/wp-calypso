@@ -318,7 +318,7 @@ class Plans extends Component {
 	}
 
 	renderBusinessTrialPage() {
-		const { selectedSite } = this.props;
+		const { selectedSite, currentPlan } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
@@ -326,7 +326,13 @@ class Plans extends Component {
 
 		const interval = this.getIntervalForBusinessMigrationPlans();
 
-		return <BusinessTrialPlansPage interval={ interval } site={ selectedSite } />;
+		return (
+			<BusinessTrialPlansPage
+				currentPlan={ currentPlan }
+				interval={ interval }
+				selectedSite={ selectedSite }
+			/>
+		);
 	}
 
 	renderWooExpressPlansPage() {
