@@ -16,7 +16,9 @@ import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
-import { formatSites, getProductSlugFromProductType } from '../utils';
+import { Site } from '../types';
+import { getProductSlugFromProductType } from '../utils';
+import useFormattedSites from './hooks/use-formatted-sites';
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -26,7 +28,9 @@ const addPageArgs = ( pageNumber: number ) => {
 };
 
 interface Props {
-	data: { sites: Array< any >; total: number; perPage: number; totalFavorites: number } | undefined;
+	data:
+		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
+		| undefined;
 	isLoading: boolean;
 	currentPage: number;
 	isFavoritesTab: boolean;
@@ -43,7 +47,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const { products, isLargeScreen } = useContext( DashboardDataContext );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
 
-	const sites = formatSites( data?.sites );
+	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const handlePageClick = ( pageNumber: number ) => {
 		addPageArgs( pageNumber );

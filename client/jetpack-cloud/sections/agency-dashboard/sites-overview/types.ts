@@ -128,7 +128,7 @@ export interface ScanNode {
 	threats: number;
 }
 
-interface PluginNode {
+export interface PluginNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
 	value: string;
