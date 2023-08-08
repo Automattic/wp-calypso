@@ -56,7 +56,7 @@ declare global {
 	}
 }
 
-const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '22.9.blaze';
+const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '23.0-rc-1';
 
 const getWidgetDSPJSURL = () => {
 	let dspWidgetJS: string = shouldUseTestWidgetURL()
@@ -86,7 +86,7 @@ export async function loadDSPWidgetJS(): Promise< void > {
 const shouldHideGoToCampaignButton = () => {
 	// App versions higher or equal than 22.9.rc-1 should hide the button
 	const deviceInfo = getMobileDeviceInfo();
-	return versionCompare( deviceInfo?.version, '22.9.rc-1', '>=' );
+	return versionCompare( deviceInfo?.version, '22.9-rc-1', '>=' );
 };
 
 const getWidgetOptions = () => {
