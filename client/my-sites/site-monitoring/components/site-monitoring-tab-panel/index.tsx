@@ -20,7 +20,7 @@ interface SiteMonitoringTabPanelProps {
 
 export const SiteMonitoringTabPanel = ( {
 	children: renderContents,
-	selectedTab = 'php',
+	selectedTab = 'metrics',
 	className,
 	onSelected,
 }: SiteMonitoringTabPanelProps ) => {
