@@ -11,11 +11,12 @@ import EditButton from '../../dashboard-bulk-actions/edit-button';
 import useJetpackAgencyDashboardRecordTrackEvent from '../../hooks/use-jetpack-agency-dashboard-record-track-event';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
+import useDefaultSiteColumns from '../hooks/use-default-site-columns';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
-import { formatSites, getProductSlugFromProductType, siteColumns } from '../utils';
+import { formatSites, getProductSlugFromProductType } from '../utils';
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -48,6 +49,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 		addPageArgs( pageNumber );
 	};
 
+	const siteColumns = useDefaultSiteColumns();
 	const firstColumn = siteColumns[ 0 ];
 
 	const currentLicenseProductSlug = currentLicenseInfo
