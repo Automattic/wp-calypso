@@ -1114,8 +1114,11 @@ class ManagePurchase extends Component<
 						{ this.getPurchaseDescription() }
 					</div>
 					<div className="manage-purchase__content-domain-description">
-						{ purchase.productType === 'domain_transfer' && cancelText }
-						{ purchase.productType === 'domain_transfer' && ' ' + domainTransferDuration }
+						{ purchase.productType === 'domain_transfer' && (
+							<>
+								{ cancelText } { domainTransferDuration }
+							</>
+						) }
 					</div>
 					<div className="manage-purchase__content-domain-description">
 						{ purchase.productType === 'domain_transfer' && supportText }
