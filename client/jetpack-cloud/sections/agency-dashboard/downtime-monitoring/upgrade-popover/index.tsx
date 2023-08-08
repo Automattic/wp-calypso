@@ -1,15 +1,15 @@
 import { Popover, Button } from '@automattic/components';
 import { close, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
 	JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_TOOLTIP_PREFERENCE as tooltipPreference,
 	getJetpackDashboardPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import SitesOverviewContext from '../../sites-overview/context';
 import { PreferenceType } from '../../sites-overview/types';
-
 import './style.scss';
 
 type Props = {
@@ -29,6 +29,7 @@ export default function UpgradePopover( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const preference = useSelector( ( state ) => getPreference( state, tooltipPreference ) );
 
@@ -57,7 +58,7 @@ export default function UpgradePopover( {
 	const handleClickExplore = () => {
 		handleDismissPopover();
 		// TODO: Add event tracking here
-		// TODO: Hanle show upgrade modal
+		showLicenseInfo( 'monitor' );
 	};
 
 	// Don't show the popover if the user has dismissed it

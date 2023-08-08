@@ -31,6 +31,7 @@ import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
+import useDashboardShowLargeScreen from './site-content/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import { getProductSlugFromProductType } from './utils';
@@ -46,6 +47,9 @@ export default function SitesOverview() {
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const containerRef = createRef< any >();
+	const siteTableRef = createRef< HTMLTableElement >();
+
+	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
@@ -341,6 +345,7 @@ export default function SitesOverview() {
 										},
 									},
 									products: products ?? [],
+									isLargeScreen: showLargeScreen,
 								} }
 							>
 								<>
@@ -350,7 +355,7 @@ export default function SitesOverview() {
 										isLoading={ isLoading }
 										currentPage={ currentPage }
 										isFavoritesTab={ isFavoritesTab }
-										ref={ containerRef }
+										ref={ siteTableRef }
 									/>
 								</>
 							</DashboardDataContext.Provider>

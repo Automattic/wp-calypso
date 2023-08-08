@@ -224,7 +224,8 @@
 		"starter",
 		"domain",
 		"onboarding-2023-pricing-grid",
-		"domain-transfer"
+		"domain-transfer",
+		"site-selected"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

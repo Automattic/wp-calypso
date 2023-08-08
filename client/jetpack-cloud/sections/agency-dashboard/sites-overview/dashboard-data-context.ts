@@ -10,6 +10,7 @@ const DashboardDataContext = createContext< DashboardDataContextInterface >( {
 		},
 	},
 	products: [],
+	isLargeScreen: true,
 } );
 
 export default DashboardDataContext;

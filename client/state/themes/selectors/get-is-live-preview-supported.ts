@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
+import { AppState } from 'calypso/types';
 import {
 	isWporgTheme,
 	isThemeActive,
@@ -62,7 +63,7 @@ const NOT_COMPATIBLE_THEMES = [
 	'winkel',
 ];
 
-const isNotCompatibleThemes = ( themeId ) => {
+const isNotCompatibleThemes = ( themeId: string ) => {
 	return NOT_COMPATIBLE_THEMES.includes( themeId );
 };
 
@@ -82,7 +83,7 @@ const isNotCompatibleThemes = ( themeId ) => {
  *
  * @see pbxlJb-3Uv-p2
  */
-export const getIsLivePreviewSupported = ( state, themeId, siteId ) => {
+export const getIsLivePreviewSupported = ( state: AppState, themeId: string, siteId: number ) => {
 	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
 		return false;
 	}

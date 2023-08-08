@@ -3,12 +3,13 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
+import SitesOverviewContext from '../../sites-overview/context';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-
 import './style.scss';
 
 export default function UpgradeLink( { isInline = false } ) {
 	const translate = useTranslate();
+	const { showLicenseInfo } = useContext( SitesOverviewContext );
 
 	const { products } = useContext( DashboardDataContext );
 
@@ -20,9 +21,7 @@ export default function UpgradeLink( { isInline = false } ) {
 
 	const handleOnClick = () => {
 		// TODO: Add event tracking here
-		// TODO: Add redirect to upgrade link here
-		// Do not use href for redirect since it is being used inside an "a" tag
-		// and we cannot nest "a" tags
+		showLicenseInfo( 'monitor' );
 	};
 
 	return (
