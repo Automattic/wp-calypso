@@ -84,7 +84,7 @@ export async function loadDSPWidgetJS(): Promise< void > {
 }
 
 const shouldHideGoToCampaignButton = () => {
-	// App versions higher or equal than 22.9.rc-1 should hide the button
+	// App versions higher or equal than 22.9-rc-1 should hide the button
 	const deviceInfo = getMobileDeviceInfo();
 	return versionCompare( deviceInfo?.version, '22.9-rc-1', '>=' );
 };
