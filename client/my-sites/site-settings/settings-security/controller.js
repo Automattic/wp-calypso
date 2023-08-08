@@ -10,8 +10,8 @@ export function security( context, next ) {
 	// Otherwise, redirect to site selection.
 	if ( siteId ) {
 		context.primary = createElement( SecurityMain );
-		next();
-	} else {
-		return page.redirect( '/settings/security' );
+		return next();
 	}
+	page.redirect( '/settings/security' );
+	return;
 }
