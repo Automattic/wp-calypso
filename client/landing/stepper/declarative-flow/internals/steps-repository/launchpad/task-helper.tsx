@@ -3,7 +3,7 @@ import {
 	planHasFeature,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isBlogOnboardingFlow,
@@ -13,6 +13,7 @@ import {
 	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -27,7 +28,6 @@ import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
-import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -52,7 +52,8 @@ export function getEnhancedTasks(
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
 	stripeConnectUrl?: string,
-	setShowPlansModal?: Dispatch< SetStateAction< boolean > >
+	setShowPlansModal?: Dispatch< SetStateAction< boolean > >,
+	queryClient?: QueryClient
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -107,6 +108,14 @@ export function getEnhancedTasks(
 		if ( siteSlug ) {
 			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { migrate_content: true },
+			} );
+		}
+	};
+
+	const completePaidNewsletterTask = async () => {
+		if ( siteSlug ) {
+			await updateLaunchpadSettings( siteSlug, {
+				checklist_statuses: { newsletter_plan_created: true },
 			} );
 		}
 	};
@@ -512,6 +521,10 @@ export function getEnhancedTasks(
 						disabled: ! isStripeConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							completePaidNewsletterTask();
+							if ( queryClient ) {
+								queryClient?.invalidateQueries( [ 'launchpad' ] );
+							}
 							setShowPlansModal
 								? setShowPlansModal( true )
 								: window.location.assign(
