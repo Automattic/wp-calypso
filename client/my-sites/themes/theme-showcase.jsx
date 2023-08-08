@@ -72,7 +72,6 @@ class ThemeShowcase extends Component {
 
 		this.state = {
 			tabFilter: this.getTabFilterFromUrl( props.filter ),
-			selectedTierIndex: 0,
 		};
 	}
 
@@ -304,9 +303,6 @@ class ThemeShowcase extends Component {
 		) {
 			this.setState( { tabFilter: staticFilters.ALL } );
 		}
-
-		const selectedTierIndex = this.getTiers().findIndex( ( t ) => t.value === tier );
-		this.setState( { selectedTierIndex } );
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
@@ -580,10 +576,10 @@ class ThemeShowcase extends Component {
 									className="section-nav-tabs__dropdown"
 									onSelect={ this.onTierSelect }
 									selectedText={ translate( 'View: %s', {
-										args:
-											getOptionLabel( tiers, tiers[ this.state.selectedTierIndex ].value ) || '',
+										args: getOptionLabel( tiers, this.props.tier ) || '',
 									} ) }
 									options={ tiers }
+									initialSelected={ this.props.tier }
 								></SelectDropdown>
 							) }
 						</div>
