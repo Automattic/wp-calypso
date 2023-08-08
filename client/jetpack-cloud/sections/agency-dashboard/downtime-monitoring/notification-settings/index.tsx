@@ -7,8 +7,8 @@ import { DEFAULT_DOWNTIME_MONITORING_DURATION } from '../../constants';
 import DashboardModalForm from '../../dashboard-modal-form';
 import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import useNotificationDurations from '../../sites-overview/hooks/use-notification-durations';
 import useSiteCountText from '../../sites-overview/hooks/use-site-count-text';
-import { availableNotificationDurations as durations } from '../../sites-overview/utils';
 import ContactEditor from '../contact-editor';
 import { RestrictionType } from '../types';
 import EmailNotification from './form-content/email-notification';
@@ -55,6 +55,7 @@ export default function NotificationSettings( {
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
+	const durations = useNotificationDurations();
 	const defaultDuration = durations.find(
 		( duration ) => duration.time === DEFAULT_DOWNTIME_MONITORING_DURATION
 	);
@@ -365,6 +366,7 @@ export default function NotificationSettings( {
 		},
 		[
 			defaultDuration,
+			durations,
 			getAllEmailItems,
 			getAllPhoneItems,
 			handleSetEmailItems,
