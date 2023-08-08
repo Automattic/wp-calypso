@@ -11,6 +11,7 @@ class ImporterSubstack extends PureComponent {
 		site: PropTypes.shape( {
 			title: PropTypes.string.isRequired,
 		} ).isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		siteTitle: PropTypes.string.isRequired,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
@@ -24,6 +25,7 @@ class ImporterSubstack extends PureComponent {
 
 	render() {
 		const importerData = importerConfig( {
+			siteSlug: this.props.siteSlug,
 			siteTitle: this.props.siteTitle,
 		} ).substack;
 

@@ -27,12 +27,18 @@ interface ImporterConfigMap {
 }
 
 interface ImporterConfigArgs {
-	siteTitle?: string;
 	isAtomic?: boolean;
 	isJetpack?: boolean;
+	siteSlug?: string;
+	siteTitle?: string;
 }
 
-function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): ImporterConfigMap {
+function getConfig( {
+	isAtomic = false,
+	isJetpack = false,
+	siteSlug = '',
+	siteTitle = '',
+} ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
@@ -149,34 +155,36 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 		type: 'file',
 		title: 'Substack',
 		icon: 'substack',
-		description: translate(
-			'Import posts and images, podcasts and public comments from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					importerName: 'Substack',
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<>
+				{ translate(
+					'Import posts and images, podcasts and public comments from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: {
+							importerName: 'Substack',
+							siteTitle,
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }{ ' ' }
+				{ translate( 'To migrate your readers, {{a}}go to subscribers{{/a}}.', {
+					components: {
+						a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
+					},
+				} ) }
+			</>
 		),
-		uploadDescription: translate(
-			'A %(importerName)s export file is a ZIP file ' +
-				'containing a CSV file with all posts and individual HTML posts. ' +
-				'{{supportLink/}}',
-			{
-				args: {
-					importerName: 'Substack',
-				},
-				components: {
-					supportLink: (
-						<InlineSupportLink supportContext="importers-substack" showIcon={ false }>
-							{ translate( 'Need help exporting your content?' ) }
-						</InlineSupportLink>
-					),
-				},
-			}
+		uploadDescription: (
+			<>
+				{ translate(
+					'A Substack export file is a ZIP file containing a CSV file with all posts.'
+				) }{ ' ' }
+				<InlineSupportLink supportContext="importers-substack" showIcon={ false }>
+					{ translate( 'See how to get your export file.' ) }
+				</InlineSupportLink>
+			</>
 		),
 		optionalUrl: {
 			title: translate( 'Substack Newsletter URL' ),
@@ -270,7 +278,7 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 	return importerConfig;
 }
 
-export function getImporters( args: ImporterConfigArgs = { siteTitle: '' } ) {
+export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' } ) {
 	const importerConfig = getConfig( args );
 
 	if ( ! config.isEnabled( 'importers/substack' ) ) {
@@ -282,7 +290,10 @@ export function getImporters( args: ImporterConfigArgs = { siteTitle: '' } ) {
 	return importers;
 }
 
-export function getImporterByKey( key: string, args: ImporterConfigArgs = { siteTitle: '' } ) {
+export function getImporterByKey(
+	key: string,
+	args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' }
+) {
 	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
 }
 
