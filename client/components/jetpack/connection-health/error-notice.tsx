@@ -5,14 +5,14 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
-	eventType: string;
+	errorType: string;
 	errorText: string;
 	noticeActionHref: string;
 	noticeActionText: string;
 }
 
 export const ErrorNotice = ( {
-	eventType,
+	errorType,
 	errorText,
 	noticeActionHref,
 	noticeActionText,
@@ -22,7 +22,7 @@ export const ErrorNotice = ( {
 	const handleJetpackConnectionHealthLinkClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_connection_health_issue_click', {
-				error_type: eventType,
+				error_type: errorType,
 			} )
 		);
 	};
@@ -31,7 +31,7 @@ export const ErrorNotice = ( {
 		<>
 			<TrackComponentView
 				eventName="calypso_jetpack_connection_health_issue_view"
-				eventProperties={ { error_type: eventType } }
+				eventProperties={ { error_type: errorType } }
 			/>
 			<Notice status="is-error" showDismiss={ false } text={ errorText }>
 				<NoticeAction
