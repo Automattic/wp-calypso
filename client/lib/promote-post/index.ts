@@ -56,16 +56,26 @@ declare global {
 	}
 }
 
+const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '22.9.blaze';
+
+const getWidgetDSPJSURL = () => {
+	let dspWidgetJS: string = shouldUseTestWidgetURL()
+		? config( 'dsp_widget_js_test_src' )
+		: config( 'dsp_widget_js_src' );
+
+	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
+		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
+	}
+	return dspWidgetJS;
+};
+
 export async function loadDSPWidgetJS(): Promise< void > {
 	// check if already loaded
 	if ( window.BlazePress ) {
 		return;
 	}
-	let dspWidgetJS: string = config( 'dsp_widget_js_src' );
-	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
-		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
-	}
-	const src = dspWidgetJS + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
+
+	const src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
 	await loadScript( src );
 	// Load the strings so that translations get associated with the module and loaded properly.
 	// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,

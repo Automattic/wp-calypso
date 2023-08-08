@@ -103,4 +103,13 @@ describe( 'getMobileDeviceInfo', () => {
 
 		expect( getMobileDeviceInfo() ).toStrictEqual( { device: 'unknown', version: 'unknown' } );
 	} );
+
+	test( 'should return the correct version for a release candidate', () => {
+		global.navigator = {
+			userAgent:
+				'Mozilla/5.0 (Linux; Android 6.0; Android SDK built for x86_64 Build/MASTER; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/44.0.2403.119 Mobile Safari/537.36 wc-android/22.9.rc-1',
+		};
+
+		expect( getMobileDeviceInfo() ).toMatchObject( { version: '22.9.rc-1' } );
+	} );
 } );
