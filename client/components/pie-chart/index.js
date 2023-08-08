@@ -10,7 +10,7 @@ import './style.scss';
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data ) {
+function transformData( data, donut = false ) {
 	const sortedData = sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
@@ -23,7 +23,7 @@ function transformData( data ) {
 		.value( ( datum ) => datum.value )( sortedData );
 
 	const arcGen = d3Arc()
-		.innerRadius( 0 )
+		.innerRadius( donut ? SVG_SIZE / 4 : 0 )
 		.outerRadius( SVG_SIZE / 2 );
 
 	const paths = arcs.map( ( arc ) => arcGen( arc ) );
@@ -52,7 +52,7 @@ class PieChart extends Component {
 			return {
 				data: nextProps.data,
 				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
-				transformedData: transformData( nextProps.data ),
+				transformedData: transformData( nextProps.data, nextProps.donut ),
 			};
 		}
 
@@ -80,7 +80,7 @@ class PieChart extends Component {
 	}
 
 	render() {
-		const { title, translate, donut } = this.props;
+		const { title, translate } = this.props;
 		const { dataTotal } = this.state;
 
 		return (
@@ -92,14 +92,6 @@ class PieChart extends Component {
 				>
 					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
 						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
-						{ dataTotal > 0 && donut && (
-							<circle
-								cx={ 0 }
-								cy={ 0 }
-								r={ SVG_SIZE / 4 }
-								className="pie-chart__chart-drawing-donut-hole"
-							/>
-						) }
 					</g>
 				</svg>
 
