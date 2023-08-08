@@ -1,6 +1,5 @@
 export * from './main';
 export * from './camel-or-snake-slug';
-export * from './camel-or-snake-id';
 export * from './types';
 export * from './plans-utilities';
 export * from './constants';
