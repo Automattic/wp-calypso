@@ -25,13 +25,10 @@ function useTimeRange() {
 		setSelectedTimeRange( timeRange );
 	};
 
-	// Call the `calculateTimeRange` function with the default selected option
-	const defaultTimeRange = calculateTimeRange( '24-hours' );
-
 	// Calculate the startTime and endTime using useMemo to memoize the result
 	const { start, end } = useMemo( () => {
-		return selectedTimeRange || defaultTimeRange;
-	}, [ defaultTimeRange, selectedTimeRange ] );
+		return selectedTimeRange || calculateTimeRange( '24-hours' );
+	}, [ selectedTimeRange ] );
 
 	return {
 		start,
