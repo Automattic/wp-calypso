@@ -148,7 +148,7 @@ const ScreenCategoryList = ( {
 						onDoneClick();
 					} }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save sections' ) }
 				</NavigatorBackButton>
 			</div>
 			<PatternListPanel
