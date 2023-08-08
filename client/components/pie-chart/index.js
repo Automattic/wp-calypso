@@ -37,6 +37,7 @@ function transformData( data ) {
 class PieChart extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
+		donut: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
@@ -79,7 +80,7 @@ class PieChart extends Component {
 	}
 
 	render() {
-		const { title, translate } = this.props;
+		const { title, translate, donut } = this.props;
 		const { dataTotal } = this.state;
 
 		return (
@@ -91,6 +92,14 @@ class PieChart extends Component {
 				>
 					<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
 						{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
+						{ dataTotal > 0 && donut && (
+							<circle
+								cx={ 0 }
+								cy={ 0 }
+								r={ SVG_SIZE / 4 }
+								className="pie-chart__chart-drawing-donut-hole"
+							/>
+						) }
 					</g>
 				</svg>
 
