@@ -4,6 +4,24 @@
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+	position: relative;
+
+	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
+	.pagination__page-number,
+	.pagination__ellipsis {
+		display: none;
+	}
+
+	&.is-loading {
+		.site-logs__monitoring-text {
+			opacity: 0.5;
+		}
+
+		.site-logs__monitoring-click-guard {
+			pointer-events: none;
+			opacity: 0.5;
+		}
+	}
 }
 
 .site-monitoring__formatted-header {
@@ -68,6 +86,11 @@
 	.pie-chart__legend-sample-1 {
 		fill: var(--studio-green-5);
 	}
+}
+
+.site-monitoring__pagination-text {
+	text-align: center;
+	margin: 0 0 1.5rem;
 }
 
 .u-legend {

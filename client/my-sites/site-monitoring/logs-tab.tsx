@@ -99,9 +99,11 @@ export const LogsTab = ( {
 				onDateTimeChange={ handleDateTimeChange }
 			/>
 			<SiteLogsTable logs={ data?.logs } logType={ logType } isLoading={ isFetching } />
-			{ paginationText && <div className="site-logs__pagination-text">{ paginationText }</div> }
+			{ paginationText && (
+				<div className="site-monitoring__pagination-text">{ paginationText }</div>
+			) }
 			{ !! data?.total_results && (
-				<div className="site-logs__pagination-click-guard">
+				<div className="site-monitoring__pagination-click-guard">
 					<Pagination
 						page={ currentPageIndex + 1 }
 						perPage={ pageSize }
