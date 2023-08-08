@@ -72,7 +72,6 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 			iconPath={ CelebrationIcon }
 			callToAction={ translate( 'Explore' ) }
 			dismissWithoutSavingPreference
-			href="" // TODO: We will need to provide link to the info modal here
 			onClick={ () => dismissAndRecordEvent( 'monitor_upgrade_banner_accept' ) }
 			onDismiss={ () => dismissAndRecordEvent( 'monitor_upgrade_banner_dismiss' ) }
 		/>
