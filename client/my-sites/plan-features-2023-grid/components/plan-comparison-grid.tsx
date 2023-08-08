@@ -373,23 +373,28 @@ const PlanComparisonGridHeaderCell = ( {
 	siteId,
 }: PlanComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
-	const { planConstantObj, availableForPurchase, current } = gridPlansIndex[ planSlug ];
+	const gridPlan = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedPlans: visibleGridPlans.map( ( { planSlug } ) => planSlug ),
 	} );
+
+	if ( ! gridPlan ) {
+		return null;
+	}
+
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
-		'popular-plan-parent-class': gridPlansIndex[ planSlug ]?.highlightLabel,
+		'popular-plan-parent-class': gridPlan.highlightLabel,
 		'is-last-in-row': isLastInRow,
 		'plan-is-footer': isFooter,
 		'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
 		'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
 		'is-only-highlight': highlightAdjacencyMatrix[ planSlug ]?.isOnlyHighlight,
-		'is-current-plan': current,
+		'is-current-plan': gridPlan.current,
 	} );
 	const popularBadgeClasses = classNames( {
-		'is-current-plan': current,
+		'is-current-plan': gridPlan.current,
 	} );
-	const showPlanSelect = ! allVisible && ! current;
+	const showPlanSelect = ! allVisible && ! gridPlan.current;
 
 	return (
 		<Cell className={ headerClasses } textAlign="start">
@@ -425,7 +430,7 @@ const PlanComparisonGridHeaderCell = ( {
 					</select>
 				) }
 				<h4 className="plan-comparison-grid__title">
-					<span>{ planConstantObj.getTitle() }</span>
+					<span>{ gridPlan.planConstantObj.getTitle() }</span>
 					{ showPlanSelect && <DropdownIcon /> }
 				</h4>
 			</PlanSelector>
@@ -439,21 +444,21 @@ const PlanComparisonGridHeaderCell = ( {
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
 					planSlug={ planSlug }
-					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+					billingTimeframe={ gridPlan.planConstantObj.getBillingTimeFrame() }
 				/>
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
 				manageHref={ manageHref }
 				canUserPurchasePlan={ canUserPurchasePlan }
-				current={ current ?? false }
-				availableForPurchase={ availableForPurchase }
+				current={ gridPlan.current ?? false }
+				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
 				isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
-				planTitle={ planConstantObj.getTitle() }
+				planTitle={ gridPlan.planConstantObj.getTitle() }
 				planSlug={ planSlug }
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }
@@ -534,19 +539,22 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	intervalType?: string;
 } > = ( { feature, visibleGridPlans, planSlug, isStorageFeature, intervalType } ) => {
 	const { gridPlansIndex } = usePlansGridContext();
+	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
 		renderedPlans: visibleGridPlans.map( ( { planSlug } ) => planSlug ),
 	} );
+
+	if ( ! gridPlan ) {
+		return null;
+	}
+
 	const featureSlug = feature?.getSlug();
 
 	const hasFeature =
 		isStorageFeature ||
 		( featureSlug
-			? [
-					...gridPlansIndex[ planSlug ].features.wpcomFeatures,
-					...gridPlansIndex[ planSlug ].features.jetpackFeatures,
-			  ]
+			? [ ...gridPlan.features.wpcomFeatures, ...gridPlan.features.jetpackFeatures ]
 					.filter( ( feature ) =>
 						'monthly' === intervalType ? ! feature.availableOnlyForAnnualPlans : true
 					)
@@ -554,19 +562,17 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			: false );
 
 	const hasConditionalFeature = featureSlug
-		? gridPlansIndex[ planSlug ].features.conditionalFeatures?.some(
+		? gridPlan.features.conditionalFeatures?.some(
 				( feature ) => feature.getSlug() === featureSlug
 		  )
 		: false;
-	const storageOption = gridPlansIndex[ planSlug ].features.storageOptions.find(
-		( option ) => ! option.isAddOn
-	);
+	const storageOption = gridPlan.features.storageOptions.find( ( option ) => ! option.isAddOn );
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
 		getPlanClass( planSlug ),
 		{
-			'popular-plan-parent-class': gridPlansIndex[ planSlug ]?.highlightLabel,
+			'popular-plan-parent-class': gridPlan.highlightLabel,
 			'has-feature': hasFeature,
 			'has-conditional-feature': hasConditionalFeature,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
@@ -575,8 +581,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			'is-only-highlight': highlightAdjacencyMatrix[ planSlug ]?.isOnlyHighlight,
 		}
 	);
-	const gridPlan = gridPlansIndex[ planSlug ];
-	const planPaymentTransactionFees = gridPlan?.features.wpcomFeatures?.find(
+	const planPaymentTransactionFees = gridPlan.features.wpcomFeatures?.find(
 		( feature ) => feature?.getFeatureGroup?.() === FEATURE_GROUP_PAYMENT_TRANSACTION_FEES
 	);
 
