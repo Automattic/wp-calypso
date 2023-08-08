@@ -14,6 +14,7 @@ import {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
+	isP2Plus,
 	isPersonal,
 	isPlan,
 	isPremium,
@@ -819,6 +820,10 @@ export class CheckoutThankYou extends Component<
 		if ( purchases.some( isChargeback ) ) {
 			return [ 'chargeback-details', purchases.find( isChargeback ) ];
 		}
+		if ( purchases.some( isP2Plus ) ) {
+			return [ 'p2-plus-details', purchases.find( isP2Plus ) ];
+		}
+
 		return [];
 	};
 
