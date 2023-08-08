@@ -61,7 +61,7 @@ describe( 'useCategoriesQuery', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'shouldcall request with the right parameters', async () => {
+	it( 'should call request with the right parameters', async () => {
 		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( mockResponse );
 
 		const { result } = renderHook( () => useCategoriesQuery( 123 ), { wrapper } );
