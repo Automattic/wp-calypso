@@ -236,6 +236,15 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'migrate_content':
+					taskData = {
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/import/${ siteSlug }` );
+						},
+					};
+					break;
 				case 'first_post_published':
 					taskData = {
 						disabled:
