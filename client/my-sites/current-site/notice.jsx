@@ -101,28 +101,35 @@ export class SiteNotice extends Component {
 			return null;
 		}
 
+		let bannerText;
 		const eventProperties = { cta_name: 'migration-trial-upgrade-sidebar' };
-		const momentParams = { endsAt: currentPlan.expiry };
-		const daysRemaining = this.daysRemaining( momentParams );
+		const daysRemaining = this.daysRemaining( { endsAt: currentPlan.expiry } );
 
-		const bannerText = this.promotionEndsToday( momentParams )
-			? createInterpolateElement( translate( 'Your trial ends <strong>today</strong>' ), {
+		if ( daysRemaining < 0 ) {
+			bannerText = 'Your trial has expired';
+		} else if ( daysRemaining === 0 ) {
+			bannerText = createInterpolateElement(
+				translate( 'Your trial ends <strong>today</strong>' ),
+				{
 					strong: <strong />,
-			  } )
-			: createInterpolateElement(
-					translate(
-						'<strong>%(daysRemaining)d day</strong> left in your trial',
-						'<strong>%(daysRemaining)d days</strong> left in your trial',
-						{
-							count: daysRemaining,
-							args: {
-								daysRemaining,
-							},
-							comment: '%(daysRemaining) is the no of days, e.g. "1 day"',
-						}
-					),
-					{ strong: <strong /> }
-			  );
+				}
+			);
+		} else {
+			bannerText = createInterpolateElement(
+				translate(
+					'<strong>%(daysRemaining)d day</strong> left in your trial',
+					'<strong>%(daysRemaining)d days</strong> left in your trial',
+					{
+						count: daysRemaining,
+						args: {
+							daysRemaining,
+						},
+						comment: '%(daysRemaining) is the no of days, e.g. "1 day"',
+					}
+				),
+				{ strong: <strong /> }
+			);
+		}
 
 		return (
 			<>
