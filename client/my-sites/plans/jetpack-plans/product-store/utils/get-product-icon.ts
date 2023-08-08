@@ -11,6 +11,7 @@ import {
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_STATS_PRODUCTS,
+	JETPACK_MONITOR_PRODUCTS,
 	WOOCOMMERCE_PRODUCTS,
 } from '@automattic/calypso-products';
 import JetpackProductIconAILight from 'calypso/assets/images/jetpack/jetpack-product-icon-ai-light.svg';
@@ -24,6 +25,8 @@ import JetpackProductIconBoost from 'calypso/assets/images/jetpack/jetpack-produ
 import JetpackProductIconComplete from 'calypso/assets/images/jetpack/jetpack-product-icon-complete.svg';
 import JetpackProductIconCRMLight from 'calypso/assets/images/jetpack/jetpack-product-icon-crm-light.svg';
 import JetpackProductIconCRM from 'calypso/assets/images/jetpack/jetpack-product-icon-crm.svg';
+import JetpackProductIconMonitorLight from 'calypso/assets/images/jetpack/jetpack-product-icon-monitor-light.svg';
+import JetpackProductIconMonitor from 'calypso/assets/images/jetpack/jetpack-product-icon-monitor.svg';
 import JetpackProductIconScanLight from 'calypso/assets/images/jetpack/jetpack-product-icon-scan-light.svg';
 import JetpackProductIconScan from 'calypso/assets/images/jetpack/jetpack-product-icon-scan.svg';
 import JetpackProductIconSearchLight from 'calypso/assets/images/jetpack/jetpack-product-icon-search-light.svg';
@@ -74,6 +77,10 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 	...setProductsIcon( JETPACK_BOOST_PRODUCTS, {
 		regular: JetpackProductIconBoost,
 		light: JetpackProductIconBoostLight,
+	} ),
+	...setProductsIcon( JETPACK_MONITOR_PRODUCTS, {
+		regular: JetpackProductIconMonitor,
+		light: JetpackProductIconMonitorLight,
 	} ),
 	...setProductsIcon( JETPACK_SOCIAL_PRODUCTS, {
 		regular: JetpackProductIconSocial,

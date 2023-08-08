@@ -49,7 +49,7 @@ const ScreenMain = ( {
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
 	const headerDescription = translate(
-		'Customize everything by first adding patterns and then choosing styles.'
+		'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 	);
 
 	// Use the mousedown event to prevent either the button focusing or text selection
@@ -92,7 +92,7 @@ const ScreenMain = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Design your own homepage' ) } /> }
+				title={ <NavigatorTitle title={ translate( 'Design your own' ) } /> }
 				description={ headerDescription }
 				hideBack
 			/>

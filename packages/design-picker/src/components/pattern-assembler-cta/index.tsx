@@ -7,8 +7,7 @@ import './style.scss';
 type PatternAssemblerCtaData = {
 	shouldGoToAssemblerStep: boolean;
 	title: string;
-	subtitleLineOne: string;
-	subtitleLineTwo: string;
+	subtitle: string;
 	buttonText: string;
 };
 
@@ -25,9 +24,10 @@ export function usePatternAssemblerCtaData(): PatternAssemblerCtaData {
 	return {
 		shouldGoToAssemblerStep,
 		title: translate( 'Design your own' ),
-		subtitleLineOne: translate( 'Can’t find something you like?' ),
-		subtitleLineTwo: shouldGoToAssemblerStep
-			? translate( 'Use our library of styles and patterns to build a homepage.' )
+		subtitle: shouldGoToAssemblerStep
+			? translate(
+					'Unleash your creativity in just three simple steps: add patterns, choose colors, and select fonts to design your perfect site.'
+			  )
 			: translate( 'Jump right into the editor to design your homepage from scratch.' ),
 		buttonText: shouldGoToAssemblerStep
 			? translate( 'Start designing' )
@@ -48,11 +48,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 				<img className="pattern-assembler-cta__image" src={ blankCanvasImage } alt="Blank Canvas" />
 			</div>
 			<h3 className="pattern-assembler-cta__title">{ data.title }</h3>
-			<p className="pattern-assembler-cta__subtitle">
-				{ data.subtitleLineOne }
-				<br />
-				{ data.subtitleLineTwo }
-			</p>
+			<p className="pattern-assembler-cta__subtitle">{ data.subtitle }</p>
 			<Button className="pattern-assembler-cta__button" onClick={ handleButtonClick } primary>
 				{ data.buttonText }
 			</Button>

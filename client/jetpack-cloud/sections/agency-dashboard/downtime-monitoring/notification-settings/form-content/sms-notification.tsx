@@ -4,7 +4,7 @@ import ContactList from '../../contact-list';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import { RestrictionType } from '../../types';
 import UpgradeLink from '../../upgrade-link';
-import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
+import type { MonitorSettings, StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
 	recordEvent: ( action: string, params?: object ) => void;
@@ -14,6 +14,7 @@ interface Props {
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	verifiedItem?: { [ key: string ]: string };
 	restriction: RestrictionType;
+	settings?: MonitorSettings;
 }
 
 export default function SMSNotification( {
@@ -24,6 +25,7 @@ export default function SMSNotification( {
 	allPhoneItems,
 	verifiedItem,
 	restriction,
+	settings,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -72,6 +74,7 @@ export default function SMSNotification( {
 					items={ allPhoneItems }
 					recordEvent={ recordEvent }
 					verifiedItemKey={ verifiedItem?.phone }
+					settings={ settings }
 				/>
 			) }
 		</>

@@ -11,7 +11,7 @@ export function useSite() {
 	const site = useSelect(
 		( select ) => {
 			const siteStore = select( SITE_STORE ) as SiteSelect;
-			const siteKey = siteSlug ?? siteIdParam;
+			const siteKey = siteIdParam ?? siteSlug;
 
 			return siteKey ? siteStore.getSite( siteKey as string | number ) : null;
 		},

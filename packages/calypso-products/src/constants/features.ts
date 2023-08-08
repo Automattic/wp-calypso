@@ -25,6 +25,8 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_MONITOR_MONTHLY,
+	PRODUCT_JETPACK_MONITOR_YEARLY,
 } from './jetpack';
 
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
@@ -200,6 +202,11 @@ export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
 export const FEATURE_SOCIAL_INSTAGRAM_CONNECTION = 'social-instagram-connection';
+export const FEATURE_JETPACK_MONITOR_MONTHLY = PRODUCT_JETPACK_MONITOR_MONTHLY;
+export const FEATURE_JETPACK_MONITOR_YEARLY = PRODUCT_JETPACK_MONITOR_YEARLY;
+export const FEATURE_MONITOR_1_MINUTE_CHECK_INTERVAL = 'monitor-1-minute-check-interval';
+export const FEATURE_MONITOR_MULTIPLE_EMAIL_RECIPIENTS = 'monitor-multiple-email-recipients';
+export const FEATURE_MONITOR_SMS_NOTIFICATIONS = 'monitor-sms-notifications';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_1GB_BACKUP_STORAGE = 'jetpack-1gb-backup-storage';
