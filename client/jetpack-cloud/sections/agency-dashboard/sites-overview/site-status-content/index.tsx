@@ -14,10 +14,11 @@ import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboar
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from '../context';
+import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import SiteBackupStaging from '../site-backup-staging';
 import SiteSelectCheckbox from '../site-select-checkbox';
 import SiteSetFavorite from '../site-set-favorite';
-import { getBoostRating, getBoostRatingClass, getProductSlugFromProductType } from '../utils';
+import { getProductSlugFromProductType } from '../utils';
 import useRowMetadata from './hooks/use-row-metadata';
 import type { AllowedTypes, SiteData } from '../types';
 
