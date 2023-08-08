@@ -7,10 +7,8 @@ import { DEFAULT_DOWNTIME_MONITORING_DURATION } from '../../constants';
 import DashboardModalForm from '../../dashboard-modal-form';
 import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
-import {
-	availableNotificationDurations as durations,
-	getSiteCountText,
-} from '../../sites-overview/utils';
+import useSiteCountText from '../../sites-overview/hooks/use-site-count-text';
+import { availableNotificationDurations as durations } from '../../sites-overview/utils';
 import ContactEditor from '../contact-editor';
 import { RestrictionType } from '../types';
 import EmailNotification from './form-content/email-notification';
@@ -53,6 +51,7 @@ export default function NotificationSettings( {
 }: Props ) {
 	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
+	const siteCountText = useSiteCountText( sites );
 
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
@@ -466,7 +465,7 @@ export default function NotificationSettings( {
 		<DashboardModalForm
 			className="notification-settings"
 			title={ translate( 'Set custom notification' ) }
-			subtitle={ getSiteCountText( sites ) }
+			subtitle={ siteCountText }
 			onClose={ handleOnClose }
 			onSubmit={ onSave }
 		>
