@@ -106,7 +106,7 @@ export class SiteNotice extends Component {
 		const daysRemaining = this.daysRemaining( { endsAt: currentPlan.expiry } );
 
 		if ( daysRemaining < 0 ) {
-			bannerText = 'Your trial has expired';
+			bannerText = translate( 'Your trial has expired' );
 		} else if ( daysRemaining === 0 ) {
 			bannerText = createInterpolateElement(
 				translate( 'Your trial ends <strong>today</strong>' ),
