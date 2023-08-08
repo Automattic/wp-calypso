@@ -308,9 +308,6 @@ export type Plan = BillingTerm & {
 export type WithSnakeCaseSlug = { product_slug: string };
 export type WithCamelCaseSlug = { productSlug: string };
 
-export type WithSnakeCaseId = { product_id: number };
-export type WithCamelCaseId = { productId: number };
-
 export type WithSlugAndAmount = ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
 	amount: number;
 };
