@@ -328,7 +328,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/discover' ],
+		paths: [ '/discover', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/discover' ],
 		module: 'calypso/reader/discover',
 		group: 'reader',
 		enableLoggedOut: true,
