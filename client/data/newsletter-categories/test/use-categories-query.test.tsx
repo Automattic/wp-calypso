@@ -61,6 +61,20 @@ describe( 'useCategoriesQuery', () => {
 		jest.clearAllMocks();
 	} );
 
+	it( 'shouldcall request with the right parameters', async () => {
+		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( mockResponse );
+
+		const { result } = renderHook( () => useCategoriesQuery( 123 ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
+
+		expect( request ).toHaveBeenCalledWith( {
+			path: `/sites/123/categories`,
+			apiVersion: '2',
+			apiNamespace: 'wp/v2',
+		} );
+	} );
+
 	it( 'should return expected data when successful', async () => {
 		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( mockResponse );
 
