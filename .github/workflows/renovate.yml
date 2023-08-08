@@ -1,0 +1,58 @@
+name: Renovate
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        type: choice
+        default: debug
+        options:
+          - debug
+          - trace
+      dryRun:
+        description: 'Dry run?'
+        type: choice
+        default: 'no'
+        options:
+          - 'no'
+          - full
+          - lookup
+          - extract
+  schedule:
+    # Run every 15 minutes:
+    - cron: '0,30 * * * *'
+  pull_request:
+    paths:
+      - '.github/workflows/renovate.yml'
+      - 'renovate.json5'
+      - 'renovate.json'
+
+concurrency:
+  group: renovate-${{ github.ref }}
+
+jobs:
+  renovate:
+    name: Renovate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check rate limit pre-run
+        env:
+          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+        run: |
+          curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
+      - uses: renovatebot/github-action@v39.0.1
+        with:
+          configurationFile: renovate.json5
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          mount-docker-socket: true
+          renovate-version: 36.31.0
+        env:
+          LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
+          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
+      - name: Check rate limit post-run
+        env:
+          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+        run: |
+          echo "Note any difference between this number and the one from the previous step may also include API uses from elsewhere that happened to occur at the same time."
+          curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
