@@ -1,6 +1,6 @@
 import { getLocaleSlug } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { TimeRange } from '../../main';
+import { TimeRange } from '../../metrics-tab';
 import { PeriodData, useSiteMetricsQuery } from '../../use-metrics-query';
 
 const STATUS_CODES = [ 200, 401, 400, 404, 500 ];
