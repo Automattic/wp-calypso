@@ -22,7 +22,7 @@ export const ErrorNotice = ( {
 	const handleJetpackConnectionHealthLinkClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_connection_health_issue_click', {
-				type: eventType,
+				error_type: eventType,
 			} )
 		);
 	};
@@ -31,7 +31,7 @@ export const ErrorNotice = ( {
 		<>
 			<TrackComponentView
 				eventName="calypso_jetpack_connection_health_issue_view"
-				eventProperties={ { type: eventType } }
+				eventProperties={ { error_type: eventType } }
 			/>
 			<Notice status="is-error" showDismiss={ false } text={ errorText }>
 				<NoticeAction
