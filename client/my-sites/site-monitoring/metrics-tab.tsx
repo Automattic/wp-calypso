@@ -152,11 +152,17 @@ export const MetricsTab = () => {
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<SiteMonitoringLineChart
 				title={ __( 'Requests per minute & average response time' ) }
+				tooltip={ __(
+					'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+				) }
 				data={ formattedData as uPlot.AlignedData }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
-					title="Cache hit/miss"
+					title={ __( 'Cache hit/miss' ) }
+					tooltip={ __(
+						'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+					) }
 					className="site-monitoring-cache-pie-chart"
 					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
 						0: 'Cache miss',
@@ -164,7 +170,10 @@ export const MetricsTab = () => {
 					} ) }
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
-					title="PHP vs. static content served"
+					title={ __( 'PHP vs. static content served' ) }
+					tooltip={ __(
+						'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+					) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
 						php: 'PHP',
@@ -173,7 +182,10 @@ export const MetricsTab = () => {
 				></SiteMonitoringPieChart>
 			</div>
 			<SiteMonitoringBarChart
-				title={ __( 'Requests by HTTP Response Code' ) }
+				title={ __( 'Requests by HTTP response code' ) }
+				tooltip={ __(
+					'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+				) }
 				{ ...statusCodeRequestsProps }
 			/>
 		</>
