@@ -81,7 +81,7 @@
 
 	// --- Metadata settings for git ---
 	labels: [ 'Framework', '[Type] Task' ],
-	reviewers: [ 'team:team-calypso-platform' ],
+	reviewers: [ 'team:team-calypso-platform', 'team:team-calypso-frameworks' ],
 	branchPrefix: 'renovate/',
 	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
 	platform: 'github',
