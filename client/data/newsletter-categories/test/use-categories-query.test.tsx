@@ -66,7 +66,7 @@ describe( 'useCategoriesQuery', () => {
 
 		const { result } = renderHook( () => useCategoriesQuery( { blogId: 123 } ), { wrapper } );
 
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( mockResponse );
 	} );
@@ -76,7 +76,7 @@ describe( 'useCategoriesQuery', () => {
 
 		const { result } = renderHook( () => useCategoriesQuery( { blogId: 123 } ), { wrapper } );
 
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( [] );
 	} );
