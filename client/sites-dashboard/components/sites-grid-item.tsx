@@ -106,7 +106,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
-	const isTrialSite = isMigrationTrialSite( site );
+	const isMigrationTrialPlanSite = isMigrationTrialSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
@@ -143,7 +143,10 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						/>
 					</ThumbnailWrapper>
 					{ showSiteRenewLink && site.plan?.expired && (
-						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
+						<SitesGridActionRenew
+							site={ site }
+							hideRenewLink={ isECommerceTrialSite || isMigrationTrialPlanSite }
+						/>
 					) }
 				</>
 			}
@@ -157,7 +160,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						<div className={ badges }>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
-							{ isTrialSite && (
+							{ isMigrationTrialPlanSite && (
 								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
 							) }
 							{ getSiteLaunchStatus( site ) !== 'public' && (
