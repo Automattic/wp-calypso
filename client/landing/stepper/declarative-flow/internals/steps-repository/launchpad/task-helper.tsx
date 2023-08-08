@@ -117,6 +117,9 @@ export function getEnhancedTasks(
 			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { newsletter_plan_created: true },
 			} );
+			if ( queryClient ) {
+				queryClient?.invalidateQueries( [ 'launchpad' ] );
+			}
 		}
 	};
 
@@ -522,9 +525,6 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							completePaidNewsletterTask();
-							if ( queryClient ) {
-								queryClient?.invalidateQueries( [ 'launchpad' ] );
-							}
 							setShowPlansModal
 								? setShowPlansModal( true )
 								: window.location.assign(
