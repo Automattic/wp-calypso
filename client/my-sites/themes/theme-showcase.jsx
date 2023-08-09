@@ -576,7 +576,7 @@ class ThemeShowcase extends Component {
 									className="section-nav-tabs__dropdown"
 									onSelect={ this.onTierSelect }
 									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, this.props.tier ) || '',
+										args: getOptionLabel( tiers, this.props.tier || 'all' ) || '',
 									} ) }
 									options={ tiers }
 									initialSelected={ this.props.tier }
