@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OdieAssistant from '..';
 import { getOdieInitialPrompt } from './initial-prompts';
@@ -38,6 +39,7 @@ interface OdieAssistantContextInterface {
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
+	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 }
 
 const defaultContextInterfaceValues = {
@@ -56,6 +58,7 @@ const defaultContextInterfaceValues = {
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
+	trackEvent: noop,
 };
 
 // Create a default new context
@@ -76,6 +79,7 @@ const OdieAssistantProvider = ( {
 	sectionName: OdieAllowedSectionNames;
 	children: ReactNode;
 } ) => {
+	const dispatch = useDispatch();
 	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v0' );
 	const odieIsEnabled =
 		config.isEnabled( 'odie' ) ||
@@ -102,6 +106,10 @@ const OdieAssistantProvider = ( {
 			messages: [ { content: getOdieInitialPrompt( sectionName ), role: 'bot', type: 'message' } ],
 		} );
 	}, [ sectionName, siteId ] );
+
+	const trackEvent = ( event: string, properties?: Record< string, unknown > ) => {
+		dispatch( recordTracksEvent( event, properties ) );
+	};
 
 	const addMessage = ( message: Message ) => {
 		setMessages( ( prevMessages ) => {
@@ -141,6 +149,7 @@ const OdieAssistantProvider = ( {
 				setIsLoading,
 				setIsNudging,
 				setIsVisible,
+				trackEvent,
 			} }
 		>
 			{ children }

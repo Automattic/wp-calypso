@@ -363,7 +363,7 @@ const PlansFeaturesMain = ( {
 		_customerType = 'business';
 	}
 
-	const { setIsVisible } = useOdieAssistantContext();
+	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
 
 	const isDisplayingPlansNeededForFeature = () => {
 		if (
@@ -664,7 +664,15 @@ const PlansFeaturesMain = ( {
 						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlanAllowed && isSpotlightOnCurrentPlan }
 						showUpgradeableStorage={ showUpgradeableStorage }
 						isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
-						showOdie={ () => setIsVisible( true ) }
+						showOdie={ () => {
+							if ( ! isVisible ) {
+								trackEvent( 'calypso_odie_chat_toggle_visibility', {
+									visibility: true,
+									trigger: 'scroll',
+								} );
+								setIsVisible( true );
+							}
+						} }
 					/>
 				</>
 			) }
