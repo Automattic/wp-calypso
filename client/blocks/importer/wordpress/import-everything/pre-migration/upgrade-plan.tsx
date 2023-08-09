@@ -3,13 +3,10 @@ import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { Tooltip } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
-import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
 import type { URL } from 'calypso/types';
 
@@ -35,11 +32,6 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		onContentOnlyClick,
 		isBusy,
 	} = props;
-	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
-		targetSite.slug
-	);
-	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
-
 	return (
 		<div
 			className={ classnames( 'import__import-everything', {
@@ -73,34 +65,14 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					{ translate( 'Upgrade and migrate' ) }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
-					<>
-						{ isEligibleForTrialPlan && (
-							<Button
-								busy={ isBusy }
-								borderless={ true }
-								className="action-buttons__borderless"
-								onClick={ onFreeTrialClick }
-							>
-								{ translate( 'Try it for free' ) }
-							</Button>
-						) }
-						{ ! isEligibleForTrialPlan && (
-							<Tooltip
-								delay={ 0 }
-								position="top center"
-								text={ createInterpolateElement(
-									translate(
-										'You are not eligible for a free trial<br/>since you have already used it.'
-									),
-									{ br: <br /> }
-								) }
-							>
-								<Button borderless={ true } className="action-buttons__borderless">
-									{ translate( 'Try it for free' ) }
-								</Button>
-							</Tooltip>
-						) }
-					</>
+					<Button
+						busy={ isBusy }
+						borderless={ true }
+						className="action-buttons__borderless"
+						onClick={ onFreeTrialClick }
+					>
+						{ translate( 'Try it for free' ) }
+					</Button>
 				) }
 				{ ! isEligibleForTrialPlan && (
 					<Button
