@@ -61,7 +61,7 @@ jobs:
         id: renovate-cache
         uses: actions/cache@v3
         with:
-          path: ${{ RENOVATE_CACHE_DIR }}
+          path: ${{ env.RENOVATE_CACHE_DIR }}
           # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
           key: gandalf
 
@@ -74,7 +74,7 @@ jobs:
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
           RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache }}
-          RENOVATE_CACHE_DIR: ${{ RENOVATE_CACHE_DIR }}
+          RENOVATE_CACHE_DIR: ${{ env.RENOVATE_CACHE_DIR }}
 
       - name: Check rate limit post-run
         env:
