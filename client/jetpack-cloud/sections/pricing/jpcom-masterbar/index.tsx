@@ -146,9 +146,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 													>
 														<Tag
 															className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
-															href={ href ? localizeUrl( href, locale ) : `#${ id }` }
+															href={
+																href && href !== '#' ? localizeUrl( href, locale ) : `#${ id }`
+															}
 															aria-expanded={ hasChildren ? false : undefined }
-															onClick={ href ? onLinkClick : undefined }
+															onClick={ href && href !== '#' ? onLinkClick : undefined }
 														>
 															{ label }
 															{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
