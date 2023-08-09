@@ -65,6 +65,9 @@ jobs:
           # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
           key: gandalf
 
+      - name: Check cache properties
+        run: ls -l $RENOVATE_CACHE_DIR
+
       - uses: renovatebot/github-action@v39.0.1
         with:
           configurationFile: renovate.json5
