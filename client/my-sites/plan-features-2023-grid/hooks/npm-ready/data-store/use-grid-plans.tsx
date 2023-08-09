@@ -19,7 +19,6 @@ import {
 	type FeatureList,
 	type PlanSlug,
 	type FeatureObject,
-	type FilteredPlan,
 	type StorageOption,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
@@ -74,7 +73,6 @@ export type UsePricingMetaForGridPlans = ( {
 export type GridPlan = {
 	planSlug: PlanSlug;
 	isVisible: boolean;
-	planConstantObj: FilteredPlan;
 	features: {
 		wpcomFeatures: TransformedFeatureObject[];
 		jetpackFeatures: TransformedFeatureObject[];
@@ -295,7 +293,6 @@ const useGridPlans = ( {
 		return {
 			planSlug,
 			isVisible: planSlugsForIntent.includes( planSlug ),
-			planConstantObj,
 			tagline,
 			availableForPurchase,
 			productNameShort,
