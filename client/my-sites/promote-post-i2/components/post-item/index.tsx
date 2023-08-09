@@ -3,7 +3,6 @@ import './style.scss';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
-import { useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -13,8 +12,6 @@ import { formatNumber } from '../../utils';
 import RelativeTime from '../relative-time';
 
 export default function PostItem( { post, className }: { post: BlazablePost; className: string } ) {
-	const [ loading ] = useState( false );
-
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: 'post-' + post.ID,
 		entrypoint: 'promoted_posts-post_item',
@@ -124,8 +121,8 @@ export default function PostItem( { post, className }: { post: BlazablePost; cla
 						</a>
 						<Button
 							variant="primary"
-							isBusy={ loading }
-							disabled={ loading }
+							isBusy={ false }
+							disabled={ false }
 							onClick={ onClickPromote }
 							className="post-item__post-promote-button"
 						>
@@ -148,8 +145,8 @@ export default function PostItem( { post, className }: { post: BlazablePost; cla
 			<td className="post-item__post-promote">
 				<Button
 					variant="primary"
-					isBusy={ loading }
-					disabled={ loading }
+					isBusy={ false }
+					disabled={ false }
 					onClick={ onClickPromote }
 					className="post-item__post-promote-button"
 				>
