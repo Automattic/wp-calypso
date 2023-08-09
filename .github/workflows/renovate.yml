@@ -65,7 +65,7 @@ jobs:
       - uses: actions/download-artifact@v3
         continue-on-error: true
         with:
-          name: renovate-cache-${{ env.GITHUB_HEAD_REF }}
+          name: renovate-cache
           path: /tmp/renovate/cache/renovate
 
       # Unfortunately, the permissions expected within renovate's docker container
@@ -87,7 +87,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: renovate-cache-${{ env.GITHUB_HEAD_REF }}
+          name: renovate-cache
           path: /tmp/renovate/cache/renovate
 
       - name: Check rate limit post-run
