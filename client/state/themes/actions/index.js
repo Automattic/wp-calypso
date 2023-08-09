@@ -14,6 +14,7 @@ export { deleteTheme } from 'calypso/state/themes/actions/delete-theme';
 export { dismissAtomicTransferDialog } from 'calypso/state/themes/actions/dismiss-atomic-transfer-dialog';
 export { hideThemePreview } from 'calypso/state/themes/actions/hide-theme-preview';
 export { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
+export { installAndLivePreview } from 'calypso/state/themes/actions/install-and-live-preview';
 export { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
 export { installTheme } from 'calypso/state/themes/actions/install-theme';
 export { livePreview } from 'calypso/state/themes/actions/live-preview';
@@ -23,6 +24,7 @@ export {
 	getRecommendedThemes,
 	receiveRecommendedThemes,
 } from 'calypso/state/themes/actions/recommended-themes';
+export { redirectToLivePreview } from 'calypso/state/themes/actions/redirect-to-live-preview';
 export {
 	getTrendingThemes,
 	receiveTrendingThemes,
