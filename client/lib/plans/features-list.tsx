@@ -301,34 +301,21 @@ import {
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import i18n, { TranslateResult } from 'i18n-calypso';
-import { MemoExoticComponent } from 'react';
+import i18n from 'i18n-calypso';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
 import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
+import type {
+	FeatureObject as FeatureObjectPackaged,
+	FeatureList as FeatureListPackaged,
+} from '@automattic/calypso-products';
 
-export type FeatureObject = {
-	getSlug: () => string;
-	getTitle: ( domainName?: string ) => TranslateResult;
-	getAlternativeTitle?: () => TranslateResult;
-	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
-	getHeader?: () => TranslateResult;
-	getDescription?: ( domainName?: string ) => TranslateResult;
-	getStoreSlug?: () => string;
-	getCompareTitle?: () => TranslateResult;
-	getCompareSubtitle?: () => TranslateResult;
-	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
-	isPlan?: boolean;
-	getFeatureGroup?: () => string;
-	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
-	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
-};
-export type FeatureList = {
-	[ key: string ]: FeatureObject;
-};
+export type FeatureObject = FeatureObjectPackaged;
+
+export type FeatureList = FeatureListPackaged;
 
 export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {

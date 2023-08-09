@@ -21,4 +21,5 @@ export type NewsletterCategory = {
 	slug: string;
 	description: string;
 	parent: number;
+	subscribed?: boolean;
 };
