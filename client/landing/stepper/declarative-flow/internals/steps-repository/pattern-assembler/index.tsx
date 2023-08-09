@@ -39,7 +39,6 @@ import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import ScreenActivation from './screen-activation';
-import ScreenCategoryList from './screen-category-list';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
@@ -414,22 +413,6 @@ const PatternAssembler = ( {
 		recordTracksEvent,
 	} );
 
-	const onPatternSelectorBack = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
-			pattern_type: 'section',
-		} );
-	};
-
-	const onDoneClick = ( type: string ) => {
-		const patterns = getPatterns( type );
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_DONE_CLICK, {
-			pattern_type: type,
-			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
-			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
-			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
-		} );
-	};
-
 	const onContinueClick = () => {
 		trackEventContinue();
 
@@ -554,14 +537,12 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						hasSections={ Boolean( sections.length ) }
-						hasHeader={ Boolean( header ) }
-						hasFooter={ Boolean( footer ) }
-						hasColor={ Boolean( colorVariation ) }
-						hasFont={ Boolean( fontVariation ) }
 						selectedMainItem={ selectedMainItem }
+						selectedSections={ sections }
 						selectedHeader={ header }
 						selectedFooter={ footer }
+						hasColor={ Boolean( colorVariation ) }
+						hasFont={ Boolean( fontVariation ) }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
 						updateActivePatternPosition={ () => {
@@ -572,21 +553,6 @@ const PatternAssembler = ( {
 								return activateFooterPosition( !! footer );
 							}
 						} }
-					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
-					<ScreenCategoryList
-						categories={ categories }
-						patternsMapByCategory={ patternsMapByCategory }
-						onDoneClick={ () => onDoneClick( 'section' ) }
-						replacePatternMode={ sectionPosition !== null }
-						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
-						onSelect={ onSelect }
-						recordTracksEvent={ recordTracksEvent }
-						onTogglePatternPanelList={ setIsPanelOpen }
-						selectedPatterns={ sections }
-						onBack={ onPatternSelectorBack }
 					/>
 				</NavigatorScreen>
 
