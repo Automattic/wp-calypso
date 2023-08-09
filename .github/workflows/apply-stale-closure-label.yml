@@ -22,7 +22,7 @@ jobs:
       - name: Set Last Comment
         id: get_last_comment
         run: |
-          last_comment=$( echo '${{ steps.get_all_comments.outputs.data }}' | jq -r '.[-1].body' )
+          last_comment=$( echo '${{ steps.get_all_comments.outputs.data }}' | tr -d '[:cntrl:]' | jq -r '.[-1].body' )
           echo comment=$last_comment >> $GITHUB_OUTPUT
 
       - name: Add [Closed] Stale label
