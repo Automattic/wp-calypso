@@ -1,7 +1,7 @@
-import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
-import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
@@ -15,7 +15,6 @@ const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-serv
 
 export default function AdditionalTermsOfServiceInCart() {
 	const translate = useTranslate();
-	const locale = useLocale();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -30,7 +29,6 @@ export default function AdditionalTermsOfServiceInCart() {
 				const message = getMessageForTermsOfServiceRecord(
 					termsOfServiceRecord,
 					translate,
-					locale,
 					siteSlug
 				);
 
@@ -47,7 +45,6 @@ export default function AdditionalTermsOfServiceInCart() {
 function getMessageForTermsOfServiceRecord(
 	termsOfServiceRecord: TermsOfServiceRecord,
 	translate: ReturnType< typeof useTranslate >,
-	locale: string,
 	siteSlug: string | null
 ): TranslateResult {
 	const { args = {} } = termsOfServiceRecord;
@@ -61,21 +58,11 @@ function getMessageForTermsOfServiceRecord(
 				return '';
 			}
 			if (
-				( locale === 'en' ||
-					i18n.hasTranslation(
-						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription {{/manageSubscriptionLink}} at any time.'
-					) ) &&
 				args.subscription_start_date &&
 				args.subscription_expiry_date &&
 				args.subscription_auto_renew_date
 			) {
-				if (
-					args.is_renewal_price_prorated &&
-					( locale === 'en' ||
-						i18n.hasTranslation(
-							'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (PAYPAL %(email)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.'
-						) )
-				) {
+				if ( args.is_renewal_price_prorated ) {
 					return translate(
 						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (PAYPAL %(email)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
 						{
@@ -165,21 +152,11 @@ function getMessageForTermsOfServiceRecord(
 				return '';
 			}
 			if (
-				( locale === 'en' ||
-					i18n.hasTranslation(
-						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.'
-					) ) &&
 				args.subscription_start_date &&
 				args.subscription_expiry_date &&
 				args.subscription_auto_renew_date
 			) {
-				if (
-					args.is_renewal_price_prorated &&
-					( locale === 'en' ||
-						i18n.hasTranslation(
-							'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (%(cardType)s ****%(cardLast4)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.'
-						) )
-				) {
+				if ( args.is_renewal_price_prorated ) {
 					return translate(
 						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (%(cardType)s ****%(cardLast4)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
 						{
