@@ -30,6 +30,7 @@ function DismissibleCard( {
 	function handleClick( event ) {
 		onClick?.( event );
 		dispatch( dismissCard( preferenceName, temporary ) );
+		event.preventDefault();
 	}
 
 	return (
