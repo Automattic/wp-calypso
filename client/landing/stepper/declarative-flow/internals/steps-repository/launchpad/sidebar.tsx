@@ -2,9 +2,9 @@ import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Badge, Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
-import { isBlogOnboardingFlow } from '@automattic/onboarding';
+import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
-import { useRef, useState } from '@wordpress/element';
+import { useRef, useState, useEffect } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -13,6 +13,7 @@ import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/int
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -29,6 +30,13 @@ type SidebarProps = {
 	flow: string | null;
 };
 
+type MembershipsData = {
+	connect_url: string | undefined;
+	connected_account_default_currency: string | undefined;
+	connected_account_description: string | undefined;
+	connected_account_id: string | undefined;
+};
+
 function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
 
@@ -38,6 +46,11 @@ function getUrlInfo( url: string ) {
 	const topLevelDomain = urlWithoutProtocol.match( /\..*/ )?.[ 0 ] || '';
 
 	return [ siteName, topLevelDomain ];
+}
+
+function fetchMembershipsData( siteId: number ): Promise< MembershipsData > {
+	const url = `/sites/${ siteId }/memberships/status?source=launchpad`;
+	return wpcom.req.get( url, { apiNamespace: 'wpcom/v2' } );
 }
 
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
@@ -50,6 +63,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const siteIntentOption = site?.options?.site_intent ?? null;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const [ stripeConnectUrl, setStripeConnectUrl ] = useState< string >( '' );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
 		useSiteGlobalStylesStatus( site?.ID );
@@ -93,7 +107,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			isEmailVerified,
 			checklistStatuses,
 			getPlanCartItem(),
-			getDomainCartItem()
+			getDomainCartItem(),
+			stripeConnectUrl
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
@@ -144,6 +159,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			</>
 		);
 	}
+
+	useEffect( () => {
+		if ( site?.ID && isNewsletterFlow( flow ) ) {
+			fetchMembershipsData( site.ID ).then( ( { connect_url } ) => {
+				setStripeConnectUrl( connect_url || '' );
+			} );
+		}
+	}, [ site, flow ] );
 
 	return (
 		<div className="launchpad__sidebar">
