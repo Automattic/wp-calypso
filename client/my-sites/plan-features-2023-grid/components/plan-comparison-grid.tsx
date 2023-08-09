@@ -412,7 +412,7 @@ const PlanComparisonGridHeaderCell = ( {
 						className="plan-comparison-grid__title-select"
 						value={ planSlug }
 					>
-						{ displayedGridPlans.map( ( { planSlug: otherPlan, planConstantObj } ) => {
+						{ displayedGridPlans.map( ( { planSlug: otherPlan, planTitle } ) => {
 							const isVisiblePlan = visibleGridPlans.find(
 								( { planSlug } ) => planSlug === otherPlan
 							);
@@ -423,14 +423,14 @@ const PlanComparisonGridHeaderCell = ( {
 
 							return (
 								<option key={ otherPlan } value={ otherPlan }>
-									{ planConstantObj.getTitle() }
+									{ planTitle }
 								</option>
 							);
 						} ) }
 					</select>
 				) }
 				<h4 className="plan-comparison-grid__title">
-					<span>{ gridPlan.planConstantObj.getTitle() }</span>
+					<span>{ gridPlan.planTitle }</span>
 					{ showPlanSelect && <DropdownIcon /> }
 				</h4>
 			</PlanSelector>
