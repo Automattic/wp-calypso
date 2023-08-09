@@ -28,12 +28,12 @@ import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
-import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './utils';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';

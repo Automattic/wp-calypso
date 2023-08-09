@@ -12,12 +12,12 @@ import useJetpackAgencyDashboardRecordTrackEvent from '../../hooks/use-jetpack-a
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
 import useDefaultSiteColumns from '../hooks/use-default-site-columns';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
 import { Site } from '../types';
-import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../utils';
 import useFormattedSites from './hooks/use-formatted-sites';
 import './style.scss';
 

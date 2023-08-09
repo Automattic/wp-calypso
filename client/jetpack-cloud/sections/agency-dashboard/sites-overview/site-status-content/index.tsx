@@ -15,10 +15,10 @@ import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from '../context';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import SiteBackupStaging from '../site-backup-staging';
 import SiteSelectCheckbox from '../site-select-checkbox';
 import SiteSetFavorite from '../site-set-favorite';
-import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../utils';
 import useRowMetadata from './hooks/use-row-metadata';
 import type { AllowedTypes, SiteData } from '../types';
 
