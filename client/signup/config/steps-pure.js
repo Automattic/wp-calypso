@@ -230,7 +230,7 @@ export function generateSteps( {
 			stepName: 'site-options',
 			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
 			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
 			apiRequestFunction: setOptionsOnSite,
 			delayApiRequestUntilComplete: true,
 		},
@@ -239,7 +239,7 @@ export function generateSteps( {
 			stepName: 'store-options',
 			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
 			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
 			apiRequestFunction: setOptionsOnSite,
 		},
 
@@ -1005,7 +1005,7 @@ export function generateSteps( {
 		'difm-options': {
 			stepName: 'site-options',
 			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
 			},
@@ -1016,7 +1016,7 @@ export function generateSteps( {
 		'difm-store-options': {
 			stepName: 'site-options',
 			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
 			},
