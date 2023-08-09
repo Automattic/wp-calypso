@@ -29,7 +29,10 @@
 }
 
 .notice {
-	margin: 0;
-	border: none;
-	box-shadow: none;
+	display: inline-block;
+	width: auto;
+	background: #fff;
+	margin-left: 64px;
+	margin-bottom: 0;
+	color: #3c434a;
 }
