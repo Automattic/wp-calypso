@@ -1,18 +1,25 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .domain-row {
 	position: relative;
 	display: block;
 	padding: 16px;
-	border-bottom: 1px solid var(--studio-gray-5);
-	font-size: $font-body-extra-small;
-	color: var(--studio-gray-50);
 	flex-wrap: wrap;
+	border-bottom: 1px solid $gray-100;
+	font-size: $font-body-extra-small;
+	color: var(--studio-gray-60);
+	line-height: 20px;
+	letter-spacing: -0.15px;
+	font-family: "SF Pro Text", $sans;
 
 	@include break-large {
 		display: flex;
+		flex-direction: column;
 		align-items: flex-start;
-		padding: 20px 0;
+		gap: 12px;
+		align-self: stretch;
+		padding: 24px 0;
 	}
 
 	/* div. for increased specificity */
@@ -72,10 +79,10 @@
 }
 
 .domain-row__mobile-container {
-	flex: 233 233 0;
 	display: flex;
-	flex-basis: 100%;
-	max-width: 100%;
+	justify-content: space-between;
+	align-items: flex-start;
+	align-self: stretch;
 }
 
 .domain-row__mobile-container2 {
@@ -190,9 +197,12 @@
 	flex: 1;
 
 	@include break-large {
-		flex: 83 83 0;
-		font-size: $font-body-small;
-		padding-top: 2px;
+		display: flex;
+		width: 280px;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		flex: none;
 	}
 
 	.domain-row__domain-name {
@@ -201,13 +211,14 @@
 		font-weight: 500;
 
 		button {
-			color: var(--studio-gray-90);
+			color: var(--studio-gray-100);
 			cursor: pointer;
+			font-family: "SF Pro Text", $sans;
+			font-size: $font-body;
+			font-style: normal;
 			font-weight: 500;
-			text-overflow: ellipsis;
-			overflow: hidden;
-			white-space: nowrap;
-			max-width: 100%;
+			line-height: 24px; /* 150% */
+			letter-spacing: -0.32px;
 
 			&:hover {
 				color: var(--color-link);
@@ -226,6 +237,9 @@
 	.domain-row__domain-type-text {
 		display: none;
 		font-size: $font-body-extra-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
 
 		@include break-large {
 			display: block;
@@ -237,21 +251,21 @@
 	display: none;
 
 	@include break-large {
-		flex: 70 70 0;
-		display: block;
+		display: flex;
+		width: 200px;
 		align-items: center;
-		padding-top: 2px;
+		gap: 2px;
 		font-size: $font-body-small;
 	}
 
 	a {
-		color: var(--studio-gray-50);
+		color: var(--studio-gray-60);
 
 		svg {
 			width: 18px;
 			height: 18px;
 			vertical-align: text-bottom;
-			fill: var(--studio-gray-50);
+			fill: var(--studio-gray-60);
 		}
 
 		&:hover {
@@ -267,10 +281,10 @@
 	display: none;
 
 	@include break-large {
-		flex: 40 40 0;
-		display: block;
+		display: flex;
+		width: 100px;
 		align-items: center;
-		padding-top: 2px;
+		gap: 2px;
 		font-size: $font-body-small;
 	}
 
@@ -285,10 +299,10 @@
 	margin-left: 16px;
 
 	@include break-large {
-		flex: 50 50 0;
-		margin: 0;
-		padding-top: 2px;
-		display: inline;
+		display: flex;
+		width: 140px;
+		align-items: center;
+		gap: 2px;
 		font-size: $font-body-small;
 	}
 }
@@ -307,6 +321,11 @@
 
 	@include break-large {
 		display: flex;
+		width: 80px;
+		align-items: center;
+		gap: 2px;
+		flex: none;
+		font-size: $font-body-small;
 
 		.components-base-control__field {
 			margin: 4px 0;
@@ -319,8 +338,12 @@
 	flex: 30 30 0;
 
 	@include break-large {
-		display: block;
-		padding-top: 2px;
+		display: flex;
+		width: 140px;
+		align-items: center;
+		gap: 2px;
+		font-size: $font-body-small;
+		flex: none;
 	}
 
 	a {
@@ -334,10 +357,12 @@
 
 .domain-row__action-cell {
 	margin-left: 10px;
-	height: 42px;
 
 	.ellipsis-menu {
 		margin: 0 auto;
+		button {
+			color: var(--studio-gray-50);
+		}
 	}
 
 	.ellipsis-menu__toggle {
@@ -347,8 +372,11 @@
 
 	@include break-large {
 		display: flex;
-		flex: 20 20 0;
-		margin: 0;
+		width: 50px;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-end;
+		gap: 10px;
 	}
 }
 
