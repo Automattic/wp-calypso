@@ -15,7 +15,7 @@ interface Props {
 export default function PostsTable( props: Props ) {
 	const { posts, isLoading, isFetchingPageResults } = props;
 
-	// const testExperimentName = 'wpcom_gf_website_builder_lp_aa_test_v2';
+	// const testExperimentName = 'dsp_blaze_open_widget_button_202308';
 	// const [ isLoadingExperimentAssignment, experimentAssignment ] =
 	// 	useExperiment( testExperimentName );
 
