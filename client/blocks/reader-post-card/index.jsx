@@ -270,9 +270,6 @@ class ReaderPostCard extends Component {
 		}
 
 		const postCardComments = () => {
-			if ( ! post.discussion?.comments_open ) {
-				return;
-			}
 			const fetchStatus = this.props.commentsFetchingStatus;
 			const hasFetchedComments = fetchStatus.hasReceivedBefore || fetchStatus.hasReceivedAfter;
 
@@ -287,16 +284,18 @@ class ReaderPostCard extends Component {
 				//  eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 				<div onClick={ ( ev ) => ev.stopPropagation() }>
 					<PostComments
-						post={ post }
-						showNestingReplyArrow={ true }
+						commentCount={ post.discussion?.comment_count }
 						expandableView={ true }
 						commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+						post={ post }
 						shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
 						shouldHighlightNew={ true }
-						initialSize={ 10 }
-						pageSize={ 25 }
-						maxDepth={ 2 }
 						showCommentCount={ false }
+						showConversationFollowButton={ false }
+						showNestingReplyArrow={ true }
+						initialSize={ 5 }
+						pageSize={ 15 }
+						maxDepth={ 1 }
 					/>
 				</div>
 			);
