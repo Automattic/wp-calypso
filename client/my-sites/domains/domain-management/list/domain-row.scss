@@ -14,11 +14,6 @@
 	font-family: "SF Pro Text", $sans;
 
 	@include break-large {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 12px;
-		align-self: stretch;
 		padding: 24px 0;
 	}
 
@@ -202,7 +197,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: flex-start;
-		flex: none;
+		flex: initial;
 	}
 
 	.domain-row__domain-name {
@@ -324,7 +319,7 @@
 		width: 80px;
 		align-items: center;
 		gap: 2px;
-		flex: none;
+		flex: initial;
 		font-size: $font-body-small;
 
 		.components-base-control__field {
@@ -343,7 +338,7 @@
 		align-items: center;
 		gap: 2px;
 		font-size: $font-body-small;
-		flex: none;
+		flex: initial;
 	}
 
 	a {
