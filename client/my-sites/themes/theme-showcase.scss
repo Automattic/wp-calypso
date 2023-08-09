@@ -112,6 +112,11 @@
 				background-color: var(--studio-blue-50);
 			}
 		}
+
+		&.is-selected {
+			background-color: var(--studio-blue-50);
+			color: var(--color-text-inverted);
+		}
 	}
 
 	.theme__filters {
