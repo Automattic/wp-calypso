@@ -10,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
-import { useSiteEligibleMigrationTrialPlan } from '../../../hooks/use-site-eligible-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
 import type { URL } from 'calypso/types';
 
@@ -27,7 +26,6 @@ interface Props {
 export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
-	const isEligibleForTrialPlan = useSiteEligibleMigrationTrialPlan();
 	const {
 		sourceSiteSlug,
 		sourceSiteUrl,
