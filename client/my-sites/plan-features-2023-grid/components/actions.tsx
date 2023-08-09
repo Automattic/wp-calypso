@@ -29,7 +29,6 @@ type PlanFeaturesActionsButtonProps = {
 	canUserPurchasePlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
-	current: boolean;
 	freePlan: boolean;
 	manageHref: string;
 	isPopular?: boolean;
@@ -176,7 +175,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
-	current,
 	manageHref,
 	canUserPurchasePlan,
 	currentSitePlanSlug,
@@ -192,7 +190,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
-	current?: boolean;
 	manageHref?: string;
 	canUserPurchasePlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
@@ -201,6 +198,8 @@ const LoggedInPlansFeatureActionButton = ( {
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
+	const { gridPlansIndex } = usePlansGridContext();
+	const { current } = gridPlansIndex[ planSlug ];
 	const currentPlanBillPeriod = useSelector( ( state ) => {
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
@@ -339,7 +338,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	canUserPurchasePlan,
 	className,
 	currentSitePlanSlug,
-	current = false,
 	freePlan = false,
 	manageHref,
 	isInSignup,
@@ -358,15 +356,15 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const { gridPlansIndex } = usePlansGridContext();
+	const {
+		planTitle,
+		current,
+		pricing: { currencyCode, originalPrice, discountedPrice },
+	} = gridPlansIndex[ planSlug ];
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
 		'is-current-plan': current,
 	} );
-
-	const {
-		planTitle,
-		pricing: { currencyCode, originalPrice, discountedPrice },
-	} = gridPlansIndex[ planSlug ];
 
 	const handleUpgradeButtonClick = () => {
 		if ( ! freePlan ) {
@@ -466,7 +464,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			current={ current }
 			manageHref={ manageHref }
 			canUserPurchasePlan={ canUserPurchasePlan }
 			currentSitePlanSlug={ currentSitePlanSlug }

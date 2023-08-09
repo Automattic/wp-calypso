@@ -566,7 +566,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			isLargeCurrency,
 		} = this.props;
 
-		return renderedGridPlans.map( ( { planSlug, current, availableForPurchase } ) => {
+		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
 			const classes = classNames(
 				'plan-features-2023-grid__table-item',
 				'is-top-buttons',
@@ -603,7 +603,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						onUpgradeClick={ () => this.handleUpgradeClick( planSlug ) }
 						planSlug={ planSlug }
 						flowName={ flowName }
-						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						selectedSiteSlug={ selectedSiteSlug }
 						buttonText={ buttonText }
