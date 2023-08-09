@@ -30,7 +30,7 @@ import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
-import useDashboardShowLargeScreen from './site-content/use-dashboard-show-large-screen';
+import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import { getProductSlugFromProductType } from './utils';
