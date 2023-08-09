@@ -62,7 +62,7 @@ jobs:
       #     path: /tmp/renovate/cache/renovate
       #     # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
       #     key: gandalf-3
-      - uses: actions/download-workflow-artifact@v2
+      - uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
         with:
           name: renovate-cache
