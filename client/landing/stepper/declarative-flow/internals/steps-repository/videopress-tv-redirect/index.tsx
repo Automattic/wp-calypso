@@ -32,7 +32,7 @@ const VideoPressTvRedirect: Step = function VideoPressTvRedirect( { data } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="videopress-tv-purchase-redirect-header"
-					headerText={ __( 'Redirecting To you VideoPress TV video site' ) }
+					headerText={ __( 'Redirecting to your VideoPress TV video site' ) }
 					align="center"
 				/>
 			}
