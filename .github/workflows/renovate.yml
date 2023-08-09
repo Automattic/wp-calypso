@@ -41,6 +41,7 @@ concurrency:
 env:
   # Set as a workflow variable so that multiple jobs can use the value.
   RENOVATE_VERSION: 36.31.0
+  RENOVATE_CACHE_DIR: ./.cache/renovate
 
 jobs:
   renovate:
@@ -54,15 +55,15 @@ jobs:
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
-      - name: Create empty cache dir
-        run: mkdir -p .cache/renovate
+      # - name: Create empty cache dir
+      #   run: mkdir -p .cache/renovate
       - name: Renovate Cache
         id: renovate-cache
         uses: actions/cache@v3
         with:
-          path: .cache/renovate
+          path: ${{ RENOVATE_CACHE_DIR }}
           # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
-          key: gandalf-${{ env.RENOVATE_VERSION }}
+          key: gandalf
 
       - uses: renovatebot/github-action@v39.0.1
         with:
@@ -73,6 +74,7 @@ jobs:
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
           RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache }}
+          RENOVATE_CACHE_DIR: $ {{ RENOVATE_CACHE_DIR }}
 
       - name: Check rate limit post-run
         env:
@@ -87,4 +89,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Config Validator
-        run: yarn dlx -p renovate@$RENOVATE_VERSION renovate-config-validator
+        run: yarn dlx -p "renovate@$RENOVATE_VERSION" renovate-config-validator

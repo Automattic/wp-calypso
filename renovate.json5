@@ -107,5 +107,4 @@
 	allowScripts: true,
 	ignoreScripts: false,
 	dependencyDashboardTitle: 'Renovate Dependency Updates',
-	cacheDir: '.cache/renovate',
 }
