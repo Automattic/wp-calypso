@@ -41,7 +41,7 @@ concurrency:
 env:
   # Set as a workflow variable so that multiple jobs can use the value.
   RENOVATE_VERSION: 36.31.0
-  RENOVATE_CACHE_DIR: .cache/renovate
+  RENOVATE_CACHE_DIR: .renovate_cache
 
 jobs:
   renovate:
