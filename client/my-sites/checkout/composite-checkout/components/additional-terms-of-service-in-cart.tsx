@@ -47,7 +47,10 @@ function getMessageForTermsOfServiceRecordPayPal(
 	translate: ReturnType< typeof useTranslate >,
 	siteSlug: string | null
 ): TranslateResult {
-	const { args = {} } = termsOfServiceRecord;
+	const args = termsOfServiceRecord.args;
+	if ( ! args ) {
+		return '';
+	}
 	if ( ! args.email || ! args.product_name || ! args.renewal_price ) {
 		debug(
 			`Malformed terms of service args with code: ${ termsOfServiceRecord.code }`,
@@ -148,7 +151,10 @@ function getMessageForTermsOfServiceRecordCard(
 	translate: ReturnType< typeof useTranslate >,
 	siteSlug: string | null
 ): TranslateResult {
-	const { args = {} } = termsOfServiceRecord;
+	const args = termsOfServiceRecord.args;
+	if ( ! args ) {
+		return '';
+	}
 	if ( ! args.card_type || ! args.card_last_4 || ! args.product_name || ! args.renewal_price ) {
 		debug(
 			`Malformed terms of service args with code: ${ termsOfServiceRecord.code }`,
@@ -252,7 +258,10 @@ function getMessageForTermsOfServiceRecordUnknown(
 	translate: ReturnType< typeof useTranslate >,
 	siteSlug: string | null
 ): TranslateResult {
-	const { args = {} } = termsOfServiceRecord;
+	const args = termsOfServiceRecord.args;
+	if ( ! args ) {
+		return '';
+	}
 	if (
 		args.subscription_start_date &&
 		args.subscription_expiry_date &&
