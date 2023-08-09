@@ -48,10 +48,11 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 		end,
 		metric: metric || 'requests_persec',
 	} );
+
 	// Function to get the dimension value for a specific key and period
 	const getDimensionValue = ( period: PeriodData ) => {
-		if ( Array.isArray( period?.dimension ) ) {
-			// If the dimension is an array, return 0
+		if ( typeof period?.dimension === 'object' && Object.keys( period.dimension ).length === 0 ) {
+			// If the dimension is an empty object, return 0
 			return 0;
 		} else if ( typeof period?.dimension === 'object' ) {
 			// If the dimension is an object, try to find and return the dimension value
