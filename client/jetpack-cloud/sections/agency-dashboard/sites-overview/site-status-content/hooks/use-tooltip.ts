@@ -1,6 +1,9 @@
 import { TranslateResult, translate as RawTranslateFn, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { AllowedStatusTypes as AllowedStatusType, AllowedTypes as AllowedRowType } from '../types';
+import {
+	AllowedStatusTypes as AllowedStatusType,
+	AllowedTypes as AllowedRowType,
+} from '../../types';
 
 type TooltipGetter = Partial<
 	Record< AllowedStatusType, ( translate: typeof RawTranslateFn ) => TranslateResult >

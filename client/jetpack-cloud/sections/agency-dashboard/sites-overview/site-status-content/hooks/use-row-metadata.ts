@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
+import { AllowedTypes, RowMetaData, SiteData } from '../../types';
 import getLinks from '../lib/get-links';
 import getRowEventName from '../lib/get-row-event-name';
-import { AllowedTypes, RowMetaData, SiteData } from '../types';
 import useTooltip from './use-tooltip';
 
 /**

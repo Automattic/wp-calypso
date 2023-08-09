@@ -12,14 +12,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
-import SitesOverviewContext from './context';
+import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
+import SitesOverviewContext from '../context';
+import SiteBackupStaging from '../site-backup-staging';
+import SiteSelectCheckbox from '../site-select-checkbox';
+import SiteSetFavorite from '../site-set-favorite';
+import { getBoostRating, getBoostRatingClass, getProductSlugFromProductType } from '../utils';
 import useRowMetadata from './hooks/use-row-metadata';
-import SiteBackupStaging from './site-backup-staging';
-import SiteSelectCheckbox from './site-select-checkbox';
-import SiteSetFavorite from './site-set-favorite';
-import { getProductSlugFromProductType, getBoostRating, getBoostRatingClass } from './utils';
-import type { AllowedTypes, SiteData } from './types';
+import type { AllowedTypes, SiteData } from '../types';
 
 interface Props {
 	rows: SiteData;

@@ -1,6 +1,6 @@
 // Status event names for large (>960px) and small (<960px) screens.
 
-import { AllowedStatusTypes, AllowedTypes, StatusEventNames } from '../types';
+import { AllowedStatusTypes, AllowedTypes, StatusEventNames } from '../../types';
 
 const backup: StatusEventNames = {
 	inactive: {

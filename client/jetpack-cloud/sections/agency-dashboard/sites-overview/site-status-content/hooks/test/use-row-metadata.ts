@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { Site, SiteData } from '../../types';
+import { Site, SiteData } from '../../../types';
 import useRowMetadata from '../use-row-metadata';
 
 const FAKE_SITE: Site = {

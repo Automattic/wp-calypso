@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
-import { AllowedTypes } from '../types';
+import { AllowedTypes } from '../../types';
 
 /**
  * Returns link and tooltip for each feature based on status
