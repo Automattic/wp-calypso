@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
 import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -18,10 +19,13 @@ interface Props {
 	site: SiteDetails;
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
 }
-const TrialPlan = function TrialPlan( props: Props ) {
+const TrialPlan = function ( props: Props ) {
 	const { __ } = useI18n();
 	const { user, site, submit } = props;
 	const [ showPlanFeaturesModal, setShowPlanFeaturesModal ] = useState( false );
+	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
+		useCheckEligibilityMigrationTrialPlan( site?.ID );
+	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
 
 	const unsupportedTrialFeatureList = useUnsupportedTrialFeatureList();
 	const plan = getPlan( PLAN_BUSINESS );
@@ -47,8 +51,23 @@ const TrialPlan = function TrialPlan( props: Props ) {
 		}
 	}
 
-	if ( isAddingTrial ) {
+	if ( isAddingTrial || isCheckingEligibility ) {
 		return <LoadingEllipsis />;
+	} else if ( ! isEligibleForTrialPlan ) {
+		return (
+			<div className="trial-plan--container">
+				<Title>{ __( 'You already have an active free trial' ) }</Title>
+				<SubTitle>
+					{ createInterpolateElement(
+						__(
+							"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the Business plan."
+						),
+						{ br: <br /> }
+					) }
+				</SubTitle>
+				<NextButton>{ __( 'Purchase and migrate' ) }</NextButton>
+			</div>
+		);
 	}
 
 	return (
