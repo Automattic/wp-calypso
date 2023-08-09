@@ -11,7 +11,7 @@ export default function isJetpackConnectionProblem( state, siteId ) {
 	if ( ! siteId ) {
 		return null;
 	}
-	const connection_data = state.jetpackConnectionHealth[ siteId ];
+	const connection_data = state.jetpackConnectionHealth?.[ siteId ];
 
 	if ( ! connection_data ) {
 		return null;
