@@ -100,6 +100,7 @@ export function fetchThemeFilters( context, next ) {
 
 	wpcom.req
 		.get( '/theme-filters', {
+			min_themes_in_subject: 2,
 			apiVersion: '1.2',
 			locale: context.lang, // Note: undefined will be omitted by the query string builder.
 		} )

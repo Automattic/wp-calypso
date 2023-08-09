@@ -16,7 +16,8 @@ import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SearchThemes from 'calypso/components/search-themes';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
@@ -456,8 +457,6 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
-		const tier = this.props.tier || '';
-
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
 		const metas = [
@@ -562,33 +561,36 @@ class ThemeShowcase extends Component {
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
 					<div className="themes__controls">
-						<SearchThemes
-							query={ filterString + search }
-							onSearch={ this.doSearch }
-							recordTracksEvent={ this.recordSearchThemesTracksEvent }
-						/>
-						{ tabFilters && (
-							<div className="theme__filters">
-								{ ! isSiteWooExpressOrEcomFreeTrial && (
-									<ThemesToolbarGroup
-										items={ Object.values( tabFilters ) }
-										selectedKey={ this.getSelectedTabFilter().key }
-										onSelect={ ( key ) =>
-											this.onFilterClick(
-												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-											)
-										}
-									/>
-								) }
-								{ premiumThemesEnabled && ! isMultisite && (
-									<SimplifiedSegmentedControl
-										key={ tier }
-										initialSelected={ tier || 'all' }
-										options={ tiers }
-										onSelect={ this.onTierSelect }
-									/>
-								) }
+						<div className="theme__search">
+							<div className="theme__search-input">
+								<SearchThemes
+									query={ filterString + search }
+									onSearch={ this.doSearch }
+									recordTracksEvent={ this.recordSearchThemesTracksEvent }
+								/>
 							</div>
+							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+								<SelectDropdown
+									className="section-nav-tabs__dropdown"
+									onSelect={ this.onTierSelect }
+									selectedText={ translate( 'View: %s', {
+										args: getOptionLabel( tiers, this.props.tier || 'all' ) || '',
+									} ) }
+									options={ tiers }
+									initialSelected={ this.props.tier }
+								></SelectDropdown>
+							) }
+						</div>
+						{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+							<ThemesToolbarGroup
+								items={ Object.values( tabFilters ) }
+								selectedKey={ this.getSelectedTabFilter().key }
+								onSelect={ ( key ) =>
+									this.onFilterClick(
+										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+									)
+								}
+							/>
 						) }
 					</div>
 					<div className="themes__showcase">

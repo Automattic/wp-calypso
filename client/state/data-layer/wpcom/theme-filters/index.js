@@ -9,13 +9,20 @@ import {
 	THEME_FILTERS_REQUEST_FAILURE,
 } from 'calypso/state/themes/action-types';
 
+const defaultThemeFiltersArguments = {
+	min_themes_in_subject: 2,
+};
+
 const fetchFilters = ( action ) =>
 	http(
 		{
 			method: 'GET',
 			apiVersion: '1.2',
 			path: '/theme-filters',
-			query: action.locale ? { locale: action.locale } : {},
+			query: {
+				...defaultThemeFiltersArguments,
+				...( action.locale ? { locale: action.locale } : {} ),
+			},
 		},
 		action
 	);

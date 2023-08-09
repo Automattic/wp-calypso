@@ -34,6 +34,7 @@ export const PRODUCT_JETPACK_SOCIAL_BASIC = 'jetpack_social_basic_yearly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY = 'jetpack_social_basic_monthly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED = 'jetpack_social_advanced_yearly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY = 'jetpack_social_advanced_monthly';
+export const PRODUCT_JETPACK_STATS_YEARLY = 'jetpack_stats_yearly';
 export const PRODUCT_JETPACK_STATS_MONTHLY = 'jetpack_stats_monthly';
 export const PRODUCT_JETPACK_STATS_PWYW_YEARLY = 'jetpack_stats_pwyw_yearly';
 export const PRODUCT_JETPACK_STATS_FREE = 'jetpack_stats_free_yearly';
@@ -163,6 +164,7 @@ export const JETPACK_SOCIAL_PRODUCTS = <const>[
 
 // Stats
 export const JETPACK_STATS_PRODUCTS = <const>[
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
