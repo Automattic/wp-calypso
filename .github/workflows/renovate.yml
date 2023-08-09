@@ -54,14 +54,18 @@ jobs:
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
-      - name: Renovate Cache
-        id: renovate-cache
-        uses: actions/cache@v3
+      # - name: Renovate Cache
+      #   id: renovate-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
+      #     path: /tmp/renovate/cache/renovate
+      #     # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
+      #     key: gandalf-3
+      - uses: actions/download-artifact@v3
         with:
-          # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
+          name: renovate-cache-${{ env.GITHUB_HEAD_REF }}
           path: /tmp/renovate/cache/renovate
-          # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
-          key: gandalf-3
 
       # Unfortunately, the permissions expected within renovate's docker container
       # are different than the ones given after the cache is restored. We have to
@@ -80,6 +84,11 @@ jobs:
           RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: renovate-cache-${{ env.GITHUB_HEAD_REF }}
+          path: /tmp/renovate/cache/renovate
+
       - name: Check rate limit post-run
         env:
           TOKEN: ${{ secrets.RENOVATE_TOKEN }}
@@ -87,10 +96,6 @@ jobs:
           echo "Note any difference between this number and the one from the previous step may also include API uses from elsewhere that happened to occur at the same time."
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
-      - name: Check cache perms
-        run: ls -l /tmp/renovate/cache/renovate
-      - name: check for files
-        run: ls -a
   validate-renovate-config:
     name: Validate Renovate Configuration
     runs-on: ubuntu-latest
