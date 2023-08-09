@@ -4,11 +4,8 @@ import { ComponentProps } from 'react';
 import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
 import PatternCategoryList from './pattern-category-list';
 
-/**
- * FIXME: This component should depend only on local `./style.scss`.
- */
-import '@automattic/onboarding/src/navigator/navigator-buttons/style.scss';
 import './style.scss';
+import './pattern-category-list.scss';
 
 export default {
 	title: 'client/landing/pattern-assembler/PatternCategoryList',
@@ -30,6 +27,7 @@ export default {
 					 * It depends on `348px` since it uses `margin-inline-start: 348px;` for its position.
 					 */
 					style={ {
+						display: 'block',
 						width: '348px',
 						padding: '32px',
 						boxSizing: 'border-box',
@@ -125,11 +123,11 @@ const defaultArgs = {
 			},
 		],
 	},
-	wrapperRef: null,
-	recordTracksEvent: action( 'recordTracksEvent' ),
+	selectedCategory: 'about',
+	onSelectCategory: action( 'onSelectCategory' ),
 };
 
-export const AddPattern = Template.bind( {} );
-AddPattern.args = {
+export const Default = Template.bind( {} );
+Default.args = {
 	...defaultArgs,
 };

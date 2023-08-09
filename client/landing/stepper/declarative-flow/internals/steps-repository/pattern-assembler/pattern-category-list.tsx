@@ -1,10 +1,10 @@
+import { NavigatorItem } from '@automattic/onboarding';
 import {
+	__experimentalVStack as VStack,
 	__unstableComposite as Composite,
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import { Icon, chevronRight } from '@wordpress/icons';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import useCategoriesOrder from './hooks/use-categories-order';
 import type { Pattern, Category } from './types';
@@ -31,47 +31,40 @@ const PatternCategoryList = ( {
 		<Composite
 			{ ...composite }
 			role="listbox"
-			className="screen-container__body pattern-category-list__body"
+			className="pattern-category-list"
 			aria-label={ translate( 'Block pattern categories' ) }
 		>
-			{ categoriesInOrder.map( ( { name, label, description } ) => {
-				const isOpen = selectedCategory === name;
-				const hasPatterns = name && patternsMapByCategory[ name ]?.length;
-				const isHeaderCategory = name === 'header';
-				const isFooterCategory = name === 'footer';
+			<VStack spacing={ 0 }>
+				{ categoriesInOrder.map( ( { name, label, description } ) => {
+					const isActive = selectedCategory === name;
+					const hasPatterns = name && patternsMapByCategory[ name ]?.length;
+					const isHeaderCategory = name === 'header';
+					const isFooterCategory = name === 'footer';
 
-				if ( ! hasPatterns || isHeaderCategory || isFooterCategory ) {
-					return null;
-				}
+					if ( ! hasPatterns || isHeaderCategory || isFooterCategory ) {
+						return null;
+					}
 
-				return (
-					<CompositeItem
-						key={ name }
-						role="option"
-						as="button"
-						{ ...composite }
-						className={ classNames(
-							'components-navigator-button',
-							'navigator-button',
-							'pattern-category-list__category-button',
-							{
-								'navigator-button--is-active': isOpen,
-							}
-						) }
-						aria-label={ label }
-						aria-describedby={ description }
-						aria-current={ isOpen }
-						onClick={ () => {
-							if ( ! isOpen ) {
-								onSelectCategory( name );
-							}
-						} }
-					>
-						<span>{ label }</span>
-						<Icon className="pattern-category-list__arrow-icon" icon={ chevronRight } size={ 24 } />
-					</CompositeItem>
-				);
-			} ) }
+					return (
+						<CompositeItem
+							key={ name }
+							role="option"
+							as="button"
+							{ ...composite }
+							aria-label={ label }
+							aria-describedby={ description }
+							aria-current={ isActive }
+							onClick={ () => {
+								if ( ! isActive ) {
+									onSelectCategory( name );
+								}
+							} }
+						>
+							<NavigatorItem active={ isActive }>{ label }</NavigatorItem>
+						</CompositeItem>
+					);
+				} ) }
+			</VStack>
 		</Composite>
 	);
 };
