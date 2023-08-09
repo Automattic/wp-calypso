@@ -64,7 +64,7 @@ jobs:
           key: gandalf
 
       - name: Change cache permissions
-        run: sudo chown -R runneradmin:root /tmp/renovate/cache/renovate
+        run: sudo chown -R runneradmin:root /tmp/renovate/
 
       - name: Check cache perms
         run: ls -l /tmp/renovate/cache/renovate
