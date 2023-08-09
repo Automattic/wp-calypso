@@ -174,8 +174,6 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 		items: [],
 	},
 	hidePrice: true,
-	// TODO: Refactor the checkout URL.
-	externalUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
 
 	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
 	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
@@ -190,6 +188,9 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 		comment:
 			'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
 	} ),
+
+	moreAboutUrl: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing',
+	indirectCheckoutUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
 } );
 
 // TODO: We'll need to internationalize currencies like we did for the purchase page.

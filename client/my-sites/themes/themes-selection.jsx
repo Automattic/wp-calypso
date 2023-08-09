@@ -366,6 +366,7 @@ export const ConnectedThemesSelection = connect(
 			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,
+			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
 		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
@@ -375,8 +376,8 @@ export const ConnectedThemesSelection = connect(
 			sourceSiteId !== 'wporg' &&
 			// Only fetch WP.org themes when searching a term.
 			!! search &&
-			// unless just searching over locally installed themes
-			tabFilter !== 'my-themes' &&
+			// unless just searching over recommended or locally installed themes
+			! [ 'recommended', 'my-themes' ].includes( tabFilter ) &&
 			// WP.org themes are not a good fit for any of the tiers,
 			// unless the site can install themes, then they can be searched in the 'free' tier.
 			( ! tier || ( tier === 'free' && canInstallThemes ) );

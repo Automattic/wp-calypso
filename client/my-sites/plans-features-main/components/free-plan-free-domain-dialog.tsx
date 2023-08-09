@@ -160,9 +160,9 @@ export function FreePlanFreeDomainDialog( {
 	} );
 
 	const monthlyPlanPrice =
-		monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice;
+		( monthlyPlanPriceObject.discountedRawPrice || monthlyPlanPriceObject.rawPrice ) ?? 0;
 	const annualPlanPrice =
-		annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice;
+		( annualPlanPriceObject.discountedRawPrice || annualPlanPriceObject.rawPrice ) ?? 0;
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {

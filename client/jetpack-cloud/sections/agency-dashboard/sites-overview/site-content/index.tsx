@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useContext, forwardRef, createRef, useMemo } from 'react';
+import { useContext, forwardRef, useMemo } from 'react';
 import Pagination from 'calypso/components/pagination';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -16,7 +16,6 @@ import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
 import { formatSites, getProductSlugFromProductType, siteColumns } from '../utils';
-import useDashboardShowLargeScreen from './use-dashboard-show-large-screen';
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -39,8 +38,8 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const { isBulkManagementActive, currentLicenseInfo, hideLicenseInfo } =
 		useContext( SitesOverviewContext );
-	const { products } = useContext( DashboardDataContext );
 
+	const { products, isLargeScreen } = useContext( DashboardDataContext );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
 
 	const sites = formatSites( data?.sites );
@@ -48,10 +47,6 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const handlePageClick = ( pageNumber: number ) => {
 		addPageArgs( pageNumber );
 	};
-
-	const siteTableRef = createRef< HTMLTableElement >();
-
-	const isLargeScreen = useDashboardShowLargeScreen( siteTableRef, ref );
 
 	const firstColumn = siteColumns[ 0 ];
 
@@ -91,12 +86,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 		<>
 			{ isLargeScreen ? (
 				<div className="site-content__large-screen-view">
-					<SiteTable
-						ref={ siteTableRef }
-						isLoading={ isLoading }
-						columns={ siteColumns }
-						items={ sites }
-					/>
+					<SiteTable ref={ ref } isLoading={ isLoading } columns={ siteColumns } items={ sites } />
 				</div>
 			) : (
 				<div className="site-content__small-screen-view">

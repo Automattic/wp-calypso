@@ -72,7 +72,7 @@ export default function ToggleActivateMonitoring( {
 
 	const isChecked = status !== 'disabled';
 	const isLoading = statuses?.[ site.blog_id ] === 'loading';
-	const smsLimitReached = false; // TODO: Get the sms limit reached status from the API.
+	const smsLimitReached = settings?.is_over_limit;
 
 	const currentSettings = () => {
 		const minutes = settings?.monitor_deferment_time;
@@ -132,7 +132,7 @@ export default function ToggleActivateMonitoring( {
 						) as string
 					}
 				>
-					{ smsLimitReached ? (
+					{ isPaidTierEnabled && smsLimitReached ? (
 						<img src={ alertIcon } alt={ translate( 'Alert' ) } />
 					) : (
 						<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />

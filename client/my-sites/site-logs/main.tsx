@@ -13,9 +13,9 @@ import { SiteLogsTab, useSiteLogsQuery } from 'calypso/data/hosting/use-site-log
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SiteLogsTable } from '../site-monitoring/components/site-logs-table';
+import { SiteLogsToolbar } from '../site-monitoring/components/site-logs-toolbar';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
-import { SiteLogsTable } from './components/site-logs-table';
-import { SiteLogsToolbar } from './components/site-logs-toolbar';
 import {
 	getDateRangeQueryParam,
 	getLogTypeQueryParam,
