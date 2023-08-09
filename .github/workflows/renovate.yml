@@ -71,7 +71,7 @@ jobs:
         env:
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
           RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
-          RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache ?? 'enabled' }}
+          RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
 
       - name: Check rate limit post-run
         env:
