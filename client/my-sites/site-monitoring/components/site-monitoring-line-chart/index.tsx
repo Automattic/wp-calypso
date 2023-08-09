@@ -1,9 +1,6 @@
 import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
-import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
-import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
-import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
 import classnames from 'classnames';
-import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -22,6 +19,13 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
+	lines: Array< SeriesProp >;
+}
+
+interface SeriesProp {
+	fill: string;
+	label: string;
+	stroke: string;
 }
 
 export function formatChatHour( date: Date ): string {
@@ -30,21 +34,43 @@ export function formatChatHour( date: Date ): string {
 	return `${ hours }:${ minutes }`;
 }
 
+function createSeries( lines: Array< SeriesProp > ) {
+	const { spline } = uPlot.paths;
+	const configuredSeries = lines.map( function ( line ) {
+		return {
+			...line,
+			...{
+				width: 2,
+				paths: ( u, seriesIdx, idx0, idx1 ) => {
+					return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+				},
+				points: {
+					show: false,
+				},
+				value: ( self: uPlot, rawValue: number ) => {
+					if ( ! rawValue ) {
+						return '-';
+					}
+
+					return numberFormat( rawValue, 0 );
+				},
+			},
+		};
+	} );
+
+	return [ {}, ...configuredSeries ];
+}
+
 export const SiteMonitoringLineChart = ( {
 	title,
 	className,
 	data,
-	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
 	options: propOptions,
-	solidFill = false,
-	period,
+	lines,
 }: UplotChartProps ) => {
-	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
-	const { spline } = uPlot.paths;
-	const scaleGradient = useScaleGradient( fillColor );
 
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
@@ -101,42 +127,7 @@ export const SiteMonitoringLineChart = ( {
 						fill: () => '#fff',
 					},
 				},
-				series: [
-					{
-						label: translate( 'Time period' ),
-						value: ( self: uPlot, rawValue: number ) => {
-							// outputs legend content - value available when mouse is hovering the chart
-							if ( ! rawValue ) {
-								return '-';
-							}
-
-							return getPeriodDateFormat(
-								period,
-								new Date( rawValue * 1000 ),
-								getLocaleSlug() || 'en'
-							);
-						},
-					},
-					{
-						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
-						label: translate( 'HTTP requests per sec' ),
-						stroke: '#0675C4',
-						width: 2,
-						paths: ( u, seriesIdx, idx0, idx1 ) => {
-							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
-						},
-						points: {
-							show: false,
-						},
-						value: ( self: uPlot, rawValue: number ) => {
-							if ( ! rawValue ) {
-								return '-';
-							}
-
-							return numberFormat( rawValue, 0 );
-						},
-					},
-				],
+				series: createSeries( lines ),
 				legend: {
 					isolate: true,
 					mount: ( self: uPlot, el: HTMLElement ) => {
@@ -152,16 +143,7 @@ export const SiteMonitoringLineChart = ( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [
-			fillColor,
-			legendContainer,
-			period,
-			propOptions,
-			scaleGradient,
-			solidFill,
-			spline,
-			translate,
-		] )
+		}, [ legendContainer, lines, propOptions ] )
 	);
 
 	useResize( uplot, uplotContainer );

@@ -43,10 +43,16 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
-	const { data } = useSiteMetricsQuery( siteId, {
+	const { data: requestsData } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric: metric || 'requests_persec',
+	} );
+
+	const { data: responseTimeData } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'response_time_average',
 	} );
 
 	// Function to get the dimension value for a specific key and period
@@ -65,17 +71,74 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 
 	// Process the data in the format accepted by uPlot
 	const formattedData =
-		data?.data?.periods?.reduce(
-			( acc, period ) => {
-				acc[ 0 ].push( period.timestamp );
-				acc[ 1 ].push( getDimensionValue( period ) );
+		requestsData?.data?.periods?.reduce(
+			( acc, period, index ) => {
+				const timestamp = period.timestamp;
+
+				// Check if the timestamp is already in the arrays, if not, push it
+				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
+					acc[ 0 ].push( timestamp );
+					acc[ 1 ].push( getDimensionValue( period ) ); // Blue line data
+
+					// Add response time data as a green line
+					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
+						acc[ 2 ].push( getDimensionValue( responseTimeData.data.periods[ index ] ) );
+					}
+				}
+
 				return acc;
 			},
-			[ [], [] ] as Array< Array< number | null > > // Define the correct initial value type
-		) || ( [ [], [] ] as Array< Array< number | null > > ); // Return a default value when data is not available yet
+			[ [], [], [] ] as Array< Array< number | null > > // Adjust the initial value with placeholders for both lines
+		) || ( [ [], [], [] ] as Array< Array< number | null > > ); // Return default value when data is not available yet
 
 	return {
 		formattedData,
+	};
+}
+
+export function useSiteMetricsData400vs500(
+	timeRange: TimeRange,
+	metric?: MetricsType,
+	dimension?: DimensionParams
+) {
+	const siteId = useSelector( getSelectedSiteId );
+
+	// Use the custom hook for time range selection
+	const { start, end } = timeRange;
+
+	const { data } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'requests_persec',
+		dimension: dimension || 'http_status',
+	} );
+
+	const formattedDataHTTP = data?.data?.periods?.reduce(
+		( acc, period ) => {
+			const timestamp = period.timestamp;
+
+			// Check if the timestamp is already in the arrays, if not, push it
+			if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
+				acc[ 0 ].push( timestamp );
+
+				// Check if the dimension object contains values for 400 and 500 status codes
+				if ( period.dimension && ( period.dimension[ '400' ] || period.dimension[ '500' ] ) ) {
+					// Push values for 400 and 500 status codes into separate arrays
+					acc[ 1 ].push( period.dimension[ '400' ] || 0 ); // Array for 400 status code, use 0 as default
+					acc[ 2 ].push( period.dimension[ '500' ] || 0 ); // Array for 500 status code, use 0 as default
+				} else {
+					acc[ 1 ].push( 0 );
+					acc[ 2 ].push( 0 );
+				}
+			}
+
+			return acc;
+		},
+		[ [], [], [] ] as Array< Array< number > > // Remove null type since we're using 0 as default
+	) || [ [], [], [] ]; // Return default value when data is not available yet
+
+	return {
+		formattedDataHTTP,
 	};
 }
 
@@ -134,6 +197,7 @@ export const MetricsTab = () => {
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData } = useSiteMetricsData( timeRange );
+	const { formattedDataHTTP } = useSiteMetricsData400vs500( timeRange );
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		timeRange,
 		'requests_persec',
@@ -154,6 +218,18 @@ export const MetricsTab = () => {
 			<SiteMonitoringLineChart
 				title={ __( 'Requests per minute & average response time' ) }
 				data={ formattedData as uPlot.AlignedData }
+				lines={ [
+					{
+						fill: 'rgba(6, 117, 196, 0.1)',
+						label: __( 'Requests per minute' ),
+						stroke: '#0675C4',
+					},
+					{
+						fill: 'rgba(0, 135, 99, 0.2)',
+						label: __( 'Average response time' ),
+						stroke: '#008763',
+					},
+				] }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
@@ -177,6 +253,22 @@ export const MetricsTab = () => {
 				title={ __( 'Requests by HTTP Response Code' ) }
 				{ ...statusCodeRequestsProps }
 			/>
+			<SiteMonitoringLineChart
+				title={ __( '400 vs 500 HTTP Responses' ) }
+				data={ formattedDataHTTP as uPlot.AlignedData }
+				lines={ [
+					{
+						fill: 'rgba(242, 215, 107, 0.1)',
+						label: __( 'HTTP 400: Bad Request' ),
+						stroke: 'rgba(242, 215, 107, 1)',
+					},
+					{
+						fill: 'rgba(235, 101, 148, 0.1)',
+						label: __( 'HTTP 500: Internal server error' ),
+						stroke: 'rgba(235, 101, 148, 1)',
+					},
+				] }
+			></SiteMonitoringLineChart>
 		</div>
 	);
 };
