@@ -1005,7 +1005,7 @@ export function generateSteps( {
 		'difm-options': {
 			stepName: 'site-options',
 			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
 			},
@@ -1016,7 +1016,7 @@ export function generateSteps( {
 		'difm-store-options': {
 			stepName: 'site-options',
 			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
 			},
