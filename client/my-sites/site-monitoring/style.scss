@@ -1,4 +1,6 @@
 @import "uplot/dist/uPlot.min.css";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .site-monitoring {
 	position: relative;
@@ -64,8 +66,15 @@
 .site-monitoring__pie-charts {
 	display: flex;
 	gap: 16px;
+	flex-direction: column;
 	.site-monitoring__chart {
 		flex-grow: 1;
+	}
+	@include break-large {
+		flex-direction: row;
+	}
+	.pie-chart__chart-drawing-empty {
+		fill: var(--studio-gray-5);
 	}
 }
 

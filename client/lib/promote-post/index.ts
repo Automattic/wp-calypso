@@ -15,6 +15,16 @@ import {
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+const DSP_ERROR_NO_LOCAL_USER = 'no_local_user';
+const DSP_URL_CHECK_UPSERT_USER = '/user/check';
+
+type NewDSPUserResult = {
+	new_dsp_user: boolean;
+};
+
+type DSPError = {
+	errorCode: string;
+};
 
 declare global {
 	interface Window {
@@ -204,6 +214,32 @@ export const requestDSP = async < T >(
 			return await wpcom.req.del( params );
 		default:
 			return await wpcom.req.get( params );
+	}
+};
+
+const handleDSPError = async < T >(
+	error: DSPError,
+	siteId: number,
+	currentURL: string
+): Promise< T > => {
+	if ( error.errorCode === DSP_ERROR_NO_LOCAL_USER ) {
+		const createUserQuery = await requestDSP< NewDSPUserResult >(
+			siteId,
+			DSP_URL_CHECK_UPSERT_USER
+		);
+		if ( createUserQuery.new_dsp_user ) {
+			// then we should retry the original query
+			return await requestDSP< T >( siteId, currentURL );
+		}
+	}
+	throw error;
+};
+
+export const requestDSPHandleErrors = async < T >( siteId: number, url: string ): Promise< T > => {
+	try {
+		return await requestDSP( siteId, url );
+	} catch ( e ) {
+		return await handleDSPError( e as DSPError, siteId, url );
 	}
 };
 
