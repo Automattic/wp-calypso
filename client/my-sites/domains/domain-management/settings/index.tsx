@@ -281,10 +281,18 @@ const Settings = ( {
 			return null;
 		}
 
+		const onClose = () => {
+			page.redirect(
+				window.location.pathname + removeQueryArgs( window.location.search, 'nameservers' )
+			);
+		};
+
 		return (
 			<Accordion
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
+				expanded={ queryParams.get( 'nameservers' ) === 'true' }
+				onClose={ onClose }
 			>
 				{ domain.canManageNameServers ? (
 					<NameServersCard
@@ -313,16 +321,10 @@ const Settings = ( {
 			return null;
 		}
 
-		const onClose = () => {
-			page.redirect( window.location.pathname + removeQueryArgs( window.location.search, 'dns' ) );
-		};
-
 		return (
 			<Accordion
 				title={ translate( 'DNS records', { textOnly: true } ) }
 				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
-				expanded={ queryParams.get( 'dns' ) === 'true' }
-				onClose={ onClose }
 			>
 				{ domain.canManageDnsRecords ? (
 					<DnsRecords
