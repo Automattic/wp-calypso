@@ -7,7 +7,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { mobileAppLink } from '../../../../sites-overview/utils';
 import MobilePushNotification from '../mobile-push-notification';
 
 describe( 'MobilePushNotification', () => {
@@ -38,7 +37,9 @@ describe( 'MobilePushNotification', () => {
 
 		const link = screen.getByRole( 'link' );
 		expect( link ).toBeInTheDocument();
-		expect( link ).toHaveAttribute( 'href', mobileAppLink );
+
+		const EXPECTED_LINK_HREF = 'https://jetpack.com/mobile/';
+		expect( link ).toHaveAttribute( 'href', EXPECTED_LINK_HREF );
 	} );
 
 	it( 'renders the component with mobile notifications disabled', () => {
