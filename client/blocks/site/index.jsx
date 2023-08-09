@@ -151,7 +151,10 @@ class Site extends Component {
 		// We show public coming soon badge only when the site is not private.
 		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
 		const shouldShowPublicComingSoonSiteBadge =
-			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
+			! site.is_private &&
+			this.props.site.is_coming_soon &&
+			! isAtomicAndEditingToolkitDeactivated &&
+			! isMigrationTrialSite( site );
 
 		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site

@@ -163,7 +163,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 							{ isMigrationTrialPlanSite && (
 								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
 							) }
-							{ getSiteLaunchStatus( site ) !== 'public' && (
+							{ getSiteLaunchStatus( site ) !== 'public' && ! isMigrationTrialPlanSite && (
 								<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 							) }
 							<EllipsisMenuContainer>
