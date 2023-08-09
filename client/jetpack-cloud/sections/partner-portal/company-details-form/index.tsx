@@ -160,7 +160,7 @@ export default function CompanyDetailsForm( {
 					<FormLabel>{ translate( 'Which answer below best describes your company:' ) }</FormLabel>
 					<FormRadio
 						label={ translate( 'Agency' ) }
-						value="Agency"
+						value="agency"
 						checked={ companyType === 'Agency' }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 							setCompanyType( event.target.value )
@@ -170,7 +170,7 @@ export default function CompanyDetailsForm( {
 					/>
 					<FormRadio
 						label={ translate( 'Freelancer/Pro' ) }
-						value="Freelancer/Pro"
+						value="freelancer"
 						checked={ companyType === 'Freelancer/Pro' }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 							setCompanyType( event.target.value )
@@ -180,7 +180,7 @@ export default function CompanyDetailsForm( {
 					/>
 					<FormRadio
 						label={ translate( 'A business with multiple sites' ) }
-						value="A business with multiple sites"
+						value="business"
 						checked={ companyType === 'A business with multiple sites' }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 							setCompanyType( event.target.value )
