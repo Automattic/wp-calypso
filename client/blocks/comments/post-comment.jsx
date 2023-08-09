@@ -75,7 +75,7 @@ class PostComment extends PureComponent {
 		enableCaterpillar: PropTypes.bool,
 
 		// connect()ed props:
-		currentUser: PropTypes.object.isRequired,
+		currentUser: PropTypes.object,
 		shouldHighlightNew: PropTypes.bool,
 	};
 
@@ -355,7 +355,7 @@ class PostComment extends PureComponent {
 		// If it's a pending comment, use the current user as the author
 		if ( comment.isPlaceholder ) {
 			comment.author = this.props.currentUser;
-			comment.author.name = this.props.currentUser.display_name;
+			comment.author.name = this.props.currentUser?.display_name;
 		} else {
 			comment.author.name = decodeEntities( comment.author.name );
 		}

@@ -115,6 +115,12 @@ class PostCommentForm extends Component {
 	render() {
 		const { post, error, errorType, translate } = this.props;
 
+		// Dont render the form if there is not a currentUser (logged out)
+		// TODO idea - render a prompt to login/signup to comment.
+		if ( ! this.props.currentUser ) {
+			return null;
+		}
+
 		// Don't display the form if comments are closed
 		if (
 			post &&
@@ -177,7 +183,7 @@ PostCommentForm.propTypes = {
 	onCommentSubmit: PropTypes.func,
 
 	// connect()ed props:
-	currentUser: PropTypes.object.isRequired,
+	currentUser: PropTypes.object,
 	writeComment: PropTypes.func.isRequired,
 	deleteComment: PropTypes.func.isRequired,
 	replyComment: PropTypes.func.isRequired,
