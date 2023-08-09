@@ -12,6 +12,10 @@ interface Props {
 	isFetchingPageResults: boolean;
 }
 
+type ExperimentVariation = {
+	variationName?: null | 'treatment';
+};
+
 export default function PostsTable( props: Props ) {
 	const { posts, isLoading, isFetchingPageResults } = props;
 
@@ -19,16 +23,22 @@ export default function PostsTable( props: Props ) {
 	// const [ isLoadingExperimentAssignment, experimentAssignment ] =
 	// 	useExperiment( testExperimentName );
 
-	// const isLoadingExperimentAssignment = true;
-	const isLoadingExperimentAssignment = false;
-	const experimentAssignment = {
-		// variationName: undefined,
-		// variationName: null, // control group
-		variationName: 'treatment', // treatment group
-	};
+	const [ isLoadingExperimentAssignment, setIsLoadingExperimentAssignment ] = useState( true );
+	const [ experimentAssignment, setExperimentAssignment ] = useState< ExperimentVariation >( {
+		variationName: undefined,
+	} );
 
-	const postClassPrefix = 'post-item__row_experimental_experiment';
-	const [ postClassName, setPostClassName ] = useState( `${ postClassPrefix }-loading` );
+	useEffect( () => {
+		const timer = setTimeout( () => {
+			// setExperimentAssignment( { variationName: null } );
+			setExperimentAssignment( { variationName: 'treatment' } );
+			setIsLoadingExperimentAssignment( false );
+			clearTimeout( timer );
+		}, 3000 );
+		return () => clearTimeout( timer );
+	}, [] );
+
+	const [ postClassName, setPostClassName ] = useState( '' );
 
 	useEffect( () => {
 		if ( ! isLoadingExperimentAssignment && undefined !== experimentAssignment?.variationName ) {
@@ -36,14 +46,14 @@ export default function PostsTable( props: Props ) {
 				experimentAssignment?.variationName === 'treatment' ? 'post-item__row_experimental' : '';
 			setPostClassName( className );
 		}
-	}, [ isLoadingExperimentAssignment ] );
+	}, [ isLoadingExperimentAssignment, experimentAssignment ] );
 
 	return (
 		<table className="promote-post-i2__table">
 			<PostsListHeader />
 
 			<tbody>
-				{ isLoading && ! isFetchingPageResults ? (
+				{ ( isLoading && ! isFetchingPageResults ) || isLoadingExperimentAssignment ? (
 					<ItemsLoading />
 				) : (
 					<>
