@@ -135,10 +135,10 @@ interface Props {
 	billingTimeframe: TranslateResult;
 }
 
-const PlanFeatures2023GridBillingTimeframe = ( { planSlug, billingTimeframe }: Props ) => {
+const PlanFeatures2023GridBillingTimeframe = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
-	const { isMonthlyPlan } = gridPlansIndex[ planSlug ];
+	const { isMonthlyPlan, billingTimeframe } = gridPlansIndex[ planSlug ];
 	const perMonthDescription = usePerMonthDescription( { planSlug } );
 	const description = perMonthDescription || billingTimeframe;
 
