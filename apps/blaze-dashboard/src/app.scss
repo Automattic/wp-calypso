@@ -7,17 +7,10 @@
 @import "./styles/typography.scss";
 
 .jp-blaze-dashboard {
-	.notice {
-		display: flex;
-		width: 100%;
+	.promote-post-notice {
 		margin: 0;
 		border: none;
 		box-shadow: none;
-
-		&.is-error:not(.is-reskinned) {
-			background: var(--color-neutral-80);
-			color: var(--color-text-inverted);
-		}
 	}
 
 	.promote-post-i2 {
