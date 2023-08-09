@@ -54,14 +54,14 @@ jobs:
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
-      - name: Renovate Cache
-        id: renovate-cache
-        uses: actions/cache@v3
-        with:
-          # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
-          path: /tmp/renovate/cache/renovate
-          # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
-          key: gandalf
+      # - name: Renovate Cache
+      #   id: renovate-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
+      #     path: /tmp/renovate/cache/renovate
+      #     # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
+      #     key: gandalf
 
       - uses: renovatebot/github-action@v39.0.1
         with:
@@ -70,8 +70,8 @@ jobs:
           renovate-version: ${{ env.RENOVATE_VERSION }}
         env:
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
-          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
-          RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache }}
+          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun === 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
+          RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache ?? 'enabled' }}
 
       - name: Check rate limit post-run
         env:
@@ -79,6 +79,9 @@ jobs:
         run: |
           echo "Note any difference between this number and the one from the previous step may also include API uses from elsewhere that happened to occur at the same time."
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
+
+      - name: Check cache perms
+        run: ls -l /tmp/renovate/cache/renovate
 
   validate-renovate-config:
     name: Validate Renovate Configuration
