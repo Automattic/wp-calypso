@@ -6,6 +6,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
+import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
@@ -13,15 +14,17 @@ import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-featur
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
 import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { UserData } from 'calypso/lib/user/user';
+import type { SiteSlug } from 'calypso/types';
 
 interface Props {
 	user: UserData;
 	site: SiteDetails;
+	siteSlug: SiteSlug;
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
 }
 const TrialPlan = function ( props: Props ) {
 	const { __ } = useI18n();
-	const { user, site, submit } = props;
+	const { user, site, siteSlug, submit } = props;
 	const [ showPlanFeaturesModal, setShowPlanFeaturesModal ] = useState( false );
 	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
 		useCheckEligibilityMigrationTrialPlan( site?.ID );
@@ -29,6 +32,7 @@ const TrialPlan = function ( props: Props ) {
 
 	const unsupportedTrialFeatureList = useUnsupportedTrialFeatureList();
 	const plan = getPlan( PLAN_BUSINESS );
+	const checkoutUrl = useCheckoutUrl( site.ID, siteSlug );
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			navigateToImporterStep();
@@ -41,6 +45,10 @@ const TrialPlan = function ( props: Props ) {
 
 	function navigateToImporterStep() {
 		submit?.( { action: 'importer' } );
+	}
+
+	function navigateToCheckoutPage() {
+		submit?.( { action: 'checkout', checkoutUrl } );
 	}
 
 	function onStartTrialClick() {
@@ -65,7 +73,7 @@ const TrialPlan = function ( props: Props ) {
 						{ br: <br /> }
 					) }
 				</SubTitle>
-				<NextButton>{ __( 'Purchase and migrate' ) }</NextButton>
+				<NextButton onClick={ navigateToCheckoutPage }>{ __( 'Purchase and migrate' ) }</NextButton>
 			</div>
 		);
 	}
