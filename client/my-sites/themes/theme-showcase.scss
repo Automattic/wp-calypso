@@ -68,7 +68,6 @@
 	}
 
 	.search-themes-card {
-		border-radius: 2px;
 
 		&.is-suggestions-open {
 			max-width: 100%;
@@ -201,6 +200,7 @@
 		.search-themes-card {
 			.search {
 				height: 43px;
+				border-radius: 2px;
 			}
 		}
 
