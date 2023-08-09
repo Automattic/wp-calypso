@@ -1,7 +1,7 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
+import './styles.scss';
 
 type AddSitesModalProps = {
 	showModal: boolean;
@@ -12,7 +12,7 @@ type AddSitesModalProps = {
 const AddSitesModal = ( { showModal, onClose, onAddFinished }: AddSitesModalProps ) => {
 	const translate = useTranslate();
 
-	const modalTitle = translate( 'Add sites', {
+	const modalTitle = translate( 'Add a site', {
 		context: 'Modal title',
 	} );
 
@@ -26,11 +26,11 @@ const AddSitesModal = ( { showModal, onClose, onAddFinished }: AddSitesModalProp
 			onRequestClose={ onClose }
 			overlayClassName="add-sites-modal"
 		>
-			<AddSitesForm
-				recordTracksEvent={ recordTracksEvent }
-				onClose={ onClose }
-				onAddFinished={ onAddFinished }
-			/>
+			<p className="add-sites-modal__subtitle">
+				{ translate( 'Subscribe to sites, newsletters, and RSS feeds.' ) }
+			</p>
+
+			<AddSitesForm onAddFinished={ onAddFinished } />
 		</Modal>
 	);
 };
