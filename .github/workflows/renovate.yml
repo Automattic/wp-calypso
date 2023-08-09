@@ -54,8 +54,6 @@ jobs:
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
-      - name: Create empty cache dir
-        run: mkdir -p $RENOVATE_CACHE_DIR
       - name: Renovate Cache
         id: renovate-cache
         uses: actions/cache@v3
