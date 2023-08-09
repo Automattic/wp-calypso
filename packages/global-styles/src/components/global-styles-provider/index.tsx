@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { DEFAULT_GLOBAL_STYLES } from '../../constants';
 import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
-import { useGetGlobalStylesBaseConfig, useRegisterCoreBlocks } from '../../hooks';
+import { useGetGlobalStylesBaseConfig } from '../../hooks';
 import type { GlobalStylesObject, SetConfig, SetConfigCallback } from '../../types';
 
 const cleanEmptyObject = < T extends Record< string, unknown > >( object: T | unknown ) => {
@@ -85,9 +85,8 @@ interface Props {
 
 const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
 	const context = useGlobalStylesContext( siteId, stylesheet );
-	const isBlocksRegistered = useRegisterCoreBlocks();
 
-	if ( ! context.isReady || ! isBlocksRegistered ) {
+	if ( ! context.isReady ) {
 		return placeholder;
 	}
 	return (

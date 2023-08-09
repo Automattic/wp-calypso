@@ -128,7 +128,11 @@ class SearchStream extends React.Component {
 		const segmentedControlClass = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		const hidePostsAndSites = this.state.feeds && this.state.feeds?.length === 1;
+		// Hide posts and sites if the only result has no feed ID. This can happen when searching
+		// for a specific site to add a rss to your feed. Originally added in
+		// https://github.com/Automattic/wp-calypso/pull/78555.
+		const hidePostsAndSites =
+			this.state.feeds && this.state.feeds?.length === 1 && ! this.state.feeds[ 0 ].feed_ID;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
