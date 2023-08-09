@@ -5,6 +5,12 @@ import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'component-file-picker', () => <div></div> );
+jest.mock( 'calypso/lib/explat', () => {
+	() => {
+		return [ false, null ];
+	};
+} );
 
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect
@@ -18,6 +24,44 @@ describe( 'index', () => {
 					'].'
 			);
 		}
+	} );
+	test( 'All step components should have a step definition', () => {
+		const stepModuleMap = getStepModuleMap();
+		const stepNames = new Set( Object.keys( stepModuleMap ) );
+		const allStepDefinitions = generateSteps();
+
+		stepNames.forEach( ( stepName ) => {
+			expect( allStepDefinitions ).toHaveProperty( stepName );
+		} );
+	} );
+
+	test( 'All mapped modules should have a step implementation', async () => {
+		const stepModuleMap = getStepModuleMap();
+		const allModules = new Set( Object.values( stepModuleMap ) );
+		const nonExistentModules = [];
+		await Promise.all(
+			Array.from( allModules ).map( async ( module ) => {
+				const path = `calypso/signup/steps/${ module }`;
+				try {
+					await import( path );
+				} catch ( e ) {
+					if ( e.message.includes( 'Cannot find module' ) ) {
+						console.error( e );
+						nonExistentModules.push( path );
+					}
+				}
+			} )
+		);
+
+		expect( nonExistentModules ).toEqual( [] );
+	} );
+
+	test( 'All step definitions should have a step component mapping', async () => {
+		const stepModuleMap = getStepModuleMap();
+		const allStepDefinitions = generateSteps();
+		Object.keys( allStepDefinitions ).forEach( ( stepName ) => {
+			expect( stepModuleMap ).toHaveProperty( stepName );
+		} );
 	} );
 
 	/***
