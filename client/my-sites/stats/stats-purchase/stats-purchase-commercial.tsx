@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { formatCurrency, getCurrencyObject } from '@automattic/format-currency';
+import { getCurrencyObject } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -25,7 +25,8 @@ const CommercialPurchase = ( {
 	from,
 }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
-	const planPriceObject = getCurrencyObject( planValue, currencyCode );
+	const planValuePerMonth = planValue / 12;
+	const planPriceObject = getCurrencyObject( planValuePerMonth, currencyCode );
 
 	return (
 		<div>
@@ -50,17 +51,24 @@ const CommercialPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__pricing` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-value` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
-						{ planPriceObject.symbol }
-					</div>
+					{ planPriceObject.symbolPosition === 'before' && (
+						<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
+							{ planPriceObject.symbol }
+						</div>
+					) }
 					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>
 						{ planPriceObject.hasNonZeroFraction
-							? formatCurrency( planValue, currencyCode ).replace( planPriceObject.symbol, '' )
-							: planPriceObject.integer }
+							? `${ planPriceObject.integer }${ planPriceObject.fraction }`
+							: `${ planPriceObject.integer }` }
 					</div>
+					{ planPriceObject.symbolPosition === 'after' && (
+						<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
+							{ planPriceObject.symbol }
+						</div>
+					) }
 				</div>
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-cadency` }>
-					/{ translate( 'month' ) }
+					/{ translate( 'month, billed yearly' ) }
 				</div>
 			</div>
 
@@ -103,11 +111,7 @@ const CommercialPurchase = ( {
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
 			>
-				{ translate( 'Get Jetpack Stats for %(value)s per month', {
-					args: {
-						value: formatCurrency( planValue, currencyCode ),
-					},
-				} ) }
+				{ translate( 'Get Jetpack Stats' ) }
 			</Button>
 		</div>
 	);
