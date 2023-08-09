@@ -67,7 +67,7 @@
 		// See also https://github.com/renovatebot/github-action/issues/756
 		{
 			fileMatch: [ '^\\.github/workflows/renovate\\.yml$' ],
-			matchStrings: [ 'renovate-version: (?<currentValue>[^\\s]+)' ],
+			matchStrings: [ 'RENOVATE_VERSION: (?<currentValue>[^\\s]+)' ],
 			datasourceTemplate: 'docker',
 			depNameTemplate: 'renovate',
 			packageNameTemplate: 'ghcr.io/renovatebot/renovate',

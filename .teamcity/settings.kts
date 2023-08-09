@@ -332,62 +332,6 @@ object CheckCodeStyle : BuildType({
 	}
 })
 
-object ValidateRenovateConfig : BuildType({
-	name = "Validate Renovate Configuration"
-	description = "Validates the renovate configuration file"
-
-	vcs {
-		root(WpCalypso)
-		cleanCheckout = true
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Run renovate config validator"
-			scriptContent = """
-				# Run renovate-config-validator from the latest version of renovate
-				# in a temporary environment (to avoid installing every package.)
-				# We use the latest version because the managed renovate service
-				# controls the renovate version we use.
-				yarn dlx -p renovate renovate-config-validator
-			"""
-		}
-	}
-
-	triggers {
-		vcs {
-			// Only trigger on changes to the renovate configuration file.
-			triggerRules = "+:root=${Settings.WpCalypso.id}:renovate.json5"
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
-		}
-	}
-
-	features {
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-	}
-})
-
-
 object SmartBuildLauncher : BuildType({
 	name = "Smart Build Launcher"
 	description = "Launches TeamCity builds based on which files were modified in VCS."
