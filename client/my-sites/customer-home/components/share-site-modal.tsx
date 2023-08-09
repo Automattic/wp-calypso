@@ -23,9 +23,11 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 
 	const copyHandler = async () => {
 		navigator.clipboard.writeText( `https://${ site?.slug }` );
-		await updateLaunchpadSettings( site?.slug || null, {
-			checklist_statuses: { share_site: true },
-		} );
+		if ( site?.slug ) {
+			await updateLaunchpadSettings( site?.slug, {
+				checklist_statuses: { share_site: true },
+			} );
+		}
 		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 		setClipboardCopied( true );
 		setTimeout( () => setClipboardCopied( false ), 3000 );
