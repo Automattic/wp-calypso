@@ -71,7 +71,7 @@ jobs:
       # are different than the ones given after the cache is restored. We have to
       # change ownership to solve this.
       - name: Change cache permissions
-        run: sudo chown -R runneradmin:root .cache
+        run: sudo chown -R runneradmin:root $RENOVATE_CACHE_DIR
 
       - uses: renovatebot/github-action@v39.0.1
         with:
