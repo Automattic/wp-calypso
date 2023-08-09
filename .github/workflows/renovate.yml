@@ -70,7 +70,7 @@ jobs:
           renovate-version: ${{ env.RENOVATE_VERSION }}
         env:
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
-          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun === 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
+          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache ?? 'enabled' }}
 
       - name: Check rate limit post-run
@@ -89,4 +89,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Config Validator
-        run: yarn dlx -p "renovate@$RENOVATE_VERSION" renovate-config-validator
+        run: yarn dlx -p renovate@$RENOVATE_VERSION renovate-config-validator
