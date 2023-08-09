@@ -31,6 +31,8 @@ describe( 'index', () => {
 	 * Eg: if a dependency was added to the `domain-only` step, then then same dependency
 	 * needs to be added to all steps that are linked by the module `domains` ( as mapped in `calypso/signup/config/step-components` ).
 	 * This dependency can be added as an optionalDependency if the dependency is provided conditionally
+	 *
+	 * Read more: p4TIVU-aK6-p2
 	 */
 	test( 'All steps should have the same dependencies provided', () => {
 		const stepModuleMap = getStepModuleMap();
