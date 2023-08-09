@@ -23,13 +23,12 @@ export function SiteMetrics() {
 		<Main className="site-monitoring" fullWidthLayout>
 			<DocumentHead title={ titleHeader } />
 			<FormattedHeader
-				brandFont
+				className="site-monitoring__formatted-header modernized-header"
+				align="left"
 				headerText={ titleHeader }
 				subHeaderText={ __(
 					'Real time information to troubleshoot or debug problems with your site.'
 				) }
-				align="left"
-				className="site-monitoring__formatted-header"
 			></FormattedHeader>
 			<SiteMonitoringTabPanel selectedTab={ page } onSelected={ handleTabSelected }>
 				{ () => (
