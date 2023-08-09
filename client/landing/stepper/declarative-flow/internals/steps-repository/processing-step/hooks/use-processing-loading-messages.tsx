@@ -173,7 +173,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 		const videoPressLoadingMessages = [
 			{ title: __( 'Scouting the locations' ), duration: 5000 },
 			{ title: __( 'Kicking off the casting' ), duration: 5000 },
-			{ title: __( "Let's head to the checkout" ), duration: 5000 },
+			{ title: __( 'Let’s head to the checkout' ), duration: 5000 },
 		];
 		return videoPressLoadingMessages;
 	}
