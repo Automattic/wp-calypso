@@ -15,6 +15,10 @@
 		margin-bottom: 16px;
 	}
 
+	.is-error .components-base-control__field {
+		margin-bottom: 6px;
+	}
+
 	.components-text-control__input {
 		border-color: var(--studio-gray-10);
 		border-radius: 4px;
