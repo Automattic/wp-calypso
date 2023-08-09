@@ -117,6 +117,10 @@
 			display: none;
 		}
 
+		tr.u-series th {
+			font-weight: 400;
+		}
+
 		// Use increased specificity to override original uPlot styles.
 		> tr.u-series > th {
 			cursor: initial;
@@ -136,5 +140,11 @@
 				vertical-align: baseline;
 			}
 		}
+	}
+}
+
+.site-monitoring-bar-chart {
+	tr.u-series th {
+		font-weight: 400;
 	}
 }
