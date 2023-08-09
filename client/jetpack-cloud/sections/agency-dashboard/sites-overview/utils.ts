@@ -486,15 +486,11 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 /**
  * Returns the product slug that can be purchased from the dashboard.
  */
-export const getProductSlugFromProductType = ( type: string ): string | undefined => {
-	const slugs: Record< string, string > = {
-		backup: 'jetpack-backup-t1',
-		boost: 'jetpack-boost',
-		scan: 'jetpack-scan',
-		monitor: 'jetpack-monitor',
-	};
-
-	return slugs[ type ];
+export const DASHBOARD_PRODUCT_SLUGS_BY_TYPE: Record< string, string > = {
+	backup: 'jetpack-backup-t1',
+	boost: 'jetpack-boost',
+	scan: 'jetpack-scan',
+	monitor: 'jetpack-monitor',
 };
 
 export const availableNotificationDurations = [

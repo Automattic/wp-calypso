@@ -18,7 +18,7 @@ import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import SiteBackupStaging from '../site-backup-staging';
 import SiteSelectCheckbox from '../site-select-checkbox';
 import SiteSetFavorite from '../site-set-favorite';
-import { getProductSlugFromProductType } from '../utils';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../utils';
 import useRowMetadata from './hooks/use-row-metadata';
 import type { AllowedTypes, SiteData } from '../types';
 
@@ -87,7 +87,7 @@ export default function SiteStatusContent( {
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: siteId,
-			product_slug: getProductSlugFromProductType( type ),
+			product_slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
 			source: 'dashboard',
 		} );
 	}, [ siteId, type ] );

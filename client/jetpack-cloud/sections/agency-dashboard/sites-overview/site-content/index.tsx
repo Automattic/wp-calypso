@@ -17,7 +17,7 @@ import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
 import { Site } from '../types';
-import { getProductSlugFromProductType } from '../utils';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../utils';
 import useFormattedSites from './hooks/use-formatted-sites';
 import './style.scss';
 
@@ -57,7 +57,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const firstColumn = siteColumns[ 0 ];
 
 	const currentLicenseProductSlug = currentLicenseInfo
-		? getProductSlugFromProductType( currentLicenseInfo )
+		? DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ currentLicenseInfo ]
 		: null;
 
 	const currentLicenseProduct = useMemo( () => {
