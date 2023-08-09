@@ -16,6 +16,11 @@
 			height: 24px;
 			cursor: pointer;
 		}
+
+		.page-modules-settings-action:focus {
+			border-radius: 2px;
+			box-shadow: 0 0 0 3px var(--color-primary-light);
+		}
 	}
 
 	.section-nav__panel {
