@@ -3,7 +3,6 @@ import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import useResize from './hooks/use-resize';
 import seriesBarsPlugin from './uplot-plugins/multi-bars';
-// import seriesBarsPlugin from './uplot-plugins/series-bars-plugins';
 
 // NOTE: Do not include this component in the package entry bundle.
 //       Doing so will cause tests of the consumer package to break due to uPlot's reliance on matchMedia.
