@@ -1,7 +1,7 @@
-import { Popover } from '@automattic/components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import Popover from '../popover';
 import useResize from './hooks/use-resize';
 import seriesBarsPlugin from './uplot-plugins/multi-bars';
 
