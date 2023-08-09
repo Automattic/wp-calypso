@@ -61,6 +61,11 @@ describe( 'useSiteMetrics test', () => {
 				data: { periods: [ { timestamp: 1685577600, dimension: {} } ] },
 			},
 		} );
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: { periods: [ { timestamp: 1685577600, dimension: {} } ] },
+			},
+		} );
 
 		// Define a wrapper function to wrap the test component with QueryClientProvider and Redux Provider
 		const wrapper = ( { children } ) => (
@@ -79,10 +84,20 @@ describe( 'useSiteMetrics test', () => {
 		expect( formattedData ).toEqual( [
 			[ 1685577600 ], // Array of timestamps
 			[ 0 ], // Array of dimension values
+			[ 0 ], // Array of dimension values
 		] );
 	} );
 
 	it( 'should return formattedData for the case with an object for dimension', () => {
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+					],
+				},
+			},
+		} );
 		useSiteMetricsQuery.mockReturnValueOnce( {
 			data: {
 				data: {
@@ -103,10 +118,24 @@ describe( 'useSiteMetrics test', () => {
 
 		const { formattedData } = result.current;
 
-		expect( formattedData ).toEqual( [ [ 1685577600 ], [ 0.0030000000000000005 ] ] );
+		expect( formattedData ).toEqual( [
+			[ 1685577600 ],
+			[ 0.0030000000000000005 ],
+			[ 0.0030000000000000005 ],
+		] );
 	} );
 
 	it( 'should return formattedData for the case with dimension being an array and an object', () => {
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+						{ timestamp: 1685577800, dimension: {} },
+					],
+				},
+			},
+		} );
 		useSiteMetricsQuery.mockReturnValueOnce( {
 			data: {
 				data: {
@@ -130,6 +159,7 @@ describe( 'useSiteMetrics test', () => {
 
 		expect( formattedData ).toEqual( [
 			[ 1685577600, 1685577800 ],
+			[ 0.0030000000000000005, 0 ],
 			[ 0.0030000000000000005, 0 ],
 		] );
 	} );
