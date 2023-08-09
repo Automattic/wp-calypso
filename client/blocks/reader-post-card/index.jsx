@@ -269,7 +269,7 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const postCardComments = () => {
+		const postCardComments = ( onClick ) => {
 			const fetchStatus = this.props.commentsFetchingStatus;
 			const hasFetchedComments = fetchStatus.hasReceivedBefore || fetchStatus.hasReceivedAfter;
 
@@ -296,6 +296,7 @@ class ReaderPostCard extends Component {
 						initialSize={ 5 }
 						pageSize={ 15 }
 						maxDepth={ 1 }
+						openPostPage={ onClick }
 					/>
 				</div>
 			);
@@ -307,7 +308,7 @@ class ReaderPostCard extends Component {
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
-				{ ! isConversations && postCardComments() }
+				{ ! isConversations && postCardComments( onClick ) }
 			</Card>
 		);
 	}

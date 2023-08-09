@@ -303,7 +303,7 @@ class PostCommentList extends Component {
 		}
 	};
 
-	renderCommentsList = ( commentIds ) => {
+	renderCommentsList = ( commentIds, displayedCommentsCount, actualCommentsCount ) => {
 		return (
 			<>
 				{
@@ -311,11 +311,19 @@ class PostCommentList extends Component {
 					// comment in the tree. We check "> 2" because the comment tree will also have a
 					// children key aside from all the commentID keys.
 					Object.keys( this.props.commentsTree ).length > 2 && this.props.expandableView && (
-						<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
-							{ this.state.isExpanded
-								? translate( 'View less comments' )
-								: translate( 'View more comments' ) }
-						</button>
+						<>
+							<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
+								{ this.state.isExpanded
+									? translate( 'View less comments' )
+									: translate( 'View more comments' ) }
+							</button>
+
+							{ this.state.isExpanded && displayedCommentsCount < actualCommentsCount && (
+								<button className="comments__open-post" onClick={ this.props.openPostPage }>
+									{ '• ' + translate( 'view all comments on the full post' ) }
+								</button>
+							) }
+						</>
 					)
 				}
 				<ol className="comments__list is-root">
@@ -376,6 +384,14 @@ class PostCommentList extends Component {
 		}
 
 		if ( this.props.expandableView && ! this.state.isExpanded ) {
+			// Note this gets the most recent comment/reply of any nested level and shows it.
+			// However, the expanded view renders based on the most recent top level comments. That
+			// means when we expand from only seeing the most recent found here, it may not be
+			// rendered in the longer list if it is a reply but not a reply to one of the most
+			// recent top level comments. Do we find the top level comment corresponding to this
+			// most recent and push it into displayedComments? Do we want to redo how
+			// displayedComments get comments in this view altogether and show comments trees with
+			// the most recent replies and not necessarily the most recent top level comments? Other?
 			const mostRecentComment = this.getMostRecentComment( this.props.commentsTree );
 
 			return {
@@ -447,6 +463,7 @@ class PostCommentList extends Component {
 		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
+			! this.props.expandableView &&
 			( size( commentsTree.children ) > amountOfCommentsToTake ||
 				haveEarlierCommentsToFetch ||
 				haveLaterCommentsToFetch ) &&
@@ -502,7 +519,7 @@ class PostCommentList extends Component {
 								) }
 							</div>
 						</div>
-						{ ! this.props.expandableView && showViewMoreComments && (
+						{ showViewMoreComments && (
 							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 									args: {
@@ -548,8 +565,12 @@ class PostCommentList extends Component {
 						</SegmentedControl.Item>
 					</SegmentedControl>
 				) }
-				{ this.renderCommentsList( displayedComments ) }
-				{ ! this.props.expandableView && showViewMoreComments && this.props.startingCommentId && (
+				{ this.renderCommentsList(
+					displayedComments,
+					displayedCommentsCount,
+					actualCommentsCount
+				) }
+				{ showViewMoreComments && this.props.startingCommentId && (
 					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
