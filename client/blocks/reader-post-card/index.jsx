@@ -18,6 +18,7 @@ import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { commentsFetchingStatus } from 'calypso/state/comments/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -269,7 +270,13 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const postCardComments = ( onClick ) => {
+		const postCardComments = () => {
+			// If there are no comments to display and the user is not logged in to comment, dont
+			// render this. In the future if we add a login/signup to comment prompt we can remove this.
+			if ( ! this.props.currentUser && this.props.post.discussion?.comment_count === 0 ) {
+				return null;
+			}
+
 			const fetchStatus = this.props.commentsFetchingStatus;
 			const hasFetchedComments = fetchStatus.hasReceivedBefore || fetchStatus.hasReceivedAfter;
 
@@ -296,7 +303,9 @@ class ReaderPostCard extends Component {
 						initialSize={ 5 }
 						pageSize={ 15 }
 						maxDepth={ 1 }
-						openPostPage={ onClick }
+						// TODO - update this to go to the comments on the post page, similar to the
+						// comment button.
+						openPostPage={ this.handleCardClick }
 					/>
 				</div>
 			);
@@ -317,6 +326,7 @@ class ReaderPostCard extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		currentRoute: getCurrentRoute( state ),
+		currentUser: getCurrentUser( state ),
 		commentsFetchingStatus: commentsFetchingStatus(
 			state,
 			ownProps.post.site_ID,
