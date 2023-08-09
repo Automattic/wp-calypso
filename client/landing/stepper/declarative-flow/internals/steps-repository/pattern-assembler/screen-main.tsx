@@ -1,7 +1,8 @@
 import { Button } from '@automattic/components';
 import {
-	NavigationButtonAsItem,
+	NavigatorButtonAsItem,
 	NavigatorHeader,
+	NavigatorItem,
 	NavigatorItemGroup,
 } from '@automattic/onboarding';
 import {
@@ -170,25 +171,25 @@ const ScreenMain = ( {
 			<div className="screen-container__body" ref={ wrapperRef }>
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
-						<NavigationButtonAsItem
+						<NavigatorItem
 							checked={ Boolean( selectedHeader ) }
-							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => onMainItemSelect( { name: 'header', isPanel: true } ) }
 							active={ getIsActiveButton( 'header' ) }
 						>
 							{ translate( 'Header' ) }
-						</NavigationButtonAsItem>
-						<NavigationButtonAsItem
+						</NavigatorItem>
+						<NavigatorItem
 							checked={ Boolean( selectedSections.length ) }
-							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
 							onClick={ () => onMainItemSelect( { name: 'section', isPanel: true } ) }
+							active={ getIsActiveButton( 'section' ) }
+							hasNestedItems
 						>
 							{ translate( 'Sections' ) }
-						</NavigationButtonAsItem>
+						</NavigatorItem>
 
 						{ selectedMainItem === 'section' && (
 							<PatternCategoryList
@@ -199,20 +200,19 @@ const ScreenMain = ( {
 							/>
 						) }
 
-						<NavigationButtonAsItem
+						<NavigatorItem
 							checked={ Boolean( selectedFooter ) }
-							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => onMainItemSelect( { name: 'footer', isPanel: true } ) }
 							active={ getIsActiveButton( 'footer' ) }
 						>
 							{ translate( 'Footer' ) }
-						</NavigationButtonAsItem>
+						</NavigatorItem>
 					</NavigatorItemGroup>
 					<NavigatorItemGroup title={ translate( 'Styles' ) }>
 						<>
-							<NavigationButtonAsItem
+							<NavigatorButtonAsItem
 								checked={ hasColor }
 								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
 								icon={ color }
@@ -220,8 +220,8 @@ const ScreenMain = ( {
 								onClick={ () => onMainItemSelect( { name: 'color-palettes' } ) }
 							>
 								{ translate( 'Colors' ) }
-							</NavigationButtonAsItem>
-							<NavigationButtonAsItem
+							</NavigatorButtonAsItem>
+							<NavigatorButtonAsItem
 								checked={ hasFont }
 								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
 								icon={ typography }
@@ -229,7 +229,7 @@ const ScreenMain = ( {
 								onClick={ () => onMainItemSelect( { name: 'font-pairings' } ) }
 							>
 								{ translate( 'Fonts' ) }
-							</NavigationButtonAsItem>
+							</NavigatorButtonAsItem>
 						</>
 					</NavigatorItemGroup>
 				</VStack>
