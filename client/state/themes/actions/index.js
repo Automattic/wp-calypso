@@ -16,6 +16,7 @@ export { hideThemePreview } from 'calypso/state/themes/actions/hide-theme-previe
 export { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 export { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
 export { installTheme } from 'calypso/state/themes/actions/install-theme';
+export { livePreview } from 'calypso/state/themes/actions/live-preview';
 export { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 export { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
 export {
