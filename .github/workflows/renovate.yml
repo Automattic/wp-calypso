@@ -41,7 +41,7 @@ concurrency:
 env:
   # Set as a workflow variable so that multiple jobs can use the value.
   RENOVATE_VERSION: 36.31.0
-  RENOVATE_CACHE_DIR: ./.cache/renovate
+  # RENOVATE_CACHE_DIR: ./.cache/renovate
 
 jobs:
   renovate:
@@ -57,13 +57,13 @@ jobs:
 
       # - name: Create empty cache dir
       #   run: mkdir -p $RENOVATE_CACHE_DIR
-      - name: Renovate Cache
-        id: renovate-cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.RENOVATE_CACHE_DIR }}
-          # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
-          key: gandalf
+      # - name: Renovate Cache
+      #   id: renovate-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.RENOVATE_CACHE_DIR }}
+      #     # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
+      #     key: gandalf
 
       # - name: Check cache properties
       #   run: ls -l $RENOVATE_CACHE_DIR
