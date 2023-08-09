@@ -29,6 +29,7 @@ import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-gri
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -119,6 +120,7 @@ type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 	isGlobalStylesOnPersonal?: boolean;
+	showOdie?: () => void;
 };
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -167,6 +169,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 		isSpotlightOnCurrentPlan,
 		showUpgradeableStorage,
 		isGlobalStylesOnPersonal,
+		showOdie,
 	} = props;
 	const translate = useTranslate();
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
@@ -271,6 +274,7 @@ const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
 			require="calypso/my-sites/plan-features-2023-grid"
 			{ ...asyncProps }
 			planTypeSelectorProps={ planTypeSelectorProps }
+			showOdie={ showOdie }
 		/>
 	);
 
@@ -358,6 +362,8 @@ const PlansFeaturesMain = ( {
 	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
 		_customerType = 'business';
 	}
+
+	const { setIsVisible } = useOdieAssistantContext();
 
 	const isDisplayingPlansNeededForFeature = () => {
 		if (
@@ -658,6 +664,7 @@ const PlansFeaturesMain = ( {
 						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlanAllowed && isSpotlightOnCurrentPlan }
 						showUpgradeableStorage={ showUpgradeableStorage }
 						isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
+						showOdie={ () => setIsVisible( true ) }
 					/>
 				</>
 			) }

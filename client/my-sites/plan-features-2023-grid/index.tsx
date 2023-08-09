@@ -124,6 +124,7 @@ export type PlanFeatures2023GridProps = {
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
 	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	showOdie?: () => void;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -224,6 +225,9 @@ export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
 > {
+	observer: IntersectionObserver | null = null;
+	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
+
 	state: PlanFeatures2023GridState = {
 		showPlansComparisonGrid: false,
 		selectedStorage: {},
@@ -235,6 +239,25 @@ export class PlanFeatures2023Grid extends Component<
 		// TODO clk: move these to PlansFeaturesMain (after Woo plans migrate)
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
+
+		this.observer = new IntersectionObserver( ( entries ) => {
+			entries.forEach( ( entry ) => {
+				if ( entry.isIntersecting ) {
+					this.props.showOdie?.();
+					this.observer?.disconnect();
+				}
+			} );
+		} );
+
+		if ( this.buttonRef.current ) {
+			this.observer.observe( this.buttonRef.current );
+		}
+	}
+
+	componentWillUnmount() {
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
 	}
 
 	toggleShowPlansComparisonGrid = () => {
@@ -906,7 +929,7 @@ export class PlanFeatures2023Grid extends Component<
 				</div>
 				{ ! hidePlansFeatureComparison && (
 					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-						<Button onClick={ this.toggleShowPlansComparisonGrid }>
+						<Button onClick={ this.toggleShowPlansComparisonGrid } ref={ this.buttonRef }>
 							{ this.state.showPlansComparisonGrid
 								? translate( 'Hide comparison' )
 								: translate( 'Compare plans' ) }
