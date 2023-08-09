@@ -80,7 +80,7 @@ const OdieAssistantProvider = ( {
 	children: ReactNode;
 } ) => {
 	const dispatch = useDispatch();
-	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v0' );
+	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v1' );
 	const odieIsEnabled =
 		config.isEnabled( 'odie' ) ||
 		( experimentAssignment?.variationName === 'treatment' &&
