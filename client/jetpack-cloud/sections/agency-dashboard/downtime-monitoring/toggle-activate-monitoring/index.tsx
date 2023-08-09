@@ -132,7 +132,7 @@ export default function ToggleActivateMonitoring( {
 						) as string
 					}
 				>
-					{ smsLimitReached ? (
+					{ isPaidTierEnabled && smsLimitReached ? (
 						<img src={ alertIcon } alt={ translate( 'Alert' ) } />
 					) : (
 						<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />

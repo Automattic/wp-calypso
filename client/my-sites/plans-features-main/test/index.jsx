@@ -3,9 +3,11 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/components/async-load', () => ( { visiblePlans } ) => (
+jest.mock( 'calypso/components/async-load', () => ( { gridPlansForFeaturesGrid } ) => (
 	<div data-testid="plan-features">
-		<div data-testid="visible-plans">{ JSON.stringify( visiblePlans ) }</div>
+		<div data-testid="visible-plans">
+			{ JSON.stringify( gridPlansForFeaturesGrid.map( ( { planSlug } ) => planSlug ) ) }
+		</div>
 	</div>
 ) );
 jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
@@ -20,6 +22,21 @@ jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
 } ) );
+jest.mock(
+	'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans',
+	() => jest.fn()
+);
+jest.mock(
+	'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid',
+	() => jest.fn()
+);
+jest.mock(
+	'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans',
+	() => jest.fn()
+);
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans', () =>
+	jest.fn()
+);
 
 import {
 	PLAN_FREE,
@@ -38,6 +55,10 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
+import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
+import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
+import usePricingMetaForGridPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-pricing-meta-for-grid-plans';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
@@ -46,6 +67,15 @@ import PlansFeaturesMain from '../index';
 const props = {
 	selectedPlan: PLAN_FREE,
 	translate: ( x ) => x,
+};
+
+const emptyPlansIndexForMockedFeatures = {
+	[ PLAN_FREE ]: null,
+	[ PLAN_PERSONAL ]: null,
+	[ PLAN_PREMIUM ]: null,
+	[ PLAN_BUSINESS ]: null,
+	[ PLAN_ECOMMERCE ]: null,
+	[ PLAN_ENTERPRISE_GRID_WPCOM ]: null,
 };
 
 describe( 'PlansFeaturesMain', () => {
@@ -57,6 +87,12 @@ describe( 'PlansFeaturesMain', () => {
 			intent: null,
 		} ) );
 		getSelectedSiteId.mockImplementation( () => 123 );
+		usePricedAPIPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
+		usePricingMetaForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
+		usePlanFeaturesForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
+		useRestructuredPlanFeaturesForComparisonGrid.mockImplementation(
+			() => emptyPlansIndexForMockedFeatures
+		);
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {

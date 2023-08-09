@@ -69,6 +69,9 @@
 	.site-monitoring__chart {
 		flex-grow: 1;
 	}
+	.pie-chart__chart-drawing-empty {
+		fill: var(--studio-gray-5);
+	}
 }
 
 .site-monitoring-cache-pie-chart {

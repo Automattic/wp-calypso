@@ -3,6 +3,19 @@
 		height: 250px;
 		width: 250px;
 	}
+	.site-monitoring__chart-container {
+		position: relative;
+		.components-spinner {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 1;
+			height: 20px;
+			width: 20px;
+			margin: 0;
+		}
+	}
 	.pie-chart__legend {
 		margin-top: 24px;
 		flex-direction: row;

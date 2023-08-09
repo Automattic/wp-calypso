@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import classnames from 'classnames';
 import InfoPopover from 'calypso/components/info-popover';
 import PieChart from 'calypso/components/pie-chart';
@@ -26,7 +27,10 @@ export const SiteMonitoringPieChart = ( { title, tooltip, className, data }: Pro
 					<InfoPopover className="site-monitoring__chart-tooltip">{ tooltip }</InfoPopover>
 				) }
 			</header>
-			<PieChart data={ data } />
+			<div className="site-monitoring__chart-container">
+				{ ! data.length ? <Spinner /> : null }
+				<PieChart data={ data } donut />
+			</div>
 			<PieChartLegend data={ data } onlyPercent />
 		</div>
 	);

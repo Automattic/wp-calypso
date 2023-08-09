@@ -59,7 +59,7 @@ export default function CampaignItem( props: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
-	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
 	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
@@ -126,9 +126,10 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row">
 					<div className="promote-post-i2__campaign-item-wrapper">
 						{ adCreativeUrl && (
-							<div className="campaign-item__header-image">
-								<img src={ adCreativeUrl } alt="" />
-							</div>
+							<div
+								className="campaign-item__header-image"
+								style={ { backgroundImage: `url(${ adCreativeUrl })` } }
+							></div>
 						) }
 						<div className="campaign-item__title-row">
 							<div className="campaign-item__title">{ name }</div>
