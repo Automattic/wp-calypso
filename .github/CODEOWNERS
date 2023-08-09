@@ -170,3 +170,7 @@
 /client/landing/stepper/declarative-flow/internals/steps-repository/importer-wordpress @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/migration-handler @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/site-picker @Automattic/caribou
+
+# Renovate config
+/renovate.json5 @Automattic/team-calypso-platform
+/.github/workflows/renovate.yml @Automattic/team-calypso-platform
