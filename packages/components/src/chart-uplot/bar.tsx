@@ -16,7 +16,7 @@ const DEFAULT_DIMENSIONS = {
 
 export interface UplotChartProps {
 	data: [ string[], ...number[][] ];
-	fillColors: string[];
+	legendData: { fillColor: string; tooltip?: JSX.Element }[];
 	labels: string[];
 	options?: Partial< uPlot.Options >;
 }
@@ -24,7 +24,7 @@ export interface UplotChartProps {
 export default function UplotBarChart( {
 	data,
 	labels,
-	fillColors = [],
+	legendData = [],
 	options: propOptions,
 }: UplotChartProps ) {
 	const uplot = useRef< uPlot | null >( null );
@@ -47,7 +47,7 @@ export default function UplotBarChart( {
 			padding: [ null, 0, null, 0 ],
 			series: data[ 0 ].map( ( label, i ) => ( {
 				label,
-				fill: fillColors[ i ],
+				fill: legendData[ i ].fillColor,
 			} ) ) as uPlot.Series[],
 			plugins: [
 				seriesBarsPlugin( {
@@ -66,7 +66,7 @@ export default function UplotBarChart( {
 			...defaultOptions,
 			...( typeof propOptions === 'object' ? propOptions : {} ),
 		};
-	}, [ chartDimensions, data, fillColors, labels, propOptions ] );
+	}, [ chartDimensions, data, labels, legendData, propOptions ] );
 
 	useResize( uplot, uplotContainer );
 
@@ -114,6 +114,8 @@ export default function UplotBarChart( {
 			legendEl.removeEventListener( 'mouseout', onMouseLeaveListener );
 		};
 	}, [ legendEl ] );
+	const tooltipContent = legendData?.[ legendVisibleIndex ]?.tooltip;
+	const tooltipContext = legendEl?.children[ legendVisibleIndex ];
 
 	return (
 		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
@@ -122,9 +124,9 @@ export default function UplotBarChart( {
 				onCreate={ ( chart ) => ( uplot.current = chart ) }
 				options={ options }
 			/>
-			{ legendVisibleIndex >= 0 && legendEl?.children[ legendVisibleIndex ] && (
-				<Popover isVisible context={ legendEl.children[ legendVisibleIndex ] } position="top">
-					{ fillColors[ legendVisibleIndex ] }
+			{ tooltipContent && tooltipContext && (
+				<Popover isVisible context={ tooltipContext } position="top">
+					{ tooltipContent }
 				</Popover>
 			) }
 		</div>
