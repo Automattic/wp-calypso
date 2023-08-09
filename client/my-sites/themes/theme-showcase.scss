@@ -9,6 +9,10 @@
 	.layout:not(.has-no-sidebar) .layout__content {
 		padding-top: var(--masterbar-height);
 	}
+	.main > .notice.is-error {
+		margin-top: 24px;
+		margin-bottom: 0;
+	}
 }
 
 .is-logged-out {
@@ -165,11 +169,6 @@
 }
 
 .theme-showcase {
-
-	> .notice.is-error {
-		margin-top: 24px;
-		margin-bottom: 0;
-	}
 
 	.theme__search {
 		.keyed-suggestions {

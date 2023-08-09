@@ -14,7 +14,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SearchThemes from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
@@ -24,7 +23,6 @@ import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -456,8 +454,6 @@ class ThemeShowcase extends Component {
 			pathName,
 			title,
 			filterString,
-			isJetpackSite,
-			isPossibleJetpackConnectionProblem,
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
@@ -529,9 +525,6 @@ class ThemeShowcase extends Component {
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				{ siteId && isJetpackSite && isPossibleJetpackConnectionProblem && (
-					<JetpackConnectionHealthBanner siteId={ siteId } />
-				) }
 				<ThemesHeader
 					title={
 						isLoggedIn
@@ -634,7 +627,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
 		isSiteECommerceFreeTrial: isSiteOnECommerceTrial( state, siteId ),
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
