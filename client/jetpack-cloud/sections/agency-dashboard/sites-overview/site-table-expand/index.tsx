@@ -5,9 +5,11 @@ import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { DASHBOARD_PREFERENCE_NAMES } from '../utils';
 import SiteTablePopover from './site-table-popover';
 import SiteTableTooltip from './site-table-tooltip';
+
+const PREF_EXPANDABLE_BLOCK_POPOVER_MESSAGE =
+	'jetpack-cloud-agency-dashboard-expandable-block-popover-message';
 
 interface Props {
 	index: number;
@@ -21,11 +23,11 @@ export default function SiteTableExpand( { index, setExpanded, isExpanded, siteI
 	const [ showTooltip, setShowTooltip ] = useState( false );
 
 	const preference = useSelector( ( state ) =>
-		getPreference( state, DASHBOARD_PREFERENCE_NAMES.EXPANDABLE_BLOCK_POPOVER_MESSAGE )
+		getPreference( state, PREF_EXPANDABLE_BLOCK_POPOVER_MESSAGE )
 	);
 	const savePreferenceType = () => {
 		dispatch(
-			savePreference( DASHBOARD_PREFERENCE_NAMES.EXPANDABLE_BLOCK_POPOVER_MESSAGE, {
+			savePreference( PREF_EXPANDABLE_BLOCK_POPOVER_MESSAGE, {
 				...preference,
 				dismiss: true,
 			} )
