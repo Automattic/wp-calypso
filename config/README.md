@@ -11,7 +11,7 @@ import config from '@automattic/calypso-config';
 console.log( config( 'redirect_uri' ) );
 ```
 
-## Feature Flags
+## Feature Flags.
 
 The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds a method to detect this: `config.isEnabled()`.
 
