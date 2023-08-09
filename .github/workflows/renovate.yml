@@ -18,6 +18,14 @@ on:
           - full
           - lookup
           - extract
+      repoCache:
+        description: 'Reset or disable the cache?'
+        type: choice
+        default: 'enabled'
+        options:
+          - 'enabled'
+          - 'disabled'
+          - 'reset'
   schedule:
     # Run every 30 minutes:
     - cron: '0,30 * * * *'
@@ -41,6 +49,15 @@ jobs:
           TOKEN: ${{ secrets.RENOVATE_TOKEN }}
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
+
+      - name: Renovate Cache
+        id: renovate-cache
+        uses: actions/cache@v3
+        with:
+          path: .cache/renovate
+          # Renovate should handle cache invalidation itself, so we can change this manually if needed.
+          key: 1
+
       - uses: renovatebot/github-action@v39.0.1
         with:
           configurationFile: renovate.json5
@@ -50,6 +67,8 @@ jobs:
         env:
           LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
           RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
+          RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache }}
+
       - name: Check rate limit post-run
         env:
           TOKEN: ${{ secrets.RENOVATE_TOKEN }}
