@@ -154,6 +154,8 @@ const importHostedSiteFlow: Flow = {
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'importer':
 							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
 						default:
 							return;
 					}
