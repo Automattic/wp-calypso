@@ -9,7 +9,6 @@ import useDateOffsetForSite from 'calypso/lib/jetpack/hooks/use-date-offset-for-
 import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { DASHBOARD_LICENSE_TYPES } from '../utils';
 import ExpandedCard from './expanded-card';
 import useDashboardAddRemoveLicense from './hooks/use-dashboard-add-remove-license';
 import useExtractedBackupTitle from './hooks/use-extracted-backup-title';
@@ -128,7 +127,7 @@ export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 
 	const { isLicenseSelected, handleAddLicenseAction } = useDashboardAddRemoveLicense(
 		siteId,
-		DASHBOARD_LICENSE_TYPES.BACKUP
+		'backup'
 	);
 
 	const addBackupText = isLicenseSelected ? (
