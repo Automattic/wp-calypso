@@ -458,7 +458,6 @@ const PlanComparisonGridHeaderCell = ( {
 				isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
-				planTitle={ gridPlan.planConstantObj.getTitle() }
 				planSlug={ planSlug }
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }

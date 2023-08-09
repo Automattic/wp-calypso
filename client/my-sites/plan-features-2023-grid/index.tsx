@@ -571,59 +571,56 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			isLargeCurrency,
 		} = this.props;
 
-		return renderedGridPlans.map(
-			( { planSlug, planConstantObj, current, availableForPurchase } ) => {
-				const classes = classNames(
-					'plan-features-2023-grid__table-item',
-					'is-top-buttons',
-					'is-bottom-aligned'
-				);
+		return renderedGridPlans.map( ( { planSlug, current, availableForPurchase } ) => {
+			const classes = classNames(
+				'plan-features-2023-grid__table-item',
+				'is-top-buttons',
+				'is-bottom-aligned'
+			);
 
-				// Leaving it `undefined` makes it use the default label
-				let buttonText;
+			// Leaving it `undefined` makes it use the default label
+			let buttonText;
 
-				if (
-					isWooExpressMediumPlan( planSlug ) &&
-					! isWooExpressMediumPlan( currentSitePlanSlug || '' )
-				) {
-					buttonText = translate( 'Get Performance', { textOnly: true } );
-				} else if (
-					isWooExpressSmallPlan( planSlug ) &&
-					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
-				) {
-					buttonText = translate( 'Get Essential', { textOnly: true } );
-				}
-
-				return (
-					<Container key={ planSlug } className={ classes } isTableCell={ options?.isTableCell }>
-						<PlanFeatures2023GridActions
-							manageHref={ manageHref }
-							canUserPurchasePlan={ canUserPurchasePlan }
-							availableForPurchase={ availableForPurchase }
-							className={ getPlanClass( planSlug ) }
-							freePlan={ isFreePlan( planSlug ) }
-							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
-							isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							onUpgradeClick={ () => this.handleUpgradeClick( planSlug ) }
-							planTitle={ planConstantObj.getTitle() }
-							planSlug={ planSlug }
-							flowName={ flowName }
-							current={ current ?? false }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							selectedSiteSlug={ selectedSiteSlug }
-							buttonText={ buttonText }
-							planActionOverrides={ planActionOverrides }
-							showMonthlyPrice={ true }
-							siteId={ siteId }
-							isStuck={ options?.isStuck || false }
-							isLargeCurrency={ isLargeCurrency }
-						/>
-					</Container>
-				);
+			if (
+				isWooExpressMediumPlan( planSlug ) &&
+				! isWooExpressMediumPlan( currentSitePlanSlug || '' )
+			) {
+				buttonText = translate( 'Get Performance', { textOnly: true } );
+			} else if (
+				isWooExpressSmallPlan( planSlug ) &&
+				! isWooExpressSmallPlan( currentSitePlanSlug || '' )
+			) {
+				buttonText = translate( 'Get Essential', { textOnly: true } );
 			}
-		);
+
+			return (
+				<Container key={ planSlug } className={ classes } isTableCell={ options?.isTableCell }>
+					<PlanFeatures2023GridActions
+						manageHref={ manageHref }
+						canUserPurchasePlan={ canUserPurchasePlan }
+						availableForPurchase={ availableForPurchase }
+						className={ getPlanClass( planSlug ) }
+						freePlan={ isFreePlan( planSlug ) }
+						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
+						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
+						isInSignup={ isInSignup }
+						isLaunchPage={ isLaunchPage }
+						onUpgradeClick={ () => this.handleUpgradeClick( planSlug ) }
+						planSlug={ planSlug }
+						flowName={ flowName }
+						current={ current ?? false }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						selectedSiteSlug={ selectedSiteSlug }
+						buttonText={ buttonText }
+						planActionOverrides={ planActionOverrides }
+						showMonthlyPrice={ true }
+						siteId={ siteId }
+						isStuck={ options?.isStuck || false }
+						isLargeCurrency={ isLargeCurrency }
+					/>
+				</Container>
+			);
+		} );
 	}
 
 	maybeRenderRefundNotice( gridPlan: GridPlan[], options?: PlanRowOptions ) {

@@ -25,6 +25,7 @@ import {
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
 export type TransformedFeatureObject = FeatureObject & {
@@ -83,6 +84,7 @@ export type GridPlan = {
 	tagline: string;
 	availableForPurchase: boolean;
 	productNameShort?: string | null;
+	planTitle: TranslateResult;
 	current?: boolean;
 	isMonthlyPlan?: boolean;
 	cartItemForPlan?: {
@@ -296,6 +298,7 @@ const useGridPlans = ( {
 			tagline,
 			availableForPurchase,
 			productNameShort,
+			planTitle: planConstantObj.getTitle?.() ?? '',
 			current: sitePlanSlug === planSlug,
 			isMonthlyPlan,
 			cartItemForPlan,

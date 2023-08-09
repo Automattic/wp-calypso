@@ -36,7 +36,6 @@ type PlanFeaturesActionsButtonProps = {
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	onUpgradeClick: () => void;
-	planTitle: TranslateResult;
 	planSlug: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
@@ -346,7 +345,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
-	planTitle,
 	planSlug,
 	flowName,
 	buttonText,
@@ -366,6 +364,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	} );
 
 	const {
+		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
 	} = gridPlansIndex[ planSlug ];
 
