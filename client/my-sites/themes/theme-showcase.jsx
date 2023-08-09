@@ -564,7 +564,7 @@ class ThemeShowcase extends Component {
 					) }
 					<div className="themes__controls">
 						<div className="theme__search">
-							<div className="theme__search--input">
+							<div className="theme__search-input">
 								<SearchThemes
 									query={ filterString + search }
 									onSearch={ this.doSearch }
