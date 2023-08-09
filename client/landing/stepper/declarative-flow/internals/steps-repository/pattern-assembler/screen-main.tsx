@@ -12,12 +12,14 @@ import { focus } from '@wordpress/dom';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
-import { NAVIGATOR_PATHS } from './constants';
+import { CATEGORY_ALL_SLUG, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
+import PatternCategoryList from './pattern-category-list';
 import PatternListPanel from './pattern-list-panel';
 import Survey from './survey';
 import { Pattern, Category } from './types';
+import { replaceCategoryAllName } from './utils';
 
 interface Props {
 	onSelect: (
@@ -30,14 +32,12 @@ interface Props {
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
-	hasSections: boolean;
-	hasHeader: boolean;
-	hasFooter: boolean;
-	hasColor: boolean;
-	hasFont: boolean;
 	selectedMainItem: string | null;
+	selectedSections: Pattern[];
 	selectedHeader: Pattern | null;
 	selectedFooter: Pattern | null;
+	hasColor: boolean;
+	hasFont: boolean;
 	updateActivePatternPosition: () => void;
 	categories: Category[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
@@ -50,14 +50,12 @@ const ScreenMain = ( {
 	recordTracksEvent,
 	surveyDismissed,
 	setSurveyDismissed,
-	hasSections,
-	hasHeader,
-	hasFooter,
-	hasColor,
-	hasFont,
 	selectedMainItem,
+	selectedSections,
 	selectedHeader,
 	selectedFooter,
+	hasColor,
+	hasFont,
 	updateActivePatternPosition,
 	categories,
 	patternsMapByCategory,
@@ -85,6 +83,14 @@ const ScreenMain = ( {
 		}
 	};
 
+	const [ selectedSectionCategory, setSelectedSectionCategory ] = useState( CATEGORY_ALL_SLUG );
+	const onSelectSectionCategory = ( category: string ) => {
+		setSelectedSectionCategory( category );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
+			pattern_category: replaceCategoryAllName( category ),
+		} );
+	};
+
 	const getSelectedPattern = () => {
 		if ( 'header' === selectedMainItem ) {
 			return selectedHeader;
@@ -93,6 +99,12 @@ const ScreenMain = ( {
 			return selectedFooter;
 		}
 		return null;
+	};
+
+	const getSelectedPatterns = () => {
+		if ( 'section' === selectedMainItem ) {
+			return selectedSections;
+		}
 	};
 
 	const getLabel = () => {
@@ -159,7 +171,7 @@ const ScreenMain = ( {
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigationButtonAsItem
-							checked={ hasHeader }
+							checked={ Boolean( selectedHeader ) }
 							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ header }
 							aria-label={ translate( 'Add header' ) }
@@ -169,16 +181,26 @@ const ScreenMain = ( {
 							{ translate( 'Header' ) }
 						</NavigationButtonAsItem>
 						<NavigationButtonAsItem
-							checked={ hasSections }
-							path={ NAVIGATOR_PATHS.SECTION_PATTERNS }
+							checked={ Boolean( selectedSections.length ) }
+							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ layout }
 							aria-label={ translate( 'Add sections' ) }
-							onClick={ () => onMainItemSelect( { name: 'section' } ) }
+							onClick={ () => onMainItemSelect( { name: 'section', isPanel: true } ) }
 						>
 							{ translate( 'Sections' ) }
 						</NavigationButtonAsItem>
+
+						{ selectedMainItem === 'section' && (
+							<PatternCategoryList
+								categories={ categories }
+								patternsMapByCategory={ patternsMapByCategory }
+								selectedCategory={ selectedSectionCategory }
+								onSelectCategory={ onSelectSectionCategory }
+							/>
+						) }
+
 						<NavigationButtonAsItem
-							checked={ hasFooter }
+							checked={ Boolean( selectedFooter ) }
 							path={ NAVIGATOR_PATHS.MAIN }
 							icon={ footer }
 							aria-label={ translate( 'Add footer' ) }
@@ -230,9 +252,12 @@ const ScreenMain = ( {
 						onSelect( selectedMainItem, selectedPattern, selectedMainItem )
 					}
 					selectedPattern={ getSelectedPattern() }
+					selectedPatterns={ getSelectedPatterns() }
 					label={ getLabel() }
 					description={ getDescription() }
-					selectedCategory={ selectedMainItem }
+					selectedCategory={
+						selectedMainItem === 'section' ? selectedSectionCategory : selectedMainItem
+					}
 					categories={ categories }
 					patternsMapByCategory={ patternsMapByCategory }
 				/>

@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions';
 import { Story, Meta } from '@storybook/react';
 import { ComponentProps } from 'react';
 import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
-import ScreenCategoryList from './screen-category-list';
+import PatternCategoryList from './pattern-category-list';
 
 /**
  * FIXME: This component should depend only on local `./style.scss`.
@@ -11,8 +11,8 @@ import '@automattic/onboarding/src/navigator/navigator-buttons/style.scss';
 import './style.scss';
 
 export default {
-	title: 'client/landing/pattern-assembler/ScreenCategoryList',
-	component: ScreenCategoryList,
+	title: 'client/landing/pattern-assembler/PatternCategoryList',
+	component: PatternCategoryList,
 	decorators: [
 		( Story ) => {
 			return (
@@ -43,8 +43,8 @@ export default {
 	],
 } as Meta;
 
-type ScreenCategoryListStory = Story< ComponentProps< typeof ScreenCategoryList > >;
-const Template: ScreenCategoryListStory = ( args ) => <ScreenCategoryList { ...args } />;
+type PatternCategoryListStory = Story< ComponentProps< typeof PatternCategoryList > >;
+const Template: PatternCategoryListStory = ( args ) => <PatternCategoryList { ...args } />;
 
 const defaultArgs = {
 	categories: [
@@ -125,22 +125,11 @@ const defaultArgs = {
 			},
 		],
 	},
-	replacePatternMode: false,
-	selectedPattern: null,
 	wrapperRef: null,
-	onDoneClick: action( 'onDoneClick' ),
-	onSelect: action( 'onSelect' ),
-	onTogglePatternPanelList: action( 'onTogglePatternPanelList' ),
 	recordTracksEvent: action( 'recordTracksEvent' ),
 };
 
 export const AddPattern = Template.bind( {} );
 AddPattern.args = {
 	...defaultArgs,
-};
-
-export const ReplacePattern = Template.bind( {} );
-ReplacePattern.args = {
-	...defaultArgs,
-	replacePatternMode: true,
 };

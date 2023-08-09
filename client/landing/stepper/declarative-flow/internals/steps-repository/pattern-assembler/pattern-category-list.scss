@@ -1,7 +1,7 @@
 @import "@automattic/components/src/styles/typography";
 
 .navigator-button {
-	&.screen-category-list__category-button {
+	&.pattern-category-list__category-button {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -13,8 +13,8 @@
 }
 
 .rtl {
-	.screen-category-list__category-button {
-		.screen-category-list__arrow-icon {
+	.pattern-category-list__category-button {
+		.pattern-category-list__arrow-icon {
 			transform: rotate(180deg);
 		}
 	}
