@@ -250,7 +250,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 				{ showPlansModal && (
 					<RecurringPaymentsPlanAddEditModal
 						closeDialog={ () => setShowPlansModal( false ) }
-						product={ null }
+						product={ { subscribe_as_site_subscriber: true } }
 					/>
 				) }
 			</div>
