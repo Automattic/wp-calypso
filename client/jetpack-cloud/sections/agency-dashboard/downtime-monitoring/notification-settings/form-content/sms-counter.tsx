@@ -1,25 +1,31 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { MonitorSettings } from '../../../sites-overview/types';
 
-export default function SMSCounter() {
+interface Props {
+	settings: MonitorSettings;
+}
+
+export default function SMSCounter( { settings }: Props ) {
 	const translate = useTranslate();
 
-	// TODO: Replace with real data
-	const monthlyUsedCount = 5;
-	const montlyLimit = 20;
+	const monthlyLimit = settings.sms_monthly_limit || 0;
+	const monthlyUsedCount = settings.sms_sent_count || 0;
 
-	const limitReached = monthlyUsedCount >= montlyLimit;
+	if ( ! monthlyLimit ) {
+		return null;
+	}
 
 	return (
 		<div
 			className={ classNames( 'notification-settings__sms-counter', {
-				'notification-settings__sms-counter-limit-reached': limitReached,
+				'notification-settings__sms-counter-limit-reached': settings.is_over_limit,
 			} ) }
 		>
-			{ translate( '%(monthlyUsedCount)d/%(montlyLimit)d SMS used this month on this site', {
-				args: { monthlyUsedCount, montlyLimit },
+			{ translate( '%(monthlyUsedCount)d/%(monthlyLimit)d SMS used this month on this site', {
+				args: { monthlyUsedCount, monthlyLimit },
 				comment:
-					'monthlyUsedCount is the number of SMS used in a month, montlyLimit is the maximum number of SMS allowed in a month',
+					'monthlyUsedCount is the number of SMS used in a month, monthlyLimit is the maximum number of SMS allowed in a month',
 			} ) }
 		</div>
 	);

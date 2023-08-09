@@ -141,6 +141,8 @@ export interface SelectorProduct extends SelectorProductCost {
 	faqs?: Array< FAQ >;
 	recommendedFor?: Array< JetpackTag >;
 	forceNoYearlyUpgrade?: boolean;
+	moreAboutUrl?: string;
+	indirectCheckoutUrl?: string;
 }
 
 export type SiteProduct = {

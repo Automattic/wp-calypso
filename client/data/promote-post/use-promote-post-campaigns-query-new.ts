@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { requestDSP } from 'calypso/lib/promote-post';
+import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
 
 export type CampaignResponse = {
 	audience_list: {
@@ -54,7 +54,7 @@ const useCampaignsQueryNew = ( siteId: number, campaignId: number, queryOptions 
 	return useQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, campaignId ],
 		queryFn: async () => {
-			const campaign = await requestDSP< CampaignResponse >(
+			const campaign = await requestDSPHandleErrors< CampaignResponse >(
 				siteId,
 				`/sites/${ siteId }/campaigns/${ campaignId }`
 			);

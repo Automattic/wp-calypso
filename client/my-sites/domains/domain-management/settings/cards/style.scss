@@ -113,7 +113,8 @@
 	}
 }
 
-.site-redirect-card__explanation {
+.site-redirect-card__explanation,
+.domain-redirect-card__explanation {
 	display: block;
 	margin-top: 5px;
 	margin-bottom: 0;
@@ -123,6 +124,17 @@
 
 	a {
 		white-space: nowrap;
+	}
+}
+
+.domain-redirect-card__fields {
+	.form-text-input-with-affixes__prefix {
+		padding: 0;
+		border: 0;
+
+		.form-select {
+			border-right: 0;
+		}
 	}
 }
 

@@ -54,7 +54,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 
 const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
-	planName: string;
+	planSlug: string;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	hideUnavailableFeatures?: boolean;
@@ -62,7 +62,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 } > = ( {
 	features,
-	planName,
+	planSlug,
 	paidDomainName,
 	wpcomFreeDomainSuggestion,
 	hideUnavailableFeatures,
@@ -81,7 +81,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const key = `${ currentFeature.getSlug() }-${ featureIndex }`;
 
 				const isFreePlanAndCustomDomainFeature =
-					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planName );
+					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planSlug );
 
 				if ( isFreePlanAndCustomDomainFeature && ! paidDomainName ) {
 					return null;
@@ -92,7 +92,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					: currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
 					  ! currentFeature.availableForCurrentPlan;
 
-				const divClasses = classNames( '', getPlanClass( planName ), {
+				const divClasses = classNames( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 				} );
 				const spanClasses = classNames( 'plan-features-2023-grid__item-info', {

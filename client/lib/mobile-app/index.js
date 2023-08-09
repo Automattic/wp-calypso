@@ -30,7 +30,7 @@ const deviceUnknown = {
 export function getMobileDeviceInfo() {
 	try {
 		const userAgent = navigator.userAgent.toLowerCase();
-		const regex = /wp-(android|iphone)\/(\d+.\d+)/;
+		const regex = /w[pc]-(android|iphone|ios)\/(\d+(.[0-9a-z-]+)*)/;
 		const match = userAgent.match( regex );
 
 		if ( ! match ) {

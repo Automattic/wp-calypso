@@ -80,7 +80,7 @@ const ScreenCategoryList = ( {
 								'Replace the selected pattern by choosing from the list of categories below.'
 						  )
 						: translate(
-								'Find the right patterns for your homepage by exploring the pattern categories below.'
+								'Find the section patterns for your homepage by exploring the categories below.'
 						  )
 				}
 				onBack={ onBack }
@@ -148,7 +148,7 @@ const ScreenCategoryList = ( {
 						onDoneClick();
 					} }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save sections' ) }
 				</NavigatorBackButton>
 			</div>
 			<PatternListPanel

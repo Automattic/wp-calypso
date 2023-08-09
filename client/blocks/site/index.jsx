@@ -10,7 +10,9 @@ import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
+import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
+import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -143,6 +145,7 @@ class Site extends Component {
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
 			'is-reskinned': this.props.isReskinned,
+			'is-migration-trial': isMigrationTrialSite( site ),
 		} );
 
 		// We show public coming soon badge only when the site is not private.
@@ -198,6 +201,11 @@ class Site extends Component {
 							<SitesStagingBadge className="site__badge" secondary>
 								{ translate( 'Staging' ) }
 							</SitesStagingBadge>
+						) }
+						{ isMigrationTrialSite( site ) && (
+							<SitesMigrationTrialBadge className="site__badge" secondary>
+								{ translate( 'Trial' ) }
+							</SitesMigrationTrialBadge>
 						) }
 						{ this.props.isP2Hub && (
 							<span className="site__badge is-p2-workspace">P2 Workspace</span>

@@ -57,7 +57,6 @@ const PatternLargePreview = ( {
 	const [ blockGap ] = useGlobalStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useGlobalStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
-		'--pattern-large-preview-block-gap': blockGap,
 		'--pattern-large-preview-background': backgroundColor,
 	} as CSSProperties );
 
@@ -181,7 +180,6 @@ const PatternLargePreview = ( {
 	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
 	useEffect( () => {
 		setPatternLargePreviewStyle( {
-			'--pattern-large-preview-block-gap': blockGap,
 			'--pattern-large-preview-background': backgroundColor,
 		} as CSSProperties );
 	}, [ blockGap, backgroundColor ] );

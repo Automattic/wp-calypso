@@ -10,6 +10,7 @@ export type SiteColumns = Array< {
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
+	showInfo?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -51,6 +52,9 @@ export interface MonitorSettings {
 	monitor_user_wp_note_notifications: boolean;
 	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
 	monitor_notify_additional_user_sms: Array< MonitorContactSMS >;
+	is_over_limit: boolean;
+	sms_sent_count: number;
+	sms_monthly_limit: number;
 }
 
 interface StatsObject {
@@ -219,6 +223,7 @@ export interface DashboardDataContextInterface {
 		refetchIfFailed: () => void;
 	};
 	products: APIProductFamilyProduct[];
+	isLargeScreen: boolean;
 }
 
 export type AgencyDashboardFilterOption =

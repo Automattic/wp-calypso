@@ -95,7 +95,17 @@ class SectionImport extends Component {
 	handleStateChanges = () => {
 		this.props.siteImports.map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
-			this.trackImporterStateChange( importerState, importerId );
+			let eventProps = {};
+
+			// Log more info about upload failures
+			if ( importerState === appStates.UPLOAD_FAILURE ) {
+				eventProps = {
+					error_code: importItem.errorData.code,
+					error_type: importItem.errorData.type,
+				};
+			}
+
+			this.trackImporterStateChange( importerState, importerId, eventProps );
 		} );
 	};
 
@@ -105,7 +115,7 @@ class SectionImport extends Component {
 			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
 	};
 
-	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
+	trackImporterStateChange = memoizeLast( ( importerState, importerId, eventProps = {} ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
 			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
@@ -119,6 +129,7 @@ class SectionImport extends Component {
 		if ( stateToEventNameMap[ importerState ] ) {
 			this.props.recordTracksEvent( stateToEventNameMap[ importerState ], {
 				importer_id: importerId,
+				...eventProps,
 			} );
 		}
 	} );

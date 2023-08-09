@@ -7,7 +7,7 @@ import {
 	TERM_TRIENNIALLY,
 	planMatches,
 	TERM_ANNUALLY,
-	PlanSlug,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
@@ -20,7 +20,7 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
-import { usePlanPricesDisplay } from '../hooks/use-plan-prices-display';
+import { usePlansGridContext } from '../grid-context';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { PlanActionOverrides } from '../types';
 
@@ -36,8 +36,8 @@ type PlanFeaturesActionsButtonProps = {
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	onUpgradeClick: () => void;
-	planName: TranslateResult;
-	planSlug: string;
+	planTitle: TranslateResult;
+	planSlug: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
@@ -48,7 +48,6 @@ type PlanFeaturesActionsButtonProps = {
 	siteId?: number | null;
 	isStuck: boolean;
 	isLargeCurrency?: boolean;
-	currencyCode: string;
 };
 
 const DummyDisabledButton = styled.div`
@@ -65,7 +64,7 @@ const DummyDisabledButton = styled.div`
 
 const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
-	planName,
+	planTitle,
 	classes,
 	priceString,
 	isStuck,
@@ -73,7 +72,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	handleUpgradeButtonClick,
 }: {
 	freePlan: boolean;
-	planName: TranslateResult;
+	planTitle: TranslateResult;
 	classes: string;
 	priceString: string | null;
 	isStuck: boolean;
@@ -88,7 +87,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	} else if ( isStuck && ! isLargeCurrency ) {
 		btnText = translate( 'Get %(plan)s – %(priceString)s', {
 			args: {
-				plan: planName,
+				plan: planTitle,
 				priceString: priceString ?? '',
 			},
 			comment:
@@ -97,7 +96,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	} else {
 		btnText = translate( 'Get %(plan)s', {
 			args: {
-				plan: planName,
+				plan: planTitle,
 			},
 		} );
 	}
@@ -111,7 +110,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 
 const LaunchPagePlanFeatureActionButton = ( {
 	freePlan,
-	planName,
+	planTitle,
 	classes,
 	priceString,
 	isStuck,
@@ -119,7 +118,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	handleUpgradeButtonClick,
 }: {
 	freePlan: boolean;
-	planName: TranslateResult;
+	planTitle: TranslateResult;
 	classes: string;
 	priceString: string | null;
 	isStuck: boolean;
@@ -144,7 +143,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	if ( isStuck && ! isLargeCurrency ) {
 		buttonText = translate( 'Select %(plan)s – %(priceString)s', {
 			args: {
-				plan: planName,
+				plan: planTitle,
 				priceString: priceString ?? '',
 			},
 			comment:
@@ -153,7 +152,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	} else {
 		buttonText = translate( 'Select %(plan)s', {
 			args: {
-				plan: planName,
+				plan: planTitle,
 			},
 			context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
 			comment:
@@ -175,7 +174,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	priceString,
 	isStuck,
 	isLargeCurrency,
-	planName,
+	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
 	current,
@@ -191,7 +190,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
-	planName: TranslateResult;
+	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
 	current?: boolean;
@@ -305,7 +304,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	} else if ( isStuck && isLargeCurrency ) {
 		buttonTextFallback = translate( 'Upgrade – %(plan)s', {
 			context: 'verb',
-			args: { plan: planName ?? '' },
+			args: { plan: planTitle ?? '' },
 			comment: '%(plan)s is the name of the plan ',
 		} );
 	} else {
@@ -347,7 +346,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
-	planName,
+	planTitle,
 	planSlug,
 	flowName,
 	buttonText,
@@ -355,25 +354,20 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isWooExpressPlusPlan = false,
 	selectedSiteSlug,
 	planActionOverrides,
-	showMonthlyPrice,
-	siteId,
-	currencyCode,
 	isStuck,
 	isLargeCurrency,
 } ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
+	const { gridPlansIndex } = usePlansGridContext();
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
 		'is-current-plan': current,
 	} );
 
-	const planPrices = usePlanPricesDisplay( {
-		planSlug: planSlug as PlanSlug,
-		returnMonthly: showMonthlyPrice,
-		currentSitePlanSlug,
-		siteId,
-	} );
+	const {
+		pricing: { currencyCode, originalPrice, discountedPrice },
+	} = gridPlansIndex[ planSlug ];
 
 	const handleUpgradeButtonClick = () => {
 		if ( ! freePlan ) {
@@ -432,7 +426,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	}
 
 	const priceString = formatCurrency(
-		planPrices.discountedPrice || planPrices.originalPrice,
+		( discountedPrice.monthly || originalPrice.monthly ) ?? 0,
 		currencyCode || 'USD',
 		{
 			stripZeros: true,
@@ -443,7 +437,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<LaunchPagePlanFeatureActionButton
 				freePlan={ freePlan }
-				planName={ planName }
+				planTitle={ planTitle }
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
@@ -456,7 +450,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		return (
 			<SignupFlowPlanFeatureActionButton
 				freePlan={ freePlan }
-				planName={ planName }
+				planTitle={ planTitle }
 				classes={ classes }
 				priceString={ priceString }
 				isStuck={ isStuck }
@@ -468,11 +462,11 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	return (
 		<LoggedInPlansFeatureActionButton
+			planSlug={ planSlug }
 			freePlan={ freePlan }
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			planSlug={ planSlug }
 			current={ current }
 			manageHref={ manageHref }
 			canUserPurchasePlan={ canUserPurchasePlan }
@@ -483,7 +477,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			priceString={ priceString }
 			isStuck={ isStuck }
 			isLargeCurrency={ !! isLargeCurrency }
-			planName={ planName }
+			planTitle={ planTitle }
 		/>
 	);
 };
