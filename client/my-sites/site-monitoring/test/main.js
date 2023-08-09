@@ -8,7 +8,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { calculateTimeRange } from '../components/time-range-picker';
-import { useSiteMetricsData } from '../main';
+import { useSiteMetricsData } from '../metrics-tab';
 import { useSiteMetricsQuery } from '../use-metrics-query';
 
 jest.mock( 'calypso/my-sites/site-monitoring/use-metrics-query.ts', () => ( {

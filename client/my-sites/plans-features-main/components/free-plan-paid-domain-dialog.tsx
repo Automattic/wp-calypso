@@ -149,7 +149,7 @@ function SuggestedPlanSection( {
 						args: {
 							planTitle: planTitle as string,
 							planPrice: formatCurrency(
-								planPrices.discountedRawPrice || planPrices.rawPrice,
+								( planPrices.discountedRawPrice || planPrices.rawPrice ) ?? 0,
 								currencyCode,
 								{ stripZeros: true }
 							),

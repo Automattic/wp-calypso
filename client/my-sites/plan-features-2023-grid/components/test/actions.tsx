@@ -37,7 +37,7 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/state/plans/selectors', () => ( {
 	getPlanBillPeriod: jest.fn(),
 } ) );
-jest.mock( '../../hooks/use-plan-prices-display', () => ( { usePlanPricesDisplay: jest.fn() } ) );
+jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
 
 import {
 	PLAN_ANNUAL_PERIOD,
@@ -53,10 +53,8 @@ import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
-import { usePlanPricesDisplay } from '../../hooks/use-plan-prices-display';
+import { usePlansGridContext } from '../../grid-context';
 import PlanFeatures2023GridActions from '../actions';
-
-type PlanPricesDisplay = ReturnType< typeof usePlanPricesDisplay >;
 
 describe( 'PlanFeatures2023GridActions', () => {
 	beforeEach( () => {
@@ -84,16 +82,23 @@ describe( 'PlanFeatures2023GridActions', () => {
 			selectedSiteSlug: 'foo.wordpress.com',
 			isStuck: false,
 			showMonthlyPrice: true,
+		};
+
+		const pricing = {
+			discountedPrice: { monthly: null, full: null },
+			originalPrice: { monthly: 20, full: 240 },
 			currencyCode: 'USD',
 		};
 
-		const planPrices: PlanPricesDisplay = {
-			discountedPrice: 50,
-			originalPrice: 100,
-		};
-		usePlanPricesDisplay.mockImplementation( () => planPrices );
-
 		test( `should render ${ contactSupport } when current plan is on a lower tier but longer term than the grid plan`, () => {
+			usePlansGridContext.mockImplementation( () => ( {
+				gridPlansIndex: {
+					[ PLAN_BUSINESS ]: {
+						isMonthlyPlan: false,
+						pricing,
+					},
+				},
+			} ) );
 			getPlanBillPeriod.mockImplementation( ( _state, planSlug ) =>
 				planSlug === PLAN_PREMIUM_2_YEARS ? PLAN_BIENNIAL_PERIOD : PLAN_ANNUAL_PERIOD
 			);
@@ -102,8 +107,8 @@ describe( 'PlanFeatures2023GridActions', () => {
 				<PlanFeatures2023GridActions
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM_2_YEARS }
-					planName={ PLAN_BUSINESS }
 					planSlug={ PLAN_BUSINESS }
+					planTitle="Business"
 				/>
 			);
 
@@ -114,12 +119,21 @@ describe( 'PlanFeatures2023GridActions', () => {
 		} );
 
 		test( `should render ${ upgrade } when current plan and grid plan do not match`, () => {
+			usePlansGridContext.mockImplementation( () => ( {
+				gridPlansIndex: {
+					[ PLAN_BUSINESS ]: {
+						isMonthlyPlan: false,
+						pricing,
+					},
+				},
+			} ) );
+
 			render(
 				<PlanFeatures2023GridActions
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM }
-					planName={ PLAN_BUSINESS }
 					planSlug={ PLAN_BUSINESS }
+					planTitle="Business"
 				/>
 			);
 
@@ -130,12 +144,20 @@ describe( 'PlanFeatures2023GridActions', () => {
 
 		describe( 'when current plan matches grid plan on lower term', () => {
 			test( `should render ${ upgradeToYearly } when grid plan yearly`, () => {
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS ]: {
+							isMonthlyPlan: false,
+							pricing,
+						},
+					},
+				} ) );
 				render(
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
-						planName={ PLAN_BUSINESS }
 						planSlug={ PLAN_BUSINESS }
+						planTitle="Business"
 					/>
 				);
 
@@ -145,12 +167,29 @@ describe( 'PlanFeatures2023GridActions', () => {
 			} );
 
 			test( `should render ${ upgradeToBiennial } when grid plan 2-yearly`, () => {
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS ]: {
+							isMonthlyPlan: false,
+							pricing,
+						},
+					},
+				} ) );
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS_2_YEARS ]: {
+							isMonthlyPlan: false,
+							pricing,
+						},
+					},
+				} ) );
+
 				render(
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
-						planName={ PLAN_BUSINESS_2_YEARS }
 						planSlug={ PLAN_BUSINESS_2_YEARS }
+						planTitle="Business"
 					/>
 				);
 
@@ -160,12 +199,20 @@ describe( 'PlanFeatures2023GridActions', () => {
 			} );
 
 			test( `should render ${ upgradeToTriennial } when grid plan 3-yearly`, () => {
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS_3_YEARS ]: {
+							isMonthlyPlan: false,
+							pricing,
+						},
+					},
+				} ) );
 				render(
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
-						planName={ PLAN_BUSINESS_3_YEARS }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
+						planTitle="Business"
 					/>
 				);
 
@@ -175,17 +222,25 @@ describe( 'PlanFeatures2023GridActions', () => {
 			} );
 
 			test( 'should render the price when isStuck is true', () => {
+				usePlansGridContext.mockImplementation( () => ( {
+					gridPlansIndex: {
+						[ PLAN_BUSINESS_3_YEARS ]: {
+							isMonthlyPlan: false,
+							pricing,
+						},
+					},
+				} ) );
 				render(
 					<PlanFeatures2023GridActions
 						{ ...defaultProps }
-						planName={ PLAN_BUSINESS_3_YEARS }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
 						isStuck={ true }
+						planTitle="Business"
 					/>
 				);
-				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $50' } );
+				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $20' } );
 
-				expect( upgradeButton ).toHaveTextContent( 'Upgrade – $50' );
+				expect( upgradeButton ).toHaveTextContent( 'Upgrade – $20' );
 			} );
 		} );
 	} );

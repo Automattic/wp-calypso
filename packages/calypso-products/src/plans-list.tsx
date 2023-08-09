@@ -560,6 +560,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_MULTI_SITE,
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,

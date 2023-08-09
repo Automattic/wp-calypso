@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import classnames from 'classnames';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
@@ -21,7 +22,10 @@ export const SiteMonitoringPieChart = ( { title, className, data }: Props ) => {
 			<header className="site-monitoring__chart-header">
 				<h2 className="site-monitoring__chart-title">{ title }</h2>
 			</header>
-			<PieChart data={ data } />
+			<div className="site-monitoring__chart-container">
+				{ ! data.length ? <Spinner /> : null }
+				<PieChart data={ data } donut />
+			</div>
 			<PieChartLegend data={ data } onlyPercent />
 		</div>
 	);

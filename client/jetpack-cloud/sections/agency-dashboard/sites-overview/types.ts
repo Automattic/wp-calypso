@@ -10,6 +10,7 @@ export type SiteColumns = Array< {
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
+	showInfo?: boolean;
 } >;
 
 export type AllowedStatusTypes =
