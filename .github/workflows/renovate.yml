@@ -81,6 +81,9 @@ jobs:
           echo "Note any difference between this number and the one from the previous step may also include API uses from elsewhere that happened to occur at the same time."
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
+      - name: Check if cache exists
+        run: ls /tmp/renovate/cache/renovate
+
   validate-renovate-config:
     name: Validate Renovate Configuration
     runs-on: ubuntu-latest
