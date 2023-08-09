@@ -7,6 +7,7 @@ import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import InfoPopover from 'calypso/components/info-popover';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -15,6 +16,7 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	title?: string;
+	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: uPlot.AlignedData;
 	fillColor?: string;
@@ -32,6 +34,7 @@ export function formatChatHour( date: Date ): string {
 
 export const SiteMonitoringLineChart = ( {
 	title,
+	tooltip,
 	className,
 	data,
 	fillColor = 'rgba(48, 87, 220, 0.4)',
@@ -175,6 +178,9 @@ export const SiteMonitoringLineChart = ( {
 		<div className={ classnames( classes ) }>
 			<header className="site-monitoring__chart-header">
 				<h2 className="site-monitoring__chart-title">{ title }</h2>
+				{ tooltip && (
+					<InfoPopover className="site-monitoring__chart-tooltip">{ tooltip }</InfoPopover>
+				) }
 			</header>
 			<div ref={ uplotContainer }>
 				<UplotReact
