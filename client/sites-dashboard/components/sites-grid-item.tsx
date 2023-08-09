@@ -160,12 +160,14 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						<div className={ badges }>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
-							{ isMigrationTrialPlanSite && (
+							{ ( isMigrationTrialPlanSite || isECommerceTrialSite ) && (
 								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
 							) }
-							{ getSiteLaunchStatus( site ) !== 'public' && ! isMigrationTrialPlanSite && (
-								<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
-							) }
+							{ getSiteLaunchStatus( site ) !== 'public' &&
+								! isMigrationTrialPlanSite &&
+								! isECommerceTrialSite && (
+									<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
+								) }
 							<EllipsisMenuContainer>
 								{ inView && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
 							</EllipsisMenuContainer>
