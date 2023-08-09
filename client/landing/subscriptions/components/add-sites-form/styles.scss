@@ -1,11 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .subscriptions-add-sites__form--container {
-	label {
-		display: block;
-		width: 100%;
-		font-size: rem(14px);
-		line-height: rem(20px);
-		font-weight: 500;
-	}
+	min-width: 515px;
 
 	.components-base-control.is-error input {
 		border-color: var(--color-error);
@@ -16,7 +12,7 @@
 	}
 
 	.components-base-control__field {
-		margin: rem(6px) auto;
+		margin-bottom: 16px;
 	}
 
 	.components-text-control__input {
@@ -55,5 +51,13 @@
 		svg {
 			fill: var(--color-success-50);
 		}
+	}
+
+	.subscriptions-add-sites__save-button {
+		float: right;
+	}
+
+	@media (max-width: $break-small) {
+		min-width: initial;
 	}
 }
