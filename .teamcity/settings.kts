@@ -55,7 +55,6 @@ project {
 	buildType(YarnInstall)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
-	buildType(ValidateRenovateConfig)
 	buildType(SmartBuildLauncher)
 
 	params {
