@@ -1,8 +1,9 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { useSelector } from 'calypso/state';
-import { getIsLivePreviewSupported, getLivePreviewUrl } from 'calypso/state/themes/selectors';
+import { useDispatch, useSelector } from 'calypso/state';
+import { livePreview } from 'calypso/state/themes/actions';
+import { getIsLivePreviewSupported } from 'calypso/state/themes/selectors';
 
 interface Props {
 	themeId: string;
@@ -16,12 +17,18 @@ interface Props {
  */
 export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const isLivePreviewSupported = useSelector( ( state ) =>
 		getIsLivePreviewSupported( state, themeId, siteId )
 	);
-	const livePreviewUrl = useSelector( ( state ) => getLivePreviewUrl( state, themeId, siteId ) );
 	if ( ! isLivePreviewSupported ) {
 		return null;
 	}
-	return <Button href={ livePreviewUrl }>{ translate( 'Live Preview' ) }</Button>;
+
+	return (
+		<Button onClick={ () => dispatch( livePreview( themeId, siteId ) ) }>
+			{ translate( 'Live Preview' ) }
+		</Button>
+	);
 };
