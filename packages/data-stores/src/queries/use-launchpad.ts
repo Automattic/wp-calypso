@@ -86,7 +86,7 @@ export const useLaunchpad = (
 };
 
 export const updateLaunchpadSettings = (
-	siteSlug: string | null,
+	siteSlug: string | number,
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = encodeURIComponent( siteSlug as string );
