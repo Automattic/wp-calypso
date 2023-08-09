@@ -54,14 +54,16 @@ jobs:
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
-      # - name: Renovate Cache
-      #   id: renovate-cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
-      #     path: /tmp/renovate/cache/renovate
-      #     # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
-      #     key: gandalf
+      - name: Renovate Cache
+        id: renovate-cache
+        uses: actions/cache@v3
+        with:
+          # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
+          path: /tmp/renovate/cache/renovate
+          # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
+          key: gandalf
+      - name: Check cache perms
+        run: ls -l /tmp/renovate/cache/renovate
 
       - uses: renovatebot/github-action@v39.0.1
         with:
