@@ -13,7 +13,7 @@ import {
 } from '.';
 
 /**
- * Hardcoded list of themes that are not compatible with Block Theme Previews.
+ * Hardcoded list of themes that are NOT compatible with Block Theme Previews.
  * This list should be removed once they are retired.
  *
  * @see pekYwv-284-p2
@@ -73,13 +73,14 @@ const isNotCompatibleThemes = ( themeId: string ) => {
  * The scenarios where the Live Preview does NOT support;
  * - On both Simple and Atomic sites;
  *   - If the theme is users' active theme.
- *   - If the theme is not FullSiteEditing compatible.
+ *   - If the theme is NOT FullSiteEditing compatible.
  *   - If the theme has a static page as a homepage.
  * - On Atomic sites;
- *   - If the theme is not installed on Atomic sites.
+ *   - If the theme is externally managed and a user is NOT subscribed to the theme.
  * - On Simple sites;
- *   - If the theme is a 3rd party theme.
- *   - If the theme is not included in a plan.
+ *   - If the theme is externally managed.
+ *   - If the theme is a wporg theme.
+ *   - If the theme is NOT included in a plan.
  *
  * @see pbxlJb-3Uv-p2
  */
@@ -88,7 +89,7 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 		return false;
 	}
 
-	// The "Live" Preview does not make sense for logged out users.
+	// The "Live" Preview does NOT make sense for logged out users.
 	if ( ! isUserLoggedIn( state ) ) {
 		return false;
 	}
@@ -104,7 +105,7 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 	}
 
 	/**
-	 * Block Theme Previews do not support themes with a static page as a homepage
+	 * Block Theme Previews do NOT support themes with a static page as a homepage
 	 * as the Site Editor cannot control Reading Settings.
 	 *
 	 * @see pekYwv-284-p2#background
@@ -114,16 +115,14 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 	}
 
 	/**
-	 * If the theme is managed by 3rd party,
-	 * users must be subscribed to the theme,
+	 * If the theme is externally managed,
+	 * a user must be subscribed to the theme,
 	 * AND the site must be eligible for managed external themes.
-	 *
-	 * The site is always Atomic here since the site becomes Atomic once you subscribe to a 3rd party theme.
 	 */
 	if (
 		isExternallyManagedTheme( state, themeId ) &&
-		( ! isSiteEligibleForManagedExternalThemes( state, siteId ) ||
-			! isMarketplaceThemeSubscribed( state, themeId, siteId ) )
+		( ! isMarketplaceThemeSubscribed( state, themeId, siteId ) ||
+			! isSiteEligibleForManagedExternalThemes( state, siteId ) )
 	) {
 		return false;
 	}
@@ -131,17 +130,24 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 	const isSimple = isSimpleSite( state, siteId );
 	if ( isSimple ) {
 		/**
+		 * Disable Live Preview for externally managed themes on Simple sites.
+		 * The theme is NOT installed on Simple sites even if a user is still subscribed to the theme.
+		 * This should happen only when the site went back to Simple from Atomic.
+		 */
+		if ( isExternallyManagedTheme( state, themeId ) ) {
+			return false;
+		}
+
+		/**
 		 * Disable Live Preview for wporg themes,
-		 * since Block Theme Previews need a theme installed, and Simple sites don't have wporg themes installed.
-		 *
-		 * FIXME: This might be able to be addressed in TODO:
+		 * since Simple sites do NOT have wporg themes installed.
 		 */
 		if ( isWporgTheme( state, themeId ) ) {
 			return false;
 		}
 
 		/**
-		 * Disable Live Preview for themes that are not included in a plan.
+		 * Disable Live Preview for themes that are NOT included in a plan.
 		 * This should be updated as we implement the flow for them.
 		 * Note that BTP works on Atomic sites if a theme is installed.
 		 *

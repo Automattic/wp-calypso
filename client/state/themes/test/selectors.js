@@ -3218,9 +3218,7 @@ describe( '#getIsLivePreviewSupported()', () => {
 		sites: {
 			items: {
 				2916284: {
-					options: {
-						is_automated_transfer: true,
-					},
+					jetpack: true,
 				},
 			},
 			features: {
@@ -3328,10 +3326,44 @@ describe( '#getIsLivePreviewSupported()', () => {
 				'nokul',
 				2916284
 			);
-			expect( isLivePreviewSupported ).toBe( true );
+			expect( isLivePreviewSupported ).toBeTruthy();
+		} );
+		test( 'should return false on Simple sites even if the user is still subscribed to the theme', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported(
+				{
+					...baseState,
+					purchases: {
+						data: [
+							{
+								blog_id: 2916284,
+								product_slug: 'wp_mp_theme_nokul_monthly',
+							},
+						],
+					},
+					productsList: {
+						items: {
+							wp_mp_theme_nokul_monthly: {
+								product_slug: 'wp_mp_theme_nokul_monthly',
+								billing_product_slug: 'wp-mp-theme-nokul',
+							},
+						},
+					},
+					sites: {
+						items: {
+							2916284: {
+								// Simple site
+								jetpack: false,
+							},
+						},
+					},
+				},
+				'nokul',
+				2916284
+			);
+			expect( isLivePreviewSupported ).toBeFalsy();
 		} );
 	} );
-	describe( 'Atomic', () => {
+	describe( 'on Atomic sites', () => {
 		test( 'should return true even if the theme is NOT installed', () => {
 			const isLivePreviewSupported = getIsLivePreviewSupported(
 				{
