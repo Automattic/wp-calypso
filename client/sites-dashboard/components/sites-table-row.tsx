@@ -15,6 +15,7 @@ import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import {
 	displaySiteUrl,
 	getDashboardUrl,
+	isECommerceTrialSite,
 	isMigrationTrialSite,
 	isStagingSite,
 	MEDIA_QUERIES,
@@ -148,7 +149,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
-	const isTrialSite = isMigrationTrialSite( site );
+	const isTrialSite = isMigrationTrialSite( site ) || isECommerceTrialSite( site );
 
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
