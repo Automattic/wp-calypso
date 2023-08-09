@@ -24,7 +24,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const copyHandler = async () => {
 		navigator.clipboard.writeText( `https://${ site?.slug }` );
 		if ( site?.slug ) {
-			await updateLaunchpadSettings( site?.slug, {
+			await updateLaunchpadSettings( site.slug, {
 				checklist_statuses: { share_site: true },
 			} );
 		}
