@@ -41,6 +41,7 @@ concurrency:
 env:
   # Set as a workflow variable so that multiple jobs can use the value.
   RENOVATE_VERSION: 36.31.0
+  RENOVATE_CACHE_DIR: .cache/renovate
 
 jobs:
   renovate:
@@ -54,20 +55,23 @@ jobs:
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
+      - name: Create cache dir
+        run: mkdir -p $RENOVATE_CACHE_DIR
+
       - name: Renovate Cache
         id: renovate-cache
         uses: actions/cache@v3
         with:
           # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
-          path: /tmp/renovate/cache/renovate
+          path: ${{ env.RENOVATE_CACHE_DIR }}
           # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
-          key: gandalf
+          key: gandalf-2
 
+      # Unfortunately, the permissions expected within renovate's docker container
+      # are different than the ones given after the cache is restored. We have to
+      # change ownership to solve this.
       - name: Change cache permissions
-        run: sudo chown -R runneradmin:root /tmp/renovate/
-
-      - name: Check cache perms
-        run: ls -l /tmp/renovate/cache/renovate
+        run: sudo chown -R runneradmin:root $RENOVATE_CACHE_DIR
 
       - uses: renovatebot/github-action@v39.0.1
         with:
@@ -87,7 +91,7 @@ jobs:
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
       - name: Check cache perms
-        run: ls -l /tmp/renovate/cache/renovate
+        run: ls -l $RENOVATE_CACHE_DIR
 
   validate-renovate-config:
     name: Validate Renovate Configuration
