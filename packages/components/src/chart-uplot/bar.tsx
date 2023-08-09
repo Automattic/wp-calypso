@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import Popover from '../popover';
 import useResize from './hooks/use-resize';
 import seriesBarsPlugin from './uplot-plugins/multi-bars';
-// import seriesBarsPlugin from './uplot-plugins/series-bars-plugins';
 
 // NOTE: Do not include this component in the package entry bundle.
 //       Doing so will cause tests of the consumer package to break due to uPlot's reliance on matchMedia.
@@ -16,22 +16,22 @@ const DEFAULT_DIMENSIONS = {
 
 export interface UplotChartProps {
 	data: [ string[], ...number[][] ];
-	fillColors: string[];
+	legendData: { fillColor: string; tooltip?: JSX.Element }[];
 	labels: string[];
 	options?: Partial< uPlot.Options >;
-	legendContainer?: React.RefObject< HTMLDivElement >;
 }
 
 export default function UplotBarChart( {
 	data,
 	labels,
-	fillColors = [],
-	legendContainer,
+	legendData = [],
 	options: propOptions,
 }: UplotChartProps ) {
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef< HTMLDivElement | null >( null );
 	const [ chartDimensions, setChartDimensions ] = useState( DEFAULT_DIMENSIONS );
+	const [ legendVisibleIndex, setLegendVisibleIndex ] = useState( -1 );
+	const [ legendEl, setLegendEl ] = useState< HTMLElement | null >( null );
 
 	const options: uPlot.Options = useMemo( () => {
 		const defaultOptions: uPlot.Options = {
@@ -47,7 +47,7 @@ export default function UplotBarChart( {
 			padding: [ null, 0, null, 0 ],
 			series: data[ 0 ].map( ( label, i ) => ( {
 				label,
-				fill: fillColors[ i ],
+				fill: legendData[ i ].fillColor,
 			} ) ) as uPlot.Series[],
 			plugins: [
 				seriesBarsPlugin( {
@@ -58,10 +58,7 @@ export default function UplotBarChart( {
 				live: false,
 				isolate: true,
 				mount: ( self: uPlot, el: HTMLElement ) => {
-					// If legendContainer is defined, move the legend into it.
-					if ( legendContainer?.current ) {
-						legendContainer?.current.append( el );
-					}
+					setLegendEl( el );
 				},
 			},
 		};
@@ -69,7 +66,7 @@ export default function UplotBarChart( {
 			...defaultOptions,
 			...( typeof propOptions === 'object' ? propOptions : {} ),
 		};
-	}, [ chartDimensions, data, fillColors, labels, legendContainer, propOptions ] );
+	}, [ chartDimensions, data, labels, legendData, propOptions ] );
 
 	useResize( uplot, uplotContainer );
 
@@ -83,6 +80,43 @@ export default function UplotBarChart( {
 		}
 	}, [ chartDimensions, data ] );
 
+	useEffect( () => {
+		if ( legendEl === null ) {
+			return;
+		}
+		function onMouseOverListener( event: MouseEvent ) {
+			const target = event.target as HTMLElement | null;
+			const legendDirectChildren = target?.closest( '.u-series' );
+			if ( ! target || ! legendDirectChildren || ! legendEl ) {
+				return;
+			}
+			if ( target.classList.contains( 'u-label' ) ) {
+				const seriesIdx = Array.from( legendEl.children ).indexOf( legendDirectChildren );
+				setLegendVisibleIndex( seriesIdx );
+			}
+		}
+
+		function onMouseLeaveListener( event: MouseEvent ) {
+			const target = event.target as HTMLElement | null;
+			if ( ! target ) {
+				return;
+			}
+			if ( target.classList.contains( 'u-label' ) ) {
+				setLegendVisibleIndex( -1 );
+			}
+		}
+
+		legendEl.addEventListener( 'mouseover', onMouseOverListener );
+		legendEl.addEventListener( 'mouseout', onMouseLeaveListener );
+
+		return () => {
+			legendEl.removeEventListener( 'mouseover', onMouseOverListener );
+			legendEl.removeEventListener( 'mouseout', onMouseLeaveListener );
+		};
+	}, [ legendEl ] );
+	const tooltipContent = legendData?.[ legendVisibleIndex ]?.tooltip;
+	const tooltipContext = legendEl?.children[ legendVisibleIndex ];
+
 	return (
 		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
 			<UplotReact
@@ -90,6 +124,11 @@ export default function UplotBarChart( {
 				onCreate={ ( chart ) => ( uplot.current = chart ) }
 				options={ options }
 			/>
+			{ tooltipContent && tooltipContext && (
+				<Popover isVisible context={ tooltipContext } position="top">
+					{ tooltipContent }
+				</Popover>
+			) }
 		</div>
 	);
 }

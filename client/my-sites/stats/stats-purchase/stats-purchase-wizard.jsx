@@ -44,6 +44,7 @@ const ProductCard = ( {
 	siteSlug,
 	siteId,
 	commercialProduct,
+	maxSliderPrice,
 	pwywProduct,
 	redirectUri,
 	from,
@@ -51,7 +52,6 @@ const ProductCard = ( {
 	initialStep = SCREEN_TYPE_SELECTION,
 	initialSiteType = TYPE_PERSONAL,
 } ) => {
-	const maxSliderPrice = commercialProduct.cost;
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
@@ -232,6 +232,7 @@ const StatsPurchaseWizard = ( {
 	siteSlug,
 	siteId,
 	commercialProduct,
+	maxSliderPrice,
 	pwywProduct,
 	redirectUri,
 	from,
@@ -244,6 +245,7 @@ const StatsPurchaseWizard = ( {
 			siteSlug={ siteSlug }
 			siteId={ siteId }
 			commercialProduct={ commercialProduct }
+			maxSliderPrice={ maxSliderPrice }
 			pwywProduct={ pwywProduct }
 			redirectUri={ redirectUri }
 			from={ from }
