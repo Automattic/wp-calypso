@@ -69,6 +69,7 @@ class PostCommentList extends Component {
 		// To show only the most recent comment by default, and allow expanding to see the longer
 		// list.
 		expandableView: PropTypes.bool,
+		openPostPageAtComments: PropTypes.func,
 
 		// To display comments with a different status but not fetch them
 		// e.g. Reader full post view showing unapproved comments made to a moderated site
@@ -319,7 +320,10 @@ class PostCommentList extends Component {
 							</button>
 
 							{ this.state.isExpanded && displayedCommentsCount < actualCommentsCount && (
-								<button className="comments__open-post" onClick={ this.props.openPostPage }>
+								<button
+									className="comments__open-post"
+									onClick={ this.props.openPostPageAtComments }
+								>
 									{ '• ' + translate( 'view all comments on the full post' ) }
 								</button>
 							) }

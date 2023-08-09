@@ -303,9 +303,8 @@ class ReaderPostCard extends Component {
 						initialSize={ 5 }
 						pageSize={ 15 }
 						maxDepth={ 1 }
-						// TODO - update this to go to the comments on the post page, similar to the
-						// comment button.
-						openPostPage={ this.handleCardClick }
+						// TODO - separate this callback so it doesnt send same stats as comment icon.
+						openPostPageAtComments={ onCommentClick }
 					/>
 				</div>
 			);

@@ -218,6 +218,7 @@ class PostComment extends PureComponent {
 				{ showReplies && (
 					<ol className="comments__list">
 						{ commentChildrenIds.map( ( childId ) => (
+							// eslint-disable-next-line no-use-before-define
 							<ConnectedPostComment
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
 								showReadMoreInActions={ this.props.showReadMoreInActions }
