@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -130,6 +131,7 @@ function getFormattedDataForPieChart(
 
 export const MetricsTab = () => {
 	const { __ } = useI18n();
+	const translate = useTranslate();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData } = useSiteMetricsData( timeRange );
@@ -152,8 +154,14 @@ export const MetricsTab = () => {
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<SiteMonitoringLineChart
 				title={ __( 'Requests per minute & average response time' ) }
-				tooltip={ __(
-					'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+				tooltip={ translate(
+					'{{strong}}Requests per minute:{{/strong}} a line representing the number of requests received every minute.{{br/}}{{br/}}{{strong}}Average Response Time{{/strong}}: a line that indicates the average time taken to respond to a request within that minute.',
+					{
+						components: {
+							br: <br />,
+							strong: <strong />,
+						},
+					}
 				) }
 				data={ formattedData as uPlot.AlignedData }
 			></SiteMonitoringLineChart>
@@ -161,7 +169,7 @@ export const MetricsTab = () => {
 				<SiteMonitoringPieChart
 					title={ __( 'Cache hit/miss' ) }
 					tooltip={ __(
-						'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+						'Percentage of cache hits versus cache misses. A hit occurs when the requested data can be found in the cache, reducing the need to obtain it from the original source.'
 					) }
 					className="site-monitoring-cache-pie-chart"
 					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
@@ -172,7 +180,7 @@ export const MetricsTab = () => {
 				<SiteMonitoringPieChart
 					title={ __( 'PHP vs. static content served' ) }
 					tooltip={ __(
-						'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+						'Percentages showing the ratio of dynamic versus static content. Dynamic content is the content generated using database information.'
 					) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
@@ -184,7 +192,7 @@ export const MetricsTab = () => {
 			<SiteMonitoringBarChart
 				title={ __( 'Requests by HTTP response code' ) }
 				tooltip={ __(
-					'Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.'
+					'Number of requests categorized by their HTTP response code. Hover over each entry in the legend for detailed information.'
 				) }
 				{ ...statusCodeRequestsProps }
 			/>

@@ -16,7 +16,7 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	title?: string;
-	tooltip?: string;
+	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: uPlot.AlignedData;
 	fillColor?: string;

@@ -8,7 +8,7 @@ import './style.scss';
 
 type Props = {
 	title: string;
-	tooltip?: string;
+	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: Array< { name: string; value: number; description: string | undefined } >;
 };

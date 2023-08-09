@@ -4,7 +4,7 @@ import InfoPopover from 'calypso/components/info-popover';
 
 interface Props extends UplotChartProps {
 	title: string;
-	tooltip?: string;
+	tooltip?: string | React.ReactNode;
 	className?: string;
 }
 
