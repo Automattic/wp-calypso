@@ -536,6 +536,12 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 }
 
+.is-mobile-app-view {
+	.campaign-item__container .campaign-item-header {
+		padding-bottom: 0;
+	}
+}
+
 @mixin blazepress-campaign-details-mobile {
 	.campaign-item__container {
 		.campaign-item-details-header-line {

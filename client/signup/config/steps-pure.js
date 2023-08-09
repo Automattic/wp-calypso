@@ -107,7 +107,7 @@ export function generateSteps( {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem' ],
 			props: {
 				hideFreePlan: true,
 				hideEnterprisePlan: true,
@@ -124,7 +124,10 @@ export function generateSteps( {
 			stepName: 'plans-site-selected-legacy',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideEcommercePlan: true,
+			},
 		},
 
 		site: {
@@ -299,6 +302,17 @@ export function generateSteps( {
 
 		'plans-business': {
 			stepName: 'plans-business',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-business-with-plugin': {
+			stepName: 'plans-business-with-plugin',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],

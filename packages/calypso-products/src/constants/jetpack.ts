@@ -4,6 +4,7 @@ export const GROUP_JETPACK = 'GROUP_JETPACK';
 
 // Products
 export const PRODUCT_JETPACK_AI_MONTHLY = 'jetpack_ai_monthly';
+export const PRODUCT_JETPACK_AI_YEARLY = 'jetpack_ai_yearly';
 export const PRODUCT_JETPACK_BOOST = 'jetpack_boost_yearly';
 export const PRODUCT_JETPACK_BOOST_MONTHLY = 'jetpack_boost_monthly';
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -33,9 +34,13 @@ export const PRODUCT_JETPACK_SOCIAL_BASIC = 'jetpack_social_basic_yearly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY = 'jetpack_social_basic_monthly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED = 'jetpack_social_advanced_yearly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY = 'jetpack_social_advanced_monthly';
+export const PRODUCT_JETPACK_STATS_YEARLY = 'jetpack_stats_yearly';
 export const PRODUCT_JETPACK_STATS_MONTHLY = 'jetpack_stats_monthly';
 export const PRODUCT_JETPACK_STATS_PWYW_YEARLY = 'jetpack_stats_pwyw_yearly';
 export const PRODUCT_JETPACK_STATS_FREE = 'jetpack_stats_free_yearly';
+export const PRODUCT_JETPACK_MONITOR_YEARLY = 'jetpack_monitor_yearly';
+export const PRODUCT_JETPACK_MONITOR_MONTHLY = 'jetpack_monitor_monthly';
+export const PRODUCT_JETPACK_MONITOR = PRODUCT_JETPACK_MONITOR_YEARLY;
 
 //add-on products
 export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY =
@@ -159,6 +164,7 @@ export const JETPACK_SOCIAL_PRODUCTS = <const>[
 
 // Stats
 export const JETPACK_STATS_PRODUCTS = <const>[
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
@@ -191,9 +197,13 @@ export const JETPACK_VIDEOPRESS_PRODUCTS = <const>[
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 ];
 
-export const JETPACK_AI_PRODUCTS = <const>[ PRODUCT_JETPACK_AI_MONTHLY ];
+// Monitor
+export const JETPACK_MONITOR_PRODUCTS = <const>[
+	PRODUCT_JETPACK_MONITOR_YEARLY,
+	PRODUCT_JETPACK_MONITOR_MONTHLY,
+];
 
-export const JETPACK_MONTHLY_ONLY_PRODUCTS = <const>[ PRODUCT_JETPACK_AI_MONTHLY ];
+export const JETPACK_AI_PRODUCTS = <const>[ PRODUCT_JETPACK_AI_MONTHLY, PRODUCT_JETPACK_AI_YEARLY ];
 
 // WooCommerce Products
 export const WOOCOMMERCE_PRODUCTS = <const>[
@@ -216,6 +226,7 @@ export const JETPACK_PRODUCTS_LIST = <const>[
 	...JETPACK_BACKUP_ADDON_PRODUCTS,
 	...JETPACK_AI_PRODUCTS,
 	...JETPACK_STATS_PRODUCTS,
+	...JETPACK_MONITOR_PRODUCTS,
 ];
 
 export const JETPACK_PRODUCTS_BY_TERM = <const>[
@@ -276,8 +287,12 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		monthly: PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	},
 	{
-		yearly: null,
+		yearly: PRODUCT_JETPACK_AI_YEARLY,
 		monthly: PRODUCT_JETPACK_AI_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_MONITOR_YEARLY,
+		monthly: PRODUCT_JETPACK_MONITOR_MONTHLY,
 	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
@@ -323,6 +338,10 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	},
 	[ PRODUCT_JETPACK_VIDEOPRESS ]: {
 		relatedProduct: PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_MONITOR_YEARLY ]: {
+		relatedProduct: PRODUCT_JETPACK_MONITOR_MONTHLY,
 		ratio: 12,
 	},
 };
@@ -696,7 +715,13 @@ export const JETPACK_PRODUCT_RECCOMENDATION_MAP: Record< string, string[] > = {
 		JETPACK_TAG_FOR_ONLINE_FORUMS,
 		JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 	],
-
+	[ PRODUCT_JETPACK_AI_YEARLY ]: [
+		JETPACK_TAG_FOR_BLOGGERS,
+		JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
+		JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+		JETPACK_TAG_FOR_ONLINE_FORUMS,
+		JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+	],
 	// WooCommerce Extensions
 	[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
 	[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],

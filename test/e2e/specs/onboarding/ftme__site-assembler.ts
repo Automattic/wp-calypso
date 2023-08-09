@@ -56,7 +56,9 @@ describe( 'Site Assembler', () => {
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }` ),
+				DataHelper.getCalypsoURL(
+					`/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
+				),
 				{
 					timeout: 30 * 1000,
 				}
@@ -71,7 +73,7 @@ describe( 'Site Assembler', () => {
 			await startSiteFlow.clickButton( 'Start designing' );
 			await page.waitForURL(
 				DataHelper.getCalypsoURL(
-					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }`
+					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
 				),
 				{
 					timeout: 30 * 1000,

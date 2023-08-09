@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -43,6 +44,7 @@ import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
+import DomainRedirectCard from './cards/domain-redirect-card';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
@@ -77,11 +79,11 @@ const Settings = ( {
 		if ( ! contactInformation ) {
 			requestWhois( selectedDomainName );
 		}
-	}, [ contactInformation, selectedDomainName ] );
+	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
 	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
 
-	const renderBreadcrumbs = () => {
+	const renderHeader = () => {
 		const previousPath = domainManagementList(
 			selectedSite?.slug,
 			currentRoute,
@@ -104,7 +106,17 @@ const Settings = ( {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader
+				items={ items }
+				mobileItem={ mobileItem }
+				titleOverride={
+					domain ? (
+						<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+					) : null
+				}
+			/>
+		);
 	};
 
 	const renderSecurityAccordion = () => {
@@ -141,7 +153,6 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			! hasConnectableSites ||
 			domain.type === domainTypes.TRANSFER
 		) {
 			return null;
@@ -149,11 +160,15 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Connect a WordPress.com site', { textOnly: true } ) }
+				title={ translate( 'Create a WordPress.com site', { textOnly: true } ) }
 				key="status"
 				expanded
 			>
-				<DomainOnlyConnectCard selectedDomainName={ domain.domain } selectedSite={ selectedSite } />
+				<DomainOnlyConnectCard
+					selectedDomainName={ domain.domain }
+					selectedSite={ selectedSite }
+					hasConnectableSites={ hasConnectableSites }
+				/>
 			</Accordion>
 		);
 	};
@@ -214,7 +229,7 @@ const Settings = ( {
 			return (
 				<Accordion
 					title={ translate( 'Redirect settings', { textOnly: true } ) }
-					subtitle="Update your site redirect"
+					subtitle={ translate( 'Update your site redirect' ) }
 					key="main"
 					expanded
 				>
@@ -309,6 +324,25 @@ const Settings = ( {
 				) : (
 					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
 				) }
+			</Accordion>
+		);
+	};
+
+	const renderRedirectSection = () => {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+		return (
+			<Accordion
+				title={ translate( 'Redirect Domain', { textOnly: true } ) }
+				subtitle={ translate( 'Redirect from your domain to another' ) }
+			>
+				<DomainRedirectCard domainName={ selectedDomainName } />
 			</Accordion>
 		);
 	};
@@ -459,6 +493,7 @@ const Settings = ( {
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
+				{ config.isEnabled( 'domains/redirect' ) && renderRedirectSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
@@ -481,7 +516,7 @@ const Settings = ( {
 
 	if ( ! domain ) {
 		// TODO: Update this placeholder
-		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
+		return <DomainMainPlaceholder breadcrumbs={ renderHeader } />;
 	}
 
 	return (
@@ -489,8 +524,7 @@ const Settings = ( {
 		<Main wideLayout className="domain-settings-page">
 			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+			{ renderHeader() }
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

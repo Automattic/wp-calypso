@@ -235,7 +235,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && (
 					<Button
-						className="design-picker__design-your-own-button"
+						className={ classnames( 'design-picker__design-your-own-button', {
+							'design-picker__design-your-own-button-without-categories': ! hasCategories,
+						} ) }
 						onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }
 					>
 						{ assemblerCtaData.title }

@@ -1,9 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { localizeUrl, useLocale } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n/';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionNav from 'calypso/components/section-nav';
@@ -12,6 +11,8 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
 import Subscribers from '../subscribers';
@@ -28,6 +29,10 @@ function SubscribersTeam( props: Props ) {
 	const translate = useTranslate();
 	const { filter, search } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
+		isJetpackConnectionProblem( state, site?.ID as number )
+	);
 	const pendingInvites = useSelector( ( state ) =>
 		getPendingInvitesForSite( state, site?.ID as number )
 	);
@@ -50,56 +55,29 @@ function SubscribersTeam( props: Props ) {
 	) as unknown as FollowersQuery;
 	const usersQuery = useUsersQuery( site?.ID, teamFetchOptions ) as unknown as UsersQuery;
 
-	const locale = useLocale();
-	const { hasTranslation } = useI18n();
-
-	const getSubheaderText = () => {
-		const subHeaderTextOld = translate(
-			'Invite subscribers and team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
-			{
-				components: {
-					learnMore: (
-						<InlineSupportLink
-							showIcon={ false }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
-						/>
-					),
-				},
-			}
-		);
-
-		const subHeaderTextNew = translate(
-			'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
-			{
-				components: {
-					learnMore: (
-						<InlineSupportLink
-							showIcon={ false }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
-						/>
-					),
-				},
-			}
-		);
-
-		const useNewSubHeaderText =
-			isEnabled( 'subscribers-page-new' ) &&
-			( locale.startsWith( 'en' ) ||
-				hasTranslation(
-					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.'
-				) );
-
-		return useNewSubHeaderText ? subHeaderTextNew : subHeaderTextOld;
-	};
-
 	return (
 		<Main>
 			<ScreenOptionsTab wpAdminPath="users.php" />
+			{ isJetpack && isPossibleJetpackConnectionProblem && site?.ID && (
+				<JetpackConnectionHealthBanner siteId={ site.ID } />
+			) }
 			<FormattedHeader
 				brandFont
 				className="people__page-heading"
 				headerText={ translate( 'Users' ) }
-				subHeaderText={ getSubheaderText() }
+				subHeaderText={ translate(
+					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
+					{
+						components: {
+							learnMore: (
+								<InlineSupportLink
+									showIcon={ false }
+									supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
+								/>
+							),
+						},
+					}
+				) }
 				align="left"
 				hasScreenOptions
 			/>

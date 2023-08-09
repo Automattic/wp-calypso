@@ -198,6 +198,9 @@ export class JetpackSignup extends Component {
 	 * @param {string} _.bearerToken Bearer token
 	 */
 	handleUserCreationSuccess = ( { username, bearerToken } ) => {
+		if ( this.isWooCoreProfiler() ) {
+			this.props.recordTracksEvent( 'calypso_jpc_wc_coreprofiler_create_account_success' );
+		}
 		this.setState( {
 			newUsername: username,
 			bearerToken,

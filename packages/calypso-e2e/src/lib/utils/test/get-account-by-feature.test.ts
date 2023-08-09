@@ -211,11 +211,11 @@ describe( 'envToFeatureKey', () => {
 	} );
 
 	it( 'will include the value for "jetpackTarget" if it is not "wpcom-production"', () => {
-		expect( envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'wpcom-staging' } ) ).toMatchObject(
-			{
-				jetpackTarget: 'wpcom-staging',
-			}
-		);
+		expect(
+			envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'wpcom-deployment' } )
+		).toMatchObject( {
+			jetpackTarget: 'wpcom-deployment',
+		} );
 	} );
 
 	it( 'will set atomic to true if "jetpackTarget" is "remote-site"', () => {

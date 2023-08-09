@@ -31,7 +31,9 @@ const ScreenColorPalettes = ( {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Colors' ) } /> }
-				description={ translate( 'Discover your ideal color blend, from free to custom styles.' ) }
+				description={ translate(
+					'Find your perfect color style. Change the look and feel of your site in one click with our custom colors.'
+				) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">

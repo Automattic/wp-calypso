@@ -49,15 +49,15 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.5.0",
-		"@wordpress/element": "^5.0.0",
-		"@wordpress/i18n": "^4.22.0",
+		"@wordpress/data": "^9.8.0",
+		"@wordpress/element": "^5.15.0",
+		"@wordpress/i18n": "^4.38.0",
 		"debug": "^4.3.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__block-library": "^2.6.1",
-		"typescript": "^4.7.4"
+		"typescript": "^5.1.6"
 	},
 	"private": true
 }

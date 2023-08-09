@@ -9,6 +9,8 @@ const DashboardDataContext = createContext< DashboardDataContextInterface >( {
 			return undefined;
 		},
 	},
+	products: [],
+	isLargeScreen: true,
 } );
 
 export default DashboardDataContext;

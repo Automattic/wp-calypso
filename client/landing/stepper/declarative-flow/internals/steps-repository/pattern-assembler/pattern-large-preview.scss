@@ -30,14 +30,6 @@
 	list-style-type: none;
 	overflow: auto;
 	background: var(--pattern-large-preview-background);
-
-	.pattern-large-preview__pattern-header {
-		margin-block-end: var(--pattern-large-preview-block-gap);
-	}
-
-	.pattern-large-preview__pattern-footer {
-		margin-block-start: var(--pattern-large-preview-block-gap);
-	}
 }
 
 .pattern-large-preview__pattern {

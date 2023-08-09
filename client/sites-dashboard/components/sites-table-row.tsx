@@ -8,10 +8,17 @@ import { memo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
+import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
-import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
+import {
+	displaySiteUrl,
+	getDashboardUrl,
+	isMigrationTrialSite,
+	isStagingSite,
+	MEDIA_QUERIES,
+} from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
@@ -141,6 +148,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
+	const isTrialSite = isMigrationTrialSite( site );
 
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
@@ -176,6 +184,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
+							{ isTrialSite && (
+								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
+							) }
 						</ListTileTitle>
 					}
 					subtitle={

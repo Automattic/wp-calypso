@@ -81,8 +81,8 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 	}
 
 	let pricetext = __( 'First year free' );
-	if ( englishLocales.includes( locale ) || hasTranslation( 'We’ve paid for an extra year' ) ) {
-		pricetext = __( 'We’ve paid for an extra year' );
+	if ( englishLocales.includes( locale ) || hasTranslation( 'We’ll pay for an extra year' ) ) {
+		pricetext = __( 'We’ll pay for an extra year' );
 	}
 
 	return (
@@ -143,9 +143,8 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
-	const domainActions = ( inputValidationTextDisplayed = true ) => (
-		<>
-			{ inputValidationTextDisplayed ? <span>&nbsp;</span> : '' }
+	const domainActions = () => (
+		<span className="validation-actions">
 			{ isGoogleDomainsTransferFlow &&
 				// this means that the domain is locked and we need to show the instructions
 				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
@@ -177,7 +176,7 @@ export function DomainCodePair( {
 			>
 				<span className="refresh-label">{ __( 'Try again' ) }</span>
 			</Button>
-		</>
+		</span>
 	);
 
 	const renderGoogleDomainsModal = () => {
@@ -207,7 +206,7 @@ export function DomainCodePair( {
 				<div>
 					<Button
 						href={ localizeUrl(
-							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-unlock-your-domain-and-obtain-your-auth-code'
 						) }
 						target="_blank"
 						variant="link"
@@ -287,7 +286,7 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ ! valid }
 								text={ message }
-								children={ domainActions( true ) }
+								children={ domainActions() }
 							></FormInputValidation>
 						) }
 						{ message && loading && (
@@ -303,7 +302,7 @@ export function DomainCodePair( {
 								isError={ false }
 								text=""
 								isMuted={ true }
-								children={ domainCount > 1 && domainActions( false ) }
+								children={ domainCount > 1 && domainActions() }
 							/>
 						) }
 					</div>
@@ -331,7 +330,7 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ ! valid }
 						text={ message }
-						children={ domainActions( true ) }
+						children={ domainActions() }
 					></FormInputValidation>
 				) }
 				{ message && loading && (
@@ -347,7 +346,7 @@ export function DomainCodePair( {
 						isError={ false }
 						isMuted={ true }
 						text=""
-						children={ domainCount > 1 && domainActions( false ) }
+						children={ domainCount > 1 && domainActions() }
 					/>
 				) }
 			</div>

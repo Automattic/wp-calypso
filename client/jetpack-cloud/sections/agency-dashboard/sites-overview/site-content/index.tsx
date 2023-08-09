@@ -2,24 +2,20 @@ import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useContext, forwardRef, createRef, useMemo } from 'react';
+import { useContext, forwardRef, useMemo } from 'react';
 import Pagination from 'calypso/components/pagination';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { addQueryArgs } from 'calypso/lib/url';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
-import {
-	useDashboardShowLargeScreen,
-	useJetpackAgencyDashboardRecordTrackEvent,
-} from '../../hooks';
+import useJetpackAgencyDashboardRecordTrackEvent from '../../hooks/use-jetpack-agency-dashboard-record-track-event';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
 import { formatSites, getProductSlugFromProductType, siteColumns } from '../utils';
-
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -43,6 +39,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const { isBulkManagementActive, currentLicenseInfo, hideLicenseInfo } =
 		useContext( SitesOverviewContext );
 
+	const { products, isLargeScreen } = useContext( DashboardDataContext );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
 
 	const sites = formatSites( data?.sites );
@@ -51,13 +48,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 		addPageArgs( pageNumber );
 	};
 
-	const siteTableRef = createRef< HTMLTableElement >();
-
-	const isLargeScreen = useDashboardShowLargeScreen( siteTableRef, ref );
-
 	const firstColumn = siteColumns[ 0 ];
-
-	const { data: products } = useProductsQuery();
 
 	const currentLicenseProductSlug = currentLicenseInfo
 		? getProductSlugFromProductType( currentLicenseInfo )
@@ -95,12 +86,7 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 		<>
 			{ isLargeScreen ? (
 				<div className="site-content__large-screen-view">
-					<SiteTable
-						ref={ siteTableRef }
-						isLoading={ isLoading }
-						columns={ siteColumns }
-						items={ sites }
-					/>
+					<SiteTable ref={ ref } isLoading={ isLoading } columns={ siteColumns } items={ sites } />
 				</div>
 			) : (
 				<div className="site-content__small-screen-view">
