@@ -113,10 +113,13 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 		return false;
 	}
 
-	// Block Theme Previews need the theme installed on Atomic sites.
+	/**
+	 * Block Theme Previews need the theme installed on Atomic sites if the theme is managed by 3rd party.
+	 * (If the theme is managed by Automattic, we install it on the fly.)
+	 */
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
-	if ( isAtomic && ! isThemeInstalledOnAtomicSite ) {
+	if ( isAtomic && isExternallyManagedTheme( state, themeId ) && ! isThemeInstalledOnAtomicSite ) {
 		return false;
 	}
 
