@@ -62,6 +62,10 @@ jobs:
           path: /tmp/renovate/cache/renovate
           # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
           key: gandalf
+
+      - name: Change cache permissions
+        run: sudo chown -R runneradmin:root /tmp/renovate/cache/renovate
+
       - name: Check cache perms
         run: ls -l /tmp/renovate/cache/renovate
 
