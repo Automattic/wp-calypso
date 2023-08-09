@@ -44,9 +44,9 @@ const ResponsiveToolbarGroup = ( {
 	swipeEnabled?: boolean;
 } ) => {
 	const classes = classnames( 'responsive-toolbar-group', className );
-	const shouldSwipe = useBreakpoint( swipeBreakpoint ) || forceSwipe;
+	const shouldSwipe = useBreakpoint( swipeBreakpoint );
 
-	if ( swipeEnabled && shouldSwipe ) {
+	if ( forceSwipe || ( swipeEnabled && shouldSwipe ) ) {
 		return (
 			<SwipeGroup
 				className={ classes }
