@@ -92,7 +92,8 @@ jobs:
 
       - name: Check cache perms
         run: ls -l $RENOVATE_CACHE_DIR
-
+      - name: check for files
+        run: ls -a
   validate-renovate-config:
     name: Validate Renovate Configuration
     runs-on: ubuntu-latest
