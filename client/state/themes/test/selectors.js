@@ -49,6 +49,7 @@ import {
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
 	getIsLoadingCart,
+	getIsLivePreviewSupported,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -94,6 +95,28 @@ const quadrat = {
 const sidekick = {
 	id: 'sidekick',
 	template: 'superhero',
+};
+
+const appleton = {
+	id: 'appleton',
+	taxonomies: {
+		theme_feature: [ { slug: 'full-site-editing' } ],
+	},
+};
+
+const pendant = {
+	id: 'pendant',
+	taxonomies: {
+		theme_feature: [ { slug: 'full-site-editing' } ],
+	},
+};
+
+const nokul = {
+	id: 'nokul',
+	theme_type: 'managed-external',
+	taxonomies: {
+		theme_feature: [ { slug: 'full-site-editing' } ],
+	},
 };
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3173,6 +3196,163 @@ describe( '#isExternallyManagedTheme()', () => {
 				},
 			} );
 			expect( isLoading ).toBe( false );
+		} );
+	} );
+} );
+
+describe( '#getIsLivePreviewSupported()', () => {
+	const baseState = {
+		currentUser: {
+			id: 1234,
+		},
+		themes: {
+			activeThemes: {
+				2916284: 'twentysixteen',
+			},
+			queries: {
+				[ 2916284 ]: new ThemeQueryManager( {
+					items: { pendant },
+				} ),
+			},
+		},
+		sites: {
+			items: {
+				2916284: {
+					options: {
+						is_automated_transfer: true,
+					},
+				},
+			},
+			features: {
+				2916284: {
+					data: {
+						active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ],
+					},
+				},
+			},
+		},
+	};
+	test( 'should return false if the user is NOT logged in', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				currentUser: {
+					id: null,
+				},
+			},
+			'twentysixteen',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	test( 'should return false if the theme is the active theme', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				...baseState,
+				themes: {
+					activeThemes: {
+						2916284: 'twentysixteen',
+					},
+				},
+			},
+			'twentysixteen',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	test( 'should return false if the theme is not Full Site Editing compatible', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				...baseState,
+				themes: {
+					...baseState.themes,
+					queries: {
+						[ 2916284 ]: new ThemeQueryManager( {
+							items: { twentyfifteen },
+						} ),
+					},
+				},
+			},
+			'twentyfifteen',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	test( 'should return false if the theme is listed in the un-compatible themes', () => {
+		const isLivePreviewSupported = getIsLivePreviewSupported(
+			{
+				...baseState,
+				themes: {
+					...baseState.themes,
+					queries: {
+						[ 2916284 ]: new ThemeQueryManager( {
+							items: { appleton },
+						} ),
+					},
+				},
+			},
+			'appleton',
+			2916284
+		);
+		expect( isLivePreviewSupported ).toBe( false );
+	} );
+	describe( 'Externally managed themes', () => {
+		test( 'should return true if the user is subscribed to the theme AND the site is eligible for managed external themes', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported(
+				{
+					...baseState,
+					themes: {
+						...baseState.themes,
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { nokul },
+							} ),
+						},
+					},
+					purchases: {
+						data: [
+							{
+								blog_id: 2916284,
+								product_slug: 'wp_mp_theme_nokul_monthly',
+							},
+						],
+					},
+					productsList: {
+						items: {
+							wp_mp_theme_nokul_monthly: {
+								product_slug: 'wp_mp_theme_nokul_monthly',
+								billing_product_slug: 'wp-mp-theme-nokul',
+							},
+						},
+					},
+				},
+				'nokul',
+				2916284
+			);
+			expect( isLivePreviewSupported ).toBe( true );
+		} );
+	} );
+	describe( 'Atomic', () => {
+		test( 'should return true even if the theme is NOT installed', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported(
+				{
+					...baseState,
+					themes: {
+						...baseState.themes,
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { pendant },
+							} ),
+						},
+					},
+				},
+				'pendant',
+				2916284
+			);
+			expect( isLivePreviewSupported ).toBe( true );
+		} );
+		test( 'should return true if the theme supports live preview', () => {
+			const isLivePreviewSupported = getIsLivePreviewSupported( baseState, 'pendant', 2916284 );
+			expect( isLivePreviewSupported ).toBe( true );
 		} );
 	} );
 } );
