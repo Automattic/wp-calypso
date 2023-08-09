@@ -74,6 +74,7 @@ export interface APIPartner {
 	name: string;
 	contact_person: string;
 	company_website: string;
+	company_type: string;
 	address: APIPartnerAddress;
 	keys: APIPartnerKey[];
 	tos: string;
@@ -186,6 +187,7 @@ export interface Partner {
 	slug: string;
 	contact_person: string;
 	company_website: string;
+	company_type: string;
 	name: string;
 	address: PartnerAddress;
 	keys: PartnerKey[];
