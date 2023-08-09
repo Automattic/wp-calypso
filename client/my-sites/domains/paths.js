@@ -108,7 +108,12 @@ export function domainManagementList( siteName, relativeTo = null, isDomainOnlyS
  * @param {string?} relativeTo
  * @param {Object | null} expandSections Which accordion to expand automattically, e.g. { 'nameservers': true }
  */
-export function domainManagementEdit( siteName, domainName, relativeTo, expandSections = null ) {
+export function domainManagementEdit(
+	siteName,
+	domainName,
+	relativeTo = null,
+	expandSections = null
+) {
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo, expandSections );
 }
 
