@@ -1,15 +1,15 @@
 import config from '@automattic/calypso-config';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
+import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 import { AppState } from 'calypso/types';
 import {
 	isWporgTheme,
 	isThemeActive,
 	isFullSiteEditingTheme,
-	getTheme,
 	isExternallyManagedTheme,
 	canUseTheme,
+	isSiteEligibleForManagedExternalThemes,
 } from '.';
 
 /**
@@ -114,22 +114,29 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 	}
 
 	/**
-	 * Block Theme Previews need the theme installed on Atomic sites if the theme is managed by 3rd party.
-	 * (If the theme is managed by Automattic, we install it on the fly.)
+	 * If the theme is managed by 3rd party,
+	 * users must be subscribed to the theme,
+	 * AND the site must be eligible for managed external themes.
+	 *
+	 * The site is always Atomic here since the site becomes Atomic once you subscribe to a 3rd party theme.
 	 */
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isThemeInstalledOnAtomicSite = isAtomic && !! getTheme( state, siteId, themeId );
-	if ( isAtomic && isExternallyManagedTheme( state, themeId ) && ! isThemeInstalledOnAtomicSite ) {
+	if (
+		isExternallyManagedTheme( state, themeId ) &&
+		( ! isSiteEligibleForManagedExternalThemes( state, siteId ) ||
+			! isMarketplaceThemeSubscribed( state, themeId, siteId ) )
+	) {
 		return false;
 	}
 
 	const isSimple = isSimpleSite( state, siteId );
 	if ( isSimple ) {
 		/**
-		 * Disable Live Preview for 3rd party themes, as Block Theme Previews need a theme installed.
-		 * Note that BTP works on Atomic sites if a theme is installed.
+		 * Disable Live Preview for wporg themes,
+		 * since Block Theme Previews need a theme installed, and Simple sites don't have wporg themes installed.
+		 *
+		 * FIXME: This might be able to be addressed in TODO:
 		 */
-		if ( isExternallyManagedTheme( state, themeId ) || isWporgTheme( state, themeId ) ) {
+		if ( isWporgTheme( state, themeId ) ) {
 			return false;
 		}
 
