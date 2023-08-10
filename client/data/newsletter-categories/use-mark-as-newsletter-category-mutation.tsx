@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
+import { Category, NewsletterCategories, NewsletterCategory } from './types';
 import { getNewsletterCategoriesKey } from './use-newsletter-categories-query';
 
 type MarkAsNewsletterCategoryResponse = {
@@ -28,8 +29,32 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			return response;
 		},
-		onMutate: async () => {
+		onMutate: async ( id: number ) => {
 			await queryClient.cancelQueries( cacheKey );
+
+			const previousData = queryClient.getQueryData< NewsletterCategories >( cacheKey );
+			const categories = queryClient.getQueryData< Category[] >( [ 'categories', siteId ] );
+
+			queryClient.setQueryData( cacheKey, ( oldData?: NewsletterCategories ) => {
+				const newNewsletterCategory = categories?.find(
+					( category ) => category.id === id
+				) as NewsletterCategory;
+
+				const updatedData = {
+					...oldData,
+					newsletterCategories: [
+						...( oldData?.newsletterCategories ? oldData.newsletterCategories : [] ),
+						newNewsletterCategory,
+					],
+				};
+
+				return updatedData;
+			} );
+
+			return { previousData };
+		},
+		onError: ( error, variables, context ) => {
+			queryClient.setQueryData( cacheKey, context?.previousData );
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( cacheKey );
