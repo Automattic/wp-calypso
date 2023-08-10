@@ -8,6 +8,7 @@ import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import InfoPopover from 'calypso/components/info-popover';
+import { TimeRange } from '../../metrics-tab';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -26,10 +27,34 @@ interface UplotChartProps {
 	period?: string;
 }
 
-export function formatChatHour( date: Date ): string {
+function determineTimeRange( timeRange: TimeRange ) {
+	const { start, end } = timeRange;
+	const hours = ( end - start ) / 60 / 60;
+	if ( hours <= 6 ) {
+		return '6 hours';
+	} else if ( hours <= 24 ) {
+		return '24 hours';
+	} else if ( hours <= 3 * 24 ) {
+		return '3 days';
+	} else if ( hours <= 7 * 24 ) {
+		return '7 days';
+	}
+
+	return '24 hours'; // Default value
+}
+
+export function formatChartHour( date: Date ): string {
 	const hours = String( date.getHours() ).padStart( 2, '0' );
 	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
 	return `${ hours }:${ minutes }`;
+}
+
+function formatDaysChartHour( date: Date ): string {
+	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+	const day = String( date.getDate() ).padStart( 2, '0' );
+	const hours = String( date.getHours() ).padStart( 2, '0' );
+	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
+	return `${ month }/${ day } ${ hours }:${ minutes }`;
 }
 
 export const SiteMonitoringLineChart = ( {
@@ -58,7 +83,7 @@ export const SiteMonitoringLineChart = ( {
 				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
 				fmtDate: () => {
 					return ( date ) => {
-						const chatHour = formatChatHour( date );
+						const chatHour = formatChartHour( date );
 						return `${ chatHour }`;
 					};
 				},
