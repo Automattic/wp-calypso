@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -30,8 +29,6 @@ const PartnerPortalSidebar: React.FC< Props > = ( { path } ) => {
 		[ dispatch ]
 	);
 
-	const arePaymentsEnabled = isEnabled( 'jetpack/partner-portal-payment' );
-
 	return (
 		<Sidebar className="sidebar__jetpack-cloud">
 			<SidebarRegion>
@@ -47,7 +44,7 @@ const PartnerPortalSidebar: React.FC< Props > = ( { path } ) => {
 					/>
 
 					<SidebarItem
-						customIcon={ <JetpackIcons icon={ arePaymentsEnabled ? 'money' : 'credit-card' } /> }
+						customIcon={ <JetpackIcons icon="money" /> }
 						label={ translate( 'Billing', {
 							comment: 'Jetpack sidebar navigation item',
 						} ) }
@@ -56,29 +53,25 @@ const PartnerPortalSidebar: React.FC< Props > = ( { path } ) => {
 						selected={ path === '/partner-portal/billing' }
 					/>
 
-					{ arePaymentsEnabled && (
-						<SidebarItem
-							customIcon={ <JetpackIcons icon="credit-card" /> }
-							label={ translate( 'Payment Methods', {
-								comment: 'Jeptack sidebar navigation item',
-							} ) }
-							link="/partner-portal/payment-methods"
-							onNavigate={ onNavigate( 'Jetpack Cloud / Partner Portal / Payment Methods' ) }
-							selected={ itemLinkMatches( '/partner-portal/payment-methods', path ) }
-						/>
-					) }
+					<SidebarItem
+						customIcon={ <JetpackIcons icon="credit-card" /> }
+						label={ translate( 'Payment Methods', {
+							comment: 'Jeptack sidebar navigation item',
+						} ) }
+						link="/partner-portal/payment-methods"
+						onNavigate={ onNavigate( 'Jetpack Cloud / Partner Portal / Payment Methods' ) }
+						selected={ itemLinkMatches( '/partner-portal/payment-methods', path ) }
+					/>
 
-					{ arePaymentsEnabled && (
-						<SidebarItem
-							customIcon={ <JetpackIcons icon="page" /> }
-							label={ translate( 'Invoices', {
-								comment: 'Jeptack sidebar navigation item',
-							} ) }
-							link="/partner-portal/invoices"
-							onNavigate={ onNavigate( 'Jetpack Cloud / Partner Portal / Invoices' ) }
-							selected={ itemLinkMatches( '/partner-portal/invoices', path ) }
-						/>
-					) }
+					<SidebarItem
+						customIcon={ <JetpackIcons icon="page" /> }
+						label={ translate( 'Invoices', {
+							comment: 'Jeptack sidebar navigation item',
+						} ) }
+						link="/partner-portal/invoices"
+						onNavigate={ onNavigate( 'Jetpack Cloud / Partner Portal / Invoices' ) }
+						selected={ itemLinkMatches( '/partner-portal/invoices', path ) }
+					/>
 
 					<SidebarItem
 						customIcon={ <JetpackIcons icon="prices" /> }
@@ -90,17 +83,15 @@ const PartnerPortalSidebar: React.FC< Props > = ( { path } ) => {
 						selected={ itemLinkMatches( '/partner-portal/prices', path ) }
 					/>
 
-					{ arePaymentsEnabled && (
-						<SidebarItem
-							customIcon={ <JetpackIcons icon="settings" /> }
-							label={ translate( 'Company Details', {
-								comment: 'Jeptack sidebar navigation item',
-							} ) }
-							link="/partner-portal/company-details"
-							onNavigate={ onNavigate( 'Jetpack Cloud / Partner Portal / Company Details' ) }
-							selected={ itemLinkMatches( '/partner-portal/company-details', path ) }
-						/>
-					) }
+					<SidebarItem
+						customIcon={ <JetpackIcons icon="settings" /> }
+						label={ translate( 'Company Details', {
+							comment: 'Jeptack sidebar navigation item',
+						} ) }
+						link="/partner-portal/company-details"
+						onNavigate={ onNavigate( 'Jetpack Cloud / Partner Portal / Company Details' ) }
+						selected={ itemLinkMatches( '/partner-portal/company-details', path ) }
+					/>
 				</SidebarMenu>
 			</SidebarRegion>
 		</Sidebar>
