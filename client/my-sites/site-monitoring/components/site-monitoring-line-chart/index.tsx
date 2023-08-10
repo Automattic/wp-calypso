@@ -8,7 +8,7 @@ import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import InfoPopover from 'calypso/components/info-popover';
-import { TimeRange } from '../../metrics-tab';
+import { TimeRange, useTimeRange } from '../../metrics-tab';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -27,6 +27,20 @@ interface UplotChartProps {
 	period?: string;
 }
 
+export function formatChartHour( date: Date ): string {
+	const hours = String( date.getHours() ).padStart( 2, '0' );
+	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
+	return `${ hours }:${ minutes }`;
+}
+
+function formatDaysChartHour( date: Date ): string {
+	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+	const day = String( date.getDate() ).padStart( 2, '0' );
+	const hours = String( date.getHours() ).padStart( 2, '0' );
+	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
+	return `${ month }/${ day } ${ hours }:${ minutes }`;
+}
+
 function determineTimeRange( timeRange: TimeRange ) {
 	const { start, end } = timeRange;
 	const hours = ( end - start ) / 60 / 60;
@@ -41,20 +55,6 @@ function determineTimeRange( timeRange: TimeRange ) {
 	}
 
 	return '24 hours'; // Default value
-}
-
-export function formatChartHour( date: Date ): string {
-	const hours = String( date.getHours() ).padStart( 2, '0' );
-	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
-	return `${ hours }:${ minutes }`;
-}
-
-function formatDaysChartHour( date: Date ): string {
-	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
-	const day = String( date.getDate() ).padStart( 2, '0' );
-	const hours = String( date.getHours() ).padStart( 2, '0' );
-	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
-	return `${ month }/${ day } ${ hours }:${ minutes }`;
 }
 
 export const SiteMonitoringLineChart = ( {
@@ -73,6 +73,7 @@ export const SiteMonitoringLineChart = ( {
 	const uplotContainer = useRef( null );
 	const { spline } = uPlot.paths;
 	const scaleGradient = useScaleGradient( fillColor );
+	const timeRange = useTimeRange();
 
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
@@ -84,7 +85,16 @@ export const SiteMonitoringLineChart = ( {
 				fmtDate: () => {
 					return ( date ) => {
 						const chatHour = formatChartHour( date );
-						return `${ chatHour }`;
+						const dayHour = formatDaysChartHour( date );
+						const timeRangeResult = determineTimeRange( timeRange );
+
+						if ( timeRangeResult === '6 hours' || timeRangeResult === '24 hours' ) {
+							return chatHour;
+						} else if ( timeRangeResult === '3 days' || timeRangeResult === '7 days' ) {
+							return dayHour;
+						}
+
+						return dayHour;
 					};
 				},
 				axes: [
