@@ -52,6 +52,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dawidd6/action-download-artifact@v2
+        # Don't pull the cache if we aren't going to use it.
+        if: github.event.inputs.repoCache == 'enabled'
         continue-on-error: true
         with:
           name: renovate-cache
@@ -103,6 +105,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: renovate-cache
+          # Avoid pushing when disabled -- different from download so that reset triggers upload.
+          if: github.event.inputs.repoCache != 'disabled'
           path: ${{ env.cache_archive }}
           # Since this is created frequently, we don't need to keep it for long.
           retention-days: 1
