@@ -167,17 +167,16 @@ describe( 'FTME: Sell', function () {
 
 		it( 'Land in Home dashboard', async function () {
 			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` ),
+				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.blogid }` ),
 				{ timeout: 20 * 1000 }
 			);
 		} );
 
 		it( 'Site URL matches selected domain', async function () {
-			const url = page.url();
 			// If domain selection is skipped during onboarding, the first (default) site
 			// is created with the user's username.
 			// See https://github.com/Automattic/wp-calypso/pull/67517.
-			expect( url ).toContain( testUser.username );
+			expect( newSiteDetails.blog_details.site_slug ).toContain( testUser.username );
 		} );
 	} );
 

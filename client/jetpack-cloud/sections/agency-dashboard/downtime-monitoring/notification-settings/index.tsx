@@ -488,6 +488,7 @@ export default function NotificationSettings( {
 						allPhoneItems={ allPhoneItems }
 						verifiedItem={ verifiedItem }
 						restriction={ restriction }
+						settings={ settings }
 					/>
 				) }
 

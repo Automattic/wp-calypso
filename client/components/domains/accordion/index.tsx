@@ -11,6 +11,7 @@ const Accordion = ( {
 	children,
 	isPlaceholder,
 	expanded = false,
+	onClose,
 }: AccordionProps ) => {
 	const classes = classNames( {
 		'is-placeholder': isPlaceholder,
@@ -44,6 +45,7 @@ const Accordion = ( {
 						<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
 					</button>
 				}
+				onClose={ onClose }
 			>
 				{ children }
 			</FoldableCard>

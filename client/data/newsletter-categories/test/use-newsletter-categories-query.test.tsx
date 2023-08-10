@@ -42,7 +42,7 @@ describe( 'useNewsletterCategories', () => {
 			],
 		} );
 
-		const { result } = renderHook( () => useNewsletterCategories( { blogId: 123 } ), { wrapper } );
+		const { result } = renderHook( () => useNewsletterCategories( { siteId: 123 } ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
@@ -59,10 +59,28 @@ describe( 'useNewsletterCategories', () => {
 			newsletter_categories: [],
 		} );
 
-		const { result } = renderHook( () => useNewsletterCategories( { blogId: 123 } ), { wrapper } );
+		const { result } = renderHook( () => useNewsletterCategories( { siteId: 123 } ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( { newsletterCategories: [] } );
+	} );
+
+	it( 'should call request with correct arguments', async () => {
+		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+			success: true,
+		} );
+
+		renderHook( () => useNewsletterCategories( { siteId: 123 } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => expect( request ).toHaveBeenCalled() );
+
+		expect( request ).toHaveBeenCalledWith( {
+			path: `/sites/123/newsletter-categories`,
+			apiVersion: '2',
+			apiNamespace: 'wpcom/v2',
+		} );
 	} );
 } );

@@ -11,7 +11,7 @@ export type SiteMetricsAPIResponse = {
 
 export type PeriodData = {
 	timestamp: number;
-	dimension: [] | { [ key: string ]: number };
+	dimension: { [ key: string ]: number };
 };
 
 export type MetaData = {
