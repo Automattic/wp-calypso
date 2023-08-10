@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import {
+	PLAN_FREE,
+	PLAN_JETPACK_FREE,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
@@ -63,6 +67,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import wasBusinessTrialSite from 'calypso/state/selectors/was-business-trial-site';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -300,6 +305,30 @@ function onSelectedSiteAvailable( context ) {
 		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
 		if ( [ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug ) ) {
+			const permittedPathPrefixes = [
+				'/checkout/',
+				'/domains/',
+				'/email/',
+				'/export/',
+				'/plans/my-plan/trial-expired/',
+				'/purchases/',
+				'/settings/delete-site/',
+			];
+
+			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+				page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
+				return false;
+			}
+
+			context.hideLeftNavigation = true;
+		}
+	}
+
+	if ( wasBusinessTrialSite( state, selectedSite.ID ) ) {
+		// Use getSitePlanSlug() as it ignores expired plans.
+		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
+
+		if ( currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ) {
 			const permittedPathPrefixes = [
 				'/checkout/',
 				'/domains/',
