@@ -13,7 +13,7 @@ export { default as Checklist } from 'calypso/components/checklist/docs/example'
 export { default as ClipboardButtonInput } from 'calypso/components/clipboard-button-input/docs/example';
 export { default as ClipboardButtons } from 'calypso/components/forms/clipboard-button/docs/example';
 export { default as Collection } from 'calypso/devdocs/design/search-collection';
-export { default as Count } from 'calypso/components/count/docs/example';
+export { default as Count } from '@automattic/components/src/count/docs/example';
 export { default as CountedTextareas } from 'calypso/components/forms/counted-textarea/docs/example';
 export { default as DatePicker } from 'calypso/components/date-picker/docs/example';
 export { default as DateRange } from 'calypso/components/date-range/docs/example';
