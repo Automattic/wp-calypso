@@ -85,6 +85,10 @@ const CustomerHomeLaunchpad = ( {
 							className="themes__activation-modal-close-icon"
 							borderless
 							onClick={ () => {
+								if ( ! siteSlug ) {
+									return;
+								}
+
 								updateLaunchpadSettings( siteSlug, {
 									is_checklist_dismissed: {
 										slug: checklistSlug,
