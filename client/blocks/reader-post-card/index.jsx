@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localeRegexString } from '@automattic/i18n-utils';
 import classnames from 'classnames';
@@ -8,17 +7,12 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import PostComments from 'calypso/blocks/comments';
-import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
-import { requestPostComments } from 'calypso/state/comments/actions';
-import { commentsFetchingStatus } from 'calypso/state/comments/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -31,6 +25,7 @@ import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
+import PostCardComments from './post-card-comments';
 import StandardPost from './standard';
 import './style.scss';
 
@@ -270,56 +265,15 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const postCardComments = () => {
-			// If the user is unable to comment and the comment count is zero, return early and dont
-			// render comments.
-			if (
-				( ! this.props.post.discussion?.comments_open || ! this.props.isLoggedIn ) &&
-				this.props.post.discussion?.comment_count === 0
-			) {
-				return null;
-			}
-
-			const fetchStatus = this.props.commentsFetchingStatus;
-			const hasFetchedComments = fetchStatus.hasReceivedBefore || fetchStatus.hasReceivedAfter;
-
-			// Request comments if they have not been set in state.
-			if ( ! hasFetchedComments ) {
-				this.props.requestPostComments( { siteId: post.site_ID, postId: post.ID } );
-			}
-
-			return (
-				// Stop propagation on clicking of comment area, as the event will bubble to the
-				// card's onClick and redirect the page.
-				//  eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-				<div onClick={ ( ev ) => ev.stopPropagation() }>
-					<PostComments
-						commentCount={ post.discussion?.comment_count }
-						expandableView={ true }
-						commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-						post={ post }
-						shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-						shouldHighlightNew={ true }
-						showCommentCount={ false }
-						showConversationFollowButton={ false }
-						showNestingReplyArrow={ true }
-						initialSize={ 5 }
-						pageSize={ 15 }
-						maxDepth={ 1 }
-						// TODO - separate this callback so it doesnt send same stats as comment icon.
-						openPostPageAtComments={ onCommentClick }
-					/>
-				</div>
-			);
-		};
-
 		const onClick = ! isPhotoPost ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
-				{ ! isConversations && postCardComments( onClick ) }
+				{ ! isConversations && (
+					<PostCardComments post={ post } onCommentClick={ onCommentClick } />
+				) }
 			</Card>
 		);
 	}
@@ -328,12 +282,6 @@ class ReaderPostCard extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		currentRoute: getCurrentRoute( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-		commentsFetchingStatus: commentsFetchingStatus(
-			state,
-			ownProps.post.site_ID,
-			ownProps.post.ID
-		),
 		isWPForTeamsItem:
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
@@ -344,5 +292,5 @@ export default connect(
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		teams: getReaderTeams( state ),
 	} ),
-	{ expandCard: expandCardAction, requestPostComments }
+	{ expandCard: expandCardAction }
 )( ReaderPostCard );
