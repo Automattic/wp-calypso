@@ -6,9 +6,8 @@ import { useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
-import { getPostType } from 'calypso/my-sites/promote-post/utils';
 import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
-import { formatNumber } from '../../utils';
+import { formatNumber, getPostType } from '../../utils';
 import RelativeTime from '../relative-time';
 
 export default function PostItem( { post }: { post: BlazablePost } ) {
