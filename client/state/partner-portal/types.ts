@@ -149,6 +149,7 @@ export interface CompanyDetailsPayload {
 	name: string;
 	contactPerson: string;
 	companyWebsite: string;
+	companyType: string;
 	city: string;
 	line1: string;
 	line2: string;
