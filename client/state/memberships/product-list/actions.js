@@ -93,6 +93,7 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 				{
 					method: 'POST',
 					path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
+					apiNamespace: 'wpcom/v2',
 				},
 				product
 			)
@@ -131,8 +132,9 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 
 		return wpcom.req
 			.post( {
-				method: 'POST',
-				path: `/sites/${ siteId }/memberships/product/${ product.ID }/delete`,
+				method: 'DELETE',
+				path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
+				apiNamespace: 'wpcom/v2',
 			} )
 			.then( () => {
 				dispatch(
