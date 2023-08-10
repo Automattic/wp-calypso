@@ -7,6 +7,12 @@
 @import "./styles/typography.scss";
 
 .jp-blaze-dashboard {
+	.promote-post-notice {
+		margin: 0;
+		border: none;
+		box-shadow: none;
+	}
+
 	.promote-post-i2 {
 		.jetpack-header {
 			padding: 0;
