@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowReblog } from 'calypso/blocks/reader-share/helper';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import CommentLikeButtonContainer from './comment-likes';
 
@@ -23,7 +24,9 @@ const CommentActions = ( {
 	showReadMore,
 	onReadMore,
 } ) => {
-	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const showReplyButton =
+		isLoggedIn && post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showReblogButton = shouldShowReblog( post, hasSites );
@@ -67,13 +70,15 @@ const CommentActions = ( {
 					{ translate( 'Cancel reply' ) }
 				</Button>
 			) }
-			<CommentLikeButtonContainer
-				className="comments__comment-actions-like"
-				tagName={ Button }
-				siteId={ post.site_ID }
-				postId={ post.ID }
-				commentId={ commentId }
-			/>
+			{ isLoggedIn && (
+				<CommentLikeButtonContainer
+					className="comments__comment-actions-like"
+					tagName={ Button }
+					siteId={ post.site_ID }
+					postId={ post.ID }
+					commentId={ commentId }
+				/>
+			) }
 		</div>
 	);
 };
