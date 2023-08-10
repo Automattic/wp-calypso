@@ -6,6 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
 import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
+import { useSiteMetricsData400vs5002 } from './components/site-monitoring-line-chart/use-site-metrics-400-500-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
@@ -122,15 +123,21 @@ export function useSiteMetricsData400vs500(
 			if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
 				acc[ 0 ].push( timestamp );
 
-				// Check if the dimension object contains values for 400 and 500 status codes
-				if ( period.dimension && ( period.dimension[ '400' ] || period.dimension[ '500' ] ) ) {
-					// Push values for 400 and 500 status codes into separate arrays
-					acc[ 1 ].push( period.dimension[ '400' ] || 0 ); // Array for 400 status code, use 0 as default
-					acc[ 2 ].push( period.dimension[ '500' ] || 0 ); // Array for 500 status code, use 0 as default
-				} else {
-					acc[ 1 ].push( 0 );
-					acc[ 2 ].push( 0 );
+				// Iterate through dimension keys and check for codes starting with '4' and '5'
+				const statusCodes = period.dimension || {};
+				let statusCode4xx = 0;
+				let statusCode5xx = 0;
+
+				for ( const code in statusCodes ) {
+					if ( code.startsWith( '4' ) ) {
+						statusCode4xx = statusCodes[ code ];
+					} else if ( code.startsWith( '5' ) ) {
+						statusCode5xx = statusCodes[ code ];
+					}
 				}
+
+				acc[ 1 ].push( statusCode4xx );
+				acc[ 2 ].push( statusCode5xx );
 			}
 
 			return acc;
@@ -199,7 +206,8 @@ export const MetricsTab = () => {
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData } = useSiteMetricsData( timeRange );
-	const { formattedDataHTTP } = useSiteMetricsData400vs500( timeRange );
+	const { formattedData400500 } = useSiteMetricsData400vs5002( timeRange );
+	const LineChart400500Props = useSiteMetricsData400vs5002( timeRange );
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		timeRange,
 		'requests_persec',
@@ -275,7 +283,8 @@ export const MetricsTab = () => {
 			/>
 			<SiteMonitoringLineChart
 				title={ __( '400 vs 500 HTTP Responses' ) }
-				data={ formattedDataHTTP as uPlot.AlignedData }
+				//data={ formattedData400500 as uPlot.AlignedData }
+				{ ...LineChart400500Props }
 				tooltip={ __(
 					'Number of client-side errors (400) and server-side errors (500) over time.'
 				) }
