@@ -295,16 +295,6 @@ class Plans extends Component {
 		return interval;
 	}
 
-	getIntervalForBusinessMigrationPlans() {
-		const { intervalType } = this.props;
-
-		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
-		const interval =
-			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
-
-		return interval;
-	}
-
 	renderEcommerceTrialPage() {
 		const { selectedSite } = this.props;
 
@@ -324,15 +314,7 @@ class Plans extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const interval = this.getIntervalForBusinessMigrationPlans();
-
-		return (
-			<BusinessTrialPlansPage
-				currentPlan={ currentPlan }
-				interval={ interval }
-				selectedSite={ selectedSite }
-			/>
-		);
+		return <BusinessTrialPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
 	}
 
 	renderWooExpressPlansPage() {

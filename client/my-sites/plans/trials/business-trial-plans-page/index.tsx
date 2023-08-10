@@ -10,9 +10,7 @@ import './style.scss';
 
 interface BusinessTrialPlansPageProps {
 	currentPlan: SitePlanData;
-	interval?: 'monthly' | 'yearly';
 	selectedSite: SiteDetails;
-	// siteId: number | null;
 }
 
 const BusinessTrialPlansPage = ( props: BusinessTrialPlansPageProps ) => {
