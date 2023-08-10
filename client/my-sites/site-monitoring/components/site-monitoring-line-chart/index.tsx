@@ -21,7 +21,7 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
-	lines: Array< SeriesProp >;
+	series: Array< SeriesProp >;
 }
 
 interface SeriesProp {
@@ -36,11 +36,11 @@ export function formatChatHour( date: Date ): string {
 	return `${ hours }:${ minutes }`;
 }
 
-function createSeries( lines: Array< SeriesProp > ) {
+function createSeries( series: Array< SeriesProp > ) {
 	const { spline } = uPlot.paths;
-	const configuredSeries = lines.map( function ( line ) {
+	const configuredSeries = series.map( function ( serie ) {
 		return {
-			...line,
+			...serie,
 			...{
 				width: 2,
 				paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
@@ -70,7 +70,7 @@ export const SiteMonitoringLineChart = ( {
 	data,
 	legendContainer,
 	options: propOptions,
-	lines,
+	series,
 }: UplotChartProps ) => {
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
@@ -131,7 +131,7 @@ export const SiteMonitoringLineChart = ( {
 						fill: () => '#fff',
 					},
 				},
-				series: createSeries( lines ),
+				series: createSeries( series ),
 				legend: {
 					isolate: true,
 					mount: ( self: uPlot, el: HTMLElement ) => {
@@ -147,7 +147,7 @@ export const SiteMonitoringLineChart = ( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [ legendContainer, lines, localTz, propOptions ] )
+		}, [ legendContainer, series, localTz, propOptions ] )
 	);
 
 	useResize( uplot, uplotContainer );

@@ -194,7 +194,7 @@ export const MetricsTab = () => {
 					}
 				) }
 				data={ formattedData as uPlot.AlignedData }
-				lines={ [
+				series={ [
 					{
 						fill: 'rgba(6, 117, 196, 0.1)',
 						label: __( 'Requests per minute' ),
@@ -244,7 +244,7 @@ export const MetricsTab = () => {
 				tooltip={ __(
 					'Number of client-side errors (400) and server-side errors (500) over time.'
 				) }
-				lines={ [
+				series={ [
 					{
 						fill: 'rgba(242, 215, 107, 0.1)',
 						label: __( 'HTTP 400: Bad Request' ),
