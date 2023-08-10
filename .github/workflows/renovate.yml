@@ -60,10 +60,11 @@ jobs:
         continue-on-error: true
         with:
           name: renovate-cache
-          path: ${{ env.cache_archive }}
+          path: cache-download
 
       - name: Uncompress renovate cache
         run: |
+          mv "cache-download/$cache_archive" $cache_archive
           if [ ! -f $cache_archive ] ; then
             echo "No cache found."
             exit 0
