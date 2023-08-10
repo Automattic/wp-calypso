@@ -11,7 +11,7 @@ type StorageAddOnDropdownProps = {
 
 export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
-	const { setStorageAddOnForPlan } = useDispatch( WpcomPlansUI.store );
+	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
 	const selectedStorage = useSelect(
 		( select ) => {
 			return select( WpcomPlansUI.store ).getStorageAddOnForPlan()( planSlug );
@@ -44,7 +44,7 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 			options={ selectControlOptions }
 			value={ selectedOption }
 			onChange={ ( { selectedItem }: { selectedItem: { key?: string } } ) =>
-				setStorageAddOnForPlan( { addOnSlug: selectedItem?.key || '', plan: planSlug } )
+				setSelectedStorageOptionForPlan( { addOnSlug: selectedItem?.key || '', plan: planSlug } )
 			}
 		/>
 	);
