@@ -82,6 +82,7 @@ jobs:
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
           sudo chown -R runneradmin:root /tmp/renovate/
+          ls $cache_dir
 
       - uses: renovatebot/github-action@v39.0.1
         with:
