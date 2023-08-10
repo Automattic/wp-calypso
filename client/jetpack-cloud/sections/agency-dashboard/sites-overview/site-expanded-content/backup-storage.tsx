@@ -91,7 +91,7 @@ const BackupStorageContent = ( {
 			<div className="site-expanded-content__card-footer">
 				<Button
 					onClick={ () => trackEvent( 'expandable_block_activity_log_click' ) }
-					href={ `/activity-log/${ siteUrl }` }
+					href={ `/activity-log/${ urlToSlug( siteUrl ) }` }
 					className="site-expanded-content__card-button"
 					compact
 				>
