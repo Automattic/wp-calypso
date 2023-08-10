@@ -95,7 +95,9 @@ jobs:
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
 
       - name: Compress renovate cache
-        run: ls $cache_dir && tar -czvf $cache_archive $cache_dir
+        run: |
+          ls $cache_dir
+          tar -czvf $cache_archive -C $cache_dir .
 
       - uses: actions/upload-artifact@v3
         with:
