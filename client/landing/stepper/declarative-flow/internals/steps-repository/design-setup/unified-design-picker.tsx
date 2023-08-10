@@ -317,7 +317,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for unlocking a selected premium design
 
-	useQueryThemes( 'wpcom', { tier: '-marketplace', number: 1000 } );
+	useQueryThemes( 'wpcom', { number: 1000 } );
 	useQuerySitePurchases( site ? site.ID : -1 );
 	useQuerySiteFeatures( [ site?.ID ] );
 
