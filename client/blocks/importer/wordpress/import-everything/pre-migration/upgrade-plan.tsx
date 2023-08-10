@@ -79,13 +79,15 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 						{ translate( 'Try it for free' ) }
 					</Button>
 				) }
-				<Button
-					borderless={ true }
-					className="action-buttons__borderless"
-					onClick={ onContentOnlyClick }
-				>
-					{ translate( 'Use the content-only import option' ) }
-				</Button>
+				{ ! isEligibleForTrialPlan && (
+					<Button
+						borderless={ true }
+						className="action-buttons__borderless"
+						onClick={ onContentOnlyClick }
+					>
+						{ translate( 'Use the content-only import option' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	);
