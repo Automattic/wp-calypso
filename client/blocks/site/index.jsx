@@ -145,7 +145,7 @@ class Site extends Component {
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
 			'is-reskinned': this.props.isReskinned,
-			'is-migration-trial': this.props.isTrialSite,
+			'is-trial': this.props.isTrialSite,
 		} );
 
 		// We show public coming soon badge only when the site is not private.
