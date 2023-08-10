@@ -47,7 +47,7 @@ env:
   RENOVATE_VERSION: 36.31.0
   cache_archive: renovate_cache.tar.gz
   # This is the dir renovate provides -- if we set our own, we run into permissions issues.
-  cache_dir: /tmp/renovate/cache/renovate
+  cache_dir: /tmp/renovate/cache/renovate/repository
 
 jobs:
   renovate:
@@ -83,8 +83,7 @@ jobs:
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
           sudo chown -R runneradmin:root /tmp/renovate/
-          ls $cache_dir
-          ls $cache_dir/renovate-cache-v1
+          ls -R $cache_dir
 
       - uses: renovatebot/github-action@v39.0.1
         with:
