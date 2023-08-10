@@ -147,7 +147,7 @@ export const SiteMonitoringLineChart = ( {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			};
-		}, [ legendContainer, lines, propOptions ] )
+		}, [ legendContainer, lines, localTz, propOptions ] )
 	);
 
 	useResize( uplot, uplotContainer );

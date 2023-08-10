@@ -80,8 +80,10 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 				// Check if the timestamp is already in the arrays, if not, push it
 				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
 					acc[ 0 ].push( timestamp );
-					acc[ 1 ].push( getDimensionValue( period ) ); // Blue line data
-
+					const dimensionValue = getDimensionValue( period );
+					if ( dimensionValue !== null ) {
+						acc[ 1 ].push( dimensionValue * 60 ); // Convert to requests per minute
+					}
 					// Add response time data as a green line
 					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
 						acc[ 2 ].push( getDimensionValue( responseTimeData.data.periods[ index ] ) );
@@ -193,7 +195,7 @@ export const MetricsTab = () => {
 					},
 					{
 						fill: 'rgba(0, 135, 99, 0.2)',
-						label: __( 'Average response time' ),
+						label: __( 'Average response time(ms)' ),
 						stroke: '#008763',
 					},
 				] }
