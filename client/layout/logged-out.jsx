@@ -215,7 +215,7 @@ const LayoutLoggedOut = ( {
 				/>
 			) }
 
-			{ isGravatar && sectionName !== 'signup' && (
+			{ isGravatar && sectionName === 'login' && (
 				<PoweredByWPFooter clientTitle={ oauth2Client.title } />
 			) }
 		</div>
