@@ -1,3 +1,7 @@
+# Note: when pushing a change to this file, Renovate will run in the same way it
+# runs on trunk. This basically lets us test it live, which doesn't normally have
+# much consequence. Just be mindful about major changes.
+
 name: Renovate
 on:
   workflow_dispatch:
