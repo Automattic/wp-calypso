@@ -65,15 +65,21 @@ jobs:
       - uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
         with:
-          name: renovate-cache
-          path: /tmp/renovate/cache/renovate
+          name: renovate_cache
+          path: renovate_cache.tar.gz
 
+      - name: Uncompress renovate cache
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/renovate/cache/renovate
+          tar -xzvf renovate_cache.tar.gz /tmp/renovate/cache/renovate
+          rm renovate_cache.tar.gz
+          ls -l /tmp/renovate/cache/renovate
+          sudo chown -R runneradmin:root /tmp/renovate/
+          ls -l /tmp/renovate/cache/renovate
       # Unfortunately, the permissions expected within renovate's docker container
       # are different than the ones given after the cache is restored. We have to
       # change ownership to solve this.
-      - name: Change cache permissions
-        run: sudo chown -R runneradmin:root /tmp/renovate/
-        continue-on-error: true # It's ok for this to fail when the cache doesn't exist.
 
       - uses: renovatebot/github-action@v39.0.1
         with:
@@ -85,10 +91,15 @@ jobs:
           RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
 
+      - name: Compress renovate cache
+        run: tar -czvf renovate_cache.tar.gz /tmp/renovate/cache/renovate
+
       - uses: actions/upload-artifact@v3
         with:
           name: renovate-cache
-          path: /tmp/renovate/cache/renovate
+          path: renovate_cache.tar.gz
+          # Since this is created frequently, we don't need to keep it for long.
+          retention-days: 1
 
       - name: Check rate limit post-run
         env:
