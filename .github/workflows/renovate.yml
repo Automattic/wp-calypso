@@ -70,7 +70,7 @@ jobs:
             exit 0
           fi
           mkdir -p $cache_dir
-          tar -xzvf $cache_archive $cache_dir
+          tar -xzvf $cache_archive -C $cache_dir
           rm $cache_archive
           ls -l $cache_dir
           # Unfortunately, the permissions expected within renovate's docker container
