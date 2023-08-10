@@ -6,7 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
 import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
-import { useSiteMetricsData400vs5002 } from './components/site-monitoring-line-chart/use-site-metrics-400-500-data';
+import { useSiteMetrics400vs500Data } from './components/site-monitoring-line-chart/use-site-metrics-400-vs-500-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
@@ -98,58 +98,6 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 	};
 }
 
-export function useSiteMetricsData400vs500(
-	timeRange: TimeRange,
-	metric?: MetricsType,
-	dimension?: DimensionParams
-) {
-	const siteId = useSelector( getSelectedSiteId );
-
-	// Use the custom hook for time range selection
-	const { start, end } = timeRange;
-
-	const { data } = useSiteMetricsQuery( siteId, {
-		start,
-		end,
-		metric: metric || 'requests_persec',
-		dimension: dimension || 'http_status',
-	} );
-
-	const formattedDataHTTP = data?.data?.periods?.reduce(
-		( acc, period ) => {
-			const timestamp = period.timestamp;
-
-			// Check if the timestamp is already in the arrays, if not, push it
-			if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
-				acc[ 0 ].push( timestamp );
-
-				// Iterate through dimension keys and check for codes starting with '4' and '5'
-				const statusCodes = period.dimension || {};
-				let statusCode4xx = 0;
-				let statusCode5xx = 0;
-
-				for ( const code in statusCodes ) {
-					if ( code.startsWith( '4' ) ) {
-						statusCode4xx = statusCodes[ code ];
-					} else if ( code.startsWith( '5' ) ) {
-						statusCode5xx = statusCodes[ code ];
-					}
-				}
-
-				acc[ 1 ].push( statusCode4xx );
-				acc[ 2 ].push( statusCode5xx );
-			}
-
-			return acc;
-		},
-		[ [], [], [] ] as Array< Array< number > > // Remove null type since we're using 0 as default
-	) || [ [], [], [] ]; // Return default value when data is not available yet
-
-	return {
-		formattedDataHTTP,
-	};
-}
-
 function useAggregateSiteMetricsData(
 	timeRange: TimeRange,
 	metric?: MetricsType,
@@ -206,8 +154,6 @@ export const MetricsTab = () => {
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData } = useSiteMetricsData( timeRange );
-	const { formattedData400500 } = useSiteMetricsData400vs5002( timeRange );
-	const LineChart400500Props = useSiteMetricsData400vs5002( timeRange );
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		timeRange,
 		'requests_persec',
@@ -222,6 +168,8 @@ export const MetricsTab = () => {
 		siteId: useSelector( getSelectedSiteId ),
 		timeRange,
 	} );
+	const { data: dataFor400vs500Chart } = useSiteMetrics400vs500Data( timeRange );
+
 	return (
 		<div className="site-monitoring-metrics-tab">
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
@@ -283,8 +231,7 @@ export const MetricsTab = () => {
 			/>
 			<SiteMonitoringLineChart
 				title={ __( '400 vs 500 HTTP Responses' ) }
-				//data={ formattedData400500 as uPlot.AlignedData }
-				{ ...LineChart400500Props }
+				data={ dataFor400vs500Chart as uPlot.AlignedData }
 				tooltip={ __(
 					'Number of client-side errors (400) and server-side errors (500) over time.'
 				) }
