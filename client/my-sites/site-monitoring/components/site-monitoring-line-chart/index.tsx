@@ -43,7 +43,7 @@ function createSeries( lines: Array< SeriesProp > ) {
 			...line,
 			...{
 				width: 2,
-				paths: ( u, seriesIdx, idx0, idx1 ) => {
+				paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
 					return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
 				},
 				points: {
@@ -60,7 +60,7 @@ function createSeries( lines: Array< SeriesProp > ) {
 		};
 	} );
 
-	return [ {}, ...configuredSeries ];
+	return [ { label: ' ' }, ...configuredSeries ];
 }
 
 export const SiteMonitoringLineChart = ( {

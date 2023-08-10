@@ -62,6 +62,17 @@
 		},
 	],
 	ignoreDeps: [ 'electron-builder' ],
+	regexManagers: [
+		// Update the renovate-version in the action itself.
+		// See also https://github.com/renovatebot/github-action/issues/756
+		{
+			fileMatch: [ '^\\.github/workflows/renovate\\.yml$' ],
+			matchStrings: [ 'RENOVATE_VERSION: (?<currentValue>[^\\s]+)' ],
+			datasourceTemplate: 'docker',
+			depNameTemplate: 'renovate',
+			packageNameTemplate: 'ghcr.io/renovatebot/renovate',
+		},
+	],
 
 	// --- Update & schedule settings ---
 	rangeStrategy: 'bump',

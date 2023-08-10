@@ -55,13 +55,31 @@ const barChartData: [ string[], ...number[][] ] = [
 ];
 
 const barChartLabels = [ '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00' ];
+const legendData = [
+	{
+		fillColor: '#68B3E8',
+		tooltip: <span>Tooltip content for HTTP 200</span>,
+	},
+	{
+		fillColor: '#A7AAAD',
+		tooltip: <span>Tooltip content for HTTP 401</span>,
+	},
+	{
+		fillColor: '#F2D76B',
+		tooltip: <span>Tooltip content for HTTP 400</span>,
+	},
+	{
+		fillColor: '#09B585',
+		tooltip: <span>Tooltip content for HTTP 404</span>,
+	},
+	{
+		fillColor: '#F283AA',
+		tooltip: <span>Tooltip content for HTTP 500</span>,
+	},
+];
 
 export const BarChartUplot = () => {
 	return (
-		<UplotBarChart
-			data={ barChartData }
-			labels={ barChartLabels }
-			fillColors={ [ '#68B3E8', '#A7AAAD', '#F2D76B', '#09B585', '#F283AA' ] }
-		/>
+		<UplotBarChart data={ barChartData } labels={ barChartLabels } legendData={ legendData } />
 	);
 };
