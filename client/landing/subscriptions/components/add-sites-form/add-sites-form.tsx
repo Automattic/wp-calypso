@@ -5,21 +5,22 @@ import { check, Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { isValidUrl } from '../../helpers';
+import { useAddSitesModalNotices } from '../../hooks';
+import { SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL, useRecordSiteSubscribed } from '../../tracks';
 import './styles.scss';
 
 type AddSitesFormProps = {
 	onAddFinished: () => void;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
+	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
+	const recordSiteSubscribed = useRecordSiteSubscribed();
 
 	const { mutate: subscribe, isLoading: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
@@ -59,6 +60,10 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 			subscribe(
 				{ url: inputValue },
 				{
+					onSuccess: ( data ) => {
+						if ( data?.info === 'already_subscribed' ) {
+							showWarningNotice( inputValue );
+						} else {
 					onSuccess: () => {
 						dispatch(
 							successNotice(
@@ -68,22 +73,27 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 								} )
 							)
 						);
+							showSuccessNotice( inputValue );
+						}
 						onAddFinished();
 					},
 					onError: () => {
-						dispatch(
-							errorNotice(
-								translate( 'There was an error when trying to subscribe to %s.', {
-									args: [ inputValue ],
-									comment: 'URL of the site that the user tried to subscribe to.',
-								} )
-							)
-						);
+						showErrorNotice( inputValue );
+						onAddFinished();
 					},
 				}
 			);
 		}
-	}, [ dispatch, inputValue, isValidUrl, onAddFinished, subscribe, translate ] );
+	}, [
+		inputValue,
+		isValidInput,
+		onAddFinished,
+		recordSiteSubscribed,
+		showErrorNotice,
+		showSuccessNotice,
+		showWarningNotice,
+		subscribe,
+	] );
 
 	return (
 		<div className="subscriptions-add-sites__form--container">

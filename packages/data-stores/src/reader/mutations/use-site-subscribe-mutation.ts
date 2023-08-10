@@ -14,6 +14,7 @@ type SubscribeParams = {
 };
 
 type SubscribeResponse = {
+	info?: string;
 	success?: boolean;
 	subscribed?: boolean;
 	subscription?: {
