@@ -74,6 +74,7 @@ export const SiteMonitoringLineChart = ( {
 }: UplotChartProps ) => {
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
+	const localTz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
@@ -81,7 +82,7 @@ export const SiteMonitoringLineChart = ( {
 				class: 'calypso-uplot-chart',
 				...DEFAULT_DIMENSIONS,
 				// Set incoming dates as UTC.
-				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), localTz ),
 				fmtDate: () => {
 					return ( date ) => {
 						const chatHour = formatChatHour( date );
