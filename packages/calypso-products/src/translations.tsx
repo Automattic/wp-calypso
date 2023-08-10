@@ -58,9 +58,12 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
+	PRODUCT_JETPACK_MONITOR_YEARLY,
+	PRODUCT_JETPACK_MONITOR_MONTHLY,
 	PRODUCT_WOOCOMMERCE_BOOKINGS,
 	PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
 	PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
@@ -257,6 +260,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_WPCOM_SEARCH ]: search,
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercial,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercial,
 		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: stats,
 		[ PRODUCT_JETPACK_STATS_FREE ]: statsFree,
@@ -446,6 +450,7 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: { default: statsTagline },
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: { default: statsTagline },
 		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: { default: statsTagline },
 		[ PRODUCT_JETPACK_STATS_FREE ]: { default: statsTagline },
@@ -528,6 +533,8 @@ export const getJetpackProductDisclaimers = (
 		<></>
 	);
 
+	const monitorDisclaimer = translate( 'Limit of 20 SMS per site, each month.' );
+
 	return {
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupDisclaimer,
@@ -539,6 +546,8 @@ export const getJetpackProductDisclaimers = (
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorDisclaimer,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorDisclaimer,
 	};
 };
 
@@ -584,6 +593,10 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		'Easily share your website content on your social media channels from one place.'
 	);
 
+	const monitorDescription = translate(
+		'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantDescription,
@@ -613,6 +626,8 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedDescription,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorDescription,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorDescription,
 	};
 };
 
@@ -714,6 +729,10 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		'Write once, post everywhere. Easily share your content on social media from WordPress.'
 	);
 
+	const monitorFeaturedText = translate(
+		'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantFeaturedText,
@@ -743,6 +762,8 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedFeaturedText,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorFeaturedText,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorFeaturedText,
 	};
 };
 export const getJetpackProductsLightboxDescription = (): Record< string, TranslateResult > => {
@@ -775,6 +796,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	);
 	const socialAdvancedLightboxDescription = translate(
 		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
+	);
+	const monitorLightboxDescription = translate(
+		'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
 	);
 
 	// WooCommerce Products
@@ -827,6 +851,8 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorLightboxDescription,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesLightboxDescription,
@@ -1050,6 +1076,11 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			'Automatic VIP – Reward your best customers with VIP status based on different spending requirements.'
 		),
 	];
+	const monitorIncludesInfo = [
+		translate( '1-minute monitoring interval' ),
+		translate( 'Multiple email recipients' ),
+		translate( 'SMS notifications*' ),
+	];
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
@@ -1080,6 +1111,8 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorIncludesInfo,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorIncludesInfo,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsIncludesInfo,
 		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsIncludesInfo,
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesIncludesInfo,
@@ -1232,6 +1265,22 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'AutomateWoo integrates with your favorite plugins and services' ),
 	];
 
+	const monitorBenefits = [
+		translate(
+			'Rapid Detection: With our 1-minute interval monitoring, detect potential issues faster than ever before.'
+		),
+		translate(
+			'Multi-channel Alerts: Reach multiple people simultaneously through our expanded multi-email and SMS notifications.'
+		),
+		translate(
+			'Enhanced Uptime: Experience less downtime and increased service reliability through prompt response and resolution.'
+		),
+		translate(
+			'Better user experience, because you will have the chance to fix any issue as soon as possible.'
+		),
+		translate( 'Reduce potential revenue losses because your site went down.' ),
+	];
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantBenefits,
@@ -1261,6 +1310,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorBenefits,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorBenefits,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsBenefits,
 		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsBenefits,
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesBenefits,

@@ -259,7 +259,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		options.push( {
 			title: assemblerCtaData.title,
 			icon: addTemplate,
-			description: assemblerCtaData.subtitleLineTwo,
+			description: assemblerCtaData.subtitle,
 			onClick: () =>
 				recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
 					site_plan: sitePlan,

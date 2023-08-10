@@ -330,6 +330,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 
 		.campaign-item-details__ad-destination-url-link {
+			align-items: center;
 			color: var(--studio-gray-50);
 			display: flex;
 			flex-grow: 1;
@@ -340,6 +341,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			word-break: break-word;
 			text-align: left;
 			svg {
+				fill: var(--studio-gray-50);
 				min-width: 20px;
 			}
 		}
@@ -484,8 +486,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 
 				.inline-support-link__nowrap {
+					align-items: center;
+					display: flex;
+
 					svg {
-						vertical-align: text-top;
 						width: 16px;
 					}
 				}

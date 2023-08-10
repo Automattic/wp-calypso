@@ -167,7 +167,7 @@ export const NewHostedSiteOptions = ( { navigation }: Pick< StepProps, 'navigati
 				stepName="site-options"
 				backLabelText={ __( 'Back' ) }
 				goBack={ goBack }
-				skipLabelText={ __( 'Import a site' ) }
+				skipLabelText={ __( 'Migrate a site' ) }
 				goNext={ () => window.location.assign( '/setup/import-hosted-site' ) }
 				isHorizontalLayout
 				formattedHeader={

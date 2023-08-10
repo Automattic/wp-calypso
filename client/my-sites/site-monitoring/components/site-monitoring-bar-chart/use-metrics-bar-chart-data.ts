@@ -1,9 +1,9 @@
+import { getLocaleSlug } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { TimeRange } from '../../main';
+import { TimeRange } from '../../metrics-tab';
 import { PeriodData, useSiteMetricsQuery } from '../../use-metrics-query';
 
 const STATUS_CODES = [ 200, 401, 400, 404, 500 ];
-const FILL_COLORS = [ '#68B3E8', '#A7AAAD', '#F2D76B', '#09B585', '#F283AA' ];
 
 interface UseMetricsBarChartDataParams {
 	siteId: number | null;
@@ -49,6 +49,23 @@ function useGroupByTime( periods: PeriodData[], secondsWindow: number ) {
 	}, [ periods, secondsWindow ] );
 }
 
+function getLongDate( date: Date, locale: string ): string {
+	const formatter = new Intl.DateTimeFormat( locale, {
+		day: 'numeric',
+		month: 'long',
+	} );
+	return formatter.format( date );
+}
+
+function getShortDate( date: Date, locale: string ): string {
+	const formatter = new Intl.DateTimeFormat( locale, {
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	} );
+	return formatter.format( date );
+}
+
 export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChartDataParams ) {
 	const { start, end } = timeRange;
 	const metric = 'requests_persec';
@@ -68,7 +85,13 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 			string[],
 			...number[][]
 		],
-		labels: labels.map( ( timeSeconds ) => new Date( timeSeconds * 1000 ).toLocaleTimeString() ),
-		fillColors: FILL_COLORS,
+		labels: labels.map( ( timeSeconds ) => {
+			const date = new Date( timeSeconds * 1000 );
+			const locale = getLocaleSlug() || 'en';
+			if ( secondsWindow < 24 * 3600 ) {
+				return getShortDate( date, locale );
+			}
+			return getLongDate( date, locale );
+		} ),
 	};
 }

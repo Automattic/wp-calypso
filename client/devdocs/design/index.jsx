@@ -7,6 +7,7 @@ import {
 import Badge from '@automattic/components/src/badge/docs/example';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
+import Count from '@automattic/components/src/count/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
 import ListTile from '@automattic/components/src/list-tile/docs/example';
 import ProductLogoExample from '@automattic/components/src/logos/docs/example';
@@ -34,7 +35,6 @@ import CardHeading from 'calypso/components/card-heading/docs/example';
 import Chart from 'calypso/components/chart/docs/example';
 import Checklist from 'calypso/components/checklist/docs/example';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input/docs/example';
-import Count from 'calypso/components/count/docs/example';
 import DocumentHead from 'calypso/components/data/document-head';
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
