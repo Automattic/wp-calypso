@@ -71,7 +71,6 @@ jobs:
           mkdir -p $cache_dir
           tar -xzf $cache_archive -C $cache_dir
           rm $cache_archive
-          rm -r "$cache_dir/tmp"
 
           # Unfortunately, the permissions expected within renovate's docker container
           # are different than the ones given after the cache is restored. We have to
