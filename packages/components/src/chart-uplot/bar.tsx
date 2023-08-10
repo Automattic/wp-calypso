@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -19,6 +20,7 @@ export interface UplotChartProps {
 	legendData: { fillColor: string; tooltip?: JSX.Element }[];
 	labels: string[];
 	options?: Partial< uPlot.Options >;
+	isLoading?: boolean;
 }
 
 export default function UplotBarChart( {
@@ -26,6 +28,7 @@ export default function UplotBarChart( {
 	labels,
 	legendData = [],
 	options: propOptions,
+	isLoading = false,
 }: UplotChartProps ) {
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef< HTMLDivElement | null >( null );
@@ -119,6 +122,7 @@ export default function UplotBarChart( {
 
 	return (
 		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
+			{ isLoading && <Spinner className="calypso-uplot-chart-container__spinner" /> }
 			<UplotReact
 				data={ data as unknown as uPlot.AlignedData }
 				onCreate={ ( chart ) => ( uplot.current = chart ) }
