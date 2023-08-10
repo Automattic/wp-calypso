@@ -65,14 +65,19 @@ jobs:
       - name: Uncompress renovate cache
         run: |
           set -x
-          mv "cache-download/$cache_archive" $cache_archive
-          if [ ! -f $cache_archive ] ; then
+          if [ ! -d cache-download ] ; then
             echo "No cache found."
             exit 0
           fi
+
+          # Handle nested archive issue:
+          mv "cache-download/$cache_archive" $cache_archive
+
+          # Make sure the directory exists, and extract it:
           mkdir -p $cache_dir
           tar -xzf $cache_archive -C $cache_dir
           rm $cache_archive
+
           # Unfortunately, the permissions expected within renovate's docker container
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
