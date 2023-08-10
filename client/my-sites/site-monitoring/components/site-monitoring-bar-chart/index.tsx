@@ -21,10 +21,8 @@ export const SiteMonitoringBarChart = ( { title, tooltip, className, ...rest }: 
 		{
 			fillColor: '#68B3E8',
 			tooltip: (
-				<LegendTooltip title={ translate( 'OK' ) }>
-					{ translate(
-						'The HTTP 200 OK success status response code indicates that the request has succeeded.'
-					) }
+				<LegendTooltip title={ translate( 'OK Response' ) }>
+					{ translate( 'The client request was successfully received, understood, and accepted.' ) }
 				</LegendTooltip>
 			),
 		},
@@ -34,7 +32,7 @@ export const SiteMonitoringBarChart = ( { title, tooltip, className, ...rest }: 
 			tooltip: (
 				<LegendTooltip title={ translate( 'Unauthorized Response' ) }>
 					{ translate(
-						'The client request has not been completed because it lacks valid authentication credentials for the requested resource.'
+						'The client request was not completed because it lacked valid authentication credentials for the requested resource.'
 					) }
 				</LegendTooltip>
 			),
@@ -43,9 +41,9 @@ export const SiteMonitoringBarChart = ( { title, tooltip, className, ...rest }: 
 		{
 			fillColor: '#F2D76B',
 			tooltip: (
-				<LegendTooltip title={ translate( 'Bad Request' ) }>
+				<LegendTooltip title={ translate( 'Bad Request Response' ) }>
 					{ translate(
-						'The server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing).'
+						"The client request was malformed or couldn't be understood by the server."
 					) }
 				</LegendTooltip>
 			),
@@ -54,9 +52,9 @@ export const SiteMonitoringBarChart = ( { title, tooltip, className, ...rest }: 
 		{
 			fillColor: '#09B585',
 			tooltip: (
-				<LegendTooltip title={ translate( 'Not Found' ) }>
+				<LegendTooltip title={ translate( 'Not Found Response' ) }>
 					{ translate(
-						'The server cannot find the requested resource. Links that lead to a 404 page are often called broken or dead links.'
+						"The server couldn't find the requested resource. The resource was either removed or not available with the given URL."
 					) }
 				</LegendTooltip>
 			),
@@ -65,9 +63,9 @@ export const SiteMonitoringBarChart = ( { title, tooltip, className, ...rest }: 
 		{
 			fillColor: '#F283AA',
 			tooltip: (
-				<LegendTooltip title={ translate( 'Internal Server Error' ) }>
+				<LegendTooltip title={ translate( 'Internal Server Error Response' ) }>
 					{ translate(
-						'The server encountered an unexpected condition that prevented it from fulfilling the request.'
+						'The server encountered an unexpected error which prevented it from completing the client request.'
 					) }
 				</LegendTooltip>
 			),
