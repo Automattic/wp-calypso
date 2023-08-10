@@ -42,6 +42,7 @@ env:
   # Set as a workflow variable so that multiple jobs can use the value.
   RENOVATE_VERSION: 36.31.0
   cache_archive: renovate_cache.tar.gz
+  # This is the dir renovate provides -- if we set our own, we run into permissions issues.
   cache_dir: /tmp/renovate/cache/renovate
 
 jobs:
@@ -56,9 +57,10 @@ jobs:
           name: renovate-cache
           path: cache-download
 
-      - name: Uncompress renovate cache
+      - name: Extract renovate cache
         run: |
           set -x
+          # Skip if no cache is set, such as the first time it runs.
           if [ ! -d cache-download ] ; then
             echo "No cache found."
             exit 0
@@ -77,6 +79,7 @@ jobs:
           # change ownership to solve this.
           sudo chown -R runneradmin:root /tmp/renovate/
           ls $cache_dir
+          ls $cache_dir/renovate-cache-v1
 
       - uses: renovatebot/github-action@v39.0.1
         with:
@@ -88,6 +91,7 @@ jobs:
           RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
 
+      # If we don't compress it, the upload takes 100x longer. (Not a joke!)
       - name: Compress renovate cache
         run: |
           ls $cache_dir
