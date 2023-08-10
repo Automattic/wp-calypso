@@ -134,6 +134,10 @@ function normalizePlanProducts(
 			( plan ) => plan.productIds.indexOf( planProduct.product_id ) > -1
 		) as Plan;
 
+		if ( ! periodAgnosticPlan ) {
+			return plans;
+		}
+
 		plans.push( {
 			productId: planProduct.product_id,
 			// This means that free plan is considered "annually billed"
