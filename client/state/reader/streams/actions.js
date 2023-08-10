@@ -24,7 +24,7 @@ import 'calypso/state/reader/init';
  * @param  {string} streamKey The stream to fetch posts for
  * @returns {Object}          The action object
  */
-export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null, tags = null } ) {
+export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null } ) {
 	const streamType = getStreamType( streamKey );
 
 	return {
@@ -35,7 +35,6 @@ export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null
 			streamType,
 			isPoll,
 			gap,
-			tags,
 		},
 	};
 }

@@ -448,7 +448,7 @@ describe( 'Site Actions', () => {
 		const createMockedThemeSetupApiRequest = ( payload ) => ( {
 			type: 'WPCOM_REQUEST',
 			request: {
-				path: `/sites/${ siteSlug }/theme-setup`,
+				path: `/sites/${ siteSlug }/theme-setup/?_locale=user`,
 				apiNamespace: 'wpcom/v2',
 				body: payload,
 				method: 'POST',

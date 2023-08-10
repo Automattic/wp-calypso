@@ -4,6 +4,7 @@ import { FunctionComponent } from 'react';
 interface Props {
 	href: string;
 	onClick?: () => void;
+	children?: React.ReactNode;
 }
 
 const BillingButton: FunctionComponent< Props > = ( { href, children, onClick = () => null } ) => {

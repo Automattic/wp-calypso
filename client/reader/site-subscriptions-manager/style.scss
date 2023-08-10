@@ -1,12 +1,13 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "client/landing/subscriptions/styles/search-component";
+@import "client/landing/subscriptions/components/site-subscriptions-list/styles/variables";
 
 .site-subscriptions-manager {
 	&.main {
 		max-width: 1168px;
 		min-height: 100vh;
-		margin: 0;
+		margin: 0 auto;
 		padding: 0 32px;
 
 		@extend %search-component-subscriptions-style;
@@ -37,6 +38,15 @@
 		}
 	}
 
+	hr.subscriptions__separator {
+		width: 100%;
+		height: 0;
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-top: 1px solid $studio-gray-5;
+	}
+
 	&__import-export-popover {
 		box-sizing: border-box;
 		width: 305px;
@@ -54,4 +64,27 @@
 			}
 		}
 	}
+
+	.not-found-site-subscriptions,
+	.site-subscriptions__search-recommendations-label {
+		color: $studio-gray-60;
+		font-size: $font-body-small;
+		font-weight: 500;
+		font-family: "SF Pro Text", $sans;
+		line-height: $font-title-small;
+		margin: 48px 0 16px;
+	}
+
+	.reader-unsubscribed-feeds-search-list {
+		border-block-start: 1px solid $site-subscriptions-list-row-divider-color;
+	}
+}
+
+hr.subscriptions__separator {
+	width: 100%;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-top: 1px solid $studio-gray-5;
 }

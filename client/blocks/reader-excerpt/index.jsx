@@ -69,7 +69,7 @@ const getDailyPromptText = ( post ) => {
 
 const chooseExcerpt = ( post ) => {
 	// Need to figure out if custom excerpt is different to better_excerpt
-	if ( post.excerpt.length > 0 ) {
+	if ( post.excerpt?.length > 0 ) {
 		// If the post is a dailyprompt, attempt to replace the prompt text with a pullquote.
 		if ( post.tags && post.tags.hasOwnProperty( 'dailyprompt' ) ) {
 			const promptText = getDailyPromptText( post );
@@ -134,7 +134,6 @@ const ReaderExcerpt = ( { post } ) => {
 
 ReaderExcerpt.propTypes = {
 	post: PropTypes.object.isRequired,
-	isDiscover: PropTypes.bool,
 };
 
 export default ReaderExcerpt;

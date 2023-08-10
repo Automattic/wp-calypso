@@ -479,6 +479,62 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'WordPress.com plans URLs', () => {
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', false ) ).toEqual(
+			'https://wordpress.com/es/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Greek
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', false ) ).toEqual(
+			'https://wordpress.com/el/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Romanian
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', false ) ).toEqual(
+			'https://wordpress.com/ro/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Non Mag-16, Finnish
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Full path to a site plan
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+	} );
+
 	test( 'WordPress.com new style support URLs', () => {
 		expect( localizeUrl( 'https://wordpress.com/support/reader/', 'de' ) ).toEqual(
 			'https://wordpress.com/de/support/reader/'

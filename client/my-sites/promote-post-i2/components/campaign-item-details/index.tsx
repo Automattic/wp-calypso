@@ -1,24 +1,24 @@
+import config from '@automattic/calypso-config';
 import './style.scss';
 import {
+	Badge,
 	Button,
 	Dialog,
-	Gridicon,
 	HorizontalBarList,
 	HorizontalBarListItem,
 } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import Badge from 'calypso/components/badge';
 import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query-new';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
@@ -57,7 +57,20 @@ const getPostIdFromURN = ( targetUrn: string ) => {
 	}
 };
 
+const getExternalLinkIcon = ( fillColor?: string ) => (
+	<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			fill-rule="evenodd"
+			clip-rule="evenodd"
+			d="M9.93271 3.02436L12.4162 3.01314L8.1546 7.27477L8.8617 7.98188L13.1183 3.72526L13.0971 6.18673L14.0971 6.19534L14.1332 2.00537L9.92819 2.02437L9.93271 3.02436ZM4.66732 2.83349C3.6548 2.83349 2.83398 3.6543 2.83398 4.66682V11.3335C2.83398 12.346 3.6548 13.1668 4.66732 13.1668H11.334C12.3465 13.1668 13.1673 12.346 13.1673 11.3335V8.90756H12.1673V11.3335C12.1673 11.7937 11.7942 12.1668 11.334 12.1668H4.66732C4.20708 12.1668 3.83398 11.7937 3.83398 11.3335V4.66682C3.83398 4.20658 4.20708 3.83349 4.66732 3.83349H6.83398V2.83349H4.66732Z"
+			fill={ fillColor }
+		/>
+	</svg>
+);
+
 export default function CampaignItemDetails( props: Props ) {
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const translate = useTranslate();
@@ -114,7 +127,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const devicesList = audience_list ? audience_list[ 'devices' ] : '';
 	const countriesList = audience_list ? audience_list[ 'countries' ] : '';
 	const topicsList = audience_list ? audience_list[ 'topics' ] : '';
-	const OSsList = audience_list ? audience_list[ 'OSs' ] : '';
+	const languagesList = audience_list ? audience_list[ 'languages' ] : '';
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
@@ -127,7 +140,9 @@ export default function CampaignItemDetails( props: Props ) {
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const countriesListFormatted = countriesList ? `${ countriesList }` : __( 'Everywhere' );
-	const osListFormatted = OSsList ? `${ OSsList }` : translate( 'All' );
+	const languagesListFormatted = languagesList
+		? `${ languagesList }`
+		: translate( 'All languages' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
 	const subtotalFormatted = `$${ formatCents( subtotal || 0 ) }`;
@@ -137,11 +152,11 @@ export default function CampaignItemDetails( props: Props ) {
 	const navigationItems = [
 		{
 			label: translate( 'Advertising' ),
-			href: getAdvertisingDashboardPath( `/${ selectedSiteSlug }/campaigns` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ),
 		},
 		{
 			label: campaignTitleFormatted || '',
-			href: getAdvertisingDashboardPath( `${ selectedSiteSlug }/campaigns/${ campaignId }` ),
+			href: getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ selectedSiteSlug }` ),
 		},
 	];
 
@@ -204,7 +219,7 @@ export default function CampaignItemDetails( props: Props ) {
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
-				cancelCampaign( siteId, campaignId );
+				cancelCampaign( siteId ?? 0, campaignId ?? 0 );
 			},
 		},
 	];
@@ -215,7 +230,8 @@ export default function CampaignItemDetails( props: Props ) {
 			label: __( 'Contact support' ),
 			onClick: async () => {
 				setShowErrorDialog( false );
-				window.open( 'https://wordpress.com/support/', '_blank' );
+				const localizedUrl = localizeUrl( 'https://wordpress.com/support/' );
+				window.open( localizedUrl, '_blank' );
 			},
 		},
 		{
@@ -292,7 +308,7 @@ export default function CampaignItemDetails( props: Props ) {
 				</div>
 
 				<div>
-					{ ! isLoading && status === 'finished' && (
+					{ ! isLoading && ! isSmallScreen && (
 						<Button
 							className="campaign-item-promote-again-button"
 							primary
@@ -319,7 +335,7 @@ export default function CampaignItemDetails( props: Props ) {
 								components: {
 									wpcomTos: (
 										<a
-											href="https://wordpress.com/tos/"
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -493,10 +509,10 @@ export default function CampaignItemDetails( props: Props ) {
 											{ ! isLoading ? countriesListFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__label">
-											{ translate( 'Operating systems' ) }
+											{ translate( 'Languages' ) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? osListFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
 									<div className="campaign-item-details__interests">
@@ -521,7 +537,7 @@ export default function CampaignItemDetails( props: Props ) {
 													target="_blank"
 												>
 													{ clickUrl }
-													<Gridicon icon="external" size={ 16 } />
+													{ getExternalLinkIcon() }
 												</Button>
 											) : (
 												<FlexibleSkeleton />
@@ -622,7 +638,10 @@ export default function CampaignItemDetails( props: Props ) {
 												{ cancelCampaignButtonText }
 											</Button>
 										) }
-										<Button href={ CALYPSO_CONTACT } target="_blank">
+										<Button
+											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+											target="_blank"
+										>
 											{ icon }
 											{ translate( 'Contact Support' ) }
 										</Button>
@@ -639,16 +658,17 @@ export default function CampaignItemDetails( props: Props ) {
 								commented out until we get the link
 								<Button className="is-link campaign-item-details__support-effective-ad-doc">
 									{ translate( 'What makes an effective ad?' ) }
-									<Gridicon icon="external" size={ 16 } />
+									{ getExternalLinkIcon() }
 								</Button>*/ }
 
 								<InlineSupportLink
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
+									showSupportModal={ ! isRunningInJetpack }
 								>
 									{ translate( 'View documentation' ) }
-									<Gridicon icon="external" size={ 16 } />
+									{ getExternalLinkIcon() }
 								</InlineSupportLink>
 								<div className="campaign-item-details__powered-by">
 									<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>

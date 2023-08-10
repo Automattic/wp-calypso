@@ -1,13 +1,13 @@
 /**
  * External Dependencies
  */
-import { useUpdateZendeskUserFieldsMutation } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 /**
  * External Dependencies
  */
 import { getSectionName } from 'calypso/state/ui/selectors'; /* eslint-disable-line no-restricted-imports */
+import { useUpdateZendeskUserFieldsMutation } from '../data/use-update-zendesk-user-fields';
 import { HELP_CENTER_STORE } from '../stores';
 
 export default function useChatWidget() {

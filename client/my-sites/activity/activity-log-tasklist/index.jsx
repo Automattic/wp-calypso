@@ -16,7 +16,10 @@ import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/ac
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
-import { PLUGIN_INSTALLATION_COMPLETED } from 'calypso/state/plugins/installed/status/constants';
+import {
+	PLUGIN_INSTALLATION_COMPLETED,
+	PLUGIN_INSTALLATION_UP_TO_DATE,
+} from 'calypso/state/plugins/installed/status/constants';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import WithItemsToUpdate from './to-update';
@@ -383,7 +386,11 @@ const updateSingle = ( item, siteId ) => ( dispatch, getState ) => {
 			} );
 		case 'plugin':
 			return dispatch( updatePlugin( siteId, item ) ).then( () => {
-				if ( getStatusForPlugin( getState(), siteId, item.id ) !== PLUGIN_INSTALLATION_COMPLETED ) {
+				const status = getStatusForPlugin( getState(), siteId, item.id );
+				if (
+					status !== PLUGIN_INSTALLATION_COMPLETED &&
+					status !== PLUGIN_INSTALLATION_UP_TO_DATE
+				) {
 					return Promise.reject( 'Plugin update failed' );
 				}
 			} );

@@ -105,10 +105,10 @@ describe( 'Checkout payment methods list', () => {
 
 	it( 'renders the full credits payment method option when full credits are available', async () => {
 		const cartChanges = {
-			sub_total_integer: 0,
-			sub_total_display: '0',
 			credits_integer: 15600,
 			credits_display: 'R$156',
+			total_tax_integer: 0,
+			total_cost_integer: 0,
 		};
 		render(
 			<MockCheckout
@@ -118,16 +118,121 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Assign a payment method later' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders the full credits payment method option when a coupon has made the purchase free for a one-time purchase', async () => {
+		const cartChanges = {
+			coupon: 'FREE',
+			sub_total_integer: 0,
+			sub_total_display: '0',
+			credits_integer: 0,
+			credits_display: '0',
+			total_tax_integer: 0,
+			total_cost_integer: 0,
+			products: [
+				{
+					...initialCart.products[ 0 ],
+					is_one_time_purchase: true,
+				},
+			],
+		};
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
+		await waitFor( () => {
+			expect( screen.getByText( 'Free Purchase' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders the full credits payment method option when full credits are available for a one-time purchase', async () => {
+		const cartChanges = {
+			credits_integer: 15600,
+			credits_display: 'R$156',
+			total_tax_integer: 0,
+			total_cost_integer: 0,
+			products: [
+				{
+					...initialCart.products[ 0 ],
+					is_one_time_purchase: true,
+				},
+			],
+		};
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
+		await waitFor( () => {
+			expect( screen.getByText( /WordPress.com Credits/ ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders the full credits payment method option when full credits are available for a renewal with a saved payment method', async () => {
+		const cartChanges = {
+			credits_integer: 15600,
+			credits_display: 'R$156',
+			total_tax_integer: 0,
+			total_cost_integer: 0,
+			products: [
+				{
+					...initialCart.products[ 0 ],
+					is_renewal: true,
+					is_renewal_and_will_auto_renew: true,
+				},
+			],
+		};
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
+		await waitFor( () => {
+			expect( screen.getByText( /WordPress.com Credits/ ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders the full credits payment method option when full credits are available for a renewal without a saved payment method', async () => {
+		const cartChanges = {
+			credits_integer: 15600,
+			credits_display: 'R$156',
+			total_tax_integer: 0,
+			total_cost_integer: 0,
+			products: [
+				{
+					...initialCart.products[ 0 ],
+					is_renewal: true,
+					is_renewal_and_will_auto_renew: false,
+				},
+			],
+		};
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+			/>
+		);
+		await waitFor( () => {
+			expect( screen.getByText( 'Assign a payment method later' ) ).toBeInTheDocument();
 		} );
 	} );
 
 	it( 'does not render the other payment method options when full credits are available', async () => {
 		const cartChanges = {
-			sub_total_integer: 0,
-			sub_total_display: '0',
 			credits_integer: 15600,
 			credits_display: 'R$156',
+			total_tax_integer: 0,
+			total_cost_integer: 0,
 		};
 		render(
 			<MockCheckout
@@ -145,6 +250,7 @@ describe( 'Checkout payment methods list', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Assign a payment method later' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -164,8 +270,6 @@ describe( 'Checkout payment methods list', () => {
 
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
 		const cartChanges = {
-			sub_total_integer: 0,
-			sub_total_display: '0',
 			total_tax_integer: 0,
 			total_tax_display: 'R$0',
 			total_cost_integer: 0,
@@ -195,7 +299,7 @@ describe( 'Checkout payment methods list', () => {
 			/>
 		);
 		await waitFor( () => {
-			expect( screen.getByText( 'Free Purchase' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Assign a payment method later' ) ).toBeInTheDocument();
 		} );
 	} );
 

@@ -25,7 +25,7 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 	);
 
 	// Gives WP Admin Customizer a chance to return to where we started from.
-	if ( isSafeWpAdminUrl && url.includes( 'wp-admin/customize.php' ) ) {
+	if ( isSafeWpAdminUrl && url?.includes( 'wp-admin/customize.php' ) ) {
 		url = addQueryArgs(
 			{
 				return: document.location.href,

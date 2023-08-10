@@ -1,9 +1,8 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -14,7 +13,7 @@ import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
-	const showAsExternal = isExternalLink && ! props.forceInternalLink;
+	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
 	const classes = classnames( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
@@ -98,6 +97,7 @@ SidebarItem.propTypes = {
 	selected: PropTypes.bool,
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,
+	forceExternalLink: PropTypes.bool,
 	forceInternalLink: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,

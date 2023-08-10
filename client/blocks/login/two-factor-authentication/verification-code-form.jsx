@@ -127,9 +127,12 @@ class VerificationCodeForm extends Component {
 		}
 
 		return (
-			<form onSubmit={ this.onSubmitForm }>
+			<form
+				className="two-factor-authentication__verification-code-form-wrapper"
+				onSubmit={ this.onSubmitForm }
+			>
 				<Card compact className="two-factor-authentication__verification-code-form">
-					<p>{ helpText }</p>
+					<p className="verification-code-form__help-text">{ helpText }</p>
 
 					<FormFieldset>
 						<FormLabel htmlFor="twoStepCode">{ labelText }</FormLabel>

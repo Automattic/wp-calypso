@@ -28,6 +28,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getCtaAriaLabel,
 		getIsDeprecated,
 		getIsExternal,
+		getIsIndirectCheckout,
 		getIsIncludedInPlan,
 		getIsIncludedInPlanOrSuperseded,
 		getIsMultisiteCompatible,
@@ -56,6 +57,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const isSuperseded = getIsSuperseded( item );
 					const isDeprecated = getIsDeprecated( item );
 					const isExternal = getIsExternal( item );
+					const isIndirectCheckout = getIsIndirectCheckout( item );
 					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
 					const isIncludedInPlan = getIsIncludedInPlan( item );
 					const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( item );
@@ -87,7 +89,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 								<MoreInfoLink
 									onClick={ onClickMoreInfoFactory( item ) }
 									item={ item }
-									isExternal={ isExternal }
+									isLinkExternal={ isExternal || isIndirectCheckout }
 								/>
 							) }
 						</>
@@ -110,10 +112,10 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					// Go to the checkout page for all products when they click on the 'GET' CTA,
 					// except for Jetpack Social when it isn't owned or included in an active plan,
 					// in which case we open a modal.
-					const ctaHref =
-						isSocialProduct && ! isIncludedInPlanOrSuperseded
-							? `#${ item.productSlug }`
-							: getCheckoutURL( item );
+					let ctaHref = getCheckoutURL( item );
+					if ( isSocialProduct && ! isIncludedInPlanOrSuperseded ) {
+						ctaHref = `#${ item.productSlug }`;
+					}
 
 					const onClickCta = isSocialProduct
 						? onClickMoreInfoFactory( item )

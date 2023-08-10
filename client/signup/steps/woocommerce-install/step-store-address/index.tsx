@@ -166,8 +166,8 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 						<ComboboxControl
 							label={ __( 'Country / State' ) }
 							value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
-							onChange={ ( value: string | null ) => {
-								update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
+							onChange={ ( value ) => {
+								update( WOOCOMMERCE_DEFAULT_COUNTRY, value ?? '' );
 								clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
 							} }
 							options={ countriesAsOptions }

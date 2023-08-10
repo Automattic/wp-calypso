@@ -1,8 +1,10 @@
 import { Button } from '@automattic/components';
 import { ColorPaletteVariations } from '@automattic/global-styles';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import NavigatorHeader from './navigator-header';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import NavigatorTitle from './navigator-title';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
 interface Props {
@@ -23,13 +25,14 @@ const ScreenColorPalettes = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Colors' ) }
+				title={ <NavigatorTitle title={ translate( 'Colors' ) } /> }
 				description={ translate(
-					'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+					'Find your perfect color style. Change the look and feel of your site in one click with our custom colors.'
 				) }
 				onBack={ onBack }
 			/>
@@ -39,6 +42,7 @@ const ScreenColorPalettes = ( {
 					stylesheet={ stylesheet }
 					selectedColorPaletteVariation={ selectedColorPaletteVariation }
 					onSelect={ onSelect }
+					limitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 			</div>
 			<div className="screen-container__footer">

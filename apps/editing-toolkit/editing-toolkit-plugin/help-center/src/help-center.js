@@ -30,7 +30,7 @@ function HelpCenterContent() {
 
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 
-	const handleToggleHelpCenter = () => {
+	const handleToggleHelpCenter = useCallback( () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
@@ -38,7 +38,7 @@ function HelpCenterContent() {
 		} );
 
 		setShowHelpCenter( ! show );
-	};
+	}, [ setShowHelpCenter, show ] );
 
 	useEffect( () => {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );

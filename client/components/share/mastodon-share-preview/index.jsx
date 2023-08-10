@@ -16,6 +16,7 @@ export class MastodonSharePreview extends PureComponent {
 			customImage,
 			isSocialPost,
 			message,
+			hidePostPreview,
 		} = this.props;
 
 		return (
@@ -33,6 +34,7 @@ export class MastodonSharePreview extends PureComponent {
 					avatarUrl: externalProfilePicture,
 					address: externalDisplay,
 				} }
+				hidePostPreview={ hidePostPreview }
 			/>
 		);
 	}

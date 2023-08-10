@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
 import { Children, cloneElement, FunctionComponent, isValidElement } from 'react';
@@ -6,7 +6,6 @@ import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
-import Badge from 'calypso/components/badge';
 import PromoCardCta from './cta';
 import type { ReactElement } from 'react';
 
@@ -33,6 +32,7 @@ export interface Props {
 	isPrimary?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
+	children?: React.ReactNode;
 }
 
 const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnProperty( 'path' );
@@ -98,7 +98,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 				{ titleComponentLocation === TitleLocation.BODY && titleComponentHeader }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
-							if ( ! child || ! isValidElement( child ) ) {
+							if ( ! child || ! isValidElement< { isPrimary?: boolean } >( child ) ) {
 								return child;
 							}
 							return PromoCardCta === child.type ? cloneElement( child, { isPrimary } ) : child;

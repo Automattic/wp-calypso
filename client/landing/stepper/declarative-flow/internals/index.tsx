@@ -1,11 +1,12 @@
 import {
+	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 	isSenseiFlow,
 	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState, useCallback, Suspense, lazy, useRef } from 'react';
+import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -62,7 +63,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	const urlQueryParams = useQuery();
-	const isInHostingFlow = useRef( urlQueryParams.get( 'hosting-flow' ) === 'true' ).current;
 
 	const site = useSite();
 	const ref = urlQueryParams.get( 'ref' ) || '';
@@ -146,7 +146,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( ! isReEnteringStep ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), {
 				intent,
-				is_in_hosting_flow: isInHostingFlow,
+				is_in_hosting_flow: isAnyHostingFlow( flow.name ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 			} );
 		}
@@ -161,7 +161,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow.name, currentStepRoute ] );
 
-	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
+	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
+		state: AssertConditionState.SUCCESS,
+	};
 
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
@@ -225,7 +227,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				<Route
 					path="*"
 					element={
-						<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+						<Navigate
+							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` }
+							replace
+						/>
 					}
 				/>
 			</Routes>

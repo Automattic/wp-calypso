@@ -6,12 +6,14 @@ describe( 'get-new-site-params', () => {
 			dependencies: {},
 			flowToCheck: 'myFlow',
 		} );
+
 		expect( options ).toHaveProperty( 'site_creation_flow', 'myFlow' );
 		expect( options ).toHaveProperty( 'use_theme_annotation', false );
 		expect( options ).toHaveProperty( 'default_annotation_as_primary_fallback', true );
 		expect( options ).toHaveProperty( 'designType', undefined );
-		expect( options ).toHaveProperty( 'site_segment', undefined );
 		expect( options ).toHaveProperty( 'wpcom_public_coming_soon', 1 );
+
+		expect( options ).not.toHaveProperty( 'site_segment' );
 	} );
 
 	describe( 'For preselected url', () => {

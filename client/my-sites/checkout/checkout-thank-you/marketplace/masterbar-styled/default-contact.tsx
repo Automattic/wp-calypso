@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Gridicon } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -11,8 +12,11 @@ import { useTranslate } from 'i18n-calypso';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const ContactContainer = styled.div`
-	margin-top: 24px;
-	margin-right: 24px;
+	display: flex;
+	align-items: center;
+	column-gap: 8px;
+	padding-right: 24px;
+	padding-left: 24px;
 	font-size: 14px;
 	line-height: 20px;
 	font-weight: 500;
@@ -22,8 +26,25 @@ const ContactContainer = styled.div`
 	}
 
 	button.marketplace-thank-you-help-center {
-		color: var( --studio-gray-100 );
 		text-decoration: underline;
+	}
+
+	.gridicon {
+		display: block;
+		fill: var( --studio-gray-60 );
+	}
+	label,
+	span {
+		display: none;
+	}
+	@media ( min-width: 600px ) {
+		.gridicon {
+			display: none;
+		}
+		label,
+		span {
+			display: block;
+		}
 	}
 `;
 
@@ -49,9 +70,14 @@ export function DefaultMasterbarContact() {
 
 	return (
 		<ContactContainer>
-			<label>{ translate( 'Need extra help?' ) }</label>&nbsp;
-			<Button className="marketplace-thank-you-help-center" isLink onClick={ toggleHelpCenter }>
-				{ translate( 'Visit Help Center.' ) }
+			<label>{ translate( 'Need extra help?' ) }</label>
+			<Button
+				className="marketplace-thank-you-help-center"
+				variant="link"
+				onClick={ toggleHelpCenter }
+			>
+				<Gridicon icon="help-outline" />
+				<span>{ translate( 'Visit Help Center' ) }</span>
 			</Button>
 		</ContactContainer>
 	);

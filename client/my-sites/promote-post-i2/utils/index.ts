@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign, CampaignStats } from 'calypso/data/promote-post/types';
+import { BlazablePost, Campaign } from 'calypso/data/promote-post/types';
 import {
 	PagedBlazeContentData,
 	PagedBlazeSearchResponse,
@@ -174,15 +174,25 @@ export const canCancelCampaign = ( status: string ) => {
 
 export const getPagedBlazeSearchData = (
 	mode: 'campaigns' | 'posts',
-	campaignsData?: PagedBlazeSearchResponse
+	pagedData?: PagedBlazeSearchResponse
 ): PagedBlazeContentData => {
-	const lastPage = campaignsData?.pages?.[ campaignsData?.pages?.length - 1 ];
+	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		const foundContent = campaignsData?.pages
-			?.map( ( page: any ) => page[ mode ] )
-			?.flat() as Campaign[];
+		let foundContent = pagedData?.pages
+			?.map( ( item: any ) => item[ mode ] )
+			?.flat()
+			?.filter( ( item: BlazablePost | Campaign ) => 'undefined' !== typeof item );
+
+		if ( foundContent?.length ) {
+			switch ( mode ) {
+				case 'campaigns':
+					foundContent = foundContent as Campaign[];
+				case 'posts':
+					foundContent = foundContent as BlazablePost[];
+			}
+		}
 
 		return {
 			has_more_pages,
@@ -208,26 +218,6 @@ export function getAdvertisingDashboardPath( path: string ) {
 	return `${ pathPrefix }${ path }`;
 }
 
-/**
- * Unifies the campaign list with the stats list
- *
- * @param {Campaign[]} campaigns List of campaigns
- * @param {CampaignStats[]} campaignsStats List of campaign stats
- * @returns A unified list of campaign with the stats
- */
-export const unifyCampaigns = (
-	campaigns: Campaign[] = [],
-	campaignsStats: CampaignStats[] = []
-) => {
-	return campaigns.map( ( campaign ) => {
-		const stats = campaignsStats.find( ( cs ) => cs.campaign_id === campaign.campaign_id );
-		return {
-			...campaign,
-			...( stats ? stats : {} ),
-		};
-	} );
-};
-
 export const getShortDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	const now = moment();
@@ -245,6 +235,6 @@ export const getShortDateString = ( date: string ) => {
 export const getLongDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
-	const sameElse: string = __( 'll [at] LT' );
+	const sameElse: string = __( 'll [at] LT' ) ?? 'll [at] LT';
 	return timestamp.calendar( null, { sameElse } );
 };

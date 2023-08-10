@@ -33,7 +33,7 @@ export const DeploymentStatusExplanation = ( {
 			'Failed to build. Please {{a}}check the logs{{/a}} for more information.',
 			{
 				components: {
-					a: <ExternalLink href={ deploymentLogsUrl } />,
+					a: <ExternalLink href={ deploymentLogsUrl } children={ null } />,
 				},
 			}
 		);
@@ -47,7 +47,7 @@ export const DeploymentStatusExplanation = ( {
 					totalFailures,
 				},
 				components: {
-					a: <ExternalLink href={ deploymentLogsUrl } />,
+					a: <ExternalLink href={ deploymentLogsUrl } children={ null } />,
 				},
 			}
 		);

@@ -23,6 +23,7 @@ class FollowButtonContainer extends Component {
 		siteId: PropTypes.number,
 		followIcon: PropTypes.object,
 		followingIcon: PropTypes.object,
+		hasButtonStyle: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -63,6 +64,7 @@ class FollowButtonContainer extends Component {
 				className={ this.props.className }
 				followIcon={ this.props.followIcon }
 				followingIcon={ this.props.followingIcon }
+				hasButtonStyle={ this.props.hasButtonStyle }
 			/>
 		);
 	}

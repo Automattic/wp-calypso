@@ -75,7 +75,7 @@ const SharingServiceAction = ( {
 	}
 
 	// See: https://developers.google.com/photos/library/guides/ux-guidelines
-	if ( 'google_photos' === service.ID && ! path.startsWith( '/marketing/connections/' ) ) {
+	if ( 'google_photos' === service.ID && ! path?.startsWith( '/marketing/connections/' ) ) {
 		return (
 			<Button primary onClick={ onClick } disabled={ isPending }>
 				{ translate( 'Connect to Google Photos' ) }

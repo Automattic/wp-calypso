@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorBackButton as NavigatorBackButton,
 	__unstableComposite as Composite,
@@ -11,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import PatternListPanel from './pattern-list-panel';
 import { replaceCategoryAllName } from './utils';
 import type { Pattern, Category } from './types';
@@ -21,6 +22,7 @@ interface Props {
 	categories: Category[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	onDoneClick: () => void;
+	onBack: () => void;
 	onSelect: (
 		type: string,
 		selectedPattern: Pattern | null,
@@ -37,6 +39,7 @@ const ScreenCategoryList = ( {
 	patternsMapByCategory,
 	categories,
 	onDoneClick,
+	onBack,
 	replacePatternMode,
 	onSelect,
 	selectedPattern,
@@ -64,21 +67,28 @@ const ScreenCategoryList = ( {
 	return (
 		<div className="screen-container">
 			<NavigatorHeader
-				title={ replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
+				title={
+					<NavigatorTitle
+						title={
+							replacePatternMode ? translate( 'Replace section' ) : translate( 'Add sections' )
+						}
+					/>
+				}
 				description={
 					replacePatternMode
 						? translate(
 								'Replace the selected pattern by choosing from the list of categories below.'
 						  )
 						: translate(
-								'Find the right patterns for you by exploring the list of categories below.'
+								'Find the section patterns for your homepage by exploring the categories below.'
 						  )
 				}
+				onBack={ onBack }
 			/>
 			<Composite
 				{ ...composite }
 				role="listbox"
-				className="screen-container__body screen-container__body--align-sides screen-category-list__body"
+				className="screen-container__body screen-category-list__body"
 				aria-label={ translate( 'Block pattern categories' ) }
 			>
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
@@ -97,9 +107,14 @@ const ScreenCategoryList = ( {
 							role="option"
 							as="button"
 							{ ...composite }
-							className={ classNames( 'screen-category-list__category-button navigator-button', {
-								'screen-category-list__category-button--is-open': isOpen,
-							} ) }
+							className={ classNames(
+								'components-navigator-button',
+								'navigator-button',
+								'screen-category-list__category-button',
+								{
+									'screen-category-list__category-button--is-open': isOpen,
+								}
+							) }
 							aria-label={ label }
 							aria-describedby={ description }
 							aria-current={ isOpen }
@@ -133,7 +148,7 @@ const ScreenCategoryList = ( {
 						onDoneClick();
 					} }
 				>
-					{ translate( 'Save' ) }
+					{ translate( 'Save sections' ) }
 				</NavigatorBackButton>
 			</div>
 			<PatternListPanel

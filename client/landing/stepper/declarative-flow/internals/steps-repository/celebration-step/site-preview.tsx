@@ -4,14 +4,14 @@ import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 import type { Device } from '@automattic/components';
 
 const CelebrationStepSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
 	const site = useSite();
-	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
+	const { globalStylesInUse } = useSiteGlobalStylesStatus( site?.ID );
 
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];

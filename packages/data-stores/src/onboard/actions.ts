@@ -5,7 +5,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData } from './types';
-import type { State } from '.';
+import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
@@ -451,6 +451,18 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 	domainCartItem,
 } );
 
+export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
+	type: 'SET_DOMAINS_TRANSFER_DATA' as const,
+	bulkDomainsData,
+} );
+
+export const setShouldImportDomainTransferDnsRecords = (
+	shouldImportDomainTransferDnsRecords: boolean
+) => ( {
+	type: 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' as const,
+	shouldImportDomainTransferDnsRecords,
+} );
+
 export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	type: 'SET_HIDE_FREE_PLAN' as const,
 	hideFreePlan,
@@ -488,6 +500,8 @@ export type OnboardAction = ReturnType<
 	| typeof resetOnboardStore
 	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
+	| typeof setDomainsTransferData
+	| typeof setShouldImportDomainTransferDnsRecords
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch

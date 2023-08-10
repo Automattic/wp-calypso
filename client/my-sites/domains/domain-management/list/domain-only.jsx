@@ -11,13 +11,21 @@ import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementEdit, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import './domain-only.scss';
 
-const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, translate } ) => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+const DomainOnly = ( {
+	currentRoute,
+	primaryDomain,
+	hasNotice,
+	recordTracks,
+	siteId,
+	slug,
+	translate,
+} ) => {
 	if ( ! primaryDomain ) {
 		return (
 			<div>
@@ -52,7 +60,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 				action={ canCreateSite && translate( 'Create site' ) }
 				actionURL={ canCreateSite && createSiteUrl }
 				secondaryAction={ translate( 'Manage domain' ) }
-				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
+				secondaryActionURL={ domainManagementEdit( slug, domainName, currentRoute ) }
 				illustration={ Illustration }
 			>
 				<Button
@@ -86,6 +94,7 @@ DomainOnly.propTypes = {
 export default connect(
 	( state, ownProps ) => {
 		return {
+			currentRoute: getCurrentRoute( state ),
 			slug: getSiteSlug( state, ownProps.siteId ),
 			primaryDomain: getPrimaryDomainBySiteId( state, ownProps.siteId ),
 		};

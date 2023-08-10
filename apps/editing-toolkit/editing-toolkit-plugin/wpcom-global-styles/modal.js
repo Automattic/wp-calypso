@@ -11,6 +11,8 @@ import { useCanvas } from './use-canvas';
 
 import './modal.scss';
 
+const GLOBAL_STYLES_TREATMENT_GROUP = '1';
+
 const GlobalStylesModal = () => {
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 	const { viewCanvasPath } = useCanvas();
@@ -61,6 +63,19 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
+	let description;
+	if ( wpcomGlobalStyles?.globalStylesInPersonalPlan === GLOBAL_STYLES_TREATMENT_GROUP ) {
+		description = __(
+			"Change all of your site's fonts, colors and more. Available on the Personal plan.",
+			'full-site-editing'
+		);
+	} else {
+		description = __(
+			"Change all of your site's fonts, colors and more. Available on the Premium plan.",
+			'full-site-editing'
+		);
+	}
+
 	return (
 		<Modal
 			className="wpcom-global-styles-modal"
@@ -73,12 +88,7 @@ const GlobalStylesModal = () => {
 					<h1 className="wpcom-global-styles-modal__heading">
 						{ __( 'A powerful new way to style your site', 'full-site-editing' ) }
 					</h1>
-					<p className="wpcom-global-styles-modal__description">
-						{ __(
-							"Change all of your site's fonts, colors and more. Available on the Premium plan.",
-							'full-site-editing'
-						) }
-					</p>
+					<p className="wpcom-global-styles-modal__description">{ description }</p>
 					<div className="wpcom-global-styles-modal__actions">
 						<Button variant="secondary" onClick={ closeModal }>
 							{ __( 'Try it out', 'full-site-editing' ) }

@@ -3,7 +3,7 @@ import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import FeaturedAsset from './featured-asset';
 
-const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
+const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site } ) => {
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'
 			? () => expandCard( { postKey, post, site } )
@@ -26,7 +26,7 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 						</a>
 					</h2>
 				</AutoDirection>
-				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
+				<ReaderExcerpt post={ post } />
 				{ children }
 			</div>
 		</div>
@@ -35,7 +35,6 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 
 StandardPost.propTypes = {
 	post: PropTypes.object.isRequired,
-	isDiscover: PropTypes.bool,
 };
 
 export default StandardPost;

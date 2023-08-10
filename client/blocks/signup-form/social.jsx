@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,8 +12,8 @@ import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import SocialSignupToS from './social-signup-tos';
 
 class SocialSignupForm extends Component {
@@ -28,12 +27,10 @@ class SocialSignupForm extends Component {
 		flowName: PropTypes.string,
 		redirectToAfterLoginUrl: PropTypes.string,
 		loginUrl: PropTypes.string,
-		isDevAccount: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		compact: false,
-		isDevAccount: false,
 	};
 
 	handleAppleResponse = ( response ) => {
@@ -41,13 +38,14 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		const extraUserData = {
-			is_dev_account: this.props.isDevAccount,
-			...( response.user && {
+		let extraUserData = {};
+
+		if ( response.user ) {
+			extraUserData = {
 				user_name: response.user.name,
 				user_email: response.user.email,
-			} ),
-		};
+			};
+		}
 
 		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
 	};
@@ -61,9 +59,7 @@ class SocialSignupForm extends Component {
 			social_account_type: 'google',
 		} );
 
-		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token, {
-			is_dev_account: this.props.isDevAccount,
-		} );
+		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
 	trackSocialSignup = ( service ) => {
@@ -191,7 +187,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isWoo:
 			isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-			'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ),
+			isWooCommerceCoreProfilerFlow( state ),
 	} ),
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

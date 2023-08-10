@@ -2,6 +2,7 @@ import { Button, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SectionHeader from 'calypso/components/section-header';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -16,7 +17,7 @@ type EmailListInactiveItemProps = {
 
 const EmailListInactiveItem = ( { domain, source }: EmailListInactiveItemProps ) => {
 	const translate = useTranslate();
-
+	const { sendNudge } = useOdieAssistantContext();
 	const selectedSite = useSelector( getSelectedSite );
 	const currentRoute = useSelector( getCurrentRoute );
 
@@ -31,6 +32,15 @@ const EmailListInactiveItem = ( { domain, source }: EmailListInactiveItemProps )
 					currentRoute,
 					source
 				) }
+				onClick={ () => {
+					sendNudge( {
+						nudge: 'email-comparison',
+						initialMessage: `I see you want to add an email provider to your domain ${ domain.name }. I can give you a few tips on how to do that.`,
+						context: {
+							domain: domain.name,
+						},
+					} );
+				} }
 			>
 				{ translate( 'Add Email' ) }
 			</Button>

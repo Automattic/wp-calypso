@@ -165,11 +165,11 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	const buttons = [
 		<>{ checkboxes }</>,
 		<div className="language-picker__modal-buttons">
-			<Button isLink onClick={ onClose }>
+			<Button variant="link" onClick={ onClose }>
 				{ __( 'Cancel' ) }
 			</Button>
 			<Button
-				isSecondary
+				variant="secondary"
 				onClick={ () => {
 					onClose();
 					if ( selectedLanguage ) {

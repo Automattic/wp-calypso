@@ -4,6 +4,7 @@ import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import schema from './schema.json';
@@ -122,6 +123,7 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
  */
 export const failedJITM = ( action ) => ( dispatch, getState ) => {
 	const siteId = action.siteId || action.site_id || getSelectedSiteId( getState() );
+	dispatch( setJetpackConnectionMaybeUnhealthy( siteId ) );
 	dispatch( clearJITM( siteId, action.messagePath ) );
 };
 

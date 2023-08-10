@@ -1,7 +1,7 @@
+import { Badge } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import Badge from 'calypso/components/badge';
 import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';

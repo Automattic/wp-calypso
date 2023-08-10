@@ -34,9 +34,9 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
-	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_ACTIVATION_MODAL_SHOW,
+	THEME_ACTIVATION_MODAL_ACCEPT,
+	THEME_ACTIVATION_MODAL_DISMISS,
 	THEME_SHOW_ATOMIC_TRANSFER_DIALOG,
 	THEME_ACCEPT_ATOMIC_TRANSFER_DIALOG,
 	THEME_DISMISS_ATOMIC_TRANSFER_DIALOG,
@@ -454,9 +454,9 @@ export const themePreviewVisibility = ( state = null, action ) => {
 	return state;
 };
 
-export const themeHasAutoLoadingHomepageWarning = ( state = null, action ) => {
+export const themeActivationModal = ( state = null, action ) => {
 	switch ( action.type ) {
-		case THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING: {
+		case THEME_ACTIVATION_MODAL_SHOW: {
 			return {
 				themeId: action.themeId,
 				show: true,
@@ -464,7 +464,7 @@ export const themeHasAutoLoadingHomepageWarning = ( state = null, action ) => {
 			};
 		}
 
-		case THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING: {
+		case THEME_ACTIVATION_MODAL_ACCEPT: {
 			return {
 				themeId: action.themeId,
 				show: false,
@@ -475,7 +475,7 @@ export const themeHasAutoLoadingHomepageWarning = ( state = null, action ) => {
 		case THEME_ACTIVATE:
 		case THEME_ACTIVATE_SUCCESS:
 		case THEME_ACTIVATE_FAILURE:
-		case THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING: {
+		case THEME_ACTIVATION_MODAL_DISMISS: {
 			return null;
 		}
 	}
@@ -695,7 +695,7 @@ const combinedReducer = combineReducers( {
 	themeFilterRequestError,
 	recommendedThemes,
 	trendingThemes,
-	themeHasAutoLoadingHomepageWarning,
+	themeActivationModal,
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,

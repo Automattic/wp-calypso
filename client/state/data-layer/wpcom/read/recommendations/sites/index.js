@@ -24,7 +24,7 @@ export const fromApi = ( { algorithm, sites } ) =>
 		feedId: site.feed_id,
 		blogId: site.blog_id,
 		title: decodeEntities( site.blog_title ),
-		url: site.blog_url,
+		url: site.blog_url ?? site.URL,
 		railcar: site.railcar,
 		algorithm,
 	} ) );

@@ -1,8 +1,9 @@
 import { Button } from '@automattic/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import PatternSelector from './pattern-selector';
 import type { Pattern } from './types';
 
@@ -31,9 +32,9 @@ const ScreenHeader = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Header' ) }
+				title={ <NavigatorTitle title={ translate( 'Add header' ) } /> }
 				description={ translate(
-					'The header appears at the top of every page, with a site name and navigation.'
+					'The header pattern lives at the top of your homepage and typically shows your site logo, title, and navigation.'
 				) }
 				onBack={ onBack }
 			/>

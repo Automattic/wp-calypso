@@ -4,6 +4,7 @@ import {
 	getByText as getByTextInNode,
 	queryByText as queryByTextInNode,
 	screen,
+	waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createContext, useState, useContext } from 'react';
@@ -217,16 +218,20 @@ describe( 'Checkout', () => {
 				await user.click( firstStepContinue );
 			} );
 
-			it( 'makes the first step invisible', () => {
+			it( 'makes the first step invisible', async () => {
 				const firstStep = container.querySelector( '.checkout__review-order-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
-				expect( firstStepContent ).toHaveStyle( 'display: none' );
+				await waitFor( () => {
+					expect( firstStepContent ).toHaveStyle( 'display: none' );
+				} );
 			} );
 
-			it( 'makes the next step visible', () => {
+			it( 'makes the next step visible', async () => {
 				const reviewStep = container.querySelector( '.checkout__payment-method-step' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
-				expect( reviewStepContent ).toHaveStyle( 'display: block' );
+				await waitFor( () => {
+					expect( reviewStepContent ).toHaveStyle( 'display: block' );
+				} );
 			} );
 		} );
 	} );
@@ -388,7 +393,9 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			const user = userEvent.setup();
 			await user.click( firstStepContinue );
-			expect( firstStepContent ).toHaveStyle( 'display: none' );
+			await waitFor( () => {
+				expect( firstStepContent ).toHaveStyle( 'display: none' );
+			} );
 		} );
 
 		it( 'disables the continue button while isCompleteCallback resolves a Promise', async () => {
@@ -420,7 +427,9 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			const user = userEvent.setup();
 			await user.click( firstStepContinue );
-			expect( firstStepContent ).toHaveStyle( 'display: none' );
+			await waitFor( () => {
+				expect( firstStepContent ).toHaveStyle( 'display: none' );
+			} );
 		} );
 
 		it( 'does change steps if useSetStepComplete is used and the step becomes complete after a Promise resolves', async () => {
@@ -458,7 +467,9 @@ describe( 'Checkout', () => {
 			expect( secondStepContent ).toHaveStyle( 'display: none' );
 			const user = userEvent.setup();
 			await user.click( manualContinue );
-			expect( firstStepContent ).toHaveStyle( 'display: none' );
+			await waitFor( () => {
+				expect( firstStepContent ).toHaveStyle( 'display: none' );
+			} );
 			expect( secondStepContent ).toHaveStyle( 'display: none' );
 			expect( thirdStepContent ).toHaveStyle( 'display: block' );
 		} );
@@ -579,7 +590,9 @@ describe( 'Checkout', () => {
 			const user = userEvent.setup();
 			await user.click( firstStepContinue );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
-			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
+			} );
 		} );
 
 		it( 'does not render the edit button if the form status is submitting', async () => {
@@ -589,7 +602,9 @@ describe( 'Checkout', () => {
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			const user = userEvent.setup();
 			await user.click( firstStepContinue );
-			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( queryByText( 'Edit' ) ).toBeInTheDocument();
+			} );
 			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
 			await user.click( submitButton );
 			expect( queryByText( 'Edit' ) ).not.toBeInTheDocument();
@@ -635,7 +650,9 @@ describe( 'Checkout', () => {
 			await user.type( getByLabelText( 'User Name' ), 'Lyra' );
 			// isComplete does not update until we press continue
 			await user.click( firstStepContinue );
-			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
+			} );
 		} );
 	} );
 

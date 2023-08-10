@@ -46,6 +46,7 @@ import {
 	usePaymentMethod,
 	usePaymentMethodId,
 	useAllPaymentMethods,
+	useAvailablePaymentMethodIds,
 	useTogglePaymentMethod,
 } from './lib/payment-methods';
 import PaymentLogo from './lib/payment-methods/payment-logo';
@@ -103,6 +104,7 @@ export {
 	makeRedirectResponse,
 	makeSuccessResponse,
 	useAllPaymentMethods,
+	useAvailablePaymentMethodIds,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,

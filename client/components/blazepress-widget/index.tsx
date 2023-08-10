@@ -29,8 +29,8 @@ export type BlazePressPromotionProps = {
 
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
-	const index = pathname.indexOf( '/promote' );
-	page( index < 0 ? pathname : pathname.substring( 0, index ) );
+	const index = pathname.indexOf( '/promote/' );
+	page( index < 0 ? pathname : pathname.replace( /\/promote\/.*?\//, '/' ) );
 }
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
@@ -66,7 +66,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const onClose = ( goToCampaigns?: boolean ) => {
 		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
-			page( getAdvertisingDashboardPath( `/${ siteSlug }/campaigns` ) );
+			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
 			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 			if ( previousRoute ) {
@@ -124,29 +124,44 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 		return <></>;
 	}
 
+	const isPromotePostI2 = config.isEnabled( 'promote-post/widget-i2' );
+
 	return (
 		<>
 			{ isVisible && (
 				<BlankCanvas
 					className={ classNames( 'blazepress-widget', {
 						'hidden-header': hiddenHeader,
+						'blazepress-i2': isPromotePostI2,
 					} ) }
 				>
-					<div className="blazepress-widget__header-bar">
-						<BlazeLogo />
-						<h2>{ translate( 'Blaze' ) }</h2>
-						{ showCancelButton && (
-							<span
-								role="button"
-								className="blazepress-widget__cancel"
-								onKeyDown={ () => setShowCancelDialog( true ) }
-								tabIndex={ 0 }
-								onClick={ () => setShowCancelDialog( true ) }
-							>
-								{ translate( 'Cancel' ) }
-							</span>
-						) }
-					</div>
+					{ isPromotePostI2 ? (
+						<BlankCanvas.Header
+							className={ classNames( 'blazepress-widget__header-bar', {
+								'no-back-button': ! showCancelButton,
+							} ) }
+							onBackClick={ () => setShowCancelDialog( true ) }
+						>
+							<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
+						</BlankCanvas.Header>
+					) : (
+						<div className="blazepress-widget__header-bar">
+							<BlazeLogo />
+							<h2>{ translate( 'Blaze' ) }</h2>
+							{ showCancelButton && (
+								<span
+									role="button"
+									className="blazepress-widget__cancel"
+									onKeyDown={ () => setShowCancelDialog( true ) }
+									tabIndex={ 0 }
+									onClick={ () => setShowCancelDialog( true ) }
+								>
+									{ translate( 'Cancel' ) }
+								</span>
+							) }
+						</div>
+					) }
+
 					<div
 						className={
 							isLoading ? 'blazepress-widget__content loading' : 'blazepress-widget__content'

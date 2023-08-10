@@ -585,7 +585,9 @@ describe( 'CheckoutMain', () => {
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
-		expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
+		await waitFor( async () => {
+			expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
+		} );
 
 		// Noticing the error message is a little difficult because we are not
 		// mounting the error display components. Instead, we spy on the
@@ -630,7 +632,8 @@ describe( 'CheckoutMain', () => {
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
 		expect( await screen.findByText( /WordPress.com Personal/ ) ).toBeInTheDocument();
-		expect( await screen.findByText( 'Gift' ) ).toBeInTheDocument();
+		// There are two versions of the "Gift" label: one shown at small width and one at wide width.
+		expect( ( await screen.findAllByText( 'Gift' ) ).length ).toBeGreaterThan( 0 );
 		expect( errorNotice ).not.toHaveBeenCalled();
 	} );
 

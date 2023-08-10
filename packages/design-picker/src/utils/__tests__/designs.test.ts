@@ -52,12 +52,11 @@ describe( 'Design Picker designs utils', () => {
 				language: 'id',
 				vertical_id: '3',
 				site_title: 'Design Title',
-				viewport_width: 1280,
 				viewport_height: 700,
 			};
 
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(
-				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&vertical_id=3&language=id&viewport_width=1280&viewport_height=700&source_site=patternboilerplates.wordpress.com&site_title=Design%20Title`
+				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&vertical_id=3&language=id&viewport_height=700&source_site=patternboilerplates.wordpress.com&site_title=Design%20Title`
 			);
 		} );
 

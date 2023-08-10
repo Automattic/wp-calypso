@@ -132,7 +132,6 @@ const ScaledBlockRendererContainer = ( {
 			} }
 		>
 			<Iframe
-				head={ <EditorStyles styles={ editorStyles } /> }
 				contentRef={ contentRef }
 				aria-hidden
 				tabIndex={ -1 }
@@ -149,6 +148,7 @@ const ScaledBlockRendererContainer = ( {
 					opacity: isLoaded ? 1 : 0,
 				} }
 			>
+				<EditorStyles styles={ editorStyles } />
 				{ isLoaded ? contentResizeListener : null }
 				{
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */

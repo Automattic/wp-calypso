@@ -1,8 +1,8 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useMemo } from 'react';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import TimeSince from 'calypso/components/time-since';
-import { SiteIcon } from 'calypso/landing/subscriptions/components/site-icon';
 import { CommentSettings } from '../settings';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
@@ -44,7 +44,7 @@ const CommentRow = ( {
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 					<span className="title-box" role="cell">
-						<SiteIcon iconUrl={ site_icon } siteName={ site_title } />
+						<SiteIcon iconUrl={ site_icon } size={ 40 } alt={ site_title } />
 						<span className="title-column">
 							<span className="name">
 								{ site_title }

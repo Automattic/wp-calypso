@@ -28,7 +28,8 @@ jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSec
 
 describe( 'DataHelper Tests', function () {
 	describe( `Test: getRandomInteger`, function () {
-		test.each`
+		type TestCase = { min: number; max: number; expected: number[] };
+		test.each< TestCase >`
 			min    | max      | expected
 			${ 0 } | ${ 0 }   | ${ [ 0 ] }
 			${ 0 } | ${ 1 }   | ${ [ 0, 1 ] }
@@ -41,7 +42,8 @@ describe( 'DataHelper Tests', function () {
 	} );
 
 	describe( `Test: getCalypsoURL`, function () {
-		test.each`
+		type Params = Parameters< typeof getCalypsoURL >;
+		test.each< { route: Params[ 0 ]; queryStrings: Params[ 1 ]; expected: string } >`
 			route           | queryStrings                               | expected
 			${ '/' }        | ${ undefined }                             | ${ 'https://wordpress.com/' }
 			${ 'log-in' }   | ${ undefined }                             | ${ 'https://wordpress.com/log-in' }
@@ -57,7 +59,8 @@ describe( 'DataHelper Tests', function () {
 	} );
 
 	describe( `Test: getAccountCredential`, function () {
-		test.each`
+		type AccountType = Parameters< typeof getAccountCredential >[ 0 ];
+		test.each< { accountType: AccountType; expected: string } >`
 			accountType      | expected
 			${ 'basicUser' } | ${ { username: 'wpcomuser2', password: 'hunter2', totpKey: undefined } }
 			${ 'noUrlUser' } | ${ { username: 'nourluser', password: 'password1234', totpKey: undefined } }
@@ -68,7 +71,7 @@ describe( 'DataHelper Tests', function () {
 			}
 		);
 
-		test.each`
+		test.each< { accountType: AccountType } >`
 			accountType
 			${ 'nonexistent_user' }
 		`(
@@ -80,7 +83,9 @@ describe( 'DataHelper Tests', function () {
 	} );
 
 	describe( `Test: getAccountSiteURL`, function () {
-		test.each`
+		type AccountType = Parameters< typeof getAccountCredential >[ 0 ];
+		type TestCase = { accountType: AccountType; expected: string };
+		test.each< TestCase >`
 			accountType      | expected
 			${ 'basicUser' } | ${ 'https://wpcomuser.wordpress.com/' }
 		`(
@@ -90,7 +95,7 @@ describe( 'DataHelper Tests', function () {
 			}
 		);
 
-		test.each`
+		test.each< TestCase >`
 			accountType             | expected
 			${ 'nonexistent_user' } | ${ Error }
 			${ 'noUrlUser' }        | ${ ReferenceError }
@@ -103,7 +108,7 @@ describe( 'DataHelper Tests', function () {
 	} );
 
 	describe( `Test: toTitleCase`, function () {
-		test.each`
+		test.each< { words: string; expected: string } >`
 			words                        | expected
 			${ 'test' }                  | ${ 'Test' }
 			${ 'test words' }            | ${ 'Test Words' }

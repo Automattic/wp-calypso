@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
@@ -42,9 +41,9 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
-import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
+import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
 import { filterDomainsByOwner, filterDomainOnlyDomains } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
 import {
@@ -245,6 +244,19 @@ class AllDomains extends Component {
 		} );
 	};
 
+	getSelectedFilter = () => {
+		const { context } = this.props;
+		return context?.query?.filter || 'all-domains';
+	};
+
+	getDomainsList = ( selectedFilter = this.getSelectedFilter() ) => {
+		const { sites } = this.props;
+
+		return selectedFilter === 'domain-only'
+			? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
+			: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
+	};
+
 	renderDomainsList() {
 		if ( this.isLoading() ) {
 			return Array.from( { length: 3 } ).map( ( _, n ) => (
@@ -256,7 +268,6 @@ class AllDomains extends Component {
 			purchases,
 			sites,
 			currentRoute,
-			context,
 			requestingSiteDomains,
 			hasLoadedUserPurchases,
 			isContactEmailEditContext,
@@ -266,12 +277,22 @@ class AllDomains extends Component {
 
 		const { isSavingContactInfo } = this.state;
 
-		const selectedFilter = context?.query?.filter || 'owned-by-me';
+		const domains = this.getDomainsList();
 
-		const domains =
-			selectedFilter === 'domain-only'
-				? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
-				: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
+		if ( domains.length === 0 && this.getSelectedFilter() === 'all-domains' ) {
+			return (
+				<EmptyDomainsListCardSkeleton
+					title={ translate( 'All Domains' ) }
+					line={ translate(
+						'Here you will be able to manage all the domains you own on WordPress.com. Start by adding some:'
+					) }
+					action={ translate( 'Add a domain' ) }
+					actionURL="/domains/add"
+					secondaryAction={ translate( 'Transfer a domain' ) }
+					secondaryActionURL="/start/domain-transfer/domains"
+				/>
+			);
+		}
 
 		const domainsTableColumns = [
 			{
@@ -325,6 +346,7 @@ class AllDomains extends Component {
 				label: translate( 'Status' ),
 				isSortable: true,
 				initialSortOrder: -1,
+				supportsOrderSwitching: true,
 				sortFunctions: [
 					( first, second, sortOrder ) => {
 						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus(
@@ -367,7 +389,7 @@ class AllDomains extends Component {
 				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 			},
 			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
-			{ name: 'action', label: null },
+			{ name: 'action', label: translate( 'Actions' ) },
 		];
 
 		if ( isContactEmailEditContext ) {
@@ -406,25 +428,6 @@ class AllDomains extends Component {
 				/>
 			</>
 		);
-	}
-
-	renderDomainOnlyUpsellCarousel() {
-		const { sites } = this.props;
-		const domains = filterDomainOnlyDomains(
-			this.mergeFilteredDomainsWithDomainsDetails(),
-			sites
-		).sort( ( a, b ) => {
-			if ( moment( a.registrationDate ).isBefore( b.registrationDate ) ) {
-				return 1;
-			} else if ( moment( a.registrationDate ).isAfter( b.registrationDate ) ) {
-				return -1;
-			}
-			return 0;
-		} );
-		if ( domains.length === 0 ) {
-			return null;
-		}
-		return <DomainOnlyUpsellCarousel domain={ domains[ 0 ] } />;
 	}
 
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
@@ -587,20 +590,20 @@ class AllDomains extends Component {
 	renderDomainTableFilterButton() {
 		const { context, translate, sites } = this.props;
 
-		const selectedFilter = context?.query?.filter || 'owned-by-me';
+		const selectedFilter = context?.query?.filter || 'all-domains';
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
 
 		const filterOptions = [
 			{
 				label: translate( 'All domains' ),
 				value: 'all-domains',
-				path: domainManagementRoot() + '?' + stringify( { filter: 'all-domains' } ),
+				path: domainManagementRoot(),
 				count: nonWpcomDomains?.length,
 			},
 			{
 				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
-				path: domainManagementRoot(),
+				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
@@ -633,6 +636,14 @@ class AllDomains extends Component {
 
 		const item = {
 			label: translate( 'All Domains' ),
+			subtitle: translate(
+				'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+					},
+				}
+			),
 			helpBubble: translate(
 				'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 				{
@@ -643,16 +654,18 @@ class AllDomains extends Component {
 			),
 		};
 
-		const buttons = [
-			this.renderDomainTableFilterButton(),
-			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
-		];
+		const hasNoDomains = this.getDomainsList( 'all-domains' ).length === 0;
 
-		const mobileButtons = [
-			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
-		];
+		const buttons = hasNoDomains
+			? []
+			: [
+					this.renderDomainTableFilterButton(),
+					<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
+			  ];
+
+		const mobileButtons = hasNoDomains
+			? []
+			: [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList /> ];
 
 		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
@@ -682,11 +695,10 @@ class AllDomains extends Component {
 				<div>
 					<QueryAllDomains />
 					<QueryUserPurchases />
-					<Main wideLayout>
+					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
-						<div>{ this.renderDomainOnlyUpsellCarousel() }</div>
-					</Main>
+					</>
 				</div>
 			</>
 		);

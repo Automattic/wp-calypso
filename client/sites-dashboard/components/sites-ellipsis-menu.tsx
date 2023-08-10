@@ -49,7 +49,7 @@ interface SitesMenuItemProps {
 	onClick?: () => void;
 }
 
-interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
+interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof CoreMenuItem >, 'href' > {
 	href?: string;
 }
 
@@ -297,7 +297,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'web_server_settings',
 			},
 			{
-				label: __( 'Clear cache' ),
+				label: __( 'Cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
 				sectionName: 'cache',
 			},
@@ -311,7 +311,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const displayUpsell = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
-		offsetTop: -8,
+		offset: -8,
 	} );
 
 	if ( submenuItems.length === 0 ) {

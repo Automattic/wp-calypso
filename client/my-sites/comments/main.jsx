@@ -6,12 +6,15 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import CommentList from './comment-list';
 import { NEWEST_FIRST } from './constants';
 
@@ -45,6 +48,8 @@ export class CommentsManagement extends Component {
 		const {
 			analyticsPath,
 			changePage,
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
 			page,
 			postId,
 			showCommentList,
@@ -60,6 +65,9 @@ export class CommentsManagement extends Component {
 			<Main className="comments" wideLayout>
 				<ScreenOptionsTab wpAdminPath="edit-comments.php" />
 				<PageViewTracker path={ analyticsPath } title="Comments" />
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
 				<DocumentHead title={ translate( 'Comments' ) } />
 				{ ! showPermissionError && (
 					<FormattedHeader
@@ -115,6 +123,8 @@ const mapStateToProps = ( state, { siteFragment } ) => {
 	const showCommentList = ! showPermissionError;
 
 	return {
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		siteId,
 		showCommentList,
 		showPermissionError,

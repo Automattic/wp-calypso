@@ -6,6 +6,8 @@ import {
 	fireGoogleAnalyticsEvent,
 } from 'calypso/lib/analytics/ad-tracking';
 import isAkismetCheckout from '../akismet/is-akismet-checkout';
+import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
+import isJetpackCloud from '../jetpack/is-jetpack-cloud';
 import { mayWeTrackByTracker } from './tracker-buckets';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
@@ -19,8 +21,8 @@ function initialize() {
 			...getGoogleAnalyticsDefaultConfig(),
 		};
 
-		// We enable custom cross-domain linking only for Akismet checkouts
-		if ( isAkismetCheckout() ) {
+		// We enable custom cross-domain linking for Akismet and Jetpack checkouts + Jetpack Cloud
+		if ( isAkismetCheckout() || isJetpackCloud() || isJetpackCheckout() ) {
 			const queryParams = new URLSearchParams( location.search );
 			const gl = queryParams.get( '_gl' );
 

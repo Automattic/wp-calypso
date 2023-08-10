@@ -1,8 +1,10 @@
 import { Button } from '@automattic/components';
 import { FontPairingVariations } from '@automattic/global-styles';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import NavigatorHeader from './navigator-header';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import NavigatorTitle from './navigator-title';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
 interface Props {
@@ -23,14 +25,13 @@ const ScreenFontPairings = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Fonts' ) }
-				description={ translate(
-					'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
-				) }
+				title={ <NavigatorTitle title={ translate( 'Fonts' ) } /> }
+				description={ translate( 'Elevate your design with expertly curated font pairings.' ) }
 				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
@@ -39,6 +40,7 @@ const ScreenFontPairings = ( {
 					stylesheet={ stylesheet }
 					selectedFontPairingVariation={ selectedFontPairingVariation }
 					onSelect={ onSelect }
+					limitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 			</div>
 			<div className="screen-container__footer">

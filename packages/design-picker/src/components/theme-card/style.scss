@@ -28,8 +28,8 @@ $theme-card-info-margin-top: 16px;
 			margin-top: 0;
 			padding: 8px 24px;
 
-			.theme__more-button,
-			.theme-card__info-options {
+			.theme-card__info-options,
+			.theme-card__info-options .theme__more-button {
 				position: relative;
 			}
 		}
@@ -217,8 +217,8 @@ $theme-card-info-margin-top: 16px;
 	-webkit-font-smoothing: antialiased;
 
 	&:not(&--has-style-variations) {
-		.theme__more-button,
-		.theme-card__info-options {
+		.theme-card__info-options,
+		.theme-card__info-options .theme__more-button {
 			top: 0;
 		}
 	}
@@ -286,8 +286,8 @@ $theme-card-info-margin-top: 16px;
 	}
 }
 
-.theme__more-button,
-.theme-card__info-options {
+.theme-card__info-options,
+.theme-card__info-options .theme__more-button {
 	border: 0;
 	bottom: 0;
 	display: flex;

@@ -56,7 +56,8 @@ export default function PortalNav( { className = '' }: Props ) {
 
 	usePresalesChat(
 		'jpAgency',
-		hasJetpackPartnerAccess && isSectionNameEnabled( 'jetpack-cloud-partner-portal' )
+		hasJetpackPartnerAccess && isSectionNameEnabled( 'jetpack-cloud-partner-portal' ),
+		true
 	);
 
 	// Route belongs dashboard when it starts with /dashboard or /plugins and no site is selected(multi-site view).

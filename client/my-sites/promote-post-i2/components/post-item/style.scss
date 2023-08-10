@@ -112,13 +112,7 @@ body.is-section-promote-post-i2 {
 		}
 
 		&__post-promote-button {
-			color: var(--studio-simplenote-blue-50);
-			text-decoration: none;
-
-			&:hover:not(:disabled) {
-				color: var(--studio-simplenote-blue-50);
-				text-decoration: underline;
-			}
+			border-radius: 4px;
 		}
 	}
 
@@ -133,17 +127,18 @@ body.is-section-promote-post-i2 {
 	}
 
 	.post-item__post-thumbnail-wrapper {
-		display: block;
-		position: relative;
-		height: 78px;
-		width: 108px;
-		min-width: 108px;
 		align-self: stretch;
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+		background-size: cover;
 		border: 1px solid #eee;
 		border-radius: 4px;
+		display: block;
+		height: 78px;
+		min-width: 108px;
 		overflow: hidden;
-		background-size: cover;
-		background-repeat: no-repeat;
+		position: relative;
+		width: 108px;
 
 		&_no-image {
 			align-items: center;
@@ -169,6 +164,10 @@ body.is-section-promote-post-i2 {
 			width: calc(100% - 32px);
 		}
 
+		th.posts-list__header-column {
+			display: none;
+		}
+
 		.post-item__post {
 			// Do not show the rest of columns on mobiles
 			&-type,
@@ -187,6 +186,7 @@ body.is-section-promote-post-i2 {
 						&-mobile {
 							display: flex;
 							justify-content: space-between;
+							flex-direction: column;
 						}
 
 						.post-item__post-title {
@@ -197,12 +197,13 @@ body.is-section-promote-post-i2 {
 								@include blazepress-data-row-font-mobile;
 
 								display: block;
+								margin-bottom: 8px;
 							}
 
 							.post-item__post-title-content {
 								font-size: 0.875rem;
 								font-weight: 600;
-								line-height: 1.47;
+								line-height: 1.4285;
 							}
 						}
 					}
@@ -216,17 +217,21 @@ body.is-section-promote-post-i2 {
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link,
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link:visited {
 			@include blazepress-data-row-font-mobile;
-
-			margin-right: 4px;
+			border-radius: 4px;
+			display: inline-block;
+			flex-grow: 1;
+			height: 40px;
+			line-height: 22px;
+			margin-right: 8px;
+			text-decoration: none;
 		}
 
 		// Promote link
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
-			@include blazepress-data-row-font-mobile;
-
-			color: #3858ea;
-			height: 16px;
-			padding: 0 12px;
+			display: inline-block;
+			flex-grow: 1;
+			height: 40px;
+			margin-left: 8px;
 		}
 	}
 }

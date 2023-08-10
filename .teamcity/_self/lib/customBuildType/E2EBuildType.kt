@@ -71,7 +71,6 @@ open class E2EBuildType(
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
 		val params = params
-		val addWpcomVcsRoot = addWpcomVcsRoot
 		val buildSteps = buildSteps
 
 		id( buildId )
@@ -88,9 +87,6 @@ open class E2EBuildType(
 
 		vcs {
 			root(Settings.WpCalypso)
-			if (addWpcomVcsRoot) {
-				root(AbsoluteId("wpcom"), "-:.")
-			}
 			cleanCheckout = true
 		}
 
@@ -145,8 +141,17 @@ open class E2EBuildType(
 					cd test/e2e
 					mkdir temp
 
+					# Disable exit on error to support retries.
+					set +o errexit
+
 					# Run suite.
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup
+
+					# Restore exit on error.
+					set -o errexit
+
+					# Retry failed tests only.
+					RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures
 				"""
 				dockerImage = "%docker_image_e2e%"
 				dockerRunParameters = "-u %env.UID% --shm-size=4g"
@@ -200,6 +205,9 @@ open class E2EBuildType(
 			executionTimeoutMin = 20
 			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 			nonZeroExitCode = false
+
+			// Support retries using the --onlyFailures flag in Jest.
+			supportTestRetry = true
 
 			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
 			failOnMetricChange {

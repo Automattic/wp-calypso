@@ -170,7 +170,7 @@ export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 		case 'google-pay':
 			return 'web_payment';
 	}
-	return camelToSnakeCase( paymentMethodSlug );
+	return camelToSnakeCase( paymentMethodSlug ).replaceAll( '-', '_' );
 }
 
 export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): boolean {

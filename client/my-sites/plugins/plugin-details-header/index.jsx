@@ -1,6 +1,6 @@
+import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';

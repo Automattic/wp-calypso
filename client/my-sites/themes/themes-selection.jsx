@@ -26,7 +26,9 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	prependThemeFilterKeys,
+	getThemeType,
 } from 'calypso/state/themes/selectors';
+import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addStyleVariation, trackClick, interlaceThemes } from './helpers';
 import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
@@ -48,6 +50,7 @@ class ThemesSelection extends Component {
 		] ),
 		getPremiumThemePrice: PropTypes.func,
 		getThemeDetailsUrl: PropTypes.func,
+		getThemeType: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		isLastPage: PropTypes.bool,
 		isRequesting: PropTypes.bool,
@@ -87,6 +90,7 @@ class ThemesSelection extends Component {
 			page_number: query.page,
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
 			action: snakeCase( action ),
+			theme_type: this.props.getThemeType( themeId ),
 		} );
 	};
 
@@ -123,6 +127,7 @@ class ThemesSelection extends Component {
 			results_rank: resultsRank + 1,
 			page_number: query.page,
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
+			theme_type: this.props.getThemeType( themeId ),
 		};
 
 		if ( variation ) {
@@ -171,6 +176,14 @@ class ThemesSelection extends Component {
 	//intercept preview and add primary and secondary
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
+
+		const wrappedActivateAction = ( action ) => {
+			return ( t ) => {
+				this.props.setThemePreviewOptions( themeId, null, null, styleVariation );
+				return action( t, context );
+			};
+		};
+
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
@@ -199,6 +212,7 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
+
 				this.props.setThemePreviewOptions(
 					themeId,
 					defaultOption,
@@ -211,6 +225,10 @@ class ThemesSelection extends Component {
 
 		if ( options ) {
 			options = addStyleVariation( options, styleVariation, this.props.isLoggedIn );
+			if ( options.activate ) {
+				options.activate.action = wrappedActivateAction( options.activate.action );
+			}
+
 			if ( options.preview ) {
 				options.preview.action = wrappedPreviewAction( options.preview.action );
 			}
@@ -293,6 +311,10 @@ function bindGetThemeDetailsUrl( state, siteId ) {
 	return ( themeId ) => getThemeDetailsUrl( state, themeId, siteId );
 }
 
+function bindGetThemeType( state ) {
+	return ( themeId ) => getThemeType( state, themeId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -308,11 +330,13 @@ export const ConnectedThemesSelection = connect(
 			source,
 			forceWpOrgSearch,
 			isLoading: isCustomizedThemeListLoading,
+			tabFilter,
 		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
+		const hiddenFilters = getThemeHiddenFilters( state, siteId );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
@@ -340,8 +364,9 @@ export const ConnectedThemesSelection = connect(
 			search,
 			page,
 			tier: premiumThemesEnabled ? tier : 'free',
-			filter: compact( [ filter, vertical ] ).join( ',' ),
+			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,
+			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
 		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
@@ -351,6 +376,8 @@ export const ConnectedThemesSelection = connect(
 			sourceSiteId !== 'wporg' &&
 			// Only fetch WP.org themes when searching a term.
 			!! search &&
+			// unless just searching over recommended or locally installed themes
+			! [ 'recommended', 'my-themes' ].includes( tabFilter ) &&
 			// WP.org themes are not a good fit for any of the tiers,
 			// unless the site can install themes, then they can be searched in the 'free' tier.
 			( ! tier || ( tier === 'free' && canInstallThemes ) );
@@ -359,7 +386,10 @@ export const ConnectedThemesSelection = connect(
 			// We limit the WP.org themes to one page only.
 			page: 1,
 			// WP.com theme filters don't match WP.org ones, so we add them to the search term.
-			search: filter ? `${ search } ${ filter.replace( /[+-]/g, ' ' ) }` : search,
+			// Filters are slugified and concatenated, so we clear `-` and `+` characters; we also remove the `subject:` prefix that can appear when changing categories.
+			search: filter
+				? `${ search } ${ filter.replaceAll( 'subject:', '' ).replace( /[+-]/g, ' ' ) }`
+				: search,
 		};
 		const wpOrgThemes = shouldFetchWpOrgThemes
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
@@ -386,6 +416,7 @@ export const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
+			getThemeType: bindGetThemeType( state ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
@@ -411,7 +442,8 @@ class ThemesSelectionWithPage extends React.Component {
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
 			nextProps.filter !== this.props.filter ||
-			nextProps.vertical !== this.props.vertical
+			nextProps.vertical !== this.props.vertical ||
+			nextProps.tabFilter !== this.props.tabFilter
 		) {
 			this.resetPage();
 		}

@@ -29,8 +29,7 @@
 }
 
 .import-focused .step-container__content,
-.site-setup.processing .step-container__content,
-.anchor-fm.processing .step-container__content {
+.site-setup.processing .step-container__content {
 	width: 100%;
 }
 
@@ -99,14 +98,3 @@
 	}
 }
 
-
-.is-section-stepper .newsletter.processing {
-	.processing-step {
-		.loading-bar {
-			background-color: var(--studio-blue-10);
-			&::before {
-				background: var(--studio-blue-50);
-			}
-		}
-	}
-}

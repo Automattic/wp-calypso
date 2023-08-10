@@ -127,6 +127,9 @@ function getWebpackConfig(
 			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 			conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 			modules: [ 'node_modules' ],
+			fallback: {
+				stream: require.resolve( 'stream-browserify' ),
+			},
 		},
 		node: false,
 		plugins: [

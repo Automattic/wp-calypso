@@ -1,18 +1,20 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .domain-row {
 	position: relative;
 	display: block;
 	padding: 16px;
-	border-bottom: 1px solid var(--studio-gray-5);
-	font-size: $font-body-extra-small;
-	color: var(--studio-gray-50);
 	flex-wrap: wrap;
+	border-bottom: 1px solid $gray-100;
+	font-size: $font-body-extra-small;
+	color: var(--studio-gray-60);
+	line-height: 20px;
+	letter-spacing: -0.15px;
+	font-family: "SF Pro Text", $sans;
 
-	@include break-mobile {
-		display: flex;
-		align-items: flex-start;
-		padding: 20px 0;
+	@include break-large {
+		padding: 24px 0;
 	}
 
 	/* div. for increased specificity */
@@ -22,7 +24,7 @@
 		font-weight: 500;
 		margin: 4px 0;
 
-		@include break-mobile {
+		@include break-large {
 			margin-top: 8px;
 		}
 
@@ -72,16 +74,16 @@
 }
 
 .domain-row__mobile-container {
-	flex: 233 233 0;
 	display: flex;
-	flex-basis: 100%;
-	max-width: 100%;
+	justify-content: space-between;
+	align-items: flex-start;
+	align-self: stretch;
 }
 
 .domain-row__mobile-container2 {
 	display: block;
 	font-size: $font-body-small;
-	@include break-mobile {
+	@include break-large {
 		display: none;
 	}
 }
@@ -94,7 +96,7 @@
 		display: inline;
 	}
 
-	@include break-mobile {
+	@include break-large {
 		display: none;
 	}
 }
@@ -177,7 +179,7 @@
 	overflow: hidden;
 	flex: 1;
 
-	@include break-mobile {
+	@include break-large {
 		flex: 10 10 0;
 		align-self: center;
 		font-size: $font-body-small;
@@ -189,10 +191,13 @@
 	overflow: hidden;
 	flex: 1;
 
-	@include break-mobile {
-		flex: 83 83 0;
-		font-size: $font-body-small;
-		padding-top: 2px;
+	@include break-large {
+		display: flex;
+		width: 280px;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		flex: initial;
 	}
 
 	.domain-row__domain-name {
@@ -201,13 +206,14 @@
 		font-weight: 500;
 
 		button {
-			color: var(--studio-gray-90);
+			color: var(--studio-gray-100);
 			cursor: pointer;
+			font-family: "SF Pro Text", $sans;
+			font-size: $font-body;
+			font-style: normal;
 			font-weight: 500;
-			text-overflow: ellipsis;
-			overflow: hidden;
-			white-space: nowrap;
-			max-width: 100%;
+			line-height: 24px; /* 150% */
+			letter-spacing: -0.32px;
 
 			&:hover {
 				color: var(--color-link);
@@ -218,7 +224,7 @@
 			}
 		}
 
-		@include break-mobile {
+		@include break-large {
 			font-size: $font-body-small;
 		}
 	}
@@ -226,8 +232,11 @@
 	.domain-row__domain-type-text {
 		display: none;
 		font-size: $font-body-extra-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
 
-		@include break-mobile {
+		@include break-large {
 			display: block;
 		}
 	}
@@ -236,22 +245,22 @@
 .domain-row__site-cell {
 	display: none;
 
-	@include break-mobile {
-		flex: 70 70 0;
-		display: block;
+	@include break-large {
+		display: flex;
+		width: 200px;
 		align-items: center;
-		padding-top: 2px;
+		gap: 2px;
 		font-size: $font-body-small;
 	}
 
 	a {
-		color: var(--studio-gray-50);
+		color: var(--studio-gray-60);
 
 		svg {
 			width: 18px;
 			height: 18px;
 			vertical-align: text-bottom;
-			fill: var(--studio-gray-50);
+			fill: var(--studio-gray-60);
 		}
 
 		&:hover {
@@ -266,11 +275,11 @@
 .domain-row__status-cell {
 	display: none;
 
-	@include break-mobile {
-		flex: 40 40 0;
-		display: block;
+	@include break-large {
+		display: flex;
+		width: 100px;
 		align-items: center;
-		padding-top: 2px;
+		gap: 2px;
 		font-size: $font-body-small;
 	}
 
@@ -284,11 +293,11 @@
 	display: none;
 	margin-left: 16px;
 
-	@include break-mobile {
-		flex: 50 50 0;
-		margin: 0;
-		padding-top: 2px;
-		display: inline;
+	@include break-large {
+		display: flex;
+		width: 140px;
+		align-items: center;
+		gap: 2px;
 		font-size: $font-body-small;
 	}
 }
@@ -296,17 +305,22 @@
 .domain-row__mobile-extra-info {
 	display: inline;
 
-	@include break-mobile {
+	@include break-large {
 		display: none;
 	}
 }
 
 .domain-row__auto-renew-cell {
 	display: none;
-	flex: 30 30 0;
+	flex: 40 40 0;
 
-	@include break-mobile {
+	@include break-large {
 		display: flex;
+		width: 80px;
+		align-items: center;
+		gap: 2px;
+		flex: initial;
+		font-size: $font-body-small;
 
 		.components-base-control__field {
 			margin: 4px 0;
@@ -318,9 +332,13 @@
 	display: none;
 	flex: 30 30 0;
 
-	@include break-mobile {
-		display: block;
-		padding-top: 2px;
+	@include break-large {
+		display: flex;
+		width: 140px;
+		align-items: center;
+		gap: 2px;
+		font-size: $font-body-small;
+		flex: initial;
 	}
 
 	a {
@@ -334,10 +352,12 @@
 
 .domain-row__action-cell {
 	margin-left: 10px;
-	height: 42px;
 
 	.ellipsis-menu {
-		float: right;
+		margin: 0 auto;
+		button {
+			color: var(--studio-gray-50);
+		}
 	}
 
 	.ellipsis-menu__toggle {
@@ -345,13 +365,13 @@
 		padding: 0;
 	}
 
-	@include break-mobile {
-		flex: 6 6 0;
-		margin: 0;
-
-		.button.is-borderless {
-			padding: 0 15px 10px 15px;
-		}
+	@include break-large {
+		display: flex;
+		width: 50px;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-end;
+		gap: 10px;
 	}
 }
 

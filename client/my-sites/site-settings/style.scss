@@ -703,3 +703,18 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		white-space: nowrap;
 	}
 }
+
+.site-settings__built-by-upsell {
+	&.banner.card {
+		padding-inline-end: 24px;
+	}
+	.banner__icon-no-circle {
+		img {
+			max-height: 32px;
+			max-width: 32px;
+		}
+	}
+	.banner__action {
+		margin-inline-end: 0;
+	}
+}

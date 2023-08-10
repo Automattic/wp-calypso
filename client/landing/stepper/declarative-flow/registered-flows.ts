@@ -6,15 +6,15 @@ import {
 	DESIGN_FIRST_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
+	DOMAIN_TRANSFER,
+	ONBOARDING_PM_FLOW,
+	GOOGLE_TRANSFER,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
-
-	'anchor-fm-flow': () =>
-		import( /* webpackChunkName: "anchor-fm-flow" */ '../declarative-flow/anchor-fm-flow' ),
 
 	'copy-site': () =>
 		import( /* webpackChunkName: "copy-site-flow" */ '../declarative-flow/copy-site' ),
@@ -100,9 +100,18 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
-};
 
-availableFlows[ 'plugin-bundle' ] = () =>
-	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+	[ ONBOARDING_PM_FLOW ]: () =>
+		import( /* webpackChunkName: "new-hosted-site-flow" */ './onboarding-pm' ),
+
+	[ DOMAIN_TRANSFER ]: () =>
+		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
+
+	[ GOOGLE_TRANSFER ]: () =>
+		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
+
+	[ 'plugin-bundle' ]: () =>
+		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
+};
 
 export default availableFlows;

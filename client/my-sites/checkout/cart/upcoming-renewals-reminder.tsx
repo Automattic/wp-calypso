@@ -92,7 +92,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	);
 
 	const addSelectedPurchasesToCart = useCallback(
-		( purchases ) => {
+		( purchases: Purchase[] ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
 					selected: purchases.length,
@@ -114,7 +114,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	}, [ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ] );
 
 	const onConfirm = useCallback(
-		( selectedPurchases ) => {
+		( selectedPurchases: Purchase[] ) => {
 			addSelectedPurchasesToCart( selectedPurchases );
 			setUpcomingRenewalsDialogVisible( false );
 		},

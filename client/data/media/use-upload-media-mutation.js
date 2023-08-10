@@ -43,9 +43,10 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 			}
 
 			const uploadedItems = [];
-
-			const uploads = dispatch( createTransientMediaItems( files, site ) );
+			const transientItems = dispatch( createTransientMediaItems( files, site ) );
 			const { ID: siteId } = site;
+
+			const uploads = files.map( ( _, i ) => [ files[ i ], transientItems[ i ] ] );
 
 			for await ( const [ file, transientMedia ] of uploads ) {
 				if ( ! transientMedia ) {

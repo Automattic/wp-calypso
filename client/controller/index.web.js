@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { getLanguage, getLanguageSlugs } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -35,7 +35,7 @@ export const ProviderWrappedLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
-	headerSection,
+	renderHeaderSection,
 	redirectUri,
 } ) => {
 	const state = store.getState();
@@ -47,7 +47,7 @@ export const ProviderWrappedLayout = ( {
 			primary={ primary }
 			secondary={ secondary }
 			redirectUri={ redirectUri }
-			headerSection={ headerSection }
+			renderHeaderSection={ renderHeaderSection }
 		/>
 	);
 
@@ -104,6 +104,19 @@ function smartHydrate( context ) {
 export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, smartHydrate );
 }
+
+export const redirectInvalidLanguage = ( context, next ) => {
+	const langParam = context.params.lang;
+	const language = getLanguage( langParam );
+	if ( langParam && ! language ) {
+		// redirect unsupported language to the default language
+		return page.redirect( context.path.replace( `/${ langParam }`, '' ) );
+	} else if ( langParam && language.langSlug !== langParam ) {
+		// redirect unsupported child language to the parent language
+		return page.redirect( context.path.replace( `/${ langParam }`, `/${ language.langSlug }` ) );
+	}
+	next();
+};
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from 'page';
 
@@ -34,4 +35,55 @@ export function getImportSectionLocation( siteSlug, isJetpack = false ) {
 	return isJetpack && ! config.isEnabled( 'importer/unified' )
 		? `https://${ siteSlug }/wp-admin/import.php`
 		: `/import/${ siteSlug }/?engine=wordpress`;
+}
+// Flow mapping dictionary, key is the path segment, value is the flow name
+const flowMapping = {
+	'import-focused': 'import-focused',
+	'import-hosted-site': 'import-hosted-site',
+};
+
+export function getImportFlowByURL() {
+	const url = window.location.href;
+	const parsedUrl = new URL( url );
+	const pathSegments = parsedUrl.pathname.split( '/' );
+	// E.g. setup/import-focused/import returns import-foceused
+	if ( pathSegments.length >= 3 && pathSegments[ 2 ] in flowMapping ) {
+		return flowMapping[ pathSegments[ 2 ] ];
+	}
+
+	return 'onboarding-flow';
+}
+
+export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+
+/**
+ * Returns a selector that tests if the user is newer than a given time
+ *
+ * @param {number} age Number of milliseconds
+ * @returns {Function} Selector function
+ */
+export const isUserNewerThan = ( age ) => ( user ) => {
+	const registrationDate = user && Date.parse( user.date );
+	if ( ! registrationDate ) {
+		return false;
+	}
+	const userAge = Date.now() - registrationDate;
+	return userAge <= age;
+};
+
+export const isNewUser = isUserNewerThan( WEEK_IN_MILLISECONDS );
+
+export function formatMigrationEventProps( user, from = '' ) {
+	const migrationFlow = from ? from : getImportFlowByURL();
+	return {
+		is_new_user: isNewUser( user ),
+		migration_flow: migrationFlow,
+	};
+}
+
+export function triggerMigrationStartingEvent( user, from = '' ) {
+	return recordTracksEvent(
+		'calypso_migration_starting_point',
+		formatMigrationEventProps( user, from )
+	);
 }

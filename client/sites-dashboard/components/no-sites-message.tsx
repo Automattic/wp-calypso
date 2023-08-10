@@ -160,5 +160,21 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 		);
 	}
 
-	return null;
+	return (
+		<NoSitesLayout
+			title={ <Title> { __( 'Create your first site' ) } </Title> }
+			line={
+				<SecondaryText>
+					{ __(
+						"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
+					) }
+				</SecondaryText>
+			}
+			action={ __( 'Create your first site' ) }
+			actionURL="/start?source=sites-dashboard&ref=calypso-nosites"
+			illustration="/calypso/images/illustrations/illustration-empty-sites.svg"
+			illustrationWidth={ 124 }
+			illustrationHeight={ 101 }
+		/>
+	);
 };

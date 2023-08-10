@@ -15,6 +15,7 @@ interface Props {
 	isShowFrameBorder?: boolean;
 	isShowFrameShadow?: boolean;
 	isFixedViewport?: boolean;
+	isFullscreen?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 	onViewportChange?: ( height?: number ) => void;
@@ -31,6 +32,7 @@ const DeviceSwitcher = ( {
 	isShowFrameBorder,
 	isShowFrameShadow = true,
 	isFixedViewport,
+	isFullscreen,
 	frameRef,
 	onDeviceChange,
 	onViewportChange,
@@ -92,6 +94,7 @@ const DeviceSwitcher = ( {
 				'device-switcher__container--is-computer': device === 'computer',
 				'device-switcher__container--is-tablet': device === 'tablet',
 				'device-switcher__container--is-phone': device === 'phone',
+				'device-switcher__container--is-fullscreen': isFullscreen,
 			} ) }
 		>
 			{ isShowDeviceSwitcherToolbar && (

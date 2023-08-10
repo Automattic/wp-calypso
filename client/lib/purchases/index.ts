@@ -12,6 +12,7 @@ import {
 	isTitanMail,
 	isConciergeSession,
 	getJetpackProductsDisplayNames,
+	getStorageAddOnDisplayName,
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -20,6 +21,7 @@ import {
 	isDIFMProduct,
 	isJetpackSearchFree,
 	isAkismetProduct,
+	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
@@ -239,10 +241,17 @@ export function getName( purchase: Purchase ): string {
 }
 
 export function getDisplayName( purchase: Purchase ): TranslateResult {
+	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
+
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
-	if ( jetpackProductsDisplayNames[ purchase.productSlug ] ) {
-		return jetpackProductsDisplayNames[ purchase.productSlug ];
+	if ( jetpackProductsDisplayNames[ productSlug ] ) {
+		return jetpackProductsDisplayNames[ productSlug ];
 	}
+
+	if ( isTieredVolumeSpaceAddon( purchase ) ) {
+		return getStorageAddOnDisplayName( productName, purchaseRenewalQuantity );
+	}
+
 	return getName( purchase );
 }
 
@@ -622,7 +631,7 @@ export function isRechargeable( purchase: Purchase ): boolean {
  * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
  */
 export function isRefundable( purchase: Purchase ): boolean {
-	return purchase.isRefundable;
+	return purchase.isRefundable && purchase.productType !== 'saas_plugin';
 }
 
 /**

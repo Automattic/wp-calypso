@@ -16,7 +16,7 @@
 	color: var(--studio-gray-40);
 	font-size: 0.75rem;
 	font-weight: 400;
-	line-height: 1.125;
+	line-height: 1.5;
 }
 
 @mixin blazepress-data-row {
@@ -29,10 +29,67 @@
 			display: none;
 			margin-top: 20px;
 
+			.post-item__actions-mobile {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 20px;
+				width: 100%;
+			}
+
 			.post-item__stats-mobile,
 			.campaign-item__stats-mobile {
+				align-self: start;
 				@include blazepress-data-row-font-mobile;
 			}
+		}
+	}
+}
+
+@mixin blazepress-search-component {
+	.search-component {
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		margin-bottom: 32px;
+
+		&.is-open {
+			width: 100%;
+
+			svg,
+			form,
+			.search-component__input-fade {
+				border-radius: 4px;
+			}
+
+			input.search-component__input[type="search"] {
+				@include promote-post-i2-font;
+
+				border-radius: 4px;
+				color: var(--studio-gray-100); // Change text color
+				width: 100%;
+
+				// Prevent zoom in iPhone/Safari (ios only)
+				@supports (-webkit-overflow-scrolling: touch) {
+					font-size: 1rem;
+				}
+			}
+
+			&.promote-post-i2__search-bar-search {
+				height: 42px;
+			}
+		}
+	}
+}
+
+@mixin blazepress-animated-skeleton {
+	background-color: hsl(200, 20%, 90%);
+	animation: skeleton-loading 1s linear infinite alternate;
+
+	@keyframes skeleton-loading {
+		0% {
+			background-color: #eceded;
+		}
+		100% {
+			background-color: #e6e7e7;
 		}
 	}
 }
@@ -83,6 +140,27 @@ body.is-section-promote-post-i2 {
 						margin: 0 64px;
 						max-width: 1040px;
 						width: auto;
+
+						@media screen and (max-width: $break-medium) {
+							overflow: auto;
+
+							/* Hide scrollbar for Chrome, Safari and Opera */
+							&::-webkit-scrollbar {
+								display: none;
+							}
+							/* Hide scrollbar for IE, Edge and Firefox */
+							-ms-overflow-style: none;  /* IE and Edge */
+							scrollbar-width: none;  /* Firefox */
+						}
+					}
+
+					// Hide dropdown version of tabs
+					&.is-dropdown {
+						margin: 0;
+
+						.select-dropdown.section-nav-tabs__dropdown {
+							display: none;
+						}
 					}
 				}
 
@@ -213,18 +291,6 @@ body.is-section-promote-post-i2 {
 		.section-nav__mobile-header {
 			display: none;
 		}
-
-		@media screen and (max-width: $break-medium) {
-			overflow: auto;
-
-			/* Hide scrollbar for Chrome, Safari and Opera */
-			&::-webkit-scrollbar {
-				display: none;
-			}
-			/* Hide scrollbar for IE, Edge and Firefox */
-			-ms-overflow-style: none;  /* IE and Edge */
-			scrollbar-width: none;  /* Firefox */
-		}
 	}
 
 	.section-nav-tab {
@@ -262,7 +328,7 @@ body.is-section-promote-post-i2 {
 			margin-right: 0;
 
 			@media screen and (max-width: $break-medium) {
-				margin: 0;
+				margin: 0 0 0 auto; // Align Credits tab to the right
 			}
 		}
 	}
@@ -272,14 +338,7 @@ body.is-section-promote-post-i2 {
 		height: 53px;
 	}
 
-	.search {
-		border: 1px solid #ddd;
-		border-radius: 4px;
-
-		&.is-open .search__open-icon {
-			fill: $studio-gray-30;
-		}
-	}
+	@include blazepress-search-component;
 
 	&__search-bar-wrapper {
 		.form-text-input.search__input {
@@ -338,6 +397,10 @@ body.is-section-promote-post-i2 {
 }
 
 .is-mobile-app-view {
+
+	.blazepress-widget__content {
+		margin-top: 0 !important;
+	}
 	.layout {
 		&.has-no-masterbar.is-group-sites.is-section-promote-post-i2 .layout__content {
 			padding-top: 0;
@@ -350,8 +413,13 @@ body.is-section-promote-post-i2 {
 			.promote-post-i2 .posts-list-banner__container,
 			.promote-post-i2 .section-nav,
 			.promote-post-i2 .post-item__view-link,
+			.promote-post-i2 .campaign-item-breadcrumb,
 			.promote-post-i2 .campaign-item-details__support-buttons {
 				display: none;
+			}
+
+			.campaign-item-header {
+				margin-top: 8px;
 			}
 
 			.main {
@@ -475,6 +543,14 @@ $break-medium-expanded-menu: $break-medium + 272px;
 @media screen and (max-width: $break-medium-expanded-menu) {
 	body.is-section-promote-post-i2:not(.is-sidebar-collapsed) {
 		@include blazepress-mobile;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.theme-default.is-section-promote-post-i2 .focus-content .layout__content {
+		padding-left: 0;
+		padding-right: 0;
+		padding-top: 47px;
 	}
 }
 

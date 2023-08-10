@@ -20,6 +20,9 @@ const domainRegistrationThankYouProps = ( {
 	selectedSiteSlug,
 	siteIntent,
 	launchpadScreen,
+	redirectTo,
+	isDomainOnly,
+	selectedSiteId,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -38,6 +41,7 @@ const domainRegistrationThankYouProps = ( {
 		launchpadScreen as string,
 		selectedSiteSlug,
 		'REGISTRATION',
+		redirectTo,
 		true
 	);
 
@@ -47,7 +51,7 @@ const domainRegistrationThankYouProps = ( {
 		stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
 		stepCta: (
 			<FullWidthButton
-				href={ createSiteFromDomainOnly( domain, null ) }
+				href={ createSiteFromDomainOnly( domain, selectedSiteId ) }
 				busy={ false }
 				disabled={ false }
 			>
@@ -90,7 +94,7 @@ const domainRegistrationThankYouProps = ( {
 					? [ launchpadNextSteps ]
 					: [
 							...( professionalEmail ? [ professionalEmail ] : [] ),
-							...( ! selectedSiteSlug ? [ createSiteStep ] : [] ),
+							...( isDomainOnly && selectedSiteId ? [ createSiteStep ] : [] ),
 							viewDomainsStep,
 					  ],
 			},

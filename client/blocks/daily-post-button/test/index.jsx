@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import pageSpy from 'page';
 import { parse } from 'qs';
@@ -112,7 +112,9 @@ describe( 'DailyPostButton', () => {
 			const btn = screen.getByRole( 'button' );
 			await userEvent.click( btn );
 
-			expect( screen.getByTestId( 'sites-popover' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.getByTestId( 'sites-popover' ) ).toBeInTheDocument();
+			} );
 		} );
 	} );
 

@@ -10,6 +10,7 @@ import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns
 import { domainManagementDnsEditRecord } from 'calypso/my-sites/domains/paths';
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecordData from './dns-record-data';
 import DomainConnectInfoDialog from './domain-connect-info-dialog';
@@ -109,8 +110,15 @@ class DnsRecordsList extends Component {
 	};
 
 	editDns = ( record ) => {
-		const { selectedDomainName, selectedSite } = this.props;
-		page( domainManagementDnsEditRecord( selectedSite.slug, selectedDomainName, record.id ) );
+		const { currentRoute, selectedDomainName, selectedSite } = this.props;
+		page(
+			domainManagementDnsEditRecord(
+				selectedSite.slug,
+				selectedDomainName,
+				currentRoute,
+				record.id
+			)
+		);
 	};
 
 	deleteDns = ( record, action = 'delete', confirmed = false ) => {
@@ -272,10 +280,15 @@ class DnsRecordsList extends Component {
 	}
 }
 
-export default connect( null, {
-	addDns,
-	deleteDns,
-	errorNotice,
-	removeNotice,
-	successNotice,
-} )( localize( DnsRecordsList ) );
+export default connect(
+	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
+	{
+		addDns,
+		deleteDns,
+		errorNotice,
+		removeNotice,
+		successNotice,
+	}
+)( localize( DnsRecordsList ) );

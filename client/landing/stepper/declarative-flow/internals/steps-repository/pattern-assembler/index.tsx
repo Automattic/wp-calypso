@@ -1,5 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import {
+	useSyncGlobalStylesUserConfig,
+	getVariationTitle,
+	getVariationType,
+} from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic/onboarding';
 import {
@@ -15,7 +18,7 @@ import { useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
-import { activateOrInstallThenActivate, setActiveTheme } from 'calypso/state/themes/actions';
+import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -23,7 +26,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
@@ -42,15 +45,13 @@ import ScreenFontPairings from './screen-font-pairings';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
-import ScreenSection from './screen-section';
-import { encodePatternId, getVariationTitle, getVariationType } from './utils';
+import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
-import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import type { FC } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
@@ -71,7 +72,7 @@ const PatternAssembler = ( {
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
-	const { applyThemeWithPatterns, assembleSite } = useDispatch( SITE_STORE );
+	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
@@ -163,12 +164,6 @@ const PatternAssembler = ( {
 		return patterns.filter( ( pattern ) => pattern ) as Pattern[];
 	};
 
-	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_ADD_CLICK, {
-			pattern_type: patternType,
-		} );
-	};
-
 	const trackEventPatternSelect = ( {
 		patternType,
 		patternId,
@@ -231,11 +226,7 @@ const PatternAssembler = ( {
 		setHeader( pattern );
 		updateActivePatternPosition( -1 );
 		if ( pattern ) {
-			if ( header ) {
-				noticeOperations.showPatternReplacedNotice( pattern );
-			} else {
-				noticeOperations.showPatternInsertedNotice( pattern );
-			}
+			noticeOperations.showPatternInsertedNotice( pattern );
 		} else if ( header ) {
 			noticeOperations.showPatternRemovedNotice( header );
 		}
@@ -250,28 +241,24 @@ const PatternAssembler = ( {
 		setFooter( pattern );
 		activateFooterPosition( !! pattern );
 		if ( pattern ) {
-			if ( footer ) {
-				noticeOperations.showPatternReplacedNotice( pattern );
-			} else {
-				noticeOperations.showPatternInsertedNotice( pattern );
-			}
+			noticeOperations.showPatternInsertedNotice( pattern );
 		} else if ( footer ) {
 			noticeOperations.showPatternRemovedNotice( footer );
 		}
 	};
 
-	const replaceSection = ( pattern: Pattern ) => {
-		if ( sectionPosition !== null ) {
+	const replaceSection = ( pattern: Pattern, position: number | null = sectionPosition ) => {
+		if ( position !== null ) {
 			setSections( [
-				...sections.slice( 0, sectionPosition ),
+				...sections.slice( 0, position ),
 				{
 					...pattern,
-					key: sections[ sectionPosition ].key,
+					key: sections[ position ].key,
 				},
-				...sections.slice( sectionPosition + 1 ),
+				...sections.slice( position + 1 ),
 			] );
-			updateActivePatternPosition( sectionPosition );
-			noticeOperations.showPatternReplacedNotice( pattern );
+			updateActivePatternPosition( position );
+			noticeOperations.showPatternInsertedNotice( pattern );
 		}
 	};
 
@@ -321,24 +308,7 @@ const PatternAssembler = ( {
 		selectedCategory?: string | null
 	) => {
 		if ( selectedPattern ) {
-			// Inject the selected pattern category or the first category
-			// to be used in tracks and as selected pattern name.
-			const [ firstCategory ] = Object.keys( selectedPattern.categories );
-			selectedPattern.category = categories.find( ( { name } ) => {
-				if ( selectedCategory === CATEGORY_ALL_SLUG ) {
-					return name === firstCategory;
-				}
-				return name === ( selectedCategory || firstCategory );
-			} );
-
-			if ( selectedCategory === CATEGORY_ALL_SLUG ) {
-				// Use 'all' rather than 'featured' as slug for tracks.
-				// Use the first category label as selected pattern name.
-				selectedPattern.category = {
-					name: 'all',
-					label: selectedPattern.category?.label,
-				};
-			}
+			injectCategoryToPattern( selectedPattern, categories, selectedCategory );
 
 			trackEventPatternSelect( {
 				patternType: type,
@@ -381,47 +351,43 @@ const PatternAssembler = ( {
 
 	const onSubmit = () => {
 		const design = getDesign();
-		const stylesheet = design?.recipe?.stylesheet ?? '';
+		const stylesheet = design.recipe?.stylesheet ?? '';
 		const themeId = getThemeIdFromStylesheet( stylesheet );
+		const hasBlogPatterns = !! sections.find(
+			( { categories } ) => categories[ 'posts' ] || categories[ 'blog' ]
+		);
 
 		if ( ! siteSlugOrId || ! site?.ID || ! themeId ) {
 			return;
 		}
 
-		if ( isEnabled( 'pattern-assembler/logged-in-showcase' ) ) {
-			setPendingAction( () =>
-				Promise.resolve()
-					.then( () =>
-						reduxDispatch(
-							activateOrInstallThenActivate(
-								themeId,
-								site?.ID,
-								'assembler',
-								false,
-								false
-							) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
-						)
+		setPendingAction( () =>
+			Promise.resolve()
+				.then( () =>
+					reduxDispatch(
+						activateOrInstallThenActivate(
+							themeId,
+							site?.ID,
+							'assembler',
+							false,
+							false
+						) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 					)
-					.then( ( activeThemeStylesheet: string ) =>
-						assembleSite( siteSlugOrId, activeThemeStylesheet, {
-							homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
-							headerHtml: header?.html,
-							footerHtml: footer?.html,
-							globalStyles: syncedGlobalStylesUserConfig,
-							// Newly created sites should reset the starter content created from the default Headstart annotation
-							shouldResetContent: isNewSite,
-							// Also, new sites except for virtual themes set the option wpcom_site_setup=assembler
-							siteSetupOption: isNewSite && ! design.is_virtual ? 'assembler' : '',
-						} )
-					)
-			);
-		} else {
-			setPendingAction( () =>
-				applyThemeWithPatterns( siteSlugOrId, design, syncedGlobalStylesUserConfig ).then(
-					( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID, theme ) )
 				)
-			);
-		}
+				.then( ( activeThemeStylesheet: string ) =>
+					assembleSite( siteSlugOrId, activeThemeStylesheet, {
+						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
+						headerHtml: header?.html,
+						footerHtml: footer?.html,
+						globalStyles: syncedGlobalStylesUserConfig,
+						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
+						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
+						shouldResetContent: isNewSite && hasBlogPatterns,
+						// All sites using the assembler set the option wpcom_site_setup
+						siteSetupOption: design.is_virtual ? 'assembler-virtual-theme' : 'assembler',
+					} )
+				)
+		);
 
 		recordSelectedDesign( { flow, intent, design } );
 		submit?.();
@@ -482,20 +448,7 @@ const PatternAssembler = ( {
 	};
 
 	const onMainItemSelect = ( name: string ) => {
-		if ( PATTERN_TYPES.includes( name ) ) {
-			trackEventPatternAdd( name );
-		}
-
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
-	};
-
-	const onAddSection = () => {
-		trackEventPatternAdd( 'section' );
-		setSectionPosition( null );
-	};
-
-	const onReplaceSection = ( position: number ) => {
-		setSectionPosition( position );
 	};
 
 	const onDeleteSection = ( position: number ) => {
@@ -514,6 +467,23 @@ const PatternAssembler = ( {
 	const onDeleteHeader = () => onSelect( 'header', null );
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
+
+	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
+		const [ firstCategory ] = Object.keys( pattern.categories );
+		const selectedCategory = pattern.category?.name || firstCategory;
+		const patterns =
+			patternsMapByCategory[ selectedCategory ] || patternsMapByCategory[ CATEGORY_ALL_SLUG ];
+		const shuffledPattern = getShuffledPattern( patterns, pattern );
+		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
+
+		if ( type === 'header' ) {
+			updateHeader( shuffledPattern );
+		} else if ( type === 'footer' ) {
+			updateFooter( shuffledPattern );
+		} else {
+			replaceSection( shuffledPattern, position );
+		}
+	};
 
 	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
@@ -598,16 +568,6 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION }>
-					<ScreenSection
-						patterns={ sections }
-						onAddSection={ onAddSection }
-						onReplaceSection={ onReplaceSection }
-						onDeleteSection={ onDeleteSection }
-						onMoveUpSection={ onMoveUpSection }
-						onMoveDownSection={ onMoveDownSection }
-					/>
-				</NavigatorScreen>
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
 					<ScreenCategoryList
 						categories={ categories }
@@ -619,6 +579,7 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						selectedPatterns={ sections }
+						onBack={ () => onPatternSelectorBack( 'section' ) }
 					/>
 				</NavigatorScreen>
 
@@ -658,6 +619,7 @@ const PatternAssembler = ( {
 				onMoveDownSection={ onMoveDownSection }
 				onDeleteHeader={ onDeleteHeader }
 				onDeleteFooter={ onDeleteFooter }
+				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />

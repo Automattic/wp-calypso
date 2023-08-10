@@ -27,40 +27,27 @@ export const FeatherIcon = () => (
 
 export const DesignIcon = () => (
 	<svg
-		xmlns="http://www.w3.org/2000/svg"
 		width="24"
 		height="24"
-		fill="none"
 		viewBox="0 0 24 24"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
 		className="blogger-intent__icon"
 	>
-		<mask id="path-1-inside-1_1831_60163" fill="#fff">
-			<rect width="22" height="18" x="1" y="3.5" rx="1"></rect>
-		</mask>
-		<rect
-			width="22"
-			height="18"
-			x="1"
-			y="3.5"
+		<path
+			d="M3 9H21"
 			stroke="#8C8F94"
-			strokeWidth="3.2"
-			mask="url(#path-1-inside-1_1831_60163)"
-			rx="1"
-		></rect>
-		<mask id="path-2-inside-2_1831_60163" fill="#fff">
-			<rect width="13" height="11" x="10" y="3.5" rx="1"></rect>
-		</mask>
-		<rect
-			width="13"
-			height="11"
-			x="10"
-			y="3.5"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+		<path
+			d="M9 21V9"
 			stroke="#8C8F94"
-			strokeWidth="3.2"
-			mask="url(#path-2-inside-2_1831_60163)"
-			rx="1"
-		></rect>
-		<path fill="#8C8F94" d="M5 2H8V3.5H5z"></path>
-		<path fill="#8C8F94" d="M16 2h3v1.5h-3V2z"></path>
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+		<rect x="3" y="3" width="18" height="18" rx="1" stroke="#8C8F94" strokeWidth="1.6" />
 	</svg>
 );

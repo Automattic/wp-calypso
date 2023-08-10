@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn } from 'node:child_process';
 import chalk from 'chalk';
 
 // This is technically an import side-effect for the callee, but any TeamCity

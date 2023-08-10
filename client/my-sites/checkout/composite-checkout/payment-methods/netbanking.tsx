@@ -58,6 +58,9 @@ const actions = {
 	touchAllFields() {
 		return { type: 'TOUCH_ALL_FIELDS' };
 	},
+	resetFields() {
+		return { type: 'RESET_FIELDS' };
+	},
 };
 
 const selectors: StoreSelectorsWithState< NounsInStore > & {
@@ -125,6 +128,9 @@ export function createNetBankingPaymentMethodStore(): NetBankingStore {
 							{}
 						),
 					};
+				case 'RESET_FIELDS': {
+					return { ...state, fields: {} };
+				}
 			}
 			return state;
 		},

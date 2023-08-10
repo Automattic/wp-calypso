@@ -7,6 +7,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useCurrentRoute } from 'calypso/components/route';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -98,6 +99,7 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { currentRoute } = useCurrentRoute();
 
 	const domainName = primaryDomain.name;
 	const hasEmailWithUs = hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain );
@@ -134,7 +136,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 				}
 			) }
 			action={ translate( 'Manage domain' ) }
-			actionURL={ domainManagementList( siteSlug ) }
+			actionURL={ domainManagementList( siteSlug, currentRoute ) }
 			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
 			secondaryActionURL={ emailManagement( siteSlug, null ) }
 			secondaryActionCallback={ recordEmailClick }

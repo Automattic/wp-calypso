@@ -1,19 +1,21 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
+import { DesignPreviewImage, isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { activate } from 'calypso/state/themes/actions';
 import {
+	getThemePreviewThemeOptions,
+	hasActivatedTheme,
 	isThemeActive,
 	isActivatingTheme,
-	hasActivatedTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
@@ -21,15 +23,11 @@ import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
 const ThemeSectionContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 720px;
+	width: 100%;
 	box-sizing: border-box;
 
-	@media ( max-width: 740px ) {
-		width: 500px;
-	}
-
-	@media ( max-width: 520px ) {
-		width: 280px;
+	@media ( min-width: 782px ) {
+		width: 720px;
 	}
 `;
 
@@ -38,11 +36,21 @@ const ThemeSectionImageContainer = styled.div`
 	border-radius: 16px;
 	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
 		0px 6px 6px rgba( 0, 0, 0, 0.02 );
+	width: 100%;
+`;
+
+const ThemeSectionMShotsContainer = styled.div`
+	border-radius: 13px;
+	margin-bottom: 8px;
+	position: relative;
+	overflow: hidden;
+	padding-top: 74%;
+	width: 100%;
 `;
 
 const ThemeSectionImage = styled.img`
-	width: 100%;
 	border-radius: 13px;
+	width: 100%;
 `;
 
 const ThemeSectionContent = styled.div`
@@ -50,14 +58,20 @@ const ThemeSectionContent = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 16px;
-	padding-top: 26px;
+	row-gap: 16px;
+
+	padding: 24px;
+	@media ( min-width: 480px ) {
+		padding: 20px 25px;
+	}
+	border: 1px solid var( --color-border-subtle );
 `;
 
 const ThemeSectionName = styled.div`
 	font-size: 16px;
 	font-weight: 500;
 	line-height: 24px;
+	flex-grow: 1;
 	color: var( --studio-gray-100 );
 	& small {
 		font-size: 14px;
@@ -69,13 +83,10 @@ const ThemeSectionName = styled.div`
 
 const ThemeSectionButtons = styled.div`
 	display: flex;
-	gap: 16px;
+	column-gap: 16px;
+	row-gap: 12px;
+	align-items: flex-start;
 	flex-wrap: wrap;
-
-	& a {
-		flex-grow: 1;
-		justify-content: center;
-	}
 
 	.gridicon.gridicons-external {
 		margin-right: 4px;
@@ -84,6 +95,14 @@ const ThemeSectionButtons = styled.div`
 
 const ThemeButton = styled( Button )`
 	border-radius: 4px;
+`;
+
+const ThemeNameSectionWrapper = styled.div`
+	display: flex;
+	row-gap: 12px;
+	column-gap: 16px;
+	flex-grow: 1;
+	flex-wrap: wrap;
 `;
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
@@ -99,6 +118,10 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		getCustomizeUrl( state, theme.id, siteId, isFSEActive )
 	);
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
+	const themeOptions = useSelector( ( state ) => getThemePreviewThemeOptions( state ) );
+
+	const themeStyleVariation =
+		themeOptions && themeOptions.themeId === theme.id ? themeOptions.styleVariation : undefined;
 
 	const isValidThankyouSectionTheme = useIsValidThankYouTheme( theme, siteId );
 
@@ -123,48 +146,63 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	return (
 		<ThemeSectionContainer>
 			<QueryActiveTheme siteId={ siteId } />
-			<AutoLoadingHomepageModal source="details" />
-			<ThemeSectionImageContainer>
-				<ThemeSectionImage
-					src={ theme.screenshot }
-					alt={
-						translate( "%(theme)s's icon", {
-							args: {
-								theme: theme.name,
-							},
-						} ) as string
-					}
-				/>
-			</ThemeSectionImageContainer>
+			<ActivationModal source="details" />
 			<ThemeSectionContent>
-				<ThemeSectionName>
-					<h5>{ theme.name }</h5>
-					<small>
-						{ theme.author
-							? translate( 'by %(author)s', { args: { author: theme.author } } )
-							: null }
-					</small>
-				</ThemeSectionName>
-				<ThemeSectionButtons>
-					<ThemeButton
-						primary
-						busy={ ( isActivating && ! hasActivated ) || isLoading }
-						onClick={ handleActivateTheme }
-						href={ isActive ? customizeUrl : undefined }
-						disabled={ ! isValidThankyouSectionTheme }
-					>
-						{ isActive
-							? translate( 'Customize this design' )
-							: translate( 'Activate this design' ) }
-					</ThemeButton>
-
-					{ isActive ? (
-						<ThemeButton href={ siteUrl } disabled={ ! isValidThankyouSectionTheme }>
-							<Gridicon size={ 18 } icon="external" />
-							{ translate( 'View site' ) }
+				<ThemeNameSectionWrapper>
+					<ThemeSectionName>
+						<h5>{ theme.name }</h5>
+						<small>
+							{ theme.author
+								? translate( 'by %(author)s', { args: { author: theme.author } } )
+								: null }
+						</small>
+					</ThemeSectionName>
+					<ThemeSectionButtons>
+						<ThemeButton
+							primary
+							busy={ ( isActivating && ! hasActivated ) || isLoading }
+							onClick={ handleActivateTheme }
+							href={ isActive ? customizeUrl : undefined }
+							disabled={ ! isValidThankyouSectionTheme }
+						>
+							{ isActive
+								? translate( 'Customize this design' )
+								: translate( 'Activate this design' ) }
 						</ThemeButton>
-					) : null }
-				</ThemeSectionButtons>
+
+						{ isActive ? (
+							<ThemeButton href={ siteUrl } disabled={ ! isValidThankyouSectionTheme }>
+								<Gridicon size={ 18 } icon="external" />
+								{ translate( 'View site' ) }
+							</ThemeButton>
+						) : null }
+					</ThemeSectionButtons>
+				</ThemeNameSectionWrapper>
+				<ThemeSectionImageContainer>
+					{ ! isDefaultGlobalStylesVariationSlug( themeStyleVariation?.slug ) ? (
+						<ThemeSectionMShotsContainer>
+							<DesignPreviewImage
+								design={ {
+									...theme,
+									slug: theme.id,
+									recipe: { stylesheet: theme.stylesheet },
+								} }
+								styleVariation={ themeStyleVariation }
+							/>
+						</ThemeSectionMShotsContainer>
+					) : (
+						<ThemeSectionImage
+							src={ theme.screenshot }
+							alt={
+								translate( "%(theme)s's icon", {
+									args: {
+										theme: theme.name,
+									},
+								} ) as string
+							}
+						/>
+					) }
+				</ThemeSectionImageContainer>
 			</ThemeSectionContent>
 		</ThemeSectionContainer>
 	);

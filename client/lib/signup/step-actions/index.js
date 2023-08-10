@@ -43,6 +43,7 @@ import {
 	getProductBySlug,
 	getProductsByBillingSlug,
 	getProductsList,
+	getMarketplaceProducts,
 } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -489,6 +490,22 @@ export function setIntentOnSite( callback, { siteSlug, intent } ) {
 			callback( [ errors ] );
 		} );
 }
+
+function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
+	const plugins = getMarketplaceProducts( state, pluginSlug );
+	const billingPeriodToTerm = {
+		MONTHLY: 'month',
+		ANNUALLY: 'year',
+	};
+	const term = ( billingPeriod && billingPeriodToTerm[ billingPeriod ] ) || '';
+
+	if ( ! term ) {
+		return plugins?.[ 0 ] || null;
+	}
+
+	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
+}
+
 export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	const { cartItem } = stepProvidedItems;
 
@@ -589,7 +606,7 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug } = dependencies;
+	const { emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
 	const { cartItem, lastKnownFlow } = stepProvidedItems;
 	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
@@ -598,8 +615,13 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		return;
 	}
 
+	let pluginItem;
+	if ( plugin ) {
+		pluginItem = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
+	}
+
 	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem, emailItem, pluginItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 		lastKnownFlow,
@@ -1293,20 +1315,10 @@ export const buildUpgradeFunction = ( planProps, cartItem ) => {
 	};
 
 	if ( selectedSite && flowName === 'site-selected' && ! cartItem ) {
-		wpcom.req.post(
-			`/domains/${ selectedSite.ID }/${ selectedSite.name }/convert-domain-only-to-site`,
-			{},
-			( error ) => {
-				if ( error ) {
-					errorNotice( error.message );
-					return;
-				}
-				submitSignupStep( step, {
-					cartItem,
-				} );
-				goToNextStep();
-			}
-		);
+		submitSignupStep( step, {
+			cartItem,
+		} );
+		goToNextStep();
 		return;
 	}
 

@@ -144,24 +144,16 @@ private object EditingToolkit : WPComPluginBuild(
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 			"""
 		}
-		bashNodeScript {
-			name = "Run JS tests"
-			scriptContent = """
-				cd apps/editing-toolkit
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
-			"""
-		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
 		bashNodeScript {
 			name = "Run PHP Lint"
 			scriptContent = """
 				cd apps/editing-toolkit
-				if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
-					echo "Newspack blocks were not built correctly."
-					exit 1
-				fi
 				yarn lint:php
+
+				# Do some extra checks on the textdomain, since we're manually changing it for the newspack blocks.
+				./bin/verify-textdomain.sh
 			"""
 		}
 	},
@@ -224,15 +216,6 @@ private object OdysseyStats : WPComPluginBuild(
 	docsLink = "PejTkB-3N-p2",
 	buildSteps = {
 		bashNodeScript {
-			name = "Run Unit Tests"
-			scriptContent = """
-				cd apps/odyssey-stats
-
-				# run unit tests
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
-			"""
-		}
-		bashNodeScript {
 			name = "Run Size Test"
 			scriptContent = """
 				cd apps/odyssey-stats
@@ -251,8 +234,7 @@ private object BlazeDashboard : WPComPluginBuild(
 	pluginSlug = "blaze-dashboard",
 	archiveDir = "./dist/",
 	withPRNotify = "false",
-	// TODO: Update doc link when the doc is released
-	docsLink = "TODO",
+	docsLink = "PCYsg-SuD-p2",
 	buildSteps = {
 		bashNodeScript {
 			name = "Translate Blaze Dashboard"

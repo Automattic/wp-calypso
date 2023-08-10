@@ -17,8 +17,6 @@
 
 		&.is-discover-stream {
 			.reader-tag-sidebar-recommended-sites {
-				max-width: 270px;
-
 				.reader-subscription-list-item .follow-button__label,
 				.reader-subscription-list-item__settings-label {
 					display: none;
@@ -487,7 +485,6 @@
 
 	@include breakpoint-deprecated( ">960px" ) {
 		flex-direction: column;
-		margin-top: -40px;
 		width: 50%;
 	}
 
@@ -663,6 +660,15 @@
 			overflow: hidden;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
+			white-space: nowrap;
+			position: relative;
+
+			.stream__two-column & {
+				width: 225px;
+			}
+			.stream__two-column &::after {
+				@include long-content-fade( $size: 5% );
+			}
 		}
 	}
 
@@ -712,8 +718,9 @@
 	}
 	.reader-tag-sidebar-related-tags,
 	.reader-tag-sidebar-related-sites {
+		margin-bottom: 32px;
 		h2 {
-			font-size: $font-body-small;
+			font-size: $font-body;
 			margin-bottom: 14px;
 		}
 	}
@@ -786,6 +793,10 @@
 	.reader-tag-sidebar-related-tags {
 		margin-bottom: 32px;
 	}
+
+	.reader-feed-header__seen-button {
+		margin-bottom: 24px;
+	}
 }
 
 // Posts and Sites tabbed headers
@@ -818,6 +829,11 @@
 	@include break-medium {
 		margin-top: 0;
 	}
+}
+
+// Stop the sidebar from expanding too wide when shown in a 2 column layout.
+.stream__two-column .stream__right-column {
+	max-width: 270px;
 }
 
 .stream__header .section-nav-group {
@@ -890,3 +906,6 @@
 	}
 }
 
+.is-site-stream .stream__two-column .stream__right-column {
+	margin-top: 0;
+}

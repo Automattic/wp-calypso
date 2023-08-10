@@ -29,7 +29,7 @@ describe( 'requestFollow', () => {
 
 describe( 'receiveFollow', () => {
 	test( 'should dispatch updateFollow with new subscription info', () => {
-		const action = follow( 'http://example.com' );
+		const action = follow( 'http://example.com', null, { siteId: 123 } );
 		const response = {
 			subscribed: true,
 			subscription: {

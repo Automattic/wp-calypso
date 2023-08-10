@@ -1,5 +1,9 @@
 import { Onboard } from '@automattic/data-stores';
-import { isWooExpressFlow } from '@automattic/onboarding';
+import {
+	isNewHostedSiteCreationFlow,
+	isTransferringHostedSiteCreationFlow,
+	isWooExpressFlow,
+} from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import WooPurpleHeart from 'calypso/assets/images/onboarding/woo-purple-heart.png';
@@ -17,6 +21,21 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
 		[]
 	);
+
+	if ( flow && isNewHostedSiteCreationFlow( flow ) ) {
+		return [ { title: __( 'Creating your site' ), duration: Infinity } ];
+	}
+
+	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
+		return [
+			{ title: __( 'Laying the foundations' ), duration: 5000 },
+			{ title: __( 'Warming up CPUs' ), duration: 3000 },
+			{ title: __( 'Installing WordPress' ), duration: 3000 },
+			{ title: __( 'Securing your data' ), duration: 5000 },
+			{ title: __( 'Distributing your site worldwide' ), duration: 5000 },
+			{ title: __( 'Closing the loop' ), duration: Infinity },
+		];
+	}
 
 	if ( flow === 'copy-site' ) {
 		return [

@@ -2,24 +2,20 @@ import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
-import {
-	SiteLogsData,
-	SiteLogsTab,
-	useSiteLogsQuery,
-} from 'calypso/data/hosting/use-site-logs-query';
+import { SiteLogsTab, useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SiteLogsTable } from '../site-monitoring/components/site-logs-table';
+import { SiteLogsToolbar } from '../site-monitoring/components/site-logs-toolbar';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
-import { SiteLogsTable } from './components/site-logs-table';
-import { SiteLogsToolbar } from './components/site-logs-toolbar';
 import {
 	getDateRangeQueryParam,
 	getLogTypeQueryParam,
@@ -55,7 +51,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 
 	const [ logType, setLogType ] = useState< SiteLogsTab >( () => getLogTypeQueryParam() || 'php' );
 
-	const { data: latestPageData, isLoading } = useSiteLogsQuery( siteId, {
+	const { data, isInitialLoading, isFetching } = useSiteLogsQuery( siteId, {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
@@ -75,18 +71,9 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	}, [ getLatestDateRange ] );
 	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
 
-	// We keep a copy of the most recently shown page so that we can use it as part of the loading state while switching pages.
-	const [ data, setCachedPageData ] = useState< SiteLogsData | undefined >();
-	useEffect( () => {
-		if ( ! isLoading ) {
-			setCachedPageData( latestPageData );
-		}
-	}, [ latestPageData, isLoading ] );
-
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
 		setCurrentPageIndex( 0 );
-		setCachedPageData( undefined );
 	};
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
@@ -102,7 +89,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
-		if ( isLoading ) {
+		if ( isInitialLoading ) {
 			return;
 		}
 
@@ -145,7 +132,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	};
 
 	return (
-		<Main fullWidthLayout className={ classnames( 'site-logs', { 'is-loading': isLoading } ) }>
+		<Main fullWidthLayout className={ classnames( 'site-logs', { 'is-loading': isFetching } ) }>
 			<DocumentHead title={ titleHeader } />
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			<FormattedHeader
@@ -172,7 +159,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 							endDateTime={ dateRange.endTime }
 							onDateTimeChange={ handleDateTimeChange }
 						/>
-						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
+						<SiteLogsTable logs={ data?.logs } logType={ logType } isLoading={ isFetching } />
 						{ paginationText && (
 							<div className="site-logs__pagination-text">{ paginationText }</div>
 						) }

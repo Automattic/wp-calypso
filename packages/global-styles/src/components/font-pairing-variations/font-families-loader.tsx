@@ -31,6 +31,7 @@ const FontFamiliesLoader = ( { fontFamilies, onLoad }: Props ) => {
 			type="text/css"
 			href={ `${ FONT_API_BASE }?${ params }` }
 			onLoad={ onLoad }
+			onError={ onLoad }
 		/>
 	);
 };

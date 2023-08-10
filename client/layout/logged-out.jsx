@@ -31,9 +31,9 @@ import {
 } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -49,7 +49,7 @@ const LayoutLoggedOut = ( {
 	oauth2Client,
 	primary,
 	secondary,
-	headerSection,
+	renderHeaderSection,
 	sectionGroup,
 	sectionName,
 	sectionTitle,
@@ -64,8 +64,7 @@ const LayoutLoggedOut = ( {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
-	const pathNameWithoutLocale =
-		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -75,15 +74,19 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage = sectionName === 'reader' && currentRoute.startsWith( '/tag/' );
+	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
 
-	const isReaderSearchPage = sectionName === 'reader' && currentRoute.startsWith( '/read/search' );
+	const isReaderDiscoverPage =
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
+
+	const isReaderSearchPage =
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
 		'focus-content': true,
-		'has-header-section': headerSection,
+		'has-header-section': renderHeaderSection,
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
@@ -128,7 +131,8 @@ const LayoutLoggedOut = ( {
 	} else if (
 		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName ) &&
 		! isReaderTagPage &&
-		! isReaderSearchPage
+		! isReaderSearchPage &&
+		! isReaderDiscoverPage
 	) {
 		masterbar = (
 			<UniversalNavbarHeader
@@ -161,7 +165,9 @@ const LayoutLoggedOut = ( {
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			<div className="layout__header-section">
 				{ masterbar }
-				{ headerSection && <div className="layout__header-section-content">{ headerSection }</div> }
+				{ renderHeaderSection && (
+					<div className="layout__header-section-content">{ renderHeaderSection() }</div>
+				) }
 			</div>
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -185,7 +191,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 						isLoggedIn={ isLoggedIn }
 						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
+							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
 							window.location.reload();
 						} }
 					/>
@@ -198,7 +204,7 @@ const LayoutLoggedOut = ( {
 			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
-						navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
+						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
 						window.location.reload();
 					} }
 					currentRoute={ currentRoute }
@@ -252,7 +258,7 @@ export default withCurrentRoute(
 			! isWooOAuth2Client( oauth2Client ) &&
 			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-		const isWooCoreProfilerFlow = 'woocommerce-core-profiler' === currentQuery?.from;
+		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;

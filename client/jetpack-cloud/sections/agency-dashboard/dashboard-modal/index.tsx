@@ -10,6 +10,7 @@ export type DashboardModalProps = {
 	onClose: () => void;
 	subtitle?: ReactNode;
 	title: string;
+	shouldCloseOnClickOutside?: boolean;
 };
 
 export default function DashboardModal( {
@@ -18,10 +19,11 @@ export default function DashboardModal( {
 	onClose,
 	subtitle,
 	title,
+	shouldCloseOnClickOutside = true,
 }: DashboardModalProps ) {
 	return (
 		<Modal
-			open={ true }
+			shouldCloseOnClickOutside={ shouldCloseOnClickOutside }
 			onRequestClose={ onClose }
 			title={ title }
 			className={ classNames( 'dashboard-modal', className ) }

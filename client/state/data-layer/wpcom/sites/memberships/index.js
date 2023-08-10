@@ -91,7 +91,7 @@ export const handleMembershipGetSettings = dispatchRequest( {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/memberships/status?source=${ action.source }`,
+				path: `/sites/${ action.siteId }/memberships/status?source=${ action.source ?? 'calypso' }`,
 				apiNamespace: 'wpcom/v2',
 			},
 			action

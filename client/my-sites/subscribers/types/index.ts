@@ -1,3 +1,5 @@
+import { SubscribersFilterBy, SubscribersSortBy } from '../constants';
+
 export type SubscriberEndpointResponse = {
 	per_page: number;
 	total: number;
@@ -28,4 +30,17 @@ export type Subscriber = {
 	plans?: SubscriptionPlan[];
 	open_rate?: number;
 	subscriptions?: string[];
+	country?: {
+		code: string;
+		name: string;
+	};
+	url?: string;
+};
+
+export type SubscriberListArgs = {
+	currentPage: number;
+	perPage?: number;
+	filterOption?: SubscribersFilterBy;
+	searchTerm?: string;
+	sortTerm?: SubscribersSortBy;
 };

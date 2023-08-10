@@ -10,6 +10,7 @@ interface NoticeActionProps {
 	onClick?: () => void;
 	external?: boolean;
 	icon?: string;
+	children?: React.ReactNode;
 }
 
 export default class NoticeAction extends Component< NoticeActionProps > {

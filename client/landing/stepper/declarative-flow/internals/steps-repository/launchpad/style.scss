@@ -29,6 +29,8 @@
 	}
 
 	.step-container__content {
+		margin-bottom: 50px;
+
 		@include break-large {
 			height: 100vh;
 		}
@@ -337,6 +339,12 @@
 		@include break-large {
 			max-width: 340px;
 			height: 713px;
+		}
+	}
+
+	.is-tablet .web-preview__placeholder {
+		@include break-large {
+			max-width: 783px;
 		}
 	}
 

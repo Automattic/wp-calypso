@@ -13,7 +13,9 @@ import {
 	isStartWritingFlow,
 	isWooExpressFlow,
 	isNewHostedSiteCreationFlow,
+	isNewsletterFlow,
 	isBlogOnboardingFlow,
+	isOnboardingPMFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -39,11 +41,11 @@ import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
-const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
+const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
-const DEFAULT_START_WRITING_THEME = 'pub/livro';
+const DEFAULT_START_WRITING_THEME = 'pub/hey';
 
 function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
@@ -62,11 +64,11 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const urlData = useSelector( getUrlData );
 
-	const { domainCartItem, planCartItem, siteAccentColor, selectedSiteTitle, productCartItems } =
+	const { domainItem, domainCartItem, planCartItem, selectedSiteTitle, productCartItems } =
 		useSelect(
 			( select ) => ( {
+				domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
 				selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -78,15 +80,18 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
-	let theme: string;
+	// when it's empty, the default WordPress theme will be used.
+	let theme = '';
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
-		theme = DEFAULT_WP_SITE_THEME;
+		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
-	} else {
-		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
+	} else if ( isLinkInBioFlow( flow ) ) {
+		theme = DEFAULT_LINK_IN_BIO_THEME;
+	} else if ( isNewsletterFlow( flow ) ) {
+		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
@@ -108,6 +113,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		isMigrationFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
+		isOnboardingPMFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -124,7 +130,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
-	const useThemeHeadstart = ! isStartWritingFlow( flow );
+	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -142,9 +148,13 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,
-			siteAccentColor,
+			// We removed the color option during newsletter onboarding.
+			// But backend still expects/needs a value, so supplying the default.
+			// Ideally should remove this and update code downstream to handle this.
+			'#113AF5',
 			useThemeHeadstart,
 			username,
+			domainItem,
 			domainCartItem,
 			sourceSlug
 		);

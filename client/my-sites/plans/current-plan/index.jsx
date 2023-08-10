@@ -16,6 +16,7 @@ import {
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlan,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -43,7 +44,6 @@ import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
-import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -64,8 +64,8 @@ import VideoPressProductThankYou from './current-plan-thank-you/jetpack-videopre
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
-import ECommerceTrialCurrentPlan from './ecommerce-trial';
 import PurchasesListing from './purchases-listing';
+import TrialCurrentPlan from './trials/trial-current-plan';
 
 import './style.scss';
 
@@ -161,7 +161,7 @@ class CurrentPlan extends Component {
 	renderMain() {
 		const { selectedSiteId, selectedSite, showJetpackChecklist, translate } = this.props;
 		const isLoading = this.isLoading();
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const planTitle = getPlan( currentPlanSlug ).getTitle();
 		const planFeaturesHeader = translate( '{{planName/}} plan features', {
 			components: { planName: <>{ planTitle }</> },
@@ -195,8 +195,8 @@ class CurrentPlan extends Component {
 		);
 	}
 
-	renderEcommerceTrialPage() {
-		return <ECommerceTrialCurrentPlan />;
+	renderTrialPage() {
+		return <TrialCurrentPlan />;
 	}
 
 	render() {
@@ -214,8 +214,10 @@ class CurrentPlan extends Component {
 			isJetpackNotAtomic,
 		} = this.props;
 
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isBusinessTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+		const isTrial = isEcommerceTrial || isBusinessTrial;
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
@@ -296,9 +298,7 @@ class CurrentPlan extends Component {
 								</Notice>
 							) }
 
-							{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
-
-							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
+							{ isTrial ? this.renderTrialPage() : this.renderMain() }
 
 							<TrackComponentView eventName="calypso_plans_my_plan_view" />
 						</Main>

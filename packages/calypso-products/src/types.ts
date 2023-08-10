@@ -4,6 +4,7 @@ import type {
 	GROUP_WPCOM,
 	WPCOM_PRODUCTS,
 	WPCOM_PLANS,
+	WPCOM_STORAGE_ADD_ONS,
 	PLAN_JETPACK_FREE,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_LEGACY_PLANS,
@@ -24,26 +25,49 @@ import type {
 	FEATURE_GROUP_PAYMENTS,
 	FEATURE_GROUP_MARKETING_EMAIL,
 	FEATURE_GROUP_SHIPPING,
+	WOOCOMMERCE_PRODUCTS,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement } from 'react';
+import type { ReactElement, MemoExoticComponent } from 'react';
 
 export type Feature = string;
+
+export type FeatureObject = {
+	getSlug: () => string;
+	getTitle: ( domainName?: string ) => TranslateResult;
+	getAlternativeTitle?: () => TranslateResult;
+	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
+	getHeader?: () => TranslateResult;
+	getDescription?: ( domainName?: string ) => TranslateResult;
+	getStoreSlug?: () => string;
+	getCompareTitle?: () => TranslateResult;
+	getCompareSubtitle?: () => TranslateResult;
+	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
+	isPlan?: boolean;
+	getFeatureGroup?: () => string;
+	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
+	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
+};
+
+export type FeatureList = {
+	[ key: string ]: FeatureObject;
+};
 
 // WPCom
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
+export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
 
 export interface WPComPlan extends Plan {
 	getAudience?: () => TranslateResult;
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: () => string;
-	getNewsletterTagLine?: () => string;
-	getLinkInBioTagLine?: () => string;
-	getBlogOnboardingTagLine?: () => string;
+	getPlanTagline?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getNewsletterTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getLinkInBioTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
+	getBlogOnboardingTagLine?: ( isGlobalStylesOnPersonal?: boolean ) => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -87,6 +111,9 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
+// WooCommerce
+export type WooCommerceProductSlug = ( typeof WOOCOMMERCE_PRODUCTS )[ number ];
+
 export type SelectorProductFeaturesItem = {
 	slug: string;
 	icon?:
@@ -129,7 +156,7 @@ export type IncompleteJetpackPlan = Partial< JetpackPlan > &
 export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ number ];
 
 // All
-export type ProductSlug = WPComProductSlug | JetpackProductSlug;
+export type ProductSlug = WPComProductSlug | JetpackProductSlug | WooCommerceProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
 
@@ -188,6 +215,13 @@ export type FeatureGroup = {
 };
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
+export type StorageOption = {
+	slug: string;
+	// Determines if the storage option is an add-on that can be purchased. There are a mixture of patterns
+	// to identify add-ons for now, and we're temporarily adding one more
+	isAddOn: boolean;
+};
+
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
 	type: string;
@@ -200,7 +234,7 @@ export type Plan = BillingTerm & {
 	 * this feature list will be ignored in the plans comparison table only.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+	get2023PricingGridSignupWpcomFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
@@ -228,7 +262,10 @@ export type Plan = BillingTerm & {
 	 */
 	get2023PlanComparisonConditionalFeatures?: () => Feature[];
 
-	get2023PricingGridSignupStorageOptions?: () => Feature[];
+	get2023PricingGridSignupStorageOptions?: (
+		showLegacyStorageFeature?: boolean,
+		isCurrentPlan?: boolean
+	) => StorageOption[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
@@ -261,9 +298,9 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
-	getNewsletterSignupFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
-	getBlogOnboardingSignupFeatures?: () => Feature[];
+	getNewsletterSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getLinkInBioSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
+	getBlogOnboardingSignupFeatures?: ( isGlobalStylesOnPersonal?: boolean ) => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 };

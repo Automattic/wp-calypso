@@ -1,7 +1,10 @@
+export { default as Badge } from './badge';
+export type { BadgeType } from './badge';
 export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
+export { default as Count } from './count';
 export * from './device-switcher';
 export { default as Dialog } from './dialog';
 export { default as FormInputValidation } from './forms/form-input-validation';
@@ -53,6 +56,11 @@ export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
+export { default as PricingSlider } from './pricing-slider';
+export * from './theme-type-badge';
+
+// Types
+export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
 export { default as JetpackLogo } from './logos/jetpack-logo';

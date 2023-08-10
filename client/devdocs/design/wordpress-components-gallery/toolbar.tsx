@@ -8,7 +8,6 @@ import {
 	formatItalic,
 	formatStrikethrough,
 	link,
-	more,
 	paragraph,
 } from '@wordpress/icons';
 
@@ -33,8 +32,6 @@ const ToolbarExample = () => (
 			<ToolbarButton icon={ link } label="Link" />
 			<ToolbarGroup
 				isCollapsed
-				icon={ undefined }
-				label="More rich text controls"
 				controls={ [
 					{ icon: code, title: 'Inline code' },
 					{ icon: <InlineImageIcon />, title: 'Inline image' },
@@ -46,8 +43,6 @@ const ToolbarExample = () => (
 			/>
 		</ToolbarGroup>
 		<ToolbarGroup
-			icon={ more }
-			label="Change text alignment"
 			isCollapsed
 			controls={ [
 				{

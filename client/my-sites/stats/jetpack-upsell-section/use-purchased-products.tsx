@@ -6,14 +6,18 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
-import { useEffect, useState } from 'react';
-import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import {
+	default as getSiteProducts,
+	SiteProduct,
+} from 'calypso/state/sites/selectors/get-site-products';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 //
 // WARNING: This hook will only work within Odyssey Stats!
 // It also requires the existence of ${api_root}/jetpack/v4/site/purchases!
 //
-
+// TODO: check whether the site plan supports these products.
 const KEY_SLUG_MAP = new Map( [
 	[ 'backup', [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SECURITY_PLANS ] as readonly string[] ],
 	[ 'boost', JETPACK_BOOST_PRODUCTS as readonly string[] ],
@@ -23,11 +27,11 @@ const KEY_SLUG_MAP = new Map( [
 	[ 'video', JETPACK_VIDEOPRESS_PRODUCTS as readonly string[] ],
 ] );
 
-function formatResponse( responseData?: Record< string, string >[] ) {
+function getSupportedProductSlugs( siteProducts?: SiteProduct[] | null ) {
 	const products = [] as string[];
 	// Find active purchase product slugs.
 	const purchasedProductSlugs =
-		responseData?.filter( ( p ) => p.active === '1' )?.map( ( p ) => p.product_slug ) ?? [];
+		siteProducts?.filter( ( p ) => ! p.expired )?.map( ( p ) => p.productSlug ) ?? [];
 	// Append active product slugs to the products array.
 	KEY_SLUG_MAP.forEach( ( value, key ) => {
 		if ( purchasedProductSlugs.some( ( slug ) => value.includes( slug ) ) ) {
@@ -38,24 +42,11 @@ function formatResponse( responseData?: Record< string, string >[] ) {
 }
 
 export default function usePurchasedProducts() {
-	const [ purchasedProducts, setPurchasedProducts ] = useState( [] as string[] );
-	const [ isLoading, setIsLoading ] = useState( true );
-	const [ error, setError ] = useState< Error | null >( null );
-
-	useEffect( () => {
-		wpcom.req
-			.get( { path: '/site/purchases', apiNamespace: 'jetpack/v4' } )
-			.then( ( res: { data: string } ) => JSON.parse( res.data ) )
-			.then( ( purchases: Record< string, string >[] ) => {
-				setIsLoading( false );
-				setPurchasedProducts( formatResponse( purchases ) );
-			} )
-			.catch( ( error: Error ) => setError( error ) );
-	}, [] );
+	const purchasedProducts = useSelector( ( state ) =>
+		getSiteProducts( state, getSelectedSiteId( state ) )
+	);
 
 	return {
-		purchasedProducts,
-		error,
-		isLoading,
+		purchasedProducts: getSupportedProductSlugs( purchasedProducts ),
 	};
 }

@@ -320,6 +320,10 @@ export function getRandomPhrase(): string {
 export function createSuiteTitle( title: string ): string {
 	const parts = [ `${ toTitleCase( title ) }` ];
 
+	if ( envVariables.RUN_ID ) {
+		parts.push( `(${ envVariables.RUN_ID })` );
+	}
+
 	return parts.join( ' ' );
 }
 

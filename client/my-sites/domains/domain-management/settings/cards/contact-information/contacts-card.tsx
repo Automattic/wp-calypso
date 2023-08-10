@@ -148,7 +148,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent } = props;
+	const { selectedDomainName, canManageConsent, currentRoute } = props;
 
 	return (
 		<div>
@@ -160,7 +160,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 							href={ domainManagementEditContactInfo(
 								props.selectedSite.slug,
 								props.selectedDomainName,
-								props.currentRoute as undefined
+								currentRoute
 							) }
 						>
 							{ translate( 'Edit' ) }
@@ -170,7 +170,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 								href={ domainManagementManageConsent(
 									props.selectedSite.slug,
 									props.selectedDomainName,
-									props.currentRoute as undefined
+									currentRoute
 								) }
 							>
 								{ translate( 'Manage consent' ) }

@@ -35,10 +35,16 @@ interface LaunchpadResponse {
 	launchpad_screen?: string | boolean | null | undefined;
 	checklist?: Task[] | null;
 	checklist_statuses?: ChecklistStatuses;
+	is_enabled: boolean;
+	is_dismissed: boolean;
 }
 
 type LaunchpadUpdateSettings = {
 	checklist_statuses?: Record< string, boolean >;
+	is_checklist_dismissed?: {
+		slug: string;
+		is_dismissed: boolean;
+	};
 };
 
 export const fetchLaunchpad = (
@@ -77,12 +83,14 @@ export const useLaunchpad = (
 			launchpad_screen: undefined,
 			checklist_statuses: {},
 			checklist: null,
+			is_enabled: false,
+			is_dismissed: false,
 		},
 	} );
 };
 
 export const updateLaunchpadSettings = (
-	siteSlug: string | null,
+	siteSlug: string | number,
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = encodeURIComponent( siteSlug as string );

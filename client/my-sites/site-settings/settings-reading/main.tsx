@@ -3,8 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { useSelector } from 'calypso/state';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -39,6 +42,7 @@ type Fields = {
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
+	sm_enabled?: boolean;
 };
 
 const getFormSettings = ( settings: unknown & Fields ) => {
@@ -62,6 +66,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_featured_image_in_email,
 		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
+		sm_enabled,
 	} = settings;
 
 	return {
@@ -80,6 +85,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
 		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
+		sm_enabled: !! sm_enabled,
 	};
 };
 
@@ -99,7 +105,7 @@ type ReadingSettingsFormProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleAutosavingToggle: ( field: string ) => () => void;
-	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
+	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	isAtomic: boolean | null;
 	isRequestingSettings: boolean;
@@ -175,6 +181,11 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 
 const ReadingSettings = () => {
 	const translate = useTranslate();
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
+		isJetpackConnectionProblem( state, siteId as number )
+	);
 
 	if ( ! isEnabled ) {
 		return null;
@@ -183,6 +194,9 @@ const ReadingSettings = () => {
 	return (
 		<Main className="site-settings site-settings__reading-settings">
 			<ScreenOptionsTab wpAdminPath="options-reading.php" />
+			{ isJetpack && isPossibleJetpackConnectionProblem && siteId && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
 			<ReadingSettingsForm />

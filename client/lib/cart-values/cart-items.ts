@@ -42,6 +42,7 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
 	isAkismetProduct,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -164,6 +165,17 @@ export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
 }
 
+export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).every( ( item ) => {
+		return (
+			( isDomainTransfer( item ) &&
+				item.is_sale_coupon_applied &&
+				item.item_subtotal_integer === 0 ) ||
+			isPartialCredits( item )
+		);
+	} );
+}
+
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter(
 		( product ) => product.product_slug === domainProductSlugs.TRANSFER_IN
@@ -213,8 +225,8 @@ export function hasRenewableSubscription( cart: ObjectWithProducts ): boolean {
  * Creates a new shopping cart item for a plan.
  */
 export function planItem( productSlug: string ): { product_slug: string } | null {
-	// Free plan doesn't have shopping cart.
-	if ( isWpComFreePlan( productSlug ) ) {
+	// Free and Enterprise plans don't have shopping cart.
+	if ( isWpComFreePlan( productSlug ) || isWpcomEnterpriseGridPlan( productSlug ) ) {
 		return null;
 	}
 

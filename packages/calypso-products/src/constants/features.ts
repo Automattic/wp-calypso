@@ -25,6 +25,8 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_MONITOR_MONTHLY,
+	PRODUCT_JETPACK_MONITOR_YEARLY,
 } from './jetpack';
 
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
@@ -40,6 +42,7 @@ export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_50GB_STORAGE = '50gb-storage';
 export const FEATURE_200GB_STORAGE = '200gb-storage';
+export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
@@ -103,6 +106,7 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+export const FEATURE_STATS_PAID = 'stats-paid';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -198,6 +202,11 @@ export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
 export const FEATURE_SOCIAL_INSTAGRAM_CONNECTION = 'social-instagram-connection';
+export const FEATURE_JETPACK_MONITOR_MONTHLY = PRODUCT_JETPACK_MONITOR_MONTHLY;
+export const FEATURE_JETPACK_MONITOR_YEARLY = PRODUCT_JETPACK_MONITOR_YEARLY;
+export const FEATURE_MONITOR_1_MINUTE_CHECK_INTERVAL = 'monitor-1-minute-check-interval';
+export const FEATURE_MONITOR_MULTIPLE_EMAIL_RECIPIENTS = 'monitor-multiple-email-recipients';
+export const FEATURE_MONITOR_SMS_NOTIFICATIONS = 'monitor-sms-notifications';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_1GB_BACKUP_STORAGE = 'jetpack-1gb-backup-storage';
@@ -237,6 +246,7 @@ export const FEATURE_WOOCOMMERCE = 'woocommerce';
 export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';
 
 // From class-wpcom-features.php in WPCOM
+export const WPCOM_FEATURES_AI_ASSISTANT = 'ai-assistant';
 export const WPCOM_FEATURES_AKISMET = 'akismet';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
 export const WPCOM_FEATURES_ATOMIC = 'atomic';
@@ -292,6 +302,9 @@ export const FEATURE_PAYMENT_TRANSACTION_FEES_8 = 'payment-transaction-fees-8';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_4 = 'payment-transaction-fees-4';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_2 = 'payment-transaction-fees-2';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_0 = 'payment-transaction-fees-0';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO = 'payment-transaction-fees-0-woo';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL = 'payment-transaction-fees-0-all';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR = 'payment-transaction-fees-2-regular';
 export const FEATURE_GROUP_PAYMENT_TRANSACTION_FEES = 'payment-transaction-fees-group';
 export const FEATURE_THE_READER = 'the-reader';
 
@@ -366,6 +379,9 @@ export const FEATURE_ES_SEARCH_JP = 'es-search-jp';
 export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
 export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
+export const FEATURE_DONATIONS_AND_TIPS_JP = 'donations-and-tips-jp';
+export const FEATURE_PAYPAL_JP = 'payments-paypal-jp';
+export const FEATURE_PAYMENT_BUTTONS_JP = 'payment-buttons-jp';
 export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';
 export const FEATURE_PREMIUM_STORE_THEMES = 'premium-store-themes';
 export const FEATURE_STORE_DESIGN = 'store-design';
@@ -383,6 +399,13 @@ export const FEATURE_INVENTORY_MGMT = 'inventory-mgmt';
 export const FEATURE_STREAMLINED_CHECKOUT = 'streamlined-checkout';
 export const FEATURE_SELL_60_COUNTRIES = 'sell-60-countries';
 export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
+export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
+export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
+
+export const WPCOM_STORAGE_ADD_ONS = <const>[
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
+];
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store

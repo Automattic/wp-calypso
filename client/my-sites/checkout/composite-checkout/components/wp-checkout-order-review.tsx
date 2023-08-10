@@ -20,7 +20,8 @@ import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
-import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { ResponseCart, RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
@@ -104,18 +105,8 @@ export default function WPCheckoutOrderReview( {
 
 	const selectedSiteData = useSelector( getSelectedSite );
 
-	const primaryDomain = selectedSiteData?.options?.is_mapped_domain
-		? selectedSiteData?.domain
-		: null;
-	const firstDomainProduct = responseCart.products.find(
-		( product ) =>
-			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
-	);
-	const domainUrl =
-		primaryDomain ??
-		firstDomainProduct?.meta ??
-		responseCart?.gift_details?.receiver_blog_url ??
-		siteUrl;
+	// This is what will be displayed at the top of checkout prefixed by "Site: ".
+	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
 
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
@@ -134,9 +125,7 @@ export default function WPCheckoutOrderReview( {
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
-			{ ! planIsP2Plus && domainUrl && 'no-user' !== domainUrl && (
-				<SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary>
-			) }
+			{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
 			{ planIsP2Plus && selectedSiteData?.name && (
 				<SiteSummary>
 					{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
@@ -226,4 +215,64 @@ function CouponFieldArea( {
 			</CouponEnableButton>
 		</CouponLinkWrapper>
 	);
+}
+
+function getDomainToDisplayInCheckoutHeader(
+	responseCart: ResponseCart,
+	selectedSiteData: SiteDetails | undefined | null,
+	sitelessCheckoutSlug: string | undefined
+): string | undefined {
+	if ( hasP2PlusPlan( responseCart ) ) {
+		return undefined;
+	}
+
+	const primaryDomainForMapping = selectedSiteData?.options?.is_mapped_domain
+		? selectedSiteData?.domain
+		: undefined;
+	if ( primaryDomainForMapping ) {
+		return primaryDomainForMapping;
+	}
+
+	const domainUrl = getDomainProductUrlToDisplayInCheckoutHeader( responseCart, selectedSiteData );
+	if ( domainUrl ) {
+		return domainUrl;
+	}
+
+	if ( responseCart.gift_details?.receiver_blog_url ) {
+		return responseCart.gift_details.receiver_blog_url;
+	}
+
+	if (
+		sitelessCheckoutSlug &&
+		sitelessCheckoutSlug !== 'no-user' &&
+		sitelessCheckoutSlug !== 'no-site'
+	) {
+		return sitelessCheckoutSlug;
+	}
+
+	return undefined;
+}
+
+function getDomainProductUrlToDisplayInCheckoutHeader(
+	responseCart: ResponseCart,
+	selectedSiteData: SiteDetails | undefined | null
+): string | undefined {
+	const domainProducts = responseCart.products.filter(
+		( product ) =>
+			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
+	);
+
+	const firstDomainProduct = domainProducts.length > 0 ? domainProducts[ 0 ] : undefined;
+
+	const isPurchaseSiteless = ! selectedSiteData;
+
+	if ( ! firstDomainProduct?.meta ) {
+		return undefined;
+	}
+
+	if ( isPurchaseSiteless && domainProducts.length > 1 ) {
+		return undefined;
+	}
+
+	return firstDomainProduct.meta;
 }

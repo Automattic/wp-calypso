@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
@@ -11,10 +12,11 @@ import './style.scss';
 
 const noop = () => undefined;
 
+type ButtonProps = ComponentProps< typeof Button >;
 type ReaderImportButtonProps = {
 	onProgress?: () => void;
-	icon?: Button.ButtonProps[ 'icon' ];
-	iconSize?: Button.ButtonProps[ 'iconSize' ];
+	icon?: ButtonProps[ 'icon' ];
+	iconSize?: ButtonProps[ 'iconSize' ];
 };
 
 const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
@@ -24,6 +26,7 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 } ) => {
 	const [ disabled, setDisabled ] = useState( false );
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
 	const dispatch = useDispatch();
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
@@ -83,7 +86,9 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 		<Button className="reader-import-button" icon={ icon } iconSize={ iconSize }>
 			<FilePicker accept=".xml,.opml" onClick={ onClick } onPick={ onPick }>
 				{ ! icon && <Gridicon icon="cloud-upload" className="reader-import-button__icon" /> }
-				<span className="reader-import-button__label">{ translate( 'Import' ) }</span>
+				<span className="reader-import-button__label">
+					{ hasTranslation( 'Import OPML' ) ? translate( 'Import OPML' ) : translate( 'Import' ) }
+				</span>
 			</FilePicker>
 		</Button>
 	);

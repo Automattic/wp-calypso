@@ -1,3 +1,4 @@
+import { localeRegexString } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -77,7 +78,7 @@ function getLocation( path ) {
 	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
 		return 'recommended_posts';
 	}
-	if ( path.indexOf( '/read/search' ) === 0 ) {
+	if ( path.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) ) ) {
 		return 'search';
 	}
 	if ( path.indexOf( '/read/conversations/a8c' ) === 0 ) {

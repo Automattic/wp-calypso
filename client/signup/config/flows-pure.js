@@ -13,6 +13,7 @@ export function generateFlows( {
 	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
 	getWithThemeDestination = noop,
+	getWithPluginDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
@@ -23,9 +24,8 @@ export function generateFlows( {
 			name: HOSTING_LP_FLOW,
 			steps: [ 'user-hosting' ],
 			destination: getHostingFlowDestination,
-			description:
-				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
-			lastModified: '2023-05-19',
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
 		},
 		{
@@ -33,11 +33,13 @@ export function generateFlows( {
 			steps: [ 'user' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2020-08-12',
+			lastModified: '2023-06-16',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'business',
@@ -106,6 +108,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'with-plugin',
+			steps: [ 'user', 'domains', 'plans-business-with-plugin' ],
+			destination: getWithPluginDestination,
+			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
+			lastModified: '2023-07-19',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
+		},
+		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
@@ -143,8 +154,19 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
-			lastModified: '2023-01-10',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
+		},
+		{
+			name: 'onboarding-media',
+			steps: [ 'user' ],
+			destination: getRedirectDestination,
+			description:
+				'The intermittent user step for the GF foundation version of the paid media flow.',
+			lastModified: '2023-06/17',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'import',
@@ -310,10 +332,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'site-selected',
-			steps: [ 'themes-site-selected', 'plans-site-selected-legacy' ],
-			destination: getSiteDestination,
+			steps: [ 'plans-site-selected-legacy' ],
+			destination: getSignupDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
-			optionalDependenciesInQuery: [ 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
 		},

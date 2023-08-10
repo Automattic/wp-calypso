@@ -1,8 +1,9 @@
 import { Button } from '@automattic/components';
+import { NavigatorHeader } from '@automattic/onboarding';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import NavigatorHeader from './navigator-header';
+import NavigatorTitle from './navigator-title';
 import PatternSelector from './pattern-selector';
 import type { Pattern } from './types';
 
@@ -31,9 +32,9 @@ const ScreenFooter = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Footer' ) }
+				title={ <NavigatorTitle title={ translate( 'Add footer' ) } /> }
 				description={ translate(
-					'The footer appears at the bottom of a site and shows useful links and contact information.'
+					'The footer pattern sits at the bottom of the homepage and typically shows useful links and contact details.'
 				) }
 				onBack={ onBack }
 			/>

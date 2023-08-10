@@ -1,5 +1,7 @@
 import warn from '@wordpress/warning';
+import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
+import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -199,16 +201,19 @@ const streamApis = {
 	},
 	discover: {
 		path: ( { streamKey } ) => {
-			if ( ! streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
-				return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
+			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
+				return '/read/tags/cards';
+			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
+				return '/read/tags/posts';
 			}
-			return '/read/tags/cards';
+			return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
 		},
 		dateProperty: 'date',
-		query: ( extras, { tags } ) =>
+		query: ( extras, { streamKey } ) =>
 			getQueryString( {
 				...extras,
-				tags: tags ? Object.values( tags )?.map( ( tag ) => tag.slug ) : [],
+				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
+				tags: getTagsFromStreamKey( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
 			} ),
@@ -327,6 +332,8 @@ export function requestPage( action ) {
 	// eslint-disable-next-line no-extra-boolean-cast
 	const number = !! gap ? PER_GAP : fetchCount;
 
+	const lang = i18n.getLocaleSlug();
+
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
@@ -334,7 +341,7 @@ export function requestPage( action ) {
 		apiNamespace: api.apiNamespace ?? null,
 		query: isPoll
 			? pollQuery( [], { ...algorithm } )
-			: query( { ...pageHandle, ...algorithm, number }, action.payload ),
+			: query( { ...pageHandle, ...algorithm, number, lang }, action.payload ),
 		onSuccess: action,
 		onFailure: action,
 	} );

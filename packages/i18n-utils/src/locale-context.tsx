@@ -9,6 +9,7 @@ export const localeContext = createContext< string | null >( null );
 
 interface Props {
 	localeSlug: string;
+	children: React.ReactNode;
 }
 
 export const LocaleProvider: React.FC< Props > = ( { children, localeSlug } ) => (

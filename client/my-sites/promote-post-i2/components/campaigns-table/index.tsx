@@ -10,7 +10,7 @@ interface Props {
 	isFetchingPageResults: boolean;
 }
 
-export const CampaignItemLoading = ( { totalRows = 7 }: { totalRows?: number } ) => {
+export const SingleItemLoading = ( { totalRows = 8 }: { totalRows?: number } ) => {
 	return (
 		<tr>
 			<td>
@@ -26,6 +26,17 @@ export const CampaignItemLoading = ( { totalRows = 7 }: { totalRows?: number } )
 				<td key={ i }></td>
 			) ) }
 		</tr>
+	);
+};
+
+export const ItemsLoading = ( { totalRows = 8 }: { totalRows?: number } ) => {
+	const rowsNumber = 5;
+	return (
+		<>
+			{ new Array( rowsNumber ).fill( 0, 0, rowsNumber ).map( ( _, key ) => (
+				<SingleItemLoading totalRows={ totalRows } key={ key } />
+			) ) }
+		</>
 	);
 };
 
@@ -85,11 +96,7 @@ export default function CampaignsTable( props: Props ) {
 				</thead>
 				<tbody>
 					{ isLoading && ! isFetchingPageResults ? (
-						<>
-							{ columns.map( ( item, key ) => (
-								<CampaignItemLoading key={ key } />
-							) ) }
-						</>
+						<ItemsLoading />
 					) : (
 						<>
 							{ campaigns.map( ( campaign ) => {
@@ -100,7 +107,7 @@ export default function CampaignsTable( props: Props ) {
 									/>
 								);
 							} ) }
-							{ isFetchingPageResults && <CampaignItemLoading /> }
+							{ isFetchingPageResults && <SingleItemLoading /> }
 						</>
 					) }
 				</tbody>

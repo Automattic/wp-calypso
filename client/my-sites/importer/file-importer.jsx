@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { startImport } from 'calypso/state/imports/actions';
+import { startImport, cancelImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
@@ -111,6 +111,9 @@ class FileImporter extends PureComponent {
 						description={ errorData.description }
 						siteSlug={ site.slug }
 						code={ errorData.code }
+						retryImport={ () => {
+							this.props.cancelImport( site.ID, importerStatus.importerId );
+						} }
 					/>
 				) }
 				{ includes( importingStates, importerState ) && (
@@ -130,4 +133,4 @@ class FileImporter extends PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent, startImport } )( FileImporter );
+export default connect( null, { recordTracksEvent, startImport, cancelImport } )( FileImporter );

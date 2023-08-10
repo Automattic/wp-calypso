@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { translate, useTranslate } from 'i18n-calypso';
-import { useState, useMemo } from 'react';
+import { translate } from 'i18n-calypso';
+import { useState } from 'react';
 import useRequestContactVerificationCode from 'calypso/state/jetpack-agency-dashboard/hooks/use-request-contact-verification-code';
 import useResendVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-resend-contact-verification-code';
 import useValidateVerificationCodeMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-validate-contact-verification-code';
@@ -8,7 +8,6 @@ import {
 	RequestVerificationCodeParams,
 	ValidateVerificationCodeParams,
 	ResendVerificationCodeParams,
-	AllowedMonitorContactActions,
 } from '../sites-overview/types';
 
 export function useRequestVerificationCode(): {
@@ -140,62 +139,4 @@ export function useResendVerificationCode(): {
 			return false;
 		},
 	} );
-}
-
-export function useContactModalTitleAndSubtitle(
-	type: 'email' | 'phone',
-	action: AllowedMonitorContactActions
-): {
-	title: string;
-	subtitle: string;
-} {
-	const translate = useTranslate();
-
-	const getContactModalTitleAndSubTitle = useMemo(
-		() => ( {
-			email: {
-				add: {
-					title: translate( 'Add new email address' ),
-					subtitle: translate(
-						'Please use an email address that is accessible. Only alerts will be sent.'
-					),
-				},
-				edit: {
-					title: translate( 'Edit your email address' ),
-					subtitle: translate( 'If you update your email address, you’ll need to verify it.' ),
-				},
-				remove: {
-					title: translate( 'Remove Email' ),
-					subtitle: translate( 'Are you sure you want to remove this email address?' ),
-				},
-				verify: {
-					title: translate( 'Verify your email address' ),
-					subtitle: translate( 'We’ll send a code to verify your email address.' ),
-				},
-			},
-			phone: {
-				add: {
-					title: translate( 'Add your phone number' ),
-					subtitle: translate(
-						'Please use phone number that is accessible. Only alerts will be sent.'
-					),
-				},
-				edit: {
-					title: translate( 'Edit your phone number' ),
-					subtitle: translate( 'If you update your number, you’ll need to verify it.' ),
-				},
-				remove: {
-					title: translate( 'Remove Phone Number' ),
-					subtitle: translate( 'Are you sure you want to remove this phone number?' ),
-				},
-				verify: {
-					title: translate( 'Verify your phone number' ),
-					subtitle: translate( 'We’ll send a code to verify your phone number.' ),
-				},
-			},
-		} ),
-		[ translate ]
-	);
-
-	return getContactModalTitleAndSubTitle[ type ][ action ];
 }

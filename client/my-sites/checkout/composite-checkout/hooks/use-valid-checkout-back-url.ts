@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
 import { resemblesUrl } from 'calypso/lib/url';
@@ -11,6 +12,7 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
+		config( 'hostname' ),
 		...( ( siteSlug && [ siteSlug ] ) || [] ),
 	];
 

@@ -20,7 +20,12 @@ import useSharingModalDismissed from './use-sharing-modal-dismissed';
 import './style.scss';
 
 type CoreEditorPlaceholder = {
-	getCurrentPost: ( ...args: unknown[] ) => { link: string; title: string };
+	getCurrentPost: ( ...args: unknown[] ) => {
+		link: string;
+		title: string;
+		status: string;
+		password: string;
+	};
 	getCurrentPostType: ( ...args: unknown[] ) => string;
 	isCurrentPostPublished: ( ...args: unknown[] ) => boolean;
 };
@@ -33,7 +38,12 @@ const SharingModal: React.FC = () => {
 	const { __ } = useI18n();
 	const isPrivateBlog = window?.wpcomGutenberg?.blogPublic === '-1';
 
-	const { link, title } = useSelect(
+	const {
+		link,
+		title,
+		status: postStatus,
+		password: postPassword,
+	} = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
 	);
@@ -65,6 +75,9 @@ const SharingModal: React.FC = () => {
 			launchpadScreenOption !== 'full' &&
 			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished &&
+			// Ensure post is published publicly and not private or password protected.
+			postStatus === 'publish' &&
+			! postPassword &&
 			postType === 'post'
 		) {
 			previousIsCurrentPostPublished.current = isCurrentPostPublished;
@@ -165,7 +178,6 @@ const SharingModal: React.FC = () => {
 	return (
 		<Modal
 			className="wpcom-block-editor-post-published-sharing-modal"
-			open={ isOpen }
 			title=""
 			onRequestClose={ closeModal }
 		>
@@ -182,9 +194,9 @@ const SharingModal: React.FC = () => {
 							{
 								a: (
 									<ExternalLink
+										children={ null }
 										href={ subscribersUrl }
 										onClick={ trackSubscribersClick }
-										target="_blank"
 									/>
 								),
 							}

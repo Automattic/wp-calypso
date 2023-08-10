@@ -6,6 +6,8 @@ import {
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import renderHeaderSection from '../lib/header-section';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -19,6 +21,9 @@ const exported = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_discover_viewed' );
 
+		if ( ! isUserLoggedIn( context.store.getState() ) ) {
+			context.renderHeaderSection = renderHeaderSection;
+		}
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad

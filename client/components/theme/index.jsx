@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
@@ -82,6 +83,7 @@ export class Theme extends Component {
 		errorOnUpdate: PropTypes.bool,
 		softLaunched: PropTypes.bool,
 		selectedStyleVariation: PropTypes.object,
+		shouldLimitGlobalStyles: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -282,11 +284,15 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
+		const isLockedStyleVariation =
+			this.props.shouldLimitGlobalStyles &&
+			! isDefaultGlobalStylesVariationSlug( this.props.selectedStyleVariation?.slug );
 		return (
 			<ThemeTypeBadge
 				siteId={ this.props.siteId }
 				siteSlug={ this.props.siteSlug }
 				themeId={ this.props.theme.id }
+				isLockedStyleVariation={ isLockedStyleVariation }
 			/>
 		);
 	};
@@ -326,7 +332,7 @@ export class Theme extends Component {
 	}
 }
 
-export default connect(
+const ConnectedTheme = connect(
 	( state, { theme, siteId } ) => {
 		const {
 			themes: { themesUpdate },
@@ -344,3 +350,8 @@ export default connect(
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
 )( localize( Theme ) );
+
+export default ( props ) => {
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( props.siteId );
+	return <ConnectedTheme { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+};

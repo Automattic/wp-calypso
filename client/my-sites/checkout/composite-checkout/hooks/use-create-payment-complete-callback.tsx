@@ -100,7 +100,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const domains = useSiteDomains( siteId ?? undefined );
 
 	return useCallback(
-		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
+		async ( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ) => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
 
@@ -141,7 +141,7 @@ export default function useCreatePaymentCompleteCallback( {
 			debug( 'getThankYouUrl returned', url );
 
 			try {
-				recordPaymentCompleteAnalytics( {
+				await recordPaymentCompleteAnalytics( {
 					paymentMethodId,
 					transactionResult,
 					redirectUrl: url,
@@ -265,7 +265,7 @@ export default function useCreatePaymentCompleteCallback( {
 	);
 }
 
-function recordPaymentCompleteAnalytics( {
+async function recordPaymentCompleteAnalytics( {
 	paymentMethodId,
 	transactionResult,
 	redirectUrl,
@@ -298,7 +298,7 @@ function recordPaymentCompleteAnalytics( {
 	);
 
 	try {
-		recordPurchase( {
+		await recordPurchase( {
 			cart: responseCart,
 			orderId:
 				transactionResult && 'receipt_id' in transactionResult

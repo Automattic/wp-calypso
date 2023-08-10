@@ -1,6 +1,8 @@
+import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { JetpackLogo } from '@automattic/components';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
@@ -13,6 +15,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -27,6 +30,8 @@ import {
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
+	getSitePlanSlug,
+	getSite,
 } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -57,6 +62,7 @@ export const QuickLinks = ( {
 	trackDesignLogoAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackManageAllDomainsAction,
 	trackExplorePluginsAction,
 	isExpanded,
 	updateHomeQuickLinksToggleStatus,
@@ -65,14 +71,30 @@ export const QuickLinks = ( {
 	siteSlug,
 	isFSEActive,
 	siteEditorUrl,
+	isAtomic,
 } ) => {
 	const translate = useTranslate();
+	const { sendNudge } = useOdieAssistantContext();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
+	const hasBoost = site?.options.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
+
+	const addNewDomain = () => {
+		sendNudge( {
+			nudge: 'add-domain',
+			initialMessage:
+				'I see you want to add a domain. I can give you a few tips on how to do that.',
+		} );
+		trackAddDomainAction();
+	};
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -173,12 +195,21 @@ export const QuickLinks = ( {
 						<ActionBox
 							href={ `/domains/add/${ siteSlug }` }
 							hideLinkIndicator
-							onClick={ trackAddDomainAction }
+							onClick={ addNewDomain }
 							label={ translate( 'Add a domain' ) }
-							gridicon="domains"
+							gridicon="add-outline"
 						/>
 					) }
 				</>
+			) }
+			{ canManageSite && (
+				<ActionBox
+					href="/domains/manage"
+					hideLinkIndicator
+					onClick={ trackManageAllDomainsAction }
+					label={ translate( 'Manage all domains' ) }
+					gridicon="domains"
+				/>
 			) }
 			{ siteAdminUrl && (
 				<ActionBox
@@ -212,6 +243,22 @@ export const QuickLinks = ( {
 						iconSrc={ fiverrIcon }
 					/>
 				</>
+			) }
+			{ isAtomic && hasBoost && (
+				<ActionBox
+					href={ `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-boost` }
+					hideLinkIndicator
+					label={ translate( 'Speed up your site' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
+			) }
+			{ isAtomic && hasBackups && (
+				<ActionBox
+					href={ `/backup/${ siteSlug }` }
+					hideLinkIndicator
+					label={ translate( 'Restore a backup' ) }
+					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
+				/>
 			) }
 		</div>
 	);
@@ -356,13 +403,24 @@ const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
-const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
+export const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_domain_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_add_domain' )
+		)
+	);
+};
+
+export const trackManageAllDomainsAction = ( isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_my_site_manage_all_domains_click', {
+				is_static_home_page: isStaticHomePage,
+			} ),
+			bumpStat( 'calypso_customer_home', 'my_site_manage_all_domains' )
 		)
 	);
 };
@@ -426,6 +484,7 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackManageAllDomainsAction,
 	trackExplorePluginsAction,
 	updateHomeQuickLinksToggleStatus: ( status ) =>
 		savePreference( 'homeQuickLinksToggleStatus', status ),
@@ -448,6 +507,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddEmailAction: () => dispatchProps.trackAddEmailAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
+		trackManageAllDomainsAction: () =>
+			dispatchProps.trackManageAllDomainsAction( isStaticHomePage ),
 		trackExplorePluginsAction: () => dispatchProps.trackExplorePluginsAction( isStaticHomePage ),
 		...ownProps,
 	};

@@ -26,15 +26,15 @@
 	},
 	"dependencies": {
 		"@automattic/explat-client": "workspace:^",
-		"react": ">=16.8 <18",
+		"react": "^18.2.0",
 		"tslib": ">=2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/react": "^12.1.3",
+		"@testing-library/react": "^14.0.0",
 		"@testing-library/react-hooks": "^7.0.2",
-		"react-dom": ">=16.8 <18",
-		"typescript": "^4.7.4"
+		"react-dom": "^18.2.0",
+		"typescript": "^5.1.6"
 	}
 }

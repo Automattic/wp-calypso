@@ -260,7 +260,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 						<FormLabel htmlFor="store_postcode">{ __( 'Country / State' ) }</FormLabel>
 						<ComboboxControl
 							value={ getSettingsValue( 'store_country' ) }
-							onChange={ ( value: string | null ) => {
+							onChange={ ( value?: string | null ) => {
 								onChange( 'store_country', value || '' );
 							} }
 							options={ countriesAsOptions }

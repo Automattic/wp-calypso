@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { useSubscriberListManager } from 'calypso/my-sites/subscribers/components/subscriber-list-manager/subscriber-list-manager-context';
+import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { Subscriber } from '../../types';
 import { SubscriberRow } from './subscriber-row';
 import './style.scss';
@@ -12,7 +12,7 @@ type SubscriberListProps = {
 
 const SubscriberList = ( { onView, onUnsubscribe }: SubscriberListProps ) => {
 	const translate = useTranslate();
-	const { subscribers } = useSubscriberListManager();
+	const { subscribers } = useSubscribersPage();
 
 	return (
 		<ul className="subscriber-list" role="table">

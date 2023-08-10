@@ -74,7 +74,7 @@ const getOnSubmitNewMailboxesHandler =
 
 		if ( ! userCanAddEmail || ! validated ) {
 			if ( ! userCanAddEmail ) {
-				dispatch( errorNotice( userCannotAddEmailReason ) );
+				dispatch( errorNotice( userCannotAddEmailReason?.message ) );
 			}
 
 			setAddingToCart( false );

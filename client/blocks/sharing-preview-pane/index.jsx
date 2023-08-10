@@ -7,8 +7,6 @@ import { get, find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
 import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
 import MastodonSharePreview from 'calypso/components/share/mastodon-share-preview';
@@ -83,30 +81,12 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon, siteName } =
+		const { post, site, message, connections, translate, seoTitle, siteIcon, siteName } =
 			this.props;
 		const { selectedService } = this.state;
 
 		if ( ! selectedService ) {
 			return null;
-		}
-
-		const connection = find( connections, { service: selectedService } );
-
-		if ( ! connection ) {
-			return (
-				<Notice
-					text={ translate( 'Connect to %s to see the preview', {
-						args: serviceNames[ selectedService ],
-					} ) }
-					status="is-info"
-					showDismiss={ false }
-				>
-					<NoticeAction href={ '/marketing/connections/' + siteSlug }>
-						{ translate( 'Settings' ) }
-					</NoticeAction>
-				</Notice>
-			);
 		}
 
 		const articleUrl = get( post, 'URL', '' );
@@ -115,30 +95,34 @@ class SharingPreviewPane extends PureComponent {
 		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
 		const imageUrl = getPostImage( post );
-		const customImage = getPostCustomImage( post );
-		const {
-			external_name: externalName,
-			external_profile_url: externalProfileURL,
-			external_profile_picture: externalProfilePicture,
-			external_display: externalDisplay,
-		} = connection;
 
+		const connection = find( connections, { service: selectedService } ) ?? {};
+
+		/**
+		 * Props to pass to the preview component. Will be populated with the connection
+		 * specific data if the selected service is connected.
+		 *
+		 * @type {Object}
+		 */
 		const previewProps = {
 			articleUrl,
 			articleTitle,
 			articleContent,
 			articleSummary,
-			externalDisplay,
-			externalName,
-			externalProfileURL,
-			externalProfilePicture,
 			message,
 			imageUrl,
 			seoTitle,
 			siteDomain,
 			siteIcon,
 			siteName,
+			hidePostPreview: ! connection.ID,
+			externalDisplay: connection.external_display,
+			externalName: connection.external_name,
+			externalProfileURL: connection.external_profile_URL,
+			externalProfilePicture: connection.external_profile_picture,
 		};
+
+		const customImage = getPostCustomImage( post );
 
 		switch ( selectedService ) {
 			case 'facebook':
@@ -157,13 +141,13 @@ class SharingPreviewPane extends PureComponent {
 					<TumblrSharePreview
 						{ ...previewProps }
 						articleContent={ post.content }
-						externalProfileURL={ connection.external_profile_URL }
+						externalProfileURL={ connection?.external_profile_URL }
 					/>
 				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':
-				return <TwitterSharePreview { ...previewProps } externalDisplay={ externalDisplay } />;
+				return <TwitterSharePreview { ...previewProps } />;
 			case 'mastodon':
 				return (
 					<MastodonSharePreview

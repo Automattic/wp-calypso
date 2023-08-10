@@ -4,7 +4,7 @@ import {
 	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
-import { Spinner as WPSpinner } from '@wordpress/components';
+import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes, startsWith } from 'lodash';
@@ -25,6 +25,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -41,6 +42,7 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlockedError as isSiteBlockedSelector,
 } from 'calypso/state/jetpack-connect/selectors';
+import { logoutUser } from 'calypso/state/logout/actions';
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
@@ -82,6 +84,8 @@ import {
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
+import { WooLoader } from './woo-loader';
+import { ConnectingYourAccountStage, OpeningTheDoorsStage } from './woo-loader-stages';
 
 /**
  * Constants
@@ -438,13 +442,30 @@ export class JetpackAuthorize extends Component {
 		return partnerID && 'pressable' !== partnerSlug;
 	}
 
-	handleSignIn = () => {
+	handleSignIn = async ( e, loginURL ) => {
+		e.preventDefault();
+
 		const { recordTracksEvent } = this.props;
-		const { from } = this.props.authQuery;
-		if ( 'woocommerce-onboarding' === from ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
-		} else if ( from === 'woocommerce-core-profiler' ) {
-			recordTracksEvent( 'calypso_jpc_different_user_click' );
+		switch ( true ) {
+			case this.isWooOnboarding():
+				recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+				window.location.href = e.target.href;
+				break;
+			case this.isWooCoreProfiler():
+				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
+				window.location.href = e.target.href;
+				break;
+			default:
+				try {
+					const { redirect_to: redirectTo } = await this.props.logoutUser( loginURL );
+					disablePersistence();
+					await clearStore();
+					window.location.href = redirectTo || '/';
+				} catch ( error ) {
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					this.props.redirectToLogout( loginURL );
+				}
 		}
 	};
 
@@ -509,6 +530,10 @@ export class JetpackAuthorize extends Component {
 
 		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+		}
+
+		if ( 'woocommerce-core-profiler' === from ) {
+			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
 		}
 
 		return this.authorize();
@@ -846,20 +871,20 @@ export class JetpackAuthorize extends Component {
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
 						<Card className="jetpack-connect__logged-in-card">
-							<Gravatar user={ user } size={ 40 } />
-							<div>
+							<div className="jetpack-connect__logged-in-form-user">
+								<Gravatar user={ user } size={ 40 } />
 								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-								<LoggedOutFormLinkItem
-									href={ login( {
-										isJetpack: true,
-										redirectTo: window.location.href,
-										from: authQuery.from,
-									} ) }
-									onClick={ this.handleSignIn }
-								>
-									{ translate( 'Sign in as a different user' ) }
-								</LoggedOutFormLinkItem>
 							</div>
+							<LoggedOutFormLinkItem
+								href={ login( {
+									isJetpack: true,
+									redirectTo: window.location.href,
+									from: authQuery.from,
+								} ) }
+								onClick={ this.handleSignIn }
+							>
+								{ translate( 'Sign in as a different user' ) }
+							</LoggedOutFormLinkItem>
 						</Card>
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
@@ -909,12 +934,14 @@ export class JetpackAuthorize extends Component {
 			return wooDnaFooterLinks;
 		}
 
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
 		return (
 			<LoggedOutFormLinks>
 				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
-					href={ login( { isJetpack: true, redirectTo: window.location.href, from } ) }
-					onClick={ this.handleSignIn }
+					href={ loginURL }
+					onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
@@ -1027,6 +1054,24 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
+		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+
+		if ( this.isWooCoreProfiler() && ( isAuthorizing || authorizeSuccess ) ) {
+			return (
+				// Wrap the loader in a modal to show it in full screen
+				<Modal
+					open
+					title=""
+					overlayClassName="jetpack-connect-woocommerce-loader__modal-overlay"
+					className="jetpack-connect-woocommerce-loader__modal"
+					shouldCloseOnClickOutside={ false }
+					shouldCloseOnEsc={ false }
+					isDismissible={ false }
+				>
+					<WooLoader stages={ [ ConnectingYourAccountStage, OpeningTheDoorsStage ] } />
+				</Modal>
+			);
+		}
 
 		return (
 			<MainWrapper
@@ -1102,6 +1147,7 @@ const connectComponent = connect(
 		recordTracksEvent: recordTracksEventAction,
 		redirectToLogout,
 		retryAuth: retryAuthAction,
+		logoutUser,
 	}
 );
 

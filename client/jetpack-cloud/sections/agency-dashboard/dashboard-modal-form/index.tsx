@@ -22,6 +22,7 @@ export default function DashboardModalForm( {
 
 	return (
 		<DashboardModal
+			shouldCloseOnClickOutside={ false }
 			title={ title }
 			subtitle={ subtitle }
 			onClose={ onClose }

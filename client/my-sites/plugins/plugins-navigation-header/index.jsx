@@ -109,26 +109,28 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const { localizePath } = useLocalizedPlugins();
 
 	const setBreadcrumbs = ( breadcrumbs = [] ) => {
+		const pluginsBreadcrumb = {
+			label: translate( 'Plugins' ),
+			href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
+			id: 'plugins',
+			helpBubble: translate(
+				'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+					},
+				}
+			),
+		};
+
 		if ( breadcrumbs?.length === 0 || ( ! category && ! search ) ) {
 			dispatch( resetBreadcrumbs() );
-			dispatch(
-				appendBreadcrumb( {
-					label: translate( 'Plugins' ),
-					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-							},
-						}
-					),
-				} )
-			);
+			dispatch( appendBreadcrumb( pluginsBreadcrumb ) );
 		}
 
 		if ( category ) {
+			resetBreadcrumbs();
+			dispatch( appendBreadcrumb( pluginsBreadcrumb ) );
 			dispatch(
 				appendBreadcrumb( {
 					label: categoryName,
@@ -139,6 +141,8 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 		}
 
 		if ( search ) {
+			dispatch( resetBreadcrumbs() );
+			dispatch( appendBreadcrumb( pluginsBreadcrumb ) );
 			dispatch(
 				appendBreadcrumb( {
 					label: translate( 'Search Results' ),

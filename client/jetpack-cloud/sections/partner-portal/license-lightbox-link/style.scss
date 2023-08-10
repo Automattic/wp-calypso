@@ -7,7 +7,10 @@
 	text-decoration: underline;
 	text-align: left;
 	cursor: pointer;
-	white-space: nowrap;
+}
+
+.license-lightbox-link__text {
+	white-space: initial;
 }
 
 .license-lightbox-link-icon {

@@ -1,0 +1,60 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.navigator-screen__footer {
+	display: flex;
+	position: fixed;
+	align-items: center;
+	justify-content: space-between;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+	padding: 0 20px;
+	box-shadow: inset 0 1px 0 #e2e4e7;
+	box-sizing: border-box;
+	background-color: var(--studio-white);
+
+	a,
+	button {
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+	}
+
+	.navigator-screen__footer-back-button {
+		display: block;
+		color: #101517;
+		font-size: $font-body-small;
+		font-weight: 600;
+
+		svg.gridicon {
+			width: 20px;
+			height: 20px;
+			top: 5px;
+			margin-right: 2px;
+
+			.rtl & {
+				transform: scaleX(-1);
+			}
+		}
+	}
+
+	@include break-large {
+		display: flex;
+		flex-direction: column;
+		align-items: initial;
+		position: sticky;
+		height: auto;
+		gap: 8px;
+		padding: 32px 16px;
+		margin: 0 -16px;
+		box-shadow: none;
+		box-sizing: content-box;
+
+		.navigator-screen__footer-back-button {
+			display: none;
+		}
+	}
+}

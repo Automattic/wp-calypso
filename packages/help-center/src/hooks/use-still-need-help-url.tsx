@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { useSupportAvailability } from '@automattic/data-stores';
+import { useSupportAvailability } from '../data/use-support-availability';
 
 export function useStillNeedHelpURL() {
 	const { data: supportAvailability, isLoading } = useSupportAvailability( 'OTHER' );

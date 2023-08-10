@@ -138,8 +138,15 @@
 	&.is-compact {
 		.reader-featured-image {
 			width: 200px !important;
-			min-height: 140px;
-			max-height: 140px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				width: auto !important;
+				height: 300px !important;
+			}
+
+			@include breakpoint-deprecated( "<480px" ) {
+				height: 200px !important;
+			}
 		}
 
 		.reader-post-card__post {
@@ -156,6 +163,10 @@
 			flex-direction: row;
 			gap: 24px;
 			margin-bottom: 8px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				flex-direction: column-reverse;
+			}
 		}
 
 		.reader-post-card__post-details {
@@ -289,7 +300,6 @@
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	margin-top: 2px;
-	white-space: nowrap;
 	cursor: pointer;
 	&:hover {
 		color: var(--color-text-subtle);

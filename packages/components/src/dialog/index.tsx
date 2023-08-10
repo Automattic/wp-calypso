@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import Modal from 'react-modal';
 import Gridicon from '../gridicon';
 import ButtonBar from './button-bar';
-import type { Button, BaseButton } from './button-bar';
+import type { BaseButton } from './button-bar';
 import type { PropsWithChildren } from 'react';
 
 import './style.scss';
@@ -12,7 +12,7 @@ type Props = {
 	additionalClassNames?: Parameters< typeof classnames >[ 0 ];
 	additionalOverlayClassNames?: Parameters< typeof classnames >[ 0 ];
 	baseClassName?: string;
-	buttons?: Button[];
+	buttons?: ( React.ReactElement | BaseButton )[];
 	className?: string;
 	isBackdropVisible?: boolean;
 	isFullScreen?: boolean;

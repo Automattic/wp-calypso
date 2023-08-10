@@ -1,10 +1,10 @@
+import { Railcar } from '@automattic/calypso-analytics';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
-import { Railcar } from 'calypso/data/marketplace/types';
 import { requestRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import {
 	getReaderRecommendedSites,
@@ -19,14 +19,17 @@ const displayRecommendedSitesTotal = 2;
 
 export const seed = Math.floor( Math.random() * 10001 );
 
-type RecommendedSite = {
-	ID: number;
+type RecommendedSiteType = {
 	blogId: number;
-	feedId: number;
-	railcar?: Railcar;
+	feedId?: number;
+	railcar: Railcar;
+	title: string;
+	url: string;
 };
 
-const RecommendedSitesResponsiveContainer: React.FC = ( { children } ) => {
+const RecommendedSitesResponsiveContainer: React.FC< { children: React.ReactNode } > = ( {
+	children,
+} ) => {
 	const displayAsDotPager = useBreakpoint( '<1040px' );
 	if ( displayAsDotPager ) {
 		return <DotPager isClickEnabled>{ children }</DotPager>;
@@ -51,9 +54,10 @@ const RecommendedSitesPlaceholder = ( { count }: { count: number } ) => {
 const RecommendedSites = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const amountOfPlaceHolders = useBreakpoint( '<1040px' ) ? 1 : 2;
 
 	const recommendedSites = useSelector(
-		( state ) => getReaderRecommendedSites( state, seed ) as RecommendedSite[]
+		( state ) => getReaderRecommendedSites( state, seed ) as RecommendedSiteType[]
 	);
 
 	const offset = useSelector( ( state ) => getReaderRecommendedSitesPagingOffset( state, seed ) );
@@ -93,7 +97,7 @@ const RecommendedSites = () => {
 				} ) }
 				{ filteredRecommendedSites.length < displayRecommendedSitesTotal && (
 					<RecommendedSitesPlaceholder
-						count={ displayRecommendedSitesTotal - filteredRecommendedSites.length }
+						count={ amountOfPlaceHolders - filteredRecommendedSites.length }
 					/>
 				) }
 			</RecommendedSitesResponsiveContainer>

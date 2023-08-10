@@ -8,19 +8,29 @@
 	display: flex;
 	flex-direction: column;
 	font-size: $font-body-small;
+	justify-content: space-between;
 	line-height: 1;
 	overflow: hidden;
 	width: 100%;
 	height: 100%;
+
+	@include break-mobile {
+		flex-direction: row-reverse;
+		justify-content: space-between;
+	}
 }
 
 .featured-item-card--hero {
-	min-height: 175px;
+	min-height: 200px;
 	position: relative;
 	width: 100%;
 
-	@media only screen and (min-width: 821px) and (max-width: 960px) {
-		min-height: 135px;
+	@include break-mobile {
+		width: 33.6%;
+	}
+
+	@media (max-width: $break-mobile) {
+		width: auto;
 	}
 }
 
@@ -28,10 +38,17 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding: 1.5rem;
+	padding: 1rem;
 	width: 100%;
-	height: 100%;
-	box-sizing: border-box;
+
+	@include break-mobile {
+		padding: 24px;
+		width: 66.6%;
+	}
+
+	@media (max-width: $break-mobile) {
+		width: auto;
+	}
 }
 
 .featured-item-card--title {
@@ -39,15 +56,15 @@
 	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 1;
+
+	@include break-medium {
+		font-size: $font-title-large;
+	}
 }
 
 .featured-item-card--price {
-	margin-top: 0.5rem;
+	margin-top: 0.25rem;
 	margin-bottom: 0.5rem;
-
-	.item-price .display-price:not(.is-placeholder) .plan-price.is-original {
-		color: var(--gray-30);
-	}
 }
 
 .featured-item-card--desc {

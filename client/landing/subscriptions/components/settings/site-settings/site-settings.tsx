@@ -24,6 +24,7 @@ type SiteSettingsProps = {
 	emailMeNewComments: boolean;
 	onEmailMeNewCommentsChange: ( value: boolean ) => void;
 	updatingEmailMeNewComments: boolean;
+	isWpComSite?: boolean;
 };
 
 const SiteSettings = ( {
@@ -84,6 +85,7 @@ type SiteSettingsPopoverProps = SiteSettingsProps & {
 export const SiteSettingsPopover = ( {
 	onUnsubscribe,
 	unsubscribing,
+	isWpComSite = true,
 	...props
 }: SiteSettingsPopoverProps ) => {
 	const translate = useTranslate();
@@ -91,9 +93,12 @@ export const SiteSettingsPopover = ( {
 		<SubscriptionsEllipsisMenu popoverClassName="site-settings-popover">
 			{ ( close: () => void ) => (
 				<>
-					<SiteSettings { ...props } />
-
-					<hr className="subscriptions__separator" />
+					{ isWpComSite && (
+						<>
+							<SiteSettings { ...props } />
+							<hr className="subscriptions__separator" />
+						</>
+					) }
 
 					<Button
 						className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }

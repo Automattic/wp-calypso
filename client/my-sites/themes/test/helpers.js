@@ -35,7 +35,7 @@ describe( 'helpers', () => {
 			expect( interlacedThemes[ 0 ] ).toEqual( { id: 'wporg-theme-2' } );
 		} );
 
-		test( 'prioritizes WP.org block themes over WP.org classic themes', () => {
+		test( 'Uses the WP.org theme order as-is', () => {
 			const wpOrgClassicAndBlockThemes = [
 				{ id: 'wporg-classic-theme' },
 				{
@@ -49,8 +49,8 @@ describe( 'helpers', () => {
 				'test',
 				true
 			);
-			expect( interlacedThemes[ 2 ].id ).toEqual( 'wporg-block-theme' );
-			expect( interlacedThemes[ 3 ].id ).toEqual( 'wporg-classic-theme' );
+			expect( interlacedThemes[ 2 ].id ).toEqual( 'wporg-classic-theme' );
+			expect( interlacedThemes[ 3 ].id ).toEqual( 'wporg-block-theme' );
 		} );
 	} );
 } );

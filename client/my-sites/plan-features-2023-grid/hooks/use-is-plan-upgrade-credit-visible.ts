@@ -13,12 +13,16 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
  * @returns If the credit should be displayed to the user
  */
 export function useIsPlanUpgradeCreditVisible(
-	siteId: number,
+	siteId?: number | null,
 	visiblePlans: PlanSlug[] = []
 ): boolean {
-	const isSiteOnPaidPlan = !! useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
-	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
-	const creditsValue = useCalculateMaxPlanUpgradeCredit( siteId, visiblePlans );
+	const isSiteOnPaidPlan = !! useSelector(
+		( state ) => siteId && isCurrentPlanPaid( state, siteId )
+	);
+	const currentSitePlanSlug = useSelector( ( state ) =>
+		siteId ? getSitePlanSlug( state, siteId ) : undefined
+	);
+	const creditsValue = useCalculateMaxPlanUpgradeCredit( { siteId, plans: visiblePlans } );
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);

@@ -12,6 +12,7 @@ interface GoToCheckoutProps {
 	siteSlug: string;
 	destination: string;
 	plan?: string;
+	cancelDestination?: string;
 }
 
 const useCheckout = () => {
@@ -21,11 +22,12 @@ const useCheckout = () => {
 		siteSlug,
 		destination,
 		plan,
+		cancelDestination,
 	}: GoToCheckoutProps ) => {
 		const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
 		const params = new URLSearchParams( {
 			redirect_to: destination,
-			cancel_to: relativeCurrentPath,
+			cancel_to: cancelDestination || relativeCurrentPath,
 			signup: '1',
 		} );
 

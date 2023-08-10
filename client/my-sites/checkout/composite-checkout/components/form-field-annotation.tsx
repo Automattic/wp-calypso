@@ -61,6 +61,7 @@ type FormFieldAnnotationProps = {
 	labelId: string;
 	descriptionId: string;
 	formFieldId: string;
+	children?: React.ReactNode;
 };
 
 const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {

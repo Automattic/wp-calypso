@@ -1,13 +1,15 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .breadcrumbs {
 	svg.options-domain-button__add.gridicon {
 		margin-left: 2px;
 		margin-right: 2px;
 
-		@include break-mobile {
+		@include break-large {
 			margin-left: 0;
 		}
 	}
@@ -21,7 +23,7 @@
 		height: 28px;
 		margin-left: 0;
 
-		@include break-mobile {
+		@include break-large {
 			width: 24px;
 			height: 24px;
 		}
@@ -85,9 +87,13 @@
 	box-shadow: none;
 }
 
+.domain-management-list__items.has-no-wpcom-domain {
+	margin-top: 24px;
+}
+
 .domain-management-list__items + .empty-domains-list-card {
 	margin-top: 16px;
-	margin-bottom: 32px;
+	margin-bottom: 0;
 
 	@include break-small {
 		margin-top: 0;
@@ -103,19 +109,19 @@
 .all-domains__filter {
 	padding: 0 16px;
 	> .domains-table-filter-button.is-mobile-version {
+		padding-top: 16px;
 		width: 100%;
 		.select-dropdown__container {
 			width: 100%;
 		}
 
-		@include break-mobile {
+		@include break-large {
 			display: none;
 		}
 	}
 }
 
-.empty-domains-list-card__wrapper,
-.domain-only-upsell-carousel__card-wrapper {
+.empty-domains-list-card__wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -134,21 +140,18 @@
 		font-size: $font-body;
 	}
 
-	.empty-domains-list-card__text,
-	.domain-only-upsell-carousel__card-text {
+	.empty-domains-list-card__text {
 		text-align: center;
 		margin-bottom: 10px;
 	}
 
-	.empty-domains-list-card__content,
-	.domain-only-upsell-carousel__card-content {
+	.empty-domains-list-card__content {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
 
-	.empty-domains-list-card__actions,
-	.domain-only-upsell-carousel__card-actions {
+	.empty-domains-list-card__actions {
 		display: inline-flex;
 		justify-content: center;
 		flex-wrap: wrap;
@@ -174,25 +177,21 @@
 				margin-top: 0;
 			}
 
-			> .empty-domains-list-card__illustration,
-			.domain-only-upsell-carousel__card-illustration {
+			> .empty-domains-list-card__illustration {
 				margin-left: 40px;
 				margin-right: 24px;
 			}
 
-			.empty-domains-list-card__text,
-			.domain-only-upsell-carousel__card-text {
+			.empty-domains-list-card__text {
 				margin-bottom: 10px;
 				text-align: initial;
 			}
 
-			.empty-domains-list-card__actions,
-			.domain-only-upsell-carousel__card-actions {
+			.empty-domains-list-card__actions {
 				text-align: initial;
 			}
 
-			.empty-domains-list-card__content,
-			.domain-only-upsell-carousel__card-content {
+			.empty-domains-list-card__content {
 				align-items: normal;
 				width: 100%;
 			}
@@ -203,18 +202,17 @@
 .domain-table-header {
 	display: flex;
 	justify-content: space-between;
-	padding: 8px 0;
+	padding: 8px 0 16px;
 	font-size: $font-body-small;
-	font-weight: 600;
-	color: var(--color-neutral-50);
-
-	border-bottom: 1px solid var(--color-neutral-5);
-	@include break-mobile {
-		border-bottom: 1px solid var(--color-neutral-20);
-	}
+	font-weight: 500;
+	color: var(--color-neutral-60);
+	border-bottom: 1px solid $gray-100;
 
 	.button-plain {
+		font-family: "SF Pro Text", $sans;
 		text-align: left;
+		line-height: 20px;
+		letter-spacing: -0.15px;
 
 		&:focus {
 			outline: thin dotted;
@@ -258,7 +256,7 @@
 		display: none;
 	}
 
-	@include break-mobile {
+	@include break-large {
 		&.domain-table-header__desktop {
 			display: flex;
 		}
@@ -272,13 +270,22 @@
 	flex: 10 10 0;
 }
 .list__domain-cell {
-	flex: 83 83 0;
+	display: flex;
+	width: 280px;
+	align-items: center;
+	gap: 2px;
 }
 .list__site-cell {
-	flex: 70 70 0;
+	display: flex;
+	width: 200px;
+	align-items: center;
+	gap: 2px;
 }
 .list__status-cell {
-	flex: 40 40 0;
+	display: flex;
+	width: 100px;
+	align-items: center;
+	gap: 2px;
 	&__bubble {
 		display: flex;
 		width: 20px;
@@ -294,31 +301,39 @@
 	}
 }
 .list__registered-until-cell {
-	flex: 50 50 0;
+	display: flex;
+	width: 140px;
+	align-items: center;
+	gap: 2px;
 }
 .list__auto-renew-cell {
-	flex: 30 30 0;
+	display: flex;
+	width: 80px;
+	align-items: center;
+	gap: 2px;
 }
 .list__email-cell {
-	flex: 30 30 0;
+	display: flex;
+	width: 140px;
+	align-items: center;
+	gap: 2px;
 }
 .list__action-cell {
-	flex: 6 6 0;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 2px;
 }
 
-.domain-only-upsell-carousel {
-	box-shadow: 0 0 0 1px var(--color-border-subtle);
-	padding: 24px;
-	margin-top: 32px;
-	.button.is-borderless .gridicon {
-		width: auto;
-		height: auto;
-		top: 3px;
+.domain-management__all-domains-section {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 32px 16px;
+	width: fit-content;
+	margin: 0 auto;
+
+	&.separator {
+		border-top: 1px solid var(--studio-gray-5);
 	}
-}
-
-.domain-only-upsell-carousel__card.card {
-	padding: 0;
-	margin: 0;
-	box-shadow: none;
 }

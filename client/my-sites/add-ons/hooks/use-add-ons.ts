@@ -1,7 +1,12 @@
+import config from '@automattic/calypso-config';
 import {
+	FEATURE_STATS_PAID,
+	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
+	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
@@ -13,9 +18,12 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
+import jetpackAIIcon from '../icons/jetpack-ai';
+import jetpackStatsIcon from '../icons/jetpack-stats';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
@@ -32,6 +40,7 @@ export interface AddOnMeta {
 	description: string | null;
 	displayCost: TranslateResult | null;
 	purchased?: boolean;
+	isLoading?: boolean;
 }
 
 // some memoization. executes far too many times
@@ -39,6 +48,17 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
 
 	const addOnsActive = [
+		{
+			productSlug: PRODUCT_JETPACK_AI_MONTHLY,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_AI_MONTHLY ),
+			icon: jetpackAIIcon,
+			overrides: null,
+			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_AI_MONTHLY ),
+			featured: true,
+			description: translate(
+				'Elevate your content with Jetpack AI, your AI assistant in the WordPress Editor. Save time writing with effortless content crafting, tone adjustment, title generation, grammar checks, translation, and more.'
+			),
+		},
 		{
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
 			featureSlugs: useAddOnFeatureSlugs( PRODUCT_WPCOM_UNLIMITED_THEMES ),
@@ -79,14 +99,30 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			featured: false,
 			purchased: false,
 		},
+		{
+			productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_PWYW_YEARLY ),
+			icon: jetpackStatsIcon,
+			overrides: null,
+			displayCost: translate( 'Varies', {
+				comment:
+					'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+			} ),
+			featured: true,
+			description: translate(
+				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
+			),
+		},
 	];
 
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { billingTransactions } = usePastBillingTransactions();
+	const { billingTransactions, isLoading } = usePastBillingTransactions();
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
+		// get the list of supported features
+		const siteFeatures = getFeaturesBySiteId( state, siteId );
 		const filter = getBillingTransactionFilters( state, 'past' );
 		const filteredTransactions =
 			billingTransactions && filterTransactions( billingTransactions, filter, siteId );
@@ -112,6 +148,31 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 					return ( addOn.quantity ?? 0 ) >= Math.min( ...spaceUpgradesPurchased );
 				}
 
+				// remove the Jetpack AI add-on if the site already supports the feature
+				if (
+					addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
+					siteFeatures?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
+				) {
+					return false;
+				}
+
+				// TODO: Remove this check once paid WPCOM stats is live.
+				// gate the Jetpack Stats add-on on a feature flag
+				if (
+					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					! config.isEnabled( 'stats/paid-wpcom-stats' )
+				) {
+					return false;
+				}
+
+				// remove Jetpack Stats add-on if the site already has a paid stats feature through a paid plan.
+				if (
+					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					siteFeatures?.active?.includes( FEATURE_STATS_PAID )
+				) {
+					return false;
+				}
+
 				return true;
 			} )
 			.map( ( addOn ) => {
@@ -126,11 +187,22 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 						return null;
 					}
 
+					// if storage add on hasn't loaded yet
+					if ( isLoading || ! product ) {
+						return {
+							...addOn,
+							name,
+							description,
+							isLoading,
+						};
+					}
+
 					// if storage add on is already purchased
 					if (
 						spaceUpgradesPurchased.findIndex(
 							( spaceUpgrade ) => spaceUpgrade === addOn.quantity
-						) >= 0
+						) >= 0 &&
+						product
 					) {
 						return {
 							...addOn,

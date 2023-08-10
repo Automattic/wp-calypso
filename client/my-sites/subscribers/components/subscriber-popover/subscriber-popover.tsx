@@ -30,7 +30,8 @@ const SubscriberPopover = ( {
 	return (
 		<div className="subscriber-popover__container">
 			<button
-				className={ classNames( 'subscriber-popover__toggle', {
+				aria-label="Open subscriber menu"
+				className={ classNames( 'components-button subscriber-popover__toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
 				onClick={ onToggle }
@@ -61,7 +62,7 @@ const SubscriberPopover = ( {
 				) }
 				<PopoverMenuItem onClick={ onUnsubscribe }>
 					<Icon icon={ trash } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-					{ translate( 'Unsubscribe' ) }
+					{ translate( 'Remove' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
 		</div>

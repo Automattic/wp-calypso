@@ -1,4 +1,4 @@
-import { ReaderCombinedCard, combinedCardPostKeyToKeys } from 'calypso/blocks/reader-combined-card';
+import ReaderCombinedCard, { combinedCardPostKeyToKeys } from 'calypso/blocks/reader-combined-card';
 import { posts, feed, site } from 'calypso/blocks/reader-post-card/docs/fixtures';
 
 const postKey = {

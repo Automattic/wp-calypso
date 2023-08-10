@@ -323,7 +323,7 @@ export default function getThankYouPageUrl( {
 		return newBlogReceiptUrl;
 	}
 
-	// disable upsell for tailored signup users
+	// disable upsell for given tailored signup users
 	const isTailoredSignup = isTailoredSignupFlow( signupFlowName );
 
 	const redirectUrlForPostCheckoutUpsell =

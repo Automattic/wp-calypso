@@ -1,12 +1,13 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import useLicenseDownloadUrlMutation from 'calypso/components/data/query-jetpack-partner-portal-licenses/use-license-download-url-mutation';
 import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
 import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import UnassignLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/unassign-license-dialog';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 interface Props {
 	licenseKey: string;
@@ -14,6 +15,7 @@ interface Props {
 	siteUrl: string | null;
 	licenseState: LicenseState;
 	licenseType: LicenseType;
+	hasDownloads: boolean;
 }
 
 export default function LicenseDetailsActions( {
@@ -22,12 +24,13 @@ export default function LicenseDetailsActions( {
 	siteUrl,
 	licenseState,
 	licenseType,
+	hasDownloads,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
-	const [ unassignDialog, setUnassignDialog ] = useState( false );
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
+	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -39,18 +42,32 @@ export default function LicenseDetailsActions( {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_revoke_dialog_close' ) );
 	}, [ dispatch, setRevokeDialog ] );
 
-	const openUnassignDialog = useCallback( () => {
-		setUnassignDialog( true );
-		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_unassign_dialog_open' ) );
-	}, [ dispatch, setUnassignDialog ] );
-
-	const closeUnassignDialog = useCallback( () => {
-		setUnassignDialog( false );
-		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_unassign_dialog_close' ) );
-	}, [ dispatch, setUnassignDialog ] );
+	const download = useCallback( () => {
+		downloadUrl.mutate( null, {
+			onSuccess: ( data ) => {
+				window.location.replace( data.download_url );
+			},
+			onError: ( error: Error ) => {
+				dispatch( errorNotice( error.message ) );
+			},
+		} );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_download' ) );
+	}, [ dispatch, downloadUrl.mutate ] );
 
 	return (
 		<div className="license-details__actions">
+			{ hasDownloads &&
+				licenseState === LicenseState.Attached &&
+				licenseType === LicenseType.Partner && (
+					<Button
+						compact
+						{ ...( downloadUrl.isLoading ? { busy: true } : {} ) }
+						onClick={ download }
+					>
+						{ translate( 'Download' ) }
+					</Button>
+				) }
+
 			{ licenseState === LicenseState.Attached && siteUrl && (
 				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
 					{ translate( 'View site' ) }
@@ -63,13 +80,7 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
-			{ licenseState === LicenseState.Attached && licenseType === LicenseType.Partner && (
-				<Button compact onClick={ openUnassignDialog }>
-					{ translate( 'Unassign' ) }
-				</Button>
-			) }
-
-			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
+			{ licenseState !== LicenseState.Revoked && licenseType === LicenseType.Partner && (
 				<Button compact onClick={ openRevokeDialog } scary>
 					{ translate( 'Revoke' ) }
 				</Button>
@@ -92,15 +103,6 @@ export default function LicenseDetailsActions( {
 					product={ product }
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
-				/>
-			) }
-
-			{ unassignDialog && (
-				<UnassignLicenseDialog
-					licenseKey={ licenseKey }
-					product={ product }
-					siteUrl={ siteUrl }
-					onClose={ closeUnassignDialog }
 				/>
 			) }
 		</div>

@@ -1,5 +1,7 @@
 import { Plans } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { addQueryArgs } from '@wordpress/url';
 import { useMatch } from 'react-router-dom';
 
 const plansPaths = Plans.plansSlugs;
@@ -41,3 +43,29 @@ export function useLangRouteParam() {
 	const match = useMatch( path );
 	return match?.params.lang;
 }
+
+export const useLoginUrl = ( {
+	variationName,
+	redirectTo,
+	pageTitle,
+	loginPath = `/start/account/user/`,
+}: {
+	/**
+	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
+	 */
+	variationName?: string | null;
+	redirectTo?: string | null;
+	pageTitle?: string | null;
+	loginPath?: string;
+} ): string => {
+	const locale = useLocale();
+	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }${ locale }` : loginPath;
+
+	// Empty values are ignored down the call stack, so we don't need to check for them here.
+	return addQueryArgs( localizedLoginPath, {
+		variationName,
+		redirect_to: redirectTo,
+		pageTitle,
+		toStepper: true,
+	} );
+};

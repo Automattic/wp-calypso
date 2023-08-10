@@ -9,11 +9,12 @@ export interface GeoLocationData {
 	region: string;
 }
 
-export const useGeoLocationQuery = () =>
+export const useGeoLocationQuery = ( options = {} ) =>
 	useQuery< GeoLocationData >( {
 		queryKey: [ 'geo' ],
 		queryFn: () =>
 			globalThis
 				.fetch( 'https://public-api.wordpress.com/geo/' )
 				.then( ( response ) => response.json() ),
+		...options,
 	} );

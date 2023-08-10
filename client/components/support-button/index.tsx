@@ -11,6 +11,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 type Props = {
 	isLink?: boolean;
 	skipToContactOptions?: boolean;
+	children?: React.ReactNode;
 };
 
 const SupportButton: FC< Props > = ( {

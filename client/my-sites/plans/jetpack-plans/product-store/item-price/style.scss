@@ -89,6 +89,10 @@
 		align-items: center;
 		margin: 0;
 	}
+
+	&.is-free .display-price__billing-time-frame {
+		margin-left: 4px;
+	}
 }
 
 .item-price .display-price.is-placeholder {

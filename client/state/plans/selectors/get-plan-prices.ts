@@ -7,9 +7,9 @@ import type { IAppState } from 'calypso/state/types';
 import type { SiteId } from 'calypso/types';
 
 export interface PlanPrices {
-	rawPrice: number;
-	discountedRawPrice: number; // discounted on yearly-monthly conversion
-	planDiscountedRawPrice: number; // discounted on site plan upgrade
+	rawPrice: number | null;
+	discountedRawPrice: number | null; // discounted on yearly-monthly conversion
+	planDiscountedRawPrice: number | null; // discounted on site plan upgrade
 }
 
 /**
@@ -28,13 +28,11 @@ export function getPlanPrices(
 	const productId = plan?.getProductId();
 
 	return {
-		rawPrice: ( productId && getPlanRawPrice( state, productId, returnMonthly ) ) || 0,
-		discountedRawPrice:
-			( productId && getDiscountedRawPrice( state, productId, returnMonthly ) ) || 0,
+		rawPrice: productId ? getPlanRawPrice( state, productId, returnMonthly ) : null,
+		discountedRawPrice: productId ? getDiscountedRawPrice( state, productId, returnMonthly ) : null,
 		planDiscountedRawPrice:
-			( siteId &&
-				planSlug &&
-				getPlanDiscountedRawPrice( state, siteId, planSlug, { returnMonthly } ) ) ||
-			0,
+			siteId && planSlug
+				? getPlanDiscountedRawPrice( state, siteId, planSlug, { returnMonthly } )
+				: null,
 	};
 }

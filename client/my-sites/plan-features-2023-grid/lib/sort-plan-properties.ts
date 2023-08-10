@@ -1,25 +1,25 @@
 import { isFreePlan } from '@automattic/calypso-products';
-import { isPopularPlan } from './is-popular-plan';
-import type { PlanProperties } from '../types';
+import { isPopularPlan } from '../hooks/npm-ready/data-store/is-popular-plan';
+import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 export function sortPlans(
-	planProperties: PlanProperties[],
-	currentSitePlanProductSlug?: string,
+	gridPlans: GridPlan[],
+	currentSitePlanProductSlug?: string | null,
 	isMobile?: boolean
-): PlanProperties[] {
+): GridPlan[] {
 	let firstPlanIndex = -1;
 
 	// Try to find the current paid plan in the plans list
 	if ( currentSitePlanProductSlug && ! isFreePlan( currentSitePlanProductSlug ) ) {
-		firstPlanIndex = planProperties.findIndex( ( properties ) => {
-			return properties?.planName === currentSitePlanProductSlug;
+		firstPlanIndex = gridPlans.findIndex( ( gridPlan ) => {
+			return gridPlan.planSlug === currentSitePlanProductSlug;
 		} );
 	}
 
 	if ( firstPlanIndex < 0 ) {
 		// Site is on a free plan or the current plan is not in the list. Try to find the popular plan.
-		firstPlanIndex = planProperties.findIndex( ( properties ) => {
-			return isPopularPlan( properties.planName );
+		firstPlanIndex = gridPlans.findIndex( ( { planSlug } ) => {
+			return isPopularPlan( planSlug );
 		} );
 		// If the popular plan exists, on mobile, it will be second plan for comparison.
 		if ( firstPlanIndex > 0 && isMobile ) {
@@ -28,17 +28,19 @@ export function sortPlans(
 	}
 
 	if ( firstPlanIndex < 0 ) {
-		return planProperties;
+		return gridPlans;
 	}
 
 	return [
 		// The first plan
-		planProperties[ firstPlanIndex ],
+		gridPlans[ firstPlanIndex ],
 		// Rest of the plans in default order
-		...planProperties.slice( firstPlanIndex + 1 ),
+		...gridPlans.slice( firstPlanIndex + 1 ),
 		// Leftover plans (before the first plan) in descending order of value
-		...planProperties.slice( 0, firstPlanIndex ).sort( ( planA, planB ) => {
-			return ( planB?.rawPrice || 0 ) - ( planA?.rawPrice || 0 );
+		...gridPlans.slice( 0, firstPlanIndex ).sort( ( planA, planB ) => {
+			return (
+				( planB?.pricing.originalPrice.full || 0 ) - ( planA?.pricing.originalPrice.full || 0 )
+			);
 		} ),
-	].filter( ( properties ) => Boolean( properties ) );
+	].filter( ( gridPlan ) => Boolean( gridPlan ) );
 }

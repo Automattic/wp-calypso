@@ -57,7 +57,7 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	const goBackSection = (
 		<MasterbarStyled
 			onClick={ () => page( `/themes/${ siteSlug }` ) }
-			backText={ translate( 'Back to themes' ) }
+			backText={ translate( 'Back to the dashboard' ) }
 			canGoBack={ allThemesFetched }
 			showContact={ allThemesFetched }
 		/>
@@ -98,5 +98,6 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 		subtitle,
 		thankyouSteps,
 		isAtomicNeeded,
+		null,
 	];
 }

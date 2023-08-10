@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
@@ -42,6 +43,8 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ destinationState, setDestinationState ] = useState( {} );
+
+	const recordSignupComplete = useRecordSignupComplete( flow );
 
 	useInterval( () => {
 		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
@@ -95,14 +98,15 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
-	// When the hasActionSuccessfullyRun flag turns on, run submit().
+	// When the hasActionSuccessfullyRun flag turns on, run submit() and fire the sign-up completion event.
 	useEffect( () => {
 		if ( hasActionSuccessfullyRun ) {
+			recordSignupComplete();
 			submit?.( destinationState, ProcessingResult.SUCCESS );
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasActionSuccessfullyRun ] );
+	}, [ hasActionSuccessfullyRun, recordSignupComplete ] );
 
 	const getSubtitle = () => {
 		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;

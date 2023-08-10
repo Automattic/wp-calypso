@@ -119,3 +119,7 @@ yarn-json-output.json
 
 # Storybook
 storybook-static
+
+# PHPUnit cache
+.phpunit.result.cache
+.phpunit.cache

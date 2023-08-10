@@ -289,7 +289,7 @@ export function togglePluginActivation( siteId, plugin ) {
 }
 
 export function updatePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return async ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: UPDATE_PLUGIN,
@@ -301,31 +301,22 @@ export function updatePlugin( siteId, plugin ) {
 			! pluginHasTruthySiteProp( 'update', plugin, siteId ) ||
 			( siteId && plugin?.sites?.[ siteId ]?.update?.recentlyUpdated )
 		) {
-			return dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
+			dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
+			return;
 		}
 
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
 
-		const afterUpdateCallback = ( error ) => {
-			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId, error ) );
-		};
-
-		const successCallback = ( data ) => {
+		try {
+			const data = await getPluginHandler( siteId, pluginId ).updateVersion();
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
 			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
-			afterUpdateCallback( undefined );
+			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId ) );
 			dispatch( sitePluginUpdated( siteId ) );
-		};
-
-		const errorCallback = ( error ) => {
+		} catch ( error ) {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_FAILURE, error } );
-			afterUpdateCallback( error );
-		};
-
-		return getPluginHandler( siteId, pluginId )
-			.updateVersion()
-			.then( successCallback )
-			.catch( errorCallback );
+			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId, error ) );
+		}
 	};
 }
 

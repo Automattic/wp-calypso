@@ -27,6 +27,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import ManagePurchase from './manage-purchase';
+import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesList from './purchases-list';
 import titles from './titles';
 import VatInfoPage from './vat-info';
@@ -206,18 +207,34 @@ export function managePurchase( context, next ) {
 	next();
 }
 
+export function managePurchaseByOwnership( context, next ) {
+	const ManagePurchasesByOwnershipWrapper = localize( () => {
+		const classes = 'manage-purchase';
+
+		return (
+			<PurchasesWrapper title={ titles.managePurchase }>
+				<Main wideLayout className={ classes }>
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<PageViewTracker
+						path="/me/purchases/:ownershipId"
+						title="Purchases > Manage Purchase by Ownership"
+					/>
+					<ManagePurchaseByOwnership ownershipId={ parseInt( context.params.ownershipId, 10 ) } />
+				</Main>
+			</PurchasesWrapper>
+		);
+	} );
+
+	context.primary = <ManagePurchasesByOwnershipWrapper />;
+	next();
+}
+
 export function addNewPaymentMethod( context, next ) {
 	context.primary = <AddNewPaymentMethod />;
 	next();
 }
 
 export function changePaymentMethod( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' );
-	}
-
 	const ChangePaymentMethodWrapper = () => {
 		const translate = useTranslate();
 		const logPurchasesError = useLogPurchasesError(

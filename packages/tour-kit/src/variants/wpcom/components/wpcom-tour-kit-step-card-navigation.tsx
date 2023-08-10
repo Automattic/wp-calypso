@@ -27,12 +27,12 @@ const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 			>
 				{ isFirstStep ? (
 					<div>
-						<Button isTertiary onClick={ onDismiss( 'no-thanks-btn' ) }>
+						<Button variant="tertiary" onClick={ onDismiss( 'no-thanks-btn' ) }>
 							{ __( 'Skip', __i18n_text_domain__ ) }
 						</Button>
 						<Button
 							className="wpcom-tour-kit-step-card-navigation__next-btn"
-							isPrimary
+							variant="primary"
 							onClick={ onNextStep }
 							ref={ setInitialFocusedElement }
 						>
@@ -41,12 +41,12 @@ const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 					</div>
 				) : (
 					<div>
-						<Button isTertiary onClick={ onPreviousStep }>
+						<Button variant="tertiary" onClick={ onPreviousStep }>
 							{ __( 'Back', __i18n_text_domain__ ) }
 						</Button>
 						<Button
 							className="wpcom-tour-kit-step-card-navigation__next-btn"
-							isPrimary
+							variant="primary"
 							onClick={ onNextStep }
 							ref={ setInitialFocusedElement }
 						>

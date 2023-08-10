@@ -7,6 +7,7 @@ import {
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
 	stagingSiteNotSupportedRedirect,
+	noSite,
 } from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
@@ -28,10 +29,11 @@ function registerStandardDomainManagementPages( pathFunction, controller ) {
 
 function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
+	noSiteSelection = false,
 	warnIfJetpack = true,
 } = {} ) {
 	const handlers = [
-		siteSelection,
+		...( noSiteSelection ? [] : [ siteSelection ] ),
 		navigation,
 		wpForTeamsGeneralNotSupportedRedirect,
 		stagingSiteNotSupportedRedirect,
@@ -140,7 +142,8 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot(),
-		...getCommonHandlers( { noSitePath: false } ),
+		noSite,
+		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
 		domainManagementController.domainManagementListAllSites,
 		makeLayout,
 		clientRender

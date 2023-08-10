@@ -62,7 +62,10 @@ function getRedirectToAfterLoginUrl( {
 	) {
 		return initialContext.query.oauth2_redirect;
 	}
-	if ( initialContext?.canonicalPath?.startsWith( '/start/account' ) ) {
+	if (
+		initialContext?.canonicalPath?.startsWith( '/start/account' ) ||
+		initialContext?.canonicalPath?.startsWith( '/start/videopress-account' )
+	) {
 		return initialContext.query.redirect_to;
 	}
 
@@ -113,12 +116,10 @@ export class UserStep extends Component {
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
 		initialContext: PropTypes.object,
-		showIsDevAccountCheckbox: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isSocialSignupEnabled: false,
-		showIsDevAccountCheckbox: false,
 	};
 
 	state = {
@@ -217,7 +218,13 @@ export class UserStep extends Component {
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
-							a: <a href="https://wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
 							br: <br />,
 						},
 					}
@@ -314,10 +321,7 @@ export class UserStep extends Component {
 				oauth2Signup,
 				...data,
 			},
-			dependencies,
-			{
-				is_dev_account: data.userData.is_dev_account ?? false,
-			}
+			dependencies
 		);
 	};
 
@@ -487,7 +491,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned, isPasswordless, showIsDevAccountCheckbox } = this.props;
+		const { oauth2Client, isReskinned, isPasswordless } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -519,7 +523,6 @@ export class UserStep extends Component {
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordless={ isMobile() || isPasswordless }
-					showIsDevAccountCheckbox={ showIsDevAccountCheckbox }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }

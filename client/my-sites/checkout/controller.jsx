@@ -92,7 +92,6 @@ function sitelessCheckout( context, next, extraProps ) {
 
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
-
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const selectedSite = getSelectedSite( state );

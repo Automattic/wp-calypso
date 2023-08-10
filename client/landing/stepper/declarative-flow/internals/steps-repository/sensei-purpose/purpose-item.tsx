@@ -6,6 +6,7 @@ interface Props {
 	label: string;
 	checked: boolean;
 	onToggle: () => void;
+	children?: React.ReactNode;
 }
 
 const PurposeItem: React.FC< Props > = ( { label, checked, onToggle, children } ) => (

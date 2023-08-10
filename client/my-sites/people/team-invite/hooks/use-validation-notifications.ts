@@ -10,7 +10,9 @@ export function useValidationNotifications() {
 
 	const { failure } = useSelector( getTokenValidation );
 
-	useEffect( () => failure && showValidationFailureNotice(), [ failure ] );
+	useEffect( () => {
+		failure && showValidationFailureNotice();
+	}, [ failure ] );
 
 	function showValidationFailureNotice() {
 		dispatch(

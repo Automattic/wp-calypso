@@ -7,6 +7,7 @@ import {
 	JETPACK_SITES_FEATURES_FETCH,
 	JETPACK_SITES_FEATURES_FETCH_FAILURE,
 	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+	SITE_PURCHASES_UPDATE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -279,6 +280,19 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 						...state[ siteId ].stats_notices,
 						[ id ]: ! [ 'dismissed', 'postponed' ].includes( status ),
 					},
+				},
+			};
+		}
+
+		// Partial updates for purchases of the site as `site.products`.
+		case SITE_PURCHASES_UPDATE: {
+			const { siteId, purchases } = action;
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					products: purchases,
 				},
 			};
 		}

@@ -101,6 +101,16 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						href: `${ JETPACK_COM_BASE_URL }/features/growth/`,
 						items: [
 							{
+								label: translate( 'AI Assistant', { context: 'Jetpack product name' } ),
+								tagline: translate( 'Write smarter, not harder' ),
+								href: `${ JETPACK_COM_BASE_URL }/ai/`,
+							},
+							{
+								label: translate( 'Stats', { context: 'Jetpack product name' } ),
+								tagline: translate( 'Simple, yet powerful analytics' ),
+								href: `${ JETPACK_COM_BASE_URL }/stats/`,
+							},
+							{
 								label: translate( 'Social', { context: 'Jetpack product name' } ),
 								tagline: translate( 'Write once, post everywhere' ),
 								href: `${ JETPACK_COM_BASE_URL }/social/`,
@@ -115,6 +125,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								tagline: translate( 'Advertise your best content' ),
 								href: `${ JETPACK_COM_BASE_URL }/blaze/`,
 							},
+							{
+								label: translate( 'Newsletter' ),
+								tagline: translate( 'Write once, reach all' ),
+								href: `${ JETPACK_COM_BASE_URL }/newsletter/`,
+							},
 						],
 					},
 				],
@@ -124,8 +139,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 				href: `${ JETPACK_COM_BASE_URL }/pricing/`,
 			},
 			{
-				label: translate( 'Agencies' ),
-				href: `${ JETPACK_COM_BASE_URL }/for/agencies/`,
+				label: translate( 'Partners' ),
+				href: `${ JETPACK_COM_BASE_URL }/jetpack-partners/`,
 			},
 			{
 				label: translate( 'Support' ),
@@ -182,7 +197,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
 	} );
 
-	const onLinkClick = useCallback( ( e ) => {
+	const onLinkClick = useCallback( ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
 			nav_item: e.currentTarget
 				.getAttribute( 'href' )

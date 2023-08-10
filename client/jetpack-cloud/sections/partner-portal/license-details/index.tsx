@@ -13,6 +13,7 @@ interface Props {
 	siteUrl: string | null;
 	username: string | null;
 	blogId: number | null;
+	hasDownloads: boolean;
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
@@ -29,6 +30,7 @@ export default function LicenseDetails( {
 	siteUrl,
 	username,
 	blogId,
+	hasDownloads,
 	issuedAt,
 	attachedAt,
 	revokedAt,
@@ -97,6 +99,7 @@ export default function LicenseDetails( {
 				siteUrl={ siteUrl }
 				licenseState={ licenseState }
 				licenseType={ licenseType }
+				hasDownloads={ hasDownloads }
 			/>
 		</Card>
 	);

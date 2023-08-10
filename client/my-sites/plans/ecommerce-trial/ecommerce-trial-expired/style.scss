@@ -48,7 +48,9 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 		flex-direction: column;
 		gap: 2em;
 		justify-content: center;
-		padding-top: 2em;
+		margin: auto;
+		max-width: 800px;
+		padding-top: 1.5em;
 
 		@media ( min-width: $break-small ) {
 			flex-direction: row;

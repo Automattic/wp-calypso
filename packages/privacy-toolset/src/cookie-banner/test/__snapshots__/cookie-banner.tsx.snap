@@ -78,10 +78,9 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
         class="cookie-banner__bucket-container"
       >
         <span
-          class="components-form-toggle is-checked"
+          class="components-form-toggle"
         >
           <input
-            checked=""
             class="components-form-toggle__input"
             data-testid="advertising-bucket-toggle"
             type="checkbox"

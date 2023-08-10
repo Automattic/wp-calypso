@@ -8,6 +8,7 @@ import {
 	countryCode,
 	postalCode,
 	contactDetailsForDomain,
+	mockLogStashEndpoint,
 } from './util';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { Stripe } from '@stripe/stripe-js';
@@ -59,7 +60,15 @@ describe( 'existingCardProcessor', () => {
 			path: '/',
 			viewport: '0x0',
 		},
+		ad_conversion: {
+			ad_details: '',
+			sensitive_pixel_options: '',
+		},
 	};
+
+	beforeEach( () => {
+		mockLogStashEndpoint();
+	} );
 
 	it( 'throws an error if there is no storedDetailsId passed', async () => {
 		const submitData = {};

@@ -8,13 +8,16 @@ import {
 	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
-	isJetpackStarterSlug,
+	isJetpackStatsFreeProductSlug,
+	isJetpackStatsPaidProductSlug,
 	isJetpackVideoPressSlug,
+	isJetpackAISlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
 
 type featureString =
+	| 'ai'
 	| 'anti-spam'
 	| 'backup-t1'
 	| 'boost'
@@ -22,16 +25,24 @@ type featureString =
 	| 'search'
 	| 'social-basic'
 	| 'social-advanced'
+	| 'stats-free'
+	| 'stats'
 	| 'support'
 	| 'videopress'
-	| 'complete'
-	| 'jetpack-starter';
+	| 'complete';
 
 function getFeatureStrings(
 	feature: featureString,
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
 	switch ( feature ) {
+		case 'ai':
+			return [
+				translate( 'Prompt-based content generation' ),
+				translate( 'Adaptive tone adjustment' ),
+				translate( 'Superior spelling and grammar correction' ),
+				translate( 'Title and summary generation' ),
+			];
 		case 'anti-spam':
 			return [
 				translate( 'Comment and form spam protection' ),
@@ -68,8 +79,6 @@ function getFeatureStrings(
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
 			];
-		case 'jetpack-starter':
-			return [ translate( '1K API calls per month' ), translate( '1GB of backup storage' ) ];
 		case 'scan':
 			return [
 				translate( 'Website firewall (WAF beta)' ),
@@ -94,6 +103,17 @@ function getFeatureStrings(
 				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
 				translate( 'Content recycling' ),
 			];
+		case 'stats-free':
+			return [
+				translate( 'Real-time data on visitors, likes, and comments' ),
+				translate( 'View weekly and yearly trends' ),
+			];
+		case 'stats':
+			return [
+				translate( 'Instant access to upcoming features' ),
+				translate( 'Priority support' ),
+				translate( 'Ad-free experience' ),
+			];
 		case 'support':
 			return [ translate( 'Priority support' ) ];
 		case 'videopress':
@@ -115,6 +135,10 @@ export default function getJetpackProductFeatures(
 	product: WithSnakeCaseSlug,
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
+	if ( isJetpackAISlug( product.product_slug ) ) {
+		return getFeatureStrings( 'ai', translate );
+	}
+
 	if ( isJetpackAntiSpamSlug( product.product_slug ) ) {
 		return getFeatureStrings( 'anti-spam', translate );
 	}
@@ -177,21 +201,16 @@ export default function getJetpackProductFeatures(
 		];
 	}
 
-	if ( isJetpackStarterSlug( product.product_slug ) ) {
-		// Filter out these strings for Starter to avoid clutter
-		const starterExcludes = [
-			translate( '10GB of backup storage' ),
-			translate( '10K API calls per month' ),
-		];
+	if ( isJetpackStatsFreeProductSlug( product.product_slug ) ) {
+		return [ ...getFeatureStrings( 'stats-free', translate ) ];
+	}
 
+	if ( isJetpackStatsPaidProductSlug( product.product_slug ) ) {
 		return [
-			...getFeatureStrings( 'jetpack-starter', translate ),
-			...getFeatureStrings( 'anti-spam', translate ),
-			...getFeatureStrings( 'backup-t1', translate ),
+			...getFeatureStrings( 'stats-free', translate ),
+			...getFeatureStrings( 'stats', translate ),
 			...getFeatureStrings( 'support', translate ),
-		].filter( ( productFeature ) => {
-			return ! starterExcludes.includes( productFeature );
-		} );
+		];
 	}
 
 	if ( isJetpackVideoPressSlug( product.product_slug ) ) {

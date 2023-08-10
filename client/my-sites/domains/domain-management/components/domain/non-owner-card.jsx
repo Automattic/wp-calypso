@@ -6,6 +6,11 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 const NonOwnerCard = ( { domains, redesigned = false, selectedDomainName } ) => {
 	const translate = useTranslate();
 	const domain = getSelectedDomain( { domains, selectedDomainName } );
+
+	if ( ! domains || ! domain ) {
+		return null;
+	}
+
 	const text = translate(
 		'These settings can be changed by the user {{strong}}%(owner)s{{/strong}}.',
 		{

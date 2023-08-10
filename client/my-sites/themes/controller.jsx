@@ -13,7 +13,7 @@ import LoggedOutComponent from './logged-out';
 const debug = debugFactory( 'calypso:themes' );
 
 export function getProps( context ) {
-	const { tier, filter, vertical } = context.params;
+	const { category, tier, filter, vertical } = context.params;
 
 	const { analyticsPath, analyticsPageTitle } = getAnalyticsData( context.path, context.params );
 
@@ -22,6 +22,7 @@ export function getProps( context ) {
 	};
 
 	return {
+		category,
 		tier,
 		filter,
 		vertical,
@@ -99,6 +100,7 @@ export function fetchThemeFilters( context, next ) {
 
 	wpcom.req
 		.get( '/theme-filters', {
+			min_themes_in_subject: 2,
 			apiVersion: '1.2',
 			locale: context.lang, // Note: undefined will be omitted by the query string builder.
 		} )

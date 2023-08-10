@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design, isAssemblerDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -18,12 +18,14 @@ import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
+import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import MigrationHandler from './internals/steps-repository/migration-handler';
+import MigrationTrial from './internals/steps-repository/migration-trial';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
@@ -53,8 +55,10 @@ const importFlow: Flow = {
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'migrationHandler', component: MigrationHandler },
+			{ slug: 'migrationTrial', component: MigrationTrial },
 			{ slug: 'sitePicker', component: SitePickerStep },
 			{ slug: 'error', component: MigrationError },
+			{ slug: 'verifyEmail', component: ImportVerifyEmail },
 		];
 	},
 
@@ -145,8 +149,8 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const _selectedDesign = providedDependencies?.selectedDesign as Design;
-					if ( _selectedDesign?.design_type === 'assembler' ) {
+					const { selectedDesign: _selectedDesign, shouldGoToAssembler } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && shouldGoToAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -182,7 +186,7 @@ const importFlow: Flow = {
 							  );
 					}
 					// End of Pattern Assembler flow
-					if ( isBlankCanvasDesign( selectedDesign ) ) {
+					if ( isAssemblerDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 
@@ -193,8 +197,22 @@ const importFlow: Flow = {
 					return handleMigrationRedirects( providedDependencies );
 				}
 
+				case 'migrationTrial': {
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'importer':
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						default:
+							return;
+					}
+				}
+
 				case 'error':
 					return navigate( providedDependencies?.url as string );
+
+				case 'verifyEmail':
+					return navigate( `migrationTrial?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {
@@ -265,6 +283,10 @@ const importFlow: Flow = {
 						return navigate( `sitePicker?from=${ fromParam }` );
 					}
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
+
+				case 'verifyEmail':
+				case 'migrationTrial':
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 			}
 		};
 

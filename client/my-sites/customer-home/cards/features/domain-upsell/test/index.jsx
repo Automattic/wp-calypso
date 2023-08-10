@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
@@ -119,9 +119,11 @@ describe( 'index', () => {
 
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
-		expect( pageLink ).toBe(
-			'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
-		);
+		await waitFor( () => {
+			expect( pageLink ).toBe(
+				'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
+			);
+		} );
 	} );
 
 	test( 'Should test the purchase button link on Yearly plans', async () => {
@@ -162,7 +164,9 @@ describe( 'index', () => {
 
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
-		expect( pageLink ).toBe( '/checkout/example.wordpress.com' );
+		await waitFor( () => {
+			expect( pageLink ).toBe( '/checkout/example.wordpress.com' );
+		} );
 	} );
 
 	test( 'Should show H3 content for the Home domain upsell if paid plan with no domains', async () => {

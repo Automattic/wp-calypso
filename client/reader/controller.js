@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import { createElement } from 'react';
@@ -346,10 +345,6 @@ export async function blogDiscoveryByFeedId( context, next ) {
 }
 
 export async function sitesSubscriptionManager( context, next ) {
-	if ( config.isEnabled( 'reader/subscription-management' ) ) {
-		context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
-		return next();
-	}
-
-	return context.redirect( '/read' );
+	context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
+	return next();
 }

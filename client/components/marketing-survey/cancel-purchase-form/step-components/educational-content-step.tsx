@@ -47,7 +47,7 @@ function Content( { image, ...props }: ContentProps ) {
 				<div className="cancel-purchase-form__edu-buttons">
 					<p>{ translate( 'Thanks, but this is not what I need' ) }</p>
 					<Button
-						isSecondary
+						variant="secondary"
 						onClick={ () => {
 							setIsBusy( true );
 							props.onDecline?.();
@@ -131,7 +131,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 											link: (
 												<Button
 													href={ localizeUrl( 'https://wordpress.com/support/site-speed/' ) }
-													isLink
+													variant="link"
 												/>
 											),
 										},
@@ -160,7 +160,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plan’s free domain',
 								{
 									components: {
-										link: <Button href={ `/domains/add/${ site.slug }` } isLink />,
+										link: <Button href={ `/domains/add/${ site.slug }` } variant="link" />,
 									},
 								}
 							) }
@@ -191,7 +191,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 											href={ localizeUrl(
 												'https://wordpress.com/support/domains/register-domain/'
 											) }
-											isLink
+											variant="link"
 										/>
 									),
 								},
@@ -217,7 +217,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 											href={ localizeUrl(
 												'https://wordpress.com/support/domains/connect-existing-domain/#steps-to-connect-a-domain'
 											) }
-											isLink
+											variant="link"
 										/>
 									),
 								},
@@ -245,7 +245,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 												href={ localizeUrl(
 													'https://wordpress.com/support/domains/connect-existing-domain/'
 												) }
-												isLink
+												variant="link"
 											/>
 										),
 										chat: (
@@ -260,7 +260,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 														site.URL
 													);
 												} }
-												isLink
+												variant="link"
 											/>
 										),
 									},
@@ -335,11 +335,14 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 											link: (
 												<Button
 													href={ localizeUrl( 'https://wordpress.com/support/seo/' ) }
-													isLink
+													variant="link"
 												/>
 											),
 											seo: (
-												<Button href="https://wordpress.com/learn/courses/intro-to-seo/" isLink />
+												<Button
+													href="https://wordpress.com/learn/courses/intro-to-seo/"
+													variant="link"
+												/>
 											),
 										},
 									}

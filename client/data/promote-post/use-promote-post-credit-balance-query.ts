@@ -9,12 +9,12 @@ const useCreditBalanceQuery = ( queryOptions = {} ) => {
 	return useQuery( {
 		queryKey: [ 'promote-post-credit-balance-siteid', selectedSiteId ],
 		queryFn: async () => {
-			if ( typeof selectedSiteId === 'number' ) {
+			if ( selectedSiteId ) {
 				const { balance } = await requestDSP< { balance: string } >(
 					selectedSiteId,
 					`/credits/balance`
 				);
-				return balance ? parseInt( balance ) : undefined;
+				return balance ? parseFloat( balance ).toFixed( 2 ) : undefined;
 			}
 			throw new Error( 'wpcomUserId is undefined' );
 		},

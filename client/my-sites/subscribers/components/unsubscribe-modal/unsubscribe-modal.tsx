@@ -1,5 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
+import { useRecordRemoveModal } from '../../tracks';
 import { Subscriber } from '../../types';
 
 export enum UnsubscribeActionType {
@@ -16,6 +18,7 @@ type UnsubscribeModalProps = {
 const UnsubscribeModal = ( { subscriber, onCancel, onConfirm }: UnsubscribeModalProps ) => {
 	const translate = useTranslate();
 	const subscriberHasPlans = !! subscriber?.plans?.length;
+	const recordRemoveModal = useRecordRemoveModal();
 
 	const freeSubscriberProps = {
 		action: UnsubscribeActionType.Unsubscribe,
@@ -47,13 +50,24 @@ const UnsubscribeModal = ( { subscriber, onCancel, onConfirm }: UnsubscribeModal
 		? paidSubscriberProps
 		: freeSubscriberProps;
 
+	useEffect( () => {
+		if ( subscriber ) {
+			recordRemoveModal( subscriberHasPlans, 'modal_showed' );
+		}
+	}, [ recordRemoveModal, subscriberHasPlans, subscriber ] );
+
+	const onCancelClick = useCallback( () => {
+		recordRemoveModal( subscriberHasPlans, 'modal_dismissed' );
+		onCancel();
+	}, [ subscriberHasPlans, onCancel ] );
+
 	return (
 		<ConfirmModal
 			isVisible={ !! subscriber }
 			confirmButtonLabel={ confirmButtonLabel }
 			text={ text }
 			title={ title }
-			onCancel={ onCancel }
+			onCancel={ onCancelClick }
 			onConfirm={ () => onConfirm( action, subscriber ) }
 		/>
 	);

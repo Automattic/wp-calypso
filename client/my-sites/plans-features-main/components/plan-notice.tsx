@@ -16,10 +16,10 @@ import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sit
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 
 export type PlanNoticeProps = {
-	visiblePlans: PlanSlug[];
-	isInSignup: boolean;
 	siteId: number;
-	discountInformation: {
+	visiblePlans: PlanSlug[];
+	isInSignup?: boolean;
+	discountInformation?: {
 		withDiscount: string;
 		discountEndDate: Date;
 	};
@@ -42,19 +42,16 @@ export type PlanNoticeTypes =
 	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 
 function useResolveNoticeType(
-	{
-		siteId,
-		isInSignup,
-		visiblePlans = [],
-		discountInformation: { withDiscount, discountEndDate },
-	}: PlanNoticeProps,
+	{ siteId, isInSignup, visiblePlans = [], discountInformation }: PlanNoticeProps,
 	isNoticeDismissed: boolean
 ): PlanNoticeTypes {
 	const canUserPurchasePlan = useSelector(
 		( state ) =>
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 	);
-	const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
+	const activeDiscount =
+		discountInformation &&
+		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
 	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
@@ -81,17 +78,15 @@ function useResolveNoticeType(
 }
 
 export default function PlanNotice( props: PlanNoticeProps ) {
-	const {
-		siteId,
-		visiblePlans,
-		discountInformation: { withDiscount, discountEndDate },
-	} = props;
+	const { siteId, visiblePlans, discountInformation } = props;
 	const translate = useTranslate();
 	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
 	const noticeType = useResolveNoticeType( props, isNoticeDismissed );
 	const handleDismissNotice = () => setIsNoticeDismissed( true );
-	let activeDiscount = getDiscountByName( withDiscount, discountEndDate );
-	const creditsValue = useCalculateMaxPlanUpgradeCredit( siteId, visiblePlans );
+	let activeDiscount =
+		discountInformation &&
+		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
+	const creditsValue = useCalculateMaxPlanUpgradeCredit( { siteId, plans: visiblePlans } );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
 	switch ( noticeType ) {

@@ -8,6 +8,7 @@ import {
 	isTranslatedIncompletely,
 	isDefaultLocale,
 	getLanguageSlugs,
+	localizeUrl,
 } from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -685,22 +686,9 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/discover', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv !== 'development' ) {
-			res.redirect( config( 'discover_logged_out_redirect_url' ) );
-		} else {
-			next();
-		}
-	} );
-	app.get( '/read/search', function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn && calypsoEnv === 'production' ) {
-			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
-		} else {
-			next();
-		}
-	} );
+	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
+		const locale = req.params?.locale;
 
-	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
@@ -710,12 +698,18 @@ function wpcomPages( app ) {
 					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 				);
 			} else {
-				const pricingPageUrl = ref
-					? `https://wordpress.com/pricing/?ref=${ ref }`
-					: 'https://wordpress.com/pricing/';
+				const pricingPage = 'https://wordpress.com/pricing/';
+				const refQuery = ref ? `?ref=${ ref }` : '';
+				const pricingPageUrl = localizeUrl( `${ pricingPage }${ refQuery }`, locale );
 				res.redirect( pricingPageUrl );
 			}
 		} else {
+			if ( locale ) {
+				const queryParams = new URLSearchParams( req.query );
+				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
+				res.redirect( `/plans${ queryString }` );
+				return;
+			}
 			next();
 		}
 	} );
@@ -832,6 +826,18 @@ function wpcomPages( app ) {
 
 		// Otherwise, show them email subscriptions external landing page
 		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
+
+	// Redirects from the /start/domain-transfer flow to the new /setup/domain-transfer.
+	app.get( [ '/start/domain-transfer', '/start/domain-transfer/*' ], function ( req, res ) {
+		const redirectUrl = '/setup/domain-transfer';
+		res.redirect( 301, redirectUrl );
+	} );
+
+	// Redirects from /help/courses to https://wordpress.com/learn/courses.
+	app.get( '/help/courses', function ( req, res ) {
+		const redirectUrl = 'https://wordpress.com/learn/courses';
+		res.redirect( 301, redirectUrl );
 	} );
 }
 

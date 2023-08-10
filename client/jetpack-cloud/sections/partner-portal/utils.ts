@@ -222,3 +222,25 @@ export function areLicenseKeysAssignableToMultisite( licenseKeys: Array< string 
 	// If any license keys are not Jetpack Backup or Scan, they can be assigned to multisite.
 	return licenseKeys.some( ( key ) => ! /^jetpack-(backup|scan)/.test( key ) );
 }
+
+export const LICENSE_INFO_MODAL_ID = 'show_license_modal';
+
+/**
+ * Provided a license key or a product slug, can we trust that the product is a WooCommerce product
+ *
+ * @param keyOrSlug string
+ * @returns boolean True if WC product, false if not
+ */
+export function isWooCommerceProduct( keyOrSlug: string ) {
+	return keyOrSlug.startsWith( 'woocommerce' );
+}
+
+/**
+ * Provided a license key, return the product slug
+ *
+ * @param licenseKey string
+ * @returns string Product slug
+ */
+export function getProductSlugFromKey( licenseKey: string ) {
+	return licenseKey.split( '_' )[ 0 ];
+}

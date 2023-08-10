@@ -35,13 +35,7 @@ const mIsPlanAvailableForPurchase = isPlanAvailableForPurchase as jest.MockedFun
 >;
 
 const siteId = 9999999;
-const plansList: PlanSlug[] = [
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-];
+const plans: PlanSlug[] = [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
 describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 	beforeEach( () => {
@@ -84,7 +78,7 @@ describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 
 	test( 'Return the correct amount of credits given a plan list', () => {
 		const { result } = renderHookWithProvider( () =>
-			useCalculateMaxPlanUpgradeCredit( siteId, plansList )
+			useCalculateMaxPlanUpgradeCredit( { siteId, plans } )
 		);
 		expect( result.current ).toEqual( 1000 );
 	} );
@@ -95,7 +89,7 @@ describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 		);
 
 		const { result } = renderHookWithProvider( () =>
-			useCalculateMaxPlanUpgradeCredit( siteId, plansList )
+			useCalculateMaxPlanUpgradeCredit( { siteId, plans } )
 		);
 		expect( result.current ).toEqual( 800 );
 	} );

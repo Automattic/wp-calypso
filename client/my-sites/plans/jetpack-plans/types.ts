@@ -125,6 +125,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	externalUrl?: string;
 	displayTerm?: Duration;
 	displayPrice?: number;
+	displayPriceText?: TranslateResult | null;
 	displayCurrency?: string;
 	displayFrom?: boolean;
 	belowPriceText?: TranslateResult;
@@ -140,6 +141,8 @@ export interface SelectorProduct extends SelectorProductCost {
 	faqs?: Array< FAQ >;
 	recommendedFor?: Array< JetpackTag >;
 	forceNoYearlyUpgrade?: boolean;
+	moreAboutUrl?: string;
+	indirectCheckoutUrl?: string;
 }
 
 export type SiteProduct = {

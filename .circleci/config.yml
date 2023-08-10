@@ -168,7 +168,7 @@ jobs:
   wp-desktop-mac:
     macos:
       xcode: '14.2.0'
-    resource_class: macos.x86.medium.gen2
+    resource_class: macos.m1.medium.gen1
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     environment:
@@ -219,7 +219,9 @@ jobs:
             # If this isn't a full artifact build, ensure to persist the built application for inspection
             if ! ls desktop/release/*.zip &>/dev/null
             then
-              ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+              # Wildcard is to support both Intel and Apple Silicon builds.
+              # Intel artifcats are in `/mac`, Apple Silicon is in `/mac-arm64`.
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac* desktop/release/mac.app.zip
             fi
       - run:
           when: always
@@ -345,7 +347,7 @@ jobs:
             yarn --version
       - run:
           name: Install Make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install Desktop Dependencies
           command: yarn
@@ -429,7 +431,7 @@ jobs:
   # GitHub release and generate the release notes using the Git commits history
   wp-desktop-publish:
     docker:
-      - image: circleci/golang:1.12-node
+      - image: cimg/go:1.20-node
     working_directory: /home/circleci/wp-calypso
     environment:
       VERSION: << pipeline.git.tag >>
@@ -439,7 +441,7 @@ jobs:
           at: /home/circleci/wp-calypso
       - run:
           name: Install Dependencies
-          command: go get github.com/tcnksm/ghr
+          command: go install github.com/tcnksm/ghr@v0.16.0
       - run:
           name: Update wp-desktop repo README
           command: |

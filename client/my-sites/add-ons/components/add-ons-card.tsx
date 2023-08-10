@@ -1,17 +1,21 @@
-import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import Badge from 'calypso/components/badge';
+import page from 'page';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
+type ActionPrimary = {
+	text: string;
+	handler: ( productSlug: string, quantity?: number ) => void;
+};
+
 export interface Props {
-	actionPrimary?: {
-		text: string;
-		handler: ( productSlug: string, quantity?: number ) => void;
-	};
+	actionPrimary?: ActionPrimary;
 	actionSecondary?: {
 		text: string;
 		handler: ( productSlug: string ) => void;
@@ -89,15 +93,53 @@ const Container = styled.div`
 	}
 `;
 
+const useAddonName = ( addOnMeta: AddOnMeta ) => {
+	const translate = useTranslate();
+
+	// Add special handling for Jetpack Stats, which actually encompasses three different products:
+	// - Jetpack Stats (free)
+	// - Jetpack Stats Personal (pay-what-you-want, yearly)
+	// - Jetpack Stats Commercial (fixed monthly price for now, monthly)
+	if ( addOnMeta.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY ) {
+		return translate( 'Jetpack Stats' );
+	}
+
+	return addOnMeta.name;
+};
+
+const useModifiedActionPrimary = (
+	actionPrimary: ActionPrimary | undefined,
+	addOnMeta: AddOnMeta
+) => {
+	const translate = useTranslate();
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+
+	// Add special handling for Jetpack Stats, which uses its own special purchase page.
+	if ( addOnMeta.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY ) {
+		return {
+			text: translate( 'Upgrade Stats' ),
+			handler: () => {
+				// Navigate to the stats purchase page, scrolled to the top.
+				page.show( `/stats/purchase/${ siteSlug }` );
+				window.scrollTo( 0, 0 );
+			},
+		};
+	}
+	return actionPrimary;
+};
+
 const AddOnCard = ( {
 	addOnMeta,
-	actionPrimary,
+	actionPrimary: actionPrimaryFromProps,
 	actionSecondary,
 	useAddOnAvailabilityStatus,
 	highlightFeatured,
 }: Props ) => {
 	const translate = useTranslate();
 	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta );
+	const name = useAddonName( addOnMeta );
+	const actionPrimary = useModifiedActionPrimary( actionPrimaryFromProps, addOnMeta );
+
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
 	};
@@ -105,16 +147,19 @@ const AddOnCard = ( {
 		actionSecondary?.handler( addOnMeta.productSlug );
 	};
 
+	const shouldRenderLoadingState =
+		addOnMeta.productSlug === PRODUCT_1GB_SPACE && addOnMeta.isLoading;
+
 	// if product is space upgrade choose the action based on the purchased status
 	const shouldRenderPrimaryAction =
 		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? ! addOnMeta.purchased
-			: availabilityStatus?.available;
+			? ! addOnMeta.purchased && ! shouldRenderLoadingState
+			: availabilityStatus?.available && ! shouldRenderLoadingState;
 
 	const shouldRenderSecondaryAction =
 		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? addOnMeta.purchased
-			: ! availabilityStatus?.available;
+			? addOnMeta.purchased && ! shouldRenderLoadingState
+			: ! availabilityStatus?.available && ! shouldRenderLoadingState;
 
 	return (
 		<Container>
@@ -125,7 +170,7 @@ const AddOnCard = ( {
 					</div>
 					<div className="add-ons-card__name-and-billing">
 						<div className="add-ons-card__name-tag">
-							<div className="add-ons-card__name">{ addOnMeta.name }</div>
+							<div className="add-ons-card__name">{ name }</div>
 							{ highlightFeatured && addOnMeta.featured && (
 								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
 									{ translate( 'Popular' ) }
@@ -137,6 +182,9 @@ const AddOnCard = ( {
 				</CardHeader>
 				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
+					{ shouldRenderLoadingState && (
+						<Spinner size={ 24 } className="spinner-button__spinner" />
+					) }
 					{ shouldRenderSecondaryAction && (
 						<>
 							{ actionSecondary && (

@@ -18,6 +18,7 @@ function transformData( data ) {
 class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
+		onlyPercent: PropTypes.bool,
 	};
 
 	state = {
@@ -50,7 +51,7 @@ class PieChartLegend extends Component {
 						<LegendItem
 							key={ datum.name }
 							name={ datum.name }
-							value={ datum.value.toString() }
+							value={ this.props.onlyPercent ? '' : datum.value.toString() }
 							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum }` }
 							percent={ percent }
 							description={ datum.description }

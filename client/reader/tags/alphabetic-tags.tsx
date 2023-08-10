@@ -118,7 +118,7 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 						<div className="alphabetic-tags__tag-links">
 							{ Object.keys( tagTables ).map( ( letter: string ) => (
 								<Button
-									isLink
+									variant="link"
 									key={ 'alphabetic-tags-link-' + letter }
 									onClick={ () => scrollToLetter( letter ) }
 								>

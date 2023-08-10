@@ -8,6 +8,7 @@ interface Props {
 	activePageIndex: number;
 	numberOfPages: number;
 	classNames?: string | string[];
+	children?: React.ReactNode;
 }
 
 const PaginationControl: React.FunctionComponent< Props > = ( {

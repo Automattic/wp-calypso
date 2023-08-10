@@ -4,23 +4,20 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import DashboardModalForm from '../../dashboard-modal-form';
-import {
-	useUpdateMonitorSettings,
-	useJetpackAgencyDashboardRecordTrackEvent,
-	useShowVerifiedBadge,
-} from '../../hooks';
+import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
 } from '../../sites-overview/utils';
-import EmailAddressEditor from '../configure-email-notification/email-address-editor';
-import PhoneNumberEditor from '../configure-sms-notification/phone-number-editor';
+import ContactEditor from '../contact-editor';
+import { RestrictionType } from '../types';
 import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
 import NotificationDuration from './form-content/notification-duration';
 import SMSNotification from './form-content/sms-notification';
+import useShowVerifiedBadge from './use-show-verified-badge';
 import type {
 	MonitorSettings,
 	Site,
@@ -32,8 +29,8 @@ import type {
 	InitialMonitorSettings,
 	StateMonitorSettingsSMS,
 	MonitorSettingsContact,
+	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
-
 import './style.scss';
 import '../style.scss';
 
@@ -97,6 +94,18 @@ export default function NotificationSettings( {
 	const isSMSNotificationEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
+
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	// Check if current site or all sites selected has a paid license.
+	const hasPaidLicenses = ! sites.find( ( site ) => ! site.has_paid_agency_monitor );
+
+	let restriction: RestrictionType = 'none';
+
+	if ( ! hasPaidLicenses ) {
+		// We need to set the restriction type to determine correct messaging.
+		restriction = isBulkUpdate ? 'free_site_selected' : 'upgrade_required';
+	}
 
 	const isContactListMatch = (
 		list1: ReadonlyArray< MonitorSettingsContact >,
@@ -167,20 +176,34 @@ export default function NotificationSettings( {
 		}
 	};
 
-	const handleSetAllEmailItems = ( items: StateMonitorSettingsEmail[] ) => {
-		setAllEmailItems( items );
+	const clearValidationError = useCallback( () => {
+		setValidationError( '' );
+		setHasUnsavedChanges( false );
+	}, [] );
+
+	const handleSetAllEmailItems = ( items: StateMonitoringSettingsContact[] ) => {
+		setAllEmailItems( items as StateMonitorSettingsEmail[] );
 		setHasUnsavedChanges( false );
 	};
 
-	const handleSetAllPhoneItems = ( items: StateMonitorSettingsSMS[] ) => {
-		setAllPhoneItems( items );
-		setHasUnsavedChanges( false );
+	const handleSetAllPhoneItems = ( items: StateMonitoringSettingsContact[] ) => {
+		setAllPhoneItems( items as StateMonitorSettingsSMS[] );
+		clearValidationError();
 	};
 
-	const onSave = () => {
-		if ( ! enableMobileNotification && ! enableEmailNotification ) {
+	function onSave() {
+		if (
+			! enableMobileNotification &&
+			! enableEmailNotification &&
+			! ( isSMSNotificationEnabled && enableSMSNotification )
+		) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
+
+		if ( isSMSNotificationEnabled && enableSMSNotification && ! allPhoneItems.length ) {
+			return setValidationError( translate( 'Please add at least one phone number.' ) );
+		}
+
 		const params = {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
@@ -220,12 +243,12 @@ export default function NotificationSettings( {
 					};
 				} ),
 			};
-			eventParams.email_contacts = params.contacts.sms_numbers?.length;
+			eventParams.sms_contacts = params.contacts.sms_numbers?.length;
 			eventParams.sms_notifications = params.sms_notifications;
 		}
 		recordEvent( 'notification_save_click', eventParams );
 		updateMonitorSettings( params );
-	};
+	}
 
 	function selectDuration( duration: MonitorDuration ) {
 		recordEvent( 'duration_select', { duration: duration.time } );
@@ -320,7 +343,11 @@ export default function NotificationSettings( {
 				foundDuration = durations.find(
 					( duration ) => duration.time === settings.monitor_deferment_time
 				);
-				setSelectedDuration( foundDuration );
+
+				// We need to make sure that we are not setting a paid duration if there is no license.
+				if ( hasPaidLicenses || ! foundDuration?.isPaid ) {
+					setSelectedDuration( foundDuration );
+				}
 			}
 
 			// Set initial settings
@@ -339,6 +366,7 @@ export default function NotificationSettings( {
 			getAllPhoneItems,
 			handleSetEmailItems,
 			handleSetPhoneItems,
+			hasPaidLicenses,
 			isMultipleEmailEnabled,
 			isSMSNotificationEnabled,
 		]
@@ -382,11 +410,15 @@ export default function NotificationSettings( {
 	}, [ bulkUpdateSettings, setBulkUpdateSettings ] );
 
 	useEffect( () => {
-		if ( enableMobileNotification || enableEmailNotification ) {
-			setValidationError( '' );
-			setHasUnsavedChanges( false );
+		if ( enableMobileNotification || enableEmailNotification || enableSMSNotification ) {
+			clearValidationError();
 		}
-	}, [ enableMobileNotification, enableEmailNotification ] );
+	}, [
+		enableMobileNotification,
+		enableEmailNotification,
+		enableSMSNotification,
+		clearValidationError,
+	] );
 
 	useEffect( () => {
 		if ( isComplete ) {
@@ -396,14 +428,15 @@ export default function NotificationSettings( {
 
 	if ( isAddEmailModalOpen ) {
 		return (
-			<EmailAddressEditor
-				toggleModal={ toggleAddEmailModal }
-				selectedEmail={ selectedEmail }
-				selectedAction={ selectedAction }
-				allEmailItems={ allEmailItems }
-				setAllEmailItems={ handleSetAllEmailItems }
+			<ContactEditor
+				type="email"
+				onClose={ toggleAddEmailModal }
+				selectedContact={ selectedEmail }
+				action={ selectedAction }
+				contacts={ allEmailItems }
+				setContacts={ handleSetAllEmailItems }
 				recordEvent={ recordEvent }
-				setVerifiedEmail={ ( item ) => handleSetVerifiedItem( 'email', item ) }
+				setVerifiedContact={ ( item ) => handleSetVerifiedItem( 'email', item ) }
 				sites={ sites }
 			/>
 		);
@@ -411,13 +444,15 @@ export default function NotificationSettings( {
 
 	if ( isAddSMSModalOpen ) {
 		return (
-			<PhoneNumberEditor
-				toggleModal={ toggleAddSMSModal }
-				selectedPhone={ selectedPhone }
-				allPhoneItems={ allPhoneItems }
-				selectedAction={ selectedAction }
-				setAllPhoneItems={ handleSetAllPhoneItems }
-				setVerifiedPhoneNumber={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
+			<ContactEditor
+				type="sms"
+				onClose={ toggleAddSMSModal }
+				selectedContact={ selectedPhone }
+				action={ selectedAction }
+				contacts={ allPhoneItems }
+				setContacts={ handleSetAllPhoneItems }
+				recordEvent={ recordEvent }
+				setVerifiedContact={ ( item ) => handleSetVerifiedItem( 'phone', item ) }
 				sites={ sites }
 			/>
 		);
@@ -441,8 +476,10 @@ export default function NotificationSettings( {
 					recordEvent={ recordEvent }
 					selectedDuration={ selectedDuration }
 					selectDuration={ selectDuration }
+					restriction={ restriction }
 				/>
-				{ isSMSNotificationEnabled && (
+
+				{ isPaidTierEnabled && (
 					<SMSNotification
 						recordEvent={ recordEvent }
 						enableSMSNotification={ enableSMSNotification }
@@ -450,13 +487,11 @@ export default function NotificationSettings( {
 						toggleModal={ toggleAddSMSModal }
 						allPhoneItems={ allPhoneItems }
 						verifiedItem={ verifiedItem }
+						restriction={ restriction }
+						settings={ settings }
 					/>
 				) }
-				<MobilePushNotification
-					recordEvent={ recordEvent }
-					enableMobileNotification={ enableMobileNotification }
-					setEnableMobileNotification={ setEnableMobileNotification }
-				/>
+
 				<EmailNotification
 					recordEvent={ recordEvent }
 					verifiedItem={ verifiedItem }
@@ -465,6 +500,13 @@ export default function NotificationSettings( {
 					defaultUserEmailAddresses={ defaultUserEmailAddresses }
 					toggleAddEmailModal={ toggleAddEmailModal }
 					allEmailItems={ allEmailItems }
+					restriction={ restriction }
+				/>
+
+				<MobilePushNotification
+					recordEvent={ recordEvent }
+					enableMobileNotification={ enableMobileNotification }
+					setEnableMobileNotification={ setEnableMobileNotification }
 				/>
 			</div>
 			<NotificationSettingsFormFooter

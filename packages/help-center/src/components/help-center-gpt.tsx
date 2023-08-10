@@ -1,9 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, LoadingPlaceholder } from '@automattic/components';
-import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stores';
+import { LoadingPlaceholder } from '@automattic/components';
+import { HelpCenterSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -11,6 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import stripTags from 'striptags';
 import './help-center-article-content.scss';
+import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 

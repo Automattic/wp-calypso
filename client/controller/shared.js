@@ -15,7 +15,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 			query,
 			primary,
 			secondary,
-			headerSection,
+			renderHeaderSection,
 			showGdprBanner,
 			cachedMarkup,
 		} = context;
@@ -36,7 +36,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 					currentQuery={ query }
 					primary={ primary }
 					secondary={ secondary }
-					headerSection={ headerSection }
+					renderHeaderSection={ renderHeaderSection }
 					redirectUri={ context.originalUrl }
 					showGdprBanner={ showGdprBanner }
 				/>
@@ -70,7 +70,6 @@ export function setLocaleMiddleware( param = 'lang' ) {
 			context.lang = paramsLocale;
 			context.store.dispatch( setLocale( paramsLocale ) );
 		}
-
 		next();
 	};
 }

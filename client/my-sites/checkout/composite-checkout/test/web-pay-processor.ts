@@ -9,6 +9,7 @@ import {
 	countryCode,
 	postalCode,
 	contactDetailsForDomain,
+	mockLogStashEndpoint,
 } from './util';
 
 describe( 'webPayProcessor', () => {
@@ -52,7 +53,15 @@ describe( 'webPayProcessor', () => {
 			path: '/',
 			viewport: '0x0',
 		},
+		ad_conversion: {
+			ad_details: '',
+			sensitive_pixel_options: '',
+		},
 	};
+
+	beforeEach( () => {
+		mockLogStashEndpoint();
+	} );
 
 	it( 'throws an error if there is no stripe object', async () => {
 		const submitData = { paymentPartner: 'stripe' };

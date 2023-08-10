@@ -1,7 +1,6 @@
 import {
 	FEATURE_VIDEO_UPLOADS,
 	planHasFeature,
-	PLAN_PREMIUM,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -10,7 +9,9 @@ import {
 	isDesignFirstFlow,
 	isNewsletterFlow,
 	isStartWritingFlow,
+	replaceProductsInCart,
 } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { ExternalLink } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -18,6 +19,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -40,11 +42,14 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
+	globalStylesMinimumPlan: string,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {},
-	planCartProductSlug?: string | null
+	planCartItem?: MinimalRequestCartProduct | null,
+	domainCartItem?: MinimalRequestCartProduct | null,
+	stripeConnectUrl?: string
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -53,9 +58,10 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( isBlogOnboardingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
+		( isBlogOnboardingFlow( flow ) ? planCartItem?.product_slug : null ) ??
+		site?.plan?.product_slug;
 
-	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+	const translatedPlanName = ( productSlug && PLANS_LIST[ productSlug ]?.getTitle() ) || '';
 
 	const firstPostPublished = Boolean(
 		tasks?.find( ( task ) => task.id === 'first_post_published' )?.completed
@@ -89,6 +95,10 @@ export function getEnhancedTasks(
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
+
+	const isStripeConnected = Boolean(
+		tasks?.find( ( task ) => task.id === 'set_up_payments' )?.completed
+	);
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -155,7 +165,7 @@ export function getEnhancedTasks(
 						}
 						const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 							...( shouldDisplayWarning && {
-								plan: PLAN_PREMIUM,
+								plan: globalStylesMinimumPlan,
 								feature: isVideoPressFlowWithUnsupportedPlan
 									? FEATURE_VIDEO_UPLOADS
 									: FEATURE_STYLE_CUSTOMIZATION,
@@ -172,6 +182,7 @@ export function getEnhancedTasks(
 							components: {
 								a: (
 									<ExternalLink
+										children={ null }
 										href={ localizeUrl(
 											'https://wordpress.com/support/using-styles/#reset-all-styles'
 										) }
@@ -333,8 +344,15 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'blog_launched':
+				case 'blog_launched': {
+					const onboardingCartItems = [ planCartItem, domainCartItem ].filter( Boolean );
+					let title = task.title;
+					if ( isBlogOnboardingFlow( flow ) && planCompleted && onboardingCartItems.length ) {
+						title = translate( 'Checkout and launch' );
+					}
+
 					taskData = {
+						title,
 						disabled:
 							( isStartWritingFlow( flow ) &&
 								( ! firstPostPublished ||
@@ -346,23 +364,39 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
-								const { launchSite } = dispatch( SITE_STORE );
-
 								setPendingAction( async () => {
+									setProgressTitle( __( 'Directing to checkout' ) );
+									// If user selected products during onboarding, update cart and redirect to checkout
+									const onboardingCartItems = [ planCartItem, domainCartItem ].filter(
+										Boolean
+									) as MinimalRequestCartProduct[];
+									if ( onboardingCartItems.length ) {
+										await replaceProductsInCart( siteSlug as string, onboardingCartItems );
+										const { goToCheckout } = useCheckout();
+										goToCheckout( {
+											flowName: flow ?? '',
+											stepName: 'blog_launched',
+											siteSlug: siteSlug ?? '',
+											destination: `/setup/${ flow }/site-launch?siteSlug=${ siteSlug }`,
+											cancelDestination: '/home',
+										} );
+										return { goToCheckout: true };
+									}
+									// Launch blog if no items in cart
+									const { launchSite } = dispatch( SITE_STORE );
 									setProgressTitle( __( 'Launching blog' ) );
 									await launchSite( site.ID );
-
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
 									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { blogLaunched: true, siteSlug };
 								} );
-
 								submit?.();
 							}
 						},
 					};
 					break;
+				}
 				case 'videopress_upload':
 					taskData = {
 						actionUrl: launchpadUploadVideoLink,
@@ -439,14 +473,18 @@ export function getEnhancedTasks(
 					break;
 				case 'set_up_payments':
 					taskData = {
+						badge_text: task.completed ? translate( 'Connected' ) : null,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+							stripeConnectUrl
+								? window.location.assign( stripeConnectUrl )
+								: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
 					break;
 				case 'newsletter_plan_created':
 					taskData = {
+						disabled: ! isStripeConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(

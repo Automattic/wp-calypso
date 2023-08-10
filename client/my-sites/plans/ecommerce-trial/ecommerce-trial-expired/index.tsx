@@ -13,7 +13,6 @@ import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const ECommerceTrialExpired = (): JSX.Element => {

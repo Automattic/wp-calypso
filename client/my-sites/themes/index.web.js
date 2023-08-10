@@ -26,12 +26,16 @@ export default function ( router ) {
 	const routesWithoutSites = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?`,
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
 	];
 	const routesWithSites = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes)?/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
 	];

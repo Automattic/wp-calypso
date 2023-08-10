@@ -28,6 +28,18 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 			cost = priceTier?.maximum_price / 100;
 		}
 
+		if ( product?.product_term === 'month' ) {
+			const formattedCost = formatCurrency( cost, currencyCode, {
+				stripZeros: true,
+			} );
+			return translate( '%(formattedCost)s/month, billed monthly', {
+				/* Translators: $formattedCost: monthly price formatted with currency */
+				args: {
+					formattedCost,
+				},
+			} );
+		}
+
 		const monthlyCost = formatCurrency( cost / 12, currencyCode, {
 			stripZeros: true,
 		} );

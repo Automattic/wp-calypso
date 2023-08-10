@@ -446,6 +446,14 @@ class PurchaseItem extends Component {
 			return translate( 'Included with Plan' );
 		}
 
+		if ( purchase.isInAppPurchase ) {
+			return (
+				<div>
+					<span>{ translate( 'In-App Purchase' ) }</span>
+				</div>
+			);
+		}
+
 		if (
 			purchase.isAutoRenewEnabled &&
 			! hasPaymentMethod( purchase ) &&

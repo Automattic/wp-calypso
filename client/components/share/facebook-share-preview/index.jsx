@@ -14,6 +14,7 @@ export class FacebookSharePreview extends PureComponent {
 		customImage: PropTypes.string,
 		message: PropTypes.string,
 		seoTitle: PropTypes.string,
+		hidePostPreview: PropTypes.bool,
 	};
 
 	render() {
@@ -27,6 +28,7 @@ export class FacebookSharePreview extends PureComponent {
 			message,
 			seoTitle,
 			customImage,
+			hidePostPreview,
 		} = this.props;
 
 		// The post object in the state has a default excerpt, which is the first words of the
@@ -47,6 +49,7 @@ export class FacebookSharePreview extends PureComponent {
 				customImage={ customImage }
 				user={ { displayName: externalDisplay, avatarUrl: externalProfilePicture } }
 				type={ TYPE_ARTICLE }
+				hidePostPreview={ hidePostPreview }
 			/>
 		);
 	}

@@ -144,19 +144,17 @@ export interface LocalizeProps {
 	numberFormat: typeof numberFormat;
 }
 
-// Infers prop type from component C
-export type GetProps< C > = C extends React.ComponentType< infer P > ? P : never;
-
 export type WithoutLocalizedProps< OrigProps > = Pick<
 	OrigProps,
 	Exclude< keyof OrigProps, keyof LocalizeProps >
 >;
 
-export type LocalizedComponent< C > = React.ComponentClass<
-	WithoutLocalizedProps< GetProps< C > >
->;
+export type LocalizedComponent< C extends React.JSXElementConstructor< any > > =
+	React.ComponentClass< WithoutLocalizedProps< React.ComponentPropsWithRef< C > > >;
 
-export function localize< C >( component: C ): LocalizedComponent< C >;
+export function localize< C extends React.JSXElementConstructor< any > >(
+	component: C
+): LocalizedComponent< C >;
 export function useTranslate(): typeof translate & { localeSlug: string | undefined };
 export function useRtl(): boolean;
 

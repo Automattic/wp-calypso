@@ -34,8 +34,8 @@ const HomepagePopover = ( { isAdmin, template }: HomepagePopoverProps ) => {
 	const learnMoreLink = (
 		<ExternalLink
 			href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
-			target="_blank"
 			rel="noopener noreferrer"
+			children={ null }
 		/>
 	);
 

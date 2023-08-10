@@ -29,7 +29,7 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getDomainName, getIntervalType } from './util';
+import { getIntervalType } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -74,22 +74,33 @@ export class PlansStep extends Component {
 		return 'personal';
 	}
 
-	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
-		if ( freeDomainSuggestion?.product_slug ) {
-			return;
-		}
+	removePaidDomain = () => {
 		const domainItem = undefined;
-		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
 
 		this.props.submitSignupStep(
 			{
 				stepName: 'domains',
 				domainItem,
 				isPurchasingItem: false,
-				siteUrl,
 				stepSectionName: undefined,
 			},
 			{ domainItem }
+		);
+	};
+
+	setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				siteUrl,
+			},
+			{}
 		);
 	};
 
@@ -99,9 +110,8 @@ export class PlansStep extends Component {
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
-			planTypes,
+			intent,
 			flowName,
-			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
 		} = this.props;
@@ -144,34 +154,36 @@ export class PlansStep extends Component {
 				</div>
 			);
 		}
-
-		const domainName = getDomainName( this.props.signupDependencies.domainItem );
-
+		const { signupDependencies } = this.props;
+		const { siteUrl, domainItem, siteTitle, username } = signupDependencies;
+		const paidDomainName = domainItem?.meta;
 		return (
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					hideEcommercePlan={ this.shouldHideEcommercePlan() }
+					paidDomainName={ paidDomainName }
+					freeSubdomain={ ! domainItem ? siteUrl : undefined }
+					siteTitle={ siteTitle }
+					signupFlowUserName={ username }
+					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					domainName={ domainName }
 					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }
-					planTypes={ planTypes }
+					intent={ intent }
 					flowName={ flowName }
-					isAllPaidPlansShown={ true }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hideFreePlan={ hideFreePlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
-					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
+					showBiennialToggle={ this.props.showBiennialToggle }
+					removePaidDomain={ this.removePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 				/>
 			</div>
 		);
@@ -234,8 +246,9 @@ export class PlansStep extends Component {
 	}
 
 	shouldHideEcommercePlan() {
-		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan
-		return isSiteAssemblerFlow( this.props.flowName );
+		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan.
+		// We also hide the plan if the flag is set - currently it's only set for the `site-selected` flow.
+		return isSiteAssemblerFlow( this.props.flowName ) || this.props.hideEcommercePlan;
 	}
 
 	plansFeaturesSelection() {
@@ -272,12 +285,12 @@ export class PlansStep extends Component {
 				// During onboarding, if the user chooses to use their own domain, but that domain needs to have
 				// its ownership verified, they can skip the domain selection step and the `domainItem` dependency
 				// is not provided. In that case, the "Back" button in the plan selection step needs to go back to
-				// the initial domain seleciton step and no to the "transfer or connect" step.
+				// the initial domain selection step and not to the "transfer or connect" step.
 				if (
-					'onboarding' === flowName &&
+					( 'onboarding' === flowName || 'onboarding-pm' === flowName ) &&
 					undefined === previousStep?.providedDependencies?.domainItem
 				) {
-					backUrl = getStepUrl( 'onboarding', 'domains' );
+					backUrl = getStepUrl( flowName, 'domains' );
 				}
 			}
 		}
@@ -333,8 +346,17 @@ PlansStep.propTypes = {
 	stepSectionName: PropTypes.string,
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
+	intent: PropTypes.oneOf( [
+		'plans-blog-onboarding',
+		'plans-newsletter',
+		'plans-link-in-bio',
+		'plans-new-hosted-site',
+		'plans-plugins',
+		'plans-jetpack-app',
+		'plans-import',
+		'default',
+	] ),
 };
 
 /**

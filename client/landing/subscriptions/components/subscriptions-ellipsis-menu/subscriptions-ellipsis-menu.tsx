@@ -6,7 +6,7 @@ import usePopoverToggle from 'calypso/landing/subscriptions/hooks/use-popover-to
 import './styles.scss';
 
 type SubscriptionsEllipsisMenuProps = {
-	children?: React.ReactNode;
+	children?: ( ( onClose: () => void ) => React.ReactNode ) | React.ReactNode;
 	popoverClassName?: string;
 	toggleTitle?: string;
 	verticalToggle?: boolean;

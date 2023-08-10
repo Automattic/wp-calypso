@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import '../jsdom-test-globals-fix';
 import { JSDOM } from 'jsdom';
 import fixtures from '../malformed-html-fixtures';
 import {
@@ -220,11 +219,9 @@ const runTests = ( isSSR = false ) => {
 		);
 	} );
 
-	fixtures.forEach( ( { title, payload, expected, expectedSSR }, index ) => {
-		test( `Fixture test #${ index }: ${ title } `, () => {
-			const toBeExpected = isSSR ? expectedSSR || expected : expected;
-			expect( clean( payload ) ).toBe( toBeExpected );
-		} );
+	test.each( fixtures )( '`Fixture test $#: $title `', ( testConfig ) => {
+		const { payload, expected } = testConfig;
+		expect( clean( payload ) ).toBe( expected );
 	} );
 };
 

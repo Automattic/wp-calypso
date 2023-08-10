@@ -310,6 +310,12 @@ export class SiteSelector extends Component {
 			sites = sites.filter( ( site ) => site.slug !== this.props.selected );
 		}
 
+		// Bulk transfers of many domains get attached to a single domain-only site.
+		// Because of this, it doesn't make sense to show domain-only sites in the site selector.
+
+		// Eventually, we'll want to filter out domain-only sites at the API boundary instead.
+		sites = sites.filter( ( site ) => ! site?.options?.is_domain_only );
+
 		return sites;
 	}
 
@@ -561,6 +567,11 @@ const navigateToSite =
 				if ( ! isStore ) {
 					path = '/stats/day';
 				}
+			}
+
+			// Defaults to /advertising/campaigns when switching sites in the 3rd level
+			if ( path.match( /^\/advertising\/campaigns\/\d+/ ) ) {
+				path = '/advertising/campaigns';
 			}
 
 			// Jetpack Cloud: default to /backups/ when in the details of a particular backup

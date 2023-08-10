@@ -366,9 +366,7 @@ export default function DIFMLanding( {
 						) }
 					</p>
 					<CTASectionWrapper>
-						<NextButton onClick={ onSubmit } isPrimary={ true }>
-							{ translate( 'Get started' ) }
-						</NextButton>
+						<NextButton onClick={ onSubmit }>{ translate( 'Get started' ) }</NextButton>
 					</CTASectionWrapper>
 				</ContentSection>
 				<ImageSection>

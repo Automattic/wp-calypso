@@ -94,7 +94,6 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 
 	return (
 		<Modal
-			open
 			overlayClassName="checkout-modal"
 			bodyOpenClassName="has-checkout-modal"
 			title={ translate( 'Checkout modal' ) }

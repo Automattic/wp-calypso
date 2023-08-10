@@ -493,6 +493,7 @@ module.exports = {
 					'__experimentalDivider',
 					'__experimentalHStack',
 					'__experimentalVStack',
+					'__experimentalSpacer',
 					'__experimentalItem',
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',

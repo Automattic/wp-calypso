@@ -4,12 +4,14 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import wpcom from 'calypso/lib/wp';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -52,6 +54,7 @@ const free: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
+		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -83,7 +86,7 @@ const free: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
+							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
@@ -128,7 +131,7 @@ const free: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
+					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
 
 				default:
 					return navigate( 'freeSetup' );
@@ -151,7 +154,17 @@ const free: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const flowName = this.name;
-		const locale = useLocale();
+
+		// There is a race condition where useLocale is reporting english,
+		// despite there being a locale in the URL so we need to look it up manually.
+		// We also need to support both query param and path suffix localized urls
+		// depending on where the user is coming from.
+		const useLocaleSlug = useLocale();
+		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
+		const queryLocaleSlug = getLocaleFromQueryParam();
+		const pathLocaleSlug = getLocaleFromPathname();
+		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+
 		const flags = queryParams.get( 'flags' );
 		const siteSlug = queryParams.get( 'siteSlug' );
 
@@ -180,6 +193,18 @@ const free: Flow = {
 
 			return url + ( flags ? `&flags=${ flags }` : '' );
 		};
+
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/blog/blogger-intent route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				const logInUrl = getStartUrl();
+				window.location.assign( logInUrl );
+			}
+		}, [] );
 
 		if ( ! userIsLoggedIn ) {
 			const logInUrl = getStartUrl();

@@ -9,9 +9,12 @@
 		}
 	}
 
-	.unsubscribe-button.components-button.has-icon,
-	.resubscribe-button.components-button.has-icon {
-		margin-top: 24px;
+	.subscriptions__separator {
+		margin-bottom: 24px;
+	}
+
+	.unsubscribe-button {
+		display: flex;
+		width: 100%;
 	}
 }
-

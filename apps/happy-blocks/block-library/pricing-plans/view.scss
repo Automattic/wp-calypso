@@ -227,6 +227,8 @@ $brand-display: "SF Pro Display", $sans;
 		margin: 18px 0;
 		row-gap: 8px;
 		column-gap: 26px;
+		border: none;
+		padding: 0;
 	}
 
 	&__billing-option-input {

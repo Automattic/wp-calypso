@@ -56,7 +56,7 @@ const exported = {
 		function reportSortChange( newSort ) {
 			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
 		}
-		context.headerSection = renderHeaderSection();
+		context.renderHeaderSection = renderHeaderSection;
 
 		context.primary = (
 			<AsyncLoad

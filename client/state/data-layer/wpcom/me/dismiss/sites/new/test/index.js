@@ -22,12 +22,19 @@ describe( 'site-dismissals', () => {
 
 	describe( 'receiveSiteDismiss', () => {
 		test( 'should return a success notice', () => {
-			expect( receiveSiteDismiss() ).toEqual(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
-						status: 'is-success',
+			expect( receiveSiteDismiss( { payload: { siteId: 123 }, seed: 456 } ) ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						type: 'READER_RECOMMENDED_SITE_DISMISSED',
+						payload: expect.objectContaining( { siteId: 123 } ),
+						seed: 456,
 					} ),
-				} )
+					expect.objectContaining( {
+						notice: expect.objectContaining( {
+							status: 'is-success',
+						} ),
+					} ),
+				] )
 			);
 		} );
 	} );

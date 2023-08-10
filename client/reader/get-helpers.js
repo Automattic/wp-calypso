@@ -189,3 +189,22 @@ export const getFeaturedImageAlt = ( post ) => {
 
 	return featuredImageAlt;
 };
+
+/**
+ * Get the follower count from a site/feed.
+ *
+ * @param {Object} feed Feed object.
+ * @param {Object} site Site object.
+ * @returns {number|null}
+ */
+export const getFollowerCount = ( feed, site ) => {
+	if ( site && site.subscribers_count ) {
+		return site.subscribers_count;
+	}
+
+	if ( feed && feed.subscribers_count > 0 ) {
+		return feed.subscribers_count;
+	}
+
+	return null;
+};

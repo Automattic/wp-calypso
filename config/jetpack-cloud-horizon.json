@@ -45,7 +45,9 @@
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/pro-dashboard-jetpack-boost": false,
 		"jetpack/pro-dashboard-monitor-multiple-email-recipients": true,
+		"jetpack/pro-dashboard-monitor-paid-tier": true,
 		"jetpack/pro-dashboard-monitor-sms-notification": true,
+		"jetpack/pro-dashboard-woo-extensions": false,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
@@ -60,8 +62,7 @@
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
-		"jetpack/pricing-page-cart": true,
-		"jetpack-social/multiple-connections": false
+		"jetpack/pricing-page-cart": true
 	},
 	"enable_all_sections": false,
 	"sections": {

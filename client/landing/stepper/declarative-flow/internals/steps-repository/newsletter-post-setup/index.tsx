@@ -1,23 +1,14 @@
-import {
-	StepContainer,
-	base64ImageToBlob,
-	uploadAndSetSiteLogo,
-	hexToRgb,
-} from '@automattic/onboarding';
+import { StepContainer, base64ImageToBlob, uploadAndSetSiteLogo } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import useAccentColor from 'calypso/landing/stepper/hooks/use-accent-color';
-import useSaveAccentColor from 'calypso/landing/stepper/hooks/use-save-accent-color';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
-import AccentColorControl, { AccentColor } from '../components/accent-color-control';
 import SetupForm from '../components/setup-form';
 import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-form-initial-values';
-import { defaultAccentColor } from '../newsletter-setup';
 import type { Step } from '../../types';
 
 import '../newsletter-setup/style.scss';
@@ -26,8 +17,6 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
 	const site = useSite();
-	const fetchedAccentColor = useAccentColor();
-	const saveAccentColor = useSaveAccentColor();
 	const newsletterFormText = {
 		titleLabel: translate( 'Give your newsletter a name' ),
 		titlePlaceholder: translate( 'Open Me Carefully' ),
@@ -35,11 +24,9 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 		taglineLabel: translate( 'Add a brief description' ),
 		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
 		iconPlaceholder: translate( 'Add a site icon' ),
-		colorLabel: translate( 'Choose an accent color' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
-	const [ accentColor, setAccentColor ] = useState< AccentColor >( defaultAccentColor );
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -47,16 +34,6 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
-
-	useEffect( () => {
-		if ( fetchedAccentColor ) {
-			setAccentColor( {
-				hex: fetchedAccentColor,
-				rgb: hexToRgb( fetchedAccentColor ),
-				default: false,
-			} );
-		}
-	}, [ fetchedAccentColor ] );
 
 	useEffect( () => {
 		setIsSubmitError( false );
@@ -77,9 +54,6 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					blogname: siteTitle,
 					blogdescription: tagline,
 				} );
-				if ( accentColor.hex !== fetchedAccentColor ) {
-					await saveAccentColor( site.ID, accentColor.hex );
-				}
 				if ( base64Image ) {
 					await uploadAndSetSiteLogo(
 						site.ID,
@@ -87,7 +61,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					);
 				}
 				setIsLoading( false );
-				submit?.( { color: accentColor.hex.replace( '#', '' ) } );
+				submit?.();
 			}
 		} catch {
 			setIsSubmitError( true );
@@ -126,13 +100,8 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					translatedText={ newsletterFormText }
 					isLoading={ isLoading }
 					isSubmitError={ isSubmitError }
-				>
-					<AccentColorControl
-						accentColor={ accentColor }
-						setAccentColor={ setAccentColor }
-						labelText={ newsletterFormText?.colorLabel }
-					/>
-				</SetupForm>
+					className="newsletter-setup-form"
+				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
 			showJetpackPowered

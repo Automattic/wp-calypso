@@ -152,4 +152,19 @@ describe( 'CacheCard component', () => {
 		expect( useClearEdgeCacheMutation().clearEdgeCache ).toHaveBeenCalledTimes( 1 );
 		expect( defaultProps.clearAtomicWordPressCache ).toHaveBeenCalledTimes( 1 );
 	} );
+	it( 'shows the Clear Cache button', () => {
+		useEdgeCacheQuery.mockReturnValue( { data: true, isLoading: true } );
+		useClearEdgeCacheMutation.mockReturnValue( {
+			clearEdgeCache: jest.fn(),
+			isLoading: false,
+		} );
+		render(
+			<Provider store={ store }>
+				<CacheCard { ...{ ...defaultProps } } />
+			</Provider>
+		);
+		expect( screen.queryByRole( 'button' ) ).toBeTruthy();
+		expect( screen.queryByRole( 'button' ) ).toBeDisabled();
+		fireEvent.click( screen.getByRole( 'button' ) );
+	} );
 } );

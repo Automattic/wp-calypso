@@ -1,8 +1,9 @@
 import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW, replaceProductsInCart } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
+import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -50,6 +51,10 @@ const startWriting: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
 			{
+				slug: 'site-launch',
+				asyncComponent: () => import( './internals/steps-repository/site-launch' ),
+			},
+			{
 				slug: 'celebration-step',
 				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
@@ -59,13 +64,6 @@ const startWriting: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
-		const { getDomainCartItem, getPlanCartItem } = useSelect(
-			( select ) => ( {
-				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
-				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			} ),
-			[]
-		);
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const state = useSelect(
@@ -74,9 +72,18 @@ const startWriting: Flow = {
 		).getState();
 		const site = useSite();
 
+		// This flow clear the site_intent when flow is completed.
+		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
+		// See https://github.com/Automattic/dotcom-forge/issues/2886
+		const isSiteLaunched = site?.launch_status === 'launched' || false;
+		useEffect( () => {
+			if ( isSiteLaunched ) {
+				setIntentOnSite( siteSlug, '' );
+			}
+		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
+
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-			const returnUrl = `/setup/start-writing/celebration-step?siteSlug=${ siteSlug }`;
 
 			switch ( currentStep ) {
 				case 'site-creation-step':
@@ -99,24 +106,17 @@ const startWriting: Flow = {
 						);
 					}
 
-					// If the user's site has just been launched.
-					if ( providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
-						// Remove the site_intent.
+					if ( providedDependencies?.blogLaunched ) {
+						// Remove the site_intent so that it doesn't affect the editor.
 						await setIntentOnSite( providedDependencies?.siteSlug, '' );
-
-						// If the user launched their site with a plan or domain in their cart, redirect them to
-						// checkout before sending them home.
-						if ( getPlanCartItem() || getDomainCartItem() ) {
-							const encodedReturnUrl = encodeURIComponent( returnUrl );
-
-							return window.location.assign(
-								`/checkout/${ encodeURIComponent(
-									( siteSlug as string ) ?? ''
-								) }?redirect_to=${ encodedReturnUrl }`
-							);
-						}
-						return window.location.replace( returnUrl );
+						return navigate( 'celebration-step' );
 					}
+
+					if ( providedDependencies?.goToCheckout ) {
+						// Do nothing and wait for checkout redirect
+						return;
+					}
+
 					return navigate( 'launchpad' );
 				}
 				case 'domains':
@@ -147,11 +147,6 @@ const startWriting: Flow = {
 
 						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
 
-						await replaceProductsInCart(
-							currentSiteSlug as string,
-							[ getPlanCartItem() ].filter( Boolean ) as MinimalRequestCartProduct[]
-						);
-
 						return window.location.assign(
 							`/setup/start-writing/launchpad?siteSlug=${ currentSiteSlug }`
 						);
@@ -171,14 +166,6 @@ const startWriting: Flow = {
 							checklist_statuses: { plan_completed: true },
 						} );
 					}
-					if ( providedDependencies?.goToCheckout ) {
-						const items = [ getPlanCartItem(), getDomainCartItem() ].filter(
-							Boolean
-						) as MinimalRequestCartProduct[];
-
-						// Always replace items in the cart so we can remove old plan/domain items.
-						await replaceProductsInCart( siteSlug as string, items );
-					}
 					return navigate( 'launchpad' );
 				case 'setup-blog':
 					if ( siteSlug ) {
@@ -189,6 +176,8 @@ const startWriting: Flow = {
 					return navigate( 'launchpad' );
 				case 'launchpad':
 					return navigate( 'processing' );
+				case 'site-launch':
+					return navigate( 'processing' );
 			}
 		}
 		return { submit };
@@ -198,30 +187,51 @@ const startWriting: Flow = {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-		const locale = useLocale();
 		const currentPath = window.location.pathname;
 		const isSiteCreationStep =
+			currentPath.endsWith( 'setup/start-writing' ) ||
 			currentPath.endsWith( 'setup/start-writing/' ) ||
 			currentPath.includes( 'setup/start-writing/site-creation-step' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
+
+		// There is a race condition where useLocale is reporting english,
+		// despite there being a locale in the URL so we need to look it up manually.
+		// We also need to support both query param and path suffix localized urls
+		// depending on where the user is coming from.
+		const useLocaleSlug = useLocale();
+		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
+		const queryLocaleSlug = getLocaleFromQueryParam();
+		const pathLocaleSlug = getLocaleFromPathname();
+		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
 		const logInUrl =
 			locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }`
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }`;
 
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/start-writing/site-creation-step route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/start-writing/<locale> starting points and /setup/start-writing/site-creation-step/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			if ( ! isLoggedIn ) {
+				redirect( logInUrl );
+			} else if ( userAlreadyHasSites && isSiteCreationStep ) {
+				// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
+				// This prevents a bunch of sites being created accidentally.
+				redirect( `/post?${ START_WRITING_FLOW }=true` );
+			}
+		}, [] );
+
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! isLoggedIn ) {
-			redirect( logInUrl );
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( userAlreadyHasSites && isSiteCreationStep ) {
-			// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
-			// This prevents a bunch of sites being created accidentally.
-			redirect( `/post?${ START_WRITING_FLOW }=true` );
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,

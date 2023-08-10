@@ -989,6 +989,7 @@ class RegisterDomainStep extends Component {
 
 					this.setState( {
 						exactMatchDomain: domainChecked,
+						lastDomainTld: result.tld,
 						lastDomainStatus: availabilityStatus,
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
@@ -1390,6 +1391,7 @@ class RegisterDomainStep extends Component {
 			lastDomainIsTransferrable,
 			lastDomainSearched,
 			lastDomainStatus,
+			lastDomainTld,
 			premiumDomains,
 		} = this.state;
 
@@ -1426,6 +1428,7 @@ class RegisterDomainStep extends Component {
 				isDomainOnly={ this.props.isDomainOnly }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainStatus={ lastDomainStatus }
+				lastDomainTld={ lastDomainTld }
 				lastDomainIsTransferrable={ lastDomainIsTransferrable }
 				onAddMapping={ onAddMapping }
 				onClickResult={ this.onAddDomain }

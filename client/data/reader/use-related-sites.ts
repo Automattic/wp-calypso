@@ -76,5 +76,9 @@ export const useRelatedSites = (
 		enabled: !! siteId,
 		staleTime: 3600000, // 1 hour
 		select: selectRelatedSites,
+		retry: false,
+		refetchOnMount: false,
+		retryOnMount: false,
+		refetchOnWindowFocus: false,
 	} );
 };

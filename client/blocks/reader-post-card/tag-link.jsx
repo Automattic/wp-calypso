@@ -25,7 +25,7 @@ class TagLink extends Component {
 				tag: tag.slug,
 			} );
 		}
-		this.props.onClick();
+		this.props.onClick( tag );
 	};
 
 	render() {

@@ -40,10 +40,8 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 		setShowTooltip( false );
 	};
 
-	const ButtonWithIcon = ( props: Button.Props & { icon: typeof info } ) => <Button { ...props } />;
-
 	return (
-		<ButtonWithIcon
+		<Button
 			icon={ info }
 			onClick={ handleClick }
 			className="info-tooltip"
@@ -60,7 +58,7 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 					{ children }
 				</Popover>
 			) }
-		</ButtonWithIcon>
+		</Button>
 	);
 };
 

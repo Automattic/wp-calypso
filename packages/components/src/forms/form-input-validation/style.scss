@@ -23,6 +23,10 @@
 		visibility: hidden;
 	}
 
+	&.is-muted {
+		color: var(--color-text-subtle);
+	}
+
 	.gridicon,
 	svg {
 		fill: currentcolor;

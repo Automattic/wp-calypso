@@ -81,6 +81,7 @@ export const setupDevTool = ( siteId, dispatch ) => {
  */
 export const fetchJITM = ( siteId, messagePath, searchQuery, locale ) => ( {
 	type: JITM_FETCH,
+	keyedPath: messagePath + siteId,
 	siteId,
 	messagePath,
 	searchQuery,

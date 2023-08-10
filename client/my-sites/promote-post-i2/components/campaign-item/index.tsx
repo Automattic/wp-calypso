@@ -1,10 +1,10 @@
 import { safeImageUrl } from '@automattic/calypso-url';
+import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import page from 'page';
-import { useMemo } from 'react';
-import Badge from 'calypso/components/badge';
+import { Fragment, useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -59,7 +59,7 @@ export default function CampaignItem( props: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
-	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
 	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
@@ -76,10 +76,10 @@ export default function CampaignItem( props: Props ) {
 		</Badge>
 	);
 	const openCampaignURL = getAdvertisingDashboardPath(
-		`/${ selectedSiteSlug }/campaigns/${ campaign.campaign_id }`
+		`/campaigns/${ campaign.campaign_id }/${ selectedSiteSlug }`
 	);
 
-	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLTableRowElement > ) => {
+	const navigateToDetailsPage = ( event: React.MouseEvent< HTMLElement > ) => {
 		event.stopPropagation();
 		page.show( openCampaignURL );
 	};
@@ -109,12 +109,10 @@ export default function CampaignItem( props: Props ) {
 		return statElements.map( ( value, index ) => {
 			if ( index < statElements.length - 1 ) {
 				return (
-					<>
-						<span key={ index }>{ value }</span>
-						<span key={ `${ index }-dot` } className="blazepress-mobile-stats-mid-dot">
-							&#183;
-						</span>
-					</>
+					<Fragment key={ index }>
+						<span>{ value }</span>
+						<span className="blazepress-mobile-stats-mid-dot">&#183;</span>
+					</Fragment>
 				);
 			}
 
@@ -128,9 +126,10 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row">
 					<div className="promote-post-i2__campaign-item-wrapper">
 						{ adCreativeUrl && (
-							<div className="campaign-item__header-image">
-								<img src={ adCreativeUrl } alt="" />
-							</div>
+							<div
+								className="campaign-item__header-image"
+								style={ { backgroundImage: `url(${ adCreativeUrl })` } }
+							></div>
 						) }
 						<div className="campaign-item__title-row">
 							<div className="campaign-item__title">{ name }</div>
@@ -141,9 +140,13 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row campaign-item__data-row-mobile">
 					<div className="campaign-item__stats-mobile">{ getMobileStats() }</div>
 					<div className="campaign-item__actions-mobile">
-						<a href={ openCampaignURL } className="campaign-item__view-link">
+						<Button
+							onClick={ navigateToDetailsPage }
+							variant="link"
+							className="campaign-item__view-link"
+						>
 							{ __( 'Open details' ) }
-						</a>
+						</Button>
 					</div>
 				</div>
 			</td>
@@ -166,7 +169,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ formatNumber( clicks_total ) }</div>
 			</td>
 			<td className="campaign-item__action">
-				<Button isLink icon={ chevronRight } />
+				<Button onClick={ navigateToDetailsPage } variant="link" icon={ chevronRight } />
 			</td>
 		</tr>
 	);

@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
+
 .is-section-stepper {
 	.processing {
 		.signup-header {
@@ -19,7 +20,7 @@
 		}
 
 		.processing-step__progress-bar {
-			background-color: #fff;
+			background-color: var(--studio-white);
 		}
 
 		.processing-step__container {
@@ -71,28 +72,13 @@
 
 	.newsletter {
 		.processing-step__container {
-			background-color: #a2dafe;
-			background-image:
-				url(calypso/assets/images/onboarding/newsletter-processing-left.webp),
-				url(calypso/assets/images/onboarding/newsletter-processing-right.webp);
-			background-position: left bottom, right top;
-			background-repeat: no-repeat, no-repeat;
-			background-attachment: fixed;
-			/*!rtl:ignore*/
-			background-position-x: 0%, 100%;
-			background-position-y: 30%, 100%;
-			background-size: auto 55%, auto 25%;
+			background-color: var(--studio-gray-0);
+		}
 
-			@include break-medium {
-				background-size: auto 50%, auto 35%;
-			}
-
-			@include break-huge {
-				background-size: auto 80%, auto 45%;
-				background-position-y: 70%, 100%;
-				background-image:
-					url(calypso/assets/images/onboarding/newsletter-processing-left-desktop.webp),
-					url(calypso/assets/images/onboarding/newsletter-processing-right-desktop.webp);
+		.loading-bar {
+			background-color: var(--studio-gray-5);
+			&::before {
+				background: var(--studio-black);
 			}
 		}
 	}

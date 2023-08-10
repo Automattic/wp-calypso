@@ -26,4 +26,10 @@ const config = {
 	...( window.A8C_HAPPY_BLOCKS_CONFIG || {} ),
 };
 
+window.configData = {
+	features: {
+		'plans/updated-storage-labels': true,
+	},
+};
+
 export default config;

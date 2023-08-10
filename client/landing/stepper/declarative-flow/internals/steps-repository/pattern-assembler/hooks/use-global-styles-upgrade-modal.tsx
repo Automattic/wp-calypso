@@ -1,7 +1,6 @@
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { urlToSlug } from 'calypso/lib/url';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
@@ -31,36 +30,13 @@ const useGlobalStylesUpgradeModal = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
-	const translate = useTranslate();
-	const { goToCheckout } = useCheckout();
-
-	let description;
-
-	if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
-		description = translate(
-			'Your font and color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
-	} else if ( hasSelectedColorVariation ) {
-		description = translate(
-			'Your color choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
-	} else if ( hasSelectedFontVariation ) {
-		description = translate(
-			'Your font choices will be only visible to visitors after upgrading to the Premium plan or higher.'
-		);
-	}
-
-	description = (
-		<>
-			<p>{ description }</p>
-			<p>
-				{ translate(
-					'Upgrade now to unlock your current choices and get access to tons of other features. Or you can decide later and try them out first in the editor.'
-				) }
-			</p>
-		</>
+	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
+		site?.ID
 	);
+	const { goToCheckout } = useCheckout();
+	const numOfSelectedGlobalStyles = [ hasSelectedColorVariation, hasSelectedFontVariation ].filter(
+		Boolean
+	).length;
 
 	const openModal = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_SHOW );
@@ -84,7 +60,7 @@ const useGlobalStylesUpgradeModal = ( {
 			stepName,
 			siteSlug: siteUrl,
 			destination: redirectUrl,
-			plan: 'premium',
+			plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
 		} );
 
 		setIsOpen( false );
@@ -99,11 +75,10 @@ const useGlobalStylesUpgradeModal = ( {
 	};
 
 	return {
-		shouldUnlockGlobalStyles:
-			( hasSelectedColorVariation || hasSelectedFontVariation ) && shouldLimitGlobalStyles,
+		shouldUnlockGlobalStyles: numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles,
 		globalStylesUpgradeModalProps: {
 			isOpen,
-			description,
+			numOfSelectedGlobalStyles,
 			closeModal,
 			checkout,
 			tryStyle: upgradeLater,

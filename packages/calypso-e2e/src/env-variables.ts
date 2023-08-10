@@ -5,6 +5,7 @@ import {
 	SupportedEnvVariables,
 	EnvVariableValue,
 	JetpackTarget,
+	AtomicVariation,
 } from './types/env-variables.types';
 import { TestAccountName } from '.';
 
@@ -19,14 +20,17 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	GUTENBERG_EDGE: false,
 	GUTENBERG_NIGHTLY: false,
 	COBLOCKS_EDGE: false,
-	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'atomicUser', 'defaultUser' ],
+	AUTHENTICATE_ACCOUNTS: [],
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,
+	ATOMIC_VARIATION: 'default',
 	JETPACK_TARGET: 'wpcom-production',
 	CALYPSO_BASE_URL: 'https://wordpress.com',
 	BROWSER_NAME: 'chromium',
 	ALLURE_RESULTS_PATH: '',
+	RUN_ID: '',
+	RETRY_COUNT: 0,
 };
 
 /**
@@ -114,11 +118,30 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 			const supportedValues: JetpackTarget[] = [
 				'remote-site',
 				'wpcom-production',
-				'wpcom-staging',
+				'wpcom-deployment',
 			];
 			if ( ! supportedValues.includes( output as JetpackTarget ) ) {
 				throw new Error(
 					`Unknown JETPACK_TARGET value: ${ output }.\nSupported values: ${ supportedValues.join(
+						' | '
+					) }`
+				);
+			}
+			break;
+		}
+		case 'ATOMIC_VARIATION': {
+			const supportedValues: AtomicVariation[] = [
+				'default',
+				'php-old',
+				'php-new',
+				'wp-beta',
+				'wp-previous',
+				'private',
+				'ecomm-plan',
+			];
+			if ( ! supportedValues.includes( output as AtomicVariation ) ) {
+				throw new Error(
+					`Unknown ATOMIC_VARIATION value: ${ output }.\nSupported values: ${ supportedValues.join(
 						' | '
 					) }`
 				);

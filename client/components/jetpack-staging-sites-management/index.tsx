@@ -68,12 +68,6 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 		</svg>
 	);
 
-	const StagingToggleControl = ToggleControl as React.ComponentType<
-		ToggleControl.Props & {
-			disabled?: boolean;
-		}
-	>;
-
 	return (
 		<>
 			<QueryBackupStagingSite siteId={ siteId } />
@@ -85,21 +79,19 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 				<Card className="setting-content">
 					<div className="setting-option">
 						<div className="setting-option__toggle">
-							<StagingToggleControl
+							<ToggleControl
+								label={ translate(
+									'{{strong}}Set this site as a Staging Site.{{/strong}} You will be able to copy any site to this staging site and test your changes safely.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
 								disabled={ isLoading }
 								checked={ isStaging }
 								onChange={ toggleStagingFlag }
 							/>
-						</div>
-						<div className="setting-option__description">
-							{ translate(
-								'{{strong}}Set this site as a Staging Site.{{/strong}} You will be able to copy any site to this staging site and test your changes safely.',
-								{
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
 						</div>
 					</div>
 				</Card>

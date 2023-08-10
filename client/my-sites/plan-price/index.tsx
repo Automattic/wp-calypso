@@ -1,8 +1,8 @@
+import { Badge } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { Component, createElement } from 'react';
-import Badge from 'calypso/components/badge';
 
 import './style.scss';
 
@@ -47,7 +47,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			);
 		}
 
-		if ( ! currencyCode || rawPrice === undefined ) {
+		if ( ! currencyCode || rawPrice === undefined || rawPrice === null ) {
 			return null;
 		}
 
@@ -103,7 +103,7 @@ export interface PlanPriceProps {
 	 * If specified along with `productDisplayPrice`, this will be ignored unless
 	 * it is an array, in which case `productDisplayPrice` will be ignored.
 	 */
-	rawPrice?: number | [ number, number ];
+	rawPrice?: number | [ number, number ] | null;
 
 	/**
 	 * If true, the number(s) in `rawPrice` will be interpreted as integers in
@@ -169,7 +169,7 @@ export interface PlanPriceProps {
 	 *
 	 * Ignored if `rawPrice` is set and is an array.
 	 */
-	productDisplayPrice?: string;
+	productDisplayPrice?: string | TranslateResult;
 
 	/**
 	 * If set, the component will render a `span` instead of an `h4`.

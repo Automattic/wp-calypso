@@ -15,7 +15,8 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 export function shouldSiteBeFetched( state, siteId ) {
 	const isNotQueued = ! state.reader.sites.queuedRequests[ siteId ];
 	const isMissing = ! getSite( state, siteId );
-	return isNotQueued && ( isMissing || isStale( state, siteId ) );
+	const staleWithoutError = isStale( state, siteId ) && ! isError( state, siteId );
+	return isNotQueued && ( isMissing || staleWithoutError );
 }
 
 function isStale( state, siteId ) {
@@ -24,6 +25,11 @@ function isStale( state, siteId ) {
 		return true;
 	}
 	return lastFetched <= Date.now() - DAY_IN_MILLIS;
+}
+
+function isError( state, siteId ) {
+	const site = getSite( state, siteId );
+	return site && site.is_error;
 }
 
 /**

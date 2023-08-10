@@ -25,7 +25,7 @@ const DeliveryWindowInput = ( {
 	const moment = useLocalizedMoment();
 
 	const getLabel = useCallback(
-		( hour ) =>
+		( hour: number ) =>
 			translate( '%(fromHour)s - %(toHour)s', {
 				context: 'Hour range between which subscriptions are delivered',
 				args: {

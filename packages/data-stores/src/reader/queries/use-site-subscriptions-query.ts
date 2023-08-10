@@ -1,9 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useMemo, useEffect, useCallback } from 'react';
 import { SiteSubscriptionsFilterBy, SiteSubscriptionsSortBy } from '../constants';
+import { useSiteSubscriptionsQueryProps } from '../contexts';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
+
+export const siteSubscriptionsQueryKeyPrefix = [ 'read', 'site-subscriptions' ];
 
 type SubscriptionManagerSiteSubscriptions = {
 	subscriptions: SiteSubscription[];
@@ -12,9 +15,6 @@ type SubscriptionManagerSiteSubscriptions = {
 };
 
 type SubscriptionManagerSiteSubscriptionsQueryProps = {
-	searchTerm?: string;
-	filterOption?: SiteSubscriptionsFilterBy;
-	sortTerm?: SiteSubscriptionsSortBy;
 	number?: number;
 };
 
@@ -45,14 +45,12 @@ const getSortFunction = ( sortTerm: SiteSubscriptionsSortBy ) => {
 };
 
 const useSiteSubscriptionsQuery = ( {
-	searchTerm = '',
-	filterOption = SiteSubscriptionsFilterBy.All,
-	sortTerm = SiteSubscriptionsSortBy.LastUpdated,
 	number = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
-	const cacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const cacheKey = useCacheKey( siteSubscriptionsQueryKeyPrefix );
+	const { searchTerm, filterOption, sortTerm } = useSiteSubscriptionsQueryProps();
 
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =
 		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >(

@@ -23,12 +23,14 @@ class AddDomainButton extends Component {
 		specificSiteActions: PropTypes.bool,
 		ellipsisButton: PropTypes.bool,
 		borderless: PropTypes.bool,
+		allDomainsList: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		specificSiteActions: false,
 		ellipsisButton: false,
 		borderless: false,
+		allDomainsList: false,
 	};
 
 	state = {
@@ -60,7 +62,27 @@ class AddDomainButton extends Component {
 	};
 
 	renderOptions = () => {
-		const { selectedSiteSlug, specificSiteActions, translate } = this.props;
+		const { allDomainsList, selectedSiteSlug, specificSiteActions, translate } = this.props;
+
+		if ( allDomainsList ) {
+			return (
+				<Fragment>
+					<PopoverMenuItem icon="plus" href="/new" onClick={ this.trackMenuClick }>
+						{ translate( 'Add a domain to a new site' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
+						{ translate( 'Add a domain without a site' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem
+						icon="domains"
+						href="/setup/domain-transfer"
+						onClick={ this.trackMenuClick }
+					>
+						{ translate( 'Transfer domains' ) }
+					</PopoverMenuItem>
+				</Fragment>
+			);
+		}
 
 		if ( specificSiteActions ) {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );

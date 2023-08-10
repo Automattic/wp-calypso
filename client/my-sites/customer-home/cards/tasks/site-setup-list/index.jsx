@@ -168,7 +168,7 @@ const SiteSetupList = ( {
 		}
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
-			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
+			if ( rawCurrentTask?.isCompleted && ! currentTask.isCompleted ) {
 				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
 				setTaskIsManuallySelected( false );
 				setCurrentTaskId( nextTaskId );

@@ -16,10 +16,16 @@ $theme-sheet-content-max-width: 1462px;
 			padding-right: 0;
 		}
 
+		.theme__sheet-screenshot,
 		.theme__sheet-web-preview {
 			@include breakpoint-deprecated( ">960px" ) {
-				height: calc(100vh - 96px);
 				top: calc(var(--masterbar-height) + 16px);
+			}
+		}
+
+		.theme__sheet-web-preview .theme-preview__frame-wrapper {
+			@include breakpoint-deprecated( ">960px" ) {
+				max-height: calc(100vh - 32px - var(--masterbar-height));
 			}
 		}
 	}
@@ -191,7 +197,7 @@ $theme-sheet-content-max-width: 1462px;
 			width: 100%;
 		}
 
-		button {
+		.button {
 			border-radius: 4px;
 
 			@include breakpoint-deprecated( "<960px" ) {
@@ -249,7 +255,7 @@ $theme-sheet-content-max-width: 1462px;
 	box-shadow: 0 1px var(--color-border-subtle);
 }
 
-.theme__sheet-action-bar.card {
+.header-cake.card.theme__sheet-action-bar {
 	box-shadow: none;
 	box-sizing: content-box;
 	margin: 0 auto;
@@ -264,7 +270,7 @@ $theme-sheet-content-max-width: 1462px;
 	}
 }
 
-.is-mobile-app-view .theme__sheet-action-bar.card {
+.is-mobile-app-view .header-cake.card.theme__sheet-action-bar {
 	display: none;
 }
 
@@ -332,6 +338,37 @@ $theme-sheet-content-max-width: 1462px;
 	font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 }
 
+.theme__sheet-web-preview {
+	$iframe-viewport-height: 1040px;
+	$iframe-viewport-height-scaled: calc($iframe-viewport-height / 2);
+
+	min-height: $iframe-viewport-height-scaled;
+	pointer-events: none;
+
+	.theme-preview__frame-wrapper {
+		@include breakpoint-deprecated( ">960px" ) {
+			max-height: calc(100vh - var(--masterbar-height));
+
+			.theme-preview__frame {
+				height: 200%;
+				max-height: 200vh;
+				max-width: 200%;
+				min-height: $iframe-viewport-height-scaled;
+				transform: scale(0.5) !important;
+				width: 200%;
+			}
+		}
+	}
+
+	.theme-preview__container {
+		position: relative;
+	}
+
+	.theme-preview__frame {
+		transform: none !important;
+	}
+}
+
 .theme__sheet-web-preview,
 .theme__sheet-screenshot {
 	background-color: transparentize(rgb(255, 255, 255), 0.5);
@@ -347,15 +384,11 @@ $theme-sheet-content-max-width: 1462px;
 	width: 98%;
 	z-index: 1;
 
-	// with width: 98%, gives 4:3 ratio before the image loads
-	// also x-browser issues, so it's smaller than 4:3 proper
-	min-height: 36.15vw; // 36.75vw would be correct, but Safari is slightly off
-
 	@include breakpoint-deprecated( "<960px" ) {
 		border-radius: 0;
 		box-shadow: none;
 		position: relative;
-		height: 100vw; // force proportions
+		max-height: 100vw;
 		overflow: hidden;
 		margin-top: 0;
 		top: 0;
@@ -373,29 +406,15 @@ $theme-sheet-content-max-width: 1462px;
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
+		pointer-events: all;
+		position: sticky;
+		top: 16px;
+
 		&.is-active:hover {
 			cursor: pointer;
 			box-shadow:
 				0 0 0 1px var(--color-neutral-light),
 				0 2px 10px 0 rgba(var(--color-neutral-dark-rgb), 0.5);
-		}
-	}
-}
-
-.theme__sheet-web-preview {
-	pointer-events: none;
-
-	@include breakpoint-deprecated( ">960px" ) {
-		height: calc(100vh - 64px);
-		pointer-events: all;
-		position: sticky;
-		top: 16px;
-
-		.theme-preview__frame-wrapper .theme-preview__frame {
-			height: 200%;
-			max-width: 200%;
-			transform: scale(0.5) !important;
-			width: 200%;
 		}
 	}
 }

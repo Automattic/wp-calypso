@@ -1,6 +1,10 @@
 import config from '@automattic/calypso-config';
 import { WordPressWordmark } from '@automattic/components';
-import { isDefaultLocale, addLocaleToPath } from '@automattic/i18n-utils';
+import {
+	isDefaultLocale,
+	addLocaleToPath,
+	addLocaleToPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -31,6 +35,64 @@ class MasterbarLoggedOut extends Component {
 		sectionName: '',
 		title: '',
 	};
+
+	renderTagsItem() {
+		const { translate } = this.props;
+		// const locale = getLocaleSlug();
+
+		const tagsUrl = '/tags';
+		// TODO - Enable locales for logged out tags page.
+		// if ( ! isDefaultLocale( locale ) ) {
+		// 	tagsUrl = addLocaleToPathLocaleInFront( tagsUrl, locale );
+		// }
+
+		return (
+			<Item url={ tagsUrl }>
+				{ translate( 'Popular Tags', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~15 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderSearchItem() {
+		const { translate } = this.props;
+		const locale = getLocaleSlug();
+
+		let searchUrl = '/read/search';
+		if ( ! isDefaultLocale( locale ) ) {
+			searchUrl = addLocaleToPathLocaleInFront( searchUrl, locale );
+		}
+
+		return (
+			<Item url={ searchUrl }>
+				{ translate( 'Search', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderDiscoverItem() {
+		const { translate } = this.props;
+		const locale = getLocaleSlug();
+
+		let discoverUrl = '/discover';
+		if ( ! isDefaultLocale( locale ) ) {
+			discoverUrl = addLocaleToPathLocaleInFront( discoverUrl, locale );
+		}
+
+		return (
+			<Item url={ discoverUrl }>
+				{ translate( 'Discover', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
 
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
@@ -134,6 +196,22 @@ class MasterbarLoggedOut extends Component {
 		);
 	}
 
+	renderWordPressItem() {
+		const { locale } = this.props;
+
+		let homeUrl = '/';
+		if ( ! isDefaultLocale( locale ) ) {
+			homeUrl = addLocaleToPath( homeUrl, locale );
+		}
+
+		return (
+			<Item url={ homeUrl } className="masterbar__item-logo masterbar__item--always-show-content">
+				<WordPressLogo className="masterbar__wpcom-logo" />
+				<WordPressWordmark className="masterbar__wpcom-wordmark" />
+			</Item>
+		);
+	}
+
 	render() {
 		const { title, isCheckout, isCheckoutPending } = this.props;
 
@@ -149,15 +227,15 @@ class MasterbarLoggedOut extends Component {
 		}
 
 		return (
-			<Masterbar>
-				<Item className="masterbar__item-logo masterbar__item--always-show-content">
-					<WordPressLogo className="masterbar__wpcom-logo" />
-					<WordPressWordmark className="masterbar__wpcom-wordmark" />
-				</Item>
+			<Masterbar className="masterbar__loggedout">
+				{ this.renderWordPressItem() }
 				<Item className="masterbar__item-title">{ title }</Item>
 				<div className="masterbar__login-links">
-					{ this.renderSignupItem() }
+					{ this.renderDiscoverItem() }
+					{ this.renderTagsItem() }
+					{ this.renderSearchItem() }
 					{ this.renderLoginItem() }
+					{ this.renderSignupItem() }
 				</div>
 			</Masterbar>
 		);

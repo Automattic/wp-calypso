@@ -22,6 +22,21 @@ export function useSiteSetupFlowProgress( currentStep: string, intent: string ) 
 	}
 
 	switch ( intent ) {
+		case 'host':
+			switch ( currentStep ) {
+				case 'options':
+					middleProgress = { progress: 1, count: 3 };
+					break;
+				case 'plans':
+					middleProgress = { progress: 2, count: 3 };
+					break;
+				case 'processing':
+					middleProgress = { progress: 3, count: 3 };
+					break;
+			}
+
+			break;
+
 		case SiteIntent.Write: {
 			switch ( currentStep ) {
 				case 'options':

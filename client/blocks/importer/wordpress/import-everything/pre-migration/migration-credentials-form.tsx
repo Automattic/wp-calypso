@@ -52,7 +52,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	);
 
 	const startImportCallback = useCallback(
-		( args ) => {
+		( args: StartImportTrackingProps ) => {
 			// reset migration confirmation to initial state
 			setMigrationConfirmed( false );
 			setShowConfirmModal( false );
@@ -82,7 +82,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 		useMigrateProvisionMutation( handleUpdateCredentials );
 
 	const submitCredentials = useCallback(
-		( e ) => {
+		( e: React.SyntheticEvent ) => {
 			const _confirmCallback = () => {
 				setShowConfirmModal( false );
 				setMigrationConfirmed( true );
@@ -210,7 +210,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 					</NextButton>
 					<Button
 						borderless={ true }
-						className="action-buttons__content-only"
+						className="action-buttons__borderless"
 						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 							e.preventDefault();
 

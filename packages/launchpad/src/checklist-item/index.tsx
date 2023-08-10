@@ -1,7 +1,6 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Badge, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
-import Badge from '../badge';
 import { Task } from '../types';
 
 import './style.scss';
@@ -17,6 +16,12 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 		localStorage.removeItem( 'launchpad_siteSlug' );
 		actionDispatch && actionDispatch();
 	};
+
+	// Display task counter if task is incomplete and has the count properties;
+	const shouldDisplayTaskCounter =
+		task.target_repetitions &&
+		null !== task.repetition_count &&
+		undefined !== task.repetition_count;
 
 	return (
 		<li
@@ -56,6 +61,11 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					) }
 					<span className="checklist-item__text">{ title }</span>
 					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
+					{ shouldDisplayTaskCounter && (
+						<span className="checklist-item__counter">
+							{ task.repetition_count }/{ task.target_repetitions }
+						</span>
+					) }
 					{ shouldDisplayChevron && (
 						<Gridicon
 							aria-label={ translate( 'Task enabled' ) }

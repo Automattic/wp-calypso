@@ -1,5 +1,8 @@
+import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
+import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -19,6 +22,8 @@ export const tagListing = ( context, next ) => {
 		.toLowerCase()
 		.replace( /\s+/g, '-' )
 		.replace( /-{2,}/g, '-' );
+	const tagTitle = titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
+
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
 	const streamKey = 'tag:' + tagSlug;
 	const mcKey = 'topic';
@@ -30,27 +35,35 @@ export const tagListing = ( context, next ) => {
 	} );
 
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
-		context.headerSection = renderHeaderSection();
+		context.renderHeaderSection = renderHeaderSection;
 	}
 	context.primary = (
-		<AsyncLoad
-			require="calypso/reader/tag-stream/main"
-			key={ 'tag-' + encodedTag }
-			streamKey={ streamKey }
-			encodedTagSlug={ encodedTag }
-			decodedTagSlug={ tagSlug }
-			trackScrollPage={ trackScrollPage.bind(
-				// eslint-disable-line
-				null,
-				basePath,
-				fullAnalyticsPageTitle,
-				analyticsPageTitle,
-				mcKey
-			) }
-			startDate={ startDate }
-			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
-			showBack={ !! context.lastRoute }
-		/>
+		<>
+			<DocumentHead
+				title={ translate( 'Articles About %s ‹ Reader', {
+					args: [ tagTitle ],
+					comment: 'page title for reader tag pages. %s is the name of the tag e.g. "art"',
+				} ) }
+			/>
+			<AsyncLoad
+				require="calypso/reader/tag-stream/main"
+				key={ 'tag-' + encodedTag }
+				streamKey={ streamKey }
+				encodedTagSlug={ encodedTag }
+				decodedTagSlug={ tagSlug }
+				trackScrollPage={ trackScrollPage.bind(
+					// eslint-disable-line
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				startDate={ startDate }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
+				showBack={ !! context.lastRoute }
+			/>
+		</>
 	);
 	next();
 };

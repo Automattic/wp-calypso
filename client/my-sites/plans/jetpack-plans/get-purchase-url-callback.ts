@@ -7,6 +7,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import {
 	EXTERNAL_PRODUCTS_LIST,
+	INDIRECT_CHECKOUT_PRODUCTS_LIST,
 	PURCHASE_FLOW_UPSELLS_MATRIX,
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
@@ -151,6 +152,11 @@ export const getPurchaseURLCallback =
 		if ( purchase ) {
 			const relativePath = managePurchase( siteSlug, purchase.id );
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
+		}
+
+		// Visit the indirect checkout URL to determine the purchasable product on another page.
+		if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( product.productSlug ) ) {
+			return product.indirectCheckoutUrl?.replace( '{siteSlug}', siteSlug ) || '';
 		}
 
 		let url;

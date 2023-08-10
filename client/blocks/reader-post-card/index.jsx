@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localeRegexString } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import closest from 'component-closest';
 import { truncate, get } from 'lodash';
@@ -47,6 +48,7 @@ class ReaderPostCard extends Component {
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
+		showFollowButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -54,6 +56,7 @@ class ReaderPostCard extends Component {
 		onCommentClick: noop,
 		isSelected: false,
 		showSiteName: true,
+		showFollowButton: true,
 	};
 
 	propagateCardClick = () => {
@@ -128,6 +131,7 @@ class ReaderPostCard extends Component {
 			hasOrganization,
 			isWPForTeamsItem,
 			teams,
+			showFollowButton,
 		} = this.props;
 
 		let isSeen = false;
@@ -140,7 +144,11 @@ class ReaderPostCard extends Component {
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isConversations = currentRoute.startsWith( '/read/conversations' );
-		const isReaderSearchPage = currentRoute.startsWith( '/read/search' );
+
+		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
+			currentRoute
+		);
+
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
@@ -158,6 +166,7 @@ class ReaderPostCard extends Component {
 				post={ discoverPost || post }
 				site={ site }
 				visitUrl={ post.URL }
+				showFollow={ showFollowButton }
 				showVisit={ true }
 				fullPost={ false }
 				onCommentClick={ onCommentClick }
@@ -193,7 +202,7 @@ class ReaderPostCard extends Component {
 					title={ title }
 					isDiscover={ isDiscover }
 					postByline={ postByline }
-					commentIds={ postKey.comments ?? [] }
+					commentIds={ postKey?.comments ?? [] }
 					onClick={ this.handleCardClick }
 				/>
 			);
@@ -202,7 +211,6 @@ class ReaderPostCard extends Component {
 				<CompactPostCard
 					post={ post }
 					title={ title }
-					isDiscover={ isDiscover }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
 					site={ site }
@@ -243,7 +251,6 @@ class ReaderPostCard extends Component {
 				<StandardPost
 					post={ post }
 					title={ title }
-					isDiscover={ isDiscover }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
 					site={ site }
@@ -275,11 +282,9 @@ export default connect(
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
 				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
-		hasOrganization: hasReaderFollowOrganization(
-			state,
-			ownProps.postKey.feedId,
-			ownProps.postKey.blogId
-		),
+		hasOrganization:
+			ownProps.postKey &&
+			hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		teams: getReaderTeams( state ),
 	} ),

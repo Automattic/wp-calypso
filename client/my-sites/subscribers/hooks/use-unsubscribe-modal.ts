@@ -4,12 +4,19 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { UnsubscribeActionType } from '../components/unsubscribe-modal';
 import { getEarnPaymentsPageUrl } from '../helpers';
 import { useSubscriberRemoveMutation } from '../mutations';
-import { Subscriber } from '../types';
+import { useRecordRemoveModal } from '../tracks';
+import { Subscriber, SubscriberListArgs } from '../types';
 
-const useUnsubscribeModal = ( siteId: number | null, currentPage: number ) => {
+const useUnsubscribeModal = (
+	siteId: number | undefined | null,
+	args: SubscriberListArgs,
+	detailsView = false,
+	onSuccess?: () => void
+) => {
 	const [ currentSubscriber, setCurrentSubscriber ] = useState< Subscriber >();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const { mutate } = useSubscriberRemoveMutation( siteId, currentPage );
+	const recordRemoveModal = useRecordRemoveModal();
+	const { mutate } = useSubscriberRemoveMutation( siteId, args, detailsView );
 
 	const onClickUnsubscribe = ( subscriber: Subscriber ) => {
 		setCurrentSubscriber( subscriber );
@@ -21,9 +28,15 @@ const useUnsubscribeModal = ( siteId: number | null, currentPage: number ) => {
 
 	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
+			recordRemoveModal( true, 'manage_button_clicked' );
 			window.open( getEarnPaymentsPageUrl( selectedSiteSlug ), '_blank' );
 		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
-			mutate( subscriber );
+			mutate( subscriber, {
+				onSuccess: () => {
+					resetSubscriber();
+					onSuccess?.();
+				},
+			} );
 		}
 
 		resetSubscriber();

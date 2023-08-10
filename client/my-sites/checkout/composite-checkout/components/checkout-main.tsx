@@ -56,9 +56,14 @@ import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
+import { OnChangeItemVariant } from './item-variation-picker';
+import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type {
+	CheckoutPageErrorCallback,
+	PaymentEventCallbackArguments,
+} from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	CountryListItem,
@@ -69,32 +74,7 @@ import type {
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
 
-export default function CheckoutMain( {
-	siteSlug,
-	siteId,
-	productAliasFromUrl,
-	productSourceFromUrl,
-	overrideCountryList,
-	redirectTo,
-	feature,
-	plan,
-	purchaseId,
-	couponCode: couponCodeFromUrl,
-	isComingFromUpsell,
-	isLoggedOutCart,
-	isNoSiteCart,
-	isGiftPurchase,
-	infoMessage,
-	isInModal,
-	onAfterPaymentComplete,
-	disabledThankYouPage,
-	sitelessCheckoutType,
-	akismetSiteSlug,
-	jetpackSiteSlug,
-	jetpackPurchaseToken,
-	isUserComingFromLoginForm,
-	customizedPreviousPath,
-}: {
+export interface CheckoutMainProps {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
@@ -122,8 +102,36 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-} ) {
+}
+
+export default function CheckoutMain( {
+	siteSlug,
+	siteId,
+	productAliasFromUrl,
+	productSourceFromUrl,
+	overrideCountryList,
+	redirectTo,
+	feature,
+	plan,
+	purchaseId,
+	couponCode: couponCodeFromUrl,
+	isComingFromUpsell,
+	isLoggedOutCart,
+	isNoSiteCart,
+	isGiftPurchase,
+	infoMessage,
+	isInModal,
+	onAfterPaymentComplete,
+	disabledThankYouPage,
+	sitelessCheckoutType,
+	akismetSiteSlug,
+	jetpackSiteSlug,
+	jetpackPurchaseToken,
+	isUserComingFromLoginForm,
+	customizedPreviousPath,
+}: CheckoutMainProps ) {
 	const translate = useTranslate();
+
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
@@ -151,7 +159,7 @@ export default function CheckoutMain( {
 	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
-		( error ) => {
+		( error: string ) => {
 			debug( 'error', error );
 			const message = error && error.toString ? error.toString() : error;
 			reduxDispatch(
@@ -333,6 +341,7 @@ export default function CheckoutMain( {
 	} );
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
+		contactDetailsType,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -375,7 +384,7 @@ export default function CheckoutMain( {
 		checkoutFlow
 	);
 
-	const changePlanLength = useCallback(
+	const changePlanLength = useCallback< OnChangeItemVariant >(
 		( uuidToReplace, newProductSlug, newProductId ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
@@ -449,7 +458,9 @@ export default function CheckoutMain( {
 				webPayProcessor( 'google-pay', transactionData, dataForProcessor ),
 			'free-purchase': () => freePurchaseProcessor( dataForProcessor ),
 			card: ( transactionData: unknown ) =>
-				multiPartnerCardProcessor( transactionData, dataForProcessor ),
+				multiPartnerCardProcessor( transactionData, dataForProcessor, {
+					translate,
+				} ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -473,7 +484,7 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ dataForProcessor ]
+		[ dataForProcessor, translate ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
@@ -622,7 +633,7 @@ export default function CheckoutMain( {
 	// PayPal. They will redirect directly to the post-checkout page decided by
 	// `getThankYouUrl`.
 	const handlePaymentComplete = useCallback(
-		( args ) => {
+		( args: PaymentEventCallbackArguments ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
 			reduxDispatch(
@@ -738,6 +749,13 @@ export default function CheckoutMain( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 				/>
+				{
+					// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+					<JetpackProRedirectModal
+						redirectTo={ redirectTo }
+						productSourceFromUrl={ productSourceFromUrl }
+					/>
+				}
 			</CheckoutProvider>
 		</Fragment>
 	);

@@ -16,6 +16,7 @@ import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
 import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**
  * Module variables
@@ -99,7 +100,7 @@ class InviteAcceptLoggedOut extends Component {
 		const { invite } = this.props;
 		this.setState( { submitting: true } );
 		this.props
-			.acceptInvite( invite )
+			.acceptInvite( invite, this.props.emailVerificationSecret )
 			.then( () => {
 				window.location = addQueryArgs(
 					{ update: 'activate', email: invite.sentTo, key: invite.authKey },
@@ -197,6 +198,9 @@ class InviteAcceptLoggedOut extends Component {
 	}
 }
 
-export default connect( null, { createAccount, acceptInvite } )(
-	localize( InviteAcceptLoggedOut )
-);
+export default connect(
+	( state ) => ( {
+		emailVerificationSecret: getCurrentQueryArguments( state )?.email_verification_secret,
+	} ),
+	{ createAccount, acceptInvite }
+)( localize( InviteAcceptLoggedOut ) );

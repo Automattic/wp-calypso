@@ -1,6 +1,8 @@
 export {
+	Badge,
 	Button,
 	Card,
+	Count,
 	CompactCard,
 	FormInputValidation,
 	Gridicon,
@@ -17,7 +19,6 @@ export {
 export { default as ActionCard } from 'calypso/components/action-card';
 export { default as Animate } from 'calypso/components/animate';
 export { default as BackButton } from 'calypso/components/back-button';
-export { default as Badge } from 'calypso/components/badge';
 export { default as Banner } from 'calypso/components/banner';
 export { default as BulkSelect } from 'calypso/components/bulk-select';
 export { default as ButtonGroup } from 'calypso/components/button-group';
@@ -27,7 +28,6 @@ export { default as ClipboardButtonInput } from 'calypso/components/clipboard-bu
 export { default as ClipboardButton } from 'calypso/components/forms/clipboard-button';
 export { default as Collection } from 'calypso/devdocs/design/search-collection';
 export { default as Column } from 'calypso/components/layout/column';
-export { default as Count } from 'calypso/components/count';
 export { default as CountedTextarea } from 'calypso/components/forms/counted-textarea';
 export { default as DatePicker } from 'calypso/components/date-picker';
 export { default as DateRange } from 'calypso/components/date-range';

@@ -94,7 +94,7 @@ export default function DesignCarousel( {
 			<div className="design-carousel__cta">
 				<Button
 					className="design-carousel__select"
-					isPrimary
+					variant="primary"
 					onClick={ () => {
 						if ( swiperInstance.current && selectedDesigns ) {
 							onPick( selectedDesigns[ swiperInstance.current?.activeIndex ] );

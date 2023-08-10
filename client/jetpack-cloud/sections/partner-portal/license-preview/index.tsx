@@ -1,11 +1,10 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Gridicon } from '@automattic/components';
+import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
-import Badge from 'calypso/components/badge';
 import FormattedDate from 'calypso/components/formatted-date';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -28,6 +27,7 @@ interface Props {
 	username: string | null;
 	blogId: number | null;
 	siteUrl: string | null;
+	hasDownloads: boolean;
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
@@ -41,6 +41,7 @@ export default function LicensePreview( {
 	username,
 	blogId,
 	siteUrl,
+	hasDownloads,
 	issuedAt,
 	attachedAt,
 	revokedAt,
@@ -195,6 +196,7 @@ export default function LicensePreview( {
 					siteUrl={ siteUrl }
 					username={ username }
 					blogId={ blogId }
+					hasDownloads={ hasDownloads }
 					issuedAt={ issuedAt }
 					attachedAt={ attachedAt }
 					revokedAt={ revokedAt }

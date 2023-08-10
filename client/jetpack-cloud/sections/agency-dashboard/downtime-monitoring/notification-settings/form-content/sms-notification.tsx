@@ -1,8 +1,10 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import AlertBanner from 'calypso/components/jetpack/alert-banner';
-import ConfigureSMSNotification from '../../configure-sms-notification';
-import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
+import ContactList from '../../contact-list';
+import FeatureRestrictionBadge from '../../feature-restriction-badge';
+import { RestrictionType } from '../../types';
+import UpgradeLink from '../../upgrade-link';
+import type { MonitorSettings, StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
 	recordEvent: ( action: string, params?: object ) => void;
@@ -11,6 +13,8 @@ interface Props {
 	toggleModal: () => void;
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	verifiedItem?: { [ key: string ]: string };
+	restriction: RestrictionType;
+	settings?: MonitorSettings;
 }
 
 export default function SMSNotification( {
@@ -20,11 +24,13 @@ export default function SMSNotification( {
 	toggleModal,
 	allPhoneItems,
 	verifiedItem,
+	restriction,
+	settings,
 }: Props ) {
 	const translate = useTranslate();
 
 	const handleToggleClick = ( isEnabled: boolean ) => {
-		// Record event here
+		recordEvent( isEnabled ? 'sms_notification_enable' : 'sms_notification_disable' );
 		setEnableSMSNotification( isEnabled );
 	};
 
@@ -32,34 +38,44 @@ export default function SMSNotification( {
 		<>
 			<div className="notification-settings__toggle-container">
 				<div className="notification-settings__toggle">
-					<ToggleControl onChange={ handleToggleClick } checked={ enableSMSNotification } />
+					<ToggleControl
+						label={
+							enableSMSNotification
+								? translate( 'Disable SMS notifications' )
+								: translate( 'Enable SMS notifications' )
+						}
+						onChange={ handleToggleClick }
+						checked={ enableSMSNotification }
+						className="notification-settings__toggle-control"
+						disabled={ restriction !== 'none' }
+					/>
 				</div>
 				<div className="notification-settings__toggle-content">
 					<div className="notification-settings__content-heading-with-beta">
-						<div className="notification-settings__content-heading">{ translate( 'Mobile' ) }</div>
-						<div className="notification-settings__beta-tag">{ translate( 'BETA' ) }</div>
+						<div className="notification-settings__content-heading">
+							{ translate( 'SMS Notification' ) }
+							<FeatureRestrictionBadge restriction={ restriction } />
+						</div>
 					</div>
 					<div className="notification-settings__content-sub-heading">
-						{ translate( 'Set up text messages to send to one or more people' ) }
+						{ translate( 'Set up text messages to send to one or more people.' ) }
 					</div>
+					{ restriction === 'upgrade_required' && (
+						<div>
+							<UpgradeLink />
+						</div>
+					) }
 				</div>
 			</div>
 			{ enableSMSNotification && (
-				<>
-					{ allPhoneItems.length === 0 && (
-						<div className="margin-top-16">
-							<AlertBanner type="warning">
-								{ translate( 'You need at least one phone number' ) }
-							</AlertBanner>
-						</div>
-					) }
-					<ConfigureSMSNotification
-						toggleModal={ toggleModal }
-						allPhoneItems={ allPhoneItems }
-						recordEvent={ recordEvent }
-						verifiedPhoneNumber={ verifiedItem?.phone }
-					/>
-				</>
+				<ContactList
+					type="sms"
+					onAction={ toggleModal }
+					items={ allPhoneItems }
+					recordEvent={ recordEvent }
+					verifiedItemKey={ verifiedItem?.phone }
+					settings={ settings }
+				/>
 			) }
 		</>
 	);

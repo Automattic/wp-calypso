@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Onboard, Site } from '@automattic/data-stores';
+import { Onboard, Site, OnboardSelect, SiteActions } from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
@@ -44,11 +44,11 @@ interface SetupOnboardingSiteOptions {
 
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
 	// const { resetOnboardStore } = dispatch( ONBOARD_STORE );
-	const goals = select( ONBOARD_STORE ).getGoals();
-	const selectedDesign = select( ONBOARD_STORE ).getSelectedDesign();
-	const siteTitle = select( ONBOARD_STORE ).getSelectedSiteTitle();
-	const siteDescription = select( ONBOARD_STORE ).getSelectedSiteDescription();
-	const siteLogo = select( ONBOARD_STORE ).getSelectedSiteLogo();
+	const goals = ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals();
+	const selectedDesign = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign();
+	const siteTitle = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle();
+	const siteDescription = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription();
+	const siteLogo = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteLogo();
 
 	if ( siteId && flowName ) {
 		const formData: ( string | File )[][] = [];
@@ -70,8 +70,8 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
 				settings.site_intent = isLinkInBioFlow( flowName ) ? LINK_IN_BIO_FLOW : FREE_FLOW;
 				if ( selectedDesign && selectedDesign.is_virtual ) {
-					const { applyThemeWithPatterns } = dispatch( SITE_STORE );
-					promises.push( applyThemeWithPatterns( siteId, selectedDesign ) );
+					const { applyThemeWithPatterns } = dispatch( SITE_STORE ) as SiteActions;
+					promises.push( applyThemeWithPatterns( String( siteId ), selectedDesign ) );
 				}
 			} else {
 				settings.site_intent = flowName;

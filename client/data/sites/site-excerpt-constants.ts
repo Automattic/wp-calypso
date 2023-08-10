@@ -24,6 +24,7 @@ export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;
 
 export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'admin_url',
+	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
 	'launchpad_screen',

@@ -6,7 +6,8 @@ import type { Button } from '@wordpress/components';
 import './style.scss';
 
 const ToolbarButton = BaseToolbarButton as React.ComponentType<
-	( BaseToolbarButton.Props & { href?: string } ) | Button.Props
+	| ( React.ComponentProps< typeof BaseToolbarButton > & { href?: string } )
+	| React.ComponentProps< typeof Button >
 >;
 
 export default function SwipeGroup( {

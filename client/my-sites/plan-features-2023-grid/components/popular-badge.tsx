@@ -1,34 +1,20 @@
-import { getPlanClass } from '@automattic/calypso-products';
+import { getPlanClass, PlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import useHighlightLabel from '../hooks/use-highlight-label';
+import { usePlansGridContext } from '../grid-context';
 
 const PopularBadge: React.FunctionComponent< {
-	isInSignup: boolean;
-	planName: string;
-	flowName: string;
+	isInSignup?: boolean;
+	planSlug: PlanSlug;
 	additionalClassName?: string;
-	currentSitePlanSlug?: string;
-	selectedPlan?: string;
-} > = ( {
-	isInSignup,
-	planName,
-	additionalClassName,
-	flowName,
-	currentSitePlanSlug,
-	selectedPlan,
-} ) => {
+} > = ( { isInSignup, planSlug, additionalClassName } ) => {
+	const { gridPlansIndex } = usePlansGridContext();
 	const classes = classNames(
 		'plan-features-2023-grid__popular-badge',
-		getPlanClass( planName ),
+		getPlanClass( planSlug ),
 		additionalClassName
 	);
-	const highlightLabel = useHighlightLabel( {
-		planName,
-		flowName,
-		currentSitePlanSlug,
-		selectedPlan,
-	} );
+	const highlightLabel = gridPlansIndex[ planSlug ]?.highlightLabel;
 
 	return (
 		<>
