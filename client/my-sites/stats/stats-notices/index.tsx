@@ -74,8 +74,12 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 			{ showDoYouLoveJetpackStatsNotice && (
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
 			) }
-			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
-			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
+			{ ! showDoYouLoveJetpackStatsNotice && isOdysseyStats && (
+				<>
+					<OptOutNotice siteId={ siteId } />
+					<FeedbackNotice siteId={ siteId } />
+				</>
+			) }
 		</>
 	);
 };
