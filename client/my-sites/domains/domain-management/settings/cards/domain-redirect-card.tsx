@@ -154,7 +154,8 @@ const connector = connect(
 				( redirect?.targetHost ?? '_invalid_.domain' );
 			const url = new URL( path, origin );
 			if ( url.hostname !== '_invalid_.domain' ) {
-				targetUrl = url.hostname + url.pathname + url.search + url.hash;
+				targetUrl =
+					url.hostname + ( url.pathname === '/' ? '' : url.pathname ) + url.search + url.hash;
 			}
 		} catch ( e ) {
 			// ignore

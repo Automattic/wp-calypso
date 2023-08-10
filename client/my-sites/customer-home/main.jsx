@@ -12,6 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
@@ -26,6 +27,7 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
@@ -42,6 +44,7 @@ import {
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
@@ -50,6 +53,8 @@ import './style.scss';
 const Home = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
+	isJetpack,
+	isPossibleJetpackConnectionProblem,
 	isRequestingSitePlugins,
 	isSiteLaunching,
 	site,
@@ -169,6 +174,9 @@ const Home = ( {
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			{ header }
 			{ isLoading ? (
 				<div className="customer-home__loading-placeholder"></div>
@@ -220,6 +228,8 @@ const mapStateToProps = ( state ) => {
 		site: getSelectedSite( state ),
 		sitePlan: getSitePlan( state, siteId ),
 		siteId,
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:

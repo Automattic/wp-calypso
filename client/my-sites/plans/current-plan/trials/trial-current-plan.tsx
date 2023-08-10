@@ -13,7 +13,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
+import TrialBanner from '../../trials/trial-banner';
 import BusinessTrialIncluded from './business-trial-included';
 import EcommerceTrialIncluded from './ecommerce-trial-included';
 import EcommerceTrialNotIncluded from './ecommerce-trial-not-included';
@@ -86,7 +86,7 @@ const TrialCurrentPlan = () => {
 			<BodySectionCssClass bodyClass={ bodyClass } />
 
 			<div className="trial-current-plan__banner-wrapper">
-				<ECommerceTrialBanner callToAction={ bannerCallToAction } />
+				<TrialBanner callToAction={ bannerCallToAction } />
 			</div>
 
 			<h2 className="trial-current-plan__section-title">

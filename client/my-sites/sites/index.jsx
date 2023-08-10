@@ -116,7 +116,7 @@ class Sites extends Component {
 				path = translate( 'Activity' );
 				break;
 			case 'stats':
-				path = translate( 'Insights' );
+				path = translate( 'Stats' );
 				break;
 			case 'plans':
 				path = translate( 'Plans' );
