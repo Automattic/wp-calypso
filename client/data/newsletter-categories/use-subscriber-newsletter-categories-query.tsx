@@ -3,12 +3,17 @@ import request from 'wpcom-proxy-request';
 import { NewsletterCategories, NewsletterCategory } from './types';
 
 type NewsletterCategoryQueryProps = {
-	blogId: number;
+	siteId: number;
 };
 
 type NewsletterCategoryResponse = {
 	newsletter_categories: NewsletterCategory[];
 };
+
+export const getSubscriberNewsletterCategoriesKey = ( siteId?: string | number ) => [
+	`newsletter-categories`,
+	siteId,
+];
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
@@ -17,17 +22,17 @@ const convertNewsletterCategoryResponse = (
 };
 
 const useSubscriberNewsletterCategories = ( {
-	blogId,
+	siteId,
 }: NewsletterCategoryQueryProps ): UseQueryResult< NewsletterCategories > => {
 	return useQuery( {
-		queryKey: [ `newsletter-categories-${ blogId }` ],
+		queryKey: getSubscriberNewsletterCategoriesKey( siteId ),
 		queryFn: () =>
 			request< NewsletterCategoryResponse >( {
-				path: `/sites/${ blogId }/newsletter-categories/subscriptions`,
+				path: `/sites/${ siteId }/newsletter-categories/subscriptions`,
 				apiVersion: '2',
 				apiNamespace: 'wpcom/v2',
 			} ).then( convertNewsletterCategoryResponse ),
-		enabled: !! blogId,
+		enabled: !! siteId,
 	} );
 };
 

@@ -7,7 +7,7 @@ export default function useUnsupportedTrialFeatureList() {
 		__( 'Your site will be unpublished' ),
 		__( 'No custom domains' ),
 		__( 'No SSH or SFTP access' ),
-		__( 'Limit of 200GB' ),
+		__( 'Limit of 50GB' ),
 		__( 'Limit of 100 subscribers' ),
 	];
 }

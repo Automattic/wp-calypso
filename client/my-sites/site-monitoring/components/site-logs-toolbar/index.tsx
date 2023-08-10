@@ -39,6 +39,7 @@ type Props = {
 	logType: SiteLogsTab;
 	startDateTime: Moment;
 	endDateTime: Moment;
+	children?: React.ReactNode;
 };
 
 export const SiteLogsToolbar = ( {
@@ -46,6 +47,7 @@ export const SiteLogsToolbar = ( {
 	logType,
 	startDateTime,
 	endDateTime,
+	children,
 }: Props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -98,6 +100,7 @@ export const SiteLogsToolbar = ( {
 
 				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
 			</div>
+			{ children }
 		</div>
 	);
 };

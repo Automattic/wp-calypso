@@ -4,7 +4,6 @@ import { TimeRange } from '../../metrics-tab';
 import { PeriodData, useSiteMetricsQuery } from '../../use-metrics-query';
 
 const STATUS_CODES = [ 200, 401, 400, 404, 500 ];
-const FILL_COLORS = [ '#68B3E8', '#A7AAAD', '#F2D76B', '#09B585', '#F283AA' ];
 
 interface UseMetricsBarChartDataParams {
 	siteId: number | null;
@@ -71,7 +70,7 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 	const { start, end } = timeRange;
 	const metric = 'requests_persec';
 	const dimension = 'http_status';
-	const { data } = useSiteMetricsQuery( siteId, {
+	const { data, isLoading } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric,
@@ -80,8 +79,8 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 
 	const secondsWindow = useSecondsWindow( timeRange );
 	const { dataForBarChart, labels } = useGroupByTime( data?.data?.periods || [], secondsWindow );
-
 	return {
+		isLoading,
 		data: [ STATUS_CODES.map( ( code ) => `HTTP ${ code }` ), ...dataForBarChart ] as [
 			string[],
 			...number[][]
@@ -94,6 +93,5 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 			}
 			return getLongDate( date, locale );
 		} ),
-		fillColors: FILL_COLORS,
 	};
 }

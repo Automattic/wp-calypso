@@ -276,6 +276,9 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -1745,6 +1748,38 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for WooCommerce payment features', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for all payment features', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for regular payment features', {
+				args: { commission: 2 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_50GB_STORAGE_ADD_ON ]: {

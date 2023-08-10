@@ -2,11 +2,13 @@ import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
 import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
 import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
+import { Spinner } from '@wordpress/components';
 import classnames from 'classnames';
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import InfoPopover from 'calypso/components/info-popover';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -15,6 +17,7 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	title?: string;
+	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: uPlot.AlignedData;
 	fillColor?: string;
@@ -22,6 +25,7 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
+	isLoading?: boolean;
 }
 
 export function formatChatHour( date: Date ): string {
@@ -32,6 +36,7 @@ export function formatChatHour( date: Date ): string {
 
 export const SiteMonitoringLineChart = ( {
 	title,
+	tooltip,
 	className,
 	data,
 	fillColor = 'rgba(48, 87, 220, 0.4)',
@@ -39,6 +44,7 @@ export const SiteMonitoringLineChart = ( {
 	options: propOptions,
 	solidFill = false,
 	period,
+	isLoading = false,
 }: UplotChartProps ) => {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
@@ -175,8 +181,12 @@ export const SiteMonitoringLineChart = ( {
 		<div className={ classnames( classes ) }>
 			<header className="site-monitoring__chart-header">
 				<h2 className="site-monitoring__chart-title">{ title }</h2>
+				{ tooltip && (
+					<InfoPopover className="site-monitoring__chart-tooltip">{ tooltip }</InfoPopover>
+				) }
 			</header>
 			<div ref={ uplotContainer }>
+				{ isLoading && <Spinner /> }
 				<UplotReact
 					data={ data }
 					onCreate={ ( chart ) => ( uplot.current = chart ) }
