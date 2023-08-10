@@ -49,6 +49,9 @@ export interface GlobalStylesObject {
 			};
 		};
 		typography?: Typography;
+		blocks?: {
+			[ key: string ]: unknown;
+		};
 	};
 }
 

@@ -3,7 +3,7 @@ import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
+import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG, DEFAULT_GLOBAL_STYLES } from '../../constants';
 import {
 	GlobalStylesContext,
 	mergeBaseAndUserConfigs,
@@ -48,10 +48,11 @@ const GlobalStylesVariation = ( {
 	const context = useMemo( () => {
 		const { inline_css: globalStylesVariationInlineCss = '' } = globalStylesVariation;
 		const baseInlineCss = base.inline_css || '';
+		const baseStyles = base.styles || DEFAULT_GLOBAL_STYLES.styles;
 		return {
 			user: globalStylesVariation,
 			base,
-			merged: mergeBaseAndUserConfigs( base, globalStylesVariation ),
+			merged: mergeBaseAndUserConfigs( { ...base, styles: baseStyles }, globalStylesVariation ),
 			inline_css: baseInlineCss + globalStylesVariationInlineCss,
 		};
 	}, [ globalStylesVariation, base ] );
