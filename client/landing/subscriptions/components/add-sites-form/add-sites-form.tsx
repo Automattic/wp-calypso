@@ -19,27 +19,28 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
-	const [ isValidUrl, setIsValidUrl ] = useState( false );
-	const dispatch = useDispatch();
+	const [ isValidInput, setIsValidInput ] = useState( false );
 
 	const { mutate: subscribe, isLoading: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
 	const validateInputValue = useCallback(
 		( url: string, showError = false ) => {
+			// If the input is empty, we don't want to show an error message
 			if ( url.length === 0 ) {
-				setIsValidUrl( false );
+				setIsValidInput( false );
 				setInputFieldError( null );
 				return;
 			}
-			if ( ! CAPTURE_URL_RGX.test( url ) ) {
-				setIsValidUrl( false );
+
+			if ( isValidUrl( url ) ) {
+				setInputFieldError( null );
+				setIsValidInput( true );
+			} else {
+				setIsValidInput( false );
 				if ( showError ) {
 					setInputFieldError( translate( 'Please enter a valid URL' ) );
 				}
-			} else {
-				setInputFieldError( null );
-				setIsValidUrl( true );
 			}
 		},
 		[ translate ]
@@ -54,7 +55,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	);
 
 	const onAddSite = useCallback( () => {
-		if ( isValidUrl ) {
+		if ( isValidInput ) {
 			subscribe(
 				{ url: inputValue },
 				{
@@ -96,7 +97,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 				value={ inputValue }
 				type="url"
 				onChange={ onTextFieldChange }
-				help={ isValidUrl ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
+				help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 				onBlur={ () => validateInputValue( inputValue, true ) }
 			/>
 
