@@ -1,3 +1,5 @@
+import type { PlanSlug } from '@automattic/calypso-products';
+
 export const setShowDomainUpsellDialog = ( show: boolean ) =>
 	( {
 		type: 'WPCOM_PLANS_UI_DOMAIN_UPSELL_DIALOG_SET_SHOW' as const,
@@ -11,15 +13,15 @@ export const resetStore = () =>
 
 export const setSelectedStorageOptionForPlan = ( {
 	addOnSlug,
-	plan,
+	planSlug,
 }: {
 	addOnSlug: string;
-	plan: string;
+	planSlug: PlanSlug;
 } ) =>
 	( {
 		type: 'WPCOM_PLANS_UI_SET_STORAGE_ADD_ON_FOR_PLAN',
 		addOnSlug,
-		plan,
+		planSlug,
 	} as const );
 
 export type WpcomPlansUIAction = ReturnType<
