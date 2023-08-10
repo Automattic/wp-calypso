@@ -59,7 +59,7 @@ jobs:
       - uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
         with:
-          name: renovate_cache
+          name: renovate-cache
           path: ${{ env.cache_archive }}
 
       - name: Uncompress renovate cache
