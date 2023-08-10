@@ -8,6 +8,14 @@ export type EnvVariables = {
 export type ViewportName = string;
 export type TestLocales = string[];
 export type JetpackTarget = 'remote-site' | 'wpcom-production' | 'wpcom-deployment';
+export type AtomicVariation =
+	| 'default'
+	| 'php-old'
+	| 'php-new'
+	| 'wp-beta'
+	| 'wp-previous'
+	| 'private'
+	| 'ecomm-plan';
 
 export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
@@ -22,8 +30,11 @@ export interface SupportedEnvVariables extends EnvVariables {
 	SLOW_MO: number;
 	TIMEOUT: number;
 	TEST_ON_ATOMIC: boolean;
+	ATOMIC_VARIATION: AtomicVariation;
 	JETPACK_TARGET: JetpackTarget;
 	CALYPSO_BASE_URL: string;
 	BROWSER_NAME: string;
 	ALLURE_RESULTS_PATH: string;
+	RUN_ID: string;
+	RETRY_COUNT: number;
 }
