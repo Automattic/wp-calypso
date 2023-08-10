@@ -50,12 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Check rate limit pre-run
-        env:
-          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
-        run: |
-          curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
-
       - uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
         with:
@@ -77,6 +71,7 @@ jobs:
           mkdir -p $cache_dir
           tar -xzf $cache_archive -C $cache_dir
           rm $cache_archive
+          rm -r "$cache_dir/tmp"
 
           # Unfortunately, the permissions expected within renovate's docker container
           # are different than the ones given after the cache is restored. We have to
@@ -97,6 +92,9 @@ jobs:
       - name: Compress renovate cache
         run: |
           ls $cache_dir
+          # The -C is important -- otherwise we end up extracting the files with
+          # their full path, ultimately leading to a nested directory situation.
+          # To solve *that*, we'd have to extract to root (/), which isn't safe.
           tar -czvf $cache_archive -C $cache_dir .
 
       - uses: actions/upload-artifact@v3
@@ -105,13 +103,6 @@ jobs:
           path: ${{ env.cache_archive }}
           # Since this is created frequently, we don't need to keep it for long.
           retention-days: 1
-
-      - name: Check rate limit post-run
-        env:
-          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
-        run: |
-          echo "Note any difference between this number and the one from the previous step may also include API uses from elsewhere that happened to occur at the same time."
-          curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
   validate-renovate-config:
     name: Validate Renovate Configuration
