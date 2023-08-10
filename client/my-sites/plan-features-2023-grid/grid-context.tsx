@@ -1,23 +1,54 @@
-import { PlanSlug } from '@automattic/calypso-products';
 import { createContext, useContext } from '@wordpress/element';
 import type {
 	GridPlan,
 	PlansIntent,
-} from './hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
+	UsePricingMetaForGridPlans,
+} from './hooks/npm-ready/data-store/use-grid-plans';
+import type { FeatureList } from '@automattic/calypso-products';
 
 interface PlansGridContext {
 	intent?: PlansIntent;
-	planRecords: Record< PlanSlug, GridPlan >;
-	visiblePlans: PlanSlug[];
+	gridPlans: GridPlan[];
+	gridPlansIndex: { [ key: string ]: GridPlan };
+	allFeaturesList: FeatureList;
+	helpers?: Record< 'usePricingMetaForGridPlans', UsePricingMetaForGridPlans >;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
 
-const PlansGridContextProvider: React.FunctionComponent<
-	PlansGridContext & { children: React.ReactNode }
-> = ( { intent, planRecords, visiblePlans, children } ) => {
+interface PlansGridContextProviderProps {
+	intent?: PlansIntent;
+	gridPlans: GridPlan[];
+	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
+	allFeaturesList: FeatureList;
+	children: React.ReactNode;
+}
+
+const PlansGridContextProvider = ( {
+	intent,
+	gridPlans,
+	usePricingMetaForGridPlans,
+	allFeaturesList,
+	children,
+}: PlansGridContextProviderProps ) => {
+	const gridPlansIndex = gridPlans.reduce(
+		( acc, gridPlan ) => ( {
+			...acc,
+			[ gridPlan.planSlug ]: gridPlan,
+		} ),
+		{}
+	);
+
 	return (
-		<PlansGridContext.Provider value={ { intent, planRecords, visiblePlans } }>
+		<PlansGridContext.Provider
+			value={ {
+				intent,
+				gridPlans,
+				gridPlansIndex,
+				allFeaturesList,
+				helpers: { usePricingMetaForGridPlans },
+			} }
+		>
 			{ children }
 		</PlansGridContext.Provider>
 	);

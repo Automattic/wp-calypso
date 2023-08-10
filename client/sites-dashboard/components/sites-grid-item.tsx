@@ -7,7 +7,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
+import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
+import { displaySiteUrl, getDashboardUrl, isMigrationTrialSite, isStagingSite } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
 import { SitesGridTile } from './sites-grid-tile';
@@ -105,6 +106,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
+	const isMigrationTrialPlanSite = isMigrationTrialSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
@@ -141,7 +143,10 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						/>
 					</ThumbnailWrapper>
 					{ showSiteRenewLink && site.plan?.expired && (
-						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
+						<SitesGridActionRenew
+							site={ site }
+							hideRenewLink={ isECommerceTrialSite || isMigrationTrialPlanSite }
+						/>
 					) }
 				</>
 			}
@@ -155,6 +160,9 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						<div className={ badges }>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
+							{ isMigrationTrialPlanSite && (
+								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
+							) }
 							{ getSiteLaunchStatus( site ) !== 'public' && (
 								<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 							) }

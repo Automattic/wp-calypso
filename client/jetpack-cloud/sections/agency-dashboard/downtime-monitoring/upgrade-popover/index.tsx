@@ -8,7 +8,9 @@ import {
 	getJetpackDashboardPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../../sites-overview/context';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import { PreferenceType } from '../../sites-overview/types';
 import './style.scss';
 
@@ -35,6 +37,9 @@ export default function UpgradePopover( {
 
 	const isDismissed = dismissibleWithPreference ? preference?.dismiss : false;
 
+	const { isLargeScreen } = useContext( DashboardDataContext );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, isLargeScreen );
+
 	const savePreferenceType = useCallback(
 		( type: PreferenceType ) => {
 			dispatch( savePreference( tooltipPreference, { ...preference, [ type ]: true } ) );
@@ -52,12 +57,12 @@ export default function UpgradePopover( {
 
 	const handleClose = () => {
 		handleDismissPopover();
-		// TODO: Add event tracking here
+		recordEvent( 'downtime_monitoring_upgrade_popover_dismiss' );
 	};
 
 	const handleClickExplore = () => {
 		handleDismissPopover();
-		// TODO: Add event tracking here
+		recordEvent( 'downtime_monitoring_upgrade_popover_accept' );
 		showLicenseInfo( 'monitor' );
 	};
 

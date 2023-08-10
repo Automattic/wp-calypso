@@ -48,7 +48,8 @@ export function getEnhancedTasks(
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
-	domainCartItem?: MinimalRequestCartProduct | null
+	domainCartItem?: MinimalRequestCartProduct | null,
+	stripeConnectUrl?: string
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -94,6 +95,10 @@ export function getEnhancedTasks(
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
+
+	const isStripeConnected = Boolean(
+		tasks?.find( ( task ) => task.id === 'set_up_payments' )?.completed
+	);
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -468,14 +473,18 @@ export function getEnhancedTasks(
 					break;
 				case 'set_up_payments':
 					taskData = {
+						badge_text: task.completed ? translate( 'Connected' ) : null,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+							stripeConnectUrl
+								? window.location.assign( stripeConnectUrl )
+								: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
 					break;
 				case 'newsletter_plan_created':
 					taskData = {
+						disabled: ! isStripeConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
