@@ -5,7 +5,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const P2PlanFooter = () => {
+const P2PlusPlanFooter = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -34,4 +34,4 @@ const P2PlanFooter = () => {
 	);
 };
 
-export default P2PlanFooter;
+export default P2PlusPlanFooter;
