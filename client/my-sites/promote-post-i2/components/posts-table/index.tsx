@@ -15,9 +15,9 @@ interface Props {
 export default function PostsTable( props: Props ) {
 	const { posts, isLoading, isFetchingPageResults } = props;
 
-	const testExperimentName = 'dsp_blaze_open_widget_button_202308';
-	const [ isLoadingExperimentAssignment, experimentAssignment ] =
-		useExperiment( testExperimentName );
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'dsp_blaze_open_widget_button_202308'
+	);
 
 	const [ postClassName, setPostClassName ] = useState( '' );
 
