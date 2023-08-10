@@ -139,14 +139,15 @@ export class UploadingPane extends PureComponent {
 			this.props.failPreUpload(
 				importerStatus.importerId,
 				'',
-				WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED
+				WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED,
+				file
 			);
 			return;
 		}
 
 		// Fail fast if a user tries to upload a too big file
 		if ( file.size > MAX_FILE_SIZE ) {
-			this.props.failPreUpload( importerStatus.importerId, '', FileTooLarge.FILE_TOO_LARGE );
+			this.props.failPreUpload( importerStatus.importerId, '', FileTooLarge.FILE_TOO_LARGE, file );
 			return;
 		}
 

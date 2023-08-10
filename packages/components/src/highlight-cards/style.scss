@@ -220,6 +220,9 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 			box-sizing: border-box;
 			border-radius: 5px; // stylelint-disable-line scales/radii
 		}
+		button:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
 	}
 
 	// Modules settings popover

@@ -92,3 +92,39 @@ fun defaultE2eArtifactRules(): String = """
     screenshots => screenshots
     trace => trace
 """.trimIndent()
+
+fun BuildSteps.runE2eTestsWithRetry(
+	testGroup: String,
+	additionalEnvVars: Map<String, String> = mapOf(),
+	stepName: String = "Run tests" 
+): ScriptBuildStep {
+	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
+
+	return bashNodeScript {
+        name = stepName
+        scriptContent = """
+            # Configure bash shell.
+            set -x
+            
+            # Export additional environment variables.
+            $envVarExport
+
+            # Enter testing directory.
+            cd test/e2e
+            mkdir -p temp
+
+            # Disable exit on error to support retries.
+            set +o errexit
+
+            # Run suite.
+            xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup
+
+            # Restore exit on error.
+            set -o errexit
+
+            # Retry failed tests only.
+            RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures
+        """.trimIndent()
+        dockerImage = "%docker_image_e2e%"
+    }
+}
