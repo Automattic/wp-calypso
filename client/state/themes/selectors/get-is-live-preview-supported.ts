@@ -72,6 +72,7 @@ const isNotCompatibleThemes = ( themeId: string ) => {
  *
  * The scenarios where the Live Preview does NOT support;
  * - On both Simple and Atomic sites;
+ *   - If the user is NOT logged in.
  *   - If the theme is users' active theme.
  *   - If the theme is NOT FullSiteEditing compatible.
  *   - If the theme has a static page as a homepage.
