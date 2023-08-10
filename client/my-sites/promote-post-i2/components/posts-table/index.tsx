@@ -22,7 +22,10 @@ export default function PostsTable( props: Props ) {
 	const [ postClassName, setPostClassName ] = useState( '' );
 
 	useEffect( () => {
-		if ( ! isLoadingExperimentAssignment && undefined !== experimentAssignment?.variationName ) {
+		if ( isLoadingExperimentAssignment ) {
+			return;
+		}
+		if ( undefined !== experimentAssignment?.variationName ) {
 			const className =
 				experimentAssignment?.variationName === 'treatment' ? 'post-item__row_experimental' : '';
 			setPostClassName( className );
