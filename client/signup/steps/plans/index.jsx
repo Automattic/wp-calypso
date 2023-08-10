@@ -15,10 +15,7 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
-import PlansComparison, {
-	isEligibleForProPlan,
-	isStarterPlanEnabled,
-} from 'calypso/my-sites/plans-comparison';
+import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -214,30 +211,20 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { eligibleForProPlan, hideFreePlan, locale, translate, useEmailOnboardingSubheader } =
-			this.props;
+		const { hideFreePlan, translate, useEmailOnboardingSubheader } = this.props;
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
 		);
 
-		if ( eligibleForProPlan ) {
-			if ( isStarterPlanEnabled() ) {
-				return hideFreePlan
-					? translate( 'Try risk-free with a 14-day money-back guarantee.' )
-					: translate(
-							'Try risk-free with a 14-day money-back guarantee or {{link}}start with a free site{{/link}}.',
-							{ components: { link: freePlanButton } }
-					  );
-			}
-
-			return 'en' === locale ||
-				i18n.hasTranslation( 'he WordPress Pro plan comes with a 14-day money back guarantee' )
-				? translate( 'The WordPress Pro plan comes with a 14-day money back guarantee' )
-				: translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
+		if ( hideFreePlan ) {
+			return translate(
+				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+				{ components: { link: freePlanButton } }
+			);
 		}
 
-		if ( useEmailOnboardingSubheader && ! hideFreePlan ) {
+		if ( useEmailOnboardingSubheader ) {
 			return translate(
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }

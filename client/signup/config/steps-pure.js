@@ -258,6 +258,7 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
 				showBiennialToggle: true,
+				hideFreePlan: true,
 			},
 		},
 
