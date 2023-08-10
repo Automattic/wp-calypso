@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/woo-commerce";
 @import "@wordpress/base-styles/breakpoints";
 
-body.is-section-plans.is-migration-trial-plan {
+body.is-section-plans.is-business-trial-plan {
 	&.color-scheme {
 		--color-surface-backdrop: var(--color-surface);
 	}
@@ -10,7 +10,7 @@ body.is-section-plans.is-migration-trial-plan {
 		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 	}
 
-	.migration-trial-plans__banner-wrapper {
+	.business-trial-plans__banner-wrapper {
 		margin: 20px 0;
 	}
 

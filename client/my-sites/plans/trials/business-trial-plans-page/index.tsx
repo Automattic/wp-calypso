@@ -23,9 +23,9 @@ const BusinessTrialPlansPage = ( props: BusinessTrialPlansPageProps ) => {
 
 	return (
 		<>
-			<BodySectionCssClass bodyClass={ [ 'is-migration-trial-plan' ] } />
+			<BodySectionCssClass bodyClass={ [ 'is-business-trial-plan' ] } />
 
-			<div className="migration-trial-plans__banner-wrapper">
+			<div className="business-trial-plans__banner-wrapper">
 				<TrialBanner />
 			</div>
 			<BusinessTrialPlans
