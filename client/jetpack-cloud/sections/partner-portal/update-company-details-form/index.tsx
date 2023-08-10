@@ -62,7 +62,7 @@ export default function UpdateCompanyDetailsForm() {
 					name: payload.name,
 					contact_person: payload.contactPerson,
 					company_website: payload.companyWebsite,
-					company_type: companyType,
+					company_type: payload.companyType,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
