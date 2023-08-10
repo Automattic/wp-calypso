@@ -222,6 +222,11 @@ export const getShortDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	const now = moment();
 
+	const minuteDiff = Math.abs( now.diff( timestamp, 'minutes' ) );
+	if ( minuteDiff < 1 ) {
+		return __( 'Now' );
+	}
+
 	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
 	if ( dateDiff < 7 ) {
 		return timestamp.fromNow();
