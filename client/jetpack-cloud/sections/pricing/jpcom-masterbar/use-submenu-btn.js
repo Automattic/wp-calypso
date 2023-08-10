@@ -40,16 +40,6 @@ export default function useSubmenuBtn() {
 				toggleMenuItem( btn, menu );
 			};
 
-			btn.addEventListener( 'click', function ( e ) {
-				e.preventDefault();
-
-				if ( btn.getAttribute( 'aria-expanded' ) === 'false' ) {
-					collapseExpandedMenu();
-				}
-
-				toggle();
-			} );
-
 			menu.addEventListener( 'click', function ( e ) {
 				// If user clicks menu backdrop
 				if ( e.target === menu ) {

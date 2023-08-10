@@ -88,6 +88,39 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		} );
 	}, [] );
 
+	const toggleMenuItem = ( btn: HTMLAnchorElement, menu: HTMLUListElement ) => {
+		const expanded = btn.getAttribute( 'aria-expanded' ) === 'true' || false;
+		btn.setAttribute( 'aria-expanded', String( ! expanded ) );
+
+		menu.hidden = ! menu.hidden;
+	};
+
+	const collapseExpandedMenu = () => {
+		const expandedBtn = document.querySelector(
+			'.js-menu-btn[aria-expanded="true"]'
+		) as HTMLAnchorElement;
+
+		if ( expandedBtn ) {
+			const menu = expandedBtn?.parentNode?.querySelector( 'js-menu' ) as HTMLUListElement;
+
+			if ( menu ) {
+				toggleMenuItem( expandedBtn, menu );
+			}
+		}
+	};
+
+	const onMenuBtnClick = ( e: React.MouseEvent< HTMLAnchorElement > ) => {
+		e.preventDefault();
+		const btn = e.currentTarget;
+		const menu = btn.parentNode?.querySelector( '.js-menu' ) as HTMLUListElement;
+
+		if ( btn.getAttribute( 'aria-expanded' ) === 'false' ) {
+			collapseExpandedMenu();
+		}
+
+		toggleMenuItem( btn, menu );
+	};
+
 	useSubmenuBtn();
 	useUserMenu();
 	useMobileBtn();
@@ -150,7 +183,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																href && href !== '#' ? localizeUrl( href, locale ) : `#${ id }`
 															}
 															aria-expanded={ hasChildren ? false : undefined }
-															onClick={ href && href !== '#' ? onLinkClick : undefined }
+															onClick={ href && href !== '#' ? onLinkClick : onMenuBtnClick }
 														>
 															{ label }
 															{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
