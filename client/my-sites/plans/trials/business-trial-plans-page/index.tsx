@@ -2,14 +2,12 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { BusinessTrialPlans } from '../business-trial-plans';
 import TrialBanner from '../trial-banner';
 
 import './style.scss';
 
 interface BusinessTrialPlansPageProps {
-	currentPlan: SitePlanData;
 	selectedSite: SiteDetails;
 }
 

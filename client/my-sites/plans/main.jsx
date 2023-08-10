@@ -308,13 +308,13 @@ class Plans extends Component {
 	}
 
 	renderBusinessTrialPage() {
-		const { selectedSite, currentPlan } = this.props;
+		const { selectedSite } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
 		}
 
-		return <BusinessTrialPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
+		return <BusinessTrialPlansPage selectedSite={ selectedSite } />;
 	}
 
 	renderWooExpressPlansPage() {
