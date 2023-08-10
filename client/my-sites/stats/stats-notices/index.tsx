@@ -82,7 +82,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
 			) }
 			{ /* If we add more notice, we'll need to refator the logic with logic similar in `use-notice-visibility-query` */ }
-			{ ! showDoYouLoveJetpackStatsNotice && isOdysseyStats && (
+			{ ! showDoYouLoveJetpackStatsNotice && hasLoadedPurchases && isOdysseyStats && (
 				<>
 					<OptOutNotice siteId={ siteId } />
 					<FeedbackNotice siteId={ siteId } />
