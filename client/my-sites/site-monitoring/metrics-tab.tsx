@@ -80,13 +80,20 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 				// Check if the timestamp is already in the arrays, if not, push it
 				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
 					acc[ 0 ].push( timestamp );
-					const dimensionValue = getDimensionValue( period );
-					if ( dimensionValue !== null ) {
-						acc[ 1 ].push( dimensionValue * 60 ); // Convert to requests per minute
+
+					const requestsPerSecondValue = getDimensionValue( period );
+					if ( requestsPerSecondValue !== null ) {
+						const requestsPerMinuteValue = requestsPerSecondValue * 60; // Convert to requests per minute
+						acc[ 1 ].push( requestsPerMinuteValue ); // Push RPM value into the array
 					}
 					// Add response time data as a green line
 					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
-						acc[ 2 ].push( getDimensionValue( responseTimeData.data.periods[ index ] ) );
+						const responseTimeAverageValue = getDimensionValue(
+							responseTimeData.data.periods[ index ]
+						);
+						if ( responseTimeAverageValue !== null ) {
+							acc[ 2 ].push( responseTimeAverageValue * 1000 ); // Convert to response time average in milliseconds
+						}
 					}
 				}
 
