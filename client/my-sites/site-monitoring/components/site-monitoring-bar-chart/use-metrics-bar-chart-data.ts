@@ -70,7 +70,7 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 	const { start, end } = timeRange;
 	const metric = 'requests_persec';
 	const dimension = 'http_status';
-	const { data } = useSiteMetricsQuery( siteId, {
+	const { data, isLoading } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric,
@@ -79,8 +79,8 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 
 	const secondsWindow = useSecondsWindow( timeRange );
 	const { dataForBarChart, labels } = useGroupByTime( data?.data?.periods || [], secondsWindow );
-
 	return {
+		isLoading,
 		data: [ STATUS_CODES.map( ( code ) => `HTTP ${ code }` ), ...dataForBarChart ] as [
 			string[],
 			...number[][]

@@ -28,3 +28,13 @@
 		}
 	}
 }
+
+.calypso-uplot-chart-container {
+	position: relative;
+
+	.components-spinner {
+		position: absolute;
+		top: calc(50% - 8px - 60px);
+		left: calc(50% - 8px);
+	}
+}
