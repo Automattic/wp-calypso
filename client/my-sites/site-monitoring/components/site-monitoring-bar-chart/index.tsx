@@ -4,7 +4,7 @@ import { translate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import { LegendTooltip } from './legend-tooltip';
 
-interface Props extends Pick< UplotChartProps, 'data' | 'labels' > {
+interface Props extends Pick< UplotChartProps, 'data' | 'labels' | 'isLoading' > {
 	title: string;
 	tooltip?: string | React.ReactNode;
 	className?: string;
