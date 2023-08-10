@@ -64,15 +64,14 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 						if ( data?.info === 'already_subscribed' ) {
 							showWarningNotice( inputValue );
 						} else {
-					onSuccess: () => {
-						dispatch(
-							successNotice(
-								translate( 'You have successfully subscribed to %s.', {
-									args: [ inputValue ],
-									comment: 'URL of the site that the user has subscribed to.',
-								} )
-							)
-						);
+							if ( data?.subscription?.blog_ID ) {
+								recordSiteSubscribed( {
+									blog_id: data?.subscription?.blog_ID,
+									url: inputValue,
+									source: SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL,
+								} );
+							}
+
 							showSuccessNotice( inputValue );
 						}
 						onAddFinished();
