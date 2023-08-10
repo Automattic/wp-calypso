@@ -89,6 +89,7 @@ class PostCommentForm extends Component {
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
 			parent_post_id: this.props.parentCommentId ? this.props.parentCommentId : undefined,
+			is_inline_comment: this.props.isInlineComment,
 		} );
 
 		this.resetCommentText();
@@ -181,6 +182,7 @@ PostCommentForm.propTypes = {
 	commentText: PropTypes.string,
 	onUpdateCommentText: PropTypes.func.isRequired,
 	onCommentSubmit: PropTypes.func,
+	isInlineComment: PropTypes.bool,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,

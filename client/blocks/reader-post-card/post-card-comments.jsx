@@ -2,12 +2,13 @@ import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import PostComments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { commentsFetchingStatus } from 'calypso/state/comments/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-const PostCardComments = ( { post, onCommentClick } ) => {
+const PostCardComments = ( { post, handleClick } ) => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const fetchStatus = useSelector( ( state ) =>
@@ -26,6 +27,18 @@ const PostCardComments = ( { post, onCommentClick } ) => {
 			dispatch( requestPostComments( { siteId: post.site_ID, postId: post.ID } ) );
 		}
 	}, [ post, dispatch, hasFetchedComments, shouldHideComments ] );
+
+	const onOpenPostPageAtCommentsClick = () => {
+		recordAction( 'click_inline_comments_view_on_post' );
+		recordGaEvent( 'Clicked Inline Comments View On Post' );
+		recordTrackForPost( 'calypso_reader_inline_comments_view_on_post_clicked', post );
+
+		handleClick &&
+			handleClick( {
+				post,
+				comments: true,
+			} );
+	};
 
 	if ( shouldHideComments ) {
 		return null;
@@ -50,7 +63,7 @@ const PostCardComments = ( { post, onCommentClick } ) => {
 				pageSize={ 15 }
 				maxDepth={ 1 }
 				// TODO - separate this callback so it doesnt send same stats as comment icon.
-				openPostPageAtComments={ onCommentClick }
+				openPostPageAtComments={ onOpenPostPageAtCommentsClick }
 			/>
 		</div>
 	);

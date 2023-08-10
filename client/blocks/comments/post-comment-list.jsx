@@ -10,7 +10,7 @@ import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-
 import SegmentedControl from 'calypso/components/segmented-control';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import {
 	requestPostComments,
 	requestComment,
@@ -260,6 +260,7 @@ class PostCommentList extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: commentId,
+			is_inline_comment: this.props.expandableView,
 		} );
 	};
 
@@ -270,6 +271,7 @@ class PostCommentList extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: this.props.activeReplyCommentId,
+			is_inline_comment: this.props.expandableView,
 		} );
 		this.resetActiveReplyComment();
 	};
@@ -300,6 +302,13 @@ class PostCommentList extends Component {
 	toggleExpanded = ( ev ) => {
 		if ( this.props.expandableView ) {
 			ev.stopPropagation();
+
+			if ( ! this.state.isExpanded ) {
+				recordAction( 'click_inline_comments_expand' );
+				recordGaEvent( 'Clicked Inline Comments Expand' );
+				recordTrackForPost( 'calypso_reader_inline_comments_expand_click', this.props.post );
+			}
+
 			this.setState( { isExpanded: ! this.state.isExpanded } );
 		}
 	};
@@ -590,6 +599,7 @@ class PostCommentList extends Component {
 					commentText={ this.state.commentText }
 					onUpdateCommentText={ this.onUpdateCommentText }
 					activeReplyCommentId={ this.props.activeReplyCommentId }
+					isInlineComment={ this.props.expandableView }
 				/>
 			</div>
 		);

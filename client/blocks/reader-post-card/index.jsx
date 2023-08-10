@@ -40,6 +40,7 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
+		handleClick: PropTypes.func,
 		discoverPost: PropTypes.object,
 		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
@@ -55,6 +56,7 @@ class ReaderPostCard extends Component {
 	static defaultProps = {
 		onClick: noop,
 		onCommentClick: noop,
+		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
 		showFollowButton: true,
@@ -272,7 +274,7 @@ class ReaderPostCard extends Component {
 				{ readerPostCard }
 				{ this.props.children }
 				{ ! isConversations && (
-					<PostCardComments post={ post } onCommentClick={ onCommentClick } />
+					<PostCardComments post={ post } handleClick={ this.props.handleClick } />
 				) }
 			</Card>
 		);
