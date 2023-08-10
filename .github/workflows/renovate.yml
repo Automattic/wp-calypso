@@ -41,6 +41,8 @@ concurrency:
 env:
   # Set as a workflow variable so that multiple jobs can use the value.
   RENOVATE_VERSION: 36.31.0
+  cache_archive: renovate_cache.tar.gz
+  cache_dir: /tmp/renovate/cache/renovate
 
 jobs:
   renovate:
@@ -66,17 +68,20 @@ jobs:
         continue-on-error: true
         with:
           name: renovate_cache
-          path: renovate_cache.tar.gz
+          path: ${{ env.cache_archive }}
 
       - name: Uncompress renovate cache
-        continue-on-error: true
         run: |
-          mkdir -p /tmp/renovate/cache/renovate
-          tar -xzvf renovate_cache.tar.gz /tmp/renovate/cache/renovate
-          rm renovate_cache.tar.gz
-          ls -l /tmp/renovate/cache/renovate
+          if [ ! -f $cache_archive ] ; then
+            echo "No cache found."
+            exit 0
+          fi
+          mkdir -p $cache_dir
+          tar -xzvf $cache_archive $cache_dir
+          rm $cache_archive
+          ls -l $cache_dir
           sudo chown -R runneradmin:root /tmp/renovate/
-          ls -l /tmp/renovate/cache/renovate
+          ls -l $cache_dir
       # Unfortunately, the permissions expected within renovate's docker container
       # are different than the ones given after the cache is restored. We have to
       # change ownership to solve this.
@@ -92,12 +97,12 @@ jobs:
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
 
       - name: Compress renovate cache
-        run: tar -czvf renovate_cache.tar.gz /tmp/renovate/cache/renovate
+        run: tar -czvf $cache_archive $cache_dir
 
       - uses: actions/upload-artifact@v3
         with:
           name: renovate-cache
-          path: renovate_cache.tar.gz
+          path: ${{ env.cache_archive }}
           # Since this is created frequently, we don't need to keep it for long.
           retention-days: 1
 
