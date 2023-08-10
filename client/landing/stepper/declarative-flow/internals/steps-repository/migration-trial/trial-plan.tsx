@@ -1,19 +1,55 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
+import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { UserData } from 'calypso/lib/user/user';
 
-const TrialPlan = function TrialPlan() {
+interface Props {
+	user: UserData;
+	site: SiteDetails;
+	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+}
+const TrialPlan = function TrialPlan( props: Props ) {
 	const { __ } = useI18n();
+	const { user, site, submit } = props;
 	const [ showPlanFeaturesModal, setShowPlanFeaturesModal ] = useState( false );
 
 	const unsupportedTrialFeatureList = useUnsupportedTrialFeatureList();
 	const plan = getPlan( PLAN_BUSINESS );
+	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+		onSuccess: () => {
+			navigateToImporterStep();
+		},
+	} );
+
+	function navigateToVerifyEmailStep() {
+		submit?.( { action: 'verify-email' } );
+	}
+
+	function navigateToImporterStep() {
+		submit?.( { action: 'importer' } );
+	}
+
+	function onStartTrialClick() {
+		if ( ! user?.email_verified ) {
+			navigateToVerifyEmailStep();
+		} else {
+			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
+		}
+	}
+
+	if ( isAddingTrial ) {
+		return <LoadingEllipsis />;
+	}
 
 	return (
 		<>
@@ -73,7 +109,9 @@ const TrialPlan = function TrialPlan() {
 					</div>
 				</div>
 
-				<NextButton>{ __( 'Start the trial and migrate' ) }</NextButton>
+				<NextButton isBusy={ isAddingTrial } onClick={ onStartTrialClick }>
+					{ __( 'Start the trial and migrate' ) }
+				</NextButton>
 			</div>
 		</>
 	);

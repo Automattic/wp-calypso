@@ -215,12 +215,17 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 
 	render() {
-		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType } = this.props;
+		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType, upgradeItem } = this.props;
 		const styleClass =
 			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
 				? 'business-plan-upgrade-upsell-new-design'
 				: upsellType;
 
+		// There is no `siteId` if we're purchasing a domain-only site, so we pass the site slug to the query component instead.
+		const siteId =
+			upsellType === PROFESSIONAL_EMAIL_UPSELL
+				? upgradeItem
+				: parseInt( String( selectedSiteId ), 10 );
 		return (
 			<Main
 				className={ classnames( styleClass, {
@@ -228,9 +233,11 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				} ) }
 			>
 				<QueryPaymentCountries />
-				<QuerySites siteId={ selectedSiteId } />
+				<QuerySites siteId={ siteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
-				{ ! hasSitePlans && <QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } /> }
+				{ ! hasSitePlans && typeof siteId === 'number' && ! isNaN( siteId ) && (
+					<QuerySitePlans siteId={ siteId } />
+				) }
 				{ this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }

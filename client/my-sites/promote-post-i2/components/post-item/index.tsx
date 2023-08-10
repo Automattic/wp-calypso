@@ -21,7 +21,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 
 	// API can return "false" as a featured image URL
 	const safeUrl = 'string' === typeof post?.featured_image && safeImageUrl( post.featured_image );
-	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+	const featuredImage = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
 	const postDate = (
 		<RelativeTime date={ post.date } showTooltip={ true } tooltipTitle={ __( 'Published date' ) } />

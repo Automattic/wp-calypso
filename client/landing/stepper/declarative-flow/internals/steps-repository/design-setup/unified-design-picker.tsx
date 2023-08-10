@@ -488,9 +488,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	async function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 
-		await updateLaunchpadSettings( siteSlug, {
-			checklist_statuses: { design_completed: true },
-		} );
+		if ( siteSlugOrId ) {
+			await updateLaunchpadSettings( siteSlugOrId, {
+				checklist_statuses: { design_completed: true },
+			} );
+		}
 
 		if ( siteSlugOrId && _selectedDesign ) {
 			const positionIndex = designs.findIndex(
@@ -562,6 +564,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				intent,
 				design: _selectedDesign,
 				styleVariation: selectedStyleVariation,
+				colorVariation: selectedColorVariation,
+				fontVariation: selectedFontVariation,
 				optionalProps,
 			} );
 		}

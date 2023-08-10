@@ -234,3 +234,13 @@ export const LICENSE_INFO_MODAL_ID = 'show_license_modal';
 export function isWooCommerceProduct( keyOrSlug: string ) {
 	return keyOrSlug.startsWith( 'woocommerce' );
 }
+
+/**
+ * Provided a license key, return the product slug
+ *
+ * @param licenseKey string
+ * @returns string Product slug
+ */
+export function getProductSlugFromKey( licenseKey: string ) {
+	return licenseKey.split( '_' )[ 0 ];
+}

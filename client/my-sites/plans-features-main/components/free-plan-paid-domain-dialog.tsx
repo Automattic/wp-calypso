@@ -149,7 +149,7 @@ function SuggestedPlanSection( {
 						args: {
 							planTitle: planTitle as string,
 							planPrice: formatCurrency(
-								planPrices.discountedRawPrice || planPrices.rawPrice,
+								( planPrices.discountedRawPrice || planPrices.rawPrice ) ?? 0,
 								currencyCode,
 								{ stripZeros: true }
 							),
@@ -169,7 +169,7 @@ type DomainPlanDialogProps = {
 };
 
 // See p2-pbxNRc-2Ri#comment-4703 for more context
-const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
+export const MODAL_VIEW_EVENT_NAME = 'calypso_plan_upsell_modal_view';
 
 function DialogPaidPlanIsRequired( {
 	paidDomainName,

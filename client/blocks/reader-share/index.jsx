@@ -59,10 +59,16 @@ class ReaderShare extends Component {
 
 	toggle = () => {
 		if ( ! this.state.showingMenu ) {
-			const actionName = this.props.isReblogSelection ? 'open_reader_reblog' : 'open_share';
-			const eventName = this.props.isReblogSelection ? 'Opened Reader Reblog' : 'Opened Share';
+			// Determine if we want to use reblog or share for stat/tracks names.
+			// If reblogging a comment, add comment to the reblog stat/tracks names.
+			const actionName = this.props.isReblogSelection
+				? `open_reader_${ this.props.comment ? 'comment_' : '' }reblog`
+				: 'open_share';
+			const eventName = this.props.isReblogSelection
+				? `Opened Reader ${ this.props.comment ? 'Comment ' : '' }Reblog`
+				: 'Opened Share';
 			const trackName = this.props.isReblogSelection
-				? 'calypso_reader_reblog_opened'
+				? `calypso_reader_${ this.props.comment ? 'comment_' : '' }reblog_opened`
 				: 'calypso_reader_share_opened';
 			stats.recordAction( actionName );
 			stats.recordGaEvent( eventName );
@@ -113,6 +119,7 @@ class ReaderShare extends Component {
 					onMouseEnter={ preloadEditor }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
+					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
 				>
 					{ ! this.props.isReblogSelection ? (
 						ReaderShareIcon( {

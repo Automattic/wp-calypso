@@ -60,6 +60,30 @@ const importerComponents = {
 const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
 
 /**
+ * Turns filesize into a range divided by 100MB, so that we dont'need to track specific filesizes in Tracks.
+ *
+ * For example:
+ * 0mb   = 0—100MB (1 chunk)
+ * 85mb   = 0—100MB (1 chunk)
+ * 100mb  = 100—200MB (2 chunks)
+ * 110mb  = 100—200MB (2 chunks)
+ * 350mb  = 300—400MB (4 chunks)
+ */
+const bytesToFilesizeRange = ( bytes ) => {
+	const megabytes = parseInt( bytes / ( 1024 * 1024 ) );
+	const maxChunk = 100;
+
+	// How many full chunks can fit into our megabytes?
+	const chunks = Math.floor( megabytes / maxChunk );
+
+	const min = chunks * 100;
+	const max = min + maxChunk;
+
+	// Range of mbs where the filesize fits
+	return `${ min }—${ max }MB`;
+};
+
+/**
  * The minimum version of the Jetpack plugin required to use the Jetpack Importer API.
  */
 const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.1';
@@ -95,7 +119,20 @@ class SectionImport extends Component {
 	handleStateChanges = () => {
 		this.props.siteImports.map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
-			this.trackImporterStateChange( importerState, importerId );
+			let eventProps = {};
+
+			// Log more info about upload failures
+			if ( importerState === appStates.UPLOAD_FAILURE ) {
+				eventProps = {
+					error_code: importItem.errorData.code,
+					error_type: importItem.errorData.type,
+					filesize_range: importItem.file?.size
+						? bytesToFilesizeRange( importItem.file.size )
+						: null,
+				};
+			}
+
+			this.trackImporterStateChange( importerState, importerId, eventProps );
 		} );
 	};
 
@@ -105,7 +142,7 @@ class SectionImport extends Component {
 			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
 	};
 
-	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
+	trackImporterStateChange = memoizeLast( ( importerState, importerId, eventProps = {} ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
 			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
@@ -119,6 +156,7 @@ class SectionImport extends Component {
 		if ( stateToEventNameMap[ importerState ] ) {
 			this.props.recordTracksEvent( stateToEventNameMap[ importerState ], {
 				importer_id: importerId,
+				...eventProps,
 			} );
 		}
 	} );

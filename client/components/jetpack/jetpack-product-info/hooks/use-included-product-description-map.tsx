@@ -11,6 +11,7 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_STATS_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -59,6 +60,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		const crmDescription = translate(
 			'Manage your sales funnel. Entrepreneur plan with 30 extensions.'
 		);
+		const statsDescription = translate( 'Simple, yet powerful stats to grow your site.' );
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, ProductDescription > = {
 			...setProductDescription(
@@ -103,6 +105,10 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 		const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, ProductDescription > = {
 			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
+
+			...setProductDescription( JETPACK_STATS_PRODUCTS, {
+				value: statsDescription,
+			} ),
 
 			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
 				value: antiSpamDescription,

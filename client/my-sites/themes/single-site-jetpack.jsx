@@ -9,9 +9,11 @@ import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
@@ -43,6 +45,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		filter,
 		getScreenshotOption,
 		isAtomic,
+		isPossibleJetpackConnectionProblem,
 		showWpcomThemesList,
 		search,
 		siteId,
@@ -103,6 +106,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 
+			{ isPossibleJetpackConnectionProblem && <JetpackConnectionHealthBanner siteId={ siteId } /> }
+
 			<ThemeShowcase
 				{ ...props }
 				upsellUrl={ upsellUrl() }
@@ -162,6 +167,7 @@ export default connect( ( state, { siteId, tier } ) => {
 		emptyContent: null,
 		isAtomic: isAtomicSite( state, siteId ),
 		isMultisite,
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),
 	};
 } )( ConnectedSingleSiteJetpack );

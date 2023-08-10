@@ -22,6 +22,8 @@ export default function ( router ) {
 	const showcaseRoutes = [
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?`,
 		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?`,
+		`/${ langParam }/themes/:category(all)?/:tier(free|premium|marketplace)?/filter/:filter`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
 		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
 	];

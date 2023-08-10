@@ -49,18 +49,24 @@ export default function PreinstalledPremiumPluginBrowserItemPricing( { plugin } 
 	return (
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-				{ ( { isFetching, price, period } ) =>
-					isFetching ? (
-						<div className="plugins-browser-item__pricing-placeholder">...</div>
-					) : (
-						<PreinstalledPremiumPluginPriceDisplay
-							className="plugins-browser-item__period"
-							period={ period }
-							pluginSlug={ plugin.slug }
-							price={ price }
-						/>
-					)
-				}
+				{ ( { isFetching, price, period } ) => {
+					if ( isFetching ) {
+						return <div className="plugins-browser-item__pricing-placeholder">...</div>;
+					}
+
+					if ( price ) {
+						return (
+							<PreinstalledPremiumPluginPriceDisplay
+								className="plugins-browser-item__period"
+								period={ period }
+								pluginSlug={ plugin.slug }
+								price={ price }
+							/>
+						);
+					}
+
+					return <>{ translate( 'Free' ) }</>;
+				} }
 			</PluginPrice>
 		</div>
 	);

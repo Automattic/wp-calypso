@@ -181,8 +181,8 @@ export const HelpCenterContactForm = () => {
 		supportSite = currentSite as HelpCenterSite;
 	}
 
-	const [ debouncedMessage ] = useDebounce( message || '', 5000 );
-	const [ debouncedSubject ] = useDebounce( subject || '', 5000 );
+	const [ debouncedMessage ] = useDebounce( message || '', 500 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -443,7 +443,7 @@ export const HelpCenterContactForm = () => {
 		siteId: '9619154',
 		query: jpSearchAiQueryText,
 		stopAt: 'response',
-		enabled: enableGPTResponse,
+		enabled: enableGPTResponse && showingGPTResponse,
 	} );
 
 	const isCTADisabled = () => {
@@ -453,7 +453,7 @@ export const HelpCenterContactForm = () => {
 
 		// We're prefetching the GPT response,
 		// so only disabling the button while fetching if we're on the response screen
-		if ( isFetchingGPTResponse && ! showingGPTResponse ) {
+		if ( showingGPTResponse && isFetchingGPTResponse ) {
 			return true;
 		}
 

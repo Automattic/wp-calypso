@@ -78,7 +78,6 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"newsletter/stats": true,
-		"onboarding-pm/free-free-modal": true,
 		"onboarding/import-light-url-screen": true,
 		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
@@ -87,6 +86,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plans/updated-storage-labels": true,
+		"plans/upgradeable-storage": false,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
@@ -146,7 +146,8 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/hosting-metrics-i1": false
+		"yolo/hosting-metrics-i1": false,
+		"yolo/jetpack-error-ux-i1": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

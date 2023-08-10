@@ -276,6 +276,9 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -301,34 +304,21 @@ import {
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import i18n, { TranslateResult } from 'i18n-calypso';
-import { MemoExoticComponent } from 'react';
+import i18n from 'i18n-calypso';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
 import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
+import type {
+	FeatureObject as FeatureObjectPackaged,
+	FeatureList as FeatureListPackaged,
+} from '@automattic/calypso-products';
 
-export type FeatureObject = {
-	getSlug: () => string;
-	getTitle: ( domainName?: string ) => TranslateResult;
-	getAlternativeTitle?: () => TranslateResult;
-	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
-	getHeader?: () => TranslateResult;
-	getDescription?: ( domainName?: string ) => TranslateResult;
-	getStoreSlug?: () => string;
-	getCompareTitle?: () => TranslateResult;
-	getCompareSubtitle?: () => TranslateResult;
-	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
-	isPlan?: boolean;
-	getFeatureGroup?: () => string;
-	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
-	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
-};
-export type FeatureList = {
-	[ key: string ]: FeatureObject;
-};
+export type FeatureObject = FeatureObjectPackaged;
+
+export type FeatureList = FeatureListPackaged;
 
 export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {
@@ -1760,6 +1750,38 @@ export const FEATURES_LIST: FeatureList = {
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for WooCommerce payment features', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for all payment features', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for regular payment features', {
+				args: { commission: 2 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '2%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
 	[ FEATURE_50GB_STORAGE_ADD_ON ]: {
 		getSlug: () => FEATURE_50GB_STORAGE_ADD_ON,
 		getUnitProductSlug: () => PRODUCT_1GB_SPACE,
@@ -2348,7 +2370,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Create, assign and list brands for products, and allow customers to view by brand.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_PRODUCT_ADD_ONS ]: {
@@ -2359,7 +2381,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ASSEMBLED_KITS ]: {
@@ -2370,7 +2392,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Give customers the freedom to build their own products utilizing your existing items.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_MIN_MAX_QTY ]: {
@@ -2379,7 +2401,7 @@ export const FEATURES_LIST: FeatureList = {
 
 		getDescription: () =>
 			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STOCK_NOTIFS ]: {
@@ -2388,7 +2410,7 @@ export const FEATURES_LIST: FeatureList = {
 
 		getDescription: () =>
 			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_DYNAMIC_UPSELLS ]: {
@@ -2399,7 +2421,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Earn more revenue with automated upsell and cross-sell product recommendations.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_LOYALTY_PROG ]: {
@@ -2410,7 +2432,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_MARKETING_AUTOMATION ]: {
@@ -2421,7 +2443,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Advanced email marketing functionality, including subscriber segmentation, advanced analytics, and automation.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_BULK_DISCOUNTS ]: {
@@ -2429,7 +2451,7 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
 
 		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY_MGMT ]: {
@@ -2468,7 +2490,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Get real-time shipping prices, print labels and give your customers tracking codes.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	/* END: 2023 Pricing Grid Features */

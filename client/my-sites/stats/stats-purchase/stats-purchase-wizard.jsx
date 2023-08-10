@@ -40,8 +40,18 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 	);
 };
 
-const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redirectUri, from } ) => {
-	const maxSliderPrice = commercialProduct.cost;
+const ProductCard = ( {
+	siteSlug,
+	siteId,
+	commercialProduct,
+	maxSliderPrice,
+	pwywProduct,
+	redirectUri,
+	from,
+	disableFreeProduct = false,
+	initialStep = SCREEN_TYPE_SELECTION,
+	initialSiteType = TYPE_PERSONAL,
+} ) => {
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
@@ -51,8 +61,8 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
 	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
-	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
-	const [ siteType, setSiteType ] = useState( null );
+	const [ wizardStep, setWizardStep ] = useState( initialStep );
+	const [ siteType, setSiteType ] = useState( initialSiteType );
 	const translate = useTranslate();
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -173,6 +183,7 @@ const ProductCard = ( { siteSlug, siteId, commercialProduct, pwywProduct, redire
 											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
 											sliderSettings={ {
+												minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
 												sliderStepPrice,
 												maxSliderPrice,
 												uiEmojiHeartTier,
@@ -221,21 +232,36 @@ const StatsPurchaseWizard = ( {
 	siteSlug,
 	siteId,
 	commercialProduct,
+	maxSliderPrice,
 	pwywProduct,
 	redirectUri,
 	from,
+	disableFreeProduct,
+	initialStep,
+	initialSiteType,
 } ) => {
-	// redirectTo is a relative URI.
 	return (
 		<ProductCard
 			siteSlug={ siteSlug }
 			siteId={ siteId }
 			commercialProduct={ commercialProduct }
+			maxSliderPrice={ maxSliderPrice }
 			pwywProduct={ pwywProduct }
 			redirectUri={ redirectUri }
 			from={ from }
+			disableFreeProduct={ disableFreeProduct }
+			initialStep={ initialStep }
+			initialSiteType={ initialSiteType }
 		/>
 	);
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, MIN_STEP_SPLITS };
+export {
+	StatsPurchaseWizard as default,
+	COMPONENT_CLASS_NAME,
+	MIN_STEP_SPLITS,
+	SCREEN_TYPE_SELECTION,
+	SCREEN_PURCHASE,
+	TYPE_PERSONAL,
+	TYPE_COMMERCIAL,
+};

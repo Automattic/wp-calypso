@@ -11,7 +11,7 @@
 	border-top: none;
 	display: flex;
 	flex-wrap: wrap;
-	padding: 16px;
+	padding: 16px 0;
 	width: 100%;
 	margin: 0;
 	color: var(--color-text);
@@ -60,6 +60,11 @@
 
 .checklist-item__task-content[data-task="verify_email"] {
 	color: var(--color-text);
+}
+
+.checklist-item__task-content[data-task="set_up_payments"] .badge {
+	background-color: var(--studio-green-5);
+	cursor: default;
 }
 
 .checklist-item__checkmark-container {
@@ -157,6 +162,10 @@
 	// change badge color on hover (Choose a Plan step)
 	.badge {
 		background: var(--studio-blue-10);
+	}
+
+	.checklist-item__task-content[data-task="set_up_payments"] .badge {
+		background-color: var(--studio-green-5);
 	}
 }
 
