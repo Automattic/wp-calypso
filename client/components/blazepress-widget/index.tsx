@@ -177,7 +177,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							<h1>{ translate( 'Are you sure you want to quit?' ) }</h1>
 							<p>
 								{ translate(
-									'If quit, all of the work that has been done during this session will be lost.'
+									'If you quit, all of the work that has been done during this session will be lost.'
 								) }
 							</p>
 						</Dialog>
