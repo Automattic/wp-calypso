@@ -30,7 +30,7 @@ export const fetchDomainRedirect = ( domain ) => ( dispatch ) => {
 				targetHost: target_host,
 				targetPath: target_path,
 				forwardPaths: forward_paths,
-				is_secure: is_secure ? true : false,
+				isSecure: is_secure !== '0' ? true : false,
 			} );
 		},
 		( error ) => {

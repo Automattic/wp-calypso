@@ -20,14 +20,16 @@ import './style.scss';
 interface DomainRedirectCardProps {
 	domainName: string;
 	redirect?: ReturnType< typeof getDomainRedirect >;
-	targetUrl?: string;
+	target?: string;
 }
 
 type PropsFromRedux = ConnectedProps< typeof connector >;
 
 const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) => {
-	const [ targetUrl, setTargetUrl ] = useState( '' );
-	const [ protocol, setProtocol ] = useState( props.redirect.secure ? 'https' : 'http' );
+	const { redirect, target } = props;
+	const { isUpdating, isFetching, isFetched } = redirect;
+	const [ targetUrl, setTargetUrl ] = useState( target ?? '' );
+	const [ protocol, setProtocol ] = useState( redirect.isSecure ? 'https' : 'http' );
 	const { domainName, fetchDomainRedirect, closeDomainRedirectNotice } = props;
 
 	useEffect( () => {
@@ -37,6 +39,13 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 		};
 	}, [ domainName, fetchDomainRedirect, closeDomainRedirectNotice ] );
 
+	useEffect( () => {
+		if ( isFetched && ! isUpdating ) {
+			setTargetUrl( target ?? '' );
+			setProtocol( redirect.isSecure ? 'https' : 'http' );
+		}
+	}, [ isFetched, isUpdating, target, redirect ] );
+
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
 	};
@@ -45,13 +54,13 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 		event.preventDefault();
 		let targetHost = '';
 		let targetPath = '';
-		let secure = true;
+		let isSecure = true;
 		try {
 			const url = new URL( protocol + '://' + targetUrl, 'https://_invalid_.domain' );
 			if ( url.origin !== 'https://_invalid_.domain' ) {
 				targetHost = url.hostname;
 				targetPath = url.pathname + url.search + url.hash;
-				secure = url.protocol === 'https:';
+				isSecure = url.protocol === 'https:';
 			}
 		} catch ( e ) {
 			// ignore
@@ -63,7 +72,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 				targetHost,
 				targetPath,
 				null, // forwardPaths not supported yet
-				secure
+				isSecure
 			)
 			.then( ( success: boolean ) => {
 				if ( success ) {
@@ -82,8 +91,6 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
 		setProtocol( event.currentTarget.value );
 	};
-	const { redirect } = props;
-	const { isUpdating, isFetching } = redirect;
 	const prefix = (
 		<>
 			<FormSelect
@@ -91,6 +98,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 				id="protocol-type"
 				value={ protocol }
 				onChange={ handleChangeProtocol }
+				disabled={ isFetching || isUpdating }
 			>
 				<option value="https">https://</option>
 				<option value="http">http://</option>
@@ -107,7 +115,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					noWrap
 					onChange={ handleChange }
 					prefix={ prefix }
-					value={ targetUrl || props.targetUrl }
+					value={ targetUrl }
 					id="domain-redirect__input"
 				/>
 
@@ -133,8 +141,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 				disabled={
 					isFetching ||
 					isUpdating ||
-					( props.redirect?.targetUrl === targetUrl &&
-						( props.redirect?.secure ? 'https' : 'http' ) === protocol )
+					( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
 				}
 			>
 				{ translate( 'Update' ) }
@@ -146,22 +153,22 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 const connector = connect(
 	( state, ownProps: DomainRedirectCardProps ) => {
 		const redirect = getDomainRedirect( state, ownProps.domainName );
-		let targetUrl = '';
+		let target = '';
 		try {
 			const path = redirect?.targetPath ?? '';
 			const origin =
-				( redirect?.secure === false ? 'http://' : 'https://' ) +
+				( redirect?.isSecure === false ? 'http://' : 'https://' ) +
 				( redirect?.targetHost ?? '_invalid_.domain' );
 			const url = new URL( path, origin );
 			if ( url.hostname !== '_invalid_.domain' ) {
-				targetUrl =
+				target =
 					url.hostname + ( url.pathname === '/' ? '' : url.pathname ) + url.search + url.hash;
 			}
 		} catch ( e ) {
 			// ignore
 		}
 
-		return { redirect, targetUrl };
+		return { redirect, target };
 	},
 	{
 		fetchDomainRedirect,
