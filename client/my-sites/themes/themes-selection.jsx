@@ -442,7 +442,8 @@ class ThemesSelectionWithPage extends React.Component {
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
 			nextProps.filter !== this.props.filter ||
-			nextProps.vertical !== this.props.vertical
+			nextProps.vertical !== this.props.vertical ||
+			nextProps.tabFilter !== this.props.tabFilter
 		) {
 			this.resetPage();
 		}

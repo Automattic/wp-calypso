@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
+import { getNewsletterCategoriesKey } from './use-newsletter-categories-query';
 
 type MarkAsNewsletterCategoryResponse = {
 	success: boolean;
@@ -7,7 +8,7 @@ type MarkAsNewsletterCategoryResponse = {
 
 const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 	const queryClient = useQueryClient();
-	const cacheKey = [ `newsletter-categories-${ siteId }` ];
+	const cacheKey = getNewsletterCategoriesKey( siteId );
 	return useMutation( {
 		mutationFn: async ( id: number ) => {
 			if ( ! id ) {

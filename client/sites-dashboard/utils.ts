@@ -1,4 +1,7 @@
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 
 export const TRACK_SOURCE_NAME = 'sites-dashboard';
@@ -53,6 +56,10 @@ export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
 
 export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
+};
+
+export const isECommerceTrialSite = ( site: SiteExcerptNetworkData ) => {
+	return site?.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

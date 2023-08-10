@@ -41,6 +41,10 @@ interface LaunchpadResponse {
 
 type LaunchpadUpdateSettings = {
 	checklist_statuses?: Record< string, boolean >;
+	is_checklist_dismissed?: {
+		slug: string;
+		is_dismissed: boolean;
+	};
 };
 
 export const fetchLaunchpad = (
@@ -86,7 +90,7 @@ export const useLaunchpad = (
 };
 
 export const updateLaunchpadSettings = (
-	siteSlug: string | null,
+	siteSlug: string | number,
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = encodeURIComponent( siteSlug as string );

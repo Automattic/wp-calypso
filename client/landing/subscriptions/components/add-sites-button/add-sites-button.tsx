@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import './styles.scss';
 import { AddSitesModal } from 'calypso/landing/subscriptions/components/add-sites-modal';
+import './styles.scss';
 
 const AddSitesButton = () => {
 	const translate = useTranslate();
@@ -20,7 +20,8 @@ const AddSitesButton = () => {
 				className="subscriptions-add-sites__button"
 				onClick={ () => setIsAddSitesModalVisible( true ) }
 			>
-				{ translate( 'Add sites' ) }
+				<Gridicon className="subscriptions-add-sites__button-icon" icon="plus" size={ 24 } />
+				<span className="subscriptions-add-sites__button-text">{ translate( 'Add a site' ) }</span>
 			</Button>
 			<AddSitesModal
 				showModal={ isAddSitesModalVisible }
