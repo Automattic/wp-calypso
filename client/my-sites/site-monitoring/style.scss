@@ -23,8 +23,9 @@
 	}
 }
 
-.site-monitoring__formatted-header {
+.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
 	position: relative;
+	padding-bottom: 24px;
 	& ::before {
 		content: "";
 		display: block;
