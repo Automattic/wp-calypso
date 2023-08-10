@@ -3,7 +3,6 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
-	PRODUCT_JETPACK_STATS_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
@@ -12,6 +11,7 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_STATS_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -106,7 +106,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, ProductDescription > = {
 			...INCLUDED_PRODUCT_DESCRIPTION_T1_MAP,
 
-			...setProductDescription( [ PRODUCT_JETPACK_STATS_MONTHLY ], {
+			...setProductDescription( JETPACK_STATS_PRODUCTS, {
 				value: statsDescription,
 			} ),
 
