@@ -5,11 +5,13 @@ import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import React, { useState } from 'react';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
 import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -20,11 +22,14 @@ interface Props {
 	user: UserData;
 	site: SiteDetails;
 	siteSlug: SiteSlug;
+	flowName: string;
+	stepName: string;
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
 }
 const TrialPlan = function ( props: Props ) {
 	const { __ } = useI18n();
-	const { user, site, siteSlug, submit } = props;
+	const urlQueryParams = useQuery();
+	const { user, site, siteSlug, flowName, stepName, submit } = props;
 	const [ showPlanFeaturesModal, setShowPlanFeaturesModal ] = useState( false );
 	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
 		useCheckEligibilityMigrationTrialPlan( site?.ID );
@@ -48,7 +53,13 @@ const TrialPlan = function ( props: Props ) {
 	}
 
 	function navigateToCheckoutPage() {
-		submit?.( { action: 'checkout', checkoutUrl } );
+		const returnUrl = `/setup/${ flowName }/${ stepName }?${ urlQueryParams.toString() }`;
+		const preparedCheckoutUrl = addQueryArgs( checkoutUrl, {
+			redirect_to: returnUrl,
+			cancel_to: returnUrl,
+		} );
+
+		submit?.( { action: 'checkout', checkoutUrl: preparedCheckoutUrl } );
 	}
 
 	function onStartTrialClick() {

@@ -9,7 +9,7 @@ import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/ty
 import type { UserData } from 'calypso/lib/user/user';
 import './style.scss';
 
-const MigrationTrial: Step = function MigrationTrial( { navigation } ) {
+const MigrationTrial: Step = function MigrationTrial( { navigation, flow, stepName } ) {
 	const site = useSite();
 	const siteSlug = useSiteSlug();
 	const user = useSelector( getCurrentUser ) as UserData;
@@ -29,7 +29,14 @@ const MigrationTrial: Step = function MigrationTrial( { navigation } ) {
 			goBack={ goBack }
 			isWideLayout={ false }
 			stepContent={
-				<TrialPlan user={ user } site={ site } siteSlug={ siteSlug } submit={ submit } />
+				<TrialPlan
+					user={ user }
+					site={ site }
+					siteSlug={ siteSlug }
+					flowName={ flow }
+					stepName={ stepName }
+					submit={ submit }
+				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
