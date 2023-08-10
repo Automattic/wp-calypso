@@ -324,7 +324,7 @@ class PostCommentList extends Component {
 									className="comments__open-post"
 									onClick={ this.props.openPostPageAtComments }
 								>
-									{ '• ' + translate( 'view all comments on the full post' ) }
+									{ '• ' + translate( 'view more comments on the full post' ) }
 								</button>
 							) }
 						</>
