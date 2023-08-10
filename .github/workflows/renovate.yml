@@ -106,9 +106,9 @@ jobs:
           tar -czvf $cache_archive -C $cache_dir .
 
       - uses: actions/upload-artifact@v3
+        if: github.event.inputs.repoCache != 'disabled'
         with:
           name: renovate-cache
-          if: github.event.inputs.repoCache != 'disabled'
           path: ${{ env.cache_archive }}
           # Since this is created frequently, we don't need to keep it for long.
           retention-days: 1
