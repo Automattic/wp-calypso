@@ -56,14 +56,6 @@ jobs:
         run: |
           curl --no-progress-meter --header "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit
 
-      # - name: Renovate Cache
-      #   id: renovate-cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     # This is used internally by renovate. Note that Renovate doesn't have permissions to use a directory we create ourselves.
-      #     path: /tmp/renovate/cache/renovate
-      #     # Renovate should handle cache invalidation itself, but we can bust the cache here manually if needed.
-      #     key: gandalf-3
       - uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
         with:
@@ -80,11 +72,11 @@ jobs:
           tar -xzvf $cache_archive $cache_dir
           rm $cache_archive
           ls -l $cache_dir
+          # Unfortunately, the permissions expected within renovate's docker container
+          # are different than the ones given after the cache is restored. We have to
+          # change ownership to solve this.
           sudo chown -R runneradmin:root /tmp/renovate/
           ls -l $cache_dir
-      # Unfortunately, the permissions expected within renovate's docker container
-      # are different than the ones given after the cache is restored. We have to
-      # change ownership to solve this.
 
       - uses: renovatebot/github-action@v39.0.1
         with:
