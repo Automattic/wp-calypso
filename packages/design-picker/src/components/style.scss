@@ -24,12 +24,14 @@
 
 	.design-picker__filters {
 		display: flex;
+		justify-content: space-between;
 
 		.design-picker__category-filter {
-			flex: 1;
+			flex: 0.85;
 		}
 
 		.design-picker__design-your-own-button {
+			flex-shrink: 0;
 			height: 32px;
 			line-height: 14px;
 			margin-top: 9px;
