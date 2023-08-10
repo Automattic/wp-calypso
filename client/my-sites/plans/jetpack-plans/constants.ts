@@ -41,12 +41,12 @@ import {
 	JETPACK_SECURITY_T1_PLANS,
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
-import { PRODUCT_JETPACK_STATS_YEARLY } from './../../../../packages/calypso-products/src/constants/jetpack';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug, JetpackPurchasableItemSlug } from '@automattic/calypso-products';
