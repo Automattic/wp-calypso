@@ -64,13 +64,14 @@ jobs:
 
       - name: Uncompress renovate cache
         run: |
+          set -x
           mv "cache-download/$cache_archive" $cache_archive
           if [ ! -f $cache_archive ] ; then
             echo "No cache found."
             exit 0
           fi
           mkdir -p $cache_dir
-          tar -xzvf $cache_archive -C $cache_dir
+          tar -xzf $cache_archive -C $cache_dir
           rm $cache_archive
           ls -l $cache_dir
           # Unfortunately, the permissions expected within renovate's docker container
