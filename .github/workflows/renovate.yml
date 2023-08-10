@@ -73,12 +73,10 @@ jobs:
           mkdir -p $cache_dir
           tar -xzf $cache_archive -C $cache_dir
           rm $cache_archive
-          ls -l $cache_dir
           # Unfortunately, the permissions expected within renovate's docker container
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
           sudo chown -R runneradmin:root /tmp/renovate/
-          ls -l $cache_dir
 
       - uses: renovatebot/github-action@v39.0.1
         with:
@@ -91,7 +89,7 @@ jobs:
           RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
 
       - name: Compress renovate cache
-        run: tar -czvf $cache_archive $cache_dir
+        run: ls $cache_dir && tar -czvf $cache_archive $cache_dir
 
       - uses: actions/upload-artifact@v3
         with:
