@@ -5,6 +5,11 @@ import { render, screen } from '@testing-library/react';
 import { RegistrantExtraInfoUkForm } from '../uk-form';
 
 jest.mock( '@automattic/components', () => ( {
+	FormLabel: ( { children } ) => (
+		<div data-testid="test-label" key={ children }>
+			{ children }
+		</div>
+	),
 	FormInputValidation: ( { text } ) => <div data-testid="test-validation">{ text }</div>,
 } ) );
 
