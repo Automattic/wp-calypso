@@ -336,14 +336,14 @@ class Plans extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isMigrationTrial, isWooExpressPlan } ) {
+	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
 		if ( isWooExpressPlan ) {
 			return this.renderWooExpressPlansPage();
 		}
-		if ( isMigrationTrial ) {
+		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
 		}
 		return this.renderPlansMain();
@@ -372,7 +372,7 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-		const isMigrationTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+		const isBusinessTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
 		const isWooExpressPlan = [
 			PLAN_WOOEXPRESS_MEDIUM,
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -451,7 +451,7 @@ class Plans extends Component {
 								) }
 								{ this.renderMainContent( {
 									isEcommerceTrial,
-									isMigrationTrial,
+									isBusinessTrial,
 									isWooExpressPlan,
 								} ) }
 								<PerformanceTrackerStop />
