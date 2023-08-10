@@ -108,7 +108,6 @@ class SignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
-		loginUrl: PropTypes.string,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -836,30 +835,37 @@ class SignupForm extends Component {
 			);
 		}
 
-		const tosText = this.props.translate(
-			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
-				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			{
-				components: {
-					tosLink: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							onClick={ this.handleTosClick }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					privacyLink: (
-						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							onClick={ this.handlePrivacyClick }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
+		const options = {
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						onClick={ this.handleTosClick }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						onClick={ this.handlePrivacyClick }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		};
+		let tosText = this.props.translate(
+			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			options
 		);
+
+		if ( this.props.isGravatar ) {
+			tosText = this.props.translate(
+				'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				options
+			);
+		}
 
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
@@ -1157,7 +1163,10 @@ class SignupForm extends Component {
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
-		if ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) {
+		if (
+			( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) ||
+			this.props.isGravatar
+		) {
 			const logInUrl = this.getLoginLink();
 
 			return (
@@ -1177,24 +1186,36 @@ class SignupForm extends Component {
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
+						inputLabel={ this.props.translate(
+							'Provide your email address and we will send you a magic link to log in.'
+						) }
+						inputPlaceholder={ this.props.translate( 'Enter your email address' ) }
+						submitButtonLabel={ this.props.translate( 'Continue' ) }
+						submitButtonLoadingLabel={ this.props.translate( 'Continue' ) }
 					/>
 
-					{ showSeparator && (
-						<div className="signup-form__separator">
-							<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-						</div>
-					) }
+					{ ! this.props.isGravatar && (
+						<>
+							{ showSeparator && (
+								<div className="signup-form__separator">
+									<div className="signup-form__separator-text">
+										{ this.props.translate( 'or' ) }
+									</div>
+								</div>
+							) }
 
-					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
-						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							isReskinned={ this.props.isReskinned }
-							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
-						/>
+							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+								<SocialSignupForm
+									handleResponse={ this.props.handleSocialResponse }
+									socialService={ this.props.socialService }
+									socialServiceResponse={ this.props.socialServiceResponse }
+									isReskinned={ this.props.isReskinned }
+									redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
+								/>
+							) }
+							{ this.props.footerLink || this.footerLink() }
+						</>
 					) }
-					{ this.props.footerLink || this.footerLink() }
 				</div>
 			);
 		}
@@ -1232,9 +1253,8 @@ class SignupForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							isReskinned={ this.props.isReskinned }
 							flowName={ this.props.flowName }
-							compact={ this.props.isWoo || isGravatarOAuth2Client( this.props.oauth2Client ) }
+							compact={ this.props.isWoo }
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
-							loginUrl={ this.props.loginUrl }
 						/>
 					</Fragment>
 				) }
@@ -1271,6 +1291,7 @@ export default connect(
 			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
+			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 		};
 	},
 	{

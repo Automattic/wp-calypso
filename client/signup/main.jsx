@@ -391,7 +391,8 @@ class Signup extends Component {
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		if (
 			isWooOAuth2Client( this.props.oauth2Client ) ||
-			'videopress-account' === this.props.flowName
+			'videopress-account' === this.props.flowName ||
+			this.props.isGravatar
 		) {
 			// We don't want to show the loading screen for the Woo signup and videopress-account flow.
 			return;
@@ -784,10 +785,7 @@ class Signup extends Component {
 			};
 		}
 
-		const stepClassName =
-			this.props.stepName === 'user-hosting' || this.props.isGravatar
-				? 'user'
-				: this.props.stepName;
+		const stepClassName = this.props.stepName === 'user-hosting' ? 'user' : this.props.stepName;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -863,7 +861,7 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const isReskinned = isReskinnedFlow( this.props.flowName ) || this.props.isGravatar;
+		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
 
 		return (

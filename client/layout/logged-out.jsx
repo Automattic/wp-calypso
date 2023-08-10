@@ -110,7 +110,10 @@ const LayoutLoggedOut = ( {
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		} else if (
+			( isWooOAuth2Client( oauth2Client ) && wccomFrom ) ||
+			( isGravatar && sectionName === 'signup' )
+		) {
 			masterbar = null;
 		} else {
 			if ( ! isGravatar ) {
@@ -212,7 +215,9 @@ const LayoutLoggedOut = ( {
 				/>
 			) }
 
-			{ isGravatar && <PoweredByWPFooter clientTitle={ oauth2Client.title } /> }
+			{ isGravatar && sectionName !== 'signup' && (
+				<PoweredByWPFooter clientTitle={ oauth2Client.title } />
+			) }
 		</div>
 	);
 };

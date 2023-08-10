@@ -20,6 +20,8 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
+		inputLabel: PropTypes.string,
+		inputPlaceholder: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -71,15 +73,22 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
+		const { flowName, queryArgs = {} } = this.props;
+		const { oauth2_client_id, oauth2_redirect } = queryArgs;
+
 		try {
 			const response = await wpcom.req.post( '/users/new', {
 				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 				is_passwordless: true,
-				signup_flow_name: this.props.flowName,
+				signup_flow_name: flowName,
 				validate: false,
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
+				...( flowName === 'wpcc' && {
+					oauth2_client_id,
+					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
+				} ),
 			} );
 			this.createAccountCallback( null, response );
 		} catch ( err ) {
@@ -100,7 +109,6 @@ class PasswordlessSignupForm extends Component {
 
 		this.setState( {
 			errorMessages: null,
-			isSubmitting: false,
 		} );
 
 		const username =
@@ -116,11 +124,12 @@ class PasswordlessSignupForm extends Component {
 		};
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
-		const redirect = this.props.queryArgs?.redirect_to;
+		const { flowName, queryArgs = {} } = this.props;
+		const { redirect_to, oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		recordRegistration( {
 			userData,
-			flow: this.props.flowName,
+			flow: flowName,
 			type: 'passwordless',
 		} );
 
@@ -128,7 +137,9 @@ class PasswordlessSignupForm extends Component {
 			username,
 			marketing_price_group,
 			bearer_token: response.bearer_token,
-			redirect,
+			...( flowName === 'wpcc'
+				? { oauth2_client_id, oauth2_redirect }
+				: { redirect: redirect_to } ),
 		} );
 	};
 
@@ -212,8 +223,9 @@ class PasswordlessSignupForm extends Component {
 			);
 		}
 		const submitButtonText = isSubmitting
-			? this.props.translate( 'Creating Your Account…' )
-			: this.props.translate( 'Create your account' );
+			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
+			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
+
 		return (
 			<LoggedOutFormFooter>
 				<Button
@@ -229,14 +241,16 @@ class PasswordlessSignupForm extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { inputLabel, translate } = this.props;
 		const { errorMessages, isSubmitting } = this.state;
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="email">{ translate( 'Enter your email address' ) }</FormLabel>
+						<FormLabel htmlFor="email">
+							{ inputLabel || translate( 'Enter your email address' ) }
+						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							className="signup-form__passwordless-email"
@@ -245,6 +259,7 @@ class PasswordlessSignupForm extends Component {
 							value={ this.state.email }
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
+							placeholder={ this.props.inputPlaceholder }
 						/>
 					</ValidationFieldset>
 					{ this.props.renderTerms() }
