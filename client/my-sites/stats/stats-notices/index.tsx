@@ -2,10 +2,12 @@ import config from '@automattic/calypso-config';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
@@ -132,6 +134,18 @@ export default function StatsNotices( {
 	isOdysseyStats,
 	statsPurchaseSuccess,
 }: StatsNoticesProps ) {
+	const statsAdminVersion = useSelector( ( state: object ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const supportNewStatsNotices =
+		! isOdysseyStats ||
+		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
+
+	if ( ! supportNewStatsNotices ) {
+		return null;
+	}
+
 	return (
 		<>
 			<PostPurchaseNotices
