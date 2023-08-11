@@ -94,16 +94,16 @@
 		// Post table
 		.post-item__post-promote-button {
 			color: var(--color-accent) !important;
-			border: 1.5px solid var(--color-accent);
+			border: 1.5px solid var(--color-accent) !important;
 			border-radius: 4px;
 			font-weight: 600;
 			font-size: 0.75rem;
-			background-color: var(--color-surface);
+			background-color: var(--color-surface) !important;
 
 			&:hover {
 				text-decoration: underline;
-				color: var(--color-accent);
-				background-color: var(--color-surface);
+				color: var(--color-accent) !important;
+				background-color: var(--color-surface) !important;
 			}
 		}
 
