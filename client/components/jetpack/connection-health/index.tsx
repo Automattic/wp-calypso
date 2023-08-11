@@ -40,7 +40,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	if ( jetpackConnectionHealth?.error === DNS_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ DNS_ERROR }
+				errorType={ jetpackConnectionHealth?.error }
 				errorText={ translate(
 					"Jetpack is unable to connect to your domain. Please update your domain's DNS records so they're pointed properly to your site."
 				) }
@@ -55,7 +55,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	if ( jetpackConnectionHealth?.error === FATAL_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ FATAL_ERROR }
+				errorType={ jetpackConnectionHealth?.error }
 				errorText={ translate(
 					"Jetpack is unable to communicate with your site due to a critical error that has occurred there. Please check your site admin's email inbox for instructions."
 				) }
@@ -70,7 +70,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	if ( [ USER_TOKEN_ERROR, BLOG_TOKEN_ERROR ].includes( jetpackConnectionHealth?.error ) ) {
 		return (
 			<ErrorNotice
-				errorType={ FATAL_ERROR }
+				errorType={ jetpackConnectionHealth?.error }
 				errorText={ translate(
 					'Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack.'
 				) }
@@ -85,7 +85,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	if ( jetpackConnectionHealth?.error === HTTP_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ HTTP_ERROR }
+				errorType={ jetpackConnectionHealth?.error }
 				errorText={ translate(
 					'Jetpack is unable to communicate with your site due to a HTTP connection error. Please ensure that your site serves requests.'
 				) }
