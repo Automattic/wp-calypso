@@ -104,7 +104,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'We are unable to communicate with your site because Jetpack is deactivated.'
+					'We are unable to communicate with your site because the Jetpack plugin is deactivated.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
