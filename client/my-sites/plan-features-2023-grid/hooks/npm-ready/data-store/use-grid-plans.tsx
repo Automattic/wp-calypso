@@ -103,6 +103,7 @@ export type PlansIntent =
 	| 'plans-import'
 	| 'plans-woocommerce'
 	| 'plans-default-wpcom'
+	| 'plans-business-trial'
 	| 'default';
 
 interface Props {
@@ -191,6 +192,12 @@ const usePlanTypesWithIntent = ( {
 				TYPE_PREMIUM,
 				TYPE_BUSINESS,
 				TYPE_ECOMMERCE,
+				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+			];
+			break;
+		case 'plans-business-trial':
+			planTypes = [
+				TYPE_BUSINESS,
 				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 			];
 			break;

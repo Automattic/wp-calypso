@@ -47,6 +47,11 @@
 		> * {
 			z-index: 2;
 		}
+
+		img,
+		svg {
+			min-width: 400px;
+		}
 	}
 
 	.stats-purchase-wizard__card-inner--right-background {

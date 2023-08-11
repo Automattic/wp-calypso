@@ -41,6 +41,10 @@ interface LaunchpadResponse {
 
 type LaunchpadUpdateSettings = {
 	checklist_statuses?: Record< string, boolean >;
+	is_checklist_dismissed?: {
+		slug: string;
+		is_dismissed: boolean;
+	};
 };
 
 export const fetchLaunchpad = (

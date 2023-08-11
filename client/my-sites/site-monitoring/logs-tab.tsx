@@ -1,9 +1,11 @@
+import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
+import { useInterval } from 'calypso/lib/interval';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTable } from './components/site-logs-table';
@@ -26,6 +28,8 @@ export const LogsTab = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
 
+	const [ autoRefresh, setAutoRefresh ] = useState( false );
+
 	const getLatestDateRange = useCallback( () => {
 		const startTime = moment().subtract( 7, 'd' );
 		const endTime = moment();
@@ -43,6 +47,12 @@ export const LogsTab = ( {
 
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
 
+	const autoRefreshCallback = useCallback( () => {
+		setDateRange( getLatestDateRange() );
+		setCurrentPageIndex( 0 );
+	}, [ getLatestDateRange ] );
+	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
+
 	const { data, isInitialLoading, isFetching } = useSiteLogsQuery( siteId, {
 		logType,
 		start: dateRange.startTime.unix(),
@@ -51,6 +61,18 @@ export const LogsTab = ( {
 		pageSize,
 		pageIndex: currentPageIndex,
 	} );
+
+	const handleAutoRefreshClick = ( isChecked: boolean ) => {
+		if ( isChecked ) {
+			setDateRange( getLatestDateRange() );
+			updateDateRangeQueryParam( null );
+			setCurrentPageIndex( 0 );
+		} else {
+			updateDateRangeQueryParam( dateRange );
+		}
+
+		setAutoRefresh( isChecked );
+	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
 		if ( isInitialLoading ) {
@@ -66,6 +88,8 @@ export const LogsTab = ( {
 		) {
 			setCurrentPageIndex( currentPageIndex + 1 );
 		}
+
+		setAutoRefresh( false );
 	};
 
 	const paginationText =
@@ -87,6 +111,7 @@ export const LogsTab = ( {
 		}
 
 		setDateRange( { startTime, endTime } );
+		setAutoRefresh( false );
 		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
@@ -97,7 +122,14 @@ export const LogsTab = ( {
 				startDateTime={ dateRange.startTime }
 				endDateTime={ dateRange.endTime }
 				onDateTimeChange={ handleDateTimeChange }
-			/>
+			>
+				<ToggleControl
+					className="site-logs__auto-refresh"
+					label={ __( 'Auto-refresh' ) }
+					checked={ autoRefresh }
+					onChange={ handleAutoRefreshClick }
+				/>
+			</SiteLogsToolbar>
 			<SiteLogsTable logs={ data?.logs } logType={ logType } isLoading={ isFetching } />
 			{ paginationText && (
 				<div className="site-monitoring__pagination-text">{ paginationText }</div>

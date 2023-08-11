@@ -1406,7 +1406,6 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 		translate( 'Brute force attack protection' ),
 		translate( 'Downtime monitoring' ),
 		translate( 'CDN (Content Delivery Networks)' ),
-		translate( 'Stats' ),
 	];
 
 	return {
