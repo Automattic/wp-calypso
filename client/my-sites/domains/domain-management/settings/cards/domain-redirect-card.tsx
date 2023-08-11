@@ -105,9 +105,11 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 
 	const handleDelete = () => {
 		if ( ! redirect?.domainRedirectId || ! redirect?.targetHost ) {
-			setTargetUrl( withoutHttp( '' ) );
 			return;
 		}
+
+		setTargetUrl( '' );
+
 		props
 			.deleteDomainRedirect( props.domainName, redirect.domainRedirectId )
 			.then( ( success: boolean ) => {
@@ -145,7 +147,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 
 	const suffix = (
 		<Button
-			disabled={ isFetching || isUpdating }
+			disabled={ isFetching || isUpdating || ( targetUrl === '' && props.targetUrl === '' ) }
 			className="domain-redirect-card__delete"
 			onClick={ handleDelete }
 		>
