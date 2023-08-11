@@ -39,10 +39,12 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return;
 	}
 
-	if ( jetpackConnectionHealth?.error === DNS_ERROR ) {
+	const errorType = jetpackConnectionHealth?.error ?? '';
+
+	if ( errorType === DNS_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ jetpackConnectionHealth?.error }
+				errorType={ errorType }
 				errorText={ translate(
 					"Jetpack is unable to connect to your domain. Please update your domain's DNS records so they're pointed properly to your site."
 				) }
@@ -54,10 +56,10 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		);
 	}
 
-	if ( jetpackConnectionHealth?.error === FATAL_ERROR ) {
+	if ( errorType === FATAL_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ jetpackConnectionHealth?.error }
+				errorType={ errorType }
 				errorText={ translate(
 					"Jetpack is unable to communicate with your site due to a critical error that has occurred there. Please check your site admin's email inbox for instructions."
 				) }
@@ -69,10 +71,10 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		);
 	}
 
-	if ( [ USER_TOKEN_ERROR, BLOG_TOKEN_ERROR ].includes( jetpackConnectionHealth?.error ) ) {
+	if ( [ USER_TOKEN_ERROR, BLOG_TOKEN_ERROR ].includes( errorType ) ) {
 		return (
 			<ErrorNotice
-				errorType={ jetpackConnectionHealth?.error }
+				errorType={ errorType }
 				errorText={ translate(
 					'Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack.'
 				) }
@@ -84,10 +86,10 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		);
 	}
 
-	if ( jetpackConnectionHealth?.error === HTTP_ERROR ) {
+	if ( errorType === HTTP_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ jetpackConnectionHealth?.error }
+				errorType={ errorType }
 				errorText={ translate(
 					'Jetpack is unable to communicate with your site due to a HTTP connection error. Please ensure that your site serves requests.'
 				) }
@@ -97,10 +99,10 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		);
 	}
 
-	if ( jetpackConnectionHealth?.error === PLUGIN_ERROR ) {
+	if ( errorType === PLUGIN_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ jetpackConnectionHealth?.error }
+				errorType={ errorType }
 				errorText={ translate(
 					'Jetpack is unable to communicate with your site due to an inactive Jetpack plugin. Please ensure that Jetpack plugin is active and reconnect Jetpack.'
 				) }
@@ -112,10 +114,10 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		);
 	}
 
-	if ( jetpackConnectionHealth?.error === GENERIC_ERROR ) {
+	if ( errorType === GENERIC_ERROR ) {
 		return (
 			<ErrorNotice
-				errorType={ jetpackConnectionHealth?.error }
+				errorType={ errorType }
 				errorText={ translate(
 					'Jetpack is unable to communicate with your site. Please contact site administrator.'
 				) }
