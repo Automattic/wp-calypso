@@ -7,6 +7,9 @@ import {
 	DOMAINS_REDIRECT_UPDATE,
 	DOMAINS_REDIRECT_UPDATE_COMPLETED,
 	DOMAINS_REDIRECT_UPDATE_FAILED,
+	DOMAINS_REDIRECT_DELETE,
+	DOMAINS_REDIRECT_DELETE_COMPLETED,
+	DOMAINS_REDIRECT_DELETE_FAILED,
 } from 'calypso/state/action-types';
 
 function updateStateForDomain( state, domain, data ) {
@@ -27,6 +30,7 @@ export const initialStateForDomain = {
 	targetPath: null,
 	forwardPaths: false,
 	isSecure: true,
+	domainRedirectId: null,
 };
 
 export default function reducer( state = {}, action ) {
@@ -52,6 +56,7 @@ export default function reducer( state = {}, action ) {
 				targetPath: action.targetPath,
 				forwardPaths: action.forwardPaths,
 				isSecure: action.isSecure,
+				domainRedirectId: action.domainRedirectId,
 			} );
 			break;
 
@@ -86,6 +91,36 @@ export default function reducer( state = {}, action ) {
 			break;
 
 		case DOMAINS_REDIRECT_UPDATE_FAILED:
+			state = updateStateForDomain( state, action.domain, {
+				isUpdating: false,
+				notice: {
+					error: true,
+					text: action.error,
+				},
+			} );
+			break;
+		case DOMAINS_REDIRECT_DELETE:
+			state = updateStateForDomain( state, action.domain, {
+				isUpdating: true,
+			} );
+			break;
+
+		case DOMAINS_REDIRECT_DELETE_COMPLETED:
+			state = updateStateForDomain( state, action.domain, {
+				isUpdating: false,
+				notice: {
+					success: true,
+					text: action.success,
+				},
+				targetHost: null,
+				targetPath: null,
+				forwardPaths: false,
+				isSecure: true,
+				domainRedirectId: null,
+			} );
+			break;
+
+		case DOMAINS_REDIRECT_DELETE_FAILED:
 			state = updateStateForDomain( state, action.domain, {
 				isUpdating: false,
 				notice: {

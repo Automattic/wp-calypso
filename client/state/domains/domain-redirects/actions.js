@@ -8,6 +8,9 @@ import {
 	DOMAINS_REDIRECT_UPDATE,
 	DOMAINS_REDIRECT_UPDATE_COMPLETED,
 	DOMAINS_REDIRECT_UPDATE_FAILED,
+	DOMAINS_REDIRECT_DELETE,
+	DOMAINS_REDIRECT_DELETE_COMPLETED,
+	DOMAINS_REDIRECT_DELETE_FAILED,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/domains/init';
@@ -23,7 +26,7 @@ export const fetchDomainRedirect = ( domain ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_REDIRECT_FETCH, domain } );
 
 	wpcom.req.get( { path: '/sites/all/domain/' + domain + '/redirects' } ).then(
-		( { target_host, target_path, forward_paths, is_secure } ) => {
+		( { target_host, target_path, forward_paths, is_secure, domain_redirect_id } ) => {
 			dispatch( {
 				type: DOMAINS_REDIRECT_FETCH_COMPLETED,
 				domain,
@@ -31,6 +34,7 @@ export const fetchDomainRedirect = ( domain ) => ( dispatch ) => {
 				targetPath: target_path,
 				forwardPaths: forward_paths,
 				isSecure: is_secure !== '0' ? true : false,
+				domainRedirectId: domain_redirect_id,
 			} );
 		},
 		( error ) => {
@@ -96,3 +100,44 @@ export const updateDomainRedirect =
 				}
 			);
 	};
+
+export const deleteDomainRedirect = ( domain, domainRedirectId ) => ( dispatch ) => {
+	dispatch( { type: DOMAINS_REDIRECT_DELETE, domain } );
+
+	return wpcom.req
+		.post(
+			{ path: '/sites/all/domain/' + domain + '/redirects/delete' },
+			{
+				domain_redirect_id: domainRedirectId,
+			}
+		)
+		.then(
+			( data ) => {
+				if ( data.success ) {
+					dispatch( {
+						type: DOMAINS_REDIRECT_DELETE_COMPLETED,
+						domain,
+						success: i18n.translate( 'The redirect settings were deleted successfully.' ),
+					} );
+					return true;
+				}
+
+				dispatch( {
+					type: DOMAINS_REDIRECT_DELETE_FAILED,
+					domain,
+					error: i18n.translate(
+						'There was a problem deleting the redirect settings. Please try again later or contact support.'
+					),
+				} );
+				return false;
+			},
+			( error ) => {
+				dispatch( {
+					type: DOMAINS_REDIRECT_DELETE_FAILED,
+					domain,
+					error: error.message,
+				} );
+				return false;
+			}
+		);
+};
