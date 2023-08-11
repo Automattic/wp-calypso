@@ -81,6 +81,7 @@ export default function UpgradePopover( {
 			context={ context }
 			isVisible={ isVisible }
 			position={ position }
+			showDelay={ 300 }
 			onShow={ handleOnShow }
 		>
 			<h2 className="upgrade-popover__heading">{ translate( 'Maximise uptime' ) }</h2>
