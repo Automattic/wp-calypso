@@ -14,6 +14,7 @@ import {
 	PLUGIN_ERROR,
 	DNS_ERROR,
 	UNKNOWN_ERROR,
+	GENERIC_ERROR,
 } from '../constants';
 
 const mockError = jest.fn().mockReturnValue( UNKNOWN_ERROR );
@@ -156,6 +157,24 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			expect(
 				screen.getByText(
 					/Jetpack is unable to communicate with your site due to an inactive Jetpack plugin./i
+				)
+			).toBeVisible();
+		} );
+
+		test( 'shows generic error message', () => {
+			mockError.mockReturnValue( GENERIC_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.getByText(
+					/Jetpack is unable to communicate with your site. Please contact site administrator./i
 				)
 			).toBeVisible();
 		} );

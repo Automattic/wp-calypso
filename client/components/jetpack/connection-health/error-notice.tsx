@@ -34,13 +34,15 @@ export const ErrorNotice = ( {
 				eventProperties={ { error_type: errorType } }
 			/>
 			<Notice status="is-error" showDismiss={ false } text={ errorText }>
-				<NoticeAction
-					href={ noticeActionHref }
-					external
-					onClick={ handleJetpackConnectionHealthLinkClick }
-				>
-					{ noticeActionText }
-				</NoticeAction>
+				{ noticeActionText && noticeActionHref && (
+					<NoticeAction
+						href={ noticeActionHref }
+						external
+						onClick={ handleJetpackConnectionHealthLinkClick }
+					>
+						{ noticeActionText }
+					</NoticeAction>
+				) }
 			</Notice>
 		</>
 	);

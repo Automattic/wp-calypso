@@ -9,6 +9,7 @@ import {
 	PLUGIN_ERROR,
 	DNS_ERROR,
 	UNKNOWN_ERROR,
+	GENERIC_ERROR,
 } from './constants';
 import { ErrorNotice } from './error-notice';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
@@ -107,6 +108,17 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
+			/>
+		);
+	}
+
+	if ( jetpackConnectionHealth?.error === GENERIC_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ jetpackConnectionHealth?.error }
+				errorText={ translate(
+					'Jetpack is unable to communicate with your site. Please contact site administrator.'
+				) }
 			/>
 		);
 	}
