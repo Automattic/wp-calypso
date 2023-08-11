@@ -55,3 +55,4 @@ export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
+export type { UserActions } from './user';
