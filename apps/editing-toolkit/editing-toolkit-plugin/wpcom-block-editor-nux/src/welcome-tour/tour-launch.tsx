@@ -9,11 +9,14 @@ import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
 import { selectors as starterPageTemplatesSelectors } from '../../../starter-page-templates/store';
 import { selectors as wpcomBlockEditorNavSidebarSelectors } from '../../../wpcom-block-editor-nav-sidebar/src/store';
-import { selectors as wpcomWelcomeGuideSelectors } from '../store';
+import {
+	selectors as wpcomWelcomeGuideSelectors,
+	actions as wpcomWelcomeGuideActions,
+} from '../store';
 import { getEditorType } from './get-editor-type';
 import getTourSteps from './tour-steps';
 import './style-tour.scss';
-import type { SelectFromMap } from '@automattic/data-stores';
+import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { WpcomConfig } from '@automattic/tour-kit';
 import type { Rect, Placement } from '@popperjs/core';
 
@@ -22,6 +25,7 @@ type WpcomBlockEditorNavSidebarSelectors = SelectFromMap<
 	typeof wpcomBlockEditorNavSidebarSelectors
 >;
 type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
+type WPcomWelcomeGuideActions = DispatchFromMap< typeof wpcomWelcomeGuideActions >;
 type CoreEditPostPlaceholder = {
 	isInserterOpened: ( ...args: unknown[] ) => boolean;
 };
@@ -169,7 +173,9 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 					);
 				},
 				onTourRate: ( rating ) => {
-					dispatch( 'automattic/wpcom-welcome-guide' ).setTourRating( rating );
+					(
+						dispatch( 'automattic/wpcom-welcome-guide' ) as WPcomWelcomeGuideActions
+					 ).setTourRating( rating );
 					recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 						thumbs_up: rating === 'thumbs-up',
 						is_gutenboarding: false,
