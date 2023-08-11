@@ -3,9 +3,11 @@ import {
 	getYearlyPlanByMonthly,
 	isDomainProduct,
 	isDomainTransfer,
+	isGoogleWorkspace,
 	isMonthly,
 	isNoAds,
 	isPlan,
+	isTitanMail,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
@@ -328,6 +330,10 @@ function CheckoutSummaryFeaturesList( props: {
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
 
+	const hasEmailInCart = responseCart.products.some(
+		( product ) => isGoogleWorkspace( product ) || isTitanMail( product )
+	);
+
 	// Check for domains
 	const domains = responseCart.products.filter(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
@@ -401,6 +407,13 @@ function CheckoutSummaryFeaturesList( props: {
 						{ translate( 'Private domain registration and SSL certificate included for free' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</>
+			) }
+
+			{ ! hasPlanInCart && hasEmailInCart && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-support-email" />
+					{ translate( '24/7 support via email' ) }
+				</CheckoutSummaryFeaturesListItem>
 			) }
 
 			{ ( ! hasPlanInCart || hasDomainTransferProduct ) && (
