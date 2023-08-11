@@ -6,6 +6,7 @@ import {
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
 	HTTP_ERROR,
+	PLUGIN_ERROR,
 	DNS_ERROR,
 	UNKNOWN_ERROR,
 } from './constants';
@@ -90,6 +91,21 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'Jetpack is unable to communicate with your site due to a HTTP connection error. Please ensure that your site serves requests.'
 				) }
 				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+			/>
+		);
+	}
+
+	if ( jetpackConnectionHealth?.error === PLUGIN_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ jetpackConnectionHealth?.error }
+				errorText={ translate(
+					'Jetpack is unable to communicate with your site due to an inactive Jetpack plugin. Please ensure that Jetpack plugin is active and reconnect Jetpack.'
+				) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
+				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 			/>
 		);

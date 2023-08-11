@@ -11,6 +11,7 @@ import {
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
 	HTTP_ERROR,
+	PLUGIN_ERROR,
 	DNS_ERROR,
 	UNKNOWN_ERROR,
 } from '../constants';
@@ -137,6 +138,24 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			expect(
 				screen.getByText(
 					/Jetpack is unable to communicate with your site due to a HTTP connection error. Please ensure that your site serves requests./i
+				)
+			).toBeVisible();
+		} );
+
+		test( 'shows plugin error message', () => {
+			mockError.mockReturnValue( PLUGIN_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.getByText(
+					/Jetpack is unable to communicate with your site due to an inactive Jetpack plugin./i
 				)
 			).toBeVisible();
 		} );
