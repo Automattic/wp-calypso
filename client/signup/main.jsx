@@ -391,10 +391,10 @@ class Signup extends Component {
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		if (
 			isWooOAuth2Client( this.props.oauth2Client ) ||
-			'videopress-account' === this.props.flowName ||
-			this.props.isGravatar
+			this.props.isGravatar ||
+			'videopress-account' === this.props.flowName
 		) {
-			// We don't want to show the loading screen for the Woo signup and videopress-account flow.
+			// We don't want to show the loading screen for the Woo signup, Gravatar signup, and videopress-account flow.
 			return;
 		}
 
