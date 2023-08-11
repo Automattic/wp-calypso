@@ -161,6 +161,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					! isValidUrl ||
 					isFetching ||
 					isUpdating ||
+					targetUrl === '' ||
 					( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
 				}
 			>
