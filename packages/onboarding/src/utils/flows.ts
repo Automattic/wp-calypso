@@ -9,6 +9,8 @@ export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const VIDEOPRESS_FLOW = 'videopress';
+export const VIDEOPRESS_TV_FLOW = 'videopress-tv';
+export const VIDEOPRESS_TV_PURCHASE_FLOW = 'videopress-tv-purchase';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
 export const SENSEI_FLOW = 'sensei';
@@ -69,6 +71,8 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 		flowName &&
 			( isNewsletterOrLinkInBioFlow( flowName ) ||
 				VIDEOPRESS_FLOW === flowName ||
+				VIDEOPRESS_TV_FLOW === flowName ||
+				VIDEOPRESS_TV_PURCHASE_FLOW === flowName ||
 				ECOMMERCE_FLOW === flowName ||
 				FREE_FLOW === flowName )
 	);
@@ -158,4 +162,10 @@ export const ecommerceFlowRecurTypes = {
 	MONTHLY: 'monthly',
 	'2Y': '2Y',
 	'3Y': '3Y',
+};
+
+export const isVideoPressTVFlow = ( flowName: string | null | undefined ) => {
+	return Boolean(
+		flowName && [ VIDEOPRESS_TV_FLOW, VIDEOPRESS_TV_PURCHASE_FLOW ].includes( flowName )
+	);
 };

@@ -73,7 +73,9 @@
 
 }
 
-.is-videopress-stepper.is-processing-step {
+.is-videopress-stepper.is-processing-step,
+.is-videopress-tv-stepper,
+.is-videopress-tv-purchase-stepper {
 	padding: 0;
 	color: #fff;
 
