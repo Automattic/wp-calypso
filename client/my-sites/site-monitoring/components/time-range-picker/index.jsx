@@ -5,6 +5,13 @@ import SegmentedControl from 'calypso/components/segmented-control';
 
 import './style.scss';
 
+export const TIME_RANGE_OPTIONS = {
+	'6-hours': '6-hours',
+	'24-hours': '24-hours',
+	'3-days': '3-days',
+	'7-days': '7-days',
+};
+
 export function calculateTimeRange( selectedOption ) {
 	const now = moment().unix();
 	let start;
@@ -38,19 +45,19 @@ export const TimeDateChartControls = ( { onTimeRangeChange } ) => {
 
 	const options = [
 		{
-			value: '6-hours',
+			value: TIME_RANGE_OPTIONS[ '6-hours' ],
 			label: translate( '6 hours' ),
 		},
 		{
-			value: '24-hours',
+			value: TIME_RANGE_OPTIONS[ '24-hours' ],
 			label: translate( '24 hours' ),
 		},
 		{
-			value: '3-days',
+			value: TIME_RANGE_OPTIONS[ '3-days' ],
 			label: translate( '3 days' ),
 		},
 		{
-			value: '7-days',
+			value: TIME_RANGE_OPTIONS[ '7-days' ],
 			label: translate( '7 days' ),
 		},
 	];

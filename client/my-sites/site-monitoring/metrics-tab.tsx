@@ -155,6 +155,7 @@ export const MetricsTab = () => {
 		<div className="site-monitoring-metrics-tab">
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<SiteMonitoringLineChart
+				timeRange={ timeRange }
 				title={ __( 'Requests per minute & average response time' ) }
 				tooltip={ translate(
 					'{{strong}}Requests per minute:{{/strong}} a line representing the number of requests received every minute.{{br/}}{{br/}}{{strong}}Average Response Time{{/strong}}: a line that indicates the average time taken to respond to a request within that minute.',
