@@ -4,7 +4,7 @@ import wpcom from 'calypso/lib/wp';
 export type SiteMetricsAPIResponse = {
 	message?: string;
 	data: {
-		meta?: MetaData;
+		_meta?: MetaData;
 		periods: PeriodData[];
 	};
 };
