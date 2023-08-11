@@ -13,9 +13,12 @@ export function useGroupByTime(
 ) {
 	return useMemo( () => {
 		const groupedData: { [ key: number ]: { [ statusCode: string ]: number } } = {};
+		const initialTimestamp = periods[ 0 ]?.timestamp || 0;
 
 		periods.forEach( ( period ) => {
-			const groupTimestamp = period.timestamp - ( period.timestamp % secondsWindow );
+			const groupTimestamp =
+				initialTimestamp +
+				secondsWindow * Math.floor( ( period.timestamp - initialTimestamp ) / secondsWindow );
 			if ( ! groupedData[ groupTimestamp ] ) {
 				groupedData[ groupTimestamp ] = {};
 			}
