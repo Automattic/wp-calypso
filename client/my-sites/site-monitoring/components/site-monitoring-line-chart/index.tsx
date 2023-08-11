@@ -199,9 +199,9 @@ export const SiteMonitoringLineChart = ( {
 
 	useEffect( () => {
 		if ( uplotContainer.current ) {
-			const { width, height } = uplotContainer.current.getBoundingClientRect();
-			if ( width !== chartDimensions.width || height !== chartDimensions.height ) {
-				setChartDimensions( { width, height } );
+			const { width } = uplotContainer.current.getBoundingClientRect();
+			if ( width !== chartDimensions.width ) {
+				setChartDimensions( { width, height: DEFAULT_DIMENSIONS.height } );
 			}
 		}
 	}, [ chartDimensions, data ] );
