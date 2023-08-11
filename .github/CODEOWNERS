@@ -80,9 +80,6 @@
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
 
-# Jetpack Search
-/client/my-sites/jetpack-search @Automattic/jetpack-search
-
 # TeamCity configuration
 /.teamcity @Automattic/team-calypso-platform
 
