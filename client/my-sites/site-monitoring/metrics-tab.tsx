@@ -3,8 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
-import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
 import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
@@ -238,10 +236,6 @@ export const MetricsTab = () => {
 		'requests_persec',
 		'page_renderer'
 	);
-	const statusCodeRequestsProps = useMetricsBarChartData( {
-		siteId: useSelector( getSelectedSiteId ),
-		timeRange,
-	} );
 	const successHttpCodes = useSuccessHttpCodeSeries();
 	const { data: dataForSuccessCodesChart } = useSiteMetricsStatusCodesData(
 		timeRange,
@@ -307,13 +301,6 @@ export const MetricsTab = () => {
 					} ) }
 				></SiteMonitoringPieChart>
 			</div>
-			<SiteMonitoringBarChart
-				title={ __( 'Requests by HTTP response code' ) }
-				tooltip={ __(
-					'Number of requests categorized by their HTTP response code. Hover over each entry in the legend for detailed information.'
-				) }
-				{ ...statusCodeRequestsProps }
-			/>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
 				title={ __( 'Success HTTP Responses' ) }
