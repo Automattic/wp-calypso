@@ -3,9 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
-import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
+import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
@@ -44,10 +43,16 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
-	const { data, isLoading } = useSiteMetricsQuery( siteId, {
+	const { data: requestsData, isLoading } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric: metric || 'requests_persec',
+	} );
+
+	const { data: responseTimeData } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'response_time_average',
 	} );
 
 	// Function to get the dimension value for a specific key and period
@@ -66,14 +71,34 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 
 	// Process the data in the format accepted by uPlot
 	const formattedData =
-		data?.data?.periods?.reduce(
-			( acc, period ) => {
-				acc[ 0 ].push( period.timestamp );
-				acc[ 1 ].push( getDimensionValue( period ) );
+		requestsData?.data?.periods?.reduce(
+			( acc, period, index ) => {
+				const timestamp = period.timestamp;
+
+				// Check if the timestamp is already in the arrays, if not, push it
+				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
+					acc[ 0 ].push( timestamp );
+
+					const requestsPerSecondValue = getDimensionValue( period );
+					if ( requestsPerSecondValue !== null ) {
+						const requestsPerMinuteValue = requestsPerSecondValue * 60; // Convert to requests per minute
+						acc[ 1 ].push( requestsPerMinuteValue ); // Push RPM value into the array
+					}
+					// Add response time data as a green line
+					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
+						const responseTimeAverageValue = getDimensionValue(
+							responseTimeData.data.periods[ index ]
+						);
+						if ( responseTimeAverageValue !== null ) {
+							acc[ 2 ].push( responseTimeAverageValue * 1000 ); // Convert to response time average in milliseconds
+						}
+					}
+				}
+
 				return acc;
 			},
-			[ [], [] ] as Array< Array< number | null > > // Define the correct initial value type
-		) || ( [ [], [] ] as Array< Array< number | null > > ); // Return a default value when data is not available yet
+			[ [], [], [] ] as Array< Array< number | null > > // Adjust the initial value with placeholders for both lines
+		) || ( [ [], [], [] ] as Array< Array< number | null > > ); // Return default value when data is not available yet
 
 	return {
 		formattedData,
@@ -131,6 +156,70 @@ function getFormattedDataForPieChart(
 	} );
 }
 
+const useSuccessHttpCodeSeries = () => {
+	const { __ } = useI18n();
+	const series = [
+		{
+			statusCode: 200,
+			fill: 'rgba(104, 179, 232, 0.1)',
+			label: __( 'HTTP 200: OK Response' ),
+			stroke: 'rgba(104, 179, 232, 1)',
+		},
+		{
+			statusCode: 301,
+			fill: 'rgba(227, 174, 212, 0.1)',
+			label: __( 'HTTP 301: Moved Permanently' ),
+			stroke: 'rgba(227, 174, 212, 1)',
+		},
+		{
+			statusCode: 302,
+			fill: 'rgba(9, 181, 133, 0.1)',
+			label: __( 'HTTP 302: Moved Temporarily' ),
+			stroke: 'rgba(9, 181, 133, 1)',
+		},
+	];
+	const statusCodes = series.map( ( { statusCode } ) => statusCode );
+	return { series, statusCodes };
+};
+
+const useErrorHttpCodeSeries = () => {
+	const { __ } = useI18n();
+	const series = [
+		{
+			statusCode: 400,
+			fill: 'rgba(242, 215, 107, 0.1)',
+			label: __( 'HTTP 400: Bad Request' ),
+			stroke: 'rgba(242, 215, 107, 1)',
+		},
+		{
+			statusCode: 401,
+			fill: 'rgba(227, 174, 212, 0.1)',
+			label: __( 'HTTP 401: Unauthorized Request' ),
+			stroke: 'rgba(227, 174, 212, 1)',
+		},
+		{
+			statusCode: 403,
+			fill: 'rgba(104, 179, 232, 0.1)',
+			label: __( 'HTTP 403: Forbidden Request' ),
+			stroke: 'rgba(104, 179, 232, 1)',
+		},
+		{
+			statusCode: 404,
+			fill: 'rgba(9, 181, 133, 0.1)',
+			label: __( 'HTTP 404: Not Found Request' ),
+			stroke: 'rgba(9, 181, 133, 1)',
+		},
+		{
+			statusCode: 500,
+			fill: 'rgba(235, 101, 148, 0.1)',
+			label: __( 'HTTP 500: Internal server error' ),
+			stroke: 'rgba(235, 101, 148, 1)',
+		},
+	];
+	const statusCodes = series.map( ( { statusCode } ) => statusCode );
+	return { series, statusCodes };
+};
+
 export const MetricsTab = () => {
 	const { __ } = useI18n();
 	const translate = useTranslate();
@@ -147,10 +236,17 @@ export const MetricsTab = () => {
 		'requests_persec',
 		'page_renderer'
 	);
-	const statusCodeRequestsProps = useMetricsBarChartData( {
-		siteId: useSelector( getSelectedSiteId ),
+	const successHttpCodes = useSuccessHttpCodeSeries();
+	const { data: dataForSuccessCodesChart } = useSiteMetricsStatusCodesData(
 		timeRange,
-	} );
+		successHttpCodes.statusCodes
+	);
+	const errorHttpCodes = useErrorHttpCodeSeries();
+	const { data: dataForErrorCodesChart } = useSiteMetricsStatusCodesData(
+		timeRange,
+		errorHttpCodes.statusCodes
+	);
+
 	return (
 		<div className="site-monitoring-metrics-tab">
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
@@ -167,6 +263,18 @@ export const MetricsTab = () => {
 					}
 				) }
 				data={ formattedData as uPlot.AlignedData }
+				series={ [
+					{
+						fill: 'rgba(6, 117, 196, 0.1)',
+						label: __( 'Requests per minute' ),
+						stroke: '#0675C4',
+					},
+					{
+						fill: 'rgba(0, 135, 99, 0.2)',
+						label: __( 'Average response time (ms)' ),
+						stroke: '#008763',
+					},
+				] }
 				isLoading={ isLoadingLineChart }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
@@ -193,13 +301,24 @@ export const MetricsTab = () => {
 					} ) }
 				></SiteMonitoringPieChart>
 			</div>
-			<SiteMonitoringBarChart
-				title={ __( 'Requests by HTTP response code' ) }
+			<SiteMonitoringLineChart
+				timeRange={ timeRange }
+				title={ __( 'Successful HTTP responses' ) }
+				data={ dataForSuccessCodesChart as uPlot.AlignedData }
 				tooltip={ __(
-					'Number of requests categorized by their HTTP response code. Hover over each entry in the legend for detailed information.'
+					'Number of successful responses (200) and redirections (301 and 302) per minute.'
 				) }
-				{ ...statusCodeRequestsProps }
-			/>
+				series={ successHttpCodes.series }
+			></SiteMonitoringLineChart>
+			<SiteMonitoringLineChart
+				timeRange={ timeRange }
+				title={ __( 'Problematic HTTP responses' ) }
+				data={ dataForErrorCodesChart as uPlot.AlignedData }
+				tooltip={ __(
+					'Number of client-side errors (400) and server-side errors (500) per minute.'
+				) }
+				series={ errorHttpCodes.series }
+			></SiteMonitoringLineChart>
 		</div>
 	);
 };
