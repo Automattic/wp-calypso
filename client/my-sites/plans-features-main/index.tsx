@@ -641,7 +641,7 @@ const PlansFeaturesMain = ( {
 						} ) }
 				/>
 			) }
-			{ hideFreePlan && (
+			{ intent === 'plans-paid-media' && (
 				<FreePlanSubHeader>
 					{ translate(
 						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
