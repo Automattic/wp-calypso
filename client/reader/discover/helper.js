@@ -60,7 +60,3 @@ export function getTagsFromStreamKey( streamKey = '' ) {
 	}
 	return [];
 }
-
-export function isDiscoverEnabled() {
-	return true;
-}
