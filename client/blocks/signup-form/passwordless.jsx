@@ -22,6 +22,8 @@ class PasswordlessSignupForm extends Component {
 		locale: PropTypes.string,
 		inputLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
+		submitButtonLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
