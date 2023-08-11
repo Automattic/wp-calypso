@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, Fragment } from 'react';
 import * as React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
@@ -19,6 +19,14 @@ import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selec
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import CloudCart from './cloud-cart';
+import AntispamIcon from './icons/jetpack-bundle-icon-antispam';
+import BackupIcon from './icons/jetpack-bundle-icon-backup';
+import BoostIcon from './icons/jetpack-bundle-icon-boost';
+import CRMIcon from './icons/jetpack-bundle-icon-crm';
+import ScanIcon from './icons/jetpack-bundle-icon-scan';
+import SearchIcon from './icons/jetpack-bundle-icon-search';
+import SocialIcon from './icons/jetpack-bundle-icon-social';
+import VideopressIcon from './icons/jetpack-bundle-icon-videopress';
 import useMobileBtn from './use-mobile-btn';
 import useSubmenuBtn from './use-submenu-btn';
 import useUserMenu from './use-user-menu';
@@ -53,13 +61,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const sections = menuData?.sections ? Array.from( Object.values( menuData.sections ) ) : null;
 	const bundles = menuData?.bundles ?? null;
 
-	const appsLink = {
-		categoryLabel: translate( 'Android and iOS' ),
-		label: translate( 'Mobile app' ),
-		tagline: translate( 'Put your site in your pocket' ),
-		href: `${ JETPACK_COM_BASE_URL }/mobile/`,
-	};
-
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
 	const windowBoundaryOffset = useMemo( () => {
@@ -77,6 +78,10 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const classes = classNames( 'header__content-background-wrapper', {
 		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
 	} );
+
+	const isValidLink = ( url: string ) => {
+		return url && url !== '#';
+	};
 
 	const onLinkClick = useCallback( ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
@@ -119,6 +124,29 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		}
 
 		toggleMenuItem( btn, menu );
+	};
+
+	const getBundleIcons = ( bundle: string ) => {
+		// Using a soft match in case the menu item gets deleted and recreated in wp-admin
+		// causing the name to change to `complete-2` or something similar.
+		if ( bundle.includes( 'complete' ) ) {
+			return [
+				<BackupIcon />,
+				<AntispamIcon />,
+				<ScanIcon />,
+				<SearchIcon />,
+				<SocialIcon />,
+				<VideopressIcon />,
+				<CRMIcon />,
+				<BoostIcon />,
+			];
+		}
+
+		if ( bundle.includes( 'security' ) ) {
+			return [ <BackupIcon />, <AntispamIcon />, <ScanIcon /> ];
+		}
+
+		return [];
 	};
 
 	useSubmenuBtn();
@@ -170,20 +198,19 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 														className={ classNames( {
 															'is-active':
 																pathname &&
-																href &&
-																href !== '#' &&
+																isValidLink( href ) &&
 																new URL( trailingslashit( href ) ).pathname ===
 																	trailingslashit( pathname ),
 														} ) }
-														key={ href || id }
+														key={ `main-menu-${ href }${ label }` }
 													>
 														<Tag
 															className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
 															href={
-																href && href !== '#' ? localizeUrl( href, locale ) : `#${ id }`
+																isValidLink( href ) ? localizeUrl( href, locale ) : `#${ id }`
 															}
 															aria-expanded={ hasChildren ? false : undefined }
-															onClick={ href && href !== '#' ? onLinkClick : onMenuBtnClick }
+															onClick={ isValidLink( href ) ? onLinkClick : onMenuBtnClick }
 														>
 															{ label }
 															{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
@@ -191,113 +218,92 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 														{ hasChildren && (
 															<div id={ id } className="header__submenu js-menu" tabIndex={ -1 }>
 																<div className="header__submenu-content">
-																	<button className="header__back-btn js-menu-back">
-																		<Gridicon icon="chevron-left" size={ 18 } />
-																		{ translate( 'Back' ) }
-																	</button>
-																	<ul className="header__submenu-categories-list">
-																		{ Array.from( Object.values( items ) )
-																			.sort( sortByMenuOrder )
-																			.map( ( { label, tagline, href, items } ) => {
-																				return (
-																					<li key={ href }>
-																						<ExternalLink
-																							className="header__submenu-category header__submenu-link"
-																							href={ localizeUrl( href, locale ) }
-																							onClick={ onLinkClick }
-																						>
-																							<span className="header__submenu-label">
-																								<span className="header__submenu-chevron">
-																									<Gridicon icon="chevron-right" size={ 18 } />
-																								</span>
-																								{ label }
-																							</span>
-																							{ tagline && (
-																								<span className="header__submenu-tagline">
-																									{ tagline }
-																								</span>
-																							) }
-																						</ExternalLink>
-																						<ul className="header__submenu-links-list">
-																							{ Array.from( Object.values( items ) )
-																								.sort( sortByMenuOrder )
-																								.map( ( { label, tagline, href } ) => (
-																									<li key={ href }>
-																										<ExternalLink
-																											className="header__submenu-link"
-																											href={ localizeUrl( href, locale ) }
-																											onClick={ onLinkClick }
-																										>
-																											<span className="header__submenu-label">
-																												{ label }
-																											</span>
-																											{ tagline && (
-																												<span className="header__submenu-tagline">
-																													{ tagline }
-																												</span>
-																											) }
-																										</ExternalLink>
-																									</li>
-																								) ) }
-																						</ul>
-																					</li>
-																				);
-																			} ) }
-																	</ul>
-
-																	<hr className="header__submenu-section-separator" />
-
-																	<div className="header__submenu-bottom-section">
-																		<div className="header__submenu-bundles">
-																			<p className="header__submenu-category-heading">
-																				{ bundles?.label }
-																			</p>
-
-																			<ul className="header__submenu-links-list">
-																				{ bundles &&
-																					Array.from( Object.values( bundles.items ) )
-																						.sort( sortByMenuOrder )
-																						.map( ( { label, tagline, href } ) => (
-																							<li key={ `bundles-${ href }` }>
+																	<div className="header__submenu-wrapper">
+																		<button className="header__back-btn js-menu-back">
+																			<Gridicon icon="chevron-left" size={ 18 } />
+																			{ translate( 'Back' ) }
+																		</button>
+																		<ul className="header__submenu-categories-list">
+																			{ Array.from( Object.values( items ) )
+																				.sort( sortByMenuOrder )
+																				.map( ( { label, href, items } ) => {
+																					return (
+																						<li key={ `submenu-category-${ href }${ label }` }>
+																							{ isValidLink( href ) ? (
 																								<ExternalLink
-																									className="header__submenu-link"
+																									className="header__submenu-category header__submenu-link"
 																									href={ localizeUrl( href, locale ) }
 																									onClick={ onLinkClick }
 																								>
 																									<span className="header__submenu-label">
 																										{ label }
 																									</span>
-																									{ tagline && (
-																										<span className="header__submenu-tagline">
-																											{ tagline }
-																										</span>
-																									) }
 																								</ExternalLink>
-																							</li>
-																						) ) }
-																			</ul>
-																		</div>
-																		<div className="header__submenu-apps-wrapper">
-																			<p className="header__submenu-category-heading">
-																				{ appsLink.categoryLabel }
-																			</p>
+																							) : (
+																								<p className="header__submenu-category header__submenu-link">
+																									<span className="header__submenu-label">
+																										{ label }
+																									</span>
+																								</p>
+																							) }
+																							<ul className="header__submenu-links-list">
+																								{ Array.from( Object.values( items ) )
+																									.sort( sortByMenuOrder )
+																									.map( ( { label, href } ) => (
+																										<li key={ `submenu-${ href }${ label }` }>
+																											<ExternalLink
+																												className="header__submenu-link"
+																												href={ localizeUrl( href, locale ) }
+																												onClick={ onLinkClick }
+																											>
+																												<span className="header__submenu-label">
+																													{ label }
+																												</span>
+																											</ExternalLink>
+																										</li>
+																									) ) }
+																							</ul>
+																						</li>
+																					);
+																				} ) }
+																		</ul>
 
-																			<ul className="header__submenu-links-list">
-																				<li>
-																					<ExternalLink
-																						className="header__submenu-link"
-																						href={ localizeUrl( appsLink.href, locale ) }
-																						onClick={ onLinkClick }
-																					>
-																						<span className="header__submenu-label">
-																							{ appsLink.label }
-																						</span>
-																						<span className="header__submenu-tagline">
-																							{ appsLink.tagline }
-																						</span>
-																					</ExternalLink>
-																				</li>
-																			</ul>
+																		<div className="header__submenu-bottom-section">
+																			<div className="header__submenu-bundles">
+																				<p className="header__submenu-category-heading">
+																					{ bundles?.label }
+																				</p>
+
+																				<ul className="header__submenu-links-list">
+																					{ bundles &&
+																						Array.from( Object.values( bundles.items ) )
+																							.sort( sortByMenuOrder )
+																							.map( ( { id, label, href } ) => (
+																								<li key={ `bundles-${ href }-${ label }` }>
+																									<ExternalLink
+																										className="header__submenu-link"
+																										href={ localizeUrl( href, locale ) }
+																										onClick={ onLinkClick }
+																									>
+																										<p className="header__submenu-label">
+																											<span>{ label }</span>
+																										</p>
+																										<div className="header__submenu-bundle-icons">
+																											{ getBundleIcons( id ).map(
+																												( icon, index ) => (
+																													<Fragment
+																														key={ `bundle-icon-${ id }${ index }` }
+																													>
+																														{ icon }
+																													</Fragment>
+																												)
+																											) }
+																										</div>
+																									</ExternalLink>
+																								</li>
+																							) ) }
+																				</ul>
+																			</div>
 																		</div>
 																	</div>
 																</div>
