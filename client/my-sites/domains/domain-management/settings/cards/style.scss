@@ -139,11 +139,15 @@
 			border-right: 0;
 			height: 100%;
 		}
-		button {
+		.domain-redirect-card__delete {
 			border-left: 0;
 
 			svg {
 				margin-top: 5px;
+			}
+
+			&.is-disabled {
+				background: var(--color-neutral-0);
 			}
 		}
 	}

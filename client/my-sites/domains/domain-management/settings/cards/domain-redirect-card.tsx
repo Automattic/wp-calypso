@@ -151,8 +151,10 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 
 	const suffix = (
 		<Button
-			disabled={ isFetching || isUpdating || ( targetUrl === '' && props.targetUrl === '' ) }
-			className="domain-redirect-card__delete"
+			disabled={ isFetching || isUpdating || ( targetUrl === '' && target === '' ) }
+			className={ classNames( 'domain-redirect-card__delete', {
+				'is-disabled': isFetching || isUpdating || ( targetUrl === '' && target === '' ),
+			} ) }
 			onClick={ handleDelete }
 		>
 			<Icon icon={ trash } size={ 18 } />
