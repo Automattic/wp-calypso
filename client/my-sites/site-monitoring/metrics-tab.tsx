@@ -306,7 +306,7 @@ export const MetricsTab = () => {
 				title={ __( 'Success HTTP Responses' ) }
 				data={ dataForSuccessCodesChart as uPlot.AlignedData }
 				tooltip={ __(
-					'Number of successful responses (200) and redirections (301 and 302) over time.'
+					'Number of successful responses (200) and redirections (301 and 302) per minute.'
 				) }
 				series={ successHttpCodes.series }
 			></SiteMonitoringLineChart>
@@ -315,7 +315,7 @@ export const MetricsTab = () => {
 				title={ __( 'Error HTTP Responses' ) }
 				data={ dataForErrorCodesChart as uPlot.AlignedData }
 				tooltip={ __(
-					'Number of client-side errors (400) and server-side errors (500) over time.'
+					'Number of client-side errors (400) and server-side errors (500) per minute.'
 				) }
 				series={ errorHttpCodes.series }
 			></SiteMonitoringLineChart>
