@@ -17,7 +17,7 @@ export interface TimeRange {
 	end: number;
 }
 
-export function useTimeRange() {
+function useTimeRange() {
 	// State to store the selected time range
 	const [ selectedTimeRange, setSelectedTimeRange ] = useState( null as TimeRange | null );
 
