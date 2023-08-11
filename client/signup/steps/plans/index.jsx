@@ -211,18 +211,11 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, translate, useEmailOnboardingSubheader } = this.props;
+		const { translate, useEmailOnboardingSubheader } = this.props;
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
 		);
-
-		if ( hideFreePlan ) {
-			return translate(
-				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-				{ components: { link: freePlanButton } }
-			);
-		}
 
 		if ( useEmailOnboardingSubheader ) {
 			return translate(

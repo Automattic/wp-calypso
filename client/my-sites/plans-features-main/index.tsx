@@ -11,10 +11,11 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useLayoutEffect, useState } from '@wordpress/element';
 import classNames from 'classnames';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate, translate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -67,6 +68,20 @@ import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
+
+const FreePlanSubHeader = styled.p`
+	margin: -32px 0 40px 0;
+	color: var( --studio-gray-60 );
+	font-size: 1rem;
+	text-align: center;
+	button.is-borderless {
+		font-weight: 500;
+		color: var( --studio-gray-90 );
+		text-decoration: underline;
+		font-size: 16px;
+		padding: 0;
+	}
+`;
 
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
@@ -625,6 +640,18 @@ const PlansFeaturesMain = ( {
 							},
 						} ) }
 				/>
+			) }
+			{ hideFreePlan && (
+				<FreePlanSubHeader>
+					{ translate(
+						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+							},
+						}
+					) }
+				</FreePlanSubHeader>
 			) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 			{ ! intentFromSiteMeta.processing && (
