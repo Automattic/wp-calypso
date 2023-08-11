@@ -1,11 +1,10 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { DNS_TXT_RECORD_CHAR_LIMIT } from 'calypso/lib/url/support';

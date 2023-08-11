@@ -3,7 +3,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';

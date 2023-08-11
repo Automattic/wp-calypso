@@ -1,7 +1,6 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { Component } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';

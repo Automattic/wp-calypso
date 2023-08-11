@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty } from 'lodash';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';

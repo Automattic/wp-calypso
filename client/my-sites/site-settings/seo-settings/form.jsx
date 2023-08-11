@@ -4,7 +4,7 @@ import {
 	TYPE_BUSINESS,
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
-import { Card, Button, FormInputValidation } from '@automattic/components';
+import { Card, Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
@@ -15,7 +15,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';

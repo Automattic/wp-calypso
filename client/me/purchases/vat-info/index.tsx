@@ -1,10 +1,9 @@
-import { CompactCard, Button, Card } from '@automattic/components';
+import { CompactCard, Button, Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';

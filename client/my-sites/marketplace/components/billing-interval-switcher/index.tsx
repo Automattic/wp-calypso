@@ -1,7 +1,7 @@
+import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, type FunctionComponent } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';

@@ -1,7 +1,14 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
-import { Button, Card, FormInputValidation, Gridicon, Spinner } from '@automattic/components';
+import {
+	Button,
+	Card,
+	FormInputValidation,
+	FormLabel,
+	Gridicon,
+	Spinner,
+} from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -10,7 +17,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';

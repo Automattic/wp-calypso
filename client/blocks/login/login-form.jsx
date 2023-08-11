@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -11,7 +11,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import FormsButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';

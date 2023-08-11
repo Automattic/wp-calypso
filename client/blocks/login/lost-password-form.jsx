@@ -1,10 +1,9 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import FormsButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 

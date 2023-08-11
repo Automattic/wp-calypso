@@ -1,4 +1,4 @@
-import FormLabel from 'calypso/components/forms/form-label';
+import { FormLabel } from '@automattic/components';
 
 // Prevents the event from bubbling up the DOM tree
 const stopPropagation = ( event ) => event.stopPropagation();

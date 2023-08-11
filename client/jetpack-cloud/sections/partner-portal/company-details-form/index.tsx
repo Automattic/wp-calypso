@@ -1,8 +1,7 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, FormLabel, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';

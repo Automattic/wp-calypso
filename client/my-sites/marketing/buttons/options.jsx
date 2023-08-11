@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { filter, flowRight, get, some, values, xor } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +7,6 @@ import { connect } from 'react-redux';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import SupportInfo from 'calypso/components/support-info';

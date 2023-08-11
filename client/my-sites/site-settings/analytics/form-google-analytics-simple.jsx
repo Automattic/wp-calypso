@@ -3,14 +3,17 @@ import {
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
-import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import {
+	CompactCard,
+	FormInputValidation as FormTextValidation,
+	FormLabel,
+} from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect } from 'react';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';

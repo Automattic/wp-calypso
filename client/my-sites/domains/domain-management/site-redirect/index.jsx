@@ -1,4 +1,4 @@
-import { CompactCard as Card } from '@automattic/components';
+import { CompactCard as Card, FormLabel } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import { Component } from 'react';
 import { connect, useSelector } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';

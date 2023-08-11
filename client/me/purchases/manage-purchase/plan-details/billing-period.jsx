@@ -1,5 +1,5 @@
 import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

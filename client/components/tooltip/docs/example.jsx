@@ -1,5 +1,5 @@
+import { FormLabel } from '@automattic/components';
 import { PureComponent, createRef } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import TooltipComponent from 'calypso/components/tooltip';
 

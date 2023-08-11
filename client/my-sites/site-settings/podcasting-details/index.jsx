@@ -1,5 +1,5 @@
 import { PLAN_PERSONAL, WPCOM_FEATURES_UPLOAD_AUDIO_FILES } from '@automattic/calypso-products';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map, pick, flowRight } from 'lodash';
@@ -10,7 +10,6 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryTerms from 'calypso/components/data/query-terms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';

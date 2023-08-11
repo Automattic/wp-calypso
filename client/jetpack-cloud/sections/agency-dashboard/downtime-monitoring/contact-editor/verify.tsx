@@ -1,10 +1,9 @@
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useCountdownTimer from 'calypso/jetpack-cloud/sections/hooks/use-countdown-timer';

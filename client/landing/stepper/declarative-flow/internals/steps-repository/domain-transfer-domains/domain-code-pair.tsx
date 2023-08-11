@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FormInputValidation, Gridicon } from '@automattic/components';
+import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl, englishLocales, useLocale } from '@automattic/i18n-utils';
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
@@ -10,7 +10,6 @@ import classnames from 'classnames';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { domainAvailability } from 'calypso/lib/domains/constants';

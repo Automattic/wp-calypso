@@ -1,11 +1,10 @@
-import { Dialog, FormInputValidation } from '@automattic/components';
+import { Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { Icon, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getSelectedDomain } from 'calypso/lib/domains';

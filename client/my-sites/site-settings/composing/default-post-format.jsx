@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import usePostFormatsQuery from 'calypso/data/post-formats/use-post-formats-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

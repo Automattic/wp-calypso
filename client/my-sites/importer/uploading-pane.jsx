@@ -1,4 +1,4 @@
-import { ProgressBar, FormInputValidation, Gridicon } from '@automattic/components';
+import { ProgressBar, FormInputValidation, Gridicon, FormLabel } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
@@ -7,7 +7,6 @@ import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
 import DropZone from 'calypso/components/drop-zone';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TextInput from 'calypso/components/forms/form-text-input';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';

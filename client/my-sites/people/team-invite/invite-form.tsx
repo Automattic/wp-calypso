@@ -1,11 +1,10 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent, useRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';

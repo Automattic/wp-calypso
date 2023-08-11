@@ -10,7 +10,7 @@ import {
 	PLAN_PERSONAL,
 	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
 } from '@automattic/calypso-products/src';
-import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
+import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
@@ -26,7 +26,6 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';

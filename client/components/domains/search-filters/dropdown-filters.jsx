@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Popover } from '@automattic/components';
+import { Button, FormLabel, Popover } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
@@ -8,7 +8,6 @@ import { createRef, Component } from 'react';
 import Count from 'calypso/components/count';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
 import TokenField from 'calypso/components/token-field';

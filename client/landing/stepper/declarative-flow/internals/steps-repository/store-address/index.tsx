@@ -1,4 +1,4 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { ComboboxControl } from '@wordpress/components';
@@ -8,7 +8,6 @@ import emailValidator from 'email-validator';
 import { FormEvent, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';

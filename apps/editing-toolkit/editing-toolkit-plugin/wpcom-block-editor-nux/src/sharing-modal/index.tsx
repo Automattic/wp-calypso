@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { FormLabel } from '@automattic/components';
 import { Modal, Button, ExternalLink } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
@@ -9,7 +10,6 @@ import classnames from 'classnames';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';

@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 

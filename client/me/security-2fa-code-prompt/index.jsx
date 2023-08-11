@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';

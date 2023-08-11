@@ -1,10 +1,9 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';

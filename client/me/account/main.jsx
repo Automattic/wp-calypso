@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
@@ -16,7 +16,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';

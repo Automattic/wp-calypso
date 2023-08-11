@@ -1,10 +1,9 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { ComponentProps, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Image from 'calypso/components/image';
 import { useDispatch, useSelector } from 'calypso/state';

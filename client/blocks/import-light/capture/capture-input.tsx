@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -9,7 +9,6 @@ import { localize, translate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { bulb } from 'calypso/signup/icons';

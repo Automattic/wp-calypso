@@ -1,4 +1,4 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';

@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 
 const CheckboxTermsWrapper = styled.div`
 	column-gap: 8px;

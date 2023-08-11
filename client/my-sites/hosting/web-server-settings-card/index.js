@@ -1,4 +1,4 @@
-import { Button, Card, LoadingPlaceholder } from '@automattic/components';
+import { Button, Card, LoadingPlaceholder, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
@@ -9,7 +9,6 @@ import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version'
 import QuerySiteStaticFile404 from 'calypso/components/data/query-site-static-file-404';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';

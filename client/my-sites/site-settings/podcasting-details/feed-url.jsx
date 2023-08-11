@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTerm } from 'calypso/state/terms/selectors';

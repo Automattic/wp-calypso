@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -7,7 +7,6 @@ import AuthorSelector from 'calypso/blocks/author-selector';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'calypso/components/data/query-jetpack-user-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
 import accept from 'calypso/lib/accept';

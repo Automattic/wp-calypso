@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormLabel from 'calypso/components/forms/form-label';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';

@@ -1,9 +1,8 @@
-import { Button, Dialog } from '@automattic/components';
+import { Button, Dialog, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useSelector } from 'calypso/state';
 import { getSiteDomain, getSiteTitle } from 'calypso/state/sites/selectors';

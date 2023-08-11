@@ -1,4 +1,4 @@
-import { Button, Spinner } from '@automattic/components';
+import { Button, Spinner, FormLabel } from '@automattic/components';
 import classnames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import Image from 'calypso/components/image';
 import { withAddMedia } from 'calypso/data/media/with-add-media';
 import { createTransientMediaId } from 'calypso/lib/media/utils';

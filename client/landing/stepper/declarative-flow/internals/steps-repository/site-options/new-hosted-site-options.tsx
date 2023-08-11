@@ -1,4 +1,4 @@
-import { Button, FormInputValidation, Spinner } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect } from '@wordpress/data';
@@ -10,7 +10,6 @@ import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useGetSiteSuggestionsQuery } from 'calypso/landing/stepper/hooks/use-get-site-suggestions-query';

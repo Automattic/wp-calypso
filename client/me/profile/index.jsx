@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';

@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import useDropdownPagesQuery, {
