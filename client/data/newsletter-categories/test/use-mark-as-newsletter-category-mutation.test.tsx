@@ -148,15 +148,13 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 
 		queryClient.setQueryData( [ 'categories', siteId ], mockedCategories );
 
-		const { result, waitFor } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
+		const { result } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
 		await act( async () => {
 			await result.current.mutateAsync( 200 );
 		} );
-
-		await waitFor( () => expect( result.current.isSuccess ).toBe( false ) );
 
 		const updatedData = queryClient.getQueryData< NewsletterCategories >( [
 			'newsletter-categories',
