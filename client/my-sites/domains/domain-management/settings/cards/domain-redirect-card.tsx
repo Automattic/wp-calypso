@@ -64,8 +64,35 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 		setIsValidUrl( true );
 	};
 
+	const handleDelete = () => {
+		if ( ! redirect?.domainRedirectId || ! redirect?.targetHost ) {
+			return;
+		}
+
+		setTargetUrl( '' );
+
+		props
+			.deleteDomainRedirect( props.domainName, redirect.domainRedirectId )
+			.then( ( success: boolean ) => {
+				if ( success ) {
+					props.fetchDomainRedirect( props.domainName );
+
+					props.successNotice( translate( 'Site redirect deleted successfully.' ), {
+						duration: 5000,
+						id: `site-redirect-update-notification`,
+					} );
+				} else {
+					props.errorNotice( props.redirect.notice.text );
+				}
+			} );
+	};
+
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+		if ( targetUrl === '' ) {
+			handleDelete();
+			return;
+		}
 		let targetHost = '';
 		let targetPath = '';
 		let isSecure = true;
@@ -101,29 +128,6 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 				}
 			} );
 		return false;
-	};
-
-	const handleDelete = () => {
-		if ( ! redirect?.domainRedirectId || ! redirect?.targetHost ) {
-			return;
-		}
-
-		setTargetUrl( '' );
-
-		props
-			.deleteDomainRedirect( props.domainName, redirect.domainRedirectId )
-			.then( ( success: boolean ) => {
-				if ( success ) {
-					props.fetchDomainRedirect( props.domainName );
-
-					props.successNotice( translate( 'Site redirect deleted successfully.' ), {
-						duration: 5000,
-						id: `site-redirect-update-notification`,
-					} );
-				} else {
-					props.errorNotice( props.redirect.notice.text );
-				}
-			} );
 	};
 
 	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
@@ -199,7 +203,6 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					! isValidUrl ||
 					isFetching ||
 					isUpdating ||
-					targetUrl === '' ||
 					( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
 				}
 			>
