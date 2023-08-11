@@ -198,6 +198,7 @@ export const SiteMonitoringLineChart = ( {
 			scaleGradient,
 			solidFill,
 			spline,
+			timeRange,
 			translate,
 		] )
 	);
