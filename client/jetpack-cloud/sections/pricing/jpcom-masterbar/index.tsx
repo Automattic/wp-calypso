@@ -163,7 +163,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 										{ menuDataStatus === 'success' && sections ? (
 											sections.sort( sortByMenuOrder ).map( ( { label, id, href, items } ) => {
 												const hasChildren = Object.keys( items ).length > 0;
-												const Tag = hasChildren ? 'a' : ExternalLink;
+												const MainMenuTag = hasChildren ? 'a' : ExternalLink;
 
 												return (
 													<li
@@ -177,7 +177,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 														} ) }
 														key={ href || id }
 													>
-														<Tag
+														<MainMenuTag
 															className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
 															href={
 																href && href !== '#' ? localizeUrl( href, locale ) : `#${ id }`
@@ -187,7 +187,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 														>
 															{ label }
 															{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
-														</Tag>
+														</MainMenuTag>
 														{ hasChildren && (
 															<div id={ id } className="header__submenu js-menu" tabIndex={ -1 }>
 																<div className="header__submenu-content">
