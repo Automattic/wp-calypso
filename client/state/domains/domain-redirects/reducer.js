@@ -20,12 +20,13 @@ function updateStateForDomain( state, domain, data ) {
 
 export const initialStateForDomain = {
 	isFetching: false,
+	isFetched: false,
 	isUpdating: false,
 	notice: null,
 	targetHost: null,
 	targetPath: null,
 	forwardPaths: false,
-	secure: true,
+	isSecure: true,
 };
 
 export default function reducer( state = {}, action ) {
@@ -45,11 +46,12 @@ export default function reducer( state = {}, action ) {
 		case DOMAINS_REDIRECT_FETCH_COMPLETED:
 			state = updateStateForDomain( state, action.domain, {
 				isFetching: false,
+				isFetched: true,
 				notice: null,
 				targetHost: action.targetHost,
 				targetPath: action.targetPath,
 				forwardPaths: action.forwardPaths,
-				secure: action.secure,
+				isSecure: action.isSecure,
 			} );
 			break;
 
@@ -79,7 +81,7 @@ export default function reducer( state = {}, action ) {
 				targetHost: action.targetHost,
 				targetPath: action.targetPath,
 				forwardPaths: action.forwardPaths,
-				secure: action.secure,
+				isSecure: action.isSecure,
 			} );
 			break;
 
