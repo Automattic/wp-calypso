@@ -3,6 +3,7 @@ import {
 	planHasFeature,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isBlogOnboardingFlow,
@@ -99,6 +100,14 @@ export function getEnhancedTasks(
 	const isStripeConnected = Boolean(
 		tasks?.find( ( task ) => task.id === 'set_up_payments' )?.completed
 	);
+
+	const completeMigrateContentTask = async () => {
+		if ( siteSlug ) {
+			await updateLaunchpadSettings( siteSlug, {
+				checklist_statuses: { migrate_content: true },
+			} );
+		}
+	};
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -241,6 +250,11 @@ export function getEnhancedTasks(
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
+
+							// Mark task done
+							completeMigrateContentTask();
+
+							// Go to importers
 							window.location.assign( `/import/${ siteSlug }` );
 						},
 					};
