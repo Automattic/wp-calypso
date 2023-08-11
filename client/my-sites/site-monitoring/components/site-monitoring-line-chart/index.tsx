@@ -10,6 +10,7 @@ import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import InfoPopover from 'calypso/components/info-popover';
 import { TimeRange } from '../../metrics-tab';
+import { TIME_RANGE_OPTIONS } from '../time-range-picker';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -48,16 +49,16 @@ function determineTimeRange( timeRange: TimeRange ) {
 	const { start, end } = timeRange;
 	const hours = ( end - start ) / 60 / 60;
 	if ( hours <= 6 ) {
-		return '6 hours';
+		return TIME_RANGE_OPTIONS[ '6-hours' ];
 	} else if ( hours <= 24 ) {
-		return '24 hours';
+		return TIME_RANGE_OPTIONS[ '24-hours' ];
 	} else if ( hours <= 3 * 24 ) {
-		return '3 days';
+		return TIME_RANGE_OPTIONS[ '3-days' ];
 	} else if ( hours <= 7 * 24 ) {
-		return '7 days';
+		return TIME_RANGE_OPTIONS[ '7-days' ];
 	}
 
-	return '24 hours'; // Default value
+	return TIME_RANGE_OPTIONS[ '24-hours' ]; // Default value
 }
 
 export const SiteMonitoringLineChart = ( {
@@ -92,9 +93,15 @@ export const SiteMonitoringLineChart = ( {
 					const dayHour = formatDaysChartHour( date );
 					const timeRangeResult = determineTimeRange( timeRange );
 
-					if ( timeRangeResult === '6 hours' || timeRangeResult === '24 hours' ) {
+					if (
+						timeRangeResult === TIME_RANGE_OPTIONS[ '6-hours' ] ||
+						timeRangeResult === TIME_RANGE_OPTIONS[ '24-hours' ]
+					) {
 						return chatHour;
-					} else if ( timeRangeResult === '3 days' || timeRangeResult === '7 days' ) {
+					} else if (
+						timeRangeResult === TIME_RANGE_OPTIONS[ '3-days' ] ||
+						timeRangeResult === TIME_RANGE_OPTIONS[ '7-days' ]
+					) {
 						return dayHour;
 					}
 
