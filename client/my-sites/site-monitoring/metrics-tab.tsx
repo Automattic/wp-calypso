@@ -303,7 +303,7 @@ export const MetricsTab = () => {
 			</div>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Success HTTP Responses' ) }
+				title={ __( 'Successful HTTP responses' ) }
 				data={ dataForSuccessCodesChart as uPlot.AlignedData }
 				tooltip={ __(
 					'Number of successful responses (200) and redirections (301 and 302) per minute.'
@@ -312,7 +312,7 @@ export const MetricsTab = () => {
 			></SiteMonitoringLineChart>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Error HTTP Responses' ) }
+				title={ __( 'Problematic HTTP responses' ) }
 				data={ dataForErrorCodesChart as uPlot.AlignedData }
 				tooltip={ __(
 					'Number of client-side errors (400) and server-side errors (500) per minute.'
