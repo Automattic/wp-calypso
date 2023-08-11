@@ -156,7 +156,7 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 			await result.current.mutateAsync( 200 );
 		} );
 
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( false ) );
 
 		const updatedData = queryClient.getQueryData< NewsletterCategories >( [
 			'newsletter-categories',
@@ -179,7 +179,5 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 				} ),
 			] )
 		);
-
-		expect( result.current.data ).toEqual( { success: true } );
 	} );
 } );

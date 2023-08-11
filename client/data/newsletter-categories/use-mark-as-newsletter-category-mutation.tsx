@@ -11,13 +11,13 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 	const queryClient = useQueryClient();
 	const cacheKey = getNewsletterCategoriesKey( siteId );
 	return useMutation( {
-		mutationFn: async ( id: number ) => {
-			if ( ! id ) {
+		mutationFn: async ( categoryId: number ) => {
+			if ( ! categoryId ) {
 				throw new Error( 'ID is missing.' );
 			}
 
 			const response = await request< MarkAsNewsletterCategoryResponse >( {
-				path: `/sites/${ siteId }/newsletter-categories/${ id }`,
+				path: `/sites/${ siteId }/newsletter-categories/${ categoryId }`,
 				method: 'POST',
 				apiVersion: '2',
 				apiNamespace: 'wpcom/v2',
@@ -29,7 +29,7 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			return response;
 		},
-		onMutate: async ( id: number ) => {
+		onMutate: async ( categoryId: number ) => {
 			await queryClient.cancelQueries( cacheKey );
 
 			const previousData = queryClient.getQueryData< NewsletterCategories >( cacheKey );
@@ -37,7 +37,7 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			queryClient.setQueryData( cacheKey, ( oldData?: NewsletterCategories ) => {
 				const newNewsletterCategory = categories?.find(
-					( category ) => category.id === id
+					( category ) => category.id === categoryId
 				) as NewsletterCategory;
 
 				const updatedData = {
