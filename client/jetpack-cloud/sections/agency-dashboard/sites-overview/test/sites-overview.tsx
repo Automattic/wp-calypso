@@ -43,6 +43,8 @@ describe( '<SitesOverview>', () => {
 		filter: { issueTypes: [], showOnlyFavorites: false },
 		selectedSites: [],
 		sort: { field: 'url', direction: 'asc' },
+		selectedLicensesCount: 0,
+		isLargeScreen: true,
 	};
 
 	const queryClient = new QueryClient();
@@ -134,6 +136,34 @@ describe( '<SitesOverview>', () => {
 
 		const [ emptyStateMessage ] = getAllByText( "You don't have any favorites yet." );
 		expect( emptyStateMessage ).toBeInTheDocument();
+
+		const promise = Promise.resolve();
+		await act( () => promise );
+	} );
+
+	test( 'Show the add site and issue license buttons', async () => {
+		setData();
+
+		const { getAllByText } = render( <Wrapper context={ context } /> );
+
+		const [ addSiteButton ] = getAllByText( 'Add New Site' );
+		const [ issueLicenseButton ] = getAllByText( 'Issue License' );
+		expect( addSiteButton ).toBeInTheDocument();
+		expect( issueLicenseButton ).toBeInTheDocument();
+
+		const promise = Promise.resolve();
+		await act( () => promise );
+	} );
+
+	test( 'Hide the add site and issue license buttons', async () => {
+		setData();
+		context.selectedLicensesCount = 1;
+		const { getAllByText } = render( <Wrapper context={ context } /> );
+
+		const [ addSiteButton ] = getAllByText( 'Add New Site' );
+		const [ issueLicenseButton ] = getAllByText( 'Issue License' );
+		expect( addSiteButton ).not.toBeInTheDocument();
+		expect( issueLicenseButton ).not.toBeInTheDocument();
 
 		const promise = Promise.resolve();
 		await act( () => promise );
