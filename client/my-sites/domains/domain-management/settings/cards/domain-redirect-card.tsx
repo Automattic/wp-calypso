@@ -1,7 +1,10 @@
+import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -31,6 +34,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 	const [ targetUrl, setTargetUrl ] = useState( target ?? '' );
 	const [ protocol, setProtocol ] = useState( redirect.isSecure ? 'https' : 'http' );
 	const { domainName, fetchDomainRedirect, closeDomainRedirectNotice } = props;
+	const [ isValidUrl, setIsValidUrl ] = useState( true );
 
 	useEffect( () => {
 		fetchDomainRedirect( domainName );
@@ -48,6 +52,14 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
+		if (
+			event.target.value.length > 0 &&
+			! CAPTURE_URL_RGX.test( protocol + '://' + event.target.value )
+		) {
+			setIsValidUrl( false );
+			return;
+		}
+		setIsValidUrl( true );
 	};
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -117,8 +129,8 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					prefix={ prefix }
 					value={ targetUrl }
 					id="domain-redirect__input"
+					className={ classNames( { 'is-error': ! isValidUrl } ) }
 				/>
-
 				<p className="domain-redirect-card__explanation">
 					{ translate(
 						'Requests to your domain will receive an HTTP redirect here. ' +
@@ -137,8 +149,16 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					) }
 				</p>
 			</FormFieldset>
+			<p className="domain-redirect-card__error-field">
+				{ ! isValidUrl ? (
+					<FormInputValidation isError={ true } text={ translate( 'Please enter a valid URL.' ) } />
+				) : (
+					' '
+				) }
+			</p>
 			<FormButton
 				disabled={
+					! isValidUrl ||
 					isFetching ||
 					isUpdating ||
 					( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
