@@ -92,6 +92,8 @@
 		}
 
 		// Post table
+		// the important rules below are to override the styles from the AB experiment that is running in calypso
+		// check history and remove when the experiment is over
 		.post-item__post-promote-button {
 			color: var(--color-accent) !important;
 			border: 1.5px solid var(--color-accent) !important;
