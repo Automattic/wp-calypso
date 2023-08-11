@@ -6,7 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
 import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
-import { useSiteMetrics400vs500Data } from './components/site-monitoring-line-chart/use-site-metrics-400-vs-500-data';
+import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
@@ -158,6 +158,64 @@ function getFormattedDataForPieChart(
 	} );
 }
 
+const useSuccessHttpCodeSeries = () => {
+	const { __ } = useI18n();
+	const series = [
+		{
+			statusCode: 200,
+			fill: 'rgba(104, 179, 232, 0.1)',
+			label: __( 'HTTP 200: OK Response' ),
+			stroke: 'rgba(104, 179, 232, 1)',
+		},
+		{
+			statusCode: 301,
+			fill: 'rgba(227, 174, 212, 0.1)',
+			label: __( 'HTTP 301: Moved Permanently' ),
+			stroke: 'rgba(227, 174, 212, 1)',
+		},
+		{
+			statusCode: 302,
+			fill: 'rgba(9, 181, 133, 0.1)',
+			label: __( 'HTTP 302: Moved Temporarily' ),
+			stroke: 'rgba(9, 181, 133, 1)',
+		},
+	];
+	const statusCodes = series.map( ( { statusCode } ) => statusCode );
+	return { series, statusCodes };
+};
+
+const useErrorHttpCodeSeries = () => {
+	const { __ } = useI18n();
+	const series = [
+		{
+			statusCode: 400,
+			fill: 'rgba(242, 215, 107, 0.1)',
+			label: __( 'HTTP 400: Bad Request' ),
+			stroke: 'rgba(242, 215, 107, 1)',
+		},
+		{
+			statusCode: 401,
+			fill: 'rgba(227, 174, 212, 0.1)',
+			label: __( 'HTTP 401: Unauthorized Request' ),
+			stroke: 'rgba(227, 174, 212, 1)',
+		},
+		{
+			statusCode: 404,
+			fill: 'rgba(9, 181, 133, 0.1)',
+			label: __( 'HTTP 404: Not Found Request' ),
+			stroke: 'rgba(9, 181, 133, 1)',
+		},
+		{
+			statusCode: 500,
+			fill: 'rgba(235, 101, 148, 0.1)',
+			label: __( 'HTTP 500: Internal server error' ),
+			stroke: 'rgba(235, 101, 148, 1)',
+		},
+	];
+	const statusCodes = series.map( ( { statusCode } ) => statusCode );
+	return { series, statusCodes };
+};
+
 export const MetricsTab = () => {
 	const { __ } = useI18n();
 	const translate = useTranslate();
@@ -178,7 +236,16 @@ export const MetricsTab = () => {
 		siteId: useSelector( getSelectedSiteId ),
 		timeRange,
 	} );
-	const { data: dataFor400vs500Chart } = useSiteMetrics400vs500Data( timeRange );
+	const successHttpCodes = useSuccessHttpCodeSeries();
+	const { data: dataForSuccessCodesChart } = useSiteMetricsStatusCodesData(
+		timeRange,
+		successHttpCodes.statusCodes
+	);
+	const errorHttpCodes = useErrorHttpCodeSeries();
+	const { data: dataForErrorCodesChart } = useSiteMetricsStatusCodesData(
+		timeRange,
+		errorHttpCodes.statusCodes
+	);
 
 	return (
 		<div className="site-monitoring-metrics-tab">
@@ -241,23 +308,20 @@ export const MetricsTab = () => {
 				{ ...statusCodeRequestsProps }
 			/>
 			<SiteMonitoringLineChart
-				title={ __( '400 vs 500 HTTP Responses' ) }
-				data={ dataFor400vs500Chart as uPlot.AlignedData }
+				title={ __( 'Success HTTP Responses' ) }
+				data={ dataForSuccessCodesChart as uPlot.AlignedData }
 				tooltip={ __(
 					'Number of client-side errors (400) and server-side errors (500) over time.'
 				) }
-				series={ [
-					{
-						fill: 'rgba(242, 215, 107, 0.1)',
-						label: __( 'HTTP 400: Bad Request' ),
-						stroke: 'rgba(242, 215, 107, 1)',
-					},
-					{
-						fill: 'rgba(235, 101, 148, 0.1)',
-						label: __( 'HTTP 500: Internal server error' ),
-						stroke: 'rgba(235, 101, 148, 1)',
-					},
-				] }
+				series={ successHttpCodes.series }
+			></SiteMonitoringLineChart>
+			<SiteMonitoringLineChart
+				title={ __( 'Error HTTP Responses' ) }
+				data={ dataForErrorCodesChart as uPlot.AlignedData }
+				tooltip={ __(
+					'Number of client-side errors (400) and server-side errors (500) over time.'
+				) }
+				series={ errorHttpCodes.series }
 			></SiteMonitoringLineChart>
 		</div>
 	);

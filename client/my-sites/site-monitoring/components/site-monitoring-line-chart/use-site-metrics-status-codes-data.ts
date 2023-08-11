@@ -4,8 +4,6 @@ import { useGroupByTime } from '../../hooks/use-group-by-time';
 import { TimeRange } from '../../metrics-tab';
 import { DimensionParams, MetricsType, useSiteMetricsQuery } from '../../use-metrics-query';
 
-const STATUS_CODES = [ 400, 500 ];
-
 function useSecondsWindow( timeRange: { start: number; end: number } ) {
 	const { start, end } = timeRange;
 	const hours = ( end - start ) / 60 / 60;
@@ -19,8 +17,9 @@ function useSecondsWindow( timeRange: { start: number; end: number } ) {
 	return 3600; // 1 hour in seconds
 }
 
-export function useSiteMetrics400vs500Data(
+export function useSiteMetricsStatusCodesData(
 	timeRange: TimeRange,
+	statusCodes: number[],
 	metric?: MetricsType,
 	dimension?: DimensionParams
 ) {
@@ -41,7 +40,7 @@ export function useSiteMetrics400vs500Data(
 	const { dataGroupedByTime, labels } = useGroupByTime(
 		data?.data?.periods || [],
 		secondsWindow,
-		STATUS_CODES
+		statusCodes
 	);
 
 	return {
