@@ -2,12 +2,10 @@ import config from '@automattic/calypso-config';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
@@ -15,7 +13,6 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
-import LegacyStatsNotices from './legacy-notices';
 import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { StatsNoticesProps } from './types';
@@ -135,15 +132,7 @@ export default function StatsNotices( {
 	isOdysseyStats,
 	statsPurchaseSuccess,
 }: StatsNoticesProps ) {
-	const statsAdminVersion = useSelector( ( state: object ) =>
-		getJetpackStatsAdminVersion( state, siteId )
-	);
-
-	const supportNewStatsNotices =
-		! isOdysseyStats ||
-		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
-
-	return supportNewStatsNotices ? (
+	return (
 		<>
 			<PostPurchaseNotices
 				siteId={ siteId }
@@ -154,7 +143,5 @@ export default function StatsNotices( {
 				<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }
 		</>
-	) : (
-		<LegacyStatsNotices siteId={ siteId } />
 	);
 }
