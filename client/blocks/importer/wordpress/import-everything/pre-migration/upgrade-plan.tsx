@@ -3,6 +3,8 @@ import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { Tooltip } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -71,14 +73,34 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					{ translate( 'Upgrade and migrate' ) }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
-					<Button
-						busy={ isBusy }
-						borderless={ true }
-						className="action-buttons__borderless"
-						onClick={ onFreeTrialClick }
-					>
-						{ translate( 'Try it for free' ) }
-					</Button>
+					<>
+						{ isEligibleForTrialPlan && (
+							<Button
+								busy={ isBusy }
+								borderless={ true }
+								className="action-buttons__borderless"
+								onClick={ onFreeTrialClick }
+							>
+								{ translate( 'Try it for free' ) }
+							</Button>
+						) }
+						{ ! isEligibleForTrialPlan && (
+							<Tooltip
+								delay={ 0 }
+								position="top center"
+								text={ createInterpolateElement(
+									translate(
+										'Free trials are a one-time offer and<br />you’ve already enrolled in one in the past.'
+									),
+									{ br: <br /> }
+								) }
+							>
+								<Button borderless={ true } className="action-buttons__borderless">
+									{ translate( 'Try it for free' ) }
+								</Button>
+							</Tooltip>
+						) }
+					</>
 				) }
 				{ ! isEligibleForTrialPlan && (
 					<Button
