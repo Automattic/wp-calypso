@@ -104,7 +104,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 	};
 
 	const handleDelete = () => {
-		if ( ! redirect?.domainRedirectId || ! redirect?.targetUrl ) {
+		if ( ! redirect?.domainRedirectId || ! redirect?.targetHost ) {
 			setTargetUrl( withoutHttp( '' ) );
 			return;
 		}
