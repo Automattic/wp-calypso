@@ -53,8 +53,9 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.getByText( /Jetpack is unable to communicate with your site./i )
+				screen.queryByText( /Jetpack is unable to communicate with your site./i )
 			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
 		test( 'shows fatal error message', () => {
@@ -69,10 +70,11 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.getByText(
+				screen.queryByText(
 					/Jetpack is unable to communicate with your site due to a critical error that has occurred there/i
 				)
 			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
 		test( 'shows dns error message', () => {
@@ -86,7 +88,8 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
-			expect( screen.getByText( /Jetpack is unable to connect to your domain./i ) ).toBeVisible();
+			expect( screen.queryByText( /Jetpack is unable to connect to your domain./i ) ).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
 		test( 'shows user token error message', () => {
@@ -101,10 +104,11 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.getByText(
+				screen.queryByText(
 					/Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack./i
 				)
 			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
 		test( 'shows blog token error message', () => {
@@ -119,10 +123,11 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.getByText(
+				screen.queryByText(
 					/Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack./i
 				)
 			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
 		test( 'shows http error message', () => {
@@ -137,10 +142,11 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.getByText(
+				screen.queryByText(
 					/Jetpack is unable to communicate with your site due to a HTTP connection error. Please ensure that your site serves requests./i
 				)
 			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
 		test( 'shows plugin error message', () => {
@@ -155,10 +161,11 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.getByText(
+				screen.queryByText(
 					/Jetpack is unable to communicate with your site due to an inactive Jetpack plugin./i
 				)
 			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
 		test( 'shows generic error message', () => {
@@ -173,10 +180,11 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.getByText(
+				screen.queryByText(
 					/Jetpack is unable to communicate with your site. Please contact site administrator./i
 				)
 			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
