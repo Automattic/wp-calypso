@@ -162,7 +162,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/We are unable to communicate with your site because Jetpack is deactivated./i
+					/We are unable to communicate with your site because the Jetpack plugin is deactivated./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to reactivate Jetpack/i ) ).toBeVisible();
