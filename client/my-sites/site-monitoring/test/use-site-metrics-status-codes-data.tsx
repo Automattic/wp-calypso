@@ -1,7 +1,8 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useGroupByTime } from '../hooks/use-group-by-time';
+import { PeriodData } from '../use-metrics-query';
 
-const periods = [
+const periods: PeriodData[] = [
 	{
 		timestamp: 1691664300, // Initial timestamp in seconds
 		dimension: {
@@ -43,59 +44,71 @@ const periods = [
 	},
 ];
 
+const data = {
+	_meta: {
+		start: 1691150400,
+		end: 1691762400,
+		resolution: 7200,
+		metric: 'requests_persec',
+		dimension: 'http_status',
+		took: 604,
+	},
+	periods,
+};
+
 describe( 'useGroupByTime hook', () => {
 	it( 'should group data by time windows correctly', () => {
-		const { result } = renderHook( () =>
-			useGroupByTime( periods, 600, [ 200, 301, 302, 304, 404 ] )
-		);
+		const { result } = renderHook( () => useGroupByTime( data, [ 200, 301, 302, 304, 404 ] ) );
 		const { groupedData, dataGroupedByTime, labels } = result.current;
 
-		expect( Object.keys( groupedData ).length ).toBe( 2 );
-		expect( Object.values( groupedData ) ).toStrictEqual( [
-			{ '200': 2, '301': 1, '302': 1, '304': 1, '404': 2 },
-			{ '200': 3, '301': 2, '304': 1, '404': 1 },
-		] );
+		expect( Object.keys( groupedData ).length ).toBe( 5 );
+		expect( groupedData ).toStrictEqual( {
+			'1691664300': {
+				'200': 52.53333333333333,
+				'301': 1.4666666666666666,
+				'302': 0.13333333333333333,
+				'304': 2.933333333333333,
+				'404': 0.4,
+			},
+			'1691664600': { '200': 56.93333333333333, '404': 0.6666666666666666 },
+			'1691664900': { '200': 56.93333333333333, '301': 0.5333333333333333 },
+			'1691665100': {
+				'200': 56.93333333333333,
+				'301': 0.5333333333333333,
+				'304': 3.3333333333333335,
+				'404': 0.6666666666666666,
+			},
+			'1691665200': { '200': 56.93333333333333 },
+		} );
 		expect( dataGroupedByTime ).toEqual( [
-			[ 2, 3 ], // 200
-			[ 1, 2 ], // 301
-			[ 1, 0 ], // 302
-			[ 1, 1 ], // 304
-			[ 2, 1 ], // 404
+			[
+				52.53333333333333, 56.93333333333333, 56.93333333333333, 56.93333333333333,
+				56.93333333333333,
+			],
+			[ 1.4666666666666666, 0, 0.5333333333333333, 0.5333333333333333, 0 ],
+			[ 0.13333333333333333, 0, 0, 0, 0 ],
+			[ 2.933333333333333, 0, 0, 3.3333333333333335, 0 ],
+			[ 0.4, 0.6666666666666666, 0, 0.6666666666666666, 0 ],
 		] );
-		expect( labels.length ).toEqual( 2 );
-		expect( labels ).toEqual( [ 1691664300, 1691664900 ] );
-	} );
-
-	it( 'should group data by a bigger time window correctly', () => {
-		const { result } = renderHook( () =>
-			useGroupByTime( periods, 3600, [ 200, 301, 302, 304, 404 ] )
-		);
-		const { groupedData, dataGroupedByTime, labels } = result.current;
-
-		expect( Object.keys( groupedData ).length ).toBe( 1 );
-		expect( Object.values( groupedData ) ).toStrictEqual( [
-			{ '200': 5, '301': 3, '302': 1, '304': 2, '404': 3 },
+		expect( labels.length ).toEqual( 5 );
+		expect( labels ).toEqual( [
+			1691664300,
+			1691664300 + 300,
+			1691664300 + 600,
+			1691664300 + 800,
+			1691664300 + 900,
 		] );
-		expect( dataGroupedByTime ).toEqual( [
-			[ 5 ], // 200
-			[ 3 ], // 301
-			[ 1 ], // 302
-			[ 2 ], // 304
-			[ 3 ], // 404
-		] );
-		expect( labels.length ).toEqual( 1 );
-		expect( labels ).toEqual( [ 1691664300 ] );
 	} );
 
 	it( 'should correctly handle missing status codes', () => {
-		const { result } = renderHook( () => useGroupByTime( periods, 3600, [ 444 ] ) );
+		const { result } = renderHook( () => useGroupByTime( data, [ 444 ] ) );
 		const { dataGroupedByTime } = result.current;
 
-		expect( dataGroupedByTime ).toEqual( [ [ 0 ] ] );
+		expect( dataGroupedByTime ).toEqual( [ [ 0, 0, 0, 0, 0 ] ] );
 	} );
 
 	it( 'should return empty arrays if no periods given', () => {
-		const { result } = renderHook( () => useGroupByTime( [], 3600, [ 200, 301 ] ) );
+		const { result } = renderHook( () => useGroupByTime( undefined, [ 200, 301 ] ) );
 		const { groupedData, dataGroupedByTime, labels } = result.current;
 
 		expect( groupedData ).toEqual( {} );
