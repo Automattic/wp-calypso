@@ -1,7 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { DNS_ERROR, FATAL_ERROR, UNKNOWN_ERROR } from './constants';
+import {
+	FATAL_ERROR,
+	USER_TOKEN_ERROR,
+	BLOG_TOKEN_ERROR,
+	DNS_ERROR,
+	UNKNOWN_ERROR,
+} from './constants';
 import { ErrorNotice } from './error-notice';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
@@ -54,6 +60,21 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-a-critical-error-on-your-site'
+				) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+			/>
+		);
+	}
+
+	if ( [ USER_TOKEN_ERROR, BLOG_TOKEN_ERROR ].includes( jetpackConnectionHealth?.error ) ) {
+		return (
+			<ErrorNotice
+				errorType={ FATAL_ERROR }
+				errorText={ translate(
+					'Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack.'
+				) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 			/>

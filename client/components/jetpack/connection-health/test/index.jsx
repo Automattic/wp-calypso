@@ -3,14 +3,16 @@
  */
 import { screen } from '@testing-library/react';
 import { merge } from 'lodash';
-import {
-	DNS_ERROR,
-	FATAL_ERROR,
-	UNKNOWN_ERROR,
-} from 'calypso/components/jetpack/connection-health/constants';
 import { jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackConnectionHealthBanner } from '..';
+import {
+	FATAL_ERROR,
+	USER_TOKEN_ERROR,
+	BLOG_TOKEN_ERROR,
+	DNS_ERROR,
+	UNKNOWN_ERROR,
+} from '../constants';
 
 const mockError = jest.fn().mockReturnValue( UNKNOWN_ERROR );
 
@@ -82,6 +84,42 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect( screen.getByText( /Jetpack is unable to connect to your domain./i ) ).toBeVisible();
+		} );
+
+		test( 'shows user token error message', () => {
+			mockError.mockReturnValue( USER_TOKEN_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.getByText(
+					/Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack./i
+				)
+			).toBeVisible();
+		} );
+
+		test( 'shows blog token error message', () => {
+			mockError.mockReturnValue( BLOG_TOKEN_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.getByText(
+					/Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack./i
+				)
+			).toBeVisible();
 		} );
 	} );
 } );
