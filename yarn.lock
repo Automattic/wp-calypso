@@ -163,7 +163,7 @@ __metadata:
     prop-types: ^15.8.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-redux: ^8.0.7
+    react-redux: ^8.1.2
     redux: ^4.2.1
     redux-thunk: ^2.4.2
     webpack: ^5.68.0
@@ -196,7 +196,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -651,7 +651,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -692,7 +692,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -724,7 +724,7 @@ __metadata:
     debug: ^4.3.3
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -759,7 +759,7 @@ __metadata:
     "@wordpress/element": ^5.15.0
     "@wordpress/i18n": ^4.38.0
     react: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -903,7 +903,7 @@ __metadata:
     "@wordpress/element": ^5.15.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -982,7 +982,7 @@ __metadata:
     "@wordpress/data": ^9.8.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1083,7 +1083,7 @@ __metadata:
     typescript: ^5.1.6
   peerDependencies:
     "@emotion/react": ^11.4.1
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1127,7 +1127,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-redux: ^8.0.7
+    react-redux: ^8.1.2
     redux: ^4.2.1
     redux-thunk: ^2.4.2
     webpack: ^5.68.0
@@ -1214,7 +1214,7 @@ __metadata:
     prop-types: ^15.8.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-redux: ^8.0.7
+    react-redux: ^8.1.2
     redux: ^4.2.1
     redux-thunk: ^2.4.2
     size-limit: ^8.2.4
@@ -1282,7 +1282,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^9.8.0
     react: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1310,7 +1310,7 @@ __metadata:
     "@wordpress/i18n": ^4.38.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1442,7 +1442,7 @@ __metadata:
     "@wordpress/data": ^9.8.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1458,7 +1458,7 @@ __metadata:
     "@wordpress/data": ^9.8.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1534,7 +1534,7 @@ __metadata:
     "@wordpress/data": ^9.8.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1567,7 +1567,7 @@ __metadata:
     "@wordpress/data": ^9.8.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1684,7 +1684,7 @@ __metadata:
     "@wordpress/data": ^9.8.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1781,7 +1781,7 @@ __metadata:
     typescript: ^5.1.6
   peerDependencies:
     "@emotion/react": ^11.4.1
-    redux: ^4.1.2
+    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -1869,7 +1869,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-popper: ^2.3.0
-    react-redux: ^8.0.7
+    react-redux: ^8.1.2
     redux: ^4.2.1
     redux-thunk: ^2.4.2
     swiper: ^8.4.5
@@ -8949,9 +8949,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/redux-routine@npm:4.38.0":
-  version: 4.38.0
-  resolution: "@wordpress/redux-routine@npm:4.38.0"
+"@wordpress/redux-routine@npm:4.39.0":
+  version: 4.39.0
+  resolution: "@wordpress/redux-routine@npm:4.39.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     is-plain-object: ^5.0.0
@@ -8959,7 +8959,7 @@ __metadata:
     rungen: ^0.3.2
   peerDependencies:
     redux: ">=4"
-  checksum: fb87f161af5dfef1c76177f8074f7c06194dd4e5340f162c817cf8c6079eaf06c0cc064ac8864af7322cf6788af3d36e94ef8fe130a2a2531de518f30a6d14ce
+  checksum: 353a7ab74334a27627ba5df0c2de43ed35902c786696a256daf0e92c7d4a8f07e5ee7815951b9eba94a313d4ebe81b1a49056fb62dc4e35772ac43ff0f81f872
   languageName: node
   linkType: hard
 
@@ -11269,7 +11269,7 @@ __metadata:
     react-live: ^4.1.1
     react-markdown: ^8.0.7
     react-modal: ^3.16.1
-    react-redux: ^8.0.7
+    react-redux: ^8.1.2
     react-router: ^6.10.0
     react-router-dom: ^6.10.0
     react-test-renderer: ^18.2.0
@@ -25002,9 +25002,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-redux@npm:^8.0.7":
-  version: 8.0.7
-  resolution: "react-redux@npm:8.0.7"
+"react-redux@npm:^8.1.2":
+  version: 8.1.2
+  resolution: "react-redux@npm:8.1.2"
   dependencies:
     "@babel/runtime": ^7.12.1
     "@types/hoist-non-react-statics": ^3.3.1
@@ -25018,7 +25018,7 @@ __metadata:
     react: ^16.8 || ^17.0 || ^18.0
     react-dom: ^16.8 || ^17.0 || ^18.0
     react-native: ">=0.59"
-    redux: ^4
+    redux: ^4 || ^5.0.0-beta.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
@@ -25030,7 +25030,7 @@ __metadata:
       optional: true
     redux:
       optional: true
-  checksum: 594daac6c5114fa8958931b53ffaf87b92252057befdc6fefe3a9bced5b2dfda59135a94253e1c04aba9e76530125a37a787a7c8c37842761e71d6a3e1f4166d
+  checksum: 779b911dc2121cf589adfbc31c4cba4357f952c58ec3ea37b13d229e5abf347d50e1439fdb182de77b0eab71bc1c91f94a78292d332d4db68c9a004739ad729d
   languageName: node
   linkType: hard
 
