@@ -107,12 +107,36 @@ export interface PlansFeaturesMainProps {
 	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
-	hideFreePlan?: boolean; // to be deprecated
-	hidePersonalPlan?: boolean; // to be deprecated
-	hidePremiumPlan?: boolean; // to be deprecated
-	hideBusinessPlan?: boolean; // to be deprecated
-	hideEcommercePlan?: boolean; // to be deprecated
-	hideEnterprisePlan?: boolean; // to be deprecated
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideFreePlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hidePersonalPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hidePremiumPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideBusinessPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideEcommercePlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideEnterprisePlan?: boolean;
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
