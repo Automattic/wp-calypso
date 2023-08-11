@@ -32,7 +32,7 @@ export function useGroupByTime(
 				Object.values( groupedData ).map( ( group ) => group[ statusCode ] || 0 )
 			);
 		}
-		const labels = Object.keys( groupedData ) as unknown as number[];
+		const labels = Object.keys( groupedData ).map( ( key ) => parseInt( key ) );
 		return { groupedData, dataGroupedByTime: dataForBarChart, labels };
 	}, [ periods, secondsWindow, statusCodes ] );
 }
