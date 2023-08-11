@@ -3,6 +3,9 @@ import { PeriodData } from '../use-metrics-query';
 
 const STATUS_CODES_TO_GROUP = [ 400, 500 ];
 
+/**
+ * It gruops the data by time windows and counts the repetitions of status code in each window.
+ */
 export function useGroupByTime(
 	periods: PeriodData[],
 	secondsWindow: number,
@@ -26,13 +29,13 @@ export function useGroupByTime(
 			} );
 		} );
 
-		const dataForBarChart = [];
+		const dataGroupedByTime = [];
 		for ( const statusCode of statusCodes ) {
-			dataForBarChart.push(
+			dataGroupedByTime.push(
 				Object.values( groupedData ).map( ( group ) => group[ statusCode ] || 0 )
 			);
 		}
 		const labels = Object.keys( groupedData ).map( ( key ) => parseInt( key ) );
-		return { groupedData, dataGroupedByTime: dataForBarChart, labels };
+		return { groupedData, dataGroupedByTime, labels };
 	}, [ periods, secondsWindow, statusCodes ] );
 }
