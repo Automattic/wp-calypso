@@ -259,6 +259,7 @@ export function generateSteps( {
 			props: {
 				showBiennialToggle: true,
 				hideFreePlan: true,
+				hideEnterprisePlan: true,
 			},
 		},
 
