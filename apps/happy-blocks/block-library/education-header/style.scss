@@ -215,6 +215,17 @@ body.archive {
 				}
 			}
 		}
+
+		&.is-webinars,
+		&.is-courses {
+			.happy-blocks-global-header-site__title__wrapper {
+				@media ( max-width: $breakpoint-mobile ) {
+					margin-top: 0;
+				}
+			}
+		}
+
+
 		.happy-blocks-search__inside-wrapper {
 			input {
 				background-color: var(--studio-gray-0);
