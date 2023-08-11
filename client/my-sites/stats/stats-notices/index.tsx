@@ -14,11 +14,9 @@ import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-si
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
-import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import LegacyStatsNotices from './legacy-notices';
 import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
-import OptOutNotice from './opt-out-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { StatsNoticesProps } from './types';
 import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
@@ -80,13 +78,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		<>
 			{ showDoYouLoveJetpackStatsNotice && (
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
-			) }
-			{ /* If we add more notice, we'll need to refator the logic with logic similar in `use-notice-visibility-query` */ }
-			{ ! showDoYouLoveJetpackStatsNotice && hasLoadedPurchases && isOdysseyStats && (
-				<>
-					<OptOutNotice siteId={ siteId } />
-					<FeedbackNotice siteId={ siteId } />
-				</>
 			) }
 		</>
 	);

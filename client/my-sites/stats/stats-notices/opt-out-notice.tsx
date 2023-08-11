@@ -1,9 +1,6 @@
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import { StatsNoticeProps, NoticeBodyProps } from './types';
+import { NoticeBodyProps } from './types';
 
 export const OptOutNoticeBody = ( { onNoticeDismiss }: NoticeBodyProps ) => {
 	const translate = useTranslate();
@@ -30,24 +27,3 @@ export const OptOutNoticeBody = ( { onNoticeDismiss }: NoticeBodyProps ) => {
 		</div>
 	);
 };
-
-const OptOutNotice = ( { siteId }: StatsNoticeProps ) => {
-	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
-	const { data: showOptOutNotice } = useNoticeVisibilityQuery( siteId, 'opt_out_new_stats' );
-	const { mutateAsync: dismissOptOutNoticeAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'opt_out_new_stats'
-	);
-	const dismissOptOutNotice = () => {
-		setNoticeDismissed( true );
-		dismissOptOutNoticeAsync();
-	};
-
-	if ( noticeDismissed || ! showOptOutNotice ) {
-		return null;
-	}
-
-	return <OptOutNoticeBody onNoticeDismiss={ dismissOptOutNotice } />;
-};
-
-export default OptOutNotice;
