@@ -200,6 +200,12 @@ const useErrorHttpCodeSeries = () => {
 			stroke: 'rgba(227, 174, 212, 1)',
 		},
 		{
+			statusCode: 403,
+			fill: 'rgba(104, 179, 232, 0.1)',
+			label: __( 'HTTP 403: Forbidden Request' ),
+			stroke: 'rgba(104, 179, 232, 1)',
+		},
+		{
 			statusCode: 404,
 			fill: 'rgba(9, 181, 133, 0.1)',
 			label: __( 'HTTP 404: Not Found Request' ),
