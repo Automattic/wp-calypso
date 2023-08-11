@@ -1,5 +1,6 @@
-import { FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Icon, trash } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ import {
 	closeDomainRedirectNotice,
 	fetchDomainRedirect,
 	updateDomainRedirect,
+	deleteDomainRedirect,
 } from 'calypso/state/domains/domain-redirects/actions';
 import { getDomainRedirect } from 'calypso/state/domains/domain-redirects/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -62,8 +64,35 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 		setIsValidUrl( true );
 	};
 
+	const handleDelete = () => {
+		if ( ! redirect?.domainRedirectId || ! redirect?.targetHost ) {
+			return;
+		}
+
+		setTargetUrl( '' );
+
+		props
+			.deleteDomainRedirect( props.domainName, redirect.domainRedirectId )
+			.then( ( success: boolean ) => {
+				if ( success ) {
+					props.fetchDomainRedirect( props.domainName );
+
+					props.successNotice( translate( 'Site redirect deleted successfully.' ), {
+						duration: 5000,
+						id: `site-redirect-update-notification`,
+					} );
+				} else {
+					props.errorNotice( props.redirect.notice.text );
+				}
+			} );
+	};
+
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+		if ( targetUrl === '' ) {
+			handleDelete();
+			return;
+		}
 		let targetHost = '';
 		let targetPath = '';
 		let isSecure = true;
@@ -100,9 +129,11 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 			} );
 		return false;
 	};
+
 	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
 		setProtocol( event.currentTarget.value );
 	};
+
 	const prefix = (
 		<>
 			<FormSelect
@@ -118,6 +149,18 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 		</>
 	);
 
+	const suffix = (
+		<Button
+			disabled={ isFetching || isUpdating || ( targetUrl === '' && target === '' ) }
+			className={ classNames( 'domain-redirect-card__delete', {
+				'is-disabled': isFetching || isUpdating || ( targetUrl === '' && target === '' ),
+			} ) }
+			onClick={ handleDelete }
+		>
+			<Icon icon={ trash } size={ 18 } />
+		</Button>
+	);
+
 	return (
 		<form onSubmit={ handleSubmit }>
 			<FormFieldset className="domain-redirect-card__fields">
@@ -128,6 +171,7 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					onChange={ handleChange }
 					prefix={ prefix }
 					value={ targetUrl }
+					suffix={ suffix }
 					id="domain-redirect__input"
 					className={ classNames( { 'is-error': ! isValidUrl } ) }
 				/>
@@ -161,11 +205,10 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					! isValidUrl ||
 					isFetching ||
 					isUpdating ||
-					targetUrl === '' ||
 					( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
 				}
 			>
-				{ translate( 'Update' ) }
+				{ translate( 'Save' ) }
 			</FormButton>
 		</form>
 	);
@@ -194,6 +237,7 @@ const connector = connect(
 	{
 		fetchDomainRedirect,
 		updateDomainRedirect,
+		deleteDomainRedirect,
 		closeDomainRedirectNotice,
 		successNotice,
 		errorNotice,
