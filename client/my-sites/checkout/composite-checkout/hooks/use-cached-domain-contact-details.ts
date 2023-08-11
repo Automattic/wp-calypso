@@ -91,7 +91,6 @@ function useCachedContactDetailsForCheckoutForm(
 			...cachedContactDetails,
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
 		} )
-			// @ts-expect-error Action creator return types are incorrect. This can be removed after https://github.com/WordPress/gutenberg/pull/52530 is available in @wordpress/data.
 			.then( () => {
 				if ( ! isMounted.current ) {
 					return false;
