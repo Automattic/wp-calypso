@@ -1,34 +1,29 @@
 import { useMemo } from 'react';
-import { PeriodData } from '../use-metrics-query';
+import { SiteMetricsAPIResponse } from '../use-metrics-query';
 
 const STATUS_CODES_TO_GROUP = [ 400, 500 ];
 
 /**
- * It gruops the data by time windows and counts the repetitions of status code in each window.
+ * It calculates the number of requests per minute for each status code.
  */
 export function useGroupByTime(
-	periods: PeriodData[],
-	secondsWindow: number,
+	data: SiteMetricsAPIResponse[ 'data' ] | undefined,
 	statusCodes: number[] = STATUS_CODES_TO_GROUP
 ) {
 	return useMemo( () => {
+		const periods = data?.periods || [];
+		const resolution = data?._meta?.resolution || 0;
 		const groupedData: { [ key: number ]: { [ statusCode: string ]: number } } = {};
-		const initialTimestamp = periods[ 0 ]?.timestamp || 0;
 
 		periods.forEach( ( period ) => {
-			const groupTimestamp =
-				initialTimestamp +
-				secondsWindow * Math.floor( ( period.timestamp - initialTimestamp ) / secondsWindow );
-			if ( ! groupedData[ groupTimestamp ] ) {
-				groupedData[ groupTimestamp ] = {};
+			if ( ! groupedData[ period.timestamp ] ) {
+				groupedData[ period.timestamp ] = {};
 			}
 			// Count status codes
 			const statusCodes = Object.keys( period.dimension );
 			statusCodes.forEach( ( statusCode ) => {
-				if ( ! groupedData[ groupTimestamp ][ statusCode ] ) {
-					groupedData[ groupTimestamp ][ statusCode ] = 0;
-				}
-				groupedData[ groupTimestamp ][ statusCode ]++;
+				groupedData[ period.timestamp ][ statusCode ] =
+					( period.dimension[ statusCode ] * resolution ) / 60; // convert requests per minute
 			} );
 		} );
 
@@ -40,5 +35,5 @@ export function useGroupByTime(
 		}
 		const labels = Object.keys( groupedData ).map( ( key ) => parseInt( key ) );
 		return { groupedData, dataGroupedByTime, labels };
-	}, [ periods, secondsWindow, statusCodes ] );
+	}, [ data, statusCodes ] );
 }
