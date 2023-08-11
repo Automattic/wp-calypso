@@ -45,7 +45,7 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
-	const { data: requestsData } = useSiteMetricsQuery( siteId, {
+	const { data: requestsData, isLoading } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric: metric || 'requests_persec',
@@ -104,6 +104,7 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 
 	return {
 		formattedData,
+		isLoading,
 	};
 }
 
@@ -162,7 +163,7 @@ export const MetricsTab = () => {
 	const translate = useTranslate();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
-	const { formattedData } = useSiteMetricsData( timeRange );
+	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( timeRange );
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		timeRange,
 		'requests_persec',
@@ -206,6 +207,7 @@ export const MetricsTab = () => {
 						stroke: '#008763',
 					},
 				] }
+				isLoading={ isLoadingLineChart }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart

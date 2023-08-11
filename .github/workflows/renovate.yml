@@ -47,7 +47,8 @@ env:
   RENOVATE_VERSION: 36.31.0
   cache_archive: renovate_cache.tar.gz
   # This is the dir renovate provides -- if we set our own, we run into permissions issues.
-  cache_dir: /tmp/renovate/cache/renovate
+  cache_dir: /tmp/renovate/cache/renovate/repository
+  cache_key: gandalfs-renovate-cache
 
 jobs:
   renovate:
@@ -59,7 +60,7 @@ jobs:
         if: github.event.inputs.repoCache != 'disabled'
         continue-on-error: true
         with:
-          name: renovate-cache
+          name: ${{ env.cache_key }}
           path: cache-download
 
       - name: Extract renovate cache
@@ -83,8 +84,7 @@ jobs:
           # are different than the ones given after the cache is restored. We have to
           # change ownership to solve this.
           sudo chown -R runneradmin:root /tmp/renovate/
-          ls $cache_dir
-          ls $cache_dir/renovate-cache-v1
+          ls -R $cache_dir
 
       - uses: renovatebot/github-action@v39.0.1
         with:
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: github.event.inputs.repoCache != 'disabled'
         with:
-          name: renovate-cache
+          name: ${{ env.cache_key }}
           path: ${{ env.cache_archive }}
           # Since this is created frequently, we don't need to keep it for long.
           retention-days: 1

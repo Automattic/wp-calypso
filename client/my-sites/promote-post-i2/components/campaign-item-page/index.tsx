@@ -34,7 +34,12 @@ export default function CampaignItemPage( props: Props ) {
 	if ( isError ) {
 		return (
 			<MainWrapper>
-				<Notice status="is-error" icon="mention" showDismiss={ false }>
+				<Notice
+					className="promote-post-notice"
+					status="is-error"
+					icon="mention"
+					showDismiss={ false }
+				>
 					{ noCampaignListMessage }
 				</Notice>
 			</MainWrapper>

@@ -39,7 +39,7 @@ function getShortDate( date: Date, locale: string ): string {
 
 export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChartDataParams ) {
 	const { start, end } = timeRange;
-	const { data } = useSiteMetricsQuery( siteId, {
+	const { data, isLoading } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric: 'requests_persec',
@@ -54,6 +54,7 @@ export function useMetricsBarChartData( { siteId, timeRange }: UseMetricsBarChar
 	);
 
 	return {
+		isLoading,
 		data: [ STATUS_CODES.map( ( code ) => `HTTP ${ code }` ), ...dataGroupedByTime ] as [
 			string[],
 			...number[][]

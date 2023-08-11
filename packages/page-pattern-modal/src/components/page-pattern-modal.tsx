@@ -43,7 +43,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	// Parse patterns blocks and memoize them.
 	getFormattedPatternsByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
 		const blocksByPatternSlugs = patterns.reduce(
-			( prev, { name, description = '', html, pattern_meta } ) => {
+			( prev, { name, title = '', description = '', html, pattern_meta } ) => {
 				// The default value is from https://github.com/Automattic/wp-calypso/blob/d22976d8250fb4479d5677f5434742878fbd0ef3/apps/editing-toolkit/editing-toolkit-plugin/block-patterns/class-block-patterns-from-api.php#L115
 				const viewportWidth = pattern_meta?.viewport_width
 					? Number( pattern_meta.viewport_width )
@@ -51,8 +51,8 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 
 				prev[ name ] = {
 					name,
-					// Keep showing the description as before instead of the title
-					title: description,
+					// A lot of patterns don't have a description, so we fallback to the title if it's blank
+					title: description || title,
 					blocks: html
 						? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
 						: [],

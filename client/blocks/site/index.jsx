@@ -12,12 +12,12 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import {
 	getSite,
 	getSiteSlug,
@@ -145,13 +145,16 @@ class Site extends Component {
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
 			'is-reskinned': this.props.isReskinned,
-			'is-migration-trial': isMigrationTrialSite( site ),
+			'is-trial': this.props.isTrialSite,
 		} );
 
 		// We show public coming soon badge only when the site is not private.
 		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
 		const shouldShowPublicComingSoonSiteBadge =
-			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
+			! site.is_private &&
+			this.props.site.is_coming_soon &&
+			! isAtomicAndEditingToolkitDeactivated &&
+			! this.props.isTrialSite;
 
 		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
@@ -202,7 +205,7 @@ class Site extends Component {
 								{ translate( 'Staging' ) }
 							</SitesStagingBadge>
 						) }
-						{ isMigrationTrialSite( site ) && (
+						{ this.props.isTrialSite && (
 							<SitesMigrationTrialBadge className="site__badge" secondary>
 								{ translate( 'Trial' ) }
 							</SitesMigrationTrialBadge>
@@ -262,6 +265,7 @@ function mapStateToProps( state, ownProps ) {
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isSiteP2: isSiteWPForTeams( state, siteId ),
 		isP2Hub: isSiteP2Hub( state, siteId ),
+		isTrialSite: isTrialSite( state, siteId ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,

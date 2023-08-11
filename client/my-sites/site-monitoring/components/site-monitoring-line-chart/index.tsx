@@ -1,4 +1,5 @@
 import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
+import { Spinner } from '@wordpress/components';
 import classnames from 'classnames';
 import { numberFormat } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
@@ -22,6 +23,7 @@ interface UplotChartProps {
 	solidFill?: boolean;
 	period?: string;
 	series: Array< SeriesProp >;
+	isLoading?: boolean;
 }
 
 interface SeriesProp {
@@ -71,6 +73,7 @@ export const SiteMonitoringLineChart = ( {
 	legendContainer,
 	options: propOptions,
 	series,
+	isLoading = false,
 }: UplotChartProps ) => {
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
@@ -166,6 +169,7 @@ export const SiteMonitoringLineChart = ( {
 				) }
 			</header>
 			<div ref={ uplotContainer }>
+				{ isLoading && <Spinner /> }
 				<UplotReact
 					data={ data }
 					onCreate={ ( chart ) => ( uplot.current = chart ) }

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 const Root = styled.div( {
 	fontSize: 14,
-	maxWidth: 350,
+	maxWidth: 300,
 	padding: 16,
 	textAlign: 'left',
 	color: 'var(--color-neutral-50)',

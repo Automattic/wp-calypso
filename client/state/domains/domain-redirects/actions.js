@@ -23,14 +23,14 @@ export const fetchDomainRedirect = ( domain ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_REDIRECT_FETCH, domain } );
 
 	wpcom.req.get( { path: '/sites/all/domain/' + domain + '/redirects' } ).then(
-		( { target_host, target_path, forward_paths, secure } ) => {
+		( { target_host, target_path, forward_paths, is_secure } ) => {
 			dispatch( {
 				type: DOMAINS_REDIRECT_FETCH_COMPLETED,
 				domain,
 				targetHost: target_host,
 				targetPath: target_path,
 				forwardPaths: forward_paths,
-				secure: secure ? true : false,
+				is_secure: is_secure ? true : false,
 			} );
 		},
 		( error ) => {
@@ -48,13 +48,19 @@ export const fetchDomainRedirect = ( domain ) => ( dispatch ) => {
 };
 
 export const updateDomainRedirect =
-	( domain, targetHost, targetPath, forwardPaths, secure ) => ( dispatch ) => {
+	( domain, targetHost, targetPath, forwardPaths, isSecure ) => ( dispatch ) => {
 		dispatch( { type: DOMAINS_REDIRECT_UPDATE, domain } );
 
 		return wpcom.req
 			.post(
 				{ path: '/sites/all/domain/' + domain + '/redirects' },
-				{ target_host: targetHost, target_path: targetPath, forward_paths: forwardPaths, secure }
+				{
+					target_host: targetHost,
+					target_path: targetPath,
+					is_secure: isSecure,
+					forward_paths: true, // Always permanent on v1
+					is_permanent: true, // Always permanent on v1
+				}
 			)
 			.then(
 				( data ) => {
@@ -65,7 +71,7 @@ export const updateDomainRedirect =
 							targetHost,
 							targetPath,
 							forwardPaths,
-							secure,
+							isSecure,
 							success: i18n.translate( 'The redirect settings were updated successfully.' ),
 						} );
 						return true;
