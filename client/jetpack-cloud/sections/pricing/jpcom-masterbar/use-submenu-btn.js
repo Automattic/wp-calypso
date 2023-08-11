@@ -4,6 +4,11 @@ import { getLastFocusableElement } from 'calypso/lib/dom/focus';
 /*
  * WARNING: script below is directly ported from
  * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/js/header.js
+ *
+ * A portion of this script has been ported to React to avoid an issue
+ * where the menu buttons were getting multiple event listeners attached.
+ *
+ * This entire script should probably be ported over eventually.
  */
 export default function useSubmenuBtn() {
 	useEffect( () => {
@@ -39,16 +44,6 @@ export default function useSubmenuBtn() {
 			const toggle = function () {
 				toggleMenuItem( btn, menu );
 			};
-
-			btn.addEventListener( 'click', function ( e ) {
-				e.preventDefault();
-
-				if ( btn.getAttribute( 'aria-expanded' ) === 'false' ) {
-					collapseExpandedMenu();
-				}
-
-				toggle();
-			} );
 
 			menu.addEventListener( 'click', function ( e ) {
 				// If user clicks menu backdrop
