@@ -47,6 +47,7 @@
 		"help/gpt-response": true,
 		"i18n/empathy-mode": true,
 		"importer/unified": true,
+		"importers/substack": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/api-cache": true,
