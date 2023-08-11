@@ -2,6 +2,7 @@ import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
 import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
 import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
+import { Spinner } from '@wordpress/components';
 import classnames from 'classnames';
 import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -26,6 +27,7 @@ interface UplotChartProps {
 	solidFill?: boolean;
 	period?: string;
 	timeRange: TimeRange;
+	isLoading?: boolean;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -70,6 +72,7 @@ export const SiteMonitoringLineChart = ( {
 	solidFill = false,
 	period,
 	timeRange,
+	isLoading = false,
 }: UplotChartProps ) => {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
@@ -230,6 +233,7 @@ export const SiteMonitoringLineChart = ( {
 				) }
 			</header>
 			<div ref={ uplotContainer }>
+				{ isLoading && <Spinner /> }
 				<UplotReact
 					data={ data }
 					onCreate={ ( chart ) => ( uplot.current = chart ) }

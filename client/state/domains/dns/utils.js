@@ -57,6 +57,8 @@ function isValidName( name, type, domainName ) {
 		case 'A':
 		case 'AAAA':
 			return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( name );
+		case 'CNAME':
+			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name ) || name === '*';
 		default:
 			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
 	}

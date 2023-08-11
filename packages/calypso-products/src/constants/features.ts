@@ -302,6 +302,9 @@ export const FEATURE_PAYMENT_TRANSACTION_FEES_8 = 'payment-transaction-fees-8';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_4 = 'payment-transaction-fees-4';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_2 = 'payment-transaction-fees-2';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_0 = 'payment-transaction-fees-0';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO = 'payment-transaction-fees-0-woo';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL = 'payment-transaction-fees-0-all';
+export const FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR = 'payment-transaction-fees-2-regular';
 export const FEATURE_GROUP_PAYMENT_TRANSACTION_FEES = 'payment-transaction-fees-group';
 export const FEATURE_THE_READER = 'the-reader';
 

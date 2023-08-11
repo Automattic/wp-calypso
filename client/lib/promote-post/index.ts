@@ -66,7 +66,7 @@ declare global {
 	}
 }
 
-const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '23.0-rc-1';
+const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '22.9.blaze';
 
 const getWidgetDSPJSURL = () => {
 	let dspWidgetJS: string = shouldUseTestWidgetURL()

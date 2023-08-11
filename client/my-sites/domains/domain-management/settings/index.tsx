@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
+import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -74,6 +76,8 @@ const Settings = ( {
 }: SettingsPageProps ) => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
+
+	const queryParams = new URLSearchParams( window.location.search );
 
 	useEffect( () => {
 		if ( ! contactInformation ) {
@@ -277,10 +281,18 @@ const Settings = ( {
 			return null;
 		}
 
+		const onClose = () => {
+			page.redirect(
+				window.location.pathname + removeQueryArgs( window.location.search, 'nameservers' )
+			);
+		};
+
 		return (
 			<Accordion
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
+				expanded={ queryParams.get( 'nameservers' ) === 'true' }
+				onClose={ onClose }
 			>
 				{ domain.canManageNameServers ? (
 					<NameServersCard

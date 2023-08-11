@@ -160,6 +160,7 @@ describe( 'envToFeatureKey', () => {
 		TEST_ON_ATOMIC: false,
 		GUTENBERG_NIGHTLY: false,
 		JETPACK_TARGET: 'wpcom-production',
+		ATOMIC_VARIATION: 'default',
 	};
 
 	it( 'will return a proper `FeatureKey` object', () => {
