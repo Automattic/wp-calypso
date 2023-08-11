@@ -11,15 +11,15 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
-      - name: Get comments
+      - name: Get all comments on issue
         uses: octokit/request-action@v2.x
-        id: get_comments
+        id: get_all_comments
         with:
           route: GET /repos/${{github.repository}}/issues/${{ github.event.issue.number }}/comments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set Last Comment
+      - name: Identify last comment
         id: get_last_comment
         run: |
           last_comment=$( echo '${{ steps.get_all_comments.outputs.data }}' | tr -d '[:cntrl:]' | jq -r '.[-1].body' )
