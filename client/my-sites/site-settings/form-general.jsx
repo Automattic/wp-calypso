@@ -408,121 +408,137 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 
 		return (
-			<FormFieldset>
-				{ ! isNonAtomicJetpackSite &&
-					! isWPForTeamsSite &&
-					! isAtomicAndEditingToolkitDeactivated && (
+			<>
+				<FormFieldset>
+					{ ! isNonAtomicJetpackSite &&
+						! isWPForTeamsSite &&
+						! isAtomicAndEditingToolkitDeactivated && (
+							<>
+								{ shouldShowPremiumStylesNotice && this.advancedCustomizationNotice() }
+								<FormLabel className={ comingSoonFormLabelClasses }>
+									<FormRadio
+										name="blog_public"
+										value="0"
+										checked={ isAnyComingSoonEnabled }
+										onChange={ () =>
+											this.handleVisibilityOptionChange( {
+												blog_public: 0,
+												wpcom_coming_soon: 0,
+												wpcom_public_coming_soon: 1,
+											} )
+										}
+										disabled={ isComingSoonDisabled }
+										onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+										label={ translate( 'Coming Soon' ) }
+									/>
+								</FormLabel>
+								<FormSettingExplanation>
+									{ translate(
+										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+									) }
+								</FormSettingExplanation>
+								{ showPreviewLink && (
+									<div className="site-settings__visibility-label is-checkbox">
+										<SitePreviewLink
+											siteUrl={ site.URL }
+											siteId={ siteId }
+											disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
+											forceOff={ ! isAnyComingSoonEnabled }
+											source="privacy-settings"
+										/>
+									</div>
+								) }
+							</>
+						) }
+					{ isWpcomStagingSite && (
 						<>
-							{ shouldShowPremiumStylesNotice && this.advancedCustomizationNotice() }
-							<FormLabel className={ comingSoonFormLabelClasses }>
-								<FormRadio
+							<PublicFormRadio />
+							<FormSettingExplanation>
+								{ translate(
+									'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
+								) }
+							</FormSettingExplanation>
+						</>
+					) }
+					{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && <PublicFormRadio /> }
+					{ ! isWpcomStagingSite && (
+						<>
+							<FormSettingExplanation>
+								{ translate( 'Your site is visible to everyone.' ) }
+							</FormSettingExplanation>
+							<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
+								<FormInputCheckbox
 									name="blog_public"
 									value="0"
-									checked={ isAnyComingSoonEnabled }
+									checked={
+										( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+										( 0 === blogPublic && ! wpcomPublicComingSoon )
+									}
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
-											blog_public: 0,
+											blog_public:
+												wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
 											wpcom_coming_soon: 0,
-											wpcom_public_coming_soon: 1,
+											wpcom_public_coming_soon: 0,
 										} )
 									}
-									disabled={ isComingSoonDisabled }
+									disabled={ isRequestingSettings }
 									onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-									label={ translate( 'Coming Soon' ) }
+								/>
+								<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
+								<FormSettingExplanation>
+									{ translate(
+										'This option does not block access to your site — it is up to search engines to honor your request.'
+									) }
+								</FormSettingExplanation>
+							</FormLabel>
+						</>
+					) }
+					{ ! isNonAtomicJetpackSite && (
+						<>
+							<FormLabel className="site-settings__visibility-label is-private">
+								<FormRadio
+									name="blog_public"
+									value="-1"
+									checked={
+										( -1 === blogPublic && ! wpcomComingSoon && ! isPrivateAndUnlaunched ) ||
+										( wpcomComingSoon && isAtomicAndEditingToolkitDeactivated )
+									}
+									onChange={ () =>
+										this.handleVisibilityOptionChange( {
+											blog_public: -1,
+											wpcom_coming_soon: 0,
+											wpcom_public_coming_soon: 0,
+										} )
+									}
+									disabled={ isRequestingSettings }
+									onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+									label={ translate( 'Private' ) }
 								/>
 							</FormLabel>
 							<FormSettingExplanation>
 								{ translate(
-									'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+									'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
 								) }
 							</FormSettingExplanation>
-							{ showPreviewLink && (
-								<div className="site-settings__visibility-label is-checkbox">
-									<SitePreviewLink
-										siteUrl={ site.URL }
-										siteId={ siteId }
-										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
-										forceOff={ ! isAnyComingSoonEnabled }
-										source="privacy-settings"
-									/>
-								</div>
-							) }
 						</>
 					) }
-				{ isWpcomStagingSite && (
-					<>
-						<PublicFormRadio />
-						<FormSettingExplanation>
-							{ translate(
-								'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
-							) }
-						</FormSettingExplanation>
-					</>
-				) }
-				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && <PublicFormRadio /> }
-				{ ! isWpcomStagingSite && (
-					<>
-						<FormSettingExplanation>
-							{ translate( 'Your site is visible to everyone.' ) }
-						</FormSettingExplanation>
-						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
-							<FormInputCheckbox
-								name="blog_public"
-								value="0"
-								checked={
-									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-									( 0 === blogPublic && ! wpcomPublicComingSoon )
-								}
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										blog_public:
-											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
-										wpcom_coming_soon: 0,
-										wpcom_public_coming_soon: 0,
-									} )
-								}
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-							/>
-							<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-							<FormSettingExplanation>
-								{ translate(
-									'This option does not block access to your site — it is up to search engines to honor your request.'
-								) }
-							</FormSettingExplanation>
-						</FormLabel>
-					</>
-				) }
-				{ ! isNonAtomicJetpackSite && (
-					<>
-						<FormLabel className="site-settings__visibility-label is-private">
-							<FormRadio
-								name="blog_public"
-								value="-1"
-								checked={
-									( -1 === blogPublic && ! wpcomComingSoon && ! isPrivateAndUnlaunched ) ||
-									( wpcomComingSoon && isAtomicAndEditingToolkitDeactivated )
-								}
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										blog_public: -1,
-										wpcom_coming_soon: 0,
-										wpcom_public_coming_soon: 0,
-									} )
-								}
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-								label={ translate( 'Private' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							{ translate(
-								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-							) }
-						</FormSettingExplanation>
-					</>
-				) }
-			</FormFieldset>
+				</FormFieldset>
+				<FormFieldset>
+					<ToggleControl
+						disabled={ isRequestingSettings || isSavingSettings }
+						className="site-settings__gifting-toggle"
+						label={ translate( 'Allow AI bots to index your public content' ) }
+						checked={ fields.wpcom_ai_permission }
+						onChange={ this.props.handleToggle( 'wpcom_ai_permission' ) }
+					/>
+					<FormSettingExplanation>
+						{ translate(
+							'AI bots can crawl public internet sites and use the content to train their algorithms. WordPress.com never gives or sells your data without your explicit permission.'
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			</>
 		);
 	}
 
