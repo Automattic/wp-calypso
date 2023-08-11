@@ -1160,13 +1160,11 @@ class SignupForm extends Component {
 			);
 		}
 
+		const isGravatar = this.props.isGravatar;
 		const showSeparator =
 			! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
-		if (
-			( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) ||
-			this.props.isGravatar
-		) {
+		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
 			const logInUrl = this.getLoginLink();
 
 			return (
@@ -1186,15 +1184,18 @@ class SignupForm extends Component {
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
-						inputLabel={ this.props.translate(
-							'Provide your email address and we will send you a magic link to log in.'
-						) }
-						inputPlaceholder={ this.props.translate( 'Enter your email address' ) }
-						submitButtonLabel={ this.props.translate( 'Continue' ) }
-						submitButtonLoadingLabel={ this.props.translate( 'Continue' ) }
+						inputLabel={
+							isGravatar &&
+							this.props.translate(
+								'Provide your email address and we will send you a magic link to log in.'
+							)
+						}
+						inputPlaceholder={ isGravatar && this.props.translate( 'Enter your email address' ) }
+						submitButtonLabel={ isGravatar && this.props.translate( 'Continue' ) }
+						submitButtonLoadingLabel={ isGravatar && this.props.translate( 'Continue' ) }
 					/>
 
-					{ ! this.props.isGravatar && (
+					{ ! isGravatar && (
 						<>
 							{ showSeparator && (
 								<div className="signup-form__separator">
