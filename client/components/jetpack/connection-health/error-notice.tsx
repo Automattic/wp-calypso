@@ -7,8 +7,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 interface Props {
 	errorType: string;
 	errorText: string;
-	noticeActionHref: string;
-	noticeActionText: string;
+	noticeActionHref?: string;
+	noticeActionText?: string;
 }
 
 export const ErrorNotice = ( {
