@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
+import { NewsletterCategories, NewsletterCategory } from './types';
 import { getNewsletterCategoriesKey } from './use-newsletter-categories-query';
 
 type UnmarkAsNewsletterCategoryResponse = {
@@ -11,13 +12,13 @@ const useUnmarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 	const cacheKey = getNewsletterCategoriesKey( siteId );
 
 	return useMutation( {
-		mutationFn: async ( id: number ) => {
-			if ( ! id ) {
+		mutationFn: async ( categoryId: number ) => {
+			if ( ! categoryId ) {
 				throw new Error( 'ID is missing.' );
 			}
 
 			const response = await request< UnmarkAsNewsletterCategoryResponse >( {
-				path: `/sites/${ siteId }/newsletter-categories/${ id }`,
+				path: `/sites/${ siteId }/newsletter-categories/${ categoryId }`,
 				method: 'DELETE',
 				apiVersion: '2',
 				apiNamespace: 'wpcom/v2',
@@ -29,8 +30,27 @@ const useUnmarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			return response;
 		},
-		onMutate: async () => {
+		onMutate: async ( categoryId: number ) => {
 			await queryClient.cancelQueries( cacheKey );
+
+			const previousData = queryClient.getQueryData< NewsletterCategories >( cacheKey );
+
+			queryClient.setQueryData( cacheKey, ( oldData?: NewsletterCategories ) => {
+				const updatedData = {
+					...oldData,
+					newsletterCategories:
+						oldData?.newsletterCategories.filter(
+							( category: NewsletterCategory ) => category.id !== categoryId
+						) || [],
+				};
+
+				return updatedData;
+			} );
+
+			return { previousData };
+		},
+		onError: ( error, variables, context ) => {
+			queryClient.setQueryData( cacheKey, context?.previousData );
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( cacheKey );
