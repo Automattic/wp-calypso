@@ -41,7 +41,6 @@ function formatDaysChartHour( date: Date ): string {
 	const day = String( date.getDate() ).padStart( 2, '0' );
 	const hours = String( date.getHours() ).padStart( 2, '0' );
 	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
-	//return `${ month }/${ day } \n${ hours }:${ minutes }`;
 	return `${ hours }:${ minutes }\n ${ month }/${ day } `;
 }
 
@@ -76,7 +75,7 @@ export const SiteMonitoringLineChart = ( {
 }: UplotChartProps ) => {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
-	const uplotContainer = useRef( null );
+	const uplotContainer = useRef< HTMLDivElement | null >( null );
 	const { spline } = uPlot.paths;
 	const scaleGradient = useScaleGradient( fillColor );
 	const [ chartDimensions, setChartDimensions ] = useState( DEFAULT_DIMENSIONS );
