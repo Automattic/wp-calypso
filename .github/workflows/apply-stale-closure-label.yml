@@ -30,4 +30,4 @@ jobs:
         uses: actions-ecosystem/action-add-labels@v1
         if: contains( steps.get_last_comment.outputs.comment, 'Since this issue has been inactive for quite some time, KitKat has made the decision to close it.' )
         with:
-          labels: [Closed] Stale
+          labels: \[Closed\] Stale
