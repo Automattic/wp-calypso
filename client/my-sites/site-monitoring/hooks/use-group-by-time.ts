@@ -23,7 +23,7 @@ export function useGroupByTime(
 			const statusCodes = Object.keys( period.dimension );
 			statusCodes.forEach( ( statusCode ) => {
 				groupedData[ period.timestamp ][ statusCode ] =
-					( period.dimension[ statusCode ] * resolution ) / 60; // convert requests per minute
+					period.dimension[ statusCode ] * ( resolution / 60 ); // convert it to requests per minute
 			} );
 		} );
 
