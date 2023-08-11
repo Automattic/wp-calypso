@@ -61,7 +61,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					"Jetpack is unable to communicate with your site due to a critical error that has occurred there. Please check your site admin's email inbox for instructions."
+					'Jetpack is unable to communicate with your site due to a critical error on the site.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-a-critical-error-on-your-site'
@@ -76,12 +76,12 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack.'
+					'Jetpack is unable to communicate with your site because your site isn’t connected.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
-				noticeActionText={ translate( 'Learn how to fix' ) }
+				noticeActionText={ translate( 'Learn how to reconnect Jetpack' ) }
 			/>
 		);
 	}
@@ -91,7 +91,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack is unable to communicate with your site due to a HTTP connection error. Please ensure that your site serves requests.'
+					'Jetpack is unable to communicate with your site because your site isn’t responding to requests.'
 				) }
 				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
@@ -104,12 +104,12 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack is unable to communicate with your site due to an inactive Jetpack plugin. Please ensure that Jetpack plugin is active and reconnect Jetpack.'
+					'We are unable to communicate with your site because Jetpack is deactivated.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
-				noticeActionText={ translate( 'Learn how to fix' ) }
+				noticeActionText={ translate( 'Learn how to reactivate Jetpack' ) }
 			/>
 		);
 	}

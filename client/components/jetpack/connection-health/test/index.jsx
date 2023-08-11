@@ -71,7 +71,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site due to a critical error that has occurred there/i
+					/Jetpack is unable to communicate with your site due to a critical error on the site./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
@@ -105,10 +105,10 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack./i
+					/Jetpack is unable to communicate with your site because your site isn’t connected./i
 				)
 			).toBeVisible();
-			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+			expect( screen.queryByText( /Learn how to reconnect Jetpack/i ) ).toBeVisible();
 		} );
 
 		test( 'shows blog token error message', () => {
@@ -124,10 +124,10 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site due to a token error. Please reconnect Jetpack./i
+					/Jetpack is unable to communicate with your site because your site isn’t connected./i
 				)
 			).toBeVisible();
-			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+			expect( screen.queryByText( /Learn how to reconnect Jetpack/i ) ).toBeVisible();
 		} );
 
 		test( 'shows http error message', () => {
@@ -143,7 +143,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site due to a HTTP connection error. Please ensure that your site serves requests./i
+					/Jetpack is unable to communicate with your site because your site isn’t responding to requests./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
@@ -162,10 +162,10 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site due to an inactive Jetpack plugin./i
+					/We are unable to communicate with your site because Jetpack is deactivated./i
 				)
 			).toBeVisible();
-			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+			expect( screen.queryByText( /Learn how to reactivate Jetpack/i ) ).toBeVisible();
 		} );
 
 		test( 'shows generic error message', () => {
