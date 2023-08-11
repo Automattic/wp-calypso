@@ -981,10 +981,11 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 	const aiAssistantIncludesInfo = [
 		translate( 'Prompt-based content generation' ),
-		translate( 'Text, table, and list generation' ),
+		translate( 'Text, table,list, and form generation' ),
 		translate( 'Adaptive tone adjustment' ),
 		translate( 'Superior spelling and grammar correction' ),
 		translate( 'Title and summary generation' ),
+		translate( 'Get feedback about your post' ),
 	];
 
 	// WooCommerce Extensions
