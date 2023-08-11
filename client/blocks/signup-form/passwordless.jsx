@@ -243,7 +243,7 @@ class PasswordlessSignupForm extends Component {
 	}
 
 	render() {
-		const { inputLabel, translate } = this.props;
+		const { inputLabel, inputPlaceholder, translate } = this.props;
 		const { errorMessages, isSubmitting } = this.state;
 
 		return (
@@ -261,7 +261,7 @@ class PasswordlessSignupForm extends Component {
 							value={ this.state.email }
 							onChange={ this.onInputChange }
 							disabled={ isSubmitting || !! this.props.disabled }
-							placeholder={ this.props.inputPlaceholder }
+							placeholder={ inputPlaceholder }
 						/>
 					</ValidationFieldset>
 					{ this.props.renderTerms() }
