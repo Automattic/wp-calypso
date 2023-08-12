@@ -1,3 +1,6 @@
+// Links are localized at InlineSupportLink during render
+/* eslint-disable wpcalypso/i18n-unlocalized-url */
+
 const contextLinks = {
 	'account-settings': {
 		link: 'https://wordpress.com/support/account-settings/',
