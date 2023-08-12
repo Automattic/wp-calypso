@@ -20,7 +20,7 @@ const selectedStorageAddOnsForPlans: Reducer<
 	WpcomPlansUIAction
 > = ( state, action ) => {
 	if ( action.type === 'WPCOM_PLANS_UI_SET_STORAGE_ADD_ON_FOR_PLAN' ) {
-		return { ...state, [ action.plan ]: action.addOnSlug };
+		return { ...state, [ action.planSlug ]: action.addOnSlug };
 	}
 	return state;
 };
