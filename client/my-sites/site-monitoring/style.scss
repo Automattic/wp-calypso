@@ -2,6 +2,15 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.is-section-site-monitoring.theme-default {
+	background-color: var(--studio-white);
+	.focus-content:not(.has-no-sidebar) .layout__content {
+		@media screen and (max-width: 782px) {
+			padding-top: 71px;
+		}
+	}
+}
+
 .site-monitoring {
 	position: relative;
 
@@ -23,19 +32,8 @@
 	}
 }
 
-.site-monitoring__formatted-header {
-	position: relative;
-	& ::before {
-		content: "";
-		display: block;
-		position: absolute;
-		background: var(--studio-white);
-		top: -47px;
-		right: -32px;
-		bottom: 20px;
-		left: -33px;
-		z-index: -1;
-	}
+.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
+	padding-bottom: 24px;
 }
 
 .site-monitoring-metrics-tab {
@@ -120,7 +118,7 @@
 		color: var(--studio-gray-100);
 
 		// Disable rendering first u-marker, which is for "Date" and is empty.
-		> .u-series:first-child > th > .u-marker {
+		> .u-series:first-child {
 			display: none;
 		}
 
@@ -139,8 +137,9 @@
 			> .u-marker {
 				// Nudge marker down to align with text.
 				margin-top: -2px;
-				// Make the marker round.
-				border-radius: 100%;
+				border-radius: 4px;
+				width: 12px;
+				height: 3px;
 			}
 
 			> .u-label {

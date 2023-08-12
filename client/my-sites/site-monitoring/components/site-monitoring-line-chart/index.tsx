@@ -1,10 +1,7 @@
 import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
-import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
-import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
-import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
 import { Spinner } from '@wordpress/components';
 import classnames from 'classnames';
-import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -27,8 +24,15 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
+	series: Array< SeriesProp >;
 	timeRange: TimeRange;
 	isLoading?: boolean;
+}
+
+interface SeriesProp {
+	fill: string;
+	label: string;
+	stroke: string;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -61,32 +65,55 @@ function determineTimeRange( timeRange: TimeRange ) {
 	return TIME_RANGE_OPTIONS[ '24-hours' ]; // Default value
 }
 
+function createSeries( series: Array< SeriesProp > ) {
+	const { spline } = uPlot.paths;
+	const configuredSeries = series.map( function ( serie ) {
+		return {
+			...serie,
+			...{
+				width: 2,
+				paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
+					return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+				},
+				points: {
+					show: false,
+				},
+				value: ( self: uPlot, rawValue: number ) => {
+					if ( ! rawValue ) {
+						return '-';
+					}
+
+					return numberFormat( rawValue, 0 );
+				},
+			},
+		};
+	} );
+
+	return [ { label: ' ' }, ...configuredSeries ];
+}
+
 export const SiteMonitoringLineChart = ( {
 	title,
 	tooltip,
 	className,
 	data,
-	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
 	options: propOptions,
-	solidFill = false,
-	period,
+	series,
 	timeRange,
 	isLoading = false,
 }: UplotChartProps ) => {
-	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef< HTMLDivElement | null >( null );
-	const { spline } = uPlot.paths;
-	const scaleGradient = useScaleGradient( fillColor );
 	const [ chartDimensions, setChartDimensions ] = useState( DEFAULT_DIMENSIONS );
+	const localTz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	const options = useMemo( () => {
 		const defaultOptions: uPlot.Options = {
 			class: 'calypso-uplot-chart',
 			...chartDimensions,
 			// Set incoming dates as UTC.
-			tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
+			tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), localTz ),
 			fmtDate: () => {
 				return ( date ) => {
 					const chatHour = formatChartHour( date );
@@ -150,42 +177,7 @@ export const SiteMonitoringLineChart = ( {
 					fill: () => '#fff',
 				},
 			},
-			series: [
-				{
-					label: translate( 'Time period' ),
-					value: ( self: uPlot, rawValue: number ) => {
-						// outputs legend content - value available when mouse is hovering the chart
-						if ( ! rawValue ) {
-							return '-';
-						}
-
-						return getPeriodDateFormat(
-							period,
-							new Date( rawValue * 1000 ),
-							getLocaleSlug() || 'en'
-						);
-					},
-				},
-				{
-					fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
-					label: translate( 'HTTP requests per sec' ),
-					stroke: '#0675C4',
-					width: 2,
-					paths: ( u, seriesIdx, idx0, idx1 ) => {
-						return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
-					},
-					points: {
-						show: false,
-					},
-					value: ( self: uPlot, rawValue: number ) => {
-						if ( ! rawValue ) {
-							return '-';
-						}
-
-						return numberFormat( rawValue, 0 );
-					},
-				},
-			],
+			series: createSeries( series ),
 			legend: {
 				isolate: true,
 				mount: ( self: uPlot, el: HTMLElement ) => {
@@ -201,26 +193,15 @@ export const SiteMonitoringLineChart = ( {
 			...defaultOptions,
 			...( typeof propOptions === 'object' ? propOptions : {} ),
 		};
-	}, [
-		chartDimensions,
-		fillColor,
-		legendContainer,
-		period,
-		propOptions,
-		scaleGradient,
-		solidFill,
-		spline,
-		timeRange,
-		translate,
-	] );
+	}, [ chartDimensions, series, propOptions, localTz, timeRange, legendContainer ] );
 
 	useResize( uplot, uplotContainer );
 
 	useEffect( () => {
 		if ( uplotContainer.current ) {
-			const { width, height } = uplotContainer.current.getBoundingClientRect();
-			if ( width !== chartDimensions.width || height !== chartDimensions.height ) {
-				setChartDimensions( { width, height } );
+			const { width } = uplotContainer.current.getBoundingClientRect();
+			if ( width !== chartDimensions.width ) {
+				setChartDimensions( { width, height: DEFAULT_DIMENSIONS.height } );
 			}
 		}
 	}, [ chartDimensions, data ] );
