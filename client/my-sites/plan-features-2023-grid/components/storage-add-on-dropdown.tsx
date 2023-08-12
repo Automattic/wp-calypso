@@ -3,9 +3,10 @@ import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { getStorageStringFromFeature } from '../util';
+import type { PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 
 type StorageAddOnDropdownProps = {
-	planSlug: string;
+	planSlug: PlanSlug;
 	storageOptions: { slug: string; isAddOn: boolean }[];
 };
 
@@ -43,8 +44,8 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 			label={ translate( 'Storage' ) }
 			options={ selectControlOptions }
 			value={ selectedOption }
-			onChange={ ( { selectedItem }: { selectedItem: { key?: string } } ) =>
-				setSelectedStorageOptionForPlan( { addOnSlug: selectedItem?.key || '', plan: planSlug } )
+			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) =>
+				setSelectedStorageOptionForPlan( { addOnSlug: selectedItem?.key || '', planSlug } )
 			}
 		/>
 	);
