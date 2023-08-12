@@ -117,7 +117,7 @@ const contextLinks = {
 	},
 	'importers-substack': {
 		link: 'https://wordpress.com/support/import/import-from-substack/',
-		post_id: 87696,
+		post_id: 257527,
 	},
 	'importers-wix': {
 		link: 'https://wordpress.com/support/import/import-from-wix/',
