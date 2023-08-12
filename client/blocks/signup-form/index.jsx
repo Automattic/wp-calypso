@@ -1166,7 +1166,7 @@ class SignupForm extends Component {
 
 		if ( ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) || isGravatar ) {
 			const logInUrl = this.getLoginLink();
-			const gravProps = isGravatar
+			const gravatarProps = isGravatar
 				? {
 						inputLabel: this.props.translate(
 							'Provide your email address and we will send you a magic link to log in.'
@@ -1194,7 +1194,7 @@ class SignupForm extends Component {
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
 						queryArgs={ this.props.queryArgs }
-						{ ...gravProps }
+						{ ...gravatarProps }
 					/>
 
 					{ ! isGravatar && (
