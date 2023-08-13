@@ -108,6 +108,19 @@ export interface FormStatusContextInterface {
 	setFormStatus: ( newStatus: FormStatus ) => void;
 }
 
+export interface CheckoutContextInterface {
+	allPaymentMethods: PaymentMethod[];
+	disabledPaymentMethodIds: string[];
+	setDisabledPaymentMethodIds: ( methods: string[] ) => void;
+	paymentMethodId: string | null;
+	setPaymentMethodId: ( id: string ) => void;
+	transactionStatusManager: TransactionStatusManager | null;
+	paymentProcessors: PaymentProcessorProp;
+	onPageLoadError?: CheckoutPageErrorCallback;
+	onStepChanged?: StepChangedCallback;
+	onPaymentMethodChanged?: PaymentMethodChangedCallback;
+}
+
 export type ReactStandardAction< T = string, P = unknown > = P extends void
 	? {
 			type: T;

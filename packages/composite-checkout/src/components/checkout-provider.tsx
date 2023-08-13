@@ -17,11 +17,11 @@ import { LineItem, CheckoutProviderProps, FormStatus, TransactionStatus } from '
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormStatusProvider } from './form-status-provider';
 import TransactionStatusHandler from './transaction-status-handler';
-import type { CheckoutContextInterface } from '../lib/checkout-context';
 import type {
 	PaymentEventCallback,
 	PaymentErrorCallback,
 	PaymentProcessorResponseData,
+	CheckoutContextInterface,
 } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
