@@ -3,11 +3,11 @@ import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { getStorageStringFromFeature } from '../util';
-import type { PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 
 type StorageAddOnDropdownProps = {
 	planSlug: PlanSlug;
-	storageOptions: { slug: string; isAddOn: boolean }[];
+	storageOptions: StorageOption[];
 };
 
 export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOnDropdownProps ) => {
