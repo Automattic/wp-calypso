@@ -117,7 +117,6 @@ export interface CheckoutContextInterface {
 	transactionStatusManager: TransactionStatusManager | null;
 	paymentProcessors: PaymentProcessorProp;
 	onPageLoadError?: CheckoutPageErrorCallback;
-	onStepChanged?: StepChangedCallback;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
 }
 

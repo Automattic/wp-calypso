@@ -34,6 +34,7 @@ import type {
 	CheckoutStepGroupState,
 	CheckoutStepCompleteStatus,
 	CheckoutStepGroupStore,
+	StepChangedCallback,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
@@ -323,10 +324,12 @@ function CheckoutStepGroupWrapper( {
 	children,
 	className,
 	loadingContent,
+	onStepChanged,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
+	onStepChanged?: StepChangedCallback;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -351,6 +354,22 @@ function CheckoutStepGroupWrapper( {
 			}, 0 );
 		} );
 	}, [ store ] );
+
+	const [ previousStepNumber, setPreviousStepNumber ] = useState( store.state.activeStepNumber );
+	const activePaymentMethod = usePaymentMethod();
+	// Call the `onStepChanged` callback when a step changes.
+	useEffect( () => {
+		if ( store.state.activeStepNumber !== previousStepNumber ) {
+			onStepChanged?.( {
+				stepNumber: store.state.activeStepNumber,
+				previousStepNumber: previousStepNumber,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+			} );
+			setPreviousStepNumber( store.state.activeStepNumber );
+		}
+		// We only want to run this when the step changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ store.state.activeStepNumber ] );
 
 	// WordPress.com checkout session activity.
 	const classNames = joinClasses( [
@@ -408,12 +427,11 @@ export const CheckoutStep = ( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { onPageLoadError, onStepChanged } = useContext( CheckoutContext );
+	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
-	const activePaymentMethod = usePaymentMethod();
 
 	// This is the callback called when you press "Continue" on a step.
 	const goToNextStep = async () => {
@@ -422,15 +440,8 @@ export const CheckoutStep = ( {
 		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
 		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
 		setThisStepCompleteStatus( completeResult );
-		if ( completeResult ) {
-			onStepChanged?.( {
-				stepNumber: nextStepNumber,
-				previousStepNumber: stepNumber,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-			} );
-			if ( nextStepNumber ) {
-				setActiveStepNumber( nextStepNumber );
-			}
+		if ( completeResult && nextStepNumber ) {
+			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
 		return completeResult;
@@ -1041,16 +1052,22 @@ export function CheckoutStepGroup( {
 	areStepsActive,
 	stepAreaHeader,
 	store,
+	onStepChanged,
 	loadingContent,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
+	onStepChanged?: StepChangedCallback;
 	loadingContent?: ReactNode;
 } > ) {
 	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
-		<CheckoutStepGroupWrapper store={ stepGroupStore } loadingContent={ loadingContent }>
+		<CheckoutStepGroupWrapper
+			store={ stepGroupStore }
+			loadingContent={ loadingContent }
+			onStepChanged={ onStepChanged }
+		>
 			{ stepAreaHeader }
 			<CheckoutStepArea>
 				<CheckoutStepGroupInner areStepsActive={ areStepsActive }>
