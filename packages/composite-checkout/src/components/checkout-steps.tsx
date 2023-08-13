@@ -551,7 +551,7 @@ export const SubmitFooterWrapper = styled.div`
 	}
 `;
 
-export function CheckoutStepArea( {
+function CheckoutStepArea( {
 	children,
 	className,
 }: PropsWithChildren< {

@@ -15,6 +15,7 @@ import {
 } from '../lib/validation';
 import { LineItem, CheckoutProviderProps, FormStatus, TransactionStatus } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
+import { FormStatusProvider } from './form-status-provider';
 import TransactionStatusHandler from './transaction-status-handler';
 import type { CheckoutContextInterface } from '../lib/checkout-context';
 import type {
@@ -87,10 +88,7 @@ export function CheckoutProvider( {
 		setPaymentMethodId
 	);
 
-	const [ formStatus, setFormStatus ] = useFormStatusManager(
-		Boolean( isLoading ),
-		Boolean( isValidating )
-	);
+	const formStatusManager = useFormStatusManager( Boolean( isLoading ), Boolean( isValidating ) );
 	const transactionStatusManager = useTransactionStatusManager();
 	const { transactionLastResponse, transactionStatus, transactionError } = transactionStatusManager;
 
@@ -98,7 +96,7 @@ export function CheckoutProvider( {
 		onPaymentComplete,
 		onPaymentRedirect,
 		onPaymentError,
-		formStatus,
+		formStatus: formStatusManager.formStatus,
 		transactionError,
 		transactionStatus,
 		paymentMethodId,
@@ -112,8 +110,6 @@ export function CheckoutProvider( {
 			setDisabledPaymentMethodIds,
 			paymentMethodId,
 			setPaymentMethodId,
-			formStatus,
-			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
@@ -121,11 +117,9 @@ export function CheckoutProvider( {
 			onPaymentMethodChanged,
 		} ),
 		[
-			formStatus,
 			paymentMethodId,
 			paymentMethods,
 			disabledPaymentMethodIds,
-			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
@@ -147,10 +141,12 @@ export function CheckoutProvider( {
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<LineItemsProvider items={ items } total={ total }>
-					<CheckoutContext.Provider value={ value }>
-						<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-						{ children }
-					</CheckoutContext.Provider>
+					<FormStatusProvider formStatusManager={ formStatusManager }>
+						<CheckoutContext.Provider value={ value }>
+							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+							{ children }
+						</CheckoutContext.Provider>
+					</FormStatusProvider>
 				</LineItemsProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>

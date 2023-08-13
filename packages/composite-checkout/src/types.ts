@@ -98,7 +98,15 @@ export interface FormStatusController extends FormStatusState {
 
 export type FormStatusSetter = ( newStatus: FormStatus ) => void;
 
-export type FormStatusManager = [ FormStatus, FormStatusSetter ];
+export type FormStatusManager = {
+	formStatus: FormStatus;
+	setFormStatus: FormStatusSetter;
+};
+
+export interface FormStatusContextInterface {
+	formStatus: FormStatus;
+	setFormStatus: ( newStatus: FormStatus ) => void;
+}
 
 export type ReactStandardAction< T = string, P = unknown > = P extends void
 	? {
