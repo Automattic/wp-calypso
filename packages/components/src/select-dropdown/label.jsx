@@ -1,4 +1,4 @@
-import FormLabel from '../form-label';
+import { FormLabel } from '../forms';
 
 // Prevents the event from bubbling up the DOM tree
 const stopPropagation = ( event ) => event.stopPropagation();
