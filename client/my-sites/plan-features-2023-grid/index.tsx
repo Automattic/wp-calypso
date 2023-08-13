@@ -12,7 +12,6 @@ import {
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
-	WPComStorageAddOnSlug,
 	FeatureList,
 } from '@automattic/calypso-products';
 import {
