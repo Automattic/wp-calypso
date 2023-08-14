@@ -16,6 +16,7 @@ storybookConfig.previewHead = ( head ) => `
 	${ head }
 	<script>
 		window.configData = ${ JSON.stringify( configData ) };
+		window.__i18n_text_domain__ = 'default';
 	</script>
 `;
 
