@@ -52,9 +52,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
-			expect(
-				screen.queryByText( /Jetpack is unable to communicate with your site./i )
-			).toBeVisible();
+			expect( screen.queryByText( /Jetpack can’t communicate with your site./i ) ).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
@@ -71,7 +69,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site due to a critical error on the site./i
+					/Jetpack can’t communicate with your site due to a critical error on the site./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
@@ -105,7 +103,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site because your site isn’t connected./i
+					/Jetpack can’t communicate with your site because your site isn’t connected./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to reconnect Jetpack/i ) ).toBeVisible();
@@ -124,7 +122,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site because your site isn’t connected./i
+					/Jetpack can’t communicate with your site because your site isn’t connected./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to reconnect Jetpack/i ) ).toBeVisible();
@@ -143,7 +141,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site because your site isn’t responding to requests./i
+					/Jetpack can’t communicate with your site because your site isn’t responding to requests./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
@@ -162,7 +160,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/We are unable to communicate with your site because the Jetpack plugin is deactivated./i
+					/We can’t communicate with your site because the Jetpack plugin is deactivated./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to reactivate Jetpack/i ) ).toBeVisible();
@@ -181,7 +179,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack is unable to communicate with your site. Please contact site administrator./i
+					/Jetpack can’t communicate with your site. Please contact site administrator./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).not.toBeInTheDocument();

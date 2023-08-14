@@ -46,7 +46,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					"Jetpack is unable to connect to your domain. Please update your domain's DNS records so they're pointed properly to your site."
+					'Jetpack is unable to connect to your domain. Ensure your domain’s DNS records are correctly pointing to your site.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-domain-name'
@@ -61,7 +61,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack is unable to communicate with your site due to a critical error on the site.'
+					'Jetpack can’t communicate with your site due to a critical error on the site.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-a-critical-error-on-your-site'
@@ -76,7 +76,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack is unable to communicate with your site because your site isn’t connected.'
+					'Jetpack can’t communicate with your site because your site isn’t connected.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
@@ -91,7 +91,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack is unable to communicate with your site because your site isn’t responding to requests.'
+					'Jetpack can’t communicate with your site because your site isn’t responding to requests.'
 				) }
 				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
@@ -104,7 +104,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'We are unable to communicate with your site because the Jetpack plugin is deactivated.'
+					'We can’t communicate with your site because the Jetpack plugin is deactivated.'
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
@@ -119,7 +119,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack is unable to communicate with your site. Please contact site administrator.'
+					'Jetpack can’t communicate with your site. Please contact site administrator.'
 				) }
 			/>
 		);
@@ -128,7 +128,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	return (
 		<ErrorNotice
 			errorType={ UNKNOWN_ERROR }
-			errorText={ translate( 'Jetpack is unable to communicate with your site.' ) }
+			errorText={ translate( 'Jetpack can’t communicate with your site.' ) }
 			noticeActionHref={ localizeUrl(
 				'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 			) }
