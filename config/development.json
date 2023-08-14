@@ -214,7 +214,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true,
-		"yolo/jetpack-error-ux-i1": true
+		"yolo/hosting-metrics-i1": true
 	}
 }
