@@ -14,6 +14,7 @@ import CRMIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-crm.svg'
 import ScanIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-scan.svg';
 import SearchIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-search.svg';
 import SocialIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-social.svg';
+import StatsIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-stats.svg';
 import VideoPressIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress.svg';
 import { ComparisonDataItem } from '../types';
 import { links } from './links';
@@ -265,6 +266,24 @@ export const useComparisonData = () => {
 						},
 					},
 					{
+						id: 'stats',
+						name: translate( 'Stats' ),
+						url: links.stats,
+						icon: StatsIcon,
+						info: {
+							FREE: {
+								content: translate( 'Basic Stats' ),
+							},
+							SECURITY: {
+								content: translate( 'Basic Stats' ),
+							},
+							COMPLETE: {
+								highlight: true,
+								content: translate( 'All Stats' ),
+							},
+						},
+					},
+					{
 						id: 'payments_block',
 						name: translate( 'Collect payments' ),
 						url: links.payments_block,
@@ -280,12 +299,6 @@ export const useComparisonData = () => {
 							SECURITY: { content: <CheckIcon /> },
 							COMPLETE: { content: <CheckIcon /> },
 						},
-					},
-					{
-						id: 'stats',
-						name: translate( 'Stats' ),
-						url: links.stats,
-						info: allChecked,
 					},
 					{
 						id: 'seo',

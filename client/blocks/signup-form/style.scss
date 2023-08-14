@@ -116,21 +116,6 @@
 	}
 }
 
-.signup-form__is-dev-account-checkbox {
-	margin-bottom: 48px;
-
-	@include break-large {
-		width: fit-content;
-	}
-
-	// The SelectCardCheckbox label is flex by default, which is good for badges, but makes
-	// the <strong> section of the label it's own block and not wrap nicely with the rest
-	// of the label.
-	&.select-card-checkbox__container .select-card-checkbox__label {
-		display: inline;
-	}
-}
-
 // Replace recaptcha badge with ToS text and space
 // everything out a little more.
 @media ( max-width: 660px ) {

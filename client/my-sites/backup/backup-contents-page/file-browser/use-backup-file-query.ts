@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
+import { encodeToBase64 } from './util';
 
 export const useBackupFileQuery = (
 	siteId: number,
@@ -7,7 +8,7 @@ export const useBackupFileQuery = (
 	manifestPath: string | undefined,
 	shouldFetch = true
 ) => {
-	const encodedManifestPath = window.btoa( manifestPath ?? '' );
+	const encodedManifestPath = encodeToBase64( ( manifestPath as string ) ?? '' );
 
 	return useQuery( {
 		queryKey: [ 'jetpack-backup-file-url', siteId, rewindId, encodedManifestPath ],

@@ -1,6 +1,8 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .breadcrumbs {
 	svg.options-domain-button__add.gridicon {
@@ -200,18 +202,17 @@
 .domain-table-header {
 	display: flex;
 	justify-content: space-between;
-	padding: 8px 0;
+	padding: 8px 0 16px;
 	font-size: $font-body-small;
-	font-weight: 600;
-	color: var(--color-neutral-50);
-
-	border-bottom: 1px solid var(--color-neutral-5);
-	@include break-large {
-		border-bottom: 1px solid var(--color-neutral-20);
-	}
+	font-weight: 500;
+	color: var(--color-neutral-60);
+	border-bottom: 1px solid $gray-100;
 
 	.button-plain {
+		font-family: "SF Pro Text", $sans;
 		text-align: left;
+		line-height: 20px;
+		letter-spacing: -0.15px;
 
 		&:focus {
 			outline: thin dotted;
@@ -269,13 +270,22 @@
 	flex: 10 10 0;
 }
 .list__domain-cell {
-	flex: 83 83 0;
+	display: flex;
+	width: 280px;
+	align-items: center;
+	gap: 2px;
 }
 .list__site-cell {
-	flex: 70 70 0;
+	display: flex;
+	width: 200px;
+	align-items: center;
+	gap: 2px;
 }
 .list__status-cell {
-	flex: 40 40 0;
+	display: flex;
+	width: 100px;
+	align-items: center;
+	gap: 2px;
 	&__bubble {
 		display: flex;
 		width: 20px;
@@ -291,17 +301,28 @@
 	}
 }
 .list__registered-until-cell {
-	flex: 50 50 0;
+	display: flex;
+	width: 140px;
+	align-items: center;
+	gap: 2px;
 }
 .list__auto-renew-cell {
-	flex: 40 40 0;
+	display: flex;
+	width: 80px;
+	align-items: center;
+	gap: 2px;
 }
 .list__email-cell {
-	flex: 30 30 0;
+	display: flex;
+	width: 140px;
+	align-items: center;
+	gap: 2px;
 }
 .list__action-cell {
-	justify-content: center;
-	flex: 20 20 0;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 2px;
 }
 
 .domain-management__all-domains-section {
@@ -314,27 +335,5 @@
 
 	&.separator {
 		border-top: 1px solid var(--studio-gray-5);
-	}
-}
-
-.is-section-domains main.main {
-	padding-top: 59px;
-}
-
-@include breakpoint-deprecated( ">660px" ) {
-	.is-section-domains main.main {
-		padding-top: 45px;
-	}
-}
-
-@include breakpoint-deprecated( ">800px" ) {
-	.is-section-domains main.main {
-		padding-top: 32px;
-	}
-}
-
-@include breakpoint-deprecated( ">960px" ) {
-	.is-section-domains main.main {
-		padding-top: 24px;
 	}
 }

@@ -133,10 +133,37 @@ $heading-font-body-small: 15px;
 			margin-top: $headerHeightI2;
 		}
 	}
-}
 
-.blazepress-widget.dialog__backdrop {
-	background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+	.dialog__content {
+		padding: 30px 80px 15px 30px;
+	}
+
+	&.dialog__backdrop {
+		background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+
+		.dialog.card {
+			max-width: 480px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px;
+
+			.dialog__action-buttons-close {
+				top: 20px;
+				right: 20px;
+			}
+
+			.dialog__action-buttons {
+				text-align: left;
+				padding: 15px 30px 30px;
+				border: none;
+
+				.button {
+					margin-left: 0;
+					margin-right: 16px;
+					border-radius: 4px;
+				}
+			}
+		}
+	}
 }
 
 .is-mobile-app-view {

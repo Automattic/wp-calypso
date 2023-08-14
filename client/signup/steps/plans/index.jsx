@@ -29,7 +29,7 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getDomainName, getIntervalType } from './util';
+import { getIntervalType } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -74,22 +74,33 @@ export class PlansStep extends Component {
 		return 'personal';
 	}
 
-	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
-		if ( freeDomainSuggestion?.product_slug ) {
-			return;
-		}
+	removePaidDomain = () => {
 		const domainItem = undefined;
-		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
 
 		this.props.submitSignupStep(
 			{
 				stepName: 'domains',
 				domainItem,
 				isPurchasingItem: false,
-				siteUrl,
 				stepSectionName: undefined,
 			},
 			{ domainItem }
+		);
+	};
+
+	setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				siteUrl,
+			},
+			{}
 		);
 	};
 
@@ -143,19 +154,22 @@ export class PlansStep extends Component {
 				</div>
 			);
 		}
-
-		const paidDomainName = getDomainName( this.props.signupDependencies.domainItem );
-
+		const { signupDependencies } = this.props;
+		const { siteUrl, domainItem, siteTitle, username } = signupDependencies;
+		const paidDomainName = domainItem?.meta;
 		return (
 			<div>
 				{ errorDisplay }
 				<PlansFeaturesMain
+					paidDomainName={ paidDomainName }
+					freeSubdomain={ ! domainItem ? siteUrl : undefined }
+					siteTitle={ siteTitle }
+					signupFlowUserName={ username }
 					siteId={ selectedSite?.ID }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
-					paidDomainName={ paidDomainName }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }
@@ -168,7 +182,8 @@ export class PlansStep extends Component {
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
 					showBiennialToggle={ this.props.showBiennialToggle }
-					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
+					removePaidDomain={ this.removePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ this.setSiteUrlAsFreeDomainSuggestion }
 				/>
 			</div>
 		);
@@ -231,8 +246,9 @@ export class PlansStep extends Component {
 	}
 
 	shouldHideEcommercePlan() {
-		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan
-		return isSiteAssemblerFlow( this.props.flowName );
+		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan.
+		// We also hide the plan if the flag is set - currently it's only set for the `site-selected` flow.
+		return isSiteAssemblerFlow( this.props.flowName ) || this.props.hideEcommercePlan;
 	}
 
 	plansFeaturesSelection() {

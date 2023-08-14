@@ -29,8 +29,8 @@ export type BlazePressPromotionProps = {
 
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
-	const index = pathname.indexOf( '/promote' );
-	page( index < 0 ? pathname : pathname.substring( 0, index ) );
+	const index = pathname.indexOf( '/promote/' );
+	page( index < 0 ? pathname : pathname.replace( /\/promote\/.*?\//, '/' ) );
 }
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
@@ -66,7 +66,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const onClose = ( goToCampaigns?: boolean ) => {
 		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
-			page( getAdvertisingDashboardPath( `/${ siteSlug }/campaigns` ) );
+			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
 			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 			if ( previousRoute ) {
@@ -168,13 +168,18 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						}
 					>
 						<Dialog
+							showCloseIcon={ true }
 							additionalOverlayClassNames="blazepress-widget"
 							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
 						>
 							<h1>{ translate( 'Are you sure you want to quit?' ) }</h1>
-							<p>{ translate( 'All progress in this session will be lost.' ) }</p>
+							<p>
+								{ translate(
+									'If you quit, all of the work that has been done during this session will be lost.'
+								) }
+							</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
 						<div className="blazepress-widget__widget-container" ref={ widgetContainer }></div>

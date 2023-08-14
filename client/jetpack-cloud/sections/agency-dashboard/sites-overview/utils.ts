@@ -24,6 +24,9 @@ import type {
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
 const isBoostEnabled = config.isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
+const isDowntimeMonitoringPaidTierEnabled = config.isEnabled(
+	'jetpack/pro-dashboard-monitor-paid-tier'
+);
 
 // Mapping the columns to the site data keys
 export const siteColumnKeyMap: { [ key: string ]: string } = {
@@ -37,6 +40,7 @@ const boostColumn: SiteColumns = isBoostEnabled
 				title: translate( 'Boost' ),
 				className: 'width-fit-content',
 				isExpandable: true,
+				showInfo: true,
 			},
 	  ]
 	: [];
@@ -59,17 +63,20 @@ export const siteColumns: SiteColumns = [
 		title: translate( 'Backup' ),
 		className: 'fixed-site-column',
 		isExpandable: true,
+		showInfo: true,
 	},
 	{
 		key: 'scan',
 		title: translate( 'Scan' ),
 		className: 'fixed-site-column',
+		showInfo: true,
 	},
 	{
 		key: 'monitor',
 		title: translate( 'Monitor' ),
 		className: 'min-width-100px',
 		isExpandable: true,
+		showInfo: isDowntimeMonitoringPaidTierEnabled,
 	},
 	{
 		key: 'plugin',
@@ -484,6 +491,7 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 		backup: 'jetpack-backup-t1',
 		boost: 'jetpack-boost',
 		scan: 'jetpack-scan',
+		monitor: 'jetpack-monitor',
 	};
 
 	return slugs[ type ];

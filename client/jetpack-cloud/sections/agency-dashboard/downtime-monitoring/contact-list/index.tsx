@@ -6,11 +6,14 @@ import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import {
 	AllowedMonitorContactActions,
 	AllowedMonitorContactTypes,
+	MonitorSettings,
 	StateMonitorSettingsEmail,
 	StateMonitorSettingsSMS,
 } from '../../sites-overview/types';
 import FeatureRestrictionBadge from '../feature-restriction-badge';
+import SMSCounter from '../notification-settings/form-content/sms-counter';
 import { RestrictionType } from '../types';
+import UpgradeLink from '../upgrade-link';
 import ContactListItem from './item';
 import { getContactActionEventName, getContactItemValue } from './utils';
 
@@ -26,6 +29,7 @@ export type Props = {
 	type: AllowedMonitorContactTypes;
 	verifiedItemKey?: string;
 	restriction?: RestrictionType;
+	settings?: MonitorSettings;
 };
 
 export default function ContactList( {
@@ -35,6 +39,7 @@ export default function ContactList( {
 	type,
 	verifiedItemKey,
 	restriction = 'none',
+	settings,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -63,6 +68,8 @@ export default function ContactList( {
 				return true;
 		}
 	}, [ items.length, type ] );
+
+	const showSMSCounter = type === 'sms' && items.length > 0 && !! settings;
 
 	return (
 		<>
@@ -102,11 +109,13 @@ export default function ContactList( {
 					</div>
 				) }
 
-				{ showAddButton && restriction === 'upgrade_required' && (
+				{ showAddButton && restriction === 'upgrade_required' && type === 'email' && (
 					<div className="contact-list__upgrade-message">
 						{ translate( 'Multiple email recipients is part of the Basic plan.' ) }
+						<UpgradeLink isInline />
 					</div>
 				) }
+				{ showSMSCounter && <SMSCounter settings={ settings } /> }
 			</div>
 		</>
 	);

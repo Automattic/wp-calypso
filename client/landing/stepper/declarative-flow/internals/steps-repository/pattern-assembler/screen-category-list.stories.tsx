@@ -7,7 +7,7 @@ import ScreenCategoryList from './screen-category-list';
 /**
  * FIXME: This component should depend only on local `./style.scss`.
  */
-import './navigator-buttons/style.scss';
+import '@automattic/onboarding/src/navigator/navigator-buttons/style.scss';
 import './style.scss';
 
 export default {

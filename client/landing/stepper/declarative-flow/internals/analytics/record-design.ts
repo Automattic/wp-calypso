@@ -14,14 +14,25 @@ export function recordPreviewedDesign( {
 	intent,
 	design,
 	styleVariation,
+	colorVariation,
+	fontVariation,
 }: {
 	flow: string | null;
 	intent: string;
 	design: Design;
 	styleVariation?: StyleVariation;
+	colorVariation?: GlobalStylesObject | null;
+	fontVariation?: GlobalStylesObject | null;
 } ) {
 	recordTracksEvent( 'calypso_signup_design_preview_select', {
-		...getDesignEventProps( { flow, intent, design, styleVariation } ),
+		...getDesignEventProps( {
+			flow,
+			intent,
+			design,
+			styleVariation,
+			colorVariation,
+			fontVariation,
+		} ),
 		...getDesignTypeProps( design ),
 		...getVirtualDesignProps( design ),
 	} );
@@ -32,12 +43,16 @@ export function recordSelectedDesign( {
 	intent,
 	design,
 	styleVariation,
+	colorVariation,
+	fontVariation,
 	optionalProps,
 }: {
 	flow: string | null;
 	intent: string;
 	design?: Design;
 	styleVariation?: StyleVariation;
+	colorVariation?: GlobalStylesObject | null;
+	fontVariation?: GlobalStylesObject | null;
 	optionalProps?: object;
 } ) {
 	recordTracksEvent( 'calypso_signup_design_type_submit', {
@@ -49,7 +64,14 @@ export function recordSelectedDesign( {
 
 	if ( design ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
-			...getDesignEventProps( { flow, intent, design, styleVariation } ),
+			...getDesignEventProps( {
+				flow,
+				intent,
+				design,
+				styleVariation,
+				colorVariation,
+				fontVariation,
+			} ),
 			...getDesignTypeProps( design ),
 			...getVirtualDesignProps( design ),
 			...optionalProps,

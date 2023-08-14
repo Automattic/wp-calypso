@@ -2,32 +2,37 @@ import { useTranslate } from 'i18n-calypso';
 import SiteSelector from 'calypso/components/site-selector';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 const ReaderReblogSelection = ( props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const buildQuerystringForPost = ( post ) => {
+	const buildQuerystringForPost = ( post, comment ) => {
 		const args = {};
 
-		if ( post.content_embeds && post.content_embeds.length ) {
-			args.embed = post.content_embeds[ 0 ].embedUrl || post.content_embeds[ 0 ].src;
-		}
-
-		args.title = `${ post.title } — ${ post.site_name }`;
-		args.text = post.excerpt;
 		args.url = post.URL;
 		args.is_post_share = true; // There is a dependency on this here https://github.com/Automattic/wp-calypso/blob/a69ded693a99fa6a957b590b1a538f32a581eb8a/client/gutenberg/editor/controller.js#L209
+
+		if ( comment ) {
+			args.comment_content = comment.content;
+			args.comment_author = comment.author?.name;
+		}
 
 		const params = new URLSearchParams( args );
 		return params.toString();
 	};
 
 	const pickSiteToShareTo = ( slug ) => {
-		stats.recordAction( 'share_wordpress' );
-		stats.recordGaEvent( 'Clicked on Share to WordPress' );
-		stats.recordTrack( 'calypso_reader_share_to_site' );
+		// Add 'comment' specificity to stats and tracks names if this is for a comment.
+		stats.recordAction( `share_wordpress${ props.comment ? '_comment' : '' }` );
+		stats.recordGaEvent( `Clicked on Share${ props.comment ? ' Comment' : '' } to WordPress` );
+		dispatch(
+			recordReaderTracksEvent( `calypso_reader_share${ props.comment ? '_comment' : '' }_to_site` )
+		);
 		window.open(
-			`/post/${ slug }?${ buildQuerystringForPost( props.post ) }`,
+			`/post/${ slug }?${ buildQuerystringForPost( props.post, props.comment ) }`,
 			'reblog post',
 			'width=550,height=420,resizeable,scrollbars'
 		);

@@ -59,6 +59,9 @@ import {
 	receiveRecommendedThemes,
 	updateThemes,
 	addExternalManagedThemeToCart,
+	livePreview,
+	redirectToLivePreview,
+	installAndLivePreview,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
 
@@ -1348,6 +1351,92 @@ describe( 'actions', () => {
 							);
 							expect( stub ).toBeCalledWith(
 								expect.toMatchFunction( installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) )
+							);
+							done();
+						} );
+					} );
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#livePreview', () => {
+		const dispatch = jest.fn();
+		dispatch.mockReturnValue(
+			new Promise( ( res ) => {
+				res();
+			} )
+		);
+		describe( 'on a WordPress.com site', () => {
+			const state = () => ( {
+				sites: {
+					items: {
+						2211667: {
+							jetpack: false,
+						},
+					},
+				},
+			} );
+			test( 'should redirect users to the Live Preview', () => {
+				return new Promise( ( done ) => {
+					livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
+						expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+						expect( dispatch ).toBeCalledWith(
+							expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
+						);
+						expect( dispatch ).not.toBeCalledWith( installAndLivePreview( 'pendant', 2211667 ) );
+						done();
+					} );
+				} );
+			} );
+		} );
+		describe( 'on a Jetpack site', () => {
+			const baseState = {
+				sites: {
+					items: {
+						2211667: {
+							jetpack: true,
+						},
+					},
+				},
+			};
+			describe( 'if the theme is already installed', () => {
+				const state = () => ( {
+					...baseState,
+					themes: {
+						queries: {
+							2211667: new ThemeQueryManager( {
+								items: { pendant: {} },
+							} ),
+						},
+					},
+				} );
+				test( 'should redirect users to the Live Preview', () => {
+					return new Promise( ( done ) => {
+						livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
+							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+							expect( dispatch ).toBeCalledWith(
+								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
+							);
+							expect( dispatch ).not.toBeCalledWith( installAndLivePreview( 'pendant', 2211667 ) );
+							done();
+						} );
+					} );
+				} );
+			} );
+			describe( "if the theme isn't installed", () => {
+				const state = () => ( {
+					...baseState,
+					themes: {
+						queries: {},
+					},
+				} );
+				test( 'should install the theme and then redirect users to the Live Preview', () => {
+					return new Promise( ( done ) => {
+						livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
+							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+							expect( dispatch ).toBeCalledWith(
+								expect.toMatchFunction( installAndLivePreview( 'pendant', 2211667 ) )
 							);
 							done();
 						} );

@@ -7,8 +7,9 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
-import { URL } from 'calypso/types';
+import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
+import type { URL } from 'calypso/types';
 
 interface Props {
 	sourceSiteSlug: string;
@@ -32,6 +33,10 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		onContentOnlyClick,
 		isBusy,
 	} = props;
+	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
+		targetSite.slug
+	);
+	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
 
 	return (
 		<div
@@ -71,17 +76,18 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 						className="action-buttons__borderless"
 						onClick={ onFreeTrialClick }
 					>
-						{ /* Untranslated until we've confirmed the design */ }
-						Try for free
+						{ translate( 'Try it for free' ) }
 					</Button>
 				) }
-				<Button
-					borderless={ true }
-					className="action-buttons__borderless"
-					onClick={ onContentOnlyClick }
-				>
-					{ translate( 'Use the content-only import option' ) }
-				</Button>
+				{ ! isEligibleForTrialPlan && (
+					<Button
+						borderless={ true }
+						className="action-buttons__borderless"
+						onClick={ onContentOnlyClick }
+					>
+						{ translate( 'Use the content-only import option' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	);

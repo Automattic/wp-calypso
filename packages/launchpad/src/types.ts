@@ -11,6 +11,9 @@ export interface Task {
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
 	extra_data?: TaskExtraData;
+	calypso_path?: string;
+	target_repetitions?: number;
+	repetition_count?: number;
 }
 
 export type LaunchpadChecklist = Task[];
@@ -58,4 +61,5 @@ export interface LaunchpadTaskActionsProps {
 	extraActions?: {
 		setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
 	};
+	uiContext?: 'calypso';
 }

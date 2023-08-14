@@ -5,16 +5,16 @@ import { usePlansGridContext } from '../grid-context';
 
 const PopularBadge: React.FunctionComponent< {
 	isInSignup?: boolean;
-	planName: PlanSlug;
+	planSlug: PlanSlug;
 	additionalClassName?: string;
-} > = ( { isInSignup, planName, additionalClassName } ) => {
-	const { planRecords } = usePlansGridContext();
+} > = ( { isInSignup, planSlug, additionalClassName } ) => {
+	const { gridPlansIndex } = usePlansGridContext();
 	const classes = classNames(
 		'plan-features-2023-grid__popular-badge',
-		getPlanClass( planName ),
+		getPlanClass( planSlug ),
 		additionalClassName
 	);
-	const highlightLabel = planRecords[ planName ]?.highlightLabel;
+	const highlightLabel = gridPlansIndex[ planSlug ]?.highlightLabel;
 
 	return (
 		<>

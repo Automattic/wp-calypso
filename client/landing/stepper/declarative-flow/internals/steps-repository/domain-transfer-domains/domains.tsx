@@ -12,8 +12,6 @@ import { getQueryArg } from '@wordpress/url';
 import { useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import QueryPlans from 'calypso/components/data/query-plans';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -23,10 +21,10 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 export interface Props {
 	onSubmit: () => void;
+	variantSlug: string | undefined;
 }
 
 const defaultState: DomainTransferForm = {
-	shouldImportDnsRecords: true,
 	domains: {
 		[ uuid() ]: {
 			domain: '',
@@ -64,14 +62,13 @@ const getFormattedTotalPrice = ( state: DomainTransferData ) => {
 	return 0;
 };
 
-const Domains: React.FC< Props > = ( { onSubmit } ) => {
+const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const [ enabledDataLossWarning, setEnabledDataLossWarning ] = useState( true );
 	const newDomainTransferQueryArg = getQueryArg( window.location.search, 'new' );
 
 	const storedDomainsState = useSelect( ( select ) => {
 		const onboardSelect = select( ONBOARD_STORE ) as OnboardSelect;
 		return {
-			shouldImportDnsRecords: onboardSelect.getBulkDomainsImportDnsRecords(),
 			domains: onboardSelect.getBulkDomainsData(),
 		};
 	}, [] );
@@ -83,10 +80,9 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 		( { valid } ) => valid
 	).length;
 
-	const { setPendingAction, setDomainsTransferData, setShouldImportDomainTransferDnsRecords } =
-		useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setDomainsTransferData } = useDispatch( ONBOARD_STORE );
 
-	const { __, _n } = useI18n();
+	const { __ } = useI18n();
 
 	const filledDomainValues = Object.values( domainsState ).filter( ( x ) => x.domain && x.auth );
 	const allGood = filledDomainValues.every( ( { valid } ) => valid );
@@ -113,7 +109,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					extra: {
 						auth_code: auth,
 						signup: false,
-						import_dns_records: storedDomainsState.shouldImportDnsRecords,
+						import_dns_records: true,
 					},
 				} )
 			);
@@ -200,7 +196,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 			);
 		}
 
-		return __( 'Transfer for free' );
+		return __( 'Start transfer' );
 	}
 
 	const setNewDomainFromQueryArg = () => {
@@ -252,6 +248,7 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 						( { domain: otherDomain }, otherIndex ) =>
 							otherDomain && otherDomain === domain.domain && otherIndex < index
 					) }
+					variantSlug={ variantSlug }
 				/>
 			) ) }
 			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
@@ -267,29 +264,6 @@ const Domains: React.FC< Props > = ( { onSubmit } ) => {
 					{ getTransferButtonText() }
 				</Button>
 			</div>
-			{ numberOfValidDomains > 0 && (
-				<div className="bulk-domain-transfer__import-dns-records">
-					<FormLabel
-						htmlFor="import-dns-records"
-						className="bulk-domain-transfer__import-dns-records-label"
-					>
-						<FormInputCheckbox
-							id="import-dns-records"
-							onChange={ ( event ) => {
-								setShouldImportDomainTransferDnsRecords( event.target.checked );
-							} }
-							checked={ storedDomainsState.shouldImportDnsRecords }
-						/>
-						<span>
-							{ _n(
-								'Import DNS records from this domain',
-								'Import DNS records from these domains',
-								domainCount
-							) }
-						</span>
-					</FormLabel>
-				</div>
-			) }
 			{ isEnabled( 'domain-transfer/faq' ) && (
 				<div className="bulk-domain-transfer__faqs">
 					<DomainTransferFAQ />

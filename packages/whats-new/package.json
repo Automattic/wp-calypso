@@ -5,7 +5,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.tsx",
-	"types": "./types.d.ts",
+	"types": "dist/types",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -30,9 +30,10 @@
 		"src"
 	],
 	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "transpile && copy-assets",
-		"prepack": "yarn run clean && yarn run build"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
@@ -47,11 +48,12 @@
 		"@wordpress/keycodes": "^3.38.0",
 		"@wordpress/react-i18n": "^3.36.0",
 		"classnames": "^2.3.1",
+		"typescript": "^5.1.6",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.5.0",
+		"@wordpress/data": "^9.8.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.1.2"

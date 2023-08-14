@@ -1,22 +1,20 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import formatCurrency from '@automattic/format-currency';
+import { englishLocales } from '@automattic/i18n-utils';
 import { joinClasses } from '@automattic/wpcom-checkout';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { connect } from 'react-redux';
-import { domainManagementRoot, domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 import './style.scss';
 
 type Props = {
 	purchases: ReceiptPurchase[] | undefined;
-	manageDomainUrl: string;
 	currency?: string;
 };
 
-const DomainsTransferredList = ( { purchases, manageDomainUrl, currency = 'USD' }: Props ) => {
+const DomainsTransferredList = ( { purchases, currency = 'USD' }: Props ) => {
 	const { __, _n } = useI18n();
 
 	const handleUserClick = ( destination: string ) => {
@@ -26,8 +24,12 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl, currency = 'USD' 
 	};
 
 	const purchaseLabel = ( priceInteger: number ) => {
+		const hasTranslation =
+			englishLocales.includes( String( getLocaleSlug() ) ) ||
+			i18n.hasTranslation( 'We’ve paid for an extra year' );
+
 		if ( priceInteger === 0 ) {
-			return __( 'Free for one year' );
+			return hasTranslation ? __( 'We’ve paid for an extra year' ) : __( 'Free for one year' );
 		}
 
 		const priceFormatted = formatCurrency( priceInteger, currency, {
@@ -52,7 +54,7 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl, currency = 'USD' 
 				</Button>
 
 				<Button
-					href={ manageDomainUrl }
+					href="/domains/manage"
 					className="manage-all-domains"
 					onClick={ () => handleUserClick( '/domains/manage' ) }
 					variant="primary"
@@ -82,15 +84,4 @@ const DomainsTransferredList = ( { purchases, manageDomainUrl, currency = 'USD' 
 	);
 };
 
-export default connect( ( state, ownProps: { purchases: ReceiptPurchase[] } ) => {
-	let manageDomainUrl = '/domains/manage';
-	if ( ownProps.purchases?.length === 1 ) {
-		const { blogId, meta } = ownProps.purchases[ 0 ];
-		const siteSlug = getSiteSlug( state, blogId );
-		manageDomainUrl = domainManagementTransferIn( siteSlug ?? '', meta, domainManagementRoot() );
-	}
-
-	return {
-		manageDomainUrl,
-	};
-} )( DomainsTransferredList );
+export default DomainsTransferredList;

@@ -7,6 +7,12 @@
 @import "./styles/typography.scss";
 
 .jp-blaze-dashboard {
+	.promote-post-notice {
+		margin: 0;
+		border: none;
+		box-shadow: none;
+	}
+
 	.promote-post-i2 {
 		.jetpack-header {
 			padding: 0;
@@ -60,6 +66,10 @@
 			.section-nav-tab {
 				&.is-selected {
 					height: 36px !important;
+				}
+
+				.section-nav-tab__text .count {
+					line-height: 1.43;
 				}
 
 				.section-nav-tab__link {

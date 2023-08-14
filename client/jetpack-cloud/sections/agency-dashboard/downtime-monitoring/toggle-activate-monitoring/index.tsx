@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState, useRef } from 'react';
+import alertIcon from 'calypso/assets/images/jetpack/alert-icon.svg';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
@@ -45,8 +46,8 @@ export default function ToggleActivateMonitoring( {
 
 	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
-	// TODO: Need to figure out if current site has no existing paid version of downtime monitoring.
-	const shouldDisplayUpgradePopover = status === 'success' && isPaidTierEnabled;
+	const shouldDisplayUpgradePopover =
+		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -71,6 +72,7 @@ export default function ToggleActivateMonitoring( {
 
 	const isChecked = status !== 'disabled';
 	const isLoading = statuses?.[ site.blog_id ] === 'loading';
+	const smsLimitReached = settings?.is_over_limit;
 
 	const currentSettings = () => {
 		const minutes = settings?.monitor_deferment_time;
@@ -130,7 +132,11 @@ export default function ToggleActivateMonitoring( {
 						) as string
 					}
 				>
-					<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />
+					{ isPaidTierEnabled && smsLimitReached ? (
+						<img src={ alertIcon } alt={ translate( 'Alert' ) } />
+					) : (
+						<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />
+					) }
 					<span>{ currentDurationText }</span>
 				</Button>
 			</div>
@@ -154,27 +160,36 @@ export default function ToggleActivateMonitoring( {
 		);
 	}
 
-	const upgradePopoverOrTooltip = shouldDisplayUpgradePopover ? (
-		<UpgradePopover
-			context={ statusContentRef.current }
-			isVisible={ showTooltip }
-			position="bottom left"
-			onClose={ handleHideTooltip }
-			dismissibleWithPreference
-		/>
-	) : (
-		tooltip && (
-			<Tooltip
-				id={ tooltipId }
-				context={ statusContentRef.current }
-				isVisible={ showTooltip }
-				position="bottom"
-				className="sites-overview__tooltip"
-			>
-				{ tooltip }
-			</Tooltip>
-		)
-	);
+	const onHoverContent = () => {
+		if ( shouldDisplayUpgradePopover && ! smsLimitReached ) {
+			return (
+				<UpgradePopover
+					context={ statusContentRef.current }
+					isVisible={ showTooltip }
+					position="bottom left"
+					onClose={ handleHideTooltip }
+					dismissibleWithPreference
+				/>
+			);
+		}
+		let tooltipText = tooltip;
+		if ( isPaidTierEnabled && smsLimitReached && status === 'success' ) {
+			tooltipText = translate( 'You have reached the SMS limit' );
+		}
+		if ( tooltipText ) {
+			return (
+				<Tooltip
+					id={ tooltipId }
+					context={ statusContentRef.current }
+					isVisible={ showTooltip }
+					position="bottom"
+					className="sites-overview__tooltip"
+				>
+					{ tooltipText }
+				</Tooltip>
+			);
+		}
+	};
 
 	return (
 		<>
@@ -191,7 +206,7 @@ export default function ToggleActivateMonitoring( {
 			>
 				{ toggleContent }
 
-				{ upgradePopoverOrTooltip }
+				{ onHoverContent() }
 			</span>
 
 			{ showNotificationSettings && (

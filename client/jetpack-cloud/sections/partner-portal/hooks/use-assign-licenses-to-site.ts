@@ -46,7 +46,10 @@ const useAssignLicensesToSite = (
 			const keysWithProductNames = licenseKeys
 				.map( ( key ) => {
 					const productSlug = getProductSlugFromLicenseKey( key );
-					const selectedProduct = products?.data?.find?.( ( p ) => p.slug === productSlug );
+					const selectedProduct = products?.data?.find?.(
+						// Product slugs are limited to 38 characters in license keys.
+						( p ) => p.slug.substring( 0, 38 ) === productSlug
+					);
 
 					return {
 						key,

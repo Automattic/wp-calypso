@@ -1,32 +1,156 @@
 @import "uplot/dist/uPlot.min.css";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-.u-legend {
-	color: var(--studio-gray-100);
-
-	// Disable rendering first u-marker, which is for "Date" and is empty.
-	> .u-series:first-child > th > .u-marker {
-		display: none;
-	}
-
-	// Use increased specificity to override original uPlot styles.
-	> tr.u-series > th {
-		cursor: initial;
-
-		&::after {
-			vertical-align: baseline;
-		}
-		> .u-marker {
-			// Nudge marker down to align with text.
-			margin-top: -2px;
-			// Make the marker round.
-			border-radius: 100%;
-		}
-		> .u-label {
-			vertical-align: baseline;
+.is-section-site-monitoring.theme-default {
+	background-color: var(--studio-white);
+	.focus-content:not(.has-no-sidebar) .layout__content {
+		@media screen and (max-width: 782px) {
+			padding-top: 71px;
 		}
 	}
 }
 
-.uplot {
-	border: 1px solid #dcdcde;
+.site-monitoring {
+	position: relative;
+
+	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
+	.pagination__page-number,
+	.pagination__ellipsis {
+		display: none;
+	}
+
+	&.is-loading {
+		.site-logs__monitoring-text {
+			opacity: 0.5;
+		}
+
+		.site-logs__monitoring-click-guard {
+			pointer-events: none;
+			opacity: 0.5;
+		}
+	}
+}
+
+.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
+	padding-bottom: 24px;
+}
+
+.site-monitoring-metrics-tab {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.site-monitoring__chart {
+	padding: 24px;
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	background-color: var(--studio-white);
+	position: relative;
+
+	.components-spinner {
+		position: absolute;
+		top: calc(50% - 8px);
+		left: calc(50% - 8px);
+	}
+}
+
+.site-monitoring__chart-header {
+	margin-bottom: 24px;
+	display: flex;
+	gap: 4px;
+}
+
+.site-monitoring__chart-title {
+	font-family: "SF Pro Text", $sans;
+	font-size: rem(14px);
+	line-height: rem(20px);
+	font-weight: 500;
+	color: var(--studio-gray-90);
+}
+
+.site-monitoring__pie-charts {
+	display: flex;
+	gap: 16px;
+	flex-direction: column;
+	.site-monitoring__chart {
+		flex-grow: 1;
+	}
+	@include break-large {
+		flex-direction: row;
+	}
+	.pie-chart__chart-drawing-empty {
+		fill: var(--studio-gray-5);
+	}
+}
+
+.site-monitoring-cache-pie-chart {
+	.pie-chart__chart-section-0,
+	.pie-chart__legend-sample-0 {
+		fill: #bae0f9;
+
+	}
+	.pie-chart__chart-section-1,
+	.pie-chart__legend-sample-1 {
+		fill: var(--studio-blue-30);
+	}
+}
+
+.site-monitoring-php-static-pie-chart {
+	.pie-chart__chart-section-0,
+	.pie-chart__legend-sample-0 {
+		fill: #09b585;
+	}
+	.pie-chart__chart-section-1,
+	.pie-chart__legend-sample-1 {
+		fill: var(--studio-green-5);
+	}
+}
+
+.site-monitoring__pagination-text {
+	text-align: center;
+	margin: 0 0 1.5rem;
+}
+
+.site-monitoring-line-chart {
+	.u-legend {
+		color: var(--studio-gray-100);
+
+		// Disable rendering first u-marker, which is for "Date" and is empty.
+		> .u-series:first-child {
+			display: none;
+		}
+
+		tr.u-series th {
+			font-weight: 400;
+		}
+
+		// Use increased specificity to override original uPlot styles.
+		> tr.u-series > th {
+			cursor: initial;
+
+			&::after {
+				vertical-align: baseline;
+			}
+
+			> .u-marker {
+				// Nudge marker down to align with text.
+				margin-top: -2px;
+				border-radius: 4px;
+				width: 12px;
+				height: 3px;
+			}
+
+			> .u-label {
+				vertical-align: baseline;
+			}
+		}
+	}
+}
+
+.site-monitoring-bar-chart {
+	tr.u-series th {
+		font-weight: 400;
+	}
 }

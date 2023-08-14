@@ -3,7 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import ContactList from '../../contact-list';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import { RestrictionType } from '../../types';
-import type { StateMonitorSettingsSMS } from '../../../sites-overview/types';
+import UpgradeLink from '../../upgrade-link';
+import type { MonitorSettings, StateMonitorSettingsSMS } from '../../../sites-overview/types';
 
 interface Props {
 	recordEvent: ( action: string, params?: object ) => void;
@@ -13,6 +14,7 @@ interface Props {
 	allPhoneItems: Array< StateMonitorSettingsSMS >;
 	verifiedItem?: { [ key: string ]: string };
 	restriction: RestrictionType;
+	settings?: MonitorSettings;
 }
 
 export default function SMSNotification( {
@@ -23,6 +25,7 @@ export default function SMSNotification( {
 	allPhoneItems,
 	verifiedItem,
 	restriction,
+	settings,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -57,6 +60,11 @@ export default function SMSNotification( {
 					<div className="notification-settings__content-sub-heading">
 						{ translate( 'Set up text messages to send to one or more people.' ) }
 					</div>
+					{ restriction === 'upgrade_required' && (
+						<div>
+							<UpgradeLink />
+						</div>
+					) }
 				</div>
 			</div>
 			{ enableSMSNotification && (
@@ -66,6 +74,7 @@ export default function SMSNotification( {
 					items={ allPhoneItems }
 					recordEvent={ recordEvent }
 					verifiedItemKey={ verifiedItem?.phone }
+					settings={ settings }
 				/>
 			) }
 		</>

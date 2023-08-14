@@ -1,5 +1,5 @@
 import {
-	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
@@ -74,7 +74,6 @@ const gotoCheckoutPage = ( {
 
 	switch ( type ) {
 		case 'pwyw':
-			// YEARLY!
 			eventName = 'pwyw';
 			product = price
 				? `${ PRODUCT_JETPACK_STATS_PWYW_YEARLY }:-q-${ getYearlyPrice( price ) }` // specify price per unit or the plan will default to a free plan
@@ -85,9 +84,9 @@ const gotoCheckoutPage = ( {
 			product = PRODUCT_JETPACK_STATS_FREE;
 			break;
 		case 'commercial':
-			// MONTHLY!
+			// Default to yearly/annual billing
 			eventName = 'commercial';
-			product = PRODUCT_JETPACK_STATS_MONTHLY;
+			product = PRODUCT_JETPACK_STATS_YEARLY;
 			break;
 	}
 

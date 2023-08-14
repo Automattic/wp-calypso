@@ -98,6 +98,7 @@ export class ImportingPane extends PureComponent {
 			ID: PropTypes.number.isRequired,
 			name: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
+			site_slug: PropTypes.bool.isRequired,
 		} ).isRequired,
 		sourceType: PropTypes.string.isRequired,
 	};
@@ -120,8 +121,25 @@ export class ImportingPane extends PureComponent {
 		return this.props.translate( 'Processing your file. Please wait a few moments.' );
 	};
 
-	getSuccessText = () => {
-		return this.props.translate( 'Success! Your content has been imported.' );
+	getSuccessText = ( sourceType ) => {
+		const successText = this.props.translate( 'Success! Your content has been imported.' );
+
+		if ( sourceType === 'Substack' ) {
+			return (
+				<>
+					{ successText }
+					<br />
+					<br />
+					{ this.props.translate( 'To migrate your readers, {{a}}go to subscribers{{/a}}.', {
+						components: {
+							a: <a href={ `/subscribers/${ this.props.site.slug }#add-subscribers` } />,
+						},
+					} ) }
+				</>
+			);
+		}
+
+		return successText;
 	};
 
 	getImportMessage = ( numResources ) => {
@@ -235,7 +253,7 @@ export class ImportingPane extends PureComponent {
 
 		if ( this.isFinished() ) {
 			percentComplete = 100;
-			statusMessage = this.getSuccessText();
+			statusMessage = this.getSuccessText( sourceType );
 		}
 
 		if ( this.isImporting() && hasProgressInfo( progress ) ) {

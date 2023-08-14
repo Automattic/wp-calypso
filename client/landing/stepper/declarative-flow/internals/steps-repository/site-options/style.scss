@@ -113,7 +113,8 @@
 		}
 	}
 
-	.videopress & {
+	.videopress &,
+	.videopress-tv & {
 		max-width: 425px;
 
 		.step-container__header {

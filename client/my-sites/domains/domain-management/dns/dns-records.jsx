@@ -4,7 +4,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
@@ -37,7 +36,7 @@ class DnsRecords extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	renderBreadcrumbs = () => {
+	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const pointsToWpcom = selectedDomain?.pointsToWpcom ?? false;
@@ -114,8 +113,7 @@ class DnsRecords extends Component {
 			<Main wideLayout className="dns-records">
 				<BodySectionCssClass bodyClass={ [ 'dns__body-white' ] } />
 				<DocumentHead title={ headerText } />
-				{ this.renderBreadcrumbs() }
-				<FormattedHeader brandFont headerText={ headerText } align="left" />
+				{ this.renderHeader() }
 				{ selectedDomain?.canManageDnsRecords ? (
 					<>
 						<DnsDetails />
@@ -140,7 +138,7 @@ class DnsRecords extends Component {
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
 				{ showPlaceholder ? (
-					<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+					<DomainMainPlaceholder breadcrumbs={ this.renderHeader } />
 				) : (
 					this.renderMain()
 				) }
