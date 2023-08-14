@@ -5,6 +5,7 @@
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import SiteErrorContent from '../site-error-content';
 
 describe( '<SiteErrorContent>', () => {
@@ -24,7 +25,7 @@ describe( '<SiteErrorContent>', () => {
 		const [ fixNow ] = container.getElementsByClassName( 'sites-overview__error-message-link' );
 		expect( fixNow ).toHaveProperty(
 			'href',
-			`https://example.com/settings/disconnect-site/${ siteUrl }?type=down`
+			`https://example.com/settings/disconnect-site/${ urlToSlug( siteUrl ) }?type=down`
 		);
 	} );
 } );
