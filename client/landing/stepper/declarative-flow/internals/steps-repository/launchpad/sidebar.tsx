@@ -251,7 +251,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 						closeDialog={ () => setShowPlansModal( false ) }
 						product={ { subscribe_as_site_subscriber: true } }
 						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
+						// @ts-ignore - Underlying component is JS class component with props supplied by connect() and mapstatetoprops.
 						siteId={ site.ID }
 					/>
 				) }
