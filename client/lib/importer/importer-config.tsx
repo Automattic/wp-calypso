@@ -47,14 +47,18 @@ function getConfig( {
 		type: 'file',
 		title: 'WordPress',
 		icon: 'wordpress',
-		description: translate(
-			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: { siteTitle },
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: { siteTitle },
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A WordPress export is ' +
@@ -81,17 +85,21 @@ function getConfig( {
 		type: 'file',
 		title: 'Blogger',
 		icon: 'blogger-alt',
-		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					importerName: 'Blogger',
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: {
+							importerName: 'Blogger',
+							siteTitle,
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A %(importerName)s export file is an XML file ' +
@@ -119,15 +127,19 @@ function getConfig( {
 		type: 'file',
 		title: 'Medium',
 		icon: 'medium',
-		description: translate(
-			'Import posts, tags, images, and videos ' +
-				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: { siteTitle },
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, tags, images, and videos ' +
+						'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: { siteTitle },
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A %(importerName)s export file is a ZIP ' +
@@ -157,23 +169,26 @@ function getConfig( {
 		icon: 'substack',
 		description: (
 			<>
-				{ translate(
-					'Import posts and images, podcasts and public comments from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-					{
-						args: {
-							importerName: 'Substack',
-							siteTitle,
-						},
+				<p>
+					{ translate(
+						'Import posts and images, podcasts and public comments from a Substack export file to {{b}}%(siteTitle)s{{/b}}.',
+						{
+							args: {
+								siteTitle,
+							},
+							components: {
+								b: <strong />,
+							},
+						}
+					) }
+				</p>
+				<p>
+					{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
 						components: {
-							b: <strong />,
+							a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
 						},
-					}
-				) }{ ' ' }
-				{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
-					components: {
-						a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
-					},
-				} ) }
+					} ) }
+				</p>
 			</>
 		),
 		uploadDescription: (
@@ -242,14 +257,18 @@ function getConfig( {
 		type: 'url',
 		title: 'Wix',
 		icon: 'wix',
-		description: translate(
-			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: { siteTitle },
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: { siteTitle },
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate( 'Enter the URL of your Wix site. ' + '{{supportLink/}}', {
 			components: {
