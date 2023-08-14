@@ -42,12 +42,16 @@ const getCheckoutBackUrl = ( {
 	siteSlug: string;
 	adminUrl?: string;
 } ) => {
+	// TODO: Enumerate all possible values of `from` parameter.
 	const isFromWPAdmin = from.startsWith( 'jetpack' );
 	const isFromMyJetpack = from === 'jetpack-my-jetpack';
+	const isFromPlansPage = from === 'calypso-plans';
 
 	// Use full URL even though redirecting on Calypso.
 	if ( ! isFromWPAdmin ) {
-		return window.location.origin + `/stats/day/${ siteSlug }`;
+		return window.location.origin + isFromPlansPage
+			? `/plans/${ siteSlug }`
+			: `/stats/day/${ siteSlug }`;
 	}
 
 	const checkoutBackPath = isFromMyJetpack ? 'admin.php?page=my-jetpack' : 'admin.php?page=stats';
