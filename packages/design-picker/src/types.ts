@@ -99,6 +99,7 @@ export interface Design {
 	description?: string;
 	recipe?: DesignRecipe;
 	is_premium: boolean;
+	is_externally_managed: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
 	is_featured_picks?: boolean; // Whether this design will be featured in the sidebar. Example: Blank Canvas
@@ -111,6 +112,7 @@ export interface Design {
 	is_bundled_with_woo_commerce?: boolean;
 	is_virtual?: boolean;
 	preview_data?: PreviewData;
+	screenshot?: string;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
