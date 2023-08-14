@@ -45,15 +45,15 @@ export function getEnhancedTasks(
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
 	globalStylesMinimumPlan: string,
+	setShowPlansModal: Dispatch< SetStateAction< boolean > >,
+	queryClient: QueryClient,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
 	domainCartItem?: MinimalRequestCartProduct | null,
-	stripeConnectUrl?: string,
-	setShowPlansModal?: Dispatch< SetStateAction< boolean > >,
-	queryClient?: QueryClient
+	stripeConnectUrl?: string
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -117,9 +117,7 @@ export function getEnhancedTasks(
 			await updateLaunchpadSettings( siteSlug, {
 				checklist_statuses: { newsletter_plan_created: true },
 			} );
-			if ( queryClient ) {
-				queryClient?.invalidateQueries( [ 'launchpad' ] );
-			}
+			queryClient?.invalidateQueries( [ 'launchpad' ] );
 		}
 	};
 
@@ -525,7 +523,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							completePaidNewsletterTask();
-							setShowPlansModal
+							site?.ID
 								? setShowPlansModal( true )
 								: window.location.assign(
 										`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
