@@ -409,7 +409,16 @@
 	}
 }
 
-.is-videopress-signup {
+.is-videopress-tv-signup {
+	font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.videopress-step-wrapper__middle .videopress-step-wrapper__header-text {
+		font-family: inherit;
+	}
+}
+
+.is-videopress-signup,
+.is-videopress-tv-signup {
 	.progress-bar {
 		display: block;
 		border-radius: 0;
