@@ -16,13 +16,13 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 $happy_blocks_is_english = ( 0 === stripos( get_locale(), 'en' ) );
-$website_clasname = '';
-if ( isset( $args[ 'website' ] ) ) {
-	$website_clasname = 'is-' . $args[ 'website' ];
+$website_clasname        = '';
+if ( isset( $args['website'] ) ) {
+	$website_clasname = 'is-' . $args['website'];
 }
 
 ?>
-<div id="lpc-header-nav" class="lpc lpc-header-nav <?php esc_attr_e( $website_clasname ) ?>">
+<div id="lpc-header-nav" class="lpc lpc-header-nav <?php echo $website_clasname; ?>">
 	<div class="x-root lpc-header-nav-wrapper">
 		<div class="lpc-header-nav-container">
 			<!-- Nav bar starts here. -->
