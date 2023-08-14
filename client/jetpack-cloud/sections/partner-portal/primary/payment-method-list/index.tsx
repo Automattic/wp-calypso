@@ -17,7 +17,9 @@ import {
 	hasMoreStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
 import Layout from '../../layout';
+import LayoutBody from '../../layout/body';
 import LayoutHeader from '../../layout/header';
+import LayoutTop from '../../layout/top';
 
 import './style.scss';
 
@@ -63,32 +65,36 @@ export default function PaymentMethodList() {
 		<Layout className="payment-method-list" title={ translate( 'Payment Methods' ) } wide>
 			<QueryJetpackPartnerPortalStoredCards paging={ paging } />
 
-			<LayoutHeader>
-				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
-			</LayoutHeader>
+			<LayoutTop borderless>
+				<LayoutHeader>
+					<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
+				</LayoutHeader>
+			</LayoutTop>
 
-			<div className="payment-method-list__body">
-				<AddStoredCreditCard />
+			<LayoutBody>
+				<div className="payment-method-list__body">
+					<AddStoredCreditCard />
 
-				{ isFetching && <StoredCreditCardLoading /> }
+					{ isFetching && <StoredCreditCardLoading /> }
 
-				{ ! isFetching &&
-					storedCards.map( ( card: PaymentMethod ) => (
-						<StoredCreditCard key={ card.id } card={ card } />
-					) ) }
-			</div>
+					{ ! isFetching &&
+						storedCards.map( ( card: PaymentMethod ) => (
+							<StoredCreditCard key={ card.id } card={ card } />
+						) ) }
+				</div>
 
-			{ showPagination && (
-				<Pagination
-					className={ classnames( 'payment-method-list__pagination', {
-						'payment-method-list__pagination--has-prev': page > 1,
-						'payment-method-list__pagination--has-next': isFetching || hasMore,
-					} ) }
-					pageClick={ onPageClick }
-					page={ page }
-					perPage={ perPage }
-				/>
-			) }
+				{ showPagination && (
+					<Pagination
+						className={ classnames( 'payment-method-list__pagination', {
+							'payment-method-list__pagination--has-prev': page > 1,
+							'payment-method-list__pagination--has-next': isFetching || hasMore,
+						} ) }
+						pageClick={ onPageClick }
+						page={ page }
+						perPage={ perPage }
+					/>
+				) }
+			</LayoutBody>
 		</Layout>
 	);
 }

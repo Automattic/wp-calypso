@@ -17,7 +17,7 @@ export default function Layout( { children, className, title, wide = false }: Pr
 	return (
 		<Main
 			className={ classNames( 'partner-portal-layout', className ) }
-			fullWidthLayout={ wide } // Our 'wide' here means maximum of 1500px.
+			fullWidthLayout={ wide }
 			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
 		>
 			<DocumentHead title={ title } />

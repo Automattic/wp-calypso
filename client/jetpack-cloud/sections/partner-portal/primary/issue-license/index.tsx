@@ -6,7 +6,9 @@ import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-po
 import IssueMultipleLicensesForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-multiple-licenses-form';
 import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
 import Layout from '../../layout';
+import LayoutBody from '../../layout/body';
 import LayoutHeader from '../../layout/header';
+import LayoutTop from '../../layout/top';
 import { AssignLicenceProps } from '../../types';
 
 import './styles.scss';
@@ -27,19 +29,23 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 
 	return (
 		<Layout className="issue-license" title={ translate( 'Issue a new License' ) } wide>
-			<div className="issue-license__step-progress">
-				<AssignLicenseStepProgress currentStep="issueLicense" selectedSite={ selectedSite } />
-				{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) && <TotalCost /> }
-			</div>
+			<LayoutTop borderless>
+				<div className="issue-license__step-progress">
+					<AssignLicenseStepProgress currentStep="issueLicense" selectedSite={ selectedSite } />
+					{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) && <TotalCost /> }
+				</div>
 
-			<LayoutHeader>
-				<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
-			</LayoutHeader>
+				<LayoutHeader>
+					<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
+				</LayoutHeader>
+			</LayoutTop>
 
-			<IssueMultipleLicensesForm
-				selectedSite={ selectedSite }
-				suggestedProduct={ suggestedProduct }
-			/>
+			<LayoutBody>
+				<IssueMultipleLicensesForm
+					selectedSite={ selectedSite }
+					suggestedProduct={ suggestedProduct }
+				/>
+			</LayoutBody>
 		</Layout>
 	);
 }

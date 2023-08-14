@@ -7,7 +7,9 @@ import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-por
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Layout from '../../layout';
+import LayoutBody from '../../layout/body';
 import LayoutHeader from '../../layout/header';
+import LayoutTop from '../../layout/top';
 
 export default function BillingDashboard() {
 	const translate = useTranslate();
@@ -19,18 +21,22 @@ export default function BillingDashboard() {
 
 	return (
 		<Layout className="billing-dashboard" title={ translate( 'Billing' ) } wide>
-			<LayoutHeader>
-				<CardHeading size={ 36 }>{ translate( 'Billing' ) }</CardHeading>
+			<LayoutTop borderless>
+				<LayoutHeader>
+					<CardHeading size={ 36 }>{ translate( 'Billing' ) }</CardHeading>
 
-				<SelectPartnerKeyDropdown />
+					<SelectPartnerKeyDropdown />
 
-				<Button primary href="/partner-portal/issue-license" onClick={ onIssueNewLicenseClick }>
-					{ translate( 'Issue New License' ) }
-				</Button>
-			</LayoutHeader>
+					<Button primary href="/partner-portal/issue-license" onClick={ onIssueNewLicenseClick }>
+						{ translate( 'Issue New License' ) }
+					</Button>
+				</LayoutHeader>
+			</LayoutTop>
 
-			<BillingSummary />
-			<BillingDetails />
+			<LayoutBody>
+				<BillingSummary />
+				<BillingDetails />
+			</LayoutBody>
 		</Layout>
 	);
 }
