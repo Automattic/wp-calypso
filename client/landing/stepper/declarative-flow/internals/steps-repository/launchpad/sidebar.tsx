@@ -106,15 +106,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
 			globalStylesInPersonalPlan ? PLAN_PERSONAL : PLAN_PREMIUM,
+			setShowPlansModal,
+			queryClient,
 			goToStep,
 			flow,
 			isEmailVerified,
 			checklistStatuses,
 			getPlanCartItem(),
 			getDomainCartItem(),
-			stripeConnectUrl,
-			setShowPlansModal,
-			queryClient
+			stripeConnectUrl
 		);
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
