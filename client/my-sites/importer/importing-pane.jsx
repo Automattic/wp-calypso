@@ -189,7 +189,6 @@ export class ImportingPane extends PureComponent {
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
 	onClickViewPosts = () => {
-		console.log( 'onClickViewPosts', this.props ); // eslint-disable-line no-console
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			importer_id: this.props.importerStatus.type,
 			action: 'view-posts',
@@ -199,7 +198,6 @@ export class ImportingPane extends PureComponent {
 	};
 
 	onClickImportSubscribers = () => {
-		console.log( 'onClickImportSubscribers', this.props ); // eslint-disable-line no-console
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			importer_id: this.props.importerStatus.type,
 			action: 'add-subscribers',
