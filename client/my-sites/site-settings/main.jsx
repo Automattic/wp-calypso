@@ -6,8 +6,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 import SiteSettingsNavigation from './navigation';
@@ -15,10 +18,18 @@ import GeneralSettings from './section-general';
 
 import './style.scss';
 
-const SiteSettingsComponent = ( { siteId, translate } ) => {
+const SiteSettingsComponent = ( {
+	isJetpack,
+	isPossibleJetpackConnectionProblem,
+	siteId,
+	translate,
+} ) => {
 	return (
 		<Main className="site-settings">
 			<ScreenOptionsTab wpAdminPath="options-general.php" />
+			{ isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			<DocumentHead title={ translate( 'General Settings' ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
@@ -45,6 +56,11 @@ SiteSettingsComponent.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( SiteSettingsComponent ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
+	};
+} )( localize( SiteSettingsComponent ) );

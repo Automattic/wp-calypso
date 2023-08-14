@@ -5,7 +5,7 @@ import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { WPImportError } from 'calypso/blocks/importer/wordpress/types';
+import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
 import DropZone from 'calypso/components/drop-zone';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -14,7 +14,7 @@ import ImporterActionButton from 'calypso/my-sites/importer/importer-action-butt
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import { startMappingAuthors, startUpload, failPreUpload } from 'calypso/state/imports/actions';
-import { appStates } from 'calypso/state/imports/constants';
+import { appStates, MAX_FILE_SIZE } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
 	getUploadPercentComplete,
@@ -139,8 +139,15 @@ export class UploadingPane extends PureComponent {
 			this.props.failPreUpload(
 				importerStatus.importerId,
 				'',
-				WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED
+				WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED,
+				file
 			);
+			return;
+		}
+
+		// Fail fast if a user tries to upload a too big file
+		if ( file.size > MAX_FILE_SIZE ) {
+			this.props.failPreUpload( importerStatus.importerId, '', FileTooLarge.FILE_TOO_LARGE, file );
 			return;
 		}
 

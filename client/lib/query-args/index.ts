@@ -34,12 +34,17 @@ function getRelativeUrlWithParameters(
  *    } --> '/read/search'
  *
  * @param queryArgs search object
+ * @param redirect boolean if set to true, the history will be replaced instead of pushed
  * Every object key will be created in the URL
  */
-export function setQueryArgs( queryArgs: object ) {
+export function setQueryArgs( queryArgs: object, redirect = false ) {
 	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs, true );
 
-	page( searchWithoutBaseURL );
+	if ( redirect ) {
+		page.redirect( searchWithoutBaseURL );
+	} else {
+		page( searchWithoutBaseURL );
+	}
 }
 
 /**

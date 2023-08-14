@@ -3,6 +3,7 @@ import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
+import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -49,6 +50,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
 
+	const { data: isDoYouLoveJetpackStatsVisible } = useNoticeVisibilityQuery(
+		siteId,
+		'do_you_love_jetpack_stats'
+	);
+
 	// Gate notices for WPCOM sites behind a flag.
 	const showUpgradeNoticeForWpcomSites =
 		config.isEnabled( 'stats/paid-wpcom-stats' ) &&
@@ -62,6 +68,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
 
 	const showDoYouLoveJetpackStatsNotice =
+		isDoYouLoveJetpackStatsVisible &&
 		( showUpgradeNoticeOnOdyssey ||
 			showUpgradeNoticeForJetpackNotAtomic ||
 			showUpgradeNoticeForWpcomSites ) &&
@@ -74,8 +81,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 			{ showDoYouLoveJetpackStatsNotice && (
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
 			) }
-			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
-			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
+			{ /* If we add more notice, we'll need to refator the logic with logic similar in `use-notice-visibility-query` */ }
+			{ ! showDoYouLoveJetpackStatsNotice && hasLoadedPurchases && isOdysseyStats && (
+				<>
+					<OptOutNotice siteId={ siteId } />
+					<FeedbackNotice siteId={ siteId } />
+				</>
+			) }
 		</>
 	);
 };

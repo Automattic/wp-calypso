@@ -64,7 +64,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Template content loads into editor', async function () {
 		const editorCanvas = await editorPage.getEditorCanvas();
-		await editorCanvas.locator( `h1:text-is("About Me")` ).waitFor();
+		await editorCanvas.locator( `h1:text-is("About me")` ).waitFor();
 	} );
 
 	it( 'Open setting sidebar', async function () {

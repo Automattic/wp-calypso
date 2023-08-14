@@ -406,6 +406,10 @@ $mobile-card-max-width: 440px;
 		&.is-top-buttons {
 			padding: 0 20px;
 			vertical-align: bottom;
+			@include plans-2023-break-small {
+				padding-top: 16px;
+				padding-bottom: 16px;
+			}
 		}
 
 		@include plans-2023-break-small {
@@ -421,6 +425,7 @@ $mobile-card-max-width: 440px;
 	}
 
 	.plan-features-2023-grid__plan-spotlight {
+		background-color: var(--studio-white);
 		.plan-features-2023-grid__plan-spotlight-card {
 			max-width: 100%;
 			margin-bottom: 64px;
@@ -438,6 +443,9 @@ $mobile-card-max-width: 440px;
 
 				&.plan-features-2023-grid__header-billing-info {
 					padding-bottom: 32px;
+					@include plans-2023-break-small {
+						padding-bottom: 32px;
+					}
 				}
 
 				&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
@@ -584,7 +592,7 @@ body.is-section-signup.is-white-signup,
 			padding: 0 19px 24px 20px;
 
 			@include plans-2023-break-small {
-				padding-bottom: 16px;
+				padding-bottom: 0;
 			}
 
 			.plan-features-2023-grid__vip-price {
@@ -720,7 +728,7 @@ body.is-section-signup.is-white-signup,
 			margin-bottom: 12px;
 
 			@include plans-2023-break-small {
-				margin-top: 36px;
+				margin-top: 20px;
 				font-size: $font-body-extra-small;
 			}
 
@@ -738,6 +746,17 @@ body.is-section-signup.is-white-signup,
 
 			&.is-ecommerce-plan {
 				color: #55347d;
+			}
+		}
+	}
+
+	.is-sticky-top-buttons-row {
+		.is-top-buttons.plan-features-2023-grid__table-item {
+			border: none;
+			background-color: #f9f9f9;
+			box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.04);
+			.plan-features-2023-grid__actions-button {
+				font-size: rem(12px);
 			}
 		}
 	}

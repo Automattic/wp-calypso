@@ -97,13 +97,13 @@ const defaultCriteria: FeatureCriteria[] = [
 	// Jetpack users
 	{
 		siteType: 'simple',
-		jetpackTarget: 'wpcom-staging',
+		jetpackTarget: 'wpcom-deployment',
 		gutenberg: 'stable',
 		accountName: 'jetpackStagingUser',
 	},
 	{
 		siteType: 'simple',
-		jetpackTarget: 'wpcom-staging',
+		jetpackTarget: 'wpcom-deployment',
 		gutenberg: 'stable',
 		variant: 'siteEditor',
 		accountName: 'jetpackStagingFseUser',
@@ -113,6 +113,55 @@ const defaultCriteria: FeatureCriteria[] = [
 		gutenberg: 'stable',
 		jetpackTarget: 'remote-site',
 		accountName: 'jetpackRemoteSiteUser',
+	},
+	// Jetpack Atomic Deploy Users
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		accountName: 'jetpackAtomicDefaultUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'php-old',
+		accountName: 'jetpackAtomicPhpOldUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'php-new',
+		accountName: 'jetpackAtomicPhpNewUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'ecomm-plan',
+		accountName: 'jetpackAtomicEcommPlanUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'private',
+		accountName: 'jetpackAtomicPrivateUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'wp-beta',
+		accountName: 'jetpackAtomicWpBetaUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'wp-previous',
+		accountName: 'jetpackAtomicWpPreviousUser',
 	},
 	// Atomic GB nightly tests
 	{

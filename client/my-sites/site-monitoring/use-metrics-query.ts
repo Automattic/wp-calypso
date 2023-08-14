@@ -4,14 +4,14 @@ import wpcom from 'calypso/lib/wp';
 export type SiteMetricsAPIResponse = {
 	message?: string;
 	data: {
-		meta?: MetaData;
+		_meta?: MetaData;
 		periods: PeriodData[];
 	};
 };
 
 export type PeriodData = {
 	timestamp: number;
-	dimension: [] | { [ key: string ]: number };
+	dimension: { [ key: string ]: number };
 };
 
 export type MetaData = {
@@ -30,19 +30,17 @@ export interface SiteMetricsParams {
 	dimension?: DimensionParams;
 }
 
-export type DimensionParams = {
-	dimension?:
-		| 'http_version'
-		| 'http_verb'
-		| 'http_host'
-		| 'http_status'
-		| 'page_renderer'
-		| 'page_is_cached'
-		| 'wp_admin_ajax_action'
-		| 'visitor_asn'
-		| 'visitor_country_code'
-		| 'visitor_is_crawler';
-};
+export type DimensionParams =
+	| 'http_version'
+	| 'http_verb'
+	| 'http_host'
+	| 'http_status'
+	| 'page_renderer'
+	| 'page_is_cached'
+	| 'wp_admin_ajax_action'
+	| 'visitor_asn'
+	| 'visitor_country_code'
+	| 'visitor_is_crawler';
 
 export type MetricsParams = {
 	metric?: MetricsType;

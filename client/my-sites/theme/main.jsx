@@ -34,7 +34,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryTheme from 'calypso/components/data/query-theme';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
 import HeaderCake from 'calypso/components/header-cake';
@@ -341,7 +340,7 @@ class ThemeSheet extends Component {
 	}
 
 	previewAction = ( event, type ) => {
-		const { demoUrl, isExternallyManagedTheme } = this.props;
+		const { demoUrl, isExternallyManagedTheme, isWpcomTheme } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -352,19 +351,19 @@ class ThemeSheet extends Component {
 			type,
 		} );
 
-		if ( isExternallyManagedTheme && demoUrl ) {
-			window.open( demoUrl, '_blank', 'noreferrer,noopener' );
-			return;
+		// The embed live demo works only for WP.com themes
+		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
+			const { preview } = this.props.options;
+			this.props.setThemePreviewOptions(
+				this.props.themeId,
+				this.props.defaultOption,
+				this.props.secondaryOption,
+				this.getSelectedStyleVariation()
+			);
+			return preview.action( this.props.themeId );
 		}
 
-		const { preview } = this.props.options;
-		this.props.setThemePreviewOptions(
-			this.props.themeId,
-			this.props.defaultOption,
-			this.props.secondaryOption,
-			this.getSelectedStyleVariation()
-		);
-		return preview.action( this.props.themeId );
+		return window.open( demoUrl, '_blank', 'noreferrer,noopener' );
 	};
 
 	shouldRenderForStaging() {
@@ -642,8 +641,8 @@ class ThemeSheet extends Component {
 				disableHref={ url === '' }
 				icon="notice"
 				href={ url }
-				title={ translate( 'Paid themes cannot be purchased on staging sites' ) }
-				description={ translate( 'Subscribe to this premium theme on your production site.' ) }
+				title={ translate( 'Partner themes cannot be purchased on staging sites' ) }
+				description={ translate( 'Subscribe to this theme on your production site.' ) }
 			/>
 		);
 	};
@@ -1279,19 +1278,6 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
-
-				{ /* 
-					FIXME: 
-					This is for showing the Live Preview button 
-					when the site is on Atomic AND the theme is installed.
-					We need to query a theme with the siteId to always know if it's installed on the site or not
-					(e.g. If a user go to the Theme Detail page directly).
-					This can be removed once we addressed https://github.com/Automattic/wp-calypso/issues/80089.
-				*/ }
-				{ config.isEnabled( 'themes/block-theme-previews' ) && (
-					<QueryTheme themeId={ this.props.themeId } siteId={ siteId } />
-				) }
-
 				<QueryProductsList />
 				<QueryUserPurchases />
 				{

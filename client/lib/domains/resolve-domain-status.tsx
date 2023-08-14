@@ -494,7 +494,9 @@ export function resolveDomainStatus(
 							strong: <strong />,
 							a: (
 								<a
-									href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+									href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+										nameservers: true,
+									} ) }
 								/>
 							),
 						},
@@ -508,7 +510,9 @@ export function resolveDomainStatus(
 							strong: <strong />,
 							a: (
 								<a
-									href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
+									href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+										nameservers: true,
+									} ) }
 								/>
 							),
 						},

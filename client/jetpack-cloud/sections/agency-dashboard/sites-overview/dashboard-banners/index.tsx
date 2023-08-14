@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import showBanner from 'calypso/jetpack-cloud/sections/utils/show-banner';
 import { useSelector } from 'calypso/state';
 import {
@@ -26,6 +27,7 @@ export default function DashboardBanners() {
 				getPreference( state, downtimeMonitoringUpgradeBannerPreferenceName )
 			),
 			showDays: 7,
+			hideBanner: ! isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' ),
 		},
 		{
 			component: () => <SiteSurveyBanner isDashboardView />,

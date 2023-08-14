@@ -237,6 +237,10 @@ body.is-section-promote-post-i2 {
 			.inline-support-link__nowrap {
 				color: var(--studio-gray-80);
 			}
+
+			&:hover {
+				border-color: var(--color-neutral-20);
+			}
 		}
 
 		&-buttons {

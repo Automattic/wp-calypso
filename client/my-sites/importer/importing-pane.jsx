@@ -2,16 +2,19 @@ import { ProgressBar, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AuthorMappingPane from './author-mapping-pane';
 
 import './importing-pane.scss';
@@ -98,6 +101,7 @@ export class ImportingPane extends PureComponent {
 			ID: PropTypes.number.isRequired,
 			name: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
+			site_slug: PropTypes.bool.isRequired,
 		} ).isRequired,
 		sourceType: PropTypes.string.isRequired,
 	};
@@ -184,7 +188,24 @@ export class ImportingPane extends PureComponent {
 	handleOnMap = ( source, target ) =>
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
-	renderActionButtons = () => {
+	onClickViewPosts = () => {
+		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
+			importer_id: this.props.importerStatus.type,
+			action: 'view-posts',
+		} );
+
+		page( `/posts/${ this.props.siteSlug || '' }` );
+	};
+
+	onClickImportSubscribers = () => {
+		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
+			importer_id: this.props.importerStatus.type,
+			action: 'add-subscribers',
+		} );
+		page( `/subscribers/${ this.props.siteSlug || '' }#add-subscribers` );
+	};
+
+	renderActionButtons = ( sourceType ) => {
 		if ( this.isProcessing() || this.isMapping() ) {
 			// We either don't want to show buttons while processing
 			// or, in the case of `isMapping`, we let another component (author-mapping-pane)
@@ -198,6 +219,21 @@ export class ImportingPane extends PureComponent {
 		const isError = this.isError();
 		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
 
+		// After Substack importer we nudge to view posts or
+		if ( sourceType === 'Substack' && isFinished ) {
+			return (
+				<ImporterActionButtonContainer justifyContentCenter>
+					<ImporterActionButton onClick={ this.onClickImportSubscribers } primary>
+						{ this.props.translate( 'Import Substack subscribers' ) }
+					</ImporterActionButton>
+					<ImporterActionButton onClick={ this.onClickViewPosts }>
+						{ this.props.translate( 'View imported content' ) }
+					</ImporterActionButton>
+				</ImporterActionButtonContainer>
+			);
+		}
+
+		// Other importers nudge to view the site
 		return (
 			<ImporterActionButtonContainer>
 				{ isImporting && <BusyImportingButton /> }
@@ -276,14 +312,20 @@ export class ImportingPane extends PureComponent {
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>
 				</div>
-				{ this.renderActionButtons() }
+				{ this.renderActionButtons( sourceType ) }
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
-	loadTrackingTool,
-	mapAuthor,
-	startImporting,
-} )( localize( ImportingPane ) );
+export default connect(
+	( state ) => ( {
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{
+		loadTrackingTool,
+		mapAuthor,
+		recordTracksEvent,
+		startImporting,
+	}
+)( localize( ImportingPane ) );

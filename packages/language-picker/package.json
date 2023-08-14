@@ -36,10 +36,10 @@
 		"@wordpress/react-i18n": "^3.36.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.5.0",
+		"@wordpress/data": "^9.8.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.1.2"
+		"redux": "^4.2.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

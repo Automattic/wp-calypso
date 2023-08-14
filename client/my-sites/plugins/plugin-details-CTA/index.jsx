@@ -148,7 +148,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const onIntervalSwitcherChange = useCallback(
 		( interval ) => {
-			setQueryArgs( { interval: interval?.toLowerCase() } );
+			setQueryArgs( { interval: interval?.toLowerCase() }, true );
 			dispatch( setBillingInterval( interval ) );
 		},
 		[ dispatch ]

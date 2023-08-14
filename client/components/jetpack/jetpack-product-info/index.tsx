@@ -35,6 +35,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 		benefitsComingSoon,
 		lightboxDescription,
 		faqs,
+		disclaimer,
 		productSlug,
 		recommendedFor,
 		whatIsIncluded,
@@ -109,6 +110,12 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 			{ faqs?.length && (
 				<JetpackProductInfoSection title={ translate( 'FAQs' ) }>
 					<JetpackProductInfoFAQList items={ faqs } />
+				</JetpackProductInfoSection>
+			) }
+
+			{ disclaimer && (
+				<JetpackProductInfoSection alwaysExpanded>
+					<span className="jetpack-product-info__disclaimer-text">{ disclaimer }</span>
 				</JetpackProductInfoSection>
 			) }
 		</div>

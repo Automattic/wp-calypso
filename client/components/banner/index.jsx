@@ -306,7 +306,7 @@ export class Banner extends Component {
 			{ 'is-jetpack': jetpack },
 			{ 'is-atomic': isAtomic }
 		);
-
+		const href = ( disableHref || callToAction ) && ! forceHref ? null : this.getHref();
 		if ( dismissPreferenceName ) {
 			return (
 				<DismissibleCard
@@ -314,6 +314,7 @@ export class Banner extends Component {
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
+					href={ href }
 				>
 					{ this.getIcon() }
 					{ this.getContent() }
@@ -324,7 +325,7 @@ export class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
+				href={ href }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
 				displayAsLink={ displayAsLink }
 				showLinkIcon={ showLinkIcon }

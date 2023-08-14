@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getActionEventName } from '../utils';
@@ -75,7 +76,7 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 						</PopoverMenuItem>
 						<PopoverMenuItem
 							onClick={ () => handleClickMenuItem( 'view_activity' ) }
-							href={ `/activity-log/${ siteUrl }` }
+							href={ `/activity-log/${ urlToSlug( siteUrl ) }` }
 							className="site-actions__menu-item"
 						>
 							{ translate( 'View activity' ) }
@@ -86,14 +87,14 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 					<>
 						<PopoverMenuItem
 							onClick={ () => handleClickMenuItem( 'clone_site' ) }
-							href={ `/backup/${ siteUrl }/clone` }
+							href={ `/backup/${ urlToSlug( siteUrl ) }/clone` }
 							className="site-actions__menu-item"
 						>
 							{ translate( 'Copy this site' ) }
 						</PopoverMenuItem>
 						<PopoverMenuItem
 							onClick={ () => handleClickMenuItem( 'site_settings' ) }
-							href={ `/settings/${ siteUrl }` }
+							href={ `/settings/${ urlToSlug( siteUrl ) }` }
 							className="site-actions__menu-item"
 						>
 							{ translate( 'Site settings' ) }

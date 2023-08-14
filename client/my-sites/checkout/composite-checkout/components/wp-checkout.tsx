@@ -42,6 +42,7 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner';
@@ -240,6 +241,7 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
+	usePresalesChat( 'wpcom', true, true );
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );

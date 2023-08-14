@@ -7,7 +7,8 @@ import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { useSiteMetricsData } from '../main';
+import { calculateTimeRange } from '../components/time-range-picker';
+import { useSiteMetricsData } from '../metrics-tab';
 import { useSiteMetricsQuery } from '../use-metrics-query';
 
 jest.mock( 'calypso/my-sites/site-monitoring/use-metrics-query.ts', () => ( {
@@ -33,6 +34,7 @@ const INITIAL_STATE = {
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
 const queryClient = new QueryClient();
+const timeRange = calculateTimeRange( '24-hours' );
 
 describe( 'useSiteMetrics test', () => {
 	beforeAll( () => {
@@ -56,7 +58,12 @@ describe( 'useSiteMetrics test', () => {
 	it( 'should return formattedData for the case with an empty array for dimension', () => {
 		useSiteMetricsQuery.mockReturnValueOnce( {
 			data: {
-				data: { periods: [ { timestamp: 1685577600, dimension: [] } ] },
+				data: { periods: [ { timestamp: 1685577600, dimension: {} } ] },
+			},
+		} );
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: { periods: [ { timestamp: 1685577600, dimension: {} } ] },
 			},
 		} );
 
@@ -68,7 +75,7 @@ describe( 'useSiteMetrics test', () => {
 		);
 
 		// Call the useSiteMetricsData function directly within the test
-		const { result } = renderHook( () => useSiteMetricsData(), { wrapper } );
+		const { result } = renderHook( () => useSiteMetricsData( timeRange ), { wrapper } );
 
 		// Get the formattedData from the hook's result
 		const { formattedData } = result.current;
@@ -76,6 +83,7 @@ describe( 'useSiteMetrics test', () => {
 		// Make your assertions based on the expected formattedData
 		expect( formattedData ).toEqual( [
 			[ 1685577600 ], // Array of timestamps
+			[ 0 ], // Array of dimension values
 			[ 0 ], // Array of dimension values
 		] );
 	} );
@@ -90,27 +98,11 @@ describe( 'useSiteMetrics test', () => {
 				},
 			},
 		} );
-
-		const wrapper = ( { children } ) => (
-			<QueryClientProvider client={ queryClient }>
-				<Provider store={ store }>{ children }</Provider>
-			</QueryClientProvider>
-		);
-
-		const { result } = renderHook( () => useSiteMetricsData(), { wrapper } );
-
-		const { formattedData } = result.current;
-
-		expect( formattedData ).toEqual( [ [ 1685577600 ], [ 0.0030000000000000005 ] ] );
-	} );
-
-	it( 'should return formattedData for the case with dimension being an array and an object', () => {
 		useSiteMetricsQuery.mockReturnValueOnce( {
 			data: {
 				data: {
 					periods: [
 						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
-						{ timestamp: 1685577800, dimension: [] },
 					],
 				},
 			},
@@ -122,13 +114,53 @@ describe( 'useSiteMetrics test', () => {
 			</QueryClientProvider>
 		);
 
-		const { result } = renderHook( () => useSiteMetricsData(), { wrapper } );
+		const { result } = renderHook( () => useSiteMetricsData( timeRange ), { wrapper } );
+
+		const { formattedData } = result.current;
+
+		expect( formattedData ).toEqual( [
+			[ 1685577600 ],
+			[ 0.18000000000000002 ],
+			[ 3.0000000000000004 ],
+		] );
+	} );
+
+	it( 'should return formattedData for the case with dimension being an array and an object', () => {
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+						{ timestamp: 1685577800, dimension: {} },
+					],
+				},
+			},
+		} );
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+						{ timestamp: 1685577800, dimension: {} },
+					],
+				},
+			},
+		} );
+
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useSiteMetricsData( timeRange ), { wrapper } );
 
 		const { formattedData } = result.current;
 
 		expect( formattedData ).toEqual( [
 			[ 1685577600, 1685577800 ],
-			[ 0.0030000000000000005, 0 ],
+			[ 0.18000000000000002, 0 ],
+			[ 3.0000000000000004, 0 ],
 		] );
 	} );
 } );

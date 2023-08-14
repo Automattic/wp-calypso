@@ -283,7 +283,7 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	renderBreadcrumbs() {
+	renderHeader() {
 		const { translate } = this.props;
 
 		const item = {
@@ -387,7 +387,7 @@ export class SiteDomains extends Component {
 		return (
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-				{ this.renderBreadcrumbs() }
+				{ this.renderHeader() }
 				<DocumentHead title={ headerText } />
 				{ this.renderNewDesign() }
 			</Main>

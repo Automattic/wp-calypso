@@ -1,11 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { DNS_ERROR, UNKNOWN_ERROR } from './constants';
+import { ErrorNotice } from './error-notice';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
 
 interface Props {
@@ -14,7 +11,6 @@ interface Props {
 
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
 		useState( false );
@@ -26,14 +22,6 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			},
 		} );
 
-	const handleJetpackConnectionHealthLinkClick = () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_connection_health_issue_click', {
-				type: 'default',
-			} )
-		);
-	};
-
 	if (
 		isLoadingJetpackConnectionHealth ||
 		isErrorCheckJetpackConnectionHealth ||
@@ -42,27 +30,29 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return;
 	}
 
-	return (
-		<>
-			<TrackComponentView
-				eventName="calypso_jetpack_connection_health_issue_view"
-				eventProperties={ { type: 'default' } }
+	if ( jetpackConnectionHealth?.error === DNS_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ DNS_ERROR }
+				errorText={ translate(
+					"Jetpack is unable to connect to your domain. Please update your domain's DNS records so they're pointed properly to your site."
+				) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-domain-name'
+				) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
 			/>
-			<Notice
-				status="is-error"
-				showDismiss={ false }
-				text={ translate( 'Jetpack is unable to communicate with your site.' ) }
-			>
-				<NoticeAction
-					href={ localizeUrl(
-						'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
-					) }
-					external
-					onClick={ handleJetpackConnectionHealthLinkClick }
-				>
-					{ translate( 'Learn how to fix' ) }
-				</NoticeAction>
-			</Notice>
-		</>
+		);
+	}
+
+	return (
+		<ErrorNotice
+			errorType={ UNKNOWN_ERROR }
+			errorText={ translate( 'Jetpack is unable to communicate with your site.' ) }
+			noticeActionHref={ localizeUrl(
+				'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
+			) }
+			noticeActionText={ translate( 'Learn how to fix' ) }
+		/>
 	);
 };

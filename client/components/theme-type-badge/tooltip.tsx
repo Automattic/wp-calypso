@@ -111,7 +111,10 @@ const ThemeTypeBadgeTooltip = ( {
 				textOnly: true,
 			} ),
 			[ WOOCOMMERCE_THEME ]: translate( 'WooCommerce theme' ),
-			[ MARKETPLACE_THEME ]: translate( 'Paid theme' ),
+			[ MARKETPLACE_THEME ]: translate( 'Partner theme', {
+				context: 'This theme is developed and supported by a theme partner',
+				textOnly: true,
+			} ),
 		} as { [ key: string ]: string };
 
 		if ( ! ( type in headers ) ) {

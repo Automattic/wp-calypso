@@ -23,14 +23,14 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"peerDependencies": {
-		"@wordpress/data": "^9.5.0",
+		"@wordpress/data": "^9.8.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.1.2"
+		"redux": "^4.2.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/jest-dom": "^5.17.0",
 		"@testing-library/react": "^14.0.0",
 		"typescript": "^5.1.6"
 	},

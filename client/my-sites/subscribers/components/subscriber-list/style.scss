@@ -49,7 +49,7 @@
 		}
 
 		.subscriber-list__menu-column {
-			flex-basis: 36px;
+			flex-basis: 48px;
 			flex-grow: initial;
 
 			.gridicon {
@@ -59,7 +59,7 @@
 
 		&.header {
 			padding-bottom: $font-code;
-			padding-top: 0;
+			padding-top: 8px;
 
 			span {
 				font-weight: 500;
