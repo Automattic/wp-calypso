@@ -169,7 +169,7 @@ function getConfig( {
 						},
 					}
 				) }{ ' ' }
-				{ translate( 'To migrate your readers, {{a}}go to subscribers{{/a}}.', {
+				{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
 					components: {
 						a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
 					},
