@@ -260,7 +260,19 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		label: translate( 'Live demo', {
 			comment: 'label for previewing the theme demo website',
 		} ),
-		action: themePreview,
+		action: ( themeId, siteId ) => {
+			return ( dispatch, getState ) => {
+				const state = getState();
+				if ( isWpcomTheme( state, themeId ) && ! isExternallyManagedTheme( state, themeId ) ) {
+					return dispatch( themePreview( themeId, siteId ) );
+				}
+				return window.open(
+					getThemeDemoUrl( state, themeId, siteId ),
+					'_blank',
+					'noreferrer,noopener'
+				);
+			};
+		},
 		hideForTheme: ( state, themeId, siteId ) => {
 			const demoUrl = getThemeDemoUrl( state, themeId, siteId );
 
