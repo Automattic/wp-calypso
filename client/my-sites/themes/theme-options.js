@@ -20,6 +20,7 @@ import {
 	confirmDelete,
 	showThemePreview as themePreview,
 	addExternalManagedThemeToCart,
+	livePreview as livePreviewAction,
 } from 'calypso/state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
@@ -35,7 +36,6 @@ import {
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
-	getLivePreviewUrl,
 	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
@@ -248,10 +248,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	};
 
 	const livePreview = {
-		label: translate( 'Live Preview', {
+		label: translate( 'Live preview', {
 			comment: 'label for previewing a block theme',
 		} ),
-		getUrl: ( state, themeId, siteId ) => getLivePreviewUrl( state, themeId, siteId ),
+		action: livePreviewAction,
 		hideForTheme: ( state, themeId, siteId ) =>
 			! getIsLivePreviewSupported( state, themeId, siteId ),
 	};
@@ -260,7 +260,19 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		label: translate( 'Live demo', {
 			comment: 'label for previewing the theme demo website',
 		} ),
-		action: themePreview,
+		action: ( themeId, siteId ) => {
+			return ( dispatch, getState ) => {
+				const state = getState();
+				if ( isWpcomTheme( state, themeId ) && ! isExternallyManagedTheme( state, themeId ) ) {
+					return dispatch( themePreview( themeId, siteId ) );
+				}
+				return window.open(
+					getThemeDemoUrl( state, themeId, siteId ),
+					'_blank',
+					'noreferrer,noopener'
+				);
+			};
+		},
 		hideForTheme: ( state, themeId, siteId ) => {
 			const demoUrl = getThemeDemoUrl( state, themeId, siteId );
 
