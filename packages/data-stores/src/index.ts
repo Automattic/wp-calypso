@@ -21,6 +21,7 @@ export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './user/types';
 export * from './queries/use-launchpad';
+export * from './queries/use-all-domains-query';
 
 const { SubscriptionManager } = Reader;
 

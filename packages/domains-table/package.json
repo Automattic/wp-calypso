@@ -31,6 +31,7 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
