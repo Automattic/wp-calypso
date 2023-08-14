@@ -3,7 +3,7 @@ import type { RequestCartProduct, MinimalRequestCartProduct } from './types';
 export default function createRequestCartProduct(
 	properties: MinimalRequestCartProduct
 ): RequestCartProduct {
-	if ( ! properties.product_slug ) {
+	if ( ! properties.product_slug || properties.product_slug === 'undefined' ) {
 		throw new Error( 'product_slug is required for request cart products' );
 	}
 	const { product_slug, product_id, meta, volume, quantity, extra } = properties;
