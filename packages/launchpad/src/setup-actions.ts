@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTaskActionsProps, Task } from './types';
@@ -41,6 +42,11 @@ export const setUpActionsForTasks = ( {
 			}
 
 			action = () => {
+				if ( task.id === 'add_about_page' ) {
+					updateLaunchpadSettings( siteSlug as string, {
+						checklist_statuses: { add_about_page: true },
+					} );
+				}
 				window.location.assign( targetPath );
 			};
 		} else {
