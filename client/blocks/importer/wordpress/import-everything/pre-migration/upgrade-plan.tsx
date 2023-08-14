@@ -1,11 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
@@ -34,9 +34,11 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		isBusy,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
-		targetSite.slug
+		targetSite.ID
 	);
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
+	const [ popoverVisible, setPopoverVisible ] = useState( false );
+	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
 
 	return (
 		<div
@@ -72,9 +74,15 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
 					<Button
+						ref={ trialBtnRef }
+						busy={ isBusy }
 						borderless={ true }
 						className="action-buttons__borderless"
-						onClick={ onFreeTrialClick }
+						onClick={ () => isEligibleForTrialPlan && onFreeTrialClick() }
+						onFocus={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
+						onBlur={ () => setPopoverVisible( false ) }
+						onMouseEnter={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
+						onMouseLeave={ () => setPopoverVisible( false ) }
 					>
 						{ translate( 'Try it for free' ) }
 					</Button>
@@ -89,6 +97,17 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					</Button>
 				) }
 			</div>
+
+			<Popover
+				className="info-popover__tooltip info-popover__tooltip--trial-plan"
+				focusOnShow={ false }
+				context={ trialBtnRef.current }
+				isVisible={ popoverVisible }
+			>
+				{ translate(
+					'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
+				) }
+			</Popover>
 		</div>
 	);
 };

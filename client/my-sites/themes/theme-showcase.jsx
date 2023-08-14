@@ -339,6 +339,7 @@ class ThemeShowcase extends Component {
 		} else {
 			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 			newUrlParams.filter = [ filterWithoutSubjects, subjectTerm ].join( '+' );
+			newUrlParams.category = null;
 		}
 
 		page( this.constructUrl( newUrlParams ) );
@@ -457,6 +458,7 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
+		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
 		const {
@@ -577,7 +579,7 @@ class ThemeShowcase extends Component {
 									className="section-nav-tabs__dropdown"
 									onSelect={ this.onTierSelect }
 									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, this.props.tier || 'all' ) || '',
+										args: getOptionLabel( tiers, tier ) || '',
 									} ) }
 									options={ tiers }
 									initialSelected={ this.props.tier }

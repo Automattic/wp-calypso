@@ -5,26 +5,39 @@ import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import React, { useState } from 'react';
+import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
 import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { UserData } from 'calypso/lib/user/user';
+import type { SiteSlug } from 'calypso/types';
 
 interface Props {
 	user: UserData;
 	site: SiteDetails;
+	siteSlug: SiteSlug;
+	flowName: string;
+	stepName: string;
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
 }
-const TrialPlan = function TrialPlan( props: Props ) {
+const TrialPlan = function ( props: Props ) {
 	const { __ } = useI18n();
-	const { user, site, submit } = props;
+	const urlQueryParams = useQuery();
+	const { user, site, siteSlug, flowName, stepName, submit } = props;
 	const [ showPlanFeaturesModal, setShowPlanFeaturesModal ] = useState( false );
+	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
+		useCheckEligibilityMigrationTrialPlan( site?.ID );
+	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
 
 	const unsupportedTrialFeatureList = useUnsupportedTrialFeatureList();
 	const plan = getPlan( PLAN_BUSINESS );
+	const checkoutUrl = useCheckoutUrl( site.ID, siteSlug );
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			navigateToImporterStep();
@@ -39,6 +52,16 @@ const TrialPlan = function TrialPlan( props: Props ) {
 		submit?.( { action: 'importer' } );
 	}
 
+	function navigateToCheckoutPage() {
+		const returnUrl = `/setup/${ flowName }/${ stepName }?${ urlQueryParams.toString() }`;
+		const preparedCheckoutUrl = addQueryArgs( checkoutUrl, {
+			redirect_to: returnUrl,
+			cancel_to: returnUrl,
+		} );
+
+		submit?.( { action: 'checkout', checkoutUrl: preparedCheckoutUrl } );
+	}
+
 	function onStartTrialClick() {
 		if ( ! user?.email_verified ) {
 			navigateToVerifyEmailStep();
@@ -47,8 +70,23 @@ const TrialPlan = function TrialPlan( props: Props ) {
 		}
 	}
 
-	if ( isAddingTrial ) {
+	if ( isAddingTrial || isCheckingEligibility ) {
 		return <LoadingEllipsis />;
+	} else if ( ! isEligibleForTrialPlan ) {
+		return (
+			<div className="trial-plan--container">
+				<Title>{ __( 'You already have an active free trial' ) }</Title>
+				<SubTitle>
+					{ createInterpolateElement(
+						__(
+							"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the Business plan."
+						),
+						{ br: <br /> }
+					) }
+				</SubTitle>
+				<NextButton onClick={ navigateToCheckoutPage }>{ __( 'Purchase and migrate' ) }</NextButton>
+			</div>
+		);
 	}
 
 	return (

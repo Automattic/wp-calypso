@@ -218,7 +218,7 @@ const utils = () => {
 const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
-	if ( currentUser ) {
+	if ( currentUser && currentUser.ID ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( setCurrentUser( currentUser ) );
 	}
