@@ -33,6 +33,7 @@ interface SeriesProp {
 	fill: string;
 	label: string;
 	stroke: string;
+	scale?: string;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -67,7 +68,7 @@ function determineTimeRange( timeRange: TimeRange ) {
 
 function createSeries( series: Array< SeriesProp > ) {
 	const { spline } = uPlot.paths;
-	const configuredSeries = series.map( function ( serie ) {
+	const configuredSeries: uPlot.Series[] = series.map( function ( serie ) {
 		return {
 			...serie,
 			...{
@@ -90,6 +91,24 @@ function createSeries( series: Array< SeriesProp > ) {
 	} );
 
 	return [ { label: ' ' }, ...configuredSeries ];
+}
+
+function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
+	const scale = series.find( ( serie ) => serie.scale )?.scale;
+	if ( scale ) {
+		return [
+			{
+				scale,
+				grid: {
+					show: false,
+				},
+				ticks: {
+					show: false,
+				},
+			},
+		];
+	}
+	return [];
 }
 
 export const SiteMonitoringLineChart = ( {
@@ -161,6 +180,7 @@ export const SiteMonitoringLineChart = ( {
 						show: false,
 					},
 				},
+				...addExtraScaleIfDefined( series ),
 			],
 			cursor: {
 				x: false,
