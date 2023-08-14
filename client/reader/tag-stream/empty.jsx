@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { withReaderPerformanceTrackerStop } from '../reader-performance-tracker';
@@ -41,15 +40,15 @@ class TagEmptyContent extends Component {
 			</a>
 		);
 
-		const secondaryAction = isDiscoverEnabled() ? (
+		const secondaryAction = (
 			<a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore' ) }
+				{ this.props.translate( 'Discover' ) }
 			</a>
-		) : null;
+		);
 
 		const message = this.props.translate(
 			'No posts have recently been tagged with {{tagName /}} for your language.',
