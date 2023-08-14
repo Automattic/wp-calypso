@@ -3,11 +3,15 @@ import type { BasicDomainData } from '../types';
 import './style.scss';
 
 interface DomainsTableProps {
-	domains: BasicDomainData[];
+	domains: BasicDomainData[] | undefined;
 }
 
 export function DomainsTable( { domains }: DomainsTableProps ) {
 	const { __ } = useI18n();
+
+	if ( ! domains ) {
+		return null;
+	}
 
 	return (
 		<table className="domains-table">
