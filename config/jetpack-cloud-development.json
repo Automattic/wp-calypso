@@ -45,7 +45,6 @@
 		"jetpack/backup-retention-settings": true,
 		"jetpack/backup-granular": true,
 		"jetpack/golden-token": true,
-		"jetpack/partner-portal-payment": true,
 		"jetpack/plugin-management": true,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page": true,
