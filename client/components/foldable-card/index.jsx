@@ -106,7 +106,7 @@ class FoldableCard extends Component {
 					onClick={ clickAction }
 				>
 					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
-					<Gridicon icon={ this.props.icon } size={ iconSize } />
+					<Gridicon className="foldable-card__chevron" icon={ this.props.icon } size={ iconSize } />
 				</button>
 			);
 		}
