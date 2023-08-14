@@ -338,6 +338,7 @@ class ThemeShowcase extends Component {
 		} else {
 			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 			newUrlParams.filter = [ filterWithoutSubjects, subjectTerm ].join( '+' );
+			newUrlParams.category = null;
 		}
 
 		page( this.constructUrl( newUrlParams ) );
