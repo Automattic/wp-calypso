@@ -11,6 +11,7 @@ import {
 import { Button, Card, Gridicon } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
+import DOMPurify from 'dompurify';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -202,6 +203,11 @@ export class Banner extends Component {
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
+		const sanitizedDescription = DOMPurify.sanitize( description, {
+			ALLOWED_TAGS: [ 'a' ],
+			ALLOWED_ATTR: [ 'href', 'target' ],
+		} );
+
 		return (
 			<div className="banner__content">
 				{ tracksImpressionName && event && (
@@ -217,7 +223,12 @@ export class Banner extends Component {
 				) }
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
-					{ description && <div className="banner__description">{ description }</div> }
+					{ description && (
+						<div
+							className="banner__description"
+							dangerouslySetInnerHTML={ { __html: sanitizedDescription } } // eslint-disable-line react/no-danger
+						></div>
+					) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
