@@ -4,29 +4,17 @@
 
 .partner-portal-layout__container {
 	max-width: 100%;
+	min-height: calc(100vh - 123px);
+	display: flex;
+	flex-direction: column;
 	margin: auto;
 	padding: 0;
 }
 
-.partner-portal-layout__top {
-	&:not(.is-borderless) {
-		margin-block-end: 16px;
-	}
-
-	@include breakpoint-deprecated( ">660px" ) {
-		// We need these negative margin values because we want to make the container full-width,
-		// but our element is inside a limited-width parent.
-		margin-inline: -73px;
-		padding-inline: 73px;
-
-		&:not(.is-borderless) {
-			border-bottom: 1px solid var(--color-primary-5);
-		}
-	}
-}
-
 .partner-portal-layout__body {
-	padding: 0;
+	padding: 16px 0;
+	margin-block-end: -32px;
+	flex: 1 1 100%;
 }
 
 .partner-portal-layout__top,
@@ -40,6 +28,13 @@
 	&-wrapper > * {
 		max-width: 1500px;
 		margin-inline: auto !important;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		// We need these negative margin values because we want to make the container full-width,
+		// but our element is inside a limited-width parent.
+		margin-inline: -73px;
+		padding-inline: 73px;
 	}
 }
 
@@ -70,5 +65,17 @@
 
 	a.button {
 		margin-left: auto;
+	}
+}
+
+.main.partner-portal-layout.is-with-border {
+	@include breakpoint-deprecated( ">660px" ) {
+		.partner-portal-layout__top {
+			border-bottom: 1px solid var(--color-primary-5);
+		}
+
+		.partner-portal-layout__body {
+			background: rgba(255, 255, 255, 0.5);
+		}
 	}
 }

@@ -29,7 +29,7 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 
 	return (
 		<Layout className="issue-license" title={ translate( 'Issue a new License' ) } wide>
-			<LayoutTop borderless>
+			<LayoutTop>
 				<div className="issue-license__step-progress">
 					<AssignLicenseStepProgress currentStep="issueLicense" selectedSite={ selectedSite } />
 					{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) && <TotalCost /> }

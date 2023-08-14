@@ -127,7 +127,7 @@ export default function Prices() {
 		<Layout className="prices" title={ translate( 'Prices' ) } wide>
 			<QueryProductsList type="jetpack" currency="USD" />
 
-			<LayoutTop borderless>
+			<LayoutTop>
 				<LayoutHeader>
 					<CardHeading size={ 36 }>
 						{ translate( 'Jetpack Agency & Pro Partner Program Product Pricing' ) }

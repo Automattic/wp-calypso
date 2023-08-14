@@ -11,12 +11,21 @@ type Props = {
 	className?: string;
 	title: ReactNode;
 	wide?: boolean;
+	withBorder?: boolean;
 };
 
-export default function Layout( { children, className, title, wide = false }: Props ) {
+export default function Layout( {
+	children,
+	className,
+	title,
+	wide = false,
+	withBorder = false,
+}: Props ) {
 	return (
 		<Main
-			className={ classNames( 'partner-portal-layout', className ) }
+			className={ classNames( 'partner-portal-layout', className, {
+				'is-with-border': withBorder,
+			} ) }
 			fullWidthLayout={ wide }
 			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
 		>

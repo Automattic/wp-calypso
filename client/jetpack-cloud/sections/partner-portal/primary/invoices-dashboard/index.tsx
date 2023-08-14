@@ -12,7 +12,7 @@ export default function InvoicesDashboard() {
 
 	return (
 		<Layout className="invoices-dashboard" title={ translate( 'Invoices' ) } wide>
-			<LayoutTop borderless>
+			<LayoutTop>
 				<LayoutHeader>
 					<CardHeading size={ 36 }>{ translate( 'Invoices' ) }</CardHeading>
 
