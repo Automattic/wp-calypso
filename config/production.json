@@ -37,6 +37,7 @@
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
+		"domains/management": false,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"external-media": true,
