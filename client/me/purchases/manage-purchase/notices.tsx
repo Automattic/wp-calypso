@@ -44,7 +44,7 @@ import {
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getAddNewPaymentMethodPath } from '../utils';
+import { getAddNewPaymentMethodPath, isTemporarySitePurchase } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	GetManagePurchaseUrlFor,
@@ -103,6 +103,15 @@ class PurchaseNotice extends Component<
 		if ( isMonthly( purchase.productSlug ) ) {
 			const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
 
+			if ( isTemporarySitePurchase( purchase ) ) {
+				return translate( '%(purchaseName)s will expire and be removed %(expiry)s days. ', {
+					args: {
+						purchaseName: getName( purchase ),
+						expiry: daysToExpiry,
+					},
+				} );
+			}
+
 			return translate(
 				'%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
 				{
@@ -112,6 +121,15 @@ class PurchaseNotice extends Component<
 					},
 				}
 			);
+		}
+
+		if ( isTemporarySitePurchase( purchase ) ) {
+			return translate( '%(purchaseName)s will expire and be removed %(expiry)s.', {
+				args: {
+					purchaseName: getName( purchase ),
+					expiry: expiry.fromNow(),
+				},
+			} );
 		}
 
 		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.', {
