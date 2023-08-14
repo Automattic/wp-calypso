@@ -10,7 +10,7 @@ interface Response {
 }
 
 const useCheckEligibilityMigrationTrialPlan = (
-	siteSlug: SiteSlug
+	siteSlug: SiteId | SiteSlug
 ): UseQueryResult< Response > => {
 	return useQuery( {
 		queryKey: [ 'check_eligibility_wp_bundle_migration_trial_monthly', siteSlug ],

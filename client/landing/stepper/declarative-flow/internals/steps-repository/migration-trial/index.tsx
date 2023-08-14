@@ -1,5 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -8,12 +9,13 @@ import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/ty
 import type { UserData } from 'calypso/lib/user/user';
 import './style.scss';
 
-const MigrationTrial: Step = function MigrationTrial( { navigation } ) {
+const MigrationTrial: Step = function MigrationTrial( { navigation, flow, stepName } ) {
 	const site = useSite();
+	const siteSlug = useSiteSlug();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const { goBack, submit } = navigation;
 
-	if ( ! site ) {
+	if ( ! site || ! siteSlug ) {
 		return null;
 	}
 
@@ -26,7 +28,16 @@ const MigrationTrial: Step = function MigrationTrial( { navigation } ) {
 			hideFormattedHeader={ true }
 			goBack={ goBack }
 			isWideLayout={ false }
-			stepContent={ <TrialPlan user={ user } site={ site } submit={ submit } /> }
+			stepContent={
+				<TrialPlan
+					user={ user }
+					site={ site }
+					siteSlug={ siteSlug }
+					flowName={ flow }
+					stepName={ stepName }
+					submit={ submit }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
