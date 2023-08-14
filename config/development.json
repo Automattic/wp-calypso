@@ -59,7 +59,6 @@
 		"domains/management": false,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
-		"domains/redirect": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,

@@ -1,5 +1,4 @@
 import { Button, FormInputValidation } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, trash } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -11,7 +10,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { withoutHttp } from 'calypso/lib/url';
-import { DOMAIN_REDIRECT } from 'calypso/lib/url/support';
 import {
 	closeDomainRedirectNotice,
 	fetchDomainRedirect,
@@ -175,23 +173,6 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 					id="domain-redirect__input"
 					className={ classNames( { 'is-error': ! isValidUrl } ) }
 				/>
-				<p className="domain-redirect-card__explanation">
-					{ translate(
-						'Requests to your domain will receive an HTTP redirect here. ' +
-							'{{learnMoreLink}}Learn more{{/learnMoreLink}}',
-						{
-							components: {
-								learnMoreLink: (
-									<a
-										href={ localizeUrl( DOMAIN_REDIRECT ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</p>
 			</FormFieldset>
 			<p className="domain-redirect-card__error-field">
 				{ ! isValidUrl ? (
