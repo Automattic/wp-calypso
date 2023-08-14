@@ -41,6 +41,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 				path="/"
 				isAlternate={ true }
 				setActiveNodePath={ handleClick }
+				showCheckboxes={ showCheckboxes }
 				activeNodePath={ activeNodePath }
 			/>
 		</div>
