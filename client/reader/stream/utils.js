@@ -1,5 +1,10 @@
 import { flatMap } from 'lodash';
 import moment from 'moment';
+import { isDiscoverBlog, isDiscoverFeed } from 'calypso/reader/discover/helper';
+
+export function isDiscoverPostKey( postKey ) {
+	return isDiscoverBlog( postKey.blogId ) || isDiscoverFeed( postKey.feedId );
+}
 
 export const RECS_PER_BLOCK = 2;
 

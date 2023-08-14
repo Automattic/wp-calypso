@@ -4,6 +4,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Gravatar from 'calypso/components/gravatar';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
@@ -115,7 +116,12 @@ class PostCommentForm extends Component {
 		const { post, error, errorType, translate } = this.props;
 
 		// Don't display the form if comments are closed
-		if ( post && post.discussion && post.discussion.comments_open === false ) {
+		if (
+			post &&
+			post.discussion &&
+			post.discussion.comments_open === false &&
+			! isCommentableDiscoverPost( post )
+		) {
 			// If we already have some comments, show a 'comments closed message'
 			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
 				return <p className="comments__form-closed">{ translate( 'Comments closed.' ) }</p>;

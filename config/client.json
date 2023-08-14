@@ -3,6 +3,8 @@
 	"boom_analytics_key",
 	"client_slug",
 	"daily_post_blog_id",
+	"discover_blog_id",
+	"discover_feed_id",
 	"env",
 	"env_id",
 	"facebook_api_key",

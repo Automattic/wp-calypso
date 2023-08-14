@@ -18,6 +18,7 @@ class PostByline extends Component {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
 		feed: PropTypes.object,
+		isDiscoverPost: PropTypes.bool,
 		showSiteName: PropTypes.bool,
 		showAvatar: PropTypes.bool,
 		teams: PropTypes.array,
@@ -26,6 +27,7 @@ class PostByline extends Component {
 	};
 
 	static defaultProps = {
+		isDiscoverPost: false,
 		showAvatar: true,
 	};
 
@@ -38,7 +40,8 @@ class PostByline extends Component {
 	};
 
 	render() {
-		const { post, site, feed, showSiteName, showAvatar, teams, compact } = this.props;
+		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar, teams, compact } =
+			this.props;
 		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
@@ -49,6 +52,7 @@ class PostByline extends Component {
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor =
+			! isDiscoverPost &&
 			! compact &&
 			hasAuthorName &&
 			! isAuthorNameBlocked( post.author.name ) &&
