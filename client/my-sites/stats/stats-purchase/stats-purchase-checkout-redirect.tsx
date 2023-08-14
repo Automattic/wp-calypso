@@ -5,7 +5,12 @@ import {
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const getStatsPurchaseURL = ( siteSlug: string, product: string, redirectUrl: string ) => {
+const getStatsPurchaseURL = (
+	siteSlug: string,
+	product: string,
+	redirectUrl: string,
+	checkoutBackUrl: string
+) => {
 	const checkoutProductUrl = new URL(
 		`/checkout/${ siteSlug }/${ product }`,
 		window.location.origin
@@ -13,6 +18,7 @@ const getStatsPurchaseURL = ( siteSlug: string, product: string, redirectUrl: st
 
 	// Add redirect_to parameter
 	checkoutProductUrl.searchParams.set( 'redirect_to', redirectUrl );
+	checkoutProductUrl.searchParams.set( 'checkoutBackUrl', checkoutBackUrl );
 
 	return checkoutProductUrl.pathname + checkoutProductUrl.search;
 };
@@ -25,6 +31,27 @@ const addPurchaseTypeToUri = ( uri: string, statsPurchaseSuccess: string ) => {
 	const url = new URL( uri, window.location.origin );
 	url.searchParams.set( 'statsPurchaseSuccess', statsPurchaseSuccess );
 	return url.pathname + url.search;
+};
+
+const getCheckoutBackUrl = ( {
+	from,
+	siteSlug,
+	adminUrl,
+}: {
+	from: string;
+	siteSlug: string;
+	adminUrl?: string;
+} ) => {
+	const isFromWPAdmin = from.startsWith( 'jetpack' );
+	const isFromMyJetpack = from === 'jetpack-my-jetpack';
+
+	// Use full URL even though redirecting on Calypso.
+	if ( ! isFromWPAdmin ) {
+		return window.location.origin + `/stats/day/${ siteSlug }`;
+	}
+
+	const checkoutBackPath = isFromMyJetpack ? 'admin.php?page=my-jetpack' : 'admin.php?page=stats';
+	return adminUrl + checkoutBackPath.replace( /^\//, '' );
 };
 
 const getRedirectUrl = ( {
@@ -93,10 +120,17 @@ const gotoCheckoutPage = ( {
 	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
 
 	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
+	const checkoutBackUrl = getCheckoutBackUrl( { from, adminUrl, siteSlug } );
 
 	// Allow some time for the event to be recorded before redirecting.
 	setTimeout(
-		() => ( window.location.href = getStatsPurchaseURL( siteSlug, product, redirectUrl ) ),
+		() =>
+			( window.location.href = getStatsPurchaseURL(
+				siteSlug,
+				product,
+				redirectUrl,
+				checkoutBackUrl
+			) ),
 		250
 	);
 };
