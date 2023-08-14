@@ -388,8 +388,7 @@ export default function DesignPickerStep( props ) {
 			{ ...props }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
-				'design-picker__sell-intent': 'sell' === intent,
-				'design-picker__hide-category-column': useDIFMThemes,
+				'design-picker__hide-category-column': useDIFMThemes || 'sell' === intent,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
