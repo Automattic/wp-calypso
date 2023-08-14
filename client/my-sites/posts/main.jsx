@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -81,11 +80,10 @@ class PostsMain extends Component {
 		// Since searches are across all statuses, the status needs to be shown
 		// next to each post.
 		const showPublishedStatus = Boolean( query.search );
-		const isJetpackErrorUxEnabled = isEnabled( 'yolo/jetpack-error-ux-i1' );
 
 		return (
 			<Main wideLayout className="posts">
-				{ isJetpack && isPossibleJetpackConnectionProblem && isJetpackErrorUxEnabled && (
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				<ScreenOptionsTab wpAdminPath="edit.php" />
