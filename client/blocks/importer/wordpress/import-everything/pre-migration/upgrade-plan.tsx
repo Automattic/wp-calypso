@@ -1,13 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
-import { Tooltip } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
@@ -39,6 +37,8 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		targetSite.ID
 	);
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
+	const [ popoverVisible, setPopoverVisible ] = useState( false );
+	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
 
 	return (
 		<div
@@ -73,34 +73,19 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					{ translate( 'Upgrade and migrate' ) }
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
-					<>
-						{ isEligibleForTrialPlan && (
-							<Button
-								busy={ isBusy }
-								borderless={ true }
-								className="action-buttons__borderless"
-								onClick={ onFreeTrialClick }
-							>
-								{ translate( 'Try it for free' ) }
-							</Button>
-						) }
-						{ ! isEligibleForTrialPlan && (
-							<Tooltip
-								delay={ 0 }
-								position="top center"
-								text={ createInterpolateElement(
-									translate(
-										'Free trials are a one-time offer and<br />you’ve already enrolled in one in the past.'
-									),
-									{ br: <br /> }
-								) }
-							>
-								<Button borderless={ true } className="action-buttons__borderless">
-									{ translate( 'Try it for free' ) }
-								</Button>
-							</Tooltip>
-						) }
-					</>
+					<Button
+						ref={ trialBtnRef }
+						busy={ isBusy }
+						borderless={ true }
+						className="action-buttons__borderless"
+						onClick={ () => isEligibleForTrialPlan && onFreeTrialClick() }
+						onFocus={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
+						onBlur={ () => setPopoverVisible( false ) }
+						onMouseEnter={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
+						onMouseLeave={ () => setPopoverVisible( false ) }
+					>
+						{ translate( 'Try it for free' ) }
+					</Button>
 				) }
 				{ ! isEligibleForTrialPlan && (
 					<Button
@@ -112,6 +97,17 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 					</Button>
 				) }
 			</div>
+
+			<Popover
+				className="info-popover__tooltip info-popover__tooltip--trial-plan"
+				focusOnShow={ false }
+				context={ trialBtnRef.current }
+				isVisible={ popoverVisible }
+			>
+				{ translate(
+					'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
+				) }
+			</Popover>
 		</div>
 	);
 };
