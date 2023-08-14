@@ -457,6 +457,7 @@ class ThemeShowcase extends Component {
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
+		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
 		const {
@@ -577,7 +578,7 @@ class ThemeShowcase extends Component {
 									className="section-nav-tabs__dropdown"
 									onSelect={ this.onTierSelect }
 									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, this.props.tier || 'all' ) || '',
+										args: getOptionLabel( tiers, tier ) || '',
 									} ) }
 									options={ tiers }
 									initialSelected={ this.props.tier }
