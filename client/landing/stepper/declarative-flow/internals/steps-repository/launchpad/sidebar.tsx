@@ -66,7 +66,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ stripeConnectUrl, setStripeConnectUrl ] = useState< string >( '' );
-
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
 	const queryClient = useQueryClient();
 
@@ -247,11 +246,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					taskFilter={ () => enhancedTasks || [] }
 					makeLastTaskPrimaryAction={ true }
 				/>
-				{ showPlansModal && (
+				{ showPlansModal && site?.ID && (
 					<RecurringPaymentsPlanAddEditModal
-						closeDialog={ () => setShowPlansModal( false ) }
-						product={ { subscribe_as_site_subscriber: true } }
-						siteId={ site?.ID }
+						// This spread syntax for props is needed to
+						// resolve an odd IntrinsicAttributes TS error
+						{ ...{
+							closeDialog: () => setShowPlansModal( false ),
+							product: { subscribe_as_site_subscriber: true },
+							siteId: site.ID,
+						} }
 					/>
 				) }
 			</div>
