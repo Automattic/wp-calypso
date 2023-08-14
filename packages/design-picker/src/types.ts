@@ -99,7 +99,7 @@ export interface Design {
 	description?: string;
 	recipe?: DesignRecipe;
 	is_premium: boolean;
-	is_externally_managed: boolean;
+	is_externally_managed?: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
 	is_featured_picks?: boolean; // Whether this design will be featured in the sidebar. Example: Blank Canvas
