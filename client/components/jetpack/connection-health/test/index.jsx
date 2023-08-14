@@ -86,7 +86,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
-			expect( screen.queryByText( /Jetpack is unable to connect to your domain./i ) ).toBeVisible();
+			expect( screen.queryByText( /Jetpack is unable to connect to your domain/i ) ).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
