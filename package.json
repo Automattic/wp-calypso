@@ -369,7 +369,7 @@
 		"@wordpress/project-management-automation": "1.37.0",
 		"@wordpress/react-i18n": "3.36.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "2.21.0",
-		"@wordpress/redux-routine": "4.38.0",
+		"@wordpress/redux-routine": "4.39.0",
 		"@wordpress/reusable-blocks": "4.15.0",
 		"@wordpress/rich-text": "6.15.0",
 		"@wordpress/server-side-render": "4.15.0",

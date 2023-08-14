@@ -176,7 +176,7 @@
 		"react-live": "^4.1.1",
 		"react-markdown": "^8.0.7",
 		"react-modal": "^3.16.1",
-		"react-redux": "^8.0.7",
+		"react-redux": "^8.1.2",
 		"react-router-dom": "^6.10.0",
 		"react-transition-group": "^4.3.0",
 		"reakit": "^1.3.11",

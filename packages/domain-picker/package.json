@@ -59,7 +59,7 @@
 		"@wordpress/element": "^5.15.0",
 		"@wordpress/i18n": "^4.38.0",
 		"react": "^18.2.0",
-		"redux": "^4.1.2"
+		"redux": "^4.2.1"
 	},
 	"private": true
 }
