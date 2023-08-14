@@ -248,13 +248,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 				/>
 				{ showPlansModal && site?.ID && (
 					<RecurringPaymentsPlanAddEditModal
-						// This spread syntax for props is needed to
-						// resolve an odd IntrinsicAttributes TS error
-						{ ...{
-							closeDialog: () => setShowPlansModal( false ),
-							product: { subscribe_as_site_subscriber: true },
-							siteId: site.ID,
-						} }
+						closeDialog={ () => setShowPlansModal( false ) }
+						product={ { subscribe_as_site_subscriber: true } }
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						siteId={ site.ID }
 					/>
 				) }
 			</div>
