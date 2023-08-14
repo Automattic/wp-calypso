@@ -28,7 +28,7 @@ export const LivePreviewButton: FC< Props > = ( { themeId, siteId } ) => {
 
 	return (
 		<Button onClick={ () => dispatch( livePreview( themeId, siteId ) ) }>
-			{ translate( 'Live Preview' ) }
+			{ translate( 'Live preview' ) }
 		</Button>
 	);
 };

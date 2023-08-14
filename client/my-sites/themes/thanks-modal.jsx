@@ -240,7 +240,7 @@ class ThanksModal extends Component {
 			this.props;
 
 		if ( isLivePreviewStarted ) {
-			return this.props.translate( 'Preparing the Live Preview…' );
+			return this.props.translate( 'Preparing the live preview…' );
 		}
 
 		if ( ! hasActivated ) {

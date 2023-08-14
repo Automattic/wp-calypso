@@ -248,7 +248,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	};
 
 	const livePreview = {
-		label: translate( 'Live Preview', {
+		label: translate( 'Live preview', {
 			comment: 'label for previewing a block theme',
 		} ),
 		action: livePreviewAction,
