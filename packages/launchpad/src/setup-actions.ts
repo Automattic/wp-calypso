@@ -3,6 +3,8 @@ import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
+const TASKS_TO_COMPLETE_ON_CLICK = [ 'add_about_page' ];
+
 export const setUpActionsForTasks = ( {
 	siteSlug,
 	tasks,
@@ -42,9 +44,9 @@ export const setUpActionsForTasks = ( {
 			}
 
 			action = () => {
-				if ( task.id === 'add_about_page' ) {
-					updateLaunchpadSettings( siteSlug as string, {
-						checklist_statuses: { add_about_page: true },
+				if ( siteSlug && TASKS_TO_COMPLETE_ON_CLICK.includes( task.id ) ) {
+					updateLaunchpadSettings( siteSlug, {
+						checklist_statuses: { [ task.id ]: true },
 					} );
 				}
 				window.location.assign( targetPath );
