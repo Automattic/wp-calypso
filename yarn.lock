@@ -763,6 +763,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/domains-table@workspace:^, @automattic/domains-table@workspace:packages/domains-table":
+  version: 0.0.0-use.local
+  resolution: "@automattic/domains-table@workspace:packages/domains-table"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/typography": "workspace:^"
+    "@automattic/viewport": "workspace:^"
+    "@tanstack/react-query": ^4.29.1
+    "@testing-library/jest-dom": ^5.17.0
+    "@testing-library/react": ^14.0.0
+    "@wordpress/components": ^25.4.0
+    "@wordpress/react-i18n": ^3.36.0
+    classnames: ^2.3.1
+    jest: ^29.6.1
+    postcss: ^8.4.5
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-intersection-observer: ^9.4.3
+    typescript: ^5.1.6
+    webpack: ^5.68.0
+  peerDependencies:
+    "@wordpress/data": ^9.8.0
+    "@wordpress/i18n": ^4.38.0
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/effective-module-tree@workspace:packages/effective-module-tree":
   version: 0.0.0-use.local
   resolution: "@automattic/effective-module-tree@workspace:packages/effective-module-tree"
@@ -11095,6 +11126,7 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
+    "@automattic/domains-table": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"

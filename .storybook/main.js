@@ -7,6 +7,7 @@ const storybookConfig = storybookDefaultConfig( {
 		'../client/**/*.stories.{js,jsx,ts,tsx}',
 		'../packages/design-picker/src/**/*.stories.{ts,tsx}',
 		'../packages/components/src/**/*.stories.{js,jsx,ts,tsx}',
+		'../packages/domains-table/src/**/*.stories.{js,jsx,ts,tsx}',
 	],
 } );
 
