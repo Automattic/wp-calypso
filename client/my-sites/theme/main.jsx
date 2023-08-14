@@ -48,7 +48,7 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
-import DemoSiteModal from 'calypso/my-sites/themes/theme-preview';
+import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
@@ -1357,7 +1357,7 @@ class ThemeSheet extends Component {
 						</div>
 					) }
 				</div>
-				<DemoSiteModal belowToolbar={ previewUpsellBanner } />
+				<ThemePreview belowToolbar={ previewUpsellBanner } />
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ this.onPremiumGlobalStylesUpgradeModalCheckout }
 					tryStyle={ this.onPremiumGlobalStylesUpgradeModalTryStyle }
