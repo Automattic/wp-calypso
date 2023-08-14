@@ -4,7 +4,7 @@ export default function createRequestCartProduct(
 	properties: MinimalRequestCartProduct
 ): RequestCartProduct {
 	if ( ! properties.product_slug || properties.product_slug === 'undefined' ) {
-		throw new Error( 'product_slug is required for request cart products' );
+		throw new Error( 'A product_slug is required when adding a product to the cart.' );
 	}
 	const { product_slug, product_id, meta, volume, quantity, extra } = properties;
 	return {
