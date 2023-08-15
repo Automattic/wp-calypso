@@ -12,9 +12,8 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
@@ -45,15 +44,10 @@ class SiteIndicator extends Component {
 	}
 
 	showIndicator() {
-		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
+		const { siteIsJetpack, userCanManage } = this.props;
 
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
-		return (
-			userCanManage &&
-			siteIsJetpack &&
-			! siteIsAutomatedTransfer &&
-			( this.hasUpdate() || this.hasError() )
-		);
+		return userCanManage && siteIsJetpack && ( this.hasUpdate() || this.hasError() );
 	}
 
 	toggleExpand = () => {
@@ -289,9 +283,8 @@ class SiteIndicator extends Component {
 export default connect(
 	( state, { site } ) => {
 		return {
-			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
+			siteIsConnected: site && ! isJetpackConnectionUnhealthy( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
-			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
 			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
 		};
