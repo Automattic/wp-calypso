@@ -128,10 +128,6 @@
 			cursor: initial;
 			pointer-events: none;
 
-			&::after {
-				vertical-align: baseline;
-			}
-
 			> .u-marker {
 				// Nudge marker down to align with text.
 				margin-top: -2px;
@@ -143,6 +139,10 @@
 			> .u-label {
 				vertical-align: baseline;
 			}
+		}
+		tr.u-series th::after,
+		tr.u-series .u-value {
+			display: none;
 		}
 	}
 }
