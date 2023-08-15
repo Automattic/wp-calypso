@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, Fragment } from 'react';
+import { useCallback, useMemo, Fragment, useEffect, useState } from 'react';
 import * as React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
@@ -11,6 +11,7 @@ import useJetpackMasterbarDataQuery from 'calypso/data/jetpack/use-jetpack-maste
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
+import { getLastFocusableElement } from 'calypso/lib/dom/focus';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { trailingslashit } from 'calypso/lib/route';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
@@ -27,9 +28,6 @@ import ScanIcon from './icons/jetpack-bundle-icon-scan';
 import SearchIcon from './icons/jetpack-bundle-icon-search';
 import SocialIcon from './icons/jetpack-bundle-icon-social';
 import VideopressIcon from './icons/jetpack-bundle-icon-videopress';
-import useMobileBtn from './use-mobile-btn';
-import useSubmenuBtn from './use-submenu-btn';
-import useUserMenu from './use-user-menu';
 import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 
 import './style.scss';
@@ -55,6 +53,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
 	const { data: menuData, status: menuDataStatus } = useJetpackMasterbarDataQuery();
+	const [ eventHandlersAdded, setEventHandlersAdded ] = useState( false );
 
 	const sortByMenuOrder = ( a: MenuItem, b: MenuItem ) => a.menu_order - b.menu_order;
 
@@ -93,39 +92,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		} );
 	}, [] );
 
-	const toggleMenuItem = ( btn: HTMLAnchorElement, menu: HTMLUListElement ) => {
-		const expanded = btn.getAttribute( 'aria-expanded' ) === 'true' || false;
-		btn.setAttribute( 'aria-expanded', String( ! expanded ) );
-
-		menu.hidden = expanded;
-	};
-
-	const collapseExpandedMenu = () => {
-		const expandedBtn = document.querySelector(
-			'.js-menu-btn[aria-expanded="true"]'
-		) as HTMLAnchorElement;
-
-		if ( expandedBtn ) {
-			const menu = expandedBtn?.parentNode?.querySelector( 'js-menu' ) as HTMLUListElement;
-
-			if ( menu ) {
-				toggleMenuItem( expandedBtn, menu );
-			}
-		}
-	};
-
-	const onMenuBtnClick = ( e: React.MouseEvent< HTMLAnchorElement > ) => {
-		e.preventDefault();
-		const btn = e.currentTarget;
-		const menu = btn.parentNode?.querySelector( '.js-menu' ) as HTMLUListElement;
-
-		if ( btn.getAttribute( 'aria-expanded' ) === 'false' ) {
-			collapseExpandedMenu();
-		}
-
-		toggleMenuItem( btn, menu );
-	};
-
 	const getBundleIcons = ( bundle: string ) => {
 		// Using a soft match in case the menu item gets deleted and recreated in wp-admin
 		// causing the name to change to `complete-2` or something similar.
@@ -149,9 +115,202 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		return [];
 	};
 
-	useSubmenuBtn();
-	useUserMenu();
-	useMobileBtn();
+	useEffect( () => {
+		// SUBMENU TOGGLE FUNCTIONALITY
+		function toggleMenuItem( btn: HTMLAnchorElement, menu: HTMLDivElement ) {
+			const expanded = btn.getAttribute( 'aria-expanded' ) === 'true' || false;
+			btn.setAttribute( 'aria-expanded', String( ! expanded ) );
+
+			menu.hidden = ! menu.hidden;
+		}
+
+		function collapseExpandedMenu() {
+			const expandedBtn = document.querySelector(
+				'.js-menu-btn[aria-expanded="true"]'
+			) as HTMLAnchorElement;
+
+			if ( expandedBtn ) {
+				const menu = expandedBtn?.parentNode?.querySelector( '.js-menu' ) as HTMLDivElement;
+
+				if ( menu ) {
+					toggleMenuItem( expandedBtn, menu );
+				}
+			}
+		}
+
+		function initMenu( btn: HTMLAnchorElement ) {
+			const menu = btn?.parentNode?.querySelector( '.js-menu' ) as HTMLDivElement;
+
+			if ( ! menu ) {
+				return;
+			}
+
+			const toggleSubmenu = function () {
+				toggleMenuItem( btn, menu );
+			};
+
+			menu.addEventListener( 'click', function ( e ) {
+				// If user clicks menu backdrop
+				if ( e.target === menu ) {
+					toggleSubmenu();
+				}
+			} );
+
+			btn.addEventListener( 'click', function ( e ) {
+				e.preventDefault();
+
+				if ( btn.getAttribute( 'aria-expanded' ) === 'false' ) {
+					collapseExpandedMenu();
+				}
+
+				toggleSubmenu();
+			} );
+
+			const backBtn = menu.querySelector( '.js-menu-back' );
+
+			if ( backBtn ) {
+				backBtn.addEventListener( 'click', function () {
+					toggleSubmenu();
+				} );
+			}
+
+			// Collapse menu when focusing out
+			const lastFocusable = getLastFocusableElement( menu );
+
+			if ( lastFocusable ) {
+				lastFocusable.addEventListener( 'focusout', toggleSubmenu );
+			}
+		}
+
+		// Close expanded menu on Esc keypress
+		function onKeyDown( e: KeyboardEvent ) {
+			if ( e.key === 'Escape' ) {
+				collapseExpandedMenu();
+			}
+		}
+		// END SUBMENU TOGGLE FUNCTIONALITY
+
+		// USER MENU FUNCTIONALITY
+		const userMenu = document.querySelector( '.js-user-menu' ) as HTMLDivElement;
+		const userBtn = document.querySelector( '.js-user-menu-btn' ) as HTMLAnchorElement;
+
+		function onDocumentClick( { target }: MouseEvent ) {
+			if ( ! userMenu?.contains( target as Node ) ) {
+				userBtn?.setAttribute( 'aria-expanded', 'false' );
+				userMenu.hidden = true;
+			}
+		}
+
+		function toggleUserMenu() {
+			const expanded = userBtn.getAttribute( 'aria-expanded' ) === 'true' || false;
+
+			if ( expanded ) {
+				document.removeEventListener( 'click', onDocumentClick );
+			} else {
+				document.addEventListener( 'click', onDocumentClick );
+			}
+
+			userBtn.setAttribute( 'aria-expanded', String( ! expanded ) );
+			userMenu.hidden = ! userMenu.hidden;
+		}
+
+		function onUserBtnClick( e: MouseEvent ) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			toggleUserMenu();
+		}
+		// END USER MENU FUNCTIONALITY
+
+		// MOBILE MENU FUNCTIONALITY
+		const MOBILE_BP = 900; // lrg-screen breakpoint
+		const mobileMenu = document.querySelector( '.js-mobile-menu' ) as HTMLDivElement;
+		const mobileBtn = document.querySelector( '.js-mobile-btn' );
+		const body = document.querySelector( 'body' );
+
+		function mobileMenuToggle() {
+			const expanded = mobileBtn?.getAttribute( 'aria-expanded' ) === 'true' || false;
+
+			mobileBtn?.setAttribute( 'aria-expanded', String( ! expanded ) );
+
+			if ( ! expanded ) {
+				mobileMenu?.classList.add( 'is-expanded' );
+				body?.classList.add( 'no-scroll' );
+			} else {
+				mobileMenu?.classList.remove( 'is-expanded' );
+				body?.classList.remove( 'no-scroll' );
+			}
+		}
+
+		// Close expanded menu on Esc keypress
+		function mobileOnKeyDown( e: KeyboardEvent ) {
+			if ( e.key === 'Escape' && mobileBtn?.getAttribute( 'aria-expanded' ) === 'true' ) {
+				mobileMenuToggle();
+			}
+		}
+
+		function onResize() {
+			if ( window.innerWidth > MOBILE_BP ) {
+				body?.classList.remove( 'no-scroll' );
+			}
+		}
+		// END MOBILE MENU FUNCTIONALITY
+
+		if ( menuDataStatus === 'success' && ! eventHandlersAdded ) {
+			setEventHandlersAdded( true );
+
+			// SUBMENU SETUP
+			const menuBtns = document.querySelectorAll( '.js-menu-btn' );
+
+			Array.prototype.forEach.call( menuBtns, initMenu );
+
+			document.addEventListener( 'keydown', onKeyDown );
+			// END SUBMENU SETUP
+
+			// USER MENU SETUP
+			if ( userMenu && userBtn ) {
+				userBtn.addEventListener( 'click', onUserBtnClick );
+
+				const lastFocusable = getLastFocusableElement( userMenu );
+				// Collapse menu when focusing out
+
+				if ( lastFocusable ) {
+					lastFocusable.addEventListener( 'focusout', toggleUserMenu );
+				}
+			}
+			// END MENU SETUP
+
+			// MOBILE MENU SETUP
+			if ( mobileMenu && mobileBtn ) {
+				mobileBtn.addEventListener( 'click', function ( e ) {
+					e.preventDefault();
+
+					mobileMenuToggle();
+				} );
+
+				const lastFocusable = getLastFocusableElement( mobileMenu );
+
+				if ( lastFocusable ) {
+					lastFocusable.addEventListener( 'focusout', function () {
+						if ( mobileBtn.getAttribute( 'aria-expanded' ) === 'true' ) {
+							mobileMenuToggle();
+						}
+					} );
+				}
+
+				window.addEventListener( 'resize', onResize );
+				document.addEventListener( 'keydown', mobileOnKeyDown );
+			}
+			// END MOBILE SETUP
+
+			return () => {
+				document.removeEventListener( 'keydown', onKeyDown );
+				document.removeEventListener( 'click', onDocumentClick );
+				window.removeEventListener( 'resize', onResize );
+				document.removeEventListener( 'keydown', mobileOnKeyDown );
+			};
+		}
+	}, [ menuDataStatus, eventHandlersAdded ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -210,7 +369,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																isValidLink( href ) ? localizeUrl( href, locale ) : `#${ id }`
 															}
 															aria-expanded={ hasChildren ? false : undefined }
-															onClick={ isValidLink( href ) ? onLinkClick : onMenuBtnClick }
+															onClick={ isValidLink( href ) ? onLinkClick : undefined }
 														>
 															{ label }
 															{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
@@ -333,7 +492,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 													<a className="user-menu__btn js-user-menu-btn" href="#profile">
 														<Gravatar user={ user } className="user-menu__avatar" />
 													</a>
-													<div id="profile" className="user-menu__tooltip js-user-menu">
+													<div id="profile" className="user-menu__tooltip js-user-menu js" hidden>
 														<div className="tooltip">
 															<span className="user-menu__greetings">
 																{ translate( 'Hi, %s!', {
