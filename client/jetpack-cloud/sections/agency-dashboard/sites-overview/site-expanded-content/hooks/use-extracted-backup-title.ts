@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Backup } from '../../types';
 
-export function extractBackupTextValues( str: string ): { [ key: string ]: number } {
+export const extractBackupTextValues = ( str: string ): { [ key: string ]: number } => {
 	const regex = /(\d+)\s+(\w+)(s)?\b/g;
 
 	let match;
@@ -14,7 +14,7 @@ export function extractBackupTextValues( str: string ): { [ key: string ]: numbe
 	}
 
 	return result;
-}
+};
 
 const useExtractedBackupTitle = ( backup: Backup | null ) => {
 	const translate = useTranslate();
