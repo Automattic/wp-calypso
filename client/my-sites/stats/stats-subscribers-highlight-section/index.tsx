@@ -18,13 +18,13 @@ function useSubscriberHighlights( siteId: number | null ) {
 			show: true, // Always show total subscribers.
 		},
 		{
-			heading: translate( 'Free subscribers' ),
-			count: subscribersTotals?.free_subscribers,
+			heading: translate( 'Paid subscribers' ),
+			count: subscribersTotals?.paid_subscribers,
 			show: hasPaidNewsletter,
 		},
 		{
-			heading: translate( 'Paid subscribers' ),
-			count: subscribersTotals?.paid_subscribers,
+			heading: translate( 'Free subscribers' ),
+			count: subscribersTotals?.free_subscribers,
 			show: hasPaidNewsletter,
 		},
 		{
