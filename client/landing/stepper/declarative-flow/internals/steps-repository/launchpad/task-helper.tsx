@@ -6,9 +6,8 @@ import {
 import {
 	updateLaunchpadSettings,
 	type SiteDetails,
-	SiteDetails,
-	OnboardActions,
-	SiteActions,
+	type OnboardActions,
+	type SiteActions,
 } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
