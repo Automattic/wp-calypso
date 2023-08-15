@@ -32,6 +32,14 @@
 	}
 }
 
+.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align,
+.site-monitoring .components-tab-panel__tab-content,
+.site-monitoring .components-tab-panel__tabs {
+	max-width: 1224px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
 	padding-bottom: 24px;
 }
@@ -42,10 +50,26 @@
 	gap: 16px;
 }
 
+.site-monitoring-time-controls__container {
+	display: flex;
+	gap: 24px;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 24px;
+}
+
+.site-monitoring-time-controls__title {
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	line-height: 40px;
+	color: var(--studio-gray-100);
+}
+
 .site-monitoring__chart {
 	padding: 24px;
 	border: 1px solid var(--studio-gray-5);
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
 	background-color: var(--studio-white);
 	position: relative;
 
@@ -58,16 +82,23 @@
 
 .site-monitoring__chart-header {
 	margin-bottom: 24px;
-	display: flex;
-	gap: 4px;
 }
 
 .site-monitoring__chart-title {
 	font-family: "SF Pro Text", $sans;
-	font-size: rem(14px);
-	line-height: rem(20px);
+	font-size: rem(20px);
+	line-height: rem(26px);
 	font-weight: 500;
-	color: var(--studio-gray-90);
+	color: var(--black-white-black);
+}
+
+.site-monitoring__chart-subtitle {
+	color: var(--studio-gray-60);
+	font-family: "SF Pro Text", $sans;
+	font-size: rem(14px);
+	font-weight: 400;
+	line-height: rem(20px);
+	letter-spacing: -0.15px;
 }
 
 .site-monitoring__pie-charts {
@@ -79,9 +110,6 @@
 	}
 	@include break-large {
 		flex-direction: row;
-	}
-	.pie-chart__chart-drawing-empty {
-		fill: var(--studio-gray-5);
 	}
 }
 
@@ -129,10 +157,7 @@
 		// Use increased specificity to override original uPlot styles.
 		> tr.u-series > th {
 			cursor: initial;
-
-			&::after {
-				vertical-align: baseline;
-			}
+			pointer-events: none;
 
 			> .u-marker {
 				// Nudge marker down to align with text.
@@ -145,6 +170,10 @@
 			> .u-label {
 				vertical-align: baseline;
 			}
+		}
+		tr.u-series th::after,
+		tr.u-series .u-value {
+			display: none;
 		}
 	}
 }
