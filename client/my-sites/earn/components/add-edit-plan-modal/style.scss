@@ -67,23 +67,3 @@
 		max-width: 200px;
 	}
 }
-
-// .memberships__dialog-nav.section-nav {
-// 	box-shadow: none;
-// 	border-bottom: 1px solid var(--color-neutral-5);
-// }
-
-// .memberships__dialog-section {
-// 	grid-area: item; // Sections are displayed in the same grid area so the dialog takes the size of the biggest section.
-// 	background-color: var(--color-surface);
-
-// 	&.is-visible {
-// 		z-index: z-index(".dialog__backdrop", ".memberships__dialog-section.is-visible"); // Visible section is placed above so it hides the ones below.
-// 	}
-// }
-
-// .memberships__dialog-form-header {
-// 	font-size: $font-body-small;
-// 	font-weight: 600;
-// 	margin-bottom: 1.5em;
-// }
