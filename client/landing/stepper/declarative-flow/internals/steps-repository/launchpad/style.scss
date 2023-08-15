@@ -258,7 +258,7 @@
 	fill: var(--studio-green-50);
 }
 
-.launchpad__domain-upgrade-badge {
+.badge.launchpad__domain-upgrade-badge {
 	margin-left: auto;
 	background-color: var(--studio-blue-5);
 	color: var(--studio-blue-80);
@@ -482,5 +482,31 @@
 .build.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
+	}
+}
+
+// Fix small CSS with payment modal. Ideally, should
+// be resolved via css for payment modal component itself.
+// But that modal doesn't have its own css. The CSS is part
+// of the Earn > Memberships page.
+.memberships__dialog-sections-price {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
+}
+
+.memberships__dialog-sections-price-field-container {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 25px;
+
+	@include break-medium {
+		margin-bottom: 0;
+		margin-right: 35px;
+		max-width: 200px;
 	}
 }

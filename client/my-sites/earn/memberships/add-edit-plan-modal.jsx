@@ -385,8 +385,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 };
 
 export default connect(
-	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
+	( state, props ) => ( {
+		siteId: props.siteId || getSelectedSiteId( state ),
 		connectedAccountDefaultCurrency: getconnectedAccountDefaultCurrencyForSiteId(
 			state,
 			getSelectedSiteId( state )

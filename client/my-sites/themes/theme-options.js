@@ -257,7 +257,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	};
 
 	const preview = {
-		label: translate( 'Live demo', {
+		label: translate( 'Demo site', {
 			comment: 'label for previewing the theme demo website',
 		} ),
 		action: ( themeId, siteId ) => {
@@ -274,9 +274,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			};
 		},
 		hideForTheme: ( state, themeId, siteId ) => {
-			const demoUrl = getThemeDemoUrl( state, themeId, siteId );
-
-			return ! demoUrl;
+			return (
+				getIsLivePreviewSupported( state, themeId, siteId ) ||
+				! getThemeDemoUrl( state, themeId, siteId )
+			);
 		},
 	};
 

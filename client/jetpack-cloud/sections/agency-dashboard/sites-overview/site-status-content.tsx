@@ -6,6 +6,7 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useRef, useState, useMemo, useContext } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -169,7 +170,7 @@ export default function SiteStatusContent( {
 						className="sites-overview__row-text"
 						borderless
 						compact
-						href={ `/activity-log/${ siteUrl }` }
+						href={ `/activity-log/${ urlToSlug( siteUrl ) }` }
 					>
 						{ siteUrl }
 						<SiteBackupStaging siteId={ siteId } />

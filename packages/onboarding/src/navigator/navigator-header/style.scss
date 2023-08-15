@@ -14,6 +14,7 @@
 .navigator-header__heading {
 	margin-bottom: 8px;
 	color: var(--color-neutral-100);
+	text-wrap: balance;
 
 	h2 {
 		font-family: Recoleta, sans-serif;
@@ -40,4 +41,5 @@
 	letter-spacing: -0.15px;
 	color: var(--color-neutral-60);
 	margin: 0;
+	text-wrap: balance;
 }

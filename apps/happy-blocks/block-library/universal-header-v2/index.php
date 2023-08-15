@@ -22,7 +22,7 @@ if ( isset( $args['website'] ) ) {
 }
 
 ?>
-<div id="lpc-header-nav" class="lpc lpc-header-nav <?php echo $website_clasname; ?>">
+<div id="lpc-header-nav" class="lpc lpc-header-nav <?php echo esc_attr( $website_clasname ); ?>">
 	<div class="x-root lpc-header-nav-wrapper">
 		<div class="lpc-header-nav-container">
 			<!-- Nav bar starts here. -->
