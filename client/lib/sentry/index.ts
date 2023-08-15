@@ -4,6 +4,7 @@
 // Otherwise, we'd add a fair amount to the bundle size when we don't really need
 // it for every single request.
 import config from '@automattic/calypso-config';
+import { hashPii } from 'calypso/lib/analytics/utils';
 import type * as SentryApi from '@sentry/react';
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
@@ -190,16 +191,21 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 			window.removeEventListener( 'unhandledrejection', rejectionHandler );
 
 			// See configuration docs: https://docs.sentry.io/clients/javascript/config
-			Sentry.init( {
+			const sentryConfig = {
 				...SENTRY_CONFIG,
-				initialScope: {
-					user: { id: userId?.toString() },
-				},
 				environment,
 				release,
 				beforeBreadcrumb,
 				beforeSend,
-			} );
+			};
+
+			if ( userId ) {
+				sentryConfig.initialScope = {
+					user: { id: hashPii( userId ) },
+				};
+			}
+
+			Sentry.init( sentryConfig );
 			state = { state: 'loaded', sentry: Sentry };
 		} catch ( err ) {
 			state = { state: 'error' };
