@@ -34,6 +34,7 @@ export default function DesignCarousel( {
 	useEffect( () => {
 		if ( selectedDesigns ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
+				cssMode: true,
 				autoHeight: true,
 				mousewheel: true,
 				keyboard: {
