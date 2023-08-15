@@ -34,13 +34,6 @@ export default function useSubmenuBtn() {
 		function initMenu( btn ) {
 			const menu = btn.parentNode.querySelector( '.js-menu' );
 
-			if ( ! menu ) {
-				return;
-			}
-
-			menu.classList.add( 'js' );
-			menu.hidden = true;
-
 			const toggle = function () {
 				toggleMenuItem( btn, menu );
 			};
