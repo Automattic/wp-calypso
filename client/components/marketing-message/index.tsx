@@ -85,6 +85,10 @@ const Text = styled.p< Pick< NudgeProps, 'path' > >`
 	margin: 0;
 `;
 
+const BoldText = styled.b`
+	font-weight: bold;
+`;
+
 function slugify( text: string ) {
 	return text
 		.trim()
@@ -138,7 +142,7 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 							<div className="banner__content">
 								<div className="banner__info">
 									<div className="banner__title">
-										<b>{ msg.text }</b>
+										<BoldText>{ msg.text }</BoldText>
 									</div>
 								</div>
 							</div>
