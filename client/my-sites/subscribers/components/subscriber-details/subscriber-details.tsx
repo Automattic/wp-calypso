@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
-import useSubscriptionPlans from '../../hooks/use-subscription-plans';
+import { useSubscriptionPlans } from '../../hooks';
 import { Subscriber } from '../../types';
 import { SubscriberProfile } from '../subscriber-profile';
 import { SubscriberStats } from '../subscriber-stats';
