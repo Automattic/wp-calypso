@@ -288,15 +288,17 @@ class DomainsStep extends Component {
 		 * We want to pre load an experiment to show a plan upsell modal in the plans step
 		 */
 		if ( ! isPurchasingItem ) {
-			loadExperimentAssignment( 'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3', {
-				isEligible: flowName === 'onboarding',
-			} );
-			loadExperimentAssignment(
-				'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3',
-				{
-					isEligible: flowName === 'onboarding-pm',
-				}
-			);
+			switch ( flowName ) {
+				case 'onboarding':
+					loadExperimentAssignment(
+						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
+					);
+					break;
+				case 'onboarding-pm':
+					loadExperimentAssignment(
+						'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
+					);
+			}
 		}
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
