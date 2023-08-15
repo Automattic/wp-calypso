@@ -34,7 +34,7 @@ describe( '<SitesOverview>', () => {
 		partnerPortal: { partner: {} },
 		agencyDashboard: {
 			selectedLicenses: {
-				licenses: [ 'test' ],
+				licenses: [ '' ],
 			},
 		},
 		ui: {},
@@ -84,6 +84,11 @@ describe( '<SitesOverview>', () => {
 		];
 		queryClient.setQueryData( queryKey, data );
 	};
+
+	beforeEach( () => {
+		//some tests manipulate the store, so we need to reset it
+		initialState.agencyDashboard.selectedLicenses.licenses = [];
+	} );
 
 	test( 'Show the correct empty state message when there are no sites and no applied filters in All tab', async () => {
 		setData();
@@ -151,32 +156,12 @@ describe( '<SitesOverview>', () => {
 	} );
 
 	test( 'Do not show the Add X Licenses button when license count is 0', async () => {
-		initialState.agencyDashboard.selectedLicenses.licenses = [];
 		setData();
 
 		const { queryByText } = render( <Wrapper context={ context } /> );
 
 		const addLicensesButton = queryByText( 'Add 1 license' );
 		expect( addLicensesButton ).not.toBeInTheDocument();
-
-		//reset the license count
-		initialState.agencyDashboard.selectedLicenses.licenses = [ 'test' ];
-	} );
-
-	test( 'do not show the add site and issue license buttons on large screen if licenseCount is 1', async () => {
-		setData();
-
-		mockedIsWithinBreakpoint.mockReturnValue( true );
-
-		const { queryByText } = render( <Wrapper context={ context } /> );
-
-		const addSiteButton = queryByText( 'Add New Site' );
-		const issueLicenseButton = queryByText( 'Issue 1 license' );
-		expect( addSiteButton ).not.toBeInTheDocument();
-		expect( issueLicenseButton ).toBeInTheDocument();
-
-		// set screen back to mobile for rest of tests
-		mockedIsWithinBreakpoint.mockReturnValue( false );
 	} );
 
 	test( 'Show the add site and issue license buttons', async () => {
@@ -190,12 +175,32 @@ describe( '<SitesOverview>', () => {
 		expect( issueLicenseButton ).toBeInTheDocument();
 	} );
 
-	test( 'Show the Add x Licenses button on mobile', async () => {
+	test( 'Show the Add x Licenses button when a license is selected', async () => {
+		initialState.agencyDashboard.selectedLicenses.licenses = [ 'test' ];
 		setData();
 
 		const { getAllByText } = render( <Wrapper context={ context } /> );
 
 		const [ issueLicenseButton ] = getAllByText( 'Issue 1 license' );
 		expect( issueLicenseButton ).toBeInTheDocument();
+	} );
+
+	// the default view for tests is mobile, widescreen buttons behave a bit differently
+	test( 'Swap the issue x buttons and add site/add new license buttons on large screen when a license is selected', async () => {
+		initialState.agencyDashboard.selectedLicenses.licenses = [ 'test' ];
+		setData();
+
+		//set screen to widescreen for this test
+		mockedIsWithinBreakpoint.mockReturnValue( true );
+
+		const { queryByText } = render( <Wrapper context={ context } /> );
+
+		const addSiteButton = queryByText( 'Add New Site' );
+		const issueLicenseButton = queryByText( 'Issue 1 license' );
+		expect( addSiteButton ).not.toBeInTheDocument();
+		expect( issueLicenseButton ).toBeInTheDocument();
+
+		// set screen back to mobile for rest of tests
+		mockedIsWithinBreakpoint.mockReturnValue( false );
 	} );
 } );
