@@ -11,25 +11,6 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-ob_start();
-require_once WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
-$support_content_links_html = ob_get_clean();
-
-$support_content_links_allowed_tags = array(
-	'a' => array(
-		'href'   => array(),
-		'target' => array(),
-		'rel'    => array(),
-	),
-	'p' => array(),
-	'div' => array(
-		'class' => array(),
-	)
-);
-
-$support_content_links_html_output = wp_kses( $support_content_links_html, $support_content_links_allowed_tags );
-
-
 $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
 ?>
 
@@ -96,7 +77,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 	</div>
 	<div class="support-content-links-subscribe">
 		<?php
-			echo $support_content_links_html_output;
+			require WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
 		?>
 		<div class="support-content-subscribe">
 			<p><?php esc_html_e( 'Get the latest learning in your inbox:', 'happy-blocks' ); ?></p>
