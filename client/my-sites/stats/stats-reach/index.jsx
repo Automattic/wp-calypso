@@ -59,7 +59,7 @@ export const StatsReach = ( props ) => {
 				onMouseEnter={ () => setPopoverVisible( true ) }
 				onMouseLeave={ () => setPopoverVisible( false ) }
 			>
-				{ translate( 'Social Test' ) }
+				{ translate( 'Social' ) }
 			</span>
 		),
 	};
