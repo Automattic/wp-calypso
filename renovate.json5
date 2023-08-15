@@ -10,10 +10,12 @@
 			minimumReleaseAge: '0 days',
 		},
 		{
+			matchPackagePatterns: [ '/node$' ],
 			matchDepNames: [ 'node' ],
+			matchDatasources: [ 'docker' ],
 			prPriority: 2,
 			// This gets published with broader Node support, so we'll update it when needed.
-			ignorePaths: [ 'packages/eslint-plugin-wpcalypso' ]
+			ignorePaths: [ 'packages/eslint-plugin-wpcalypso' ],
 		},
 		{
 			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
