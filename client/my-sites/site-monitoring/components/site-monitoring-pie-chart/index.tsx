@@ -29,7 +29,7 @@ export const SiteMonitoringPieChart = ( { title, tooltip, className, data }: Pro
 			</header>
 			<div className="site-monitoring__chart-container">
 				{ ! data.length ? <Spinner /> : null }
-				<PieChart data={ data } donut />
+				<PieChart data={ data } donut startAngle={ 0 } />
 			</div>
 			<PieChartLegend data={ data } onlyPercent />
 		</div>

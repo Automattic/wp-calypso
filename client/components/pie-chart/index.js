@@ -10,7 +10,7 @@ import './style.scss';
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data, donut = false ) {
+function transformData( data, { donut = false, startAngle = -Math.PI } ) {
 	const sortedData = sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
@@ -19,7 +19,7 @@ function transformData( data, donut = false ) {
 		} ) );
 
 	const arcs = d3Pie()
-		.startAngle( -Math.PI )
+		.startAngle( startAngle )
 		.value( ( datum ) => datum.value )( sortedData );
 
 	const arcGen = d3Arc()
@@ -38,6 +38,7 @@ class PieChart extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 		donut: PropTypes.bool,
+		startAngle: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
@@ -52,7 +53,10 @@ class PieChart extends Component {
 			return {
 				data: nextProps.data,
 				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
-				transformedData: transformData( nextProps.data, nextProps.donut ),
+				transformedData: transformData( nextProps.data, {
+					donut: nextProps.donut,
+					startAngle: nextProps.startAngle,
+				} ),
 			};
 		}
 
