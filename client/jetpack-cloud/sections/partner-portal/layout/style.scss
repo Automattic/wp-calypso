@@ -12,7 +12,6 @@
 }
 
 .partner-portal-layout__body {
-	padding: 16px 0;
 	margin-block-end: -32px;
 	flex: 1 1 100%;
 }
@@ -69,6 +68,10 @@
 }
 
 .main.partner-portal-layout.is-with-border {
+	.partner-portal-layout__body {
+		padding: 16px 0;
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		.partner-portal-layout__top {
 			border-bottom: 1px solid var(--color-primary-5);
