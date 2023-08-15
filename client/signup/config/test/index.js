@@ -1,3 +1,4 @@
+import { readdirSync } from 'fs';
 import { intersection, isEmpty, keys } from 'lodash';
 import flows from '../flows';
 import { getStepModuleMap } from '../step-components';
@@ -12,6 +13,20 @@ jest.mock( 'calypso/lib/explat', () => {
 	};
 } );
 
+const getStepImplementationModuleNames = () => {
+	const cwd = __dirname;
+	const parts = cwd.split( '/' );
+	const stepsPathParts = parts.slice( 0, parts.length - 2 );
+	stepsPathParts.push( 'steps' );
+	const actPath = stepsPathParts.join( '/' );
+	console.log( { cwd, parts, stepsPathParts, actPath } );
+	const files = readdirSync( actPath, { withFileTypes: true } );
+	files.forEach( ( file ) => {
+		console.log( { fileName: file.name } );
+	} );
+	return files.map( ( { name } ) => name );
+};
+
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect
 	test( 'should not have overlapping step/flow names', () => {
@@ -25,6 +40,7 @@ describe( 'index', () => {
 			);
 		}
 	} );
+
 	test( 'All step components should have a step definition', () => {
 		const stepModuleMap = getStepModuleMap();
 		const stepNames = new Set( Object.keys( stepModuleMap ) );
@@ -35,7 +51,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	test( 'All mapped modules should have a step implementation', async () => {
+	test( 'All step components should have a step implementation', async () => {
 		const stepModuleMap = getStepModuleMap();
 		const allModules = new Set( Object.values( stepModuleMap ) );
 		const nonExistentModules = [];
@@ -56,11 +72,21 @@ describe( 'index', () => {
 		expect( nonExistentModules ).toEqual( [] );
 	} );
 
-	test( 'All step definitions should have a step component mapping', async () => {
+	test( 'All step definitions should have a step component mapping', () => {
 		const stepModuleMap = getStepModuleMap();
 		const allStepDefinitions = generateSteps();
 		Object.keys( allStepDefinitions ).forEach( ( stepName ) => {
 			expect( stepModuleMap ).toHaveProperty( stepName );
+		} );
+	} );
+
+	test( 'All step implementations should have a step component mapping', async () => {
+		const moduleNames = getStepImplementationModuleNames();
+		const stepModuleMap = getStepModuleMap();
+		const stepImplementationNames = Object.values( stepModuleMap );
+
+		moduleNames.forEach( ( moduleName ) => {
+			expect( stepImplementationNames ).toBe( moduleName );
 		} );
 	} );
 

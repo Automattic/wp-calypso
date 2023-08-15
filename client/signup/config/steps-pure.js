@@ -3,7 +3,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
@@ -46,22 +45,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		themes: {
-			stepName: 'themes',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-			optionalDependencies: [ 'useThemeHeadstart' ],
-		},
-
-		'portfolio-themes': {
-			stepName: 'portfolio-themes',
-			props: {
-				designType: 'grid',
-			},
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'themeSlugWithRepo' ],
-		},
-
 		// `themes` does not update the theme for an existing site as we normally
 		// do this when the site is created. In flows where a site is merely being
 		// updated, we need to use a different API request function.
@@ -404,18 +387,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-ecommerce-fulfilled': {
-			stepName: 'plans-ecommerce-fulfilled',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
-
 		'plans-launch': {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
@@ -753,19 +724,6 @@ export function generateSteps( {
 		'clone-cloning': {
 			stepName: 'clone-cloning',
 			providesDependencies: [],
-		},
-
-		/* Imports */
-		'from-url': {
-			stepName: 'from-url',
-			providesDependencies: [
-				'importSiteEngine',
-				'importSiteFavicon',
-				'importSiteUrl',
-				'siteTitle',
-				'suggestedDomain',
-				'themeSlugWithRepo',
-			],
 		},
 
 		'reader-landing': {
