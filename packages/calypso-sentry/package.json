@@ -32,6 +32,8 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@sentry/react": "^7.54.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {

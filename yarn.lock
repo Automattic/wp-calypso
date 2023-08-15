@@ -452,6 +452,8 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@sentry/react": ^7.54.0
+    react: ^18.2.0
+    react-dom: ^18.2.0
     tslib: ^2.3.0
     typescript: ^4.7.4
   languageName: unknown
@@ -886,6 +888,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/global-styles@workspace:packages/global-styles"
   dependencies:
+    "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
