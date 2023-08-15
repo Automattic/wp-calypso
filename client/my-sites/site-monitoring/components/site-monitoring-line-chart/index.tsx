@@ -5,7 +5,6 @@ import { numberFormat } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
-import InfoPopover from 'calypso/components/info-popover';
 import { TimeRange } from '../../metrics-tab';
 import { TIME_RANGE_OPTIONS } from '../time-range-picker';
 
@@ -16,6 +15,7 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	title?: string;
+	subtitle?: string | React.ReactNode;
 	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: uPlot.AlignedData;
@@ -117,7 +117,7 @@ function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
 
 export const SiteMonitoringLineChart = ( {
 	title,
-	tooltip,
+	subtitle,
 	className,
 	data,
 	legendContainer,
@@ -241,9 +241,7 @@ export const SiteMonitoringLineChart = ( {
 		<div className={ classnames( classes ) }>
 			<header className="site-monitoring__chart-header">
 				<h2 className="site-monitoring__chart-title">{ title }</h2>
-				{ tooltip && (
-					<InfoPopover className="site-monitoring__chart-tooltip">{ tooltip }</InfoPopover>
-				) }
+				{ subtitle && <p className="site-monitoring__chart-subtitle">{ subtitle }</p> }
 			</header>
 			<div ref={ uplotContainer }>
 				{ isLoading && <Spinner /> }

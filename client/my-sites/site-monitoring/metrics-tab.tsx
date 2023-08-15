@@ -1,5 +1,4 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -222,7 +221,6 @@ const useErrorHttpCodeSeries = () => {
 
 export const MetricsTab = () => {
 	const { __ } = useI18n();
-	const translate = useTranslate();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( timeRange );
@@ -252,16 +250,8 @@ export const MetricsTab = () => {
 			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Requests per minute & average response time' ) }
-				tooltip={ translate(
-					'{{strong}}Requests per minute:{{/strong}} a line representing the number of requests received every minute.{{br/}}{{br/}}{{strong}}Average Response Time{{/strong}}: a line that indicates the average time taken to respond to a request within that minute.',
-					{
-						components: {
-							br: <br />,
-							strong: <strong />,
-						},
-					}
-				) }
+				title={ __( 'Server performance' ) }
+				subtitle={ __( 'Requests per minute and average server response time' ) }
 				data={ formattedData as uPlot.AlignedData }
 				series={ [
 					{
@@ -280,10 +270,8 @@ export const MetricsTab = () => {
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
-					title={ __( 'Cache hit/miss' ) }
-					tooltip={ __(
-						'Percentage of cache hits versus cache misses. A hit occurs when the requested data can be found in the cache, reducing the need to obtain it from the original source.'
-					) }
+					title={ __( 'Cache efficiency' ) }
+					subtitle={ __( 'Percentage of cache hits versus cache misses' ) }
 					className="site-monitoring-cache-pie-chart"
 					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
 						0: 'Cache miss',
@@ -291,10 +279,8 @@ export const MetricsTab = () => {
 					} ) }
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
-					title={ __( 'PHP vs. static content served' ) }
-					tooltip={ __(
-						'Percentages showing the ratio of dynamic versus static content. Dynamic content is the content generated using database information.'
-					) }
+					title={ __( 'Response types' ) }
+					subtitle={ __( 'Percentage of dynamic PHP responses versus static content responses' ) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
 						php: 'PHP',
@@ -305,19 +291,15 @@ export const MetricsTab = () => {
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
 				title={ __( 'Successful HTTP responses' ) }
+				subtitle={ __( 'Requests completed without errors by the server' ) }
 				data={ dataForSuccessCodesChart as uPlot.AlignedData }
-				tooltip={ __(
-					'Number of successful responses (200) and redirections (301 and 302) per minute.'
-				) }
 				series={ successHttpCodes.series }
 			></SiteMonitoringLineChart>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Problematic HTTP responses' ) }
+				title={ __( 'Unsuccessful HTTP responses' ) }
+				subtitle={ __( 'Requests that encountered errors or issues during processing' ) }
 				data={ dataForErrorCodesChart as uPlot.AlignedData }
-				tooltip={ __(
-					'Number of client-side errors (400) and server-side errors (500) per minute.'
-				) }
 				series={ errorHttpCodes.series }
 			></SiteMonitoringLineChart>
 		</div>
