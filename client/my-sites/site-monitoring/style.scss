@@ -126,6 +126,7 @@
 		// Use increased specificity to override original uPlot styles.
 		> tr.u-series > th {
 			cursor: initial;
+			pointer-events: none;
 
 			&::after {
 				vertical-align: baseline;
