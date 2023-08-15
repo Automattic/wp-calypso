@@ -12,6 +12,7 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -182,6 +183,16 @@ export class Banner extends Component {
 		);
 	}
 
+	sanitize( html ) {
+		// Getting an instance of DOMPurify this way is needed to fix a related JEST test.
+		const { window } = new JSDOM( '<!DOCTYPE html>' );
+		const domPurify = DOMPurify( window );
+		return domPurify.sanitize( html, {
+			ALLOWED_TAGS: [ 'a' ],
+			ALLOWED_ATTR: [ 'href', 'target' ],
+		} );
+	}
+
 	getContent() {
 		const {
 			callToAction,
@@ -203,11 +214,6 @@ export class Banner extends Component {
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
-		const sanitizedDescription = DOMPurify.sanitize( description, {
-			ALLOWED_TAGS: [ 'a' ],
-			ALLOWED_ATTR: [ 'href', 'target' ],
-		} );
-
 		return (
 			<div className="banner__content">
 				{ tracksImpressionName && event && (
@@ -226,7 +232,7 @@ export class Banner extends Component {
 					{ description && (
 						<div
 							className="banner__description"
-							dangerouslySetInnerHTML={ { __html: sanitizedDescription } } // eslint-disable-line react/no-danger
+							dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
 						></div>
 					) }
 					{ size( list ) > 0 && (
