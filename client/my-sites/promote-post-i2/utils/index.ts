@@ -222,17 +222,19 @@ export const getShortDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	const now = moment();
 
-	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
-	switch ( dateDiff ) {
-		case 0:
-			return __( 'hours ago' );
-		case 1:
-			return __( '1 day ago' );
-		default:
-			return timestamp.isSame( now, 'year' )
-				? moment( date ).format( 'MMM DD' )
-				: moment( date ).format( 'MMM DD, YYYY' );
+	const minuteDiff = Math.abs( now.diff( timestamp, 'minutes' ) );
+	if ( minuteDiff < 1 ) {
+		return __( 'Now' );
 	}
+
+	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
+	if ( dateDiff < 7 ) {
+		return timestamp.fromNow();
+	}
+
+	return timestamp.isSame( now, 'year' )
+		? moment( date ).format( 'MMM DD' )
+		: moment( date ).format( 'MMM DD, YYYY' );
 };
 
 export const getLongDateString = ( date: string ) => {

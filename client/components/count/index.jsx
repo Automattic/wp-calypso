@@ -1,36 +1,8 @@
-import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import formatNumberCompact from 'calypso/lib/format-number-compact';
+import { Count } from '@automattic/components';
 
-import './style.scss';
+// We're in the process of migrating to @automattic/components. Because of this, we're using this wrapper
+// component to point references to the old count component to the new one in @automattic/components.
+// This allows us to transition in smaller pieces and without risking updates to the old Calypso component in the interim.
+// See https://github.com/Automattic/martech/issues/2028 for more details.
 
-export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...rest } ) => {
-	// Omit props passed from the `localize` higher-order component that we don't need.
-	const { translate, moment, ...inheritProps } = rest;
-
-	return (
-		<span
-			ref={ forwardRef }
-			className={ classnames( 'count', { 'is-primary': primary } ) }
-			{ ...inheritProps }
-		>
-			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }
-		</span>
-	);
-};
-
-Count.propTypes = {
-	count: PropTypes.number.isRequired,
-	numberFormat: PropTypes.func,
-	primary: PropTypes.bool,
-	compact: PropTypes.bool,
-	refProp: PropTypes.oneOfType( [ PropTypes.func, PropTypes.shape( { current: PropTypes.any } ) ] ),
-};
-
-Count.defaultProps = {
-	primary: false,
-	compact: false,
-};
-
-export default localize( Count );
+export default Count;

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New `useAllDomainsQuery` which fetches all the current user's domains
+
 ### Breaking changes
 
 - Remove custom query and mutation hooks (based on `@tanstack/query`) from `support-queries/*`. These are moved to `@automattic/help-center`.

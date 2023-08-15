@@ -22,6 +22,7 @@
 		{ "path": "./design-picker" },
 		{ "path": "./design-preview" },
 		{ "path": "./domain-picker" },
+		{ "path": "./domains-table" },
 		{ "path": "./explat-client" },
 		{ "path": "./explat-client-react-helpers" },
 		{ "path": "./format-currency" },

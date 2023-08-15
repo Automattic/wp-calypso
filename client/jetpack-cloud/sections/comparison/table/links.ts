@@ -18,8 +18,9 @@ export const links = {
 	galleries_and_slideshows: 'https://jetpack.com/features/design/galleries-and-slideshows/',
 	google_analytics: 'https://jetpack.com/features/growth/google-analytics/',
 	lazy_image_loading: 'https://jetpack.com/lazy-loading-images-for-wordpress/',
-	mobile_app:
-		'https://apps.wordpress.com/get?utm_source=jetpack-com-comparison-tables&amp;utm_medium=direct&amp;utm_campaign=get-apps-promo',
+	mobile_app: localizeUrl(
+		'https://apps.wordpress.com/get?utm_source=jetpack-com-comparison-tables&amp;utm_medium=direct&amp;utm_campaign=get-apps-promo'
+	),
 	payments_block: 'https://jetpack.com/support/jetpack-blocks/payments-block/',
 	priority_support: 'https://jetpack.com/features/security/expert-priority-support/',
 	related_posts: 'https://jetpack.com/features/traffic/related-posts/',
@@ -28,7 +29,7 @@ export const links = {
 	secure_authentication: 'https://jetpack.com/features/security/secure-authentication/',
 	seo: 'https://jetpack.com/features/traffic/search-engine-optimization/',
 	social: localizeUrl( 'https://jetpack.com/social/' ),
-	stats: 'https://jetpack.com/features/traffic/site-stats/',
+	stats: localizeUrl( 'https://jetpack.com/stats/' ),
 	subscriptions: 'https://jetpack.com/features/discussion/subscriptions/',
 	themes: 'https://jetpack.com/features/design/themes/',
 	videopress: 'https://jetpack.com/features/writing/video-hosting/',

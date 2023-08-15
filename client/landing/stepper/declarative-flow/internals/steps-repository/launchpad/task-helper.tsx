@@ -3,6 +3,7 @@ import {
 	planHasFeature,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
+import { updateLaunchpadSettings, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isBlogOnboardingFlow,
@@ -12,11 +13,13 @@ import {
 	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { Dispatch, SetStateAction } from 'react';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import useCheckout from 'calypso/landing/stepper/hooks/use-checkout';
@@ -25,7 +28,6 @@ import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
-import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -43,12 +45,15 @@ export function getEnhancedTasks(
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
 	globalStylesMinimumPlan: string,
+	setShowPlansModal: Dispatch< SetStateAction< boolean > >,
+	queryClient: QueryClient,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartItem?: MinimalRequestCartProduct | null,
-	domainCartItem?: MinimalRequestCartProduct | null
+	domainCartItem?: MinimalRequestCartProduct | null,
+	stripeConnectUrl?: string
 ) {
 	if ( ! tasks ) {
 		return [];
@@ -94,6 +99,27 @@ export function getEnhancedTasks(
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
+
+	const isStripeConnected = Boolean(
+		tasks?.find( ( task ) => task.id === 'set_up_payments' )?.completed
+	);
+
+	const completeMigrateContentTask = async () => {
+		if ( siteSlug ) {
+			await updateLaunchpadSettings( siteSlug, {
+				checklist_statuses: { migrate_content: true },
+			} );
+		}
+	};
+
+	const completePaidNewsletterTask = async () => {
+		if ( siteSlug ) {
+			await updateLaunchpadSettings( siteSlug, {
+				checklist_statuses: { newsletter_plan_created: true },
+			} );
+			queryClient?.invalidateQueries( [ 'launchpad' ] );
+		}
+	};
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -228,6 +254,20 @@ export function getEnhancedTasks(
 								recordTaskClickTracksEvent( flow, task.completed, task.id );
 								goToStep( 'subscribers' );
 							}
+						},
+					};
+					break;
+				case 'migrate_content':
+					taskData = {
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+
+							// Mark task done
+							completeMigrateContentTask();
+
+							// Go to importers
+							window.location.assign( `/import/${ siteSlug }` );
 						},
 					};
 					break;
@@ -468,19 +508,26 @@ export function getEnhancedTasks(
 					break;
 				case 'set_up_payments':
 					taskData = {
+						badge_text: task.completed ? translate( 'Connected' ) : null,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+							stripeConnectUrl
+								? window.location.assign( stripeConnectUrl )
+								: window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
 					break;
 				case 'newsletter_plan_created':
 					taskData = {
+						disabled: ! isStripeConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign(
-								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
-							);
+							completePaidNewsletterTask();
+							site?.ID
+								? setShowPlansModal( true )
+								: window.location.assign(
+										`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+								  );
 						},
 					};
 					break;

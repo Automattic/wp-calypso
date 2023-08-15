@@ -37,6 +37,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
+		"domains/management": false,
 		"cookie-banner": false,
 		"google-my-business": false,
 		"help": true,
@@ -107,7 +108,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true,
-		"yolo/jetpack-error-ux-i1": true
+		"yolo/hosting-metrics-i1": true
 	}
 }

@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import './style.scss';
@@ -17,6 +17,13 @@ const AddSubscribersModal = ( { siteId, siteTitle }: AddSubscribersModalProps ) 
 	const translate = useTranslate();
 	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
 		useSubscribersPage();
+
+	useEffect( () => {
+		// Open "add subscribers" modal by default via URL
+		if ( window.location.hash === '#add-subscribers' ) {
+			setShowAddSubscribersModal( true );
+		}
+	}, [] );
 
 	const modalTitle = translate( 'Add subscribers to %s', {
 		args: [ siteTitle ],

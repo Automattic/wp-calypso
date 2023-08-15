@@ -92,6 +92,7 @@
 }
 
 // TODO: This should be extracted into a new component
+.domain-redirect-card-notice,
 .custom-name-servers-notice {
 	flex-basis: 100%;
 	background-color: var(--studio-gray-0);
@@ -113,7 +114,12 @@
 	}
 }
 
-.site-redirect-card__explanation {
+.domain-redirect-card-notice {
+	margin-bottom: 16px;
+}
+
+.site-redirect-card__explanation,
+.domain-redirect-card__explanation {
 	display: block;
 	margin-top: 5px;
 	margin-bottom: 0;
@@ -124,6 +130,37 @@
 	a {
 		white-space: nowrap;
 	}
+}
+
+.domain-redirect-card__fields {
+	margin-bottom: 0 !important;
+
+	.form-text-input-with-affixes__prefix,
+	.form-text-input-with-affixes__suffix {
+		padding: 0;
+		border: 0;
+
+		.form-select {
+			border-right: 0;
+			height: 100%;
+		}
+		.domain-redirect-card__delete {
+			border-left: 0;
+
+			svg {
+				margin-top: 5px;
+			}
+
+			&.is-disabled {
+				background: var(--color-neutral-0);
+			}
+		}
+	}
+}
+
+.domain-redirect-card__error-field {
+	margin-bottom: 0;
+	height: 35px;
 }
 
 .ownership-verification-card {

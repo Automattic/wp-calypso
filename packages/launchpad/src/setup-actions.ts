@@ -1,6 +1,9 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTaskActionsProps, Task } from './types';
+
+const TASKS_TO_COMPLETE_ON_CLICK = [ 'add_about_page' ];
 
 export const setUpActionsForTasks = ( {
 	siteSlug,
@@ -41,6 +44,11 @@ export const setUpActionsForTasks = ( {
 			}
 
 			action = () => {
+				if ( siteSlug && TASKS_TO_COMPLETE_ON_CLICK.includes( task.id ) ) {
+					updateLaunchpadSettings( siteSlug, {
+						checklist_statuses: { [ task.id ]: true },
+					} );
+				}
 				window.location.assign( targetPath );
 			};
 		} else {

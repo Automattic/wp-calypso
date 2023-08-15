@@ -155,9 +155,8 @@ export const getPurchaseURLCallback =
 		}
 
 		// Visit the indirect checkout URL to determine the purchasable product on another page.
-		// TODO: Use the checkout URL and product page URL respectively to alternate the externalUrl.
 		if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			return product.externalUrl?.replace( '{siteSlug}', siteSlug ) || '';
+			return product.indirectCheckoutUrl?.replace( '{siteSlug}', siteSlug ) || '';
 		}
 
 		let url;

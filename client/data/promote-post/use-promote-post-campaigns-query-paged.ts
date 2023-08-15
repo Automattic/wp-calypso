@@ -1,8 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { requestDSP } from 'calypso/lib/promote-post';
+import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { Campaign } from './types';
-const DSP_ERROR_NO_LOCAL_USER = 'no_local_user';
 
 type CampaignQueryResult = {
 	campaigns: Campaign[];
@@ -10,10 +9,6 @@ type CampaignQueryResult = {
 	total_pages: number;
 	page: number;
 	has_more_pages: boolean;
-};
-
-type NewDSPUserResult = {
-	new_dsp_user: boolean;
 };
 
 type CampaignQueryOptions = {
@@ -35,32 +30,6 @@ const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 	return searchQueryParams;
 };
 
-async function getCampaigns( siteId: number, pageParam: number, searchQueryParams: string ) {
-	const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=asc&order_by=post_date&page=${ pageParam }${ searchQueryParams }`;
-	try {
-		return await requestDSP< CampaignQueryResult >( siteId, searchCampaignsUrl );
-	} catch ( e ) {
-		await handleDSPError( e, siteId, pageParam, searchQueryParams );
-		throw new Error( 'Error while fetching campaigns' );
-	}
-}
-
-async function handleDSPError(
-	error: any,
-	siteId: number,
-	pageParam: number,
-	searchQueryParams: string
-) {
-	if ( error.errorCode === DSP_ERROR_NO_LOCAL_USER ) {
-		const createUserQuery = await requestDSP< NewDSPUserResult >( siteId, `/user/check` );
-		if ( ! createUserQuery.new_dsp_user ) {
-			// then we should retry the original query
-			return await getCampaigns( siteId, pageParam, searchQueryParams );
-		}
-	}
-	throw error;
-}
-
 const useCampaignsQueryPaged = (
 	siteId: number,
 	searchOptions: SearchOptions,
@@ -71,7 +40,11 @@ const useCampaignsQueryPaged = (
 	return useInfiniteQuery(
 		[ 'promote-post-campaigns', siteId, searchQueryParams ],
 		async ( { pageParam = 1 } ) => {
-			const resultQuery = await getCampaigns( siteId, pageParam, searchQueryParams );
+			const searchCampaignsUrl = `/search/campaigns/site/${ siteId }?order=asc&order_by=post_date&page=${ pageParam }${ searchQueryParams }`;
+			const resultQuery = await requestDSPHandleErrors< CampaignQueryResult >(
+				siteId,
+				searchCampaignsUrl
+			);
 
 			const { campaigns, page, total_items, total_pages } = resultQuery;
 			const has_more_pages = page < total_pages;

@@ -115,6 +115,10 @@
 	}
 }
 
+.popover.info-popover__tooltip--trial-plan .popover__inner {
+	max-width: 280px;
+}
+
 .trial-plan-features-modal {
 	.components-modal__header {
 		padding: 1rem 1.5rem !important;

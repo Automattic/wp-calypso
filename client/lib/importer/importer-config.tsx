@@ -27,12 +27,18 @@ interface ImporterConfigMap {
 }
 
 interface ImporterConfigArgs {
-	siteTitle?: string;
 	isAtomic?: boolean;
 	isJetpack?: boolean;
+	siteSlug?: string;
+	siteTitle?: string;
 }
 
-function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): ImporterConfigMap {
+function getConfig( {
+	isAtomic = false,
+	isJetpack = false,
+	siteSlug = '',
+	siteTitle = '',
+} ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
@@ -41,14 +47,18 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 		type: 'file',
 		title: 'WordPress',
 		icon: 'wordpress',
-		description: translate(
-			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: { siteTitle },
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: { siteTitle },
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A WordPress export is ' +
@@ -75,17 +85,21 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 		type: 'file',
 		title: 'Blogger',
 		icon: 'blogger-alt',
-		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					importerName: 'Blogger',
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: {
+							importerName: 'Blogger',
+							siteTitle,
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A %(importerName)s export file is an XML file ' +
@@ -113,15 +127,19 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 		type: 'file',
 		title: 'Medium',
 		icon: 'medium',
-		description: translate(
-			'Import posts, tags, images, and videos ' +
-				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: { siteTitle },
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, tags, images, and videos ' +
+						'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: { siteTitle },
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A %(importerName)s export file is a ZIP ' +
@@ -149,34 +167,39 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 		type: 'file',
 		title: 'Substack',
 		icon: 'substack',
-		description: translate(
-			'Import posts and images, podcasts and public comments from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					importerName: 'Substack',
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<>
+				<p>
+					{ translate(
+						'Import posts and images, podcasts and public comments from a Substack export file to {{b}}%(siteTitle)s{{/b}}.',
+						{
+							args: {
+								siteTitle,
+							},
+							components: {
+								b: <strong />,
+							},
+						}
+					) }
+				</p>
+				<p>
+					{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
+						components: {
+							a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
+						},
+					} ) }
+				</p>
+			</>
 		),
-		uploadDescription: translate(
-			'A %(importerName)s export file is a ZIP file ' +
-				'containing a CSV file with all posts and individual HTML posts. ' +
-				'{{supportLink/}}',
-			{
-				args: {
-					importerName: 'Substack',
-				},
-				components: {
-					supportLink: (
-						<InlineSupportLink supportContext="importers-substack" showIcon={ false }>
-							{ translate( 'Need help exporting your content?' ) }
-						</InlineSupportLink>
-					),
-				},
-			}
+		uploadDescription: (
+			<>
+				{ translate(
+					'A Substack export file is a ZIP file containing a CSV file with all posts.'
+				) }{ ' ' }
+				<InlineSupportLink supportContext="importers-substack" showIcon={ false }>
+					{ translate( 'See how to get your export file.' ) }
+				</InlineSupportLink>
+			</>
 		),
 		optionalUrl: {
 			title: translate( 'Substack Newsletter URL' ),
@@ -196,17 +219,21 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 		type: 'file',
 		title: 'Squarespace',
 		icon: 'squarespace',
-		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					importerName: 'Squarespace',
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: {
+							importerName: 'Squarespace',
+							siteTitle,
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A %(importerName)s export file is an XML file ' +
@@ -234,14 +261,18 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 		type: 'url',
 		title: 'Wix',
 		icon: 'wix',
-		description: translate(
-			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: { siteTitle },
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: { siteTitle },
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate( 'Enter the URL of your Wix site. ' + '{{supportLink/}}', {
 			components: {
@@ -270,7 +301,7 @@ function getConfig( { siteTitle = '', isAtomic = false, isJetpack = false } ): I
 	return importerConfig;
 }
 
-export function getImporters( args: ImporterConfigArgs = { siteTitle: '' } ) {
+export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' } ) {
 	const importerConfig = getConfig( args );
 
 	if ( ! config.isEnabled( 'importers/substack' ) ) {
@@ -282,7 +313,10 @@ export function getImporters( args: ImporterConfigArgs = { siteTitle: '' } ) {
 	return importers;
 }
 
-export function getImporterByKey( key: string, args: ImporterConfigArgs = { siteTitle: '' } ) {
+export function getImporterByKey(
+	key: string,
+	args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' }
+) {
 	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
 }
 

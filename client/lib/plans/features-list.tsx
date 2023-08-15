@@ -276,6 +276,9 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_STORE_DESIGN,
 	FEATURE_UNLIMITED_PRODUCTS,
@@ -301,34 +304,21 @@ import {
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import i18n, { TranslateResult } from 'i18n-calypso';
-import { MemoExoticComponent } from 'react';
+import i18n from 'i18n-calypso';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
 import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
+import type {
+	FeatureObject as FeatureObjectPackaged,
+	FeatureList as FeatureListPackaged,
+} from '@automattic/calypso-products';
 
-export type FeatureObject = {
-	getSlug: () => string;
-	getTitle: ( domainName?: string ) => TranslateResult;
-	getAlternativeTitle?: () => TranslateResult;
-	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
-	getHeader?: () => TranslateResult;
-	getDescription?: ( domainName?: string ) => TranslateResult;
-	getStoreSlug?: () => string;
-	getCompareTitle?: () => TranslateResult;
-	getCompareSubtitle?: () => TranslateResult;
-	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
-	isPlan?: boolean;
-	getFeatureGroup?: () => string;
-	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
-	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
-};
-export type FeatureList = {
-	[ key: string ]: FeatureObject;
-};
+export type FeatureObject = FeatureObjectPackaged;
+
+export type FeatureList = FeatureListPackaged;
 
 export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {
@@ -1758,6 +1748,38 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
 		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for WooCommerce payment features', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for all payment features', {
+				args: { commission: 0 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '0%',
+		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+		getTitle: () =>
+			i18n.translate( '%(commission)d%% transaction fee for regular payment features', {
+				args: { commission: 2 },
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Credit card fees are applied in addition to commission fees for payments.' ),
+		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_50GB_STORAGE_ADD_ON ]: {
