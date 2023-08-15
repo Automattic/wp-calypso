@@ -23,7 +23,6 @@ const PlanLogo: React.FunctionComponent< {
 	renderedGridPlans: GridPlan[];
 	planSlug: PlanSlug;
 	isInSignup?: boolean;
-	renderedPlans: PlanSlug[];
 	isTableCell?: boolean;
 	planIndex: number;
 	Container: (
@@ -49,7 +48,7 @@ const PlanLogo: React.FunctionComponent< {
 		'is-only-highlight': highlightAdjacencyMatrix[ planSlug ]?.isOnlyHighlight,
 		'is-current-plan': current,
 		'is-first-in-row': planIndex === 0,
-		'is-last-in-row': planIndex === renderedPlans.length - 1,
+		'is-last-in-row': planIndex === renderedGridPlans.length - 1,
 	} );
 	const popularBadgeClasses = classNames( {
 		'with-plan-logo': ! (

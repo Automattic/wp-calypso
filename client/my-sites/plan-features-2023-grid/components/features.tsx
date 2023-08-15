@@ -83,7 +83,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					return null;
 				}
 
-				const key = `${ currentFeature.getSlug() }-${ planName }-${ featureIndex }`;
+				const key = `${ currentFeature.getSlug() }-${ planSlug }-${ featureIndex }`;
 
 				const isFreePlanAndCustomDomainFeature =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planSlug );

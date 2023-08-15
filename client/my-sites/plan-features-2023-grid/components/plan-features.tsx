@@ -3,12 +3,13 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import PlanFeatures2023GridFeatures from '../components/features';
-import { PlanProperties, DataResponse } from '../types';
+import { DataResponse } from '../types';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 import type { DomainSuggestion } from '@automattic/data-stores';
 
 const PlanFeatures: React.FC< {
-	planProperties: PlanProperties[];
+	plansWithFeatures: GridPlan[];
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
 	translate: LocalizeProps[ 'translate' ];
@@ -20,7 +21,7 @@ const PlanFeatures: React.FC< {
 		props: React.HTMLAttributes< HTMLDivElement > | React.HTMLAttributes< HTMLTableCellElement >
 	) => JSX.Element;
 } > = ( {
-	planProperties,
+	plansWithFeatures,
 	paidDomainName,
 	wpcomFreeDomainSuggestion,
 	translate,
@@ -52,19 +53,17 @@ const PlanFeatures: React.FC< {
 		};
 	}, [ isDesktop ] );
 
-	return planProperties
-		.filter( ( { isVisible } ) => isVisible )
-		.map( ( properties, mapIndex ) => {
-			const { planName, features, jpFeatures } = properties;
+	return plansWithFeatures.map(
+		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
 			return (
 				<Container
-					key={ `${ planName }-${ mapIndex }` }
+					key={ `${ planSlug }-${ mapIndex }` }
 					isTableCell={ isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
 					<PlanFeatures2023GridFeatures
-						features={ features }
-						planName={ planName }
+						features={ wpcomFeatures }
+						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
 						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -73,7 +72,7 @@ const PlanFeatures: React.FC< {
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>
-					{ jpFeatures.length !== 0 && (
+					{ jetpackFeatures.length !== 0 && (
 						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
 							<Plans2023Tooltip
 								text={ translate(
@@ -81,15 +80,15 @@ const PlanFeatures: React.FC< {
 								) }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
-								id={ `${ planName }-jp-logo-${ mapIndex }` }
+								id={ `${ planSlug }-jp-logo-${ mapIndex }` }
 							>
 								<JetpackLogo size={ 16 } />
 							</Plans2023Tooltip>
 						</div>
 					) }
 					<PlanFeatures2023GridFeatures
-						features={ jpFeatures }
-						planName={ planName }
+						features={ jetpackFeatures }
+						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
 						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
 						hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -99,7 +98,8 @@ const PlanFeatures: React.FC< {
 					/>
 				</Container>
 			);
-		} );
+		}
+	);
 };
 
 export default PlanFeatures;
