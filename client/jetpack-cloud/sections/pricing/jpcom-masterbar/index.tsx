@@ -115,6 +115,9 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		return [];
 	};
 
+	// All the functionality in this useEffect is copied from the old js files that were copied from jetpack.com
+	// They were moved here due to the new data query causing the header to re-render and add too many event listeners
+	// This will be refactored very soon
 	useEffect( () => {
 		// SUBMENU TOGGLE FUNCTIONALITY
 		function toggleMenuItem( btn: HTMLAnchorElement, menu: HTMLDivElement ) {
@@ -151,7 +154,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 			menu.addEventListener( 'click', function ( e ) {
 				// If user clicks menu backdrop
-				if ( e.target === menu ) {
+				if ( e.target === menu && window.innerWidth > 900 ) {
 					toggleSubmenu();
 				}
 			} );
@@ -223,7 +226,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		// END USER MENU FUNCTIONALITY
 
 		// MOBILE MENU FUNCTIONALITY
-		const MOBILE_BP = 900; // lrg-screen breakpoint
 		const mobileMenu = document.querySelector( '.js-mobile-menu' ) as HTMLDivElement;
 		const mobileBtn = document.querySelector( '.js-mobile-btn' );
 		const body = document.querySelector( 'body' );
@@ -248,12 +250,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 				mobileMenuToggle();
 			}
 		}
-
-		function onResize() {
-			if ( window.innerWidth > MOBILE_BP ) {
-				body?.classList.remove( 'no-scroll' );
-			}
-		}
 		// END MOBILE MENU FUNCTIONALITY
 
 		if ( menuDataStatus === 'success' && ! eventHandlersAdded ) {
@@ -272,8 +268,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 				userBtn.addEventListener( 'click', onUserBtnClick );
 
 				const lastFocusable = getLastFocusableElement( userMenu );
-				// Collapse menu when focusing out
 
+				// Collapse menu when focusing out
 				if ( lastFocusable ) {
 					lastFocusable.addEventListener( 'focusout', toggleUserMenu );
 				}
@@ -298,7 +294,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 					} );
 				}
 
-				window.addEventListener( 'resize', onResize );
 				document.addEventListener( 'keydown', mobileOnKeyDown );
 			}
 			// END MOBILE SETUP
@@ -306,11 +301,19 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 			return () => {
 				document.removeEventListener( 'keydown', onKeyDown );
 				document.removeEventListener( 'click', onDocumentClick );
-				window.removeEventListener( 'resize', onResize );
 				document.removeEventListener( 'keydown', mobileOnKeyDown );
 			};
 		}
 	}, [ menuDataStatus, eventHandlersAdded ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', () => {
+			const body = document.querySelector( 'body' );
+			if ( window.innerWidth > 900 ) {
+				body?.classList.remove( 'no-scroll' );
+			}
+		} );
+	}, [] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

@@ -543,6 +543,7 @@
 	@media ( max-width: 900px ) {
 		.header__submenu {
 			top: -80px;
+			margin-top: 5rem;
 			overflow: scroll;
 		}
 		html.no-js .header__submenu {
@@ -607,7 +608,7 @@
 		.header__submenu-content {
 			z-index: 3;
 			padding-top: 1rem;
-			margin-top: 5rem;
+			margin-top: 0;
 			background: var(--studio-white);
 			animation-duration: 0.1s;
 			animation-name: submenu-content-mobile;
@@ -642,6 +643,10 @@
 		justify-content: space-between;
 		box-sizing: border-box;
 		gap: 1.25rem;
+
+		@media (max-width: 900px) {
+			padding-top: 0;
+		}
 	}
 
 	.header__submenu-bottom-section {
