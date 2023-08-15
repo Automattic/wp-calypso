@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
-import { localize, translate } from 'i18n-calypso';
+import { localize, translate, useTranslate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -40,7 +40,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
-import getThemeShowcaseLoggedOutSeoContent from './get-theme-showcase-logged-out-seo-content';
 import {
 	addTracking,
 	appendStyleVariationToThemesPath,
@@ -53,6 +52,7 @@ import ThemePreview from './theme-preview';
 import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
+import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import './theme-showcase.scss';
 
 const optionShape = PropTypes.shape( {
@@ -76,6 +76,67 @@ const staticFilters = {
 		text: translate( 'All' ),
 	},
 };
+
+function ThemeShowcaseHeader( { canonicalUrl, filter, tier, vertical } ) {
+	// eslint-disable-next-line no-shadow
+	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const description = useSelector( ( state ) =>
+		getThemeShowcaseDescription( state, { filter, tier, vertical } )
+	);
+	const title = useSelector( ( state ) =>
+		getThemeShowcaseTitle( state, { filter, tier, vertical } )
+	);
+	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
+	const {
+		title: documentHeadTitle,
+		metaDescription: metaDescription,
+		header: themesHeaderTitle,
+		description: themesHeaderDescription,
+	} = isLoggedIn
+		? {
+				title: title,
+				metaDescription: description,
+				header: translate( 'Themes' ),
+				description: translate(
+					'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+						},
+					}
+				),
+		  }
+		: loggedOutSeoContent;
+
+	const metas = [
+		{
+			name: 'description',
+			property: 'og:description',
+			content: metaDescription || themesHeaderDescription,
+		},
+		{ property: 'og:title', content: documentHeadTitle },
+		{ property: 'og:url', content: canonicalUrl },
+		{ property: 'og:type', content: 'website' },
+		{ property: 'og:site_name', content: 'WordPress.com' },
+	];
+
+	return (
+		<>
+			<DocumentHead title={ documentHeadTitle } meta={ metas } />
+			<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
+				{ isLoggedIn && (
+					<>
+						<div className="themes__install-theme-button-container">
+							<InstallThemeButton />
+						</div>
+						<ScreenOptionsTab wpAdminPath="themes.php" />
+					</>
+				) }
+			</ThemesHeader>
+		</>
+	);
+}
 
 class ThemeShowcase extends Component {
 	constructor( props ) {
@@ -461,39 +522,6 @@ class ThemeShowcase extends Component {
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
-		const {
-			title: documentHeadTitle,
-			metaDescription: metaDescription,
-			header: themesHeaderTitle,
-			description: themesHeaderDescription,
-		} = isLoggedIn
-			? {
-					title: this.props.title,
-					metaDescription: this.props.description,
-					header: translate( 'Themes' ),
-					description: translate(
-						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-							},
-						}
-					),
-			  }
-			: getThemeShowcaseLoggedOutSeoContent( filter, tier );
-
-		const metas = [
-			{
-				name: 'description',
-				property: 'og:description',
-				content: metaDescription || themesHeaderDescription,
-			},
-			{ property: 'og:title', content: documentHeadTitle },
-			{ property: 'og:url', content: canonicalUrl },
-			{ property: 'og:type', content: 'website' },
-			{ property: 'og:site_name', content: 'WordPress.com' },
-		];
-
 		const themeProps = {
 			forceWpOrgSearch: true,
 			filter: filter,
@@ -544,22 +572,17 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase">
-				<DocumentHead title={ documentHeadTitle } meta={ metas } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
-					{ isLoggedIn && (
-						<>
-							<div className="themes__install-theme-button-container">
-								<InstallThemeButton />
-							</div>
-							<ScreenOptionsTab wpAdminPath="themes.php" />
-						</>
-					) }
-				</ThemesHeader>
+				<ThemeShowcaseHeader
+					canonicalUrl={ canonicalUrl }
+					filter={ this.props.filter }
+					tier={ this.props.tier }
+					vertical={ this.props.vertical }
+				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
