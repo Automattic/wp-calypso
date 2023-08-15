@@ -1,6 +1,7 @@
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { check, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
