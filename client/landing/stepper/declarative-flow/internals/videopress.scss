@@ -2,7 +2,8 @@
 @import "./videopress-constants.scss";
 
 
-body.is-videopress-tv-stepper {
+body.is-videopress-tv-stepper,
+body.is-videopress-tv-purchase-stepper {
 	.step-container .step-container__header .formatted-header .formatted-header__title,
 	.signup-header h1 {
 		font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
