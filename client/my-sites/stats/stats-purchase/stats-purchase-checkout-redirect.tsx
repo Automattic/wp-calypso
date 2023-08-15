@@ -11,8 +11,9 @@ const getStatsPurchaseURL = (
 	redirectUrl: string,
 	checkoutBackUrl: string
 ) => {
+	// Get the checkout URL for the product, or the siteless checkout URL if no siteSlug is provided
 	const checkoutProductUrl = new URL(
-		`/checkout/${ siteSlug }/${ product }`,
+		`/checkout/${ siteSlug || 'jetpack' }/${ product }`,
 		window.location.origin
 	);
 
@@ -77,7 +78,7 @@ const getRedirectUrl = ( {
 
 	if ( ! isStartedFromJetpackSite ) {
 		redirectUri = addPurchaseTypeToUri(
-			redirectUri || `/stats/day/${ siteSlug }`,
+			redirectUri || `/stats/day/${ siteSlug || '' }`,
 			statsPurchaseSuccess
 		);
 		return redirectUri;
