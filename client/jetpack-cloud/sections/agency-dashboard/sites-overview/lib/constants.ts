@@ -1,5 +1,6 @@
 /**
- * Returns the product slug that can be purchased from the dashboard.
+ * Maps general product types to the more specific corresponding slug that's
+ * available for purchase from the dashboard.
  */
 export const DASHBOARD_PRODUCT_SLUGS_BY_TYPE: Record< string, string > = {
 	backup: 'jetpack-backup-t1',
