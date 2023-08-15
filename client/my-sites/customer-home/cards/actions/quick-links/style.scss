@@ -7,10 +7,6 @@
 		border-radius: 3px; /* stylelint-disable-line scales/radii */
 	}
 
-	&:not(.is-expanded) {
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
-	}
-
 	.foldable-card__header {
 		padding: 16px;
 		min-height: auto;
