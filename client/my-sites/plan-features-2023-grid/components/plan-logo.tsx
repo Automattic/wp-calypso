@@ -43,9 +43,15 @@ const PlanLogo: React.FunctionComponent< {
 	);
 	const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
 		'popular-plan-parent-class': gridPlansIndex[ planSlug ]?.highlightLabel,
-		'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
-		'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
-		'is-only-highlight': highlightAdjacencyMatrix[ planSlug ]?.isOnlyHighlight,
+		'is-left-of-highlight':
+			highlightAdjacencyMatrix[ planSlug as keyof typeof highlightAdjacencyMatrix ]
+				?.leftOfHighlight,
+		'is-right-of-highlight':
+			highlightAdjacencyMatrix[ planSlug as keyof typeof highlightAdjacencyMatrix ]
+				?.rightOfHighlight,
+		'is-only-highlight':
+			highlightAdjacencyMatrix[ planSlug as keyof typeof highlightAdjacencyMatrix ]
+				?.isOnlyHighlight,
 		'is-current-plan': current,
 		'is-first-in-row': planIndex === 0,
 		'is-last-in-row': planIndex === renderedGridPlans.length - 1,

@@ -326,6 +326,7 @@ const LoggedInPlansFeatureActionButton = ( {
 				setActiveTooltipId={ setActiveTooltipId }
 				activeTooltipId={ activeTooltipId }
 				showOnMobile={ false }
+				id="downgrade"
 			>
 				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
 				{ isMobile() && (
