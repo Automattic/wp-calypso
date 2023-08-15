@@ -21,11 +21,9 @@ import {
 } from 'calypso/state/memberships/product-list/actions';
 import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-<<<<<<<< HEAD:client/my-sites/earn/components/add-edit-plan-modal/index.jsx
-import './style.scss';
-========
 import type { ChangeEvent } from 'react';
->>>>>>>> e68508fd15 (Refactor earn plan modal to TS):client/my-sites/earn/memberships/add-edit-plan-modal.tsx
+
+import './style.scss';
 
 type Product = {
 	ID: string;
