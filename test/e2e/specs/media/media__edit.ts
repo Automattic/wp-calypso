@@ -20,29 +20,39 @@ import { TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;
 
+/**
+ * Ensures media can be uploaded then edited in the gallery.
+ *
+ * Keywords: Media, Image, Gallery, Upload
+ */
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
-	let testImage: TestFile;
 	let page: Page;
 	let mediaPage: MediaPage;
-	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
-		{
-			gutenberg: 'stable',
-			siteType: 'simple',
-			accountName: 'simpleSitePersonalPlanUser',
-		},
-	] );
+	let testAccount: TestAccount;
+	let testImage: TestFile;
+
+	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 
 	beforeAll( async () => {
 		testImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+
 		page = await browser.newPage();
-		const testAccount = new TestAccount( accountName );
+
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+
+		mediaPage = new MediaPage( page );
 	} );
 
 	it( 'Navigate to Media', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Media' );
-		mediaPage = new MediaPage( page );
+		// eCommerce plan loads WP-Admin for home dashboard,
+		// so instead navigate straight to the Media page.
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			await mediaPage.visit( testAccount.credentials.testSites?.primary.url as string );
+		} else {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Media' );
+		}
 	} );
 
 	it( 'Upload image', async function () {
