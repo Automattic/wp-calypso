@@ -348,12 +348,13 @@ const Settings = ( {
 		) {
 			return null;
 		}
+
 		return (
 			<Accordion
 				title={ translate( 'Redirect Domain', { textOnly: true } ) }
 				subtitle={ translate( 'Redirect from your domain to another' ) }
 			>
-				<DomainRedirectCard domainName={ selectedDomainName } />
+				<DomainRedirectCard domainName={ selectedDomainName } nameservers={ nameservers } />
 			</Accordion>
 		);
 	};
