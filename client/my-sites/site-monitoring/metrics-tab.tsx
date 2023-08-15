@@ -1,6 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
 import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
@@ -221,6 +222,7 @@ const useErrorHttpCodeSeries = () => {
 
 export const MetricsTab = () => {
 	const { __ } = useI18n();
+	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( timeRange );
@@ -245,9 +247,22 @@ export const MetricsTab = () => {
 		errorHttpCodes.statusCodes
 	);
 
+	const startDate = moment( timeRange.start * 1000 );
+	const endDate = moment( timeRange.end * 1000 );
+	let dateRange = '';
+
+	if ( endDate.isSame( startDate, 'day' ) ) {
+		dateRange = endDate.format( 'LL' );
+	} else {
+		dateRange = `${ startDate.format( 'LL' ) } - ${ endDate.format( 'LL' ) }`;
+	}
+
 	return (
 		<div className="site-monitoring-metrics-tab">
-			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
+			<div className="site-monitoring-time-controls__container">
+				<div className="site-monitoring-time-controls__title">{ dateRange }</div>
+				<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
+			</div>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
 				title={ __( 'Server performance' ) }
