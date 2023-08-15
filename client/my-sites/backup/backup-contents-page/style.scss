@@ -193,6 +193,9 @@
 
 		.form-checkbox {
 			margin: 8px;
+			&.mixed {
+				background-color: var(--studio-gray-10);
+			}
 		}
 	}
 
