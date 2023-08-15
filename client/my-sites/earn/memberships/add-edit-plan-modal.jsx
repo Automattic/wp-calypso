@@ -94,8 +94,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.multiple_per_user ?? false
 	);
 
-	const [ editedMarkAsDonation, setEditedMarkAsDonation ] = useState( product?.type ?? null );
-
 	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
 		product?.buyer_can_change_amount ?? false
 	);
@@ -165,8 +163,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
-	const handleMarkAsDonation = ( newValue ) =>
-		setEditedMarkAsDonation( true === newValue ? 'donation' : null );
 	const onNameChange = ( event ) => setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
 
@@ -188,9 +184,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
 			return;
 		}
-		const name = defaultNames[ [ 'donation' === editedMarkAsDonation, editedSchedule ] ] ?? '';
+
+		const name = defaultNames[ [ false, editedSchedule ] ] ?? '';
 		setEditedProductName( name );
-	}, [ editedMarkAsDonation, editedSchedule ] );
+	}, [ false, editedSchedule ] );
 
 	const onClose = ( reason ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
@@ -203,7 +200,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				multiple_per_user: editedMultiplePerUser,
 				welcome_email_content: editedCustomConfirmationMessage,
 				subscribe_as_site_subscriber: editedPostsEmail,
-				type: editedMarkAsDonation,
 				is_editable: true,
 			};
 			addProduct(
@@ -223,7 +219,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				multiple_per_user: editedMultiplePerUser,
 				welcome_email_content: editedCustomConfirmationMessage,
 				subscribe_as_site_subscriber: editedPostsEmail,
-				type: editedMarkAsDonation,
 				is_editable: true,
 			};
 			updateProduct(
@@ -335,11 +330,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<ToggleControl
-						onChange={ handleMarkAsDonation }
-						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Mark this plan as a donation' ) }
-					/>
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }
