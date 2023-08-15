@@ -25,7 +25,11 @@ describe( '<SitesOverview>', () => {
 	const initialState = {
 		sites: {},
 		partnerPortal: { partner: {} },
-		agencyDashboard: {},
+		agencyDashboard: {
+			selectedLicenses: {
+				licenses: [ 'test' ],
+			},
+		},
 		ui: {},
 		documentHead: {},
 		currentUser: {
@@ -43,7 +47,6 @@ describe( '<SitesOverview>', () => {
 		filter: { issueTypes: [], showOnlyFavorites: false },
 		selectedSites: [],
 		sort: { field: 'url', direction: 'asc' },
-		selectedLicensesCount: 0,
 		isLargeScreen: true,
 	};
 
@@ -141,7 +144,20 @@ describe( '<SitesOverview>', () => {
 		await act( () => promise );
 	} );
 
-	test( 'Show the add site and issue license buttons', async () => {
+	test( 'Do not show the Add X Licenses button when license count is 0', async () => {
+		initialState.agencyDashboard.selectedLicenses.licenses = [];
+		setData();
+
+		const { queryByText } = render( <Wrapper context={ context } /> );
+
+		const addLicensesButton = queryByText( 'Add 1 license' );
+		expect( addLicensesButton ).not.toBeInTheDocument();
+
+		//reset the license count
+		initialState.agencyDashboard.selectedLicenses.licenses = [ 'test' ];
+	} );
+
+	test( 'Show the add site and issue license buttons on mobile', async () => {
 		setData();
 
 		const { getAllByText } = render( <Wrapper context={ context } /> );
@@ -150,22 +166,14 @@ describe( '<SitesOverview>', () => {
 		const [ issueLicenseButton ] = getAllByText( 'Issue License' );
 		expect( addSiteButton ).toBeInTheDocument();
 		expect( issueLicenseButton ).toBeInTheDocument();
-
-		const promise = Promise.resolve();
-		await act( () => promise );
 	} );
 
-	test( 'Hide the add site and issue license buttons', async () => {
+	test( 'Show the Add x Licenses button on mobile', async () => {
 		setData();
-		context.selectedLicensesCount = 1;
+
 		const { getAllByText } = render( <Wrapper context={ context } /> );
 
-		const [ addSiteButton ] = getAllByText( 'Add New Site' );
-		const [ issueLicenseButton ] = getAllByText( 'Issue License' );
-		expect( addSiteButton ).not.toBeInTheDocument();
-		expect( issueLicenseButton ).not.toBeInTheDocument();
-
-		const promise = Promise.resolve();
-		await act( () => promise );
+		const [ issueLicenseButton ] = getAllByText( 'Issue 1 license' );
+		expect( issueLicenseButton ).toBeInTheDocument();
 	} );
 } );
