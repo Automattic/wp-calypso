@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, act } from '@testing-library/react';
 import React from 'react';
@@ -10,6 +11,12 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import SitesOverviewContext from '../context';
 import SitesOverview from '../index';
+
+jest.mock( '@automattic/viewport' );
+
+const mockedIsWithinBreakpoint = isWithinBreakpoint as jest.MockedFunction<
+	typeof isWithinBreakpoint
+>;
 
 window.IntersectionObserver = jest.fn( () => ( {
 	observe: jest.fn(),
@@ -156,7 +163,23 @@ describe( '<SitesOverview>', () => {
 		initialState.agencyDashboard.selectedLicenses.licenses = [ 'test' ];
 	} );
 
-	test( 'Show the add site and issue license buttons on mobile', async () => {
+	test( 'do not show the add site and issue license buttons on large screen if licenseCount is 1', async () => {
+		setData();
+
+		mockedIsWithinBreakpoint.mockReturnValue( true );
+
+		const { queryByText } = render( <Wrapper context={ context } /> );
+
+		const addSiteButton = queryByText( 'Add New Site' );
+		const issueLicenseButton = queryByText( 'Issue 1 license' );
+		expect( addSiteButton ).not.toBeInTheDocument();
+		expect( issueLicenseButton ).toBeInTheDocument();
+
+		// set screen back to mobile for rest of tests
+		mockedIsWithinBreakpoint.mockReturnValue( false );
+	} );
+
+	test( 'Show the add site and issue license buttons', async () => {
 		setData();
 
 		const { getAllByText } = render( <Wrapper context={ context } /> );
