@@ -33,6 +33,7 @@ interface SeriesProp {
 	fill: string;
 	label: string;
 	stroke: string;
+	scale?: string;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -67,7 +68,7 @@ function determineTimeRange( timeRange: TimeRange ) {
 
 function createSeries( series: Array< SeriesProp > ) {
 	const { spline } = uPlot.paths;
-	const configuredSeries = series.map( function ( serie ) {
+	const configuredSeries: uPlot.Series[] = series.map( function ( serie ) {
 		return {
 			...serie,
 			...{
@@ -92,6 +93,27 @@ function createSeries( series: Array< SeriesProp > ) {
 	return [ { label: ' ' }, ...configuredSeries ];
 }
 
+function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
+	const scale = series.find( ( serie ) => serie.scale )?.scale;
+	if ( scale ) {
+		return [
+			{
+				scale,
+				side: 3,
+				grid: {
+					show: false,
+				},
+				ticks: {
+					stroke: '#646970',
+					width: 1,
+					size: 3,
+				},
+			},
+		];
+	}
+	return [];
+}
+
 export const SiteMonitoringLineChart = ( {
 	title,
 	tooltip,
@@ -109,6 +131,7 @@ export const SiteMonitoringLineChart = ( {
 	const localTz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	const options = useMemo( () => {
+		const extraScale = addExtraScaleIfDefined( series );
 		const defaultOptions: uPlot.Options = {
 			class: 'calypso-uplot-chart',
 			...chartDimensions,
@@ -149,7 +172,6 @@ export const SiteMonitoringLineChart = ( {
 				},
 				{
 					// y-axis
-					side: 1, // sets y axis side to left
 					gap: 8,
 					space: 40,
 					size: 50,
@@ -161,6 +183,7 @@ export const SiteMonitoringLineChart = ( {
 						show: false,
 					},
 				},
+				...extraScale,
 			],
 			cursor: {
 				x: false,

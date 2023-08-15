@@ -273,6 +273,7 @@ export const MetricsTab = () => {
 						fill: 'rgba(0, 135, 99, 0.2)',
 						label: __( 'Average response time (ms)' ),
 						stroke: '#008763',
+						scale: 'average-response-time',
 					},
 				] }
 				isLoading={ isLoadingLineChart }
