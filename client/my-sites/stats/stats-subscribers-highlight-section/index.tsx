@@ -7,24 +7,37 @@ function useSubscriberHighlights( siteId: number | null ) {
 	const translate = useTranslate();
 
 	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
+	// TODO: follow up on this once we have a way to determine if a site has paid newsletter set up.
+	// issue: https://github.com/Automattic/wp-calypso/issues/80609
+	const hasPaidNewsletter = true;
+
 	const highlights = [
 		{
-			heading: translate( 'Total email subscribers' ),
-			count: subscribersTotals?.total_email,
+			heading: translate( 'Total subscribers' ),
+			count: subscribersTotals?.total,
+			show: true, // Always show total subscribers.
 		},
 		{
-			heading: translate( 'Free email subscribers' ),
-			count: subscribersTotals?.total_email_free,
+			heading: translate( 'Free subscribers' ),
+			count: subscribersTotals?.free_subscribers,
+			show: hasPaidNewsletter,
 		},
 		{
-			heading: translate( 'Paid email subscribers' ),
-			count: subscribersTotals?.total_email_paid,
+			heading: translate( 'Paid subscribers' ),
+			count: subscribersTotals?.paid_subscribers,
+			show: hasPaidNewsletter,
 		},
 		{
 			heading: translate( 'WordPress.com subscribers' ),
 			count: subscribersTotals?.total_wpcom,
+			show: ! hasPaidNewsletter,
 		},
-	] as { heading: string; count: number | null }[];
+		{
+			heading: translate( 'Email subscribers' ),
+			count: subscribersTotals?.total_email,
+			show: ! hasPaidNewsletter,
+		},
+	] as { heading: string; count: number | null; show: boolean }[];
 
 	if ( isLoading || isError ) {
 		// Nulling the count values makes the count comparison card render a '-' instead of a '0'.
@@ -54,14 +67,17 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 
 	return (
 		<div className="highlight-cards-list">
-			{ highlights.map( ( highlight ) => (
-				<CountComparisonCard
-					key={ highlight.heading }
-					heading={ highlight.heading }
-					count={ highlight.count }
-					showValueTooltip
-				/>
-			) ) }
+			{ highlights.map(
+				( highlight ) =>
+					highlight.show && (
+						<CountComparisonCard
+							key={ highlight.heading }
+							heading={ highlight.heading }
+							count={ highlight.count }
+							showValueTooltip
+						/>
+					)
+			) }
 		</div>
 	);
 }
