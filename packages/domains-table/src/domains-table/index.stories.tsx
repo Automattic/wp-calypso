@@ -12,7 +12,11 @@ export default {
 } as Meta;
 
 const defaultArgs = {
-	domains: [ { domain: 'example1.com' }, { domain: 'example2.com' }, { domain: 'example3.com' } ],
+	domains: [
+		{ domain: 'example1.com', blog_id: 1 },
+		{ domain: 'example2.com', blog_id: 1 },
+		{ domain: 'example3.com', blog_id: 2 },
+	],
 };
 
 const storyDefaults = {

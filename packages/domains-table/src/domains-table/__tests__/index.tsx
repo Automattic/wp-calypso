@@ -42,3 +42,12 @@ test( 'all domain names are rendered in the table', () => {
 	expect( screen.queryByText( 'example2.com' ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'example3.com' ) ).not.toBeInTheDocument();
 } );
+
+test( 'domain name links to management interface', () => {
+	render( <DomainsTable domains={ [ testDomain( { domain: 'example.com', blog_id: 123 } ) ] } /> );
+
+	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+		'href',
+		expect.stringContaining( '/domains/manage/all/example.com/edit/123' )
+	);
+} );

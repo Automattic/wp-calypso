@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { DomainsTableRow } from './domains-table-row';
 import type { PartialDomainData } from '@automattic/data-stores';
 import './style.scss';
 
@@ -21,10 +22,8 @@ export function DomainsTable( { domains }: DomainsTableProps ) {
 				</tr>
 			</thead>
 			<tbody>
-				{ domains.map( ( { domain } ) => (
-					<tr key={ domain }>
-						<td>{ domain }</td>
-					</tr>
+				{ domains.map( ( domain ) => (
+					<DomainsTableRow key={ domain.domain } domain={ domain } />
 				) ) }
 			</tbody>
 		</table>
