@@ -45,7 +45,6 @@ import PlanLogo from './components/plan-logo';
 import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { type PlansIntent } from './grid-context';
-import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import { DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
