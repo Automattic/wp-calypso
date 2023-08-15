@@ -216,8 +216,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
 			return;
 		}
-		const nameToCheck = `${ 'donation' === editedMarkAsDonation }, ${ editedSchedule }`;
-		const name = defaultNames[ nameToCheck ] ?? '';
+		const name =
+			defaultNames[ `${ 'donation' === editedMarkAsDonation },${ editedSchedule }` ] ?? '';
+
 		setEditedProductName( name );
 	}, [ editedMarkAsDonation, editedSchedule ] );
 
