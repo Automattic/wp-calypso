@@ -15,6 +15,7 @@ import QueryKeyringServices from 'calypso/components/data/query-keyring-services
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -32,12 +33,14 @@ import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
@@ -206,6 +209,8 @@ class Hosting extends Component {
 			isLoadingSftpData,
 			hasAtomicFeature,
 			hasStagingSitesFeature,
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -335,6 +340,9 @@ class Hosting extends Component {
 			<Main wideLayout className="hosting">
 				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<FormattedHeader
 					brandFont
@@ -377,6 +385,8 @@ export default connect(
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 			hasStagingSitesFeature,
+			isJetpack: isJetpackSite( state, siteId ),
+			isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		};
 	},
 	{
