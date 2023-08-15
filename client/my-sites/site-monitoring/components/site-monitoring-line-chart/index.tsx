@@ -205,7 +205,6 @@ export const SiteMonitoringLineChart = ( {
 			},
 			series: createSeries( series ),
 			legend: {
-				live: false,
 				isolate: true,
 				mount: ( self: uPlot, el: HTMLElement ) => {
 					// If legendContainer is defined, move the legend into it.
