@@ -24,6 +24,14 @@
 		gap: 16px;
 		.legend-item {
 			flex-direction: row;
+			.legend-item__title::after {
+				content: "-";
+				padding-left: 3px;
+				padding-right: 3px;
+			}
+			.legend-item__detail {
+				margin-left: 0;
+			}
 		}
 		.legend-item__title-sample-drawing {
 			margin-right: 4px;
