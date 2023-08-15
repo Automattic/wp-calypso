@@ -32,6 +32,14 @@
 	}
 }
 
+.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align,
+.site-monitoring .components-tab-panel__tab-content,
+.site-monitoring .components-tab-panel__tabs {
+	max-width: 1224px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
 	padding-bottom: 24px;
 }
