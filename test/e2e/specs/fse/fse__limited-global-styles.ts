@@ -21,7 +21,7 @@ declare const browser: Browser;
  *
  * @see https://github.com/Automattic/wp-calypso/issues/78107
  *
- * Note: Atomic sites because they are not affected by Limited Global Styles.
+ * Note: We skip Atomic sites because they are not affected by Limited Global Styles.
  * @see https://github.com/Automattic/wp-calypso/pull/71333#issuecomment-1592490057
  *
  * Keywords: FSE, Full Site Editor, Global Styles, Gutenberg
