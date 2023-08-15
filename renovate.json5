@@ -10,12 +10,20 @@
 			minimumReleaseAge: '0 days',
 		},
 		{
+			groupName: 'nodejs',
 			matchPackagePatterns: [ '/node$' ],
-			matchDepNames: [ 'node' ],
+			matchDepNames: [ 'node', 'cimg/node' ],
 			matchDatasources: [ 'docker' ],
 			prPriority: 2,
 			// This gets published with broader Node support, so we'll update it when needed.
 			ignorePaths: [ 'packages/eslint-plugin-wpcalypso' ],
+		},
+		{
+			groupName: 'nodejs',
+			fileMatch: [ '^Dockerfile$' ],
+			matchStrings: [ 'ARG node_version=(?<currentValue>.*?)\\n' ],
+			depNameTemplate: 'node',
+			datasourceTemplate: 'node',
 		},
 		{
 			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
