@@ -8,6 +8,7 @@ const Template = ( args ) => {
 
 export const Default = Template.bind( {} );
 Default.args = {
+	ariaLabel: 'select-dropdown-aria-label',
 	className: 'select-dropdown',
 	compact: false,
 	disabled: false,
@@ -18,6 +19,7 @@ Default.args = {
 		// eslint-disable-next-line no-console
 		console.log( `${ label } Dropdown item selected` );
 	},
+	initialSelected: 'pikachu',
 	options: [
 		{ value: 'pikachu', label: 'Pikachu' },
 		{ value: 'charmander', label: 'Charmander' },
