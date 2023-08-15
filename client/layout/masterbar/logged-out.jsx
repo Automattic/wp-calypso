@@ -38,13 +38,12 @@ class MasterbarLoggedOut extends Component {
 
 	renderTagsItem() {
 		const { translate } = this.props;
-		// const locale = getLocaleSlug();
+		const locale = getLocaleSlug();
 
-		const tagsUrl = '/tags';
-		// TODO - Enable locales for logged out tags page.
-		// if ( ! isDefaultLocale( locale ) ) {
-		// 	tagsUrl = addLocaleToPathLocaleInFront( tagsUrl, locale );
-		// }
+		let tagsUrl = '/tags';
+		if ( ! isDefaultLocale( locale ) ) {
+			tagsUrl = addLocaleToPathLocaleInFront( tagsUrl, locale );
+		}
 
 		return (
 			<Item url={ tagsUrl }>
