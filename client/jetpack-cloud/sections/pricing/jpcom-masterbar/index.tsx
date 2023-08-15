@@ -154,7 +154,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 			menu.addEventListener( 'click', function ( e ) {
 				// If user clicks menu backdrop
-				if ( e.target === menu && window.innerWidth > 900 ) {
+				if ( e.target === menu ) {
 					toggleSubmenu();
 				}
 			} );
