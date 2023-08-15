@@ -24,7 +24,7 @@ declare const browser: Browser;
  * Note: Atomic sites because they are not affected by Limited Global Styles.
  * @see https://github.com/Automattic/wp-calypso/pull/71333#issuecomment-1592490057
  *
- * Keywords: FSE, Full Site Editor, Global Styles
+ * Keywords: FSE, Full Site Editor, Global Styles, Gutenberg
  */
 skipDescribeIf( envVariables.TEST_ON_ATOMIC )( 'Site Editor: Limited Global Styles', function () {
 	let page: Page;
