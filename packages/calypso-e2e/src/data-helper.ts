@@ -140,6 +140,16 @@ export function getCalypsoURL(
 }
 
 /**
+ * Assembles and returns a URL to a specific page in WP-Admin.
+ *
+ * @param {string} siteSlug Slug of the site, typically wordpress or wpcomstaging.com.
+ * @param {string} path Path to the WP-Admin page.
+ */
+export function getWPAdminURL( siteSlug: string, path: string ): string {
+	return new URL( path, `https://${ siteSlug }` ).href;
+}
+
+/**
  * Returns the credential for a specified account from the secrets file.
  *
  * @param {TestAccountName} accountType Type of the account for which the credentials are to be obtained.

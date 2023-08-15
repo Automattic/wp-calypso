@@ -23,25 +23,42 @@ declare const browser: Browser;
  *
  * See: https://github.com/Automattic/wp-calypso/issues/76266
  *
- * Keywords: Jetpack, Media, Carousel
+ * Keywords: Jetpack, Media, Carousel, Settings
  */
 describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () {
 	let page: Page;
+	let testAccount: TestAccount;
 
 	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 
 	beforeAll( async function () {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		testAccount = new TestAccount( accountName );
+
+		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// Switching to or logging into eCommerce plan sites inevitably
+			// loads WP-Admin instead of Calypso, but the rediret occurs
+			// only after Calypso attempts to load.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 	} );
 
 	let wpAdminMediaSettingsPage: WpAdminMediaSettingsPage;
 
 	it( 'Navigate to Settings > Media', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Settings', 'Media' );
+		if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
+			const url = DataHelper.getWPAdminURL(
+				testAccount.credentials.testSites?.primary.url as string,
+				'wp-admin/options-media.php'
+			);
+			await page.goto( url );
+		} else {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Settings', 'Media' );
+		}
 		wpAdminMediaSettingsPage = new WpAdminMediaSettingsPage( page );
 	} );
 
