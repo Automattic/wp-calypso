@@ -484,3 +484,10 @@
 		display: none;
 	}
 }
+
+// Customizations to the payments modal when it shows on Launchpad
+.memberships__dialog-sections-type,
+.memberships__dialog-sections-message,
+.memberships__dialog-advanced-options {
+	display: none;
+}
