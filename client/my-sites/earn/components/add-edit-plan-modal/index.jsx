@@ -21,6 +21,7 @@ import {
 } from 'calypso/state/memberships/product-list/actions';
 import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './style.scss';
 
 /**
  * @typedef {[string, number] CurrencyMinimum
