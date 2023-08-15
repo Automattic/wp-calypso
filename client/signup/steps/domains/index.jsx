@@ -287,9 +287,9 @@ class DomainsStep extends Component {
 		 * We want to pre load an experiment to show a plan upsell modal in the plans step
 		 */
 		if ( ! isPurchasingItem ) {
-			loadExperimentAssignment( 'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v2' );
+			loadExperimentAssignment( 'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3' );
 			loadExperimentAssignment(
-				'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v2'
+				'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
 			);
 		}
 

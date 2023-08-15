@@ -3,7 +3,7 @@
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/components/async-load', () => ( { gridPlansForFeaturesGrid } ) => (
+jest.mock( 'calypso/my-sites/plan-features-2023-grid', () => ( { gridPlansForFeaturesGrid } ) => (
 	<div data-testid="plan-features">
 		<div data-testid="visible-plans">
 			{ JSON.stringify( gridPlansForFeaturesGrid.map( ( { planSlug } ) => planSlug ) ) }

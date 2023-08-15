@@ -5,41 +5,43 @@ import { check, Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { isValidUrl } from '../../helpers';
+import { useAddSitesModalNotices } from '../../hooks';
+import { SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL, useRecordSiteSubscribed } from '../../tracks';
 import './styles.scss';
 
 type AddSitesFormProps = {
 	onAddFinished: () => void;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
-	const [ isValidUrl, setIsValidUrl ] = useState( false );
-	const dispatch = useDispatch();
+	const [ isValidInput, setIsValidInput ] = useState( false );
+	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
+	const recordSiteSubscribed = useRecordSiteSubscribed();
 
 	const { mutate: subscribe, isLoading: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
 	const validateInputValue = useCallback(
 		( url: string, showError = false ) => {
+			// If the input is empty, we don't want to show an error message
 			if ( url.length === 0 ) {
-				setIsValidUrl( false );
+				setIsValidInput( false );
 				setInputFieldError( null );
 				return;
 			}
-			if ( ! CAPTURE_URL_RGX.test( url ) ) {
-				setIsValidUrl( false );
+
+			if ( isValidUrl( url ) ) {
+				setInputFieldError( null );
+				setIsValidInput( true );
+			} else {
+				setIsValidInput( false );
 				if ( showError ) {
 					setInputFieldError( translate( 'Please enter a valid URL' ) );
 				}
-			} else {
-				setInputFieldError( null );
-				setIsValidUrl( true );
 			}
 		},
 		[ translate ]
@@ -54,35 +56,43 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	);
 
 	const onAddSite = useCallback( () => {
-		if ( isValidUrl ) {
+		if ( isValidInput ) {
 			subscribe(
 				{ url: inputValue },
 				{
-					onSuccess: () => {
-						dispatch(
-							successNotice(
-								translate( 'You have successfully subscribed to %s.', {
-									args: [ inputValue ],
-									comment: 'URL of the site that the user has subscribed to.',
-								} )
-							)
-						);
+					onSuccess: ( data ) => {
+						if ( data?.info === 'already_subscribed' ) {
+							showWarningNotice( inputValue );
+						} else {
+							if ( data?.subscription?.blog_ID ) {
+								recordSiteSubscribed( {
+									blog_id: data?.subscription?.blog_ID,
+									url: inputValue,
+									source: SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL,
+								} );
+							}
+
+							showSuccessNotice( inputValue );
+						}
 						onAddFinished();
 					},
 					onError: () => {
-						dispatch(
-							errorNotice(
-								translate( 'There was an error when trying to subscribe to %s.', {
-									args: [ inputValue ],
-									comment: 'URL of the site that the user tried to subscribe to.',
-								} )
-							)
-						);
+						showErrorNotice( inputValue );
+						onAddFinished();
 					},
 				}
 			);
 		}
-	}, [ dispatch, inputValue, isValidUrl, onAddFinished, subscribe, translate ] );
+	}, [
+		inputValue,
+		isValidInput,
+		onAddFinished,
+		recordSiteSubscribed,
+		showErrorNotice,
+		showSuccessNotice,
+		showWarningNotice,
+		subscribe,
+	] );
 
 	return (
 		<div className="subscriptions-add-sites__form--container">
@@ -96,7 +106,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 				value={ inputValue }
 				type="url"
 				onChange={ onTextFieldChange }
-				help={ isValidUrl ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
+				help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 				onBlur={ () => validateInputValue( inputValue, true ) }
 			/>
 

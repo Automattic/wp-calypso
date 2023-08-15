@@ -40,6 +40,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
+import getThemeShowcaseLoggedOutSeoContent from './get-theme-showcase-logged-out-seo-content';
 import {
 	addTracking,
 	appendStyleVariationToThemesPath,
@@ -338,6 +339,7 @@ class ThemeShowcase extends Component {
 		} else {
 			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 			newUrlParams.filter = [ filterWithoutSubjects, subjectTerm ].join( '+' );
+			newUrlParams.category = null;
 		}
 
 		page( this.constructUrl( newUrlParams ) );
@@ -450,18 +452,43 @@ class ThemeShowcase extends Component {
 			filter,
 			isLoggedIn,
 			pathName,
-			title,
 			filterString,
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
+		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
+		const {
+			title: documentHeadTitle,
+			metaDescription: metaDescription,
+			header: themesHeaderTitle,
+			description: themesHeaderDescription,
+		} = isLoggedIn
+			? {
+					title: this.props.title,
+					metaDescription: this.props.description,
+					header: translate( 'Themes' ),
+					description: translate(
+						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+							},
+						}
+					),
+			  }
+			: getThemeShowcaseLoggedOutSeoContent( filter, tier );
+
 		const metas = [
-			{ name: 'description', property: 'og:description', content: this.props.description },
-			{ property: 'og:title', content: title },
+			{
+				name: 'description',
+				property: 'og:description',
+				content: metaDescription || themesHeaderDescription,
+			},
+			{ property: 'og:title', content: documentHeadTitle },
 			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:type', content: 'website' },
 			{ property: 'og:site_name', content: 'WordPress.com' },
@@ -517,35 +544,13 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase">
-				<DocumentHead title={ title } meta={ metas } />
+				<DocumentHead title={ documentHeadTitle } meta={ metas } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<ThemesHeader
-					title={
-						isLoggedIn
-							? translate( 'Themes' )
-							: translate( 'Find the perfect theme for your website' )
-					}
-					description={
-						isLoggedIn
-							? translate(
-									'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-									{
-										components: {
-											learnMoreLink: (
-												<InlineSupportLink supportContext="themes" showIcon={ false } />
-											),
-										},
-									}
-							  )
-							: translate(
-									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, activate the one that is right for you.'
-							  )
-					}
-				>
+				<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
 					{ isLoggedIn && (
 						<>
 							<div className="themes__install-theme-button-container">
@@ -574,7 +579,7 @@ class ThemeShowcase extends Component {
 									className="section-nav-tabs__dropdown"
 									onSelect={ this.onTierSelect }
 									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, this.props.tier || 'all' ) || '',
+										args: getOptionLabel( tiers, tier ) || '',
 									} ) }
 									options={ tiers }
 									initialSelected={ this.props.tier }

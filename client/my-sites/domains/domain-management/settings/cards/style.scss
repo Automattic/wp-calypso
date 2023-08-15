@@ -128,14 +128,34 @@
 }
 
 .domain-redirect-card__fields {
-	.form-text-input-with-affixes__prefix {
+	margin-bottom: 0 !important;
+
+	.form-text-input-with-affixes__prefix,
+	.form-text-input-with-affixes__suffix {
 		padding: 0;
 		border: 0;
 
 		.form-select {
 			border-right: 0;
+			height: 100%;
+		}
+		.domain-redirect-card__delete {
+			border-left: 0;
+
+			svg {
+				margin-top: 5px;
+			}
+
+			&.is-disabled {
+				background: var(--color-neutral-0);
+			}
 		}
 	}
+}
+
+.domain-redirect-card__error-field {
+	margin-bottom: 0;
+	height: 35px;
 }
 
 .ownership-verification-card {

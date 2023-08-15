@@ -3,7 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { getMobileDeviceInfo, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getMobileDeviceInfo, isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import versionCompare from 'calypso/lib/version-compare';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
@@ -169,11 +169,13 @@ export async function showDSP(
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
-	let origin = 'wpcom';
+	let origin = 'calypso';
 	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
 		origin = 'jetpack';
 	} else if ( isWpMobileApp() ) {
 		origin = 'wp-mobile-app';
+	} else if ( isWcMobileApp() ) {
+		origin = 'wc-mobile-app';
 	}
 
 	const eventProps = {

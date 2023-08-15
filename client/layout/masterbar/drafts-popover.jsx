@@ -1,9 +1,8 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, Count, Popover } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Count from 'calypso/components/count';
 import QueryPosts from 'calypso/components/data/query-posts';
 import { newPost } from 'calypso/lib/paths';
 import Draft from 'calypso/my-sites/draft';

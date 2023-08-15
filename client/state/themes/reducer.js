@@ -7,6 +7,8 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
+	LIVE_PREVIEW_END,
+	LIVE_PREVIEW_START,
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
@@ -649,6 +651,24 @@ export function startActivationSync( state = {}, { type, siteId, themeId } ) {
 
 	return state;
 }
+
+export function livePreview( state = {}, { type } ) {
+	switch ( type ) {
+		case LIVE_PREVIEW_START:
+			return {
+				...state,
+				started: true,
+			};
+		case LIVE_PREVIEW_END:
+			return {
+				...state,
+				started: false,
+			};
+	}
+
+	return state;
+}
+
 export const themeHasAtomicTransferDialog = ( state = null, action ) => {
 	switch ( action.type ) {
 		case THEME_SHOW_ATOMIC_TRANSFER_DIALOG: {
@@ -701,6 +721,7 @@ const combinedReducer = combineReducers( {
 	isLoadingCart,
 	startActivationSync,
 	themeHasAtomicTransferDialog,
+	livePreview,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

@@ -58,7 +58,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-actions": "^7.0.18",
 		"@storybook/react": "^7.0.18",
-		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/jest-dom": "^5.17.0",
 		"@testing-library/react": "^14.0.0",
 		"@testing-library/react-hooks": "7.0.2",
 		"@types/canvas-confetti": "^1.6.0",

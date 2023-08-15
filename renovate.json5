@@ -24,6 +24,7 @@
 			groupName: 'redux-related packages',
 			matchPackagePatterns: [ 'redux' ],
 			matchPackageNames: [ 'react-redux' ],
+			excludePackageNames: [ '@wordpress/redux-routine' ],
 			prPriority: 2,
 		},
 		{

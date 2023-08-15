@@ -5,6 +5,10 @@
 	margin-bottom: 1em;
 	flex-direction: row;
 
+	&.is-justify-content-center {
+		justify-content: center;
+	}
+
 	.importer-action-buttons__action-button {
 		margin-right: 0.75em;
 	}

@@ -66,6 +66,10 @@ export default function UpgradePopover( {
 		showLicenseInfo( 'monitor' );
 	};
 
+	const handleOnShow = () => {
+		recordEvent( 'downtime_monitoring_upgrade_popover_view' );
+	};
+
 	// Don't show the popover if the user has dismissed it
 	if ( isDismissed ) {
 		return null;
@@ -77,6 +81,8 @@ export default function UpgradePopover( {
 			context={ context }
 			isVisible={ isVisible }
 			position={ position }
+			showDelay={ 300 }
+			onShow={ handleOnShow }
 		>
 			<h2 className="upgrade-popover__heading">{ translate( 'Maximise uptime' ) }</h2>
 			{ dismissibleWithPreference && (

@@ -187,7 +187,7 @@ class SectionImport extends Component {
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( importerState ) {
-		const { site, siteTitle } = this.props;
+		const { site, siteSlug, siteTitle } = this.props;
 		const importers = getImporters( {
 			isAtomic: site.options.is_wpcom_atomic,
 			isJetpack: site.jetpack,
@@ -209,6 +209,7 @@ class SectionImport extends Component {
 				<ImporterComponent
 					key={ engine }
 					site={ site }
+					siteSlug={ siteSlug }
 					siteTitle={ siteTitle }
 					importerStatus={ importerStatus }
 					isAtomic={ site.options.is_wpcom_atomic }
@@ -234,7 +235,7 @@ class SectionImport extends Component {
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
 	renderActiveImporters() {
-		const { fromSite, site, siteTitle, siteImports } = this.props;
+		const { fromSite, site, siteSlug, siteTitle, siteImports } = this.props;
 
 		return siteImports.map( ( importItem, idx ) => {
 			const importer = getImporterByKey( importItem.type );
@@ -250,6 +251,7 @@ class SectionImport extends Component {
 						key={ idx }
 						site={ site }
 						fromSite={ fromSite }
+						siteSlug={ siteSlug }
 						siteTitle={ siteTitle }
 						importerStatus={ importItem }
 					/>

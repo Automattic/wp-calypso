@@ -11,24 +11,29 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
-import { useCallback, useLayoutEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate, translate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import useGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -52,7 +57,6 @@ import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-fro
 import type { IntervalType } from './types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { PlanFeatures2023GridProps } from 'calypso/my-sites/plan-features-2023-grid';
 import type {
 	GridPlan,
 	PlansIntent,
@@ -61,12 +65,28 @@ import type {
 	DataResponse,
 	PlanActionOverrides,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
-import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
+
+const FreePlanSubHeader = styled.p`
+	margin: -32px 0 40px 0;
+	color: var( --studio-gray-60 );
+	font-size: 1rem;
+	text-align: center;
+	button.is-borderless {
+		font-weight: 500;
+		color: var( --studio-gray-90 );
+		text-decoration: underline;
+		font-size: 16px;
+		padding: 0;
+	}
+	@media ( max-width: 960px ) {
+		margin-top: -16px;
+	}
+`;
 
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
@@ -92,12 +112,36 @@ export interface PlansFeaturesMainProps {
 	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
-	hideFreePlan?: boolean; // to be deprecated
-	hidePersonalPlan?: boolean; // to be deprecated
-	hidePremiumPlan?: boolean; // to be deprecated
-	hideBusinessPlan?: boolean; // to be deprecated
-	hideEcommercePlan?: boolean; // to be deprecated
-	hideEnterprisePlan?: boolean; // to be deprecated
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideFreePlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hidePersonalPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hidePremiumPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideBusinessPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideEcommercePlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideEnterprisePlan?: boolean;
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
@@ -107,19 +151,6 @@ export interface PlansFeaturesMainProps {
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 }
-
-type OnboardingPricingGrid2023Props = PlansFeaturesMainProps & {
-	showUpgradeableStorage: boolean;
-	gridPlansForComparisonGrid: GridPlan[];
-	gridPlansForFeaturesGrid: GridPlan[];
-	planTypeSelectorProps?: PlanTypeSelectorProps;
-	sitePlanSlug?: PlanSlug | null;
-	siteSlug?: string | null;
-	intent?: PlansIntent;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
-	isGlobalStylesOnPersonal?: boolean;
-};
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
 	const translate = useTranslate();
@@ -137,152 +168,6 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 			compactOnMobile
 			isSecondary
 		/>
-	);
-};
-
-const OnboardingPricingGrid2023 = ( props: OnboardingPricingGrid2023Props ) => {
-	const {
-		gridPlansForFeaturesGrid,
-		gridPlansForComparisonGrid,
-		paidDomainName,
-		wpcomFreeDomainSuggestion,
-		isInSignup,
-		isLaunchPage,
-		flowName,
-		onUpgradeClick,
-		selectedFeature,
-		selectedPlan,
-		siteId,
-		plansWithScroll,
-		isReskinned,
-		intervalType,
-		planTypeSelectorProps,
-		hidePlansFeatureComparison,
-		hideUnavailableFeatures,
-		sitePlanSlug,
-		siteSlug,
-		intent,
-		isCustomDomainAllowedOnFreePlan,
-		showLegacyStorageFeature,
-		isSpotlightOnCurrentPlan,
-		showUpgradeableStorage,
-		isGlobalStylesOnPersonal,
-	} = props;
-	const translate = useTranslate();
-	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
-	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
-	const showDomainUpsellDialog = useCallback( () => {
-		setShowDomainUpsellDialog( true );
-	}, [ setShowDomainUpsellDialog ] );
-
-	let planActionOverrides: PlanActionOverrides | undefined;
-	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
-		planActionOverrides = {
-			loggedInFreePlan: domainFromHomeUpsellFlow
-				? {
-						callback: showDomainUpsellDialog,
-						text: translate( 'Keep my plan', { context: 'verb' } ),
-				  }
-				: {
-						callback: () => {
-							page.redirect( `/add-ons/${ siteSlug }` );
-						},
-						text: translate( 'Manage add-ons', { context: 'verb' } ),
-				  },
-		};
-	}
-
-	let gridPlanForSpotlight: GridPlan | undefined;
-	if ( sitePlanSlug && isSpotlightOnCurrentPlan ) {
-		gridPlanForSpotlight = gridPlansForFeaturesGrid.find(
-			( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
-		);
-	}
-
-	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
-
-	/**
-	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
-	 * for the sticky CTA bar.
-	 */
-	useLayoutEffect( () => {
-		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
-
-		if ( ! masterbarElement ) {
-			return;
-		}
-
-		if ( ! window.ResizeObserver ) {
-			setMasterbarHeight( masterbarElement.offsetHeight );
-			return;
-		}
-
-		let lastHeight = masterbarElement.offsetHeight;
-
-		const observer = new ResizeObserver(
-			( [ masterbar ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
-				const currentHeight = masterbar.contentRect.height;
-
-				if ( currentHeight !== lastHeight ) {
-					setMasterbarHeight( currentHeight );
-					lastHeight = currentHeight;
-				}
-			}
-		);
-
-		observer.observe( masterbarElement );
-
-		return () => {
-			observer.disconnect();
-		};
-	}, [] );
-
-	const asyncProps: PlanFeatures2023GridProps = {
-		paidDomainName,
-		wpcomFreeDomainSuggestion,
-		isInSignup,
-		isLaunchPage,
-		onUpgradeClick,
-		flowName,
-		selectedFeature,
-		selectedPlan,
-		siteId,
-		isReskinned,
-		intervalType,
-		hidePlansFeatureComparison,
-		hideUnavailableFeatures,
-		currentSitePlanSlug: sitePlanSlug,
-		planActionOverrides,
-		intent,
-		isCustomDomainAllowedOnFreePlan,
-		isGlobalStylesOnPersonal,
-		gridPlansForFeaturesGrid,
-		gridPlansForComparisonGrid,
-		showLegacyStorageFeature,
-		gridPlanForSpotlight,
-		showUpgradeableStorage,
-		stickyRowOffset: masterbarHeight,
-		usePricingMetaForGridPlans,
-		allFeaturesList: FEATURES_LIST,
-	};
-
-	const asyncPlanFeatures2023Grid = (
-		<AsyncLoad
-			require="calypso/my-sites/plan-features-2023-grid"
-			{ ...asyncProps }
-			planTypeSelectorProps={ planTypeSelectorProps }
-		/>
-	);
-
-	return (
-		<div
-			className={ classNames( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
-				'is-scrollable': plansWithScroll,
-			} ) }
-			data-e2e-plans="wpcom"
-		>
-			{ asyncPlanFeatures2023Grid }
-		</div>
 	);
 };
 
@@ -327,6 +212,10 @@ const PlansFeaturesMain = ( {
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const [ isFreeFreeUpsellOpen, setIsFreeFreeUpsellOpen ] = useState( false );
+	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
+	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
+	const translate = useTranslate();
+	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -348,16 +237,19 @@ const PlansFeaturesMain = ( {
 		!! paidDomainName
 	);
 	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
+	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
+	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
+	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 
-	let _customerType = chooseDefaultCustomerType( {
-		currentCustomerType: customerType,
-		selectedPlan,
-		currentPlan: { productSlug: currentPlan?.productSlug },
-	} );
-	// Make sure the plans for the default customer type can be purchased.
-	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
-		_customerType = 'business';
-	}
+	const toggleShowPlansComparisonGrid = () => {
+		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
+	};
+
+	const showDomainUpsellDialog = useCallback( () => {
+		setShowDomainUpsellDialog( true );
+	}, [ setShowDomainUpsellDialog ] );
+
+	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
 
 	const isDisplayingPlansNeededForFeature = () => {
 		if (
@@ -528,6 +420,16 @@ const PlansFeaturesMain = ( {
 			: wpcomFreeDomainSuggestion.result?.domain_name,
 	};
 
+	let _customerType = chooseDefaultCustomerType( {
+		currentCustomerType: customerType,
+		selectedPlan,
+		currentPlan: { productSlug: currentPlan?.productSlug },
+	} );
+	// Make sure the plans for the default customer type can be purchased.
+	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
+		_customerType = 'business';
+	}
+
 	const planTypeSelectorProps = {
 		basePlansPath,
 		isStepperUpgradeFlow,
@@ -544,7 +446,22 @@ const PlansFeaturesMain = ( {
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 	};
 
-	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const planActionOverrides: PlanActionOverrides | undefined =
+		sitePlanSlug && isFreePlan( sitePlanSlug )
+			? {
+					loggedInFreePlan: domainFromHomeUpsellFlow
+						? {
+								callback: showDomainUpsellDialog,
+								text: translate( 'Keep my plan', { context: 'verb' } ),
+						  }
+						: {
+								callback: () => {
+									page.redirect( `/add-ons/${ siteSlug }` );
+								},
+								text: translate( 'Manage add-ons', { context: 'verb' } ),
+						  },
+			  }
+			: undefined;
 
 	/**
 	 * The spotlight in smaller grids looks broken.
@@ -554,7 +471,68 @@ const PlansFeaturesMain = ( {
 	 * Eventually once the spotlight card is made responsive this flag can be removed.
 	 * Check : https://github.com/Automattic/wp-calypso/pull/80232 for more details.
 	 */
-	const isSpotlightOnCurrentPlanAllowed = SPOTLIGHT_ENABLED_INTENTS.includes( intent );
+	const gridPlanForSpotlight =
+		sitePlanSlug && isSpotlightOnCurrentPlan && SPOTLIGHT_ENABLED_INTENTS.includes( intent )
+			? gridPlansForFeaturesGrid.find(
+					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
+			  )
+			: undefined;
+
+	/**
+	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
+	 * for the sticky CTA bar.
+	 */
+	useLayoutEffect( () => {
+		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
+
+		if ( ! masterbarElement ) {
+			return;
+		}
+
+		if ( ! window.ResizeObserver ) {
+			setMasterbarHeight( masterbarElement.offsetHeight );
+			return;
+		}
+
+		let lastHeight = masterbarElement.offsetHeight;
+
+		const observer = new ResizeObserver(
+			( [ masterbar ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
+				const currentHeight = masterbar.contentRect.height;
+
+				if ( currentHeight !== lastHeight ) {
+					setMasterbarHeight( currentHeight );
+					lastHeight = currentHeight;
+				}
+			}
+		);
+
+		observer.observe( masterbarElement );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
+
+	useLayoutEffect( () => {
+		if ( showPlansComparisonGrid ) {
+			setTimeout( () => {
+				if ( plansComparisonGridRef.current ) {
+					scrollIntoViewport( plansComparisonGridRef.current, {
+						behavior: 'smooth',
+						scrollMode: 'if-needed',
+						block: 'nearest',
+						inline: 'nearest',
+					} );
+				}
+			} );
+		}
+	}, [ showPlansComparisonGrid ] );
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_wp_plans_test_view' );
+		retargetViewPlans();
+	}, [] );
 
 	return (
 		<div
@@ -626,39 +604,75 @@ const PlansFeaturesMain = ( {
 						} ) }
 				/>
 			) }
+			{ intent === 'plans-paid-media' && (
+				<FreePlanSubHeader>
+					{ translate(
+						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+							},
+						}
+					) }
+				</FreePlanSubHeader>
+			) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 			{ ! intentFromSiteMeta.processing && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
-					<OnboardingPricingGrid2023
-						gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
-						gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
-						paidDomainName={ paidDomainName }
-						wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
-						flowName={ flowName }
-						onUpgradeClick={ handleUpgradeClick }
-						selectedFeature={ selectedFeature }
-						selectedPlan={ selectedPlan }
-						withDiscount={ withDiscount }
-						discountEndDate={ discountEndDate }
-						siteId={ siteId }
-						plansWithScroll={ plansWithScroll }
-						isReskinned={ isReskinned }
-						intervalType={ intervalType }
-						planTypeSelectorProps={ planTypeSelectorProps }
-						hidePlansFeatureComparison={ hidePlansFeatureComparison }
-						hideUnavailableFeatures={ hideUnavailableFeatures }
-						sitePlanSlug={ sitePlanSlug }
-						siteSlug={ siteSlug }
-						intent={ intent }
-						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						showLegacyStorageFeature={ showLegacyStorageFeature }
-						isSpotlightOnCurrentPlan={ isSpotlightOnCurrentPlanAllowed && isSpotlightOnCurrentPlan }
-						showUpgradeableStorage={ showUpgradeableStorage }
-						isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
-					/>
+					<div
+						className={ classNames(
+							'plans-features-main__group',
+							'is-wpcom',
+							'is-2023-pricing-grid',
+							{
+								'is-scrollable': plansWithScroll,
+							}
+						) }
+						data-e2e-plans="wpcom"
+					>
+						<PlanFeatures2023Grid
+							gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
+							gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
+							gridPlanForSpotlight={ gridPlanForSpotlight }
+							paidDomainName={ paidDomainName }
+							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							onUpgradeClick={ handleUpgradeClick }
+							flowName={ flowName }
+							selectedFeature={ selectedFeature }
+							selectedPlan={ selectedPlan }
+							siteId={ siteId }
+							isReskinned={ isReskinned }
+							intervalType={ intervalType }
+							hidePlansFeatureComparison={ hidePlansFeatureComparison }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
+							currentSitePlanSlug={ sitePlanSlug }
+							planActionOverrides={ planActionOverrides }
+							intent={ intent }
+							isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
+							showLegacyStorageFeature={ showLegacyStorageFeature }
+							showUpgradeableStorage={ showUpgradeableStorage }
+							stickyRowOffset={ masterbarHeight }
+							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+							allFeaturesList={ FEATURES_LIST }
+							showOdie={ () => {
+								if ( ! isVisible ) {
+									trackEvent( 'calypso_odie_chat_toggle_visibility', {
+										visibility: true,
+										trigger: 'scroll',
+									} );
+									setIsVisible( true );
+								}
+							} }
+							showPlansComparisonGrid={ showPlansComparisonGrid }
+							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
+							planTypeSelectorProps={ planTypeSelectorProps }
+							ref={ plansComparisonGridRef }
+						/>
+					</div>
 				</>
 			) }
 		</div>

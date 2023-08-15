@@ -12,7 +12,7 @@ type NavigationItem = {
 
 type DomainHeaderProps = {
 	items: Array< NavigationItem >;
-	mobileItem: NavigationItem;
+	mobileItem?: NavigationItem;
 	buttons?: Array< ReactNode > | null;
 	mobileButtons?: Array< ReactNode > | null;
 	titleOverride?: ReactNode | null;

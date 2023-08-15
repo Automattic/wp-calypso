@@ -56,9 +56,9 @@
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/max-characters-filter": false,
 		"domains/kracken-ui/pagination": true,
+		"domains/management": false,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
-		"domains/redirect": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
@@ -210,10 +210,10 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"user-management-revamp": true,
+		"videopress-tv": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true,
-		"yolo/jetpack-error-ux-i1": true
+		"yolo/hosting-metrics-i1": true
 	}
 }
