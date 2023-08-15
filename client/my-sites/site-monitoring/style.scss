@@ -80,9 +80,6 @@
 	@include break-large {
 		flex-direction: row;
 	}
-	.pie-chart__chart-drawing-empty {
-		fill: var(--studio-gray-5);
-	}
 }
 
 .site-monitoring-cache-pie-chart {
