@@ -179,7 +179,7 @@ export const SiteMonitoringLineChart = ( {
 					size: 50,
 					stroke: '#787C82',
 					grid: {
-						stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
+						stroke: '#DCDCDE',
 						width: 1,
 					},
 					ticks: {
