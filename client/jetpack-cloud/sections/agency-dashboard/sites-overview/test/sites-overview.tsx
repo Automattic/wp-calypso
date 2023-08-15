@@ -47,7 +47,6 @@ describe( '<SitesOverview>', () => {
 		filter: { issueTypes: [], showOnlyFavorites: false },
 		selectedSites: [],
 		sort: { field: 'url', direction: 'asc' },
-		isLargeScreen: true,
 	};
 
 	const queryClient = new QueryClient();
