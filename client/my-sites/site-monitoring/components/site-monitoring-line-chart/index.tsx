@@ -99,11 +99,14 @@ function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
 		return [
 			{
 				scale,
+				side: 3,
 				grid: {
 					show: false,
 				},
 				ticks: {
-					show: false,
+					stroke: '#646970',
+					width: 1,
+					size: 3,
 				},
 			},
 		];
@@ -172,7 +175,6 @@ export const SiteMonitoringLineChart = ( {
 					gap: 8,
 					space: 40,
 					size: 50,
-					side: extraScale.length ? 1 : undefined,
 					grid: {
 						stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
 						width: 1,
