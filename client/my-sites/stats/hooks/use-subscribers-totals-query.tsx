@@ -68,7 +68,7 @@ export default function useSubscribersTotalsQueries( siteId: number | null ) {
 				queries[ 1 ]?.data?.email_subscribers !== undefined &&
 				queries[ 1 ]?.data?.paid_subscribers !== undefined
 					? queries[ 1 ].data.email_subscribers - queries[ 1 ].data.paid_subscribers
-					: 0,
+					: null,
 			social_followers: queries[ 1 ]?.data?.social_followers,
 		},
 		isLoading: queries.some( ( result ) => result.isLoading ),
