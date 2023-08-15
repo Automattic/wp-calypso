@@ -211,7 +211,7 @@ const PlansFeaturesMain = ( {
 	isSpotlightOnCurrentPlan,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
-	const [ isFreeFreeUpsellOpen, setIsFreeFreeUpsellOpen ] = useState( false );
+	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
@@ -296,7 +296,7 @@ const PlansFeaturesMain = ( {
 				return;
 			}
 			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
-				setIsFreeFreeUpsellOpen( true );
+				setIsFreePlanFreeDomainDialogOpen( true );
 				return;
 			}
 		}
@@ -570,11 +570,11 @@ const PlansFeaturesMain = ( {
 					} }
 				/>
 			) }
-			{ isFreeFreeUpsellOpen && (
+			{ isFreePlanFreeDomainDialogOpen && (
 				<FreePlanFreeDomainDialog
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					freeSubdomain={ resolvedSubdomainName }
-					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
+					onClose={ () => setIsFreePlanFreeDomainDialogOpen( false ) }
 					onFreePlanSelected={ () => {
 						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );

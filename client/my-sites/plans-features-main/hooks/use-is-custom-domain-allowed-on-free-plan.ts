@@ -6,7 +6,7 @@ const useIsCustomDomainAllowedOnFreePlan = (
 	flowName?: string | null,
 	domainName?: string
 ): DataResponse< boolean > => {
-	const [ isLoadingAssignment, experimentAssignment ] = useExperiment(
+	const [ isLoadingBlogAllowExperiment, assignmentDotBlogAllowExperiment ] = useExperiment(
 		'calypso_onboarding_plans_dotblog_on_free_plan_202307',
 		{
 			isEligible:
@@ -14,9 +14,15 @@ const useIsCustomDomainAllowedOnFreePlan = (
 		}
 	);
 
+	const [ isLoadingAnyDomainExperiment, assignmentAnyDomainExperiment ] = useExperiment( '<TBD>', {
+		isEligible: flowName === 'onboarding-pm' && domainName != null,
+	} );
+
 	return {
-		isLoading: isLoadingAssignment,
-		result: experimentAssignment?.variationName === 'treatment',
+		isLoading: isLoadingAnyDomainExperiment || isLoadingBlogAllowExperiment,
+		result:
+			assignmentDotBlogAllowExperiment?.variationName === 'treatment' ||
+			assignmentAnyDomainExperiment?.variationName === 'treatment',
 	};
 };
 
