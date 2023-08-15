@@ -219,17 +219,21 @@ function getConfig( {
 		type: 'file',
 		title: 'Squarespace',
 		icon: 'squarespace',
-		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					importerName: 'Squarespace',
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
+		description: (
+			<p>
+				{ translate(
+					'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: {
+							importerName: 'Squarespace',
+							siteTitle,
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
 		),
 		uploadDescription: translate(
 			'A %(importerName)s export file is an XML file ' +
