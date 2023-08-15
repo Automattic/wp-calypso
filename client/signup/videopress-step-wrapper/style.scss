@@ -414,6 +414,9 @@
 
 	.videopress-step-wrapper__middle .videopress-step-wrapper__header-text {
 		font-family: inherit;
+		font-size: rem(38px); //typography-exception
+		font-weight: 700;
+		letter-spacing: -0.02em;
 	}
 }
 
