@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import cx from 'classnames';
 import { useEffect } from 'react';
@@ -61,6 +62,23 @@ const Message = styled.div< { isPlansStep: boolean } >`
 	}
 `;
 
+const LimitedTimeOfferNudgeMessage = styled.div< { isPlansStep: boolean } >`
+	position: relative;
+	font-size: 0.875rem;
+	margin-bottom: 9px;
+	width: 100%;
+
+	.button {
+		position: relative;
+		left: 1.5em;
+		right: auto;
+		min-width: 92px;
+	}
+	.banner__icon-circle {
+		background-color: var( --color-accent );
+	}
+`;
+
 const Text = styled.p< Pick< NudgeProps, 'path' > >`
 	white-space: pre-wrap;
 	text-indent: -1.5em;
@@ -73,6 +91,17 @@ function slugify( text: string ) {
 		.toLowerCase()
 		.replace( /[^a-z0-9]+/g, '-' )
 		.replace( /^-+|-+$/g, '' );
+}
+
+function renderCTAButton( msg: any ) {
+	if ( msg.buttonText && msg.buttonLink ) {
+		return (
+			<Button className="button is-compact is-primary" href={ msg.buttonLink } target="_blank">
+				{ msg.buttonText }
+			</Button>
+		);
+	}
+	return null;
 }
 
 export default function MarketingMessage( { siteId, useMockData, ...props }: NudgeProps ) {
@@ -91,14 +120,40 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 
 	return (
 		<Container path={ props.path } className={ classNames } role="status">
-			{ messages.map( ( msg ) => (
-				<Message key={ msg.id } isPlansStep={ props.path === 'signup/plans' }>
-					<Text path={ props.path }>{ msg.text }</Text>
-					<Button compact borderless onClick={ () => removeMessage( msg.id ) }>
-						<Gridicon icon="cross" size={ 24 } />
-					</Button>
-				</Message>
-			) ) }
+			{ messages.map( ( msg ) =>
+				msg.id === 'limited_time_offer' ? (
+					<LimitedTimeOfferNudgeMessage
+						key={ msg.id }
+						isPlansStep={ props.path === 'signup/plans' }
+					>
+						<a
+							href={ msg.buttonLink }
+							className={ cx( 'card banner upsell-nudge is-card-link is-clickable' ) }
+						>
+							<div className="banner__icons">
+								<div className="banner__icon-circle">
+									<Gridicon icon="star" size={ isMobile() ? 24 : 18 } />
+								</div>
+							</div>
+							<div className="banner__content">
+								<div className="banner__info">
+									<div className="banner__title">
+										<b>{ msg.text }</b>
+									</div>
+								</div>
+							</div>
+							{ renderCTAButton( msg ) }
+						</a>
+					</LimitedTimeOfferNudgeMessage>
+				) : (
+					<Message key={ msg.id } isPlansStep={ props.path === 'signup/plans' }>
+						<Text path={ props.path }>{ msg.text }</Text>
+						<Button compact borderless onClick={ () => removeMessage( msg.id ) }>
+							<Gridicon icon="cross" size={ 24 } />
+						</Button>
+					</Message>
+				)
+			) }
 		</Container>
 	);
 }
