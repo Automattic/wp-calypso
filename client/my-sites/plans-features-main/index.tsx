@@ -11,10 +11,11 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
+import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate, translate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -70,6 +71,23 @@ import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
 
+const FreePlanSubHeader = styled.p`
+	margin: -32px 0 40px 0;
+	color: var( --studio-gray-60 );
+	font-size: 1rem;
+	text-align: center;
+	button.is-borderless {
+		font-weight: 500;
+		color: var( --studio-gray-90 );
+		text-decoration: underline;
+		font-size: 16px;
+		padding: 0;
+	}
+	@media ( max-width: 960px ) {
+		margin-top: -16px;
+	}
+`;
+
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -94,12 +112,36 @@ export interface PlansFeaturesMainProps {
 	withDiscount?: string;
 	discountEndDate?: Date;
 	hidePlansFeatureComparison?: boolean;
-	hideFreePlan?: boolean; // to be deprecated
-	hidePersonalPlan?: boolean; // to be deprecated
-	hidePremiumPlan?: boolean; // to be deprecated
-	hideBusinessPlan?: boolean; // to be deprecated
-	hideEcommercePlan?: boolean; // to be deprecated
-	hideEnterprisePlan?: boolean; // to be deprecated
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideFreePlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hidePersonalPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hidePremiumPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideBusinessPlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideEcommercePlan?: boolean;
+
+	/**
+	 * @deprecated use intent mechanism instead
+	 */
+	hideEnterprisePlan?: boolean;
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
@@ -561,6 +603,18 @@ const PlansFeaturesMain = ( {
 							},
 						} ) }
 				/>
+			) }
+			{ intent === 'plans-paid-media' && (
+				<FreePlanSubHeader>
+					{ translate(
+						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+							},
+						}
+					) }
+				</FreePlanSubHeader>
 			) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 			{ ! intentFromSiteMeta.processing && (

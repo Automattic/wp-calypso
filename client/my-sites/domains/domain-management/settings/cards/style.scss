@@ -92,6 +92,7 @@
 }
 
 // TODO: This should be extracted into a new component
+.domain-redirect-card-notice,
 .custom-name-servers-notice {
 	flex-basis: 100%;
 	background-color: var(--studio-gray-0);
@@ -111,6 +112,10 @@
 		font-size: $font-body-small;
 		color: var(--studio-gray-80);
 	}
+}
+
+.domain-redirect-card-notice {
+	margin-bottom: 16px;
 }
 
 .site-redirect-card__explanation,

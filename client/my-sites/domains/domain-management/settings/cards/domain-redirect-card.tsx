@@ -1,5 +1,5 @@
 import { Button, FormInputValidation } from '@automattic/components';
-import { Icon, trash } from '@wordpress/icons';
+import { Icon, trash, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -10,6 +10,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { withoutHttp } from 'calypso/lib/url';
+import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import {
 	closeDomainRedirectNotice,
 	fetchDomainRedirect,
@@ -24,12 +25,13 @@ interface DomainRedirectCardProps {
 	domainName: string;
 	redirect?: ReturnType< typeof getDomainRedirect >;
 	target?: string;
+	nameservers: string[] | null;
 }
 
 type PropsFromRedux = ConnectedProps< typeof connector >;
 
 const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) => {
-	const { redirect, target } = props;
+	const { redirect, target, nameservers } = props;
 	const { isUpdating, isFetching, isFetched } = redirect;
 	const [ targetUrl, setTargetUrl ] = useState( target ?? '' );
 	const [ protocol, setProtocol ] = useState( redirect.isSecure ? 'https' : 'http' );
@@ -132,6 +134,36 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 		setProtocol( event.currentTarget.value );
 	};
 
+	const hasWpcomNameservers = () => {
+		if ( ! nameservers || nameservers.length === 0 ) {
+			return false;
+		}
+
+		return nameservers.every( ( nameserver ) => {
+			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
+
+	const renderNotice = () => {
+		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+			return null;
+		}
+
+		return (
+			<div className="domain-redirect-card-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="domain-redirect-card-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="domain-redirect-card-notice__message">
+					{ translate( 'You are not currently using WordPress.com name servers.' ) }
+				</div>
+			</div>
+		);
+	};
+
 	const prefix = (
 		<>
 			<FormSelect
@@ -160,38 +192,44 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 	);
 
 	return (
-		<form onSubmit={ handleSubmit }>
-			<FormFieldset className="domain-redirect-card__fields">
-				<FormTextInputWithAffixes
-					disabled={ isFetching || isUpdating }
-					name="destination"
-					noWrap
-					onChange={ handleChange }
-					prefix={ prefix }
-					value={ targetUrl }
-					suffix={ suffix }
-					id="domain-redirect__input"
-					className={ classNames( { 'is-error': ! isValidUrl } ) }
-				/>
-			</FormFieldset>
-			<p className="domain-redirect-card__error-field">
-				{ ! isValidUrl ? (
-					<FormInputValidation isError={ true } text={ translate( 'Please enter a valid URL.' ) } />
-				) : (
-					' '
-				) }
-			</p>
-			<FormButton
-				disabled={
-					! isValidUrl ||
-					isFetching ||
-					isUpdating ||
-					( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
-				}
-			>
-				{ translate( 'Save' ) }
-			</FormButton>
-		</form>
+		<>
+			{ renderNotice() }
+			<form onSubmit={ handleSubmit }>
+				<FormFieldset className="domain-redirect-card__fields">
+					<FormTextInputWithAffixes
+						disabled={ isFetching || isUpdating }
+						name="destination"
+						noWrap
+						onChange={ handleChange }
+						prefix={ prefix }
+						value={ targetUrl }
+						suffix={ suffix }
+						id="domain-redirect__input"
+						className={ classNames( { 'is-error': ! isValidUrl } ) }
+					/>
+				</FormFieldset>
+				<p className="domain-redirect-card__error-field">
+					{ ! isValidUrl ? (
+						<FormInputValidation
+							isError={ true }
+							text={ translate( 'Please enter a valid URL.' ) }
+						/>
+					) : (
+						' '
+					) }
+				</p>
+				<FormButton
+					disabled={
+						! isValidUrl ||
+						isFetching ||
+						isUpdating ||
+						( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
+					}
+				>
+					{ translate( 'Save' ) }
+				</FormButton>
+			</form>
+		</>
 	);
 };
 
