@@ -639,6 +639,7 @@ export default function CampaignItemDetails( props: Props ) {
 											</Button>
 										) }
 										<Button
+											className="contact-support-button"
 											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
 											target="_blank"
 										>
