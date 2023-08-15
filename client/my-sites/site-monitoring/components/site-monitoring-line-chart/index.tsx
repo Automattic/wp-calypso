@@ -128,6 +128,7 @@ export const SiteMonitoringLineChart = ( {
 	const localTz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	const options = useMemo( () => {
+		const extraScale = addExtraScaleIfDefined( series );
 		const defaultOptions: uPlot.Options = {
 			class: 'calypso-uplot-chart',
 			...chartDimensions,
@@ -168,10 +169,10 @@ export const SiteMonitoringLineChart = ( {
 				},
 				{
 					// y-axis
-					side: 1, // sets y axis side to left
 					gap: 8,
 					space: 40,
 					size: 50,
+					side: extraScale.length ? 1 : undefined,
 					grid: {
 						stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
 						width: 1,
@@ -180,7 +181,7 @@ export const SiteMonitoringLineChart = ( {
 						show: false,
 					},
 				},
-				...addExtraScaleIfDefined( series ),
+				...extraScale,
 			],
 			cursor: {
 				x: false,
