@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, Fragment, useEffect } from 'react';
+import { useCallback, useMemo, Fragment } from 'react';
 import * as React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
@@ -149,21 +149,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		return [];
 	};
 
-	useEffect( () => {
-		const menuBtns = document.querySelectorAll( '.js-menu-btn' ) as NodeListOf< Element >;
-
-		Array.from( menuBtns ).forEach( ( btn ) => {
-			const menu = btn?.parentNode?.querySelector( '.js-menu' ) as HTMLDivElement;
-
-			if ( ! menu ) {
-				return;
-			}
-
-			menu.classList.add( 'js' );
-			menu.hidden = true;
-		} );
-	}, [ menuDataStatus ] );
-
 	useSubmenuBtn();
 	useUserMenu();
 	useMobileBtn();
@@ -231,7 +216,12 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 															{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
 														</MainMenuTag>
 														{ hasChildren && (
-															<div id={ id } className="header__submenu js-menu" tabIndex={ -1 }>
+															<div
+																id={ id }
+																className="header__submenu js-menu js"
+																tabIndex={ -1 }
+																hidden
+															>
 																<div className="header__submenu-content">
 																	<div className="header__submenu-wrapper">
 																		<button className="header__back-btn js-menu-back">
