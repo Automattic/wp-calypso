@@ -49,9 +49,10 @@ const getCheckoutBackUrl = ( {
 
 	// Use full URL even though redirecting on Calypso.
 	if ( ! isFromWPAdmin ) {
-		return window.location.origin + isFromPlansPage
-			? `/plans/${ siteSlug }`
-			: `/stats/day/${ siteSlug }`;
+		return (
+			window.location.origin +
+			( isFromPlansPage ? `/plans/${ siteSlug }` : `/stats/day/${ siteSlug }` )
+		);
 	}
 
 	const checkoutBackPath = isFromMyJetpack ? 'admin.php?page=my-jetpack' : 'admin.php?page=stats';
