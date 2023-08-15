@@ -19,5 +19,4 @@ body:
     attributes:
       label: Context
       description: Provide more context as applicable.
-      placeholder: |
-            e.g. OS: ubuntu
+      placeholder: 'e.g. OS: ubuntu'
