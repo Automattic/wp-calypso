@@ -33,8 +33,6 @@ import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
-	getThemeShowcaseDescription,
-	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
@@ -52,7 +50,9 @@ import ThemePreview from './theme-preview';
 import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
+import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
+import useThemeShowcaseTitle from './use-theme-showcase-title';
 import './theme-showcase.scss';
 
 const optionShape = PropTypes.shape( {
@@ -81,12 +81,8 @@ function ThemeShowcaseHeader( { canonicalUrl, filter, tier, vertical } ) {
 	// eslint-disable-next-line no-shadow
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const description = useSelector( ( state ) =>
-		getThemeShowcaseDescription( state, { filter, tier, vertical } )
-	);
-	const title = useSelector( ( state ) =>
-		getThemeShowcaseTitle( state, { filter, tier, vertical } )
-	);
+	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
+	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
 	const {
 		title: documentHeadTitle,
@@ -638,7 +634,7 @@ class ThemeShowcase extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+const mapStateToProps = ( state, { siteId, filter } ) => {
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
@@ -646,8 +642,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
-		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
