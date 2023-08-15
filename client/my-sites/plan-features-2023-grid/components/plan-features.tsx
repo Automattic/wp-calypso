@@ -74,18 +74,16 @@ const PlanFeatures: React.FC< {
 					/>
 					{ jetpackFeatures.length !== 0 && (
 						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-							<span className="plan-features-2023-grid__jp-logo-hover-area-expander">
-								<Plans2023Tooltip
-									text={ translate(
-										'Security, performance and growth tools made by the WordPress experts.'
-									) }
-									setActiveTooltipId={ setActiveTooltipId }
-									activeTooltipId={ activeTooltipId }
-									id={ `${ planSlug }-jp-logo-${ mapIndex }` }
-								>
-									<JetpackLogo size={ 16 } />
-								</Plans2023Tooltip>
-							</span>
+							<Plans2023Tooltip
+								text={ translate(
+									'Security, performance and growth tools made by the WordPress experts.'
+								) }
+								setActiveTooltipId={ setActiveTooltipId }
+								activeTooltipId={ activeTooltipId }
+								id={ `${ planSlug }-jp-logo-${ mapIndex }` }
+							>
+								<JetpackLogo size={ 16 } />
+							</Plans2023Tooltip>
 						</div>
 					) }
 					<PlanFeatures2023GridFeatures
