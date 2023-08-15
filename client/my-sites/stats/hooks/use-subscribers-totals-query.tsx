@@ -34,9 +34,9 @@ const selectPaidSubscribers = ( payload: {
 	};
 } ) => {
 	return {
-		email_subscribers: payload?.counts?.email_subscribers || 0,
-		paid_subscribers: payload?.counts?.paid_subscribers || 0,
-		social_followers: payload?.counts?.social_followers || 0,
+		email_subscribers: payload?.counts?.email_subscribers,
+		paid_subscribers: payload?.counts?.paid_subscribers,
+		social_followers: payload?.counts?.social_followers,
 	};
 };
 
