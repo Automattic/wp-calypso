@@ -81,6 +81,9 @@ const FreePlanSubHeader = styled.p`
 		font-size: 16px;
 		padding: 0;
 	}
+	@media ( max-width: 960px ) {
+		margin-top: -16px;
+	}
 `;
 
 export interface PlansFeaturesMainProps {
