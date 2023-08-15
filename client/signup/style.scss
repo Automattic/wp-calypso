@@ -889,13 +889,9 @@ body.is-section-signup .is-gravatar {
 	height: 100%;
 	background-color: #e7e9ea;
 
-	.layout__content {
-		padding-top: 36px;
-	}
-
 	@include break-small {
 		.layout__content {
-			padding-top: 70px;
+			padding-top: 75px;
 		}
 	}
 }
