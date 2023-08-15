@@ -162,19 +162,19 @@ const useSuccessHttpCodeSeries = () => {
 		{
 			statusCode: 200,
 			fill: 'rgba(104, 179, 232, 0.1)',
-			label: __( 'HTTP 200: OK Response' ),
+			label: __( '200: OK Response' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 		},
 		{
 			statusCode: 301,
 			fill: 'rgba(227, 174, 212, 0.1)',
-			label: __( 'HTTP 301: Moved Permanently' ),
+			label: __( '301: Moved Permanently' ),
 			stroke: 'rgba(227, 174, 212, 1)',
 		},
 		{
 			statusCode: 302,
 			fill: 'rgba(9, 181, 133, 0.1)',
-			label: __( 'HTTP 302: Moved Temporarily' ),
+			label: __( '302: Moved Temporarily' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 		},
 	];
@@ -188,31 +188,31 @@ const useErrorHttpCodeSeries = () => {
 		{
 			statusCode: 400,
 			fill: 'rgba(242, 215, 107, 0.1)',
-			label: __( 'HTTP 400: Bad Request' ),
+			label: __( '400: Bad Request' ),
 			stroke: 'rgba(242, 215, 107, 1)',
 		},
 		{
 			statusCode: 401,
 			fill: 'rgba(227, 174, 212, 0.1)',
-			label: __( 'HTTP 401: Unauthorized Request' ),
+			label: __( '401: Unauthorized Request' ),
 			stroke: 'rgba(227, 174, 212, 1)',
 		},
 		{
 			statusCode: 403,
 			fill: 'rgba(104, 179, 232, 0.1)',
-			label: __( 'HTTP 403: Forbidden Request' ),
+			label: __( '403: Forbidden Request' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 		},
 		{
 			statusCode: 404,
 			fill: 'rgba(9, 181, 133, 0.1)',
-			label: __( 'HTTP 404: Not Found Request' ),
+			label: __( '404: Not Found Request' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 		},
 		{
 			statusCode: 500,
 			fill: 'rgba(235, 101, 148, 0.1)',
-			label: __( 'HTTP 500: Internal server error' ),
+			label: __( '500: Internal server error' ),
 			stroke: 'rgba(235, 101, 148, 1)',
 		},
 	];
