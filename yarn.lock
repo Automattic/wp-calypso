@@ -445,6 +445,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-sentry@workspace:^, @automattic/calypso-sentry@workspace:packages/calypso-sentry":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-sentry@workspace:packages/calypso-sentry"
+  dependencies:
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@sentry/react": ^7.54.0
+    tslib: ^2.3.0
+    typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-storybook@workspace:^, @automattic/calypso-storybook@workspace:packages/calypso-storybook":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-storybook@workspace:packages/calypso-storybook"
@@ -11117,6 +11129,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
+    "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/color-studio": 2.5.0
@@ -11167,7 +11180,6 @@ __metadata:
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@github/webauthn-json": ^0.4.1
-    "@sentry/react": ^7.54.0
     "@sentry/webpack-plugin": ^1.18.8
     "@storybook/addon-actions": ^7.0.18
     "@stripe/react-stripe-js": ^2.1.0
@@ -29629,6 +29641,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^4.7.4":
+  version: 4.9.5
+  resolution: "typescript@npm:4.9.5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 5f6cad2e728a8a063521328e612d7876e12f0d8a8390d3b3aaa452a6a65e24e9ac8ea22beb72a924fd96ea0a49ea63bb4e251fb922b12eedfb7f7a26475e5c56
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^5.1.6":
   version: 5.1.6
   resolution: "typescript@npm:5.1.6"
@@ -29636,6 +29658,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 45ac28e2df8365fd28dac42f5d62edfe69a7203d5ec646732cadc04065331f34f9078f81f150fde42ed9754eed6fa3b06a8f3523c40b821e557b727f1992e025
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
+  version: 4.9.5
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=a1c5e5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 897c8ac656e01b132fa82be6a8e34c4507b19be63dbf1ff1d8287d775519081a7c91dd0ca3ec62536c8137228141d65b238dfb2e8987a3f5182818f58f83e7d7
   languageName: node
   linkType: hard
 
