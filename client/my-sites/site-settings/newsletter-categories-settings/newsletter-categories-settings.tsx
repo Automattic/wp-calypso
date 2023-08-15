@@ -1,19 +1,16 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
-import { useNewsletterCategoriesQuery } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useNewsletterCategoriesSettings from './use-newsletter-categories-settings';
 import './style.scss';
 
 const NewsletterCategoriesSettings = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const { data } = useNewsletterCategoriesQuery( { siteId } );
-	const newsletterCategoryIds = useMemo(
-		() => data?.newsletterCategories?.map( ( { id } ) => id ) ?? [],
-		[ data ]
-	);
+	const { newsletterCategoryIds, handleCategoryToggle, handleSave } =
+		useNewsletterCategoriesSettings( siteId );
 
 	return (
 		<div className="newsletter-categories-settings">
@@ -26,10 +23,18 @@ const NewsletterCategoriesSettings = () => {
 				addTerm={ true }
 				multiple={ true }
 				selected={ newsletterCategoryIds }
-				onChange={ () => undefined }
-				onAddTermSuccess={ () => undefined }
+				onChange={ handleCategoryToggle }
+				onAddTermSuccess={ handleCategoryToggle }
 				height={ 218 }
 			/>
+
+			<Button
+				primary
+				className="newsletter-categories-settings__save-button"
+				onClick={ handleSave }
+			>
+				{ translate( 'Save settings' ) }
+			</Button>
 		</div>
 	);
 };
