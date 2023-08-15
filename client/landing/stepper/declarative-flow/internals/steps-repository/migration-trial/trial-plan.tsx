@@ -134,9 +134,10 @@ const TrialPlan = function ( props: Props ) {
 
 				<div className="trial-plan--details-limitation">
 					<img src={ clockIcon } alt={ __( 'Limit' ) } />
-					<strong>{ __( 'Trial limitations' ) }</strong>
 					<p>
-						<small>No custom domains, 100 subscribers, no SSH or SFTP access</small>
+						<strong>{ __( 'Trial limitations' ) }</strong>
+						<br />
+						<small>{ __( 'No custom domains, 100 subscribers, no SSH or SFTP access' ) }</small>
 					</p>
 				</div>
 
