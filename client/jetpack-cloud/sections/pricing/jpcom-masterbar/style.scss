@@ -567,8 +567,7 @@
 		background: rgba(16, 21, 23, 0.85);
 		backdrop-filter: blur(8px);
 		animation-name: submenu-backdrop;
-		animation-duration: 0.3s;
-		animation-delay: calc(0.1s / 1.5);
+		animation-duration: 0.1s;
 	}
 	@media ( max-width: 900px ) {
 		.header__submenu::before {

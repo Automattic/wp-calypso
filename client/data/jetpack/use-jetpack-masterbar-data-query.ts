@@ -27,6 +27,7 @@ const useJetpackMasterbarDataQuery = (): UseQueryResult< MasterbarData > => {
 				apiNamespace: 'wpcom/v2',
 			} ),
 		refetchOnWindowFocus: false,
+		cacheTime: 0,
 	} );
 };
 
