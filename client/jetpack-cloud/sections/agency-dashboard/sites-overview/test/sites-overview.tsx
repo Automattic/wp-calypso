@@ -18,16 +18,6 @@ const mockedIsWithinBreakpoint = isWithinBreakpoint as jest.MockedFunction<
 	typeof isWithinBreakpoint
 >;
 
-window.IntersectionObserver = jest.fn( () => ( {
-	observe: jest.fn(),
-	disconnect: jest.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: jest.fn(),
-	unobserve: jest.fn(),
-} ) );
-
 describe( '<SitesOverview>', () => {
 	const initialState = {
 		sites: {},
@@ -84,6 +74,18 @@ describe( '<SitesOverview>', () => {
 		];
 		queryClient.setQueryData( queryKey, data );
 	};
+
+	beforeAll( () => {
+		window.IntersectionObserver = jest.fn( () => ( {
+			observe: jest.fn(),
+			disconnect: jest.fn(),
+			root: null,
+			rootMargin: '',
+			thresholds: [],
+			takeRecords: jest.fn(),
+			unobserve: jest.fn(),
+		} ) );
+	} );
 
 	beforeEach( () => {
 		//some tests manipulate the store, so we need to reset it
