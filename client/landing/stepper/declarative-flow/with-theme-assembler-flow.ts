@@ -2,6 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
 import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { parse } from 'qs';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
@@ -17,6 +18,7 @@ import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
+const queryString = window.location.search.substring( 1 );
 
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
@@ -39,6 +41,9 @@ const withThemeAssemblerFlow: Flow = {
 				return;
 			}
 
+			const queryParams = parse( queryString );
+			const patternIds = queryParams.pattern_ids ? queryParams.pattern_ids.split( ',' ) : [];
+
 			setSelectedDesign( {
 				...selectedDesign,
 				slug: theme.id,
@@ -46,12 +51,13 @@ const withThemeAssemblerFlow: Flow = {
 				recipe: {
 					...selectedDesign?.recipe,
 					stylesheet: theme.stylesheet,
+					pattern_ids: patternIds,
 				},
 				design_type: 'assembler',
 			} );
 
 			setIntent( SiteIntent.WithThemeAssembler );
-		}, [ theme ] );
+		}, [ theme, queryString ] );
 	},
 
 	useSteps() {
