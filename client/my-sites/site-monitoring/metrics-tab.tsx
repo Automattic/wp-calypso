@@ -4,7 +4,9 @@ import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
+import { FirstChartTooltip } from './components/site-monitoring-line-chart/line-chart-tooltip';
 import { timeHighlightPlugin } from './components/site-monitoring-line-chart/time-highlight-plugin';
+import { tooltipsPlugin } from './components/site-monitoring-line-chart/uplot-tooltip-plugin';
 import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
@@ -264,29 +266,31 @@ export const MetricsTab = () => {
 				<div className="site-monitoring-time-controls__title">{ dateRange }</div>
 				<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			</div>
-			<SiteMonitoringLineChart
-				timeRange={ timeRange }
-				title={ __( 'Server performance' ) }
-				subtitle={ __( 'Requests per minute and average server response time' ) }
-				data={ formattedData as uPlot.AlignedData }
-				series={ [
-					{
-						fill: 'rgba(6, 117, 196, 0.1)',
-						label: __( 'Requests per minute' ),
-						stroke: '#0675C4',
-					},
-					{
-						fill: 'rgba(0, 135, 99, 0.2)',
-						label: __( 'Average response time (ms)' ),
-						stroke: '#008763',
-						scale: 'average-response-time',
-					},
-				] }
-				isLoading={ isLoadingLineChart }
-				options={ {
-					plugins: [ timeHighlightPlugin( 'auto' ) ],
-				} }
-			></SiteMonitoringLineChart>
+			<div>
+				<SiteMonitoringLineChart
+					timeRange={ timeRange }
+					title={ __( 'Server performance' ) }
+					subtitle={ __( 'Requests per minute and average server response time' ) }
+					data={ formattedData as uPlot.AlignedData }
+					series={ [
+						{
+							fill: 'rgba(6, 117, 196, 0.1)',
+							label: __( 'Requests per minute' ),
+							stroke: '#0675C4',
+						},
+						{
+							fill: 'rgba(0, 135, 99, 0.2)',
+							label: __( 'Average response time (ms)' ),
+							stroke: '#008763',
+							scale: 'average-response-time',
+						},
+					] }
+					isLoading={ isLoadingLineChart }
+					options={ {
+						plugins: [ timeHighlightPlugin( 'auto' ), tooltipsPlugin( FirstChartTooltip ) ],
+					} }
+				></SiteMonitoringLineChart>
+			</div>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
 					title={ __( 'Cache efficiency' ) }
