@@ -886,51 +886,13 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	}
 }
 
-body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
-	.signup__step.is-user .signup-form.is-horizontal {
-		p.signup-form__social-buttons-tos {
-			font-size: 0.875rem;
-		}
+body.is-section-signup .is-gravatar {
+	height: 100%;
+	background-color: #e7e9ea;
 
-		@include break-small {
-			.signup-form__social {
-				position: relative;
-				display: flex;
-				justify-content: center;
-				width: 100%;
-				padding-bottom: 62px;
-			}
-
-			.social-buttons__button {
-				text-align: unset;
-			}
-
-			p.signup-form__social-buttons-tos {
-				position: absolute;
-				left: 0;
-				bottom: 0;
-			}
-		}
-
-		@include break-medium {
-			.signup-form__social {
-				justify-content: start;
-				padding-bottom: 0;
-			}
-
-			.signup-form__social-buttons {
-				transform: translateY(40px);
-			}
-
-			p.signup-form__social-buttons-tos {
-				position: unset;
-			}
-		}
-
-		@include break-large {
-			.signup-form__social-buttons {
-				transform: translateY(30px);
-			}
+	@include break-small {
+		.layout__content {
+			padding-top: 80px;
 		}
 	}
 }
