@@ -4,5 +4,5 @@ import type { AppState } from 'calypso/types';
 export default function wasBusinessTrialSite( state: AppState, siteId: number ) {
 	const site = getRawSite( state, siteId );
 
-	return site?.plan?.is_free && site?.was_migration_trial;
+	return site?.was_migration_trial;
 }
