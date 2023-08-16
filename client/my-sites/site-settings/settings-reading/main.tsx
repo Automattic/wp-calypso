@@ -45,6 +45,8 @@ type Fields = {
 	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
+	date_format?: string;
+	timezone_string?: string;
 };
 
 const getFormSettings = ( settings: unknown & Fields ) => {
@@ -69,6 +71,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
+		date_format,
+		timezone_string,
 	} = settings;
 
 	return {
@@ -88,6 +92,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
+		date_format: date_format,
+		timezone_string: timezone_string,
 	};
 };
 
