@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { CAPTURE_URL_RGX_SOFT } from 'calypso/blocks/import/util';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -36,6 +37,7 @@ export default function DomainRedirectCard( {
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	// Display success notices when the redirect is updated
 	const { updateDomainRedirect } = useUpdateDomainRedirectMutation( domainName, {
@@ -103,27 +105,27 @@ export default function DomainRedirectCard( {
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
 
-		if ( event.target.value.length === 0 ) {
-			setIsValidUrl( true );
+		if (
+			event.target.value.length > 0 &&
+			! CAPTURE_URL_RGX_SOFT.test( protocol + '://' + event.target.value )
+		) {
+			setIsValidUrl( false );
+			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			return;
 		}
 
 		try {
-			// Use an invalid origin as the URL(,base), if the URL is valid it will be
-			// replaced with the correct origin.
-			const url = new URL( protocol + '://' + event.target.value, 'https://_domain_.invalid' );
-			if ( url.origin === 'https://_domain_.invalid' ) {
-				setIsValidUrl( false );
-				return;
-			}
+			const url = new URL( protocol + '://' + event.target.value );
 
 			// Disallow subdomain redirects to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain redirects (for now, this may change in the future)
 			if ( url.hostname === domainName || url.hostname.endsWith( `.${ domainName }` ) ) {
+				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
 				setIsValidUrl( false );
 				return;
 			}
 		} catch ( e ) {
+			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			setIsValidUrl( false );
 			return;
 		}
@@ -248,14 +250,7 @@ export default function DomainRedirectCard( {
 					/>
 				</FormFieldset>
 				<p className="domain-redirect-card__error-field">
-					{ ! isValidUrl ? (
-						<FormInputValidation
-							isError={ true }
-							text={ translate( 'Please enter a valid URL.' ) }
-						/>
-					) : (
-						' '
-					) }
+					{ ! isValidUrl ? <FormInputValidation isError={ true } text={ errorMessage } /> : ' ' }
 				</p>
 				<FormButton
 					disabled={
