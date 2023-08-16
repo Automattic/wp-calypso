@@ -1,4 +1,6 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localize } from 'i18n-calypso';
+import { useEffect } from 'react';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryP2Connections from 'calypso/components/data/query-p2-connections';
@@ -9,8 +11,15 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import SharingServicesGroup from './services-group';
 
-const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
+const SharingConnections = ( { translate, isP2Hub, siteId, siteSlug } ) => {
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.POST_SHARING_ENABLED );
+
+	useEffect( () => {
+		// Mark the task as done
+		updateLaunchpadSettings( siteSlug, {
+			checklist_statuses: { drive_traffic: true },
+		} );
+	}, [] );
 
 	return (
 		<div className="connections__sharing-settings connections__sharing-connections">
