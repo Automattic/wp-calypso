@@ -1,4 +1,4 @@
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad, updateLaunchpadSettings } from '@automattic/data-stores';
 import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -91,12 +91,20 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ siteSlug, site ] );
 
+	const goNext = async () => {
+		// Skip action
+		if ( siteSlug ) {
+			await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+		}
+		navigation.goNext?.();
+	};
+
 	return (
 		<>
 			<DocumentHead title={ almostReadyToLaunchText } />
 			<StepContainer
 				stepName="launchpad"
-				goNext={ navigation.goNext }
+				goNext={ goNext }
 				isFullLayout={ true }
 				skipLabelText={ translate( 'Skip for now' ) }
 				skipButtonAlign="top"
@@ -105,7 +113,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 					<StepContent
 						siteSlug={ siteSlug }
 						submit={ navigation.submit }
-						goNext={ navigation.goNext }
+						goNext={ goNext }
 						goToStep={ navigation.goToStep }
 						flow={ flow }
 					/>
