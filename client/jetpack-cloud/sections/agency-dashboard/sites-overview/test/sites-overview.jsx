@@ -14,10 +14,6 @@ import SitesOverview from '../index';
 
 jest.mock( '@automattic/viewport' );
 
-const mockedIsWithinBreakpoint = isWithinBreakpoint as jest.MockedFunction<
-	typeof isWithinBreakpoint
->;
-
 describe( '<SitesOverview>', () => {
 	const initialState = {
 		sites: {},
@@ -48,7 +44,7 @@ describe( '<SitesOverview>', () => {
 
 	const queryClient = new QueryClient();
 
-	const Wrapper = ( { context } ): JSX.Element => (
+	const Wrapper = ( { context } ) => (
 		<Provider store={ store }>
 			<QueryClientProvider client={ queryClient }>
 				<SitesOverviewContext.Provider value={ context }>
@@ -58,7 +54,7 @@ describe( '<SitesOverview>', () => {
 		</Provider>
 	);
 
-	const setData = (): void => {
+	const setData = () => {
 		const data = {
 			sites: [],
 			total: 1,
@@ -193,7 +189,7 @@ describe( '<SitesOverview>', () => {
 		setData();
 
 		//set screen to widescreen for this test
-		mockedIsWithinBreakpoint.mockReturnValue( true );
+		isWithinBreakpoint.mockReturnValue( true );
 
 		const { queryByText } = render( <Wrapper context={ context } /> );
 
@@ -203,6 +199,6 @@ describe( '<SitesOverview>', () => {
 		expect( issueLicenseButton ).toBeInTheDocument();
 
 		// set screen back to mobile for rest of tests
-		mockedIsWithinBreakpoint.mockReturnValue( false );
+		isWithinBreakpoint.mockReturnValue( false );
 	} );
 } );
