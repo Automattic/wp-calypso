@@ -70,7 +70,7 @@ const testWorkspaces = {
 };
 
 const testPrepack = {
-	name: 'test-prepack-transpile.sh',
+	name: './test-prepack-transpile.sh',
 	testId: 'test_prepack',
 };
 
