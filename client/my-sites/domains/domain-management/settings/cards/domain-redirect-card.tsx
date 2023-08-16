@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -90,9 +89,9 @@ export default function DomainRedirectCard( {
 		try {
 			const origin =
 				( redirect.isSecure ? 'http://' : 'https://' ) +
-				( redirect.targetHost ?? '_invalid_.domain' );
+				( redirect.targetHost ?? '_domain_.invalid' );
 			const url = new URL( redirect.targetPath, origin );
-			if ( url.hostname !== '_invalid_.domain' ) {
+			if ( url.hostname !== '_domain_.invalid' ) {
 				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
 				setProtocol( redirect.isSecure ? 'https' : 'http' );
 			}
@@ -103,14 +102,24 @@ export default function DomainRedirectCard( {
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
-		if (
-			event.target.value.length > 0 &&
-			! CAPTURE_URL_RGX.test( protocol + '://' + event.target.value )
-		) {
-			setIsValidUrl( false );
+
+		if ( event.target.value.length === 0 ) {
+			setIsValidUrl( true );
 			return;
 		}
 
+		try {
+			// Use an invalid origin as the URL(,base), if the URL is valid it will be
+			// replaced with the correct origin.
+			const url = new URL( protocol + '://' + event.target.value, 'https://_domain_.invalid' );
+			if ( url.origin === 'https://_domain_.invalid' ) {
+				setIsValidUrl( false );
+				return;
+			}
+		} catch ( e ) {
+			setIsValidUrl( false );
+			return;
+		}
 		setIsValidUrl( true );
 	};
 
@@ -138,8 +147,8 @@ export default function DomainRedirectCard( {
 
 		// Validate we have a valid url from the user
 		try {
-			const url = new URL( protocol + '://' + targetUrl, 'https://_invalid_.domain' );
-			if ( url.origin !== 'https://_invalid_.domain' ) {
+			const url = new URL( protocol + '://' + targetUrl, 'https://_domain_.invalid' );
+			if ( url.origin !== 'https://_domain_.invalid' ) {
 				targetHost = url.hostname;
 				targetPath = url.pathname + url.search + url.hash;
 				isSecure = url.protocol === 'https:';
