@@ -14,6 +14,7 @@ function transformData( data ) {
 			sectionNum: index % NUM_COLOR_SECTIONS,
 		} ) );
 }
+
 class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
