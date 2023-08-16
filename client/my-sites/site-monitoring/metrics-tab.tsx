@@ -310,12 +310,12 @@ export const MetricsTab = () => {
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
 					title={ __( 'Response types' ) }
-					subtitle={ __( 'Percentage of dynamic PHP responses versus static content responses' ) }
+					subtitle={ __( 'Percentage of dynamic versus static responses' ) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
 						php: {
-							name: 'PHP',
-							className: 'php',
+							name: 'Dynamic',
+							className: 'dynamic',
 						},
 						static: {
 							name: 'Static',
