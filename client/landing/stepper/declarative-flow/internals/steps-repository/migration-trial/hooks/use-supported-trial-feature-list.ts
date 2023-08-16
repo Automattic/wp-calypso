@@ -8,7 +8,7 @@ export default function useSupportedTrialFeatureList() {
 		__( 'Advanced Design Tools' ),
 		__( 'Newsletters' ),
 		__( 'Jetpack backups and restores' ),
-		__( 'Spam protection with Akisimet' ),
+		__( 'Spam protection with Akismet' ),
 		__( 'SEO tools' ),
 		__( 'Google Analytics' ),
 		__( 'Best-in-class hosting' ),
