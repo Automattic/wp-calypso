@@ -1,5 +1,6 @@
+import { englishLocales } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -123,7 +124,15 @@ class DnsRecords extends Component {
 	renderNotice = () => {
 		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers } = this.props;
 
-		if ( this.hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+		if (
+			( ! englishLocales.includes( getLocaleSlug() ) &&
+				! i18n.hasTranslation(
+					'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.'
+				) ) ||
+			this.hasWpcomNameservers() ||
+			! nameservers ||
+			! nameservers.length
+		) {
 			return null;
 		}
 
