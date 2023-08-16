@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, Fragment, useEffect, useState } from 'react';
 import * as React from 'react';
 import ExternalLink from 'calypso/components/external-link';
-import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import useJetpackMasterbarDataQuery from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
@@ -16,10 +15,10 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { trailingslashit } from 'calypso/lib/route';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import { useSelector } from 'calypso/state';
-import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import CloudCart from './cloud-cart';
+import UserMenu from './components/user-menu';
 import AntispamIcon from './icons/jetpack-bundle-icon-antispam';
 import BackupIcon from './icons/jetpack-bundle-icon-backup';
 import BoostIcon from './icons/jetpack-bundle-icon-boost';
@@ -50,8 +49,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const user = useSelector( getCurrentUser );
 	const { data: menuData, status: menuDataStatus } = useJetpackMasterbarDataQuery();
 	const [ eventHandlersAdded, setEventHandlersAdded ] = useState( false );
 
@@ -193,38 +190,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		}
 		// END SUBMENU TOGGLE FUNCTIONALITY
 
-		// USER MENU FUNCTIONALITY
-		const userMenu = document.querySelector( '.js-user-menu' ) as HTMLDivElement;
-		const userBtn = document.querySelector( '.js-user-menu-btn' ) as HTMLAnchorElement;
-
-		function onDocumentClick( { target }: MouseEvent ) {
-			if ( ! userMenu?.contains( target as Node ) ) {
-				userBtn?.setAttribute( 'aria-expanded', 'false' );
-				userMenu.hidden = true;
-			}
-		}
-
-		function toggleUserMenu() {
-			const expanded = userBtn.getAttribute( 'aria-expanded' ) === 'true' || false;
-
-			if ( expanded ) {
-				document.removeEventListener( 'click', onDocumentClick );
-			} else {
-				document.addEventListener( 'click', onDocumentClick );
-			}
-
-			userBtn.setAttribute( 'aria-expanded', String( ! expanded ) );
-			userMenu.hidden = ! userMenu.hidden;
-		}
-
-		function onUserBtnClick( e: MouseEvent ) {
-			e.preventDefault();
-			e.stopPropagation();
-
-			toggleUserMenu();
-		}
-		// END USER MENU FUNCTIONALITY
-
 		// MOBILE MENU FUNCTIONALITY
 		const mobileMenu = document.querySelector( '.js-mobile-menu' ) as HTMLDivElement;
 		const mobileBtn = document.querySelector( '.js-mobile-btn' );
@@ -263,19 +228,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 			document.addEventListener( 'keydown', onKeyDown );
 			// END SUBMENU SETUP
 
-			// USER MENU SETUP
-			if ( userMenu && userBtn ) {
-				userBtn.addEventListener( 'click', onUserBtnClick );
-
-				const lastFocusable = getLastFocusableElement( userMenu );
-
-				// Collapse menu when focusing out
-				if ( lastFocusable ) {
-					lastFocusable.addEventListener( 'focusout', toggleUserMenu );
-				}
-			}
-			// END MENU SETUP
-
 			// MOBILE MENU SETUP
 			if ( mobileMenu && mobileBtn ) {
 				mobileBtn.addEventListener( 'click', function ( e ) {
@@ -300,7 +252,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 			return () => {
 				document.removeEventListener( 'keydown', onKeyDown );
-				document.removeEventListener( 'click', onDocumentClick );
 				document.removeEventListener( 'keydown', mobileOnKeyDown );
 			};
 		}
@@ -484,47 +435,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 										) }
 									</ul>
 									{ shouldShowCart && <CloudCart /> }
-									<ul className="header__actions-list">
-										<li
-											className={ classNames( 'header__user-menu user-menu ', {
-												'is-logged-in': isLoggedIn,
-											} ) }
-										>
-											{ isLoggedIn ? (
-												<>
-													<a className="user-menu__btn js-user-menu-btn" href="#profile">
-														<Gravatar user={ user } className="user-menu__avatar" />
-													</a>
-													<div id="profile" className="user-menu__tooltip js-user-menu js" hidden>
-														<div className="tooltip">
-															<span className="user-menu__greetings">
-																{ translate( 'Hi, %s!', {
-																	args: user?.display_name || user?.username,
-																} ) }
-															</span>
-															<ul className="user-menu__list">
-																<li>
-																	<a
-																		className="js-manage-sites"
-																		href={ localizeUrl( '/', locale ) }
-																	>
-																		{ translate( 'Manage your sites' ) }
-																	</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-												</>
-											) : (
-												<a
-													className="header__action-link js-login"
-													href={ localizeUrl( '/login/', locale ) }
-												>
-													{ translate( 'Log in' ) }
-												</a>
-											) }
-										</li>
-									</ul>
+									<UserMenu />
 								</div>
 							</nav>
 						</div>
