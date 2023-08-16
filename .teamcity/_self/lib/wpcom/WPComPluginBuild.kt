@@ -105,14 +105,7 @@ open class WPComPluginBuild(
 
 					# Update composer
 					composer install
-
-					cd $workingDir
-
-					# Focus on the app workspace. This will also install all dependant workspaces
-					yarn workspaces focus
-
-					# Run the script 'prepare' in all dependant workspaces
-					yarn workspaces foreach --recursive --verbose --parallel run prepare
+					yarn
 				"""
 			}
 			bashNodeScript {
