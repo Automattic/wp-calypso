@@ -3,7 +3,7 @@
  */
 
 import { isWithinBreakpoint } from '@automattic/viewport';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -85,72 +85,68 @@ describe( '<SitesOverview>', () => {
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and no applied filters in All tab', () => {
-		const { getAllByText } = render( <Wrapper /> );
-		const [ dashboardHeading ] = getAllByText( 'Dashboard' );
+		render( <Wrapper /> );
+		const [ dashboardHeading ] = screen.getAllByText( 'Dashboard' );
 		expect( dashboardHeading ).toBeInTheDocument();
 
-		const [ dashboardSubHeading ] = getAllByText(
+		const [ dashboardSubHeading ] = screen.getAllByText(
 			'Manage all your Jetpack sites from one location'
 		);
 		expect( dashboardSubHeading ).toBeInTheDocument();
 
-		const [ emptyStateMessage ] = getAllByText(
+		const [ emptyStateMessage ] = screen.getAllByText(
 			"Let's get started with the Jetpack Pro Dashboard"
 		);
 		expect( emptyStateMessage ).toBeInTheDocument();
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and has applied filters in All tab', async () => {
-		const { getAllByText } = render(
-			<Wrapper context={ createFakeContext( { search: 'test' } ) } />
-		);
+		render( <Wrapper context={ createFakeContext( { search: 'test' } ) } /> );
 
-		const [ emptyStateMessage ] = getAllByText(
+		const [ emptyStateMessage ] = screen.getAllByText(
 			'No results found. Please try refining your search.'
 		);
 		expect( emptyStateMessage ).toBeInTheDocument();
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and has applied filters in Favorites tab', () => {
-		const { getAllByText } = render(
+		render(
 			<Wrapper
 				context={ createFakeContext( { search: 'test', filter: { showOnlyFavorites: true } } ) }
 			/>
 		);
 
-		const [ emptyStateMessage ] = getAllByText(
+		const [ emptyStateMessage ] = screen.getAllByText(
 			'No results found. Please try refining your search.'
 		);
 		expect( emptyStateMessage ).toBeInTheDocument();
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and no applied filters in Favorites tab', () => {
-		const { getAllByText } = render(
-			<Wrapper context={ createFakeContext( { filter: { showOnlyFavorites: true } } ) } />
-		);
+		render( <Wrapper context={ createFakeContext( { filter: { showOnlyFavorites: true } } ) } /> );
 
-		const [ emptyStateMessage ] = getAllByText( "You don't have any favorites yet." );
+		const [ emptyStateMessage ] = screen.getAllByText( "You don't have any favorites yet." );
 		expect( emptyStateMessage ).toBeInTheDocument();
 	} );
 
 	test( 'Do not show the Add X Licenses button when license count is 0', () => {
-		const { queryByText } = render( <Wrapper /> );
+		render( <Wrapper /> );
 
-		const addLicensesButton = queryByText( 'Add 1 license' );
+		const addLicensesButton = screen.queryByText( 'Add 1 license' );
 		expect( addLicensesButton ).not.toBeInTheDocument();
 	} );
 
 	test( 'Show the add site and issue license buttons', () => {
-		const { getAllByText } = render( <Wrapper /> );
+		render( <Wrapper /> );
 
-		const [ addSiteButton ] = getAllByText( 'Add New Site' );
-		const [ issueLicenseButton ] = getAllByText( 'Issue License' );
+		const [ addSiteButton ] = screen.getAllByText( 'Add New Site' );
+		const [ issueLicenseButton ] = screen.getAllByText( 'Issue License' );
 		expect( addSiteButton ).toBeInTheDocument();
 		expect( issueLicenseButton ).toBeInTheDocument();
 	} );
 
 	test( 'Show the Add x Licenses button when a license is selected', () => {
-		const { getAllByText } = render(
+		render(
 			<Wrapper
 				state={ createFakeState( {
 					agencyDashboard: { selectedLicenses: { licenses: [ 'test' ] } },
@@ -158,7 +154,7 @@ describe( '<SitesOverview>', () => {
 			/>
 		);
 
-		const [ issueLicenseButton ] = getAllByText( 'Issue 1 license' );
+		const [ issueLicenseButton ] = screen.getAllByText( 'Issue 1 license' );
 		expect( issueLicenseButton ).toBeInTheDocument();
 	} );
 
@@ -167,7 +163,7 @@ describe( '<SitesOverview>', () => {
 		//set screen to widescreen for this test
 		isWithinBreakpoint.mockReturnValue( true );
 
-		const { queryByText } = render(
+		render(
 			<Wrapper
 				state={ createFakeState( {
 					agencyDashboard: { selectedLicenses: { licenses: [ 'test' ] } },
@@ -175,8 +171,8 @@ describe( '<SitesOverview>', () => {
 			/>
 		);
 
-		const addSiteButton = queryByText( 'Add New Site' );
-		const issueLicenseButton = queryByText( 'Issue 1 license' );
+		const addSiteButton = screen.queryByText( 'Add New Site' );
+		const issueLicenseButton = screen.queryByText( 'Issue 1 license' );
 		expect( addSiteButton ).not.toBeInTheDocument();
 		expect( issueLicenseButton ).toBeInTheDocument();
 	} );
