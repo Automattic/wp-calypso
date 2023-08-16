@@ -363,7 +363,6 @@ class DomainsStep extends Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
