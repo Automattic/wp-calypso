@@ -12,7 +12,7 @@
 		{
 			groupName: 'nodejs',
 			matchPackagePatterns: [ '/node$' ],
-			matchDepNames: [ 'node', 'cimg/node', '@types/node' ],
+			matchDepNames: [ 'node', 'cimg/node' ],
 			matchDatasources: [ 'docker', 'node' ],
 			prPriority: 2,
 		},
@@ -21,6 +21,10 @@
 			matchDepNames: [ 'node' ],
 			// This gets published with broader Node support, so we'll update it when needed.
 			ignorePaths: [ 'packages/eslint-plugin-wpcalypso' ],
+		},
+		{
+			groupName: 'nodejs',
+			matchDepNames: [ '@types/node' ],
 		},
 		{
 			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
