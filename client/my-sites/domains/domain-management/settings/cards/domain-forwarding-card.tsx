@@ -1,7 +1,5 @@
 import { Button, FormInputValidation } from '@automattic/components';
-import { englishLocales, useLocale } from '@automattic/i18n-utils';
 import { Icon, trash, info } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -15,7 +13,6 @@ import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/u
 import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
-import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
@@ -27,17 +24,13 @@ const noticeOptions = {
 
 export default function DomainForwardingCard( {
 	domainName,
-	nameservers,
 	domain,
 }: {
 	domainName: string;
-	nameservers: string[] | null;
 	domain: ResponseDomain;
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const locale = useLocale();
-	const { hasTranslation } = useI18n();
 
 	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domainName );
 
@@ -189,36 +182,20 @@ export default function DomainForwardingCard( {
 		return false;
 	};
 
-	const hasWpcomNameservers = () => {
-		if ( ! nameservers || nameservers.length === 0 ) {
-			return false;
-		}
-
-		return nameservers.every( ( nameserver ) => {
-			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
-		} );
-	};
-
 	const renderNotice = () => {
-		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length || pointsToWpcom ) {
+		if ( pointsToWpcom ) {
 			return null;
 		}
 
-		const noticeText =
-			englishLocales.includes( locale ) ||
-			hasTranslation(
-				'Domain redirection requires using WordPress.com nameservers.{{br/}}{{a}}Update your nameservers now{{/a}}.'
-			)
-				? translate(
-						'Domain redirection requires using WordPress.com nameservers.{{br/}}{{a}}Update your nameservers now{{/a}}.',
-						{
-							components: {
-								a: <a href="?nameservers=true" />,
-								br: <br />,
-							},
-						}
-				  )
-				: translate( 'You are not currently using WordPress.com name servers.' );
+		const noticeText = translate(
+			'Your domain is not connected to WordPress.com and Domain forwarding requires it.{{br/}}{{a}}More info{{/a}}.',
+			{
+				components: {
+					a: <a href="?nameservers=true" />,
+					br: <br />,
+				},
+			}
+		);
 
 		return (
 			<div className="domain-forwarding-card-notice">
