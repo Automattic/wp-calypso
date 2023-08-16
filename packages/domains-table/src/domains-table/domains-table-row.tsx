@@ -1,16 +1,22 @@
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { useMemo } from 'react';
+import { PrimaryDomainLabel } from '../primary-domain-label';
 import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data-stores';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
+	displayPrimaryDomainLabel?: boolean;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 }
 
-export function DomainsTableRow( { domain, fetchSiteDomains }: DomainsTableRowProps ) {
+export function DomainsTableRow( {
+	domain,
+	fetchSiteDomains,
+	displayPrimaryDomainLabel,
+}: DomainsTableRowProps ) {
 	const { data } = useSiteDomainsQuery(
 		domain.blog_id,
 		fetchSiteDomains && {
@@ -18,7 +24,7 @@ export function DomainsTableRow( { domain, fetchSiteDomains }: DomainsTableRowPr
 		}
 	);
 
-	const { siteSlug } = useMemo( () => {
+	const { siteSlug, primaryDomain } = useMemo( () => {
 		const primaryDomain = data?.domains?.find( ( d ) => d.primary_domain );
 		const unmappedDomain = data?.domains?.find( ( d ) => d.wpcom_domain );
 		const siteSlug =
@@ -27,12 +33,17 @@ export function DomainsTableRow( { domain, fetchSiteDomains }: DomainsTableRowPr
 		return {
 			// Fall back to the site's ID if we're still loading detailed domain data
 			siteSlug: siteSlug || domain.blog_id.toString( 10 ),
+			primaryDomain,
 		};
 	}, [ data, domain.blog_id ] );
+
+	const isPrimaryDomain = primaryDomain?.domain === domain.domain;
+	const shouldDisplayPrimaryDomainLabel = displayPrimaryDomainLabel && isPrimaryDomain;
 
 	return (
 		<tr key={ domain.domain }>
 			<td>
+				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 				<a className="domains-table__domain-link" href={ domainManagementLink( domain, siteSlug ) }>
 					{ domain.domain }
 				</a>

@@ -10,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
+import './bulk-site-domains.scss';
 
 interface BulkSiteDomainsProps {
 	analyticsPath: string;
@@ -43,7 +44,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				<DomainsTable domains={ data?.domains } />
+				<DomainsTable domains={ data?.domains } displayPrimaryDomainLabel />
 			</Main>
 			<UsePresalesChat />
 		</>
