@@ -445,6 +445,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-sentry@workspace:^, @automattic/calypso-sentry@workspace:packages/calypso-sentry":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-sentry@workspace:packages/calypso-sentry"
+  dependencies:
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@sentry/react": ^7.54.0
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    tslib: ^2.3.0
+    typescript: ^5.1.6
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-storybook@workspace:^, @automattic/calypso-storybook@workspace:packages/calypso-storybook":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-storybook@workspace:packages/calypso-storybook"
@@ -874,6 +888,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/global-styles@workspace:packages/global-styles"
   dependencies:
+    "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
@@ -11118,6 +11133,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
+    "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/color-studio": 2.5.0
@@ -11168,7 +11184,6 @@ __metadata:
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@github/webauthn-json": ^0.4.1
-    "@sentry/react": ^7.54.0
     "@sentry/webpack-plugin": ^1.18.8
     "@storybook/addon-actions": ^7.0.18
     "@stripe/react-stripe-js": ^2.1.0

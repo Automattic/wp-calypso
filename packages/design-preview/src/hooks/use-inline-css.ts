@@ -1,4 +1,4 @@
-import { useGlobalStylesOutput, transformStyles } from '@automattic/global-styles';
+import { useSafeGlobalStylesOutput, transformStyles } from '@automattic/global-styles';
 import { useMemo } from 'react';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 
@@ -8,7 +8,7 @@ const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
 	variations.find( ( variation ) => variation.slug === slug );
 
 const useInlineCss = ( variations?: StyleVariation[], selectedVariation?: StyleVariation ) => {
-	const [ globalStyles ] = useGlobalStylesOutput();
+	const [ globalStyles ] = useSafeGlobalStylesOutput();
 
 	return useMemo( () => {
 		let inlineCss = INJECTED_CSS;

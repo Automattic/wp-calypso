@@ -1,5 +1,5 @@
 import {
-	useGlobalStylesOutput,
+	useSafeGlobalStylesOutput,
 	withExperimentalBlockEditorProvider,
 } from '@automattic/global-styles';
 import { useMemo } from 'react';
@@ -21,7 +21,7 @@ const useBlockRendererContext = (
 ) => {
 	const { data: settings } = useBlockRendererSettings( siteId, stylesheet, useInlineStyles );
 
-	const [ globalStyles ] = useGlobalStylesOutput();
+	const [ globalStyles ] = useSafeGlobalStylesOutput();
 	const context = useMemo(
 		() => ( {
 			isReady: !! settings,
