@@ -4,7 +4,7 @@ import moment from 'moment';
 import { UplotTooltipProps } from './uplot-tooltip-plugin';
 
 const Root = styled.div( {
-	minWidth: 274,
+	minWidth: 300,
 	transform: 'translate(-50%, -100%)',
 	padding: '8px 12px',
 	marginBottom: 8,
@@ -30,7 +30,7 @@ const Footer = styled.div( {
 interface seriesInfo {
 	color: string;
 	label: string;
-	value: number;
+	value: string | number;
 }
 
 interface LineChartTooltipProps {
@@ -44,7 +44,7 @@ export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipPro
 			{ tooltipSeries.map( ( { color, label, value } ) => (
 				<div key={ label }>
 					<Serie>
-						<Dot color={ color } /> <Label>{ label }</Label>: { Math.floor( value ) }
+						<Dot color={ color } /> <Label>{ label }</Label>: { value }
 					</Serie>
 				</div>
 			) ) }
@@ -60,12 +60,12 @@ export function FirstChartTooltip( { data, idx }: UplotTooltipProps ) {
 				{
 					color: 'var(--studio-blue-50)',
 					label: translate( 'Requests per minute' ),
-					value: data[ 1 ][ idx ],
+					value: Math.floor( data[ 1 ][ idx ] ),
 				},
 				{
-					color: 'var(--studio-celadon-50)',
+					color: 'rgba(222, 177, 0, 1)',
 					label: translate( 'Average response time' ),
-					value: data[ 2 ][ idx ],
+					value: `${ Math.floor( data[ 2 ][ idx ] ) }ms`,
 				},
 			] }
 			footer={ moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' ) }

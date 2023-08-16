@@ -34,7 +34,7 @@ export function tooltipsPlugin( TooltipNode?: ( props: UplotTooltipProps ) => Re
 		 * Hides all tooltips.
 		 */
 		function hideTips() {
-			// cursortt.style.display = 'none';
+			cursortt.style.display = 'none';
 		}
 
 		/**
