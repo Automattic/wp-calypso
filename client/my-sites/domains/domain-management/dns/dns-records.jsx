@@ -12,6 +12,8 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
+import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
+import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -35,6 +37,7 @@ class DnsRecords extends Component {
 		showPlaceholder: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		nameservers: PropTypes.array || null,
 	};
 
 	renderHeader = () => {
@@ -105,10 +108,22 @@ class DnsRecords extends Component {
 		);
 	};
 
-	renderNotice = () => {
-		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+	hasWpcomNameservers = () => {
+		const { nameservers } = this.props;
 
-		if ( selectedDomainName.hasWpcomNameservers ) {
+		if ( ! nameservers || nameservers.length === 0 ) {
+			return false;
+		}
+
+		return nameservers.every( ( nameserver ) => {
+			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
+
+	renderNotice = () => {
+		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers } = this.props;
+
+		if ( this.hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
 			return null;
 		}
 
@@ -204,4 +219,4 @@ export default connect(
 		};
 	},
 	{ successNotice, errorNotice, fetchDns }
-)( localize( DnsRecords ) );
+)( localize( withDomainNameservers( DnsRecords ) ) );
