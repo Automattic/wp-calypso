@@ -1,20 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
-import { localize, translate, useTranslate } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SearchThemes from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
@@ -45,14 +42,10 @@ import {
 	trackClick,
 	localizeThemesPath,
 } from './helpers';
-import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
-import ThemesHeader from './themes-header';
+import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
-import useThemeShowcaseDescription from './use-theme-showcase-description';
-import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
-import useThemeShowcaseTitle from './use-theme-showcase-title';
 import './theme-showcase.scss';
 
 const optionShape = PropTypes.shape( {
@@ -76,63 +69,6 @@ const staticFilters = {
 		text: translate( 'All' ),
 	},
 };
-
-function ThemeShowcaseHeader( { canonicalUrl, filter, tier, vertical } ) {
-	// eslint-disable-next-line no-shadow
-	const translate = useTranslate();
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
-	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
-	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
-	const {
-		title: documentHeadTitle,
-		metaDescription: metaDescription,
-		header: themesHeaderTitle,
-		description: themesHeaderDescription,
-	} = isLoggedIn
-		? {
-				title: title,
-				metaDescription: description,
-				header: translate( 'Themes' ),
-				description: translate(
-					'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-						},
-					}
-				),
-		  }
-		: loggedOutSeoContent;
-
-	const metas = [
-		{
-			name: 'description',
-			property: 'og:description',
-			content: metaDescription || themesHeaderDescription,
-		},
-		{ property: 'og:title', content: documentHeadTitle },
-		{ property: 'og:url', content: canonicalUrl },
-		{ property: 'og:type', content: 'website' },
-		{ property: 'og:site_name', content: 'WordPress.com' },
-	];
-
-	return (
-		<>
-			<DocumentHead title={ documentHeadTitle } meta={ metas } />
-			<ThemesHeader title={ themesHeaderTitle } description={ themesHeaderDescription }>
-				{ isLoggedIn && (
-					<>
-						<div className="themes__install-theme-button-container">
-							<InstallThemeButton />
-						</div>
-						<ScreenOptionsTab wpAdminPath="themes.php" />
-					</>
-				) }
-			</ThemesHeader>
-		</>
-	);
-}
 
 class ThemeShowcase extends Component {
 	constructor( props ) {
