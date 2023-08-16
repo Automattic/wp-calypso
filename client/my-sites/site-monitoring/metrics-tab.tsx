@@ -305,7 +305,7 @@ export const MetricsTab = () => {
 							name: 'Cache miss',
 							className: 'cache-miss',
 						},
-					} ) }
+					} ).reverse() }
 					fixedOrder
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
