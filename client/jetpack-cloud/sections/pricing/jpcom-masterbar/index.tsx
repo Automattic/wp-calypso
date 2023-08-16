@@ -17,6 +17,7 @@ import CloudCart from './cloud-cart';
 import MenuItems from './components/menu-items';
 import MobileMenuButton from './components/mobile-menu-button';
 import UserMenu from './components/user-menu';
+import { isMobile } from './utils';
 
 import './style.scss';
 
@@ -61,9 +62,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 	useEffect( () => {
 		window.addEventListener( 'resize', () => {
-			const body = document.querySelector( 'body' );
-			if ( window.innerWidth > 900 ) {
-				body?.classList.remove( 'no-scroll' );
+			if ( isMobile() ) {
+				document.body.classList.remove( 'no-scroll' );
 			}
 		} );
 	}, [] );
