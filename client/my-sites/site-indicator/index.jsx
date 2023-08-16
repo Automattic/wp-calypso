@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -192,15 +193,15 @@ class SiteIndicator extends Component {
 		if ( site ) {
 			return (
 				<span>
-					{ translate( 'This site cannot be accessed.' ) }
+					{ translate( 'Jetpack can’t communicate with your site.' ) }
 					<Button
 						borderless
 						compact
 						scary
-						href={ `/settings/disconnect-site/${ site.slug }?type=down` }
+						href={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 						onClick={ this.props.trackSiteDisconnect }
 					>
-						{ translate( 'I’d like to fix this now' ) }
+						{ translate( 'Learn how to fix' ) }
 					</Button>
 				</span>
 			);
