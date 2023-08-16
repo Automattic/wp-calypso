@@ -249,12 +249,21 @@ export const MetricsTab = () => {
 
 	const startDate = moment( timeRange.start * 1000 );
 	const endDate = moment( timeRange.end * 1000 );
-	let dateRange = '';
+	let dateRange = null;
 
 	if ( endDate.isSame( startDate, 'day' ) ) {
 		dateRange = endDate.format( 'LL' );
+		dateRange = (
+			<>
+				<span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
 	} else {
-		dateRange = `${ startDate.format( 'LL' ) } - ${ endDate.format( 'LL' ) }`;
+		dateRange = (
+			<>
+				<span>{ startDate.format( 'LL' ) }</span> - <span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
 	}
 
 	return (
