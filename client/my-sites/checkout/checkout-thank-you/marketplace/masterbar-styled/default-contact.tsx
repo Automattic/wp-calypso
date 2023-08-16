@@ -13,6 +13,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 const ContactContainer = styled.div`
 	display: flex;
+	flex: 1;
 	align-items: center;
 	column-gap: 8px;
 	padding-right: 24px;
