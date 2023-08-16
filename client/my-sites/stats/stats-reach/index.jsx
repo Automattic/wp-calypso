@@ -1,8 +1,6 @@
 import config from '@automattic/calypso-config';
-import { Popover } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, reduce } from 'lodash';
-import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -24,9 +22,6 @@ export const StatsReach = ( props ) => {
 		siteSlug,
 		isOdysseyStats,
 	} = props;
-
-	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
-	const socialRef = useRef( null );
 
 	const isLoadingFollowData = ! followData;
 	const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
@@ -53,15 +48,7 @@ export const StatsReach = ( props ) => {
 
 	const socialData = {
 		value: publicizeFollowCount,
-		label: (
-			<span
-				ref={ socialRef }
-				onMouseEnter={ () => setPopoverVisible( true ) }
-				onMouseLeave={ () => setPopoverVisible( false ) }
-			>
-				{ translate( 'Social' ) }
-			</span>
-		),
+		label: translate( 'Social' ),
 	};
 
 	if ( ! isOdysseyStats ) {
@@ -113,17 +100,6 @@ export const StatsReach = ( props ) => {
 					)
 				}
 			/>
-
-			<Popover
-				className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
-				isVisible={ isPopoverVisible }
-				position="bottom left"
-				context={ socialRef.current }
-			>
-				<div className="highlight-card-tooltip-content">
-					<p>{ translate( 'This represents the count of social media subscribers.' ) }</p>
-				</div>
-			</Popover>
 		</>
 	);
 };
