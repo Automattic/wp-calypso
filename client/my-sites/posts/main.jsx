@@ -93,7 +93,7 @@ class PostsMain extends Component {
 						require="calypso/blocks/jitm"
 						template="notice"
 						placeholder={ null }
-						messagePath="calypso:edit-post:admin_notices"
+						messagePath="wp:edit-post:admin_notices"
 					/>
 				) }
 				<ScreenOptionsTab wpAdminPath="edit.php" />
