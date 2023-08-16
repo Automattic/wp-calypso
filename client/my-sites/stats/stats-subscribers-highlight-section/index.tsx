@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -68,6 +69,8 @@ function SubscriberHighlightsHeader() {
 }
 
 function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	const isPaymentProcessorConnected: boolean = useSelector(
 		( state ) => !! getConnectedAccountIdForSiteId( state, siteId )
 	);
@@ -76,7 +79,7 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 
 	return (
 		<div className="highlight-cards-list">
-			{ siteId && <QueryMembershipsSettings siteId={ siteId } /> }
+			{ siteId && ! isOdysseyStats && <QueryMembershipsSettings siteId={ siteId } /> }
 			{ highlights.map(
 				( highlight ) =>
 					highlight.show && (
