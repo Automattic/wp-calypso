@@ -34,6 +34,7 @@ interface SeriesProp {
 	label: string;
 	stroke: string;
 	scale?: string;
+	unit?: string;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -94,11 +95,12 @@ function createSeries( series: Array< SeriesProp > ) {
 }
 
 function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
-	const scale = series.find( ( serie ) => serie.scale )?.scale;
-	if ( scale ) {
+	const serie = series.find( ( serie ) => serie.scale );
+
+	if ( serie?.scale ) {
 		return [
 			{
-				scale,
+				scale: serie.scale,
 				side: 1,
 				grid: {
 					show: false,
@@ -109,6 +111,10 @@ function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
 					width: 1,
 					size: 3,
 				},
+				values: ( u: uPlot, ticks: number[] ) =>
+					ticks.map( ( rawValue ) => {
+						return rawValue + ( serie?.unit ? ' ' + serie.unit : '' );
+					} ),
 			},
 		];
 	}
