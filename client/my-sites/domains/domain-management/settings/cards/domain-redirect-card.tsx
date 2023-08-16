@@ -1,5 +1,7 @@
 import { Button, FormInputValidation } from '@automattic/components';
+import { englishLocales, useLocale } from '@automattic/i18n-utils';
 import { Icon, trash, info } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -31,6 +33,9 @@ export default function DomainRedirectCard( {
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
+
 	const { data: redirect, isLoading, isError } = useDomainRedirectQuery( domainName );
 
 	// Manage local state for target url and protocol as we split redirect target into host, path and protocol when we store it
@@ -176,6 +181,22 @@ export default function DomainRedirectCard( {
 			return null;
 		}
 
+		const noticeText =
+			englishLocales.includes( locale ) ||
+			hasTranslation(
+				'Domain redirection requires using WordPress.com nameservers.{{br/}}{{a}}Update your nameservers now{{/a}}.'
+			)
+				? translate(
+						'Domain redirection requires using WordPress.com nameservers.{{br/}}{{a}}Update your nameservers now{{/a}}.',
+						{
+							components: {
+								a: <a href="?nameservers=true" />,
+								br: <br />,
+							},
+						}
+				  )
+				: translate( 'You are not currently using WordPress.com name servers.' );
+
 		return (
 			<div className="domain-redirect-card-notice">
 				<Icon
@@ -184,17 +205,7 @@ export default function DomainRedirectCard( {
 					className="domain-redirect-card-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="domain-redirect-card-notice__message">
-					{ translate(
-						'Domain redirection requires using WordPress.com nameservers.{{br/}}{{a}}Update your nameservers now{{/a}}.',
-						{
-							components: {
-								a: <a href="?nameservers=true" />,
-								br: <br />,
-							},
-						}
-					) }
-				</div>
+				<div className="domain-redirect-card-notice__message">{ noticeText }</div>
 			</div>
 		);
 	};
