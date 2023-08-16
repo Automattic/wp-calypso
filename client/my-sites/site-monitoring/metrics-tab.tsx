@@ -144,12 +144,20 @@ function useAggregateSiteMetricsData(
 
 function getFormattedDataForPieChart(
 	data: Record< string, number >,
-	labels: Record< string, string >
+	labels: Record<
+		string,
+		{
+			name: string;
+			className?: string;
+		}
+	>
 ) {
 	return Object.keys( data ).map( ( key ) => {
-		const name = labels[ key ] || key;
+		const name = labels[ key ]?.name || key;
+		const className = labels[ key ]?.className || key;
 		return {
 			name,
+			className,
 			value: data[ key ],
 			description: undefined,
 		};
@@ -298,18 +306,32 @@ export const MetricsTab = () => {
 					subtitle={ __( 'Percentage of cache hits versus cache misses' ) }
 					className="site-monitoring-cache-pie-chart"
 					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
-						0: 'Cache miss',
-						1: 'Cache hit',
-					} ) }
+						1: {
+							name: 'Cache hit',
+							className: 'cache-hit',
+						},
+						0: {
+							name: 'Cache miss',
+							className: 'cache-miss',
+						},
+					} ).reverse() }
+					fixedOrder
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
 					title={ __( 'Response types' ) }
-					subtitle={ __( 'Percentage of dynamic PHP responses versus static content responses' ) }
+					subtitle={ __( 'Percentage of dynamic versus static responses' ) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
-						php: 'PHP',
-						static: 'Static',
+						php: {
+							name: 'Dynamic',
+							className: 'dynamic',
+						},
+						static: {
+							name: 'Static',
+							className: 'static',
+						},
 					} ) }
+					fixedOrder
 				></SiteMonitoringPieChart>
 			</div>
 			<SiteMonitoringLineChart
