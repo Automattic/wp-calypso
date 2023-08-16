@@ -329,7 +329,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^18.11.18
+    "@types/node": ^18.17.3
     cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^5.1.6
@@ -358,7 +358,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^29.5.0
     "@jest/types": ^29.5.0
-    "@types/node": ^18.11.18
+    "@types/node": ^18.17.3
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.39.0
@@ -997,7 +997,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": ^0.0.1
-    "@types/node": ^18.11.18
+    "@types/node": ^18.17.3
     allure-js-commons: 2.0.0-beta.9
     typescript: ^5.1.6
   languageName: unknown
@@ -1863,7 +1863,7 @@ __metadata:
     "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
-    "@types/node": ^18.11.18
+    "@types/node": ^18.17.3
     "@wordpress/a11y": ^3.39.0
     "@wordpress/api-fetch": ^6.36.0
     "@wordpress/base-styles": ^4.30.0
@@ -7188,10 +7188,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.11.18":
-  version: 18.11.18
-  resolution: "@types/node@npm:18.11.18"
-  checksum: 1a308a03a7c1cfced411fc3187e49a507ab2b3ce7cdf0794b7511c8843aae5a8dbe52b16ba4217d2da1c8e3c50920c272b45fecff4cccc26606be7f42c33f4f5
+"@types/node@npm:*, @types/node@npm:^18.11.18, @types/node@npm:^18.17.3":
+  version: 18.17.5
+  resolution: "@types/node@npm:18.17.5"
+  checksum: 763c753351d3ceaedb5888a03b10f0925c5be6e80b3fa5755f47f4c6ba401999becaf7317105554a07dbba43467f2890285cfb7252c34e1b1afed3ef56acdf55
   languageName: node
   linkType: hard
 
@@ -31105,7 +31105,7 @@ __metadata:
     "@types/gtag.js": ^0.0.10
     "@types/highlight-words-core": ^1.2.1
     "@types/lodash": ^4.14.179
-    "@types/node": ^18.11.18
+    "@types/node": ^18.17.3
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^18.2.6
