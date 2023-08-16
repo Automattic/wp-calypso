@@ -21,7 +21,7 @@ import { TEST_IMAGE_PATH } from '../constants';
 declare const browser: Browser;
 
 /**
- * Ensures media can be uploaded then edited in the gallery.
+ * Ensures image media can be uploaded then edited in the gallery.
  *
  * Keywords: Media, Image, Gallery, Upload
  */
@@ -39,7 +39,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// Switching to or logging into eCommerce plan sites inevitably
+			// loads WP-Admin instead of Calypso, but the rediret occurs
+			// only after Calypso attempts to load.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 
 		mediaPage = new MediaPage( page );
 	} );

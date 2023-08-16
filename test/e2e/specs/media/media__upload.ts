@@ -25,7 +25,7 @@ declare const browser: Browser;
  * Ensures various types of media can be uploaded to the gallery.
  *
  * If any steps begin to fail permanently, check the following:
- * 	- test user plan is set on production;
+ * 	- test user has the approprite plan on production store;
  * 	- check with MarTech that plan details have not changed.
  *
  * Keywords: Media, Image, Video, Audio, Gallery, Upload
@@ -48,7 +48,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// Switching to or logging into eCommerce plan sites inevitably
+			// loads WP-Admin instead of Calypso, but the rediret occurs
+			// only after Calypso attempts to load.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 
 		mediaPage = new MediaPage( page );
 	} );
