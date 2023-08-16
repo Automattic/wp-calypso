@@ -1,5 +1,4 @@
 import { isDomainTransfer, isDomainMapping } from '@automattic/calypso-products';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -46,25 +45,26 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 		const hasPaidDomainItem =
 			( selectedDomain && ! selectedDomain.is_free ) || !! domainProductSlug;
 
-		recordSignupComplete( {
-			flow,
-			siteId,
-			isNewUser,
-			hasCartItems,
-			isNew7DUserSite,
-			theme,
-			intent: flow,
-			startingPoint: flow,
-			isBlankCanvas: theme?.includes( 'blank-canvas' ),
-			planProductSlug,
-			domainProductSlug,
-			isMapping: hasPaidDomainItem
-				? isDomainMapping( domainCartItem as MinimalRequestCartProduct )
-				: undefined,
-			isTransfer: hasPaidDomainItem
-				? isDomainTransfer( domainCartItem as MinimalRequestCartProduct )
-				: undefined,
-			signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
-		} );
+		recordSignupComplete(
+			{
+				flow,
+				siteId,
+				isNewUser,
+				hasCartItems,
+				isNew7DUserSite,
+				theme,
+				intent: flow,
+				startingPoint: flow,
+				isBlankCanvas: theme?.includes( 'blank-canvas' ),
+				planProductSlug,
+				domainProductSlug,
+				isMapping:
+					hasPaidDomainItem && domainCartItem ? isDomainMapping( domainCartItem ) : undefined,
+				isTransfer:
+					hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
+				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+			},
+			true
+		);
 	}, [ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ] );
 };

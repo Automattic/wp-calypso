@@ -4,11 +4,10 @@ import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
-import { isDiscoverPost } from 'calypso/reader/discover/helper';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
-const ReaderFullPostHeader = ( { post, referralPost } ) => {
+const ReaderFullPostHeader = ( { post } ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
@@ -22,8 +21,6 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 		classes[ 'is-missing-title' ] = true;
 	}
 
-	const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
-
 	if ( ! post || post._state === 'pending' ) {
 		return <ReaderFullPostHeaderPlaceholder />;
 	}
@@ -36,7 +33,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 					<h1 className="reader-full-post__header-title">
 						<ExternalLink
 							className="reader-full-post__header-title-link"
-							href={ externalHref }
+							href={ post.URL }
 							target="_blank"
 							icon={ false }
 							onClick={ handlePermalinkClick }
@@ -52,7 +49,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 						<a
 							className="reader-full-post__header-date-link"
 							onClick={ recordDateClick }
-							href={ externalHref }
+							href={ post.URL }
 							target="_blank"
 							rel="noopener noreferrer"
 						>
@@ -69,7 +66,6 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 
 ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
-	referralPost: PropTypes.object,
 };
 
 export default ReaderFullPostHeader;

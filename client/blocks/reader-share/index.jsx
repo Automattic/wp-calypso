@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -59,10 +59,16 @@ class ReaderShare extends Component {
 
 	toggle = () => {
 		if ( ! this.state.showingMenu ) {
-			const actionName = this.props.isReblogSelection ? 'open_reader_reblog' : 'open_share';
-			const eventName = this.props.isReblogSelection ? 'Opened Reader Reblog' : 'Opened Share';
+			// Determine if we want to use reblog or share for stat/tracks names.
+			// If reblogging a comment, add comment to the reblog stat/tracks names.
+			const actionName = this.props.isReblogSelection
+				? `open_reader_${ this.props.comment ? 'comment_' : '' }reblog`
+				: 'open_share';
+			const eventName = this.props.isReblogSelection
+				? `Opened Reader ${ this.props.comment ? 'Comment ' : '' }Reblog`
+				: 'Opened Share';
 			const trackName = this.props.isReblogSelection
-				? 'calypso_reader_reblog_opened'
+				? `calypso_reader_${ this.props.comment ? 'comment_' : '' }reblog_opened`
 				: 'calypso_reader_share_opened';
 			stats.recordAction( actionName );
 			stats.recordGaEvent( eventName );
@@ -97,6 +103,8 @@ class ReaderShare extends Component {
 			className: 'popover reader-share__popover',
 		};
 
+		const reblogTitle = this.props.comment && translate( 'Turn this comment into its own post' );
+
 		// The event.preventDefault() on the wrapping div is needed to prevent the
 		// full post opening when a share method is selected in the popover
 		return (
@@ -111,13 +119,21 @@ class ReaderShare extends Component {
 					onMouseEnter={ preloadEditor }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
+					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
 				>
 					{ ! this.props.isReblogSelection ? (
 						ReaderShareIcon( {
 							iconSize: this.props.iconSize,
 						} )
 					) : (
-						<Gridicon icon="reblog" size={ this.props.iconSize } />
+						<>
+							<Gridicon icon="reblog" size={ this.props.iconSize } title={ reblogTitle } />
+							{ this.props.showReblogLabel && (
+								<span className="reader-share__reblog-label" title={ reblogTitle }>
+									{ translate( 'Reblog' ) }
+								</span>
+							) }
+						</>
 					) }
 				</Button>
 				{ this.state.showingMenu &&
@@ -130,6 +146,7 @@ class ReaderShare extends Component {
 					) : (
 						<ReaderReblogSelection
 							post={ this.props.post }
+							comment={ this.props.comment }
 							popoverProps={ popoverProps }
 							closeMenu={ this.closeMenu }
 						/>

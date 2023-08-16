@@ -2,7 +2,7 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import classNames from 'classnames';
 import InfoPopover from 'calypso/components/info-popover';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -11,9 +11,7 @@ import useOpenPromoteWidget from '../../hooks/use-open-promote-widget';
 import { formatNumber } from '../../utils';
 import RelativeTime from '../relative-time';
 
-export default function PostItem( { post }: { post: BlazablePost } ) {
-	const [ loading ] = useState( false );
-
+export default function PostItem( { post, className }: { post: BlazablePost; className: string } ) {
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: 'post-' + post.ID,
 		entrypoint: 'promoted_posts-post_item',
@@ -21,7 +19,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 
 	// API can return "false" as a featured image URL
 	const safeUrl = 'string' === typeof post?.featured_image && safeImageUrl( post.featured_image );
-	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+	const featuredImage = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
 	const postDate = (
 		<RelativeTime date={ post.date } showTooltip={ true } tooltipTitle={ __( 'Published date' ) } />
@@ -37,7 +35,7 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 	const titleShortened = titleIsLong ? post?.title.slice( 0, 55 ) + '...' : post?.title;
 
 	return (
-		<tr className="post-item__row">
+		<tr className={ classNames( 'post-item__row', className ) }>
 			<td className="post-item__post-data">
 				<div className="post-item__post-data-row">
 					{ featuredImage && (
@@ -88,7 +86,12 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 						</div>
 					</div>
 				</div>
-				<div className="post-item__post-data-row post-item__post-data-row-mobile">
+				<div
+					className={ classNames(
+						'post-item__post-data-row post-item__post-data-row-mobile',
+						className
+					) }
+				>
 					<div className="post-item__stats-mobile">
 						{ sprintf(
 							// translators: %s is number of post's views
@@ -118,8 +121,8 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 						</a>
 						<Button
 							variant="primary"
-							isBusy={ loading }
-							disabled={ loading }
+							isBusy={ false }
+							disabled={ false }
 							onClick={ onClickPromote }
 							className="post-item__post-promote-button"
 						>
@@ -142,8 +145,8 @@ export default function PostItem( { post }: { post: BlazablePost } ) {
 			<td className="post-item__post-promote">
 				<Button
 					variant="primary"
-					isBusy={ loading }
-					disabled={ loading }
+					isBusy={ false }
+					disabled={ false }
 					onClick={ onClickPromote }
 					className="post-item__post-promote-button"
 				>

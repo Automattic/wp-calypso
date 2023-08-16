@@ -334,7 +334,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/discover' ],
+		paths: [ '/discover', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/discover' ],
 		module: 'calypso/reader/discover',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -357,7 +357,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tag' ],
+		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -607,7 +607,7 @@ const sections = [
 	},
 	{
 		name: 'promote-post',
-		paths: [ '/advertising', '/advertising/[^\\/]+', '/advertising/[^\\/]+/[^\\/]+/promote' ],
+		paths: [ '/advertising' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
 	},

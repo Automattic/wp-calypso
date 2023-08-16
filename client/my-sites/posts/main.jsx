@@ -5,13 +5,16 @@ import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mapPostStatus } from 'calypso/lib/route';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import PostTypeList from 'calypso/my-sites/post-type-list';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PostsMain extends Component {
@@ -45,7 +48,17 @@ class PostsMain extends Component {
 	}
 
 	render() {
-		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
+		const {
+			author,
+			category,
+			search,
+			siteId,
+			statusSlug,
+			tag,
+			translate,
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
+		} = this.props;
 		const status = mapPostStatus( statusSlug );
 		/* Check if All Sites Mode */
 		const isAllSites = siteId ? 1 : 0;
@@ -70,6 +83,9 @@ class PostsMain extends Component {
 
 		return (
 			<Main wideLayout className="posts">
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
 				<ScreenOptionsTab wpAdminPath="edit.php" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
@@ -101,6 +117,11 @@ class PostsMain extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( PostsMain ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
+	};
+} )( localize( PostsMain ) );

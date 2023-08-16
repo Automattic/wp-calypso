@@ -47,7 +47,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			);
 		}
 
-		if ( ! currencyCode || rawPrice === undefined ) {
+		if ( ! currencyCode || rawPrice === undefined || rawPrice === null ) {
 			return null;
 		}
 
@@ -103,7 +103,7 @@ export interface PlanPriceProps {
 	 * If specified along with `productDisplayPrice`, this will be ignored unless
 	 * it is an array, in which case `productDisplayPrice` will be ignored.
 	 */
-	rawPrice?: number | [ number, number ];
+	rawPrice?: number | [ number, number ] | null;
 
 	/**
 	 * If true, the number(s) in `rawPrice` will be interpreted as integers in

@@ -31,6 +31,7 @@ import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 interface Props {
+	initImportRun?: boolean;
 	sourceSiteId: number | null;
 	targetSite: SiteDetails;
 	targetSiteId: number | null;
@@ -170,10 +171,14 @@ export class ImportEverything extends SectionMigrate {
 			return (
 				<PreMigrationScreen
 					startImport={ this.startMigration }
+					initImportRun={ this.props.initImportRun }
 					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 					targetSite={ targetSite }
-					onContentOnlyClick={ onContentOnlySelection }
 					isMigrateFromWp={ isMigrateFromWp }
+					onContentOnlyClick={ onContentOnlySelection }
+					onFreeTrialClick={ () => {
+						stepNavigator?.navigate( `migrationTrial${ window.location.search }` );
+					} }
 				/>
 			);
 		}

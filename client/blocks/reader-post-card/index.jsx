@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { localeRegexString } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import closest from 'component-closest';
-import { truncate, get } from 'lodash';
+import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -39,10 +39,7 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
-		discoverPost: PropTypes.object,
-		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
-		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
@@ -60,9 +57,7 @@ class ReaderPostCard extends Component {
 	};
 
 	propagateCardClick = () => {
-		// If we have an discover pick post available, send the discover pick to the full post view
-		const postToOpen = get( this.props, 'discoverPost' ) || this.props.post;
-		this.props.onClick( postToOpen );
+		this.props.onClick( this.props.post );
 	};
 
 	handleCardClick = ( event ) => {
@@ -118,7 +113,6 @@ class ReaderPostCard extends Component {
 		const {
 			currentRoute,
 			post,
-			discoverPost,
 			site,
 			feed,
 			onCommentClick,
@@ -141,7 +135,6 @@ class ReaderPostCard extends Component {
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
-		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isConversations = currentRoute.startsWith( '/read/conversations' );
 
@@ -154,7 +147,6 @@ class ReaderPostCard extends Component {
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
-			'is-discover': isDiscover,
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
@@ -163,7 +155,7 @@ class ReaderPostCard extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const readerPostActions = (
 			<ReaderPostActions
-				post={ discoverPost || post }
+				post={ post }
 				site={ site }
 				visitUrl={ post.URL }
 				showFollow={ showFollowButton }
@@ -185,10 +177,10 @@ class ReaderPostCard extends Component {
 				post={ post }
 				site={ site }
 				feed={ feed }
-				showSiteName={ showSiteName || isDiscover }
+				showSiteName={ showSiteName }
 				showAvatar={ ! compact }
 				teams={ teams }
-				showFollow={ ! isDiscover }
+				showFollow={ false }
 				compact={ compact }
 			/>
 		);
@@ -200,7 +192,6 @@ class ReaderPostCard extends Component {
 				<ConversationPost
 					post={ post }
 					title={ title }
-					isDiscover={ isDiscover }
 					postByline={ postByline }
 					commentIds={ postKey?.comments ?? [] }
 					onClick={ this.handleCardClick }
@@ -237,12 +228,7 @@ class ReaderPostCard extends Component {
 			);
 		} else if ( isGalleryPost ) {
 			readerPostCard = (
-				<GalleryPost
-					post={ post }
-					title={ title }
-					onClick={ this.handleCardClick }
-					isDiscover={ isDiscover }
-				>
+				<GalleryPost post={ post } title={ title } onClick={ this.handleCardClick }>
 					{ readerPostActions }
 				</GalleryPost>
 			);

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Dialog } from '@automattic/components';
-import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
+import { BaseButton } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -356,7 +356,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			label: translate( 'Back to my purchases' ),
 		};
 
-		const firstButtons: [ ButtonType ] = [ close ];
+		const firstButtons: ( BaseButton | React.ReactElement )[] = [ close ];
 
 		// Offer accepted screen only provides back to site button.
 		if ( steps.OFFER_ACCEPTED_STEP === cancellationStep ) {

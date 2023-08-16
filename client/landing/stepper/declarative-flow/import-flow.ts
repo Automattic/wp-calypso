@@ -25,6 +25,7 @@ import ImporterSquarespace from './internals/steps-repository/importer-squarespa
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import MigrationHandler from './internals/steps-repository/migration-handler';
+import MigrationTrial from './internals/steps-repository/migration-trial';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
@@ -54,6 +55,7 @@ const importFlow: Flow = {
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'migrationHandler', component: MigrationHandler },
+			{ slug: 'migrationTrial', component: MigrationTrial },
 			{ slug: 'sitePicker', component: SitePickerStep },
 			{ slug: 'error', component: MigrationError },
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
@@ -195,12 +197,24 @@ const importFlow: Flow = {
 					return handleMigrationRedirects( providedDependencies );
 				}
 
+				case 'migrationTrial': {
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'importer':
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
+						default:
+							return;
+					}
+				}
+
 				case 'error':
 					return navigate( providedDependencies?.url as string );
 
 				case 'verifyEmail':
-					// TODO: handle verify email submission, navigate to the next step
-					return;
+					return navigate( `migrationTrial?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {
@@ -273,6 +287,7 @@ const importFlow: Flow = {
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'verifyEmail':
+				case 'migrationTrial':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 			}
 		};

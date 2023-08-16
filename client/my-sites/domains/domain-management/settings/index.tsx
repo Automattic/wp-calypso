@@ -1,6 +1,8 @@
 import { Button } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
+import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -43,6 +45,7 @@ import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
+import DomainRedirectCard from './cards/domain-redirect-card';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
@@ -73,15 +76,17 @@ const Settings = ( {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
 
+	const queryParams = new URLSearchParams( window.location.search );
+
 	useEffect( () => {
 		if ( ! contactInformation ) {
 			requestWhois( selectedDomainName );
 		}
-	}, [ contactInformation, selectedDomainName ] );
+	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
 	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
 
-	const renderBreadcrumbs = () => {
+	const renderHeader = () => {
 		const previousPath = domainManagementList(
 			selectedSite?.slug,
 			currentRoute,
@@ -104,7 +109,17 @@ const Settings = ( {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader
+				items={ items }
+				mobileItem={ mobileItem }
+				titleOverride={
+					domain ? (
+						<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+					) : null
+				}
+			/>
+		);
 	};
 
 	const renderSecurityAccordion = () => {
@@ -141,7 +156,6 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			! hasConnectableSites ||
 			domain.type === domainTypes.TRANSFER
 		) {
 			return null;
@@ -149,11 +163,15 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Connect a WordPress.com site', { textOnly: true } ) }
+				title={ translate( 'Create a WordPress.com site', { textOnly: true } ) }
 				key="status"
 				expanded
 			>
-				<DomainOnlyConnectCard selectedDomainName={ domain.domain } selectedSite={ selectedSite } />
+				<DomainOnlyConnectCard
+					selectedDomainName={ domain.domain }
+					selectedSite={ selectedSite }
+					hasConnectableSites={ hasConnectableSites }
+				/>
 			</Accordion>
 		);
 	};
@@ -214,7 +232,7 @@ const Settings = ( {
 			return (
 				<Accordion
 					title={ translate( 'Redirect settings', { textOnly: true } ) }
-					subtitle="Update your site redirect"
+					subtitle={ translate( 'Update your site redirect' ) }
 					key="main"
 					expanded
 				>
@@ -262,10 +280,18 @@ const Settings = ( {
 			return null;
 		}
 
+		const onClose = () => {
+			page.redirect(
+				window.location.pathname + removeQueryArgs( window.location.search, 'nameservers' )
+			);
+		};
+
 		return (
 			<Accordion
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
+				expanded={ queryParams.get( 'nameservers' ) === 'true' }
+				onClose={ onClose }
 			>
 				{ domain.canManageNameServers ? (
 					<NameServersCard
@@ -309,6 +335,26 @@ const Settings = ( {
 				) : (
 					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
 				) }
+			</Accordion>
+		);
+	};
+
+	const renderRedirectSection = () => {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return (
+			<Accordion
+				title={ translate( 'Redirect Domain', { textOnly: true } ) }
+				subtitle={ translate( 'Redirect from your domain to another' ) }
+			>
+				<DomainRedirectCard domainName={ selectedDomainName } nameservers={ nameservers } />
 			</Accordion>
 		);
 	};
@@ -459,6 +505,7 @@ const Settings = ( {
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
+				{ renderRedirectSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
@@ -481,7 +528,7 @@ const Settings = ( {
 
 	if ( ! domain ) {
 		// TODO: Update this placeholder
-		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
+		return <DomainMainPlaceholder breadcrumbs={ renderHeader } />;
 	}
 
 	return (
@@ -489,8 +536,7 @@ const Settings = ( {
 		<Main wideLayout className="domain-settings-page">
 			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+			{ renderHeader() }
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

@@ -28,6 +28,7 @@ const stepNameToModuleName = {
 	plans: 'plans',
 	'plans-new': 'plans',
 	'plans-business': 'plans',
+	'plans-business-with-plugin': 'plans',
 	'plans-hosting': 'plans',
 	'plans-pm': 'plans',
 	'plans-pro': 'plans',
@@ -94,7 +95,9 @@ const stepNameToModuleName = {
 export function getStepModuleName( stepName ) {
 	return stepNameToModuleName[ stepName ] || '';
 }
-
+export function getStepModuleMap() {
+	return stepNameToModuleName;
+}
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(

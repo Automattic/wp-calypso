@@ -56,7 +56,9 @@ describe( 'Site Assembler', () => {
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }` ),
+				DataHelper.getCalypsoURL(
+					`/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
+				),
 				{
 					timeout: 30 * 1000,
 				}
@@ -71,7 +73,7 @@ describe( 'Site Assembler', () => {
 			await startSiteFlow.clickButton( 'Start designing' );
 			await page.waitForURL(
 				DataHelper.getCalypsoURL(
-					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }`
+					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
 				),
 				{
 					timeout: 30 * 1000,
@@ -94,23 +96,26 @@ describe( 'Site Assembler', () => {
 			await startSiteFlow.selectLayoutComponent( 1 );
 
 			expect( await assembledPreviewLocator.count() ).toBe( 1 );
+		} );
 
-			await startSiteFlow.clickButton( 'Save' );
+		it( 'Select "Sections"', async function () {
+			await startSiteFlow.selectLayoutComponentType( 'Sections' );
+			await startSiteFlow.selectLayoutComponent( 1 );
+
+			expect( await assembledPreviewLocator.count() ).toBe( 2 );
 		} );
 
 		it( 'Select "Footer"', async function () {
 			await startSiteFlow.selectLayoutComponentType( 'Footer' );
 			await startSiteFlow.selectLayoutComponent( 1 );
 
-			expect( await assembledPreviewLocator.count() ).toBe( 2 );
-
-			await startSiteFlow.clickButton( 'Save' );
+			expect( await assembledPreviewLocator.count() ).toBe( 3 );
 		} );
 
-		it( 'Click "Continue" and land on the Site Editor', async function () {
+		it( 'Click "Save and continue" and land on the Site Editor', async function () {
 			await Promise.all( [
 				page.waitForURL( /processing/ ),
-				startSiteFlow.clickButton( 'Continue' ),
+				startSiteFlow.clickButton( 'Save and continue' ),
 			] );
 			await page.waitForURL( /site-editor/, {
 				timeout: 30 * 1000,

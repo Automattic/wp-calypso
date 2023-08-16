@@ -3,6 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -25,6 +26,7 @@ const build: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
@@ -48,7 +50,7 @@ const build: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
+							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
@@ -66,7 +68,7 @@ const build: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
+					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
 				default:
 					return navigate( 'freeSetup' );
 			}

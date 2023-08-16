@@ -11,6 +11,7 @@ import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
+import { setQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/route';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
@@ -146,7 +147,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	}, [ displayManageSitePluginsModal ] );
 
 	const onIntervalSwitcherChange = useCallback(
-		( interval ) => dispatch( setBillingInterval( interval ) ),
+		( interval ) => {
+			setQueryArgs( { interval: interval?.toLowerCase() }, true );
+			dispatch( setBillingInterval( interval ) );
+		},
 		[ dispatch ]
 	);
 

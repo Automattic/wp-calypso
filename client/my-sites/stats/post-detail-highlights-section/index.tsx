@@ -1,6 +1,5 @@
-import { Card, PostStatsCard } from '@automattic/components';
+import { Card, Count, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';

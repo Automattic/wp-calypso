@@ -17,7 +17,6 @@ export default function UpgradeBadge() {
 			className="upgrade-badge__wrapper"
 			onMouseEnter={ () => setShowPopover( true ) }
 			onMouseLeave={ () => setShowPopover( false ) }
-			onMouseDown={ () => setShowPopover( false ) }
 			role="button"
 			tabIndex={ 0 }
 			ref={ wrapperRef }

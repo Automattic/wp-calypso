@@ -1,6 +1,10 @@
 import config from '@automattic/calypso-config';
 import { WordPressWordmark } from '@automattic/components';
-import { isDefaultLocale, addLocaleToPath } from '@automattic/i18n-utils';
+import {
+	isDefaultLocale,
+	addLocaleToPath,
+	addLocaleToPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -34,11 +38,12 @@ class MasterbarLoggedOut extends Component {
 
 	renderTagsItem() {
 		const { translate } = this.props;
+		// const locale = getLocaleSlug();
 
 		const tagsUrl = '/tags';
-		// TODO - renable adding locale once we enable locales for these pages.
+		// TODO - Enable locales for logged out tags page.
 		// if ( ! isDefaultLocale( locale ) ) {
-		// 	tagsUrl = addLocaleToPath( tagsUrl, locale );
+		// 	tagsUrl = addLocaleToPathLocaleInFront( tagsUrl, locale );
 		// }
 
 		return (
@@ -53,12 +58,12 @@ class MasterbarLoggedOut extends Component {
 
 	renderSearchItem() {
 		const { translate } = this.props;
+		const locale = getLocaleSlug();
 
-		const searchUrl = '/read/search';
-		// TODO - renable adding locale once we enable locales for these pages.
-		// if ( ! isDefaultLocale( locale ) ) {
-		// 	searchUrl = addLocaleToPath( searchUrl, locale );
-		// }
+		let searchUrl = '/read/search';
+		if ( ! isDefaultLocale( locale ) ) {
+			searchUrl = addLocaleToPathLocaleInFront( searchUrl, locale );
+		}
 
 		return (
 			<Item url={ searchUrl }>
@@ -72,12 +77,12 @@ class MasterbarLoggedOut extends Component {
 
 	renderDiscoverItem() {
 		const { translate } = this.props;
+		const locale = getLocaleSlug();
 
-		const discoverUrl = '/discover';
-		// TODO - renable adding locale once we enable locales for these pages.
-		// if ( ! isDefaultLocale( locale ) ) {
-		// 	discoverUrl = addLocaleToPath( discoverUrl, locale );
-		// }
+		let discoverUrl = '/discover';
+		if ( ! isDefaultLocale( locale ) ) {
+			discoverUrl = addLocaleToPathLocaleInFront( discoverUrl, locale );
+		}
 
 		return (
 			<Item url={ discoverUrl }>

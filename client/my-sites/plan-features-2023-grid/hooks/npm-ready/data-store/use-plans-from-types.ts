@@ -1,5 +1,5 @@
 import {
-	PlanSlug,
+	type PlanSlug,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 	TYPE_FREE,
 	TYPE_WOO_EXPRESS_PLUS,

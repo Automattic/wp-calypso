@@ -16,6 +16,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	p {
 		font-size: 1rem;
 		line-height: 24px;
+		margin-top: 4px;
 	}
 
 	h4 {
@@ -30,7 +31,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	}
 
 	.support-content-cta {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var(--studio-gray-0);
 		display: flex;
 		margin-bottom: 2rem;
 		font-size: 1.25rem;
@@ -117,10 +118,17 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		justify-content: space-between;
 		margin-top: 3rem;
 
+		p,
+		form {
+			margin-bottom: 8px;
+			margin-top: 0;
+		}
+
+
 		.support-content-subscribe-disclaimer {
 			color: var(--studio-gray-60);
 			font-size: 0.75rem;
-			line-height: 26px;
+			line-height: 20px;
 
 			a {
 				color: inherit;
@@ -173,21 +181,19 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 		h4 {
 			font-size: 1.25rem;
-			line-height: 26px;
+			line-height: 26px !important;
 		}
 
 		p {
-			font-size: 0.875rem;
 			margin-top: 4px;
-			margin-bottom: 8px;
-			line-height: 20px;
+			margin-bottom: 16px;
 		}
 
 		.support-content-cta {
 			margin-bottom: 0;
 
 			.support-content-cta-left {
-				padding: 0 48px 16px 0;
+				padding: 0 48px 24px 0;
 			}
 
 			.support-content-cta-right {
@@ -197,11 +203,11 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 		.support-content-resources {
 			flex-direction: column;
-			gap: 8px;
+			gap: 0;
 
 			.support-content-resource {
 				min-width: 317px;
-				padding: 16px 48px 16px 0;
+				padding: 24px 48px 24px 0;
 
 				.resource-link {
 					line-height: 20px;
@@ -209,13 +215,20 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			}
 		}
 
+		.support-content-links {
+			a {
+				display: inline-block;
+			}
+
+			p {
+				margin-bottom: 16px !important;
+			}
+		}
+
 		.support-content-links-subscribe {
 			flex-direction: column;
 			padding-bottom: 36px;
-
-			.support-content-subscribe {
-				margin-top: 32px;
-			}
+			margin-top: 24px;
 
 			.support-content-subscribe form {
 				.support-content-subscribe-email {

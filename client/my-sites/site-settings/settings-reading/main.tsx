@@ -4,9 +4,12 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { useSelector } from 'calypso/state';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -204,6 +207,11 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 
 const ReadingSettings = () => {
 	const translate = useTranslate();
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
+		isJetpackConnectionProblem( state, siteId as number )
+	);
 
 	if ( ! isEnabled ) {
 		return null;
@@ -212,6 +220,9 @@ const ReadingSettings = () => {
 	return (
 		<Main className="site-settings site-settings__reading-settings">
 			<ScreenOptionsTab wpAdminPath="options-reading.php" />
+			{ isJetpack && isPossibleJetpackConnectionProblem && siteId && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
 			<ReadingSettingsForm />

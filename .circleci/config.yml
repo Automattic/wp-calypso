@@ -352,6 +352,7 @@ jobs:
           name: Install Desktop Dependencies
           command: yarn
       - when:
+          # Remove the condition on pipeline.git.tag on both steps to force a full artifact build for Windows.
           condition: << pipeline.git.tag >>
           steps:
             - run:

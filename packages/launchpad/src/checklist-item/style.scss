@@ -11,7 +11,7 @@
 	border-top: none;
 	display: flex;
 	flex-wrap: wrap;
-	padding: 16px;
+	padding: 16px 0;
 	width: 100%;
 	margin: 0;
 	color: var(--color-text);
@@ -62,6 +62,11 @@
 	color: var(--color-text);
 }
 
+.checklist-item__task-content[data-task="set_up_payments"] .badge {
+	background-color: var(--studio-green-5);
+	cursor: default;
+}
+
 .checklist-item__checkmark-container {
 	margin-right: 8px;
 	width: 20px;
@@ -75,6 +80,8 @@
 // general styles
 .checklist-item__text {
 	font-weight: 600;
+	flex-grow: 1;
+	text-align: left;
 }
 
 .checklist-item__subtext {
@@ -131,6 +138,11 @@
 	.checklist-item__checkmark {
 		fill: var(--studio-gray-50);
 	}
+	.checklist-item__counter {
+		color: var(--studio-gray-50);
+		font-weight: 400;
+		margin-right: 0;
+	}
 }
 
 // pending tasks and completed enabled
@@ -151,6 +163,10 @@
 	.badge {
 		background: var(--studio-blue-10);
 	}
+
+	.checklist-item__task-content[data-task="set_up_payments"] .badge {
+		background-color: var(--studio-green-5);
+	}
 }
 
 // pending disabled tasks
@@ -163,14 +179,17 @@
 .checklist-item__chevron {
 	display: flex;
 	line-height: 20px;
-	text-align: left;
 	width: 30px;
-	margin-left: auto;
 }
 
 .gridicon.checklist-item__chevron {
-	top: 0;
+	top: 2px;
 	margin-top: 0;
+}
+
+.checklist-item__counter {
+	margin-right: 1em;
+	font-weight: 600;
 }
 
 .checklist-item__checklist-primary-button {

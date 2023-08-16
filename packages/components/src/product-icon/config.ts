@@ -67,6 +67,7 @@ export type SupportedSlugs =
 	| 'pro-plan'
 	| 'starter-plan'
 	| 'jetpack_ai_monthly'
+	| 'jetpack_ai_yearly'
 	| 'jetpack_free'
 	| 'jetpack_personal'
 	| 'jetpack_personal_monthly'
@@ -162,7 +163,7 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	],
 	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
 	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
-	'jetpack-ai': [ 'jetpack_ai_monthly' ],
+	'jetpack-ai': [ 'jetpack_ai_monthly', 'jetpack_ai_yearly' ],
 	'jetpack-free': [ 'jetpack_free' ],
 	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],
 	'jetpack-premium': [ 'jetpack_premium', 'jetpack_premium_monthly' ],

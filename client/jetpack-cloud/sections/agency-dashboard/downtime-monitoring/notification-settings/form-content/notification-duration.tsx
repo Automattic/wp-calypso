@@ -5,8 +5,9 @@ import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { availableNotificationDurations as durations } from '../../../sites-overview/utils';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
-import { RestrictionType } from '../../types';
+import UpgradeLink from '../../upgrade-link';
 import type { MonitorDuration } from '../../../sites-overview/types';
+import type { RestrictionType } from '../../types';
 
 interface Props {
 	selectedDuration?: MonitorDuration;
@@ -58,7 +59,12 @@ export default function NotificationDuration( {
 						disabled={ restriction !== 'none' && duration.isPaid }
 					>
 						{ duration.label }
-						{ duration.isPaid && <FeatureRestrictionBadge restriction={ restriction } /> }
+						{ duration.isPaid && (
+							<>
+								<FeatureRestrictionBadge restriction={ restriction } />
+								{ restriction === 'upgrade_required' && <UpgradeLink isInline /> }
+							</>
+						) }
 					</SelectDropdown.Item>
 				) ) }
 			</SelectDropdown>

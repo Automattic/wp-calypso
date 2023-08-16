@@ -832,7 +832,7 @@ object PreReleaseE2ETests : BuildType({
 				set -o errexit
 
 				# Retry failed tests only.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures
+				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

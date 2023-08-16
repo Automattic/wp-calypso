@@ -15,7 +15,7 @@ class SitesBlock extends Component {
 	onSubmit = ( event ) => {
 		event.preventDefault();
 
-		this.props.onSubmit( event );
+		this.props?.onSubmit?.( event );
 
 		return false;
 	};

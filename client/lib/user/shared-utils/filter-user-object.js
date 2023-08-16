@@ -16,7 +16,6 @@ const allowedKeys = [
 	'phone_account',
 	'email',
 	'email_verified',
-	'blaze_credits_enabled',
 	'is_valid_google_apps_country',
 	'user_ip_country_code',
 	'logout_URL',

@@ -17,6 +17,20 @@ body.is-section-promote-post-i2 {
 
 	.post-item__row {
 		width: 100%;
+
+		&_experimental { // A/B testing "dsp_blaze_open_widget_button_202308"
+			.post-item__post-promote .components-button.is-primary {
+				color: var(--studio-gray-80);
+				background-color: var(--color-surface);
+				border-radius: 4px;
+				border: 1px solid var(--studio-gray-10);
+
+				&:hover {
+					border-color: var(--color-neutral-20);
+				}
+			}
+		}
+
 	}
 
 	.post-item__post {
@@ -127,17 +141,18 @@ body.is-section-promote-post-i2 {
 	}
 
 	.post-item__post-thumbnail-wrapper {
-		display: block;
-		position: relative;
-		height: 78px;
-		width: 108px;
-		min-width: 108px;
 		align-self: stretch;
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+		background-size: cover;
 		border: 1px solid #eee;
 		border-radius: 4px;
+		display: block;
+		height: 78px;
+		min-width: 108px;
 		overflow: hidden;
-		background-size: cover;
-		background-repeat: no-repeat;
+		position: relative;
+		width: 108px;
 
 		&_no-image {
 			align-items: center;
@@ -161,6 +176,10 @@ body.is-section-promote-post-i2 {
 	.promote-post-i2 {
 		.posts-list__table {
 			width: calc(100% - 32px);
+		}
+
+		th.posts-list__header-column {
+			display: none;
 		}
 
 		.post-item__post {
@@ -221,6 +240,15 @@ body.is-section-promote-post-i2 {
 			text-decoration: none;
 		}
 
+		// A/B testing "dsp_blaze_open_widget_button_202308"
+		// experimental changes in view button mobile
+		.post-item__row_experimental .post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link,
+		.post-item__row_experimental .post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile a.post-item__view-link:visited {
+			color: var(--studio-gray-80);
+			background-color: var(--studio-gray-0);
+			border: 1px solid var(--studio-gray-0);
+		}
+
 		// Promote link
 		.post-item__post-data .post-item__post-data-row-mobile .post-item__actions-mobile button.post-item__post-promote-button {
 			display: inline-block;
@@ -228,6 +256,20 @@ body.is-section-promote-post-i2 {
 			height: 40px;
 			margin-left: 8px;
 		}
+
+		// A/B testing "dsp_blaze_open_widget_button_202308"
+		// experimental changes in promote button mobile
+		.post-item__post-data .post-item__row_experimental .post-item__actions-mobile button.post-item__post-promote-button {
+			color: var(--studio-gray-80);
+			background-color: var(--color-surface);
+			border: 1px solid var(--studio-gray-10);
+
+			&:hover {
+				border-color: var(--color-neutral-20);
+			}
+		}
+
+
 	}
 }
 
