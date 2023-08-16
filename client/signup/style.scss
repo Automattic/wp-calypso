@@ -30,7 +30,8 @@ body.is-section-signup {
 			}
 		}
 	}
-	&.is-videopress-signup {
+	&.is-videopress-signup,
+	&.is-videopress-tv-signup {
 		background: var(--videopress-color-background-dark);
 		color: var(--videopress-color-text);
 
