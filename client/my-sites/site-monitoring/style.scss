@@ -42,6 +42,12 @@
 
 .site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
 	padding-bottom: 24px;
+	margin-left: 16px;
+	margin-right: 16px;
+	@include break-medium {
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
 
 .site-monitoring-metrics-tab {
@@ -64,6 +70,9 @@
 	font-size: $font-title-large;
 	line-height: 40px;
 	color: var(--studio-gray-100);
+	span {
+		white-space: nowrap;
+	}
 }
 
 .site-monitoring__chart {
@@ -106,7 +115,7 @@
 	gap: 16px;
 	flex-direction: column;
 	.site-monitoring__chart {
-		flex-grow: 1;
+		flex: 1;
 	}
 	@include break-large {
 		flex-direction: row;
@@ -114,24 +123,24 @@
 }
 
 .site-monitoring-cache-pie-chart {
-	.pie-chart__chart-section-0,
-	.pie-chart__legend-sample-0 {
+	.pie-chart__chart-section-cache-miss,
+	.pie-chart__legend-sample-cache-miss {
 		fill: #bae0f9;
 
 	}
-	.pie-chart__chart-section-1,
-	.pie-chart__legend-sample-1 {
+	.pie-chart__chart-section-cache-hit,
+	.pie-chart__legend-sample-cache-hit {
 		fill: var(--studio-blue-30);
 	}
 }
 
 .site-monitoring-php-static-pie-chart {
-	.pie-chart__chart-section-0,
-	.pie-chart__legend-sample-0 {
+	.pie-chart__chart-section-dynamic,
+	.pie-chart__legend-sample-dynamic {
 		fill: #09b585;
 	}
-	.pie-chart__chart-section-1,
-	.pie-chart__legend-sample-1 {
+	.pie-chart__chart-section-static,
+	.pie-chart__legend-sample-static {
 		fill: var(--studio-green-5);
 	}
 }

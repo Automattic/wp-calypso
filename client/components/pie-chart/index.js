@@ -69,7 +69,7 @@ class PieChart extends Component {
 		return transformedData.map( ( datum ) => {
 			return (
 				<path
-					className={ `pie-chart__chart-section-${ datum.sectionNum }` }
+					className={ `pie-chart__chart-section-${ datum.sectionNum } pie-chart__chart-section-${ datum.className }` }
 					key={ datum.name }
 					d={ datum.path }
 				/>

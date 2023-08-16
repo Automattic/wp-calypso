@@ -2,6 +2,7 @@
 
 import { merge, get } from 'lodash';
 import {
+	ALL_SITES_STATS_RECEIVE,
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
@@ -68,7 +69,7 @@ export const requests = ( state = {}, action ) => {
  */
 export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
-		case SITE_STATS_RECEIVE:
+		case SITE_STATS_RECEIVE: {
 			const { siteId, statType, query, data } = action;
 			const queryKey = getSerializedStatsQuery( query );
 
@@ -84,6 +85,34 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 					},
 				},
 			};
+		}
+
+		case ALL_SITES_STATS_RECEIVE: {
+			const { statType, query, data } = action;
+			const newState = { ...state };
+
+			for ( const siteId in data.stats ) {
+				// We can receive data for different dates from different sites,
+				// since they might have different timezones, so we need to
+				// recompute the query key for each site.
+				const newQuery = {
+					...query,
+					date: data.stats[ siteId ].date,
+				};
+				const queryKey = getSerializedStatsQuery( newQuery );
+
+				newState[ siteId ] = {
+					...newState[ siteId ],
+					[ statType ]: {
+						...( newState[ siteId ] && newState[ siteId ][ statType ]
+							? newState[ siteId ][ statType ]
+							: {} ),
+						[ queryKey ]: data.stats[ siteId ],
+					},
+				};
+			}
+			return newState;
+		}
 	}
 
 	return state;

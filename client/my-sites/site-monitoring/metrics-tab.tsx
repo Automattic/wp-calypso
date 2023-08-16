@@ -147,12 +147,20 @@ function useAggregateSiteMetricsData(
 
 function getFormattedDataForPieChart(
 	data: Record< string, number >,
-	labels: Record< string, string >
+	labels: Record<
+		string,
+		{
+			name: string;
+			className?: string;
+		}
+	>
 ) {
 	return Object.keys( data ).map( ( key ) => {
-		const name = labels[ key ] || key;
+		const name = labels[ key ]?.name || key;
+		const className = labels[ key ]?.className || key;
 		return {
 			name,
+			className,
 			value: data[ key ],
 			description: undefined,
 		};
@@ -170,9 +178,9 @@ const useSuccessHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 301,
-			fill: 'rgba(227, 174, 212, 0.1)',
+			fill: 'rgba(235, 101, 148, 0.2)',
 			label: __( '301: Moved Permanently' ),
-			stroke: 'rgba(227, 174, 212, 1)',
+			stroke: 'rgba(235, 101, 148, 1)',
 		},
 		{
 			statusCode: 302,
@@ -196,9 +204,9 @@ const useErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 401,
-			fill: 'rgba(227, 174, 212, 0.1)',
+			fill: 'rgba(140, 143, 148, 0.1)',
 			label: __( '401: Unauthorized Request' ),
-			stroke: 'rgba(227, 174, 212, 1)',
+			stroke: 'rgba(140, 143, 148, 1)',
 		},
 		{
 			statusCode: 403,
@@ -252,12 +260,21 @@ export const MetricsTab = () => {
 
 	const startDate = moment( timeRange.start * 1000 );
 	const endDate = moment( timeRange.end * 1000 );
-	let dateRange = '';
+	let dateRange = null;
 
 	if ( endDate.isSame( startDate, 'day' ) ) {
 		dateRange = endDate.format( 'LL' );
+		dateRange = (
+			<>
+				<span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
 	} else {
-		dateRange = `${ startDate.format( 'LL' ) } - ${ endDate.format( 'LL' ) }`;
+		dateRange = (
+			<>
+				<span>{ startDate.format( 'LL' ) }</span> - <span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
 	}
 
 	return (
@@ -266,49 +283,62 @@ export const MetricsTab = () => {
 				<div className="site-monitoring-time-controls__title">{ dateRange }</div>
 				<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			</div>
-			<div>
-				<SiteMonitoringLineChart
-					timeRange={ timeRange }
-					title={ __( 'Server performance' ) }
-					subtitle={ __( 'Requests per minute and average server response time' ) }
-					data={ formattedData as uPlot.AlignedData }
-					series={ [
-						{
-							fill: 'rgba(6, 117, 196, 0.1)',
-							label: __( 'Requests per minute' ),
-							stroke: '#0675C4',
-						},
-						{
-							fill: 'rgba(0, 135, 99, 0.2)',
-							label: __( 'Average response time (ms)' ),
-							stroke: '#008763',
-							scale: 'average-response-time',
-						},
-					] }
-					isLoading={ isLoadingLineChart }
-					options={ {
-						plugins: [ timeHighlightPlugin( 'auto' ), tooltipsPlugin( FirstChartTooltip ) ],
-					} }
-				></SiteMonitoringLineChart>
-			</div>
+			<SiteMonitoringLineChart
+				timeRange={ timeRange }
+				title={ __( 'Server performance' ) }
+				subtitle={ __( 'Requests per minute and average server response time' ) }
+				data={ formattedData as uPlot.AlignedData }
+				series={ [
+					{
+						fill: 'rgba(6, 117, 196, 0.1)',
+						label: __( 'Requests per minute' ),
+						stroke: '#0675C4',
+					},
+					{
+						fill: 'rgba(222, 177, 0, 0.2)',
+						label: __( 'Average response time (ms)' ),
+						stroke: 'rgba(222, 177, 0, 1)',
+						scale: 'average-response-time',
+						unit: 'ms',
+					},
+				] }
+				isLoading={ isLoadingLineChart }
+				options={ {
+					plugins: [ timeHighlightPlugin( 'auto' ), tooltipsPlugin( FirstChartTooltip ) ],
+				} }
+			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
 					title={ __( 'Cache efficiency' ) }
 					subtitle={ __( 'Percentage of cache hits versus cache misses' ) }
 					className="site-monitoring-cache-pie-chart"
 					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
-						0: 'Cache miss',
-						1: 'Cache hit',
-					} ) }
+						1: {
+							name: 'Cache hit',
+							className: 'cache-hit',
+						},
+						0: {
+							name: 'Cache miss',
+							className: 'cache-miss',
+						},
+					} ).reverse() }
+					fixedOrder
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
 					title={ __( 'Response types' ) }
-					subtitle={ __( 'Percentage of dynamic PHP responses versus static content responses' ) }
+					subtitle={ __( 'Percentage of dynamic versus static responses' ) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
-						php: 'PHP',
-						static: 'Static',
+						php: {
+							name: 'Dynamic',
+							className: 'dynamic',
+						},
+						static: {
+							name: 'Static',
+							className: 'static',
+						},
 					} ) }
+					fixedOrder
 				></SiteMonitoringPieChart>
 			</div>
 			<SiteMonitoringLineChart

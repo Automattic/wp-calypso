@@ -9,10 +9,22 @@ type Props = {
 	title: string;
 	subtitle?: string | React.ReactNode;
 	className?: string;
-	data: Array< { name: string; value: number; description: string | undefined } >;
+	data: Array< {
+		name: string;
+		value: number;
+		description: string | undefined;
+		className: string;
+	} >;
+	fixedOrder?: boolean;
 };
 
-export const SiteMonitoringPieChart = ( { title, subtitle, className, data }: Props ) => {
+export const SiteMonitoringPieChart = ( {
+	title,
+	subtitle,
+	className,
+	data,
+	fixedOrder,
+}: Props ) => {
 	const classes = [ 'site-monitoring-pie-chart', 'site-monitoring__chart' ];
 	if ( className ) {
 		classes.push( className );
@@ -28,7 +40,7 @@ export const SiteMonitoringPieChart = ( { title, subtitle, className, data }: Pr
 				{ ! data.length ? <Spinner /> : null }
 				<PieChart data={ data } donut startAngle={ 0 } />
 			</div>
-			<PieChartLegend data={ data } onlyPercent />
+			<PieChartLegend data={ data } onlyPercent fixedOrder={ fixedOrder } />
 		</div>
 	);
 };

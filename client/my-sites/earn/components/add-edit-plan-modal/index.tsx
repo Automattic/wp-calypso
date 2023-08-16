@@ -3,7 +3,6 @@ import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
-import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
@@ -14,6 +13,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	requestAddProduct,
@@ -21,18 +21,41 @@ import {
 } from 'calypso/state/memberships/product-list/actions';
 import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ChangeEvent } from 'react';
+
 import './style.scss';
 
-/**
- * @typedef {[string, number] CurrencyMinimum
- *
- *
- * Stripe Currencies also supported by WordPress.com with minimum transaction amounts.
- *
- * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
- * @type { [currency: string]: number }
- */
-const STRIPE_MINIMUM_CURRENCY_AMOUNT = {
+type Product = {
+	ID?: string;
+	currency?: string;
+	price?: number;
+	title?: string;
+	interval?: string;
+	buyer_can_change_amount?: boolean;
+	multiple_per_user?: boolean;
+	welcome_email_content?: string;
+	subscribe_as_site_subscriber?: boolean;
+	renewal_schedule?: string;
+	type?: string;
+	is_editable?: boolean;
+};
+
+type RecurringPaymentsPlanAddEditModalProps = {
+	closeDialog: () => void;
+	product: Product;
+	siteId?: number;
+};
+
+type StripeMinimumCurrencyAmounts = {
+	[ key: string ]: number;
+};
+
+type DefaultNames = {
+	// [ key: string ]: ( arg0: string ) => string;
+	[ key: string ]: string;
+};
+
+const STRIPE_MINIMUM_CURRENCY_AMOUNT: StripeMinimumCurrencyAmounts = {
 	USD: 0.5,
 	AUD: 0.5,
 	BRL: 0.5,
@@ -52,9 +75,6 @@ const STRIPE_MINIMUM_CURRENCY_AMOUNT = {
 	SGD: 0.5,
 };
 
-/**
- * @type Array<{ code: string }>
- */
 const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
 
 /**
@@ -66,7 +86,10 @@ const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code )
  * @param {string} connectedAccountDefaultCurrency - Default currency of the current account
  * @returns {number} Minimum transaction amount for given currency.
  */
-function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency ) {
+function minimumCurrencyTransactionAmount(
+	currency: string,
+	connectedAccountDefaultCurrency: string
+): number {
 	if ( connectedAccountDefaultCurrency === currency.toUpperCase() ) {
 		return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ];
 	}
@@ -74,20 +97,19 @@ function minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurr
 	return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ] * 2;
 }
 
-/**
- * @type {number}
- */
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
 
 const RecurringPaymentsPlanAddEditModal = ( {
-	addProduct,
 	closeDialog,
 	product,
 	siteId,
-	updateProduct,
-	connectedAccountDefaultCurrency,
-} ) => {
+}: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
+		getconnectedAccountDefaultCurrencyForSiteId( state, siteId ?? selectedSiteId )
+	);
 	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
 		product?.welcome_email_content ?? ''
 	);
@@ -95,7 +117,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.multiple_per_user ?? false
 	);
 
-	const [ editedMarkAsDonation, setEditedMarkAsDonation ] = useState( product?.type ?? null );
+	const [ editedMarkAsDonation, setEditedMarkAsDonation ] = useState< string | null >(
+		product?.type ?? null
+	);
 
 	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
 		product?.buyer_can_change_amount ?? false
@@ -111,7 +135,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			return connectedAccountDefaultCurrency;
 		}
 		return 'USD';
-	}, [ currencyList, product ] );
+	}, [ product, connectedAccountDefaultCurrency ] );
+
 	const [ currentCurrency, setCurrentCurrency ] = useState( defaultCurrency );
 
 	const [ currentPrice, setCurrentPrice ] = useState(
@@ -128,10 +153,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const [ editedPrice, setEditedPrice ] = useState( false );
 
-	const isValidCurrencyAmount = ( currency, price ) =>
+	const isValidCurrencyAmount = ( currency: string, price: number ) =>
 		price >= minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency );
 
-	const isFormValid = ( field ) => {
+	const isFormValid = ( field?: string ) => {
 		if (
 			( field === 'price' || ! field ) &&
 			! isValidCurrencyAmount( currentCurrency, currentPrice )
@@ -151,31 +176,33 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		return true;
 	};
 
-	const handleCurrencyChange = ( event ) => {
+	const handleCurrencyChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		const { value: currency } = event.currentTarget;
 		setCurrentCurrency( currency );
 		setEditedPrice( true );
 	};
-	const handlePriceChange = ( event ) => {
+	const handlePriceChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const value = parseFloat( event.currentTarget.value );
 		// Set the current price if the value is a valid number or an empty string.
 		if ( '' === event.currentTarget.value || ! isNaN( value ) ) {
-			setCurrentPrice( event.currentTarget.value );
+			setCurrentPrice( Number( event.currentTarget.value ) );
 		}
 		setEditedPrice( true );
 	};
-	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
-	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
-	const handleMarkAsDonation = ( newValue ) =>
+	const handlePayWhatYouWant = ( newValue: boolean ) => setEditedPayWhatYouWant( newValue );
+	const handleMultiplePerUser = ( newValue: boolean ) => setEditedMultiplePerUser( newValue );
+	const handleMarkAsDonation = ( newValue: boolean ) =>
 		setEditedMarkAsDonation( true === newValue ? 'donation' : null );
-	const onNameChange = ( event ) => setEditedProductName( event.target.value );
-	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
+	const onNameChange = ( event: ChangeEvent< HTMLInputElement > ) =>
+		setEditedProductName( event.target.value );
+	const onSelectSchedule = ( event: ChangeEvent< HTMLSelectElement > ) =>
+		setEditedSchedule( event.target.value );
 
 	// Ideally these values should be kept in sync with the Jetpack equivalents,
 	// though there's no strong technical reason to do so - nothing is going to
 	// break if they fall out of sync.
 	// https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/extensions/shared/components/product-management-controls/utils.js#L95
-	const defaultNames = {
+	const defaultNames: DefaultNames = {
 		'false,1 month': translate( 'Monthly Subscription' ),
 		'true,1 month': translate( 'Monthly Donation' ),
 		'false,1 year': translate( 'Yearly Subscription' ),
@@ -189,11 +216,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
 			return;
 		}
-		const name = defaultNames[ [ 'donation' === editedMarkAsDonation, editedSchedule ] ] ?? '';
+		const name =
+			defaultNames[ `${ 'donation' === editedMarkAsDonation },${ editedSchedule }` ] ?? '';
+
 		setEditedProductName( name );
 	}, [ editedMarkAsDonation, editedSchedule ] );
 
-	const onClose = ( reason ) => {
+	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
 			const product_details = {
 				currency: currentCurrency,
@@ -207,10 +236,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				type: editedMarkAsDonation,
 				is_editable: true,
 			};
-			addProduct(
-				siteId,
-				product_details,
-				translate( 'Added "%s" payment plan.', { args: editedProductName } )
+			dispatch(
+				requestAddProduct(
+					siteId ?? selectedSiteId,
+					product_details,
+					translate( 'Added "%s" payment plan.', { args: editedProductName } )
+				)
 			);
 			recordTracksEvent( 'calypso_earn_page_payment_added', product_details );
 		} else if ( reason === 'submit' && product && product.ID ) {
@@ -227,12 +258,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				type: editedMarkAsDonation,
 				is_editable: true,
 			};
-			updateProduct(
-				siteId,
-				product_details,
-				translate( 'Updated "%s" payment plan.', { args: editedProductName } )
+			dispatch(
+				requestUpdateProduct(
+					siteId ?? selectedSiteId,
+					product_details,
+					translate( 'Updated "%s" payment plan.', { args: editedProductName } )
+				)
 			);
-			recordTracksEvent( 'calypso_earn_page_payment_updated', product_details );
 		}
 		closeDialog();
 	};
@@ -332,6 +364,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							currencyList={ currencyList }
 							placeholder="0.00"
 							noWrap
+							className={ null }
+							currencySymbolSuffix={ null }
 						/>
 					</div>
 				</FormFieldset>
@@ -351,7 +385,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
 						value={ editedCustomConfirmationMessage }
-						onChange={ ( event ) => setEditedCustomConfirmationMessage( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
+							setEditedCustomConfirmationMessage( event.target.value )
+						}
 						acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
 						showRemainingCharacters={ true }
 						placeholder={ translate( 'Thank you for subscribing!' ) }
@@ -385,13 +421,4 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 };
 
-export default connect(
-	( state, props ) => ( {
-		siteId: props.siteId || getSelectedSiteId( state ),
-		connectedAccountDefaultCurrency: getconnectedAccountDefaultCurrencyForSiteId(
-			state,
-			getSelectedSiteId( state )
-		),
-	} ),
-	{ addProduct: requestAddProduct, updateProduct: requestUpdateProduct }
-)( RecurringPaymentsPlanAddEditModal );
+export default RecurringPaymentsPlanAddEditModal;
