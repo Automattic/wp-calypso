@@ -1,6 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	FATAL_ERROR,
 	USER_TOKEN_ERROR,
@@ -20,6 +22,9 @@ interface Props {
 
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
+	const siteIsAutomatedTransfer = useSelector( ( state ) =>
+		isSiteAutomatedTransfer( state, siteId )
+	);
 
 	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
 		useState( false );
@@ -52,6 +57,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-domain-name'
 				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
 			/>
 		);
 	}
@@ -67,6 +73,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'https://wordpress.com/support/why-is-my-site-down/#theres-a-critical-error-on-your-site'
 				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
 			/>
 		);
 	}
@@ -82,6 +89,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
 				noticeActionText={ translate( 'Learn how to reconnect Jetpack' ) }
+				isAtomic={ siteIsAutomatedTransfer }
 			/>
 		);
 	}
@@ -95,6 +103,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				) }
 				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
 			/>
 		);
 	}
@@ -110,6 +119,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
 				noticeActionText={ translate( 'Learn how to reactivate Jetpack' ) }
+				isAtomic={ siteIsAutomatedTransfer }
 			/>
 		);
 	}
@@ -121,6 +131,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				errorText={ translate(
 					'Jetpack can’t communicate with your site. Please contact site administrator.'
 				) }
+				isAtomic={ siteIsAutomatedTransfer }
 			/>
 		);
 	}
@@ -133,6 +144,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 			) }
 			noticeActionText={ translate( 'Learn how to fix' ) }
+			isAtomic={ siteIsAutomatedTransfer }
 		/>
 	);
 };
