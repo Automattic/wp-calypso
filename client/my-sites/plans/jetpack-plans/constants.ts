@@ -41,8 +41,6 @@ import {
 	JETPACK_SECURITY_T1_PLANS,
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
-	PRODUCT_JETPACK_STATS_YEARLY,
-	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
@@ -194,36 +192,6 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 	indirectCheckoutUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
 } );
 
-// TODO: We'll need to internationalize currencies like we did for the purchase page.
-const STATS_COMMERCIAL_PRICE = 10;
-const STATS_COMMERCIAL_CURRENCY = 'USD';
-
-export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
-	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
-	displayName: translate( 'Stats (Commercial)' ),
-	shortName: translate( 'Stats (Commercial)' ),
-	productSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	costProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	term: TERM_MONTHLY,
-	displayTerm: TERM_MONTHLY,
-	monthlyProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	displayPrice: STATS_COMMERCIAL_PRICE,
-	displayCurrency: STATS_COMMERCIAL_CURRENCY,
-} );
-
-export const INDIRECT_CHECKOUT_PRODUCT_STATS_YEARLY = (): SelectorProduct => ( {
-	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
-	displayName: translate( 'Stats (Commercial)' ),
-	shortName: translate( 'Stats (Commercial)' ),
-	productSlug: PRODUCT_JETPACK_STATS_YEARLY,
-	costProductSlug: PRODUCT_JETPACK_STATS_YEARLY,
-	term: TERM_ANNUALLY,
-	displayTerm: TERM_ANNUALLY,
-	monthlyProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	displayPrice: STATS_COMMERCIAL_PRICE,
-	displayCurrency: STATS_COMMERCIAL_CURRENCY,
-} );
-
 export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
 	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
 	displayName: translate( 'Stats (Free)' ),
@@ -235,16 +203,12 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
 
 // List of products showcased in the Plans grid but not sold via checkout URL directly.
 export const INDIRECT_CHECKOUT_PRODUCTS_LIST = [
-	PRODUCT_JETPACK_STATS_YEARLY,
-	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 ];
 
 // Indirect checkout Product slugs to SelectorProduct.
 export const INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct > = {
-	[ PRODUCT_JETPACK_STATS_YEARLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS_YEARLY,
-	[ PRODUCT_JETPACK_STATS_MONTHLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS,
 	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY,
 	[ PRODUCT_JETPACK_STATS_FREE ]: INDIRECT_CHECKOUT_PRODUCT_STATS_FREE,
 };
