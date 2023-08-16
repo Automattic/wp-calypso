@@ -137,7 +137,7 @@ class DnsRecords extends Component {
 				/>
 				<div className="dns-records-notice__message">
 					{ translate(
-						'Domain redirection requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.',
+						'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.',
 						{
 							components: {
 								a: (
