@@ -6,6 +6,7 @@ import {
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
 	HTTP_ERROR,
+	INACTIVITY_ERROR,
 	PLUGIN_ERROR,
 	DNS_ERROR,
 	UNKNOWN_ERROR,
@@ -92,6 +93,19 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				errorType={ errorType }
 				errorText={ translate(
 					'Jetpack can’t communicate with your site because your site isn’t responding to requests.'
+				) }
+				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+			/>
+		);
+	}
+
+	if ( errorType === INACTIVITY_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ errorType }
+				errorText={ translate(
+					'Jetpack can’t communicate with your site because your site has not been in contact for 7 days.'
 				) }
 				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }

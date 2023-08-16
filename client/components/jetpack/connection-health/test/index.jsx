@@ -11,6 +11,7 @@ import {
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
 	HTTP_ERROR,
+	INACTIVITY_ERROR,
 	PLUGIN_ERROR,
 	DNS_ERROR,
 	UNKNOWN_ERROR,
@@ -142,6 +143,25 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			expect(
 				screen.queryByText(
 					/Jetpack can’t communicate with your site because your site isn’t responding to requests./i
+				)
+			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+		} );
+
+		test( 'shows inactivity error message', () => {
+			mockError.mockReturnValue( INACTIVITY_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.queryByText(
+					/Jetpack can’t communicate with your site because your site has not been in contact for 7 days./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
