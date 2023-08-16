@@ -106,7 +106,7 @@
 	gap: 16px;
 	flex-direction: column;
 	.site-monitoring__chart {
-		flex-grow: 1;
+		flex: 1;
 	}
 	@include break-large {
 		flex-direction: row;
