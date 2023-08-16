@@ -58,7 +58,7 @@ function useSubscriberHighlights( siteId: number | null, isPaymentProcessorConne
 
 function SubscriberHighlightsHeader() {
 	const translate = useTranslate();
-	const localizedTitle = translate( 'All time stats', {
+	const localizedTitle = translate( 'All-time stats', {
 		comment: 'Heading for Subscribers page highlights section',
 	} );
 
