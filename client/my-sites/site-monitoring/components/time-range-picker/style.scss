@@ -13,12 +13,16 @@
 
 .site-monitoring-time-range-picker__container {
 	display: flex;
-	align-items: center;
 	justify-content: flex-end;
+	flex-direction: column;
+	gap: 10px;
+	@include breakpoint-deprecated( ">660px" ) {
+		flex-direction: row;
+		align-items: center;
+	}
 }
 
 .site-monitoring-time-range-picker__heading {
-	margin-right: 10px; /* Adjust the spacing between heading and controls */
 	font-weight: 400;
 	font-size: 0.875rem;
 	line-height: 20px;
