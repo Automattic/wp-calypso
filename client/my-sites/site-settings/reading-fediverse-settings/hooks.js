@@ -3,15 +3,16 @@ import wpcom from 'calypso/lib/wp';
 
 export const useActivityPubStatus = ( blogId, onUpdate = () => {} ) => {
 	const path = `/sites/${ blogId }/activitypub/status`;
-	const queryKey = [ path ];
+	const apiNamespace = 'wpcom/v2';
+	const queryKey = [ path, apiNamespace ];
 
 	const { data, isInitialLoading, isError } = useQuery( {
 		queryKey,
-		queryFn: () => wpcom.req.get( { path, apiNamespace: 'wpcom/v2' } ),
+		queryFn: () => wpcom.req.get( { path, apiNamespace } ),
 	} );
 	const queryClient = useQueryClient();
 	const { mutate, isLoading } = useMutation( {
-		mutationFn: ( enabled ) => wpcom.req.post( { path, apiNamespace: 'wpcom/v2' }, { enabled } ),
+		mutationFn: ( enabled ) => wpcom.req.post( { path, apiNamespace }, { enabled } ),
 		onSuccess: ( responseData ) => {
 			queryClient.setQueryData( queryKey, responseData );
 			onUpdate( responseData );
