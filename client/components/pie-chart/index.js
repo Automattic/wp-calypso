@@ -66,7 +66,7 @@ class PieChart extends Component {
 	renderPieChart() {
 		const { transformedData } = this.state;
 
-		return transformedData.reverse().map( ( datum ) => {
+		return transformedData.map( ( datum ) => {
 			return (
 				<path
 					className={ `pie-chart__chart-section-${ datum.sectionNum } pie-chart__chart-section-${ datum.className }` }

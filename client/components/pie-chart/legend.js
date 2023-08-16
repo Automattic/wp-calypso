@@ -7,15 +7,12 @@ import DataType from './data-type';
 const NUM_COLOR_SECTIONS = 3;
 
 function transformData( data ) {
-	const sortedData = sortBy( data, ( datum ) => datum.value );
-
-	return sortedData.map( ( datum, index ) => {
-		const sectionNum = index % NUM_COLOR_SECTIONS;
-		return {
+	return sortBy( data, ( datum ) => datum.value )
+		.reverse()
+		.map( ( datum, index ) => ( {
 			...datum,
-			sectionNum,
-		};
-	} );
+			sectionNum: index % NUM_COLOR_SECTIONS,
+		} ) );
 }
 class PieChartLegend extends Component {
 	static propTypes = {
