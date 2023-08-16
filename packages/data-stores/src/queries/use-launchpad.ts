@@ -45,6 +45,7 @@ type LaunchpadUpdateSettings = {
 		slug: string;
 		is_dismissed: boolean;
 	};
+	launchpad_screen?: 'off' | 'minimized' | 'full' | 'skipped';
 };
 
 export const fetchLaunchpad = (

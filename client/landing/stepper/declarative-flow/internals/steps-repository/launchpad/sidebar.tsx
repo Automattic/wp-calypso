@@ -1,6 +1,6 @@
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Badge, Gridicon, CircularProgressBar } from '@automattic/components';
-import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
+import { Badge, Gridicon, CircularProgressBar, Button } from '@automattic/components';
+import { OnboardSelect, useLaunchpad, updateLaunchpadSettings } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
@@ -21,7 +21,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getEnhancedTasks } from './task-helper';
 import { getLaunchpadTranslations } from './translations';
-import { Task } from './types';
+import type { Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
@@ -174,6 +174,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		}
 	}, [ site, flow ] );
 
+	const skipFullscreenLaunchpad = async () => {
+		if ( siteSlug ) {
+			await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+			window.location.href = `/home/${ siteSlug }`;
+		}
+	};
+
 	return (
 		<div className="launchpad__sidebar">
 			<div className="launchpad__sidebar-content-container">
@@ -246,6 +253,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					taskFilter={ () => enhancedTasks || [] }
 					makeLastTaskPrimaryAction={ true }
 				/>
+
+				<Button onClick={ skipFullscreenLaunchpad }>Don't show this again</Button>
+
 				{ showPlansModal && site?.ID && (
 					<RecurringPaymentsPlanAddEditModal
 						closeDialog={ () => setShowPlansModal( false ) }
