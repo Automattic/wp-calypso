@@ -137,10 +137,6 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
 }
 
-type PlanFeatures2023GridState = {
-	selectedStorage: PlanSelectedStorage;
-};
-
 const PlanLogo: React.FunctionComponent< {
 	planIndex: number;
 	planSlug: PlanSlug;
@@ -214,10 +210,7 @@ const PlanLogo: React.FunctionComponent< {
 	);
 };
 
-export class PlanFeatures2023Grid extends Component<
-	PlanFeatures2023GridType,
-	PlanFeatures2023GridState
-> {
+export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
 	observer: IntersectionObserver | null = null;
 	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
 
