@@ -1,5 +1,5 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import { updateLaunchpadSettings, useLaunchpad, SiteDetails } from '@automattic/data-stores';
+import { updateLaunchpadSettings, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad, Task, setUpActionsForTasks } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -25,10 +25,7 @@ const CustomerHomeLaunchpad = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 
-	// The type definition for getSite is incorrect, it returns a SiteDetails object
-	const site = useSelector(
-		( state: AppState ) => siteId && ( getSite( state as object, siteId ) as any as SiteDetails )
-	);
+	const site = useSelector( ( state: AppState ) => siteId && getSite( state as object, siteId ) );
 
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
