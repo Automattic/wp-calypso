@@ -36,13 +36,7 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore && (
-				<Button
-					className="comments__comment-actions-read-more"
-					onClick={ ( e ) => {
-						onReadMore();
-						e.preventDefault();
-					} }
-				>
+				<Button className="comments__comment-actions-read-more" onClick={ onReadMore }>
 					<Gridicon
 						icon="chevron-down"
 						size={ 18 }
@@ -52,13 +46,7 @@ const CommentActions = ( {
 				</Button>
 			) }
 			{ showReplyButton && (
-				<Button
-					className="comments__comment-actions-reply"
-					onClick={ ( e ) => {
-						handleReply();
-						e.preventDefault();
-					} }
-				>
+				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 				</Button>
@@ -75,13 +63,7 @@ const CommentActions = ( {
 				/>
 			) }
 			{ showCancelReplyButton && (
-				<Button
-					className="comments__comment-actions-cancel-reply"
-					onClick={ ( e ) => {
-						onReplyCancel();
-						e.preventDefault();
-					} }
-				>
+				<Button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
 				</Button>
 			) }
