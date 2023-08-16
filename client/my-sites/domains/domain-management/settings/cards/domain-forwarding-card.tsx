@@ -1,4 +1,5 @@
 import { Button, FormInputValidation } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, trash, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -13,6 +14,7 @@ import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/u
 import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
+import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
@@ -188,10 +190,10 @@ export default function DomainForwardingCard( {
 		}
 
 		const noticeText = translate(
-			'Your domain is not connected to WordPress.com and Domain forwarding requires it.{{br/}}{{a}}More info{{/a}}.',
+			'Connect your domain to WordPress.com to enable domain forwarding.{{br/}}{{a}}Learn more{{/a}}.',
 			{
 				components: {
-					a: <a href="?nameservers=true" />,
+					a: <a href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
 					br: <br />,
 				},
 			}
