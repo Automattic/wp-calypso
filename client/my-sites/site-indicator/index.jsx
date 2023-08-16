@@ -210,9 +210,7 @@ class SiteIndicator extends Component {
 					/>
 					{ translate( 'Jetpack can’t communicate with your site.' ) }
 					<Button
-						borderless
-						compact
-						scary
+						plain
 						href={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 						target="_blank"
 						onClick={ this.handleJetpackConnectionHealthSidebarLinkClick }
