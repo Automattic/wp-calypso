@@ -6,7 +6,7 @@ import DesignPicker, {
 	useCategorization,
 	useThemeDesignsQuery,
 } from '@automattic/design-picker';
-import { englishLocales } from '@automattic/i18n-utils';
+import { englishLocales, translationExists } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -42,6 +42,7 @@ export default function DesignPickerStep( props ) {
 		hideDesignTitle,
 		hideDescription,
 		hideBadge,
+		useDIFMThemes,
 		signupDependencies: dependencies,
 	} = props;
 
@@ -58,10 +59,9 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
-	const isDIFMStoreFlow = 'do-it-for-me-store' === props.flowName;
-
 	const getThemeFilters = () => {
-		if ( props.useDIFMThemes ) {
+		if ( useDIFMThemes ) {
+			const isDIFMStoreFlow = 'do-it-for-me-store' === props.flowName;
 			return isDIFMStoreFlow ? 'do-it-for-me-store' : 'do-it-for-me';
 		}
 
@@ -305,6 +305,10 @@ export default function DesignPickerStep( props ) {
 			);
 		}
 
+		if ( useDIFMThemes && translationExists( 'Select a theme to suggest a style.' ) ) {
+			return translate( 'Select a theme to suggest a style.' );
+		}
+
 		const text = translate( 'Choose a starting theme. You can change it later.' );
 
 		if ( englishLocales.includes( translate.localeSlug ) ) {
@@ -384,7 +388,7 @@ export default function DesignPickerStep( props ) {
 			{ ...props }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
-				'design-picker__sell-intent': 'sell' === intent || isDIFMStoreFlow,
+				'design-picker__hide-category-column': useDIFMThemes || 'sell' === intent,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
