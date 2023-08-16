@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useEffect, useState } from 'react';
+import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -19,6 +19,7 @@ import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import CloudCart from './cloud-cart';
 import BundlesSection from './components/bundles-section';
+import MobileMenuButton from './components/mobile-menu-button';
 import UserMenu from './components/user-menu';
 import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 
@@ -43,7 +44,9 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const locale = useLocale();
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const { data: menuData, status: menuDataStatus } = useJetpackMasterbarDataQuery();
+	const mobileMenu = useRef< HTMLDivElement >( null );
 	const [ eventHandlersAdded, setEventHandlersAdded ] = useState( false );
+	const [ isMobileMenuOpen, setIsMobileMenuOpen ] = useState( false );
 
 	const sortByMenuOrder = ( a: MenuItem, b: MenuItem ) => a.menu_order - b.menu_order;
 
@@ -160,33 +163,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		}
 		// END SUBMENU TOGGLE FUNCTIONALITY
 
-		// MOBILE MENU FUNCTIONALITY
-		const mobileMenu = document.querySelector( '.js-mobile-menu' ) as HTMLDivElement;
-		const mobileBtn = document.querySelector( '.js-mobile-btn' );
-		const body = document.querySelector( 'body' );
-
-		function mobileMenuToggle() {
-			const expanded = mobileBtn?.getAttribute( 'aria-expanded' ) === 'true' || false;
-
-			mobileBtn?.setAttribute( 'aria-expanded', String( ! expanded ) );
-
-			if ( ! expanded ) {
-				mobileMenu?.classList.add( 'is-expanded' );
-				body?.classList.add( 'no-scroll' );
-			} else {
-				mobileMenu?.classList.remove( 'is-expanded' );
-				body?.classList.remove( 'no-scroll' );
-			}
-		}
-
-		// Close expanded menu on Esc keypress
-		function mobileOnKeyDown( e: KeyboardEvent ) {
-			if ( e.key === 'Escape' && mobileBtn?.getAttribute( 'aria-expanded' ) === 'true' ) {
-				mobileMenuToggle();
-			}
-		}
-		// END MOBILE MENU FUNCTIONALITY
-
 		if ( menuDataStatus === 'success' && ! eventHandlersAdded ) {
 			setEventHandlersAdded( true );
 
@@ -198,31 +174,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 			document.addEventListener( 'keydown', onKeyDown );
 			// END SUBMENU SETUP
 
-			// MOBILE MENU SETUP
-			if ( mobileMenu && mobileBtn ) {
-				mobileBtn.addEventListener( 'click', function ( e ) {
-					e.preventDefault();
-
-					mobileMenuToggle();
-				} );
-
-				const lastFocusable = getLastFocusableElement( mobileMenu );
-
-				if ( lastFocusable ) {
-					lastFocusable.addEventListener( 'focusout', function () {
-						if ( mobileBtn.getAttribute( 'aria-expanded' ) === 'true' ) {
-							mobileMenuToggle();
-						}
-					} );
-				}
-
-				document.addEventListener( 'keydown', mobileOnKeyDown );
-			}
-			// END MOBILE SETUP
-
 			return () => {
 				document.removeEventListener( 'keydown', onKeyDown );
-				document.removeEventListener( 'keydown', mobileOnKeyDown );
 			};
 		}
 	}, [ menuDataStatus, eventHandlersAdded ] );
@@ -259,17 +212,18 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 									<JetpackLogo full size={ 38 } />
 								</ExternalLink>
 								{ shouldShowCart && <CloudCart /> }
-								<a
-									className="header__mobile-btn mobile-btn js-mobile-btn"
-									href="#mobile-menu"
-									aria-expanded="false"
+								<MobileMenuButton
+									isOpen={ isMobileMenuOpen }
+									setIsOpen={ setIsMobileMenuOpen }
+									mobileMenu={ mobileMenu }
+								/>
+								<div
+									className={ `header__nav-wrapper js-mobile-menu ${
+										isMobileMenuOpen ? 'is-expanded' : ''
+									}` }
+									id="mobile-menu"
+									ref={ mobileMenu }
 								>
-									<span className="mobile-btn__icon" aria-hidden="true">
-										<span className="mobile-btn__inner"></span>
-									</span>
-									<span className="mobile-btn__label">{ translate( 'Menu' ) }</span>
-								</a>
-								<div className="header__nav-wrapper js-mobile-menu" id="mobile-menu">
 									<ul className="header__sections-list js-nav-list">
 										{ menuDataStatus === 'success' && sections ? (
 											sections.sort( sortByMenuOrder ).map( ( { label, id, href, items } ) => {
