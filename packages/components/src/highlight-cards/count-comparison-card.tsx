@@ -11,7 +11,7 @@ type CountComparisonCardProps = {
 	onClick?: ( event: MouseEvent ) => void;
 	previousCount?: number | null;
 	showValueTooltip?: boolean | null;
-	note: string | undefined;
+	note?: string;
 };
 
 function subtract( a: number | null, b: number | null | undefined ): number | null {
