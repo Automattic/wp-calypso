@@ -1,0 +1,14 @@
+@import "@automattic/typography/styles/variables";
+
+.domains-table__primary-domain-label {
+	display: flex !important;
+	align-items: center;
+	gap: 4px;
+	width: max-content;
+
+	&-popover-content {
+		padding: 16px;
+		font-size: $font-body-small;
+		color: var(--studio-gray-50);
+	}
+}
