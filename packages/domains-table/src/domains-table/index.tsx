@@ -1,13 +1,19 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { DomainsTableRow } from './domains-table-row';
-import type { PartialDomainData } from '@automattic/data-stores';
+import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data-stores';
 import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
+
+	// Detailed domain data is fetched on demand. The ability to customise fetching
+	// is provided to allow for testing.
+	fetchSiteDomains?: (
+		siteIdOrSlug: number | string | null | undefined
+	) => Promise< SiteDomainsQueryFnData >;
 }
 
-export function DomainsTable( { domains }: DomainsTableProps ) {
+export function DomainsTable( { domains, fetchSiteDomains }: DomainsTableProps ) {
 	const { __ } = useI18n();
 
 	if ( ! domains ) {
@@ -23,7 +29,11 @@ export function DomainsTable( { domains }: DomainsTableProps ) {
 			</thead>
 			<tbody>
 				{ domains.map( ( domain ) => (
-					<DomainsTableRow key={ domain.domain } domain={ domain } />
+					<DomainsTableRow
+						key={ domain.domain }
+						domain={ domain }
+						fetchSiteDomains={ fetchSiteDomains }
+					/>
 				) ) }
 			</tbody>
 		</table>
