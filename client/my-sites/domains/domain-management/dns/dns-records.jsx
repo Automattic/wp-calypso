@@ -1,3 +1,4 @@
+import { Icon, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -104,6 +105,44 @@ class DnsRecords extends Component {
 		);
 	};
 
+	renderNotice = () => {
+		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+
+		if ( selectedDomainName.hasWpcomNameservers ) {
+			return null;
+		}
+
+		return (
+			<div className="dns-records-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="dns-records-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="dns-records-notice__message">
+					{ translate(
+						'Domain redirection requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit(
+											selectedSite.slug,
+											selectedDomainName,
+											currentRoute,
+											{ nameservers: true }
+										) }
+									></a>
+								),
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite, translate, domains } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
@@ -117,6 +156,7 @@ class DnsRecords extends Component {
 				{ selectedDomain?.canManageDnsRecords ? (
 					<>
 						<DnsDetails />
+						{ this.renderNotice() }
 						<DnsRecordsList
 							dns={ dns }
 							selectedSite={ selectedSite }
