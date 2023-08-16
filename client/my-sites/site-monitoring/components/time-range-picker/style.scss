@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .site-monitoring-time-range-picker__controls {
 	max-width: 329px;
 	flex-grow: 1;
@@ -16,7 +19,7 @@
 	justify-content: flex-end;
 	flex-direction: column;
 	gap: 10px;
-	@include breakpoint-deprecated( ">660px" ) {
+	@include break-medium {
 		flex-direction: row;
 		align-items: center;
 	}

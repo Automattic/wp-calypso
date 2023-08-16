@@ -44,7 +44,7 @@
 	padding-bottom: 24px;
 	margin-left: 16px;
 	margin-right: 16px;
-	@include breakpoint-deprecated( ">660px" ) {
+	@include break-medium {
 		margin-left: 0;
 		margin-right: 0;
 	}
