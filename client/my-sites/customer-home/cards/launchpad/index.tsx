@@ -1,6 +1,6 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import { updateLaunchpadSettings, useLaunchpad } from '@automattic/data-stores';
-import { Launchpad, Task, setUpActionsForTasks } from '@automattic/launchpad';
+import { Launchpad, PermittedActions, Task, setUpActionsForTasks } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -14,7 +14,7 @@ import './style.scss';
 
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
-	extraActions?: any;
+	extraActions?: PermittedActions;
 }
 
 const CustomerHomeLaunchpad = ( {
