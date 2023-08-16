@@ -41,12 +41,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			dispatch(
-				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
+				successNotice( translate( 'Domain forwarding updated and enabled.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice( translate( 'An error occurred while updating the redirect.' ), noticeOptions )
+				errorNotice(
+					translate( 'An error occurred while updating the forwarding.' ),
+					noticeOptions
+				)
 			);
 		},
 	} );
@@ -56,12 +59,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
-				successNotice( translate( 'Domain redirect deleted successfully.' ), noticeOptions )
+				successNotice( translate( 'Domain forwarding deleted successfully.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice( translate( 'An error occurred while deleting the redirect.' ), noticeOptions )
+				errorNotice(
+					translate( 'An error occurred while deleting the forwarding.' ),
+					noticeOptions
+				)
 			);
 		},
 	} );
@@ -71,7 +77,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		if ( isError ) {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while fetching your domain redirects.' ),
+					translate( 'An error occurred while fetching your domain forwarding.' ),
 					noticeOptions
 				)
 			);
@@ -118,7 +124,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
 			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
-				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
+				setErrorMessage( translate( 'Forwarding to the same domain are not allowed.' ) );
 				setIsValidUrl( false );
 				return;
 			}
