@@ -16,6 +16,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
@@ -188,17 +189,25 @@ class SiteIndicator extends Component {
 	};
 
 	handleJetpackConnectionHealthSidebarLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_jetpack_connection_health_issue_sidebar_click' );
+		const { siteIsAutomatedTransfer } = this.props;
+		this.props.recordTracksEvent( 'calypso_jetpack_connection_health_issue_sidebar_click', {
+			is_atomic: siteIsAutomatedTransfer,
+		} );
 	};
 
 	errorAccessing() {
-		const { site, translate } = this.props;
+		const { site, translate, siteIsAutomatedTransfer } = this.props;
 
 		// Don't show the button if the site is not defined.
 		if ( site ) {
 			return (
 				<span>
-					<TrackComponentView eventName="calypso_jetpack_connection_health_issue_sidebar_view" />
+					<TrackComponentView
+						eventName="calypso_jetpack_connection_health_issue_sidebar_view"
+						eventProperties={ {
+							is_atomic: siteIsAutomatedTransfer,
+						} }
+					/>
 					{ translate( 'Jetpack can’t communicate with your site.' ) }
 					<Button
 						borderless
@@ -293,6 +302,7 @@ export default connect(
 		return {
 			siteIsConnected: site && ! isJetpackConnectionUnhealthy( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
+			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
 			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
 		};
