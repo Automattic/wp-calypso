@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
