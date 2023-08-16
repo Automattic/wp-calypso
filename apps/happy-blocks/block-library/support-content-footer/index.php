@@ -76,28 +76,11 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 		</div>
 	</div>
 	<div class="support-content-links-subscribe">
-		<div class="support-content-links">
-			<p>
-				<?php esc_html_e( 'Questions?', 'happy-blocks' ); ?>
-				<a href="<?php echo esc_url( 'https://wordpress.com/help/contact/' ); ?>" target="_blank" rel="noreferrer noopener">
-					<?php esc_html_e( 'Contact our Happiness Engineers.', 'happy-blocks' ); ?>
-				</a>
-			</p>
-			<p>
-				<?php esc_html_e( 'Self-hosted WordPress site?', 'happy-blocks' ); ?>
-				<a href="<?php echo esc_url( 'http://wordpress.org/support' ); ?>" target="_blank" rel="noreferrer noopener">
-					<?php esc_html_e( 'Find support here.', 'happy-blocks' ); ?>
-				</a>
-			</p>
-			<p>
-				<?php esc_html_e( 'New to WordPress.com? ', 'happy-blocks' ); ?>
-				<a href="<?php echo esc_url( 'https://wordpress.com/support/start/' ); ?>" target="_blank" rel="noreferrer noopener">
-					<?php esc_html_e( 'Find your perfect-fit plan here.', 'happy-blocks' ); ?>
-				</a>
-			</p>
-		</div>
+		<?php
+			require WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
+		?>
 		<div class="support-content-subscribe">
-			<p><?php esc_html_e( 'Get the latest learning in your inbox::', 'happy-blocks' ); ?></p>
+			<p><?php esc_html_e( 'Get the latest learning in your inbox:', 'happy-blocks' ); ?></p>
 			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" data-blog="<?php echo get_current_blog_id(); ?>" data-post_access_level="everybody" id="subscribe-blog">
 				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Type your email', 'happy-blocks' ); ?>"  id="subscribe-field">
 				<input type="hidden" name="action" value="subscribe">

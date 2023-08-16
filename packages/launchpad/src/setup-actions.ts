@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
@@ -104,7 +105,11 @@ export const setUpActionsForTasks = ( {
 				case 'customize_welcome_message':
 					logMissingCalypsoPath = true;
 					action = () => {
-						window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
+						if ( config.isEnabled( 'settings/newsletter-settings-page' ) ) {
+							window.location.assign( `/settings/newsletter/${ siteSlug }` );
+						} else {
+							window.location.assign( `/settings/reading/${ siteSlug }#newsletter-settings` );
+						}
 					};
 					break;
 				case 'manage_subscribers':

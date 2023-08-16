@@ -107,7 +107,7 @@ import './redesign-v2/style.scss';
 import { isBulkDomainTransfer } from './utils';
 import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';
 import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
@@ -254,7 +254,7 @@ export class CheckoutThankYou extends Component<
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
 			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
-				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
+				( dispatch( imports.ONBOARD_STORE ) as OnboardActions ).resetOnboardStore()
 			);
 
 			if ( mayWeTrackByTracker( 'googleAds' ) ) {

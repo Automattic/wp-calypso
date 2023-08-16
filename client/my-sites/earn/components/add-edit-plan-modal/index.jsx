@@ -335,7 +335,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						/>
 					</div>
 				</FormFieldset>
-				<FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-type">
 					<ToggleControl
 						onChange={ handleMarkAsDonation }
 						checked={ 'donation' === editedMarkAsDonation }
@@ -347,7 +347,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						label={ translate( 'Paid newsletter subscription' ) }
 					/>
 				</FormFieldset>
-				<FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-message">
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
 						value={ editedCustomConfirmationMessage }

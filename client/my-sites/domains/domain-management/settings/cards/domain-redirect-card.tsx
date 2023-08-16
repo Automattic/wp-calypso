@@ -89,9 +89,9 @@ export default function DomainRedirectCard( {
 		try {
 			const origin =
 				( redirect.isSecure ? 'http://' : 'https://' ) +
-				( redirect.targetHost ?? '_domain_.invalid' );
+				( redirect.targetHost ?? '_invalid_.domain' );
 			const url = new URL( redirect.targetPath, origin );
-			if ( url.hostname !== '_domain_.invalid' ) {
+			if ( url.hostname !== '_invalid_.domain' ) {
 				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
 				setProtocol( redirect.isSecure ? 'https' : 'http' );
 			}
@@ -127,6 +127,7 @@ export default function DomainRedirectCard( {
 			setIsValidUrl( false );
 			return;
 		}
+
 		setIsValidUrl( true );
 	};
 

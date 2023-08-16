@@ -367,6 +367,7 @@ export const ConnectedThemesSelection = connect(
 			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,
 			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
+			...( tabFilter === 'all' && { sort: 'date' } ),
 		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];

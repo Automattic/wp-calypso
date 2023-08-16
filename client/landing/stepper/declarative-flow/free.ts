@@ -1,3 +1,4 @@
+import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -18,6 +19,7 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
 import FreeSetup from './internals/steps-repository/free-setup';
 import LaunchPad from './internals/steps-repository/launchpad';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
@@ -46,12 +48,13 @@ const free: Flow = {
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
 			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'patternAssembler', component: PatternAssembler },
 		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteId = useSiteIdParam();
@@ -73,6 +76,16 @@ const free: Flow = {
 			}
 		);
 
+		const exitFlow = ( to: string ) => {
+			setPendingAction( () => {
+				return new Promise( () => {
+					window.location.assign( to );
+				} );
+			} );
+
+			return navigate( 'processing' );
+		};
+
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
@@ -91,6 +104,15 @@ const free: Flow = {
 								launchpadComplete: true,
 							} )
 						);
+					}
+
+					if ( isAssemblerDesign( selectedDesign ) ) {
+						const params = new URLSearchParams( {
+							canvas: 'edit',
+							assembler: '1',
+						} );
+
+						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					if ( selectedDesign ) {
@@ -115,7 +137,16 @@ const free: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
+
+					if ( providedDependencies?.shouldGoToAssembler ) {
+						return navigate( 'patternAssembler' );
+					}
+
 					return navigate( `processing?siteSlug=${ siteSlug }` );
+
+				case 'patternAssembler': {
+					return navigate( `processing?siteSlug=${ siteSlug }` );
+				}
 
 				case 'launchpad': {
 					return navigate( 'processing' );
@@ -125,7 +156,10 @@ const free: Flow = {
 		};
 
 		const goBack = () => {
-			return;
+			switch ( _currentStep ) {
+				case 'patternAssembler':
+					return navigate( 'designSetup' );
+			}
 		};
 
 		const goNext = () => {

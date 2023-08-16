@@ -11,6 +11,7 @@ This component renders a dataset as a pie chart. A separate `PieChartLegend` sub
 - **title** — (optional) (String | Function) Title for the chart. If it is a function it will be called with the arguments
   `translate` and `dataTotal`. This is used to create titles that reference the data total
 - **donut** - (optional) (Boolean) Make it a donut chart instead of a pie chart.
+- **startAngle** - (optional) (Number) Specify a starting angle for the chart.
 
 ## Usage
 

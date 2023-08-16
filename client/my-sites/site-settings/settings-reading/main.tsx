@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -6,10 +7,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSettingsSection from '../reader-settings';
@@ -91,10 +93,12 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 const connectComponent = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = siteId && getSiteSlug( state, siteId );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	return {
+		...( siteSlug && { siteSlug } ),
 		...( siteUrl && { siteUrl } ),
 		siteIsJetpack,
 		isAtomic,
@@ -112,6 +116,7 @@ type ReadingSettingsFormProps = {
 	isSavingSettings: boolean;
 	settings: { subscription_options?: SubscriptionOptions };
 	siteIsJetpack: boolean | null;
+	siteSlug?: string;
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -129,9 +134,11 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isSavingSettings,
 			settings,
 			siteIsJetpack,
+			siteSlug,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
+			const translate = useTranslate();
 			const disabled = isRequestingSettings || isSavingSettings;
 			const savedSubscriptionOptions = settings?.subscription_options;
 			return (
@@ -146,15 +153,34 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-					<NewsletterSettingsSection
-						fields={ fields }
-						handleToggle={ handleToggle }
-						handleSubmitForm={ handleSubmitForm }
-						disabled={ disabled }
-						isSavingSettings={ isSavingSettings }
-						savedSubscriptionOptions={ savedSubscriptionOptions }
-						updateFields={ updateFields }
-					/>
+					{ config.isEnabled( 'settings/newsletter-settings-page' ) ? (
+						<>
+							{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+							<SettingsSectionHeader
+								id="newsletter-settings"
+								title={ translate( 'Newsletter settings' ) }
+							/>
+							<Card className="site-settings__card">
+								<em>
+									{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {
+										components: {
+											a: <a href={ `/settings/newsletter/${ siteSlug }` } />,
+										},
+									} ) }
+								</em>
+							</Card>
+						</>
+					) : (
+						<NewsletterSettingsSection
+							fields={ fields }
+							handleToggle={ handleToggle }
+							handleSubmitForm={ handleSubmitForm }
+							disabled={ disabled }
+							isSavingSettings={ isSavingSettings }
+							savedSubscriptionOptions={ savedSubscriptionOptions }
+							updateFields={ updateFields }
+						/>
+					) }
 					<ReaderSettingsSection
 						fields={ fields }
 						handleAutosavingToggle={ handleAutosavingToggle }
