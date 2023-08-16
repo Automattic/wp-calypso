@@ -12,7 +12,6 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -185,9 +184,7 @@ export class Banner extends Component {
 
 	sanitize( html ) {
 		// Getting an instance of DOMPurify this way is needed to fix a related JEST test.
-		const { window } = new JSDOM( '<!DOCTYPE html>' );
-		const domPurify = DOMPurify( window );
-		return domPurify.sanitize( html, {
+		return DOMPurify.sanitize( html, {
 			ALLOWED_TAGS: [ 'a' ],
 			ALLOWED_ATTR: [ 'href', 'target' ],
 		} );
