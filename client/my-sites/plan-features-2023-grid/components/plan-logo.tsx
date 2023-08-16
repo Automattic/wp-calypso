@@ -7,12 +7,12 @@ import {
 	isPersonalPlan,
 	isPremiumPlan,
 	isFreePlan,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { PlanSlug } from 'calypso/types';
 import { Plans2023Tooltip } from '../components/plans-2023-tooltip';
 import PopularBadge from '../components/popular-badge';
 import { usePlansGridContext } from '../grid-context';
