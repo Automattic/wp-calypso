@@ -38,7 +38,9 @@ const MobileMenuButton: FC< MobileMenuButtonProps > = ( { isOpen, setIsOpen, mob
 	};
 
 	const onBlur = () => {
-		const lastFocusable = getLastFocusableElement( mobileMenu.current as HTMLDivElement );
+		const lastFocusable = mobileMenu.current
+			? getLastFocusableElement( mobileMenu.current as HTMLDivElement )
+			: null;
 
 		if ( lastFocusable ) {
 			lastFocusable.addEventListener(

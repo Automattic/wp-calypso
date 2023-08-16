@@ -25,7 +25,7 @@ const UserMenu: FC = () => {
 			document.addEventListener( 'click', onDocumentClick );
 		}
 
-		setIsMenuOpen( ( prevStatus ) => ! prevStatus );
+		setIsMenuOpen( ( open ) => ! open );
 	}, [ isMenuOpen ] );
 
 	const onUserBtnClick = ( e: ReactMouseEvent< HTMLAnchorElement, MouseEvent > ) => {
