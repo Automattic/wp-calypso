@@ -16,16 +16,19 @@ function useSubscriberHighlights( siteId: number | null ) {
 			heading: translate( 'Total subscribers' ),
 			count: subscribersTotals?.total,
 			show: true, // Always show total subscribers.
+			note: 'WordPress.com and Email subscribers excluding subscribers from social media',
 		},
 		{
 			heading: translate( 'Paid subscribers' ),
 			count: subscribersTotals?.paid_subscribers,
 			show: hasPaidNewsletter,
+			note: 'Paid WordPress.com subscribers',
 		},
 		{
 			heading: translate( 'Free subscribers' ),
 			count: subscribersTotals?.free_subscribers,
 			show: hasPaidNewsletter,
+			note: 'Email subscribers and free WordPress.com subscribers',
 		},
 		{
 			heading: translate( 'WordPress.com subscribers' ),
@@ -37,7 +40,7 @@ function useSubscriberHighlights( siteId: number | null ) {
 			count: subscribersTotals?.total_email,
 			show: ! hasPaidNewsletter,
 		},
-	] as { heading: string; count: number | null; show: boolean }[];
+	] as { heading: string; count: number | null; show: boolean; note?: string }[];
 
 	if ( isLoading || isError ) {
 		// Nulling the count values makes the count comparison card render a '-' instead of a '0'.
@@ -75,6 +78,7 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 							heading={ highlight.heading }
 							count={ highlight.count }
 							showValueTooltip
+							note={ highlight.note }
 						/>
 					)
 			) }

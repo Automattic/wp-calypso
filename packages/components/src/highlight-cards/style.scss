@@ -385,6 +385,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
+.highlight-card-tooltip-note {
+	font-size: $font-body-extra-small;
+	padding-top: 8px;
+}
 .highlight-card__settings-tooltip {
 	.highlight-card-tooltip-content {
 		flex-direction: column;
