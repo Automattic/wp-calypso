@@ -102,8 +102,8 @@ failing to do so, will make your package work correctly in the dev build but tre
 
 If your package requires compilation, the `package.json` `build` script should compile the package:
 
-- If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
-- If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"build": "transpile && copy-assets"`.
+- If it contains ES6+ code that needs to be transpiled, use `run -T transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
+- If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& run -T copy-assets` ie `"build": "transpile && run -T copy-assets"`.
 
 `package.json` is linted using ESLint. Run `yarn eslint packages/*/package.json apps/*/package.json` to validate them.
 
