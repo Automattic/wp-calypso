@@ -185,7 +185,15 @@ export default function DomainRedirectCard( {
 					viewBox="2 2 20 20"
 				/>
 				<div className="domain-redirect-card-notice__message">
-					{ translate( 'You are not currently using WordPress.com name servers.' ) }
+					{ translate(
+						'You are currently not using WordPress.com name servers.{{br/}}For redirects to work correctly, please {{a}}use WordPress.com name servers{{/a}}.',
+						{
+							components: {
+								a: <a href="?nameservers=true" />,
+								br: <br />,
+							},
+						}
+					) }
 				</div>
 			</div>
 		);
