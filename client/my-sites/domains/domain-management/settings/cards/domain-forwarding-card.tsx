@@ -185,7 +185,7 @@ export default function DomainForwardingCard( {
 	};
 
 	const renderNotice = () => {
-		if ( ! pointsToWpcom ) {
+		if ( pointsToWpcom ) {
 			return null;
 		}
 
