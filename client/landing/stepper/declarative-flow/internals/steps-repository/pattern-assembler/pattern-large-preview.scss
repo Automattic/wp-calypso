@@ -14,7 +14,7 @@
 	z-index: 1;
 	transition: margin-inline-start 0.2s ease-out;
 
-	.pattern-assembler__panel--is-open & {
+	.pattern-assembler__pattern-panel-list--is-open & {
 		margin-inline-start: 360px;
 
 		@include break-wide {

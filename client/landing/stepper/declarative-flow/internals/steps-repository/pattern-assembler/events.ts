@@ -10,7 +10,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	CONTINUE_MISCLICK: 'calypso_signup_pattern_assembler_continue_misclick',
 	BACK_CLICK: 'calypso_signup_pattern_assembler_back_click',
 	PATTERN_FINAL_SELECT: 'calypso_signup_pattern_assembler_pattern_final_select',
-	CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
 
 	/**
 	 * Screen Colors
@@ -25,6 +24,11 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	SCREEN_FONTS_PREVIEW_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_preview_click',
 	SCREEN_FONTS_BACK_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_back_click',
 	SCREEN_FONTS_DONE_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_done_click',
+
+	/**
+	 * Screen Category List
+	 */
+	SCREEN_CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
 
 	/**
 	 * Screen Activation

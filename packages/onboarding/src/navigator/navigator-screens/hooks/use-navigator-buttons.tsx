@@ -1,4 +1,4 @@
-import { NavigatorButtonAsItem } from '../../navigator-buttons';
+import { NavigationButtonAsItem } from '../../navigator-buttons';
 import NavigatorItemGroup from '../../navigator-item-group';
 import type { NavigatorScreenObject } from '../types';
 
@@ -14,7 +14,7 @@ const useNavigatorButtons = ( screens: NavigatorScreenObject[] ) => {
 	return (
 		<NavigatorItemGroup>
 			{ screens.map( ( { slug, checked, icon, label, path, onSelect } ) => (
-				<NavigatorButtonAsItem
+				<NavigationButtonAsItem
 					key={ path }
 					checked={ checked }
 					icon={ icon }
@@ -23,7 +23,7 @@ const useNavigatorButtons = ( screens: NavigatorScreenObject[] ) => {
 					onClick={ () => onSelect?.( slug ) }
 				>
 					{ label }
-				</NavigatorButtonAsItem>
+				</NavigationButtonAsItem>
 			) ) }
 		</NavigatorItemGroup>
 	);
