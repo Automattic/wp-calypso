@@ -11,6 +11,7 @@ $color-gray: #9ea4a8;
 $color-light-gray: #9ea4a8;
 $color-lighter-gray: #e7e9ea;
 $color-blue: #1d4fc4;
+$color-light-blue: #399ce3;
 $color-dark-blue: #163d98;
 
 .gravatar-step-wrapper {
@@ -83,7 +84,7 @@ $color-dark-blue: #163d98;
 		padding: 0;
 	}
 
-	.button {
+	.button.is-primary {
 		font-family: $font-body;
 		background-color: $color-blue;
 		padding: 10px 16px;
@@ -94,6 +95,10 @@ $color-dark-blue: #163d98;
 		&:hover,
 		&:focus {
 			background-color: $color-dark-blue;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px $color-light-blue;
 		}
 
 		&.is-busy {
