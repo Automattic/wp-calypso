@@ -5,9 +5,9 @@ import { useState, useCallback } from 'react';
 import Gravatar from 'calypso/components/gravatar';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
-import type { MouseEvent as ReactMouseEvent } from 'react';
+import type { MouseEvent as ReactMouseEvent, FC } from 'react';
 
-const UserMenu = () => {
+const UserMenu: FC = () => {
 	const locale = useLocale();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );

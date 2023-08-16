@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, Fragment, useEffect, useState } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
 import * as React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -18,15 +18,8 @@ import { useSelector } from 'calypso/state';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import CloudCart from './cloud-cart';
+import BundlesSection from './components/bundles-section';
 import UserMenu from './components/user-menu';
-import AntispamIcon from './icons/jetpack-bundle-icon-antispam';
-import BackupIcon from './icons/jetpack-bundle-icon-backup';
-import BoostIcon from './icons/jetpack-bundle-icon-boost';
-import CRMIcon from './icons/jetpack-bundle-icon-crm';
-import ScanIcon from './icons/jetpack-bundle-icon-scan';
-import SearchIcon from './icons/jetpack-bundle-icon-search';
-import SocialIcon from './icons/jetpack-bundle-icon-social';
-import VideopressIcon from './icons/jetpack-bundle-icon-videopress';
 import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 
 import './style.scss';
@@ -88,29 +81,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 				?.replace( /https?:\/\/[a-z]{0,2}.?jetpack.com/, '' ),
 		} );
 	}, [] );
-
-	const getBundleIcons = ( bundle: string ) => {
-		// Using a soft match in case the menu item gets deleted and recreated in wp-admin
-		// causing the name to change to `complete-2` or something similar.
-		if ( bundle.includes( 'complete' ) ) {
-			return [
-				<BackupIcon />,
-				<AntispamIcon />,
-				<ScanIcon />,
-				<SearchIcon />,
-				<SocialIcon />,
-				<VideopressIcon />,
-				<CRMIcon />,
-				<BoostIcon />,
-			];
-		}
-
-		if ( bundle.includes( 'security' ) ) {
-			return [ <BackupIcon />, <AntispamIcon />, <ScanIcon /> ];
-		}
-
-		return [];
-	};
 
 	// All the functionality in this useEffect is copied from the old js files that were copied from jetpack.com
 	// They were moved here due to the new data query causing the header to re-render and add too many event listeners
@@ -385,44 +355,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																					);
 																				} ) }
 																		</ul>
-
-																		<div className="header__submenu-bottom-section">
-																			<div className="header__submenu-bundles">
-																				<p className="header__submenu-category-heading">
-																					{ bundles?.label }
-																				</p>
-
-																				<ul className="header__submenu-links-list">
-																					{ bundles &&
-																						Array.from( Object.values( bundles.items ) )
-																							.sort( sortByMenuOrder )
-																							.map( ( { id, label, href } ) => (
-																								<li key={ `bundles-${ href }-${ label }` }>
-																									<ExternalLink
-																										className="header__submenu-link"
-																										href={ localizeUrl( href, locale ) }
-																										onClick={ onLinkClick }
-																									>
-																										<p className="header__submenu-label">
-																											<span>{ label }</span>
-																										</p>
-																										<div className="header__submenu-bundle-icons">
-																											{ getBundleIcons( id ).map(
-																												( icon, index ) => (
-																													<Fragment
-																														key={ `bundle-icon-${ id }${ index }` }
-																													>
-																														{ icon }
-																													</Fragment>
-																												)
-																											) }
-																										</div>
-																									</ExternalLink>
-																								</li>
-																							) ) }
-																				</ul>
-																			</div>
-																		</div>
+																		<BundlesSection bundles={ bundles } />
 																	</div>
 																</div>
 															</div>
