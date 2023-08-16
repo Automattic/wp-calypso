@@ -42,6 +42,12 @@
 
 .site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
 	padding-bottom: 24px;
+	margin-left: 16px;
+	margin-right: 16px;
+	@include breakpoint-deprecated( ">660px" ) {
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
 
 .site-monitoring-metrics-tab {
