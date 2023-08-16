@@ -43,9 +43,10 @@ const CustomerHomeLaunchpad = ( {
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = completedSteps === numberOfSteps;
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
+	const hasShareSiteTask = checklist?.some( ( task: Task ) => task.id === 'share_site' );
 
 	const defaultExtraActions = {
-		setShareSiteModalIsOpen,
+		...( hasShareSiteTask ? { setShareSiteModalIsOpen } : {} ),
 		...extraActions,
 	};
 
