@@ -506,6 +506,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'themeItem',
 				'useThemeHeadstart',
+				'designType',
 			], // note: siteId, siteSlug are not provided when used in domain flow
 			optionalDependencies: [
 				'signupDomainOrigin',

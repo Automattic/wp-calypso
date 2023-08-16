@@ -283,6 +283,8 @@ class DomainsStep extends Component {
 			  } )
 			: undefined;
 
+		const designType = this.getDesignType();
+
 		/**
 		 * If we do not select a paid domain.
 		 * We want to pre load an experiment to show a plan upsell modal in the plans step
@@ -311,6 +313,33 @@ class DomainsStep extends Component {
 			submitSignupStep: this.props.submitSignupStep,
 		} );
 
+		// If this is a domain only purchase, skip to checkout.
+		if ( this.props.isDomainOnly ) {
+			this.props.submitSignupStep(
+				{
+					stepName: this.props.stepName,
+					domainItem,
+					designType,
+					siteSlug: domainItem.meta,
+					siteUrl,
+					isPurchasingItem: true,
+				},
+				{ designType, domainItem, siteUrl }
+			);
+
+			this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
+			this.props.submitSignupStep( { stepName: 'site-or-domain', wasSkipped: true } );
+			this.props.submitSignupStep(
+				{ stepName: 'themes', wasSkipped: true },
+				{ themeSlugWithRepo: 'pub/twentysixteen' }
+			);
+			this.props.submitSignupStep(
+				{ stepName: 'plans-site-selected', wasSkipped: true },
+				{ cartItem: null }
+			);
+			this.props.goToStep( 'user' );
+		}
+
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -334,6 +363,7 @@ class DomainsStep extends Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
+
 		this.props.goToNextStep();
 
 		// Start the username suggestion process.
