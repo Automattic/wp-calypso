@@ -7,10 +7,12 @@ declare global {
 		Odie?: {
 			render: ( params: {
 				authToken: string;
+				siteId: number | null;
 				domNode?: HTMLElement | null;
 				locale?: string;
 				hotjarSiteSettings?: object;
 				onLoaded?: () => void;
+				botJids?: string[];
 			} ) => void;
 			strings: any; // would be used for translations
 		};
@@ -35,7 +37,11 @@ export async function loadOdieWidgetJS(): Promise< void > {
 	// await import( './string' );
 }
 
-export async function showOdie( domNodeOrId?: HTMLElement | string | null, locale?: string ) {
+export async function showOdie(
+	siteId: number | null,
+	domNodeOrId?: HTMLElement | string | null,
+	locale?: string
+) {
 	await loadOdieWidgetJS();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.Odie ) {
@@ -45,6 +51,8 @@ export async function showOdie( domNodeOrId?: HTMLElement | string | null, local
 				locale,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 				onLoaded: () => resolve( true ),
+				siteId,
+				botJids: [ 'wapuu-bot@xmpp.jetpacksandbox.com' ],
 			} );
 		} else {
 			reject( false );
