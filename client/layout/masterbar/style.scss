@@ -892,6 +892,18 @@ a.masterbar__quick-language-switcher {
 	pointer-events: none;
 }
 
+.masterbar__support-icons {
+	display: flex;
+	justify-content: flex-end;
+
+	& .chat-button {
+		position: relative;
+		top: 1px;
+		left: 10px;
+		flex: 1;
+	}
+}
+
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
@@ -928,11 +940,13 @@ a.masterbar__quick-language-switcher {
 		line-height: 1.2em;
 		font-size: 0.75rem;
 		margin-left: 5px;
+		display: none;
 
 		@include breakpoint-deprecated( ">480px" ) {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
 			margin-left: 0;
+			display: block;
 		}
 
 		.masterbar--is-jetpack & {

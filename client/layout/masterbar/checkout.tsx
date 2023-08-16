@@ -125,16 +125,18 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
-			<ChatButton
-				chatIntent="PRESALES"
-				initialMessage={ initialMessage }
-				siteUrl={ siteSlug }
-				className="masterbar__item"
-				onClick={ handleClick }
-			>
-				<MaterialIcon icon="chat_bubble" />
-			</ChatButton>
-			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
+			<div className="masterbar__support-icons">
+				<ChatButton
+					chatIntent="PRESALES"
+					initialMessage={ initialMessage }
+					siteUrl={ siteSlug }
+					className="masterbar__item"
+					onClick={ handleClick }
+				>
+					<MaterialIcon icon="chat_bubble" />
+				</ChatButton>
+				{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
+			</div>
 			<CheckoutModal
 				title={ modalTitleText }
 				copy={ modalBodyText }
