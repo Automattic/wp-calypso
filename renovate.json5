@@ -15,6 +15,9 @@
 			matchDepNames: [ 'node', 'cimg/node' ],
 			matchDatasources: [ 'docker' ],
 			prPriority: 2,
+		},
+		{
+			matchDepNames: [ 'node' ],
 			// This gets published with broader Node support, so we'll update it when needed.
 			ignorePaths: [ 'packages/eslint-plugin-wpcalypso' ],
 		},
