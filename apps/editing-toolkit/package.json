@@ -123,7 +123,7 @@
 		"@tanstack/eslint-plugin-query": "^4.29.8",
 		"@testing-library/jest-dom": "^5.17.0",
 		"@testing-library/react": "^14.0.0",
-		"@types/node": "^18.11.18",
+		"@types/node": "^18.17.3",
 		"@wordpress/eslint-plugin": "^14.12.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.21.0",
 		"babel-jest": "^29.6.1",
