@@ -242,6 +242,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/purchases/subscriptions/${ slug }`,
 		// Any page under `/domains/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
 		'/domains/manage/all/',
+		'/email/all/',
 		// Add A Domain > Search for a domain
 		domainAddNew( slug ),
 		// Add A Domain > Use a domain I own
