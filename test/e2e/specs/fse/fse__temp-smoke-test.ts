@@ -32,8 +32,18 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let testAccount: TestAccount;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' }, [
+	// Jetpack deploy (`atomicVariation`) and CoBlocks (`coblocks`) have to use different sets of
+	// feature keys.
+	// CoBlocks needs to override what `getTestAccountByFeature` would return in case of CoBlocks EDGE and
+	// FSE, so the additional `variant` value is set.
+	// Meanwhile, for Jetpack deploys the extra `variant` causes `getTestAccountByFeature` to report
+	// no valid match, because none of the Jetpack deploy test users contain the key `variant`.
+	let features = envToFeatureKey( envVariables );
+	if ( envVariables.COBLOCKS_EDGE ) {
+		features = { ...features, variant: 'siteEditor' };
+	}
+
+	const accountName = getTestAccountByFeature( features, [
 		// None of our CoBlocks users use block themes, so we need to fall back to the default Gutenberg users
 		// if COBLOCKS_EDGE is set.
 		{
@@ -63,16 +73,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 			siteType: 'atomic',
 			variant: 'siteEditor',
 			accountName: 'siteEditorAtomicSiteEdgeUser',
-		},
-		// The jetpackAtomicEcommPlanUser already has an FSE-enabled
-		// test site.
-		{
-			gutenberg: 'stable',
-			siteType: 'atomic',
-			variant: 'siteEditor',
-			atomicVariation: 'ecomm-plan',
-			jetpackTarget: 'wpcom-deployment',
-			accountName: 'jetpackAtomicEcommPlanUser',
 		},
 	] );
 
