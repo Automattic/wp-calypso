@@ -57,7 +57,7 @@ const SubscriberStatsCard = ( {
 		<Card className="highlight-card subscriber-stats-card">
 			<div className="highlight-card-icon subscriber-stats-card__icon">{ icon }</div>
 			<div className="highlight-card-heading subscriber-stats-card__heading">
-				{ heading }{ ' ' }
+				{ heading }
 				{ helpText ? <InfoPopover position="bottom left">{ helpText }</InfoPopover> : null }
 			</div>
 			<div className="highlight-card-count subscriber-stats-card__count">

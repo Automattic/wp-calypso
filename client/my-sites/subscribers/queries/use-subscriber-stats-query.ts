@@ -1,11 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-
-type SubscriberStats = {
-	emails_sent: number;
-	unique_opens: number;
-	unique_clicks: number;
-};
+import type { SubscriberStats } from '../types';
 
 const useSubscriberStatsQuery = (
 	siteId: number | null,

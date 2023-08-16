@@ -1,9 +1,9 @@
-import { Icon } from '@wordpress/icons';
+import { Icon, chartBar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useSubscriberStatsRate } from '../../hooks';
 import { useSubscriberStatsQuery } from '../../queries';
 import { SubscriberStatsCard } from '../subscriber-stats-card';
-import { ChartIcon, MailIcon, SelectIcon } from './icons';
+import { MailIcon, SelectIcon } from './icons';
 import './style.scss';
 
 type SubscriberStatsProps = {
@@ -21,19 +21,8 @@ const SubscriberStats = ( { siteId, subscriptionId, userId }: SubscriberStatsPro
 		userId
 	);
 
-	const openRate = useMemo( () => {
-		if ( subscriberStats && subscriberStats.emails_sent ) {
-			return ( ( subscriberStats.unique_opens / subscriberStats.emails_sent ) * 100 ).toFixed();
-		}
-		return 0;
-	}, [ subscriberStats ] );
-
-	const clickRate = useMemo( () => {
-		if ( subscriberStats && subscriberStats.emails_sent ) {
-			return ( ( subscriberStats.unique_clicks / subscriberStats.emails_sent ) * 100 ).toFixed();
-		}
-		return 0;
-	}, [ subscriberStats ] );
+	const openRate = useSubscriberStatsRate( subscriberStats, 'unique_opens' );
+	const clickRate = useSubscriberStatsRate( subscriberStats, 'unique_clicks' );
 
 	return (
 		<div className="subscriber-stats highlight-cards-list">
@@ -47,7 +36,7 @@ const SubscriberStats = ( { siteId, subscriptionId, userId }: SubscriberStatsPro
 			<SubscriberStatsCard
 				heading="Open rate"
 				isLoading={ isLoading }
-				icon={ <Icon icon={ ChartIcon } /> }
+				icon={ <Icon icon={ chartBar } /> }
 				value={ `${ openRate }%` }
 			/>
 			<SubscriberStatsCard
