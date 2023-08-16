@@ -97,7 +97,7 @@ const updateDesign: Flow = {
 					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
 
 				case 'patternAssembler': {
-					return navigate( `processing?siteSlug=${ siteSlug }` );
+					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
 				}
 			}
 		}
