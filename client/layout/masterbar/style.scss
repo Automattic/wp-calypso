@@ -278,6 +278,13 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
+	.masterbar--is-checkout &.chat-button {
+
+		@include breakpoint-deprecated( ">480px" ) {
+			display: none;
+		}
+	}
+
 	&:hover {
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
