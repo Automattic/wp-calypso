@@ -185,16 +185,15 @@ export default function DomainForwardingCard( {
 	};
 
 	const renderNotice = () => {
-		if ( pointsToWpcom ) {
+		if ( ! pointsToWpcom ) {
 			return null;
 		}
 
 		const noticeText = translate(
-			'Connect your domain to WordPress.com to enable domain forwarding.{{br/}}{{a}}Learn more{{/a}}.',
+			'Connect your domain to WordPress.com to enable domain forwarding. {{a}}Learn more{{/a}}.',
 			{
 				components: {
 					a: <a href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
-					br: <br />,
 				},
 			}
 		);
