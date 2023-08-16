@@ -26,7 +26,13 @@ const PlanLogo: React.FunctionComponent< {
 	isTableCell?: boolean;
 	planIndex: number;
 	Container: (
-		props: React.HTMLAttributes< HTMLDivElement > | React.HTMLAttributes< HTMLTableCellElement >
+		props: (
+			| React.HTMLAttributes< HTMLDivElement >
+			| React.HTMLAttributes< HTMLTableCellElement >
+		 ) & {
+			isTableCell?: boolean | undefined;
+			scope?: string | undefined;
+		}
 	) => JSX.Element;
 } > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, Container, planIndex } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );

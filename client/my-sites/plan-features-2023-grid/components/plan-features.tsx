@@ -18,7 +18,13 @@ const PlanFeatures: React.FC< {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
 	Container: (
-		props: React.HTMLAttributes< HTMLDivElement > | React.HTMLAttributes< HTMLTableCellElement >
+		props: (
+			| React.HTMLAttributes< HTMLDivElement >
+			| React.HTMLAttributes< HTMLTableCellElement >
+		 ) & {
+			isTableCell?: boolean | undefined;
+			scope?: string | undefined;
+		}
 	) => JSX.Element;
 } > = ( {
 	plansWithFeatures,
