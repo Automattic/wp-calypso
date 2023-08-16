@@ -24,4 +24,12 @@
 		font-weight: 500;
 		line-height: 24px;
 	}
+
+	.domains-table__domain-link {
+		color: var(--studio-gray-100);
+
+		&:hover {
+			color: var(--color-link);
+		}
+	}
 }

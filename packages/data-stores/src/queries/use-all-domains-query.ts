@@ -1,19 +1,21 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import type { DomainData } from './use-site-domains-query';
 
 // The data returned by the /all-domains endpoint only includes the basic data
 // related to a domain.
-export interface PartialDomainData {
-	domain: string;
-	blog_id: number;
-	type: 'mapping' | 'wpcom';
-	is_wpcom_staging_domain: boolean;
-	has_registration: boolean;
-	registration_date: string;
-	expiry: string;
-	wpcom_domain: boolean;
-	current_user_is_owner: boolean;
-}
+export type PartialDomainData = Pick<
+	DomainData,
+	| 'domain'
+	| 'blog_id'
+	| 'type'
+	| 'is_wpcom_staging_domain'
+	| 'has_registration'
+	| 'registration_date'
+	| 'expiry'
+	| 'wpcom_domain'
+	| 'current_user_is_owner'
+>;
 
 export interface AllDomainsQueryFnData {
 	domains: PartialDomainData[];
