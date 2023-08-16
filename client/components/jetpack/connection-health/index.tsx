@@ -22,8 +22,8 @@ interface Props {
 
 export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 	const translate = useTranslate();
-	const siteIsAutomatedTransfer = useSelector( ( state ) =>
-		isSiteAutomatedTransfer( state, siteId )
+	const siteIsAutomatedTransfer = useSelector(
+		( state ) => !! isSiteAutomatedTransfer( state, siteId )
 	);
 
 	const [ isErrorCheckJetpackConnectionHealth, setIsErrorCheckJetpackConnectionHealth ] =
