@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { DomainsApiError } from 'calypso/lib/domains/types';
 import wp from 'calypso/lib/wp';
-import { domainRedirectsQueryKey } from './domain-redirects-query-key';
+import { domainForwardingQueryKey } from './domain-forwarding-query-key';
 
-export type DomainRedirectUpdate = {
+export type DomainForwardingUpdate = {
 	targetHost: string;
 	targetPath: string;
 	forwardPaths: boolean;
@@ -14,7 +14,7 @@ export type DomainRedirectUpdate = {
 	sourcePath: string | null;
 };
 
-export default function useUpdateDomainRedirectMutation(
+export default function useUpdateDomainForwardingMutation(
 	domainName: string,
 	queryOptions: {
 		onSuccess?: () => void;
@@ -23,30 +23,30 @@ export default function useUpdateDomainRedirectMutation(
 ) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: ( redirect: DomainRedirectUpdate ) =>
+		mutationFn: ( forwarding: DomainForwardingUpdate ) =>
 			wp.req.post( `/sites/all/domain/${ domainName }/redirects`, {
 				domain: domainName,
-				target_host: redirect.targetHost,
-				target_path: redirect.targetPath,
-				forward_paths: redirect.forwardPaths,
-				is_secure: redirect.isSecure,
-				is_permanent: redirect.isPermanent,
-				is_active: redirect.isActive,
-				source_path: redirect.sourcePath,
+				target_host: forwarding.targetHost,
+				target_path: forwarding.targetPath,
+				forward_paths: forwarding.forwardPaths,
+				is_secure: forwarding.isSecure,
+				is_permanent: forwarding.isPermanent,
+				is_active: forwarding.isActive,
+				source_path: forwarding.sourcePath,
 			} ),
 		...queryOptions,
 		onSuccess() {
-			queryClient.invalidateQueries( domainRedirectsQueryKey( domainName ) );
+			queryClient.invalidateQueries( domainForwardingQueryKey( domainName ) );
 			queryOptions.onSuccess?.();
 		},
 	} );
 
 	const { mutate } = mutation;
 
-	const updateDomainRedirect = useCallback(
-		( redirect: DomainRedirectUpdate ) => mutate( redirect ),
+	const updateDomainForwarding = useCallback(
+		( forwarding: DomainForwardingUpdate ) => mutate( forwarding ),
 		[ mutate ]
 	);
 
-	return { updateDomainRedirect, ...mutation };
+	return { updateDomainForwarding, ...mutation };
 }
