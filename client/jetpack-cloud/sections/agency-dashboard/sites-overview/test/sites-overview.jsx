@@ -14,37 +14,47 @@ import SitesOverview from '../index';
 
 jest.mock( '@automattic/viewport' );
 
-describe( '<SitesOverview>', () => {
-	const initialState = {
-		sites: {},
-		partnerPortal: { partner: {} },
-		agencyDashboard: {
-			selectedLicenses: {
-				licenses: [ '' ],
-			},
+const createFakeState = ( changes = {} ) => ( {
+	sites: {},
+	partnerPortal: { partner: {} },
+	agencyDashboard: {
+		selectedLicenses: {
+			licenses: [],
 		},
-		ui: {},
-		documentHead: {},
-		currentUser: {
-			capabilities: {},
-		},
-	};
-	const middlewares = [ thunk ];
+	},
+	ui: {},
+	documentHead: {},
+	currentUser: {
+		capabilities: {},
+	},
+	...changes,
+} );
 
-	const mockStore = configureStore( middlewares );
-	const store = mockStore( initialState );
+const createFakeContext = ( changes = {} ) => ( {
+	currentPage: 1,
+	search: '',
+	filter: { issueTypes: [], showOnlyFavorites: false },
+	selectedSites: [],
+	sort: { field: 'url', direction: 'asc' },
+	...changes,
+} );
 
-	const context = {
-		currentPage: 1,
-		search: '',
-		filter: { issueTypes: [], showOnlyFavorites: false },
-		selectedSites: [],
-		sort: { field: 'url', direction: 'asc' },
-	};
+const Wrapper = ( { state = createFakeState(), context = createFakeContext() } ) => {
+	const mockStore = configureStore( [ thunk ] );
+	const store = mockStore( state );
 
 	const queryClient = new QueryClient();
+	queryClient.setQueryData(
+		[ 'jetpack-agency-dashboard-sites', context.search, 1, context.filter, context.sort ],
+		{
+			sites: [],
+			total: 1,
+			perPage: 1,
+			totalFavorites: 1,
+		}
+	);
 
-	const Wrapper = ( { context } ) => (
+	return (
 		<Provider store={ store }>
 			<QueryClientProvider client={ queryClient }>
 				<SitesOverviewContext.Provider value={ context }>
@@ -53,24 +63,9 @@ describe( '<SitesOverview>', () => {
 			</QueryClientProvider>
 		</Provider>
 	);
+};
 
-	const setData = () => {
-		const data = {
-			sites: [],
-			total: 1,
-			perPage: 1,
-			totalFavorites: 1,
-		};
-		const queryKey = [
-			'jetpack-agency-dashboard-sites',
-			context.search,
-			1,
-			context.filter,
-			context.sort,
-		];
-		queryClient.setQueryData( queryKey, data );
-	};
-
+describe( '<SitesOverview>', () => {
 	beforeAll( () => {
 		window.IntersectionObserver = jest.fn( () => ( {
 			observe: jest.fn(),
@@ -83,15 +78,8 @@ describe( '<SitesOverview>', () => {
 		} ) );
 	} );
 
-	beforeEach( () => {
-		//some tests manipulate the store, so we need to reset it
-		initialState.agencyDashboard.selectedLicenses.licenses = [];
-	} );
-
 	test( 'Show the correct empty state message when there are no sites and no applied filters in All tab', async () => {
-		setData();
-
-		const { getAllByText } = render( <Wrapper context={ context } /> );
+		const { getAllByText } = render( <Wrapper /> );
 		const [ dashboardHeading ] = getAllByText( 'Dashboard' );
 		expect( dashboardHeading ).toBeInTheDocument();
 
@@ -105,15 +93,13 @@ describe( '<SitesOverview>', () => {
 		);
 		expect( emptyStateMessage ).toBeInTheDocument();
 
-		const promise = Promise.resolve();
-		await act( () => promise );
+		await act( () => Promise.resolve() );
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and has applied filters in All tab', async () => {
-		context.search = 'test';
-		setData();
-
-		const { getAllByText } = render( <Wrapper context={ context } /> );
+		const { getAllByText } = render(
+			<Wrapper context={ createFakeContext( { search: 'test' } ) } />
+		);
 
 		const [ emptyStateMessage ] = getAllByText(
 			'No results found. Please try refining your search.'
@@ -125,74 +111,78 @@ describe( '<SitesOverview>', () => {
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and has applied filters in Favorites tab', async () => {
-		context.search = 'test';
-		context.filter.showOnlyFavorites = true;
-		setData();
-
-		const { getAllByText } = render( <Wrapper context={ context } /> );
+		const { getAllByText } = render(
+			<Wrapper
+				context={ createFakeContext( { search: 'test', filter: { showOnlyFavorites: true } } ) }
+			/>
+		);
 
 		const [ emptyStateMessage ] = getAllByText(
 			'No results found. Please try refining your search.'
 		);
 		expect( emptyStateMessage ).toBeInTheDocument();
 
-		const promise = Promise.resolve();
-		await act( () => promise );
+		await act( () => Promise.resolve() );
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and no applied filters in Favorites tab', async () => {
-		context.search = '';
-		context.filter.showOnlyFavorites = true;
-		setData();
-
-		const { getAllByText } = render( <Wrapper context={ context } /> );
+		const { getAllByText } = render(
+			<Wrapper context={ createFakeContext( { filter: { showOnlyFavorites: true } } ) } />
+		);
 
 		const [ emptyStateMessage ] = getAllByText( "You don't have any favorites yet." );
 		expect( emptyStateMessage ).toBeInTheDocument();
 
-		const promise = Promise.resolve();
-		await act( () => promise );
+		await act( () => Promise.resolve() );
 	} );
 
 	test( 'Do not show the Add X Licenses button when license count is 0', async () => {
-		setData();
-
-		const { queryByText } = render( <Wrapper context={ context } /> );
+		const { queryByText } = render( <Wrapper /> );
 
 		const addLicensesButton = queryByText( 'Add 1 license' );
 		expect( addLicensesButton ).not.toBeInTheDocument();
+
+		await act( () => Promise.resolve() );
 	} );
 
 	test( 'Show the add site and issue license buttons', async () => {
-		setData();
-
-		const { getAllByText } = render( <Wrapper context={ context } /> );
+		const { getAllByText } = render( <Wrapper /> );
 
 		const [ addSiteButton ] = getAllByText( 'Add New Site' );
 		const [ issueLicenseButton ] = getAllByText( 'Issue License' );
 		expect( addSiteButton ).toBeInTheDocument();
 		expect( issueLicenseButton ).toBeInTheDocument();
+
+		await act( () => Promise.resolve() );
 	} );
 
 	test( 'Show the Add x Licenses button when a license is selected', async () => {
-		initialState.agencyDashboard.selectedLicenses.licenses = [ 'test' ];
-		setData();
-
-		const { getAllByText } = render( <Wrapper context={ context } /> );
+		const { getAllByText } = render(
+			<Wrapper
+				state={ createFakeState( {
+					agencyDashboard: { selectedLicenses: { licenses: [ 'test' ] } },
+				} ) }
+			/>
+		);
 
 		const [ issueLicenseButton ] = getAllByText( 'Issue 1 license' );
 		expect( issueLicenseButton ).toBeInTheDocument();
+
+		await act( () => Promise.resolve() );
 	} );
 
 	// the default view for tests is mobile, widescreen buttons behave a bit differently
 	test( 'Swap the issue x buttons and add site/add new license buttons on large screen when a license is selected', async () => {
-		initialState.agencyDashboard.selectedLicenses.licenses = [ 'test' ];
-		setData();
-
 		//set screen to widescreen for this test
 		isWithinBreakpoint.mockReturnValue( true );
 
-		const { queryByText } = render( <Wrapper context={ context } /> );
+		const { queryByText } = render(
+			<Wrapper
+				state={ createFakeState( {
+					agencyDashboard: { selectedLicenses: { licenses: [ 'test' ] } },
+				} ) }
+			/>
+		);
 
 		const addSiteButton = queryByText( 'Add New Site' );
 		const issueLicenseButton = queryByText( 'Issue 1 license' );
@@ -201,5 +191,7 @@ describe( '<SitesOverview>', () => {
 
 		// set screen back to mobile for rest of tests
 		isWithinBreakpoint.mockReturnValue( false );
+
+		await act( () => Promise.resolve() );
 	} );
 } );
