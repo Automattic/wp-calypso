@@ -12,7 +12,7 @@
 		{
 			groupName: 'nodejs',
 			matchPackagePatterns: [ '/node$' ],
-			matchDepNames: [ 'node', 'cimg/node' ],
+			matchDepNames: [ 'node', 'cimg/node', '@types/node' ],
 			matchDatasources: [ 'docker', 'node' ],
 			prPriority: 2,
 		},
