@@ -9,7 +9,7 @@ interface Props {
 	errorText: string;
 	noticeActionHref?: string;
 	noticeActionText?: string;
-	isAtomic: bool;
+	isAtomic: boolean;
 }
 
 export const ErrorNotice = ( {
