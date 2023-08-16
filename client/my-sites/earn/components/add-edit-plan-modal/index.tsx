@@ -91,7 +91,7 @@ function minimumCurrencyTransactionAmount(
 	connectedAccountDefaultCurrency: string
 ): number {
 	if ( connectedAccountDefaultCurrency === currency.toUpperCase() ) {
-		return Number( STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ] );
+		return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ];
 	}
 
 	return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ] * 2;
