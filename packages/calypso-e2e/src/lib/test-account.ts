@@ -137,12 +137,18 @@ export class TestAccount {
 	}
 
 	/**
-	 * Retrieves the site URL from the config file if defined for the current
-	 * account.
+	 * Returns the testSites.primary.url value for the user.
 	 *
+	 * By default, `protocol` is false. In this case, the return value is equivalent to a site slug.
+	 *
+	 * If `protocol` is set to true, a fully-formed URL is returned, containing the `https://` prefix.
+	 *
+	 * @param param0 Keyed object parameter.
+	 * @param {boolean} [param0.protocol] Whether to include the protocol in the returned string. Defaults to false.
+	 * @returns {string} Site Slug or fully-formed URL.
 	 * @throws If the site URL is not available.
 	 */
-	getSiteURL( { protocol = true }: { protocol?: boolean } = {} ): string {
+	getSiteURL( { protocol = false }: { protocol?: boolean } = {} ): string {
 		return getAccountSiteURL( this.accountName, { protocol } );
 	}
 

@@ -182,7 +182,7 @@ export function getAccountCredential( accountType: TestAccountName ): AccountCre
  */
 export function getAccountSiteURL(
 	accountType: TestAccountName,
-	{ protocol = true }: { protocol?: boolean } = {}
+	{ protocol = false }: { protocol?: boolean } = {}
 ): string {
 	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
 	const url = testAccount.primarySite || testAccount.testSites?.primary.url;

@@ -49,9 +49,11 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () 
 	let wpAdminMediaSettingsPage: WpAdminMediaSettingsPage;
 
 	it( 'Navigate to Settings > Media', async function () {
+		// eCommerce plan loads WP-Admin for home dashboard,
+		// so instead navigate straight to the Media page.
 		if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
 			const url = DataHelper.getWPAdminURL(
-				testAccount.credentials.testSites?.primary.url as string,
+				testAccount.getSiteURL(),
 				'wp-admin/options-media.php'
 			);
 			await page.goto( url );
