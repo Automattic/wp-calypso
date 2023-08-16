@@ -2,7 +2,7 @@ import 'calypso/components/environment-badge/style.scss';
 import '@automattic/calypso-polyfills';
 import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { CurrentUser, User } from '@automattic/data-stores';
+import { CurrentUser, User, UserActions } from '@automattic/data-stores';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import ReactDom from 'react-dom';
@@ -35,9 +35,9 @@ const setupReduxStore = ( user: CurrentUser ) => {
 	const userStoreKey = User.register( { client_id: '', client_secret: '' } );
 	if ( user?.ID ) {
 		reduxStore.dispatch( setCurrentUser( user ) as AnyAction );
-		dispatch( userStoreKey ).receiveCurrentUser( user );
+		( dispatch( userStoreKey ) as UserActions ).receiveCurrentUser( user );
 	} else {
-		dispatch( userStoreKey ).receiveCurrentUserFailed();
+		( dispatch( userStoreKey ) as UserActions ).receiveCurrentUserFailed();
 	}
 
 	return reduxStore;

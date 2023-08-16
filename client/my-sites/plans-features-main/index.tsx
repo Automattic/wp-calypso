@@ -15,7 +15,7 @@ import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
-import { localize, useTranslate, translate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -276,6 +276,8 @@ const PlansFeaturesMain = ( {
 		// It only applies to main onboarding flow and the paid media flow at the moment.
 		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
 		if ( ! cartItemForPlan ) {
+			recordTracksEvent( 'calypso_signup_free_plan_click' );
+
 			/**
 			 * Delay showing modal until the experiments have loaded
 			 */

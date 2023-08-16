@@ -62,16 +62,10 @@ const IntroPricingBanner: React.FC = () => {
 
 	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
 
-	let classModifier = '';
-
-	if ( hasCrossed ) {
-		classModifier = 'is-sticky';
-	}
-
 	return (
 		<>
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
-			<div className={ `intro-pricing-banner ${ classModifier }` }>
+			<div className="intro-pricing-banner">
 				<div className="intro-pricing-banner__content">
 					<div className="intro-pricing-banner__item">
 						<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />

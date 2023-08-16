@@ -1,9 +1,9 @@
 import { useI18n } from '@wordpress/react-i18n';
-import type { BasicDomainData } from '../types';
+import type { PartialDomainData } from '@automattic/data-stores';
 import './style.scss';
 
 interface DomainsTableProps {
-	domains: BasicDomainData[] | undefined;
+	domains: PartialDomainData[] | undefined;
 }
 
 export function DomainsTable( { domains }: DomainsTableProps ) {

@@ -1554,7 +1554,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ADVANCED,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-			FEATURE_200GB_STORAGE,
+			FEATURE_50GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,

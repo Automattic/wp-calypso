@@ -1,3 +1,6 @@
+// Links are localized at InlineSupportLink during render
+/* eslint-disable wpcalypso/i18n-unlocalized-url */
+
 const contextLinks = {
 	'account-settings': {
 		link: 'https://wordpress.com/support/account-settings/',
@@ -117,7 +120,7 @@ const contextLinks = {
 	},
 	'importers-substack': {
 		link: 'https://wordpress.com/support/import/import-from-substack/',
-		post_id: 87696,
+		post_id: 257527,
 	},
 	'importers-wix': {
 		link: 'https://wordpress.com/support/import/import-from-wix/',

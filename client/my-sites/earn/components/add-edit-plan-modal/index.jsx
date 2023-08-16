@@ -21,6 +21,7 @@ import {
 } from 'calypso/state/memberships/product-list/actions';
 import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './style.scss';
 
 /**
  * @typedef {[string, number] CurrencyMinimum
@@ -334,7 +335,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						/>
 					</div>
 				</FormFieldset>
-				<FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-type">
 					<ToggleControl
 						onChange={ handleMarkAsDonation }
 						checked={ 'donation' === editedMarkAsDonation }
@@ -346,7 +347,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						label={ translate( 'Paid newsletter subscription' ) }
 					/>
 				</FormFieldset>
-				<FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-message">
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
 						value={ editedCustomConfirmationMessage }

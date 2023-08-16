@@ -95,7 +95,9 @@ const stepNameToModuleName = {
 export function getStepModuleName( stepName ) {
 	return stepNameToModuleName[ stepName ] || '';
 }
-
+export function getStepModuleMap() {
+	return stepNameToModuleName;
+}
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(

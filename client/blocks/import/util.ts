@@ -3,7 +3,7 @@ import { capitalize } from 'lodash';
 import { ImporterPlatform } from './types';
 
 export const CAPTURE_URL_RGX =
-	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
+	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/i;
 
 const platformMap: { [ key in ImporterPlatform ]: string } = {
 	wordpress: 'WordPress',

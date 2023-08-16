@@ -1,54 +1,105 @@
 import { Button, FormInputValidation } from '@automattic/components';
-import { Icon, trash } from '@wordpress/icons';
+import { Icon, trash, info } from '@wordpress/icons';
 import classNames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import useDeleteDomainRedirectMutation from 'calypso/data/domains/redirects/use-delete-domain-redirect-mutation';
+import useDomainRedirectQuery from 'calypso/data/domains/redirects/use-domain-redirect-query';
+import useUpdateDomainRedirectMutation from 'calypso/data/domains/redirects/use-update-domain-redirect-mutation';
 import { withoutHttp } from 'calypso/lib/url';
-import {
-	closeDomainRedirectNotice,
-	fetchDomainRedirect,
-	updateDomainRedirect,
-	deleteDomainRedirect,
-} from 'calypso/state/domains/domain-redirects/actions';
-import { getDomainRedirect } from 'calypso/state/domains/domain-redirects/selectors';
+import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
-interface DomainRedirectCardProps {
+const noticeOptions = {
+	duration: 5000,
+	id: `domain-redirects-notification`,
+};
+
+export default function DomainRedirectCard( {
+	domainName,
+	nameservers,
+}: {
 	domainName: string;
-	redirect?: ReturnType< typeof getDomainRedirect >;
-	target?: string;
-}
+	nameservers: string[] | null;
+} ) {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const { data: redirect, isLoading, isError } = useDomainRedirectQuery( domainName );
 
-type PropsFromRedux = ConnectedProps< typeof connector >;
-
-const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) => {
-	const { redirect, target } = props;
-	const { isUpdating, isFetching, isFetched } = redirect;
-	const [ targetUrl, setTargetUrl ] = useState( target ?? '' );
-	const [ protocol, setProtocol ] = useState( redirect.isSecure ? 'https' : 'http' );
-	const { domainName, fetchDomainRedirect, closeDomainRedirectNotice } = props;
+	// Manage local state for target url and protocol as we split redirect target into host, path and protocol when we store it
+	const [ targetUrl, setTargetUrl ] = useState( '' );
+	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
 
-	useEffect( () => {
-		fetchDomainRedirect( domainName );
-		return () => {
-			closeDomainRedirectNotice( domainName );
-		};
-	}, [ domainName, fetchDomainRedirect, closeDomainRedirectNotice ] );
+	// Display success notices when the redirect is updated
+	const { updateDomainRedirect } = useUpdateDomainRedirectMutation( domainName, {
+		onSuccess() {
+			dispatch(
+				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
+			);
+		},
+		onError() {
+			dispatch(
+				errorNotice( translate( 'An error occurred while updating the redirect.' ), noticeOptions )
+			);
+		},
+	} );
 
+	// Display success notices when the redirect is deleted
+	const { deleteDomainRedirect } = useDeleteDomainRedirectMutation( domainName, {
+		onSuccess() {
+			setTargetUrl( '' );
+			dispatch(
+				successNotice( translate( 'Domain redirect deleted successfully.' ), noticeOptions )
+			);
+		},
+		onError() {
+			dispatch(
+				errorNotice( translate( 'An error occurred while deleting the redirect.' ), noticeOptions )
+			);
+		},
+	} );
+
+	// Render an error if the redirect fails to load
 	useEffect( () => {
-		if ( isFetched && ! isUpdating ) {
-			setTargetUrl( target ?? '' );
-			setProtocol( redirect.isSecure ? 'https' : 'http' );
+		if ( isError ) {
+			dispatch(
+				errorNotice(
+					translate( 'An error occurred while fetching your domain redirects.' ),
+					noticeOptions
+				)
+			);
 		}
-	}, [ isFetched, isUpdating, target, redirect ] );
+	}, [ isError, dispatch, translate ] );
+
+	// Load saved redirect into local state
+	useEffect( () => {
+		if ( isLoading || ! redirect ) {
+			setTargetUrl( '' );
+			setProtocol( 'https' );
+			return;
+		}
+
+		try {
+			const origin =
+				( redirect.isSecure ? 'http://' : 'https://' ) +
+				( redirect.targetHost ?? '_invalid_.domain' );
+			const url = new URL( redirect.targetPath, origin );
+			if ( url.hostname !== '_invalid_.domain' ) {
+				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
+				setProtocol( redirect.isSecure ? 'https' : 'http' );
+			}
+		} catch ( e ) {
+			// ignore
+		}
+	}, [ isLoading, redirect, setTargetUrl, setProtocol ] );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
@@ -59,41 +110,33 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 			setIsValidUrl( false );
 			return;
 		}
+
 		setIsValidUrl( true );
 	};
 
 	const handleDelete = () => {
-		if ( ! redirect?.domainRedirectId || ! redirect?.targetHost ) {
+		if ( isLoading || ! redirect ) {
 			return;
 		}
+		deleteDomainRedirect();
+	};
 
-		setTargetUrl( '' );
-
-		props
-			.deleteDomainRedirect( props.domainName, redirect.domainRedirectId )
-			.then( ( success: boolean ) => {
-				if ( success ) {
-					props.fetchDomainRedirect( props.domainName );
-
-					props.successNotice( translate( 'Site redirect deleted successfully.' ), {
-						duration: 5000,
-						id: `site-redirect-update-notification`,
-					} );
-				} else {
-					props.errorNotice( props.redirect.notice.text );
-				}
-			} );
+	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
+		setProtocol( event.currentTarget.value );
 	};
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		if ( targetUrl === '' ) {
-			handleDelete();
-			return;
-		}
 		let targetHost = '';
 		let targetPath = '';
 		let isSecure = true;
+
+		if ( targetUrl === '' ) {
+			handleDelete();
+			return false;
+		}
+
+		// Validate we have a valid url from the user
 		try {
 			const url = new URL( protocol + '://' + targetUrl, 'https://_invalid_.domain' );
 			if ( url.origin !== 'https://_invalid_.domain' ) {
@@ -105,124 +148,111 @@ const DomainRedirectCard = ( props: DomainRedirectCardProps & PropsFromRedux ) =
 			// ignore
 		}
 
-		props
-			.updateDomainRedirect(
-				props.domainName,
-				targetHost,
-				targetPath,
-				null, // forwardPaths not supported yet
-				isSecure
-			)
-			.then( ( success: boolean ) => {
-				if ( success ) {
-					props.fetchDomainRedirect( props.domainName );
+		updateDomainRedirect( {
+			targetHost,
+			targetPath,
+			isSecure,
+			forwardPaths: true, // v1 always forward paths
+			isPermanent: false, // v1 always temporary
+			isActive: true, // v1 always active
+			sourcePath: null, // v1 always using domain only
+		} );
 
-					props.successNotice( translate( 'Site redirect updated successfully.' ), {
-						duration: 5000,
-						id: `site-redirect-update-notification`,
-					} );
-				} else {
-					props.errorNotice( props.redirect.notice.text );
-				}
-			} );
 		return false;
 	};
 
-	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
-		setProtocol( event.currentTarget.value );
-	};
-
-	const prefix = (
-		<>
-			<FormSelect
-				name="protocol"
-				id="protocol-type"
-				value={ protocol }
-				onChange={ handleChangeProtocol }
-				disabled={ isFetching || isUpdating }
-			>
-				<option value="https">https://</option>
-				<option value="http">http://</option>
-			</FormSelect>
-		</>
-	);
-
-	const suffix = (
-		<Button
-			disabled={ isFetching || isUpdating || ( targetUrl === '' && target === '' ) }
-			className={ classNames( 'domain-redirect-card__delete', {
-				'is-disabled': isFetching || isUpdating || ( targetUrl === '' && target === '' ),
-			} ) }
-			onClick={ handleDelete }
-		>
-			<Icon icon={ trash } size={ 18 } />
-		</Button>
-	);
-
-	return (
-		<form onSubmit={ handleSubmit }>
-			<FormFieldset className="domain-redirect-card__fields">
-				<FormTextInputWithAffixes
-					disabled={ isFetching || isUpdating }
-					name="destination"
-					noWrap
-					onChange={ handleChange }
-					prefix={ prefix }
-					value={ targetUrl }
-					suffix={ suffix }
-					id="domain-redirect__input"
-					className={ classNames( { 'is-error': ! isValidUrl } ) }
-				/>
-			</FormFieldset>
-			<p className="domain-redirect-card__error-field">
-				{ ! isValidUrl ? (
-					<FormInputValidation isError={ true } text={ translate( 'Please enter a valid URL.' ) } />
-				) : (
-					' '
-				) }
-			</p>
-			<FormButton
-				disabled={
-					! isValidUrl ||
-					isFetching ||
-					isUpdating ||
-					( target === targetUrl && ( redirect?.isSecure ? 'https' : 'http' ) === protocol )
-				}
-			>
-				{ translate( 'Save' ) }
-			</FormButton>
-		</form>
-	);
-};
-
-const connector = connect(
-	( state, ownProps: DomainRedirectCardProps ) => {
-		const redirect = getDomainRedirect( state, ownProps.domainName );
-		let target = '';
-		try {
-			const path = redirect?.targetPath ?? '';
-			const origin =
-				( redirect?.isSecure === false ? 'http://' : 'https://' ) +
-				( redirect?.targetHost ?? '_invalid_.domain' );
-			const url = new URL( path, origin );
-			if ( url.hostname !== '_invalid_.domain' ) {
-				target =
-					url.hostname + ( url.pathname === '/' ? '' : url.pathname ) + url.search + url.hash;
-			}
-		} catch ( e ) {
-			// ignore
+	const hasWpcomNameservers = () => {
+		if ( ! nameservers || nameservers.length === 0 ) {
+			return false;
 		}
 
-		return { redirect, target };
-	},
-	{
-		fetchDomainRedirect,
-		updateDomainRedirect,
-		deleteDomainRedirect,
-		closeDomainRedirectNotice,
-		successNotice,
-		errorNotice,
-	}
-);
+		return nameservers.every( ( nameserver ) => {
+			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
 
-export default connector( localize( DomainRedirectCard ) );
+	const renderNotice = () => {
+		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+			return null;
+		}
+
+		return (
+			<div className="domain-redirect-card-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="domain-redirect-card-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="domain-redirect-card-notice__message">
+					{ translate( 'You are not currently using WordPress.com name servers.' ) }
+				</div>
+			</div>
+		);
+	};
+
+	return (
+		<>
+			{ renderNotice() }
+			<form onSubmit={ handleSubmit }>
+				<FormFieldset className="domain-redirect-card__fields">
+					<FormTextInputWithAffixes
+						disabled={ isLoading }
+						name="destination"
+						noWrap
+						onChange={ handleChange }
+						value={ targetUrl }
+						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						id="domain-redirect__input"
+						maxLength={ 1000 }
+						prefix={
+							<FormSelect
+								name="protocol"
+								id="protocol-type"
+								value={ protocol }
+								onChange={ handleChangeProtocol }
+								disabled={ isLoading }
+							>
+								<option value="https">https://</option>
+								<option value="http">http://</option>
+							</FormSelect>
+						}
+						suffix={
+							<Button
+								disabled={ isLoading || targetUrl === '' }
+								className={ classNames( 'domain-redirect-card__delete', {
+									'is-disabled': isLoading || targetUrl === '',
+								} ) }
+								onClick={ handleDelete }
+							>
+								<Icon icon={ trash } size={ 18 } />
+							</Button>
+						}
+					/>
+				</FormFieldset>
+				<p className="domain-redirect-card__error-field">
+					{ ! isValidUrl ? (
+						<FormInputValidation
+							isError={ true }
+							text={ translate( 'Please enter a valid URL.' ) }
+						/>
+					) : (
+						' '
+					) }
+				</p>
+				<FormButton
+					disabled={
+						! isValidUrl ||
+						isLoading ||
+						( redirect &&
+							redirect.targetHost + redirect.targetPath === targetUrl &&
+							( redirect.isSecure ? 'https' : 'http' ) === protocol ) ||
+						( ! redirect && targetUrl === '' )
+					}
+				>
+					{ translate( 'Save' ) }
+				</FormButton>
+			</form>
+		</>
+	);
+}

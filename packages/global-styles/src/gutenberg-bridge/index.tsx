@@ -3,6 +3,7 @@
  * on our own as this kind of internal apis might be drastically changed from time to time.
  * See https://github.com/Automattic/wp-calypso/issues/77048
  */
+import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
@@ -49,12 +50,23 @@ const withExperimentalBlockEditorProvider = createHigherOrderComponent(
 	'withExperimentalBlockEditorProvider'
 );
 
+const useSafeGlobalStylesOutput = () => {
+	try {
+		return useGlobalStylesOutput();
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error: Unable to get the output of global styles. Reason: %s', error );
+		captureException( error );
+		return [];
+	}
+};
+
 export {
 	cleanEmptyObject,
 	ExperimentalBlockEditorProvider,
 	GlobalStylesContext,
 	transformStyles,
-	useGlobalStylesOutput,
+	useSafeGlobalStylesOutput,
 	useGlobalSetting,
 	useGlobalStyle,
 	mergeBaseAndUserConfigs,

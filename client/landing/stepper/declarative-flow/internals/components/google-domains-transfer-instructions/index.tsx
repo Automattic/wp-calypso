@@ -1,4 +1,3 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { useState, createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,13 +16,9 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
-	const step2Text = useHasEnTranslation()(
+	const step2Text = __(
 		'Click on the name of the domain that you\'d like to transfer in the "My domains" section.'
-	)
-		? __(
-				'Click on the name of the domain that you\'d like to transfer in the "My domains" section.'
-		  )
-		: __( 'Select the domain you want to transfer in the "My domains" section.' );
+	);
 
 	return (
 		<>
