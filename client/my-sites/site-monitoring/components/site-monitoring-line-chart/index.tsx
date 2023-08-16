@@ -107,9 +107,7 @@ function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
 				},
 				stroke: '#787C82',
 				ticks: {
-					stroke: '#787C82',
-					width: 1,
-					size: 3,
+					show: false,
 				},
 				values: ( u: uPlot, ticks: number[] ) =>
 					ticks.map( ( rawValue ) => {

@@ -175,9 +175,9 @@ const useSuccessHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 301,
-			fill: 'rgba(227, 174, 212, 0.1)',
+			fill: 'rgba(235, 101, 148, 0.2)',
 			label: __( '301: Moved Permanently' ),
-			stroke: 'rgba(227, 174, 212, 1)',
+			stroke: 'rgba(235, 101, 148, 1)',
 		},
 		{
 			statusCode: 302,
@@ -201,9 +201,9 @@ const useErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 401,
-			fill: 'rgba(227, 174, 212, 0.1)',
+			fill: 'rgba(140, 143, 148, 0.1)',
 			label: __( '401: Unauthorized Request' ),
-			stroke: 'rgba(227, 174, 212, 1)',
+			stroke: 'rgba(140, 143, 148, 1)',
 		},
 		{
 			statusCode: 403,
@@ -292,9 +292,9 @@ export const MetricsTab = () => {
 						stroke: '#0675C4',
 					},
 					{
-						fill: 'rgba(0, 135, 99, 0.2)',
+						fill: 'rgba(222, 177, 0, 0.2)',
 						label: __( 'Average response time (ms)' ),
-						stroke: '#008763',
+						stroke: 'rgba(222, 177, 0, 1)',
 						scale: 'average-response-time',
 						unit: 'ms',
 					},
