@@ -1,8 +1,8 @@
-import { getSite } from '../sites/selectors';
+import getRawSite from './get-raw-site';
 import type { AppState } from 'calypso/types';
 
 export default function wasBusinessTrialSite( state: AppState, siteId: number ) {
-	const site = getSite( state, siteId );
+	const site = getRawSite( state, siteId );
 
-	return site?.was_migration_trial === true;
+	return site?.plan?.is_free && site?.was_migration_trial;
 }

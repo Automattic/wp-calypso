@@ -23,6 +23,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
 	'was_ecommerce_trial',
+	'was_migration_trial',
 	'description',
 	'user_interactions',
 ].join();
