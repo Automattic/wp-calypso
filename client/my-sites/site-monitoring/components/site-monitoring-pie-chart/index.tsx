@@ -10,9 +10,16 @@ type Props = {
 	subtitle?: string | React.ReactNode;
 	className?: string;
 	data: Array< { name: string; value: number; description: string | undefined } >;
+	regularOrder?: boolean;
 };
 
-export const SiteMonitoringPieChart = ( { title, subtitle, className, data }: Props ) => {
+export const SiteMonitoringPieChart = ( {
+	title,
+	subtitle,
+	className,
+	data,
+	regularOrder,
+}: Props ) => {
 	const classes = [ 'site-monitoring-pie-chart', 'site-monitoring__chart' ];
 	if ( className ) {
 		classes.push( className );
@@ -28,7 +35,7 @@ export const SiteMonitoringPieChart = ( { title, subtitle, className, data }: Pr
 				{ ! data.length ? <Spinner /> : null }
 				<PieChart data={ data } donut startAngle={ 0 } />
 			</div>
-			<PieChartLegend data={ data } onlyPercent />
+			<PieChartLegend data={ data } onlyPercent regularOrder={ regularOrder } />
 		</div>
 	);
 };

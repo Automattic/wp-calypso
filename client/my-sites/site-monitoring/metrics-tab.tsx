@@ -292,6 +292,7 @@ export const MetricsTab = () => {
 						0: 'Cache miss',
 						1: 'Cache hit',
 					} ) }
+					regularOrder={ false }
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
 					title={ __( 'Response types' ) }
@@ -301,6 +302,7 @@ export const MetricsTab = () => {
 						php: 'PHP',
 						static: 'Static',
 					} ) }
+					regularOrder={ true }
 				></SiteMonitoringPieChart>
 			</div>
 			<SiteMonitoringLineChart

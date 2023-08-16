@@ -6,19 +6,25 @@ import DataType from './data-type';
 
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data ) {
-	return sortBy( data, ( datum ) => datum.value )
-		.reverse()
-		.map( ( datum, index ) => ( {
-			...datum,
-			sectionNum: index % NUM_COLOR_SECTIONS,
-		} ) );
-}
+function transformData( data, regularOrder ) {
+	const sortedData = sortBy( data, ( datum ) => datum.value );
+	const orderedData = regularOrder ? sortedData.reverse() : sortedData;
 
+	return orderedData.map( ( datum, index ) => {
+		const sectionNum = regularOrder
+			? index % NUM_COLOR_SECTIONS
+			: ( orderedData.length - 1 - index ) % NUM_COLOR_SECTIONS; // Inverts colors when regularOrder is false
+		return {
+			...datum,
+			sectionNum,
+		};
+	} );
+}
 class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 		onlyPercent: PropTypes.bool,
+		regularOrder: PropTypes.bool,
 	};
 
 	state = {
@@ -31,7 +37,7 @@ class PieChartLegend extends Component {
 			return {
 				data: nextProps.data,
 				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
-				transformedData: transformData( nextProps.data ),
+				transformedData: transformData( nextProps.data, nextProps.regularOrder ),
 			};
 		}
 
@@ -55,6 +61,7 @@ class PieChartLegend extends Component {
 							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum }` }
 							percent={ percent }
 							description={ datum.description }
+							regularOrder={ this.props.regularOrder }
 						/>
 					);
 				} ) }
