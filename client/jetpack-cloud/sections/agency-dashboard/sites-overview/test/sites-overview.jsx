@@ -125,6 +125,7 @@ describe( '<SitesOverview>', () => {
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and has applied filters in Favorites tab', async () => {
+		context.search = 'test';
 		context.filter.showOnlyFavorites = true;
 		setData();
 
