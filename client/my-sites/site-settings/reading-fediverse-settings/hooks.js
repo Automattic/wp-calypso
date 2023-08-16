@@ -1,21 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-export const useActivityPubStatus = ( blogId ) => {
-	const queryKey = [ 'activitypub/status', blogId ];
-	const reqArgs = {
-		path: `/sites/${ blogId }/activitypub/status`,
-		apiNamespace: 'wpcom/v2',
-	};
+export const useActivityPubStatus = ( blogId, onUpdate = () => {} ) => {
+	const path = `/sites/${ blogId }/activitypub/status`;
+	const queryKey = [ path ];
 
 	const { data, isInitialLoading, isError } = useQuery( {
 		queryKey,
-		queryFn: () => wpcom.req.get( reqArgs ),
+		queryFn: () => wpcom.req.get( { path, apiNamespace: 'wpcom/v2' } ),
 	} );
 	const queryClient = useQueryClient();
 	const { mutate, isLoading } = useMutation( {
-		mutationFn: ( enabled ) => wpcom.req.post( { body: { enabled }, ...reqArgs } ),
-		onSuccess: ( responseData ) => queryClient.setQueryData( queryKey, responseData ),
+		mutationFn: ( enabled ) => wpcom.req.post( { path, apiNamespace: 'wpcom/v2' }, { enabled } ),
+		onSuccess: ( responseData ) => {
+			queryClient.setQueryData( queryKey, responseData );
+			onUpdate( responseData );
+		},
 	} );
 
 	return {
@@ -23,5 +23,6 @@ export const useActivityPubStatus = ( blogId ) => {
 		setEnabled: mutate,
 		isLoading: isInitialLoading || isLoading,
 		isError,
+		data,
 	};
 };
