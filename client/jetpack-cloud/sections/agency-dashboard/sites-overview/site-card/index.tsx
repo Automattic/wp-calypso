@@ -2,7 +2,7 @@ import { Card, Gridicon, Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
-import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
+import useSyncJetpackConnectionStatus from 'calypso/data/agency-dashboard/use-sync-jetpack-connection-status';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -36,7 +36,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const blogId = rows.site.value.blog_id;
 	const isConnectionHealthy = rows.site.value?.is_connection_healthy;
 
-	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	useSyncJetpackConnectionStatus( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
 	const isSiteConnected = rows.site.value.is_connected;
 

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { Fragment } from 'react';
-import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
+import useSyncJetpackConnectionStatus from 'calypso/data/agency-dashboard/use-sync-jetpack-connection-status';
 import { useDispatch, useSelector } from 'calypso/state';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
@@ -38,7 +38,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	useSyncJetpackConnectionStatus( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
 	const currentSiteHasSelectedLicenses =
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
