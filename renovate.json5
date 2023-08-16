@@ -19,13 +19,6 @@
 			ignorePaths: [ 'packages/eslint-plugin-wpcalypso' ],
 		},
 		{
-			groupName: 'nodejs',
-			fileMatch: [ '^Dockerfile$' ],
-			matchStrings: [ 'ARG node_version=(?<currentValue>.*?)\\n' ],
-			depNameTemplate: 'node',
-			datasourceTemplate: 'node',
-		},
-		{
 			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
 			prPriority: 2,
 			ignorePaths: [ 'packages/interpolate-components' ],
@@ -82,6 +75,13 @@
 			datasourceTemplate: 'docker',
 			depNameTemplate: 'renovate',
 			packageNameTemplate: 'ghcr.io/renovatebot/renovate',
+		},
+		{
+			groupName: 'nodejs',
+			fileMatch: [ '^Dockerfile$' ],
+			matchStrings: [ 'ARG node_version=(?<currentValue>.*?)\\n' ],
+			depNameTemplate: 'node',
+			datasourceTemplate: 'node',
 		},
 	],
 
