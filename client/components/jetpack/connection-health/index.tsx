@@ -105,7 +105,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate(
-					'Jetpack can’t communicate with your site because your site has not been in contact for 7 days.'
+					"Jetpack can’t communicate with your site because it hasn't seen your site for 7 days."
 				) }
 				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }

@@ -161,7 +161,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 
 			expect(
 				screen.queryByText(
-					/Jetpack can’t communicate with your site because your site has not been in contact for 7 days./i
+					/Jetpack can’t communicate with your site because it hasn't seen your site for 7 days./i
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
