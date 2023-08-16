@@ -13,8 +13,8 @@ for ( const stream of [ process.stdout, process.stderr ] ) {
 export default async function runTask( { name = 'yarn', args, env = {}, testId } ) {
 	return new Promise( ( resolve, reject ) => {
 		const startTime = Date.now();
-		console.log( `Spawning task: ${ name } ${ args }` );
-		const task = spawn( name, args.split( ' ' ), {
+		console.log( `Spawning task: ${ name } ${ args ? args : '' }` );
+		const task = spawn( name, args?.split( ' ' ), {
 			shell: true,
 			env: {
 				...process.env,

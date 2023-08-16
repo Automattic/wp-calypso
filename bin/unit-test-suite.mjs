@@ -69,6 +69,11 @@ const testWorkspaces = {
 	testId: 'check_storybook',
 };
 
+const testPrepack = {
+	name: './bin/test-prepack-transpile.sh',
+	testId: 'test_prepack',
+};
+
 try {
 	// Since this task is so much larger than the others, we give it a large amount
 	// of CPU and run it by itself. We let other tasks complete in parallel with
@@ -89,6 +94,9 @@ try {
 		// This task is a prerequisite for the other tsc tasks, so it must run separately.
 		await runTask( tscPackages );
 		await completeTasks( tscCommands.map( runTask ) );
+		// This isn't technically a tsc task, but since it cleans the build output
+		// of other packages, it could break compilation.
+		await runTask( testPrepack );
 	} )();
 
 	// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
