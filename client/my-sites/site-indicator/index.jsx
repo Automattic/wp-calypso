@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -186,6 +187,10 @@ class SiteIndicator extends Component {
 		);
 	};
 
+	handleJetpackConnectionHealthSidebarLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_jetpack_connection_health_issue_sidebar_click' );
+	};
+
 	errorAccessing() {
 		const { site, translate } = this.props;
 
@@ -193,13 +198,15 @@ class SiteIndicator extends Component {
 		if ( site ) {
 			return (
 				<span>
+					<TrackComponentView eventName="calypso_jetpack_connection_health_issue_sidebar_view" />
 					{ translate( 'Jetpack can’t communicate with your site.' ) }
 					<Button
 						borderless
 						compact
 						scary
 						href={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
-						onClick={ this.props.trackSiteDisconnect }
+						target="_blank"
+						onClick={ this.handleJetpackConnectionHealthSidebarLinkClick }
 					>
 						{ translate( 'Learn how to fix' ) }
 					</Button>
