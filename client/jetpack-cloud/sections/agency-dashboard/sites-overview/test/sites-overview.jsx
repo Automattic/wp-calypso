@@ -86,27 +86,30 @@ describe( '<SitesOverview>', () => {
 
 	test( 'Show the correct empty state message when there are no sites and no applied filters in All tab', () => {
 		render( <Wrapper /> );
-		const [ dashboardHeading ] = screen.getAllByText( 'Dashboard' );
-		expect( dashboardHeading ).toBeInTheDocument();
 
-		const [ dashboardSubHeading ] = screen.getAllByText(
-			'Manage all your Jetpack sites from one location'
-		);
-		expect( dashboardSubHeading ).toBeInTheDocument();
+		// Top heading
+		// (text occurs first as an invisible site header,
+		// then visibly as the page header)
+		const [ , pageHeading ] = screen.queryAllByText( 'Dashboard', { role: 'heading' } );
+		expect( pageHeading ).toBeVisible();
 
-		const [ emptyStateMessage ] = screen.getAllByText(
-			"Let's get started with the Jetpack Pro Dashboard"
-		);
-		expect( emptyStateMessage ).toBeInTheDocument();
+		// Sub-heading
+		expect(
+			screen.queryByText( 'Manage all your Jetpack sites from one location' )
+		).toBeInTheDocument();
+
+		// Empty-state onboarding message
+		expect(
+			screen.queryByText( "Let's get started with the Jetpack Pro Dashboard" )
+		).toBeInTheDocument();
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and has applied filters in All tab', async () => {
 		render( <Wrapper context={ createFakeContext( { search: 'test' } ) } /> );
 
-		const [ emptyStateMessage ] = screen.getAllByText(
-			'No results found. Please try refining your search.'
-		);
-		expect( emptyStateMessage ).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'No results found. Please try refining your search.' )
+		).toBeInTheDocument();
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and has applied filters in Favorites tab', () => {
@@ -116,36 +119,31 @@ describe( '<SitesOverview>', () => {
 			/>
 		);
 
-		const [ emptyStateMessage ] = screen.getAllByText(
-			'No results found. Please try refining your search.'
-		);
-		expect( emptyStateMessage ).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'No results found. Please try refining your search.' )
+		).toBeInTheDocument();
 	} );
 
 	test( 'Show the correct empty state message when there are no sites and no applied filters in Favorites tab', () => {
 		render( <Wrapper context={ createFakeContext( { filter: { showOnlyFavorites: true } } ) } /> );
 
-		const [ emptyStateMessage ] = screen.getAllByText( "You don't have any favorites yet." );
-		expect( emptyStateMessage ).toBeInTheDocument();
+		expect( screen.queryByText( "You don't have any favorites yet." ) ).toBeInTheDocument();
 	} );
 
 	test( 'Do not show the Add X Licenses button when license count is 0', () => {
 		render( <Wrapper /> );
 
-		const addLicensesButton = screen.queryByText( 'Add 1 license' );
-		expect( addLicensesButton ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Add 1 license', { role: 'button' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Show the add site and issue license buttons', () => {
 		render( <Wrapper /> );
 
-		const [ addSiteButton ] = screen.getAllByText( 'Add New Site' );
-		const [ issueLicenseButton ] = screen.getAllByText( 'Issue License' );
-		expect( addSiteButton ).toBeInTheDocument();
-		expect( issueLicenseButton ).toBeInTheDocument();
+		expect( screen.queryByText( 'Add New Site', { role: 'button' } ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Issue License', { role: 'button' } ) ).toBeInTheDocument();
 	} );
 
-	test( 'Show the Add x Licenses button when a license is selected', () => {
+	test( 'Show the "Issue x licenses" button when a license is selected', () => {
 		render(
 			<Wrapper
 				state={ createFakeState( {
@@ -154,12 +152,11 @@ describe( '<SitesOverview>', () => {
 			/>
 		);
 
-		const [ issueLicenseButton ] = screen.getAllByText( 'Issue 1 license' );
-		expect( issueLicenseButton ).toBeInTheDocument();
+		expect( screen.queryByText( 'Issue 1 license', { role: 'button' } ) ).toBeInTheDocument();
 	} );
 
 	// the default view for tests is mobile, widescreen buttons behave a bit differently
-	test( 'Swap the issue x buttons and add site/add new license buttons on large screen when a license is selected', () => {
+	test( 'Remove the "Add Site" button and replace the "Issue License" button with "Issue x licenses" on large screens, when a license is selected', () => {
 		//set screen to widescreen for this test
 		isWithinBreakpoint.mockReturnValue( true );
 
@@ -171,9 +168,8 @@ describe( '<SitesOverview>', () => {
 			/>
 		);
 
-		const addSiteButton = screen.queryByText( 'Add New Site' );
-		const issueLicenseButton = screen.queryByText( 'Issue 1 license' );
-		expect( addSiteButton ).not.toBeInTheDocument();
-		expect( issueLicenseButton ).toBeInTheDocument();
+		expect( screen.queryByText( 'Add New Site', { role: 'button' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Issue License', { role: 'button' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Issue 1 license', { role: 'button' } ) ).toBeInTheDocument();
 	} );
 } );
