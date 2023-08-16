@@ -17,6 +17,7 @@ import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/u
 import { withoutHttp } from 'calypso/lib/url';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
 const noticeOptions = {
@@ -27,9 +28,11 @@ const noticeOptions = {
 export default function DomainForwardingCard( {
 	domainName,
 	nameservers,
+	domain,
 }: {
 	domainName: string;
 	nameservers: string[] | null;
+	domain: ResponseDomain;
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -43,6 +46,7 @@ export default function DomainForwardingCard( {
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const pointsToWpcom = domain?.pointsToWpcom ?? false;
 
 	// Display success notices when the forwarding is updated
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domainName, {
@@ -196,7 +200,7 @@ export default function DomainForwardingCard( {
 	};
 
 	const renderNotice = () => {
-		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length || pointsToWpcom ) {
 			return null;
 		}
 
