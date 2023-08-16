@@ -131,35 +131,25 @@ export default function DropdownGroup( {
 	const interceptionCallback = useCallback(
 		( index: number, entries: IntersectionObserverEntry[] ) => {
 			const entry = entries[ 0 ];
+			let isHidden = entry.intersectionRatio < showRatio;
 
-			if ( index === 0 ) {
-				return;
-			}
-
-			if ( entry.intersectionRatio >= showRatio ) {
-				// is last child becoming visible just showcase it.
-				if ( index === children.length - 1 ) {
-					setGroupedIndexes( ( state: GroupedIndexStore ) => ( {
-						...state,
-						[ index ]: false,
-						[ index - 1 ]: false,
-					} ) );
-				} else {
-					setGroupedIndexes( ( state: GroupedIndexStore ) => ( {
-						...state,
-						[ index - 1 ]: false,
-					} ) );
+			const visibleIndexes = Object.keys( groupedIndexes )
+				.map( Number )
+				.filter( ( index ) => ! groupedIndexes[ index ] );
+			const lastVisibleIndex = Math.max( ...visibleIndexes );
+			const isLastVisibleIndex = ! isHidden && ( ! lastVisibleIndex || index >= lastVisibleIndex );
+			if ( isLastVisibleIndex ) {
+				const remainingSpace = entry.rootBounds.right - entry.boundingClientRect.right;
+				const moreSpace = 81.031 + 4;
+				if ( remainingSpace < moreSpace ) {
+					isHidden = true;
 				}
 			}
 
-			// always hide sets of two to give space to the "more" item.
-			if ( entry.intersectionRatio <= hideRatio ) {
-				setGroupedIndexes( ( state: GroupedIndexStore ) => ( {
-					...state,
-					[ index ]: true,
-					[ index - 1 ]: true,
-				} ) );
-			}
+			setGroupedIndexes( ( state: GroupedIndexStore ) => ( {
+				...state,
+				[ index ]: isHidden,
+			} ) );
 
 			setCalculatedOnce( ( calculated ) => {
 				if ( ! calculated ) {
@@ -169,7 +159,7 @@ export default function DropdownGroup( {
 				return calculated;
 			} );
 		},
-		[ children, hideRatio, showRatio ]
+		[ groupedIndexes, showRatio ]
 	);
 
 	useEffect( () => {
