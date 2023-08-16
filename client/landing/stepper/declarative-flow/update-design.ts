@@ -1,3 +1,5 @@
+import { isAssemblerDesign } from '@automattic/design-picker';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import {
 	setSignupCompleteSlug,
@@ -6,11 +8,16 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
+import ErrorStep from './internals/steps-repository/error-step';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const updateDesign: Flow = {
 	name: 'update-design',
@@ -20,7 +27,9 @@ const updateDesign: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: Processing },
+			{ slug: 'error', component: ErrorStep },
 		];
 	},
 
@@ -28,11 +37,38 @@ const updateDesign: Flow = {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const exitFlow = ( to: string ) => {
+			setPendingAction( () => {
+				return new Promise( () => {
+					window.location.assign( to );
+				} );
+			} );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			return navigate( 'processing' );
+		};
+
+		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
 			recordSubmitStep( providedDependencies, 'update-design', flowName, currentStep );
 			switch ( currentStep ) {
 				case 'processing':
+					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
+						return navigate( 'error' );
+					}
+
+					if ( isAssemblerDesign( selectedDesign ) ) {
+						const params = new URLSearchParams( {
+							canvas: 'edit',
+							assembler: '1',
+						} );
+
+						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					}
+
 					return window.location.assign(
 						`/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }`
 					);
@@ -53,11 +89,27 @@ const updateDesign: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
+
+					if ( providedDependencies?.shouldGoToAssembler ) {
+						return navigate( 'patternAssembler' );
+					}
+
 					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
+
+				case 'patternAssembler': {
+					return navigate( `processing?siteSlug=${ siteSlug }` );
+				}
 			}
 		}
 
-		return { submit };
+		const goBack = () => {
+			switch ( currentStep ) {
+				case 'patternAssembler':
+					return navigate( 'designSetup' );
+			}
+		};
+
+		return { submit, goBack };
 	},
 };
 
