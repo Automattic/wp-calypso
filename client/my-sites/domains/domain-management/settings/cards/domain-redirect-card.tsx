@@ -116,6 +116,12 @@ export default function DomainRedirectCard( {
 				setIsValidUrl( false );
 				return;
 			}
+
+			// Disallow subdomain redirects to the main domain, e.g. www.example.com => example.com
+			if ( url.hostname.endsWith( `.${ domainName }` ) ) {
+				setIsValidUrl( false );
+				return;
+			}
 		} catch ( e ) {
 			setIsValidUrl( false );
 			return;
