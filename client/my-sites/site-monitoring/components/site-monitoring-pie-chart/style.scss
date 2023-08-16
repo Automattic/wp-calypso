@@ -3,6 +3,7 @@
 		height: 250px;
 		width: 250px;
 		max-width: none;
+		transform: scaleX(-1);
 	}
 	.pie-chart__chart-drawing-empty {
 		visibility: hidden;
