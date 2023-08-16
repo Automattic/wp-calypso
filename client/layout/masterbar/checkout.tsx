@@ -6,12 +6,16 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';
+import ChatButton from 'calypso/components/chat-button';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import MaterialIcon from 'calypso/components/material-icon';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { DefaultMasterbarContact } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled/default-contact';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Item from './item';
 import Masterbar from './masterbar';
 
@@ -81,6 +85,19 @@ const CheckoutMasterbar = ( {
 
 	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
 
+	const initialMessage =
+		'Customer is contacting us from the checkout pre-sales flow.\n' +
+		`Product${ responseCart.products.length > 1 && 's' } they're attempting to purchase: ` +
+		responseCart.products.map( ( product ) => product.product_name ).join( ', ' );
+
+	const handleClick = () => {
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_masterbar_support_click', {
+				cart: JSON.stringify( responseCart ),
+			} )
+		);
+	};
+
 	return (
 		<Masterbar
 			className={ classnames( 'masterbar--is-checkout', {
@@ -108,6 +125,15 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
+			<ChatButton
+				chatIntent="PRESALES"
+				initialMessage={ initialMessage }
+				siteUrl={ siteSlug }
+				className="masterbar__item"
+				onClick={ handleClick }
+			>
+				<MaterialIcon icon="chat_bubble" />
+			</ChatButton>
 			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
 			<CheckoutModal
 				title={ modalTitleText }
