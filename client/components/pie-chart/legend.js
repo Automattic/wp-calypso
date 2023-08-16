@@ -6,14 +6,11 @@ import DataType from './data-type';
 
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data, regularOrder ) {
+function transformData( data ) {
 	const sortedData = sortBy( data, ( datum ) => datum.value );
-	const orderedData = regularOrder ? sortedData.reverse() : sortedData;
 
-	return orderedData.map( ( datum, index ) => {
-		const sectionNum = regularOrder
-			? index % NUM_COLOR_SECTIONS
-			: ( orderedData.length - 1 - index ) % NUM_COLOR_SECTIONS; // Inverts colors when regularOrder is false
+	return sortedData.map( ( datum, index ) => {
+		const sectionNum = index % NUM_COLOR_SECTIONS;
 		return {
 			...datum,
 			sectionNum,
@@ -24,7 +21,7 @@ class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 		onlyPercent: PropTypes.bool,
-		regularOrder: PropTypes.bool,
+		fixedOrder: PropTypes.bool,
 	};
 
 	state = {
@@ -37,7 +34,7 @@ class PieChartLegend extends Component {
 			return {
 				data: nextProps.data,
 				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
-				transformedData: transformData( nextProps.data, nextProps.regularOrder ),
+				transformedData: transformData( nextProps.data ),
 			};
 		}
 
@@ -47,9 +44,11 @@ class PieChartLegend extends Component {
 	render() {
 		const { transformedData, dataTotal } = this.state;
 
+		const legendItems = this.props.fixedOrder ? this.props.data : transformedData;
+
 		return (
 			<div className="pie-chart__legend">
-				{ transformedData.map( ( datum ) => {
+				{ legendItems.map( ( datum ) => {
 					const percent =
 						dataTotal > 0 ? Math.round( ( datum.value / dataTotal ) * 100 ).toString() : '0';
 
@@ -58,10 +57,9 @@ class PieChartLegend extends Component {
 							key={ datum.name }
 							name={ datum.name }
 							value={ this.props.onlyPercent ? '' : datum.value.toString() }
-							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum }` }
+							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum } pie-chart__legend-sample-${ datum.className }` }
 							percent={ percent }
 							description={ datum.description }
-							regularOrder={ this.props.regularOrder }
 						/>
 					);
 				} ) }

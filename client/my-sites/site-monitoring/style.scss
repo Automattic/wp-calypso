@@ -114,24 +114,24 @@
 }
 
 .site-monitoring-cache-pie-chart {
-	.pie-chart__chart-section-0,
-	.pie-chart__legend-sample-0 {
+	.pie-chart__chart-section-cache-miss,
+	.pie-chart__legend-sample-cache-miss {
 		fill: #bae0f9;
 
 	}
-	.pie-chart__chart-section-1,
-	.pie-chart__legend-sample-1 {
+	.pie-chart__chart-section-cache-hit,
+	.pie-chart__legend-sample-cache-hit {
 		fill: var(--studio-blue-30);
 	}
 }
 
 .site-monitoring-php-static-pie-chart {
-	.pie-chart__chart-section-0,
-	.pie-chart__legend-sample-0 {
+	.pie-chart__chart-section-php,
+	.pie-chart__legend-sample-php {
 		fill: #09b585;
 	}
-	.pie-chart__chart-section-1,
-	.pie-chart__legend-sample-1 {
+	.pie-chart__chart-section-static,
+	.pie-chart__legend-sample-static {
 		fill: var(--studio-green-5);
 	}
 }
