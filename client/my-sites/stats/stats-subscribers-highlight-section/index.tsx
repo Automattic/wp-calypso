@@ -1,15 +1,17 @@
 import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import { useSelector } from 'calypso/state';
+import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import './style.scss';
 
-function useSubscriberHighlights( siteId: number | null ) {
+function useSubscriberHighlights( siteId: number | null, isPaymentProcessorConnected: boolean ) {
 	const translate = useTranslate();
 
 	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
-	// TODO: follow up on this once we have a way to determine if a site has paid newsletter set up.
-	// issue: https://github.com/Automattic/wp-calypso/issues/80609
-	const hasPaidNewsletter = true;
+	// Check if the payment processor Stripe is connected to the site.
+	const hasPaidNewsletter = isPaymentProcessorConnected;
 
 	const highlights = [
 		{
@@ -66,10 +68,15 @@ function SubscriberHighlightsHeader() {
 }
 
 function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
-	const highlights = useSubscriberHighlights( siteId );
+	const isPaymentProcessorConnected: boolean = useSelector(
+		( state ) => !! getConnectedAccountIdForSiteId( state, siteId )
+	);
+
+	const highlights = useSubscriberHighlights( siteId, isPaymentProcessorConnected );
 
 	return (
 		<div className="highlight-cards-list">
+			{ siteId && <QueryMembershipsSettings siteId={ siteId } /> }
 			{ highlights.map(
 				( highlight ) =>
 					highlight.show && (
