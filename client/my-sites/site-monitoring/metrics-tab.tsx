@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
+import { timeHighlightPlugin } from './components/site-monitoring-line-chart/time-highlight-plugin';
 import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
@@ -282,6 +283,9 @@ export const MetricsTab = () => {
 					},
 				] }
 				isLoading={ isLoadingLineChart }
+				options={ {
+					plugins: [ timeHighlightPlugin( 'auto' ) ],
+				} }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
