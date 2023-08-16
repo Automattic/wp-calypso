@@ -355,17 +355,17 @@ function CheckoutStepGroupWrapper( {
 		} );
 	}, [ store ] );
 
-	const [ previousStepNumber, setPreviousStepNumber ] = useState( store.state.activeStepNumber );
+	const previousStepNumber = useRef( store.state.activeStepNumber );
 	const activePaymentMethod = usePaymentMethod();
 	// Call the `onStepChanged` callback when a step changes.
 	useEffect( () => {
-		if ( store.state.activeStepNumber !== previousStepNumber ) {
+		if ( store.state.activeStepNumber !== previousStepNumber.current ) {
 			onStepChanged?.( {
 				stepNumber: store.state.activeStepNumber,
-				previousStepNumber: previousStepNumber,
+				previousStepNumber: previousStepNumber.current,
 				paymentMethodId: activePaymentMethod?.id ?? '',
 			} );
-			setPreviousStepNumber( store.state.activeStepNumber );
+			previousStepNumber.current = store.state.activeStepNumber;
 		}
 		// We only want to run this when the step changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
