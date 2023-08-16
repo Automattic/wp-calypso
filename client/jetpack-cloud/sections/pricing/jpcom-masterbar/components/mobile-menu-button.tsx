@@ -1,12 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
-import { getLastFocusableElement } from 'calypso/lib/dom/focus';
+import { closeOnFocusOut } from '../utils';
 import type { MouseEvent, FC, SetStateAction, Dispatch, RefObject } from 'react';
 
 interface MobileMenuButtonProps {
 	isOpen: boolean;
 	setIsOpen: Dispatch< SetStateAction< boolean > >;
-	mobileMenu: RefObject< HTMLElement >;
+	mobileMenu: RefObject< HTMLDivElement >;
 }
 
 const MobileMenuButton: FC< MobileMenuButtonProps > = ( { isOpen, setIsOpen, mobileMenu } ) => {
@@ -38,21 +38,7 @@ const MobileMenuButton: FC< MobileMenuButtonProps > = ( { isOpen, setIsOpen, mob
 	};
 
 	const onBlur = () => {
-		const lastFocusable = mobileMenu.current
-			? getLastFocusableElement( mobileMenu.current as HTMLDivElement )
-			: null;
-
-		if ( lastFocusable ) {
-			lastFocusable.addEventListener(
-				'focusout',
-				() => {
-					if ( isOpen ) {
-						mobileMenuToggle();
-					}
-				},
-				{ once: true }
-			);
-		}
+		closeOnFocusOut( mobileMenu, isOpen, mobileMenuToggle );
 	};
 
 	useEffect( () => {

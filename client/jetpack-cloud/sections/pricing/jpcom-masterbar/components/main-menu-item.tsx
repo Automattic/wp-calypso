@@ -1,13 +1,12 @@
 import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ExternalLink from 'calypso/components/external-link';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getLastFocusableElement } from 'calypso/lib/dom/focus';
+import { isMobile, sortByMenuOrder, onLinkClick, closeOnFocusOut, isValidLink } from '../utils';
 import BundlesSection from './bundles-section';
 import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
-import type { FC } from 'react';
+import type { FC, MouseEvent } from 'react';
 
 interface MainMenuItemProps {
 	section: MenuItem | null;
@@ -19,22 +18,6 @@ const MainMenuItem: FC< MainMenuItemProps > = ( { section, bundles } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState< boolean >( false );
 	const submenu = useRef< HTMLDivElement >( null );
-
-	const isMobile = () => {
-		return window.innerWidth <= 900;
-	};
-
-	const sortByMenuOrder = ( a: MenuItem, b: MenuItem ) => a.menu_order - b.menu_order;
-
-	const onLinkClick = useCallback( ( e: React.MouseEvent< HTMLAnchorElement > ) => {
-		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
-			nav_item: e.currentTarget
-				.getAttribute( 'href' )
-				// Remove the hostname https://jetpack.com/ from the href
-				// (including other languages, ie. es.jetpack.com, fr.jetpack.com, etc.)
-				?.replace( /https?:\/\/[a-z]{0,2}.?jetpack.com/, '' ),
-		} );
-	}, [] );
 
 	const desktopOnKeyDown = ( e: KeyboardEvent ) => {
 		if ( e.key === 'Escape' ) {
@@ -54,30 +37,16 @@ const MainMenuItem: FC< MainMenuItemProps > = ( { section, bundles } ) => {
 		return <></>;
 	}
 
-	const isValidLink = ( url: string ) => {
-		return url && url !== '#';
-	};
-
 	const toggleMenuItem = () => {
 		setIsOpen( ( open ) => ! open );
 	};
 
 	const onBlur = () => {
-		const lastFocusable = submenu.current
-			? getLastFocusableElement( submenu.current as HTMLDivElement )
-			: null;
+		closeOnFocusOut( submenu, isOpen, toggleMenuItem );
+	};
 
-		if ( lastFocusable ) {
-			lastFocusable.addEventListener(
-				'focusout',
-				() => {
-					if ( isOpen ) {
-						toggleMenuItem();
-					}
-				},
-				{ once: true }
-			);
-		}
+	const onMainMenuTagClick = ( e: MouseEvent< HTMLAnchorElement > ) => {
+		onLinkClick( e, 'calypso_jetpack_nav_item_click' );
 	};
 
 	const { label, id, href, items } = section;
@@ -90,7 +59,7 @@ const MainMenuItem: FC< MainMenuItemProps > = ( { section, bundles } ) => {
 				className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
 				href={ isValidLink( href ) ? localizeUrl( href, locale ) : `#${ id }` }
 				aria-expanded={ hasChildren ? isOpen : undefined }
-				onClick={ isValidLink( href ) ? onLinkClick : toggleMenuItem }
+				onClick={ isValidLink( href ) ? onMainMenuTagClick : toggleMenuItem }
 				onBlur={ onBlur }
 			>
 				{ label }

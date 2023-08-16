@@ -1,7 +1,6 @@
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
-import { Fragment, useCallback } from 'react';
+import { Fragment } from 'react';
 import ExternalLink from 'calypso/components/external-link';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AntispamIcon from '../icons/jetpack-bundle-icon-antispam';
 import BackupIcon from '../icons/jetpack-bundle-icon-backup';
 import BoostIcon from '../icons/jetpack-bundle-icon-boost';
@@ -10,8 +9,9 @@ import ScanIcon from '../icons/jetpack-bundle-icon-scan';
 import SearchIcon from '../icons/jetpack-bundle-icon-search';
 import SocialIcon from '../icons/jetpack-bundle-icon-social';
 import VideopressIcon from '../icons/jetpack-bundle-icon-videopress';
+import { onLinkClick, sortByMenuOrder } from '../utils';
 import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
-import type { FC } from 'react';
+import type { FC, MouseEvent } from 'react';
 
 interface BundlesSectionProps {
 	bundles: MenuItem | null;
@@ -19,8 +19,6 @@ interface BundlesSectionProps {
 
 const BundlesSection: FC< BundlesSectionProps > = ( { bundles } ) => {
 	const locale = useLocale();
-
-	const sortByMenuOrder = ( a: MenuItem, b: MenuItem ) => a.menu_order - b.menu_order;
 
 	const getBundleIcons = ( bundle: string ) => {
 		// Using a soft match in case the menu item gets deleted and recreated in wp-admin
@@ -45,15 +43,9 @@ const BundlesSection: FC< BundlesSectionProps > = ( { bundles } ) => {
 		return [];
 	};
 
-	const onLinkClick = useCallback( ( e: React.MouseEvent< HTMLAnchorElement > ) => {
-		recordTracksEvent( 'calypso_jetpack_nav_bundle_click', {
-			nav_item: e.currentTarget
-				.getAttribute( 'href' )
-				// Remove the hostname https://jetpack.com/ from the href
-				// (including other languages, ie. es.jetpack.com, fr.jetpack.com, etc.)
-				?.replace( /https?:\/\/[a-z]{0,2}.?jetpack.com/, '' ),
-		} );
-	}, [] );
+	const onBundlesLinkClick = ( e: MouseEvent< HTMLAnchorElement > ) => {
+		onLinkClick( e, 'calypso_jetpack_nav_bundles_click' );
+	};
 
 	return (
 		<div className="header__submenu-bottom-section">
@@ -69,7 +61,7 @@ const BundlesSection: FC< BundlesSectionProps > = ( { bundles } ) => {
 									<ExternalLink
 										className="header__submenu-link"
 										href={ localizeUrl( href, locale ) }
-										onClick={ onLinkClick }
+										onClick={ onBundlesLinkClick }
 									>
 										<p className="header__submenu-label">
 											<span>{ label }</span>
