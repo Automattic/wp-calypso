@@ -250,10 +250,12 @@ export function isTranslatedIncompletely( locale: string ) {
  * @param locale - locale slug (eg: 'fr')
  * @returns original path with new locale slug
  */
-export function addLocaleToPathLocaleInFront( path: string, locale: string ) {
+export function addLocaleToPathLocaleInFront( path: string, locale: string | null ) {
 	const urlParts = getUrlParts( path );
 	const queryString = urlParts.search || '';
-
+	if ( ! locale || isDefaultLocale( locale ) ) {
+		return path;
+	}
 	return `/${ locale }` + removeLocaleFromPathLocaleInFront( urlParts.pathname ) + queryString;
 }
 

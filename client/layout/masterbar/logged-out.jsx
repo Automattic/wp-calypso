@@ -39,11 +39,7 @@ class MasterbarLoggedOut extends Component {
 	renderTagsItem() {
 		const { translate } = this.props;
 		const locale = getLocaleSlug();
-
-		let tagsUrl = '/tags';
-		if ( ! isDefaultLocale( locale ) ) {
-			tagsUrl = addLocaleToPathLocaleInFront( tagsUrl, locale );
-		}
+		const tagsUrl = addLocaleToPathLocaleInFront( '/tags', locale );
 
 		return (
 			<Item url={ tagsUrl }>
@@ -58,11 +54,7 @@ class MasterbarLoggedOut extends Component {
 	renderSearchItem() {
 		const { translate } = this.props;
 		const locale = getLocaleSlug();
-
-		let searchUrl = '/read/search';
-		if ( ! isDefaultLocale( locale ) ) {
-			searchUrl = addLocaleToPathLocaleInFront( searchUrl, locale );
-		}
+		const searchUrl = addLocaleToPathLocaleInFront( '/read/search', locale );
 
 		return (
 			<Item url={ searchUrl }>
@@ -77,11 +69,7 @@ class MasterbarLoggedOut extends Component {
 	renderDiscoverItem() {
 		const { translate } = this.props;
 		const locale = getLocaleSlug();
-
-		let discoverUrl = '/discover';
-		if ( ! isDefaultLocale( locale ) ) {
-			discoverUrl = addLocaleToPathLocaleInFront( discoverUrl, locale );
-		}
+		const discoverUrl = addLocaleToPathLocaleInFront( '/discover', locale );
 
 		return (
 			<Item url={ discoverUrl }>
