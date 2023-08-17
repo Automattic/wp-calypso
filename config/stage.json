@@ -49,7 +49,7 @@
 		"i18n/empathy-mode": true,
 		"importer/unified": true,
 		"importers/substack": true,
-		"individual-subscriber-stats": false,
+		"individual-subscriber-stats": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/api-cache": true,
