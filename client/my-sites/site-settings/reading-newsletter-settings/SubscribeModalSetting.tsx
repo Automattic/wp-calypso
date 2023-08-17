@@ -3,7 +3,9 @@ import { addQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
@@ -31,11 +33,20 @@ export const SubscribeModalSetting = ( {
 	const translate = useTranslate();
 
 	// Construct a link to edit the modal
-	const editApiUrl = 'https://wordpress.com'; // @TODO
-	const siteSlug = useSelector( getSelectedSiteSlug ); // alternatively get getSelectedSiteId or whole object getSelectedSite
-	const subscribeModalEditUrl = addQueryArgs( editApiUrl, {
-		siteSlug,
-	} );
+	const selectedSite = useSelector( getSelectedSite );
+	const siteEditorUrl = useSelector( ( state: object ) =>
+		getSiteEditorUrl( state, selectedSite?.ID || null )
+	);
+	const themeSlug = useSelector( ( state ) =>
+		getSiteOption( state, selectedSite?.ID, 'theme_slug' )
+	);
+	const subscribeModalEditorUrl = themeSlug
+		? addQueryArgs( siteEditorUrl, {
+				postType: 'wp_template_part',
+				postId: `${ themeSlug }//subscribe-modal`,
+				canvas: 'edit',
+		  } )
+		: siteEditorUrl;
 
 	return (
 		<>
@@ -60,7 +71,7 @@ export const SubscribeModalSetting = ( {
 				{ isModalEditTranslated && (
 					<>
 						{ ' ' }
-						<ExternalLink href={ subscribeModalEditUrl }>
+						<ExternalLink href={ subscribeModalEditorUrl }>
 							{ translate( 'Preview and edit the popup' ) }
 						</ExternalLink>
 					</>
