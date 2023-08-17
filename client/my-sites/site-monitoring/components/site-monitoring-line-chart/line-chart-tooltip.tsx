@@ -78,12 +78,12 @@ export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
 				{
 					color: 'var(--studio-blue-50)',
 					label: translate( 'Requests per minute' ),
-					value: Math.round( data[ 1 ][ idx ] ),
+					value: rountToTwoDecimals( data[ 1 ][ idx ] ),
 				},
 				{
 					color: 'rgba(222, 177, 0, 1)',
 					label: translate( 'Average response time' ),
-					value: `${ Math.round( data[ 2 ][ idx ] ) }ms`,
+					value: `${ rountToTwoDecimals( data[ 2 ][ idx ] ) }ms`,
 				},
 			] }
 			footer={ dateString }
