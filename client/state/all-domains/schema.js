@@ -5,6 +5,7 @@ export const allDomainsSchema = {
 		required: [ 'domain' ],
 		properties: {
 			blogId: { type: 'number' },
+			blogName: { type: 'string' },
 			domain: { type: 'string' },
 			expiry: { type: [ 'null', 'string' ] },
 			hasRegistration: { type: 'boolean' },

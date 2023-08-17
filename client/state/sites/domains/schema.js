@@ -12,6 +12,7 @@ export const itemsSchema = {
 					autoRenewalDate: { type: 'string' },
 					autoRenewing: { type: 'boolean' },
 					blogId: { type: 'number' },
+					blogName: { type: 'string' },
 					canSetAsPrimary: { type: 'boolean' },
 					currentUserCanManage: { type: 'boolean' },
 					canManageDnsRecords: { type: 'boolean' },

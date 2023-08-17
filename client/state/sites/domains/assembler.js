@@ -56,6 +56,7 @@ export const createSiteDomainObject = ( domain ) => {
 		autoRenewing: Boolean( domain.auto_renewing ),
 		beginTransferUntilDate: String( domain.begin_transfer_until_date ),
 		blogId: Number( domain.blog_id ),
+		blogName: String( domain.blog_name ),
 		bundledPlanSubscriptionId: domain.bundled_plan_subscription_id,
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		canManageDnsRecords: Boolean( domain.can_manage_dns_records ),
