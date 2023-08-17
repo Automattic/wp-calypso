@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { login } from 'calypso/lib/paths';
 import versionCompare from 'calypso/lib/version-compare';
@@ -142,28 +143,63 @@ export class AuthFormHeader extends Component {
 		if ( isWooCoreProfiler ) {
 			switch ( currentState ) {
 				case 'logged-out':
-					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-						{
-							components: {
-								br: <br />,
-								a: (
-									<a
-										href={ login( {
-											isJetpack: true,
-											redirectTo: window.location.href,
-											from: this.props.authQuery.from,
-										} ) }
-									/>
-								),
-							},
-							comment:
-								'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
-						}
+					return (
+						<ProvideExperimentData name="coreprofiler_jetpack_or_jetpack_boost">
+							{ ( isLoading, experimentAssignment ) => {
+								if ( isLoading ) {
+									return <></>;
+								}
+
+								const translateData = {
+									components: {
+										br: <br />,
+										a: (
+											<a
+												href={ login( {
+													isJetpack: true,
+													redirectTo: window.location.href,
+													from: this.props.authQuery.from,
+												} ) }
+											/>
+										),
+									},
+									comment:
+										'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
+								};
+								if ( 'treatment' === experimentAssignment?.variationName ) {
+									return translate(
+										"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack Boost, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+										translateData
+									);
+								}
+
+								return translate(
+									"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack AI, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+									translateData
+								);
+							} }
+						</ProvideExperimentData>
 					);
+
 				default:
-					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack, you'll need to connect your store to your WordPress.com account."
+					return (
+						<ProvideExperimentData name="coreprofiler_jetpack_or_jetpack_boost">
+							{ ( isLoading, experimentAssignment ) => {
+								if ( isLoading ) {
+									return <></>;
+								}
+
+								if ( 'treatment' === experimentAssignment?.variationName ) {
+									return translate(
+										"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack Boost, you'll need to connect your store to your WordPress.com account."
+									);
+								}
+
+								return translate(
+									"We'll make it quick – promise. In order to take advantage of the benefits offered by Jetpack AI, you'll need to connect your store to your WordPress.com account."
+								);
+							} }
+						</ProvideExperimentData>
 					);
 			}
 		}
