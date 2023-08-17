@@ -22,8 +22,7 @@ export function useGroupByTime(
 			// Count status codes
 			const statusCodes = Object.keys( period.dimension );
 			statusCodes.forEach( ( statusCode ) => {
-				groupedData[ period.timestamp ][ statusCode ] =
-					period.dimension[ statusCode ] * ( resolution / 60 ); // convert it to requests per minute
+				groupedData[ period.timestamp ][ statusCode ] = period.dimension[ statusCode ] * resolution; // requests per second
 			} );
 		} );
 

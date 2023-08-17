@@ -55,6 +55,14 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 		metric: metric || 'response_time_average',
 	} );
 
+	const resolution = requestsData?.data?._meta?.resolution;
+	if ( ! resolution ) {
+		return {
+			formattedData: [],
+			isLoading,
+		};
+	}
+
 	// Function to get the dimension value for a specific key and period
 	const getDimensionValue = ( period: PeriodData ) => {
 		if ( typeof period?.dimension === 'object' && Object.keys( period.dimension ).length === 0 ) {
@@ -81,8 +89,8 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 
 					const requestsPerSecondValue = getDimensionValue( period );
 					if ( requestsPerSecondValue !== null ) {
-						const requestsPerMinuteValue = requestsPerSecondValue * 60; // Convert to requests per minute
-						acc[ 1 ].push( requestsPerMinuteValue ); // Push RPM value into the array
+						const requestsPerSecondOnInterval = requestsPerSecondValue * resolution;
+						acc[ 1 ].push( requestsPerSecondOnInterval ); // Push RPS value into the array
 					}
 					// Add response time data as a green line
 					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
@@ -283,12 +291,12 @@ export const MetricsTab = () => {
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
 				title={ __( 'Server performance' ) }
-				subtitle={ __( 'Requests per minute and average server response time' ) }
+				subtitle={ __( 'Requests per second and average server response time' ) }
 				data={ formattedData as uPlot.AlignedData }
 				series={ [
 					{
 						fill: 'rgba(6, 117, 196, 0.1)',
-						label: __( 'Requests per minute' ),
+						label: __( 'Requests per second' ),
 						stroke: '#0675C4',
 					},
 					{
