@@ -32,7 +32,7 @@ const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
 	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
-const MembershipsProductsSection = ( { section, query } ) => {
+function MembershipsProductsSection( { section, query } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
@@ -61,10 +61,7 @@ const MembershipsProductsSection = ( { section, query } ) => {
 		? product?.subscribe_as_site_subscriber
 		: window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
-	const trackUpgrade = () =>
-		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
-
-	const openAddEditDialog = ( productId ) => {
+	function openAddEditDialog( productId ) {
 		if ( productId ) {
 			const currentProduct = products.find( ( prod ) => prod.ID === productId );
 			setShowAddEditDialog( true );
@@ -73,35 +70,40 @@ const MembershipsProductsSection = ( { section, query } ) => {
 			setShowAddEditDialog( true );
 			setProduct( null );
 		}
-	};
+	}
 
-	const openDeleteDialog = ( productId ) => {
+	function openDeleteDialog( productId ) {
 		if ( productId ) {
 			const currentProduct = products.find( ( prod ) => prod.ID === productId );
 			setShowDeleteDialog( true );
 			setProduct( currentProduct );
 		}
-	};
+	}
 
-	const closeDialog = () => {
+	function closeDialog() {
 		setShowAddEditDialog( false );
 		setShowDeleteDialog( false );
-	};
+	}
 
-	const renderEllipsisMenu = ( productId ) => (
-		<EllipsisMenu position="bottom left">
-			{ hasStripeFeature && (
-				<PopoverMenuItem onClick={ () => openAddEditDialog( productId ) }>
-					<Gridicon size={ 18 } icon="pencil" />
-					{ translate( 'Edit' ) }
+	function renderEllipsisMenu( productId ) {
+		return (
+			<EllipsisMenu position="bottom left">
+				{ hasStripeFeature && (
+					<PopoverMenuItem onClick={ () => openAddEditDialog( productId ) }>
+						<Gridicon size={ 18 } icon="pencil" />
+						{ translate( 'Edit' ) }
+					</PopoverMenuItem>
+				) }
+				<PopoverMenuItem onClick={ () => openDeleteDialog( productId ) }>
+					<Gridicon size={ 18 } icon="trash" />
+					{ translate( 'Delete' ) }
 				</PopoverMenuItem>
-			) }
-			<PopoverMenuItem onClick={ () => openDeleteDialog( productId ) }>
-				<Gridicon size={ 18 } icon="trash" />
-				{ translate( 'Delete' ) }
-			</PopoverMenuItem>
-		</EllipsisMenu>
-	);
+			</EllipsisMenu>
+		);
+	}
+
+	const trackUpgrade = () =>
+		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 
 	return (
 		<div>
@@ -174,6 +176,6 @@ const MembershipsProductsSection = ( { section, query } ) => {
 			) }
 		</div>
 	);
-};
+}
 
 export default MembershipsProductsSection;
