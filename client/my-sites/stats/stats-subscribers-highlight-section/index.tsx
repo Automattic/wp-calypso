@@ -1,18 +1,21 @@
 import config from '@automattic/calypso-config';
 import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import { useSelector } from 'calypso/state';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import './style.scss';
 
-function useSubscriberHighlights( siteId: number | null, isPaymentProcessorConnected: boolean ) {
+function useSubscriberHighlights(
+	siteId: number | null,
+	hasAddedPaidSubscriptionProduct: boolean
+) {
 	const translate = useTranslate();
 
 	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
 	// Check if the payment processor Stripe is connected to the site.
-	const hasPaidNewsletter = isPaymentProcessorConnected;
+	const hasPaidNewsletter = hasAddedPaidSubscriptionProduct;
 
 	const highlights = [
 		{
@@ -71,15 +74,15 @@ function SubscriberHighlightsHeader() {
 function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const isPaymentProcessorConnected: boolean = useSelector(
-		( state ) => !! getConnectedAccountIdForSiteId( state, siteId )
-	);
+	const products = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+	// Check if the site has any paid subscription products added.
+	const hasAddedPaidSubscriptionProduct = products.length > 0;
 
-	const highlights = useSubscriberHighlights( siteId, isPaymentProcessorConnected );
+	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
 	return (
 		<div className="highlight-cards-list">
-			{ siteId && ! isOdysseyStats && <QueryMembershipsSettings siteId={ siteId } /> }
+			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
 			{ highlights.map(
 				( highlight ) =>
 					highlight.show && (
