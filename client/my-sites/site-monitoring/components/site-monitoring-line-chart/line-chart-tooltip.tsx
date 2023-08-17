@@ -27,6 +27,8 @@ const Dot = styled.div( ( props ) => ( {
 } ) );
 const Label = styled.div( {
 	fontWeight: 'bold',
+	marginRight: 4,
+	marginLeft: 2,
 } );
 const Footer = styled.div( {
 	color: 'var(--studio-gray-50)',
