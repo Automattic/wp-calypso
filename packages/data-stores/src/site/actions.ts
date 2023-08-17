@@ -27,7 +27,6 @@ import type {
 	AtomicSoftwareInstallError as AtomicSoftwareInstallErrorType,
 	AtomicSoftwareStatus,
 	SiteSettings,
-	ThemeSetupOptions,
 	ActiveTheme,
 	CurrentTheme,
 } from './types';
@@ -365,13 +364,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setThemeOnSite( siteSlug: string, theme: string, options: DesignOptions = {} ) {
-		const { keepHomepage = true, styleVariation, globalStyles } = options;
+	function* setDesignOnSite(
+		siteSlug: string,
+		selectedDesign: Design,
+		options: DesignOptions = {}
+	) {
+		const { keepHomepage = false, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
 			body: {
-				theme: theme,
+				theme: selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
 				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
@@ -404,63 +407,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 
 		return activatedTheme;
-	}
-
-	function* runThemeSetupOnSite(
-		siteSlug: string,
-		selectedDesign: Design,
-		options?: DesignOptions
-	) {
-		const { recipe } = selectedDesign;
-
-		/*
-		 * Anchor themes are set up directly via Headstart on the server side
-		 * so exclude them from theme setup.
-		 */
-		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
-		if ( anchorDesigns.indexOf( selectedDesign.template ) >= 0 ) {
-			return;
-		}
-
-		const themeSetupOptions: ThemeSetupOptions = {
-			trim_content: options?.trimContent ?? true,
-		};
-
-		if ( options?.posts_source_site_id ) {
-			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
-		}
-
-		if ( recipe?.pattern_ids ) {
-			themeSetupOptions.pattern_ids = recipe?.pattern_ids;
-		}
-
-		if ( recipe?.header_pattern_ids ) {
-			themeSetupOptions.header_pattern_ids = recipe?.header_pattern_ids;
-		}
-
-		if ( recipe?.footer_pattern_ids ) {
-			themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
-		}
-
-		const response: { blog: string } = yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup/?_locale=user`,
-			apiNamespace: 'wpcom/v2',
-			body: themeSetupOptions,
-			method: 'POST',
-		} );
-
-		return response;
-	}
-
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
-		const theme = yield* setThemeOnSite(
-			siteSlug,
-			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
-			options
-		);
-
-		yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
-		return theme;
 	}
 
 	function* createCustomTemplate(
