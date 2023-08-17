@@ -7,12 +7,15 @@ const PopoverStyled = styled.div( {
 	transform: 'translate(-50%, -100% )',
 } );
 const PopoverInner = styled.div( {
-	minWidth: 300,
-	padding: '8px 12px',
+	whiteSpace: 'nowrap',
+	padding: '16px 14px',
+	textAlign: 'left',
 } );
 const Serie = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
+	fontSize: 14,
+	marginBottom: 4,
 } );
 const Dot = styled.div( ( props ) => ( {
 	marginRight: 4,
@@ -26,6 +29,9 @@ const Label = styled.div( {
 } );
 const Footer = styled.div( {
 	color: 'var(--studio-gray-50)',
+	textAlign: 'left',
+	marginTop: 8,
+	fontSize: 12,
 } );
 
 interface seriesInfo {
@@ -45,11 +51,9 @@ export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipPro
 			<div className="popover__arrow"></div>
 			<PopoverInner className="popover__inner">
 				{ tooltipSeries.map( ( { color, label, value } ) => (
-					<div key={ label }>
-						<Serie>
-							<Dot color={ color } /> <Label>{ label }</Label>: { value }
-						</Serie>
-					</div>
+					<Serie key={ label }>
+						<Dot color={ color } /> <Label>{ label }</Label>: { value }
+					</Serie>
 				) ) }
 				{ footer && <Footer>{ footer }</Footer> }
 			</PopoverInner>

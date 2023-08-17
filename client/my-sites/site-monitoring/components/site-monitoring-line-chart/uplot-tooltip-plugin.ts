@@ -11,7 +11,7 @@ export interface UplotTooltipProps {
  */
 export function tooltipsPlugin(
 	TooltipNode?: ( props: UplotTooltipProps ) => React.ReactNode,
-	options = { positionTop: true }
+	options = { positionFixedTop: true }
 ) {
 	let cursortt: HTMLDivElement;
 	let cursorRoot: Root;
@@ -68,11 +68,17 @@ export function tooltipsPlugin(
 	 * Sets the cursor for tooltips.
 	 */
 	function setCursor( u: uPlot ) {
-		const marginBottom = 20;
+		const spaceBottom = 20;
 		const { left, top = 0, idx } = u.cursor;
 		context?.cursorMemo?.set( left, top );
-		cursortt.style.left = left + 'px';
-		cursortt.style.top = options.positionTop ? '0px' : `${ top - marginBottom }px`;
+		if ( idx == null ) {
+			return;
+		}
+
+		const timestamp = u.data[ 0 ][ idx ];
+		const leftPosition = Math.round( u.valToPos( timestamp, 'x' ) ) + 'px';
+		cursortt.style.left = options.positionFixedTop ? leftPosition : `${ left }px`;
+		cursortt.style.top = options.positionFixedTop ? '0px' : `${ top - spaceBottom }px`;
 
 		if ( TooltipNode && idx && idx > 0 ) {
 			cursorRoot.render(
