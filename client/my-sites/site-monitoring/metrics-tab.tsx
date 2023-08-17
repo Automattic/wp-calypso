@@ -304,7 +304,12 @@ export const MetricsTab = () => {
 				] }
 				isLoading={ isLoadingLineChart }
 				options={ {
-					plugins: [ timeHighlightPlugin( 'auto' ), tooltipsPlugin( FirstChartTooltip ) ],
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( FirstChartTooltip, {
+							positionFixedTop: ! window.location.href.includes( 'follow' ),
+						} ),
+					],
 				} }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
