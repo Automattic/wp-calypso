@@ -1,3 +1,4 @@
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import {
 	useSyncGlobalStylesUserConfig,
 	getVariationTitle,
@@ -19,7 +20,6 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
-import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';

@@ -109,20 +109,6 @@ export function normalizeWporgTheme( theme ) {
 }
 
 /**
- * Given a theme stylesheet string (like 'pub/twentysixteen'), returns the corresponding theme ID ('twentysixteen').
- *
- * @param  {string}  stylesheet Theme stylesheet
- * @returns {?string}            Theme ID
- */
-export function getThemeIdFromStylesheet( stylesheet ) {
-	const [ , slug ] = stylesheet?.split( '/', 2 ) ?? [];
-	if ( ! slug ) {
-		return stylesheet;
-	}
-	return slug;
-}
-
-/**
  * Returns a normalized themes query, excluding any values which match the
  * default theme query.
  *
