@@ -3,11 +3,12 @@ import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { UplotTooltipProps } from './uplot-tooltip-plugin';
 
-const Root = styled.div( {
+const PopoverStyled = styled.div( {
+	transform: 'translate(-50%, -100% )',
+} );
+const PopoverInner = styled.div( {
 	minWidth: 300,
-	transform: 'translate(-50%, -100%)',
 	padding: '8px 12px',
-	marginBottom: 8,
 } );
 const Serie = styled.div( {
 	display: 'flex',
@@ -40,22 +41,26 @@ interface LineChartTooltipProps {
 
 export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipProps ) {
 	return (
-		<Root>
-			{ tooltipSeries.map( ( { color, label, value } ) => (
-				<div key={ label }>
-					<Serie>
-						<Dot color={ color } /> <Label>{ label }</Label>: { value }
-					</Serie>
-				</div>
-			) ) }
-			{ footer && <Footer>{ footer }</Footer> }
-		</Root>
+		<PopoverStyled role="tooltip" className="popover is-top">
+			<div className="popover__arrow"></div>
+			<PopoverInner className="popover__inner">
+				{ tooltipSeries.map( ( { color, label, value } ) => (
+					<div key={ label }>
+						<Serie>
+							<Dot color={ color } /> <Label>{ label }</Label>: { value }
+						</Serie>
+					</div>
+				) ) }
+				{ footer && <Footer>{ footer }</Footer> }
+			</PopoverInner>
+		</PopoverStyled>
 	);
 }
 
-export function FirstChartTooltip( { data, idx }: UplotTooltipProps ) {
+export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
 	return (
 		<LineChartTooltip
+			{ ...rest }
 			tooltipSeries={ [
 				{
 					color: 'var(--studio-blue-50)',

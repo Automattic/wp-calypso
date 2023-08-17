@@ -9,7 +9,10 @@ export interface UplotTooltipProps {
 /**
  * Custom tooltips plugin for uPlot.
  */
-export function tooltipsPlugin( TooltipNode?: ( props: UplotTooltipProps ) => React.ReactNode ) {
+export function tooltipsPlugin(
+	TooltipNode?: ( props: UplotTooltipProps ) => React.ReactNode,
+	options = { positionTop: true }
+) {
 	let cursortt: HTMLDivElement;
 	let cursorRoot: Root;
 	const context = {
@@ -65,10 +68,11 @@ export function tooltipsPlugin( TooltipNode?: ( props: UplotTooltipProps ) => Re
 	 * Sets the cursor for tooltips.
 	 */
 	function setCursor( u: uPlot ) {
-		const { left, top, idx } = u.cursor;
+		const marginBottom = 20;
+		const { left, top = 0, idx } = u.cursor;
 		context?.cursorMemo?.set( left, top );
 		cursortt.style.left = left + 'px';
-		cursortt.style.top = top + 'px';
+		cursortt.style.top = options.positionTop ? '0px' : `${ top - marginBottom }px`;
 
 		if ( TooltipNode && idx && idx > 0 ) {
 			cursorRoot.render(
