@@ -83,6 +83,8 @@ const ChatButton: FC< Props > = ( {
 		if ( isEligibleForChat && isChatAvailable ) {
 			return true;
 		}
+
+		return false;
 	}
 
 	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
