@@ -87,7 +87,7 @@ describe( 'DataHelper Tests', function () {
 		type TestCase = { accountType: AccountType; expected: string };
 		test.each< TestCase >`
 			accountType      | expected
-			${ 'basicUser' } | ${ 'https://wpcomuser.wordpress.com/' }
+			${ 'basicUser' } | ${ 'wpcomuser.wordpress.com/' }
 		`(
 			'Returns $expected if getAccountSiteURL is called with $accountType',
 			function ( { accountType, expected } ) {
