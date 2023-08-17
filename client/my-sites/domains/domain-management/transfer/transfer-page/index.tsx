@@ -117,27 +117,25 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const renderTransferOptions = () => {
 		const options = [];
 
-		if ( ! isDomainOnly ) {
-			const mainText = isMapping
-				? __( 'Transfer this domain connection to any administrator on this site' )
-				: __( 'Transfer this domain to any administrator on this site' );
+		const userTransferText = isMapping
+			? __( 'Transfer this domain connection to any administrator on this site' )
+			: __( 'Transfer this domain to any administrator on this site' );
 
-			options.push(
-				<ActionCard
-					key="transfer-to-another-user"
-					buttonHref={ domainManagementTransferToAnotherUser(
-						selectedSite?.slug,
-						selectedDomainName,
-						currentRoute
-					) }
-					// translators: Continue is a verb
-					buttonText={ __( 'Continue' ) }
-					// translators: Transfer a domain to another user
-					headerText={ __( 'To another user' ) }
-					mainText={ mainText }
-				/>
-			);
-		}
+		options.push(
+			<ActionCard
+				key="transfer-to-another-user"
+				buttonHref={ domainManagementTransferToAnotherUser(
+					selectedSite?.slug,
+					selectedDomainName,
+					currentRoute
+				) }
+				// translators: Continue is a verb
+				buttonText={ __( 'Continue' ) }
+				// translators: Transfer a domain to another user
+				headerText={ __( 'To another user' ) }
+				mainText={ userTransferText }
+			/>
+		);
 
 		if ( domain?.pendingRegistration ) {
 			return (

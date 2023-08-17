@@ -327,6 +327,8 @@ export function generateFlows( {
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
 			lastModified: '2022-02-15',
+			providesDependenciesInQuery: [ 'siteOrDomain' ],
+			optionalDependenciesInQuery: [ 'siteOrDomain' ],
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},

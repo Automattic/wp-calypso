@@ -1,4 +1,5 @@
 import { Dialog, Gridicon } from '@automattic/components';
+import { Modal, Button } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -27,6 +28,7 @@ import {
 	domainManagementTransfer,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
+import InviteForm from 'calypso/my-sites/people/team-invite/invite-form';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -56,6 +58,7 @@ class TransferDomainToOtherUser extends Component {
 			selectedUserId: '',
 			showConfirmationDialog: false,
 			disableDialogButtons: false,
+			modalIsOpen: false,
 		};
 
 		this.handleUserChange = this.handleUserChange.bind( this );
@@ -77,6 +80,16 @@ class TransferDomainToOtherUser extends Component {
 	handleTransferCancel = () => {
 		const { selectedSite, selectedDomainName, currentRoute } = this.props;
 		page( domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ) );
+	};
+
+	openModal = ( event ) => {
+		console.log( 'hello world' );
+		event.preventDefault();
+		this.setState( { isModalOpen: true } );
+	};
+
+	closeModal = () => {
+		this.setState( { isModalOpen: false } );
 	};
 
 	handleConfirmTransferDomain( closeDialog ) {
@@ -345,44 +358,38 @@ class TransferDomainToOtherUser extends Component {
 	}
 
 	renderTransferInformation() {
-		const { isMapping, selectedDomainName: domainName, selectedSite, translate } = this.props;
+		const { isMapping, selectedDomainName: domainName, translate } = this.props;
+		const { isModalOpen } = this.state;
 
-		if ( isMapping ) {
-			return (
-				<>
-					<p>
-						{ translate(
-							'Please choose an administrator to transfer domain connection of {{strong}}%(domainName)s{{/strong}} to.',
-							{ args: { domainName }, components: { strong: <strong /> } }
-						) }
-					</p>
-					<p>
-						{ translate(
-							'You can transfer this domain connection to any administrator on this site. If the user you want to ' +
-								'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
-							{ components: { a: <a href={ `/people/new/${ selectedSite?.slug }` } /> } }
-						) }
-					</p>
-				</>
-			);
-		}
+		const explanationText = isMapping
+			? translate(
+					'Please choose an administrator to transfer domain connection of {{strong}}%(domainName)s{{/strong}} to.',
+					{ args: { domainName }, components: { strong: <strong /> } }
+			  )
+			: translate(
+					'Transferring a domain to another user will give all the rights of the domain to that user. ' +
+						'Please choose an administrator to transfer {{strong}}%(domainName)s{{/strong}} to.',
+					{ args: { domainName }, components: { strong: <strong /> } }
+			  );
 
 		return (
 			<>
-				<p>
-					{ translate(
-						'Transferring a domain to another user will give all the rights of the domain to that user. ' +
-							'Please choose an administrator to transfer {{strong}}%(domainName)s{{/strong}} to.',
-						{ args: { domainName }, components: { strong: <strong /> } }
-					) }
-				</p>
+				<p>{ explanationText }</p>
 				<p>
 					{ translate(
 						'You can transfer this domain to any administrator on this site. If the user you want to ' +
 							'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
-						{ components: { a: <a href={ `/people/new/${ selectedSite?.slug }` } /> } }
+						{ components: { a: <Button onClick={ this.openModal } variant="link" /> } }
 					) }
 				</p>
+				{ isModalOpen && (
+					<Modal
+						title={ translate( 'Invite Domain Administrator' ) }
+						onRequestClose={ this.closeModal }
+					>
+						<InviteForm onInviteSuccess={ this.closeModal } />
+					</Modal>
+				) }
 			</>
 		);
 	}

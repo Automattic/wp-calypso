@@ -515,6 +515,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'themeItem',
 				'useThemeHeadstart',
+				'siteOrDomain',
 			],
 			props: {
 				isDomainOnly: true,
@@ -675,7 +676,9 @@ export function generateSteps( {
 				'siteUrl',
 				'domainItem',
 				'themeSlugWithRepo',
+				'siteOrDomain',
 			],
+			optionalDependencies: [ 'siteOrDomain' ],
 		},
 		'site-picker': {
 			stepName: 'site-picker',

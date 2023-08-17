@@ -21,6 +21,16 @@ import NewSiteImage from './new-site-image';
 import './style.scss';
 
 class SiteOrDomain extends Component {
+	constructor( props ) {
+		super( props );
+
+		const { signupDependencies } = props;
+		if ( signupDependencies && signupDependencies.siteOrDomain === '0' ) {
+			this.skipRender = true;
+			this.submitDomainOnlyChoice();
+		}
+	}
+
 	getDomainName() {
 		const { signupDependencies } = this.props;
 		let isValidDomain = false;
@@ -233,6 +243,8 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
+		const { signupDependencies } = this.props;
+
 		const { translate, productsLoaded, isReskinned } = this.props;
 		const domainName = this.getDomainName();
 
