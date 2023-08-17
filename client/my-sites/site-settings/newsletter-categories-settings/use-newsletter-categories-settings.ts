@@ -80,12 +80,17 @@ const useNewsletterCategoriesSettings = ( siteId: number ) => {
 
 		Promise.all( promises )
 			.then( () => {
-				dispatch( successNotice( translate( 'Your newsletter categories have been saved.' ) ) );
+				dispatch(
+					successNotice( translate( 'Your newsletter categories have been saved.' ), {
+						duration: 2000,
+					} )
+				);
 			} )
 			.catch( () => {
 				dispatch(
 					errorNotice(
-						translate( 'There was an error when trying to save your newsletter categories.' )
+						translate( 'There was an error when trying to save your newsletter categories.' ),
+						{ duration: 2000 }
 					)
 				);
 			} );
