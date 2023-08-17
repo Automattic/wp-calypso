@@ -13,7 +13,7 @@
 
 		@include break-mobile {
 			margin-block-start: 76px;
-			padding-block-end: 32px;
+			padding-block-end: 76px;
 		}
 	}
 
@@ -29,6 +29,11 @@
 		@include break-mobile {
 			margin-block-start: 16px;
 		}
+	}
+
+	@include break-mobile {
+		max-height: 80%;
+		margin: auto;
 	}
 }
 
