@@ -247,10 +247,10 @@ export function isTranslatedIncompletely( locale: string ) {
  * Will replace existing locale slug, if present.
  *
  * @param path - original path
- * @param locale - locale slug (eg: 'fr')
  * @returns original path with new locale slug
  */
-export function addLocaleToPathLocaleInFront( path: string, locale: string | null ) {
+export function addLocaleToPathLocaleInFront( path: string ) {
+	const locale = getLocaleSlug();
 	const urlParts = getUrlParts( path );
 	const queryString = urlParts.search || '';
 	if ( ! locale || isDefaultLocale( locale ) ) {

@@ -1,5 +1,4 @@
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { getLocaleSlug } from 'i18n-calypso';
 import titlecase from 'to-title-case';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
@@ -23,8 +22,7 @@ const trackTagClick = ( slug: string ) => {
 };
 
 const TagRow = ( props: TagRowProps ) => {
-	const locale = getLocaleSlug();
-	const path = addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( props.slug ) }`, locale );
+	const path = addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( props.slug ) }` );
 	return (
 		<div className="trending-tags__column" key={ props.slug }>
 			<a href={ path } onClick={ trackTagClick.bind( null, props.slug ) }>
