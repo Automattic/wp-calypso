@@ -32,14 +32,14 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let testAccount: TestAccount;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
-	// Jetpack deploy (`atomicVariation`) and CoBlocks (`coblocks`) have to use different sets of
-	// feature keys.
-	// Normal and CoBlocks runs need to override the feature keys to specify the `variant: siteEditor`,
-	// otherwise the CoBlocks EDGE test users are returned - which don't have FSE-capable themes.
+	// Jetpack deploy (`atomicVariation`) and "regular" Calypso E2E have to use different sets of
+	// feature keys that are not mutually compatible.
+	// Regular and CoBlocks runs must override the feature keys to add the `variant: siteEditor` clause.
 	// Meanwhile, for Jetpack deploys the extra `variant` causes `getTestAccountByFeature` to report
-	// no valid match, because none of the Jetpack deploy test users contain the key `variant`.
+	// no valid match because none of the Jetpack deploy test users in the default criteria have
+	// `variant` keys.
 	let features = envToFeatureKey( envVariables );
-	if ( ! envVariables.ATOMIC_VARIATION ) {
+	if ( envVariables.ATOMIC_VARIATION === 'default' ) {
 		features = { ...features, variant: 'siteEditor' };
 	}
 
