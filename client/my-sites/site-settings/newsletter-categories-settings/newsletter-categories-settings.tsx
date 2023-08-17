@@ -9,7 +9,7 @@ import './style.scss';
 const NewsletterCategoriesSettings = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const { newsletterCategoryIds, handleCategoryToggle, handleSave } =
+	const { isSaving, newsletterCategoryIds, handleCategoryToggle, handleSave } =
 		useNewsletterCategoriesSettings( siteId );
 
 	return (
@@ -30,6 +30,8 @@ const NewsletterCategoriesSettings = () => {
 
 			<Button
 				primary
+				compact
+				disabled={ isSaving }
 				className="newsletter-categories-settings__save-button"
 				onClick={ handleSave }
 			>

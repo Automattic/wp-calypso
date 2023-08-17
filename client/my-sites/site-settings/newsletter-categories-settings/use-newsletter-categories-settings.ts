@@ -30,7 +30,7 @@ const convertToNewsletterCategory = ( category: Category ): NewsletterCategory =
 const useNewsletterCategoriesSettings = ( siteId: number ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { data: initialData } = useNewsletterCategoriesQuery( { siteId } );
+	const { data: initialData, isLoading } = useNewsletterCategoriesQuery( { siteId } );
 	const [ newsletterCategories, setNewsletterCategories ] = useState(
 		initialData?.newsletterCategories ?? []
 	);
@@ -38,8 +38,10 @@ const useNewsletterCategoriesSettings = ( siteId: number ) => {
 		() => newsletterCategories.map( ( { id } ) => id ),
 		[ newsletterCategories ]
 	);
-	const { mutateAsync: markNewsletterCategory } = useMarkAsNewsletterCategoryMutation( siteId );
-	const { mutateAsync: unmarkNewsletterCategory } = useUnmarkAsNewsletterCategoryMutation( siteId );
+	const { mutateAsync: markNewsletterCategory, isLoading: isMarking } =
+		useMarkAsNewsletterCategoryMutation( siteId );
+	const { mutateAsync: unmarkNewsletterCategory, isLoading: isUnmarking } =
+		useUnmarkAsNewsletterCategoryMutation( siteId );
 
 	const handleCategoryToggle = ( category: Category ) => {
 		const index = newsletterCategories.findIndex( ( { id } ) => id === category.ID );
@@ -90,6 +92,8 @@ const useNewsletterCategoriesSettings = ( siteId: number ) => {
 	};
 
 	return {
+		isLoading,
+		isSaving: isMarking || isUnmarking,
 		newsletterCategories,
 		newsletterCategoryIds,
 		handleCategoryToggle,
