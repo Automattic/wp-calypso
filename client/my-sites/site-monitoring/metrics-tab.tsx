@@ -4,7 +4,11 @@ import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
-import { FirstChartTooltip } from './components/site-monitoring-line-chart/line-chart-tooltip';
+import {
+	FirstChartTooltip,
+	HttpChartTooltip,
+	withSeries,
+} from './components/site-monitoring-line-chart/line-chart-tooltip';
 import { timeHighlightPlugin } from './components/site-monitoring-line-chart/time-highlight-plugin';
 import { tooltipsPlugin } from './components/site-monitoring-line-chart/uplot-tooltip-plugin';
 import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
@@ -166,10 +170,16 @@ function getFormattedDataForPieChart(
 		};
 	} );
 }
+export interface HTTPCodeSerie {
+	statusCode: number;
+	fill: string;
+	label: string;
+	stroke: string;
+}
 
 const useSuccessHttpCodeSeries = () => {
 	const { __ } = useI18n();
-	const series = [
+	const series: HTTPCodeSerie[] = [
 		{
 			statusCode: 200,
 			fill: 'rgba(104, 179, 232, 0.1)',
@@ -195,7 +205,7 @@ const useSuccessHttpCodeSeries = () => {
 
 const useErrorHttpCodeSeries = () => {
 	const { __ } = useI18n();
-	const series = [
+	const series: HTTPCodeSerie[] = [
 		{
 			statusCode: 400,
 			fill: 'rgba(242, 215, 107, 0.1)',
@@ -352,6 +362,14 @@ export const MetricsTab = () => {
 				subtitle={ __( 'Requests completed without errors by the server' ) }
 				data={ dataForSuccessCodesChart as uPlot.AlignedData }
 				series={ successHttpCodes.series }
+				options={ {
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( withSeries( HttpChartTooltip, successHttpCodes.series ), {
+							positionFixedTop: ! window.location.href.includes( 'follow' ),
+						} ),
+					],
+				} }
 			></SiteMonitoringLineChart>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
@@ -359,6 +377,14 @@ export const MetricsTab = () => {
 				subtitle={ __( 'Requests that encountered errors or issues during processing' ) }
 				data={ dataForErrorCodesChart as uPlot.AlignedData }
 				series={ errorHttpCodes.series }
+				options={ {
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( withSeries( HttpChartTooltip, errorHttpCodes.series ), {
+							positionFixedTop: ! window.location.href.includes( 'follow' ),
+						} ),
+					],
+				} }
 			></SiteMonitoringLineChart>
 		</div>
 	);

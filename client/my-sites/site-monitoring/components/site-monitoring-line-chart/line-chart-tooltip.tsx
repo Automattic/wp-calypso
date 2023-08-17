@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
+import { HTTPCodeSerie } from '../../metrics-tab';
 import { UplotTooltipProps } from './uplot-tooltip-plugin';
 
 const PopoverStyled = styled.div( {
@@ -80,4 +81,29 @@ export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
 			footer={ moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' ) }
 		/>
 	);
+}
+
+interface HttpChartTooltipProps extends UplotTooltipProps {
+	series: HTTPCodeSerie[];
+}
+
+export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChartTooltipProps ) {
+	return (
+		<LineChartTooltip
+			{ ...rest }
+			tooltipSeries={ series.map( ( serie, serieI ) => ( {
+				color: serie.stroke,
+				label: serie.label,
+				value: Math.floor( data[ serieI + 1 ][ idx ] ),
+			} ) ) }
+			footer={ moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' ) }
+		/>
+	);
+}
+
+export function withSeries(
+	Component: React.ComponentType< HttpChartTooltipProps >,
+	series: HTTPCodeSerie[]
+) {
+	return ( props: UplotTooltipProps ) => <Component { ...props } series={ series } />;
 }
