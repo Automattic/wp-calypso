@@ -59,6 +59,7 @@ export function useSiteMetricsQuery(
 	const queryResult = useQuery< SiteMetricsAPIResponse >( {
 		queryKey: buildQueryKey( siteId, params ),
 		queryFn: () => {
+			const siteId = 142101118;
 			const path = `/sites/${ siteId }/hosting/metrics`;
 			return wpcom.req.get(
 				{ path, apiNamespace: 'wpcom/v2' },
