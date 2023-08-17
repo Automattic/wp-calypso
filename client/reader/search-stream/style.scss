@@ -223,6 +223,11 @@
 	padding-bottom: 15px;
 }
 
+.search-stream__headers-logged-out .search-stream__post-header,
+.search-stream__headers-logged-out .search-stream__site-header {
+	border-bottom: none;
+}
+
 .search-stream .search-stream__post-header,
 .search-stream .search-stream__site-header {
 	flex: 1 1 auto;
