@@ -1,38 +1,48 @@
 import { Button, Icon } from '@wordpress/components';
+import { useCallback, useState } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
-import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect } from 'react';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { useDispatch, useSelector } from 'calypso/state';
+import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
+import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
-import { FileBrowserItem } from './types';
+import { FileBrowserItem, FileBrowserCheckState } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
 
 interface FileBrowserNodeProps {
 	item: FileBrowserItem;
 	path: string;
-	siteId: number;
 	rewindId: number;
 	isAlternate: boolean; // This decides if the node will have a background color or not
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
+	showCheckboxes: boolean;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	item,
 	path,
-	siteId,
 	rewindId,
 	isAlternate,
 	setActiveNodePath,
 	activeNodePath,
+	showCheckboxes,
 	parentItem,
 } ) => {
 	const isRoot = path === '/';
+	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
+	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
 
 	const {
 		isSuccess,
@@ -40,12 +50,86 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		data: backupFiles,
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
+	// We don't want to add changed extensions or original extensions if the extension version is not available
+	const shouldAddChildNode = useCallback(
+		( childItem: FileBrowserItem ) => {
+			if ( childItem.type !== 'archive' ) {
+				return true;
+			}
+
+			if ( childItem.extensionType === 'changed' ) {
+				return false;
+			}
+
+			if ( ! item.extensionVersion ) {
+				return false;
+			}
+
+			return true;
+		},
+		[ item.extensionVersion ]
+	);
+
+	// When we load the children from the API we'll add their check status info to the state
+	const addChildrenWhenLoaded = useCallback(
+		( siteId: number, path: string, backupFiles: FileBrowserItem[] ) => {
+			if ( backupFiles ) {
+				dispatch(
+					addChildNodes(
+						siteId,
+						path,
+						backupFiles
+							.filter( shouldAddChildNode )
+							.map( ( childItem: FileBrowserItem ) => childItem.name )
+					)
+				);
+			}
+		},
+		[ dispatch, shouldAddChildNode ]
+	);
+
+	// When the checkbox is clicked, we'll update the check state in the state
+	const updateNodeCheckState = useCallback(
+		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {
+			dispatch( setNodeCheckState( siteId, path, checkState ) );
+		},
+		[ dispatch ]
+	);
+
+	// Using isSuccess to track the API call status
+	useEffect( () => {
+		if ( isSuccess ) {
+			if ( item.hasChildren && ! addedAnyChildren ) {
+				// Add children to the node
+				addChildrenWhenLoaded( siteId, path, backupFiles );
+				setAddedAnyChildren( true );
+			}
+		}
+	}, [
+		addChildrenWhenLoaded,
+		addedAnyChildren,
+		backupFiles,
+		isSuccess,
+		item.hasChildren,
+		path,
+		siteId,
+	] );
+
 	useEffect( () => {
 		// When it is no longer the current node clicked, close the node
 		if ( ! isCurrentNodeClicked && ! isRoot ) {
 			setIsOpen( false );
 		}
 	}, [ isCurrentNodeClicked, isRoot ] );
+
+	// A simple toggle.  Mixed will go to unchecked.
+	const onCheckboxChange = () => {
+		updateNodeCheckState(
+			siteId,
+			path,
+			browserNodeItem && browserNodeItem.checkState === 'unchecked' ? 'checked' : 'unchecked'
+		);
+	};
 
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
@@ -76,7 +160,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		}
 
 		// @TODO: Add a message when the API fails to fetch
-		if ( isSuccess ) {
+		if ( isSuccess && addedAnyChildren ) {
 			let childIsAlternate = isAlternate;
 
 			return backupFiles.map( ( childItem ) => {
@@ -96,10 +180,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						key={ childItem.name }
 						item={ childItem }
 						path={ `${ path }${ childItem.name }/` }
-						siteId={ siteId }
 						rewindId={ rewindId }
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
+						showCheckboxes={ showCheckboxes }
 						setActiveNodePath={ setActiveNodePath }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
@@ -109,6 +193,29 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		}
 
 		return null;
+	};
+
+	const renderCheckbox = () => {
+		if ( ! showCheckboxes ) {
+			return;
+		}
+
+		// Mixed state will show checked but with a mixed class
+		// We'll use this to show an alternate background
+		// TODO: Replace with a [-] for mixed state
+		return (
+			<FormCheckbox
+				checked={
+					browserNodeItem
+						? browserNodeItem.checkState === 'checked' || browserNodeItem.checkState === 'mixed'
+						: false
+				}
+				onChange={ onCheckboxChange }
+				className={ `${
+					browserNodeItem && browserNodeItem.checkState === 'mixed' ? 'mixed' : ''
+				}` }
+			/>
+		);
 	};
 
 	const renderExpandIcon = () => {
@@ -132,15 +239,18 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		<div className={ nodeClassName }>
 			<div className={ nodeItemClassName }>
 				{ ! isRoot && (
-					<Button
-						icon={ renderExpandIcon }
-						className="file-browser-node__title has-icon"
-						onClick={ handleClick }
-						showTooltip={ isLabelTruncated }
-						label={ item.name }
-					>
-						<FileTypeIcon type={ item.type } /> { label }
-					</Button>
+					<>
+						{ renderCheckbox() }
+						<Button
+							icon={ renderExpandIcon }
+							className="file-browser-node__title has-icon"
+							onClick={ handleClick }
+							showTooltip={ isLabelTruncated }
+							label={ item.name }
+						>
+							<FileTypeIcon type={ item.type } /> { label }
+						</Button>
+					</>
 				) }
 			</div>
 			{ isCurrentNodeClicked && (

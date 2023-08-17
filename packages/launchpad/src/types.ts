@@ -54,12 +54,14 @@ export interface LaunchpadResponse {
 	checklist_statuses: LaunchpadStatuses[];
 }
 
+export interface PermittedActions {
+	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
+}
+
 export interface LaunchpadTaskActionsProps {
 	siteSlug: string | null;
 	tasks: Task[];
 	tracksData: LaunchpadTracksData;
-	extraActions?: {
-		setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
-	};
+	extraActions?: PermittedActions;
 	uiContext?: 'calypso';
 }
