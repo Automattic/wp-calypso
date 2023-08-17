@@ -33,6 +33,9 @@ const Footer = styled.div( {
 	textAlign: 'left',
 	marginTop: 8,
 	fontSize: 12,
+	span: {
+		fontWeight: 'bold',
+	},
 } );
 
 interface seriesInfo {
@@ -53,7 +56,7 @@ export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipPro
 			<PopoverInner className="popover__inner">
 				{ tooltipSeries.map( ( { color, label, value } ) => (
 					<Serie key={ label }>
-						<Dot color={ color } /> <Label>{ label }</Label>: { value }
+						<Dot color={ color } /> <Label>{ label }:</Label> { value }
 					</Serie>
 				) ) }
 				{ footer && <Footer>{ footer }</Footer> }
@@ -63,6 +66,15 @@ export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipPro
 }
 
 export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
+	const dateString = moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
+	const totalRequests = Math.round( data[ 1 ][ idx ] );
+	/* translators: the totalRequests is a number of requests */
+	const totalRequestsString = translate( '%(totalRequests)s requests', {
+		args: {
+			totalRequests,
+		},
+	} );
+
 	return (
 		<LineChartTooltip
 			{ ...rest }
@@ -70,15 +82,19 @@ export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
 				{
 					color: 'var(--studio-blue-50)',
 					label: translate( 'Requests per minute' ),
-					value: Math.floor( data[ 1 ][ idx ] ),
+					value: totalRequests,
 				},
 				{
 					color: 'rgba(222, 177, 0, 1)',
 					label: translate( 'Average response time' ),
-					value: `${ Math.floor( data[ 2 ][ idx ] ) }ms`,
+					value: `${ Math.round( data[ 2 ][ idx ] ) }ms`,
 				},
 			] }
-			footer={ moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' ) }
+			footer={
+				<>
+					{ totalRequestsString } { ` - ${ dateString }` }
+				</>
+			}
 		/>
 	);
 }
@@ -88,15 +104,24 @@ interface HttpChartTooltipProps extends UplotTooltipProps {
 }
 
 export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChartTooltipProps ) {
+	const [ timestamps, ...requests ] = data;
+	const dateString = moment( timestamps[ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
+	const totalRequests = requests.reduce( ( acc, serie ) => acc + Math.round( serie[ idx ] ), 0 );
+	/* translators: the totalRequests is a number of requests */
+	const totalRequestsString = translate( '%(totalRequests)s requests', {
+		args: {
+			totalRequests,
+		},
+	} );
 	return (
 		<LineChartTooltip
 			{ ...rest }
 			tooltipSeries={ series.map( ( serie, serieI ) => ( {
 				color: serie.stroke,
 				label: serie.label,
-				value: Math.floor( data[ serieI + 1 ][ idx ] ),
+				value: Math.round( data[ serieI + 1 ][ idx ] ),
 			} ) ) }
-			footer={ moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' ) }
+			footer={ `${ totalRequestsString } - ${ dateString }` }
 		/>
 	);
 }
