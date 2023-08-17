@@ -606,7 +606,6 @@ __metadata:
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
