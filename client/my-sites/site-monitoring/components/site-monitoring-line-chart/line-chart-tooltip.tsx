@@ -49,6 +49,10 @@ interface LineChartTooltipProps {
 	footer?: React.ReactNode;
 }
 
+function rountToTwoDecimals( value: number ) {
+	return Math.round( value * 100 ) / 100;
+}
+
 export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipProps ) {
 	return (
 		<PopoverStyled role="tooltip" className="popover is-top">
@@ -106,7 +110,9 @@ interface HttpChartTooltipProps extends UplotTooltipProps {
 export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChartTooltipProps ) {
 	const [ timestamps, ...requests ] = data;
 	const dateString = moment( timestamps[ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
-	const totalRequests = requests.reduce( ( acc, serie ) => acc + Math.round( serie[ idx ] ), 0 );
+	const totalRequests = rountToTwoDecimals(
+		requests.reduce( ( acc, serie ) => acc + rountToTwoDecimals( serie[ idx ] ), 0 )
+	);
 	/* translators: the totalRequests is a number of requests */
 	const totalRequestsString = translate( '%(totalRequests)s requests', {
 		args: {
@@ -119,7 +125,7 @@ export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChart
 			tooltipSeries={ series.map( ( serie, serieI ) => ( {
 				color: serie.stroke,
 				label: serie.label,
-				value: Math.round( data[ serieI + 1 ][ idx ] ),
+				value: rountToTwoDecimals( data[ serieI + 1 ][ idx ] ),
 			} ) ) }
 			footer={ `${ totalRequestsString } - ${ dateString }` }
 		/>
