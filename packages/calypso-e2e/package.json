@@ -24,7 +24,7 @@
 		"jest-docblock": "^29.4.3",
 		"mailosaur": "^8.4.0",
 		"nock": "^12.0.3",
-		"playwright": "^1.34",
+		"playwright": "^1.37",
 		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {

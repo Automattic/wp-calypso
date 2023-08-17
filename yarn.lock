@@ -368,7 +368,7 @@ __metadata:
     mailosaur: ^8.4.0
     nock: ^12.0.3
     node-fetch: ^2.6.7
-    playwright: ^1.34
+    playwright: ^1.37
     totp-generator: ^0.0.12
     typescript: ^5.1.6
   languageName: unknown
@@ -9249,7 +9249,7 @@ __metadata:
     js-yaml: ^4.0.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.34
+    playwright: ^1.37
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -23600,23 +23600,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.34.3":
-  version: 1.34.3
-  resolution: "playwright-core@npm:1.34.3"
+"playwright-core@npm:1.37.0":
+  version: 1.37.0
+  resolution: "playwright-core@npm:1.37.0"
   bin:
     playwright-core: cli.js
-  checksum: 2e3ec8394b69bcd55db3a01a0a2cf63ee4b924bd79852c237d3eb045273f056b5784ab2147f60a7bb2db7998b8f7c5ec34d8554dd7648cc77d5affc9d91a85c8
+  checksum: 1778ba865f1ca5d5022cbaafac3b9cca98ee589171825da81f0408c48b66c7d6ba03ed53ceacb1e79093caa106f57c5e0fbc4bbb42266a4502746e54571bd14b
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.34":
-  version: 1.34.3
-  resolution: "playwright@npm:1.34.3"
+"playwright@npm:^1.37":
+  version: 1.37.0
+  resolution: "playwright@npm:1.37.0"
   dependencies:
-    playwright-core: 1.34.3
+    playwright-core: 1.37.0
   bin:
     playwright: cli.js
-  checksum: e17c0dbfc87f8764d1e34762b27d561d34a1e3dccc5d4e5d08edbf58e582d49e86ecf161f7f21af103a35045ae5a9cf0169204aa9c0a808046116cb2cc9f415c
+  checksum: 78a711fe8e7faff8012bd277a8d8dd73faeb795e266d6ce07d07a9c5f9a2333f823dc70813ec34dbf3d3177c84d9c152287c02c3545b4ee33f47a3e716ef14f8
   languageName: node
   linkType: hard
 
@@ -31254,7 +31254,7 @@ __metadata:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.34
+    playwright: ^1.37
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown
