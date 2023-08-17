@@ -25,7 +25,7 @@ import {
 import AdsWrapper from './ads/wrapper';
 import Home from './home';
 import MembershipsSection from './memberships';
-import MembershipsProductsSection from './memberships/membership-products-section';
+import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
 
 class EarningsMain extends Component {
