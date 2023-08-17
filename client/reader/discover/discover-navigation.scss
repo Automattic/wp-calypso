@@ -73,16 +73,20 @@
 			display: none;  /* Safari and Chrome */
 		}
 
-		.segmented-control.is-primary.discover-stream-navigation__tab-control .segmented-control__item {
-			.segmented-control__link {
-				border: 1px solid var(--color-neutral-10);
-				border-radius: 4px;
-				margin: 0 5px;
-			}
+		.segmented-control.is-primary.discover-stream-navigation__tab-control {
+			background: inherit;
 
-			&:not(.is-selected) {
+			.segmented-control__item {
 				.segmented-control__link {
-					background: var(--studio-white);
+					border: 1px solid var(--color-neutral-10);
+					border-radius: 4px;
+					margin: 0 5px;
+				}
+
+				&:not(.is-selected) {
+					.segmented-control__link {
+						background: var(--studio-white);
+					}
 				}
 			}
 		}
