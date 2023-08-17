@@ -84,50 +84,54 @@ describe( '<SitesOverview>', () => {
 		} );
 	} );
 
-	test( 'Show the correct empty state message when there are no sites and no applied filters in All tab', () => {
-		render( <Wrapper /> );
+	describe( 'When there are no sites', () => {
+		test( 'Show the correct message in the All tab with no filters applied', () => {
+			render( <Wrapper /> );
 
-		// Top heading
-		// (text occurs first as an invisible site header,
-		// then visibly as the page header)
-		const [ , pageHeading ] = screen.queryAllByText( 'Dashboard', { role: 'heading' } );
-		expect( pageHeading ).toBeVisible();
+			// Top heading
+			// (text occurs first as an invisible site header,
+			// then visibly as the page header)
+			const [ , pageHeading ] = screen.queryAllByText( 'Dashboard', { role: 'heading' } );
+			expect( pageHeading ).toBeVisible();
 
-		// Sub-heading
-		expect(
-			screen.queryByText( 'Manage all your Jetpack sites from one location' )
-		).toBeInTheDocument();
+			// Sub-heading
+			expect(
+				screen.queryByText( 'Manage all your Jetpack sites from one location' )
+			).toBeInTheDocument();
 
-		// Empty-state onboarding message
-		expect(
-			screen.queryByText( "Let's get started with the Jetpack Pro Dashboard" )
-		).toBeInTheDocument();
-	} );
+			// Empty-state onboarding message
+			expect(
+				screen.queryByText( "Let's get started with the Jetpack Pro Dashboard" )
+			).toBeInTheDocument();
+		} );
 
-	test( 'Show the correct empty state message when there are no sites and has applied filters in All tab', async () => {
-		render( <Wrapper context={ createFakeContext( { search: 'test' } ) } /> );
+		test( 'Show the correct message in the All tab with a filter applied', () => {
+			render( <Wrapper context={ createFakeContext( { search: 'test' } ) } /> );
 
-		expect(
-			screen.queryByText( 'No results found. Please try refining your search.' )
-		).toBeInTheDocument();
-	} );
+			expect(
+				screen.queryByText( 'No results found. Please try refining your search.' )
+			).toBeInTheDocument();
+		} );
 
-	test( 'Show the correct empty state message when there are no sites and has applied filters in Favorites tab', () => {
-		render(
-			<Wrapper
-				context={ createFakeContext( { search: 'test', filter: { showOnlyFavorites: true } } ) }
-			/>
-		);
+		test( 'Show the correct message in the Favorites tab with a filter applied', () => {
+			render(
+				<Wrapper
+					context={ createFakeContext( { search: 'test', filter: { showOnlyFavorites: true } } ) }
+				/>
+			);
 
-		expect(
-			screen.queryByText( 'No results found. Please try refining your search.' )
-		).toBeInTheDocument();
-	} );
+			expect(
+				screen.queryByText( 'No results found. Please try refining your search.' )
+			).toBeInTheDocument();
+		} );
 
-	test( 'Show the correct empty state message when there are no sites and no applied filters in Favorites tab', () => {
-		render( <Wrapper context={ createFakeContext( { filter: { showOnlyFavorites: true } } ) } /> );
+		test( 'Show the correct message in the Favorites tab with no filters applied', () => {
+			render(
+				<Wrapper context={ createFakeContext( { filter: { showOnlyFavorites: true } } ) } />
+			);
 
-		expect( screen.queryByText( "You don't have any favorites yet." ) ).toBeInTheDocument();
+			expect( screen.queryByText( "You don't have any favorites yet." ) ).toBeInTheDocument();
+		} );
 	} );
 
 	test( 'Do not show the Add X Licenses button when license count is 0', () => {
