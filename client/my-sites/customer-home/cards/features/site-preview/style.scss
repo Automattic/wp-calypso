@@ -11,7 +11,7 @@
 		max-height: 235px;
 		cursor: pointer;
 		transition: all 200ms ease-in-out;
-		border: 1px solid #eee;
+		border: 1px solid var(--color-border-subtle);
 		border-radius: 4px;
 
 		&:hover,
