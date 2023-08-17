@@ -15,7 +15,7 @@ const useDotcomPatterns = (
 				method: 'GET',
 				apiVersion: '1.1',
 				query: new URLSearchParams( {
-					tags: 'pattern',
+					tags: 'assembler',
 					pattern_meta: 'is_web',
 					categories: PATTERN_CATEGORIES.join( ',' ),
 				} ).toString(),

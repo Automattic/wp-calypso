@@ -11,9 +11,9 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import useDeleteDomainRedirectMutation from 'calypso/data/domains/redirects/use-delete-domain-redirect-mutation';
-import useDomainRedirectQuery from 'calypso/data/domains/redirects/use-domain-redirect-query';
-import useUpdateDomainRedirectMutation from 'calypso/data/domains/redirects/use-update-domain-redirect-mutation';
+import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/use-delete-domain-forwarding-mutation';
+import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
+import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -21,10 +21,10 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `domain-redirects-notification`,
+	id: `domain-forwarding-notification`,
 };
 
-export default function DomainRedirectCard( {
+export default function DomainForwardingCard( {
 	domainName,
 	nameservers,
 }: {
@@ -36,16 +36,16 @@ export default function DomainRedirectCard( {
 	const locale = useLocale();
 	const { hasTranslation } = useI18n();
 
-	const { data: redirect, isLoading, isError } = useDomainRedirectQuery( domainName );
+	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domainName );
 
-	// Manage local state for target url and protocol as we split redirect target into host, path and protocol when we store it
+	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
-	// Display success notices when the redirect is updated
-	const { updateDomainRedirect } = useUpdateDomainRedirectMutation( domainName, {
+	// Display success notices when the forwarding is updated
+	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domainName, {
 		onSuccess() {
 			dispatch(
 				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
@@ -58,8 +58,8 @@ export default function DomainRedirectCard( {
 		},
 	} );
 
-	// Display success notices when the redirect is deleted
-	const { deleteDomainRedirect } = useDeleteDomainRedirectMutation( domainName, {
+	// Display success notices when the forwarding is deleted
+	const { deleteDomainForwarding } = useDeleteDomainForwardingMutation( domainName, {
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
@@ -73,7 +73,7 @@ export default function DomainRedirectCard( {
 		},
 	} );
 
-	// Render an error if the redirect fails to load
+	// Render an error if the forwarding fails to load
 	useEffect( () => {
 		if ( isError ) {
 			dispatch(
@@ -85,9 +85,9 @@ export default function DomainRedirectCard( {
 		}
 	}, [ isError, dispatch, translate ] );
 
-	// Load saved redirect into local state
+	// Load saved forwarding into local state
 	useEffect( () => {
-		if ( isLoading || ! redirect ) {
+		if ( isLoading || ! forwarding ) {
 			setTargetUrl( '' );
 			setProtocol( 'https' );
 			return;
@@ -95,17 +95,17 @@ export default function DomainRedirectCard( {
 
 		try {
 			const origin =
-				( redirect.isSecure ? 'http://' : 'https://' ) +
-				( redirect.targetHost ?? '_invalid_.domain' );
-			const url = new URL( redirect.targetPath, origin );
+				( forwarding.isSecure ? 'http://' : 'https://' ) +
+				( forwarding.targetHost ?? '_invalid_.domain' );
+			const url = new URL( forwarding.targetPath, origin );
 			if ( url.hostname !== '_invalid_.domain' ) {
 				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
-				setProtocol( redirect.isSecure ? 'https' : 'http' );
+				setProtocol( forwarding.isSecure ? 'https' : 'http' );
 			}
 		} catch ( e ) {
 			// ignore
 		}
-	}, [ isLoading, redirect, setTargetUrl, setProtocol ] );
+	}, [ isLoading, forwarding, setTargetUrl, setProtocol ] );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
@@ -122,8 +122,8 @@ export default function DomainRedirectCard( {
 		try {
 			const url = new URL( protocol + '://' + event.target.value );
 
-			// Disallow subdomain redirects to the main domain, e.g. www.example.com => example.com
-			// Disallow same domain redirects (for now, this may change in the future)
+			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
+			// Disallow same domain forwardings (for now, this may change in the future)
 			if ( url.hostname === domainName || url.hostname.endsWith( `.${ domainName }` ) ) {
 				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
 				setIsValidUrl( false );
@@ -139,10 +139,10 @@ export default function DomainRedirectCard( {
 	};
 
 	const handleDelete = () => {
-		if ( isLoading || ! redirect ) {
+		if ( isLoading || ! forwarding ) {
 			return;
 		}
-		deleteDomainRedirect();
+		deleteDomainForwarding();
 	};
 
 	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
@@ -172,7 +172,7 @@ export default function DomainRedirectCard( {
 			// ignore
 		}
 
-		updateDomainRedirect( {
+		updateDomainForwarding( {
 			targetHost,
 			targetPath,
 			isSecure,
@@ -217,14 +217,14 @@ export default function DomainRedirectCard( {
 				: translate( 'You are not currently using WordPress.com name servers.' );
 
 		return (
-			<div className="domain-redirect-card-notice">
+			<div className="domain-forwarding-card-notice">
 				<Icon
 					icon={ info }
 					size={ 18 }
-					className="domain-redirect-card-notice__icon gridicon"
+					className="domain-forwarding-card-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="domain-redirect-card-notice__message">{ noticeText }</div>
+				<div className="domain-forwarding-card-notice__message">{ noticeText }</div>
 			</div>
 		);
 	};
@@ -233,7 +233,7 @@ export default function DomainRedirectCard( {
 		<>
 			{ renderNotice() }
 			<form onSubmit={ handleSubmit }>
-				<FormFieldset className="domain-redirect-card__fields">
+				<FormFieldset className="domain-forwarding-card__fields">
 					<FormTextInputWithAffixes
 						disabled={ isLoading }
 						name="destination"
@@ -241,7 +241,7 @@ export default function DomainRedirectCard( {
 						onChange={ handleChange }
 						value={ targetUrl }
 						className={ classNames( { 'is-error': ! isValidUrl } ) }
-						id="domain-redirect__input"
+						id="domain-forwarding__input"
 						maxLength={ 1000 }
 						prefix={
 							<FormSelect
@@ -258,7 +258,7 @@ export default function DomainRedirectCard( {
 						suffix={
 							<Button
 								disabled={ isLoading || targetUrl === '' }
-								className={ classNames( 'domain-redirect-card__delete', {
+								className={ classNames( 'domain-forwarding-card__delete', {
 									'is-disabled': isLoading || targetUrl === '',
 								} ) }
 								onClick={ handleDelete }
@@ -268,17 +268,17 @@ export default function DomainRedirectCard( {
 						}
 					/>
 				</FormFieldset>
-				<p className="domain-redirect-card__error-field">
+				<p className="domain-forwarding-card__error-field">
 					{ ! isValidUrl ? <FormInputValidation isError={ true } text={ errorMessage } /> : ' ' }
 				</p>
 				<FormButton
 					disabled={
 						! isValidUrl ||
 						isLoading ||
-						( redirect &&
-							redirect.targetHost + redirect.targetPath === targetUrl &&
-							( redirect.isSecure ? 'https' : 'http' ) === protocol ) ||
-						( ! redirect && targetUrl === '' )
+						( forwarding &&
+							forwarding.targetHost + forwarding.targetPath === targetUrl &&
+							( forwarding.isSecure ? 'https' : 'http' ) === protocol ) ||
+						( ! forwarding && targetUrl === '' )
 					}
 				>
 					{ translate( 'Save' ) }

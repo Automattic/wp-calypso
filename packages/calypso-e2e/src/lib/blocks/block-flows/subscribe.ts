@@ -1,11 +1,6 @@
 import { BlockFlow, PublishedPostContext } from '.';
 
 const editorBlockParentSelector = '[aria-label="Block: Subscribe"]';
-const publishedBlockParentSelector = '.wp-block-jetpack-subscriptions';
-const selectors = {
-	emailInput: `${ publishedBlockParentSelector } input[name=email]`,
-	subscribeButton: `${ publishedBlockParentSelector } button:has-text("Subscribe")`,
-};
 
 /**
  * Class representing the flow of using a Subscription Form block in the editor.
@@ -21,10 +16,14 @@ export class SubscribeFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Is there an interactive email field?
-		const emailInputLocator = context.page.locator( selectors.emailInput );
+		const emailInputLocator = context.page
+			.getByRole( 'main' )
+			.getByRole( 'textbox', { name: 'Type your email' } );
 		await emailInputLocator.fill( 'foo@example.com' );
 		// And a subscribe button?
-		const subscribeButtonLocator = context.page.locator( selectors.subscribeButton );
+		const subscribeButtonLocator = context.page
+			.getByRole( 'main' )
+			.getByRole( 'button', { name: 'Subscribe' } );
 		await subscribeButtonLocator.waitFor(); // Don't click - we don't want a real subscription!
 	}
 }

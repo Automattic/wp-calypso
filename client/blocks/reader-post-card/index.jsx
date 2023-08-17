@@ -83,6 +83,11 @@ class ReaderPostCard extends Component {
 			return;
 		}
 
+		// ignore clicks on comments
+		if ( closest( event.target, '.conversations__comment-list', rootNode ) ) {
+			return;
+		}
+
 		// ignore clicks on anchors inside inline content
 		if (
 			closest( event.target, 'a', rootNode ) &&

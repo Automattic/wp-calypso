@@ -1,33 +1,20 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import { DomainsTable } from '..';
-import type { PartialDomainData } from '@automattic/data-stores';
+import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 
-function testDomain( defaults: Partial< PartialDomainData > = {} ): PartialDomainData {
-	return {
-		domain: 'example.com',
-		blog_id: 113,
-		type: 'mapping',
-		is_wpcom_staging_domain: false,
-		has_registration: true,
-		registration_date: '2020-03-11T22:23:58+00:00',
-		expiry: '2026-03-11T00:00:00+00:00',
-		wpcom_domain: false,
-		current_user_is_owner: true,
-		...defaults,
-	};
-}
+const render = ( el ) => renderWithProvider( el );
 
 test( 'all domain names are rendered in the table', () => {
 	const { rerender } = render(
 		<DomainsTable
 			domains={ [
-				testDomain( { domain: 'example1.com' } ),
-				testDomain( { domain: 'example2.com' } ),
-				testDomain( { domain: 'example3.com' } ),
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+				testPartialDomain( { domain: 'example3.com' } ),
 			] }
 		/>
 	);
@@ -41,4 +28,39 @@ test( 'all domain names are rendered in the table', () => {
 	expect( screen.queryByText( 'example1.com' ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'example2.com' ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'example3.com' ) ).not.toBeInTheDocument();
+} );
+
+test( 'when two domains share the same underlying site, there is only one fetch for detailed domain info for that site', () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+	} );
+	const [ notPrimaryPartial, notPrimaryFull ] = testDomain( {
+		domain: 'not-primary-domain.blog',
+		blog_id: 123,
+		primary_domain: false,
+	} );
+	const [ differentSitePartial, differentSiteFull ] = testDomain( {
+		domain: 'a-different-site.com',
+		blog_id: 1337,
+		primary_domain: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( ( siteId ) =>
+		Promise.resolve( {
+			domains: siteId === 123 ? [ primaryFull, notPrimaryFull ] : [ differentSiteFull ],
+		} )
+	);
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial, notPrimaryPartial, differentSitePartial ] }
+			fetchSiteDomains={ fetchSiteDomains }
+		/>
+	);
+
+	expect( fetchSiteDomains ).toHaveBeenCalledTimes( 2 );
+	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
+	expect( fetchSiteDomains ).toHaveBeenCalledWith( 1337 );
 } );

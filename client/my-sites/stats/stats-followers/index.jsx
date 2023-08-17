@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
@@ -13,6 +14,7 @@ import {
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SUPPORT_URL } from '../const';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -148,7 +150,16 @@ class StatModuleFollowers extends Component {
 					} ) ) }
 					usePlainCard
 					title={ translate( 'Subscribers' ) }
-					emptyMessage={ translate( 'No subscribers' ) }
+					emptyMessage={ translate(
+						'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',
+						{
+							comment: '{{link}} links to support documentation.',
+							components: {
+								link: <a href={ localizeUrl( `${ SUPPORT_URL }#subscribers` ) } />,
+							},
+							context: 'Stats: Info box label when the Subscribers module is empty',
+						}
+					) }
 					mainItemLabel={ translate( 'Subscriber' ) }
 					metricLabel={ translate( 'Since' ) }
 					splitHeader

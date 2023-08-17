@@ -4,7 +4,6 @@ import {
 	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
 import { Badge, Button, CompactCard, Gridicon } from '@automattic/components';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -41,12 +40,6 @@ class MembershipsProductsSection extends Component {
 		showDeleteDialog: false,
 		product: null,
 	};
-
-	componentDidMount() {
-		updateLaunchpadSettings( this.props.siteSlug, {
-			checklist_statuses: { manage_paid_newsletter_plan: true },
-		} );
-	}
 
 	renderEllipsisMenu( productId ) {
 		return (

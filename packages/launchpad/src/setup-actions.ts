@@ -4,7 +4,12 @@ import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
-const TASKS_TO_COMPLETE_ON_CLICK = [ 'add_about_page' ];
+const TASKS_TO_COMPLETE_ON_CLICK = [
+	'add_about_page',
+	'manage_paid_newsletter_plan',
+	'earn_money',
+	'manage_subscribers',
+];
 
 export const setUpActionsForTasks = ( {
 	siteSlug,

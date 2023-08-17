@@ -1,5 +1,8 @@
 .pattern-category-list {
-	margin-top: 5px;
-	margin-left: 11px;
+	margin-top: 10px;
 	margin-right: -22px;
+
+	.components-item.navigator-item {
+		padding-left: 42px;
+	}
 }

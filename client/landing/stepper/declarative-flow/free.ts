@@ -17,10 +17,12 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
+import ErrorStep from './internals/steps-repository/error-step';
 import FreeSetup from './internals/steps-repository/free-setup';
 import LaunchPad from './internals/steps-repository/launchpad';
 import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
@@ -49,6 +51,7 @@ const free: Flow = {
 			{ slug: 'launchpad', component: LaunchPad },
 			{ slug: 'designSetup', component: DesignSetup },
 			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'error', component: ErrorStep },
 		];
 	},
 
@@ -86,7 +89,7 @@ const free: Flow = {
 			return navigate( 'processing' );
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
 			switch ( _currentStep ) {
@@ -97,6 +100,10 @@ const free: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
+					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
+						return navigate( 'error' );
+					}
+
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
 							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {

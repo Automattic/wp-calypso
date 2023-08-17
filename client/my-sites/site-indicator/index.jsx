@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,13 +8,14 @@ import { connect } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 
@@ -45,15 +47,10 @@ class SiteIndicator extends Component {
 	}
 
 	showIndicator() {
-		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
+		const { siteIsJetpack, userCanManage } = this.props;
 
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
-		return (
-			userCanManage &&
-			siteIsJetpack &&
-			! siteIsAutomatedTransfer &&
-			( this.hasUpdate() || this.hasError() )
-		);
+		return userCanManage && siteIsJetpack && ( this.hasUpdate() || this.hasError() );
 	}
 
 	toggleExpand = () => {
@@ -191,22 +188,34 @@ class SiteIndicator extends Component {
 		);
 	};
 
+	handleJetpackConnectionHealthSidebarLinkClick = () => {
+		const { siteIsAutomatedTransfer } = this.props;
+		this.props.recordTracksEvent( 'calypso_jetpack_connection_health_issue_sidebar_click', {
+			is_atomic: siteIsAutomatedTransfer,
+		} );
+	};
+
 	errorAccessing() {
-		const { site, translate } = this.props;
+		const { site, translate, siteIsAutomatedTransfer } = this.props;
 
 		// Don't show the button if the site is not defined.
 		if ( site ) {
 			return (
 				<span>
-					{ translate( 'This site cannot be accessed.' ) }
+					<TrackComponentView
+						eventName="calypso_jetpack_connection_health_issue_sidebar_view"
+						eventProperties={ {
+							is_atomic: siteIsAutomatedTransfer,
+						} }
+					/>
+					{ translate( 'Jetpack can’t communicate with your site.' ) }
 					<Button
-						borderless
-						compact
-						scary
-						href={ `/settings/disconnect-site/${ site.slug }?type=down` }
-						onClick={ this.props.trackSiteDisconnect }
+						plain
+						href={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+						target="_blank"
+						onClick={ this.handleJetpackConnectionHealthSidebarLinkClick }
 					>
-						{ translate( 'I’d like to fix this now' ) }
+						{ translate( 'Learn how to fix' ) }
 					</Button>
 				</span>
 			);
@@ -289,7 +298,7 @@ class SiteIndicator extends Component {
 export default connect(
 	( state, { site } ) => {
 		return {
-			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
+			siteIsConnected: site && ! isJetpackConnectionUnhealthy( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
 			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),

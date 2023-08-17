@@ -209,7 +209,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 								defaultCartKey: 123456,
 							} }
 						>
-							<WPCheckoutOrderSummary siteId={ undefined } onChangePlanLength={ () => null } />
+							<WPCheckoutOrderSummary siteId={ undefined } onChangeSelection={ () => null } />
 						</ShoppingCartProvider>
 					</ThemeProvider>
 				</ReduxProvider>
