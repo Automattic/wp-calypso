@@ -19,6 +19,23 @@ test( 'domain name is rendered in the row', () => {
 	expect( screen.queryByText( 'example1.com' ) ).toBeInTheDocument();
 } );
 
+test( 'wpcom domains do not link to management interface', async () => {
+	const [ partialDomain, fullDomain ] = testDomain( {
+		domain: 'example.wordpress.com',
+		blog_id: 123,
+		primary_domain: false,
+		wpcom_domain: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ fullDomain ],
+	} );
+
+	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+
+	expect( screen.getByText( 'example.wordpress.com' ) ).not.toHaveAttribute( 'href' );
+} );
+
 test( 'domain name links to management interface', async () => {
 	const [ partialDomain, fullDomain ] = testDomain( {
 		domain: 'example.com',

@@ -38,15 +38,23 @@ export function DomainsTableRow( {
 	}, [ data, domain.blog_id ] );
 
 	const isPrimaryDomain = primaryDomain?.domain === domain.domain;
+	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = displayPrimaryDomainLabel && isPrimaryDomain;
 
 	return (
 		<tr key={ domain.domain }>
 			<td>
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
-				<a className="domains-table__domain-link" href={ domainManagementLink( domain, siteSlug ) }>
-					{ domain.domain }
-				</a>
+				{ isManageableDomain ? (
+					<a
+						className="domains-table__domain-link"
+						href={ domainManagementLink( domain, siteSlug ) }
+					>
+						{ domain.domain }
+					</a>
+				) : (
+					domain.domain
+				) }
 			</td>
 		</tr>
 	);
