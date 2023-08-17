@@ -76,7 +76,15 @@ export const useLaunchpad = (
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
 	return useQuery( {
 		queryKey: key,
-		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ),
+		queryFn: () =>
+			fetchLaunchpad( siteSlug, checklist_slug ).then( ( data ) => {
+				const tasks = data.checklist || [];
+				const completedTasks = tasks.filter( ( task: Task ) => task.completed );
+				const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
+				data.checklist = [ ...completedTasks, ...incompleteTasks ];
+
+				return data;
+			} ),
 		retry: 3,
 		initialData: {
 			site_intent: '',
