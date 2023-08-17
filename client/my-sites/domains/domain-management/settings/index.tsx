@@ -354,7 +354,7 @@ const Settings = ( {
 				title={ translate( 'Redirect Domain', { textOnly: true } ) }
 				subtitle={ translate( 'Redirect from your domain to another' ) }
 			>
-				<DomainForwardingCard domainName={ selectedDomainName } domain={ domain } />
+				<DomainForwardingCard domain={ domain } />
 			</Accordion>
 		);
 	};

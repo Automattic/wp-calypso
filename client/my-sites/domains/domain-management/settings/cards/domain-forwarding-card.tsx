@@ -24,27 +24,21 @@ const noticeOptions = {
 	id: `domain-forwarding-notification`,
 };
 
-export default function DomainForwardingCard( {
-	domainName,
-	domain,
-}: {
-	domainName: string;
-	domain: ResponseDomain;
-} ) {
+export default function DomainForwardingCard( { domain }: { domain: ResponseDomain } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domainName );
+	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domain.name );
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
-	const pointsToWpcom = domain?.pointsToWpcom ?? false;
+	const pointsToWpcom = domain.pointsToWpcom;
 
 	// Display success notices when the forwarding is updated
-	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domainName, {
+	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			dispatch(
 				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
@@ -58,7 +52,7 @@ export default function DomainForwardingCard( {
 	} );
 
 	// Display success notices when the forwarding is deleted
-	const { deleteDomainForwarding } = useDeleteDomainForwardingMutation( domainName, {
+	const { deleteDomainForwarding } = useDeleteDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
@@ -123,7 +117,7 @@ export default function DomainForwardingCard( {
 
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
-			if ( url.hostname === domainName || url.hostname.endsWith( `.${ domainName }` ) ) {
+			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
 				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
 				setIsValidUrl( false );
 				return;
