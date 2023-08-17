@@ -6,6 +6,7 @@
 	width: 480px;
 	animation: components-modal__appear-animation 0.1s ease-out;
 	animation-fill-mode: forwards;
+	margin-block-start: 0;
 
 	.components-modal__content {
 		margin-block-start: 50px;
