@@ -47,10 +47,14 @@ class SiteIndicator extends Component {
 	}
 
 	showIndicator() {
-		const { siteIsJetpack, userCanManage } = this.props;
+		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
 
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
-		return userCanManage && siteIsJetpack && ( this.hasUpdate() || this.hasError() );
+		return (
+			userCanManage &&
+			siteIsJetpack &&
+			( ( ! siteIsAutomatedTransfer && this.hasUpdate() ) || this.hasError() )
+		);
 	}
 
 	toggleExpand = () => {
