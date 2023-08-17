@@ -58,10 +58,10 @@ export const fetchLaunchpad = (
 		  } as APIFetchOptions );
 };
 
-const mapTask = ( task: Task, index: number ) => {
+function mapTask( task: Task, index: number ): Task {
 	task.order = index;
 	return task;
-};
+}
 
 export const useLaunchpad = (
 	siteSlug: string | null,
