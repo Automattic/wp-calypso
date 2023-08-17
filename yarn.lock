@@ -438,6 +438,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
     i18n-calypso: "workspace:^"
     typescript: ^5.1.6
   peerDependencies:
