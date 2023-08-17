@@ -118,6 +118,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				) }
 				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
 			/>
 		);
 	}
