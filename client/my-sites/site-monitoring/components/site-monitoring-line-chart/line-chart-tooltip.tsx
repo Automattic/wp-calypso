@@ -71,14 +71,6 @@ export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipPro
 
 export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
 	const dateString = moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
-	const totalRequests = Math.round( data[ 1 ][ idx ] );
-	/* translators: the totalRequests is a number of requests */
-	const totalRequestsString = translate( '%(totalRequests)s requests', {
-		args: {
-			totalRequests,
-		},
-	} );
-
 	return (
 		<LineChartTooltip
 			{ ...rest }
@@ -86,7 +78,7 @@ export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
 				{
 					color: 'var(--studio-blue-50)',
 					label: translate( 'Requests per minute' ),
-					value: totalRequests,
+					value: Math.round( data[ 1 ][ idx ] ),
 				},
 				{
 					color: 'rgba(222, 177, 0, 1)',
@@ -94,11 +86,7 @@ export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
 					value: `${ Math.round( data[ 2 ][ idx ] ) }ms`,
 				},
 			] }
-			footer={
-				<>
-					{ totalRequestsString } { ` - ${ dateString }` }
-				</>
-			}
+			footer={ dateString }
 		/>
 	);
 }
