@@ -206,6 +206,16 @@ export const SiteMonitoringLineChart = ( {
 					},
 					fill: () => '#fff',
 				},
+				drag: {
+					setScale: false,
+				},
+			},
+			select: {
+				show: false,
+				width: 0,
+				height: 0,
+				left: 0,
+				top: 0,
 			},
 			series: createSeries( series ),
 			legend: {
