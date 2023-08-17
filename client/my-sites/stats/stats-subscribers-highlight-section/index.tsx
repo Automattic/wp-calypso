@@ -14,8 +14,6 @@ function useSubscriberHighlights(
 	const translate = useTranslate();
 
 	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
-	// Check if the payment processor Stripe is connected to the site.
-	const hasPaidNewsletter = hasAddedPaidSubscriptionProduct;
 
 	const highlights = [
 		{
@@ -27,24 +25,24 @@ function useSubscriberHighlights(
 		{
 			heading: translate( 'Paid subscribers' ),
 			count: subscribersTotals?.paid_subscribers,
-			show: hasPaidNewsletter,
+			show: hasAddedPaidSubscriptionProduct,
 			note: 'Paid WordPress.com subscribers',
 		},
 		{
 			heading: translate( 'Free subscribers' ),
 			count: subscribersTotals?.free_subscribers,
-			show: hasPaidNewsletter,
+			show: hasAddedPaidSubscriptionProduct,
 			note: 'Email subscribers and free WordPress.com subscribers',
 		},
 		{
 			heading: translate( 'WordPress.com subscribers' ),
 			count: subscribersTotals?.total_wpcom,
-			show: ! hasPaidNewsletter,
+			show: ! hasAddedPaidSubscriptionProduct,
 		},
 		{
 			heading: translate( 'Email subscribers' ),
 			count: subscribersTotals?.total_email,
-			show: ! hasPaidNewsletter,
+			show: ! hasAddedPaidSubscriptionProduct,
 		},
 	] as { heading: string; count: number | null; show: boolean; note?: string }[];
 
