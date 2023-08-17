@@ -1,7 +1,6 @@
 import { Button, FormInputValidation } from '@automattic/components';
-import { englishLocales, useLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, trash, info } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -15,8 +14,9 @@ import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/u
 import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
-import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
+import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
 const noticeOptions = {
@@ -24,28 +24,21 @@ const noticeOptions = {
 	id: `domain-forwarding-notification`,
 };
 
-export default function DomainForwardingCard( {
-	domainName,
-	nameservers,
-}: {
-	domainName: string;
-	nameservers: string[] | null;
-} ) {
+export default function DomainForwardingCard( { domain }: { domain: ResponseDomain } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const locale = useLocale();
-	const { hasTranslation } = useI18n();
 
-	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domainName );
+	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domain.name );
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const pointsToWpcom = domain.pointsToWpcom;
 
 	// Display success notices when the forwarding is updated
-	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domainName, {
+	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			dispatch(
 				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
@@ -59,7 +52,7 @@ export default function DomainForwardingCard( {
 	} );
 
 	// Display success notices when the forwarding is deleted
-	const { deleteDomainForwarding } = useDeleteDomainForwardingMutation( domainName, {
+	const { deleteDomainForwarding } = useDeleteDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
@@ -124,7 +117,7 @@ export default function DomainForwardingCard( {
 
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
-			if ( url.hostname === domainName || url.hostname.endsWith( `.${ domainName }` ) ) {
+			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
 				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
 				setIsValidUrl( false );
 				return;
@@ -185,36 +178,19 @@ export default function DomainForwardingCard( {
 		return false;
 	};
 
-	const hasWpcomNameservers = () => {
-		if ( ! nameservers || nameservers.length === 0 ) {
-			return false;
-		}
-
-		return nameservers.every( ( nameserver ) => {
-			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
-		} );
-	};
-
 	const renderNotice = () => {
-		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+		if ( pointsToWpcom ) {
 			return null;
 		}
 
-		const noticeText =
-			englishLocales.includes( locale ) ||
-			hasTranslation(
-				'Domain redirection requires using WordPress.com nameservers.{{br/}}{{a}}Update your nameservers now{{/a}}.'
-			)
-				? translate(
-						'Domain redirection requires using WordPress.com nameservers.{{br/}}{{a}}Update your nameservers now{{/a}}.',
-						{
-							components: {
-								a: <a href="?nameservers=true" />,
-								br: <br />,
-							},
-						}
-				  )
-				: translate( 'You are not currently using WordPress.com name servers.' );
+		const noticeText = translate(
+			'Connect your domain to WordPress.com to enable domain forwarding. {{a}}Learn more{{/a}}.',
+			{
+				components: {
+					a: <a href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
+				},
+			}
+		);
 
 		return (
 			<div className="domain-forwarding-card-notice">
