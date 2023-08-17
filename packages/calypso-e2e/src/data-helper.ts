@@ -144,8 +144,16 @@ export function getCalypsoURL(
  *
  * @param {string} siteSlug Slug of the site, typically wordpress or wpcomstaging.com.
  * @param {string} path Path to the WP-Admin page.
+ * @returns {string} The full URL path.
+ * @throws {Error} If siteSlug is empty.
  */
 export function getWPAdminURL( siteSlug: string, path: string ): string {
+	if ( ! siteSlug ) {
+		throw new Error( 'siteSlug must not be empty.' );
+	}
+	if ( siteSlug.match( /^(http:\/\/|https:\/\/)/ ) ) {
+		siteSlug = siteSlug.replace( /^(http:\/\/|https:\/\/)/, '' );
+	}
 	return new URL( path, `https://${ siteSlug }` ).href;
 }
 
