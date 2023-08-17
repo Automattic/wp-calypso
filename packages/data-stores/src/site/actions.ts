@@ -371,7 +371,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	) {
 		const { keepHomepage = false, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
-			path: `/sites/${ siteSlug }/themes/mine`,
+			path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 			apiVersion: '1.1',
 			body: {
 				theme: selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
