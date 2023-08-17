@@ -6,10 +6,9 @@ import { FileBrowserItem } from './types';
 
 interface FileBrowserProps {
 	rewindId: number;
-	siteId: number;
 }
 
-const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId } ) => {
+const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
 	const [ showCheckboxes, setShowCheckboxes ] = useState< boolean >( false );
@@ -31,8 +30,8 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 
 	const rootItem: FileBrowserItem = {
 		name: '/',
-		type: 'dir',
 		hasChildren: true,
+		type: 'dir',
 	};
 
 	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
@@ -49,12 +48,12 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { siteId, rewindId 
 				/>
 			) }
 			<FileBrowserNode
-				siteId={ siteId }
 				rewindId={ rewindId }
 				item={ rootItem }
 				path="/"
 				isAlternate={ true }
 				setActiveNodePath={ handleClick }
+				showCheckboxes={ showCheckboxes }
 				activeNodePath={ activeNodePath }
 			/>
 		</div>
