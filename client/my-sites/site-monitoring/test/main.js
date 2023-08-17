@@ -120,7 +120,7 @@ describe( 'useSiteMetrics test', () => {
 
 		expect( formattedData ).toEqual( [
 			[ 1685577600 ],
-			[ 0.18000000000000002 ],
+			[ 0.0030000000000000005 ],
 			[ 3.0000000000000004 ],
 		] );
 	} );
@@ -133,6 +133,7 @@ describe( 'useSiteMetrics test', () => {
 						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
 						{ timestamp: 1685577800, dimension: {} },
 					],
+					_meta: { resolution: 60 },
 				},
 			},
 		} );
