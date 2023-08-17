@@ -104,7 +104,6 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/show-waitlist-patterns": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
