@@ -25,7 +25,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
 import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
-import MembershipsSection from '.';
+import MembershipsSection from './';
 import './style.scss';
 
 const showAddEditDialogInitially =
