@@ -1,22 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import type { Task } from '@automattic/launchpad';
 
 interface APIFetchOptions {
 	global: boolean;
 	path: string;
-}
-
-interface Task {
-	id: string;
-	completed: boolean;
-	disabled: boolean;
-	title: string;
-	subtitle?: string;
-	badgeText?: string;
-	actionDispatch?: () => void;
-	isLaunchTask?: boolean;
-	warning?: boolean;
 }
 
 interface ChecklistStatuses {
@@ -69,6 +58,11 @@ export const fetchLaunchpad = (
 		  } as APIFetchOptions );
 };
 
+const mapTask = ( task: Task, index: number ) => {
+	task.order = index;
+	return task;
+};
+
 export const useLaunchpad = (
 	siteSlug: string | null,
 	checklist_slug?: string | 0 | null | undefined
@@ -81,7 +75,7 @@ export const useLaunchpad = (
 				const tasks = data.checklist || [];
 				const completedTasks = tasks.filter( ( task: Task ) => task.completed );
 				const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
-				data.checklist = [ ...completedTasks, ...incompleteTasks ];
+				data.checklist = [ ...completedTasks, ...incompleteTasks ].map( mapTask );
 
 				return data;
 			} ),

@@ -34,7 +34,7 @@ export const setUpActionsForTasks = ( {
 	};
 
 	// Add actions to the tasks.
-	return tasks.map( ( task: Task, sortedIndex: number ) => {
+	return tasks.map( ( task: Task ) => {
 		let action: () => void;
 		let logMissingCalypsoPath = false;
 
@@ -139,6 +139,6 @@ export const setUpActionsForTasks = ( {
 			action?.();
 		};
 
-		return { ...task, actionDispatch, order: sortedIndex };
+		return { ...task, actionDispatch };
 	} );
 };
