@@ -124,7 +124,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
 			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
-				setErrorMessage( translate( 'Forwarding to the same domain are not allowed.' ) );
+				setErrorMessage( translate( 'Forwarding to the same domain is not allowed.' ) );
 				setIsValidUrl( false );
 				return;
 			}
