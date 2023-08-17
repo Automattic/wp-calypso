@@ -1,24 +1,23 @@
-import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { PlanSelectedStorage } from '..';
 import { getStorageStringFromFeature } from '../util';
-import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import type { PlanSlug, StorageOption } from '@automattic/calypso-products';
 
 type StorageAddOnDropdownProps = {
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
+	selectedStorage: PlanSelectedStorage;
+	setSelectedStorage: ( selectedStorage: PlanSelectedStorage ) => void;
 };
 
-export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOnDropdownProps ) => {
+const StorageAddOnDropdown = ( {
+	planSlug,
+	storageOptions,
+	selectedStorage,
+	setSelectedStorage,
+}: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
-	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
-	const selectedStorage = useSelect(
-		( select ) => {
-			return select( WpcomPlansUI.store ).getStorageAddOnForPlan( planSlug );
-		},
-		[ planSlug ]
-	);
 
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce( ( acc, storageOption ) => {
@@ -34,7 +33,7 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 	}, [] as { key: string; name: TranslateResult }[] );
 
 	const defaultStorageOption = storageOptions.find( ( storageOption ) => ! storageOption?.isAddOn );
-	const selectedOptionKey = selectedStorage || defaultStorageOption?.slug || '';
+	const selectedOptionKey = selectedStorage[ planSlug ] || defaultStorageOption?.slug || '';
 	const selectedOption = {
 		key: selectedOptionKey,
 		name: getStorageStringFromFeature( selectedOptionKey ),
@@ -44,9 +43,13 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 			label={ translate( 'Storage' ) }
 			options={ selectControlOptions }
 			value={ selectedOption }
-			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) =>
-				setSelectedStorageOptionForPlan( { addOnSlug: selectedItem?.key || '', planSlug } )
-			}
+			onChange={ ( { selectedItem }: { selectedItem: { key?: string } } ) => {
+				const updatedSelectedStorage = {
+					[ planSlug ]: selectedItem?.key || '',
+				} as PlanSelectedStorage;
+
+				setSelectedStorage( updatedSelectedStorage );
+			} }
 		/>
 	);
 };
