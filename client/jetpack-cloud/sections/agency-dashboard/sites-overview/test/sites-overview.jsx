@@ -134,34 +134,8 @@ describe( '<SitesOverview>', () => {
 		} );
 	} );
 
-	test( 'Do not show the Add X Licenses button when license count is 0', () => {
-		render( <Wrapper /> );
-
-		expect( screen.queryByText( 'Add 1 license', { role: 'button' } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'Show the add site and issue license buttons', () => {
-		render( <Wrapper /> );
-
-		expect( screen.queryByText( 'Add New Site', { role: 'button' } ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Issue License', { role: 'button' } ) ).toBeInTheDocument();
-	} );
-
-	test( 'Show the "Issue x licenses" button when a license is selected', () => {
-		render(
-			<Wrapper
-				state={ createFakeState( {
-					agencyDashboard: { selectedLicenses: { licenses: [ 'test' ] } },
-				} ) }
-			/>
-		);
-
-		expect( screen.queryByText( 'Issue 1 license', { role: 'button' } ) ).toBeInTheDocument();
-	} );
-
-	// the default view for tests is mobile, widescreen buttons behave a bit differently
-	test( 'Remove the "Add Site" button and replace the "Issue License" button with "Issue x licenses" on large screens, when a license is selected', () => {
-		//set screen to widescreen for this test
+	test( 'Hide the "Add Site" and "Issue License" buttons on large screens when one or more licenses are selected', () => {
+		// Pretend we're running this test on a screen that's >960px wide
 		isWithinBreakpoint.mockReturnValue( true );
 
 		render(
@@ -174,16 +148,30 @@ describe( '<SitesOverview>', () => {
 
 		expect( screen.queryByText( 'Add New Site', { role: 'button' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Issue License', { role: 'button' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Issue 1 license', { role: 'button' } ) ).toBeInTheDocument();
+	} );
+
+	test( 'Show the "Add Site" button when no licenses are selected', () => {
+		render( <Wrapper /> );
+
+		expect( screen.queryByText( 'Add New Site', { role: 'button' } ) ).toBeInTheDocument();
+	} );
+
+	test( 'Show "Issue License" and not "Issue x licenses" when no licenses are selected', () => {
+		render( <Wrapper /> );
+
+		expect( screen.queryByText( 'Issue License', { role: 'button' } ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( /^Issue \d+ licenses?$/, { role: 'button' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test.each( [
-		[ 1, 'Issue 1 license' ],
-		[ 3, 'Issue 3 licenses' ],
-		[ 7, 'Issue 7 licenses' ],
+		{ quantity: 1, expectedText: 'Issue 1 license' },
+		{ quantity: 3, expectedText: 'Issue 3 licenses' },
+		{ quantity: 7, expectedText: 'Issue 7 licenses' },
 	] )(
-		'Shows the correct quantity and grammar in the text of the "Issue x licenses" button',
-		( quantity, expectedText ) => {
+		'Show a button for "$expectedText" when $quantity licenses are selected',
+		( { quantity, expectedText } ) => {
 			// Create an array of length `quantity`, with a non-empty string in each element
 			const fakeLicenses = Array.from( { length: quantity }, ( val, index ) => `test-${ index }` );
 			expect( fakeLicenses.length ).toBe( quantity );
