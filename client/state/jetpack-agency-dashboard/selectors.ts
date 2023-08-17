@@ -13,9 +13,6 @@ export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE =
 export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE =
 	'jetpack-dashboard-welcome-banner-preference-home-page';
 
-export const JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE =
-	'jetpack-dashboard-agency-program-survey-banner-preference';
-
 export const JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE =
 	'jetpack-dashboard-agency-program-downtime-monitoring-upgrade-banner-preference';
 
