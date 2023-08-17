@@ -238,7 +238,10 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
-				<FormFieldset disabled={ domain?.isPrimary } className="domain-forwarding-card__fields">
+				<FormFieldset
+					disabled={ domain?.isPrimary || ! pointsToWpcom }
+					className="domain-forwarding-card__fields"
+				>
 					<FormTextInputWithAffixes
 						disabled={ isLoading }
 						name="destination"
