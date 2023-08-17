@@ -98,11 +98,11 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { site } = this.props;
+		const { domain } = this.props;
 		return (
 			<div className="domain-row__site-cell">
-				<Button href={ '/home/' + site?.slug } plain>
-					{ ! site.options?.is_domain_only ? site?.title || site?.slug : '' }
+				<Button href={ '/home/' + domain.blogId } plain>
+					{ domain.blogName }
 				</Button>
 			</div>
 		);
@@ -304,7 +304,7 @@ class DomainRow extends PureComponent {
 	/* eslint-enable jsx-a11y/anchor-is-valid */
 
 	addEmailClick = ( event ) => {
-		const { currentRoute, domain, site, dispatch } = this.props;
+		const { currentRoute, domain, dispatch } = this.props;
 		event.stopPropagation();
 
 		dispatch(
@@ -315,12 +315,12 @@ class DomainRow extends PureComponent {
 
 		this.goToEmailPage(
 			event,
-			emailManagementPurchaseNewEmailAccount( site.slug, domain.domain, currentRoute )
+			emailManagementPurchaseNewEmailAccount( domain.blogId, domain.domain, currentRoute )
 		);
 	};
 
 	goToEmailPage = ( event, targetPath ) => {
-		const { currentRoute, disabled, domain, site } = this.props;
+		const { currentRoute, disabled, domain } = this.props;
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -330,24 +330,24 @@ class DomainRow extends PureComponent {
 
 		const emailPath = targetPath
 			? targetPath
-			: emailManagement( site.slug, domain.domain, currentRoute );
+			: emailManagement( domain.blogId, domain.domain, currentRoute );
 
 		page( emailPath );
 	};
 
 	goToEditContactInfo = () => {
-		const { currentRoute, domain, site } = this.props;
-		page( domainManagementEditContactInfo( site.slug, domain.domain, currentRoute ) );
+		const { currentRoute, domain } = this.props;
+		page( domainManagementEditContactInfo( domain.blogId, domain.domain, currentRoute ) );
 	};
 
 	goToDNSManagement = () => {
-		const { currentRoute, domain, site, sendNudge } = this.props;
+		const { currentRoute, domain, sendNudge } = this.props;
 		sendNudge( {
 			nudge: 'dns-settings',
 			initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
 			context: { domain: domain.domain },
 		} );
-		page( domainManagementDns( site.slug, domain.domain, currentRoute ) );
+		page( domainManagementDns( domain.blogId, domain.domain, currentRoute ) );
 	};
 
 	renderEllipsisMenu() {
@@ -367,7 +367,7 @@ class DomainRow extends PureComponent {
 			return <div className="domain-row__action-cell"></div>;
 		}
 
-		if ( isLoadingDomainDetails || ! domain || ! site ) {
+		if ( isLoadingDomainDetails || ! domain ) {
 			return (
 				<div className="domain-row__action-cell">
 					<p className="domain-row__placeholder" />
@@ -507,6 +507,9 @@ class DomainRow extends PureComponent {
 			}
 		);
 
+		console.log( domain );
+		console.log( domain.blogName );
+
 		return (
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
@@ -515,7 +518,7 @@ class DomainRow extends PureComponent {
 					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }
 					{ this.renderExpiryDate( expiryDate ) }
-					{ this.renderAutoRenew() }
+					{ /*{ this.renderAutoRenew() }*/ }
 					{ ! isManagingAllSites && this.renderEmail() }
 					{ this.renderEllipsisMenu() }
 				</div>
