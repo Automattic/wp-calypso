@@ -2,30 +2,50 @@
  * @jest-environment jsdom
  */
 
-import { render } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SiteErrorContent from '../site-error-content';
 
+jest.mock( 'react-redux' );
+
 describe( '<SiteErrorContent>', () => {
-	const siteUrl = 'test.jurassic.ninja';
+	test( 'shows a "Fix now" link that points to the correct page', () => {
+		const SITE_SLUG = 'test.jurassic.ninja';
 
-	const initialState = {};
-	const mockStore = configureStore();
-	const store = mockStore( initialState );
+		render( <SiteErrorContent siteUrl={ SITE_SLUG } /> );
 
-	const { container } = render(
-		<Provider store={ store }>
-			<SiteErrorContent siteUrl={ siteUrl } />
-		</Provider>
-	);
+		const fixNowButton = screen.queryByText( 'Fix now' );
+		expect( fixNowButton ).toBeInTheDocument();
 
-	test( 'should render correctly and have href for Fix Now', () => {
-		const [ fixNow ] = container.getElementsByClassName( 'sites-overview__error-message-link' );
-		expect( fixNow ).toHaveProperty(
-			'href',
-			`https://example.com/settings/disconnect-site/${ urlToSlug( siteUrl ) }?type=down`
+		expect( ( fixNowButton as HTMLElement ).getAttribute( 'href' ) ).toEqual(
+			`/settings/disconnect-site/${ SITE_SLUG }?type=down`
 		);
+	} );
+
+	test( 'records the correct Tracks event when the "Fix now" button is clicked', async () => {
+		const mockDispatch = jest.fn();
+		( useDispatch as jest.Mock< typeof useDispatch > ).mockReturnValue( mockDispatch );
+
+		const user = userEvent.setup();
+
+		render( <SiteErrorContent siteUrl="doesnotmatter" /> );
+
+		const fixNowButton = screen.queryByText( 'Fix now' );
+		expect( fixNowButton ).toBeInTheDocument();
+
+		// Suppress actual navigation, because jest-jsdom throws errors
+		( fixNowButton as HTMLElement ).addEventListener( 'click', ( e ) => {
+			e.preventDefault();
+		} );
+
+		await user.click( fixNowButton as HTMLElement );
+
+		const expectedEventAction = recordTracksEvent(
+			'calypso_jetpack_agency_dashboard_fix_connection_click'
+		);
+		expect( mockDispatch ).toBeCalledWith( expectedEventAction );
 	} );
 } );
