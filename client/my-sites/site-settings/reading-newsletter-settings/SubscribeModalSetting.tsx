@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
@@ -33,12 +33,12 @@ export const SubscribeModalSetting = ( {
 	const translate = useTranslate();
 
 	// Construct a link to edit the modal
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteEditorUrl = useSelector( ( state: object ) =>
-		getSiteEditorUrl( state, selectedSite?.ID || null )
+		getSiteEditorUrl( state, selectedSiteId )
 	);
 	const themeSlug = useSelector( ( state ) =>
-		getSiteOption( state, selectedSite?.ID, 'theme_slug' )
+		getSiteOption( state, selectedSiteId, 'theme_slug' )
 	);
 	const subscribeModalEditorUrl = themeSlug
 		? addQueryArgs( siteEditorUrl, {
@@ -46,7 +46,7 @@ export const SubscribeModalSetting = ( {
 				postId: `${ themeSlug }//jetpack-subscribe-modal`,
 				canvas: 'edit',
 		  } )
-		: siteEditorUrl;
+		: false;
 
 	return (
 		<>
@@ -68,7 +68,7 @@ export const SubscribeModalSetting = ( {
 					: translate(
 							'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll.'
 					  ) }
-				{ isModalEditTranslated && (
+				{ isModalEditTranslated && subscribeModalEditorUrl && (
 					<>
 						{ ' ' }
 						<ExternalLink href={ subscribeModalEditorUrl }>
