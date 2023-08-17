@@ -41,7 +41,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.1.6"
+		"typescript": "^5.1.6",
+		"react-dom": "18.2.0"
 	},
 	"peerDependencies": {
 		"react": "^18.2.0"
