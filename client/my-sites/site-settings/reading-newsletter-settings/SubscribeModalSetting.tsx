@@ -43,7 +43,7 @@ export const SubscribeModalSetting = ( {
 	const subscribeModalEditorUrl = themeSlug
 		? addQueryArgs( siteEditorUrl, {
 				postType: 'wp_template_part',
-				postId: `${ themeSlug }//subscribe-modal`,
+				postId: `${ themeSlug }//jetpack-subscribe-modal`,
 				canvas: 'edit',
 		  } )
 		: siteEditorUrl;
