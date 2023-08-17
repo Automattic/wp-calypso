@@ -158,7 +158,6 @@ export default ( state = initialState, { type, payload }: AnyAction ) => {
 			// We need to update the node's checkState
 			newNode.checkState = checkState;
 			parent.children[ index ] = newNode;
-			// parent.children[0] = { ...nodeToUpdate };
 			// We need to update the node's children's checkState
 			if ( checkState !== 'mixed' ) {
 				updateChildrenStatus( newNode, checkState );
