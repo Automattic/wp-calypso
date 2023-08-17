@@ -7,7 +7,7 @@ import uPlot from 'uplot';
  */
 export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 	let overEl;
-	let highlightEl;
+	let highlightEl: HTMLElement;
 
 	/**
 	 * Initialize the plugin
@@ -35,7 +35,7 @@ export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 
 		// show/hide highlight on enter/exit
 		overEl.addEventListener( 'mouseenter', () => {
-			highlightEl.style.display = null;
+			highlightEl.style.display = 'block';
 		} );
 		overEl.addEventListener( 'mouseleave', () => {
 			highlightEl.style.display = 'none';
@@ -44,15 +44,15 @@ export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 
 	/**
 	 * On update
-	 *
-	 * @param {uPlot} u - The uPlot instance.
 	 */
-	function update( u ) {
+	function update( u: uPlot ) {
 		const { idx } = u.cursor;
-
+		if ( idx == null ) {
+			return;
+		}
 		// Timestamp of the cursor position
 		const timestamp: number = u.data[ 0 ][ idx ];
-		let timeSlotToHighlight = timeSlot;
+		let timeSlotToHighlight = timeSlot as number;
 		if ( timeSlot === 'auto' ) {
 			const dataLength = u.data[ 0 ].length;
 			const firstTimestamp = u.data[ 0 ][ 0 ];
@@ -65,8 +65,8 @@ export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 		const endOfSlot = startOfSlot + timeSlotToHighlight;
 
 		// Find the left position, and width of the box, bounded by the range of the graph
-		const boxLeft = u.valToPos( Math.max( startOfSlot, u.scales.x.min ), 'x' );
-		const boxWidth = u.valToPos( Math.min( endOfSlot, u.scales.x.max ), 'x' ) - boxLeft;
+		const boxLeft = u.valToPos( Math.max( startOfSlot, u.scales.x.min || 0 ), 'x' );
+		const boxWidth = u.valToPos( Math.min( endOfSlot, u.scales.x.max || 0 ), 'x' ) - boxLeft;
 
 		// Update the highlight box
 		highlightEl.style.transform = 'translateX(' + Math.round( boxLeft ) + 'px)';
@@ -74,7 +74,7 @@ export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 	}
 
 	return {
-		opts: ( u, opts ) => {
+		opts: ( u: uPlot, opts: uPlot.Options ) => {
 			uPlot.assign( opts, {
 				cursor: {
 					x: false,
