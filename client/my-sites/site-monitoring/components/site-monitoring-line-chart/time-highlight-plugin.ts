@@ -57,7 +57,8 @@ export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 			const dataLength = u.data[ 0 ].length;
 			const firstTimestamp = u.data[ 0 ][ 0 ];
 			const lastTimestamp = u.data[ 0 ][ dataLength - 1 ];
-			timeSlotToHighlight = ( lastTimestamp - firstTimestamp ) / dataLength;
+			const paddingUnits = 3;
+			timeSlotToHighlight = ( ( lastTimestamp - firstTimestamp ) * paddingUnits ) / dataLength;
 		}
 
 		// Find start and end of day for the cursor position
