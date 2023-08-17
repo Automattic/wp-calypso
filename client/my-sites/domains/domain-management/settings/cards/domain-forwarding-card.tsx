@@ -205,11 +205,40 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		);
 	};
 
+	const renderNoticeForPrimaryDomain = () => {
+		if ( ! domain?.isPrimary ) {
+			return;
+		}
+
+		return (
+			<div className="domain-forwarding-card-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="domain-forwarding-card-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="domain-forwarding-card-notice__message">
+					{ translate(
+						'Domains set as the {{strong}}primary site address{{/strong}} can not be forwarded. To forward this domain, please {{a}}set a new primary site address{{/a}}.',
+						{
+							components: {
+								strong: <strong />,
+								a: <a href={ `/domains/manage/${ domain.domain }` } />,
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<>
 			{ renderNotice() }
+			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
-				<FormFieldset className="domain-forwarding-card__fields">
+				<FormFieldset disabled={ domain?.isPrimary } className="domain-forwarding-card__fields">
 					<FormTextInputWithAffixes
 						disabled={ isLoading }
 						name="destination"
