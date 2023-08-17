@@ -41,13 +41,13 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			dispatch(
-				successNotice( translate( 'Domain forwarding updated and enabled.' ), noticeOptions )
+				successNotice( translate( 'Domain forward updated and enabled.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while updating the forwarding.' ),
+					translate( 'An error occurred while updating the domain forward.' ),
 					noticeOptions
 				)
 			);
@@ -59,13 +59,13 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
-				successNotice( translate( 'Domain forwarding deleted successfully.' ), noticeOptions )
+				successNotice( translate( 'Domain forward deleted successfully.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while deleting the forwarding.' ),
+					translate( 'An error occurred while deleting the domain forward.' ),
 					noticeOptions
 				)
 			);

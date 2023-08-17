@@ -351,8 +351,8 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Forwarding Domain', { textOnly: true } ) }
-				subtitle={ translate( 'Forwarding from your domain to another' ) }
+				title={ translate( 'Domain Forwarding', { textOnly: true } ) }
+				subtitle={ translate( 'Forward your domain to another' ) }
 			>
 				<DomainForwardingCard domain={ domain } />
 			</Accordion>
