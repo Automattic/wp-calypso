@@ -49,7 +49,7 @@ const SubscriberStats = ( { siteId, subscriptionId, userId }: SubscriberStatsPro
 			{ subscriberStats?.blog_registration_date &&
 			subscriberStats.blog_registration_date < new Date( '2023-08-17' ) ? (
 				<div className="subscriber-stats__tip">
-					<Icon icon={ tip } size={ 20 } />
+					<Icon icon={ tip } size={ 16 } />
 					{ translate( 'Data available since August 17th, 2023' ) }
 				</div>
 			) : null }
