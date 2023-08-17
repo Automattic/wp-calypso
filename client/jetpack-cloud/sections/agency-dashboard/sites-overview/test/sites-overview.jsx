@@ -172,4 +172,28 @@ describe( '<SitesOverview>', () => {
 		expect( screen.queryByText( 'Issue License', { role: 'button' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Issue 1 license', { role: 'button' } ) ).toBeInTheDocument();
 	} );
+
+	test.each( [
+		[ 1, 'Issue 1 license' ],
+		[ 3, 'Issue 3 licenses' ],
+		[ 7, 'Issue 7 licenses' ],
+	] )(
+		'Shows the correct quantity and grammar in the text of the "Issue x licenses" button',
+		( quantity, expectedText ) => {
+			// Create an array of length `quantity`, with a non-empty string in each element
+			const fakeLicenses = Array.from( { length: quantity }, ( val, index ) => `test-${ index }` );
+			expect( fakeLicenses.length ).toBe( quantity );
+			expect( fakeLicenses.every( ( s ) => s ) );
+
+			render(
+				<Wrapper
+					state={ createFakeState( {
+						agencyDashboard: { selectedLicenses: { licenses: fakeLicenses } },
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( expectedText, { role: 'button' } ) ).toBeInTheDocument();
+		}
+	);
 } );
