@@ -55,13 +55,7 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 		metric: metric || 'response_time_average',
 	} );
 
-	const resolution = requestsData?.data?._meta?.resolution;
-	if ( ! resolution ) {
-		return {
-			formattedData: [],
-			isLoading,
-		};
-	}
+	const resolution = requestsData?.data?._meta?.resolution || 1;
 
 	// Function to get the dimension value for a specific key and period
 	const getDimensionValue = ( period: PeriodData ) => {
