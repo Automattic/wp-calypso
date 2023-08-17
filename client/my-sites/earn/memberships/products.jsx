@@ -23,43 +23,36 @@ import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
-import { Product } from '../types';
 import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from '.';
 import './style.scss';
 
-type MembershipsProductsSectionProps = {
-	section: any;
-	query: any;
-};
-
 const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
 	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
-const MembershipsProductsSection = ( { section, query }: MembershipsProductsSectionProps ) => {
+const MembershipsProductsSection = ( { section, query } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
-	const [ product, setProduct ] = useState< Product | null >( null );
+	const [ product, setProduct ] = useState( null );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
-	// const hasLoadedFeatures = features && features.hasLoadedFromServer;
-	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
+	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )
 	);
 	const hasDonationsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
+		siteHasFeature( state, site?.ID, FEATURE_DONATIONS )
 	);
 	const hasPremiumContentFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID ?? null, FEATURE_PREMIUM_CONTENT_CONTAINER )
+		siteHasFeature( state, site?.ID, FEATURE_PREMIUM_CONTENT_CONTAINER )
 	);
 	const hasRecurringPaymentsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID ?? null, FEATURE_RECURRING_PAYMENTS )
+		siteHasFeature( state, site?.ID, FEATURE_RECURRING_PAYMENTS )
 	);
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
@@ -71,22 +64,22 @@ const MembershipsProductsSection = ( { section, query }: MembershipsProductsSect
 	const trackUpgrade = () =>
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 
-	const openAddEditDialog = ( productId: string | null ): void => {
+	const openAddEditDialog = ( productId ) => {
 		if ( productId ) {
-			const product = products.find( ( prod ) => prod.ID === productId );
+			const currentProduct = products.find( ( prod ) => prod.ID === productId );
 			setShowAddEditDialog( true );
-			setProduct( product ?? null );
+			setProduct( currentProduct );
 		} else {
 			setShowAddEditDialog( true );
 			setProduct( null );
 		}
 	};
 
-	const openDeleteDialog = ( productId: string ): void => {
+	const openDeleteDialog = ( productId ) => {
 		if ( productId ) {
-			const product = products.find( ( prod ) => prod.ID === productId );
+			const currentProduct = products.find( ( prod ) => prod.ID === productId );
 			setShowDeleteDialog( true );
-			setProduct( product ?? null );
+			setProduct( currentProduct );
 		}
 	};
 
@@ -95,7 +88,7 @@ const MembershipsProductsSection = ( { section, query }: MembershipsProductsSect
 		setShowDeleteDialog( false );
 	};
 
-	const renderEllipsisMenu = ( productId: string ) => (
+	const renderEllipsisMenu = ( productId ) => (
 		<EllipsisMenu position="bottom left">
 			{ hasStripeFeature && (
 				<PopoverMenuItem onClick={ () => openAddEditDialog( productId ) }>
@@ -112,8 +105,8 @@ const MembershipsProductsSection = ( { section, query }: MembershipsProductsSect
 
 	return (
 		<div>
-			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
-			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
+			<QueryMembershipsSettings siteId={ site?.ID } />
+			<QueryMembershipProducts siteId={ site?.ID } />
 			<HeaderCake backHref={ '/earn/payments/' + site?.slug }>
 				{ translate( 'Payment plans' ) }
 			</HeaderCake>
@@ -146,21 +139,21 @@ const MembershipsProductsSection = ( { section, query }: MembershipsProductsSect
 				</SectionHeader>
 			) }
 			{ hasLoadedFeatures &&
-				products.map( ( product ) => (
-					<CompactCard className="memberships__products-product-card" key={ product.ID }>
+				products.map( ( currentProduct ) => (
+					<CompactCard className="memberships__products-product-card" key={ currentProduct?.ID }>
 						<div className="memberships__products-product-details">
 							<div className="memberships__products-product-price">
-								{ formatCurrency( product?.price || 0, product?.currency || '' ) }
+								{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
 							</div>
-							<div className="memberships__products-product-title">{ product.title }</div>
-							{ product?.subscribe_as_site_subscriber && (
+							<div className="memberships__products-product-title">{ currentProduct?.title }</div>
+							{ currentProduct?.subscribe_as_site_subscriber && (
 								<div className="memberships__products-product-badge">
 									<Badge type="info">{ translate( 'Newsletter' ) }</Badge>
 								</div>
 							) }
 						</div>
 
-						{ renderEllipsisMenu( product?.ID ?? '' ) }
+						{ renderEllipsisMenu( currentProduct?.ID ) }
 					</CompactCard>
 				) ) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
