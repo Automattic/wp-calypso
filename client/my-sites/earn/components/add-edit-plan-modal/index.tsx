@@ -31,6 +31,7 @@ import './style.scss';
 type RecurringPaymentsPlanAddEditModalProps = {
 	closeDialog: () => void;
 	product: Product;
+	annualProduct?: Product;
 	siteId?: number;
 };
 
@@ -64,6 +65,7 @@ const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
 const RecurringPaymentsPlanAddEditModal = ( {
 	closeDialog,
 	product,
+	annualProduct /* annual product for tiers */,
 	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
@@ -110,8 +112,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			)
 	);
 
+	const [ currentAnnualPrice, setCurrentAnnualPrice ] = useState(
+		annualProduct?.price ??
+			minimumCurrencyTransactionAmount( connectedAccountMinimumCurrency, currentCurrency, connectedAccountDefaultCurrency )
+	);
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
-	const [ editedPostsEmail, setEditedPostsEmail ] = useState(
+	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
 		product?.subscribe_as_site_subscriber ?? false
 	);
 	const [ editedSchedule, setEditedSchedule ] = useState( product?.renewal_schedule ?? '1 month' );
@@ -130,8 +136,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const isFormValid = ( field?: string ) => {
 		if (
 			( field === 'price' || ! field ) &&
-			! isValidCurrencyAmount( currentCurrency, currentPrice )
+			( ! isValidCurrencyAmount( currentCurrency, currentPrice ) ||
+				! isValidCurrencyAmount( currentCurrency, currentAnnualPrice ) )
 		) {
+			return false;
+		}
+		if ( ( field === 'prices' || ! field ) && currentPrice >= currentAnnualPrice ) {
 			return false;
 		}
 		if ( ( field === 'name' || ! field ) && editedProductName.length === 0 ) {
@@ -152,14 +162,17 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		setCurrentCurrency( currency );
 		setEditedPrice( true );
 	};
-	const handlePriceChange = ( event: ChangeEvent< HTMLInputElement > ) => {
-		const value = parseFloat( event.currentTarget.value );
-		// Set the current price if the value is a valid number or an empty string.
-		if ( '' === event.currentTarget.value || ! isNaN( value ) ) {
-			setCurrentPrice( Number( event.currentTarget.value ) );
-		}
-		setEditedPrice( true );
-	};
+	const handlePriceChange =
+		( isAnnualProduct = false ) =>
+		( event: ChangeEvent< HTMLInputElement > ) => {
+			const value = parseFloat( event.currentTarget.value );
+			// Set the current price if the value is a valid number or an empty string.
+			if ( '' === event.currentTarget.value || ! isNaN( value ) ) {
+				const newPrice = Number( event.currentTarget.value );
+				isAnnualProduct ? setCurrentAnnualPrice( newPrice ) : setCurrentPrice( newPrice );
+			}
+			setEditedPrice( true );
+		};
 	const handlePayWhatYouWant = ( newValue: boolean ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue: boolean ) => setEditedMultiplePerUser( newValue );
 	const onNameChange = ( event: ChangeEvent< HTMLInputElement > ) =>
@@ -177,15 +190,19 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		'one-time': translate( 'Subscription' ),
 	};
 
+	const defaultNameTier = translate( 'Newsletter Tier' );
+
 	useEffect( () => {
 		// If the user has manually entered a name that should be left as-is, don't overwrite it
 		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
 			return;
 		}
-		const name = defaultNames[ `${ editedSchedule }` ] ?? '';
+		const name = editedPostPaidNewsletter
+			? defaultNameTier
+			: defaultNames[ `${ editedSchedule }` ] ?? '';
 
 		setEditedProductName( name );
-	}, [ editedSchedule ] );
+	}, [ editedSchedule, editedPostPaidNewsletter ] );
 
 	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
@@ -197,7 +214,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				buyer_can_change_amount: editedPayWhatYouWant,
 				multiple_per_user: editedMultiplePerUser,
 				welcome_email_content: editedCustomConfirmationMessage,
-				subscribe_as_site_subscriber: editedPostsEmail,
+				subscribe_as_site_subscriber: editedPostPaidNewsletter,
 				is_editable: true,
 			};
 			dispatch(
@@ -218,7 +235,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				buyer_can_change_amount: editedPayWhatYouWant,
 				multiple_per_user: editedMultiplePerUser,
 				welcome_email_content: editedCustomConfirmationMessage,
-				subscribe_as_site_subscriber: editedPostsEmail,
+				subscribe_as_site_subscriber: editedPostPaidNewsletter,
 				is_editable: true,
 			};
 			dispatch(
@@ -232,13 +249,16 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		closeDialog();
 	};
 
-	const addPlan = editedPostsEmail
-		? translate( 'Set up newsletter payment options' )
-		: translate( 'Set up payment options' );
+	const monthlyFrequency = '1 month';
+	const annualFrequency = '1 year';
 
-	const editPlan = editedPostsEmail
-		? translate( 'Edit newsletter payment options' )
-		: translate( 'Edit payment options' );
+	const addPlan = editedPostPaidNewsletter
+		? translate( 'Set up newsletter tier options' )
+		: translate( 'Set up plan options' );
+
+	const editPlan = editedPostPaidNewsletter
+		? translate( 'Edit newsletter tier options' )
+		: translate( 'Edit plan options' );
 
 	const editing = product && product.ID;
 
@@ -264,7 +284,16 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			<FormSectionHeading>{ editing ? editPlan : addPlan }</FormSectionHeading>
 			<div className="memberships__dialog-sections">
 				<FormFieldset>
-					<FormLabel htmlFor="title">{ translate( 'Describe the offer' ) }</FormLabel>
+					<ToggleControl
+						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
+						checked={ editedPostPaidNewsletter }
+						label={ translate( 'Paid newsletter tier' ) }
+					/>
+					<FormLabel htmlFor="title">
+						{ editedPostPaidNewsletter
+							? translate( 'Describe the tier name' )
+							: translate( 'Describe the plan' ) }
+					</FormLabel>
 					<FormTextInput
 						id="title"
 						value={ editedProductName }
@@ -303,43 +332,96 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						} ) }
 					/>
 				) }
-				<FormFieldset className="memberships__dialog-sections-price">
-					<div className="memberships__dialog-sections-price-field-container">
-						<FormLabel htmlFor="renewal_schedule">{ translate( 'Renewal frequency' ) }</FormLabel>
-						<FormSelect
-							id="renewal_schedule"
-							value={ editedSchedule }
-							onChange={ onSelectSchedule }
-						>
-							<option value="1 month">{ translate( 'Monthly' ) }</option>
-							<option value="1 year">{ translate( 'Yearly' ) }</option>
-							<option value="one-time">{ translate( 'One time sale' ) }</option>
-						</FormSelect>
-					</div>
-					<div className="memberships__dialog-sections-price-field-container">
-						<FormLabel htmlFor="currency">{ translate( 'Amount' ) }</FormLabel>
-						<FormCurrencyInput
-							name="currency"
-							id="currency"
-							value={ currentPrice }
-							onChange={ handlePriceChange }
-							currencySymbolPrefix={ currentCurrency }
-							onCurrencyChange={ handleCurrencyChange }
-							currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
-							placeholder="0.00"
-							noWrap
-							className={ null }
-							currencySymbolSuffix={ null }
-						/>
-					</div>
-				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-type">
-					<ToggleControl
-						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
-						checked={ editedPostsEmail }
-						label={ translate( 'Paid newsletter subscription' ) }
+				{ editedPostPaidNewsletter && ! isFormValid( 'prices' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a annual price higher than the monthly price', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										connectedAccountMinimumCurrency,
+										currentCurrency,
+										connectedAccountDefaultCurrency
+									),
+									currentCurrency
+								),
+							],
+						} ) }
 					/>
-				</FormFieldset>
+				) }
+				{ /* Price settings for a tier plan */ }
+				{ editedPostPaidNewsletter && (
+					<>
+						<FormFieldset className="memberships__dialog-sections-price">
+							<div className="memberships__dialog-sections-price-field-container">
+								<FormLabel htmlFor="currency">{ translate( 'Monthly Price' ) }</FormLabel>
+								<FormCurrencyInput
+									name="currency"
+									id="currency"
+									value={ currentPrice }
+									onChange={ handlePriceChange( false ) }
+									currencySymbolPrefix={ currentCurrency }
+									onCurrencyChange={ handleCurrencyChange }
+									currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
+									placeholder="0.00"
+									noWrap
+									className={ null }
+									currencySymbolSuffix={ null }
+								/>
+							</div>
+							<div className="memberships__dialog-sections-price-field-container">
+								<FormLabel htmlFor="currency">{ translate( 'Annual Price' ) }</FormLabel>
+								<FormCurrencyInput
+									name="currency"
+									id="currency"
+									value={ currentAnnualPrice }
+									onChange={ handlePriceChange( true ) }
+									currencySymbolPrefix={ currentCurrency }
+									onCurrencyChange={ handleCurrencyChange }
+									currencyList={ currencyList }
+									placeholder="0.00"
+									noWrap
+									className={ null }
+									currencySymbolSuffix={ null }
+								/>
+							</div>
+						</FormFieldset>
+					</>
+				) }
+
+				{ /* Price settings for a regular plan */ }
+				{ ! editedPostPaidNewsletter && (
+					<FormFieldset className="memberships__dialog-sections-price">
+						<div className="memberships__dialog-sections-price-field-container">
+							<FormLabel htmlFor="renewal_schedule">{ translate( 'Renewal frequency' ) }</FormLabel>
+							<FormSelect
+								id="renewal_schedule"
+								value={ editedSchedule }
+								onChange={ onSelectSchedule }
+							>
+								<option value={ monthlyFrequency }>{ translate( 'Monthly' ) }</option>
+								<option value={ annualFrequency }>{ translate( 'Yearly' ) }</option>
+								<option value="one-time">{ translate( 'One time sale' ) }</option>
+							</FormSelect>
+						</div>
+						<div className="memberships__dialog-sections-price-field-container">
+							<FormLabel htmlFor="currency">{ translate( 'Amount' ) }</FormLabel>
+							<FormCurrencyInput
+								name="currency"
+								id="currency"
+								value={ currentPrice }
+								onChange={ handlePriceChange( false ) }
+								currencySymbolPrefix={ currentCurrency }
+								onCurrencyChange={ handleCurrencyChange }
+								currencyList={ currencyList }
+								placeholder="0.00"
+								noWrap
+								className={ null }
+								currencySymbolSuffix={ null }
+							/>
+						</div>
+					</FormFieldset>
+				) }
 				<FormFieldset className="memberships__dialog-sections-message">
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
