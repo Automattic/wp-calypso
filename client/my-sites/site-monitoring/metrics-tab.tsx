@@ -317,7 +317,7 @@ export const MetricsTab = () => {
 					plugins: [
 						timeHighlightPlugin( 'auto' ),
 						tooltipsPlugin( FirstChartTooltip, {
-							positionFixedTop: ! window.location.href.includes( 'follow' ),
+							position: 'followCursor',
 						} ),
 					],
 				} }
@@ -366,7 +366,7 @@ export const MetricsTab = () => {
 					plugins: [
 						timeHighlightPlugin( 'auto' ),
 						tooltipsPlugin( withSeries( HttpChartTooltip, successHttpCodes.series ), {
-							positionFixedTop: ! window.location.href.includes( 'follow' ),
+							position: 'followCursor',
 						} ),
 					],
 				} }
@@ -381,7 +381,7 @@ export const MetricsTab = () => {
 					plugins: [
 						timeHighlightPlugin( 'auto' ),
 						tooltipsPlugin( withSeries( HttpChartTooltip, errorHttpCodes.series ), {
-							positionFixedTop: ! window.location.href.includes( 'follow' ),
+							position: 'followCursor',
 						} ),
 					],
 				} }

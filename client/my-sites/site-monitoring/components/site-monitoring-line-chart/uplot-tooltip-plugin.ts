@@ -6,13 +6,32 @@ export interface UplotTooltipProps {
 	idx: number;
 }
 
+const TOOLTIP_POSITIONS = {
+	fixedTop: 'fixedTop',
+	followCursor: 'followCursor',
+} as const;
+
+interface TooltipsPluginOptions {
+	position?: keyof typeof TOOLTIP_POSITIONS;
+	spaceBottom?: number;
+}
+
+const DEFAULT_OPTIONS = {
+	position: TOOLTIP_POSITIONS.followCursor,
+	spaceBottom: 20,
+};
+
 /**
  * Custom tooltips plugin for uPlot.
  */
 export function tooltipsPlugin(
 	TooltipNode?: ( props: UplotTooltipProps ) => React.ReactNode,
-	options = { positionFixedTop: true }
+	options: TooltipsPluginOptions = {}
 ) {
+	const tooltipOptions = {
+		...DEFAULT_OPTIONS,
+		...options,
+	};
 	let cursortt: HTMLDivElement;
 	let cursorRoot: Root;
 	const context = {
@@ -68,17 +87,23 @@ export function tooltipsPlugin(
 	 * Sets the cursor for tooltips.
 	 */
 	function setCursor( u: uPlot ) {
-		const spaceBottom = 20;
 		const { left, top = 0, idx } = u.cursor;
 		context?.cursorMemo?.set( left, top );
 		if ( idx == null ) {
 			return;
 		}
 
+		const { position, spaceBottom } = tooltipOptions;
 		const timestamp = u.data[ 0 ][ idx ];
 		const leftPosition = Math.round( u.valToPos( timestamp, 'x' ) ) + 'px';
-		cursortt.style.left = options.positionFixedTop ? leftPosition : `${ left }px`;
-		cursortt.style.top = options.positionFixedTop ? '0px' : `${ top - spaceBottom }px`;
+		if ( position === TOOLTIP_POSITIONS.fixedTop ) {
+			cursortt.style.left = leftPosition;
+			cursortt.style.top = '0px';
+		} else {
+			// Follow cursor
+			cursortt.style.left = `${ left }px`;
+			cursortt.style.top = `${ top - spaceBottom }px`;
+		}
 
 		if ( TooltipNode && idx && idx > 0 ) {
 			cursorRoot.render(
