@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	// no valid match because none of the Jetpack deploy test users in the default criteria have
 	// `variant` keys.
 	let features = envToFeatureKey( envVariables );
-	if ( envVariables.ATOMIC_VARIATION === 'default' ) {
+	if ( envVariables.JETPACK_TARGET !== 'wpcom-deployment' ) {
 		features = { ...features, variant: 'siteEditor' };
 	}
 
