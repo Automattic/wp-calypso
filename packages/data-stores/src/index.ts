@@ -22,6 +22,7 @@ export * from './plans/types';
 export * from './user/types';
 export * from './queries/use-launchpad';
 export * from './queries/use-all-domains-query';
+export * from './queries/use-site-domains-query';
 
 const { SubscriptionManager } = Reader;
 
@@ -55,3 +56,4 @@ export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
+export type { UserActions } from './user';

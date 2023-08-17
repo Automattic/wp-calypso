@@ -1,4 +1,14 @@
-@import url( https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap );
+@font-face {
+	font-family: Inter;
+	font-weight: 400 700;
+	font-style: normal;
+	// stylelint-disable-next-line property-no-unknown
+	font-named-instance: "Regular";
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2-variations&v=3.19) format("woff2-variations"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-roman.var.woff2?t=woff2&v=3.19) format("woff2");
+}
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/videopress-extends";
@@ -409,7 +419,19 @@
 	}
 }
 
-.is-videopress-signup {
+.is-videopress-tv-signup {
+	font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.videopress-step-wrapper__middle .videopress-step-wrapper__header-text {
+		font-family: inherit;
+		font-size: rem(38px); //typography-exception
+		font-weight: 700;
+		letter-spacing: -0.02em;
+	}
+}
+
+.is-videopress-signup,
+.is-videopress-tv-signup {
 	.progress-bar {
 		display: block;
 		border-radius: 0;

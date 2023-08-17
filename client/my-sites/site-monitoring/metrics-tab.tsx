@@ -1,7 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
 import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
@@ -144,12 +144,20 @@ function useAggregateSiteMetricsData(
 
 function getFormattedDataForPieChart(
 	data: Record< string, number >,
-	labels: Record< string, string >
+	labels: Record<
+		string,
+		{
+			name: string;
+			className?: string;
+		}
+	>
 ) {
 	return Object.keys( data ).map( ( key ) => {
-		const name = labels[ key ] || key;
+		const name = labels[ key ]?.name || key;
+		const className = labels[ key ]?.className || key;
 		return {
 			name,
+			className,
 			value: data[ key ],
 			description: undefined,
 		};
@@ -162,19 +170,19 @@ const useSuccessHttpCodeSeries = () => {
 		{
 			statusCode: 200,
 			fill: 'rgba(104, 179, 232, 0.1)',
-			label: __( 'HTTP 200: OK Response' ),
+			label: __( '200: OK Response' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 		},
 		{
 			statusCode: 301,
-			fill: 'rgba(227, 174, 212, 0.1)',
-			label: __( 'HTTP 301: Moved Permanently' ),
-			stroke: 'rgba(227, 174, 212, 1)',
+			fill: 'rgba(235, 101, 148, 0.2)',
+			label: __( '301: Moved Permanently' ),
+			stroke: 'rgba(235, 101, 148, 1)',
 		},
 		{
 			statusCode: 302,
 			fill: 'rgba(9, 181, 133, 0.1)',
-			label: __( 'HTTP 302: Moved Temporarily' ),
+			label: __( '302: Moved Temporarily' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 		},
 	];
@@ -188,31 +196,31 @@ const useErrorHttpCodeSeries = () => {
 		{
 			statusCode: 400,
 			fill: 'rgba(242, 215, 107, 0.1)',
-			label: __( 'HTTP 400: Bad Request' ),
+			label: __( '400: Bad Request' ),
 			stroke: 'rgba(242, 215, 107, 1)',
 		},
 		{
 			statusCode: 401,
-			fill: 'rgba(227, 174, 212, 0.1)',
-			label: __( 'HTTP 401: Unauthorized Request' ),
-			stroke: 'rgba(227, 174, 212, 1)',
+			fill: 'rgba(140, 143, 148, 0.1)',
+			label: __( '401: Unauthorized Request' ),
+			stroke: 'rgba(140, 143, 148, 1)',
 		},
 		{
 			statusCode: 403,
 			fill: 'rgba(104, 179, 232, 0.1)',
-			label: __( 'HTTP 403: Forbidden Request' ),
+			label: __( '403: Forbidden Request' ),
 			stroke: 'rgba(104, 179, 232, 1)',
 		},
 		{
 			statusCode: 404,
 			fill: 'rgba(9, 181, 133, 0.1)',
-			label: __( 'HTTP 404: Not Found Request' ),
+			label: __( '404: Not Found Request' ),
 			stroke: 'rgba(9, 181, 133, 1)',
 		},
 		{
 			statusCode: 500,
 			fill: 'rgba(235, 101, 148, 0.1)',
-			label: __( 'HTTP 500: Internal server error' ),
+			label: __( '500: Internal server error' ),
 			stroke: 'rgba(235, 101, 148, 1)',
 		},
 	];
@@ -222,7 +230,7 @@ const useErrorHttpCodeSeries = () => {
 
 export const MetricsTab = () => {
 	const { __ } = useI18n();
-	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
 	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( timeRange );
@@ -247,21 +255,35 @@ export const MetricsTab = () => {
 		errorHttpCodes.statusCodes
 	);
 
+	const startDate = moment( timeRange.start * 1000 );
+	const endDate = moment( timeRange.end * 1000 );
+	let dateRange = null;
+
+	if ( endDate.isSame( startDate, 'day' ) ) {
+		dateRange = endDate.format( 'LL' );
+		dateRange = (
+			<>
+				<span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
+	} else {
+		dateRange = (
+			<>
+				<span>{ startDate.format( 'LL' ) }</span> - <span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
+	}
+
 	return (
 		<div className="site-monitoring-metrics-tab">
-			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
+			<div className="site-monitoring-time-controls__container">
+				<div className="site-monitoring-time-controls__title">{ dateRange }</div>
+				<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
+			</div>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Requests per minute & average response time' ) }
-				tooltip={ translate(
-					'{{strong}}Requests per minute:{{/strong}} a line representing the number of requests received every minute.{{br/}}{{br/}}{{strong}}Average Response Time{{/strong}}: a line that indicates the average time taken to respond to a request within that minute.',
-					{
-						components: {
-							br: <br />,
-							strong: <strong />,
-						},
-					}
-				) }
+				title={ __( 'Server performance' ) }
+				subtitle={ __( 'Requests per minute and average server response time' ) }
 				data={ formattedData as uPlot.AlignedData }
 				series={ [
 					{
@@ -270,54 +292,61 @@ export const MetricsTab = () => {
 						stroke: '#0675C4',
 					},
 					{
-						fill: 'rgba(0, 135, 99, 0.2)',
+						fill: 'rgba(222, 177, 0, 0.2)',
 						label: __( 'Average response time (ms)' ),
-						stroke: '#008763',
+						stroke: 'rgba(222, 177, 0, 1)',
 						scale: 'average-response-time',
+						unit: 'ms',
 					},
 				] }
 				isLoading={ isLoadingLineChart }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
-					title={ __( 'Cache hit/miss' ) }
-					tooltip={ __(
-						'Percentage of cache hits versus cache misses. A hit occurs when the requested data can be found in the cache, reducing the need to obtain it from the original source.'
-					) }
+					title={ __( 'Cache efficiency' ) }
+					subtitle={ __( 'Percentage of cache hits versus cache misses' ) }
 					className="site-monitoring-cache-pie-chart"
 					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
-						0: 'Cache miss',
-						1: 'Cache hit',
-					} ) }
+						1: {
+							name: 'Cache hit',
+							className: 'cache-hit',
+						},
+						0: {
+							name: 'Cache miss',
+							className: 'cache-miss',
+						},
+					} ).reverse() }
+					fixedOrder
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
-					title={ __( 'PHP vs. static content served' ) }
-					tooltip={ __(
-						'Percentages showing the ratio of dynamic versus static content. Dynamic content is the content generated using database information.'
-					) }
+					title={ __( 'Response types' ) }
+					subtitle={ __( 'Percentage of dynamic versus static responses' ) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
-						php: 'PHP',
-						static: 'Static',
+						php: {
+							name: 'Dynamic',
+							className: 'dynamic',
+						},
+						static: {
+							name: 'Static',
+							className: 'static',
+						},
 					} ) }
+					fixedOrder
 				></SiteMonitoringPieChart>
 			</div>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
 				title={ __( 'Successful HTTP responses' ) }
+				subtitle={ __( 'Requests completed without errors by the server' ) }
 				data={ dataForSuccessCodesChart as uPlot.AlignedData }
-				tooltip={ __(
-					'Number of successful responses (200) and redirections (301 and 302) per minute.'
-				) }
 				series={ successHttpCodes.series }
 			></SiteMonitoringLineChart>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Problematic HTTP responses' ) }
+				title={ __( 'Unsuccessful HTTP responses' ) }
+				subtitle={ __( 'Requests that encountered errors or issues during processing' ) }
 				data={ dataForErrorCodesChart as uPlot.AlignedData }
-				tooltip={ __(
-					'Number of client-side errors (400) and server-side errors (500) per minute.'
-				) }
 				series={ errorHttpCodes.series }
 			></SiteMonitoringLineChart>
 		</div>

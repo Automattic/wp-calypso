@@ -1,9 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-
-// No need to localize this URL, since it's used as the prefix for other localized URLs.
-// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-const SUPPORT_URL = 'https://wordpress.com/support/stats/';
+import { SUPPORT_URL } from './const';
 
 export default function () {
 	const statsStrings = {};
@@ -143,7 +140,11 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per tag or category.',
 		} ),
-		empty: translate( 'No tagged posts or pages viewed', {
+		empty: translate( 'Most viewed {{link}}tags & categories{{/link}} will be listed here.', {
+			comment: '{{link}} links to support documentation.',
+			components: {
+				link: <a href={ localizeUrl( `${ SUPPORT_URL }#:~:text=Tags%20,%20Categories` ) } />,
+			},
 			context: 'Stats: Info box label when the Tags module is empty',
 		} ),
 	};
