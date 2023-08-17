@@ -107,7 +107,8 @@ export function isRouteForReaderStream( streamRoute ) {
 		route.startsWith( '/tag/' );
 
 	// Cases in the above route bases that are not streams.
-	const isNonStream = route.startsWith( '/read/notifications' ) || route.includes( '/posts/' );
+	// Note we do not add 'read/notifications' here as we want it to inherit stream styles
+	const isNonStream = route.includes( '/posts/' );
 
 	return isReaderStreamRouteBase && ! isNonStream;
 }
