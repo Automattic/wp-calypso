@@ -171,7 +171,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"newsletter/stats": false,
-		"yolo/hosting-metrics-i1": false
+		"yolo/hosting-metrics-i1": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
