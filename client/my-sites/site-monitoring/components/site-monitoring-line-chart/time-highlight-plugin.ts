@@ -61,7 +61,7 @@ export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 		}
 
 		// Find start and end of day for the cursor position
-		const startOfSlot = timestamp - ( timestamp % timeSlotToHighlight );
+		const startOfSlot = timestamp - timeSlotToHighlight / 2;
 		const endOfSlot = startOfSlot + timeSlotToHighlight;
 
 		// Find the left position, and width of the box, bounded by the range of the graph
