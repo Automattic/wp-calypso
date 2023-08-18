@@ -107,7 +107,6 @@
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
-		"settings/modernize-reading-settings": true,
 		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
