@@ -201,13 +201,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	// break if they fall out of sync.
 	// https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/extensions/shared/components/product-management-controls/utils.js#L95
 	const defaultNames: DefaultNames = {
-		'false,1 month,false': translate( 'Monthly Subscription' ),
-		'true,1 month,false': translate( 'Monthly Donation' ),
-		'false,1 year,false': translate( 'Yearly Subscription' ),
-		'true,1 year,false': translate( 'Yearly Donation' ),
-		'false,one-time,false': translate( 'Subscription' ),
-		'true,one-time,false': translate( 'Donation' ),
-		'true,one-time,true': translate( 'Donation' ),
+		'1 month,false': translate( 'Monthly Subscription' ),
+		'1 month,false': translate( 'Monthly Donation' ),
+		'1 year,false': translate( 'Yearly Subscription' ),
+		'1 year,false': translate( 'Yearly Donation' ),
+		'one-time,false': translate( 'Subscription' ),
+		'one-time,false': translate( 'Donation' ),
+		'one-time,true': translate( 'Donation' ),
 	};
 
 	const defaultNameTier = translate( 'Newsletter Tier' );
