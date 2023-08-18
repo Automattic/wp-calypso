@@ -99,7 +99,7 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		flex-flow: row wrap;
-		padding-top: 15px;
+		padding-top: 30px;
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
