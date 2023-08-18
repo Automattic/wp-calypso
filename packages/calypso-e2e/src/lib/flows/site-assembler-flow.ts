@@ -44,7 +44,9 @@ export class SiteAssemblerFlow {
 	 * @param {string} name Exact name of the component to select.
 	 */
 	async selectLayoutComponent( name: string ): Promise< void > {
-		await this.page.route( '*.png', ( route ) => {
+		// To reduce network load times, abort any request for
+		// placeholder images.
+		await this.page.route( '**/*.png', ( route ) => {
 			route.abort( 'aborted' );
 		} );
 
