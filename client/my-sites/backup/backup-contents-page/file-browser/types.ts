@@ -67,8 +67,4 @@ export interface FileBrowserItemInfo {
 	manifestFilter?: string;
 }
 
-export interface FileBrowserCheckTracker {
-	showCheckBoxes: boolean;
-	includedFiles: string[];
-	excludedFiles: string[];
-}
+export type FileBrowserCheckState = 'checked' | 'unchecked' | 'mixed';

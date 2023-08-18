@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { DomainsApiError } from 'calypso/lib/domains/types';
 import wp from 'calypso/lib/wp';
-import { domainRedirectsQueryKey } from './domain-redirects-query-key';
+import { domainForwardingQueryKey } from './domain-forwarding-query-key';
 
-export default function useDeleteDomainRedirectMutation(
+export default function useDeleteDomainForwardingMutation(
 	domainName: string,
 	queryOptions: {
 		onSuccess?: () => void;
@@ -16,14 +16,14 @@ export default function useDeleteDomainRedirectMutation(
 		mutationFn: () => wp.req.post( `/sites/all/domain/${ domainName }/redirects/delete` ),
 		...queryOptions,
 		onSuccess() {
-			queryClient.removeQueries( domainRedirectsQueryKey( domainName ) );
+			queryClient.removeQueries( domainForwardingQueryKey( domainName ) );
 			queryOptions.onSuccess?.();
 		},
 	} );
 
 	const { mutate } = mutation;
 
-	const deleteDomainRedirect = useCallback( () => mutate(), [ mutate ] );
+	const deleteDomainForwarding = useCallback( () => mutate(), [ mutate ] );
 
-	return { deleteDomainRedirect, ...mutation };
+	return { deleteDomainForwarding, ...mutation };
 }

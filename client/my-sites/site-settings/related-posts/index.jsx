@@ -84,12 +84,13 @@ export const RelatedPostsSetting = ( {
 					}
 				) }
 			</FormSettingExplanation>
-
 			<RelatedContentPreview
 				showContext={ fields.jetpack_relatedposts_show_context }
 				showDate={ fields.jetpack_relatedposts_show_date }
 				showHeadline={ fields.jetpack_relatedposts_show_headline }
 				showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }
+				dateFormat={ fields.date_format }
+				timezoneString={ fields.timezone_string }
 			/>
 		</FormFieldset>
 	);

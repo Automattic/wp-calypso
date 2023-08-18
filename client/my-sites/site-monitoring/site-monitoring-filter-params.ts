@@ -12,7 +12,11 @@ export function getPageQueryParam(): SiteMonitoringTab | null {
 
 export function updatePageQueryParam( tabName: SiteMonitoringTab ) {
 	const url = new URL( window.location.href );
-	url.searchParams.set( 'page', tabName );
+	if ( tabName === 'metrics' ) {
+		url.searchParams.delete( 'page' );
+	} else {
+		url.searchParams.set( 'page', tabName );
+	}
 	page.replace( url.pathname + url.search );
 }
 

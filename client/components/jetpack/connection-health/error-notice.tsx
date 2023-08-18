@@ -9,6 +9,7 @@ interface Props {
 	errorText: string;
 	noticeActionHref?: string;
 	noticeActionText?: string;
+	isAtomic: boolean;
 }
 
 export const ErrorNotice = ( {
@@ -16,6 +17,7 @@ export const ErrorNotice = ( {
 	errorText,
 	noticeActionHref,
 	noticeActionText,
+	isAtomic,
 }: Props ) => {
 	const dispatch = useDispatch();
 
@@ -23,6 +25,7 @@ export const ErrorNotice = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_connection_health_issue_click', {
 				error_type: errorType,
+				is_atomic: isAtomic,
 			} )
 		);
 	};
@@ -31,7 +34,7 @@ export const ErrorNotice = ( {
 		<>
 			<TrackComponentView
 				eventName="calypso_jetpack_connection_health_issue_view"
-				eventProperties={ { error_type: errorType } }
+				eventProperties={ { error_type: errorType, is_atomic: isAtomic } }
 			/>
 			<Notice status="is-error" showDismiss={ false } text={ errorText }>
 				{ noticeActionText && noticeActionHref && (

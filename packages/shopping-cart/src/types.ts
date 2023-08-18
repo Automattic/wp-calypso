@@ -528,6 +528,7 @@ export interface ResponseCartProductVariant {
 	introductory_offer_terms:
 		| Record< string, never >
 		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
+	volume?: number;
 }
 
 export interface IntroductoryOfferTerms {

@@ -50,7 +50,7 @@ const ProductCard = ( {
 	from,
 	disableFreeProduct = false,
 	initialStep = SCREEN_TYPE_SELECTION,
-	initialSiteType = TYPE_PERSONAL,
+	initialSiteType,
 } ) => {
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
@@ -70,6 +70,7 @@ const ProductCard = ( {
 	const commercialLabel = translate( 'Commercial site' );
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
 	const showCelebration =
+		siteType &&
 		wizardStep === SCREEN_PURCHASE &&
 		( siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier );
 
@@ -139,6 +140,9 @@ const ProductCard = ( {
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
+								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title`, {
+									[ `${ COMPONENT_CLASS_NAME }__card-panel--type-selected` ]: !! siteType,
+								} ) }
 							>
 								<PanelRow>
 									<div className={ `${ COMPONENT_CLASS_NAME }__card-grid` }>
@@ -175,7 +179,11 @@ const ProductCard = ( {
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody title={ secondStepTitleNode } opened={ wizardStep === SCREEN_PURCHASE }>
+							<PanelBody
+								title={ secondStepTitleNode }
+								opened={ wizardStep === SCREEN_PURCHASE }
+								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
+							>
 								<PanelRow>
 									{ siteType === TYPE_PERSONAL ? (
 										<PersonalPurchase

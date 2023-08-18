@@ -49,6 +49,7 @@
 		"i18n/empathy-mode": true,
 		"importer/unified": true,
 		"importers/substack": true,
+		"individual-subscriber-stats": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/api-cache": true,
@@ -128,6 +129,7 @@
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
+		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
@@ -170,7 +172,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"newsletter/stats": false,
-		"yolo/hosting-metrics-i1": false
+		"yolo/hosting-metrics-i1": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

@@ -19,8 +19,8 @@ import Discover from 'calypso/my-sites/plugins/categories/responsive-toolbar-gro
 
 - `children`[ReactNode]: A group of react components to be rendered.
 - `className`[string]: A classname to add to the ToolBarGroupComponent. (optional).
-- `hideRatio`[number]: The ratio in chich the components are considered to be hidden ([take a look at the IntersectionObserver docs](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#thresholds)) (optional).
-- `showRatio`[number]: The ratio in chich the components are considered to be shown ([take a look at the IntersectionObserver docs](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#thresholds)) (optional).
+- `hideRatio`[number]: The ratio in which the components are considered to be hidden, for example the default ratio of 0.99 will hide the element when 99% of it is visible (1% of it isn't visible). We rely on ([IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#thresholds)) (optional).
+- `showRatio`[number]: The ratio in which the components are considered to be shown, for example the default ratio of 1 will show the element when 100% of it will be visible. We rely on ([IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#thresholds)) (optional).
 - `rootMargin`[string]: take a look at ([take a look at the IntersectionObserver docs](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin)) (optional).
 - `onClick`[( index: number) => void]: A callback function that receives the index of the children being clicked. (optional).
 - `initialActiveIndex`[number]: The initial active index of the component. (optional).

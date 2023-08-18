@@ -2,7 +2,7 @@ import { Dialog, FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useMemo } from 'react';
+import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
@@ -21,24 +21,9 @@ import {
 } from 'calypso/state/memberships/product-list/actions';
 import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { ChangeEvent } from 'react';
+import { Product } from '../../types';
 
 import './style.scss';
-
-type Product = {
-	ID?: string;
-	currency?: string;
-	price?: number;
-	title?: string;
-	interval?: string;
-	buyer_can_change_amount?: boolean;
-	multiple_per_user?: boolean;
-	welcome_email_content?: string;
-	subscribe_as_site_subscriber?: boolean;
-	renewal_schedule?: string;
-	type?: string;
-	is_editable?: boolean;
-};
 
 type RecurringPaymentsPlanAddEditModalProps = {
 	closeDialog: () => void;

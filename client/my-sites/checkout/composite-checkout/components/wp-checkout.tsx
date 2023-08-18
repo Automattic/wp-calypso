@@ -196,7 +196,7 @@ const OrderReviewTitle = () => {
 
 export default function WPCheckout( {
 	addItemToCart,
-	changePlanLength,
+	changeSelection,
 	countriesList,
 	createUserAndSiteBeforeTransaction,
 	infoMessage,
@@ -213,7 +213,7 @@ export default function WPCheckout( {
 	loadingContent,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
-	changePlanLength: OnChangeItemVariant;
+	changeSelection: OnChangeItemVariant;
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
@@ -406,7 +406,7 @@ export default function WPCheckout( {
 							<CheckoutSummaryBody className="checkout__summary-body">
 								<WPCheckoutOrderSummary
 									siteId={ siteId }
-									onChangePlanLength={ changePlanLength }
+									onChangeSelection={ changeSelection }
 									nextDomainIsFree={ responseCart?.next_domain_is_free }
 								/>
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
@@ -441,7 +441,7 @@ export default function WPCheckout( {
 							<WPCheckoutOrderReview
 								removeProductFromCart={ removeProductFromCart }
 								couponFieldStateProps={ couponFieldStateProps }
-								onChangePlanLength={ changePlanLength }
+								onChangeSelection={ changeSelection }
 								siteUrl={ siteUrl }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							/>
