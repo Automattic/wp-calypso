@@ -1,5 +1,6 @@
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { useMemo } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data-stores';
 
@@ -17,12 +18,12 @@ export function DomainsTableRow( {
 	fetchSiteDomains,
 	displayPrimaryDomainLabel,
 }: DomainsTableRowProps ) {
-	const { data } = useSiteDomainsQuery(
-		domain.blog_id,
-		fetchSiteDomains && {
-			queryFn: () => fetchSiteDomains( domain.blog_id ),
-		}
-	);
+	const { ref, inView } = useInView( { triggerOnce: true } );
+
+	const { data } = useSiteDomainsQuery( domain.blog_id, {
+		enabled: inView,
+		...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
+	} );
 
 	const { siteSlug, primaryDomain } = useMemo( () => {
 		const primaryDomain = data?.domains?.find( ( d ) => d.primary_domain );
@@ -42,7 +43,7 @@ export function DomainsTableRow( {
 	const shouldDisplayPrimaryDomainLabel = displayPrimaryDomainLabel && isPrimaryDomain;
 
 	return (
-		<tr key={ domain.domain }>
+		<tr key={ domain.domain } ref={ ref }>
 			<td>
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 				{ isManageableDomain ? (
