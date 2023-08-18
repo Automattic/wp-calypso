@@ -9,7 +9,7 @@ function formatNumber( num: number ) {
 }
 const useSubscriberStatsRate = (
 	subscriberStats: SubscriberStats | undefined,
-	property: keyof Omit< SubscriberStats, 'emails_sent' >
+	property: keyof Omit< SubscriberStats, 'emails_sent' | 'blog_registration_date' >
 ) => {
 	return useMemo( () => {
 		if ( subscriberStats && subscriberStats.emails_sent && subscriberStats[ property ] ) {

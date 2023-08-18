@@ -601,7 +601,7 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	const statsCommercialDescription = translate( 'The most advanced stats Jetpack has to offer.' );
 
 	const monitorDescription = translate(
-		'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+		'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
 	);
 
 	return {
@@ -745,7 +745,7 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	);
 
 	const monitorFeaturedText = translate(
-		'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+		'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
 	);
 
 	return {
@@ -814,7 +814,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	);
 	const statsLightboxDescription = translate( 'The most advanced stats Jetpack has to offer.' );
 	const monitorLightboxDescription = translate(
-		'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+		'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
 	);
 
 	// WooCommerce Products
@@ -1307,16 +1307,13 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 
 	const monitorBenefits = [
 		translate(
-			'Rapid Detection: With our 1-minute interval monitoring, detect potential issues faster than ever before.'
+			'Rapid detection: With our 1-minute interval monitoring, we detect potential issues faster than ever before.'
 		),
 		translate(
-			'Multi-channel Alerts: Reach multiple people simultaneously through our expanded multi-email and SMS notifications.'
+			'Multi-channel alerts: Get notified immediately when a site that you manage is down via SMS and email (multiple recipients).'
 		),
 		translate(
-			'Enhanced Uptime: Experience less downtime and increased service reliability through prompt response and resolution.'
-		),
-		translate(
-			'Better user experience, because you will have the chance to fix any issue as soon as possible.'
+			'Enhanced uptime: Experience less downtime and increased service reliability through prompt response and resolution.'
 		),
 		translate( 'Reduce potential revenue losses because your site went down.' ),
 	];

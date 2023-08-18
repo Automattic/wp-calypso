@@ -12,7 +12,6 @@ export function useGroupByTime(
 ) {
 	return useMemo( () => {
 		const periods = data?.periods || [];
-		const resolution = data?._meta?.resolution || 0;
 		const groupedData: { [ key: number ]: { [ statusCode: string ]: number } } = {};
 
 		periods.forEach( ( period ) => {
@@ -22,8 +21,7 @@ export function useGroupByTime(
 			// Count status codes
 			const statusCodes = Object.keys( period.dimension );
 			statusCodes.forEach( ( statusCode ) => {
-				groupedData[ period.timestamp ][ statusCode ] =
-					period.dimension[ statusCode ] * ( resolution / 60 ); // convert it to requests per minute
+				groupedData[ period.timestamp ][ statusCode ] = period.dimension[ statusCode ] * 60; // convert it to requests per minute
 			} );
 		} );
 

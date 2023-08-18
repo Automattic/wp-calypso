@@ -140,6 +140,12 @@ export class TestAccount {
 	 * Retrieves the site URL from the config file if defined for the current
 	 * account.
 	 *
+	 * If `protocol` is set to false, only the site slug portion is returned.
+	 *
+	 * @param param0 Keyed object parameter.
+	 * @param {boolean} [param0.protocol] Whether to include the protocol in
+	 * the returned string. Defaults to true.
+	 * @returns {string} Site Slug or fully-formed URL.
 	 * @throws If the site URL is not available.
 	 */
 	getSiteURL( { protocol = true }: { protocol?: boolean } = {} ): string {

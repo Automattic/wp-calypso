@@ -7,6 +7,8 @@ import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
+	isAllSitesView: boolean;
+
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
 	fetchSiteDomains?: (
@@ -14,7 +16,7 @@ interface DomainsTableProps {
 	) => Promise< SiteDomainsQueryFnData >;
 }
 
-export function DomainsTable( { domains, fetchSiteDomains }: DomainsTableProps ) {
+export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
 		sortDirection: 'asc' | 'desc';
@@ -61,6 +63,7 @@ export function DomainsTable( { domains, fetchSiteDomains }: DomainsTableProps )
 						key={ domain.domain }
 						domain={ domain }
 						fetchSiteDomains={ fetchSiteDomains }
+						isAllSitesView={ isAllSitesView }
 					/>
 				) ) }
 			</tbody>

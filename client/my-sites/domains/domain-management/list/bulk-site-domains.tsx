@@ -1,34 +1,30 @@
-import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
+import { useSiteDomainsQuery } from '@automattic/data-stores';
+import { DomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
 
-interface BulkAllDomainsProps {
+interface BulkSiteDomainsProps {
 	analyticsPath: string;
 	analyticsTitle: string;
 }
 
-export default function BulkAllDomains( props: BulkAllDomainsProps ) {
-	const { domains } = useDomainsTable();
+export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const { data } = useSiteDomainsQuery( siteSlug );
 	const translate = useTranslate();
 
 	const item = {
-		label: translate( 'All Domains' ),
-		subtitle: translate(
-			'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-			{
-				components: {
-					learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-				},
-			}
-		),
+		label: translate( 'Domains' ),
 		helpBubble: translate(
-			'Manage all your domains. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 			{
 				components: {
 					learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
@@ -47,7 +43,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				<DomainsTable domains={ domains } isAllSitesView />
+				<DomainsTable domains={ data?.domains } isAllSitesView={ false } />
 			</Main>
 			<UsePresalesChat />
 		</>

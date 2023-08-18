@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -85,6 +87,14 @@ class PostsMain extends Component {
 			<Main wideLayout className="posts">
 				{ isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
+				{ isEnabled( 'jitms' ) && (
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="notice"
+						placeholder={ null }
+						messagePath="wp:edit-post:admin_notices"
+					/>
 				) }
 				<ScreenOptionsTab wpAdminPath="edit.php" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />

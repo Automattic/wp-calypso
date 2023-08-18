@@ -12,7 +12,6 @@ import {
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
-	WPComStorageAddOnSlug,
 	FeatureList,
 } from '@automattic/calypso-products';
 import {
@@ -74,8 +73,6 @@ type PlanRowOptions = {
 	isTableCell?: boolean;
 	isStuck?: boolean;
 };
-
-export type PlanSelectedStorage = { [ key: string ]: WPComStorageAddOnSlug | null };
 
 const Container = (
 	props: (
@@ -139,10 +136,6 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
 }
-
-type PlanFeatures2023GridState = {
-	selectedStorage: PlanSelectedStorage;
-};
 
 const PlanLogo: React.FunctionComponent< {
 	planIndex: number;
@@ -217,16 +210,9 @@ const PlanLogo: React.FunctionComponent< {
 	);
 };
 
-export class PlanFeatures2023Grid extends Component<
-	PlanFeatures2023GridType,
-	PlanFeatures2023GridState
-> {
+export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
 	observer: IntersectionObserver | null = null;
 	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
-
-	state: PlanFeatures2023GridState = {
-		selectedStorage: {},
-	};
 
 	componentDidMount() {
 		this.observer = new IntersectionObserver( ( entries ) => {
@@ -248,15 +234,6 @@ export class PlanFeatures2023Grid extends Component<
 			this.observer.disconnect();
 		}
 	}
-
-	setSelectedStorage = ( updatedSelectedStorage: PlanSelectedStorage ) => {
-		this.setState( ( { selectedStorage } ) => ( {
-			selectedStorage: {
-				...selectedStorage,
-				...updatedSelectedStorage,
-			},
-		} ) );
-	};
 
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
@@ -788,7 +765,6 @@ export class PlanFeatures2023Grid extends Component<
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const { translate, intervalType, showUpgradeableStorage } = this.props;
-		const { selectedStorage } = this.state;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -803,12 +779,7 @@ export class PlanFeatures2023Grid extends Component<
 				storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
 
 			const storageJSX = canUpgradeStorageForPlan ? (
-				<StorageAddOnDropdown
-					planSlug={ planSlug }
-					storageOptions={ storageOptions }
-					selectedStorage={ selectedStorage }
-					setSelectedStorage={ this.setSelectedStorage }
-				/>
+				<StorageAddOnDropdown planSlug={ planSlug } storageOptions={ storageOptions } />
 			) : (
 				storageOptions.map( ( storageOption ) => {
 					if ( ! storageOption?.isAddOn ) {
