@@ -1,27 +1,27 @@
 import {
+	PlanSlug,
+	WPComStorageAddOnSlug,
 	getPlanClass,
+	isBusinessPlan,
+	isEcommercePlan,
 	isFreePlan,
 	isPersonalPlan,
-	isEcommercePlan,
-	isWpComFreePlan,
-	isWpcomEnterpriseGridPlan,
-	isBusinessPlan,
 	isPremiumPlan,
 	isWooExpressMediumPlan,
-	isWooExpressSmallPlan,
 	isWooExpressPlan,
-	PlanSlug,
 	isWooExpressPlusPlan,
-	FeatureList,
+	isWooExpressSmallPlan,
+	isWpComFreePlan,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import {
-	JetpackLogo,
 	BloombergLogo,
-	CloudLogo,
 	CNNLogo,
+	CloudLogo,
 	CondenastLogo,
 	DisneyLogo,
 	FacebookLogo,
+	JetpackLogo,
 	SalesforceLogo,
 	SlackLogo,
 	TimeLogo,
@@ -29,16 +29,14 @@ import {
 	WooLogo,
 } from '@automattic/components';
 import { isAnyHostingFlow } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, ForwardedRef, forwardRef, createRef } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { Component, createRef, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
-import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
@@ -55,90 +53,22 @@ import PopularBadge from './components/popular-badge';
 import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
+import { Container } from './grid-parts/container';
+import PreviousPlanFeaturesIncludedSection from './grid-parts/previous-plan-features-included';
+import SpotlightPlans from './grid-parts/spotlight-plans';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
-import { DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
-import type { PlansIntent } from './grid-context';
-import type {
-	GridPlan,
-	UsePricingMetaForGridPlans,
-} from './hooks/npm-ready/data-store/use-grid-plans';
-import type { PlanActionOverrides } from './types';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { GridPlan } from './hooks/npm-ready/data-store/use-grid-plans';
+import type { PlanFeatures2023GridProps, PlanFeatures2023GridType, PlanRowOptions } from './types';
 import type { IAppState } from 'calypso/state/types';
+
 import './style.scss';
 
-type PlanRowOptions = {
-	isTableCell?: boolean;
-	isStuck?: boolean;
-};
+export type PlanSelectedStorage = { [ key: string ]: WPComStorageAddOnSlug | null };
 
-const Container = (
-	props: (
-		| React.HTMLAttributes< HTMLDivElement >
-		| React.HTMLAttributes< HTMLTableCellElement >
-	 ) & { isTableCell?: boolean; scope?: string }
-) => {
-	const { children, isTableCell, ...otherProps } = props;
-	return isTableCell ? (
-		<td { ...otherProps }>{ children }</td>
-	) : (
-		<div { ...otherProps }>{ children }</div>
-	);
-};
-
-export interface PlanFeatures2023GridProps {
-	gridPlansForFeaturesGrid: GridPlan[];
-	gridPlansForComparisonGrid: GridPlan[];
-	gridPlanForSpotlight?: GridPlan;
-	// allFeaturesList temporary until feature definitions are ported to calypso-products package
-	allFeaturesList: FeatureList;
-	isInSignup?: boolean;
-	siteId?: number | null;
-	isLaunchPage?: boolean | null;
-	isReskinned?: boolean;
-	onUpgradeClick?: ( cartItem?: MinimalRequestCartProduct | null ) => void;
-	flowName?: string | null;
-	paidDomainName?: string;
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
-	intervalType?: string;
-	currentSitePlanSlug?: string | null;
-	hidePlansFeatureComparison?: boolean;
-	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
-	planActionOverrides?: PlanActionOverrides;
-	// Value of the `?plan=` query param, so we can highlight a given plan.
-	selectedPlan?: string;
-	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
-	selectedFeature?: string;
-	intent?: PlansIntent;
-	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
-	isGlobalStylesOnPersonal?: boolean;
-	showLegacyStorageFeature?: boolean;
-	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
-	stickyRowOffset: number;
-	usePricingMetaForGridPlans: UsePricingMetaForGridPlans;
-	showOdie?: () => void;
-	// temporary
-	showPlansComparisonGrid: boolean;
-	// temporary
-	toggleShowPlansComparisonGrid: () => void;
-	planTypeSelectorProps: PlanTypeSelectorProps;
-}
-
-interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
-	isLargeCurrency: boolean;
-	translate: LocalizeProps[ 'translate' ];
-	canUserPurchasePlan: boolean | null;
-	manageHref: string;
-	selectedSiteSlug: string | null;
-	isPlanUpgradeCreditEligible: boolean;
-	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
-	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
-}
-
-const PlanLogo: React.FunctionComponent< {
-	planIndex: number;
+export const PlanLogo: React.FunctionComponent< {
+	planIndex?: number;
 	planSlug: PlanSlug;
 	renderedGridPlans: GridPlan[];
 	isTableCell?: boolean;
@@ -236,7 +166,28 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderTable( renderedGridPlans: GridPlan[] ) {
-		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
+		const {
+			translate,
+			gridPlanForSpotlight,
+			stickyRowOffset,
+			isInSignup,
+			isReskinned,
+			isLargeCurrency,
+			isPlanUpgradeCreditEligible,
+			currentSitePlanSlug,
+			siteId,
+			canUserPurchasePlan,
+			manageHref,
+			isLaunchPage,
+			flowName,
+			selectedSiteSlug,
+			planActionOverrides,
+			paidDomainName,
+			hideUnavailableFeatures,
+			selectedFeature,
+			wpcomFreeDomainSuggestion,
+			isCustomDomainAllowedOnFreePlan,
+		} = this.props;
 		// Do not render the spotlight plan if it exists
 		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 			? renderedGridPlans
@@ -252,33 +203,235 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					{ translate( 'Available plans to choose from' ) }
 				</caption>
 				<tbody>
-					<tr>{ this.renderPlanLogos( gridPlansWithoutSpotlight, { isTableCell: true } ) }</tr>
-					<tr>{ this.renderPlanHeaders( gridPlansWithoutSpotlight, { isTableCell: true } ) }</tr>
-					<tr>{ this.renderPlanTagline( gridPlansWithoutSpotlight, { isTableCell: true } ) }</tr>
-					<tr>{ this.renderPlanPrice( gridPlansWithoutSpotlight, { isTableCell: true } ) }</tr>
 					<tr>
-						{ this.renderBillingTimeframe( gridPlansWithoutSpotlight, { isTableCell: true } ) }
+						{ gridPlansWithoutSpotlight.map( ( { planSlug }, index ) => (
+							<PlanLogo
+								key={ planSlug }
+								planIndex={ index }
+								planSlug={ planSlug }
+								renderedGridPlans={ renderedGridPlans }
+								isTableCell={ true }
+								isInSignup={ isInSignup }
+							/>
+						) ) }
 					</tr>
+					{ /* PlanHeaders */ }
+					<tr>
+						{ gridPlansWithoutSpotlight.map( ( { planSlug, planConstantObj } ) => (
+							<Container
+								key={ planSlug }
+								className="plan-features-2023-grid__table-item"
+								isTableCell={ true }
+							>
+								<header
+									className={ classNames(
+										'plan-features-2023-grid__header',
+										getPlanClass( planSlug )
+									) }
+								>
+									<h4 className="plan-features-2023-grid__header-title">
+										{ planConstantObj.getTitle() }
+									</h4>
+								</header>
+							</Container>
+						) ) }
+					</tr>
+					{ /* PlanTagline */ }
+					<tr>
+						{ gridPlansWithoutSpotlight.map( ( { planSlug, tagline } ) => {
+							return (
+								<Container
+									key={ planSlug }
+									className="plan-features-2023-grid__table-item"
+									isTableCell={ true }
+								>
+									<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
+								</Container>
+							);
+						} ) }
+					</tr>
+					{ /* PlanPrice */ }
+					<tr>
+						{ gridPlansWithoutSpotlight.map( ( { planSlug } ) => {
+							return (
+								<Container
+									scope="col"
+									key={ planSlug }
+									className={ classNames(
+										'plan-features-2023-grid__table-item',
+										'is-bottom-aligned',
+										{
+											'has-border-top': ! isReskinned,
+										}
+									) }
+									isTableCell={ true }
+								>
+									<PlanFeatures2023GridHeaderPrice
+										planSlug={ planSlug }
+										isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+										isLargeCurrency={ isLargeCurrency }
+										currentSitePlanSlug={ currentSitePlanSlug }
+										siteId={ siteId }
+									/>
+									{ isWooExpressPlusPlan( planSlug ) && (
+										<div className="plan-features-2023-grid__header-tagline">
+											{ translate( 'Speak to our team for a custom quote.' ) }
+										</div>
+									) }
+								</Container>
+							);
+						} ) }
+					</tr>
+					{ /* BillingTimeframe */ }
+					<tr>
+						{ gridPlansWithoutSpotlight.map( ( { planConstantObj, planSlug } ) => {
+							return (
+								<Container
+									className={ classNames(
+										'plan-features-2023-grid__table-item',
+										'plan-features-2023-grid__header-billing-info'
+									) }
+									isTableCell={ true }
+									key={ planSlug }
+								>
+									<PlanFeatures2023GridBillingTimeframe
+										planSlug={ planSlug }
+										billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+									/>
+								</Container>
+							);
+						} ) }
+					</tr>
+					{ /* TopButtons */ }
 					<StickyContainer
 						stickyClass="is-sticky-top-buttons-row"
 						element="tr"
 						stickyOffset={ stickyRowOffset }
 						topOffset={ stickyRowOffset + ( isInSignup ? 0 : 20 ) }
 					>
-						{ ( isStuck: boolean ) =>
-							this.renderTopButtons( gridPlansWithoutSpotlight, { isTableCell: true, isStuck } )
-						}
+						{ ( isStuck: boolean ) => {
+							return gridPlansWithoutSpotlight.map(
+								( { planSlug, planConstantObj, current, availableForPurchase } ) => {
+									return (
+										<Container
+											key={ planSlug }
+											className={ classNames(
+												'plan-features-2023-grid__table-item',
+												'is-top-buttons',
+												'is-bottom-aligned'
+											) }
+											isTableCell={ true }
+										>
+											<PlanFeatures2023GridActions
+												manageHref={ manageHref }
+												canUserPurchasePlan={ canUserPurchasePlan }
+												availableForPurchase={ availableForPurchase }
+												className={ getPlanClass( planSlug ) }
+												freePlan={ isFreePlan( planSlug ) }
+												isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
+												isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
+												isInSignup={ isInSignup }
+												isLaunchPage={ isLaunchPage }
+												onUpgradeClick={ () => this.handleUpgradeClick( planSlug ) }
+												planTitle={ planConstantObj.getTitle() }
+												planSlug={ planSlug }
+												flowName={ flowName }
+												current={ current ?? false }
+												currentSitePlanSlug={ currentSitePlanSlug }
+												selectedSiteSlug={ selectedSiteSlug }
+												planActionOverrides={ planActionOverrides }
+												showMonthlyPrice={ true }
+												siteId={ siteId }
+												isStuck={ isStuck || false }
+												isLargeCurrency={ isLargeCurrency }
+											/>
+										</Container>
+									);
+								}
+							);
+						} }
 					</StickyContainer>
+					{ /* RefundNotice */ }
 					<tr>
-						{ this.maybeRenderRefundNotice( gridPlansWithoutSpotlight, { isTableCell: true } ) }
+						{ isAnyHostingFlow( flowName )
+							? gridPlansWithoutSpotlight.map( ( { planSlug, pricing: { billingPeriod } } ) => (
+									<Container
+										key={ planSlug }
+										className="plan-features-2023-grid__table-item"
+										isTableCell={ true }
+									>
+										{ ! isFreePlan( planSlug ) && (
+											<div
+												className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
+													planSlug
+												) }` }
+											>
+												{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+													args: {
+														dayCount: billingPeriod === 365 ? 14 : 7,
+													},
+												} ) }
+											</div>
+										) }
+									</Container>
+							  ) )
+							: null }
 					</tr>
 					<tr>
-						{ this.renderPreviousFeaturesIncludedTitle( gridPlansWithoutSpotlight, {
-							isTableCell: true,
-						} ) }
+						{ renderedGridPlans.map( ( { planSlug } ) => (
+							<PreviousPlanFeaturesIncludedSection
+								planSlug={ planSlug }
+								gridPlansForFeaturesGrid={ this.props.gridPlansForFeaturesGrid }
+								options={ { isTableCell: true } }
+							/>
+						) ) }
 					</tr>
 					<tr>
-						{ this.renderPlanFeaturesList( gridPlansWithoutSpotlight, { isTableCell: true } ) }
+						{ /* PlanFeaturesList */ }
+						{ gridPlansWithoutSpotlight
+							.filter(
+								( gridPlan ) =>
+									! isWpcomEnterpriseGridPlan( gridPlan.planSlug ) &&
+									! isWooExpressPlusPlan( gridPlan.planSlug )
+							)
+							.map( ( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
+								return (
+									<Container
+										key={ `${ planSlug }-${ mapIndex }` }
+										isTableCell={ true }
+										className="plan-features-2023-grid__table-item"
+									>
+										<PlanFeatures2023GridFeatures
+											features={ wpcomFeatures }
+											planSlug={ planSlug }
+											paidDomainName={ paidDomainName }
+											wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+											hideUnavailableFeatures={ hideUnavailableFeatures }
+											selectedFeature={ selectedFeature }
+											isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+										/>
+										{ jetpackFeatures.length !== 0 && (
+											<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
+												<Plans2023Tooltip
+													text={ translate(
+														'Security, performance and growth tools made by the WordPress experts.'
+													) }
+												>
+													<JetpackLogo size={ 16 } />
+												</Plans2023Tooltip>
+											</div>
+										) }
+										<PlanFeatures2023GridFeatures
+											features={ jetpackFeatures }
+											planSlug={ planSlug }
+											paidDomainName={ paidDomainName }
+											wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+											hideUnavailableFeatures={ hideUnavailableFeatures }
+											isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+										/>
+									</Container>
+								);
+							} ) }
 					</tr>
 					<tr>
 						{ this.renderPlanStorageOptions( gridPlansWithoutSpotlight, { isTableCell: true } ) }
@@ -313,38 +466,29 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		);
 	}
 
-	/**
-	 * Similar to `renderMobileView` above.
-	 */
-	renderSpotlightPlan() {
-		const { gridPlanForSpotlight } = this.props;
-
-		if ( ! gridPlanForSpotlight ) {
-			return null;
-		}
-
-		const spotlightPlanClasses = classNames(
-			'plan-features-2023-grid__plan-spotlight-card',
-			getPlanClass( gridPlanForSpotlight.planSlug )
-		);
-
-		return (
-			<div className="plan-features-2023-grid__plan-spotlight">
-				<div className={ spotlightPlanClasses }>
-					{ this.renderPlanLogos( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanHeaders( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanTagline( [ gridPlanForSpotlight ] ) }
-					{ this.renderPlanPrice( [ gridPlanForSpotlight ] ) }
-					{ this.renderBillingTimeframe( [ gridPlanForSpotlight ] ) }
-					{ this.renderTopButtons( [ gridPlanForSpotlight ] ) }
-				</div>
-			</div>
-		);
-	}
-
 	renderMobileView() {
-		const { translate, selectedFeature, gridPlansForFeaturesGrid, gridPlanForSpotlight } =
-			this.props;
+		const {
+			translate,
+			selectedFeature,
+			gridPlansForFeaturesGrid,
+			gridPlanForSpotlight,
+			canUserPurchasePlan,
+			isInSignup,
+			manageHref,
+			isLaunchPage,
+			flowName,
+			currentSitePlanSlug,
+			selectedSiteSlug,
+			planActionOverrides,
+			siteId,
+			isLargeCurrency,
+			isReskinned,
+			isPlanUpgradeCreditEligible,
+			paidDomainName,
+			hideUnavailableFeatures,
+			wpcomFreeDomainSuggestion,
+			isCustomDomainAllowedOnFreePlan,
+		} = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
 		) => {
@@ -373,14 +517,154 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				);
 				const planCardJsx = (
 					<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
-						{ this.renderPlanLogos( [ gridPlan ] ) }
-						{ this.renderPlanHeaders( [ gridPlan ] ) }
-						{ this.renderPlanTagline( [ gridPlan ] ) }
-						{ this.renderPlanPrice( [ gridPlan ] ) }
-						{ this.renderBillingTimeframe( [ gridPlan ] ) }
-						{ this.renderMobileFreeDomain( gridPlan.planSlug, gridPlan.isMonthlyPlan ) }
-						{ this.renderTopButtons( [ gridPlan ] ) }
-						{ this.maybeRenderRefundNotice( [ gridPlan ] ) }
+						<PlanLogo
+							key={ gridPlan.planSlug }
+							planSlug={ gridPlan.planSlug }
+							renderedGridPlans={ [ gridPlan ] }
+							isTableCell={ false }
+							isInSignup={ isInSignup }
+						/>
+						{ /* PlanHeaders */ }
+						<Container
+							key={ gridPlan.planSlug }
+							className="plan-features-2023-grid__table-item"
+							isTableCell={ false }
+						>
+							<header
+								className={ classNames(
+									'plan-features-2023-grid__header',
+									getPlanClass( gridPlan.planSlug )
+								) }
+							>
+								<h4 className="plan-features-2023-grid__header-title">
+									{ gridPlan.planConstantObj.getTitle() }
+								</h4>
+							</header>
+						</Container>
+
+						{ /* PlanTagline */ }
+						<Container
+							key={ gridPlan.planSlug }
+							className="plan-features-2023-grid__table-item"
+							isTableCell={ false }
+						>
+							<div className="plan-features-2023-grid__header-tagline">{ gridPlan.tagline }</div>
+						</Container>
+
+						{ /* PlanPrice */ }
+						<Container
+							scope="col"
+							key={ gridPlan.planSlug }
+							className={ classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+								'has-border-top': ! isReskinned,
+							} ) }
+							isTableCell={ true }
+						>
+							<PlanFeatures2023GridHeaderPrice
+								planSlug={ gridPlan.planSlug }
+								isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+								isLargeCurrency={ isLargeCurrency }
+								currentSitePlanSlug={ currentSitePlanSlug }
+								siteId={ siteId }
+							/>
+							{ isWooExpressPlusPlan( gridPlan.planSlug ) && (
+								<div className="plan-features-2023-grid__header-tagline">
+									{ translate( 'Speak to our team for a custom quote.' ) }
+								</div>
+							) }
+						</Container>
+
+						{ /* BillingTimeframe */ }
+						<Container
+							className={ classNames(
+								'plan-features-2023-grid__table-item',
+								'plan-features-2023-grid__header-billing-info'
+							) }
+							isTableCell={ false }
+							key={ gridPlan.planSlug }
+						>
+							<PlanFeatures2023GridBillingTimeframe
+								planSlug={ gridPlan.planSlug }
+								billingTimeframe={ gridPlan.planConstantObj.getBillingTimeFrame() }
+							/>
+						</Container>
+
+						{ /* MobileFreeDomain */ }
+						{ gridPlan.isMonthlyPlan ||
+						isWpComFreePlan( gridPlan.planSlug ) ||
+						isWpcomEnterpriseGridPlan( gridPlan.planSlug ) ? (
+							<div className="plan-features-2023-grid__highlighted-feature">
+								<PlanFeaturesItem>
+									<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
+										<span className="plan-features-2023-grid__item-title is-bold">
+											{ paidDomainName
+												? translate( '%(paidDomainName)s is included', {
+														args: { paidDomainName },
+												  } )
+												: translate( 'Free domain for one year' ) }
+										</span>
+									</span>
+								</PlanFeaturesItem>
+							</div>
+						) : null }
+						{ /* TopButtons */ }
+						<Container
+							key={ gridPlan.planSlug }
+							className={ classNames(
+								'plan-features-2023-grid__table-item',
+								'is-top-buttons',
+								'is-bottom-aligned'
+							) }
+							isTableCell={ false }
+						>
+							<PlanFeatures2023GridActions
+								manageHref={ manageHref }
+								canUserPurchasePlan={ canUserPurchasePlan }
+								availableForPurchase={ gridPlan.availableForPurchase }
+								className={ getPlanClass( gridPlan.planSlug ) }
+								freePlan={ isFreePlan( gridPlan.planSlug ) }
+								isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( gridPlan.planSlug ) }
+								isWooExpressPlusPlan={ isWooExpressPlusPlan( gridPlan.planSlug ) }
+								isInSignup={ isInSignup }
+								isLaunchPage={ isLaunchPage }
+								onUpgradeClick={ () => this.handleUpgradeClick( gridPlan.planSlug ) }
+								planTitle={ gridPlan.planConstantObj.getTitle() }
+								planSlug={ gridPlan.planSlug }
+								flowName={ flowName }
+								current={ gridPlan.current ?? false }
+								currentSitePlanSlug={ currentSitePlanSlug }
+								selectedSiteSlug={ selectedSiteSlug }
+								planActionOverrides={ planActionOverrides }
+								showMonthlyPrice={ true }
+								siteId={ siteId }
+								isStuck={ false }
+								isLargeCurrency={ isLargeCurrency }
+							/>
+						</Container>
+
+						{ /* RefundNotice */ }
+						{ isAnyHostingFlow( flowName ) ? (
+							<Container
+								key={ gridPlan.planSlug }
+								className="plan-features-2023-grid__table-item"
+								isTableCell={ true }
+							>
+								{ ! isFreePlan( gridPlan.planSlug ) && (
+									<div
+										className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
+											gridPlan.planSlug
+										) }` }
+									>
+										{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+											args: {
+												dayCount: gridPlan.pricing.billingPeriod === 365 ? 14 : 7,
+											},
+										} ) }
+									</div>
+								) }
+							</Container>
+						) : null }
+
 						<CardContainer
 							header={ translate( 'Show all features' ) }
 							planSlug={ gridPlan.planSlug }
@@ -392,8 +676,49 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								)
 							}
 						>
-							{ this.renderPreviousFeaturesIncludedTitle( [ gridPlan ] ) }
-							{ this.renderPlanFeaturesList( [ gridPlan ] ) }
+							{ /* PreviousFeaturesIncludedTitle */ }
+							<PreviousPlanFeaturesIncludedSection
+								planSlug={ gridPlan.planSlug }
+								gridPlansForFeaturesGrid={ this.props.gridPlansForFeaturesGrid }
+								options={ { isTableCell: false } }
+							/>
+
+							{ /* PlanFeaturesList */ }
+							<Container
+								key={ gridPlan.planSlug }
+								isTableCell={ false }
+								className="plan-features-2023-grid__table-item"
+							>
+								<PlanFeatures2023GridFeatures
+									features={ gridPlan.features.wpcomFeatures }
+									planSlug={ gridPlan.planSlug }
+									paidDomainName={ paidDomainName }
+									wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+									hideUnavailableFeatures={ hideUnavailableFeatures }
+									selectedFeature={ selectedFeature }
+									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+								/>
+								{ gridPlan.features.jetpackFeatures.length !== 0 && (
+									<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
+										<Plans2023Tooltip
+											text={ translate(
+												'Security, performance and growth tools made by the WordPress experts.'
+											) }
+										>
+											<JetpackLogo size={ 16 } />
+										</Plans2023Tooltip>
+									</div>
+								) }
+								<PlanFeatures2023GridFeatures
+									features={ gridPlan.features.jetpackFeatures }
+									planSlug={ gridPlan.planSlug }
+									paidDomainName={ paidDomainName }
+									wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+									hideUnavailableFeatures={ hideUnavailableFeatures }
+									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+								/>
+							</Container>
+
 							{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						</CardContainer>
 					</div>
@@ -402,6 +727,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			} );
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderMobileFreeDomain( planSlug: PlanSlug, isMonthlyPlan?: boolean ) {
 		const { translate } = this.props;
 
@@ -427,6 +755,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		);
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderPlanPrice( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const {
 			isReskinned,
@@ -466,6 +797,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} );
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderBillingTimeframe( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		return renderedGridPlans.map( ( { planConstantObj, planSlug } ) => {
 			const classes = classNames(
@@ -484,6 +818,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} );
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderPlanLogos( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const { isInSignup } = this.props;
 
@@ -501,6 +838,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} );
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderPlanHeaders( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		return renderedGridPlans.map( ( { planSlug, planConstantObj } ) => {
 			const headerClasses = classNames(
@@ -524,6 +864,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} );
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderPlanTagline( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		return renderedGridPlans.map( ( { planSlug, tagline } ) => {
 			return (
@@ -556,6 +899,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		}
 	};
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderTopButtons( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const {
 			isInSignup,
@@ -626,6 +972,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		);
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	maybeRenderRefundNotice( gridPlan: GridPlan[], options?: PlanRowOptions ) {
 		const { translate, flowName } = this.props;
 
@@ -652,6 +1001,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		) );
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderEnterpriseClientLogos() {
 		return (
 			<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
@@ -667,6 +1019,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		);
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderPreviousFeaturesIncludedTitle( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const { translate, gridPlansForFeaturesGrid } = this.props;
 
@@ -706,6 +1061,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} );
 	}
 
+	/**
+	 * @deprecated moved inline
+	 */
 	renderPlanFeaturesList( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const {
 			paidDomainName,
@@ -833,6 +1191,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			plansComparisonGridRef,
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
+			isReskinned,
+			isLargeCurrency,
+			planActionOverrides,
+			gridPlanForSpotlight,
+			isPlanUpgradeCreditEligible,
 		} = this.props;
 
 		return (
@@ -844,7 +1207,25 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 					allFeaturesList={ allFeaturesList }
 				>
-					{ this.renderSpotlightPlan() }
+					{ gridPlanForSpotlight && (
+						<SpotlightPlans
+							plansComparisonGridRef={ plansComparisonGridRef }
+							manageHref={ manageHref }
+							canUserPurchasePlan={ canUserPurchasePlan }
+							isLaunchPage={ isLaunchPage }
+							selectedSiteSlug={ selectedSiteSlug }
+							flowName={ flowName }
+							planActionOverrides={ planActionOverrides }
+							gridPlanForSpotlight={ gridPlanForSpotlight }
+							isInSignup={ isInSignup }
+							isReskinned={ isReskinned }
+							isLargeCurrency={ isLargeCurrency }
+							isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							siteId={ siteId }
+							onUpgradeClick={ () => this.handleUpgradeClick( gridPlanForSpotlight?.planSlug ) }
+						/>
+					) }
 				</PlansGridContextProvider>
 				<div className="plan-features">
 					<PlansGridContextProvider
