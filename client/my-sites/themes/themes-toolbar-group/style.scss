@@ -47,7 +47,7 @@
 				box-shadow: inset 0 0 0 2px var(--color-primary-light);
 			}
 
-			&:not(.is-pressed):hover::before {
+			&:not(.is-pressed):not(.is-selected):hover::before {
 				background-color: var(--studio-gray-0);
 			}
 
