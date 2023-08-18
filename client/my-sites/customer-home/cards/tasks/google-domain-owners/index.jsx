@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isDesktop } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -5,7 +6,7 @@ import { useState } from 'react';
 import googleDomainOwnersMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-google-domain-owners-mobile.svg';
 import googleDomainOwnersDesktopIllustration from 'calypso/assets/images/customer-home/illustration--task-google-domain-owners.svg';
 import { preventWidows } from 'calypso/lib/formatting';
-import { TASK_DOMAIN_UPSELL } from 'calypso/my-sites/customer-home/cards/constants';
+import { TASK_GOOGLE_DOMAIN_OWNERS } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
 import './style.scss';
@@ -17,7 +18,7 @@ export default function GoogleDomainOwners() {
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
 
-		page( '/support' );
+		page( localizeUrl( 'https://wordpress.com/transfer-google-domains/' ) );
 	};
 
 	const cardTitle = translate( 'Reclaim your Google domains' );
@@ -47,7 +48,7 @@ export default function GoogleDomainOwners() {
 			illustration={ googleDomainOwnersIllustration }
 			illustrationAlwaysShow={ true }
 			timing={ 2 }
-			taskId={ TASK_DOMAIN_UPSELL }
+			taskId={ TASK_GOOGLE_DOMAIN_OWNERS }
 		/>
 	);
 }
