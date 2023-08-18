@@ -50,7 +50,6 @@ export class SiteAssemblerFlow {
 			route.abort( 'aborted' );
 		} );
 
-		// Get the initial count of components in the preview pane.
 		const target = this.page
 			.getByRole( 'listbox', { name: 'Block patterns' } )
 			.getByRole( 'option', { name: name, exact: true } );
@@ -61,13 +60,14 @@ export class SiteAssemblerFlow {
 		// The inserted component does not load immediately, especially on
 		// slower networks or a weaker CPU.
 		// Wait for the last component to be visible.
-		// Note, this may not fully wait for the renders to appear.
+		// Note, component being visible do not necessarily mean
+		// the preview images are visible.
 		await this.page
 			.locator( '.device-switcher__viewport' )
 			.getByRole( 'list' )
 			.getByRole( 'listitem' )
 			.last()
-			.waitFor();
+			.waitFor( { timeout: 15 * 1000 } );
 	}
 
 	/**
