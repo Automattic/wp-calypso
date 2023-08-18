@@ -1,8 +1,7 @@
-import { Gridicon } from '@automattic/components';
+import { Count, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import Count from 'calypso/components/count';
 import { preload } from 'calypso/sections-helper';
 
 import './item.scss';

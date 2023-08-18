@@ -186,11 +186,11 @@ export function redirectLoggedOutToSignup( context, next ) {
  * @returns {void}
  */
 export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
-	const langSlugs = getLanguageSlugs();
-	const langSlugPathSegmentMatcher = new RegExp( `\\/(${ langSlugs.join( '|' ) })(\\/|\\?|$)` );
-	const pathWithoutLocale = context.path.replace( langSlugPathSegmentMatcher, '$2' );
+	if ( isUserLoggedIn( context.store.getState() ) && context.params.lang ) {
+		const langSlugs = getLanguageSlugs();
+		const langSlugPathSegmentMatcher = new RegExp( `\\/(${ langSlugs.join( '|' ) })(\\/|\\?|$)` );
+		const pathWithoutLocale = context.path.replace( langSlugPathSegmentMatcher, '$2' );
 
-	if ( isUserLoggedIn( context.store.getState() ) && pathWithoutLocale !== context.path ) {
 		return page.redirect( pathWithoutLocale );
 	}
 

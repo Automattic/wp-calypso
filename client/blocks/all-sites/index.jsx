@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
+import { Count } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Count from 'calypso/components/count';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getCurrentUserJetpackVisibleSiteCount,

@@ -3,7 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { getMobileDeviceInfo, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getMobileDeviceInfo, isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import versionCompare from 'calypso/lib/version-compare';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
@@ -66,7 +66,7 @@ declare global {
 	}
 }
 
-const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '23.0-rc-1';
+const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '22.9.blaze';
 
 const getWidgetDSPJSURL = () => {
 	let dspWidgetJS: string = shouldUseTestWidgetURL()
@@ -163,22 +163,27 @@ export async function showDSP(
 	} );
 }
 
+export const getDSPOrigin = () => {
+	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		return 'jetpack';
+	} else if ( isWpMobileApp() ) {
+		return 'wp-mobile-app';
+	} else if ( isWcMobileApp() ) {
+		return 'wc-mobile-app';
+	}
+
+	return 'calypso';
+};
+
 /**
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
  *
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
-	let origin = 'wpcom';
-	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-		origin = 'jetpack';
-	} else if ( isWpMobileApp() ) {
-		origin = 'wp-mobile-app';
-	}
-
 	const eventProps = {
 		entry_point: entryPoint,
-		origin,
+		origin: getDSPOrigin(),
 	};
 
 	return composeAnalytics(

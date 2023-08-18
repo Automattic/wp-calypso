@@ -34,7 +34,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryTheme from 'calypso/components/data/query-theme';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
 import HeaderCake from 'calypso/components/header-cake';
@@ -88,6 +87,7 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
+	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -341,7 +341,7 @@ class ThemeSheet extends Component {
 	}
 
 	previewAction = ( event, type ) => {
-		const { demoUrl, isExternallyManagedTheme } = this.props;
+		const { demoUrl, isExternallyManagedTheme, isWpcomTheme } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -352,19 +352,19 @@ class ThemeSheet extends Component {
 			type,
 		} );
 
-		if ( isExternallyManagedTheme && demoUrl ) {
-			window.open( demoUrl, '_blank', 'noreferrer,noopener' );
-			return;
+		// The embed live demo works only for WP.com themes
+		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
+			const { preview } = this.props.options;
+			this.props.setThemePreviewOptions(
+				this.props.themeId,
+				this.props.defaultOption,
+				this.props.secondaryOption,
+				this.getSelectedStyleVariation()
+			);
+			return preview.action( this.props.themeId );
 		}
 
-		const { preview } = this.props.options;
-		this.props.setThemePreviewOptions(
-			this.props.themeId,
-			this.props.defaultOption,
-			this.props.secondaryOption,
-			this.getSelectedStyleVariation()
-		);
-		return preview.action( this.props.themeId );
+		return window.open( demoUrl, '_blank', 'noreferrer,noopener' );
 	};
 
 	shouldRenderForStaging() {
@@ -470,16 +470,35 @@ class ThemeSheet extends Component {
 					} }
 					rel="noopener noreferrer"
 				>
+					{ this.shouldRenderPreviewButton() && (
+						<Button className="theme__sheet-preview-demo-site">
+							{ translate( 'Preview demo site' ) }
+						</Button>
+					) }
 					{ img }
 				</a>
 			);
 		}
 
-		return <div className="theme__sheet-screenshot">{ img }</div>;
+		return (
+			<div className="theme__sheet-screenshot">
+				{ this.shouldRenderPreviewButton() && (
+					<Button
+						className="theme__sheet-preview-demo-site"
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link' );
+						} }
+					>
+						{ translate( 'Preview demo site' ) }
+					</Button>
+				) }
+				{ img }
+			</div>
+		);
 	}
 
 	renderWebPreview = () => {
-		const { locale, siteSlug, stylesheet, styleVariations, themeId } = this.props;
+		const { locale, siteSlug, stylesheet, styleVariations, themeId, translate } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
 			isDefaultGlobalStylesVariationSlug( style.slug )
 		);
@@ -500,6 +519,16 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-web-preview">
+				{ this.shouldRenderPreviewButton() && (
+					<Button
+						className="theme__sheet-preview-demo-site"
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link' );
+						} }
+					>
+						{ translate( 'Preview demo site' ) }
+					</Button>
+				) }
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
@@ -541,6 +570,7 @@ class ThemeSheet extends Component {
 		const {
 			author,
 			isLoggedIn,
+			isLivePreviewSupported,
 			isWPForTeamsSite,
 			name,
 			retired,
@@ -576,14 +606,14 @@ class ThemeSheet extends Component {
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
 						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
-						{ this.shouldRenderPreviewButton() && (
+						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
 								onClick={ ( e ) => {
 									this.previewAction( e, 'link' );
 								} }
 							>
-								{ translate( 'Open live demo', {
-									context: 'Individual theme live preview button',
+								{ translate( 'Demo site', {
+									context: 'The button to open the demo site of individual theme',
 								} ) }
 							</Button>
 						) }
@@ -1279,19 +1309,6 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
-
-				{ /* 
-					FIXME: 
-					This is for showing the Live Preview button 
-					when the site is on Atomic AND the theme is installed.
-					We need to query a theme with the siteId to always know if it's installed on the site or not
-					(e.g. If a user go to the Theme Detail page directly).
-					This can be removed once we addressed https://github.com/Automattic/wp-calypso/issues/80089.
-				*/ }
-				{ config.isEnabled( 'themes/block-theme-previews' ) && (
-					<QueryTheme themeId={ this.props.themeId } siteId={ siteId } />
-				) }
-
 				<QueryProductsList />
 				<QueryUserPurchases />
 				{
@@ -1478,6 +1495,8 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
+		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
+
 		return {
 			...theme,
 			themeId,
@@ -1520,6 +1539,7 @@ export default connect(
 			isLoading,
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
+			isLivePreviewSupported,
 		};
 	},
 	{

@@ -384,16 +384,19 @@ export default function CheckoutMain( {
 		checkoutFlow
 	);
 
-	const changePlanLength = useCallback< OnChangeItemVariant >(
-		( uuidToReplace, newProductSlug, newProductId ) => {
+	const changeSelection = useCallback< OnChangeItemVariant >(
+		( uuidToReplace, newProductSlug, newProductId, newProductVolume ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
 					new_product_slug: newProductSlug,
 				} )
 			);
+
 			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
+				// Since volume is optional, only add it if it's defined
+				...( newProductVolume && { volume: newProductVolume } ),
 			} ).catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
@@ -738,7 +741,7 @@ export default function CheckoutMain( {
 					areThereErrors={ areThereErrors }
 					isInitialCartLoading={ isInitialCartLoading }
 					addItemToCart={ addItemAndLog }
-					changePlanLength={ changePlanLength }
+					changeSelection={ changeSelection }
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }

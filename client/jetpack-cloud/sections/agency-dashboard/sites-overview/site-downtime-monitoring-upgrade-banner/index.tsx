@@ -54,10 +54,13 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 		return null;
 	}
 
-	const dismissAndRecordEvent = ( eventName: string ) => {
+	const dismissAndRecordEvent = ( eventName: string, showInfoAfterDismiss = false ) => {
 		savePreferenceType( 'dismiss', true );
 		dispatch( recordTracksEvent( `calypso_jetpack_agency_dashboard_${ eventName }` ) );
-		showLicenseInfo( 'monitor' );
+
+		if ( showInfoAfterDismiss ) {
+			showLicenseInfo( 'monitor' );
+		}
 	};
 
 	return (
@@ -72,7 +75,7 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 			iconPath={ CelebrationIcon }
 			callToAction={ translate( 'Explore' ) }
 			dismissWithoutSavingPreference
-			onClick={ () => dismissAndRecordEvent( 'monitor_upgrade_banner_accept' ) }
+			onClick={ () => dismissAndRecordEvent( 'monitor_upgrade_banner_accept', true ) }
 			onDismiss={ () => dismissAndRecordEvent( 'monitor_upgrade_banner_dismiss' ) }
 		/>
 	);

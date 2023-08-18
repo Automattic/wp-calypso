@@ -83,8 +83,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		cursor: pointer;
 
 		&:focus {
-			outline: 2px solid #3057dc;
-			border-radius: 2px;
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 
 		svg {
@@ -386,6 +385,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
+.highlight-card-tooltip-note {
+	font-size: $font-body-extra-small;
+	padding-top: 8px;
+}
 .highlight-card__settings-tooltip {
 	.highlight-card-tooltip-content {
 		flex-direction: column;

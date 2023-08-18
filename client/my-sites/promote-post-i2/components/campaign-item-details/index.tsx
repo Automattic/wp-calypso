@@ -327,7 +327,7 @@ export default function CampaignItemDetails( props: Props ) {
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
-						className="campaign-item-details__notice"
+						className="promote-post-notice campaign-item-details__notice"
 					>
 						{ translate(
 							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
@@ -639,6 +639,7 @@ export default function CampaignItemDetails( props: Props ) {
 											</Button>
 										) }
 										<Button
+											className="contact-support-button"
 											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
 											target="_blank"
 										>

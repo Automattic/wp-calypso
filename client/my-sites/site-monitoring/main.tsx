@@ -3,6 +3,7 @@ import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { SiteMonitoringTabPanel } from './components/site-monitoring-tab-panel';
 import { LogsTab } from './logs-tab';
 import { MetricsTab } from './metrics-tab';
@@ -21,15 +22,15 @@ export function SiteMetrics() {
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>
+			<PageViewTracker path="/site-monitoring/:site" title="Site Monitoring" />
 			<DocumentHead title={ titleHeader } />
 			<FormattedHeader
-				brandFont
+				className="site-monitoring__formatted-header modernized-header"
+				align="left"
 				headerText={ titleHeader }
 				subHeaderText={ __(
 					'Real time information to troubleshoot or debug problems with your site.'
 				) }
-				align="left"
-				className="site-monitoring__formatted-header"
 			></FormattedHeader>
 			<SiteMonitoringTabPanel selectedTab={ page } onSelected={ handleTabSelected }>
 				{ () => (

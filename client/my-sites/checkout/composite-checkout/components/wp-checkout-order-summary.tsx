@@ -3,9 +3,11 @@ import {
 	getYearlyPlanByMonthly,
 	isDomainProduct,
 	isDomainTransfer,
+	isGoogleWorkspace,
 	isMonthly,
 	isNoAds,
 	isPlan,
+	isTitanMail,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
@@ -37,7 +39,6 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -55,11 +56,16 @@ import type { TranslateResult } from 'i18n-calypso';
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
-	onChangePlanLength,
+	onChangeSelection,
 	nextDomainIsFree = false,
 }: {
 	siteId: number | undefined;
-	onChangePlanLength: ( uuid: string, productSlug: string, productId: number ) => void;
+	onChangeSelection: (
+		uuid: string,
+		productSlug: string,
+		productId: number,
+		volume?: number
+	) => void;
 	nextDomainIsFree?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -95,7 +101,7 @@ export default function WPCheckoutOrderSummary( {
 				) }
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangePlanLength={ onChangePlanLength } />
+				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }
 			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
@@ -146,18 +152,23 @@ function LoadingCheckoutSummaryFeaturesList() {
 
 function SwitchToAnnualPlan( {
 	plan,
-	onChangePlanLength,
+	onChangeSelection,
 	linkText,
 }: {
 	plan: ResponseCartProduct;
-	onChangePlanLength: ( uuid: string, productSlug: string, productId: number ) => void;
+	onChangeSelection: (
+		uuid: string,
+		productSlug: string,
+		productId: number,
+		volume?: number
+	) => void;
 	linkText?: React.ReactNode;
 } ) {
 	const translate = useTranslate();
 	const handleClick = () => {
 		const annualPlan = getPlan( getYearlyPlanByMonthly( plan.product_slug ) );
 		if ( annualPlan ) {
-			onChangePlanLength?.( plan.uuid, annualPlan.getStoreSlug(), annualPlan.getProductId() );
+			onChangeSelection?.( plan.uuid, annualPlan.getStoreSlug(), annualPlan.getProductId() );
 		}
 	};
 	const text = linkText ?? translate( 'Switch to an annual plan and save!' );
@@ -329,6 +340,10 @@ function CheckoutSummaryFeaturesList( props: {
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
 
+	const hasEmailInCart = responseCart.products.some(
+		( product ) => isGoogleWorkspace( product ) || isTitanMail( product )
+	);
+
 	// Check for domains
 	const domains = responseCart.products.filter(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
@@ -359,8 +374,6 @@ function CheckoutSummaryFeaturesList( props: {
 	const hasDomainTransferProduct = responseCart.products.some( ( product ) =>
 		isDomainTransfer( product )
 	);
-
-	usePresalesChat( 'wpcom', hasDomainTransferProduct );
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
@@ -404,6 +417,13 @@ function CheckoutSummaryFeaturesList( props: {
 						{ translate( 'Private domain registration and SSL certificate included for free' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</>
+			) }
+
+			{ ! hasPlanInCart && hasEmailInCart && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-support-email" />
+					{ translate( '24/7 support via email' ) }
+				</CheckoutSummaryFeaturesListItem>
 			) }
 
 			{ ( ! hasPlanInCart || hasDomainTransferProduct ) && (
@@ -639,7 +659,12 @@ function CheckoutSummaryChatIfAvailable( props: {
 
 function CheckoutSummaryAnnualUpsell( props: {
 	plan: ResponseCartProduct;
-	onChangePlanLength: ( uuid: string, productSlug: string, productId: number ) => void;
+	onChangeSelection: (
+		uuid: string,
+		productSlug: string,
+		productId: number,
+		volume?: number
+	) => void;
 } ) {
 	const translate = useTranslate();
 	const productSlug = props.plan?.product_slug;
@@ -653,7 +678,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 			<CheckoutSummaryFeaturesTitle>
 				<SwitchToAnnualPlan
 					plan={ props.plan }
-					onChangePlanLength={ props.onChangePlanLength }
+					onChangeSelection={ props.onChangeSelection }
 					linkText={ translate( 'Included with an annual plan' ) }
 				/>
 			</CheckoutSummaryFeaturesTitle>
@@ -669,7 +694,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 					</CheckoutSummaryFeaturesListItem>
 				) }
 			</CheckoutSummaryFeaturesListWrapper>
-			<SwitchToAnnualPlan plan={ props.plan } onChangePlanLength={ props.onChangePlanLength } />
+			<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
 		</CheckoutSummaryFeaturesUpsell>
 	);
 }

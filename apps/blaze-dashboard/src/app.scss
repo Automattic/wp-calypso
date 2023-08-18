@@ -7,6 +7,12 @@
 @import "./styles/typography.scss";
 
 .jp-blaze-dashboard {
+	.promote-post-notice {
+		margin: 0;
+		border: none;
+		box-shadow: none;
+	}
+
 	.promote-post-i2 {
 		.jetpack-header {
 			padding: 0;
@@ -96,18 +102,20 @@
 		}
 
 		// Post table
+		// the important rules below are to override the styles from the AB experiment that is running in calypso
+		// check history and remove when the experiment is over
 		.post-item__post-promote-button {
 			color: var(--color-accent) !important;
-			border: 1.5px solid var(--color-accent);
+			border: 1.5px solid var(--color-accent) !important;
 			border-radius: 4px;
 			font-weight: 600;
 			font-size: 0.75rem;
-			background-color: var(--color-surface);
+			background-color: var(--color-surface) !important;
 
 			&:hover {
 				text-decoration: underline;
-				color: var(--color-accent);
-				background-color: var(--color-surface);
+				color: var(--color-accent) !important;
+				background-color: var(--color-surface) !important;
 			}
 		}
 

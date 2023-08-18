@@ -1,11 +1,17 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteMonitoringBarChart } from './components/site-monitoring-bar-chart';
-import { useMetricsBarChartData } from './components/site-monitoring-bar-chart/use-metrics-bar-chart-data';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
+import {
+	FirstChartTooltip,
+	HttpChartTooltip,
+	withSeries,
+} from './components/site-monitoring-line-chart/line-chart-tooltip';
+import { timeHighlightPlugin } from './components/site-monitoring-line-chart/time-highlight-plugin';
+import { tooltipsPlugin } from './components/site-monitoring-line-chart/uplot-tooltip-plugin';
+import { useSiteMetricsStatusCodesData } from './components/site-monitoring-line-chart/use-site-metrics-status-codes-data';
 import { SiteMonitoringPieChart } from './components/site-monitoring-pie-chart';
 import { calculateTimeRange, TimeDateChartControls } from './components/time-range-picker';
 import { MetricsType, DimensionParams, PeriodData, useSiteMetricsQuery } from './use-metrics-query';
@@ -44,10 +50,16 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
-	const { data } = useSiteMetricsQuery( siteId, {
+	const { data: requestsData, isLoading } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
 		metric: metric || 'requests_persec',
+	} );
+
+	const { data: responseTimeData } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'response_time_average',
 	} );
 
 	// Function to get the dimension value for a specific key and period
@@ -66,17 +78,38 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 
 	// Process the data in the format accepted by uPlot
 	const formattedData =
-		data?.data?.periods?.reduce(
-			( acc, period ) => {
-				acc[ 0 ].push( period.timestamp );
-				acc[ 1 ].push( getDimensionValue( period ) );
+		requestsData?.data?.periods?.reduce(
+			( acc, period, index ) => {
+				const timestamp = period.timestamp;
+
+				// Check if the timestamp is already in the arrays, if not, push it
+				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
+					acc[ 0 ].push( timestamp );
+
+					const requestsPerSecondValue = getDimensionValue( period );
+					if ( requestsPerSecondValue !== null ) {
+						const requestsPerMinuteValue = requestsPerSecondValue * 60; // Convert to requests per minute
+						acc[ 1 ].push( requestsPerMinuteValue ); // Push RPM value into the array
+					}
+					// Add response time data as a green line
+					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
+						const responseTimeAverageValue = getDimensionValue(
+							responseTimeData.data.periods[ index ]
+						);
+						if ( responseTimeAverageValue !== null ) {
+							acc[ 2 ].push( responseTimeAverageValue * 1000 ); // Convert to response time average in milliseconds
+						}
+					}
+				}
+
 				return acc;
 			},
-			[ [], [] ] as Array< Array< number | null > > // Define the correct initial value type
-		) || ( [ [], [] ] as Array< Array< number | null > > ); // Return a default value when data is not available yet
+			[ [], [], [] ] as Array< Array< number | null > > // Adjust the initial value with placeholders for both lines
+		) || ( [ [], [], [] ] as Array< Array< number | null > > ); // Return default value when data is not available yet
 
 	return {
 		formattedData,
+		isLoading,
 	};
 }
 
@@ -118,24 +151,102 @@ function useAggregateSiteMetricsData(
 
 function getFormattedDataForPieChart(
 	data: Record< string, number >,
-	labels: Record< string, string >
+	labels: Record<
+		string,
+		{
+			name: string;
+			className?: string;
+		}
+	>
 ) {
 	return Object.keys( data ).map( ( key ) => {
-		const name = labels[ key ] || key;
+		const name = labels[ key ]?.name || key;
+		const className = labels[ key ]?.className || key;
 		return {
 			name,
+			className,
 			value: data[ key ],
 			description: undefined,
 		};
 	} );
 }
+export interface HTTPCodeSerie {
+	statusCode: number;
+	fill: string;
+	label: string;
+	stroke: string;
+}
+
+const useSuccessHttpCodeSeries = () => {
+	const { __ } = useI18n();
+	const series: HTTPCodeSerie[] = [
+		{
+			statusCode: 200,
+			fill: 'rgba(104, 179, 232, 0.1)',
+			label: __( '200: OK Response' ),
+			stroke: 'rgba(104, 179, 232, 1)',
+		},
+		{
+			statusCode: 301,
+			fill: 'rgba(235, 101, 148, 0.2)',
+			label: __( '301: Moved Permanently' ),
+			stroke: 'rgba(235, 101, 148, 1)',
+		},
+		{
+			statusCode: 302,
+			fill: 'rgba(9, 181, 133, 0.1)',
+			label: __( '302: Moved Temporarily' ),
+			stroke: 'rgba(9, 181, 133, 1)',
+		},
+	];
+	const statusCodes = series.map( ( { statusCode } ) => statusCode );
+	return { series, statusCodes };
+};
+
+const useErrorHttpCodeSeries = () => {
+	const { __ } = useI18n();
+	const series: HTTPCodeSerie[] = [
+		{
+			statusCode: 400,
+			fill: 'rgba(242, 215, 107, 0.1)',
+			label: __( '400: Bad Request' ),
+			stroke: 'rgba(242, 215, 107, 1)',
+		},
+		{
+			statusCode: 401,
+			fill: 'rgba(140, 143, 148, 0.1)',
+			label: __( '401: Unauthorized Request' ),
+			stroke: 'rgba(140, 143, 148, 1)',
+		},
+		{
+			statusCode: 403,
+			fill: 'rgba(104, 179, 232, 0.1)',
+			label: __( '403: Forbidden Request' ),
+			stroke: 'rgba(104, 179, 232, 1)',
+		},
+		{
+			statusCode: 404,
+			fill: 'rgba(9, 181, 133, 0.1)',
+			label: __( '404: Not Found Request' ),
+			stroke: 'rgba(9, 181, 133, 1)',
+		},
+		{
+			statusCode: 500,
+			fill: 'rgba(235, 101, 148, 0.1)',
+			label: __( '500: Internal server error' ),
+			stroke: 'rgba(235, 101, 148, 1)',
+		},
+	];
+	const statusCodes = series.map( ( { statusCode } ) => statusCode );
+	return { series, statusCodes };
+};
 
 export const MetricsTab = () => {
 	const { __ } = useI18n();
-	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
-	const { formattedData } = useSiteMetricsData( timeRange );
+	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( timeRange );
 	const { formattedData: cacheHitMissFormattedData } = useAggregateSiteMetricsData(
 		timeRange,
 		'requests_persec',
@@ -146,57 +257,135 @@ export const MetricsTab = () => {
 		'requests_persec',
 		'page_renderer'
 	);
-	const statusCodeRequestsProps = useMetricsBarChartData( {
-		siteId: useSelector( getSelectedSiteId ),
+	const successHttpCodes = useSuccessHttpCodeSeries();
+	const { data: dataForSuccessCodesChart } = useSiteMetricsStatusCodesData(
 		timeRange,
-	} );
+		successHttpCodes.statusCodes
+	);
+	const errorHttpCodes = useErrorHttpCodeSeries();
+	const { data: dataForErrorCodesChart } = useSiteMetricsStatusCodesData(
+		timeRange,
+		errorHttpCodes.statusCodes
+	);
+
+	const startDate = moment( timeRange.start * 1000 );
+	const endDate = moment( timeRange.end * 1000 );
+	let dateRange = null;
+
+	if ( endDate.isSame( startDate, 'day' ) ) {
+		dateRange = endDate.format( 'LL' );
+		dateRange = (
+			<>
+				<span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
+	} else {
+		dateRange = (
+			<>
+				<span>{ startDate.format( 'LL' ) }</span> - <span>{ endDate.format( 'LL' ) }</span>
+			</>
+		);
+	}
+
 	return (
 		<div className="site-monitoring-metrics-tab">
-			<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
+			<div className="site-monitoring-time-controls__container">
+				<div className="site-monitoring-time-controls__title">{ dateRange }</div>
+				<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
+			</div>
 			<SiteMonitoringLineChart
-				title={ __( 'Requests per minute & average response time' ) }
-				tooltip={ translate(
-					'{{strong}}Requests per minute:{{/strong}} a line representing the number of requests received every minute.{{br/}}{{br/}}{{strong}}Average Response Time{{/strong}}: a line that indicates the average time taken to respond to a request within that minute.',
-					{
-						components: {
-							br: <br />,
-							strong: <strong />,
-						},
-					}
-				) }
+				timeRange={ timeRange }
+				title={ __( 'Server performance' ) }
+				subtitle={ __( 'Requests per minute and average server response time' ) }
 				data={ formattedData as uPlot.AlignedData }
+				series={ [
+					{
+						fill: 'rgba(6, 117, 196, 0.1)',
+						label: __( 'Requests per minute' ),
+						stroke: '#0675C4',
+					},
+					{
+						fill: 'rgba(222, 177, 0, 0.2)',
+						label: __( 'Average response time (ms)' ),
+						stroke: 'rgba(222, 177, 0, 1)',
+						scale: 'average-response-time',
+						unit: 'ms',
+					},
+				] }
+				isLoading={ isLoadingLineChart }
+				options={ {
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( FirstChartTooltip, {
+							position: 'followCursor',
+						} ),
+					],
+				} }
 			></SiteMonitoringLineChart>
 			<div className="site-monitoring__pie-charts">
 				<SiteMonitoringPieChart
-					title={ __( 'Cache hit/miss' ) }
-					tooltip={ __(
-						'Percentage of cache hits versus cache misses. A hit occurs when the requested data can be found in the cache, reducing the need to obtain it from the original source.'
-					) }
+					title={ __( 'Cache efficiency' ) }
+					subtitle={ __( 'Percentage of cache hits versus cache misses' ) }
 					className="site-monitoring-cache-pie-chart"
 					data={ getFormattedDataForPieChart( cacheHitMissFormattedData, {
-						0: 'Cache miss',
-						1: 'Cache hit',
-					} ) }
+						1: {
+							name: 'Cache hit',
+							className: 'cache-hit',
+						},
+						0: {
+							name: 'Cache miss',
+							className: 'cache-miss',
+						},
+					} ).reverse() }
+					fixedOrder
 				></SiteMonitoringPieChart>
 				<SiteMonitoringPieChart
-					title={ __( 'PHP vs. static content served' ) }
-					tooltip={ __(
-						'Percentages showing the ratio of dynamic versus static content. Dynamic content is the content generated using database information.'
-					) }
+					title={ __( 'Response types' ) }
+					subtitle={ __( 'Percentage of dynamic versus static responses' ) }
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
-						php: 'PHP',
-						static: 'Static',
+						php: {
+							name: 'Dynamic',
+							className: 'dynamic',
+						},
+						static: {
+							name: 'Static',
+							className: 'static',
+						},
 					} ) }
+					fixedOrder
 				></SiteMonitoringPieChart>
 			</div>
-			<SiteMonitoringBarChart
-				title={ __( 'Requests by HTTP response code' ) }
-				tooltip={ __(
-					'Number of requests categorized by their HTTP response code. Hover over each entry in the legend for detailed information.'
-				) }
-				{ ...statusCodeRequestsProps }
-			/>
+			<SiteMonitoringLineChart
+				timeRange={ timeRange }
+				title={ __( 'Successful HTTP responses' ) }
+				subtitle={ __( 'Requests completed without errors by the server' ) }
+				data={ dataForSuccessCodesChart as uPlot.AlignedData }
+				series={ successHttpCodes.series }
+				options={ {
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( withSeries( HttpChartTooltip, successHttpCodes.series ), {
+							position: 'followCursor',
+						} ),
+					],
+				} }
+			></SiteMonitoringLineChart>
+			<SiteMonitoringLineChart
+				timeRange={ timeRange }
+				title={ __( 'Unsuccessful HTTP responses' ) }
+				subtitle={ __( 'Requests that encountered errors or issues during processing' ) }
+				data={ dataForErrorCodesChart as uPlot.AlignedData }
+				series={ errorHttpCodes.series }
+				options={ {
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( withSeries( HttpChartTooltip, errorHttpCodes.series ), {
+							position: 'followCursor',
+						} ),
+					],
+				} }
+			></SiteMonitoringLineChart>
 		</div>
 	);
 };

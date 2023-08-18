@@ -25,15 +25,18 @@ export class EditorTemplateModalComponent {
 	 * Select a template category from the sidebar of options.
 	 *
 	 * @param {TemplateCategory} category Name of the category to select.
+	 * @param {number} timeout Timeout for the action.
 	 */
-	async selectTemplateCategory( category: TemplateCategory ): Promise< void > {
+	async selectTemplateCategory( category: TemplateCategory, timeout: number ): Promise< void > {
 		const editorParent = await this.editor.parent();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await editorParent
 				.locator( '.page-pattern-modal__mobile-category-dropdown' )
-				.selectOption( category.toLowerCase() );
+				.selectOption( category.toLowerCase(), { timeout: timeout } );
 		} else {
-			await editorParent.getByRole( 'menuitem', { name: category, exact: true } ).click();
+			await editorParent
+				.getByRole( 'menuitem', { name: category, exact: true } )
+				.click( { timeout: timeout } );
 		}
 	}
 
@@ -41,10 +44,13 @@ export class EditorTemplateModalComponent {
 	 * Select a template from the grid of options.
 	 *
 	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param {number} timeout Timeout for the action.
 	 */
-	async selectTemplate( label: string ): Promise< void > {
+	async selectTemplate( label: string, timeout: number ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		await editorParent.getByRole( 'option', { name: label, exact: true } ).click();
+		await editorParent
+			.getByRole( 'option', { name: label, exact: true } )
+			.click( { timeout: timeout } );
 	}
 
 	/**

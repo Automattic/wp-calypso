@@ -9,6 +9,7 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { siteColumns } from '../../utils';
 import SiteTable from '../index';
 import type { SiteData } from '../../types';
@@ -145,16 +146,16 @@ describe( '<SiteTable>', () => {
 		);
 
 		const backupEle = getByTestId( `row-${ blogId }-backup` );
-		expect( backupEle.getAttribute( 'href' ) ).toEqual( `/backup/${ siteUrl }` );
+		expect( backupEle.getAttribute( 'href' ) ).toEqual( `/backup/${ urlToSlug( siteUrl ) }` );
 		expect( getByText( /failed/i ) ).toBeInTheDocument();
 
 		const scanEle = getByTestId( `row-${ blogId }-scan` );
-		expect( scanEle.getAttribute( 'href' ) ).toEqual( `/scan/${ siteUrl }` );
+		expect( scanEle.getAttribute( 'href' ) ).toEqual( `/scan/${ urlToSlug( siteUrl ) }` );
 		expect( getByText( `${ scanThreats } Threats` ) ).toBeInTheDocument();
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );
 		expect( pluginEle.getAttribute( 'href' ) ).toEqual(
-			`https://wordpress.com/plugins/updates/${ siteUrl }`
+			`https://wordpress.com/plugins/updates/${ urlToSlug( siteUrl ) }`
 		);
 		expect( getByText( `${ pluginUpdates.length } Available` ) ).toBeInTheDocument();
 	} );

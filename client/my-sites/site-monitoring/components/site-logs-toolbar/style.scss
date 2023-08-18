@@ -1,5 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 .site-logs-toolbar {
 	margin-bottom: 1.5em;
+	@include break-wide {
+		display: flex;
+		gap: 16px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.components-toggle-control {
+		display: inline-block;
+	}
 
 	.site-logs-toolbar__top-row {
 		display: flex;

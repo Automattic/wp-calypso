@@ -1,16 +1,24 @@
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
+import { Icon } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import BulkSelect from 'calypso/components/bulk-select';
 
 interface FileBrowserHeaderProps {
 	setShowCheckboxes: ( enabled: boolean ) => void;
 	showCheckboxes: boolean;
+	currentlySelected: number;
+	totalElements: number;
+	onToggleAll: ( checkedState?: boolean ) => void;
 }
 
 const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 	setShowCheckboxes,
 	showCheckboxes,
+	currentlySelected,
+	totalElements,
+	onToggleAll,
 } ) => {
 	const translate = useTranslate();
 	const onSelectClick = () => {
@@ -19,25 +27,62 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 	const onCancelClick = () => {
 		setShowCheckboxes( false );
 	};
+	const onDownloadClick = () => {
+		alert( 'Not yet implemented' );
+	};
+	const onRestoreClick = () => {
+		alert( 'Not yet implemented' );
+	};
 
 	return (
 		<div className="file-browser-header">
 			{ ! showCheckboxes && (
-				<Button
-					className="file-browser-header__select-button"
-					onClick={ onSelectClick }
-					variant="secondary"
-				>
-					{ translate( 'Select' ) }
-				</Button>
+				<div className="file-browser-header__select">
+					<Button className="file-browser-header__select-button" onClick={ onSelectClick } compact>
+						{ translate( 'Select' ) }
+					</Button>
+					<div className="file-browser-header__select-info">
+						{ translate( 'Select individual files to restore or download' ) }
+					</div>
+				</div>
 			) }
 			{ showCheckboxes && (
-				<Button
-					className="file-browser-header__cancel-button"
-					icon={ close }
-					onClick={ onCancelClick }
-					variant="secondary"
-				/>
+				<div className="file-browser-header__selecting">
+					<BulkSelect
+						className="file-browser-header__bulk-select"
+						totalElements={ totalElements }
+						selectedElements={ currentlySelected }
+						onToggle={ onToggleAll }
+					/>
+					<div className="file-browser-header__selecting-info">
+						{ translate( 'files selected' ) }
+					</div>
+					<Button
+						className="file-browser-header__download-button"
+						onClick={ onDownloadClick }
+						compact
+						disabled={ currentlySelected === 0 }
+					>
+						{ translate( 'Download files' ) }
+					</Button>
+					<Button
+						className="file-browser-header__restore-button"
+						onClick={ onRestoreClick }
+						primary
+						compact
+						disabled={ currentlySelected === 0 }
+					>
+						{ translate( 'Restore files' ) }
+					</Button>
+					<Button
+						className="file-browser-header__cancel-button"
+						onClick={ onCancelClick }
+						borderless
+						compact
+					>
+						<Icon icon={ close } />
+					</Button>
+				</div>
 			) }
 		</div>
 	);

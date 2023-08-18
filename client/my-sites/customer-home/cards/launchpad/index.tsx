@@ -1,27 +1,31 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
 import { updateLaunchpadSettings, useLaunchpad } from '@automattic/data-stores';
-import { Launchpad, Task } from '@automattic/launchpad';
+import { Launchpad, PermittedActions, Task, setUpActionsForTasks } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ShareSiteModal from '../../components/share-site-modal';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
-	taskFilter: ( tasks: Task[] ) => Task[];
+	extraActions?: PermittedActions;
 }
 
 const CustomerHomeLaunchpad = ( {
 	checklistSlug,
-	taskFilter,
+	extraActions = {},
 }: CustomerHomeLaunchpadProps ): JSX.Element => {
+	const launchpadContext = 'customer-home';
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
+
+	const site = useSelector( ( state: AppState ) => siteId && getSite( state as object, siteId ) );
 
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
@@ -33,9 +37,27 @@ const CustomerHomeLaunchpad = ( {
 		setIsDismissed( initialIsChecklistDismissed );
 	}, [ initialIsChecklistDismissed ] );
 
+	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
+
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const tasklistCompleted = completedSteps === numberOfSteps;
+	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
+	const hasShareSiteTask = checklist?.some( ( task: Task ) => task.id === 'share_site' );
+
+	const defaultExtraActions = {
+		...( hasShareSiteTask ? { setShareSiteModalIsOpen } : {} ),
+		...extraActions,
+	};
+
+	const taskFilter = ( tasks: Task[] ) => {
+		return setUpActionsForTasks( {
+			tasks,
+			siteSlug,
+			tracksData,
+			extraActions: defaultExtraActions,
+		} );
+	};
 
 	useEffect( () => {
 		// Record task list view as a whole.
@@ -85,6 +107,10 @@ const CustomerHomeLaunchpad = ( {
 							className="themes__activation-modal-close-icon"
 							borderless
 							onClick={ () => {
+								if ( ! siteSlug ) {
+									return;
+								}
+
 								updateLaunchpadSettings( siteSlug, {
 									is_checklist_dismissed: {
 										slug: checklistSlug,
@@ -105,6 +131,9 @@ const CustomerHomeLaunchpad = ( {
 					</div>
 				) }
 			</div>
+			{ shareSiteModalIsOpen && site && (
+				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
+			) }
 			<Launchpad siteSlug={ siteSlug } checklistSlug={ checklistSlug } taskFilter={ taskFilter } />
 		</div>
 	);

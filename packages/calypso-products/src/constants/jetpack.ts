@@ -34,8 +34,8 @@ export const PRODUCT_JETPACK_SOCIAL_BASIC = 'jetpack_social_basic_yearly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY = 'jetpack_social_basic_monthly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED = 'jetpack_social_advanced_yearly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY = 'jetpack_social_advanced_monthly';
-export const PRODUCT_JETPACK_STATS_YEARLY = 'jetpack_stats_yearly';
 export const PRODUCT_JETPACK_STATS_MONTHLY = 'jetpack_stats_monthly';
+export const PRODUCT_JETPACK_STATS_YEARLY = 'jetpack_stats_yearly';
 export const PRODUCT_JETPACK_STATS_PWYW_YEARLY = 'jetpack_stats_pwyw_yearly';
 export const PRODUCT_JETPACK_STATS_FREE = 'jetpack_stats_free_yearly';
 export const PRODUCT_JETPACK_MONITOR_YEARLY = 'jetpack_monitor_yearly';
@@ -287,6 +287,10 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		monthly: PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	},
 	{
+		yearly: PRODUCT_JETPACK_STATS_YEARLY,
+		monthly: PRODUCT_JETPACK_STATS_MONTHLY,
+	},
+	{
 		yearly: PRODUCT_JETPACK_AI_YEARLY,
 		monthly: PRODUCT_JETPACK_AI_MONTHLY,
 	},
@@ -342,6 +346,10 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	},
 	[ PRODUCT_JETPACK_MONITOR_YEARLY ]: {
 		relatedProduct: PRODUCT_JETPACK_MONITOR_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_STATS_YEARLY ]: {
+		relatedProduct: PRODUCT_JETPACK_STATS_MONTHLY,
 		ratio: 12,
 	},
 };
@@ -707,6 +715,16 @@ export const JETPACK_PRODUCT_RECCOMENDATION_MAP: Record< string, string[] > = {
 		JETPACK_TAG_FOR_MEMBERSHIP_SITES,
 		JETPACK_TAG_FOR_ONLINE_FORUMS,
 		JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+	],
+	[ PRODUCT_JETPACK_STATS_YEARLY ]: [
+		JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+		JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
+		JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	],
+	[ PRODUCT_JETPACK_STATS_MONTHLY ]: [
+		JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+		JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
+		JETPACK_TAG_FOR_MEMBERSHIP_SITES,
 	],
 	[ PRODUCT_JETPACK_AI_MONTHLY ]: [
 		JETPACK_TAG_FOR_BLOGGERS,

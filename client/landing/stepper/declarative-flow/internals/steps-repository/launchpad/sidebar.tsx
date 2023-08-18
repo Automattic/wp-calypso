@@ -3,6 +3,7 @@ import { Badge, Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
 import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState, useEffect } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
@@ -14,6 +15,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import wpcom from 'calypso/lib/wp';
+import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -64,6 +66,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ stripeConnectUrl, setStripeConnectUrl ] = useState< string >( '' );
+	const [ showPlansModal, setShowPlansModal ] = useState( false );
+	const queryClient = useQueryClient();
 
 	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
 		useSiteGlobalStylesStatus( site?.ID );
@@ -102,6 +106,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
 			globalStylesInPersonalPlan ? PLAN_PERSONAL : PLAN_PREMIUM,
+			setShowPlansModal,
+			queryClient,
 			goToStep,
 			flow,
 			isEmailVerified,
@@ -240,6 +246,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 					taskFilter={ () => enhancedTasks || [] }
 					makeLastTaskPrimaryAction={ true }
 				/>
+				{ showPlansModal && site?.ID && (
+					<RecurringPaymentsPlanAddEditModal
+						closeDialog={ () => setShowPlansModal( false ) }
+						product={ { subscribe_as_site_subscriber: true, price: 5 } }
+						siteId={ site.ID }
+					/>
+				) }
 			</div>
 		</div>
 	);

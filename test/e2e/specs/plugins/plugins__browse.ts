@@ -91,7 +91,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 	it.each( [
 		'WooCommerce',
-		'Yoast SEO',
 		'MailPoet – emails and newsletters in WordPress',
 		'Jetpack CRM – Clients, Invoices, Leads, & Billing for WordPress',
 	] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {

@@ -29,12 +29,12 @@
 	"dependencies": {
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/block-editor": "^12.6.0",
-		"@wordpress/blocks": "^12.15.0",
-		"@wordpress/components": "^25.4.0",
-		"@wordpress/compose": "^6.15.0",
-		"@wordpress/element": "^5.15.0",
-		"@wordpress/i18n": "^4.38.0",
+		"@wordpress/block-editor": "^12.7.0",
+		"@wordpress/blocks": "^12.16.0",
+		"@wordpress/components": "^25.5.0",
+		"@wordpress/compose": "^6.16.0",
+		"@wordpress/element": "^5.16.0",
+		"@wordpress/i18n": "^4.39.0",
 		"classnames": "^2.3.1",
 		"debug": "^4.3.3",
 		"lodash": "^4.17.21"
@@ -42,16 +42,16 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/react": "^14.0.0",
-		"jest": "^29.6.1",
+		"jest": "^29.6.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"resize-observer-polyfill": "1.5.1",
 		"typescript": "^5.1.6"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.8.0",
+		"@wordpress/data": "^9.9.0",
 		"react": "^18.2.0",
-		"redux": "^4.1.2"
+		"redux": "^4.2.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

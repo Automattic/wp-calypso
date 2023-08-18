@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
@@ -126,7 +125,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	// If Jetpack Stats is directly or indirectly owned, continue, otherwise make it available.
 	if (
-		config.isEnabled( 'stats/paid-stats' ) &&
 		! ownedProducts.some( ( ownedProduct ) =>
 			( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
 		)

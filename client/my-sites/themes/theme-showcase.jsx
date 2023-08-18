@@ -8,13 +8,10 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SearchThemes from 'calypso/components/search-themes';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
@@ -33,8 +30,6 @@ import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
-	getThemeShowcaseDescription,
-	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
@@ -47,9 +42,8 @@ import {
 	trackClick,
 	localizeThemesPath,
 } from './helpers';
-import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
-import ThemesHeader from './themes-header';
+import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
@@ -338,6 +332,7 @@ class ThemeShowcase extends Component {
 		} else {
 			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 			newUrlParams.filter = [ filterWithoutSubjects, subjectTerm ].join( '+' );
+			newUrlParams.category = null;
 		}
 
 		page( this.constructUrl( newUrlParams ) );
@@ -450,22 +445,14 @@ class ThemeShowcase extends Component {
 			filter,
 			isLoggedIn,
 			pathName,
-			title,
 			filterString,
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
+		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-
-		const metas = [
-			{ name: 'description', property: 'og:description', content: this.props.description },
-			{ property: 'og:title', content: title },
-			{ property: 'og:url', content: canonicalUrl },
-			{ property: 'og:type', content: 'website' },
-			{ property: 'og:site_name', content: 'WordPress.com' },
-		];
 
 		const themeProps = {
 			forceWpOrgSearch: true,
@@ -517,44 +504,17 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase">
-				<DocumentHead title={ title } meta={ metas } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<ThemesHeader
-					title={
-						isLoggedIn
-							? translate( 'Themes' )
-							: translate( 'Find the perfect theme for your website' )
-					}
-					description={
-						isLoggedIn
-							? translate(
-									'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-									{
-										components: {
-											learnMoreLink: (
-												<InlineSupportLink supportContext="themes" showIcon={ false } />
-											),
-										},
-									}
-							  )
-							: translate(
-									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, activate the one that is right for you.'
-							  )
-					}
-				>
-					{ isLoggedIn && (
-						<>
-							<div className="themes__install-theme-button-container">
-								<InstallThemeButton />
-							</div>
-							<ScreenOptionsTab wpAdminPath="themes.php" />
-						</>
-					) }
-				</ThemesHeader>
+				<ThemeShowcaseHeader
+					canonicalUrl={ canonicalUrl }
+					filter={ this.props.filter }
+					tier={ this.props.tier }
+					vertical={ this.props.vertical }
+				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
@@ -574,7 +534,7 @@ class ThemeShowcase extends Component {
 									className="section-nav-tabs__dropdown"
 									onSelect={ this.onTierSelect }
 									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, this.props.tier || 'all' ) || '',
+										args: getOptionLabel( tiers, tier ) || '',
 									} ) }
 									options={ tiers }
 									initialSelected={ this.props.tier }
@@ -610,7 +570,7 @@ class ThemeShowcase extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+const mapStateToProps = ( state, { siteId, filter } ) => {
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
@@ -618,8 +578,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
-		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),

@@ -4,10 +4,6 @@
 import { render, screen } from '@testing-library/react';
 import { RegistrantExtraInfoUkForm } from '../uk-form';
 
-jest.mock( '@automattic/components', () => ( {
-	FormInputValidation: ( { text } ) => <div data-testid="test-validation">{ text }</div>,
-} ) );
-
 const mockProps = {
 	contactDetails: {},
 	step: 'uk',
@@ -31,7 +27,7 @@ describe( 'uk-form', () => {
 			};
 
 			render( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			expect( screen.getByTestId( 'test-validation' ) ).toHaveTextContent( 'Test error message.' );
+			expect( screen.getByText( 'Test error message.' ) );
 		} );
 
 		test( 'should render multiple registration errors', () => {
@@ -52,7 +48,7 @@ describe( 'uk-form', () => {
 			};
 
 			render( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			expect( screen.getAllByTestId( 'test-validation' ) ).toHaveLength( 3 );
+			expect( screen.getAllByRole( 'alert' ) ).toHaveLength( 3 );
 		} );
 	} );
 } );

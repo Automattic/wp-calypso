@@ -47,6 +47,11 @@
 		> * {
 			z-index: 2;
 		}
+
+		img,
+		svg {
+			min-width: 400px;
+		}
 	}
 
 	.stats-purchase-wizard__card-inner--right-background {
@@ -207,6 +212,19 @@
 			color: var(--jp-white);
 			background: var(--jp-green-50);
 			border-color: var(--jp-green-50);
+		}
+	}
+
+	.stats-purchase-wizard__card-panel-title {
+		h2 > button {
+			cursor: auto;
+
+		}
+
+		&.stats-purchase-wizard__card-panel--type-selected {
+			h2 > button {
+				cursor: pointer;
+			}
 		}
 	}
 

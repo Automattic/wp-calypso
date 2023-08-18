@@ -3,7 +3,18 @@ import { capitalize } from 'lodash';
 import { ImporterPlatform } from './types';
 
 export const CAPTURE_URL_RGX =
-	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
+	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/i;
+
+/**
+ * This regex is a bit more lenient than CAPTURE_URL_RGX, and is used for receiving any redirects like:
+ * - http://www.example.com
+ * - https://www.example.com
+ * - http://localhost:9090
+ * - http://somethingelse
+ * - http://somecampaing#withhash?andquery
+ */
+export const CAPTURE_URL_RGX_SOFT =
+	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;
 
 const platformMap: { [ key in ImporterPlatform ]: string } = {
 	wordpress: 'WordPress',

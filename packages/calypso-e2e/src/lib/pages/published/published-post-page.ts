@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 
 const selectors = {
 	// Post body
@@ -10,6 +10,7 @@ const selectors = {
  */
 export class PublishedPostPage {
 	private page: Page;
+	private anchor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -18,6 +19,7 @@ export class PublishedPostPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.anchor = this.page.getByRole( 'main' );
 	}
 
 	/**
@@ -83,10 +85,13 @@ export class PublishedPostPage {
 	 *
 	 * @param {string} title Title text to check.
 	 */
-	async validateTitle( title: string ): Promise< void > {
-		const dash = /-/g;
-		title = title.replace( dash, '–' );
-		await this.page.waitForSelector( `:text("${ title }")` );
+	async validateTitle( title: string ) {
+		// The dash is used in the title of the published post is
+		// not a "standard" dash, instead being U+2013.
+		// We have to replace any expectatiosn of "normal" dashes
+		// with the U+2013 version, otherwise the match will fail.
+		const sanitizedTitle = title.replace( /-/g, '–' );
+		await this.anchor.getByRole( 'heading', { name: sanitizedTitle } ).waitFor();
 	}
 
 	/**

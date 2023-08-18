@@ -1,6 +1,6 @@
+import { Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
-import Count from 'calypso/components/count';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
