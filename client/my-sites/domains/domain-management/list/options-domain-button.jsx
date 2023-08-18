@@ -75,7 +75,7 @@ class AddDomainButton extends Component {
 						href="/setup/domain-transfer"
 						onClick={ this.trackMenuClick }
 					>
-						{ translate( 'Transfer one or more domains' ) }
+						{ translate( 'Transfer domains' ) }
 					</PopoverMenuItem>
 				</Fragment>
 			);
