@@ -209,7 +209,7 @@ class PostCommentList extends Component {
 		}
 	};
 
-	renderComment = ( commentId ) => {
+	renderComment = ( commentId, commentsTree ) => {
 		if ( ! commentId ) {
 			return null;
 		}
@@ -217,7 +217,7 @@ class PostCommentList extends Component {
 		return (
 			<PostComment
 				post={ this.props.post }
-				commentsTree={ this.props.commentsTree }
+				commentsTree={ commentsTree }
 				commentId={ commentId }
 				key={ commentId }
 				activeReplyCommentId={ this.props.activeReplyCommentId }
@@ -313,7 +313,12 @@ class PostCommentList extends Component {
 		}
 	};
 
-	renderCommentsList = ( commentIds, displayedCommentsCount, actualCommentsCount ) => {
+	renderCommentsList = (
+		commentIds,
+		displayedCommentsCount,
+		actualCommentsCount,
+		commentsTree
+	) => {
 		return (
 			<>
 				{
@@ -340,7 +345,7 @@ class PostCommentList extends Component {
 					)
 				}
 				<ol className="comments__list is-root">
-					{ commentIds.map( ( commentId ) => this.renderComment( commentId ) ) }
+					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTree ) ) }
 				</ol>
 			</>
 		);
@@ -365,26 +370,6 @@ class PostCommentList extends Component {
 	};
 
 	/**
-	 * Gets most recent comment from a commentTree
-	 *
-	 * @param {Object<Object>} commentsTree The tree of comment objects.
-	 * @returns {Object} The most recent comment.
-	 */
-	getMostRecentComment = ( commentsTree ) => {
-		let mostRecentByDate;
-		for ( const key in commentsTree ) {
-			const currentObject = commentsTree[ key ];
-			if (
-				( ! mostRecentByDate && currentObject.data?.date ) ||
-				currentObject.data?.date > mostRecentByDate?.data?.date
-			) {
-				mostRecentByDate = currentObject;
-			}
-		}
-		return mostRecentByDate;
-	};
-
-	/**
 	 * Gets comments for display
 	 *
 	 * @param {Array<number>} commentIds The top level commentIds to take from
@@ -394,23 +379,6 @@ class PostCommentList extends Component {
 	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {
 			return null;
-		}
-
-		if ( this.props.expandableView && ! this.state.isExpanded ) {
-			// Note this gets the most recent comment/reply of any nested level and shows it.
-			// However, the expanded view renders based on the most recent top level comments. That
-			// means when we expand from only seeing the most recent found here, it may not be
-			// rendered in the longer list if it is a reply but not a reply to one of the most
-			// recent top level comments. Do we find the top level comment corresponding to this
-			// most recent and push it into displayedComments? Do we want to redo how
-			// displayedComments get comments in this view altogether and show comments trees with
-			// the most recent replies and not necessarily the most recent top level comments? Other?
-			const mostRecentComment = this.getMostRecentComment( this.props.commentsTree );
-
-			return {
-				displayedComments: mostRecentComment ? [ mostRecentComment.data.ID ] : [],
-				displayedCommentsCount: mostRecentComment ? 1 : 0,
-			};
 		}
 
 		const displayedComments = numberToTake ? commentIds.slice( numberToTake * -1 ) : [];
@@ -448,6 +416,42 @@ class PostCommentList extends Component {
 
 	handleFilterClick = ( commentsFilter ) => () => this.props.onFilterChange( commentsFilter );
 
+	getDisplayedCollapsedInlineComments = ( commentsTree ) => {
+		// Only take the most recent comment.
+		const lastCommentArr = commentsTree.children.slice( -1 );
+		const lastComment = lastCommentArr[ 0 ];
+
+		// Setup a new comment tree to customize replies rendered.
+		const newCommentTree = { children: lastCommentArr };
+		newCommentTree[ lastComment ] = {
+			data: commentsTree[ lastComment ]?.data,
+			children: [],
+		};
+
+		// Go through the children of the last comment to find replies by the current user.
+		const authorReplies = commentsTree[ lastComment ]?.children.filter( ( replyId ) => {
+			return commentsTree[ replyId ]?.data.author?.ID === this.props.currentUserId;
+		} );
+
+		// Add the latest reply of the current user to the comments children array and comment tree.
+		if ( authorReplies?.length ) {
+			const lastReply = authorReplies.pop();
+			newCommentTree[ lastComment ].children.push( lastReply );
+			newCommentTree[ lastReply ] = {
+				data: commentsTree[ lastReply ].data,
+				// Ensure no children since this is the last reply we want rendered.
+				children: [],
+			};
+		}
+
+		return {
+			displayedComments: lastCommentArr,
+			// We will show all comments in the newCommentTree, subtract 1 for the children array.
+			displayedCommentsCount: Object.keys( newCommentTree ).length - 1,
+			commentsTreeToUse: newCommentTree,
+		};
+	};
+
 	render() {
 		if ( ! this.props.commentsTree ) {
 			return null;
@@ -460,6 +464,7 @@ class PostCommentList extends Component {
 			showFilters,
 			commentCount,
 			followSource,
+			expandableView,
 		} = this.props;
 		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } =
 			this.props.commentsFetchingStatus;
@@ -468,10 +473,15 @@ class PostCommentList extends Component {
 			? Infinity
 			: this.state.amountOfCommentsToTake;
 
-		const { displayedComments, displayedCommentsCount } = this.getDisplayedComments(
-			commentsTree.children,
-			amountOfCommentsToTake
-		);
+		const isCollapsedInline = expandableView && ! this.state.isExpanded;
+
+		const {
+			displayedComments,
+			displayedCommentsCount,
+			commentsTreeToUse = commentsTree,
+		} = isCollapsedInline
+			? this.getDisplayedCollapsedInlineComments( commentsTree )
+			: this.getDisplayedComments( commentsTree.children, amountOfCommentsToTake );
 
 		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
@@ -581,7 +591,8 @@ class PostCommentList extends Component {
 				{ this.renderCommentsList(
 					displayedComments,
 					displayedCommentsCount,
-					actualCommentsCount
+					actualCommentsCount,
+					commentsTreeToUse
 				) }
 				{ showViewMoreComments && this.props.startingCommentId && (
 					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
@@ -595,7 +606,7 @@ class PostCommentList extends Component {
 				) }
 				<PostCommentFormRoot
 					post={ this.props.post }
-					commentsTree={ this.props.commentsTree }
+					commentsTree={ commentsTreeToUse }
 					commentText={ this.state.commentText }
 					onUpdateCommentText={ this.onUpdateCommentText }
 					activeReplyCommentId={ this.props.activeReplyCommentId }
@@ -615,6 +626,7 @@ export default connect(
 		return {
 			siteId,
 			postId,
+			currentUserId: authorId,
 			canUserModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 			commentsTree: getPostCommentsTree(
 				state,
