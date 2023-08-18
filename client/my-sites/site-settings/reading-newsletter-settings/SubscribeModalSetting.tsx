@@ -3,10 +3,9 @@ import { addQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
 type SubscribeModalSettingProps = {
@@ -31,16 +30,14 @@ export const SubscribeModalSetting = ( {
 	disabled,
 }: SubscribeModalSettingProps ) => {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	// Construct a link to edit the modal
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const siteEditorUrl = useSelector( ( state: object ) =>
-		getSiteEditorUrl( state, selectedSiteId )
-	);
-	const themeSlug = useSelector( ( state ) =>
-		getSiteOption( state, selectedSiteId, 'theme_slug' )
-	);
-	const subscribeModalEditorUrl = themeSlug
+	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+	const themeSlug = activeThemeData?.[ 0 ]?.template; // stylesheet | template;
+	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
+	const subscribeModalEditorUrl = isFSEActive
 		? addQueryArgs( siteEditorUrl, {
 				postType: 'wp_template_part',
 				postId: `${ themeSlug }//jetpack-subscribe-modal`,
