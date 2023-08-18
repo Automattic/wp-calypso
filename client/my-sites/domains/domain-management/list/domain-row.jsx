@@ -32,6 +32,7 @@ import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-manage
 import {
 	createSiteFromDomainOnly,
 	domainManagementDns,
+	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
@@ -96,13 +97,13 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { site, domain } = this.props;
+		const { site, domain, currentRoute } = this.props;
 		return (
 			<div className="domain-row__site-cell">
 				<Button
 					href={
 						site?.options?.is_domain_only
-							? `/domains/manage/${ domain.domain }/edit`
+							? domainManagementEdit( domain.blogId, domain.domain, currentRoute )
 							: '/home/' + domain.blogId
 					}
 					plain
