@@ -3,15 +3,12 @@
 .domains-table {
 	th {
 		padding-bottom: 16px;
-		border-bottom: 1px solid #f0f0f0;
-
 		color: var(--studio-gray-60);
 		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 500;
 		line-height: 20px;
 	}
-
 	td {
 		padding: 20px 0;
 		border-bottom: 1px solid var(--studio-gray-5);

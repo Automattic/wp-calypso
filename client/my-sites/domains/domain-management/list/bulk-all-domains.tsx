@@ -1,4 +1,4 @@
-import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
+import { DomainsTable, useDomainsTable, DomainsTableColumn } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -7,6 +7,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
+import { getSimpleSortFunctionBy } from './utils';
 
 interface BulkAllDomainsProps {
 	analyticsPath: string;
@@ -41,13 +42,24 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
 	];
 
+	const domainsTableColumns: DomainsTableColumn[] = [
+		{
+			name: 'domain',
+			label: translate( 'Domain' ),
+			isSortable: true,
+			initialSortDirection: 'asc',
+			supportsOrderSwitching: true,
+			sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		},
+	];
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				<DomainsTable domains={ domains } />
+				<DomainsTable domains={ domains } columns={ domainsTableColumns } />
 			</Main>
 			<UsePresalesChat />
 		</>
