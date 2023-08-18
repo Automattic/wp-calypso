@@ -6,7 +6,6 @@ import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -42,7 +41,6 @@ import {
 } from 'calypso/my-sites/email/paths';
 import { useOdieAssistantContext } from 'calypso/odie/context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './domain-row.scss';
 
@@ -570,9 +568,4 @@ function withOdieAssistantContext( Component ) {
 	};
 }
 
-export default connect( ( state ) => {
-	const currentRoute = getCurrentRoute( state );
-	return {
-		currentRoute,
-	};
-} )( withOdieAssistantContext( localize( DomainRow ) ) );
+export default withOdieAssistantContext( localize( DomainRow ) );

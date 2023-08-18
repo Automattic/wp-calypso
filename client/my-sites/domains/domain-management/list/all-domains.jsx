@@ -420,7 +420,7 @@ class AllDomains extends Component {
 					isContactEmailEditContext={ isContactEmailEditContext }
 					goToEditDomainRoot={ this.handleDomainItemClick }
 					isLoading={ this.isLoading() }
-					purchases={ purchases }
+					// purchases={ purchases }
 					sites={ sites }
 					requestingSiteDomains={ requestingSiteDomains }
 					hasLoadedPurchases={ hasLoadedUserPurchases }
@@ -694,7 +694,7 @@ class AllDomains extends Component {
 				<div>{ this.renderActionForm() }</div>
 				<div>
 					<QueryAllDomains />
-					<QueryUserPurchases />
+					{ /* <QueryUserPurchases />*/ }
 					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
@@ -771,8 +771,8 @@ export default connect( ( state, { context } ) => {
 		filteredDomainsList: getFilteredDomainsList( state, context ),
 		hasAllSitesLoaded: hasAllSitesList( state ),
 		isContactEmailEditContext: ListAllActions.editContactEmail === action,
-		purchases: getUserPurchases( state ) || [],
-		hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
+		// purchases: getUserPurchases( state ) || [],
+		// hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
 		requestingFlatDomains: isRequestingAllDomains( state ),
 		requestingSiteDomains: getAllRequestingSiteDomains( state ),
 		sites,

@@ -105,7 +105,7 @@ class DomainsTable extends PureComponent {
 			hasLoadedPurchases,
 			isLoading,
 			primaryDomainIndex,
-			purchases,
+			// purchases,
 			settingPrimaryDomain,
 			shouldUpgradeToMakeDomainPrimary,
 			requestingSiteDomains,
@@ -146,7 +146,7 @@ class DomainsTable extends PureComponent {
 		}
 
 		const domainListItems = domainItems.map( ( domain, index ) => {
-			const purchase = purchases?.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) );
+			// const purchase = purchases?.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) );
 			const selectedSite = sites?.[ domain.blogId ];
 			const isLoadingDomainDetails = requestingSiteDomains?.[ domain.blogId ];
 
@@ -181,7 +181,7 @@ class DomainsTable extends PureComponent {
 							shouldUpgradeToMakeDomainPrimary && shouldUpgradeToMakeDomainPrimary( domain )
 						}
 						hasLoadedPurchases={ hasLoadedPurchases }
-						purchase={ purchase }
+						// purchase={ purchase }
 					/>
 				</Fragment>
 			);
