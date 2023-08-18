@@ -17,7 +17,9 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	requestAddProduct,
+	requestAddTier,
 	requestUpdateProduct,
+	requestUpdateTier,
 } from 'calypso/state/memberships/product-list/actions';
 import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -238,14 +240,29 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				type: editedMarkAsDonation,
 				is_editable: true,
 			};
-			dispatch(
-				requestAddProduct(
-					siteId ?? selectedSiteId,
-					product_details,
-					translate( 'Added "%s" payment plan.', { args: editedProductName } )
-				)
-			);
-			recordTracksEvent( 'calypso_earn_page_payment_added', product_details );
+
+			if ( editedPostPaidNewsletter ) {
+				const annual_product_details = { ...product_details, price: currentAnnualPrice };
+				dispatch(
+					requestAddTier(
+						siteId ?? selectedSiteId,
+						product,
+						annualProduct,
+						translate( 'Added "%s" payment plan.', { args: editedProductName } )
+					)
+				);
+				recordTracksEvent( 'calypso_earn_page_payment_added', product_details );
+				recordTracksEvent( 'calypso_earn_page_payment_added', annual_product_details );
+			} else {
+				dispatch(
+					requestAddProduct(
+						siteId ?? selectedSiteId,
+						product_details,
+						translate( 'Added "%s" payment plan.', { args: editedProductName } )
+					)
+				);
+				recordTracksEvent( 'calypso_earn_page_payment_added', product_details );
+			}
 		} else if ( reason === 'submit' && product && product.ID ) {
 			const product_details = {
 				ID: product.ID,
@@ -260,13 +277,24 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				type: editedMarkAsDonation,
 				is_editable: true,
 			};
-			dispatch(
-				requestUpdateProduct(
-					siteId ?? selectedSiteId,
-					product_details,
-					translate( 'Updated "%s" payment plan.', { args: editedProductName } )
-				)
-			);
+
+			if ( editedPostPaidNewsletter ) {
+				dispatch(
+					requestUpdateProduct(
+						siteId ?? selectedSiteId,
+						product_details,
+						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
+					)
+				);
+			} else {
+				dispatch(
+					requestUpdateProduct(
+						siteId ?? selectedSiteId,
+						product_details,
+						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
+					)
+				);
+			}
 		}
 		closeDialog();
 	};

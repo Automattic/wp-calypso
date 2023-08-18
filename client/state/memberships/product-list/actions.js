@@ -159,3 +159,27 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 			} );
 	};
 };
+
+const addNewAnnualProduct = ( annualProduct, siteId, noticeText ) => ( membershipProduct ) => {
+	debugger;
+	const newMembershipProductId = membershipProduct.id;
+	annualProduct.type = 'tier-' + newMembershipProductId;
+	return requestAddProduct( siteId, annualProduct, noticeText );
+};
+
+export const requestAddTier = ( siteId, product, annualProduct, noticeText ) => {
+	return requestAddProduct( siteId, product, noticeText ).then(
+		addNewAnnualProduct( annualProduct, siteId, noticeText )
+	);
+};
+
+export const requestUpdateTier = ( siteId, product, annualProduct, noticeText ) => {
+	return requestUpdateProduct( siteId, product, noticeText ).then( ( membershipProduct ) => {
+		if ( annualProduct.ID ) {
+			return requestUpdateProduct( siteId, annualProduct, noticeText );
+		}
+
+		// The annual product does not exist yet
+		return addNewAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct );
+	} );
+};
