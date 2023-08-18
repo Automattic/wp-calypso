@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { values } from 'lodash';
 import PropTypes from 'prop-types';
@@ -15,6 +16,7 @@ class SearchStreamHeader extends Component {
 		wideDisplay: PropTypes.bool,
 		selected: PropTypes.oneOf( values( SEARCH_TYPES ) ),
 		onSelection: PropTypes.func,
+		isLoggedIn: PropTypes.bool,
 	};
 	static defaultProps = {
 		onSelection: noop,
@@ -25,11 +27,15 @@ class SearchStreamHeader extends Component {
 	handleSitesSelected = () => this.props.onSelection( SEARCH_TYPES.SITES );
 
 	render() {
-		const { translate, wideDisplay, selected } = this.props;
+		const { translate, wideDisplay, selected, isLoggedIn } = this.props;
 
 		if ( wideDisplay ) {
 			return (
-				<ul className="search-stream__headers">
+				<ul
+					className={ classNames( 'search-stream__headers', {
+						'search-stream__headers-logged-out': ! isLoggedIn,
+					} ) }
+				>
 					<li className="search-stream__post-header">{ translate( 'Posts' ) }</li>
 					<li className="search-stream__site-header">{ translate( 'Sites' ) }</li>
 				</ul>
