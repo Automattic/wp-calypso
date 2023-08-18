@@ -98,10 +98,17 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { domain } = this.props;
+		const { site, domain } = this.props;
 		return (
 			<div className="domain-row__site-cell">
-				<Button href={ '/home/' + domain.blogId } plain>
+				<Button
+					href={
+						site?.options?.is_domain_only
+							? `/domains/manage/${ domain.domain }/edit`
+							: '/home/' + domain.blogId
+					}
+					plain
+				>
 					{ domain.blogName }
 				</Button>
 			</div>

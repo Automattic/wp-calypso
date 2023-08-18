@@ -16,14 +16,14 @@ const RedirectComponent = ( { domainName }: { domainName: string } ) => {
 			},
 			() => {
 				// Default: redirect to all domains management
-				page( domainManagementAllRoot() );
+				page.redirect( domainManagementAllRoot() );
 			}
 		);
 	}, [ domainName ] );
 
 	useEffect( () => {
 		if ( isDomainLoaded && siteSlug ) {
-			page( domainManagementEdit( siteSlug, domainName, null ) );
+			page.redirect( domainManagementEdit( siteSlug, domainName, null ) );
 		}
 	} );
 
