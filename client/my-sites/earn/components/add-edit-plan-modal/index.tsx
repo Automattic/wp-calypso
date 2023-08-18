@@ -284,11 +284,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			<FormSectionHeading>{ editing ? editPlan : addPlan }</FormSectionHeading>
 			<div className="memberships__dialog-sections">
 				<FormFieldset>
-					<ToggleControl
-						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
-						checked={ editedPostPaidNewsletter }
-						label={ translate( 'Paid newsletter tier' ) }
-					/>
 					<FormLabel htmlFor="title">
 						{ editedPostPaidNewsletter
 							? translate( 'Describe the tier name' )
@@ -422,6 +417,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						</div>
 					</FormFieldset>
 				) }
+				<FormFieldset className="memberships__dialog-sections-type">
+					<ToggleControl
+						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
+						checked={ editedPostPaidNewsletter }
+						label={ translate( 'Paid newsletter tier' ) }
+					/>
+				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-message">
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
