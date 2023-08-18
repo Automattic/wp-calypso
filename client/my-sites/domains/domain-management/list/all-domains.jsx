@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -26,10 +25,6 @@ import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
-import {
-	getUserPurchases,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -265,7 +260,6 @@ class AllDomains extends Component {
 		}
 
 		const {
-			purchases,
 			sites,
 			currentRoute,
 			requestingSiteDomains,
@@ -694,7 +688,6 @@ class AllDomains extends Component {
 				<div>{ this.renderActionForm() }</div>
 				<div>
 					<QueryAllDomains />
-					{ /* <QueryUserPurchases />*/ }
 					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>

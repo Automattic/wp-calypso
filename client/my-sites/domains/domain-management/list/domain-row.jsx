@@ -512,9 +512,6 @@ class DomainRow extends PureComponent {
 			}
 		);
 
-		console.log( domain );
-		console.log( domain.blogName );
-
 		return (
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
