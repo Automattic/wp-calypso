@@ -2,7 +2,6 @@ import { ProgressBar, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -12,9 +11,8 @@ import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-butto
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
 import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
+import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AuthorMappingPane from './author-mapping-pane';
 
 import './importing-pane.scss';
@@ -101,7 +99,6 @@ export class ImportingPane extends PureComponent {
 			ID: PropTypes.number.isRequired,
 			name: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
-			site_slug: PropTypes.bool.isRequired,
 		} ).isRequired,
 		sourceType: PropTypes.string.isRequired,
 	};
@@ -188,21 +185,13 @@ export class ImportingPane extends PureComponent {
 	handleOnMap = ( source, target ) =>
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
-	onClickViewPosts = () => {
+	onClickSubstackDone = ( action ) => {
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			importer_id: this.props.importerStatus.type,
-			action: 'view-posts',
+			action,
 		} );
 
-		page( `/posts/${ this.props.siteSlug || '' }` );
-	};
-
-	onClickImportSubscribers = () => {
-		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
-			importer_id: this.props.importerStatus.type,
-			action: 'add-subscribers',
-		} );
-		page( `/subscribers/${ this.props.siteSlug || '' }#add-subscribers` );
+		this.props.resetImport( this.props.site.ID, this.props.importerStatus.importerId );
 	};
 
 	renderActionButtons = ( sourceType ) => {
@@ -223,10 +212,17 @@ export class ImportingPane extends PureComponent {
 		if ( sourceType === 'Substack' && isFinished ) {
 			return (
 				<ImporterActionButtonContainer justifyContentCenter>
-					<ImporterActionButton onClick={ this.onClickImportSubscribers } primary>
+					<ImporterActionButton
+						href={ `/subscribers/${ this.props.site.slug || '' }#add-subscribers` }
+						onClick={ () => this.onClickSubstackDone( 'add-subscribers' ) }
+						primary
+					>
 						{ this.props.translate( 'Import Substack subscribers' ) }
 					</ImporterActionButton>
-					<ImporterActionButton onClick={ this.onClickViewPosts }>
+					<ImporterActionButton
+						href={ `/posts/${ this.props.site.slug || '' }` }
+						onClick={ () => this.onClickSubstackDone( 'view-posts' ) }
+					>
 						{ this.props.translate( 'View imported content' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
@@ -318,14 +314,10 @@ export class ImportingPane extends PureComponent {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
-	{
-		loadTrackingTool,
-		mapAuthor,
-		recordTracksEvent,
-		startImporting,
-	}
-)( localize( ImportingPane ) );
+export default connect( null, {
+	loadTrackingTool,
+	mapAuthor,
+	recordTracksEvent,
+	resetImport,
+	startImporting,
+} )( localize( ImportingPane ) );

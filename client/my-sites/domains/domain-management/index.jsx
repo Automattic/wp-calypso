@@ -1,5 +1,6 @@
 import AllDomains from 'calypso/my-sites/domains/domain-management/list/all-domains';
 import BulkAllDomains from 'calypso/my-sites/domains/domain-management/list/bulk-all-domains';
+import BulkSiteDomains from 'calypso/my-sites/domains/domain-management/list/bulk-site-domains';
 import SiteDomains from 'calypso/my-sites/domains/domain-management/list/site-domains';
 import ContactsPrivacy from './contacts-privacy';
 import AddDnsRecord from './dns/add-dns-record';
@@ -32,4 +33,5 @@ export default {
 	TransferDomainToOtherSite,
 	TransferDomainToOtherUser,
 	BulkAllDomains,
+	BulkSiteDomains,
 };

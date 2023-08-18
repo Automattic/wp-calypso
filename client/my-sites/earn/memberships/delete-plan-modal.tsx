@@ -1,16 +1,33 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestDeleteProduct } from 'calypso/state/memberships/product-list/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { Product } from '../types';
 
-const RecurringPaymentsPlanDeleteModal = ( { closeDialog, deleteProduct, product, siteId } ) => {
+type RecurringPaymentsPlanDeleteModalProps = {
+	closeDialog: () => void;
+	product: Product;
+};
+
+const RecurringPaymentsPlanDeleteModal = ( {
+	closeDialog,
+	product,
+}: RecurringPaymentsPlanDeleteModalProps ) => {
 	const translate = useTranslate();
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const dispatch = useDispatch();
 
-	const onClose = ( reason ) => {
-		if ( reason === 'delete' ) {
-			deleteProduct( siteId, product, translate( '"%s" was deleted.', { args: product.title } ) );
+	const onClose = ( action?: string ) => {
+		if ( action === 'delete' ) {
+			dispatch(
+				requestDeleteProduct(
+					siteId,
+					product,
+					translate( '"%s" was deleted.', { args: product.title } )
+				)
+			);
 		}
 		closeDialog();
 	};
@@ -48,9 +65,4 @@ const RecurringPaymentsPlanDeleteModal = ( { closeDialog, deleteProduct, product
 	);
 };
 
-export default connect(
-	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
-	} ),
-	{ deleteProduct: requestDeleteProduct }
-)( RecurringPaymentsPlanDeleteModal );
+export default RecurringPaymentsPlanDeleteModal;

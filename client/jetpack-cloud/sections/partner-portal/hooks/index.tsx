@@ -208,7 +208,7 @@ export function useProductDescription( productSlug: string ): {
 					'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
 				);
 				break;
-			case 'woocommerce-product-minxmax-quantities':
+			case 'woocommerce-minmax-quantities':
 				description = translate(
 					'Minimum and maximum quantity rules for products, orders, and categories.'
 				);

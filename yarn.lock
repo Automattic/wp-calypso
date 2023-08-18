@@ -438,7 +438,9 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
     i18n-calypso: "workspace:^"
+    react-dom: ^18.2.0
     typescript: ^5.1.6
   peerDependencies:
     react: ^18.2.0
