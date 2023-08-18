@@ -8,6 +8,8 @@ import {
 	planMatches,
 	TERM_ANNUALLY,
 	type PlanSlug,
+	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
@@ -39,6 +41,9 @@ type PlanFeaturesActionsButtonProps = {
 	planTitle: TranslateResult;
 	planSlug: PlanSlug;
 	flowName?: string | null;
+	/**
+	 * @deprecated this prop is no longer external
+	 */
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
 	isWooExpressPlusPlan?: boolean;
@@ -349,7 +354,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	planTitle,
 	planSlug,
 	flowName,
-	buttonText,
 	isWpcomEnterpriseGridPlan = false,
 	isWooExpressPlusPlan = false,
 	selectedSiteSlug,
@@ -360,6 +364,21 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const { gridPlansIndex } = usePlansGridContext();
+
+	// Leaving it `undefined` makes it use the default label
+	let buttonText;
+
+	if (
+		isWooExpressMediumPlan( planSlug ) &&
+		! isWooExpressMediumPlan( currentSitePlanSlug || '' )
+	) {
+		buttonText = translate( 'Get Performance', { textOnly: true } );
+	} else if (
+		isWooExpressSmallPlan( planSlug ) &&
+		! isWooExpressSmallPlan( currentSitePlanSlug || '' )
+	) {
+		buttonText = translate( 'Get Essential', { textOnly: true } );
+	}
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
 		'is-current-plan': current,
