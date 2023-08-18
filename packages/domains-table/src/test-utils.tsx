@@ -9,11 +9,14 @@ export function renderWithProvider(
 ): RenderResult {
 	const queryClient = new QueryClient();
 
-	const Wrapper = ( { children }: { children: React.ReactElement } ) => (
-		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-	);
+	const Wrapper = ( { children }: { children: React.ReactElement } ) => {
+		if ( renderOptions.wrapper ) {
+			children = <renderOptions.wrapper>{ children }</renderOptions.wrapper>;
+		}
+		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+	};
 
-	return rtlRender( ui, { wrapper: Wrapper, ...renderOptions } );
+	return rtlRender( ui, { ...renderOptions, wrapper: Wrapper } );
 }
 
 export function testDomain(

@@ -7,11 +7,13 @@ import { renderWithProvider, testDomain, testPartialDomain } from '../../test-ut
 import { DomainsTableRow } from '../domains-table-row';
 
 const render = ( el ) =>
-	renderWithProvider(
-		<table>
-			<tbody>{ el }</tbody>
-		</table>
-	);
+	renderWithProvider( el, {
+		wrapper: ( { children } ) => (
+			<table>
+				<tbody>{ children }</tbody>
+			</table>
+		),
+	} );
 
 test( 'domain name is rendered in the row', () => {
 	render(
@@ -55,7 +57,7 @@ test( 'domain name links to management interface', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render(
+	const { rerender } = render(
 		<DomainsTableRow
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
@@ -79,6 +81,20 @@ test( 'domain name links to management interface', async () => {
 			'/domains/manage/all/example.com/edit/example.com'
 		)
 	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/example.com/edit/example.com'
+	);
 } );
 
 test( 'non primary domain uses the primary domain as the site slug in its link URL', async () => {
@@ -97,7 +113,7 @@ test( 'non primary domain uses the primary domain as the site slug in its link U
 		domains: [ fullDomain, primaryDomain ],
 	} );
 
-	render(
+	const { rerender } = render(
 		<DomainsTableRow
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
@@ -112,6 +128,20 @@ test( 'non primary domain uses the primary domain as the site slug in its link U
 			'href',
 			'/domains/manage/all/not-primary-domain.blog/edit/primary-domain.blog'
 		)
+	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'not-primary-domain.blog' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/not-primary-domain.blog/edit/primary-domain.blog'
 	);
 } );
 
@@ -135,7 +165,7 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 		domains: [ fullRedirectDomain, fullUnmappedDomain ],
 	} );
 
-	render(
+	const { rerender } = render(
 		<DomainsTableRow
 			domain={ partialRedirectDomain }
 			fetchSiteDomains={ fetchSiteDomains }
@@ -150,6 +180,20 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 			'href',
 			'/domains/manage/all/redirect.blog/redirect/redirect-site.wordpress.com'
 		)
+	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialRedirectDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'redirect.blog' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/redirect.blog/redirect/redirect-site.wordpress.com'
 	);
 } );
 
@@ -166,7 +210,7 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render(
+	const { rerender } = render(
 		<DomainsTableRow
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
@@ -181,5 +225,19 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 			'href',
 			'/domains/manage/all/example.com/transfer/in/example.com'
 		)
+	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/example.com/transfer/in/example.com'
 	);
 } );

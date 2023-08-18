@@ -48,7 +48,7 @@ export function DomainsTableRow( {
 				{ isManageableDomain ? (
 					<a
 						className="domains-table__domain-link"
-						href={ domainManagementLink( domain, siteSlug ) }
+						href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
 					>
 						{ domain.domain }
 					</a>
@@ -60,7 +60,11 @@ export function DomainsTableRow( {
 	);
 }
 
-function domainManagementLink( { domain, type }: PartialDomainData, siteSlug: string ) {
+function domainManagementLink(
+	{ domain, type }: PartialDomainData,
+	siteSlug: string,
+	isAllSitesView: boolean
+) {
 	const viewSlug = domainManagementViewSlug( type );
 
 	// Encodes only real domain names and not parameter placeholders
@@ -70,7 +74,11 @@ function domainManagementLink( { domain, type }: PartialDomainData, siteSlug: st
 		domain = encodeURIComponent( encodeURIComponent( domain ) );
 	}
 
-	return `/domains/manage/all/${ domain }/${ viewSlug }/${ siteSlug }`;
+	if ( isAllSitesView ) {
+		return `/domains/manage/all/${ domain }/${ viewSlug }/${ siteSlug }`;
+	}
+
+	return `/domains/manage/${ domain }/${ viewSlug }/${ siteSlug }`;
 }
 
 function domainManagementViewSlug( type: PartialDomainData[ 'type' ] ) {
