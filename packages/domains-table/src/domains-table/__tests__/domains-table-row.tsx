@@ -7,14 +7,18 @@ import { renderWithProvider, testDomain, testPartialDomain } from '../../test-ut
 import { DomainsTableRow } from '../domains-table-row';
 
 const render = ( el ) =>
-	renderWithProvider(
-		<table>
-			<tbody>{ el }</tbody>
-		</table>
-	);
+	renderWithProvider( el, {
+		wrapper: ( { children } ) => (
+			<table>
+				<tbody>{ children }</tbody>
+			</table>
+		),
+	} );
 
 test( 'domain name is rendered in the row', () => {
-	render( <DomainsTableRow domain={ testPartialDomain( { domain: 'example1.com' } ) } /> );
+	render(
+		<DomainsTableRow domain={ testPartialDomain( { domain: 'example1.com' } ) } isAllSitesView />
+	);
 
 	expect( screen.queryByText( 'example1.com' ) ).toBeInTheDocument();
 } );
@@ -31,7 +35,13 @@ test( 'wpcom domains do not link to management interface', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	expect( screen.getByText( 'example.wordpress.com' ) ).not.toHaveAttribute( 'href' );
 } );
@@ -47,7 +57,13 @@ test( 'domain name links to management interface', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	const { rerender } = render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	// Expect the row to fetch detailed domain data
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
@@ -64,6 +80,20 @@ test( 'domain name links to management interface', async () => {
 			'href',
 			'/domains/manage/all/example.com/edit/example.com'
 		)
+	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/example.com/edit/example.com'
 	);
 } );
 
@@ -83,7 +113,13 @@ test( 'non primary domain uses the primary domain as the site slug in its link U
 		domains: [ fullDomain, primaryDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	const { rerender } = render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
 
@@ -92,6 +128,20 @@ test( 'non primary domain uses the primary domain as the site slug in its link U
 			'href',
 			'/domains/manage/all/not-primary-domain.blog/edit/primary-domain.blog'
 		)
+	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'not-primary-domain.blog' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/not-primary-domain.blog/edit/primary-domain.blog'
 	);
 } );
 
@@ -115,8 +165,12 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 		domains: [ fullRedirectDomain, fullUnmappedDomain ],
 	} );
 
-	render(
-		<DomainsTableRow domain={ partialRedirectDomain } fetchSiteDomains={ fetchSiteDomains } />
+	const { rerender } = render(
+		<DomainsTableRow
+			domain={ partialRedirectDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
 	);
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
@@ -126,6 +180,20 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 			'href',
 			'/domains/manage/all/redirect.blog/redirect/redirect-site.wordpress.com'
 		)
+	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialRedirectDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'redirect.blog' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/redirect.blog/redirect/redirect-site.wordpress.com'
 	);
 } );
 
@@ -142,7 +210,13 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	const { rerender } = render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
 
@@ -151,5 +225,19 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 			'href',
 			'/domains/manage/all/example.com/transfer/in/example.com'
 		)
+	);
+
+	// Test site-specific link
+	rerender(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView={ false }
+		/>
+	);
+
+	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
+		'href',
+		'/domains/manage/example.com/transfer/in/example.com'
 	);
 } );

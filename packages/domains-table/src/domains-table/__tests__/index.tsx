@@ -16,6 +16,7 @@ test( 'all domain names are rendered in the table', () => {
 				testPartialDomain( { domain: 'example2.com' } ),
 				testPartialDomain( { domain: 'example3.com' } ),
 			] }
+			isAllSitesView
 		/>
 	);
 
@@ -23,7 +24,7 @@ test( 'all domain names are rendered in the table', () => {
 	expect( screen.queryByText( 'example2.com' ) ).toBeInTheDocument();
 	expect( screen.queryByText( 'example3.com' ) ).toBeInTheDocument();
 
-	rerender( <DomainsTable domains={ [] } /> );
+	rerender( <DomainsTable domains={ [] } isAllSitesView /> );
 
 	expect( screen.queryByText( 'example1.com' ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'example2.com' ) ).not.toBeInTheDocument();
@@ -56,6 +57,7 @@ test( 'when two domains share the same underlying site, there is only one fetch 
 	render(
 		<DomainsTable
 			domains={ [ primaryPartial, notPrimaryPartial, differentSitePartial ] }
+			isAllSitesView
 			fetchSiteDomains={ fetchSiteDomains }
 		/>
 	);
@@ -90,7 +92,7 @@ test( 'when shouldDisplayPrimaryDomainLabel is true, the primary domain label is
 		<DomainsTable
 			domains={ [ primaryPartial, notPrimaryPartial ] }
 			fetchSiteDomains={ fetchSiteDomains }
-			displayPrimaryDomainLabel
+			isAllSitesView={ false }
 		/>
 	);
 
@@ -109,7 +111,7 @@ test( 'when shouldDisplayPrimaryDomainLabel is true, the primary domain label is
 		<DomainsTable
 			domains={ [ primaryPartial, notPrimaryPartial ] }
 			fetchSiteDomains={ fetchSiteDomains }
-			displayPrimaryDomainLabel={ false }
+			isAllSitesView={ true }
 		/>
 	);
 
