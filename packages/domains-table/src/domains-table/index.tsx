@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useLayoutEffect } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { DomainsTableRow } from './domains-table-row';
@@ -25,6 +25,25 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		sortDirection: 'asc',
 	} );
 
+	const [ selectedDomains, setSelectedDomains ] = useState< PartialDomainData[] >( [] );
+
+	useLayoutEffect( () => {
+		setSelectedDomains( [] );
+	}, [ domains ] );
+
+	const handleSelectDomain = useCallback(
+		( domain: PartialDomainData ) => {
+			if ( selectedDomains.includes( domain ) ) {
+				setSelectedDomains(
+					selectedDomains.filter( ( selectedDomain ) => selectedDomain !== domain )
+				);
+			} else {
+				setSelectedDomains( [ ...selectedDomains, domain ] );
+			}
+		},
+		[ setSelectedDomains, selectedDomains ]
+	);
+
 	if ( ! domains ) {
 		return null;
 	}
@@ -47,12 +66,37 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		} );
 	};
 
+	const hasSelectedDomains = selectedDomains.length > 0;
+	const areAllDomainsSelected = domains.length === selectedDomains.length;
+
+	const getBulkSelectionStatus = () => {
+		if ( hasSelectedDomains && areAllDomainsSelected ) {
+			return 'all-domains';
+		}
+
+		if ( hasSelectedDomains && ! areAllDomainsSelected ) {
+			return 'some-domains';
+		}
+
+		return 'no-domains';
+	};
+
+	const changeBulkSelection = () => {
+		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
+			setSelectedDomains( domains );
+		} else {
+			setSelectedDomains( [] );
+		}
+	};
+
 	return (
 		<table className="domains-table">
 			<DomainsTableHeader
 				columns={ domainsTableColumns }
 				activeSortKey={ sortKey }
 				activeSortDirection={ sortDirection }
+				bulkSelectionStatus={ getBulkSelectionStatus() }
+				onBulkSelectionChange={ changeBulkSelection }
 				onChangeSortOrder={ ( selectedColumn ) => {
 					onSortChange( selectedColumn );
 				} }
@@ -62,6 +106,8 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 					<DomainsTableRow
 						key={ domain.domain }
 						domain={ domain }
+						isSelected={ selectedDomains.includes( domain ) }
+						onSelect={ handleSelectDomain }
 						fetchSiteDomains={ fetchSiteDomains }
 						isAllSitesView={ isAllSitesView }
 					/>

@@ -1,21 +1,33 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 .domains-table {
 	th {
 		padding-bottom: 16px;
-		color: var(--studio-gray-60);
+		border-bottom: 1px solid #f0f0f0;
+		vertical-align: middle;
+
+		color: var( --studio-gray-60 );
 		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 500;
 		line-height: 20px;
 	}
+
+	.domains-table__bulk-action-container {
+		width: 0;
+		min-width: fit-content;
+
+		.components-checkbox-control__input-container {
+			margin-right: 16px;
+		}
+	}
 	td {
 		padding: 20px 0;
-		border-bottom: 1px solid var(--studio-gray-5);
+		border-bottom: 1px solid var( --studio-gray-5 );
 		height: 44px;
 		vertical-align: middle;
 
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 		font-size: $font-body;
 		font-style: normal;
 		font-weight: 500;
@@ -23,10 +35,10 @@
 	}
 
 	.domains-table__domain-link {
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 
 		&:hover {
-			color: var(--color-link);
+			color: var( --color-link );
 		}
 	}
 

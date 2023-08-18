@@ -1,4 +1,5 @@
 import { useSiteDomainsQuery } from '@automattic/data-stores';
+import { CheckboxControl } from '@wordpress/components';
 import { useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
@@ -7,6 +8,8 @@ import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
 	isAllSitesView: boolean;
+	isSelected: boolean;
+	onSelect( domain: PartialDomainData ): void;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -16,6 +19,8 @@ interface DomainsTableRowProps {
 export function DomainsTableRow( {
 	domain,
 	isAllSitesView,
+	isSelected,
+	onSelect,
 	fetchSiteDomains,
 }: DomainsTableRowProps ) {
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -44,6 +49,13 @@ export function DomainsTableRow( {
 
 	return (
 		<tr key={ domain.domain } ref={ ref }>
+			<td>
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					checked={ isSelected }
+					onChange={ () => onSelect( domain ) }
+				/>
+			</td>
 			<td>
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 				{ isManageableDomain ? (
