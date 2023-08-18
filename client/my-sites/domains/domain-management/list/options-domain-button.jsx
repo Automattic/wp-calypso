@@ -67,18 +67,15 @@ class AddDomainButton extends Component {
 		if ( allDomainsList ) {
 			return (
 				<Fragment>
-					<PopoverMenuItem icon="plus" href="/new" onClick={ this.trackMenuClick }>
-						{ translate( 'Add a domain to a new site' ) }
-					</PopoverMenuItem>
 					<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
-						{ translate( 'Add a domain without a site' ) }
+						{ translate( 'Register a new domain' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem
 						icon="domains"
 						href="/setup/domain-transfer"
 						onClick={ this.trackMenuClick }
 					>
-						{ translate( 'Transfer domains' ) }
+						{ translate( 'Transfer one or more domains' ) }
 					</PopoverMenuItem>
 				</Fragment>
 			);
