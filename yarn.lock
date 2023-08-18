@@ -839,7 +839,7 @@ __metadata:
     "@wordpress/npm-package-json-lint-config": ^4.25.0
     eslint-plugin-json-es: ^1.5.7
     esquery: ^1.4.0
-    npm-package-json-lint: ^5.4.2
+    npm-package-json-lint: ^6.0.0
   peerDependencies:
     eslint: ">=8.46.0"
   languageName: unknown
@@ -12655,7 +12655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmiconfig@npm:^8.2.0":
+"cosmiconfig@npm:^8.0.0, cosmiconfig@npm:^8.2.0":
   version: 8.2.0
   resolution: "cosmiconfig@npm:8.2.0"
   dependencies:
@@ -18099,7 +18099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:^5.1.1, ignore@npm:^5.1.8, ignore@npm:^5.1.9, ignore@npm:^5.2.0, ignore@npm:^5.2.1, ignore@npm:^5.2.4":
+"ignore@npm:^5.1.1, ignore@npm:^5.1.8, ignore@npm:^5.2.0, ignore@npm:^5.2.1, ignore@npm:^5.2.4":
   version: 5.2.4
   resolution: "ignore@npm:5.2.4"
   checksum: 7c7cd90edd9fea6e037f9b9da4b01bf0a86b198ce78345f9bbd983929d68ff14830be31111edc5d70c264921f4962404d75b7262b4d9cc3bc12381eccbd03096
@@ -20134,7 +20134,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:^3.0.0, jsonc-parser@npm:^3.2.0":
+"jsonc-parser@npm:^3.2.0":
   version: 3.2.0
   resolution: "jsonc-parser@npm:3.2.0"
   checksum: 5a12d4d04dad381852476872a29dcee03a57439574e4181d91dca71904fcdcc5e8e4706c0a68a2c61ad9810e1e1c5806b5100d52d3e727b78f5cdc595401045b
@@ -21357,25 +21357,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"meow@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "meow@npm:6.1.1"
-  dependencies:
-    "@types/minimist": ^1.2.0
-    camelcase-keys: ^6.2.2
-    decamelize-keys: ^1.1.0
-    hard-rejection: ^2.1.0
-    minimist-options: ^4.0.2
-    normalize-package-data: ^2.5.0
-    read-pkg-up: ^7.0.1
-    redent: ^3.0.0
-    trim-newlines: ^3.0.0
-    type-fest: ^0.13.1
-    yargs-parser: ^18.1.3
-  checksum: ceece1e5e09a53d7bf298ef137477e395a0dd30c8ed1a9980a52caad02eccffd6bce1a5cad4596cd694e7e924e949253f0cc1e7c22073c07ce7b06cfefbcf8be
-  languageName: node
-  linkType: hard
-
 "meow@npm:^9.0.0":
   version: 9.0.0
   resolution: "meow@npm:9.0.0"
@@ -22544,28 +22525,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-package-json-lint@npm:^5.4.2":
-  version: 5.4.2
-  resolution: "npm-package-json-lint@npm:5.4.2"
+"npm-package-json-lint@npm:^6.0.0":
+  version: 6.4.0
+  resolution: "npm-package-json-lint@npm:6.4.0"
   dependencies:
     ajv: ^6.12.6
     ajv-errors: ^1.0.1
     chalk: ^4.1.2
-    cosmiconfig: ^7.0.1
-    debug: ^4.3.2
-    globby: ^11.0.4
-    ignore: ^5.1.9
+    cosmiconfig: ^8.0.0
+    debug: ^4.3.4
+    globby: ^11.1.0
+    ignore: ^5.2.0
     is-plain-obj: ^3.0.0
-    jsonc-parser: ^3.0.0
+    jsonc-parser: ^3.2.0
     log-symbols: ^4.1.0
-    meow: ^6.1.1
+    meow: ^9.0.0
     plur: ^4.0.0
-    semver: ^7.3.5
+    semver: ^7.3.8
     slash: ^3.0.0
     strip-json-comments: ^3.1.1
+    type-fest: ^3.2.0
+    validate-npm-package-name: ^5.0.0
   bin:
-    npmPkgJsonLint: src/cli.js
-  checksum: 757c73b5b62c951892f23c760f4cc0a006140ec545ed3b080d77fb9c1107bfb0b137451abcf12d6084f418f364d86f407fdf5ee7da7a22fe07dbf9bbe97410a1
+    npmPkgJsonLint: dist/cli.js
+  checksum: 3258a8a67a2251fe40198320cd97412a0d41994273f7c53da7caf039a1df521458aa5f512ff43be860d433aaeab28f29e437022bd34b71f524dccb0bc5b2acde
   languageName: node
   linkType: hard
 
@@ -29628,6 +29611,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"type-fest@npm:^3.2.0":
+  version: 3.13.1
+  resolution: "type-fest@npm:3.13.1"
+  checksum: 547d22186f73a8c04590b70dcf63baff390078c75ea8acd366bbd510fd0646e348bd1970e47ecf795b7cff0b41d26e9c475c1fedd6ef5c45c82075fbf916b629
+  languageName: node
+  linkType: hard
+
 "type-is@npm:~1.6.18":
   version: 1.6.18
   resolution: "type-is@npm:1.6.18"
@@ -31745,7 +31735,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^18.1.2, yargs-parser@npm:^18.1.3":
+"yargs-parser@npm:^18.1.2":
   version: 18.1.3
   resolution: "yargs-parser@npm:18.1.3"
   dependencies:
