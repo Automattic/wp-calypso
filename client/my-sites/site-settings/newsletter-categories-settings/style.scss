@@ -2,9 +2,12 @@
 @import "@automattic/typography/styles/variables";
 
 .newsletter-categories-settings {
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
+	&,
+	.newsletter-categories-settings__term-tree-selector {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
 
 	.newsletter-categories-settings__description {
 		color: $studio-gray-70;
@@ -20,7 +23,13 @@
 		line-height: 20px;
 	}
 
-	.term-tree-selector__add-term {
-		margin-bottom: 0;
+	.newsletter-categories-settings__term-tree-selector {
+		&.hidden {
+			display: none;
+		}
+
+		.term-tree-selector__add-term {
+			margin-bottom: 0;
+		}
 	}
 }
