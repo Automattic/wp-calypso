@@ -373,7 +373,7 @@ body.is-focus-sites {
 }
 
 // Ensure reader streams have the neutral background.
-.layout.is-reader-stream {
+.layout.is-section-reader {
 	background: var(--color-neutral-0);
 	min-height: 100vh;
 	.layout__content {

@@ -1,4 +1,3 @@
-import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import page from 'page';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -94,18 +93,4 @@ export function getStreamType( streamKey ) {
 	const indexOfColon = streamKey.indexOf( ':' );
 	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return streamType;
-}
-
-export function isRouteForReaderStream( streamRoute ) {
-	const route = removeLocaleFromPathLocaleInFront( streamRoute );
-
-	// Routes that serve reader streams.
-	const isReaderStreamRouteBase =
-		route.startsWith( '/read' ) ||
-		route.startsWith( '/discover' ) ||
-		route.startsWith( '/activities/likes' ) ||
-		route.startsWith( '/tag/' ) ||
-		route.startsWith( '/tags' );
-
-	return isReaderStreamRouteBase;
 }

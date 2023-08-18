@@ -30,7 +30,6 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { OdieAssistantProvider } from 'calypso/odie/context';
-import { isRouteForReaderStream } from 'calypso/reader/utils';
 import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -252,7 +251,6 @@ class Layout extends Component {
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
-			'is-reader-stream': this.props.isReaderStream,
 			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
 			woo: this.props.isWooCoreProfilerFlow,
@@ -370,7 +368,6 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
-		const isReaderStream = isRouteForReaderStream( currentRoute );
 		const isWooCoreProfilerFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			isWooCommerceCoreProfilerFlow( state );
@@ -413,7 +410,6 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
-			isReaderStream,
 			isWooCoreProfilerFlow,
 			isEligibleForJITM,
 			oauth2Client,
