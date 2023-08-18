@@ -102,6 +102,7 @@ export type PlansIntent =
 	| 'plans-jetpack-app'
 	| 'plans-import'
 	| 'plans-woocommerce'
+	| 'plans-paid-media'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
 	| 'default';
@@ -183,6 +184,9 @@ const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM ];
+			break;
+		case 'plans-paid-media':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-default-wpcom':
 			planTypes = [

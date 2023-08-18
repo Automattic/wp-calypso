@@ -59,7 +59,7 @@ export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
 	couponFieldStateProps,
-	onChangePlanLength,
+	onChangeSelection,
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
@@ -67,7 +67,7 @@ export default function WPCheckoutOrderReview( {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
 	couponFieldStateProps: CouponFieldStateProps;
-	onChangePlanLength?: OnChangeItemVariant;
+	onChangeSelection?: OnChangeItemVariant;
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -141,7 +141,7 @@ export default function WPCheckoutOrderReview( {
 				<WPOrderReviewLineItems
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
-					onChangePlanLength={ onChangePlanLength }
+					onChangeSelection={ onChangeSelection }
 					isSummary={ isSummary }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					responseCart={ responseCart }

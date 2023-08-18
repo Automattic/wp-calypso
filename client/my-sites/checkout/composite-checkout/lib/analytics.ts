@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { captureException } from 'calypso/lib/sentry';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,

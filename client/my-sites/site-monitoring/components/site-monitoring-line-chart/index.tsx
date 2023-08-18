@@ -5,7 +5,6 @@ import { numberFormat } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
-import InfoPopover from 'calypso/components/info-popover';
 import { TimeRange } from '../../metrics-tab';
 import { TIME_RANGE_OPTIONS } from '../time-range-picker';
 
@@ -16,6 +15,7 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	title?: string;
+	subtitle?: string | React.ReactNode;
 	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: uPlot.AlignedData;
@@ -33,6 +33,8 @@ interface SeriesProp {
 	fill: string;
 	label: string;
 	stroke: string;
+	scale?: string;
+	unit?: string;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -67,7 +69,7 @@ function determineTimeRange( timeRange: TimeRange ) {
 
 function createSeries( series: Array< SeriesProp > ) {
 	const { spline } = uPlot.paths;
-	const configuredSeries = series.map( function ( serie ) {
+	const configuredSeries: uPlot.Series[] = series.map( function ( serie ) {
 		return {
 			...serie,
 			...{
@@ -92,9 +94,34 @@ function createSeries( series: Array< SeriesProp > ) {
 	return [ { label: ' ' }, ...configuredSeries ];
 }
 
+function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
+	const serie = series.find( ( serie ) => serie.scale );
+
+	if ( serie?.scale ) {
+		return [
+			{
+				scale: serie.scale,
+				side: 1,
+				grid: {
+					show: false,
+				},
+				stroke: '#787C82',
+				ticks: {
+					show: false,
+				},
+				values: ( u: uPlot, ticks: number[] ) =>
+					ticks.map( ( rawValue ) => {
+						return rawValue + ( serie?.unit ? ' ' + serie.unit : '' );
+					} ),
+			},
+		];
+	}
+	return [];
+}
+
 export const SiteMonitoringLineChart = ( {
 	title,
-	tooltip,
+	subtitle,
 	className,
 	data,
 	legendContainer,
@@ -109,6 +136,7 @@ export const SiteMonitoringLineChart = ( {
 	const localTz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	const options = useMemo( () => {
+		const extraScale = addExtraScaleIfDefined( series );
 		const defaultOptions: uPlot.Options = {
 			class: 'calypso-uplot-chart',
 			...chartDimensions,
@@ -141,26 +169,28 @@ export const SiteMonitoringLineChart = ( {
 					grid: {
 						show: false,
 					},
+					stroke: '#787C82',
 					ticks: {
-						stroke: '#646970',
+						stroke: '#787C82',
 						width: 1,
 						size: 3,
 					},
 				},
 				{
 					// y-axis
-					side: 1, // sets y axis side to left
 					gap: 8,
 					space: 40,
 					size: 50,
+					stroke: '#787C82',
 					grid: {
-						stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
+						stroke: '#DCDCDE',
 						width: 1,
 					},
 					ticks: {
 						show: false,
 					},
 				},
+				...extraScale,
 			],
 			cursor: {
 				x: false,
@@ -176,6 +206,16 @@ export const SiteMonitoringLineChart = ( {
 					},
 					fill: () => '#fff',
 				},
+				drag: {
+					setScale: false,
+				},
+			},
+			select: {
+				show: false,
+				width: 0,
+				height: 0,
+				left: 0,
+				top: 0,
 			},
 			series: createSeries( series ),
 			legend: {
@@ -215,9 +255,7 @@ export const SiteMonitoringLineChart = ( {
 		<div className={ classnames( classes ) }>
 			<header className="site-monitoring__chart-header">
 				<h2 className="site-monitoring__chart-title">{ title }</h2>
-				{ tooltip && (
-					<InfoPopover className="site-monitoring__chart-tooltip">{ tooltip }</InfoPopover>
-				) }
+				{ subtitle && <p className="site-monitoring__chart-subtitle">{ subtitle }</p> }
 			</header>
 			<div ref={ uplotContainer }>
 				{ isLoading && <Spinner /> }

@@ -3,7 +3,7 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products/src';
-import { Button } from '@automattic/components';
+import { Button, Count } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -12,7 +12,6 @@ import { capitalize, find, flow, isEmpty } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';

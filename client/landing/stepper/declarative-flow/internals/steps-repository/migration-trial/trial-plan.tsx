@@ -1,18 +1,19 @@
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
+import { check, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import React, { useState } from 'react';
+import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import useUnsupportedTrialFeatureList from './hooks/use-unsupported-trial-feature-list';
+import useSupportedTrialFeatureList from './hooks/use-supported-trial-feature-list';
 import TrialPlanFeaturesModal from './trial-plan-features-modal';
 import type { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { UserData } from 'calypso/lib/user/user';
@@ -35,7 +36,7 @@ const TrialPlan = function ( props: Props ) {
 		useCheckEligibilityMigrationTrialPlan( site?.ID );
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
 
-	const unsupportedTrialFeatureList = useUnsupportedTrialFeatureList();
+	const trialFeatureList = useSupportedTrialFeatureList();
 	const plan = getPlan( PLAN_BUSINESS );
 	const checkoutUrl = useCheckoutUrl( site.ID, siteSlug );
 	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
@@ -111,40 +112,34 @@ const TrialPlan = function ( props: Props ) {
 				</SubTitle>
 
 				<p>
-					{ createInterpolateElement(
-						sprintf(
-							/* translators: the planName could be "Pro" or "Business" */
-							__(
-								'The 7-day trial includes <a>every feature in the %(planName)s plan</a> with a few exceptions. To enjoy all the features without limits, upgrade to the paid plan at any time before your trial ends.'
-							),
-							{ planName: plan?.getTitle() }
+					{ sprintf(
+						/* translators: the planName could be "Pro" or "Business" */
+						__(
+							'The 7-day trial includes every feature in the %(planName)s plan with a few exceptions. To enjoy all the features without limits, upgrade to the paid plan at any time before your trial ends.'
 						),
-						{
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
-									onClick={ ( e: React.MouseEvent< HTMLElement > ) => {
-										e.preventDefault();
-										setShowPlanFeaturesModal( true );
-									} }
-								/>
-							),
-						}
+						{ planName: plan?.getTitle() }
 					) }
 				</p>
 
 				<div className="trial-plan--details">
-					<div className="trial-plan--details-name">
-						<h3 className="plan-title">{ __( 'Trial' ) }</h3>
-						<h4 className="plan-duration">{ __( '7 days' ) }</h4>
-					</div>
 					<div className="trial-plan--details-features">
 						<ul>
-							{ unsupportedTrialFeatureList.map( ( feature, i ) => (
-								<li key={ i }>{ feature }</li>
+							{ trialFeatureList.map( ( feature, i ) => (
+								<li key={ i }>
+									<Icon size={ 20 } icon={ check } /> { feature }
+								</li>
 							) ) }
 						</ul>
 					</div>
+				</div>
+
+				<div className="trial-plan--details-limitation">
+					<img src={ clockIcon } alt={ __( 'Limit' ) } />
+					<p>
+						<strong>{ __( 'Trial limitations' ) }</strong>
+						<br />
+						<small>{ __( 'No custom domains, 100 subscribers, no SSH or SFTP access' ) }</small>
+					</p>
 				</div>
 
 				<NextButton isBusy={ isAddingTrial } onClick={ onStartTrialClick }>

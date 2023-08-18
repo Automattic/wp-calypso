@@ -69,6 +69,9 @@ const ProductCard = ( {
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
 	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
+	const showCelebration =
+		wizardStep === SCREEN_PURCHASE &&
+		( siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier );
 
 	const setPersonalSite = () => {
 		recordTracksEvent( `calypso_stats_personal_plan_selected` );
@@ -211,12 +214,8 @@ const ProductCard = ( {
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
 							isFree={ siteType === TYPE_PERSONAL && subscriptionValue === 0 }
-							hasHighlight={
-								siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier
-							}
-							extraMessage={
-								siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier
-							}
+							hasHighlight={ showCelebration }
+							extraMessage={ showCelebration }
 						/>
 						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
 							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />

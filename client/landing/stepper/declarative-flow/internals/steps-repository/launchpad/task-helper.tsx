@@ -3,7 +3,12 @@ import {
 	planHasFeature,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { updateLaunchpadSettings, type SiteDetails } from '@automattic/data-stores';
+import {
+	updateLaunchpadSettings,
+	type SiteDetails,
+	type OnboardActions,
+	type SiteActions,
+} from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isBlogOnboardingFlow,
@@ -339,8 +344,10 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							if ( site?.ID ) {
-								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
-								const { launchSite } = dispatch( SITE_STORE );
+								const { setPendingAction, setProgressTitle } = dispatch(
+									ONBOARD_STORE
+								) as OnboardActions;
+								const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching Link in bio' ) );
@@ -361,8 +368,10 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							if ( site?.ID ) {
-								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
-								const { launchSite } = dispatch( SITE_STORE );
+								const { setPendingAction, setProgressTitle } = dispatch(
+									ONBOARD_STORE
+								) as OnboardActions;
+								const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching website' ) );
@@ -398,7 +407,9 @@ export function getEnhancedTasks(
 								( ! planCompleted || ! domainUpsellCompleted || ! setupBlogCompleted ) ),
 						actionDispatch: () => {
 							if ( site?.ID ) {
-								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { setPendingAction, setProgressTitle } = dispatch(
+									ONBOARD_STORE
+								) as OnboardActions;
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Directing to checkout' ) );
 									// If user selected products during onboarding, update cart and redirect to checkout
@@ -418,7 +429,7 @@ export function getEnhancedTasks(
 										return { goToCheckout: true };
 									}
 									// Launch blog if no items in cart
-									const { launchSite } = dispatch( SITE_STORE );
+									const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
 									setProgressTitle( __( 'Launching blog' ) );
 									await launchSite( site.ID );
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
@@ -446,8 +457,10 @@ export function getEnhancedTasks(
 					taskData = {
 						actionDispatch: () => {
 							if ( site?.ID ) {
-								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
-								const { launchSite } = dispatch( SITE_STORE );
+								const { setPendingAction, setProgressTitle } = dispatch(
+									ONBOARD_STORE
+								) as OnboardActions;
+								const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching video site' ) );

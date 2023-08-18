@@ -44,3 +44,9 @@ export type SubscriberListArgs = {
 	searchTerm?: string;
 	sortTerm?: SubscribersSortBy;
 };
+
+export type SubscriberStats = {
+	emails_sent: number;
+	unique_opens: number;
+	unique_clicks: number;
+};

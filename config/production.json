@@ -51,6 +51,7 @@
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"importer/unified": true,
+		"individual-subscriber-stats": true,
 		"is_running_in_jetpack_site": false,
 		"jetpack/agency-dashboard": true,
 		"jetpack/ai-assistant-request-limit": true,
@@ -104,7 +105,6 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/import-redesign": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/show-waitlist-patterns": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
@@ -133,6 +133,7 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/modernize-reading-settings": true,
+		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
@@ -177,7 +178,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/hosting-metrics-i1": false
+		"yolo/hosting-metrics-i1": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

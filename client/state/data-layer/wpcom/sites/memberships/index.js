@@ -35,6 +35,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 			{
 				method: 'GET',
 				path: `/sites/${ action.siteId }/memberships/products?type=all&is_editable=true`,
+				apiNamespace: 'wpcom/v2',
 			},
 			action
 		),

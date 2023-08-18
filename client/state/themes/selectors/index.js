@@ -38,8 +38,6 @@ export { getThemeRequestErrors } from 'calypso/state/themes/selectors/get-theme-
 export { getThemesForQuery } from 'calypso/state/themes/selectors/get-themes-for-query';
 export { getThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors/get-themes-for-query-ignoring-page';
 export { getThemesFoundForQuery } from 'calypso/state/themes/selectors/get-themes-found-for-query';
-export { getThemeShowcaseDescription } from 'calypso/state/themes/selectors/get-theme-showcase-description';
-export { getThemeShowcaseTitle } from 'calypso/state/themes/selectors/get-theme-showcase-title';
 export { getThemeSignupUrl } from 'calypso/state/themes/selectors/get-theme-signup-url';
 export { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 export { getThemeSupportUrl } from 'calypso/state/themes/selectors/get-theme-support-url';

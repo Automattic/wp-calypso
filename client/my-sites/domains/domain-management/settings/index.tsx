@@ -44,8 +44,8 @@ import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
+import DomainForwardingCard from './cards/domain-forwarding-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
-import DomainRedirectCard from './cards/domain-redirect-card';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
@@ -339,7 +339,7 @@ const Settings = ( {
 		);
 	};
 
-	const renderRedirectSection = () => {
+	const renderForwardingSection = () => {
 		if (
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
@@ -348,12 +348,13 @@ const Settings = ( {
 		) {
 			return null;
 		}
+
 		return (
 			<Accordion
 				title={ translate( 'Redirect Domain', { textOnly: true } ) }
 				subtitle={ translate( 'Redirect from your domain to another' ) }
 			>
-				<DomainRedirectCard domainName={ selectedDomainName } />
+				<DomainForwardingCard domain={ domain } />
 			</Accordion>
 		);
 	};
@@ -504,7 +505,7 @@ const Settings = ( {
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
-				{ renderRedirectSection() }
+				{ renderForwardingSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }

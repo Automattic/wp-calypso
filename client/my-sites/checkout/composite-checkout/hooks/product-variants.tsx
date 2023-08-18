@@ -7,6 +7,13 @@ import {
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
 	TERM_MONTHLY,
+	TERM_QUADRENNIALLY,
+	TERM_QUINQUENNIALLY,
+	TERM_SEXENNIALLY,
+	TERM_SEPTENNIALLY,
+	TERM_OCTENNIALLY,
+	TERM_NOVENNIALLY,
+	TERM_DECENNIALLY,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -104,6 +111,8 @@ export function useGetProductVariants(
 						priceBeforeDiscounts: variant.price_before_discounts_integer,
 						currency: variant.currency,
 						productBillingTermInMonths: variant.bill_period_in_months,
+						// Since volume is optional, only add it if it's defined
+						...( variant.volume && { volume: variant.volume } ),
 					};
 				} catch ( error ) {
 					// Three-year plans are not yet fully supported, so we need to guard
@@ -142,17 +151,39 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
-		case TERM_BIENNIALLY:
-			return String( translate( 'Two years' ) );
+		case TERM_DECENNIALLY:
+			return String( translate( 'Ten years' ) );
+
+		case TERM_NOVENNIALLY:
+			return String( translate( 'Nine years' ) );
+
+		case TERM_OCTENNIALLY:
+			return String( translate( 'Eight years' ) );
+
+		case TERM_SEPTENNIALLY:
+			return String( translate( 'Seven years' ) );
+
+		case TERM_SEXENNIALLY:
+			return String( translate( 'Six years' ) );
+
+		case TERM_QUINQUENNIALLY:
+			return String( translate( 'Five years' ) );
+
+		case TERM_QUADRENNIALLY:
+			return String( translate( 'Four years' ) );
 
 		case TERM_TRIENNIALLY:
 			return String( translate( 'Three years' ) );
+
+		case TERM_BIENNIALLY:
+			return String( translate( 'Two years' ) );
 
 		case TERM_ANNUALLY:
 			return String( translate( 'One year' ) );
 
 		case TERM_MONTHLY:
 			return String( translate( 'One month' ) );
+
 		default:
 			return '';
 	}

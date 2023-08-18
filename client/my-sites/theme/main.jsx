@@ -87,6 +87,7 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
+	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -469,16 +470,35 @@ class ThemeSheet extends Component {
 					} }
 					rel="noopener noreferrer"
 				>
+					{ this.shouldRenderPreviewButton() && (
+						<Button className="theme__sheet-preview-demo-site">
+							{ translate( 'Preview demo site' ) }
+						</Button>
+					) }
 					{ img }
 				</a>
 			);
 		}
 
-		return <div className="theme__sheet-screenshot">{ img }</div>;
+		return (
+			<div className="theme__sheet-screenshot">
+				{ this.shouldRenderPreviewButton() && (
+					<Button
+						className="theme__sheet-preview-demo-site"
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link' );
+						} }
+					>
+						{ translate( 'Preview demo site' ) }
+					</Button>
+				) }
+				{ img }
+			</div>
+		);
 	}
 
 	renderWebPreview = () => {
-		const { locale, siteSlug, stylesheet, styleVariations, themeId } = this.props;
+		const { locale, siteSlug, stylesheet, styleVariations, themeId, translate } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
 			isDefaultGlobalStylesVariationSlug( style.slug )
 		);
@@ -499,6 +519,16 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-web-preview">
+				{ this.shouldRenderPreviewButton() && (
+					<Button
+						className="theme__sheet-preview-demo-site"
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link' );
+						} }
+					>
+						{ translate( 'Preview demo site' ) }
+					</Button>
+				) }
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
@@ -540,6 +570,7 @@ class ThemeSheet extends Component {
 		const {
 			author,
 			isLoggedIn,
+			isLivePreviewSupported,
 			isWPForTeamsSite,
 			name,
 			retired,
@@ -575,14 +606,14 @@ class ThemeSheet extends Component {
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
 						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
-						{ this.shouldRenderPreviewButton() && (
+						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
 								onClick={ ( e ) => {
 									this.previewAction( e, 'link' );
 								} }
 							>
-								{ translate( 'Open live demo', {
-									context: 'Individual theme live preview button',
+								{ translate( 'Demo site', {
+									context: 'The button to open the demo site of individual theme',
 								} ) }
 							</Button>
 						) }
@@ -1464,6 +1495,8 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
+		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
+
 		return {
 			...theme,
 			themeId,
@@ -1506,6 +1539,7 @@ export default connect(
 			isLoading,
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
+			isLivePreviewSupported,
 		};
 	},
 	{

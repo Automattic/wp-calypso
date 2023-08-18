@@ -15,7 +15,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import wpcom from 'calypso/lib/wp';
-import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/memberships/add-edit-plan-modal';
+import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -249,9 +249,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 				{ showPlansModal && site?.ID && (
 					<RecurringPaymentsPlanAddEditModal
 						closeDialog={ () => setShowPlansModal( false ) }
-						product={ { subscribe_as_site_subscriber: true } }
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore - Underlying component is JS class component with props supplied by connect() and mapstatetoprops.
+						product={ { subscribe_as_site_subscriber: true, price: 5 } }
 						siteId={ site.ID }
 					/>
 				) }

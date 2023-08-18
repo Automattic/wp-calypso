@@ -6,7 +6,6 @@ describe( 'reducer', () => {
 			'dns',
 			'management',
 			'siteRedirect',
-			'domainRedirect',
 			'suggestions',
 			'transfer',
 		] );
