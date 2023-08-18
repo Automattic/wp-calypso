@@ -32,7 +32,6 @@ import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
@@ -41,7 +40,6 @@ import {
 	getAllRequestingSiteDomains,
 	getFlatDomainsList,
 } from 'calypso/state/sites/domains/selectors';
-import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
@@ -155,14 +153,13 @@ class AllDomains extends Component {
 	};
 
 	handleDomainItemClick = ( domain ) => {
-		const { sites, currentRoute } = this.props;
-		const site = sites[ domain.blogId ];
+		const { currentRoute } = this.props;
 
 		if ( this.props.isContactEmailEditContext ) {
 			return;
 		}
 
-		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
+		page( getDomainManagementPath( domain.name, domain.type, domain.blogId, currentRoute ) );
 	};
 
 	handleDomainItemToggle = ( domain, selected ) => {
@@ -182,7 +179,7 @@ class AllDomains extends Component {
 	};
 
 	isLoading() {
-		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
+		const { domainsList, requestingFlatDomains } = this.props;
 		return requestingFlatDomains && domainsList.length === 0;
 	}
 
@@ -267,10 +264,8 @@ class AllDomains extends Component {
 	};
 
 	getDomainsList = ( selectedFilter = this.getSelectedFilter() ) => {
-		const { sites } = this.props;
-
 		return selectedFilter === 'domain-only'
-			? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
+			? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails() )
 			: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
 	};
 
@@ -295,6 +290,7 @@ class AllDomains extends Component {
 			isContactEmailEditContext,
 			translate,
 			dispatch,
+			domainsDetails,
 		} = this.props;
 
 		const { isSavingContactInfo } = this.state;
@@ -336,29 +332,24 @@ class AllDomains extends Component {
 				sortFunctions: [
 					( first, second, sortOrder ) => {
 						// sort all domain olny sites after/before the other sites
-						const firstSite = sites[ first?.blogId ];
-						const secondSite = sites[ second?.blogId ];
 
-						if ( firstSite?.options?.is_domain_only && secondSite?.options?.is_domain_only ) {
+						if ( first.isDomainOnlySite && second.isDomainOnlySite ) {
 							return 0;
 						}
 
-						if ( firstSite?.options?.is_domain_only ) {
+						if ( first.isDomainOnlySite ) {
 							return 1 * sortOrder;
 						}
 
-						if ( secondSite?.options?.is_domain_only ) {
+						if ( second.isDomainOnlySite ) {
 							return -1 * sortOrder;
 						}
 
 						return 0;
 					},
 					( first, second, sortOrder ) => {
-						const firstSite = sites[ first?.blogId ];
-						const secondSite = sites[ second?.blogId ];
-
-						const firstTitle = firstSite?.title || firstSite?.slug;
-						const secondTitle = secondSite?.title || secondSite?.slug;
+						const firstTitle = first?.blogName || first?.siteSlug;
+						const secondTitle = second?.blogName || second?.siteSlug;
 
 						return firstTitle.localeCompare( secondTitle ) * sortOrder;
 					},
@@ -399,7 +390,7 @@ class AllDomains extends Component {
 					domains.map( ( domain ) =>
 						resolveDomainStatus( domain, null, translate, dispatch, {
 							getMappingErrors: true,
-							siteSlug: sites[ domain.blogId ].slug,
+							siteSlug: domain.siteSlug,
 						} )
 					)
 				),
@@ -448,6 +439,7 @@ class AllDomains extends Component {
 					requestingSiteDomains={ requestingSiteDomains }
 					hasLoadedPurchases={ hasLoadedUserPurchases }
 					isSavingContactInfo={ isSavingContactInfo }
+					domainsDetails={ domainsDetails }
 				/>
 			</div>
 		);
@@ -594,8 +586,7 @@ class AllDomains extends Component {
 	}
 
 	filteredDomains() {
-		const { filteredDomainsList, domainsList, canManageSitesMap, isContactEmailEditContext } =
-			this.props;
+		const { filteredDomainsList, domainsList, isContactEmailEditContext } = this.props;
 		if ( ! domainsList ) {
 			return [];
 		}
@@ -609,7 +600,7 @@ class AllDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { context, translate, sites } = this.props;
+		const { context, translate } = this.props;
 
 		const selectedFilter = context?.query?.filter || 'all-domains';
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
@@ -637,7 +628,7 @@ class AllDomains extends Component {
 				label: translate( 'Parked domains' ),
 				value: 'domain-only',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'domain-only' } ),
-				count: filterDomainOnlyDomains( nonWpcomDomains, sites )?.length,
+				count: filterDomainOnlyDomains( nonWpcomDomains )?.length,
 			},
 		];
 
@@ -752,8 +743,6 @@ const getSitesById = ( state ) => {
 
 const getFilteredDomainsList = ( state, context ) => {
 	const action = parse( context.querystring )?.action;
-	const sites = getSitesById( state );
-	const canManageSitesMap = canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' );
 	const domainsList = getFlatDomainsList( state );
 	const domainsDetails = getAllDomains( state );
 
@@ -795,7 +784,6 @@ export default connect(
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
 			filteredDomainsList: getFilteredDomainsList( state, context ),
-			hasAllSitesLoaded: hasAllSitesList( state ),
 			isContactEmailEditContext: ListAllActions.editContactEmail === action,
 			purchases: getUserPurchases( state ) || [],
 			hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),

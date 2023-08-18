@@ -114,6 +114,7 @@ class DomainsTable extends PureComponent {
 			isSavingContactInfo,
 			handleDomainItemToggle,
 			translate,
+			domainsDetails,
 		} = this.props;
 
 		const { sortKey, sortOrder } = this.state;
@@ -149,6 +150,10 @@ class DomainsTable extends PureComponent {
 			const purchase = purchases?.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) );
 			const selectedSite = sites?.[ domain.blogId ];
 			const isLoadingDomainDetails = requestingSiteDomains?.[ domain.blogId ];
+			const siteDomains = domainsDetails?.[ domain.blogId ];
+			const hasLoadedDomainDetails = Boolean(
+				siteDomains?.find( ( siteDomain ) => siteDomain.name === domain.name )
+			);
 
 			// TODO: how can we optimize the data loading? Can we load the daomin data using `InView` component as in list-all.jsx?
 			return (
