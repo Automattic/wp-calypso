@@ -5,8 +5,30 @@ import {
 	UseQueryOptions,
 	UseQueryResult,
 } from '@tanstack/react-query';
+import { getPreinstalledPremiumPluginsVariations } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
+import { ESRelatedPluginsResult, RelatedPlugin } from './types';
+
+const mapESDataToReatedPluginData = ( results: Array< ESRelatedPluginsResult > = [] ) => {
+	return results.map( ( result ) => {
+		const esPlugin = result.fields;
+
+		const relatedPlugin: RelatedPlugin = {
+			categories: esPlugin.categories,
+			excerpt: esPlugin.excerpt,
+			icon: esPlugin.icon,
+			marketplaceSlug: esPlugin.marketplace_slug,
+			productSlug: esPlugin.product_slug,
+			slug: esPlugin.slug,
+			title: esPlugin.title,
+		};
+
+		relatedPlugin.variations = getPreinstalledPremiumPluginsVariations( esPlugin );
+
+		return relatedPlugin;
+	} );
+};
 
 const getRelatedPluginsQueryParams = (
 	pluginSlug: string,
@@ -14,13 +36,17 @@ const getRelatedPluginsQueryParams = (
 ): { queryKey: QueryKey; queryFn: QueryFunction } => {
 	const queryKey: QueryKey = [ 'related-plugins', pluginSlug, size ];
 	const queryFn = () => {
-		return wpcom.req.get(
-			{
-				path: `/marketplace/${ pluginSlug }/related`,
-				apiNamespace: 'rest/v1.3',
-			},
-			{ size }
-		);
+		return wpcom.req
+			.get(
+				{
+					path: `/marketplace/${ pluginSlug }/related`,
+					apiNamespace: 'rest/v1.3',
+				},
+				{ size }
+			)
+			.then( ( { data }: { data: Array< ESRelatedPluginsResult > } ) =>
+				mapESDataToReatedPluginData( data )
+			);
 	};
 	return { queryKey, queryFn };
 };
