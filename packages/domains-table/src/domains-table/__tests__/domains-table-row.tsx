@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { DomainsTableRow } from '../domains-table-row';
@@ -265,4 +265,83 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 		'href',
 		'/domains/manage/example.com/transfer/in/example.com'
 	);
+} );
+
+test( 'when a domain is selected, the checkbox is checked', () => {
+	const [ partialDomain, fullDomain ] = testDomain( {
+		domain: 'example.wordpress.com',
+		blog_id: 123,
+		primary_domain: false,
+		wpcom_domain: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ fullDomain ],
+	} );
+
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+			isSelected={ true }
+			onSelect={ noop }
+		/>
+	);
+
+	expect( screen.getByRole( 'checkbox' ) ).toBeChecked();
+} );
+
+test( 'when a domain is not selected, the checkbox is unchecked', () => {
+	const [ partialDomain, fullDomain ] = testDomain( {
+		domain: 'example.wordpress.com',
+		blog_id: 123,
+		primary_domain: false,
+		wpcom_domain: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ fullDomain ],
+	} );
+
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
+		/>
+	);
+
+	expect( screen.getByRole( 'checkbox' ) ).not.toBeChecked();
+} );
+
+test( 'when the user selects a domain, the onSelect function is triggered', () => {
+	const [ partialDomain, fullDomain ] = testDomain( {
+		domain: 'example.wordpress.com',
+		blog_id: 123,
+		primary_domain: false,
+		wpcom_domain: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ fullDomain ],
+	} );
+
+	const handleSelect = jest.fn();
+
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+			isSelected={ false }
+			onSelect={ handleSelect }
+		/>
+	);
+
+	fireEvent.click( screen.getByRole( 'checkbox' ) );
+
+	expect( handleSelect ).toHaveBeenCalledWith( partialDomain );
 } );
