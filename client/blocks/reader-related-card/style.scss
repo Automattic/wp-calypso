@@ -282,7 +282,6 @@
 }
 @include breakpoint-deprecated( "<660px" ) {
 	.reader-stream__recommended-posts {
-		border-bottom: 5px solid var(--color-neutral-0) !important;
 		margin: 0 !important;
 
 		.reader-stream__recommended-posts-header {
