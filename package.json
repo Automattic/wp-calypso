@@ -240,7 +240,7 @@
 		"eslint-plugin-import": "^2.28.0",
 		"eslint-plugin-inclusive-language": "^2.2.0",
 		"eslint-plugin-jest": "^25.7.0",
-		"eslint-plugin-jsdoc": "^39.9.1",
+		"eslint-plugin-jsdoc": "^46.4.6",
 		"eslint-plugin-jsx-a11y": "^6.7.1",
 		"eslint-plugin-md": "^1.0.19",
 		"eslint-plugin-mocha": "^10.1.0",

@@ -3842,17 +3842,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:~0.36.1":
-  version: 0.36.1
-  resolution: "@es-joy/jsdoccomment@npm:0.36.1"
-  dependencies:
-    comment-parser: 1.3.1
-    esquery: ^1.4.0
-    jsdoc-type-pratt-parser: ~3.1.0
-  checksum: 7bb082c64a1270ec2a8d604a8fcfa8a9a98745200bf4945e93835e99ab09e93ac43180e24180e7710ac3e9ba2845c0c04ba6c4ce363f1e5ea0511680b33bc2ad
-  languageName: node
-  linkType: hard
-
 "@es-joy/jsdoccomment@npm:~0.40.1":
   version: 0.40.1
   resolution: "@es-joy/jsdoccomment@npm:0.40.1"
@@ -12235,13 +12224,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"comment-parser@npm:1.3.1":
-  version: 1.3.1
-  resolution: "comment-parser@npm:1.3.1"
-  checksum: 848b3bbcf2eeb780831a8dd5a4cc52f914dd8c321c610403539237324c507040ea8fdca7bd1f8edb0a477e7c90138f54c4d05328a9d87fe6d651d5a2822cb14b
-  languageName: node
-  linkType: hard
-
 "comment-parser@npm:1.4.0":
   version: 1.4.0
   resolution: "comment-parser@npm:1.4.0"
@@ -15067,23 +15049,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^39.9.1":
-  version: 39.9.1
-  resolution: "eslint-plugin-jsdoc@npm:39.9.1"
-  dependencies:
-    "@es-joy/jsdoccomment": ~0.36.1
-    comment-parser: 1.3.1
-    debug: ^4.3.4
-    escape-string-regexp: ^4.0.0
-    esquery: ^1.4.0
-    semver: ^7.3.8
-    spdx-expression-parse: ^3.0.1
-  peerDependencies:
-    eslint: ^7.0.0 || ^8.0.0
-  checksum: 6c4c8623613d15bf39d78b73311dadb32a8c6ead139ad1ae1c9a3a29c1a99854953ee51783b32be7fedd8129d823131ce54ddcec73fc4b1756797fa87173204f
-  languageName: node
-  linkType: hard
-
 "eslint-plugin-jsdoc@npm:^46.4.6":
   version: 46.4.6
   resolution: "eslint-plugin-jsdoc@npm:46.4.6"
@@ -15245,7 +15210,7 @@ __metadata:
     "@babel/core": ">=7.17.5"
     eslint: ">=8.46.0"
     eslint-plugin-inclusive-language: ^2.2.0
-    eslint-plugin-jsdoc: ^39.9.1
+    eslint-plugin-jsdoc: ^46.4.6
     eslint-plugin-react: ^7.33.1
     eslint-plugin-react-hooks: ^4.3.0
   peerDependenciesMeta:
@@ -19971,13 +19936,6 @@ __metadata:
   bin:
     jscodeshift: ./bin/jscodeshift.js
   checksum: 6bbd3bbaeff93747e99eead95fa758c19efb773e4fa0b4eb3fb0ccae415d328589610bfefe3c312aef65a4fcd575b81c23990c6fa287bdb3fdaecbc272f87eab
-  languageName: node
-  linkType: hard
-
-"jsdoc-type-pratt-parser@npm:~3.1.0":
-  version: 3.1.0
-  resolution: "jsdoc-type-pratt-parser@npm:3.1.0"
-  checksum: b55f42b59d79fe22c22369c25defaf0b13522c623e6c45e9264ecba431d7b5d98c7a1316912bc1b59938b49faadb1b6abf9ae89fbffe29e74768f59cc8e6ca8b
   languageName: node
   linkType: hard
 
@@ -31254,7 +31212,7 @@ __metadata:
     eslint-plugin-import: ^2.28.0
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jest: ^25.7.0
-    eslint-plugin-jsdoc: ^39.9.1
+    eslint-plugin-jsdoc: ^46.4.6
     eslint-plugin-jsx-a11y: ^6.7.1
     eslint-plugin-md: ^1.0.19
     eslint-plugin-mocha: ^10.1.0
