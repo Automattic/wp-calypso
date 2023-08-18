@@ -2,7 +2,7 @@ import { Dialog, FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useMemo } from 'react';
+import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
@@ -22,7 +22,6 @@ import {
 import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Product } from '../../types';
-import type { ChangeEvent } from 'react';
 
 import './style.scss';
 
