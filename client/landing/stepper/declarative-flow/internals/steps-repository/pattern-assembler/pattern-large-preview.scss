@@ -30,6 +30,15 @@
 	list-style-type: none;
 	overflow: auto;
 	background: var(--pattern-large-preview-background);
+
+	/**
+	 * Hides the scrollbar to avoid the layout keeps changes forever
+	 * See https://github.com/Automattic/wp-calypso/issues/78357.
+	 */
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .pattern-large-preview__pattern {
