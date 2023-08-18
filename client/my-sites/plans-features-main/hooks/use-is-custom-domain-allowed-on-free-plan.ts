@@ -14,9 +14,12 @@ const useIsCustomDomainAllowedOnFreePlan = (
 		}
 	);
 
-	const [ isLoadingAnyDomainExperiment, assignmentAnyDomainExperiment ] = useExperiment( '<TBD>', {
-		isEligible: flowName === 'onboarding-pm' && domainName != null,
-	} );
+	const [ isLoadingAnyDomainExperiment, assignmentAnyDomainExperiment ] = useExperiment(
+		'calypso_onboardingpm_plans_paid_domain_on_free_plan',
+		{
+			isEligible: flowName === 'onboarding-pm' && domainName != null,
+		}
+	);
 
 	return {
 		isLoading: isLoadingAnyDomainExperiment || isLoadingBlogAllowExperiment,
