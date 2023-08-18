@@ -18,7 +18,7 @@ class PostResults extends Component {
 	placeholderFactory = ( { key, ...rest } ) => {
 		if ( ! this.props.query ) {
 			return (
-				<div className="search-stream__recommendation-list-item" key={ key }>
+				<div className="search-stream__recommendation-list-item is-placeholder" key={ key }>
 					<RelatedPostCard { ...rest } />
 				</div>
 			);

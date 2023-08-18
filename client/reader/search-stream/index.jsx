@@ -222,6 +222,7 @@ class SearchStream extends React.Component {
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
 							wideDisplay={ wideDisplay }
+							isLoggedIn={ isLoggedIn }
 						/>
 					) }
 				</div>
