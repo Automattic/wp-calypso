@@ -88,7 +88,7 @@ class PostsMain extends Component {
 				{ isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				{ ! isJetpack && isEnabled( 'jitms' ) && (
+				{ isEnabled( 'jitms' ) && (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
 						template="notice"
