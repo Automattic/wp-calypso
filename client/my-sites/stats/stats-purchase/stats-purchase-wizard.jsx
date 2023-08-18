@@ -68,7 +68,17 @@ const ProductCard = ( {
 
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
-	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
+	const personalProductTitle = translate( 'What is Jetpack Stats worth to you?' );
+	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
+
+	let selectedSiteTypeLabel = commercialLabel;
+	let selectedSiteTypeTitle = commercialProductTitle;
+
+	if ( siteType === TYPE_PERSONAL ) {
+		selectedSiteTypeLabel = personalLabel;
+		selectedSiteTypeTitle = personalProductTitle;
+	}
+
 	const showCelebration =
 		siteType &&
 		wizardStep === SCREEN_PURCHASE &&
@@ -115,7 +125,7 @@ const ProductCard = ( {
 								site: siteSlug,
 							},
 					  } )
-					: selectedTypeLabel
+					: selectedSiteTypeLabel
 			}
 			active={ wizardStep === SCREEN_TYPE_SELECTION }
 		/>
@@ -124,7 +134,7 @@ const ProductCard = ( {
 	const secondStepTitleNode = (
 		<TitleNode
 			indicatorNumber="2"
-			label={ translate( 'What is Jetpack Stats worth to you?' ) }
+			label={ selectedSiteTypeTitle }
 			active={ wizardStep === SCREEN_PURCHASE }
 		/>
 	);
