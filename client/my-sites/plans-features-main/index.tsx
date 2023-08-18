@@ -230,7 +230,7 @@ const PlansFeaturesMain = ( {
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
 	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
 		flowName,
-		paidDomainName
+		!! paidDomainName
 	);
 	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
 		flowName,

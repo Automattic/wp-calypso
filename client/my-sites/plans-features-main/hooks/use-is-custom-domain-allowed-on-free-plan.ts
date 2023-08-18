@@ -1,31 +1,20 @@
-import { getTld } from 'calypso/lib/domains';
 import { useExperiment } from 'calypso/lib/explat';
 import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
 const useIsCustomDomainAllowedOnFreePlan = (
 	flowName?: string | null,
-	domainName?: string
+	hasPaidDomainName?: boolean
 ): DataResponse< boolean > => {
-	const [ isLoadingBlogAllowExperiment, assignmentDotBlogAllowExperiment ] = useExperiment(
-		'calypso_onboarding_plans_dotblog_on_free_plan_202307',
-		{
-			isEligible:
-				flowName === 'onboarding' && domainName != null && getTld( domainName ) === 'blog',
-		}
-	);
-
 	const [ isLoadingAnyDomainExperiment, assignmentAnyDomainExperiment ] = useExperiment(
 		'calypso_onboardingpm_plans_paid_domain_on_free_plan',
 		{
-			isEligible: flowName === 'onboarding-pm' && domainName != null,
+			isEligible: [ 'onboarding', 'onboarding-pm' ].includes( flowName ?? '' ) && hasPaidDomainName,
 		}
 	);
 
 	return {
-		isLoading: isLoadingAnyDomainExperiment || isLoadingBlogAllowExperiment,
-		result:
-			assignmentDotBlogAllowExperiment?.variationName === 'treatment' ||
-			assignmentAnyDomainExperiment?.variationName === 'treatment',
+		isLoading: isLoadingAnyDomainExperiment,
+		result: assignmentAnyDomainExperiment?.variationName === 'treatment',
 	};
 };
 
