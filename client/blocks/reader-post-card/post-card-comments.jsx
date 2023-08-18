@@ -6,11 +6,9 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { commentsFetchingStatus } from 'calypso/state/comments/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const PostCardComments = ( { post, handleClick } ) => {
 	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( isUserLoggedIn );
 	const fetchStatus = useSelector( ( state ) =>
 		commentsFetchingStatus( state, post.site_ID, post.ID )
 	);
@@ -19,7 +17,7 @@ const PostCardComments = ( { post, handleClick } ) => {
 	// If the user is unable to comment and the comment count is zero, there is no reason to fetch
 	// and show comments.
 	const shouldHideComments =
-		( ! post.discussion?.comments_open || ! isLoggedIn ) && post.discussion?.comment_count === 0;
+		! post.discussion?.comments_open && post.discussion?.comment_count === 0;
 
 	useEffect( () => {
 		// Request comments if they have not been set in state.

@@ -1,3 +1,4 @@
+import { getUrlParts } from '@automattic/calypso-url';
 import { Button, FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -6,10 +7,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Gravatar from 'calypso/components/gravatar';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl } from 'calypso/lib/paths';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 
 import './form.scss';
@@ -59,6 +62,10 @@ class PostCommentForm extends Component {
 	};
 
 	handleTextChange = ( event ) => {
+		if ( ! this.props.isLoggedIn ) {
+			const { pathname } = getUrlParts( window.location.href );
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
+		}
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( event.target.value );
 	};
@@ -114,12 +121,6 @@ class PostCommentForm extends Component {
 
 	render() {
 		const { post, error, errorType, translate } = this.props;
-
-		// Dont render the form if there is not a currentUser (logged out)
-		// TODO idea - render a prompt to login/signup to comment.
-		if ( ! this.props.currentUser ) {
-			return null;
-		}
 
 		// Don't display the form if comments are closed
 		if ( post && post.discussion && post.discussion.comments_open === false ) {
@@ -177,6 +178,8 @@ PostCommentForm.propTypes = {
 	onUpdateCommentText: PropTypes.func.isRequired,
 	onCommentSubmit: PropTypes.func,
 	isInlineComment: PropTypes.bool,
+	isLogedIn: PropTypes.bool,
+	redirectToSignup: PropTypes.func,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
@@ -193,6 +196,7 @@ PostCommentForm.defaultProps = {
 export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{ writeComment, deleteComment, replyComment }
 )( localize( PostCommentForm ) );
