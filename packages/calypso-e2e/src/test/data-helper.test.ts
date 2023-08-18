@@ -6,7 +6,6 @@ import {
 	getAccountSiteURL,
 	toTitleCase,
 	createSuiteTitle,
-	getWPAdminURL,
 } from '../data-helper';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
@@ -59,30 +58,6 @@ describe( 'DataHelper Tests', function () {
 		);
 	} );
 
-	describe( `Test: getWPAdminURL`, function () {
-		test( 'Returns full URL without paths if no path provided', function () {
-			const url = getWPAdminURL( 'test.wordpress.com', '' );
-			expect( url ).toBe( 'https://test.wordpress.com/' );
-		} );
-
-		test( 'Returns full URL with paths if path provided', function () {
-			const url = getWPAdminURL( 'test.wordpress.com', '/options/test.php' );
-			expect( url ).toBe( 'https://test.wordpress.com/options/test.php' );
-		} );
-
-		test.each( [ 'http://', 'https://' ] )(
-			'Returns full URL with HTTPS protcol prefix when passed site slug with %s prefix',
-			function ( prefix ) {
-				const url = getWPAdminURL( `${ prefix }test.wordpress.com`, '/options/test.php' );
-				expect( url ).toBe( 'https://test.wordpress.com/options/test.php' );
-			}
-		);
-
-		test( 'Throws error if empty siteSlug is passed', function () {
-			expect( () => getWPAdminURL( '', '' ) ).toThrow();
-		} );
-	} );
-
 	describe( `Test: getAccountCredential`, function () {
 		type AccountType = Parameters< typeof getAccountCredential >[ 0 ];
 		test.each< { accountType: AccountType; expected: string } >`
@@ -112,7 +87,7 @@ describe( 'DataHelper Tests', function () {
 		type TestCase = { accountType: AccountType; expected: string };
 		test.each< TestCase >`
 			accountType      | expected
-			${ 'basicUser' } | ${ 'wpcomuser.wordpress.com/' }
+			${ 'basicUser' } | ${ 'https://wpcomuser.wordpress.com/' }
 		`(
 			'Returns $expected if getAccountSiteURL is called with $accountType',
 			function ( { accountType, expected } ) {

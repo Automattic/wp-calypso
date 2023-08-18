@@ -140,24 +140,6 @@ export function getCalypsoURL(
 }
 
 /**
- * Assembles and returns a URL to a specific page in WP-Admin.
- *
- * @param {string} siteSlug Slug of the site, typically wordpress or wpcomstaging.com.
- * @param {string} path Path to the WP-Admin page.
- * @returns {string} The full URL path.
- * @throws {Error} If siteSlug is empty.
- */
-export function getWPAdminURL( siteSlug: string, path: string ): string {
-	if ( ! siteSlug ) {
-		throw new Error( 'siteSlug must not be empty.' );
-	}
-	if ( siteSlug.match( /^(http:\/\/|https:\/\/)/ ) ) {
-		siteSlug = siteSlug.replace( /^(http:\/\/|https:\/\/)/, '' );
-	}
-	return new URL( path, `https://${ siteSlug }` ).href;
-}
-
-/**
  * Returns the credential for a specified account from the secrets file.
  *
  * @param {TestAccountName} accountType Type of the account for which the credentials are to be obtained.
@@ -190,7 +172,7 @@ export function getAccountCredential( accountType: TestAccountName ): AccountCre
  */
 export function getAccountSiteURL(
 	accountType: TestAccountName,
-	{ protocol = false }: { protocol?: boolean } = {}
+	{ protocol = true }: { protocol?: boolean } = {}
 ): string {
 	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
 	const url = testAccount.primarySite || testAccount.testSites?.primary.url;

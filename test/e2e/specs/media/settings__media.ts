@@ -11,6 +11,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	WpAdminMediaSettingsPage,
+	WritingSettingsPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipItIf } from '../../jest-helpers';
@@ -46,35 +47,64 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () 
 		}
 	} );
 
-	let wpAdminMediaSettingsPage: WpAdminMediaSettingsPage;
+	if ( envVariables.JETPACK_TARGET === 'remote-site' ) {
+		// For self-hosted sites with Jetpack plugin installed.
+		describe( 'Under writing settings for a remote site', function () {
+			let writingSettingsPage: WritingSettingsPage;
 
-	it( 'Navigate to Settings > Media', async function () {
-		// eCommerce plan loads WP-Admin for home dashboard,
-		// so instead navigate straight to the Media page.
-		if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
-			const url = DataHelper.getWPAdminURL(
-				testAccount.getSiteURL(),
-				'wp-admin/options-media.php'
-			);
-			await page.goto( url );
-		} else {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Settings', 'Media' );
-		}
-		wpAdminMediaSettingsPage = new WpAdminMediaSettingsPage( page );
-	} );
+			it( 'Navigate to Settings > Writing', async function () {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( 'Settings', 'Writing' );
 
-	// This step is not applicable for sites on Atomic infrastructure, as the checkbox
-	// is physically not present.
-	skipItIf( envVariables.TEST_ON_ATOMIC === true )( 'Toggle Carousel', async function () {
-		await wpAdminMediaSettingsPage.toggleEnableCarousel();
-	} );
+				writingSettingsPage = new WritingSettingsPage( page );
+			} );
 
-	it( 'Toggle photo metadata', async function () {
-		await wpAdminMediaSettingsPage.toggleCarouselMetadata();
-	} );
+			it( 'Toggle Carousel', async function () {
+				await writingSettingsPage.toggleOn(
+					'parent',
+					'Transform standard image galleries into full-screen slideshows'
+				);
+			} );
 
-	it( 'Select "Black" for carousel background color', async function () {
-		await wpAdminMediaSettingsPage.setBackGroundColor( 'Black' );
-	} );
+			it( 'Toggle photo metadata', async function () {
+				await writingSettingsPage.toggleOn(
+					'child',
+					'Show photo metadata in carousel, when available'
+				);
+			} );
+
+			it( 'Select "Black" for carousel background color', async function () {
+				await writingSettingsPage.selectCarouselBackgroundColor( 'Black' );
+			} );
+		} );
+	} else {
+		// For WPCOM hosted sites.
+		let wpAdminMediaSettingsPage: WpAdminMediaSettingsPage;
+
+		it( 'Navigate to Settings > Media', async function () {
+			// eCommerce plan loads WP-Admin for home dashboard,
+			// so instead navigate straight to the Media page.
+			if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
+				await page.goto( `${ testAccount.getSiteURL() }wp-admin/options-media.php` );
+			} else {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( 'Settings', 'Media' );
+			}
+			wpAdminMediaSettingsPage = new WpAdminMediaSettingsPage( page );
+		} );
+
+		// This step is not applicable for sites on Atomic infrastructure, as the checkbox
+		// is physically not present.
+		skipItIf( envVariables.TEST_ON_ATOMIC === true )( 'Toggle Carousel', async function () {
+			await wpAdminMediaSettingsPage.toggleEnableCarousel();
+		} );
+
+		it( 'Toggle photo metadata', async function () {
+			await wpAdminMediaSettingsPage.toggleCarouselMetadata();
+		} );
+
+		it( 'Select "Black" for carousel background color', async function () {
+			await wpAdminMediaSettingsPage.setBackGroundColor( 'Black' );
+		} );
+	}
 } );
