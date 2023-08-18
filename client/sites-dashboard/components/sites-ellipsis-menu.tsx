@@ -127,7 +127,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
+			info={ ! hasManagePluginsFeature ? __( 'Requires a Business Plan' ) : undefined }
 		>
 			{ label }
 		</MenuItemLink>
@@ -327,7 +327,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 					product_slug: site.plan?.product_slug,
 				} }
 			/>
-			<MenuItemLink info={ displayUpsell && __( 'Requires a Business Plan' ) }>
+			<MenuItemLink info={ displayUpsell ? __( 'Requires a Business Plan' ) : undefined }>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
