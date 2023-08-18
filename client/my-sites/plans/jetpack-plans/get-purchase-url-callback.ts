@@ -4,13 +4,13 @@ import {
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/route';
-import { managePurchase } from 'calypso/me/purchases/paths';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	INDIRECT_CHECKOUT_PRODUCTS_LIST,
 	PURCHASE_FLOW_UPSELLS_MATRIX,
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	PurchaseURLCallback,
@@ -149,8 +149,8 @@ export const getPurchaseURLCallback =
 			const yearlySlug = getYearlySlugFromMonthly( slug );
 			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 		}
-		if ( purchase ) {
-			const relativePath = managePurchase( siteSlug, purchase.id );
+		if ( siteSlug && purchase ) {
+			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.id );
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 		}
 
