@@ -25,7 +25,10 @@ export function useAllDomainsQuery( options: UseQueryOptions< AllDomainsQueryFnD
 	return useQuery( {
 		queryKey: [ 'all-domains' ],
 		queryFn: () =>
-			wpcomRequest< AllDomainsQueryFnData >( { path: '/all-domains', apiVersion: '1.1' } ),
+			wpcomRequest< AllDomainsQueryFnData >( {
+				path: '/all-domains?test_data=true&domain_count=2',
+				apiVersion: '1.1',
+			} ),
 		...options,
 	} );
 }

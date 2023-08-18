@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import React from 'react';
 import { DomainsTable } from '..';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
@@ -116,4 +116,175 @@ test( 'when shouldDisplayPrimaryDomainLabel is true, the primary domain label is
 	);
 
 	expect( screen.queryByText( 'Primary domain' ) ).not.toBeInTheDocument();
+} );
+
+test( 'when the user has no selected domains, all checkboxes are unchecked', () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
+		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+
+	expect( bulkCheckbox ).not.toBeChecked();
+	expect( firstDomainsCheckbox ).not.toBeChecked();
+	expect( secondDomainsCheckbox ).not.toBeChecked();
+} );
+
+test( 'when the user selects one domain, the bulk domains checkbox becomes partially checked', () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
+		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( bulkCheckbox ).toBePartiallyChecked();
+	expect( firstDomainsCheckbox ).toBeChecked();
+	expect( secondDomainsCheckbox ).not.toBeChecked();
+} );
+
+test( 'when the user selects all domains, the bulk domains checkbox becomes checked', () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
+		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+
+	fireEvent.click( firstDomainsCheckbox );
+	fireEvent.click( secondDomainsCheckbox );
+
+	expect( bulkCheckbox ).toBeChecked();
+	expect( firstDomainsCheckbox ).toBeChecked();
+	expect( secondDomainsCheckbox ).toBeChecked();
+} );
+
+test( 'when no domains are checked and the user clicks the bulk checkbox, all domains become checked', () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
+		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+
+	fireEvent.click( bulkCheckbox );
+
+	expect( bulkCheckbox ).toBeChecked();
+	expect( firstDomainsCheckbox ).toBeChecked();
+	expect( secondDomainsCheckbox ).toBeChecked();
+} );
+
+test( 'when a subset of domains are checked and the user clicks the bulk checkbox, all domains become checked', () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
+		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( bulkCheckbox ).toBePartiallyChecked();
+	expect( firstDomainsCheckbox ).toBeChecked();
+	expect( secondDomainsCheckbox ).not.toBeChecked();
+
+	fireEvent.click( bulkCheckbox );
+
+	expect( bulkCheckbox ).toBeChecked();
+	expect( firstDomainsCheckbox ).toBeChecked();
+	expect( secondDomainsCheckbox ).toBeChecked();
+} );
+
+test( 'when all domains are checked and the user clicks the bulk checkbox, all domains become unchecked', () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
+		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+
+	fireEvent.click( bulkCheckbox );
+	expect( bulkCheckbox ).toBeChecked();
+	expect( firstDomainsCheckbox ).toBeChecked();
+	expect( secondDomainsCheckbox ).toBeChecked();
+
+	fireEvent.click( bulkCheckbox );
+
+	expect( bulkCheckbox ).not.toBeChecked();
+	expect( firstDomainsCheckbox ).not.toBeChecked();
+	expect( secondDomainsCheckbox ).not.toBeChecked();
+} );
+
+test( 'when the domains list changes, all domains become unchecked', () => {
+	const { rerender } = render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
+		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+
+	fireEvent.click( bulkCheckbox );
+	expect( bulkCheckbox ).toBeChecked();
+	expect( firstDomainsCheckbox ).toBeChecked();
+	expect( secondDomainsCheckbox ).toBeChecked();
+
+	rerender(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+				testPartialDomain( { domain: 'example3.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	expect( bulkCheckbox ).not.toBeChecked();
+	expect( firstDomainsCheckbox ).not.toBeChecked();
+	expect( secondDomainsCheckbox ).not.toBeChecked();
 } );
