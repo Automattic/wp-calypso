@@ -25,6 +25,7 @@ class ImporterSubstack extends PureComponent {
 
 	render() {
 		const importerData = importerConfig( {
+			importerState: this.props.importerStatus.importerState,
 			siteSlug: this.props.siteSlug,
 			siteTitle: this.props.siteTitle,
 		} ).substack;
