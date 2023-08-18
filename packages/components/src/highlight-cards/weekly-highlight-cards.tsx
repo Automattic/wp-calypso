@@ -229,6 +229,7 @@ export default function WeeklyHighlightCards( {
 
 			<div className="highlight-cards-list">
 				<CountComparisonCard
+					compact={ true }
 					heading={ translate( 'Visitors' ) }
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.visitors ?? null }
@@ -237,6 +238,7 @@ export default function WeeklyHighlightCards( {
 					onClick={ onClickVisitors }
 				/>
 				<CountComparisonCard
+					compact={ true }
 					heading={ translate( 'Views' ) }
 					icon={ <Icon icon={ eye } /> }
 					count={ counts?.views ?? null }
@@ -245,6 +247,7 @@ export default function WeeklyHighlightCards( {
 					onClick={ onClickViews }
 				/>
 				<CountComparisonCard
+					compact={ true }
 					heading={ translate( 'Likes' ) }
 					icon={ <Icon icon={ starEmpty } /> }
 					count={ counts?.likes ?? null }
@@ -253,6 +256,7 @@ export default function WeeklyHighlightCards( {
 					onClick={ onClickLikes }
 				/>
 				<CountComparisonCard
+					compact={ true }
 					heading={ translate( 'Comments' ) }
 					icon={ <Icon icon={ commentContent } /> }
 					count={ counts?.comments ?? null }
