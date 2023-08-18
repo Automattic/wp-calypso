@@ -25,7 +25,6 @@ class DomainsTable extends PureComponent {
 		purchases: PropTypes.array,
 		settingPrimaryDomain: PropTypes.bool,
 		shouldUpgradeToMakeDomainPrimary: PropTypes.func,
-		sites: PropTypes.object,
 		translate: PropTypes.func,
 	};
 
@@ -109,11 +108,11 @@ class DomainsTable extends PureComponent {
 			settingPrimaryDomain,
 			shouldUpgradeToMakeDomainPrimary,
 			requestingSiteDomains,
-			sites,
 			isContactEmailEditContext,
 			isSavingContactInfo,
 			handleDomainItemToggle,
 			translate,
+			domainsDetails,
 		} = this.props;
 
 		const { sortKey, sortOrder } = this.state;
@@ -147,8 +146,11 @@ class DomainsTable extends PureComponent {
 
 		const domainListItems = domainItems.map( ( domain, index ) => {
 			// const purchase = purchases?.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) );
-			const selectedSite = sites?.[ domain.blogId ];
 			const isLoadingDomainDetails = requestingSiteDomains?.[ domain.blogId ];
+			const siteDomains = domainsDetails?.[ domain.blogId ];
+			const hasLoadedDomainDetails = Boolean(
+				siteDomains?.find( ( siteDomain ) => siteDomain.name === domain.name )
+			);
 
 			// TODO: how can we optimize the data loading? Can we load the daomin data using `InView` component as in list-all.jsx?
 			return (
@@ -156,15 +158,15 @@ class DomainsTable extends PureComponent {
 					{ /*{ ! isManagingAllSites &&*/ }
 					{ /*	domain.blogId &&*/ }
 					{ /*	this.renderQuerySitePurchasesOnce( domain.blogId ) }*/ }
-					{ /*{ isManagingAllSites &&*/ }
-					{ /*	domain.blogId &&*/ }
-					{ /*	this.renderQuerySiteDomainsOnce( domain.blogId ) }*/ }
+					{ isManagingAllSites &&
+						domain.blogId &&
+						this.renderQuerySiteDomainsOnce( domain.blogId ) }
 					<DomainRow
 						currentRoute={ currentRoute }
 						showCheckbox={ isContactEmailEditContext }
 						isSavingContactInfo={ isSavingContactInfo }
 						domain={ domain }
-						site={ selectedSite }
+						// site={ selectedSite }
 						isManagingAllSites={ isManagingAllSites }
 						isLoadingDomainDetails={ isLoadingDomainDetails }
 						handleDomainItemToggle={ handleDomainItemToggle }
@@ -181,6 +183,7 @@ class DomainsTable extends PureComponent {
 							shouldUpgradeToMakeDomainPrimary && shouldUpgradeToMakeDomainPrimary( domain )
 						}
 						hasLoadedPurchases={ hasLoadedPurchases }
+						hasLoadedDetails={ hasLoadedDomainDetails }
 						// purchase={ purchase }
 					/>
 				</Fragment>
