@@ -54,6 +54,7 @@ import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
 import { Container } from './grid-parts/container';
+import PlanStorageOptions from './grid-parts/plan-storage-options';
 import PreviousPlanFeaturesIncludedSection from './grid-parts/previous-plan-features-included';
 import SpotlightPlans from './grid-parts/spotlight-plans';
 import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
@@ -62,7 +63,6 @@ import { getStorageStringFromFeature } from './util';
 import type { GridPlan } from './hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanFeatures2023GridProps, PlanFeatures2023GridType, PlanRowOptions } from './types';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 export type PlanSelectedStorage = { [ key: string ]: WPComStorageAddOnSlug | null };
@@ -187,6 +187,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			selectedFeature,
 			wpcomFreeDomainSuggestion,
 			isCustomDomainAllowedOnFreePlan,
+			showUpgradeableStorage,
+			intervalType,
 		} = this.props;
 		// Do not render the spotlight plan if it exists
 		const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
@@ -434,7 +436,15 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 							} ) }
 					</tr>
 					<tr>
-						{ this.renderPlanStorageOptions( gridPlansWithoutSpotlight, { isTableCell: true } ) }
+						{ gridPlansWithoutSpotlight.map( ( gridPlan ) => (
+							<PlanStorageOptions
+								storageOptions={ gridPlan.features.storageOptions }
+								planSlug={ gridPlan.planSlug }
+								intervalType={ intervalType }
+								showUpgradeableStorage={ showUpgradeableStorage }
+								options={ { isTableCell: true } }
+							/>
+						) ) }
 					</tr>
 				</tbody>
 			</table>
@@ -488,6 +498,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			hideUnavailableFeatures,
 			wpcomFreeDomainSuggestion,
 			isCustomDomainAllowedOnFreePlan,
+			intervalType,
+			showUpgradeableStorage,
 		} = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
@@ -719,7 +731,13 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								/>
 							</Container>
 
-							{ this.renderPlanStorageOptions( [ gridPlan ] ) }
+							<PlanStorageOptions
+								storageOptions={ gridPlan.features.storageOptions }
+								planSlug={ gridPlan.planSlug }
+								intervalType={ intervalType }
+								showUpgradeableStorage={ showUpgradeableStorage }
+								options={ { isTableCell: false } }
+							/>
 						</CardContainer>
 					</div>
 				);
@@ -1062,65 +1080,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	/**
-	 * @deprecated moved inline
+	 * @deprecated moved to own component
 	 */
-	renderPlanFeaturesList( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const {
-			paidDomainName,
-			translate,
-			hideUnavailableFeatures,
-			selectedFeature,
-			wpcomFreeDomainSuggestion,
-			isCustomDomainAllowedOnFreePlan,
-		} = this.props;
-		const plansWithFeatures = renderedGridPlans.filter(
-			( gridPlan ) =>
-				! isWpcomEnterpriseGridPlan( gridPlan.planSlug ) &&
-				! isWooExpressPlusPlan( gridPlan.planSlug )
-		);
-
-		return plansWithFeatures.map(
-			( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
-				return (
-					<Container
-						key={ `${ planSlug }-${ mapIndex }` }
-						isTableCell={ options?.isTableCell }
-						className="plan-features-2023-grid__table-item"
-					>
-						<PlanFeatures2023GridFeatures
-							features={ wpcomFeatures }
-							planSlug={ planSlug }
-							paidDomainName={ paidDomainName }
-							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							selectedFeature={ selectedFeature }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						/>
-						{ jetpackFeatures.length !== 0 && (
-							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-								<Plans2023Tooltip
-									text={ translate(
-										'Security, performance and growth tools made by the WordPress experts.'
-									) }
-								>
-									<JetpackLogo size={ 16 } />
-								</Plans2023Tooltip>
-							</div>
-						) }
-						<PlanFeatures2023GridFeatures
-							features={ jetpackFeatures }
-							planSlug={ planSlug }
-							paidDomainName={ paidDomainName }
-							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						/>
-					</Container>
-				);
-			}
-		);
-	}
-
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const { translate, intervalType, showUpgradeableStorage } = this.props;
 
