@@ -32,18 +32,8 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let testAccount: TestAccount;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
-	// Jetpack deploy (`atomicVariation`) and "regular" Calypso E2E have to use different sets of
-	// feature keys that are not mutually compatible.
-	// Regular and CoBlocks runs must override the feature keys to add the `variant: siteEditor` clause.
-	// Meanwhile, for Jetpack deploys the extra `variant` causes `getTestAccountByFeature` to report
-	// no valid match because none of the Jetpack deploy test users in the default criteria have
-	// `variant` keys.
-	let features = envToFeatureKey( envVariables );
-	if ( envVariables.JETPACK_TARGET !== 'wpcom-deployment' ) {
-		features = { ...features, variant: 'siteEditor' };
-	}
-
-	const accountName = getTestAccountByFeature( features, [
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' }, [
 		// None of our CoBlocks users use block themes, so we need to fall back to the default Gutenberg users
 		// if COBLOCKS_EDGE is set.
 		{
