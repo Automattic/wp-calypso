@@ -2,11 +2,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import showBanner from 'calypso/jetpack-cloud/sections/utils/show-banner';
 import { useSelector } from 'calypso/state';
 import {
+	JETPACK_DASHBOARD_SURVEY_BANNER_PREFERENCE as surveyBannerPreferenceName,
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE as welcomeBannerPreferenceName,
 	JETPACK_DASHBOARD_DOWNTIME_MONITORING_UPGRADE_BANNER_PREFERENCE as downtimeMonitoringUpgradeBannerPreferenceName,
 	getJetpackDashboardPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import SiteDowntimeMonitoringUpgradeBanner from '../site-downtime-monitoring-upgrade-banner';
+import SiteSurveyBanner from '../site-survey-banner';
 import SiteWelcomeBanner from '../site-welcome-banner';
 
 export default function DashboardBanners() {
@@ -26,6 +28,11 @@ export default function DashboardBanners() {
 			),
 			showDays: 7,
 			hideBanner: ! isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' ),
+		},
+		{
+			component: () => <SiteSurveyBanner isDashboardView />,
+			preference: useSelector( ( state ) => getPreference( state, surveyBannerPreferenceName ) ),
+			showDays: 30,
 		},
 	];
 
