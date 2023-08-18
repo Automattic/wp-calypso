@@ -40,7 +40,7 @@ const PostCardComments = ( { post, handleClick } ) => {
 			} );
 	};
 
-	if ( shouldHideComments ) {
+	if ( shouldHideComments || ! hasFetchedComments ) {
 		return null;
 	}
 
