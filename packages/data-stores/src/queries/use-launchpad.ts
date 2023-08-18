@@ -48,6 +48,10 @@ type LaunchpadUpdateSettings = {
 	};
 };
 
+export type UseLaunchpadOptions = {
+	onSuccess?: ( data: LaunchpadResponse ) => LaunchpadResponse;
+};
+
 export const fetchLaunchpad = (
 	siteSlug: string | null,
 	checklist_slug?: string | 0 | null | undefined
@@ -70,27 +74,31 @@ export const fetchLaunchpad = (
 		  } as APIFetchOptions );
 };
 
-const mapTask = ( task: Task, index: number ) => {
+const addOrderToTask = ( task: Task, index: number ) => {
 	task.order = index;
 	return task;
 };
 
+export function sortLaunchpadTasksByCompletionStatus( response: LaunchpadResponse ) {
+	const tasks = response.checklist || [];
+	const completedTasks = tasks.filter( ( task: Task ) => task.completed );
+	const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
+	response.checklist = [ ...completedTasks, ...incompleteTasks ].map( addOrderToTask );
+	return response;
+}
+
 export const useLaunchpad = (
 	siteSlug: string | null,
-	checklist_slug?: string | 0 | null | undefined
+	checklist_slug?: string | 0 | null | undefined,
+	options?: UseLaunchpadOptions
 ) => {
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
+	const defaultSuccessCallback = ( response: LaunchpadResponse ) => response;
+	const onSuccessCallback = options?.onSuccess || defaultSuccessCallback;
+
 	return useQuery( {
 		queryKey: key,
-		queryFn: () =>
-			fetchLaunchpad( siteSlug, checklist_slug ).then( ( data ) => {
-				const tasks = data.checklist || [];
-				const completedTasks = tasks.filter( ( task: Task ) => task.completed );
-				const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
-				data.checklist = [ ...completedTasks, ...incompleteTasks ].map( mapTask );
-
-				return data;
-			} ),
+		queryFn: () => fetchLaunchpad( siteSlug, checklist_slug ).then( onSuccessCallback ),
 		retry: 3,
 		initialData: {
 			site_intent: '',
