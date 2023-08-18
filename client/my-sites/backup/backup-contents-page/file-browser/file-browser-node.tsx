@@ -53,6 +53,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	// We don't want to add changed extensions or original extensions if the extension version is not available
 	const shouldAddChildNode = useCallback(
 		( childItem: FileBrowserItem ) => {
+			// We won't add checkboxes for WordPres since we don't restore it
+			if ( childItem.type === 'wordpress' ) {
+				return false;
+			}
+
+			// Everything else, except archives are fine, they need some extra checking based on changed/unchanged
 			if ( childItem.type !== 'archive' ) {
 				return true;
 			}
@@ -197,6 +203,11 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 
 	const renderCheckbox = () => {
 		if ( ! showCheckboxes ) {
+			return;
+		}
+
+		// We don't restore WordPress and just download it individually
+		if ( item.type === 'wordpress' ) {
 			return;
 		}
 

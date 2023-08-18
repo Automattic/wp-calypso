@@ -29,18 +29,27 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementList( ':site' ) }
-				analyticsTitle="Domain Management"
-				component={ DomainManagement.SiteDomains }
-				context={ pageContext }
-				needsContactDetails
-				needsDomains
-				needsPlans
-				needsProductsList
-			/>
-		);
+		if ( isEnabled( 'domains/management' ) ) {
+			pageContext.primary = (
+				<DomainManagement.BulkSiteDomains
+					analyticsPath={ domainManagementRoot( ':site' ) }
+					analyticsTitle="Domain Management"
+				/>
+			);
+		} else {
+			pageContext.primary = (
+				<DomainManagementData
+					analyticsPath={ domainManagementList( ':site' ) }
+					analyticsTitle="Domain Management"
+					component={ DomainManagement.SiteDomains }
+					context={ pageContext }
+					needsContactDetails
+					needsDomains
+					needsPlans
+					needsProductsList
+				/>
+			);
+		}
 		next();
 	},
 

@@ -606,9 +606,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'promote-post',
+		name: 'promote-post-i2',
 		paths: [ '/advertising' ],
-		module: 'calypso/my-sites/promote-post',
+		module: 'calypso/my-sites/promote-post-i2',
 		group: 'sites',
 	},
 	{

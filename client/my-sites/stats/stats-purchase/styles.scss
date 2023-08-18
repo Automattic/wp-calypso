@@ -215,6 +215,19 @@
 		}
 	}
 
+	.stats-purchase-wizard__card-panel-title {
+		h2 > button {
+			cursor: auto;
+
+		}
+
+		&.stats-purchase-wizard__card-panel--type-selected {
+			h2 > button {
+				cursor: pointer;
+			}
+		}
+	}
+
 	.components-button {
 		&.is-primary {
 			border-radius: 4px;

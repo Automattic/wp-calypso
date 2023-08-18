@@ -36,10 +36,12 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-products#readme",
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
 		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"react-dom": "^18.2.0",
 		"typescript": "^5.1.6"
 	},
 	"peerDependencies": {

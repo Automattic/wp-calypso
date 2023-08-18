@@ -1,24 +1,31 @@
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { useMemo } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { PrimaryDomainLabel } from '../primary-domain-label';
 import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data-stores';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
+	isAllSitesView: boolean;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 }
 
-export function DomainsTableRow( { domain, fetchSiteDomains }: DomainsTableRowProps ) {
-	const { data } = useSiteDomainsQuery(
-		domain.blog_id,
-		fetchSiteDomains && {
-			queryFn: () => fetchSiteDomains( domain.blog_id ),
-		}
-	);
+export function DomainsTableRow( {
+	domain,
+	isAllSitesView,
+	fetchSiteDomains,
+}: DomainsTableRowProps ) {
+	const { ref, inView } = useInView( { triggerOnce: true } );
 
-	const { siteSlug } = useMemo( () => {
+	const { data } = useSiteDomainsQuery( domain.blog_id, {
+		enabled: inView,
+		...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
+	} );
+
+	const { siteSlug, primaryDomain } = useMemo( () => {
 		const primaryDomain = data?.domains?.find( ( d ) => d.primary_domain );
 		const unmappedDomain = data?.domains?.find( ( d ) => d.wpcom_domain );
 		const siteSlug =
@@ -27,21 +34,38 @@ export function DomainsTableRow( { domain, fetchSiteDomains }: DomainsTableRowPr
 		return {
 			// Fall back to the site's ID if we're still loading detailed domain data
 			siteSlug: siteSlug || domain.blog_id.toString( 10 ),
+			primaryDomain,
 		};
 	}, [ data, domain.blog_id ] );
 
+	const isPrimaryDomain = primaryDomain?.domain === domain.domain;
+	const isManageableDomain = ! domain.wpcom_domain;
+	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
+
 	return (
-		<tr key={ domain.domain }>
+		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				<a className="domains-table__domain-link" href={ domainManagementLink( domain, siteSlug ) }>
-					{ domain.domain }
-				</a>
+				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
+				{ isManageableDomain ? (
+					<a
+						className="domains-table__domain-link"
+						href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+					>
+						{ domain.domain }
+					</a>
+				) : (
+					domain.domain
+				) }
 			</td>
 		</tr>
 	);
 }
 
-function domainManagementLink( { domain, type }: PartialDomainData, siteSlug: string ) {
+function domainManagementLink(
+	{ domain, type }: PartialDomainData,
+	siteSlug: string,
+	isAllSitesView: boolean
+) {
 	const viewSlug = domainManagementViewSlug( type );
 
 	// Encodes only real domain names and not parameter placeholders
@@ -51,7 +75,11 @@ function domainManagementLink( { domain, type }: PartialDomainData, siteSlug: st
 		domain = encodeURIComponent( encodeURIComponent( domain ) );
 	}
 
-	return `/domains/manage/all/${ domain }/${ viewSlug }/${ siteSlug }`;
+	if ( isAllSitesView ) {
+		return `/domains/manage/all/${ domain }/${ viewSlug }/${ siteSlug }`;
+	}
+
+	return `/domains/manage/${ domain }/${ viewSlug }/${ siteSlug }`;
 }
 
 function domainManagementViewSlug( type: PartialDomainData[ 'type' ] ) {

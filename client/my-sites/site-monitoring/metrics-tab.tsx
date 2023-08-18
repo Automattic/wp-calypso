@@ -359,7 +359,7 @@ export const MetricsTab = () => {
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
 				title={ __( 'Successful HTTP responses' ) }
-				subtitle={ __( 'Requests completed without errors by the server' ) }
+				subtitle={ __( 'Requests per minute completed without errors by the server' ) }
 				data={ dataForSuccessCodesChart as uPlot.AlignedData }
 				series={ successHttpCodes.series }
 				options={ {
@@ -374,7 +374,7 @@ export const MetricsTab = () => {
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
 				title={ __( 'Unsuccessful HTTP responses' ) }
-				subtitle={ __( 'Requests that encountered errors or issues during processing' ) }
+				subtitle={ __( 'Requests per minute that encountered errors or issues during processing' ) }
 				data={ dataForErrorCodesChart as uPlot.AlignedData }
 				series={ errorHttpCodes.series }
 				options={ {
