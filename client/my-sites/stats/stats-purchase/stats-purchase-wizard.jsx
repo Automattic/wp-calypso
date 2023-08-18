@@ -105,6 +105,7 @@ const ProductCard = ( {
 		}
 
 		setWizardStep( SCREEN_TYPE_SELECTION );
+		setSiteType( null );
 	};
 
 	// change the plan to commercial on the personal plan confirmation
