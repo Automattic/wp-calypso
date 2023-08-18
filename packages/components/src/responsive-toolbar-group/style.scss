@@ -6,7 +6,7 @@
 		background-color: transparent;
 		border-color: transparent;
 		justify-content: space-between;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
 		display: flex;
 		opacity: 0;
 
@@ -41,7 +41,6 @@
 	}
 
 	.responsive-toolbar-group__full-list {
-		width: 99%;
 		overflow: hidden;
 		position: absolute;
 		height: 0;
