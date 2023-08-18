@@ -10,7 +10,7 @@
 	.responsive-toolbar-group__grouped-list {
 		display: flex;
 		gap: 4px;
-		justify-content: flex-start;
+		justify-content: space-between;
 		padding: 0;
 
 		> div {
@@ -34,6 +34,10 @@
 			height: 28px;
 			line-height: 24px;
 			padding: 4px 12px;
+
+			&.responsive-toolbar-group__more-item {
+				padding-right: 0;
+			}
 
 			&::before {
 				transition: background-color 0.15s ease-in-out;
