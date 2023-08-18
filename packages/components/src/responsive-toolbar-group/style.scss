@@ -15,7 +15,7 @@
 			background-color: #1e1e1e;
 			color: var(--color-text-inverted);
 		}
-		.responsive-toolbar-group__menu-item:not(.is-selected):not(.responsive-toolbar-group__more-item):not(.is-selected) {
+		.responsive-toolbar-group__menu-item:not(.is-selected):not(.responsive-toolbar-group__more-item) {
 			&:hover {
 				background: var(--studio-gray-0);
 			}
