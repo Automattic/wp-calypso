@@ -71,9 +71,9 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 
 		testAccount = new TestAccount( accountName );
 		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-			// Switching to or logging into eCommerce plan sites inevitably
-			// loads WP-Admin instead of Calypso, but the rediret occurs
-			// only after Calypso attempts to load.
+			// eCommerce plan sites attempt to load Calypso, but with
+			// third-party cookies disabled the fallback route to WP-Admin
+			// kicks in after some time.
 			await testAccount.authenticate( page, { url: /wp-admin/ } );
 		} else {
 			await testAccount.authenticate( page );
