@@ -10,7 +10,6 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
-import './bulk-site-domains.scss';
 
 interface BulkSiteDomainsProps {
 	analyticsPath: string;
