@@ -86,7 +86,7 @@ test( 'when shouldDisplayPrimaryDomainLabel is true, the primary domain label is
 		} )
 	);
 
-	render(
+	const { rerender } = render(
 		<DomainsTable
 			domains={ [ primaryPartial, notPrimaryPartial ] }
 			fetchSiteDomains={ fetchSiteDomains }
@@ -97,10 +97,21 @@ test( 'when shouldDisplayPrimaryDomainLabel is true, the primary domain label is
 	await waitFor( () => {
 		const [ , rowOne, rowTwo ] = screen.getAllByRole( 'row' );
 
-		expect( within( rowOne ).queryByText( 'example.com' ) ).toBeDefined();
-		expect( within( rowOne ).queryByText( 'Primary domain' ) ).toBeDefined();
+		expect( within( rowOne ).queryByText( 'example.com' ) ).toBeInTheDocument();
+		expect( within( rowOne ).queryByText( 'Primary domain' ) ).toBeInTheDocument();
 
-		expect( within( rowTwo ).queryByText( 'example.wordpress.com' ) ).toBeDefined();
-		expect( within( rowTwo ).queryByText( 'Primary domain' ) ).toBeNull();
+		expect( within( rowTwo ).queryByText( 'example.wordpress.com' ) ).toBeInTheDocument();
+		expect( within( rowTwo ).queryByText( 'Primary domain' ) ).not.toBeInTheDocument();
 	} );
+
+	// Test that the label is not displayed when displayPrimaryDomainLabel is false
+	rerender(
+		<DomainsTable
+			domains={ [ primaryPartial, notPrimaryPartial ] }
+			fetchSiteDomains={ fetchSiteDomains }
+			displayPrimaryDomainLabel={ false }
+		/>
+	);
+
+	expect( screen.queryByText( 'Primary domain' ) ).not.toBeInTheDocument();
 } );
