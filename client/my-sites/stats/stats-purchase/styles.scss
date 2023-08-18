@@ -262,8 +262,16 @@
 	}
 
 	// override panel
-	.components-panel__body > .components-panel__body-title:hover {
-		background-color: transparent;
+	.components-panel__body {
+		& > .components-panel__body-title:hover {
+			background-color: transparent;
+		}
+
+		&.is-opened {
+			& > .components-panel__body-title {
+				margin-bottom: 8px;
+			}
+		}
 	}
 
 	.components-panel__body-toggle.components-button {
