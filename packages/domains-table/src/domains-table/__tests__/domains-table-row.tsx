@@ -14,7 +14,9 @@ const render = ( el ) =>
 	);
 
 test( 'domain name is rendered in the row', () => {
-	render( <DomainsTableRow domain={ testPartialDomain( { domain: 'example1.com' } ) } /> );
+	render(
+		<DomainsTableRow domain={ testPartialDomain( { domain: 'example1.com' } ) } isAllSitesView />
+	);
 
 	expect( screen.queryByText( 'example1.com' ) ).toBeInTheDocument();
 } );
@@ -31,7 +33,13 @@ test( 'wpcom domains do not link to management interface', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	expect( screen.getByText( 'example.wordpress.com' ) ).not.toHaveAttribute( 'href' );
 } );
@@ -47,7 +55,13 @@ test( 'domain name links to management interface', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	// Expect the row to fetch detailed domain data
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
@@ -83,7 +97,13 @@ test( 'non primary domain uses the primary domain as the site slug in its link U
 		domains: [ fullDomain, primaryDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
 
@@ -116,7 +136,11 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 	} );
 
 	render(
-		<DomainsTableRow domain={ partialRedirectDomain } fetchSiteDomains={ fetchSiteDomains } />
+		<DomainsTableRow
+			domain={ partialRedirectDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
 	);
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
@@ -142,7 +166,13 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 		domains: [ fullDomain ],
 	} );
 
-	render( <DomainsTableRow domain={ partialDomain } fetchSiteDomains={ fetchSiteDomains } /> );
+	render(
+		<DomainsTableRow
+			domain={ partialDomain }
+			fetchSiteDomains={ fetchSiteDomains }
+			isAllSitesView
+		/>
+	);
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
 

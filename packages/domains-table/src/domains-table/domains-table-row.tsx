@@ -5,7 +5,7 @@ import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
-	displayPrimaryDomainLabel?: boolean;
+	isAllSitesView: boolean;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -14,8 +14,8 @@ interface DomainsTableRowProps {
 
 export function DomainsTableRow( {
 	domain,
+	isAllSitesView,
 	fetchSiteDomains,
-	displayPrimaryDomainLabel,
 }: DomainsTableRowProps ) {
 	const { data } = useSiteDomainsQuery(
 		domain.blog_id,
@@ -39,7 +39,7 @@ export function DomainsTableRow( {
 
 	const isPrimaryDomain = primaryDomain?.domain === domain.domain;
 	const isManageableDomain = ! domain.wpcom_domain;
-	const shouldDisplayPrimaryDomainLabel = displayPrimaryDomainLabel && isPrimaryDomain;
+	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
 
 	return (
 		<tr key={ domain.domain }>

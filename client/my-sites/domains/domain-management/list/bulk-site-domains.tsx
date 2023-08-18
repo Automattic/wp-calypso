@@ -44,7 +44,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				<DomainsTable domains={ data?.domains } displayPrimaryDomainLabel />
+				<DomainsTable domains={ data?.domains } isAllSitesView={ false } />
 			</Main>
 			<UsePresalesChat />
 		</>
