@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
+import { domainsTableColumns } from '../domains-table-header/columns';
 import { DomainsTableRow } from './domains-table-row';
 import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data-stores';
 import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
-	columns: DomainsTableColumn[];
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
 	fetchSiteDomains?: (
@@ -14,7 +14,7 @@ interface DomainsTableProps {
 	) => Promise< SiteDomainsQueryFnData >;
 }
 
-export function DomainsTable( { domains, fetchSiteDomains, columns }: DomainsTableProps ) {
+export function DomainsTable( { domains, fetchSiteDomains }: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
 		sortDirection: 'asc' | 'desc';
@@ -48,7 +48,7 @@ export function DomainsTable( { domains, fetchSiteDomains, columns }: DomainsTab
 	return (
 		<table className="domains-table">
 			<DomainsTableHeader
-				columns={ columns }
+				columns={ domainsTableColumns }
 				activeSortKey={ sortKey }
 				activeSortDirection={ sortDirection }
 				onChangeSortOrder={ ( selectedColumn ) => {

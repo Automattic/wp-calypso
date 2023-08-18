@@ -11,12 +11,6 @@ const render = ( el ) => renderWithProvider( el );
 test( 'all domain names are rendered in the table', () => {
 	const { rerender } = render(
 		<DomainsTable
-			columns={ [
-				{
-					name: 'domain',
-					label: 'Domain',
-				},
-			] }
 			domains={ [
 				testPartialDomain( { domain: 'example1.com' } ),
 				testPartialDomain( { domain: 'example2.com' } ),
@@ -29,17 +23,7 @@ test( 'all domain names are rendered in the table', () => {
 	expect( screen.queryByText( 'example2.com' ) ).toBeInTheDocument();
 	expect( screen.queryByText( 'example3.com' ) ).toBeInTheDocument();
 
-	rerender(
-		<DomainsTable
-			domains={ [] }
-			columns={ [
-				{
-					name: 'domain',
-					label: 'Domain',
-				},
-			] }
-		/>
-	);
+	rerender( <DomainsTable domains={ [] } /> );
 
 	expect( screen.queryByText( 'example1.com' ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'example2.com' ) ).not.toBeInTheDocument();
@@ -71,12 +55,6 @@ test( 'when two domains share the same underlying site, there is only one fetch 
 
 	render(
 		<DomainsTable
-			columns={ [
-				{
-					name: 'domain',
-					label: 'Domain',
-				},
-			] }
 			domains={ [ primaryPartial, notPrimaryPartial, differentSitePartial ] }
 			fetchSiteDomains={ fetchSiteDomains }
 		/>
