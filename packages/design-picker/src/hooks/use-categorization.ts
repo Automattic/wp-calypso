@@ -57,7 +57,7 @@ export function useCategorization(
 
 export function useCategorizationFromApi(
 	categoryMap: Record< string, Category >,
-	{ defaultSelection }: UseCategorizationOptions
+	{ defaultSelection, sort }: UseCategorizationOptions
 ): Categorization {
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
@@ -66,7 +66,7 @@ export function useCategorizationFromApi(
 			slug,
 		} ) );
 
-		return result;
+		return result.sort( sort );
 	}, [ categoryMap ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
