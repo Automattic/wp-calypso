@@ -449,6 +449,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
 						checked={ editedPostPaidNewsletter }
+						disabled={ !! product.ID }
 						label={ translate( 'Paid newsletter tier' ) }
 					/>
 				</FormFieldset>
