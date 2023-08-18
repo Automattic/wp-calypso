@@ -1,4 +1,4 @@
-import { Icon, chartBar } from '@wordpress/icons';
+import { Icon, chartBar, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSubscriberStatsRate } from '../../hooks';
 import { useSubscriberStatsQuery } from '../../queries';
@@ -25,26 +25,34 @@ const SubscriberStats = ( { siteId, subscriptionId, userId }: SubscriberStatsPro
 	const clickRate = useSubscriberStatsRate( subscriberStats, 'unique_clicks' );
 
 	return (
-		<div className="subscriber-stats highlight-cards-list">
-			<SubscriberStatsCard
-				heading="Emails sent"
-				isLoading={ isLoading }
-				icon={ <Icon icon={ MailIcon } /> }
-				helpText={ translate( 'Total number of emails sent to this subscriber.' ) }
-				value={ subscriberStats?.emails_sent }
-			/>
-			<SubscriberStatsCard
-				heading="Open rate"
-				isLoading={ isLoading }
-				icon={ <Icon icon={ chartBar } /> }
-				value={ `${ openRate }%` }
-			/>
-			<SubscriberStatsCard
-				heading="Click rate"
-				icon={ <Icon icon={ SelectIcon } /> }
-				isLoading={ isLoading }
-				value={ `${ clickRate }%` }
-			/>
+		<div className="subscriber-stats">
+			<div className="subscriber-stats__list highlight-cards-list">
+				<SubscriberStatsCard
+					heading="Emails sent"
+					isLoading={ isLoading }
+					icon={ <Icon icon={ MailIcon } /> }
+					value={ subscriberStats?.emails_sent }
+				/>
+				<SubscriberStatsCard
+					heading="Open rate"
+					isLoading={ isLoading }
+					icon={ <Icon icon={ chartBar } /> }
+					value={ `${ openRate }%` }
+				/>
+				<SubscriberStatsCard
+					heading="Click rate"
+					icon={ <Icon icon={ SelectIcon } /> }
+					isLoading={ isLoading }
+					value={ `${ clickRate }%` }
+				/>
+			</div>
+			{ subscriberStats?.blog_registration_date &&
+			subscriberStats.blog_registration_date < new Date( '2023-08-17' ) ? (
+				<div className="subscriber-stats__tip">
+					<Icon icon={ tip } size={ 16 } />
+					{ translate( 'Data available since August 17th, 2023' ) }
+				</div>
+			) : null }
 		</div>
 	);
 };
