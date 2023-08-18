@@ -71,12 +71,22 @@ const ProductCard = ( {
 	const personalProductTitle = translate( 'What is Jetpack Stats worth to you?' );
 	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
-	let selectedSiteTypeLabel = commercialLabel;
-	let selectedSiteTypeTitle = commercialProductTitle;
+	// Default titles for no site type selected.
+	let selectedSiteTypeLabel = translate( 'What site type is %(site)s?', {
+		args: {
+			site: siteSlug,
+		},
+	} );
+	let selectedSiteTypeTitle = personalProductTitle;
 
 	if ( siteType === TYPE_PERSONAL ) {
 		selectedSiteTypeLabel = personalLabel;
 		selectedSiteTypeTitle = personalProductTitle;
+	}
+
+	if ( siteType === TYPE_COMMERCIAL ) {
+		selectedSiteTypeLabel = commercialLabel;
+		selectedSiteTypeTitle = commercialProductTitle;
 	}
 
 	const showCelebration =
@@ -119,15 +129,7 @@ const ProductCard = ( {
 	const firstStepTitleNode = (
 		<TitleNode
 			indicatorNumber="1"
-			label={
-				! siteType
-					? translate( 'What site type is %(site)s?', {
-							args: {
-								site: siteSlug,
-							},
-					  } )
-					: selectedSiteTypeLabel
-			}
+			label={ selectedSiteTypeLabel }
 			active={ wizardStep === SCREEN_TYPE_SELECTION }
 		/>
 	);
@@ -179,12 +181,12 @@ const ProductCard = ( {
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
 											<Button variant="primary" onClick={ setPersonalSite }>
-												{ translate( 'Personal site' ) }
+												{ personalLabel }
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
 											<Button variant="primary" onClick={ setCommercialSite }>
-												{ translate( 'Commercial site' ) }
+												{ commercialLabel }
 											</Button>
 										</div>
 									</div>
