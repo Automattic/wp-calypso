@@ -40,8 +40,8 @@ class DomainsTable extends PureComponent {
 		)?.name;
 
 		this.state = {
-			sortKey: queryParamSort || 'status', // initial column to sort by - should match the header columns
-			sortOrder: -1, // initial sort order where 1 = ascending and -1 = descending
+			sortKey: queryParamSort || 'domain', // initial column to sort by - should match the header columns
+			sortOrder: 1, // initial sort order where 1 = ascending and -1 = descending
 		};
 	}
 

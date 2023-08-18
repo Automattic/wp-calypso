@@ -31,7 +31,8 @@ import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-do
 import {
 	getAllDomains,
 	getAllRequestingSiteDomains,
-	getFlatDomainsList, hasLoadedSiteDomains,
+	getFlatDomainsList,
+	hasLoadedSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainsTable from './domains-table';
@@ -372,7 +373,6 @@ class AllDomains extends Component {
 				supportsOrderSwitching: true,
 				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 			},
-			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			{ name: 'action', label: translate( 'Actions' ) },
 		];
 
