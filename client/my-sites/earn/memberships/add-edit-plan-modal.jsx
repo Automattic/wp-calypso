@@ -171,12 +171,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	// break if they fall out of sync.
 	// https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/extensions/shared/components/product-management-controls/utils.js#L95
 	const defaultNames = {
-		'false,1 month': translate( 'Monthly Subscription' ),
-		'true,1 month': translate( 'Monthly Donation' ),
-		'false,1 year': translate( 'Yearly Subscription' ),
-		'true,1 year': translate( 'Yearly Donation' ),
-		'false,one-time': translate( 'Subscription' ),
-		'true,one-time': translate( 'Donation' ),
+		'1 month': translate( 'Monthly Subscription' ),
+		'1 year': translate( 'Yearly Subscription' ),
+		'one-time': translate( 'Subscription' ),
 	};
 
 	useEffect( () => {
@@ -185,9 +182,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			return;
 		}
 
-		const name = defaultNames[ [ false, editedSchedule ] ] ?? '';
+		const name = defaultNames[ editedSchedule ] ?? '';
 		setEditedProductName( name );
-	}, [ false, editedSchedule ] );
+	}, [ editedSchedule ] );
 
 	const onClose = ( reason ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
