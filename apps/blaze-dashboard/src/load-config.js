@@ -10,7 +10,6 @@ productionConfig.features.is_running_in_jetpack_site =
 productionConfig.features[ 'use-translation-chunks' ] = false;
 
 // Override the redesign feature
-productionConfig.features[ 'promote-post/redesign-i2' ] = true;
 productionConfig.features[ 'promote-post/widget-i2' ] = true;
 
 // Sets the advertising path prefix for this app
