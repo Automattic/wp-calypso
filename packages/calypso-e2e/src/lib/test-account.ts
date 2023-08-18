@@ -138,7 +138,6 @@ export class TestAccount {
 
 	/**
 	 * Retrieves the site URL from the config file if defined for the current
-	 * Returns the testSites.primary.url value for the user.
 	 * account.
 	 *
 	 * If `protocol` is set to false, only the site slug portion is returned.
