@@ -163,6 +163,63 @@ const defaultCriteria: FeatureCriteria[] = [
 		atomicVariation: 'wp-previous',
 		accountName: 'jetpackAtomicWpPreviousUser',
 	},
+	// Jetpack Atomic Deploy Users, but with the
+	// variant: siteEditor set.
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		variant: 'siteEditor',
+		accountName: 'jetpackAtomicDefaultUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'php-old',
+		variant: 'siteEditor',
+		accountName: 'jetpackAtomicPhpOldUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'php-new',
+		variant: 'siteEditor',
+		accountName: 'jetpackAtomicPhpNewUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'ecomm-plan',
+		variant: 'siteEditor',
+		accountName: 'jetpackAtomicEcommPlanUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'private',
+		variant: 'siteEditor',
+		accountName: 'jetpackAtomicPrivateUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'wp-beta',
+		variant: 'siteEditor',
+		accountName: 'jetpackAtomicWpBetaUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'wpcom-deployment',
+		atomicVariation: 'wp-previous',
+		variant: 'siteEditor',
+		accountName: 'jetpackAtomicWpPreviousUser',
+	},
 	// Atomic GB nightly tests
 	{
 		siteType: 'atomic',

@@ -39,3 +39,15 @@ const storyDefaults = {
 };
 
 export const TableWithRows = { ...storyDefaults };
+
+export const TableWithPrimaryDomainLabel = {
+	...storyDefaults,
+	args: {
+		...defaultArgs,
+		domains: [
+			{ domain: 'example1.com', blog_id: 1, primary_domain: true },
+			{ domain: 'example2.com', blog_id: 1, primary_domain: false },
+		],
+		displayPrimaryDomainLabel: true,
+	},
+};

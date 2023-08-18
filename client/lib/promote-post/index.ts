@@ -163,24 +163,27 @@ export async function showDSP(
 	} );
 }
 
+export const getDSPOrigin = () => {
+	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		return 'jetpack';
+	} else if ( isWpMobileApp() ) {
+		return 'wp-mobile-app';
+	} else if ( isWcMobileApp() ) {
+		return 'wc-mobile-app';
+	}
+
+	return 'calypso';
+};
+
 /**
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
  *
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
-	let origin = 'calypso';
-	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-		origin = 'jetpack';
-	} else if ( isWpMobileApp() ) {
-		origin = 'wp-mobile-app';
-	} else if ( isWcMobileApp() ) {
-		origin = 'wc-mobile-app';
-	}
-
 	const eventProps = {
 		entry_point: entryPoint,
-		origin,
+		origin: getDSPOrigin(),
 	};
 
 	return composeAnalytics(

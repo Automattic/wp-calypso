@@ -21,8 +21,6 @@ import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
 
-const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
-
 export type SubscriptionOptions = {
 	invitation: string;
 	comment_follow: string;
@@ -45,6 +43,8 @@ type Fields = {
 	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
+	date_format?: string;
+	timezone_string?: string;
 };
 
 const getFormSettings = ( settings: unknown & Fields ) => {
@@ -69,6 +69,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
+		date_format,
+		timezone_string,
 	} = settings;
 
 	return {
@@ -88,6 +90,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
+		date_format: date_format,
+		timezone_string: timezone_string,
 	};
 };
 
@@ -212,10 +216,6 @@ const ReadingSettings = () => {
 	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
 		isJetpackConnectionProblem( state, siteId as number )
 	);
-
-	if ( ! isEnabled ) {
-		return null;
-	}
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { TranslateResult, translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { appStates } from 'calypso/state/imports/constants';
 
 export interface ImporterOptionalURL {
 	title: TranslateResult;
@@ -27,6 +28,7 @@ interface ImporterConfigMap {
 }
 
 interface ImporterConfigArgs {
+	importerState?: string;
 	isAtomic?: boolean;
 	isJetpack?: boolean;
 	siteSlug?: string;
@@ -34,12 +36,15 @@ interface ImporterConfigArgs {
 }
 
 function getConfig( {
+	importerState = '',
 	isAtomic = false,
 	isJetpack = false,
 	siteSlug = '',
 	siteTitle = '',
 } ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
+
+	const isFinished = importerState === appStates.IMPORT_SUCCESS;
 
 	importerConfig.wordpress = {
 		engine: 'wordpress',
@@ -182,13 +187,15 @@ function getConfig( {
 						}
 					) }
 				</p>
-				<p>
-					{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
-						components: {
-							a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
-						},
-					} ) }
-				</p>
+				{ ! isFinished && (
+					<p>
+						{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
+							components: {
+								a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
+							},
+						} ) }
+					</p>
+				) }
 			</>
 		),
 		uploadDescription: (

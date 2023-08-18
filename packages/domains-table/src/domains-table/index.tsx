@@ -5,6 +5,7 @@ import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
+	displayPrimaryDomainLabel?: boolean;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
@@ -13,7 +14,11 @@ interface DomainsTableProps {
 	) => Promise< SiteDomainsQueryFnData >;
 }
 
-export function DomainsTable( { domains, fetchSiteDomains }: DomainsTableProps ) {
+export function DomainsTable( {
+	domains,
+	fetchSiteDomains,
+	displayPrimaryDomainLabel,
+}: DomainsTableProps ) {
 	const { __ } = useI18n();
 
 	if ( ! domains ) {
@@ -33,6 +38,7 @@ export function DomainsTable( { domains, fetchSiteDomains }: DomainsTableProps )
 						key={ domain.domain }
 						domain={ domain }
 						fetchSiteDomains={ fetchSiteDomains }
+						displayPrimaryDomainLabel={ displayPrimaryDomainLabel }
 					/>
 				) ) }
 			</tbody>

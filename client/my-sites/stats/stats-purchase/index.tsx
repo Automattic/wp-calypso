@@ -24,7 +24,6 @@ import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
 	TYPE_COMMERCIAL,
-	TYPE_PERSONAL,
 } from './stats-purchase-wizard';
 
 const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: string ) => {
@@ -100,7 +99,8 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 		if ( isPWYWOwned && ! isCommercialOwned ) {
 			return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
 		}
-		return [ SCREEN_TYPE_SELECTION, TYPE_PERSONAL ];
+		// if nothing is owned don't specify the type
+		return [ SCREEN_TYPE_SELECTION, null ];
 	}, [ isPWYWOwned, isCommercialOwned ] );
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
