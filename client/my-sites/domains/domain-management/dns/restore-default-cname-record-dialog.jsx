@@ -27,10 +27,10 @@ function RestoreDefaultCnameRecordDialog( { onClose, visible } ) {
 
 	return (
 		<Dialog isVisible={ visible } buttons={ buttons } onClose={ onCancel }>
-			<h1>{ __( 'Restore default C record' ) }</h1>
+			<h1>{ __( 'Restore default CNAME record' ) }</h1>
 			<p>
 				{ __(
-					'Restoring the record will create a wildcard CNAME record pointing to your WordPress.com site. In case a wildcard CNAME record already exists, it will be deleted.'
+					'Restoring the record will create a wildcard CNAME record pointing to your WordPress.com site.'
 				) }
 			</p>
 			<p className="restore-default-cname-record-dialog__message">
