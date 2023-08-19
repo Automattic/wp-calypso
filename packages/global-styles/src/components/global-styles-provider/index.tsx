@@ -40,17 +40,15 @@ const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ]
 const useGlobalStylesBaseConfig = (
 	siteId: number | string,
 	stylesheet: string
-): [ boolean, GlobalStylesObject | undefined ] => {
-	const { data } = useGetGlobalStylesBaseConfig( siteId, stylesheet );
-	return [ !! data, data ];
+): [ boolean, GlobalStylesObject | undefined, boolean ] => {
+	const { data, isFetched } = useGetGlobalStylesBaseConfig( siteId, stylesheet );
+	return [ !! data, data, isFetched ];
 };
 
 const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) => {
 	const [ isUserConfigReady, userConfig, setUserConfig ] = useGlobalStylesUserConfig();
-	const [ isBaseConfigReady, baseConfig = DEFAULT_GLOBAL_STYLES ] = useGlobalStylesBaseConfig(
-		siteId,
-		stylesheet
-	);
+	const [ isBaseConfigReady, baseConfig = DEFAULT_GLOBAL_STYLES, isBaseConfigFetched ] =
+		useGlobalStylesBaseConfig( siteId, stylesheet );
 	const mergedConfig = useMemo( () => {
 		if ( ! baseConfig || ! userConfig ) {
 			return DEFAULT_GLOBAL_STYLES;
@@ -60,6 +58,7 @@ const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) =
 	const context = useMemo( () => {
 		return {
 			isReady: isUserConfigReady && isBaseConfigReady,
+			isBaseConfigFetched,
 			user: userConfig,
 			base: baseConfig,
 			merged: mergedConfig,
@@ -69,6 +68,7 @@ const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) =
 		mergedConfig,
 		userConfig,
 		baseConfig,
+		isBaseConfigFetched,
 		setUserConfig,
 		isUserConfigReady,
 		isBaseConfigReady,
@@ -81,13 +81,21 @@ interface Props {
 	stylesheet: string;
 	children: JSX.Element;
 	placeholder: JSX.Element | null;
+	isContextOptional?: boolean;
 }
 
-const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
+const GlobalStylesProvider = ( {
+	siteId,
+	stylesheet,
+	children,
+	isContextOptional = false,
+	placeholder = null,
+}: Props ) => {
 	const context = useGlobalStylesContext( siteId, stylesheet );
 	const isBlocksRegistered = useRegisterCoreBlocks();
+	const isReady = context.isReady || ( isContextOptional && context.isBaseConfigFetched );
 
-	if ( ! context.isReady || ! isBlocksRegistered ) {
+	if ( ! isReady || ! isBlocksRegistered ) {
 		return placeholder;
 	}
 	return (

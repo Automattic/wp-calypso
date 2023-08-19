@@ -11,6 +11,7 @@ type Theme = {
 	date_updated: string;
 	price: string;
 	taxonomies: Record< string, [] >;
+	theme_type?: string;
 };
 
 export function useThemeDetails( slug = '' ): UseQueryResult< Theme > {

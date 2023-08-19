@@ -27,6 +27,8 @@ interface DesignPreviewProps {
 	siteId: number;
 	stylesheet: string;
 	isVirtual?: boolean;
+	screenshot?: string;
+	isExternallyManaged?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -144,6 +146,7 @@ const DesignPreview = ( props: DesignPreviewProps ) => (
 		siteId={ props.siteId }
 		stylesheet={ props.stylesheet }
 		placeholder={ null }
+		isContextOptional={ !! props.isExternallyManaged }
 	>
 		<Preview { ...props } />
 	</GlobalStylesProvider>

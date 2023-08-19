@@ -12,5 +12,5 @@ export const SYSTEM_FONT_SLUG = 'system-font';
 
 export const DEFAULT_GLOBAL_STYLES = {
 	settings: {},
-	styles: {},
+	styles: { blocks: {} },
 };

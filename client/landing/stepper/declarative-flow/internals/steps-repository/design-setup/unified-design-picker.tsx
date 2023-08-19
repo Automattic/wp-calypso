@@ -727,6 +727,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
 					isVirtual={ selectedDesign.is_virtual }
+					isExternallyManaged={ selectedDesign.is_externally_managed }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }
 					selectedFontVariation={ selectedFontVariation }
