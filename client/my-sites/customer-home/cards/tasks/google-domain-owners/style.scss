@@ -13,18 +13,18 @@
 			flex-direction: column;
 		}
 
+		.task__timing {
+			display: none;
+		}
+
 		.task__text {
 			margin-bottom: 32px;
 			margin-top: 32px;
 			min-width: 360px;
 
 			@media (min-width: ( $break-wide + 1 ) ) {
-				width: 55%;
+				width: 60%;
 				gap: 10px !important;
-			}
-
-			@media (max-width: $break-wide) {
-				max-width: calc(115% - 450px);
 			}
 
 			@media ( max-width: $break-wide ) {
@@ -53,15 +53,29 @@
 					}
 				}
 			}
+			.task__illustration-top-actions {
+				width: 100%;
+				padding: 0;
+
+				@media (min-width: ( $break-large + 1 )) {
+					display: none;
+				}
+
+				img {
+					max-width: calc(100% - 50px);
+					width: 100%;
+					margin: 0 25px;
+				}
+
+			}
 
 		}
 
 		.task__illustration {
-			position: relative;
-			width: 100%;
-			padding: 0;
+			display: none;
 
 			@media (min-width: ( $break-large + 1 )) {
+				display: block;
 				width: 40%;
 			}
 

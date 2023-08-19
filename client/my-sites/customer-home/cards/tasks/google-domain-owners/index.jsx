@@ -47,6 +47,7 @@ export default function GoogleDomainOwners() {
 			hasSecondaryAction={ false }
 			illustration={ googleDomainOwnersIllustration }
 			illustrationAlwaysShow={ true }
+			illustrationTopActions={ true }
 			timing={ 2 }
 			taskId={ TASK_GOOGLE_DOMAIN_OWNERS }
 		/>

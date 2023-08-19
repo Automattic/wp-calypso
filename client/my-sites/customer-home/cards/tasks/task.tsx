@@ -38,6 +38,7 @@ const Task = ( {
 	illustration,
 	illustrationAlwaysShow,
 	illustrationHeader,
+	illustrationTopActions = false,
 	isLoading: forceIsLoading = false,
 	isUrgent = false,
 	showSkip = true,
@@ -60,6 +61,7 @@ const Task = ( {
 	illustration?: string;
 	illustrationAlwaysShow?: boolean;
 	illustrationHeader?: ReactNode;
+	illustrationTopActions: boolean;
 	isLoading?: boolean;
 	isUrgent?: boolean;
 	showSkip?: boolean;
@@ -251,6 +253,12 @@ const Task = ( {
 				) }
 				<h2 className="task__title">{ title }</h2>
 				<p className="task__description">{ description }</p>
+				{ illustrationTopActions && ( illustrationAlwaysShow || isDesktop() ) && illustration && (
+					<div className="task__illustration-top-actions">
+						{ illustrationHeader && <> { illustrationHeader } </> }
+						<img src={ illustration } alt="" />
+					</div>
+				) }
 				<div className="task__actions">
 					{ renderAction() }
 					{ renderSecondaryAction() }
