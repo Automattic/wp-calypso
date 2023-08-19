@@ -199,6 +199,22 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
 }
+
+.highlight-card.is-compact .highlight-card-count.is-pointer {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.highlight-card.is-compact .highlight-card-count-value,
+.highlight-card.is-compact .highlight-card-difference {
+	flex: 1 0 100%; /* Flex grow, flex shrink, flex basis */
+}
+
+.highlight-card.is-compact div.highlight-card-icon {
+	margin-bottom: 0;
+}
+
+
 .highlight-year-navigation {
 	display: flex;
 	justify-content: space-between;
