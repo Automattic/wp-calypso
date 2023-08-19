@@ -2,8 +2,8 @@ import { NavigatorButtonAsItem } from '../../navigator-buttons';
 import NavigatorItemGroup from '../../navigator-item-group';
 import type { NavigatorScreenObject } from '../types';
 
-const useNavigatorButtons = ( screens: NavigatorScreenObject[] ) => {
-	if ( screens.length === 0 ) {
+const useNavigatorButtons = ( screens: NavigatorScreenObject[], isExternallyManaged = false ) => {
+	if ( screens.length === 0 || isExternallyManaged ) {
 		return null;
 	}
 

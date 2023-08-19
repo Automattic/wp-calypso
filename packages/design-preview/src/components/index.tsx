@@ -60,6 +60,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	siteId,
 	stylesheet,
 	isVirtual,
+	isExternallyManaged,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
@@ -124,6 +125,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				description={ description }
 				shortDescription={ shortDescription }
 				pricingBadge={ pricingBadge }
+				isExternallyManaged={ isExternallyManaged }
 				screens={ screens }
 				actionButtons={ actionButtons }
 				onClickCategory={ onClickCategory }
