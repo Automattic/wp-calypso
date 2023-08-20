@@ -136,7 +136,7 @@ export default function Prices() {
 			<div className="prices__description">
 				<p>
 					{ translate(
-						'The following products are available through the Licenses section. Prices are calculated daily and invoiced at the beginning of the next month. Please note that the Jetpack pro Dashboard prices will be displayed as a monthly cost. If you want to determine a yearly cost for the Agency/Pro pricing, you can take the daily cost x 365.'
+						'The following products are available through the Licenses section. Prices are calculated daily and invoiced at the beginning of the next month. Please note that the Jetpack Pro Dashboard prices will be displayed as a monthly cost. If you want to determine a yearly cost for the Agency/Pro pricing, you can take the daily cost x 365.'
 					) }
 				</p>
 			</div>
