@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isPro, isStarter } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { FunctionComponent, useMemo } from 'react';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
@@ -17,6 +18,7 @@ interface Props {
 type DivProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
+
 const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
 
@@ -89,15 +91,27 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 		);
 	}
 
-	return (
-		<UpsellWrapper>
-			<CartFreeUserPlanUpsell
-				cart={ responseCart }
-				addItemToCart={ addItemToCart }
-				isCartPendingUpdate={ isCartPendingUpdate }
-			/>
-		</UpsellWrapper>
-	);
+	const isStarterPlan = responseCart.products.some( ( product ) => {
+		return isStarter( product );
+	} );
+
+	const isProPlan = responseCart.products.some( ( product ) => {
+		return isPro( product );
+	} );
+
+	if ( ! isStarterPlan && ! isProPlan ) {
+		return (
+			<UpsellWrapper>
+				<CartFreeUserPlanUpsell
+					cart={ responseCart }
+					addItemToCart={ addItemToCart }
+					isCartPendingUpdate={ isCartPendingUpdate }
+				/>
+			</UpsellWrapper>
+		);
+	}
+
+	return null;
 };
 
 export default SecondaryCartPromotions;
