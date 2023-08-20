@@ -141,28 +141,35 @@ class Help_Center {
 
 		$logo_id  = get_option( 'site_logo' );
 		$products = wpcom_get_site_purchases();
-		$plan     = array_pop(
-			array_filter(
-				$products,
-				function ( $product ) {
-					return 'bundle' === $product->product_type;
-				}
-			)
+		$plans = array_filter(
+			$products,
+			function ( $product ) {
+				return 'bundle' === $product->product_type;
+			}
 		);
+		$plan     = array_pop( $plans );
+
+		$logo_url = null;
+		if ( $logo_id ) {
+			$attachment_src = wp_get_attachment_image_src( $logo_id, 'thumbnail' );
+			if ( is_array( $attachment_src ) ) {
+				$logo_url = $attachment_src[0];
+			}
+		}
 
 		$return_data = array(
 			'ID'               => $site,
 			'name'             => get_bloginfo( 'name' ),
 			'URL'              => get_bloginfo( 'url' ),
 			'plan'             => array(
-				'product_slug' => $plan->product_slug,
+				'product_slug' => ( $plan ) ? $plan->product_slug : null,
 			),
 			'is_wpcom_atomic'  => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
 			'jetpack'          => true === apply_filters( 'is_jetpack_site', false, $site ),
 			'logo'             => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
-				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+				'url'   => $logo_url,
 			),
 			'launchpad_screen' => get_option( 'launchpad_screen' ),
 			'site_intent'      => get_option( 'site_intent' ),
