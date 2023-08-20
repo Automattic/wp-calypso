@@ -5,6 +5,7 @@ import {
 	FEATURE_SITE_STAGING_SITES,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -24,6 +25,7 @@ import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mo
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
+import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
@@ -37,7 +39,10 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
-import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
+import {
+	isSiteOnECommerceTrial,
+	isSiteOnMigrationTrial,
+} from 'calypso/state/sites/plans/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
@@ -195,6 +200,7 @@ class Hosting extends Component {
 			isAdvancedHostingDisabled,
 			isBasicHostingDisabled,
 			isECommerceTrial,
+			isMigrationTrial,
 			isSiteAtomic,
 			isTransferring,
 			isWpcomStagingSite,
@@ -344,7 +350,16 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ banner }
+				{ ! isMigrationTrial && banner }
+				{ isMigrationTrial && (
+					<TrialBanner
+						callToAction={
+							<Button primary href={ `/plans/${ siteSlug }` }>
+								{ translate( 'Upgrade plan' ) }
+							</Button>
+						}
+					/>
+				) }
 				{ getContent() }
 				<QueryReaderTeams />
 			</Main>
@@ -366,6 +381,7 @@ export default connect(
 		return {
 			teams: getReaderTeams( state ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
+			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,

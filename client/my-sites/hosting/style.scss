@@ -22,6 +22,11 @@
 		line-height: 32px;
 	}
 
+	.card.trial-banner {
+		background: var(--color-surface);
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+	}
+
 	@include breakpoint-deprecated( ">1280px" ) {
 		&__main-layout-col {
 			.card {
