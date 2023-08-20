@@ -339,7 +339,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								</ExternalLink>
 								{ shouldShowCart && <CloudCart /> }
 								<a
-									className="header__mobile-btn mobile-btn js-mobile-btn"
+									className="header__mobile-btn mobile-btn js-mobile-btn force-hide"
 									href="#mobile-menu"
 									aria-expanded="false"
 								>
@@ -348,7 +348,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 									</span>
 									<span className="mobile-btn__label">{ translate( 'Menu' ) }</span>
 								</a>
-								<div className="header__nav-wrapper js-mobile-menu" id="mobile-menu">
+								<div className="header__nav-wrapper js-mobile-menu force-hide" id="mobile-menu">
 									<ul className="header__sections-list js-nav-list">
 										{ menuDataStatus === 'success' && sections ? (
 											sections.sort( sortByMenuOrder ).map( ( { label, id, href, items } ) => {
