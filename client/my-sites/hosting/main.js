@@ -59,7 +59,7 @@ import './style.scss';
 
 const HEADING_OFFSET = 30;
 
-const ShowEnabledFeatureCards = ( { availableTypes, cards } ) => {
+const ShowEnabledFeatureCards = ( { availableTypes, cards, showDisabledCards = true } ) => {
 	const enabledCards = cards.filter(
 		( card ) => ! card.type || availableTypes.includes( card.type )
 	);
@@ -72,7 +72,7 @@ const ShowEnabledFeatureCards = ( { availableTypes, cards } ) => {
 			{ enabledCards.map( ( card ) => {
 				return <Fragment key={ card.feature }>{ card.content }</Fragment>;
 			} ) }
-			{ disabledCards.length > 0 && (
+			{ showDisabledCards && disabledCards.length > 0 && (
 				<FeatureExample>
 					{ disabledCards.map( ( card ) => {
 						return <Fragment key={ card.feature }>{ card.content }</Fragment>;
@@ -89,6 +89,7 @@ const MainCards = ( {
 	isBasicHostingDisabled,
 	isGithubIntegrationEnabled,
 	isWpcomStagingSite,
+	isMigrationTrial,
 	siteId,
 } ) => {
 	const mainCards = [
@@ -147,7 +148,13 @@ const MainCards = ( {
 		! isBasicHostingDisabled ? 'basic' : null,
 	].filter( ( type ) => type !== null );
 
-	return <ShowEnabledFeatureCards cards={ mainCards } availableTypes={ availableTypes } />;
+	return (
+		<ShowEnabledFeatureCards
+			cards={ mainCards }
+			availableTypes={ availableTypes }
+			showDisabledCards={ ! isMigrationTrial }
+		/>
+	);
 };
 
 const SidebarCards = ( { isBasicHostingDisabled } ) => {
@@ -313,6 +320,7 @@ class Hosting extends Component {
 								isBasicHostingDisabled={ isBasicHostingDisabled }
 								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
 								isWpcomStagingSite={ isWpcomStagingSite }
+								isMigrationTrial={ isMigrationTrial }
 								siteId={ siteId }
 							/>
 						</Column>
