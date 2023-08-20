@@ -18,6 +18,11 @@ const selectors = {
 	// ImporterDrag page
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
+	// Site picker page
+	sitePickerPage: ( url: string ) => `a.components-external-link[href="https://${ url }"]`,
+	sitePickerNoSiteFound: 'h2:has-text("No sites match your search.")',
+	sitePickerConfirmButton: 'button:text("Continue")',
+
 	// Errors
 	analyzeError: ( text: string ) => `:text("${ text }")`,
 
@@ -45,7 +50,7 @@ export class StartImportFlow {
 	 * @param {Page} page The underlying page.
 	 * @param framework
 	 */
-	constructor( private page: Page, private framework: 'signup' | 'stepper' ) {}
+	constructor( private page: Page, private framework: 'signup' | 'stepper' | 'migration' ) {}
 
 	/**
 	 * Given text, click on the button's first instance with the text.
@@ -63,9 +68,9 @@ export class StartImportFlow {
 	 * Validates that we've landed on the setup page.
 	 */
 	async validateSetupPage(): Promise< void > {
-		await this.page.locator(
-			`${ selectors.startImportButton }, ${ selectors.startImportGoalButton }`
-		);
+		await this.page
+			.locator( `${ selectors.startImportButton }, ${ selectors.startImportGoalButton }` )
+			.waitFor();
 	}
 
 	/**
@@ -73,6 +78,27 @@ export class StartImportFlow {
 	 */
 	async validateURLCapturePage(): Promise< void > {
 		await this.page.waitForURL( /.*setup\/site-setup\/import.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the WordPress importer page.
+	 */
+	async validateURLWordPressImporterPage(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/site-setup\/importerWordPress.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the URL importer page.
+	 */
+	async validateURLImporterPage(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/import-focused\/import\?.*/ );
+	}
+
+	/**
+	 * Validates that we've landed on the URL "not ready" importer page.
+	 */
+	async validateURLImporterReadyNotPage(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/import-focused\/importReadyNot.*/ );
 	}
 
 	/**
@@ -145,6 +171,22 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that the site picker page has the site with the given slug.
+	 *
+	 * @param {string} siteSlug The site slug to validate.
+	 */
+	async validateSitePickerHasSite( siteSlug: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.sitePickerPage( siteSlug ) );
+	}
+
+	/**
+	 * Validates that the site picker page has no sites.
+	 */
+	async validateSitePickerHasNoSites(): Promise< void > {
+		await this.page.waitForSelector( selectors.sitePickerNoSiteFound );
+	}
+
+	/**
 	 * Enter the URL to import from on the "Enter your site address" input form.
 	 *
 	 * @param {string} url The source URL.
@@ -198,6 +240,40 @@ export class StartImportFlow {
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
 		await this.page.click( selectors.startImportButton );
+	}
+
+	/**
+	 * Go to first migration page.
+	 */
+	async goToSitePickerPage( queryStrings: { [ key: string ]: string } = {} ): Promise< void > {
+		if ( this.framework !== 'migration' ) {
+			return;
+		}
+
+		const route = 'setup/import-focused/sitePicker';
+
+		await this.page.goto( DataHelper.getCalypsoURL( route, queryStrings ) );
+		await this.page.waitForURL( /.*setup\/import-focused\/sitePicker.+/ );
+	}
+
+	/**
+	 * Select the fist site from the list.
+	 */
+	async selectMigrationSite( confirm = false, valid = true ): Promise< void > {
+		await this.clickButton( 'Select this site' );
+		await this.page.waitForSelector( 'h1:text("Confirm your choice")' );
+
+		// Confirm the selection.
+		if ( confirm ) {
+			await this.page.click( selectors.sitePickerConfirmButton );
+
+			if ( valid ) {
+				await this.validateURLWordPressImporterPage();
+			} else {
+				await this.validateURLImporterPage();
+				await this.validateURLImporterReadyNotPage();
+			}
+		}
 	}
 
 	/**
