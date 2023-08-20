@@ -287,8 +287,17 @@ export const useComparisonData = () => {
 						id: 'payments_block',
 						name: translate( 'Collect payments' ),
 						url: links.payments_block,
+						info: allChecked,
+					},
+					{
+						id: 'transaction_fees',
+						name: translate( 'Transaction fees' ),
+						url: links.transaction_fees,
 						info: {
-							COMPLETE: { content: <CheckIcon /> },
+							FREE: { content: translate( '10% + Stripe fees' ) },
+							STARTER: { content: translate( '8% + Stripe fees' ) },
+							SECURITY: { content: translate( '4% + Stripe fees' ) },
+							COMPLETE: { content: translate( '2% + Stripe fees' ) },
 						},
 					},
 					{
