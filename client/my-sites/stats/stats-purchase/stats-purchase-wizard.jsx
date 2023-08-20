@@ -72,21 +72,21 @@ const ProductCard = ( {
 	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
 	// Default titles for no site type selected.
-	let selectedSiteTypeLabel = translate( 'What site type is %(site)s?', {
+	let typeSelectionScreenLabel = translate( 'What site type is %(site)s?', {
 		args: {
 			site: siteSlug,
 		},
 	} );
-	let selectedSiteTypeTitle = personalProductTitle;
+	let purchaseScreenLabel = personalProductTitle;
 
 	if ( siteType === TYPE_PERSONAL ) {
-		selectedSiteTypeLabel = personalLabel;
-		selectedSiteTypeTitle = personalProductTitle;
+		typeSelectionScreenLabel = personalLabel;
+		purchaseScreenLabel = personalProductTitle;
 	}
 
 	if ( siteType === TYPE_COMMERCIAL ) {
-		selectedSiteTypeLabel = commercialLabel;
-		selectedSiteTypeTitle = commercialProductTitle;
+		typeSelectionScreenLabel = commercialLabel;
+		purchaseScreenLabel = commercialProductTitle;
 	}
 
 	const showCelebration =
@@ -129,7 +129,7 @@ const ProductCard = ( {
 	const firstStepTitleNode = (
 		<TitleNode
 			indicatorNumber="1"
-			label={ selectedSiteTypeLabel }
+			label={ typeSelectionScreenLabel }
 			active={ wizardStep === SCREEN_TYPE_SELECTION }
 		/>
 	);
@@ -137,7 +137,7 @@ const ProductCard = ( {
 	const secondStepTitleNode = (
 		<TitleNode
 			indicatorNumber="2"
-			label={ selectedSiteTypeTitle }
+			label={ purchaseScreenLabel }
 			active={ wizardStep === SCREEN_PURCHASE }
 		/>
 	);
