@@ -11,18 +11,18 @@ import SiteActions from '../index';
 import type { SiteNode } from '../../types';
 
 const createFakeSite = ( changes = {} ) => ( {
-		blog_id: 1234,
-		url: 'test.jurassic.ninja',
-		url_with_scheme: 'https://test.jurassic.ninja/',
-		monitor_active: false,
-		monitor_site_status: false,
-		has_scan: true,
-		has_backup: false,
-		latest_scan_threats_found: [],
-		latest_backup_status: '',
-		is_connection_healthy: true,
-		awaiting_plugin_updates: [],
-		is_favorite: false,
+	blog_id: 1234,
+	url: 'test.jurassic.ninja',
+	url_with_scheme: 'https://test.jurassic.ninja/',
+	monitor_active: false,
+	monitor_site_status: false,
+	has_scan: true,
+	has_backup: false,
+	latest_scan_threats_found: [],
+	latest_backup_status: '',
+	is_connection_healthy: true,
+	awaiting_plugin_updates: [],
+	is_favorite: false,
 	...changes,
 } );
 
@@ -114,5 +114,25 @@ describe( '<SiteActions>', () => {
 		await openPopoverMenu();
 
 		expect( screen.queryByRole( 'menuitem', { name: 'View activity' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders a popover menu item to copy the site if the site has Backup', async () => {
+		render( <Wrapper site={ createFakeSite( { has_backup: true } ) } /> );
+		await openPopoverMenu();
+
+		const copyThisSite = screen.getByRole( 'menuitem', {
+			name: 'Copy this site',
+		} );
+		expect( copyThisSite.getAttribute( 'href' ) ).toEqual( '/backup/test.jurassic.ninja/clone' );
+	} );
+
+	test( 'renders a popover menu item to view site settings if the site has Backup', async () => {
+		render( <Wrapper site={ createFakeSite( { has_backup: true } ) } /> );
+		await openPopoverMenu();
+
+		const siteSettings = screen.getByRole( 'menuitem', {
+			name: 'Site settings',
+		} );
+		expect( siteSettings.getAttribute( 'href' ) ).toEqual( '/settings/test.jurassic.ninja' );
 	} );
 } );
