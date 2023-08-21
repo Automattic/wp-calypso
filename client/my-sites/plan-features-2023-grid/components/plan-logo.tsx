@@ -12,11 +12,11 @@ import {
 import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
 import { Plans2023Tooltip } from '../components/plans-2023-tooltip';
 import PopularBadge from '../components/popular-badge';
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
-import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 const PlanLogo: React.FunctionComponent< {
