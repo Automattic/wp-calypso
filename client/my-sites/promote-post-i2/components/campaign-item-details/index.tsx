@@ -17,7 +17,7 @@ import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query-new';
+import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';

@@ -50,7 +50,7 @@ export type CampaignResponse = {
 	};
 };
 
-const useCampaignsQueryNew = ( siteId: number, campaignId: number, queryOptions = {} ) => {
+const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {} ) => {
 	return useQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, campaignId ],
 		queryFn: async () => {
@@ -69,4 +69,4 @@ const useCampaignsQueryNew = ( siteId: number, campaignId: number, queryOptions 
 	} );
 };
 
-export default useCampaignsQueryNew;
+export default useCampaignsQuery;
