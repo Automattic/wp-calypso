@@ -16,12 +16,12 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../grid-context';
+import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { PlanActionOverrides } from '../types';
 
@@ -198,7 +198,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
-	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const { current } = gridPlansIndex[ planSlug ];

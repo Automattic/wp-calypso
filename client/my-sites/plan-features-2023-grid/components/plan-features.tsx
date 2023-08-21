@@ -1,8 +1,7 @@
 import { JetpackLogo } from '@automattic/components';
 import { LocalizeProps } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
-import { hasTouch } from 'calypso/lib/touch-detect';
 import PlanFeatures2023GridFeatures from '../components/features';
+import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { DataResponse } from '../types';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
@@ -37,28 +36,7 @@ const PlanFeatures: React.FC< {
 	isTableCell,
 	Container,
 } ) => {
-	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
-	const isTouch = hasTouch();
-
-	useEffect( () => {
-		if ( ! isTouch ) {
-			return;
-		}
-
-		// Close all toolltips in mobile if the user touches anywhere on the plan card.
-		const closeAllTooltips = ( event: TouchEvent ) => {
-			const eventTarget = event.target as Element;
-			if ( ! eventTarget?.classList.contains( 'plans-2023-tooltip__hover-area-container' ) ) {
-				setActiveTooltipId( '' );
-			}
-		};
-
-		document.addEventListener( 'touchstart', closeAllTooltips );
-
-		return () => {
-			document.removeEventListener( 'touchstart', closeAllTooltips );
-		};
-	}, [ isTouch ] );
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {

@@ -24,6 +24,7 @@ import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/pl
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
+import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { getStorageStringFromFeature, usePricingBreakpoint } from '../util';
@@ -662,7 +663,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isHighlighted,
 	intervalType,
 } ) => {
-	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,

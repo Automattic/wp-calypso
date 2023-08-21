@@ -12,11 +12,11 @@ import {
 import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { Plans2023Tooltip } from '../components/plans-2023-tooltip';
 import PopularBadge from '../components/popular-badge';
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
+import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 const PlanLogo: React.FunctionComponent< {
@@ -35,7 +35,7 @@ const PlanLogo: React.FunctionComponent< {
 		}
 	) => JSX.Element;
 } > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, Container, planIndex } ) => {
-	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const shouldShowWooLogo = isEcommercePlan( planSlug ) && ! isWooExpressPlan( planSlug );
 	const { gridPlansIndex } = usePlansGridContext();
