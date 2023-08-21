@@ -77,3 +77,5 @@ export type BlazablePost = {
 	featured_image: string | false;
 	post_thumbnail?: string;
 };
+
+export type BlazePagedItem = BlazablePost | Campaign;

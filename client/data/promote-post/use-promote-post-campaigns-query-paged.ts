@@ -3,7 +3,7 @@ import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { Campaign } from './types';
 
-type CampaignQueryResult = {
+export type CampaignQueryResult = {
 	campaigns: Campaign[];
 	total_items: number;
 	total_pages: number;

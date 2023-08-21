@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
+import { InfiniteData } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { BlazablePost, Campaign } from 'calypso/data/promote-post/types';
-import {
-	PagedBlazeContentData,
-	PagedBlazeSearchResponse,
-} from 'calypso/my-sites/promote-post-i2/main';
+import { BlazablePost, BlazePagedItem, Campaign } from 'calypso/data/promote-post/types';
+import { CampaignQueryResult } from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
+import { PagedBlazeContentData } from 'calypso/my-sites/promote-post-i2/main';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -172,18 +171,25 @@ export const canCancelCampaign = ( status: string ) => {
 	);
 };
 
+type PagedDataMode = 'campaigns' | 'posts';
+
+type BlazeDataPaged = {
+	campaigns?: Campaign[];
+	posts?: BlazablePost[];
+};
+
 export const getPagedBlazeSearchData = (
-	mode: 'campaigns' | 'posts',
-	pagedData?: PagedBlazeSearchResponse
+	mode: PagedDataMode,
+	pagedData?: InfiniteData< CampaignQueryResult >
 ): PagedBlazeContentData => {
 	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		let foundContent = pagedData?.pages
-			?.map( ( item: any ) => item[ mode ] )
+		let foundContent: BlazePagedItem[] = pagedData?.pages
+			?.map( ( item: BlazeDataPaged ) => item[ mode ] )
 			?.flat()
-			?.filter( ( item: BlazablePost | Campaign ) => 'undefined' !== typeof item );
+			?.filter( ( item?: BlazePagedItem ): item is BlazePagedItem => 'undefined' !== typeof item );
 
 		if ( foundContent?.length ) {
 			switch ( mode ) {
