@@ -27,6 +27,7 @@ interface DesignPreviewProps {
 	siteId: number;
 	stylesheet: string;
 	isVirtual?: boolean;
+	screenshot?: string;
 	isExternallyManaged?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
@@ -59,6 +60,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	screenshot,
 	isVirtual,
 	isExternallyManaged,
 	selectedColorVariation,
@@ -136,6 +138,9 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
 				animated={ ! isDesktop && screens.length > 0 }
+				description={ description }
+				screenshot={ screenshot }
+				isExternallyManaged={ isExternallyManaged }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>

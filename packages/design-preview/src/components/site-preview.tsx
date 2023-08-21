@@ -7,6 +7,9 @@ interface SitePreviewProps {
 	inlineCss?: string;
 	isFullscreen?: boolean;
 	animated?: boolean;
+	description?: string;
+	isExternallyManaged?: boolean;
+	screenshot?: string;
 	recordDeviceClick: ( device: string ) => void;
 }
 
@@ -15,8 +18,19 @@ const SitePreview: React.FC< SitePreviewProps > = ( {
 	inlineCss = '',
 	isFullscreen,
 	animated,
+	isExternallyManaged,
+	screenshot,
+	description,
 	recordDeviceClick,
 } ) => {
+	if ( isExternallyManaged ) {
+		return (
+			<div className="design-preview__screenshot-wrapper">
+				<img className="design-preview__screenshot" src={ screenshot } alt={ description } />
+			</div>
+		);
+	}
+
 	return (
 		<AnimatedFullscreen
 			className={ classnames( 'design-preview__site-preview', {
