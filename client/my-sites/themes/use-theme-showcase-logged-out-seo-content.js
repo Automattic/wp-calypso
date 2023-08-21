@@ -292,30 +292,30 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			'coming-soon': {
 				all: {
 					title: translate( 'Coming Soon WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your coming soon website.' ),
+					header: translate( 'Find the perfect coming soon theme for your website.' ),
 					description: translate(
-						"Start your coming soon website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+						"Start your website with the perfect coming soon theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				free: {
 					title: translate( 'Free Coming Soon WordPress Themes' ),
-					header: translate( 'Discover the perfect free theme for your coming soon website.' ),
+					header: translate( 'Discover the perfect free coming soon theme for your website.' ),
 					description: translate(
-						"Launch your coming soon website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+						"Launch your website with the perfect free coming soon theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				premium: {
 					title: translate( 'Premium Coming Soon WordPress Themes' ),
-					header: translate( 'Choose premium themes for your coming soon website.' ),
+					header: translate( 'Choose premium coming soon themes for your website.' ),
 					description: translate(
-						"Enhance your coming soon website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your website with the perfect premium coming soon theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
 					title: translate( 'Partner Coming Soon WordPress Themes' ),
-					header: translate( 'Select partner themes for your coming soon website.' ),
+					header: translate( 'Select partner coming soon themes for your website.' ),
 					description: translate(
-						"Improve your coming soon website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+						"Improve your website with the perfect partner coming soon theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 					),
 				},
 			},
@@ -351,33 +351,39 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			'community-non-profit': {
 				all: {
-					title: translate( 'Community & Non-Profit WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your community and non-profit website.' ),
+					title: translate( 'Community & Non-profit WordPress Themes' ),
+					header: translate(
+						"Find the perfect theme for your non-profit or community organization's website."
+					),
 					description: translate(
-						"Start your community and non-profit website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+						"Start your non-profit or community organization's website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				free: {
-					title: translate( 'Free Community & Non-Profit WordPress Themes' ),
+					title: translate( 'Free Community & Non-profit WordPress Themes' ),
 					header: translate(
-						'Discover the perfect free theme for your community and non-profit website.'
+						"Discover the perfect free theme for your non-profit or community organization's website."
 					),
 					description: translate(
-						"Launch your community and non-profit website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+						"Launch your non-profit or community organization's website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				premium: {
-					title: translate( 'Premium Community & Non-Profit WordPress Themes' ),
-					header: translate( 'Choose premium themes for your community and non-profit website.' ),
+					title: translate( 'Premium Community & Non-profit WordPress Themes' ),
+					header: translate(
+						"Choose premium themes for your non-profit or community organization's website."
+					),
 					description: translate(
-						"Enhance your community and non-profit website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your non-profit or community organization's website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
-					title: translate( 'Partner Community & Non-Profit WordPress Themes' ),
-					header: translate( 'Select partner themes for your community and non-profit website.' ),
+					title: translate( 'Partner Community & Non-profit WordPress Themes' ),
+					header: translate(
+						"Select partner themes for your non-profit or community organization's website."
+					),
 					description: translate(
-						"Improve your community and non-profit website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+						"Improve your non-profit or community organization's website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 					),
 				},
 			},
@@ -567,33 +573,31 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			'authors-writers': {
 				all: {
-					title: translate( 'Authors & Writers WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your authors and writers website.' ),
+					title: translate( 'Author & Writer WordPress Themes' ),
+					header: translate( 'Find the perfect theme for your author or writer website.' ),
 					description: translate(
-						"Start your authors and writers website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+						"Start your author or writer website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				free: {
-					title: translate( 'Free Authors & Writers WordPress Themes' ),
-					header: translate(
-						'Discover the perfect free theme for your authors and writers website.'
-					),
+					title: translate( 'Free Author & Writer WordPress Themes' ),
+					header: translate( 'Discover the perfect free theme for your author or writer website.' ),
 					description: translate(
-						"Launch your authors and writers website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+						"Launch your author or writer website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				premium: {
-					title: translate( 'Premium Authors & Writers WordPress Themes' ),
-					header: translate( 'Choose premium themes for your authors and writers website.' ),
+					title: translate( 'Premium Author & Writer WordPress Themes' ),
+					header: translate( 'Choose premium themes for your author or writer website.' ),
 					description: translate(
-						"Enhance your authors and writers website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your author or writer website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
-					title: translate( 'Partner Authors & Writers WordPress Themes' ),
-					header: translate( 'Select partner themes for your authors and writers website.' ),
+					title: translate( 'Partner Author & Writer WordPress Themes' ),
+					header: translate( 'Select partner themes for your author or writer website.' ),
 					description: translate(
-						"Improve your authors and writers website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
+						"Improve your author or writer website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
 					),
 				},
 			},
@@ -691,28 +695,28 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			'art-design': {
 				all: {
-					title: translate( 'Art & Design WordPress Themes' ),
+					title: translate( 'Art and Design WordPress Themes' ),
 					header: translate( 'Find the perfect theme for your art and design website.' ),
 					description: translate(
 						"Start your art and design website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				free: {
-					title: translate( 'Free Art & Design WordPress Themes' ),
+					title: translate( 'Free Art and Design WordPress Themes' ),
 					header: translate( 'Discover the perfect free theme for your art and design website.' ),
 					description: translate(
 						"Launch your art and design website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
 				},
 				premium: {
-					title: translate( 'Premium Art & Design WordPress Themes' ),
+					title: translate( 'Premium Art and Design WordPress Themes' ),
 					header: translate( 'Choose premium themes for your art and design website.' ),
 					description: translate(
 						"Enhance your art and design website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
-					title: translate( 'Partner Art & Design WordPress Themes' ),
+					title: translate( 'Partner Art and Design WordPress Themes' ),
 					header: translate( 'Select partner themes for your art and design website.' ),
 					description: translate(
 						"Improve your art and design website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
