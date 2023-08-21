@@ -51,6 +51,15 @@ const openPopoverMenu = async () => {
 };
 
 describe( '<SiteActions>', () => {
+	test( 'renders a popover menu when the button is clicked', async () => {
+		render( <Wrapper /> );
+
+		expect( screen.queryByRole( 'menu' ) ).not.toBeInTheDocument();
+
+		await openPopoverMenu();
+		expect( screen.queryByRole( 'menu' ) ).toBeInTheDocument();
+	} );
+
 	test( 'renders a popover menu item to issue a new license', async () => {
 		render( <Wrapper /> );
 		await openPopoverMenu();
