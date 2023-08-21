@@ -80,7 +80,7 @@ export class SidebarComponent {
 		if ( subitem ) {
 			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
 			await Promise.all( [
-				this.page.waitForNavigation(),
+				this.page.waitForNavigation( { timeout: 30 * 1000 } ),
 				this.page.dispatchEvent( subitemSelector, 'click' ),
 			] );
 		}
