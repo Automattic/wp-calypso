@@ -26,8 +26,20 @@
 		background: var(--color-surface);
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 
-		@include breakpoint-deprecated( "<480px" ) {
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		.card.trial-banner {
 			margin: 0 auto 0.625rem;
+
+			.trial-banner__content .trial-banner__title {
+				font-size: 1.25rem;
+				font-weight: normal;
+			}
+
+			.trial-banner__content .trial-banner__subtitle {
+				font-size: 1rem;
+			}
 		}
 	}
 
