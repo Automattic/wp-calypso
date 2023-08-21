@@ -43,27 +43,21 @@ const PostCardComments = ( { post, handleClick } ) => {
 	}
 
 	return (
-		// Stop propagation on clicking of comment area, as the event will bubble to the
-		// card's onClick and redirect the page.
-		//  eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-		<div onClick={ ( ev ) => ev.stopPropagation() }>
-			<PostComments
-				commentCount={ post.discussion?.comment_count }
-				expandableView={ true }
-				commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-				post={ post }
-				shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-				shouldHighlightNew={ true }
-				showCommentCount={ false }
-				showConversationFollowButton={ false }
-				showNestingReplyArrow={ true }
-				initialSize={ 5 }
-				pageSize={ 15 }
-				maxDepth={ 1 }
-				// TODO - separate this callback so it doesnt send same stats as comment icon.
-				openPostPageAtComments={ onOpenPostPageAtCommentsClick }
-			/>
-		</div>
+		<PostComments
+			commentCount={ post.discussion?.comment_count }
+			expandableView={ true }
+			commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+			post={ post }
+			shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+			shouldHighlightNew={ true }
+			showCommentCount={ false }
+			showConversationFollowButton={ false }
+			showNestingReplyArrow={ true }
+			initialSize={ 5 }
+			pageSize={ 15 }
+			maxDepth={ 1 }
+			openPostPageAtComments={ onOpenPostPageAtCommentsClick }
+		/>
 	);
 };
 
