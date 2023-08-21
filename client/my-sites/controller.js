@@ -294,8 +294,7 @@ function onSelectedSiteAvailable( context ) {
 		return false;
 	}
 
-	// If we had an eCommerce trial, and the user doesn't have an active paid plan,
-	// redirect to fullpage trial expired page.
+	// If we had a trial plan, and the user doesn't have an active paid plan, redirect to fullpage trial expired page.
 	if ( wasTrialSite( state, selectedSite.ID ) ) {
 		// Use getSitePlanSlug() as it ignores expired plans.
 		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
