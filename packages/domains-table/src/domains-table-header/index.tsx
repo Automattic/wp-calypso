@@ -64,8 +64,8 @@ export const DomainsTableHeader = ( {
 	return (
 		<thead className={ listHeaderClasses }>
 			<tr>
-				{ columns.map( ( column, index ) => (
-					<th key={ `item-${ index }` }>
+				{ columns.map( ( column ) => (
+					<th key={ column.name }>
 						<Button
 							plain
 							onClick={ () => onChangeSortOrder( column ) }
