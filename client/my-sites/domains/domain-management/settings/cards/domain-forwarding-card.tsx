@@ -271,7 +271,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 								} ) }
 								onClick={ handleDelete }
 							>
-								<Icon icon={ trash } size={ 18 } />
+								<Icon icon={ trash } size={ 18 } fill="currentColor" />
 							</Button>
 						}
 					/>
