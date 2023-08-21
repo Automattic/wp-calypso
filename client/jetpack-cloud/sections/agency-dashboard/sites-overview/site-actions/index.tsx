@@ -44,6 +44,10 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 		dispatch( recordTracksEvent( eventName ) );
 	};
 
+	const wpAdminUrl = siteUrlWithScheme
+		? new URL( '/wp-admin/admin.php?page=jetpack#/dashboard', siteUrlWithScheme ).toString()
+		: '#';
+
 	return (
 		<>
 			<Button
@@ -112,7 +116,7 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 				<PopoverMenuItem
 					isExternalLink
 					onClick={ () => handleClickMenuItem( 'visit_wp_admin' ) }
-					href={ `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/dashboard` }
+					href={ wpAdminUrl }
 					className="site-actions__menu-item"
 				>
 					{ translate( 'Visit WP Admin' ) }
