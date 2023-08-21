@@ -207,7 +207,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 .highlight-card.is-compact .highlight-card-count-value,
 .highlight-card.is-compact .highlight-card-difference {
-	flex: 1 0 100%; /* Flex grow, flex shrink, flex basis */
+	flex: 1 0 100%;
 }
 
 .highlight-card.is-compact div.highlight-card-icon {
