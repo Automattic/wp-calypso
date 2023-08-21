@@ -30,9 +30,12 @@ import MembershipsSection from './';
 import './style.scss';
 
 type MembersProductsSectionProps = {
-	section: any;
-	query: any;
+	section: string;
+	query?: {
+		[ key: string ]: string;
+	};
 };
+
 const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
 	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
