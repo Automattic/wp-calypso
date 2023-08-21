@@ -25,6 +25,10 @@
 	.card.trial-banner {
 		background: var(--color-surface);
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+		@include breakpoint-deprecated( "<480px" ) {
+			margin: 0 auto 0.625rem;
+		}
 	}
 
 	@include breakpoint-deprecated( ">1280px" ) {
