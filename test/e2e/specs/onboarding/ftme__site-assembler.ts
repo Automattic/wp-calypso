@@ -109,6 +109,16 @@ describe( 'Site Assembler', () => {
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 3 );
 		} );
+
+		it( 'Click "Save and continue" and land on the Site Editor', async function () {
+			await Promise.all( [
+				page.waitForURL( /processing/ ),
+				siteAssemblerFlow.clickButton( 'Save and continue' ),
+			] );
+			await page.waitForURL( /site-editor/, {
+				timeout: 30 * 1000,
+			} );
+		} );
 	} );
 
 	afterAll( async function () {
