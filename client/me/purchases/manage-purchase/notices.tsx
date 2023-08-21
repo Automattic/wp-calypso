@@ -104,19 +104,16 @@ class PurchaseNotice extends Component<
 			const daysToExpiry = expiry.diff( moment(), 'days' );
 
 			if ( isTemporarySitePurchase( purchase ) ) {
-				return translate(
-					'%(purchaseName)s will expire and be removed in %(daysToExpiry)d days. ',
-					{
-						args: {
-							purchaseName: getName( purchase ),
-							daysToExpiry,
-						},
-					}
-				);
+				return translate( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.', {
+					args: {
+						purchaseName: getName( purchase ),
+						daysToExpiry,
+					},
+				} );
 			}
 
 			return translate(
-				'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d days. ',
+				'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d days.',
 				{
 					args: {
 						purchaseName: getName( purchase ),
