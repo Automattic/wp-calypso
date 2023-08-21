@@ -17,7 +17,7 @@ import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
@@ -533,7 +533,17 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	intervalType?: string;
-} > = ( { feature, visibleGridPlans, planSlug, isStorageFeature, intervalType } ) => {
+	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	activeTooltipId: string;
+} > = ( {
+	feature,
+	visibleGridPlans,
+	planSlug,
+	isStorageFeature,
+	intervalType,
+	activeTooltipId,
+	setActiveTooltipId,
+} ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
@@ -610,9 +620,16 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getIcon() as React.ReactNode }
 								</span>
 							) }
-							<span className="plan-comparison-grid__plan-title">
-								{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
-							</span>
+							<Plans2023Tooltip
+								text={ feature?.getDescription?.() }
+								setActiveTooltipId={ setActiveTooltipId }
+								activeTooltipId={ activeTooltipId }
+								id={ `${ planSlug }-${ featureSlug }` }
+							>
+								<span className="plan-comparison-grid__plan-title">
+									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+								</span>
+							</Plans2023Tooltip>
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
 									{ feature.getCompareTitle() }
@@ -652,6 +669,8 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName?: string | null;
 	isHighlighted: boolean;
 	intervalType?: string;
+	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	activeTooltipId: string;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -662,8 +681,9 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName,
 	isHighlighted,
 	intervalType,
+	activeTooltipId,
+	setActiveTooltipId,
 } ) => {
-	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,
@@ -725,6 +745,8 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
 					intervalType={ intervalType }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
 				/>
 			) ) }
 		</Row>
@@ -749,6 +771,7 @@ export const PlanComparisonGrid = ( {
 }: PlanComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
 	const hasWooExpressFeatures = useMemo( () => {
@@ -961,6 +984,8 @@ export const PlanComparisonGrid = ( {
 									flowName={ flowName }
 									isHighlighted={ feature.getSlug() === selectedFeature }
 									intervalType={ intervalType }
+									activeTooltipId={ activeTooltipId }
+									setActiveTooltipId={ setActiveTooltipId }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -974,6 +999,8 @@ export const PlanComparisonGrid = ( {
 									flowName={ flowName }
 									isHighlighted={ false }
 									intervalType={ intervalType }
+									activeTooltipId={ activeTooltipId }
+									setActiveTooltipId={ setActiveTooltipId }
 								/>
 							) : null }
 						</div>
