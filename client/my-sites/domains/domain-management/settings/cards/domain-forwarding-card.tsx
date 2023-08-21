@@ -122,6 +122,17 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				setIsValidUrl( false );
 				return;
 			}
+
+			// Disallow wordpress.com urls.
+			if ( url.hostname.match( /\.wordpress\.com/i ) ) {
+				setErrorMessage(
+					translate(
+						'WordPress.com domains are not allowed. Use the "Set as primary" option above to make this domain your main site address.'
+					)
+				);
+				setIsValidUrl( false );
+				return;
+			}
 		} catch ( e ) {
 			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			setIsValidUrl( false );
