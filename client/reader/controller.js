@@ -7,7 +7,6 @@ import wpcom from 'calypso/lib/wp';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
@@ -32,22 +31,6 @@ function userHasHistory( context ) {
 
 function renderFeedError( context, next ) {
 	context.primary = createElement( FeedError );
-	next();
-}
-
-export function prettyRedirects( context, next ) {
-	// Do we have a 'pretty' site or feed URL? We only use this for /discover.
-	let redirect;
-	if ( context.params.blog_id ) {
-		redirect = getPrettySiteUrl( context.params.blog_id );
-	} else if ( context.params.feed_id ) {
-		redirect = getPrettyFeedUrl( context.params.feed_id );
-	}
-
-	if ( redirect ) {
-		return page.redirect( redirect );
-	}
-
 	next();
 }
 

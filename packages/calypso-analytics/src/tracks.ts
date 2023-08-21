@@ -294,10 +294,21 @@ export function recordTracksPageViewWithPageParams( urlPath: string, params?: an
 }
 
 export function getGenericSuperPropsGetter( config: ( key: string ) => string ) {
-	return () => ( {
-		environment: process.env.NODE_ENV,
-		environment_id: config( 'env_id' ),
-		site_id_label: 'wpcom',
-		client: config( 'client_slug' ),
-	} );
+	return () => {
+		const superProps = {
+			environment: process.env.NODE_ENV,
+			environment_id: config( 'env_id' ),
+			site_id_label: 'wpcom',
+			client: config( 'client_slug' ),
+		};
+
+		if ( typeof window !== 'undefined' ) {
+			Object.assign( superProps, {
+				vph: window.innerHeight,
+				vpw: window.innerWidth,
+			} );
+		}
+
+		return superProps;
+	};
 }

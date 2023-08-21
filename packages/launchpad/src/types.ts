@@ -1,3 +1,6 @@
+export interface TaskExtraData {
+	about_page_id?: number;
+}
 export interface Task {
 	id: string;
 	completed: boolean;
@@ -7,6 +10,10 @@ export interface Task {
 	badge_text?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
+	extra_data?: TaskExtraData;
+	calypso_path?: string;
+	target_repetitions?: number;
+	repetition_count?: number;
 }
 
 export type LaunchpadChecklist = Task[];
@@ -47,11 +54,14 @@ export interface LaunchpadResponse {
 	checklist_statuses: LaunchpadStatuses[];
 }
 
+export interface PermittedActions {
+	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
+}
+
 export interface LaunchpadTaskActionsProps {
 	siteSlug: string | null;
 	tasks: Task[];
 	tracksData: LaunchpadTracksData;
-	extraActions?: {
-		setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
-	};
+	extraActions?: PermittedActions;
+	uiContext?: 'calypso';
 }

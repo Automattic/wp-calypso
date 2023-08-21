@@ -1,7 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { PatternAssemblerCta, DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
+import { PatternAssemblerCta, usePatternAssemblerCtaData } from '@automattic/design-picker';
 import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -40,6 +39,26 @@ const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
 	return columnsPerRow;
 };
 
+const getSiteAssemblerUrl = ( {
+	isLoggedIn,
+	selectedSite,
+	shouldGoToAssemblerStep,
+	siteEditorUrl,
+} ) => {
+	if ( isLoggedIn && ! shouldGoToAssemblerStep ) {
+		return siteEditorUrl;
+	}
+
+	const basePathname = isLoggedIn ? '/setup' : '/start';
+	const params = new URLSearchParams( { ref: 'calypshowcase' } );
+
+	if ( selectedSite?.slug ) {
+		params.set( 'siteSlug', selectedSite.slug );
+	}
+
+	return `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }`;
+};
+
 export const ThemesList = ( { tabFilter, ...props } ) => {
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
@@ -68,9 +87,6 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		} )
 	);
 
-	const isPatternAssemblerCTAEnabled =
-		! isLoggedIn || isEnabled( 'pattern-assembler/logged-in-showcase' );
-
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
@@ -83,26 +99,12 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
 		} );
 
-		let destinationUrl;
-
-		// We have to redirect the user to the site editor directly if the user has logged in but
-		// they're on the small screen because the Assembler doesn't support the small screen yet.
-		if ( ! isLoggedIn || shouldGoToAssemblerStep ) {
-			const basePathname = isLoggedIn ? '/setup' : '/start';
-			const params = new URLSearchParams( {
-				ref: 'calypshowcase',
-				theme: DEFAULT_ASSEMBLER_DESIGN.slug,
-			} );
-
-			if ( selectedSite?.slug ) {
-				params.set( 'siteSlug', selectedSite.slug );
-			}
-
-			destinationUrl = `${ basePathname }/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }`;
-		} else {
-			destinationUrl = siteEditorUrl;
-		}
-
+		const destinationUrl = getSiteAssemblerUrl( {
+			isLoggedIn,
+			selectedSite,
+			shouldGoToAssemblerStep,
+			siteEditorUrl,
+		} );
 		window.location.assign( destinationUrl );
 	};
 
@@ -135,7 +137,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ isPatternAssemblerCTAEnabled && tabFilter !== 'my-themes' && props.themes.length > 0 && (
+			{ tabFilter !== 'my-themes' && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
@@ -225,14 +227,20 @@ function ThemeBlock( props ) {
 }
 
 function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
-	const isLoggedInShowcase = useSelector( isUserLoggedIn );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ) );
 	const sitePlan = selectedSite?.plan?.product_slug;
-	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, selectedSite?.ID ) );
+	const siteEditorUrl = useSelector( ( state ) =>
+		getSiteEditorUrl( state, selectedSite?.ID, {
+			canvas: 'edit',
+			assembler: '1',
+		} )
+	);
+	const assemblerCtaData = usePatternAssemblerCtaData();
 
 	const options = [];
 
@@ -244,27 +252,31 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	}, [ upsellCardDisplayed ] );
 
 	// Design your own theme / homepage.
-	if ( isLoggedInShowcase ) {
-		// This should start the Pattern Assembler ideally, but it's not ready yet for the
-		// logged-in showcase, so we use the site editor as a fallback.
-		if ( isFSEActive ) {
-			options.push( {
-				title: translate( 'Design your own' ),
-				icon: addTemplate,
-				description: translate( 'Jump right into the editor to design your homepage.' ),
-				onClick: () =>
-					recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
-						site_plan: sitePlan,
-						search_term: searchTerm,
-						destination: 'site-editor',
-					} ),
-				url: siteEditorUrl,
-				buttonText: translate( 'Open the editor' ),
-			} );
-		}
+	if (
+		( isLoggedIn && isFSEActive ) ||
+		( ! isLoggedIn && assemblerCtaData.shouldGoToAssemblerStep )
+	) {
+		options.push( {
+			title: assemblerCtaData.title,
+			icon: addTemplate,
+			description: assemblerCtaData.subtitle,
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: assemblerCtaData.shouldGoToAssemblerStep ? 'assembler' : 'site-editor',
+				} ),
+			url: getSiteAssemblerUrl( {
+				isLoggedIn,
+				selectedSite,
+				shouldGoToAssemblerStep: assemblerCtaData.shouldGoToAssemblerStep,
+				siteEditorUrl,
+			} ),
+			buttonText: assemblerCtaData.buttonText,
+		} );
 	} else {
 		// This should also start the Pattern Assembler, which is currently in development for
-		// the logged-out showcase. Since there isn't any proper fallback for the meantime, we
+		// the logged-out showcase on mobile viewport. Since there isn't any proper fallback for the meantime, we
 		// just don't include this option.
 	}
 
@@ -290,7 +302,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	} );
 
 	// Upload a theme.
-	if ( ! isLoggedInShowcase ) {
+	if ( ! isLoggedIn ) {
 		options.push( {
 			title: translate( 'Upload a theme' ),
 			icon: cloudUpload,

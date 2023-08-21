@@ -70,7 +70,7 @@ export const CacheCard = ( {
 		isLoading: getEdgeCacheLoading,
 		data: isEdgeCacheActive,
 		isInitialLoading: getEdgeCacheInitialLoading,
-	} = useEdgeCacheQuery( siteId, {} );
+	} = useEdgeCacheQuery( siteId );
 
 	const isEdgeCacheEligible = ! isPrivate && ! isComingSoon;
 

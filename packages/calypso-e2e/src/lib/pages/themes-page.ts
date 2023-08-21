@@ -103,7 +103,7 @@ export class ThemesPage {
 	 */
 	async clickPopoverItem(
 		selectedTheme: ElementHandle,
-		action: 'Live Demo' | 'Activate' | 'Info' | 'Support'
+		action: 'Demo site' | 'Activate' | 'Info' | 'Support'
 	): Promise< void > {
 		const popoverButton = await selectedTheme.waitForSelector( selectors.popoverButton );
 		await popoverButton.click();

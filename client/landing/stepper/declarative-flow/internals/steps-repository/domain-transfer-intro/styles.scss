@@ -12,10 +12,6 @@ $heading-font-family: "SF Pro Display", $sans;
 	display: flex;
 	align-items: center;
 
-	.flow-progress.progress-bar {
-		display: none;
-	}
-
 	// Same style also on transfer-domains step
 	.bulk-domain-transfer__cta-container {
 		display: flex;
@@ -23,26 +19,8 @@ $heading-font-family: "SF Pro Display", $sans;
 		margin-bottom: 32px;
 
 		.bulk-domain-transfer__cta {
-			justify-content: center;
-			color: var(--black-white-white, #fff);
 			height: 48px;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			border-radius: 0.25rem;
-			background: var(--blue-blue-50, #0675c4);
-			font-size: 0.875rem;
 			width: 240px;
-			font-weight: 500;
-
-			&:hover {
-				background: var(--studio-blue-60);
-			}
-
-			&:disabled {
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				border-radius: 0.25rem;
-				background: var(--gray-gray-5, #dcdcde);
-				opacity: 1;
-			}
 
 			@media (max-width: $break-medium ) {
 				width: 100%;
@@ -61,12 +39,12 @@ $heading-font-family: "SF Pro Display", $sans;
 			flex-direction: column;
 			gap: 0;
 			justify-content: flex-start;
-			margin-top: 24px;
 			padding-left: 20px;
 			padding-right: 20px;
 		}
 
 		.step-container.intro {
+			padding-top: 96px;
 			font-family: $font-family;
 			display: flex;
 			flex-direction: column;
@@ -74,16 +52,15 @@ $heading-font-family: "SF Pro Display", $sans;
 
 			@media (max-width: $break-medium ) {
 				padding: 0;
-				margin-top: 24px;
+				margin-top: 48px;
 			}
 
 			.step-container__header {
-				margin-bottom: 60px;
+				margin: 0;
 				text-align: center;
 
 				@media (max-width: $break-medium ) {
 					margin-top: 48px;
-					margin-bottom: 44px;
 				}
 
 				.formatted-header {
@@ -99,7 +76,7 @@ $heading-font-family: "SF Pro Display", $sans;
 					}
 
 					.formatted-header__subtitle {
-						color: #000;
+						color: var(--studio-gray-60);
 						margin-top: 16px;
 						text-align: center;
 
@@ -115,18 +92,43 @@ $heading-font-family: "SF Pro Display", $sans;
 				flex-shrink: 0;
 
 				.select-items {
+					margin-top: 32px;
 					margin-bottom: 32px;
 					padding-left: 0;
 					padding-right: 0;
 
 					.select-items__item {
 						padding: 24px;
+						margin: 0 auto;
 
 						@media (max-width: $break-medium ) {
 							padding: 16px;
 							width: inherit;
 						}
 
+					}
+
+					.free-domain__primary-badge {
+						border-radius: 4px;
+						margin-left: 16px;
+						vertical-align: middle;
+						font-size: rem(12px);
+
+						@media (max-width: $break-mobile) {
+							height: auto;
+						}
+					}
+
+
+					@media ( max-width: $break-mobile ) {
+						.select-items__item-title-badge {
+							display: block;
+						}
+
+						.free-domain__primary-badge {
+							margin-left: 0;
+							margin-top: 8px;
+						}
 					}
 
 					.select-items__item-icon {

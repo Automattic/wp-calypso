@@ -16,7 +16,6 @@ import usePostsQueryPaged, {
 	getSearchOptionsQueryParams,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
@@ -27,13 +26,16 @@ import {
 import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 
-export type TabType = 'posts' | 'campaigns' | 'credits';
+export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
+
+export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
 	id: TabType;
 	name: string;
@@ -251,8 +253,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render campaigns tab */ }
 			{ selectedTab === 'campaigns' && (
 				<>
-					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/campaigns' ) }
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/campaigns/:site' ) }
 						title="Advertising > Campaigns"
 					/>
 					<CampaignsList
@@ -271,8 +273,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render credits tab */ }
 			{ selectedTab === 'credits' && (
 				<>
-					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/credits' ) }
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/credits/:site' ) }
 						title="Advertising > Credits"
 					/>
 					<CreditBalance balance={ creditBalance } />
@@ -282,8 +284,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render posts tab */ }
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
 				<>
-					<PageViewTracker
-						path={ getAdvertisingDashboardPath( '/:site/posts' ) }
+					<BlazePageViewTracker
+						path={ getAdvertisingDashboardPath( '/posts/:site' ) }
 						title="Advertising > Ready to Promote"
 					/>
 					<PostsList

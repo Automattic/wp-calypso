@@ -6,40 +6,59 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
-import { COMPONENT_CLASS_NAME, PRICING_CONFIG } from './stats-purchase-wizard';
+import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
 	setSubscriptionValue: ( value: number ) => number;
+	defaultStartingValue: number;
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;
 	siteSlug: string;
-	sliderStep: number;
-	maxSliderPrice: number;
+	sliderSettings: {
+		sliderStepPrice: number;
+		minSliderPrice: number;
+		maxSliderPrice: number;
+		uiEmojiHeartTier: number;
+		uiImageCelebrationTier: number;
+	};
+	adminUrl: string;
+	redirectUri: string;
+	from: string;
 }
 
 const PersonalPurchase = ( {
 	subscriptionValue,
 	setSubscriptionValue,
+	defaultStartingValue,
 	handlePlanSwap,
 	currencyCode,
 	siteSlug,
-	sliderStep,
-	maxSliderPrice,
+	sliderSettings,
+	adminUrl,
+	redirectUri,
+	from,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
+	const {
+		sliderStepPrice,
+		minSliderPrice,
+		maxSliderPrice,
+		uiEmojiHeartTier,
+		uiImageCelebrationTier,
+	} = sliderSettings;
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
 
-		if ( subscriptionValue <= PRICING_CONFIG.EMOJI_HEART_TIER ) {
+		if ( subscriptionValue <= uiEmojiHeartTier ) {
 			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
-		} else if ( subscriptionValue < PRICING_CONFIG.IMAGE_CELEBRATION_PRICE ) {
+		} else if ( subscriptionValue < uiImageCelebrationTier ) {
 			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
-		} else if ( subscriptionValue >= PRICING_CONFIG.IMAGE_CELEBRATION_PRICE ) {
+		} else if ( subscriptionValue >= uiImageCelebrationTier ) {
 			emoji = String.fromCodePoint( 0x1f525 ); /* Fire emoji */
 		}
 
@@ -47,7 +66,10 @@ const PersonalPurchase = ( {
 			<div { ...props }>
 				{ translate( '%(value)s/month', {
 					args: {
-						value: formatCurrency( state?.valueNow || subscriptionValue, currencyCode ),
+						value: formatCurrency(
+							( state?.valueNow || subscriptionValue ) * sliderStepPrice,
+							currencyCode
+						),
 					},
 					comment: 'Price per month selected by the user via the pricing slider',
 				} ) }
@@ -76,14 +98,14 @@ const PersonalPurchase = ( {
 				value={ subscriptionValue }
 				renderThumb={ sliderLabel }
 				onChange={ setSubscriptionValue }
-				maxValue={ maxSliderPrice }
-				step={ sliderStep }
+				maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
+				minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
 				{ translate( 'Our users pay %(value)s per month on average', {
 					args: {
-						value: formatCurrency( PRICING_CONFIG.AVERAGE_PRICE_INFO, currencyCode ),
+						value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
 					},
 				} ) }
 			</p>
@@ -93,7 +115,6 @@ const PersonalPurchase = ( {
 					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 						<li>{ translate( 'No access to upcoming features' ) }</li>
 						<li>{ translate( 'No priority support' ) }</li>
-						<li>{ translate( "You'll see upsells and ads in the Stats page" ) }</li>
 					</ul>
 				) : (
 					<>
@@ -101,7 +122,6 @@ const PersonalPurchase = ( {
 						<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 							<li>{ translate( 'Instant access to upcoming features' ) }</li>
 							<li>{ translate( 'Priority support' ) }</li>
-							<li>{ translate( 'Ad-free experience' ) }</li>
 						</ul>
 					</>
 				) }
@@ -171,18 +191,29 @@ const PersonalPurchase = ( {
 				<Button
 					variant="primary"
 					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-					onClick={ () => gotoCheckoutPage( 'free', siteSlug ) }
+					onClick={ () =>
+						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
+					}
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</Button>
 			) : (
 				<Button
 					variant="primary"
-					onClick={ () => gotoCheckoutPage( 'pwyw', siteSlug, subscriptionValue ) }
+					onClick={ () =>
+						gotoCheckoutPage( {
+							from,
+							type: 'pwyw',
+							siteSlug,
+							adminUrl,
+							redirectUri,
+							price: subscriptionValue / MIN_STEP_SPLITS,
+						} )
+					}
 				>
 					{ translate( 'Get Jetpack Stats for %(value)s per month', {
 						args: {
-							value: formatCurrency( subscriptionValue, currencyCode ),
+							value: formatCurrency( subscriptionValue * sliderStepPrice, currencyCode ),
 						},
 					} ) }
 				</Button>

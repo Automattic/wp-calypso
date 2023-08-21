@@ -2,14 +2,16 @@ import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, Fragment, useEffect, useState } from 'react';
 import * as React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import useJetpackMasterbarDataQuery from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
+import { getLastFocusableElement } from 'calypso/lib/dom/focus';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { trailingslashit } from 'calypso/lib/route';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
@@ -18,9 +20,15 @@ import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selec
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import CloudCart from './cloud-cart';
-import useMobileBtn from './use-mobile-btn';
-import useSubmenuBtn from './use-submenu-btn';
-import useUserMenu from './use-user-menu';
+import AntispamIcon from './icons/jetpack-bundle-icon-antispam';
+import BackupIcon from './icons/jetpack-bundle-icon-backup';
+import BoostIcon from './icons/jetpack-bundle-icon-boost';
+import CRMIcon from './icons/jetpack-bundle-icon-crm';
+import ScanIcon from './icons/jetpack-bundle-icon-scan';
+import SearchIcon from './icons/jetpack-bundle-icon-search';
+import SocialIcon from './icons/jetpack-bundle-icon-social';
+import VideopressIcon from './icons/jetpack-bundle-icon-videopress';
+import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 
 import './style.scss';
 
@@ -44,135 +52,13 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
+	const { data: menuData, status: menuDataStatus } = useJetpackMasterbarDataQuery();
+	const [ eventHandlersAdded, setEventHandlersAdded ] = useState( false );
 
-	const sections = useMemo(
-		() => [
-			{
-				label: translate( 'Products' ),
-				id: 'products',
-				items: [
-					{
-						label: translate( 'Security', { context: 'Jetpack product name' } ),
-						tagline: translate( 'Protect your site' ),
-						href: `${ JETPACK_COM_BASE_URL }/features/security/`,
-						items: [
-							{
-								label: translate( 'VaultPress Backup' ),
-								tagline: translate( 'Save every change in real-time' ),
-								href: `${ JETPACK_COM_BASE_URL }/upgrade/backup/`,
-							},
-							{
-								label: translate( 'Scan' ),
-								tagline: translate( 'Stay one step ahead of threats' ),
-								href: `${ JETPACK_COM_BASE_URL }/upgrade/scan/`,
-							},
-							{
-								label: translate( 'Akismet Anti-spam' ),
-								tagline: translate( 'Stop comment and form spam' ),
-								href: `${ JETPACK_COM_BASE_URL }/upgrade/anti-spam/`,
-							},
-						],
-					},
-					{
-						label: translate( 'Performance' ),
-						tagline: translate( 'Speed up your site' ),
-						href: `${ JETPACK_COM_BASE_URL }/features/performance/`,
-						items: [
-							{
-								label: translate( 'Site Search' ),
-								tagline: translate( 'Help them find what they need' ),
-								href: `${ JETPACK_COM_BASE_URL }/upgrade/search/`,
-							},
-							{
-								label: translate( 'Boost' ),
-								tagline: translate( 'Instant speed and SEO' ),
-								href: `${ JETPACK_COM_BASE_URL }/boost/`,
-							},
-							{
-								label: translate( 'VideoPress' ),
-								tagline: translate( 'High-quality, ad-free video' ),
-								href: `${ JETPACK_COM_BASE_URL }/videopress/`,
-							},
-						],
-					},
-					{
-						label: translate( 'Growth' ),
-						tagline: translate( 'Grow your audience' ),
-						href: `${ JETPACK_COM_BASE_URL }/features/growth/`,
-						items: [
-							{
-								label: translate( 'AI Assistant', { context: 'Jetpack product name' } ),
-								tagline: translate( 'Write smarter, not harder' ),
-								href: `${ JETPACK_COM_BASE_URL }/ai/`,
-							},
-							{
-								label: translate( 'Stats', { context: 'Jetpack product name' } ),
-								tagline: translate( 'Simple, yet powerful analytics' ),
-								href: `${ JETPACK_COM_BASE_URL }/stats/`,
-							},
-							{
-								label: translate( 'Social', { context: 'Jetpack product name' } ),
-								tagline: translate( 'Write once, post everywhere' ),
-								href: `${ JETPACK_COM_BASE_URL }/social/`,
-							},
-							{
-								label: translate( 'CRM' ),
-								tagline: translate( 'Connect with your people' ),
-								href: 'https://jetpackcrm.com/?utm_medium=automattic_referred&utm_source=jpcom_header',
-							},
-							{
-								label: translate( 'Blaze' ),
-								tagline: translate( 'Advertise your best content' ),
-								href: `${ JETPACK_COM_BASE_URL }/blaze/`,
-							},
-						],
-					},
-				],
-			},
-			{
-				label: translate( 'Pricing' ),
-				href: `${ JETPACK_COM_BASE_URL }/pricing/`,
-			},
-			{
-				label: translate( 'Partners' ),
-				href: `${ JETPACK_COM_BASE_URL }/jetpack-partners/`,
-			},
-			{
-				label: translate( 'Support' ),
-				href: `${ JETPACK_COM_BASE_URL }/support/`,
-			},
-			{
-				label: translate( 'Blog' ),
-				href: `${ JETPACK_COM_BASE_URL }/blog/`,
-			},
-		],
-		[ translate ]
-	);
-	const bundles = useMemo(
-		() => ( {
-			label: translate( 'Bundles' ),
-			items: [
-				{
-					label: translate( 'Complete', { context: 'Jetpack plan name' } ),
-					tagline: translate( 'The ultimate toolkit' ),
-					href: `${ JETPACK_COM_BASE_URL }/complete/`,
-				},
-				{
-					label: translate( 'Security', { context: 'Jetpack product name' } ),
-					tagline: translate( 'Comprehensive site security' ),
-					href: `${ JETPACK_COM_BASE_URL }/features/security/`,
-				},
-			],
-		} ),
-		[ translate ]
-	);
+	const sortByMenuOrder = ( a: MenuItem, b: MenuItem ) => a.menu_order - b.menu_order;
 
-	const appsLink = {
-		categoryLabel: translate( 'Android and iOS' ),
-		label: translate( 'Mobile app' ),
-		tagline: translate( 'Put your site in your pocket' ),
-		href: `${ JETPACK_COM_BASE_URL }/mobile/`,
-	};
+	const sections = menuData?.sections ? Array.from( Object.values( menuData.sections ) ) : null;
+	const bundles = menuData?.bundles ?? null;
 
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
@@ -192,6 +78,10 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
 	} );
 
+	const isValidLink = ( url: string ) => {
+		return url && url !== '#';
+	};
+
 	const onLinkClick = useCallback( ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
 			nav_item: e.currentTarget
@@ -202,9 +92,228 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		} );
 	}, [] );
 
-	useSubmenuBtn();
-	useUserMenu();
-	useMobileBtn();
+	const getBundleIcons = ( bundle: string ) => {
+		// Using a soft match in case the menu item gets deleted and recreated in wp-admin
+		// causing the name to change to `complete-2` or something similar.
+		if ( bundle.includes( 'complete' ) ) {
+			return [
+				<BackupIcon />,
+				<AntispamIcon />,
+				<ScanIcon />,
+				<SearchIcon />,
+				<SocialIcon />,
+				<VideopressIcon />,
+				<CRMIcon />,
+				<BoostIcon />,
+			];
+		}
+
+		if ( bundle.includes( 'security' ) ) {
+			return [ <BackupIcon />, <AntispamIcon />, <ScanIcon /> ];
+		}
+
+		return [];
+	};
+
+	// All the functionality in this useEffect is copied from the old js files that were copied from jetpack.com
+	// They were moved here due to the new data query causing the header to re-render and add too many event listeners
+	// This will be refactored very soon
+	useEffect( () => {
+		// SUBMENU TOGGLE FUNCTIONALITY
+		function toggleMenuItem( btn: HTMLAnchorElement, menu: HTMLDivElement ) {
+			const expanded = btn.getAttribute( 'aria-expanded' ) === 'true' || false;
+			btn.setAttribute( 'aria-expanded', String( ! expanded ) );
+
+			menu.hidden = ! menu.hidden;
+		}
+
+		function collapseExpandedMenu() {
+			const expandedBtn = document.querySelector(
+				'.js-menu-btn[aria-expanded="true"]'
+			) as HTMLAnchorElement;
+
+			if ( expandedBtn ) {
+				const menu = expandedBtn?.parentNode?.querySelector( '.js-menu' ) as HTMLDivElement;
+
+				if ( menu ) {
+					toggleMenuItem( expandedBtn, menu );
+				}
+			}
+		}
+
+		function initMenu( btn: HTMLAnchorElement ) {
+			const menu = btn?.parentNode?.querySelector( '.js-menu' ) as HTMLDivElement;
+
+			if ( ! menu ) {
+				return;
+			}
+
+			const toggleSubmenu = function () {
+				toggleMenuItem( btn, menu );
+			};
+
+			menu.addEventListener( 'click', function ( e ) {
+				// If user clicks menu backdrop
+				if ( e.target === menu ) {
+					toggleSubmenu();
+				}
+			} );
+
+			btn.addEventListener( 'click', function ( e ) {
+				e.preventDefault();
+
+				if ( btn.getAttribute( 'aria-expanded' ) === 'false' ) {
+					collapseExpandedMenu();
+				}
+
+				toggleSubmenu();
+			} );
+
+			const backBtn = menu.querySelector( '.js-menu-back' );
+
+			if ( backBtn ) {
+				backBtn.addEventListener( 'click', function () {
+					toggleSubmenu();
+				} );
+			}
+
+			// Collapse menu when focusing out
+			const lastFocusable = getLastFocusableElement( menu );
+
+			if ( lastFocusable ) {
+				lastFocusable.addEventListener( 'focusout', toggleSubmenu );
+			}
+		}
+
+		// Close expanded menu on Esc keypress
+		function onKeyDown( e: KeyboardEvent ) {
+			if ( e.key === 'Escape' ) {
+				collapseExpandedMenu();
+			}
+		}
+		// END SUBMENU TOGGLE FUNCTIONALITY
+
+		// USER MENU FUNCTIONALITY
+		const userMenu = document.querySelector( '.js-user-menu' ) as HTMLDivElement;
+		const userBtn = document.querySelector( '.js-user-menu-btn' ) as HTMLAnchorElement;
+
+		function onDocumentClick( { target }: MouseEvent ) {
+			if ( ! userMenu?.contains( target as Node ) ) {
+				userBtn?.setAttribute( 'aria-expanded', 'false' );
+				userMenu.hidden = true;
+			}
+		}
+
+		function toggleUserMenu() {
+			const expanded = userBtn.getAttribute( 'aria-expanded' ) === 'true' || false;
+
+			if ( expanded ) {
+				document.removeEventListener( 'click', onDocumentClick );
+			} else {
+				document.addEventListener( 'click', onDocumentClick );
+			}
+
+			userBtn.setAttribute( 'aria-expanded', String( ! expanded ) );
+			userMenu.hidden = ! userMenu.hidden;
+		}
+
+		function onUserBtnClick( e: MouseEvent ) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			toggleUserMenu();
+		}
+		// END USER MENU FUNCTIONALITY
+
+		// MOBILE MENU FUNCTIONALITY
+		const mobileMenu = document.querySelector( '.js-mobile-menu' ) as HTMLDivElement;
+		const mobileBtn = document.querySelector( '.js-mobile-btn' );
+		const body = document.querySelector( 'body' );
+
+		function mobileMenuToggle() {
+			const expanded = mobileBtn?.getAttribute( 'aria-expanded' ) === 'true' || false;
+
+			mobileBtn?.setAttribute( 'aria-expanded', String( ! expanded ) );
+
+			if ( ! expanded ) {
+				mobileMenu?.classList.add( 'is-expanded' );
+				body?.classList.add( 'no-scroll' );
+			} else {
+				mobileMenu?.classList.remove( 'is-expanded' );
+				body?.classList.remove( 'no-scroll' );
+			}
+		}
+
+		// Close expanded menu on Esc keypress
+		function mobileOnKeyDown( e: KeyboardEvent ) {
+			if ( e.key === 'Escape' && mobileBtn?.getAttribute( 'aria-expanded' ) === 'true' ) {
+				mobileMenuToggle();
+			}
+		}
+		// END MOBILE MENU FUNCTIONALITY
+
+		if ( menuDataStatus === 'success' && ! eventHandlersAdded ) {
+			setEventHandlersAdded( true );
+
+			// SUBMENU SETUP
+			const menuBtns = document.querySelectorAll( '.js-menu-btn' );
+
+			Array.prototype.forEach.call( menuBtns, initMenu );
+
+			document.addEventListener( 'keydown', onKeyDown );
+			// END SUBMENU SETUP
+
+			// USER MENU SETUP
+			if ( userMenu && userBtn ) {
+				userBtn.addEventListener( 'click', onUserBtnClick );
+
+				const lastFocusable = getLastFocusableElement( userMenu );
+
+				// Collapse menu when focusing out
+				if ( lastFocusable ) {
+					lastFocusable.addEventListener( 'focusout', toggleUserMenu );
+				}
+			}
+			// END MENU SETUP
+
+			// MOBILE MENU SETUP
+			if ( mobileMenu && mobileBtn ) {
+				mobileBtn.addEventListener( 'click', function ( e ) {
+					e.preventDefault();
+
+					mobileMenuToggle();
+				} );
+
+				const lastFocusable = getLastFocusableElement( mobileMenu );
+
+				if ( lastFocusable ) {
+					lastFocusable.addEventListener( 'focusout', function () {
+						if ( mobileBtn.getAttribute( 'aria-expanded' ) === 'true' ) {
+							mobileMenuToggle();
+						}
+					} );
+				}
+
+				document.addEventListener( 'keydown', mobileOnKeyDown );
+			}
+			// END MOBILE SETUP
+
+			return () => {
+				document.removeEventListener( 'keydown', onKeyDown );
+				document.removeEventListener( 'click', onDocumentClick );
+				document.removeEventListener( 'keydown', mobileOnKeyDown );
+			};
+		}
+	}, [ menuDataStatus, eventHandlersAdded ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', () => {
+			const body = document.querySelector( 'body' );
+			if ( window.innerWidth > 900 ) {
+				body?.classList.remove( 'no-scroll' );
+			}
+		} );
+	}, [] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -241,133 +350,138 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								</a>
 								<div className="header__nav-wrapper js-mobile-menu" id="mobile-menu">
 									<ul className="header__sections-list js-nav-list">
-										{ sections.map( ( { label, id, href, items } ) => {
-											const hasChildren = Array.isArray( items );
-											const Tag = hasChildren ? 'a' : ExternalLink;
+										{ menuDataStatus === 'success' && sections ? (
+											sections.sort( sortByMenuOrder ).map( ( { label, id, href, items } ) => {
+												const hasChildren = Object.keys( items ).length > 0;
+												const MainMenuTag = hasChildren ? 'a' : ExternalLink;
 
-											return (
-												<li
-													className={ classNames( {
-														'is-active':
-															pathname &&
-															href &&
-															new URL( trailingslashit( href ) ).pathname ===
-																trailingslashit( pathname ),
-													} ) }
-													key={ href || id }
-												>
-													<Tag
-														className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
-														href={ href ? localizeUrl( href, locale ) : `#${ id }` }
-														aria-expanded={ hasChildren ? false : undefined }
-														onClick={ href ? onLinkClick : undefined }
+												return (
+													<li
+														className={ classNames( {
+															'is-active':
+																pathname &&
+																isValidLink( href ) &&
+																new URL( trailingslashit( href ) ).pathname ===
+																	trailingslashit( pathname ),
+														} ) }
+														key={ `main-menu-${ href }${ label }` }
 													>
-														{ label }
-														{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
-													</Tag>
-													{ hasChildren && (
-														<div id={ id } className="header__submenu js-menu" tabIndex={ -1 }>
-															<div className="header__submenu-content">
-																<button className="header__back-btn js-menu-back">
-																	<Gridicon icon="chevron-left" size={ 18 } />
-																	{ translate( 'Back' ) }
-																</button>
-																<ul className="header__submenu-categories-list">
-																	{ items.map( ( { label, tagline, href, items } ) => (
-																		<li key={ href }>
-																			<ExternalLink
-																				className="header__submenu-category header__submenu-link"
-																				href={ localizeUrl( href, locale ) }
-																				onClick={ onLinkClick }
-																			>
-																				<span className="header__submenu-label">
-																					<span className="header__submenu-chevron">
-																						<Gridicon icon="chevron-right" size={ 18 } />
-																					</span>
-																					{ label }
-																				</span>
-																				<span className="header__submenu-tagline">{ tagline }</span>
-																			</ExternalLink>
-																			<ul className="header__submenu-links-list">
-																				{ items.map( ( { label, tagline, href } ) => (
-																					<li key={ href }>
-																						<ExternalLink
-																							className="header__submenu-link"
-																							href={ localizeUrl( href, locale ) }
-																							onClick={ onLinkClick }
-																						>
-																							<span className="header__submenu-label">
-																								{ label }
-																							</span>
-																							<span className="header__submenu-tagline">
-																								{ tagline }
-																							</span>
-																						</ExternalLink>
-																					</li>
-																				) ) }
-																			</ul>
-																		</li>
-																	) ) }
-																</ul>
-
-																<hr className="header__submenu-section-separator" />
-
-																<div className="header__submenu-bottom-section">
-																	<div className="header__submenu-bundles">
-																		<p className="header__submenu-category-heading">
-																			{ bundles.label }
-																		</p>
-
-																		<ul className="header__submenu-links-list">
-																			{ bundles.items.map( ( { label, tagline, href } ) => {
-																				return (
-																					<li key={ `bundles-${ href }` }>
-																						<ExternalLink
-																							className="header__submenu-link"
-																							href={ localizeUrl( href, locale ) }
-																							onClick={ onLinkClick }
-																						>
-																							<span className="header__submenu-label">
-																								{ label }
-																							</span>
-																							<span className="header__submenu-tagline">
-																								{ tagline }
-																							</span>
-																						</ExternalLink>
-																					</li>
-																				);
-																			} ) }
+														<MainMenuTag
+															className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
+															href={
+																isValidLink( href ) ? localizeUrl( href, locale ) : `#${ id }`
+															}
+															aria-expanded={ hasChildren ? false : undefined }
+															onClick={ isValidLink( href ) ? onLinkClick : undefined }
+														>
+															{ label }
+															{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
+														</MainMenuTag>
+														{ hasChildren && (
+															<div
+																id={ id }
+																className="header__submenu js-menu js"
+																tabIndex={ -1 }
+																hidden
+															>
+																<div className="header__submenu-content">
+																	<div className="header__submenu-wrapper">
+																		<button className="header__back-btn js-menu-back">
+																			<Gridicon icon="chevron-left" size={ 18 } />
+																			{ translate( 'Back' ) }
+																		</button>
+																		<ul className="header__submenu-categories-list">
+																			{ Array.from( Object.values( items ) )
+																				.sort( sortByMenuOrder )
+																				.map( ( { label, href, items } ) => {
+																					return (
+																						<li key={ `submenu-category-${ href }${ label }` }>
+																							{ isValidLink( href ) ? (
+																								<ExternalLink
+																									className="header__submenu-category header__submenu-link"
+																									href={ localizeUrl( href, locale ) }
+																									onClick={ onLinkClick }
+																								>
+																									<span className="header__submenu-label">
+																										{ label }
+																									</span>
+																								</ExternalLink>
+																							) : (
+																								<p className="header__submenu-category header__submenu-link">
+																									<span className="header__submenu-label">
+																										{ label }
+																									</span>
+																								</p>
+																							) }
+																							<ul className="header__submenu-links-list">
+																								{ Array.from( Object.values( items ) )
+																									.sort( sortByMenuOrder )
+																									.map( ( { label, href } ) => (
+																										<li key={ `submenu-${ href }${ label }` }>
+																											<ExternalLink
+																												className="header__submenu-link"
+																												href={ localizeUrl( href, locale ) }
+																												onClick={ onLinkClick }
+																											>
+																												<span className="header__submenu-label">
+																													{ label }
+																												</span>
+																											</ExternalLink>
+																										</li>
+																									) ) }
+																							</ul>
+																						</li>
+																					);
+																				} ) }
 																		</ul>
-																	</div>
-																	<div className="header__submenu-apps-wrapper">
-																		<p className="header__submenu-category-heading">
-																			{ appsLink.categoryLabel }
-																		</p>
 
-																		<ul className="header__submenu-links-list">
-																			<li>
-																				<ExternalLink
-																					className="header__submenu-link"
-																					href={ localizeUrl( appsLink.href, locale ) }
-																					onClick={ onLinkClick }
-																				>
-																					<span className="header__submenu-label">
-																						{ appsLink.label }
-																					</span>
-																					<span className="header__submenu-tagline">
-																						{ appsLink.tagline }
-																					</span>
-																				</ExternalLink>
-																			</li>
-																		</ul>
+																		<div className="header__submenu-bottom-section">
+																			<div className="header__submenu-bundles">
+																				<p className="header__submenu-category-heading">
+																					{ bundles?.label }
+																				</p>
+
+																				<ul className="header__submenu-links-list">
+																					{ bundles &&
+																						Array.from( Object.values( bundles.items ) )
+																							.sort( sortByMenuOrder )
+																							.map( ( { id, label, href } ) => (
+																								<li key={ `bundles-${ href }-${ label }` }>
+																									<ExternalLink
+																										className="header__submenu-link"
+																										href={ localizeUrl( href, locale ) }
+																										onClick={ onLinkClick }
+																									>
+																										<p className="header__submenu-label">
+																											<span>{ label }</span>
+																										</p>
+																										<div className="header__submenu-bundle-icons">
+																											{ getBundleIcons( id ).map(
+																												( icon, index ) => (
+																													<Fragment
+																														key={ `bundle-icon-${ id }${ index }` }
+																													>
+																														{ icon }
+																													</Fragment>
+																												)
+																											) }
+																										</div>
+																									</ExternalLink>
+																								</li>
+																							) ) }
+																				</ul>
+																			</div>
+																		</div>
 																	</div>
 																</div>
 															</div>
-														</div>
-													) }
-												</li>
-											);
-										} ) }
+														) }
+													</li>
+												);
+											} )
+										) : (
+											<></>
+										) }
 									</ul>
 									{ shouldShowCart && <CloudCart /> }
 									<ul className="header__actions-list">
@@ -381,7 +495,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 													<a className="user-menu__btn js-user-menu-btn" href="#profile">
 														<Gravatar user={ user } className="user-menu__avatar" />
 													</a>
-													<div id="profile" className="user-menu__tooltip js-user-menu">
+													<div id="profile" className="user-menu__tooltip js-user-menu js" hidden>
 														<div className="tooltip">
 															<span className="user-menu__greetings">
 																{ translate( 'Hi, %s!', {

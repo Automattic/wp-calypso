@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
@@ -28,30 +29,50 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementList( ':site' ) }
-				analyticsTitle="Domain Management"
-				component={ DomainManagement.SiteDomains }
-				context={ pageContext }
-				needsContactDetails
-				needsDomains
-				needsPlans
-				needsProductsList
-			/>
-		);
+		if ( isEnabled( 'domains/management' ) ) {
+			pageContext.primary = (
+				<DomainManagement.BulkSiteDomains
+					analyticsPath={ domainManagementRoot( ':site' ) }
+					analyticsTitle="Domain Management"
+				/>
+			);
+		} else {
+			pageContext.primary = (
+				<DomainManagementData
+					analyticsPath={ domainManagementList( ':site' ) }
+					analyticsTitle="Domain Management"
+					component={ DomainManagement.SiteDomains }
+					context={ pageContext }
+					needsContactDetails
+					needsDomains
+					needsPlans
+					needsProductsList
+				/>
+			);
+		}
 		next();
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementRoot() }
-				analyticsTitle="Domain Management > All Domains"
-				component={ DomainManagement.AllDomains }
-				context={ pageContext }
-			/>
-		);
+		if ( isEnabled( 'domains/management' ) ) {
+			pageContext.primary = (
+				<>
+					<DomainManagement.BulkAllDomains
+						analyticsPath={ domainManagementRoot() }
+						analyticsTitle="Domain Management > All Domains"
+					/>
+				</>
+			);
+		} else {
+			pageContext.primary = (
+				<DomainManagementData
+					analyticsPath={ domainManagementRoot() }
+					analyticsTitle="Domain Management > All Domains"
+					component={ DomainManagement.AllDomains }
+					context={ pageContext }
+				/>
+			);
+		}
 		next();
 	},
 

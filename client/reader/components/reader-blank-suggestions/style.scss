@@ -16,6 +16,6 @@
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
-		padding: 16px;
+		padding: 16px 0 0;
 	}
 }

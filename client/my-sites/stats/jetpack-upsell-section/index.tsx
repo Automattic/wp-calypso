@@ -10,7 +10,6 @@ import {
 import { JetpackUpsellCard } from '@automattic/components';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
-import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import usePurchasedProducts from './use-purchased-products';
 
@@ -26,14 +25,13 @@ const QUERY_VALUES = {
 
 export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const hasPaidStats = useSelector( hasSiteProductJetpackStatsPaid );
 
 	// NOTE: This will only work within Odyssey Stats.
 	const { purchasedProducts } = usePurchasedProducts();
 
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
-	if ( ! isOdysseyStats || hasPaidStats ) {
+	if ( ! isOdysseyStats ) {
 		return null;
 	}
 

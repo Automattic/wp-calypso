@@ -23,6 +23,7 @@ import {
 import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
+import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -116,12 +117,10 @@ export class UserStep extends Component {
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
 		initialContext: PropTypes.object,
-		showIsDevAccountCheckbox: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isSocialSignupEnabled: false,
-		showIsDevAccountCheckbox: false,
 	};
 
 	state = {
@@ -205,7 +204,7 @@ export class UserStep extends Component {
 						  );
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+					'All Woo Express stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
@@ -323,10 +322,7 @@ export class UserStep extends Component {
 				oauth2Signup,
 				...data,
 			},
-			dependencies,
-			{
-				is_dev_account: data.userData.is_dev_account ?? false,
-			}
+			dependencies
 		);
 	};
 
@@ -429,12 +425,8 @@ export class UserStep extends Component {
 	getHeaderText() {
 		const { flowName, oauth2Client, translate, headerText, wccomFrom } = this.props;
 
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up for %(clientTitle)s', {
-				args: { clientTitle: oauth2Client.title },
-				comment:
-					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Crowdsignal' or 'Gravatar')",
-			} );
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up for Crowdsignal' );
 		}
 
 		if ( isWooOAuth2Client( oauth2Client ) ) {
@@ -496,13 +488,12 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned, isPasswordless, showIsDevAccountCheckbox } = this.props;
+		const { oauth2Client, isReskinned, isPasswordless } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
-		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
-		if ( isWooOAuth2Client( oauth2Client ) || isGravatar ) {
+		if ( isWooOAuth2Client( oauth2Client ) ) {
 			isSocialSignupEnabled = true;
 		}
 
@@ -528,7 +519,6 @@ export class UserStep extends Component {
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordless={ isMobile() || isPasswordless }
-					showIsDevAccountCheckbox={ showIsDevAccountCheckbox }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
@@ -537,7 +527,6 @@ export class UserStep extends Component {
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
-					loginUrl={ isGravatar ? this.getLoginUrl() : undefined }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -589,6 +578,20 @@ export class UserStep extends Component {
 		);
 	}
 
+	renderGravatarSignupStep() {
+		return (
+			<GravatarStepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.translate( 'Welcome to Gravatar' ) }
+				loginUrl={ this.getLoginUrl() }
+			>
+				{ this.renderSignupForm() }
+			</GravatarStepWrapper>
+		);
+	}
+
 	render() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
@@ -596,6 +599,10 @@ export class UserStep extends Component {
 
 		if ( isVideoPressFlow( this.props.flowName ) ) {
 			return this.renderVideoPressSignupStep();
+		}
+
+		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {
+			return this.renderGravatarSignupStep();
 		}
 
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {

@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,7 +13,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -33,6 +38,7 @@ type Props = {
 	showLabels: boolean;
 	hasDuplicates: boolean;
 	domainCount: number;
+	variantSlug: string | undefined;
 };
 
 type DomainPriceProps = {
@@ -62,11 +68,7 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 	const { __ } = useI18n();
 
 	if ( ! rawPrice ) {
-		return (
-			<div className="domains__domain-price-number disabled">
-				{ formatCurrency( 0, currencyCode, { stripZeros: true } ) }
-			</div>
-		);
+		return <div className="domains__domain-price-number disabled"></div>;
 	}
 
 	if ( ! saleCost && saleCost !== 0 ) {
@@ -76,6 +78,8 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 			</div>
 		);
 	}
+
+	const pricetext = __( 'We’ll pay for an extra year' );
 
 	return (
 		<div className="domains__domain-price-value">
@@ -87,7 +91,7 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 					{ formatCurrency( rawPrice, currencyCode, { stripZeros: true } ) }
 				</span>
 			</div>
-			<div className="domains__domain-price-text">{ __( 'First year free' ) }</div>
+			<div className="domains__domain-price-text">{ pricetext }</div>
 		</div>
 	);
 };
@@ -101,11 +105,12 @@ export function DomainCodePair( {
 	showLabels,
 	hasDuplicates,
 	domainCount,
+	variantSlug,
 }: Props ) {
 	const { __ } = useI18n();
 
 	const validation = useValidationMessage( domain, auth, hasDuplicates );
-
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
 	const {
@@ -134,16 +139,27 @@ export function DomainCodePair( {
 		}
 	}, [ shouldReportError, valid, domain, message, errorStatus ] );
 
-	const domainActions = (
-		<>
-			&nbsp;
+	const domainActions = () => (
+		<span className="validation-actions">
+			{ isGoogleDomainsTransferFlow &&
+				// this means that the domain is locked and we need to show the instructions
+				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
+					<GoogleDomainsModal
+						className={ classnames( {
+							'is-first-row': showLabels,
+						} ) }
+						focusedStep={ 3 }
+					>
+						<span className="unlock-label">{ __( 'How to unlock' ) }</span>
+					</GoogleDomainsModal>
+				) }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
 				onClick={ () => onRemove( id ) }
 				variant="link"
 			>
-				<span className="delete-label">{ __( 'Discard Domain' ) }</span>
+				<span className="delete-label">{ __( 'Clear domain' ) }</span>
 			</Button>
 			<Button
 				title={ __( 'Refresh' ) }
@@ -154,12 +170,52 @@ export function DomainCodePair( {
 				} ) }
 				variant="link"
 			>
-				<span className="refresh-label">{ __( 'Refresh' ) }</span>
+				<span className="refresh-label">{ __( 'Try again' ) }</span>
 			</Button>
-		</>
+		</span>
 	);
+
+	const renderGoogleDomainsModal = () => {
+		return (
+			<GoogleDomainsModal
+				className={ classnames( {
+					'is-first-row': showLabels,
+				} ) }
+				focusedStep={ 4 }
+			>
+				<Gridicon icon="info-outline" size={ 18 } />
+			</GoogleDomainsModal>
+		);
+	};
+
+	const renderInfoPopover = () => {
+		return (
+			<InfoPopover
+				className={ classnames( {
+					'is-first-row': showLabels,
+				} ) }
+				position="right"
+			>
+				{ __(
+					'Unique code proving ownership, needed for secure domain transfer between registrars.'
+				) }
+				<div>
+					<Button
+						href={ localizeUrl(
+							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-unlock-your-domain-and-obtain-your-auth-code'
+						) }
+						target="_blank"
+						variant="link"
+					>
+						<span className="learn-more-label">{ __( 'Learn more' ) }</span>
+					</Button>
+				</div>
+			</InfoPopover>
+		);
+	};
+
 	return (
-		<div className="domains__domain-info-and-validation">
+		<div className={ `domains__domain-info-and-validation ${ getLocaleSlug() }` }>
 			<div className="domains__domain-info">
 				<div className="domains__domain-domain">
 					<FormFieldset>
@@ -175,6 +231,8 @@ export function DomainCodePair( {
 							disabled={ valid }
 							id={ id }
 							value={ domain }
+							className="domains__domain-name-input-field"
+							placeholder={ __( 'example.com' ) }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain: event.target.value.trim().toLowerCase(),
@@ -198,22 +256,14 @@ export function DomainCodePair( {
 							htmlFor={ id + '-auth' }
 						>
 							{ __( 'Authorization code' ) }
-							<InfoPopover
-								className={ classnames( {
-									'is-first-row': showLabels,
-								} ) }
-								position="right"
-							>
-								{ __(
-									'Unique code proving ownership, needed for secure domain transfer between registrars.'
-								) }
-							</InfoPopover>
+							{ isGoogleDomainsTransferFlow ? renderGoogleDomainsModal() : renderInfoPopover() }
 						</FormLabel>
 
 						<FormInput
 							id={ id + '-auth' }
 							disabled={ valid || hasDuplicates }
 							value={ auth }
+							placeholder="123"
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								onChange( id, {
 									domain,
@@ -232,18 +282,23 @@ export function DomainCodePair( {
 							<FormInputValidation
 								isError={ ! valid }
 								text={ message }
-								children={ domainActions }
+								children={ domainActions() }
 							></FormInputValidation>
 						) }
 						{ message && loading && (
-							<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+							<FormInputValidation
+								className="is-checking-domain"
+								text={ message }
+								isError={ false }
+								isMuted={ true }
+							/>
 						) }
 						{ ! shouldReportError && ! loading && (
 							<FormInputValidation
 								isError={ false }
+								text=""
 								isMuted={ true }
-								text={ __( 'Please enter the domain name and authorization code.' ) }
-								children={ domainCount > 1 && domainActions }
+								children={ domainCount > 1 && domainActions() }
 							/>
 						) }
 					</div>
@@ -271,18 +326,23 @@ export function DomainCodePair( {
 					<FormInputValidation
 						isError={ ! valid }
 						text={ message }
-						children={ domainActions }
+						children={ domainActions() }
 					></FormInputValidation>
 				) }
 				{ message && loading && (
-					<FormInputValidation text={ message } isError={ false } isMuted={ true } />
+					<FormInputValidation
+						className="is-checking-domain"
+						text={ message }
+						isError={ false }
+						isMuted={ true }
+					/>
 				) }
 				{ ! shouldReportError && ! loading && (
 					<FormInputValidation
 						isError={ false }
 						isMuted={ true }
-						text={ __( 'Please enter the domain name and authorization code.' ) }
-						children={ domainCount > 1 && domainActions }
+						text=""
+						children={ domainCount > 1 && domainActions() }
 					/>
 				) }
 			</div>

@@ -4,8 +4,9 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
 import StatsPurchaseSVG from './stats-purchase-svg';
@@ -17,14 +18,12 @@ const SCREEN_PURCHASE = 1;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
 
-// TODO: Get pricing config from an API
-const PRICING_CONFIG = {
-	AVERAGE_PRICE_INFO: 6, // used to display how much a users pays on average (below price slider)
-	EMOJI_HEART_TIER: 5, // value when slider emoji is changed to a heart emoji
-	IMAGE_CELEBRATION_PRICE: 8, // minimal price that enables image celebration image
-	DEFAULT_STARTING_PRICE: 6, // default position for PWYW slider
-	FLAT_COMMERCIAL_PRICE: 10, // commercial price
-};
+const DEFAULT_STARTING_FRACTION = 0.6;
+const UI_EMOJI_HEART_TIER_THRESHOLD = 0.5;
+const UI_IMAGE_CELEBRATION_TIER_THRESHOLD = 0.8;
+
+// A step price is half of the smallest unit
+const MIN_STEP_SPLITS = 2;
 
 const TitleNode = ( { label, indicatorNumber, active } ) => {
 	return (
@@ -41,29 +40,70 @@ const TitleNode = ( { label, indicatorNumber, active } ) => {
 	);
 };
 
-const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
-	const [ subscriptionValue, setSubscriptionValue ] = useState(
-		PRICING_CONFIG.DEFAULT_STARTING_PRICE
-	);
-	const [ wizardStep, setWizardStep ] = useState( SCREEN_TYPE_SELECTION );
-	const [ siteType, setSiteType ] = useState( null );
+const ProductCard = ( {
+	siteSlug,
+	siteId,
+	commercialProduct,
+	maxSliderPrice,
+	pwywProduct,
+	redirectUri,
+	from,
+	disableFreeProduct = false,
+	initialStep = SCREEN_TYPE_SELECTION,
+	initialSiteType,
+} ) => {
+	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
+
+	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
+	// We need the exact position, otherwise the caculated pricing would not be the same as the one in the slider.
+	const defaultStartingValue = Math.floor( steps * DEFAULT_STARTING_FRACTION );
+	const uiEmojiHeartTier = steps * UI_EMOJI_HEART_TIER_THRESHOLD;
+	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
+
+	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
+	const [ wizardStep, setWizardStep ] = useState( initialStep );
+	const [ siteType, setSiteType ] = useState( initialSiteType );
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
-	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
+	const personalProductTitle = translate( 'What is Jetpack Stats worth to you?' );
+	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
-	const maxSliderPrice = commercialProduct.cost;
-	const sliderStep = pwywProduct.cost / 2;
+	// Default titles for no site type selected.
+	let typeSelectionScreenLabel = translate( 'What site type is %(site)s?', {
+		args: {
+			site: siteSlug,
+		},
+	} );
+	let purchaseScreenLabel = personalProductTitle;
+
+	if ( siteType === TYPE_PERSONAL ) {
+		typeSelectionScreenLabel = personalLabel;
+		purchaseScreenLabel = personalProductTitle;
+	}
+
+	if ( siteType === TYPE_COMMERCIAL ) {
+		typeSelectionScreenLabel = commercialLabel;
+		purchaseScreenLabel = commercialProductTitle;
+	}
+
+	const showCelebration =
+		siteType &&
+		wizardStep === SCREEN_PURCHASE &&
+		( siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier );
 
 	const setPersonalSite = () => {
+		recordTracksEvent( `calypso_stats_personal_plan_selected` );
+
 		setSiteType( TYPE_PERSONAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
 
 	const setCommercialSite = () => {
-		setSubscriptionValue( PRICING_CONFIG.FLAT_COMMERCIAL_PRICE );
+		recordTracksEvent( `calypso_stats_commercial_plan_selected` );
+
 		setSiteType( TYPE_COMMERCIAL );
 		setWizardStep( SCREEN_PURCHASE );
 	};
@@ -75,26 +115,21 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 		}
 
 		setWizardStep( SCREEN_TYPE_SELECTION );
+		setSiteType( null );
 	};
 
 	// change the plan to commercial on the personal plan confirmation
 	const handlePlanSwap = ( e ) => {
 		e.preventDefault();
+		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
+
 		setCommercialSite();
 	};
 
 	const firstStepTitleNode = (
 		<TitleNode
 			indicatorNumber="1"
-			label={
-				! siteType
-					? translate( 'What site type is %(site)s?', {
-							args: {
-								site: siteSlug,
-							},
-					  } )
-					: selectedTypeLabel
-			}
+			label={ typeSelectionScreenLabel }
 			active={ wizardStep === SCREEN_TYPE_SELECTION }
 		/>
 	);
@@ -102,7 +137,7 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 	const secondStepTitleNode = (
 		<TitleNode
 			indicatorNumber="2"
-			label={ translate( 'What is Jetpack Stats worth to you?' ) }
+			label={ purchaseScreenLabel }
 			active={ wizardStep === SCREEN_PURCHASE }
 		/>
 	);
@@ -118,6 +153,9 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
+								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title`, {
+									[ `${ COMPONENT_CLASS_NAME }__card-panel--type-selected` ]: !! siteType,
+								} ) }
 							>
 								<PanelRow>
 									<div className={ `${ COMPONENT_CLASS_NAME }__card-grid` }>
@@ -143,35 +181,51 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
 											<Button variant="primary" onClick={ setPersonalSite }>
-												{ translate( 'Personal site' ) }
+												{ personalLabel }
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
 											<Button variant="primary" onClick={ setCommercialSite }>
-												{ translate( 'Commercial site' ) }
+												{ commercialLabel }
 											</Button>
 										</div>
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody title={ secondStepTitleNode } opened={ wizardStep === SCREEN_PURCHASE }>
+							<PanelBody
+								title={ secondStepTitleNode }
+								opened={ wizardStep === SCREEN_PURCHASE }
+								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
+							>
 								<PanelRow>
 									{ siteType === TYPE_PERSONAL ? (
 										<PersonalPurchase
 											subscriptionValue={ subscriptionValue }
 											setSubscriptionValue={ setSubscriptionValue }
+											defaultStartingValue={ defaultStartingValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
-											currencyCode={ currencyCode }
+											currencyCode={ pwywProduct?.currency_code }
 											siteSlug={ siteSlug }
-											sliderStep={ sliderStep }
-											maxSliderPrice={ maxSliderPrice }
+											sliderSettings={ {
+												minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
+												sliderStepPrice,
+												maxSliderPrice,
+												uiEmojiHeartTier,
+												uiImageCelebrationTier,
+											} }
+											adminUrl={ adminUrl }
+											redirectUri={ redirectUri }
+											from={ from }
 										/>
 									) : (
 										<CommercialPurchase
 											planValue={ commercialProduct?.cost }
-											currencyCode={ currencyCode }
+											currencyCode={ commercialProduct?.currency_code }
 											siteSlug={ siteSlug }
 											commercialProduct={ commercialProduct }
+											adminUrl={ adminUrl }
+											redirectUri={ redirectUri }
+											from={ from }
 										/>
 									) }
 								</PanelRow>
@@ -180,9 +234,9 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 					</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
 						<StatsPurchaseSVG
-							isFree={ subscriptionValue === 0 }
-							hasHighlight={ subscriptionValue >= 10 } // TODO: replace with IMAGE_CELEBRATION_PRICE if this makes sense.
-							extraMessage={ subscriptionValue >= 10 }
+							isFree={ siteType === TYPE_PERSONAL && subscriptionValue === 0 }
+							hasHighlight={ showCelebration }
+							extraMessage={ showCelebration }
 						/>
 						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
 							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
@@ -194,14 +248,40 @@ const ProductCard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
 	);
 };
 
-const StatsPurchaseWizard = ( { siteSlug, commercialProduct, pwywProduct } ) => {
+const StatsPurchaseWizard = ( {
+	siteSlug,
+	siteId,
+	commercialProduct,
+	maxSliderPrice,
+	pwywProduct,
+	redirectUri,
+	from,
+	disableFreeProduct,
+	initialStep,
+	initialSiteType,
+} ) => {
 	return (
 		<ProductCard
 			siteSlug={ siteSlug }
+			siteId={ siteId }
 			commercialProduct={ commercialProduct }
+			maxSliderPrice={ maxSliderPrice }
 			pwywProduct={ pwywProduct }
+			redirectUri={ redirectUri }
+			from={ from }
+			disableFreeProduct={ disableFreeProduct }
+			initialStep={ initialStep }
+			initialSiteType={ initialSiteType }
 		/>
 	);
 };
 
-export { StatsPurchaseWizard as default, COMPONENT_CLASS_NAME, PRICING_CONFIG };
+export {
+	StatsPurchaseWizard as default,
+	COMPONENT_CLASS_NAME,
+	MIN_STEP_SPLITS,
+	SCREEN_TYPE_SELECTION,
+	SCREEN_PURCHASE,
+	TYPE_PERSONAL,
+	TYPE_COMMERCIAL,
+};

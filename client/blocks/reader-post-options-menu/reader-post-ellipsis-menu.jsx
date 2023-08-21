@@ -11,7 +11,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
-import * as DiscoverHelper from 'calypso/reader/discover/helper';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -260,7 +259,6 @@ class ReaderPostEllipsisMenu extends Component {
 		const { ID: postId, site_ID: siteId } = post;
 
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
-		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 		let isBlockPossible = false;
 
@@ -269,12 +267,7 @@ class ReaderPostEllipsisMenu extends Component {
 		}
 
 		// Should we show the 'block' option?
-		if (
-			post.site_ID &&
-			( ! post.is_external || post.is_jetpack ) &&
-			! isEditPossible &&
-			! isDiscoverPost
-		) {
+		if ( post.site_ID && ( ! post.is_external || post.is_jetpack ) && ! isEditPossible ) {
 			isBlockPossible = true;
 		}
 
@@ -338,8 +331,9 @@ class ReaderPostEllipsisMenu extends Component {
 				{ isTeamMember && site && <hr className="popover__menu-separator" /> }
 				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
-				{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-					( isBlockPossible || isDiscoverPost ) && <hr className="popover__menu-separator" /> }
+				{ ( this.props.showFollow || isEditPossible || post.URL ) && isBlockPossible && (
+					<hr className="popover__menu-separator" />
+				) }
 
 				{ isBlockPossible && (
 					<PopoverMenuItem onClick={ this.blockSite }>
@@ -347,7 +341,7 @@ class ReaderPostEllipsisMenu extends Component {
 					</PopoverMenuItem>
 				) }
 
-				{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
+				{ this.props.showReportPost && isBlockPossible && (
 					<PopoverMenuItem onClick={ this.reportPost }>
 						{ translate( 'Report this post' ) }
 					</PopoverMenuItem>

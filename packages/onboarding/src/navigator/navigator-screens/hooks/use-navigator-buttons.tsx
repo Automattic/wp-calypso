@@ -1,4 +1,4 @@
-import { NavigationButtonAsItem } from '../../navigator-buttons';
+import { NavigatorButtonAsItem } from '../../navigator-buttons';
 import NavigatorItemGroup from '../../navigator-item-group';
 import type { NavigatorScreenObject } from '../types';
 
@@ -13,17 +13,17 @@ const useNavigatorButtons = ( screens: NavigatorScreenObject[] ) => {
 
 	return (
 		<NavigatorItemGroup>
-			{ screens.map( ( { checked, icon, label, path, onSelect } ) => (
-				<NavigationButtonAsItem
+			{ screens.map( ( { slug, checked, icon, label, path, onSelect } ) => (
+				<NavigatorButtonAsItem
 					key={ path }
 					checked={ checked }
 					icon={ icon }
 					path={ path }
 					aria-label={ label }
-					onClick={ onSelect }
+					onClick={ () => onSelect?.( slug ) }
 				>
 					{ label }
-				</NavigationButtonAsItem>
+				</NavigatorButtonAsItem>
 			) ) }
 		</NavigatorItemGroup>
 	);

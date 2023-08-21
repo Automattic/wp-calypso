@@ -1,12 +1,11 @@
-import { ToggleControl } from '@wordpress/components';
+import { ExternalLink, ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
 type SubscribeModalSettingProps = {
@@ -15,26 +14,36 @@ type SubscribeModalSettingProps = {
 	disabled?: boolean;
 };
 
+const isModalEditTranslated =
+	getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Preview and edit the popup' );
+const isModalToggleTranslated =
+	getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Enable subscriber pop-up' );
+const isModalToggleHelpTranslated =
+	getLocaleSlug()?.startsWith( 'en' ) ||
+	i18n.hasTranslation(
+		'Grow your subscriber list by enabling a pop-up modal with a subscribe form. This will show as readers scroll.'
+	);
+
 export const SubscribeModalSetting = ( {
 	value = false,
 	handleToggle,
 	disabled,
 }: SubscribeModalSettingProps ) => {
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const siteEditorUrl = useSelector( ( state: object ) =>
-		getSiteEditorUrl( state, selectedSite?.ID || null )
-	);
-	const themeSlug = useSelector( ( state ) =>
-		getSiteOption( state, selectedSite?.ID, 'theme_slug' )
-	);
-	const subscribeModalEditorUrl = themeSlug
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
+	// Construct a link to edit the modal
+	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+	const themeSlug = activeThemeData?.[ 0 ]?.template;
+	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
+	const subscribeModalEditorUrl = isFSEActive
 		? addQueryArgs( siteEditorUrl, {
 				postType: 'wp_template_part',
-				postId: `${ themeSlug }//subscribe-modal`,
+				postId: `${ themeSlug }//jetpack-subscribe-modal`,
 				canvas: 'edit',
 		  } )
-		: siteEditorUrl;
+		: false;
 
 	return (
 		<>
@@ -42,16 +51,27 @@ export const SubscribeModalSetting = ( {
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Enable subscriber modal' ) }
+				label={
+					isModalToggleTranslated
+						? translate( 'Enable subscriber pop-up' )
+						: translate( 'Enable subscriber modal' )
+				}
 			/>
 			<FormSettingExplanation>
-				{ translate(
-					'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll. {{link}}Edit the modal{{/link}}.',
-					{
-						components: {
-							link: <a href={ subscribeModalEditorUrl } target="_blank" rel="noreferrer" />,
-						},
-					}
+				{ isModalToggleHelpTranslated
+					? translate(
+							'Grow your subscriber list by enabling a pop-up modal with a subscribe form. This will show as readers scroll.'
+					  )
+					: translate(
+							'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll.'
+					  ) }
+				{ isModalEditTranslated && subscribeModalEditorUrl && (
+					<>
+						{ ' ' }
+						<ExternalLink href={ subscribeModalEditorUrl }>
+							{ translate( 'Preview and edit the popup' ) }
+						</ExternalLink>
+					</>
 				) }
 			</FormSettingExplanation>
 		</>

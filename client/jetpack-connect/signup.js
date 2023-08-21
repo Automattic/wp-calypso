@@ -198,6 +198,9 @@ export class JetpackSignup extends Component {
 	 * @param {string} _.bearerToken Bearer token
 	 */
 	handleUserCreationSuccess = ( { username, bearerToken } ) => {
+		if ( this.isWooCoreProfiler() ) {
+			this.props.recordTracksEvent( 'calypso_jpc_wc_coreprofiler_create_account_success' );
+		}
 		this.setState( {
 			newUsername: username,
 			bearerToken,
@@ -389,7 +392,7 @@ export class JetpackSignup extends Component {
 				header = wooDna.getServiceName();
 				if ( wooDna.getFlowName() === 'woodna:woocommerce-payments' ) {
 					subHeader = translate(
-						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments'
 					);
 				} else {
 					subHeader = translate( 'Enter your email address to get started' );

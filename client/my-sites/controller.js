@@ -63,7 +63,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
+import wasTrialSite from 'calypso/state/selectors/was-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -242,6 +242,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		`/purchases/subscriptions/${ slug }`,
 		// Any page under `/domains/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
 		'/domains/manage/all/',
+		'/email/all/',
 		// Add A Domain > Search for a domain
 		domainAddNew( slug ),
 		// Add A Domain > Use a domain I own
@@ -293,9 +294,8 @@ function onSelectedSiteAvailable( context ) {
 		return false;
 	}
 
-	// If we had an eCommerce trial, and the user doesn't have an active paid plan,
-	// redirect to
-	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
+	// If we had a trial plan, and the user doesn't have an active paid plan, redirect to fullpage trial expired page.
+	if ( wasTrialSite( state, selectedSite.ID ) ) {
 		// Use getSitePlanSlug() as it ignores expired plans.
 		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 

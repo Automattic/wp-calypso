@@ -1,3 +1,4 @@
+import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -11,13 +12,17 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
+import ErrorStep from './internals/steps-repository/error-step';
 import FreeSetup from './internals/steps-repository/free-setup';
 import LaunchPad from './internals/steps-repository/launchpad';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
@@ -45,14 +50,17 @@ const free: Flow = {
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
 			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'error', component: ErrorStep },
 		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
+		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -71,7 +79,17 @@ const free: Flow = {
 			}
 		);
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+		const exitFlow = ( to: string ) => {
+			setPendingAction( () => {
+				return new Promise( () => {
+					window.location.assign( to );
+				} );
+			} );
+
+			return navigate( 'processing' );
+		};
+
+		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
 			switch ( _currentStep ) {
@@ -82,13 +100,26 @@ const free: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
+					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
+						return navigate( 'error' );
+					}
+
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
+							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
 						);
+					}
+
+					if ( isAssemblerDesign( selectedDesign ) ) {
+						const params = new URLSearchParams( {
+							canvas: 'edit',
+							assembler: '1',
+						} );
+
+						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					if ( selectedDesign ) {
@@ -113,7 +144,16 @@ const free: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
+
+					if ( providedDependencies?.shouldGoToAssembler ) {
+						return navigate( 'patternAssembler' );
+					}
+
 					return navigate( `processing?siteSlug=${ siteSlug }` );
+
+				case 'patternAssembler': {
+					return navigate( `processing?siteSlug=${ siteSlug }` );
+				}
 
 				case 'launchpad': {
 					return navigate( 'processing' );
@@ -123,13 +163,16 @@ const free: Flow = {
 		};
 
 		const goBack = () => {
-			return;
+			switch ( _currentStep ) {
+				case 'patternAssembler':
+					return navigate( 'designSetup' );
+			}
 		};
 
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
+					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
 
 				default:
 					return navigate( 'freeSetup' );

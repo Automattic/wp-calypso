@@ -30,16 +30,16 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@babel/runtime": "^7.17.2",
-		"@wordpress/base-styles": "^4.27.0",
-		"@wordpress/components": "^25.3.0",
-		"@wordpress/i18n": "^4.36.0",
-		"@wordpress/react-i18n": "^3.33.0"
+		"@wordpress/base-styles": "^4.30.0",
+		"@wordpress/components": "^25.5.0",
+		"@wordpress/i18n": "^4.39.0",
+		"@wordpress/react-i18n": "^3.37.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.5.0",
+		"@wordpress/data": "^9.9.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.1.2"
+		"redux": "^4.2.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
@@ -48,6 +48,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.7.4"
+		"typescript": "^5.1.6"
 	}
 }

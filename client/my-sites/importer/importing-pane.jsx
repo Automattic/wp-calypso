@@ -5,12 +5,13 @@ import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
-import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
+import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import AuthorMappingPane from './author-mapping-pane';
 
@@ -184,7 +185,16 @@ export class ImportingPane extends PureComponent {
 	handleOnMap = ( source, target ) =>
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
-	renderActionButtons = () => {
+	onClickSubstackDone = ( action ) => {
+		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
+			importer_id: this.props.importerStatus.type,
+			action,
+		} );
+
+		this.props.resetImport( this.props.site.ID, this.props.importerStatus.importerId );
+	};
+
+	renderActionButtons = ( sourceType ) => {
 		if ( this.isProcessing() || this.isMapping() ) {
 			// We either don't want to show buttons while processing
 			// or, in the case of `isMapping`, we let another component (author-mapping-pane)
@@ -198,6 +208,28 @@ export class ImportingPane extends PureComponent {
 		const isError = this.isError();
 		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
 
+		// After Substack importer we nudge to view posts or
+		if ( sourceType === 'Substack' && isFinished ) {
+			return (
+				<ImporterActionButtonContainer justifyContentCenter>
+					<ImporterActionButton
+						href={ `/subscribers/${ this.props.site.slug || '' }#add-subscribers` }
+						onClick={ () => this.onClickSubstackDone( 'add-subscribers' ) }
+						primary
+					>
+						{ this.props.translate( 'Import Substack subscribers' ) }
+					</ImporterActionButton>
+					<ImporterActionButton
+						href={ `/posts/${ this.props.site.slug || '' }` }
+						onClick={ () => this.onClickSubstackDone( 'view-posts' ) }
+					>
+						{ this.props.translate( 'View imported content' ) }
+					</ImporterActionButton>
+				</ImporterActionButtonContainer>
+			);
+		}
+
+		// Other importers nudge to view the site
 		return (
 			<ImporterActionButtonContainer>
 				{ isImporting && <BusyImportingButton /> }
@@ -276,7 +308,7 @@ export class ImportingPane extends PureComponent {
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>
 				</div>
-				{ this.renderActionButtons() }
+				{ this.renderActionButtons( sourceType ) }
 			</div>
 		);
 	}
@@ -285,5 +317,7 @@ export class ImportingPane extends PureComponent {
 export default connect( null, {
 	loadTrackingTool,
 	mapAuthor,
+	recordTracksEvent,
+	resetImport,
 	startImporting,
 } )( localize( ImportingPane ) );

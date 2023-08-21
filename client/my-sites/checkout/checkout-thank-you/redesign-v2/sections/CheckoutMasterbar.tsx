@@ -6,18 +6,15 @@ import MasterbarStyled from '../masterbar-styled';
 type HeaderProps = {
 	siteId?: number;
 	siteSlug: string | null;
-	isBulkDomainTransfer: boolean;
 };
 
-const CheckoutMasterbar = ( { siteId, siteSlug, isBulkDomainTransfer }: HeaderProps ) => {
+const CheckoutMasterbar = ( { siteId, siteSlug }: HeaderProps ) => {
 	const { __ } = useI18n();
 
-	if ( isBulkDomainTransfer ) {
+	if ( ! siteId ) {
 		return (
 			<MasterbarStyled
-				onClick={ () => {
-					return;
-				} }
+				onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
 				backText=""
 				canGoBack={ false }
 				showContact={ true }
@@ -25,21 +22,17 @@ const CheckoutMasterbar = ( { siteId, siteSlug, isBulkDomainTransfer }: HeaderPr
 		);
 	}
 
-	if ( siteId ) {
-		return (
-			<>
-				<QuerySitePurchases siteId={ siteId } />
-				<MasterbarStyled
-					onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
-					backText={ __( 'Back to dashboard' ) }
-					canGoBack={ true }
-					showContact={ true }
-				/>
-			</>
-		);
-	}
-
-	return null;
+	return (
+		<>
+			<QuerySitePurchases siteId={ siteId } />
+			<MasterbarStyled
+				onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
+				backText={ __( 'Back to dashboard' ) }
+				canGoBack={ true }
+				showContact={ true }
+			/>
+		</>
+	);
 };
 
 export default CheckoutMasterbar;

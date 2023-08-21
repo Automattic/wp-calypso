@@ -2,6 +2,7 @@ export {
 	Badge,
 	Button,
 	Card,
+	Count,
 	CompactCard,
 	FormInputValidation,
 	Gridicon,
@@ -27,7 +28,6 @@ export { default as ClipboardButtonInput } from 'calypso/components/clipboard-bu
 export { default as ClipboardButton } from 'calypso/components/forms/clipboard-button';
 export { default as Collection } from 'calypso/devdocs/design/search-collection';
 export { default as Column } from 'calypso/components/layout/column';
-export { default as Count } from 'calypso/components/count';
 export { default as CountedTextarea } from 'calypso/components/forms/counted-textarea';
 export { default as DatePicker } from 'calypso/components/date-picker';
 export { default as DateRange } from 'calypso/components/date-range';

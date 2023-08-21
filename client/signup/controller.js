@@ -65,6 +65,14 @@ export const addVideoPressSignupClassName = () => {
 	document.body.classList.add( 'is-videopress-signup' );
 };
 
+export const addVideoPressTvSignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-videopress-tv-signup' );
+};
+
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -102,6 +110,10 @@ export default {
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			addP2SignupClassName();
+			removeWhiteBackground();
+			next();
+		} else if ( context.query.flow === 'videopress-tv' ) {
+			addVideoPressTvSignupClassName();
 			removeWhiteBackground();
 			next();
 		} else if ( context.pathname.includes( 'videopress' ) ) {
@@ -289,12 +301,17 @@ export default {
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;
+		// Set plugin parameter in signup dependency store so we can retrieve it in getWithPluginDestination().
+		const pluginParameter = query && query.plugin;
+		const pluginBillingPeriod = query && query.billing_period;
 
 		const additionalDependencies = {
 			...( refParameter && { refParameter } ),
 			...( themeParameter && { themeParameter } ),
 			...( themeType && { themeType } ),
 			...( styleVariation && { styleVariation } ),
+			...( pluginParameter && { pluginParameter } ),
+			...( pluginBillingPeriod && { pluginBillingPeriod } ),
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );

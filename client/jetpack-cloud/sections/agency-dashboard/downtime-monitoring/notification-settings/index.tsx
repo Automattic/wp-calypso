@@ -4,22 +4,20 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
 import DashboardModalForm from '../../dashboard-modal-form';
-import {
-	useUpdateMonitorSettings,
-	useJetpackAgencyDashboardRecordTrackEvent,
-	useShowVerifiedBadge,
-} from '../../hooks';
+import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
 } from '../../sites-overview/utils';
 import ContactEditor from '../contact-editor';
+import { RestrictionType } from '../types';
 import EmailNotification from './form-content/email-notification';
 import NotificationSettingsFormFooter from './form-content/footer';
 import MobilePushNotification from './form-content/mobile-push-notification';
 import NotificationDuration from './form-content/notification-duration';
 import SMSNotification from './form-content/sms-notification';
+import useShowVerifiedBadge from './use-show-verified-badge';
 import type {
 	MonitorSettings,
 	Site,
@@ -33,7 +31,6 @@ import type {
 	MonitorSettingsContact,
 	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
-
 import './style.scss';
 import '../style.scss';
 
@@ -97,6 +94,18 @@ export default function NotificationSettings( {
 	const isSMSNotificationEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
+
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	// Check if current site or all sites selected has a paid license.
+	const hasPaidLicenses = ! sites.find( ( site ) => ! site.has_paid_agency_monitor );
+
+	let restriction: RestrictionType = 'none';
+
+	if ( ! hasPaidLicenses ) {
+		// We need to set the restriction type to determine correct messaging.
+		restriction = isBulkUpdate ? 'free_site_selected' : 'upgrade_required';
+	}
 
 	const isContactListMatch = (
 		list1: ReadonlyArray< MonitorSettingsContact >,
@@ -334,7 +343,11 @@ export default function NotificationSettings( {
 				foundDuration = durations.find(
 					( duration ) => duration.time === settings.monitor_deferment_time
 				);
-				setSelectedDuration( foundDuration );
+
+				// We need to make sure that we are not setting a paid duration if there is no license.
+				if ( hasPaidLicenses || ! foundDuration?.isPaid ) {
+					setSelectedDuration( foundDuration );
+				}
 			}
 
 			// Set initial settings
@@ -353,6 +366,7 @@ export default function NotificationSettings( {
 			getAllPhoneItems,
 			handleSetEmailItems,
 			handleSetPhoneItems,
+			hasPaidLicenses,
 			isMultipleEmailEnabled,
 			isSMSNotificationEnabled,
 		]
@@ -462,8 +476,10 @@ export default function NotificationSettings( {
 					recordEvent={ recordEvent }
 					selectedDuration={ selectedDuration }
 					selectDuration={ selectDuration }
+					restriction={ restriction }
 				/>
-				{ isSMSNotificationEnabled && (
+
+				{ isPaidTierEnabled && (
 					<SMSNotification
 						recordEvent={ recordEvent }
 						enableSMSNotification={ enableSMSNotification }
@@ -471,13 +487,11 @@ export default function NotificationSettings( {
 						toggleModal={ toggleAddSMSModal }
 						allPhoneItems={ allPhoneItems }
 						verifiedItem={ verifiedItem }
+						restriction={ restriction }
+						settings={ settings }
 					/>
 				) }
-				<MobilePushNotification
-					recordEvent={ recordEvent }
-					enableMobileNotification={ enableMobileNotification }
-					setEnableMobileNotification={ setEnableMobileNotification }
-				/>
+
 				<EmailNotification
 					recordEvent={ recordEvent }
 					verifiedItem={ verifiedItem }
@@ -486,6 +500,13 @@ export default function NotificationSettings( {
 					defaultUserEmailAddresses={ defaultUserEmailAddresses }
 					toggleAddEmailModal={ toggleAddEmailModal }
 					allEmailItems={ allEmailItems }
+					restriction={ restriction }
+				/>
+
+				<MobilePushNotification
+					recordEvent={ recordEvent }
+					enableMobileNotification={ enableMobileNotification }
+					setEnableMobileNotification={ setEnableMobileNotification }
 				/>
 			</div>
 			<NotificationSettingsFormFooter

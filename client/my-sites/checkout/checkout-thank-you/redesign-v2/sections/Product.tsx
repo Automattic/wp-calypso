@@ -1,3 +1,4 @@
+import { isBulkDomainTransfer } from '../../utils';
 import DomainsTransferredList from './product/DomainsTransferredList';
 import ProductPlan, { ProductPlanProps } from './product/ProductPlan';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
@@ -7,10 +8,10 @@ const Product = ( {
 	primaryPurchase,
 	siteID,
 	purchases,
-	isBulkDomainTransfer,
-}: ProductPlanProps & { purchases: ReceiptPurchase[]; isBulkDomainTransfer: boolean } ) => {
-	if ( isBulkDomainTransfer ) {
-		return <DomainsTransferredList purchases={ purchases } />;
+	currency,
+}: ProductPlanProps & { purchases: ReceiptPurchase[] } ) => {
+	if ( isBulkDomainTransfer( purchases ) ) {
+		return <DomainsTransferredList purchases={ purchases } currency={ currency } />;
 	}
 
 	return (

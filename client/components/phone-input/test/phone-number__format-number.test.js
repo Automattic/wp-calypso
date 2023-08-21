@@ -8,6 +8,7 @@ describe( 'International Format', () => {
 		{ number: '+5555912345678', country: 'BR', expected: '+55 55 91234-5678' },
 		{ number: '+393911711711', country: 'IT', expected: '+39 391 171 1711' },
 		{ number: '+919100123456', country: 'IN', expected: '+91 91001 23456' },
+		{ number: '+18096865700', country: 'DO', expected: '+1 809-686-5700' },
 	] )( `Format full length numbers for $country`, function ( { number, country, expected } ) {
 		const result = formatNumber( number, countries[ country ] );
 		expect( result ).toEqual( expected );

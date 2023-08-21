@@ -14,6 +14,7 @@ import {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
+	isP2Plus,
 	isPersonal,
 	isPlan,
 	isPremium,
@@ -38,7 +39,9 @@ import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
@@ -69,6 +72,7 @@ import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
@@ -92,21 +96,28 @@ import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
-import isRedesignV2 from './redesign-v2/is-redesign-v2';
 import CheckoutMasterbar from './redesign-v2/sections/CheckoutMasterbar';
 import Footer from './redesign-v2/sections/Footer';
+import { isRedesignV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
 import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
+import { isBulkDomainTransfer } from './utils';
 import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';
 import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
+
+declare global {
+	interface Window {
+		fbq: ( ...args: any[] ) => void;
+	}
+}
 
 type ComponentAndPrimaryPurchaseAndDomain =
 	| []
@@ -158,6 +169,7 @@ export interface CheckoutThankYouConnectedProps {
 		purchased?: boolean,
 		keepCurrentHomepage?: boolean
 	) => void;
+	requestSite: ( siteId: number ) => void;
 }
 
 interface CheckoutThankYouState {
@@ -238,12 +250,37 @@ export class CheckoutThankYou extends Component<
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
-		if ( this.isBulkDomainTransfer( getPurchases( this.props ) ) ) {
+		if ( isBulkDomainTransfer( getPurchases( this.props ) ) ) {
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
 			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
-				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
+				( dispatch( imports.ONBOARD_STORE ) as OnboardActions ).resetOnboardStore()
 			);
+
+			if ( mayWeTrackByTracker( 'googleAds' ) ) {
+				const params: [ 'event', 'conversion', { send_to: string } ] = [
+					'event',
+					'conversion',
+					{ send_to: TRACKING_IDS.wpcomGoogleAdsGtagDomainTransferPurchase } as { send_to: string },
+				];
+				debug( 'recordOrderInGoogleAds: WPCom Domain Transfer Purchase', params );
+				window.gtag( ...params );
+			}
+
+			// Custom conversion for Facebook Ads/audiences
+			if ( mayWeTrackByTracker( 'facebook' ) ) {
+				const params = [ 'trackCustom', 'BulkDomainTransfer', {} ];
+
+				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
+				window.fbq && window.fbq( ...params );
+			}
+
+			// Custom conversion for Twitter Ads.
+			if ( mayWeTrackByTracker( 'twitter' ) ) {
+				const params = [ 'event', 'tw-nvzbs-ofqri', {} ];
+				debug( 'recordOrder: [Twitter], BulkDomainTransfer', params );
+				window.twq( ...params );
+			}
 		}
 
 		recordTracksEvent( 'calypso_checkout_thank_you_view' );
@@ -267,10 +304,22 @@ export class CheckoutThankYou extends Component<
 		if (
 			! prevProps.receipt.hasLoadedFromServer &&
 			this.props.receipt.hasLoadedFromServer &&
-			this.hasPlanOrDomainProduct() &&
-			this.props.selectedSite
+			this.hasPlanOrDomainProduct()
 		) {
-			this.props.refreshSitePlans( this.props.selectedSite.ID );
+			if ( this.props.selectedSite ) {
+				this.props.refreshSitePlans( this.props.selectedSite.ID );
+			}
+
+			if ( this.props.domainOnlySiteFlow ) {
+				const [ domainOnlyPurchase ] = findPurchaseAndDomain(
+					getPurchases( this.props ),
+					isDomainRegistration
+				);
+
+				if ( domainOnlyPurchase?.blogId ) {
+					this.props.requestSite( domainOnlyPurchase.blogId );
+				}
+			}
 		}
 
 		// If the site has been transferred to Atomc and we're not already requesting the site plugins, request them.
@@ -489,6 +538,7 @@ export class CheckoutThankYou extends Component<
 		let wasTitanEmailOnlyProduct = false;
 		let wasTitanEmailProduct = false;
 		let wasDomainOnly = false;
+		let wasBulkDomainTransfer = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
@@ -512,6 +562,7 @@ export class CheckoutThankYou extends Component<
 				purchases.every(
 					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
 				);
+			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
 		} else if ( isStarterPlanEnabled() ) {
 			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
 			showHappinessSupport = false;
@@ -580,9 +631,9 @@ export class CheckoutThankYou extends Component<
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainProduct && ! this.isBulkDomainTransfer( purchases ) ) {
+		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
 			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
-			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
+			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
 			if ( selectedFeature === 'email-license' && domainName ) {
 				return (
@@ -602,14 +653,16 @@ export class CheckoutThankYou extends Component<
 			);
 
 			const emailFallback = email ? email : this.props.user?.email ?? '';
-
+			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }
 					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
 					hasProfessionalEmail={ wasTitanEmailProduct }
 					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }
-					selectedSiteSlug={ this.props.selectedSiteSlug ?? '' }
+					selectedSiteSlug={ siteSlug ?? '' }
+					isDomainOnly={ this.props.domainOnlySiteFlow }
+					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
 					type={ purchaseType as DomainThankYouType }
 				/>
 			);
@@ -629,7 +682,7 @@ export class CheckoutThankYou extends Component<
 			this.props.domainOnlySiteFlow &&
 			purchases.length > 0 &&
 			! failedPurchases.length &&
-			! this.isBulkDomainTransfer( purchases )
+			! wasBulkDomainTransfer
 		) {
 			return null;
 		}
@@ -642,14 +695,13 @@ export class CheckoutThankYou extends Component<
 				} ) }
 			>
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				{ this.isDataLoaded() &&
-					isRedesignV2( this.props ) &&
-					! this.isBulkDomainTransfer( purchases ) && <ConfettiAnimation delay={ 1000 } /> }
+				{ this.isDataLoaded() && isRedesignV2( this.props ) && (
+					<ConfettiAnimation delay={ 1000 } />
+				) }
 				{ isRedesignV2( this.props ) && (
 					<CheckoutMasterbar
 						siteId={ this.props.selectedSite?.ID }
 						siteSlug={ this.props.selectedSiteSlug }
-						isBulkDomainTransfer={ this.isBulkDomainTransfer( purchases ) }
 					/>
 				) }
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
@@ -707,10 +759,6 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
-	isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
-		return purchases.every( isDomainTransfer );
-	}
-
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
 	 * just performed by the user.
@@ -730,7 +778,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		// Check if it is the bulk domain transfer flow
-		if ( this.isBulkDomainTransfer( purchases ) ) {
+		if ( isBulkDomainTransfer( purchases ) ) {
 			return [
 				'domain-transfer-details',
 				...findPurchaseAndDomain( purchases, isDomainRegistration ),
@@ -788,12 +836,22 @@ export class CheckoutThankYou extends Component<
 		if ( purchases.some( isChargeback ) ) {
 			return [ 'chargeback-details', purchases.find( isChargeback ) ];
 		}
+		if ( purchases.some( isP2Plus ) ) {
+			return [ 'p2-plus-details', purchases.find( isP2Plus ) ];
+		}
+
 		return [];
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, siteUnlaunchedBeforeUpgrade, upgradeIntent, isSimplified, displayMode } =
-			this.props;
+		const {
+			selectedSite,
+			siteUnlaunchedBeforeUpgrade,
+			upgradeIntent,
+			isSimplified,
+			displayMode,
+			receipt,
+		} = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -841,6 +899,7 @@ export class CheckoutThankYou extends Component<
 					displayMode={ displayMode }
 					purchases={ purchases }
 					isRedesignV2={ isRedesignV2( this.props ) }
+					currency={ receipt.data?.currency }
 				>
 					{ ! isRedesignV2( this.props ) && ! isSimplified && primaryPurchase && (
 						<CheckoutThankYouFeaturesHeader
@@ -854,7 +913,7 @@ export class CheckoutThankYou extends Component<
 					{ ! isSimplified && component && (
 						<div className="checkout-thank-you__purchase-details-list">
 							{ isRedesignV2( this.props ) ? (
-								<Footer isBulkDomainFlow={ this.isBulkDomainTransfer( purchases ) } />
+								<Footer purchases={ purchases } />
 							) : (
 								<PurchaseDetailsWrapper
 									{ ...this.props }
@@ -875,13 +934,24 @@ function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
 
 export default connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
-		const siteId = getSelectedSiteId( state );
+		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
 		const sitePlugins = getInstalledPlugins( state, [ siteId ] );
+		const receipt = getReceiptById( state, props.receiptId );
+
+		if ( props.domainOnlySiteFlow && receipt.hasLoadedFromServer ) {
+			const [ domainOnlyPurchase ] = findPurchaseAndDomain(
+				receipt.data?.purchases ?? [],
+				isDomainRegistration
+			);
+			if ( domainOnlyPurchase?.blogId ) {
+				siteId = domainOnlyPurchase.blogId;
+			}
+		}
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
-			receipt: getReceiptById( state, props.receiptId ),
+			receipt,
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			isWooCommerceInstalled: isWooCommercePluginInstalled( sitePlugins ),
@@ -911,6 +981,7 @@ export default connect(
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
 		requestThenActivate,
+		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
 

@@ -1,11 +1,11 @@
 import { Onboard } from '@automattic/data-stores';
+import { DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
 import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -26,7 +26,7 @@ const withThemeAssemblerFlow: Flow = {
 			[]
 		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = useQuery().get( 'theme' );
+		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		// We have to query theme for the Jetpack site.

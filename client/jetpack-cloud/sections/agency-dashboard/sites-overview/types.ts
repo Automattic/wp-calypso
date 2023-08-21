@@ -1,3 +1,5 @@
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
@@ -8,6 +10,7 @@ export type SiteColumns = Array< {
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
+	showInfo?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -49,6 +52,9 @@ export interface MonitorSettings {
 	monitor_user_wp_note_notifications: boolean;
 	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
 	monitor_notify_additional_user_sms: Array< MonitorContactSMS >;
+	is_over_limit: boolean;
+	sms_sent_count: number;
+	sms_monthly_limit: number;
 }
 
 interface StatsObject {
@@ -89,6 +95,7 @@ export interface Site {
 	jetpack_boost_scores: BoostData;
 	php_version_num: number;
 	is_connected: boolean;
+	has_paid_agency_monitor: boolean;
 }
 export interface SiteNode {
 	value: Site;
@@ -160,11 +167,12 @@ export interface RowMetaData {
 	eventName: string | undefined;
 }
 
-export type PreferenceType = 'dismiss' | 'view';
+export type PreferenceType = 'dismiss' | 'view' | 'view_date';
 
 export type Preference = {
 	dismiss?: boolean;
 	view?: boolean;
+	view_date?: string;
 };
 
 export type StatusEventNames = {
@@ -214,6 +222,8 @@ export interface DashboardDataContextInterface {
 		phoneNumbers: Array< string >;
 		refetchIfFailed: () => void;
 	};
+	products: APIProductFamilyProduct[];
+	isLargeScreen: boolean;
 }
 
 export type AgencyDashboardFilterOption =

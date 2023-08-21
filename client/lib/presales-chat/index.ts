@@ -1,10 +1,25 @@
-import { useMessagingAvailability, useZendeskMessaging } from '@automattic/help-center/src/hooks';
+import {
+	useChatStatus,
+	useMessagingAvailability,
+	useZendeskMessaging,
+} from '@automattic/help-center/src/hooks';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 
 export type KeyType = 'akismet' | 'jpAgency' | 'jpCheckout' | 'jpGeneral' | 'wpcom';
+
+declare global {
+	interface Window {
+		zE: (
+			action: string,
+			value: string,
+			handler?: ( callback: ( data: string | number ) => void ) => void
+		) => void;
+	}
+}
 
 function getConfigName( keyType: KeyType ): ZendeskConfigName {
 	switch ( keyType ) {
@@ -36,7 +51,8 @@ function getGroupName( keyType: KeyType ) {
 
 export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabilityCheck = false ) {
 	const isEnglishLocale = useIsEnglishLocale();
-	const isEligibleForPresalesChat = enabled && isEnglishLocale;
+	const { canConnectToZendesk } = useChatStatus();
+	const isEligibleForPresalesChat = enabled && isEnglishLocale && canConnectToZendesk;
 
 	const group = getGroupName( keyType );
 
@@ -48,11 +64,18 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const zendeskKeyName = getConfigName( keyType );
-	useZendeskMessaging(
+	const { isMessagingScriptLoaded } = useZendeskMessaging(
 		zendeskKeyName,
 		isEligibleForPresalesChat && isPresalesChatAvailable,
 		isLoggedIn
 	);
+
+	useEffect( () => {
+		// presales chat is always shown by default
+		if ( enabled && isPresalesChatAvailable && isMessagingScriptLoaded ) {
+			window.zE( 'messenger', 'show' );
+		}
+	}, [ enabled, isMessagingScriptLoaded, isPresalesChatAvailable ] );
 
 	return {
 		isChatActive: isPresalesChatAvailable && isEligibleForPresalesChat,

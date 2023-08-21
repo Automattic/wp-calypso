@@ -13,6 +13,7 @@ export function generateFlows( {
 	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
 	getWithThemeDestination = noop,
+	getWithPluginDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
@@ -23,9 +24,8 @@ export function generateFlows( {
 			name: HOSTING_LP_FLOW,
 			steps: [ 'user-hosting' ],
 			destination: getHostingFlowDestination,
-			description:
-				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
-			lastModified: '2023-05-19',
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
+			lastModified: '2023-07-18',
 			showRecaptcha: true,
 		},
 		{
@@ -106,6 +106,15 @@ export function generateFlows( {
 			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
 			lastModified: '2023-02-06',
 			showRecaptcha: true,
+		},
+		{
+			name: 'with-plugin',
+			steps: [ 'user', 'domains', 'plans-business-with-plugin' ],
+			destination: getWithPluginDestination,
+			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
+			lastModified: '2023-07-19',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
 		},
 		{
 			name: 'onboarding',
@@ -323,10 +332,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'site-selected',
-			steps: [ 'themes-site-selected', 'plans-site-selected-legacy' ],
-			destination: getSiteDestination,
+			steps: [ 'plans-site-selected-legacy' ],
+			destination: getSignupDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
-			optionalDependenciesInQuery: [ 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
 		},

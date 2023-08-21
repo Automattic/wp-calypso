@@ -353,6 +353,8 @@ export interface ResponseCartProduct {
 	product_id: number;
 	currency: string;
 
+	product_name_en: string;
+
 	/**
 	 * The cart item's original price in the currency's smallest unit.
 	 *
@@ -526,6 +528,7 @@ export interface ResponseCartProductVariant {
 	introductory_offer_terms:
 		| Record< string, never >
 		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
+	volume?: number;
 }
 
 export interface IntroductoryOfferTerms {
@@ -670,5 +673,28 @@ export type FrDomainContactExtraDetails = {
 export interface TermsOfServiceRecord {
 	key: string;
 	code: string;
-	args?: Record< string, string >;
+	args?: TermsOfServiceRecordArgsBase | TermsOfServiceRecordArgsRenewal;
+}
+
+export interface TermsOfServiceRecordArgsBase {
+	subscription_start_date: string;
+	subscription_expiry_date?: string;
+	subscription_auto_renew_date?: string;
+	subscription_pre_renew_reminder_days?: string;
+	subscription_pre_renew_reminders_count?: number;
+	product_meta: string;
+	product_name: string;
+	renewal_price: string;
+	is_renewal_price_prorated: boolean;
+	regular_renewal_price: string;
+	email?: string;
+	card_type?: string;
+	card_last_4?: string;
+}
+
+export interface TermsOfServiceRecordArgsRenewal extends TermsOfServiceRecordArgsBase {
+	subscription_expiry_date: string;
+	subscription_auto_renew_date: string;
+	subscription_pre_renew_reminder_days: string;
+	subscription_pre_renew_reminders_count: number;
 }

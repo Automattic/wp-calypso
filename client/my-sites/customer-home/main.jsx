@@ -1,5 +1,6 @@
-import { isEcommerce, isFreePlanProduct } from '@automattic/calypso-products/src';
+import { isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -11,9 +12,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
@@ -23,20 +25,26 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
@@ -45,15 +53,22 @@ import './style.scss';
 const Home = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
+	isJetpack,
+	isPossibleJetpackConnectionProblem,
 	isRequestingSitePlugins,
+	isSiteLaunching,
 	site,
 	siteId,
 	trackViewSiteAction,
 	sitePlan,
 	isNew7DUser,
+	isSiteWooExpressEcommerceTrial,
+	ssoModuleActive,
+	fetchingJetpackModules,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
-
+	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
+	const queryClient = useQueryClient();
 	const translate = useTranslate();
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
@@ -89,6 +104,19 @@ const Home = ( {
 		}
 	}, [ isSuccess ] );
 
+	useEffect( () => {
+		if ( ! isSiteLaunching && launchedSiteId === siteId ) {
+			queryClient.invalidateQueries( getCacheKey( siteId ) );
+			setLaunchedSiteId( null );
+		}
+	}, [ isSiteLaunching, launchedSiteId, queryClient, siteId ] );
+
+	useEffect( () => {
+		if ( isSiteLaunching ) {
+			setLaunchedSiteId( siteId );
+		}
+	}, [ isSiteLaunching, siteId ] );
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return (
@@ -101,7 +129,11 @@ const Home = ( {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
 	// while doing the redirection.
-	if ( isEcommerce( sitePlan ) && ( isRequestingSitePlugins || hasWooCommerceInstalled ) ) {
+	if (
+		isSiteWooExpressEcommerceTrial &&
+		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
+		( fetchingJetpackModules || ssoModuleActive )
+	) {
 		return <WooCommerceHomePlaceholder />;
 	}
 
@@ -142,13 +174,15 @@ const Home = ( {
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			{ header }
 			{ isLoading ? (
 				<div className="customer-home__loading-placeholder"></div>
 			) : (
 				<>
 					<Primary cards={ layout.primary } />
-					<PluginsAnnouncementModal />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
 							<Secondary cards={ layout.secondary } siteId={ siteId } />
@@ -176,9 +210,13 @@ Home.propTypes = {
 	hasWooCommerceInstalled: PropTypes.bool.isRequired,
 	isStaticHomePage: PropTypes.bool.isRequired,
 	isRequestingSitePlugins: PropTypes.bool.isRequired,
+	isSiteLaunching: PropTypes.bool.isRequired,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
+	isSiteWooExpressEcommerceTrial: PropTypes.bool.isRequired,
+	ssoModuleActive: PropTypes.bool.isRequired,
+	fetchingJetpackModules: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state ) => {
@@ -190,12 +228,18 @@ const mapStateToProps = ( state ) => {
 		site: getSelectedSite( state ),
 		sitePlan: getSitePlan( state, siteId ),
 		siteId,
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
+		isSiteWooExpressEcommerceTrial: isSiteOnWooExpressEcommerceTrial( state, siteId ),
+		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
+		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
+		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 	};
 };
 

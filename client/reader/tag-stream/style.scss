@@ -4,6 +4,10 @@
 	justify-content: space-between;
 	align-items: baseline;
 	margin-bottom: 10px;
+
+	.tag-stream__header-follow .follow-button {
+		background: inherit;
+	}
 }
 
 .reader__content .tag-stream__header {

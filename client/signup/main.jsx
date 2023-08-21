@@ -36,6 +36,7 @@ import {
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
+	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -390,9 +391,10 @@ class Signup extends Component {
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		if (
 			isWooOAuth2Client( this.props.oauth2Client ) ||
+			this.props.isGravatar ||
 			'videopress-account' === this.props.flowName
 		) {
-			// We don't want to show the loading screen for the Woo signup and videopress-account flow.
+			// We don't want to show the loading screen for the Woo signup, Gravatar signup, and videopress-account flow.
 			return;
 		}
 
@@ -483,6 +485,7 @@ class Signup extends Component {
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
+		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
 
 		const debugProps = {
 			isNewishUser,
@@ -521,6 +524,7 @@ class Signup extends Component {
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 				isMapping: domainItem && isDomainMapping( domainItem ),
 				isTransfer: domainItem && isDomainTransfer( domainItem ),
+				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 			} );
 		}
 	};
@@ -781,10 +785,7 @@ class Signup extends Component {
 			};
 		}
 
-		const stepClassName =
-			this.props.stepName === 'user-hosting' || this.props.isGravatar
-				? 'user'
-				: this.props.stepName;
+		const stepClassName = this.props.stepName === 'user-hosting' ? 'user' : this.props.stepName;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -840,7 +841,7 @@ class Signup extends Component {
 		}
 
 		// siteDomains is sometimes empty, so we need to force update.
-		if ( isDomainsForSiteEmpty && ! isImportingFlow ) {
+		if ( isDomainsForSiteEmpty && ! isImportingFlow && this.props.siteId ) {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}
@@ -860,7 +861,7 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const isReskinned = isReskinnedFlow( this.props.flowName ) || this.props.isGravatar;
+		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
 
 		return (

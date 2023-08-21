@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SearchInput from 'calypso/components/search';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -44,7 +45,7 @@ const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
-			height: `${ height - 73 }px`,
+			height: `${ height - 38 }px`,
 		} }
 	/>
 ) );
@@ -127,7 +128,11 @@ class SearchStream extends React.Component {
 		const segmentedControlClass = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		const hidePostsAndSites = this.state.feeds && this.state.feeds?.length === 1;
+		// Hide posts and sites if the only result has no feed ID. This can happen when searching
+		// for a specific site to add a rss to your feed. Originally added in
+		// https://github.com/Automattic/wp-calypso/pull/78555.
+		const hidePostsAndSites =
+			this.state.feeds && this.state.feeds?.length === 1 && ! this.state.feeds[ 0 ].feed_ID;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -172,6 +177,13 @@ class SearchStream extends React.Component {
 					style={ { width: this.props.width } }
 					ref={ this.handleFixedAreaMounted }
 				>
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Search' ) }
+						subHeaderText={ translate( 'Search for specific topics, authors, or blogs.' ) }
+						align="left"
+						hasScreenOptions
+					/>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
@@ -210,6 +222,7 @@ class SearchStream extends React.Component {
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
 							wideDisplay={ wideDisplay }
+							isLoggedIn={ isLoggedIn }
 						/>
 					) }
 				</div>

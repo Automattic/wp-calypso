@@ -165,6 +165,17 @@ export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
 }
 
+export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).every( ( item ) => {
+		return (
+			( isDomainTransfer( item ) &&
+				item.is_sale_coupon_applied &&
+				item.item_subtotal_integer === 0 ) ||
+			isPartialCredits( item )
+		);
+	} );
+}
+
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter(
 		( product ) => product.product_slug === domainProductSlugs.TRANSFER_IN

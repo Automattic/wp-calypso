@@ -1,4 +1,5 @@
 export type NavigatorScreenObject = {
+	slug: string;
 	checked?: boolean;
 	icon?: JSX.Element;
 	label: string;
@@ -8,7 +9,7 @@ export type NavigatorScreenObject = {
 	hideBack?: boolean;
 	content: JSX.Element;
 	actionText: string;
-	onSelect?: () => void;
-	onSubmit?: () => void;
-	onBack?: () => void;
+	onSelect?: ( slug: string ) => void;
+	onSubmit?: ( slug: string ) => void;
+	onBack?: ( slug: string ) => void;
 };

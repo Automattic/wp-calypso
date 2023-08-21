@@ -113,7 +113,8 @@
 		}
 	}
 
-	.videopress & {
+	.videopress &,
+	.videopress-tv & {
 		max-width: 425px;
 
 		.step-container__header {
@@ -197,12 +198,6 @@ body:has(.new-hosted-site.options) {
 	.site-options__form {
 		display: flex;
 		flex-direction: column;
-	}
-
-	.site-options__form-fieldset {
-		&.no-site-picker {
-			margin-bottom: 0;
-		}
 	}
 
 	.data-center-picker {

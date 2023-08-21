@@ -60,8 +60,11 @@ export interface StyleVariationStylesColor {
 export interface DesignRecipe {
 	stylesheet?: string;
 	pattern_ids?: number[] | string[];
+	pattern_html?: string;
 	header_pattern_ids?: number[] | string[];
+	header_html?: string;
 	footer_pattern_ids?: number[] | string[];
+	footer_html?: string;
 	color_variation_title?: string;
 	font_variation_title?: string;
 	slug?: string;

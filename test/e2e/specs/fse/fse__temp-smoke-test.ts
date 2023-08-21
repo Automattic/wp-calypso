@@ -23,10 +23,13 @@ declare const browser: Browser;
  *
  * The goal here is to catch major breaks with the integration --- i.e. Calypso navigation no long working,
  * or getting a WSOD when trying to load the editor.
+ *
+ *
+ * Keywords: FSE, Full Site Editor, Gutenberg
  */
-
 describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let page: Page;
+	let testAccount: TestAccount;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
 	const features = envToFeatureKey( envVariables );
@@ -66,14 +69,29 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		testAccount = new TestAccount( accountName );
+		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+			// eCommerce plan sites attempt to load Calypso, but with
+			// third-party cookies disabled the fallback route to WP-Admin
+			// kicks in after some time.
+			await testAccount.authenticate( page, { url: /wp-admin/ } );
+		} else {
+			await testAccount.authenticate( page );
+		}
 	} );
 
 	it( 'Navigate to Full Site Editor', async function () {
-		// Explicitly doing sidebar navigation to ensure Calypso navigation is intact.
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Appearance', 'Editor' );
+		fullSiteEditorPage = new FullSiteEditorPage( page );
+
+		// eCommerce plan loads WP-Admin for home dashboard,
+		// so instead navigate straight to the FSE page.
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
+		} else {
+			// Explicitly doing sidebar navigation to ensure Calypso navigation is intact.
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Appearance', 'Editor' );
+		}
 	} );
 
 	it( 'Editor endpoint loads', async function () {
@@ -81,13 +99,11 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	} );
 
 	it( 'Open the Page template', async function () {
-		fullSiteEditorPage = new FullSiteEditorPage( page );
-
 		await fullSiteEditorPage.prepareForInteraction();
 
 		await fullSiteEditorPage.ensureNavigationTopLevel();
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Index' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 	} );
 

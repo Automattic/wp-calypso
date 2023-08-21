@@ -18,6 +18,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_STATS_PRODUCTS,
 	getPlan,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
@@ -120,6 +121,15 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		)
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_BOOST_PRODUCTS ];
+	}
+
+	// If Jetpack Stats is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_STATS_PRODUCTS ];
 	}
 
 	const socialProductsToShow: string[] = [];

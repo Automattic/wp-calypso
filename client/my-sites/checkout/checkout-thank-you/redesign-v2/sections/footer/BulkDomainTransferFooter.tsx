@@ -1,5 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
@@ -9,31 +7,22 @@ const BulkDomainTransferFooter = () => {
 	return (
 		<div>
 			<PurchaseDetail
-				title={ __( 'Dive into domain essentials' ) }
+				title={ __( 'Want to speed this up?' ) }
 				description={ __(
-					"Unlock the domain world's secrets. Dive into our comprehensive resource to learn the basics of domains, from registration to management."
+					'Check your inbox for an email from your current domain provider for instructions on how to speed up the transfer process.'
 				) }
-				buttonText={ __( 'Master the domain basics' ) }
-				href={ localizeUrl( 'https://wordpress.com/support/domains/' ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
-						destination: '/support/domains',
-					} )
-				}
+				buttonText={ null }
+				href={ null }
+				onClick={ null }
 			/>
-
 			<PurchaseDetail
-				title={ __( 'Consider moving your sites too?' ) }
+				title={ __( 'Will my email continue to work?' ) }
 				description={ __(
-					'You can find step-by-step guides below that will help you move your site to WordPress.com'
+					"We'll automatically import any MX, TXT, and A records for your domain, so your email will transfer seamlessly."
 				) }
-				buttonText={ __( 'Learn more about site transfers' ) }
-				href={ localizeUrl( 'https://wordpress.com/support/moving-a-blog/' ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_domain_transfer_complete_click', {
-						destination: '/support/moving-a-blog',
-					} )
-				}
+				buttonText={ null }
+				href={ null }
+				onClick={ null }
 			/>
 		</div>
 	);

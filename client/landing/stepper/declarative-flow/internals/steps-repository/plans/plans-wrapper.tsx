@@ -25,7 +25,6 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -34,7 +33,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
-import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
+import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
 
 interface Props {
@@ -42,10 +41,9 @@ interface Props {
 	flowName: string | null;
 	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
 	plansLoaded: boolean;
-	hostingFlow: boolean;
 }
 
-function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansIntent | null {
+function getPlansIntent( flowName: string | null ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:
@@ -55,7 +53,7 @@ function getPlansIntent( flowName: string | null, hostingFlow: boolean ): PlansI
 		case LINK_IN_BIO_FLOW:
 			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
-			return hostingFlow ? 'plans-new-hosted-site-hosting-flow' : 'plans-new-hosted-site';
+			return 'plans-new-hosted-site';
 		default:
 			return null;
 	}
@@ -75,7 +73,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName, hostingFlow } = props;
+	const { flowName } = props;
 
 	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 
@@ -89,7 +87,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = flowName === DOMAIN_UPSELL_FLOW ? false : true;
-	const plansIntent = getPlansIntent( flowName, hostingFlow );
+	const plansIntent = getPlansIntent( flowName );
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
@@ -127,9 +125,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			</div>
 		);
 	};
-	const replacePaidDomainWithFreeDomain = ( freeDomainSuggestion: DomainSuggestion ) => {
-		setDomain( freeDomainSuggestion );
+
+	const removePaidDomain = () => {
 		setDomainCartItem( null );
+	};
+
+	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: DomainSuggestion ) => {
+		setDomain( freeDomainSuggestion );
 	};
 
 	const plansFeaturesList = () => {
@@ -155,7 +157,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
-					replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
+					removePaidDomain={ removePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 				/>
 				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
@@ -163,11 +166,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if (
-			flowName === DOMAIN_UPSELL_FLOW ||
-			isNewHostedSiteCreationFlow( flowName ) ||
-			isOnboardingPMFlow( flowName )
-		) {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return __( 'The right plan for the right project' );
+		}
+
+		if ( flowName === DOMAIN_UPSELL_FLOW || isOnboardingPMFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
@@ -202,7 +205,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'Welcome to the best place for your WordPress website.' );
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
 		}
 
 		if ( ! hideFreePlan ) {
@@ -256,6 +261,5 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect( ( state ) => {
 	return {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		hostingFlow: startedInHostingFlow( state ),
 	};
 } )( localize( PlansWrapper ) );

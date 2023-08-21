@@ -13,7 +13,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
-import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post/utils';
+import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -29,8 +29,8 @@ export type BlazePressPromotionProps = {
 
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
-	const index = pathname.indexOf( '/promote' );
-	page( index < 0 ? pathname : pathname.substring( 0, index ) );
+	const index = pathname.indexOf( '/promote/' );
+	page( index < 0 ? pathname : pathname.replace( /\/promote\/.*?\//, '/' ) );
 }
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
@@ -66,7 +66,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const onClose = ( goToCampaigns?: boolean ) => {
 		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
-			page( getAdvertisingDashboardPath( `/${ siteSlug }/campaigns` ) );
+			page( getAdvertisingDashboardPath( `/campaigns/${ siteSlug }` ) );
 		} else {
 			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 			if ( previousRoute ) {
@@ -124,42 +124,62 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 		return <></>;
 	}
 
+	const isPromotePostI2 = config.isEnabled( 'promote-post/widget-i2' );
+
 	return (
 		<>
 			{ isVisible && (
 				<BlankCanvas
 					className={ classNames( 'blazepress-widget', {
 						'hidden-header': hiddenHeader,
+						'blazepress-i2': isPromotePostI2,
 					} ) }
 				>
-					<div className="blazepress-widget__header-bar">
-						<BlazeLogo />
-						<h2>{ translate( 'Blaze' ) }</h2>
-						{ showCancelButton && (
-							<span
-								role="button"
-								className="blazepress-widget__cancel"
-								onKeyDown={ () => setShowCancelDialog( true ) }
-								tabIndex={ 0 }
-								onClick={ () => setShowCancelDialog( true ) }
-							>
-								{ translate( 'Cancel' ) }
-							</span>
-						) }
-					</div>
+					{ isPromotePostI2 ? (
+						<BlankCanvas.Header
+							className={ classNames( 'blazepress-widget__header-bar', {
+								'no-back-button': ! showCancelButton,
+							} ) }
+							onBackClick={ () => setShowCancelDialog( true ) }
+						>
+							<h2>{ translate( 'Blaze - Powered by Jetpack' ) }</h2>
+						</BlankCanvas.Header>
+					) : (
+						<div className="blazepress-widget__header-bar">
+							<BlazeLogo />
+							<h2>{ translate( 'Blaze' ) }</h2>
+							{ showCancelButton && (
+								<span
+									role="button"
+									className="blazepress-widget__cancel"
+									onKeyDown={ () => setShowCancelDialog( true ) }
+									tabIndex={ 0 }
+									onClick={ () => setShowCancelDialog( true ) }
+								>
+									{ translate( 'Cancel' ) }
+								</span>
+							) }
+						</div>
+					) }
+
 					<div
 						className={
 							isLoading ? 'blazepress-widget__content loading' : 'blazepress-widget__content'
 						}
 					>
 						<Dialog
+							showCloseIcon={ true }
 							additionalOverlayClassNames="blazepress-widget"
 							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
 						>
 							<h1>{ translate( 'Are you sure you want to quit?' ) }</h1>
-							<p>{ translate( 'All progress in this session will be lost.' ) }</p>
+							<p>
+								{ translate(
+									'If you quit, all of the work that has been done during this session will be lost.'
+								) }
+							</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
 						<div className="blazepress-widget__widget-container" ref={ widgetContainer }></div>

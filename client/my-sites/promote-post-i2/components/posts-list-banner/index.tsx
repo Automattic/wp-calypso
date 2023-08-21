@@ -1,16 +1,9 @@
-import { sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import './style.scss';
-import photoBanner from 'calypso/assets/images/blaze/zenit-photo-banner.jpeg';
+import photoBanner from 'calypso/assets/images/blaze/wp-blaze-banner@3x.png';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 export default function PostsListBanner() {
-	const articleTitle = sprintf(
-		// translators: %d is the current year
-		translate( 'The best camera, gadgets and accessories to buy in %d' ),
-		new Date().getFullYear()
-	);
-
 	return (
 		<div className="posts-list-banner__container">
 			<div className="posts-list-banner__content">
@@ -41,27 +34,12 @@ export default function PostsListBanner() {
 					</div>
 				</section>
 				<section className="posts-list-banner__img-section">
-					<div className="posts-list-banner__wrapper">
-						<header>PhotoTimes.com</header>
-						{ /* TODO: Find a way to inform that the image is from Upsplash */ }
-						<img src={ cssSafeUrl( photoBanner ) } alt="" />
-						<footer>{ articleTitle }</footer>
-					</div>
-					<div className="posts-list-banner__article">
-						<ul className="posts-list-banner__article-menu">
-							<li className="posts-list-banner__article-menu-item posts-list-banner__article-menu-item-active">
-								{ translate( 'Articles' ) }
-							</li>
-							<li className="posts-list-banner__article-menu-item">
-								{ translate( 'Photographers' ) }
-							</li>
-							<li className="posts-list-banner__article-menu-item">{ translate( 'Events' ) }</li>
-						</ul>
-						<div>{ translate( 'Article' ) }</div>
-						<div className="posts-list-banner__article-title">{ articleTitle }</div>
-						{ /* translator: %s is an author's name */ }
-						<div>{ sprintf( translate( 'by %s' ), 'Tom Newman' ) }</div>
-					</div>
+					<div
+						className="posts-list-banner__img"
+						style={ {
+							backgroundImage: `url(${ cssSafeUrl( photoBanner ) })`,
+						} }
+					/>
 				</section>
 			</div>
 		</div>

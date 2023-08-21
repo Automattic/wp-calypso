@@ -1,5 +1,11 @@
+export interface PaidPlanPurchaseSuccessJetpackStatsNoticeProps {
+	onNoticeViewed?: () => void;
+}
+
 export interface StatsNoticeProps {
 	siteId: number | null;
+	onNoticeViewed?: () => void;
+	hasFreeStats?: boolean;
 }
 
 export interface NoticeBodyProps {
@@ -15,14 +21,4 @@ export interface StatsNoticesProps {
 	siteId: number | null;
 	isOdysseyStats?: boolean;
 	statsPurchaseSuccess?: string;
-}
-
-export interface NewStatsNoticesProps {
-	siteId: number | null;
-	isOdysseyStats?: boolean;
-}
-
-export interface PurchaseNoticesProps {
-	siteId: number | null;
-	statsPurchaseSuccess: string | undefined;
 }

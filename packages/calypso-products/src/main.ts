@@ -3,6 +3,13 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	TERM_QUADRENNIALLY,
+	TERM_QUINQUENNIALLY,
+	TERM_SEXENNIALLY,
+	TERM_SEPTENNIALLY,
+	TERM_OCTENNIALLY,
+	TERM_NOVENNIALLY,
+	TERM_DECENNIALLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_PRO,
@@ -552,6 +559,20 @@ export function getBillingMonthsForTerm( term: string ): number {
 		return 24;
 	} else if ( term === TERM_TRIENNIALLY ) {
 		return 36;
+	} else if ( term === TERM_QUADRENNIALLY ) {
+		return 48;
+	} else if ( term === TERM_QUINQUENNIALLY ) {
+		return 60;
+	} else if ( term === TERM_SEXENNIALLY ) {
+		return 72;
+	} else if ( term === TERM_SEPTENNIALLY ) {
+		return 84;
+	} else if ( term === TERM_OCTENNIALLY ) {
+		return 96;
+	} else if ( term === TERM_NOVENNIALLY ) {
+		return 108;
+	} else if ( term === TERM_DECENNIALLY ) {
+		return 120;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -578,6 +599,20 @@ export function getBillingTermForMonths( term: number ): string {
 		return TERM_BIENNIALLY;
 	} else if ( term === 36 ) {
 		return TERM_TRIENNIALLY;
+	} else if ( term === 48 ) {
+		return TERM_QUADRENNIALLY;
+	} else if ( term === 60 ) {
+		return TERM_QUINQUENNIALLY;
+	} else if ( term === 72 ) {
+		return TERM_SEXENNIALLY;
+	} else if ( term === 84 ) {
+		return TERM_SEPTENNIALLY;
+	} else if ( term === 96 ) {
+		return TERM_OCTENNIALLY;
+	} else if ( term === 108 ) {
+		return TERM_NOVENNIALLY;
+	} else if ( term === 120 ) {
+		return TERM_DECENNIALLY;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }

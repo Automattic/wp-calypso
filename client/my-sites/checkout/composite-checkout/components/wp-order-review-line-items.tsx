@@ -55,7 +55,7 @@ export function WPOrderReviewLineItems( {
 	isSummary,
 	removeProductFromCart,
 	removeCoupon,
-	onChangePlanLength,
+	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
@@ -67,7 +67,7 @@ export function WPOrderReviewLineItems( {
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
-	onChangePlanLength?: OnChangeItemVariant;
+	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser: boolean;
@@ -94,7 +94,7 @@ export function WPOrderReviewLineItems( {
 					product={ product }
 					isSummary={ isSummary }
 					removeProductFromCart={ removeProductFromCart }
-					onChangePlanLength={ onChangePlanLength }
+					onChangeSelection={ onChangeSelection }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					responseCart={ responseCart }
 					isPwpoUser={ isPwpoUser }
@@ -141,7 +141,7 @@ function LineItemWrapper( {
 	product,
 	isSummary,
 	removeProductFromCart,
-	onChangePlanLength,
+	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
@@ -155,7 +155,7 @@ function LineItemWrapper( {
 	product: ResponseCartProduct;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	onChangePlanLength?: OnChangeItemVariant;
+	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser: boolean;
@@ -176,7 +176,7 @@ function LineItemWrapper( {
 	}
 
 	const shouldShowVariantSelector =
-		onChangePlanLength && ! isWooMobile && ! isRenewal && ! hasPartnerCoupon;
+		onChangeSelection && ! isWooMobile && ! isRenewal && ! hasPartnerCoupon;
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
@@ -218,7 +218,7 @@ function LineItemWrapper( {
 				{ areThereVariants && shouldShowVariantSelector && (
 					<ItemVariationPicker
 						selectedItem={ product }
-						onChangeItemVariant={ onChangePlanLength }
+						onChangeItemVariant={ onChangeSelection }
 						isDisabled={ isDisabled }
 						variants={ variants }
 					/>

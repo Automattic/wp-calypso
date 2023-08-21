@@ -33,8 +33,8 @@ export const ItemsLoading = ( { totalRows = 8 }: { totalRows?: number } ) => {
 	const rowsNumber = 5;
 	return (
 		<>
-			{ new Array( rowsNumber ).fill( 0, 0, rowsNumber ).map( () => (
-				<SingleItemLoading totalRows={ totalRows } />
+			{ new Array( rowsNumber ).fill( 0, 0, rowsNumber ).map( ( _, key ) => (
+				<SingleItemLoading totalRows={ totalRows } key={ key } />
 			) ) }
 		</>
 	);

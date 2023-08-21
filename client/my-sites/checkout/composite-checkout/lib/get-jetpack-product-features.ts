@@ -38,10 +38,10 @@ function getFeatureStrings(
 	switch ( feature ) {
 		case 'ai':
 			return [
-				translate( 'Prompt based content generation' ),
-				translate( 'Adaptive Tone Adjustment' ),
-				translate( 'Superior spelling and Grammar Correction' ),
-				translate( 'Title & summary generation' ),
+				translate( 'Prompt-based content generation' ),
+				translate( 'Adaptive tone adjustment' ),
+				translate( 'Superior spelling and grammar correction' ),
+				translate( 'Title and summary generation' ),
 			];
 		case 'anti-spam':
 			return [
@@ -111,7 +111,6 @@ function getFeatureStrings(
 		case 'stats':
 			return [
 				translate( 'Instant access to upcoming features' ),
-				translate( 'Priority support' ),
 				translate( 'Ad-free experience' ),
 			];
 		case 'support':

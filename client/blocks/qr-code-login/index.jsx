@@ -1,6 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
@@ -54,7 +55,9 @@ function TokenQRCode( { tokenData } ) {
 	};
 	return (
 		<QRCodeSVG
-			value={ `https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }` }
+			value={ localizeUrl(
+				`https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }`
+			) }
 			size={ 300 }
 			imageSettings={ imageSettings }
 		/>
@@ -220,7 +223,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 			},
 		} ),
 		translate( 'Tap the My Site Tab.' ),
-		translate( 'Tap your Profile image in the top right corner of the screen.' ),
+		translate( 'Tap your Profile image.' ),
 		translate( 'Tap the {{strong}}Scan Login Code{{/strong}} option.', {
 			components: {
 				strong: <strong />,

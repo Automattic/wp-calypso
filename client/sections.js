@@ -50,7 +50,12 @@ const sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/me/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
+		paths: [
+			'/me/purchases',
+			'/me/purchases-by-owner',
+			'/me/billing',
+			'/payment-methods/add-credit-card',
+		],
 		module: 'calypso/me/purchases',
 		group: 'me',
 	},
@@ -147,6 +152,12 @@ const sections = [
 		name: 'settings-discussion',
 		paths: [ '/settings/discussion' ],
 		module: 'calypso/my-sites/site-settings/settings-discussion',
+		group: 'sites',
+	},
+	{
+		name: 'settings-newsletter',
+		paths: [ '/settings/newsletter' ],
+		module: 'calypso/my-sites/site-settings/settings-newsletter',
 		group: 'sites',
 	},
 	{
@@ -323,7 +334,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/discover' ],
+		paths: [ '/discover', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/discover' ],
 		module: 'calypso/reader/discover',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -346,7 +357,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tag' ],
+		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -595,15 +606,21 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'promote-post',
-		paths: [ '/advertising', '/advertising/[^\\/]+', '/advertising/[^\\/]+/[^\\/]+/promote' ],
-		module: 'calypso/my-sites/promote-post',
+		name: 'promote-post-i2',
+		paths: [ '/advertising' ],
+		module: 'calypso/my-sites/promote-post-i2',
 		group: 'sites',
 	},
 	{
 		name: 'site-logs',
 		paths: [ '/site-logs' ],
 		module: 'calypso/my-sites/site-logs',
+		group: 'sites',
+	},
+	{
+		name: 'site-monitoring',
+		paths: [ '/site-monitoring' ],
+		module: 'calypso/my-sites/site-monitoring',
 		group: 'sites',
 	},
 ];

@@ -117,7 +117,7 @@ export function useStoredPaymentMethods( {
 		if ( error ) {
 			return error.message;
 		}
-		if ( ! isDataValid ) {
+		if ( data !== undefined && ! isDataValid ) {
 			return translate( 'There was a problem loading your stored payment methods.', {
 				textOnly: true,
 			} );

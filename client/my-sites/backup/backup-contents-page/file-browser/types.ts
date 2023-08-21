@@ -66,3 +66,5 @@ export interface FileBrowserItemInfo {
 	dataType?: number;
 	manifestFilter?: string;
 }
+
+export type FileBrowserCheckState = 'checked' | 'unchecked' | 'mixed';

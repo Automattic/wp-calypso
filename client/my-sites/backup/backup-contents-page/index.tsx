@@ -60,7 +60,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 						<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
 					</div>
 					<div className="backup-contents-page__body">
-						<FileBrowser siteId={ siteId } rewindId={ rewindId } />
+						<FileBrowser rewindId={ rewindId } />
 					</div>
 				</Card>
 			</Main>

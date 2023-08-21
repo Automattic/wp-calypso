@@ -155,7 +155,7 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						recordGTMDatalayerEvent( currentStep );
+						recordGTMDatalayerEvent( 'free trial processing' );
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 

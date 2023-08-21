@@ -26,6 +26,7 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	prependThemeFilterKeys,
+	getThemeType,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addStyleVariation, trackClick, interlaceThemes } from './helpers';
@@ -49,6 +50,7 @@ class ThemesSelection extends Component {
 		] ),
 		getPremiumThemePrice: PropTypes.func,
 		getThemeDetailsUrl: PropTypes.func,
+		getThemeType: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		isLastPage: PropTypes.bool,
 		isRequesting: PropTypes.bool,
@@ -88,6 +90,7 @@ class ThemesSelection extends Component {
 			page_number: query.page,
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
 			action: snakeCase( action ),
+			theme_type: this.props.getThemeType( themeId ),
 		} );
 	};
 
@@ -124,6 +127,7 @@ class ThemesSelection extends Component {
 			results_rank: resultsRank + 1,
 			page_number: query.page,
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
+			theme_type: this.props.getThemeType( themeId ),
 		};
 
 		if ( variation ) {
@@ -307,6 +311,10 @@ function bindGetThemeDetailsUrl( state, siteId ) {
 	return ( themeId ) => getThemeDetailsUrl( state, themeId, siteId );
 }
 
+function bindGetThemeType( state ) {
+	return ( themeId ) => getThemeType( state, themeId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -358,6 +366,8 @@ export const ConnectedThemesSelection = connect(
 			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,
+			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
+			...( tabFilter === 'all' && { sort: 'date' } ),
 		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
@@ -367,8 +377,8 @@ export const ConnectedThemesSelection = connect(
 			sourceSiteId !== 'wporg' &&
 			// Only fetch WP.org themes when searching a term.
 			!! search &&
-			// unless just searching over locally installed themes
-			tabFilter !== 'my-themes' &&
+			// unless just searching over recommended or locally installed themes
+			! [ 'recommended', 'my-themes' ].includes( tabFilter ) &&
 			// WP.org themes are not a good fit for any of the tiers,
 			// unless the site can install themes, then they can be searched in the 'free' tier.
 			( ! tier || ( tier === 'free' && canInstallThemes ) );
@@ -407,6 +417,7 @@ export const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
+			getThemeType: bindGetThemeType( state ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
@@ -432,7 +443,8 @@ class ThemesSelectionWithPage extends React.Component {
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
 			nextProps.filter !== this.props.filter ||
-			nextProps.vertical !== this.props.vertical
+			nextProps.vertical !== this.props.vertical ||
+			nextProps.tabFilter !== this.props.tabFilter
 		) {
 			this.resetPage();
 		}

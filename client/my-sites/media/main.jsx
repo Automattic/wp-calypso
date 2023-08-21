@@ -9,6 +9,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Notice from 'calypso/components/notice';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
@@ -20,11 +21,13 @@ import searchUrl from 'calypso/lib/search-url';
 import MediaLibrary from 'calypso/my-sites/media-library';
 import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -351,13 +354,24 @@ class Media extends Component {
 	};
 
 	render() {
-		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
+		const {
+			selectedSite: site,
+			mediaId,
+			previousRoute,
+			translate,
+			siteId,
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
+		} = this.props;
 
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
 				<ScreenOptionsTab wpAdminPath="upload.php" />
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
 				<DocumentHead title={ translate( 'Media' ) } />
 				<FormattedHeader
 					brandFont
@@ -453,9 +467,12 @@ const mapStateToProps = ( state, { mediaId } ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
+		siteId,
 		selectedSite: getSelectedSite( state ),
 		previousRoute: getPreviousRoute( state ),
 		currentRoute: getCurrentRoute( state ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		media: getMediaItem( state, siteId, mediaId ),
 		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 	};

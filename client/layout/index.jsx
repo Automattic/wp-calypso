@@ -6,7 +6,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useEffect, Component } from 'react';
+import { useCallback, useEffect, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -90,6 +90,9 @@ function SidebarScrollSynchronizer() {
 function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const isDesktop = useBreakpoint( '>782px' );
+	const handleClose = useCallback( () => {
+		setShowHelpCenter( false );
+	}, [ setShowHelpCenter ] );
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -99,9 +102,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 		<AsyncLoad
 			require="@automattic/help-center"
 			placeholder={ null }
-			handleClose={ () => {
-				setShowHelpCenter( false );
-			} }
+			handleClose={ handleClose }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>

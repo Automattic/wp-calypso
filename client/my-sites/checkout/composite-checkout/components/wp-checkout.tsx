@@ -42,6 +42,7 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner';
@@ -65,11 +66,11 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
-import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { CheckoutSlowProcessingNotice } from './checkout-slow-processing-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
+import { GoogleDomainsCopy } from './google-transfers-copy';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
@@ -78,7 +79,10 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type {
+	CheckoutPageErrorCallback,
+	StepChangedCallback,
+} from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { ReactNode } from 'react';
@@ -195,7 +199,7 @@ const OrderReviewTitle = () => {
 
 export default function WPCheckout( {
 	addItemToCart,
-	changePlanLength,
+	changeSelection,
 	countriesList,
 	createUserAndSiteBeforeTransaction,
 	infoMessage,
@@ -210,9 +214,11 @@ export default function WPCheckout( {
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingContent,
+	onStepChanged,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
-	changePlanLength: OnChangeItemVariant;
+	changeSelection: OnChangeItemVariant;
+	onStepChanged?: StepChangedCallback;
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
@@ -240,6 +246,7 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
+	usePresalesChat( 'wpcom', true, true );
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
@@ -404,7 +411,7 @@ export default function WPCheckout( {
 							<CheckoutSummaryBody className="checkout__summary-body">
 								<WPCheckoutOrderSummary
 									siteId={ siteId }
-									onChangePlanLength={ changePlanLength }
+									onChangeSelection={ changeSelection }
 									nextDomainIsFree={ responseCart?.next_domain_is_free }
 								/>
 								{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
@@ -415,7 +422,6 @@ export default function WPCheckout( {
 									addItemToCart={ addItemToCart }
 									isCartPendingUpdate={ isCartPendingUpdate }
 								/>
-								<CheckoutHelpLink />
 								<CheckoutNextSteps responseCart={ responseCart } />
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
@@ -426,7 +432,7 @@ export default function WPCheckout( {
 			<WPCheckoutMainContent>
 				<CheckoutOrderBanner />
 				<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-				<CheckoutStepGroup loadingContent={ loadingContent }>
+				<CheckoutStepGroup loadingContent={ loadingContent } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
 					<CheckoutStepBody
@@ -440,7 +446,7 @@ export default function WPCheckout( {
 							<WPCheckoutOrderReview
 								removeProductFromCart={ removeProductFromCart }
 								couponFieldStateProps={ couponFieldStateProps }
-								onChangePlanLength={ changePlanLength }
+								onChangeSelection={ changeSelection }
 								siteUrl={ siteUrl }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							/>
@@ -551,6 +557,7 @@ export default function WPCheckout( {
 						/>
 					) }
 					<PaymentMethodStep
+						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
 						activeStepFooter={
 							<>
 								<PaymentMethodStepContent />
@@ -840,6 +847,7 @@ const WPCheckoutWrapper = styled.div`
 const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
+	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -860,7 +868,11 @@ const WPCheckoutMainContent = styled.div`
 const WPCheckoutSidebarContent = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
-	margin-top: var( --masterbar-checkout-height );
+	margin-top: var( --masterbar-height );
+
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		margin-top: var( --masterbar-checkout-height );
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;

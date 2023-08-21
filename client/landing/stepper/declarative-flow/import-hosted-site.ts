@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
@@ -11,13 +11,14 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
-import { useIsCurrentlyHostingFlow } from '../utils/hosting-flow';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
+import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
+import MigrationTrial from './internals/steps-repository/migration-trial';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -42,13 +43,14 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'sitePicker', component: SitePickerStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
+			{ slug: 'migrationTrial', component: MigrationTrial },
+			{ slug: 'verifyEmail', component: ImportVerifyEmail },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: MigrationError },
 		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const hostingFlow = useIsCurrentlyHostingFlow();
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
@@ -146,6 +148,22 @@ const importHostedSiteFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 				}
 
+				case 'migrationTrial': {
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'importer':
+							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
+						default:
+							return;
+					}
+				}
+
+				case 'verifyEmail':
+					return navigate( `migrationTrial?${ urlQueryParams.toString() }` );
+
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
 					if ( processingResult === ProcessingResult.FAILURE ) {
@@ -183,7 +201,7 @@ const importHostedSiteFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStep ) {
 				case 'import':
-					return window.location.assign( hostingFlow ? '/sites?hosting-flow=true' : '/sites' );
+					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
 					// remove the siteSlug in case they want to change the destination site
@@ -203,6 +221,10 @@ const importHostedSiteFlow: Flow = {
 					// destination site
 					urlQueryParams.delete( 'siteSlug' );
 					return navigate( `import?${ urlQueryParams.toString() }` );
+
+				case 'verifyEmail':
+				case 'migrationTrial':
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 			}
 		};
 
@@ -225,6 +247,18 @@ const importHostedSiteFlow: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
+	},
+	useSideEffect() {
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
+		useLayoutEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				window.location.assign( '/start/hosting' );
+			}
+		}, [ userIsLoggedIn ] );
 	},
 };
 

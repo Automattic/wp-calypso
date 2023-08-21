@@ -29,6 +29,7 @@ export default function MobilePushNotification( {
 						setEnableMobileNotification( isEnabled );
 					} }
 					checked={ enableMobileNotification }
+					className="notification-settings__toggle-control"
 				/>
 			</div>
 			<div className="notification-settings__toggle-content">

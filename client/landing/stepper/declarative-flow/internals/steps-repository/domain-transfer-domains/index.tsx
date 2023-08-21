@@ -2,19 +2,23 @@ import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TransferDomains from './domains';
 import type { Step } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation, flow } ) {
+const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
+
+	usePresalesChat( 'wpcom', true, true );
 
 	const handleSubmit = () => {
 		submit?.();
 	};
+
 	return (
 		<StepContainer
 			flowName={ flow }
@@ -28,11 +32,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 					headerText={ __( 'Add your domains' ) }
 					subHeaderText={
 						<>
-							<span>
-								{ __(
-									'Enter your domain names and authorization codes below. You can transfer up to 50 domains at a time.'
-								) }
-							</span>
+							<span>{ __( 'Enter your domain names and authorization codes below.' ) }</span>
 						</>
 					}
 					align="center"
@@ -40,7 +40,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			}
 			stepContent={
 				<CalypsoShoppingCartProvider>
-					<TransferDomains onSubmit={ handleSubmit } />
+					<TransferDomains onSubmit={ handleSubmit } variantSlug={ variantSlug } />
 				</CalypsoShoppingCartProvider>
 			}
 			recordTracksEvent={ recordTracksEvent }

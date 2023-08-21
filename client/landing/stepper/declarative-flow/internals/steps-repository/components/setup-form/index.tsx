@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Button, FormInputValidation } from '@automattic/components';
-import { TextControl } from '@wordpress/components';
+import { FormInputValidation } from '@automattic/components';
+import { TextControl, Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { Dispatch, FormEvent, ReactNode, SetStateAction, useEffect } from 'react';
@@ -128,6 +128,7 @@ const SetupForm = ( {
 			<Button
 				className={ `setup-form__submit ${ isTitleEmpty && 'disabled' }` }
 				disabled={ isLoading }
+				variant="primary"
 				type="submit"
 			>
 				{ isLoading ? __( 'Loading' ) : translatedText?.buttonText ?? __( 'Continue' ) }

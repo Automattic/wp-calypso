@@ -1,9 +1,9 @@
 import {
-	DEFAULT_ASSEMBLER_DESIGN,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
 	MARKETPLACE_THEME,
+	// eslint-disable-next-line import/named
 	shouldGoToAssembler,
 } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
@@ -72,7 +72,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) 
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug };
+	let queryParam = { siteSlug, siteId };
 	if ( domainItem ) {
 		// If the user is purchasing a domain then the site's primary url might change from
 		// `siteSlug` to something else during the checkout process, which means the
@@ -116,7 +116,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
-	if ( isSiteAssemblerFlow( flowName ) && themeParameter === DEFAULT_ASSEMBLER_DESIGN.slug ) {
+	if ( isSiteAssemblerFlow( flowName ) ) {
 		// Check whether to go to the assembler. If not, go to the site editor directly
 		if ( shouldGoToAssembler() ) {
 			return addQueryArgs(
@@ -163,6 +163,16 @@ function getWithThemeDestination( {
 	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
 
+function getWithPluginDestination( { siteSlug, pluginParameter, pluginBillingPeriod } ) {
+	// send to the thank you page when find a billing period (marketplace)
+	if ( pluginBillingPeriod ) {
+		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginParameter }`;
+	}
+
+	// otherwise send to installation page
+	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }`;
+}
+
 function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
@@ -199,14 +209,18 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHostingFlowDestination( { siteId } ) {
-	return addQueryArgs(
-		{
-			'new-site': siteId,
-			'hosting-flow': true,
-		},
-		'/sites'
-	);
+function getHostingFlowDestination() {
+	const queryArgs = getQueryArgs();
+
+	if ( queryArgs.flow === 'new-hosted-site' ) {
+		return '/setup/new-hosted-site';
+	}
+
+	if ( queryArgs.flow === 'import-hosted-site' ) {
+		return '/setup/import-hosted-site';
+	}
+
+	return '/sites?hosting-flow=true';
 }
 
 const flows = generateFlows( {
@@ -218,6 +232,7 @@ const flows = generateFlows( {
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
 	getWithThemeDestination,
+	getWithPluginDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,

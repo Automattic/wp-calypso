@@ -40,10 +40,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@emotion/react": "^11.4.1",
-		"@wordpress/components": "^25.3.0",
-		"@wordpress/element": "^5.13.0",
-		"@wordpress/i18n": "^4.36.0",
+		"@emotion/react": "^11.11.1",
+		"@wordpress/components": "^25.5.0",
+		"@wordpress/element": "^5.16.0",
+		"@wordpress/i18n": "^4.39.0",
 		"classnames": "^2.3.1",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"
@@ -51,12 +51,12 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/jest-dom": "^5.17.0",
 		"@testing-library/react": "^14.0.0",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"typescript": "^4.7.4",
+		"typescript": "^5.1.6",
 		"webpack": "^5.68.0"
 	},
 	"peerDependencies": {

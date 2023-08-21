@@ -345,6 +345,14 @@ $mobile-card-max-width: 440px;
 		&.has-4-cols {
 			max-width: $table-cell-max-width * 4;
 		}
+
+		.components-custom-select-control__label {
+			color: var(--studio-gray-100);
+		}
+
+		.components-custom-select-control__menu {
+			margin-left: 0;
+		}
 	}
 
 	.plan-features-2023-grid__header-title {
@@ -398,6 +406,10 @@ $mobile-card-max-width: 440px;
 		&.is-top-buttons {
 			padding: 0 20px;
 			vertical-align: bottom;
+			@include plans-2023-break-small {
+				padding-top: 16px;
+				padding-bottom: 16px;
+			}
 		}
 
 		@include plans-2023-break-small {
@@ -412,16 +424,55 @@ $mobile-card-max-width: 440px;
 		}
 	}
 
+	.plan-features-2023-grid__plan-spotlight {
+		background-color: var(--studio-white);
+		.plan-features-2023-grid__plan-spotlight-card {
+			max-width: 100%;
+			margin-bottom: 64px;
+			border: 1px solid #e0e0e0;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 0 0 5px 5px;
+			div.plan-features-2023-grid__table-item {
+				border: none;
+				&.is-top-buttons {
+					position: absolute;
+					top: 46px;
+					right: 0;
+					border-left: 0;
+				}
+
+				&.plan-features-2023-grid__header-billing-info {
+					padding-bottom: 32px;
+					@include plans-2023-break-small {
+						padding-bottom: 32px;
+					}
+				}
+
+				&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
+					padding-bottom: 23px;
+				}
+
+				.plan-features-2023-grid__header-title {
+					margin-top: 24px;
+				}
+
+				.plan-features-2023-grid__header-tagline {
+					min-height: 0;
+					padding-bottom: 16px;
+				}
+
+				.plan-features-2023-grid__header-logo {
+					display: none;
+				}
+			}
+		}
+	}
+
 	.plan-features-2023-grid__header-annual-discount {
 		color: var(--studio-green-60);
 		&-is-loading {
 			@include placeholder();
 		}
-	}
-
-	.is-placeholder {
-		width: 60%;
-		margin: 5px auto;
 	}
 
 	.plan-features-2023-grid__item-info {
@@ -541,7 +592,7 @@ body.is-section-signup.is-white-signup,
 			padding: 0 19px 24px 20px;
 
 			@include plans-2023-break-small {
-				padding-bottom: 16px;
+				padding-bottom: 0;
 			}
 
 			.plan-features-2023-grid__vip-price {
@@ -677,7 +728,7 @@ body.is-section-signup.is-white-signup,
 			margin-bottom: 12px;
 
 			@include plans-2023-break-small {
-				margin-top: 36px;
+				margin-top: 20px;
 				font-size: $font-body-extra-small;
 			}
 
@@ -695,6 +746,17 @@ body.is-section-signup.is-white-signup,
 
 			&.is-ecommerce-plan {
 				color: #55347d;
+			}
+		}
+	}
+
+	.is-sticky-top-buttons-row {
+		.is-top-buttons.plan-features-2023-grid__table-item {
+			border: none;
+			background-color: #f9f9f9;
+			box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.04);
+			.plan-features-2023-grid__actions-button {
+				font-size: rem(12px);
 			}
 		}
 	}
@@ -735,6 +797,7 @@ body.is-section-signup.is-white-signup,
 		justify-content: flex-start;
 		padding-top: 46px;
 		padding-bottom: 20px;
+		min-width: 0;
 
 		@include plans-2023-break-small {
 			padding-top: 34px;

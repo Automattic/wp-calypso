@@ -41,6 +41,8 @@ import {
 	JETPACK_SECURITY_T1_PLANS,
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
@@ -154,6 +156,61 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct >
 	[ PRODUCT_JETPACK_CRM_FREE_MONTHLY ]: EXTERNAL_PRODUCT_CRM_FREE_MONTHLY,
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
+};
+
+// Jetpack Stats
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct => ( {
+	type: ITEM_TYPE_PRODUCT,
+	iconSlug: 'jetpack_stats',
+	tagline: translate( 'Simple, yet powerful analytics' ),
+	description: translate(
+		'With Jetpack Stats, you don’t need to be a data scientist to see how your site is performing.'
+	),
+	shortDescription: translate( 'Simple, yet powerful stats to grow your site.' ),
+	buttonLabel: translate( 'Get Stats' ),
+	features: {
+		items: [],
+	},
+	hidePrice: true,
+
+	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
+	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
+	displayName: translate( 'Stats' ),
+	shortName: translate( 'Stats' ),
+	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	term: TERM_ANNUALLY,
+
+	// Set the price directly with the translated string.
+	displayPriceText: translate( 'Varies', {
+		comment:
+			'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
+	} ),
+
+	moreAboutUrl: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing',
+	indirectCheckoutUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
+} );
+
+export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
+	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
+	displayName: translate( 'Stats (Free)' ),
+	shortName: translate( 'Stats (Free)' ),
+	productSlug: PRODUCT_JETPACK_STATS_FREE,
+	costProductSlug: PRODUCT_JETPACK_STATS_FREE,
+	isFree: true,
+} );
+
+// List of products showcased in the Plans grid but not sold via checkout URL directly.
+export const INDIRECT_CHECKOUT_PRODUCTS_LIST = [
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_FREE,
+];
+
+// Indirect checkout Product slugs to SelectorProduct.
+export const INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct > = {
+	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY,
+	[ PRODUCT_JETPACK_STATS_FREE ]: INDIRECT_CHECKOUT_PRODUCT_STATS_FREE,
 };
 
 /**
