@@ -2,8 +2,13 @@ import config from '@automattic/calypso-config';
 import { InfiniteData } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { BlazablePost, BlazePagedItem, Campaign } from 'calypso/data/promote-post/types';
-import { CampaignQueryResult } from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
+import {
+	BlazablePost,
+	BlazePagedItem,
+	Campaign,
+	CampaignQueryResult,
+	PostQueryResult,
+} from 'calypso/data/promote-post/types';
 import { PagedBlazeContentData } from 'calypso/my-sites/promote-post-i2/main';
 
 export const campaignStatus = {
@@ -180,7 +185,7 @@ type BlazeDataPaged = {
 
 export const getPagedBlazeSearchData = (
 	mode: PagedDataMode,
-	pagedData?: InfiniteData< CampaignQueryResult >
+	pagedData?: InfiniteData< CampaignQueryResult | PostQueryResult >
 ): PagedBlazeContentData => {
 	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {

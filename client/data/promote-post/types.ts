@@ -79,3 +79,19 @@ export type BlazablePost = {
 };
 
 export type BlazePagedItem = BlazablePost | Campaign;
+
+export type PostQueryResult = {
+	posts?: BlazablePost[];
+	has_more_pages: boolean;
+	total_items: number;
+	total_pages: number;
+	page: number;
+};
+
+export type CampaignQueryResult = {
+	campaigns: Campaign[];
+	total_items: number;
+	total_pages: number;
+	page: number;
+	has_more_pages: boolean;
+};
