@@ -1,11 +1,19 @@
 import classNames from 'classnames';
+import { useMemo } from 'react';
 import useJetpackMasterbarDataQuery from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 import { trailingslashit } from 'calypso/lib/route';
 import { sortByMenuOrder, isValidLink } from '../utils';
 import MainMenuItem from './main-menu-item';
+import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';
 import type { FC } from 'react';
 
 interface MenuItemsProps {
+	pathname: string | undefined;
+}
+
+interface MenuItemProps {
+	section: MenuItem;
+	bundles: MenuItem | null;
 	pathname: string | undefined;
 }
 
@@ -22,17 +30,12 @@ const MenuItems: FC< MenuItemsProps > = ( { pathname } ) => {
 					const { label, href } = section;
 
 					return (
-						<li
-							className={ classNames( {
-								'is-active':
-									pathname &&
-									isValidLink( href ) &&
-									new URL( trailingslashit( href ) ).pathname === trailingslashit( pathname ),
-							} ) }
+						<MenuItem
 							key={ `main-menu-${ href }${ label }` }
-						>
-							<MainMenuItem section={ section } bundles={ bundles } />
-						</li>
+							section={ section }
+							bundles={ bundles }
+							pathname={ pathname }
+						/>
 					);
 				} )
 			) : (
@@ -43,3 +46,26 @@ const MenuItems: FC< MenuItemsProps > = ( { pathname } ) => {
 };
 
 export default MenuItems;
+
+const MenuItem: FC< MenuItemProps > = ( { section, bundles, pathname } ) => {
+	const { label, href } = section;
+
+	const isActive = useMemo( () => {
+		return (
+			pathname &&
+			isValidLink( href ) &&
+			new URL( trailingslashit( href ) ).pathname === trailingslashit( pathname )
+		);
+	}, [ href, pathname ] );
+
+	return (
+		<li
+			className={ classNames( {
+				'is-active': isActive,
+			} ) }
+			key={ `main-menu-${ href }${ label }` }
+		>
+			<MainMenuItem section={ section } bundles={ bundles } />
+		</li>
+	);
+};
