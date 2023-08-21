@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useLayoutEffect } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { DomainsTableRow } from './domains-table-row';
@@ -25,6 +25,43 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		sortDirection: 'asc',
 	} );
 
+	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
+
+	useLayoutEffect( () => {
+		if ( ! domains ) {
+			setSelectedDomains( new Set() );
+			return;
+		}
+
+		setSelectedDomains( ( selectedDomains ) => {
+			const domainUrls = domains.map( ( { domain } ) => domain );
+			const selectedDomainsCopy = new Set( selectedDomains );
+
+			for ( const selectedDomain of selectedDomainsCopy ) {
+				if ( ! domainUrls.includes( selectedDomain ) ) {
+					selectedDomainsCopy.delete( selectedDomain );
+				}
+			}
+
+			return selectedDomainsCopy;
+		} );
+	}, [ domains ] );
+
+	const handleSelectDomain = useCallback(
+		( { domain }: PartialDomainData ) => {
+			const selectedDomainsCopy = new Set( selectedDomains );
+
+			if ( selectedDomainsCopy.has( domain ) ) {
+				selectedDomainsCopy.delete( domain );
+			} else {
+				selectedDomainsCopy.add( domain );
+			}
+
+			setSelectedDomains( selectedDomainsCopy );
+		},
+		[ setSelectedDomains, selectedDomains ]
+	);
+
 	if ( ! domains ) {
 		return null;
 	}
@@ -47,12 +84,37 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		} );
 	};
 
+	const hasSelectedDomains = selectedDomains.size > 0;
+	const areAllDomainsSelected = domains.length === selectedDomains.size;
+
+	const getBulkSelectionStatus = () => {
+		if ( hasSelectedDomains && areAllDomainsSelected ) {
+			return 'all-domains';
+		}
+
+		if ( hasSelectedDomains && ! areAllDomainsSelected ) {
+			return 'some-domains';
+		}
+
+		return 'no-domains';
+	};
+
+	const changeBulkSelection = () => {
+		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
+			setSelectedDomains( new Set( domains.map( ( { domain } ) => domain ) ) );
+		} else {
+			setSelectedDomains( new Set() );
+		}
+	};
+
 	return (
 		<table className="domains-table">
 			<DomainsTableHeader
 				columns={ domainsTableColumns }
 				activeSortKey={ sortKey }
 				activeSortDirection={ sortDirection }
+				bulkSelectionStatus={ getBulkSelectionStatus() }
+				onBulkSelectionChange={ changeBulkSelection }
 				onChangeSortOrder={ ( selectedColumn ) => {
 					onSortChange( selectedColumn );
 				} }
@@ -62,6 +124,8 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 					<DomainsTableRow
 						key={ domain.domain }
 						domain={ domain }
+						isSelected={ selectedDomains.has( domain.domain ) }
+						onSelect={ handleSelectDomain }
 						fetchSiteDomains={ fetchSiteDomains }
 						isAllSitesView={ isAllSitesView }
 					/>
