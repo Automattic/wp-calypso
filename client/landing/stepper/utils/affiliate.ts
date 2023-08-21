@@ -2,13 +2,13 @@
  * Set the affiliate tracking cookie with provided data.
  *
  * @param {number} vendorId - The product vendor id.
- * @param {string} refererId - The affiliate's referer ID.
+ * @param {string} affiliateId - The affiliate's ID.
  * @param {string|null} campaignId - The campaign ID (optional).
  * @param {string|null} subId - The sub ID (optional).
  */
 export const setAffiliateCookie = (
 	vendorId: number,
-	refererId: string,
+	affiliateId: string,
 	campaignId: string | null,
 	subId: string | null
 ): void => {
@@ -25,7 +25,7 @@ export const setAffiliateCookie = (
 	// Construct the affiliate cookie data object
 	const affiliateCookieData = {
 		[ vendorId ]: {
-			affiliate_id: refererId,
+			affiliate_id: affiliateId,
 			campaign_id: campaignId || '',
 			sub_id: subId || '',
 		},

@@ -7,7 +7,7 @@ import { WOOEXPRESS_AFFILIATE_VENDOR_ID } from '../constants';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
-import { setAffiliateCookie } from '../utils/referer';
+import { setAffiliateCookie } from '../utils/affiliate';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
@@ -56,9 +56,9 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
-		const refererId = queryParams.get( 'reff' );
-		const campaignId = queryParams.get( 'campaign_id' );
-		const subId = queryParams.get( 'sub_id' );
+		const affiliateId = queryParams.get( 'aff' );
+		const campaignId = queryParams.get( 'cid' );
+		const subId = queryParams.get( 'sid' );
 
 		if ( profilerData ) {
 			try {
@@ -73,9 +73,9 @@ const wooexpress: Flow = {
 
 		const existingCookie = document.cookie.includes( 'wp-affiliate-tracker=' );
 
-		// Check if refererId exists and the cookie doesn't exist
-		if ( refererId && ! existingCookie ) {
-			setAffiliateCookie( WOOEXPRESS_AFFILIATE_VENDOR_ID, refererId, campaignId, subId );
+		// Check if affiliateId exists and the cookie doesn't exist
+		if ( affiliateId && ! existingCookie ) {
+			setAffiliateCookie( WOOEXPRESS_AFFILIATE_VENDOR_ID, affiliateId, campaignId, subId );
 		}
 
 		const getStartUrl = () => {
