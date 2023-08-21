@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 import { createActions } from '../actions';
 import {
 	SiteLaunchError,
@@ -410,6 +409,7 @@ describe( 'Site Actions', () => {
 
 	describe( 'Design Actions', () => {
 		const mockedRecipe = { stylesheet: 'pub/zoologist' };
+		const mockedGlobalStylesId = 1;
 		const mockedDesign = {
 			title: 'Zoologist',
 			slug: 'zoologist',
@@ -445,19 +445,106 @@ describe( 'Site Actions', () => {
 			},
 		} );
 
+		const createMockedGetGlobalStylesApiRequest = ( stylesheet ) => ( {
+			type: 'WPCOM_REQUEST',
+			request: {
+				path: `/sites/${ siteSlug }/global-styles/themes/${ stylesheet }/variations`,
+				apiNamespace: 'wp/v2',
+				method: 'GET',
+			},
+		} );
+
+		const createMockedSetGlobalStylesApiRequest = ( globalStylesId, payload ) => ( {
+			type: 'WPCOM_REQUEST',
+			request: {
+				path: `/sites/${ siteSlug }/global-styles/${ globalStylesId }`,
+				apiNamespace: 'wp/v2',
+				body: payload,
+				method: 'POST',
+			},
+		} );
+
+		const createMockedThemeSetupApiRequest = () => ( {
+			type: 'WPCOM_REQUEST',
+			request: {
+				path: `/sites/${ siteSlug }/theme-setup/?_locale=user`,
+				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
+				method: 'POST',
+			},
+		} );
+
 		it( 'should call global styles API to set the styles if the design has style variation', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
 			const generator = setDesignOnSite( siteSlug, mockedDesign, {
 				styleVariation: mockedStyleVariation,
 			} );
 
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			// 1st iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSwitchApiRequest( {
 					theme: 'zoologist',
 					dont_change_homepage: false,
 				} )
 			);
+
+			// 2nd iteration: WP_COM_REQUEST to /sites/${ siteSlug }/global-styles/themes/${ stylesheet }/variations is fired
+			expect(
+				generator.next( {
+					stylesheet: mockedDesign.recipe.stylesheet,
+					global_styles_id: mockedGlobalStylesId,
+				} as any ).value
+			).toEqual( createMockedGetGlobalStylesApiRequest( mockedDesign.recipe.stylesheet ) );
+
+			// 3rd iteration: WP_COM_REQUEST to /sites/${ siteSlug }/global-styles/${ globalStylesId } is fired
+			expect( generator.next( [ mockedStyleVariation ] as any ).value ).toEqual(
+				createMockedSetGlobalStylesApiRequest( mockedGlobalStylesId, {
+					id: mockedGlobalStylesId,
+					settings: mockedStyleVariation.settings,
+					styles: mockedStyleVariation.styles,
+				} )
+			);
+		} );
+
+		it( 'should call theme-setup api if the design needs to do that', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const generator = setDesignOnSite( siteSlug, {
+				...mockedDesign,
+				slug: 'arbutus',
+			} );
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSwitchApiRequest( {
+					theme: 'arbutus',
+					dont_change_homepage: true,
+				} )
+			);
+
+			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
+			expect( generator.next().value ).toEqual( createMockedThemeSetupApiRequest() );
+
+			// Second iteration: Complete the cycle
+			expect( generator.next().done ).toEqual( true );
+		} );
+
+		it( "should not call theme-setup api if the design doesn't need to do that", () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const generator = setDesignOnSite( siteSlug, {
+				...mockedDesign,
+				slug: 'twentytwentythree',
+			} );
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSwitchApiRequest( {
+					theme: 'twentytwentythree',
+					dont_change_homepage: false,
+				} )
+			);
+
+			// Second iteration: Complete the cycle
+			expect( generator.next().done ).toEqual( true );
 		} );
 	} );
 } );

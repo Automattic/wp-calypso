@@ -397,7 +397,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		// @todo Always use the global styles for consistency
 		if ( styleVariation?.slug ) {
-			const variations: GlobalStyles[] = yield getGlobalStylesVariations(
+			const variations: GlobalStyles[] = yield* getGlobalStylesVariations(
 				siteSlug,
 				activatedTheme.stylesheet
 			);
@@ -408,7 +408,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			);
 
 			if ( currentVariation ) {
-				yield setGlobalStyles(
+				yield* setGlobalStyles(
 					siteSlug,
 					activatedTheme.stylesheet,
 					currentVariation,
@@ -418,11 +418,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 
 		if ( globalStyles ) {
-			yield setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
+			yield* setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
 		}
 
 		if ( shouldRunThemeSetup ) {
-			yield runThemeSetupOnSite( siteSlug );
+			yield* runThemeSetupOnSite( siteSlug );
 		}
 
 		return activatedTheme;
