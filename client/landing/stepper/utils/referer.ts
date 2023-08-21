@@ -12,8 +12,12 @@ export const setAffiliateCookie = (
 	campaignId: string | null,
 	subId: string | null
 ): void => {
+	const DAY_IN_SECONDS = 3600 * 24;
+
 	// Define cookie expiration date (30 days from now)
-	const expirationDate = new Date( new Date().getTime() + 30 * 24 * 60 * 60 * 1000 ).toUTCString();
+	const expirationDate = new Date(
+		new Date().getTime() + 30 * DAY_IN_SECONDS * 1000
+	).toUTCString();
 
 	// Define cookie options for path and expiration date
 	const cookieOptions = `path=/; expires=${ expirationDate };`;
