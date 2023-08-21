@@ -5,16 +5,17 @@ const useIsCustomDomainAllowedOnFreePlan = (
 	flowName?: string | null,
 	hasPaidDomainName?: boolean
 ): DataResponse< boolean > => {
-	const [ isLoadingAnyDomainExperiment, assignmentAnyDomainExperiment ] = useExperiment(
-		'calypso_onboardingpm_plans_paid_domain_on_free_plan',
-		{
-			isEligible: [ 'onboarding', 'onboarding-pm' ].includes( flowName ?? '' ) && hasPaidDomainName,
-		}
-	);
+	const EXPERIMENT_NAME =
+		flowName === 'onboarding'
+			? 'calypso_onboarding_plans_paid_domain_on_free_plan'
+			: 'calypso_onboardingpm_plans_paid_domain_on_free_plan';
+	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME, {
+		isEligible: [ 'onboarding', 'onboarding-pm' ].includes( flowName ?? '' ) && hasPaidDomainName,
+	} );
 
 	return {
-		isLoading: isLoadingAnyDomainExperiment,
-		result: assignmentAnyDomainExperiment?.variationName === 'treatment',
+		isLoading,
+		result: assignment?.variationName === 'treatment',
 	};
 };
 
