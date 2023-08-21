@@ -23,36 +23,41 @@ import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
+import { Product } from '../types';
 import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from './';
 import './style.scss';
 
+type MembersProductsSectionProps = {
+	section: any;
+	query: any;
+};
 const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
 	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
-function MembershipsProductsSection( { section, query } ) {
+function MembershipsProductsSection( { section, query }: MembersProductsSectionProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
-	const [ product, setProduct ] = useState( null );
+	const [ product, setProduct ] = useState< Product | null >( null );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
-	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
+	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )
 	);
 	const hasDonationsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID, FEATURE_DONATIONS )
+		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
 	);
 	const hasPremiumContentFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID, FEATURE_PREMIUM_CONTENT_CONTAINER )
+		siteHasFeature( state, site?.ID ?? null, FEATURE_PREMIUM_CONTENT_CONTAINER )
 	);
 	const hasRecurringPaymentsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site?.ID, FEATURE_RECURRING_PAYMENTS )
+		siteHasFeature( state, site?.ID ?? null, FEATURE_RECURRING_PAYMENTS )
 	);
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
@@ -64,7 +69,7 @@ function MembershipsProductsSection( { section, query } ) {
 	const trackUpgrade = () =>
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 
-	function renderEllipsisMenu( productId ) {
+	function renderEllipsisMenu( productId: string | null ) {
 		return (
 			<EllipsisMenu position="bottom left">
 				{ hasStripeFeature && (
@@ -81,22 +86,22 @@ function MembershipsProductsSection( { section, query } ) {
 		);
 	}
 
-	function openAddEditDialog( productId ) {
+	function openAddEditDialog( productId: string | null ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod ) => prod.ID === productId );
+			const currentProduct = products.find( ( currentProduct ) => currentProduct.ID === productId );
 			setShowAddEditDialog( true );
-			setProduct( currentProduct );
+			setProduct( currentProduct ?? null );
 		} else {
 			setShowAddEditDialog( true );
 			setProduct( null );
 		}
 	}
 
-	function openDeleteDialog( productId ) {
+	function openDeleteDialog( productId: string | null ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod ) => prod.ID === productId );
+			const currentProduct = products.find( ( currentProduct ) => currentProduct.ID === productId );
 			setShowDeleteDialog( true );
-			setProduct( currentProduct );
+			setProduct( currentProduct ?? null );
 		}
 	}
 
@@ -107,8 +112,8 @@ function MembershipsProductsSection( { section, query } ) {
 
 	return (
 		<div>
-			<QueryMembershipsSettings siteId={ site?.ID } />
-			<QueryMembershipProducts siteId={ site?.ID } />
+			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
+			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
 			<HeaderCake backHref={ '/earn/payments/' + site?.slug }>
 				{ translate( 'Payment plans' ) }
 			</HeaderCake>
@@ -155,7 +160,7 @@ function MembershipsProductsSection( { section, query } ) {
 							) }
 						</div>
 
-						{ renderEllipsisMenu( currentProduct?.ID ) }
+						{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
 					</CompactCard>
 				) ) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
@@ -166,7 +171,7 @@ function MembershipsProductsSection( { section, query } ) {
 					} ) }
 				/>
 			) }
-			{ hasLoadedFeatures && showDeleteDialog && (
+			{ hasLoadedFeatures && showDeleteDialog && product && (
 				<RecurringPaymentsPlanDeleteModal closeDialog={ closeDialog } product={ product } />
 			) }
 			{ ! hasLoadedFeatures && (
