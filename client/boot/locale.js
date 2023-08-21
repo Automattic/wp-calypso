@@ -10,13 +10,25 @@ import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-lo
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setLocale } from 'calypso/state/ui/language/actions';
 
-export function getLocaleFromPathname() {
+export function getLocaleFromPathname( options ) {
+	const { excludedPathSegments = [] } = options || {};
 	const pathname = window.location.pathname.replace( /\/$/, '' );
+
+	// The excludedPathSegments option can be used on paths where the last path segment is the resource slug.
+	// This option avoids the possible collision between the resource slug and the locale slug.
+	if ( excludedPathSegments.length ) {
+		const penultimatePathSegment = pathname.split( '/' ).at( -2 );
+		if ( excludedPathSegments.some( ( segment ) => segment === penultimatePathSegment ) ) {
+			return false;
+		}
+	}
+
 	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
 	const pathLocaleSlug =
 		getLanguageSlugs().includes( lastPathSegment ) &&
 		! isDefaultLocale( lastPathSegment ) &&
 		lastPathSegment;
+
 	return pathLocaleSlug;
 }
 
@@ -69,8 +81,8 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const pathLocaleSlug = getLocaleFromQueryParam();
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	} else {
-		// For logged out Calypso pages, set the locale from slug
-		const pathLocaleSlug = getLocaleFromPathname();
+		// For logged out Calypso pages, set the locale from slug.
+		const pathLocaleSlug = getLocaleFromPathname( { excludedPathSegments: [ 'theme' ] } );
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	}
 
