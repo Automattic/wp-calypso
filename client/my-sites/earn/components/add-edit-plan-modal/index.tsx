@@ -33,7 +33,7 @@ import './style.scss';
 type RecurringPaymentsPlanAddEditModalProps = {
 	closeDialog: () => void;
 	product: Product;
-	annual_product?: Product;
+	annualProduct?: Product;
 	siteId?: number;
 };
 
@@ -67,7 +67,7 @@ const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
 const RecurringPaymentsPlanAddEditModal = ( {
 	closeDialog,
 	product,
-	annual_product /* annual product for tiers */,
+	annualProduct /* annual product for tiers */,
 	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
@@ -115,7 +115,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 
 	const [ currentAnnualPrice, setCurrentAnnualPrice ] = useState(
-		annual_product?.price ??
+		annualProduct?.price ??
 			minimumCurrencyTransactionAmount(
 				connectedAccountMinimumCurrency,
 				currentCurrency,
@@ -212,7 +212,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
-			const product_details = {
+			const productDetails = {
 				currency: currentCurrency,
 				price: currentPrice,
 				title: editedProductName,
@@ -225,29 +225,29 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			};
 
 			if ( editedPostPaidNewsletter ) {
-				const annual_product_details = { ...product_details, price: currentAnnualPrice };
+				const annualProductDetails = { ...productDetails, price: currentAnnualPrice };
 				dispatch(
 					requestAddTier(
 						siteId ?? selectedSiteId,
-						product,
-						annual_product,
+						productDetails,
+						annualProductDetails,
 						translate( 'Added "%s" payment plan.', { args: editedProductName } )
 					)
 				);
-				recordTracksEvent( 'calypso_earn_page_payment_added', product_details );
-				recordTracksEvent( 'calypso_earn_page_payment_added', annual_product_details );
+				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
+				recordTracksEvent( 'calypso_earn_page_payment_added', annualProductDetails );
 			} else {
 				dispatch(
 					requestAddProduct(
 						siteId ?? selectedSiteId,
-						product_details,
+						productDetails,
 						translate( 'Added "%s" payment plan.', { args: editedProductName } )
 					)
 				);
-				recordTracksEvent( 'calypso_earn_page_payment_added', product_details );
+				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
 			}
 		} else if ( reason === 'submit' && product && product.ID ) {
-			const product_details = {
+			const productDetails = {
 				ID: product.ID,
 				currency: currentCurrency,
 				price: currentPrice,
@@ -264,22 +264,22 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				dispatch(
 					requestUpdateProduct(
 						siteId ?? selectedSiteId,
-						product_details,
+						productDetails,
 						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 					)
 				);
 			} else {
-				const annual_product_details = {
-					...product_details,
+				const annualProductDetails = {
+					...productDetails,
 					price: currentAnnualPrice,
-					ID: annual_product?.ID,
+					ID: annualProduct?.ID,
 				};
 
 				dispatch(
 					requestUpdateTier(
 						siteId ?? selectedSiteId,
-						product_details,
-						annual_product_details,
+						productDetails,
+						annualProductDetails,
 						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 					)
 				);
