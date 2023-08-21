@@ -154,6 +154,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
+	PLAN_100_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -418,6 +419,7 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
+	TERM_CENTENNIALLY,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1509,6 +1511,20 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			andMore: false,
 		},
 	} ),
+} );
+
+const get100YearPlanDetails = (): Partial< IncompleteWPcomPlan > => ( {
+	// Todo: ¯\_(ツ)_/¯ on the copy.
+	getTitle: () => i18n.translate( '100 Year Plan' ),
+	getAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+	getBlogAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+	getStoreAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+	getPlanTagline: () => i18n.translate( 'A plan for the future of your website.' ),
+	getDescription: () => i18n.translate( 'A plan for the future of your website.' ),
+	getShortDescription: () => i18n.translate( 'A plan for the future of your website.' ),
+	getTagline: () => i18n.translate( 'A plan for the future of your website.' ),
+	getBlogOnboardingTagLine: () => i18n.translate( 'A plan for the future of your website.' ),
 } );
 
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
@@ -2707,6 +2723,33 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1048,
 		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
 		getPathSlug: () => 'business-3-years',
+	},
+
+	[ PLAN_100_YEARS ]: {
+		...getPlanBusinessDetails(),
+		...get100YearPlanDetails(),
+		term: TERM_CENTENNIALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_BUSINESS_MONTHLY,
+				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
+			].includes( plan ),
+		getProductId: () => 1061,
+		getStoreSlug: () => PLAN_100_YEARS,
+		getPathSlug: () => '100-year-plan',
 	},
 
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
