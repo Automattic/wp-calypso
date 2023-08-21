@@ -10,8 +10,7 @@ import configureStore from 'redux-mock-store';
 import SiteActions from '../index';
 import type { SiteNode } from '../../types';
 
-const Wrapper = () => {
-	const siteObj = {
+const createFakeSite = ( changes = {} ) => ( {
 		blog_id: 1234,
 		url: 'test.jurassic.ninja',
 		url_with_scheme: 'https://test.jurassic.ninja/',
@@ -24,9 +23,12 @@ const Wrapper = () => {
 		is_connection_healthy: true,
 		awaiting_plugin_updates: [],
 		is_favorite: false,
-	};
-	const site: SiteNode = {
-		value: siteObj,
+	...changes,
+} );
+
+const Wrapper = ( { site = createFakeSite(), siteError = false } ) => {
+	const siteData: SiteNode = {
+		value: site,
 		error: false,
 		type: 'site',
 		status: '',
@@ -37,7 +39,7 @@ const Wrapper = () => {
 
 	return (
 		<Provider store={ store }>
-			<SiteActions site={ site } siteError={ false } />
+			<SiteActions site={ siteData } siteError={ siteError } />
 		</Provider>
 	);
 };
