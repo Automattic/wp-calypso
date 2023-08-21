@@ -3,9 +3,11 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
+import { WOOEXPRESS_AFFILIATE_VENDOR_ID } from '../constants';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { setAffiliateCookie } from '../utils/referer';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
@@ -18,8 +20,6 @@ import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-i
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
-
-const WOOEXPRESS_AFFILIATE_VENDOR_ID = 999;
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
@@ -199,40 +199,5 @@ const wooexpress: Flow = {
 		return { submit, exitFlow };
 	},
 };
-
-/**
- * Set the affiliate tracking cookie with provided data.
- *
- * @param {string} vendorId - The product vendor id.
- * @param {string} refererId - The affiliate's referer ID.
- * @param {string} campaignId - The campaign ID (optional).
- * @param {string} subId - The sub ID (optional).
- */
-function setAffiliateCookie(
-	vendorId: number,
-	refererId: string,
-	campaignId: string | null,
-	subId: string | null
-) {
-	// Define cookie expiration date (30 days from now)
-	const expirationDate = new Date( new Date().getTime() + 30 * 24 * 60 * 60 * 1000 ).toUTCString();
-
-	// Define cookie options for path and expiration date
-	const cookieOptions = `path=/; expires=${ expirationDate };`;
-
-	// Construct the affiliate cookie data object
-	const affiliateCookieData = {
-		[ vendorId ]: {
-			affiliate_id: refererId,
-			campaign_id: campaignId || '',
-			sub_id: subId || '',
-		},
-	};
-
-	// Convert the affiliate cookie data object to a JSON string and set the cookie
-	document.cookie = `wp-affiliate-tracker=${ encodeURIComponent(
-		JSON.stringify( affiliateCookieData )
-	) }; ${ cookieOptions }`;
-}
 
 export default wooexpress;
