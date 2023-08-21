@@ -381,15 +381,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		selectedDesign: Design,
 		options: DesignOptions = {}
 	) {
-		const shouldRunThemeSetup = THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP.includes(
-			selectedDesign.slug
-		);
+		const themeSlug =
+			selectedDesign.slug ||
+			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] ||
+			selectedDesign.theme;
+		const shouldRunThemeSetup = THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP.includes( themeSlug );
 		const { keepHomepage = shouldRunThemeSetup, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 			apiVersion: '1.1',
 			body: {
-				theme: selectedDesign.slug,
+				theme: themeSlug,
 				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
