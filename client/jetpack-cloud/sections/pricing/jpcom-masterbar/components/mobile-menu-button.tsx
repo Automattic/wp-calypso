@@ -13,14 +13,15 @@ const MobileMenuButton: FC< MobileMenuButtonProps > = ( { isOpen, setIsOpen, mob
 	const translate = useTranslate();
 
 	const mobileMenuToggle = useCallback( () => {
-		setIsOpen( ( open ) => ! open );
-
-		if ( ! isOpen ) {
-			document.body.classList.add( 'no-scroll' );
-		} else {
-			document.body.classList.remove( 'no-scroll' );
-		}
-	}, [ isOpen, setIsOpen ] );
+		setIsOpen( ( open ) => {
+			if ( ! open ) {
+				document.body.classList.add( 'no-scroll' );
+			} else {
+				document.body.classList.remove( 'no-scroll' );
+			}
+			return ! open;
+		} );
+	}, [ setIsOpen ] );
 
 	const mobileOnKeyDown = useCallback(
 		( e: KeyboardEvent ) => {

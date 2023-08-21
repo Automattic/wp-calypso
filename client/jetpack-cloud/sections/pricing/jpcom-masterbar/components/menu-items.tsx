@@ -20,7 +20,7 @@ interface MenuItemProps {
 const MenuItems: FC< MenuItemsProps > = ( { pathname } ) => {
 	const { data: menuData, status: menuDataStatus } = useJetpackMasterbarDataQuery();
 
-	const sections = menuData?.sections ? Array.from( Object.values( menuData.sections ) ) : null;
+	const sections = menuData?.sections ? Object.values( menuData.sections ) : null;
 	const bundles = menuData?.bundles ?? null;
 
 	return (
