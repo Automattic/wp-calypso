@@ -23,9 +23,27 @@
 	}
 
 	.card.trial-banner {
+		padding: 1.5rem;
 		background: var(--color-surface);
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 
+		.trial-banner__content {
+			padding-right: 0;
+		}
+
+		.trial-banner__content .trial-banner__title {
+			font-size: 2rem;
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		}
+
+		.trial-banner__content .trial-banner__subtitle {
+			color: var(--color-text);
+		}
+
+		.trial-banner__chart-wrapper .trial-banner__chart-label {
+			font-size: 0.875rem;
+			color: var(--color-text);
+		}
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
