@@ -8,6 +8,11 @@ import { renderWithProvider, testDomain, testPartialDomain } from '../../test-ut
 
 const render = ( el ) => renderWithProvider( el );
 
+const getBulkCheckbox = () =>
+	screen.getByRole( 'checkbox', { name: 'Select all tick boxes for domains in table' } );
+const getDomainCheckbox = ( domain: string ) =>
+	screen.getByRole( 'checkbox', { name: `Tick box for ${ domain }` } );
+
 test( 'all domain names are rendered in the table', () => {
 	const { rerender } = render(
 		<DomainsTable
@@ -129,8 +134,9 @@ test( 'when the user has no selected domains, all checkboxes are unchecked', () 
 		/>
 	);
 
-	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
-		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+	const bulkCheckbox = getBulkCheckbox();
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
 
 	expect( bulkCheckbox ).not.toBeChecked();
 	expect( firstDomainsCheckbox ).not.toBeChecked();
@@ -148,8 +154,9 @@ test( 'when the user selects one domain, the bulk domains checkbox becomes parti
 		/>
 	);
 
-	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
-		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+	const bulkCheckbox = getBulkCheckbox();
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
 
 	fireEvent.click( firstDomainsCheckbox );
 
@@ -169,8 +176,9 @@ test( 'when the user selects all domains, the bulk domains checkbox becomes chec
 		/>
 	);
 
-	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
-		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+	const bulkCheckbox = getBulkCheckbox();
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
 
 	fireEvent.click( firstDomainsCheckbox );
 	fireEvent.click( secondDomainsCheckbox );
@@ -191,8 +199,9 @@ test( 'when no domains are checked and the user clicks the bulk checkbox, all do
 		/>
 	);
 
-	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
-		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+	const bulkCheckbox = getBulkCheckbox();
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
 
 	fireEvent.click( bulkCheckbox );
 
@@ -212,8 +221,9 @@ test( 'when a subset of domains are checked and the user clicks the bulk checkbo
 		/>
 	);
 
-	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
-		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+	const bulkCheckbox = getBulkCheckbox();
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
 
 	fireEvent.click( firstDomainsCheckbox );
 
@@ -239,8 +249,9 @@ test( 'when all domains are checked and the user clicks the bulk checkbox, all d
 		/>
 	);
 
-	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
-		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+	const bulkCheckbox = getBulkCheckbox();
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
 
 	fireEvent.click( bulkCheckbox );
 	expect( bulkCheckbox ).toBeChecked();
@@ -265,8 +276,9 @@ test( 'when the domains list changes, all domains become unchecked', () => {
 		/>
 	);
 
-	const [ bulkCheckbox, firstDomainsCheckbox, secondDomainsCheckbox ] =
-		screen.getAllByRole< HTMLInputElement >( 'checkbox' );
+	const bulkCheckbox = getBulkCheckbox();
+	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
+	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
 
 	fireEvent.click( bulkCheckbox );
 	expect( bulkCheckbox ).toBeChecked();

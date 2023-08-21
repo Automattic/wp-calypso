@@ -1,5 +1,7 @@
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
@@ -23,6 +25,7 @@ export function DomainsTableRow( {
 	onSelect,
 	fetchSiteDomains,
 }: DomainsTableRowProps ) {
+	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const { data } = useSiteDomainsQuery( domain.blog_id, {
@@ -54,6 +57,10 @@ export function DomainsTableRow( {
 					__nextHasNoMarginBottom
 					checked={ isSelected }
 					onChange={ () => onSelect( domain ) }
+					/* translators: Label for a checkbox control that selects a domain name.*/
+					aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+						domain: domain.domain,
+					} ) }
 				/>
 			</td>
 			<td>
