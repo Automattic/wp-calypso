@@ -1,10 +1,10 @@
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
-$plan-features-sidebar-width: 272px;
+$plan-features-sidebar-width: 272px; // same as --sidebar-width-max
 $plan-features-header-banner-height: 20px;
 
 // Plan Features Grid Breakpoints
-$plans-2023-small-breakpoint: 780px;
+$plans-2023-small-breakpoint: 780px; // same as $break-medium
 $plans-2023-medium-breakpoint: 1200px;
 
 $minWidthToGridWidthMap: (

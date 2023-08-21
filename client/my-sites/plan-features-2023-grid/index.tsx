@@ -827,7 +827,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} = this.props;
 
 		return (
-			<div className="plans-wrapper">
+			<div>
 				<QueryActivePromotions />
 				<PlansGridContextProvider
 					intent={ intent }

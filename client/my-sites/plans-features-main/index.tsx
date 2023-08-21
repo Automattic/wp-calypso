@@ -42,6 +42,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import ComparisonGridToggle from './components/comparison-grid-toggle';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
@@ -66,7 +67,6 @@ import type {
 	PlanActionOverrides,
 } from 'calypso/my-sites/plan-features-2023-grid/types';
 import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 const SPOTLIGHT_ENABLED_INTENTS = [ 'plans-default-wpcom' ];
@@ -633,47 +633,57 @@ const PlansFeaturesMain = ( {
 						) }
 						data-e2e-plans="wpcom"
 					>
-						<PlanFeatures2023Grid
-							gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
-							gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
-							gridPlanForSpotlight={ gridPlanForSpotlight }
-							paidDomainName={ paidDomainName }
-							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							onUpgradeClick={ handleUpgradeClick }
-							flowName={ flowName }
-							selectedFeature={ selectedFeature }
-							selectedPlan={ selectedPlan }
-							siteId={ siteId }
-							isReskinned={ isReskinned }
-							intervalType={ intervalType }
-							hidePlansFeatureComparison={ hidePlansFeatureComparison }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							currentSitePlanSlug={ sitePlanSlug }
-							planActionOverrides={ planActionOverrides }
-							intent={ intent }
-							isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
-							showLegacyStorageFeature={ showLegacyStorageFeature }
-							showUpgradeableStorage={ showUpgradeableStorage }
-							stickyRowOffset={ masterbarHeight }
-							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-							allFeaturesList={ FEATURES_LIST }
-							showOdie={ () => {
-								if ( ! isVisible ) {
-									trackEvent( 'calypso_odie_chat_toggle_visibility', {
-										visibility: true,
-										trigger: 'scroll',
-									} );
-									setIsVisible( true );
+						<div className="plans-wrapper">
+							<PlanFeatures2023Grid
+								gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
+								gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
+								gridPlanForSpotlight={ gridPlanForSpotlight }
+								paidDomainName={ paidDomainName }
+								wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+								isInSignup={ isInSignup }
+								isLaunchPage={ isLaunchPage }
+								onUpgradeClick={ handleUpgradeClick }
+								flowName={ flowName }
+								selectedFeature={ selectedFeature }
+								selectedPlan={ selectedPlan }
+								siteId={ siteId }
+								isReskinned={ isReskinned }
+								intervalType={ intervalType }
+								hidePlansFeatureComparison={ hidePlansFeatureComparison }
+								hideUnavailableFeatures={ hideUnavailableFeatures }
+								currentSitePlanSlug={ sitePlanSlug }
+								planActionOverrides={ planActionOverrides }
+								intent={ intent }
+								isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
+								showLegacyStorageFeature={ showLegacyStorageFeature }
+								showUpgradeableStorage={ showUpgradeableStorage }
+								stickyRowOffset={ masterbarHeight }
+								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+								allFeaturesList={ FEATURES_LIST }
+								showOdie={ () => {
+									if ( ! isVisible ) {
+										trackEvent( 'calypso_odie_chat_toggle_visibility', {
+											visibility: true,
+											trigger: 'scroll',
+										} );
+										setIsVisible( true );
+									}
+								} }
+								showPlansComparisonGrid={ showPlansComparisonGrid }
+								toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
+								planTypeSelectorProps={ planTypeSelectorProps }
+								ref={ plansComparisonGridRef }
+							/>
+							<ComparisonGridToggle
+								onClick={ toggleShowPlansComparisonGrid }
+								label={
+									showPlansComparisonGrid
+										? translate( 'Hide comparison' )
+										: translate( 'Compare plans' )
 								}
-							} }
-							showPlansComparisonGrid={ showPlansComparisonGrid }
-							toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
-							planTypeSelectorProps={ planTypeSelectorProps }
-							ref={ plansComparisonGridRef }
-						/>
+							/>
+						</div>
 					</div>
 				</>
 			) }
