@@ -230,6 +230,7 @@ class PostCommentList extends Component {
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 				shouldHighlightNew={ this.props.shouldHighlightNew }
+				isInlineComment={ this.props.expandableView }
 			/>
 		);
 	};

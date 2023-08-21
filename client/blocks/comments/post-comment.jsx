@@ -62,6 +62,7 @@ class PostComment extends PureComponent {
 		showNestingReplyArrow: PropTypes.bool,
 		showReadMoreInActions: PropTypes.bool,
 		hidePingbacksAndTrackbacks: PropTypes.bool,
+		isInlineComment: PropTypes.bool,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -244,6 +245,7 @@ class PostComment extends PureComponent {
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
+								isInlineComment={ this.props.isInlineComment }
 							/>
 						) ) }
 					</ol>
@@ -274,6 +276,7 @@ class PostComment extends PureComponent {
 				commentText={ this.props.commentText }
 				onUpdateCommentText={ this.props.onUpdateCommentText }
 				onCommentSubmit={ this.props.onCommentSubmit }
+				isInlineComment={ this.props.isInlineComment }
 			/>
 		);
 	}
