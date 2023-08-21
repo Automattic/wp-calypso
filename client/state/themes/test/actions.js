@@ -599,9 +599,9 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2211667/themes/mine?_locale=user', { theme: 'twentysixteen' } )
+				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'twentysixteen' } )
 				.reply( 200, { id: 'karuna', version: '1.0.3' } )
-				.post( '/rest/v1.1/sites/2211667/themes/mine?_locale=user', { theme: 'badTheme' } )
+				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'badTheme' } )
 				.reply( 404, {
 					error: 'theme_not_found',
 					message: 'The specified theme was not found',
