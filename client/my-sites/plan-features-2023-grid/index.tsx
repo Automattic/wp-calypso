@@ -40,7 +40,7 @@ import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe
 import PlanFeatures2023GridHeaderPrice from './components/header-price';
 import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
-import PlanFeatures from './components/plan-features';
+import PlanFeaturesContainer from './components/plan-features-container';
 import PlanLogo from './components/plan-logo';
 import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
@@ -629,7 +629,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		);
 
 		return (
-			<PlanFeatures
+			<PlanFeaturesContainer
 				plansWithFeatures={ plansWithFeatures }
 				paidDomainName={ paidDomainName }
 				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
