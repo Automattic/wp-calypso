@@ -228,6 +228,11 @@ $videopress-background: #010101;
 			background: none;
 		}
 	}
+
+	.featured-domain-suggestion.card .domain-product-price {
+		align-items: flex-start;
+		margin-top: 12px;
+	}
 }
 
 .is-videopress-stepper {
