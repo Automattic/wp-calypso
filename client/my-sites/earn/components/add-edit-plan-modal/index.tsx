@@ -33,7 +33,7 @@ import './style.scss';
 type RecurringPaymentsPlanAddEditModalProps = {
 	closeDialog: () => void;
 	product: Product;
-	annualProduct?: Product;
+	annual_product?: Product;
 	siteId?: number;
 };
 
@@ -67,7 +67,7 @@ const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
 const RecurringPaymentsPlanAddEditModal = ( {
 	closeDialog,
 	product,
-	annualProduct /* annual product for tiers */,
+	annual_product /* annual product for tiers */,
 	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
@@ -115,8 +115,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	);
 
 	const [ currentAnnualPrice, setCurrentAnnualPrice ] = useState(
-		annualProduct?.price ??
-			minimumCurrencyTransactionAmount( connectedAccountMinimumCurrency, currentCurrency, connectedAccountDefaultCurrency )
+		annual_product?.price ??
+			minimumCurrencyTransactionAmount(
+				connectedAccountMinimumCurrency,
+				currentCurrency,
+				connectedAccountDefaultCurrency
+			)
 	);
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
 	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
@@ -226,7 +230,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					requestAddTier(
 						siteId ?? selectedSiteId,
 						product,
-						annualProduct,
+						annual_product,
 						translate( 'Added "%s" payment plan.', { args: editedProductName } )
 					)
 				);
@@ -265,10 +269,17 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					)
 				);
 			} else {
+				const annual_product_details = {
+					...product_details,
+					price: currentAnnualPrice,
+					ID: annual_product?.ID,
+				};
+
 				dispatch(
-					requestUpdateProduct(
+					requestUpdateTier(
 						siteId ?? selectedSiteId,
 						product_details,
+						annual_product_details,
 						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 					)
 				);
