@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -27,7 +28,6 @@ import type {
 	AtomicSoftwareInstallError as AtomicSoftwareInstallErrorType,
 	AtomicSoftwareStatus,
 	SiteSettings,
-	ThemeSetupOptions,
 	ActiveTheme,
 	CurrentTheme,
 } from './types';
@@ -365,13 +365,33 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setThemeOnSite( siteSlug: string, theme: string, options: DesignOptions = {} ) {
-		const { keepHomepage = true, styleVariation, globalStyles } = options;
+	function* runThemeSetupOnSite( siteSlug: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup/?_locale=user`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				trim_content: true,
+			},
+			method: 'POST',
+		} );
+	}
+
+	function* setDesignOnSite(
+		siteSlug: string,
+		selectedDesign: Design,
+		options: DesignOptions = {}
+	) {
+		const themeSlug =
+			selectedDesign.slug ||
+			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] ||
+			selectedDesign.theme;
+		const shouldRunThemeSetup = THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP.includes( themeSlug );
+		const { keepHomepage = shouldRunThemeSetup, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
-			path: `/sites/${ siteSlug }/themes/mine`,
+			path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 			apiVersion: '1.1',
 			body: {
-				theme: theme,
+				theme: themeSlug,
 				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
@@ -379,7 +399,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		// @todo Always use the global styles for consistency
 		if ( styleVariation?.slug ) {
-			const variations: GlobalStyles[] = yield getGlobalStylesVariations(
+			const variations: GlobalStyles[] = yield* getGlobalStylesVariations(
 				siteSlug,
 				activatedTheme.stylesheet
 			);
@@ -390,7 +410,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			);
 
 			if ( currentVariation ) {
-				yield setGlobalStyles(
+				yield* setGlobalStyles(
 					siteSlug,
 					activatedTheme.stylesheet,
 					currentVariation,
@@ -400,67 +420,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 
 		if ( globalStyles ) {
-			yield setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
+			yield* setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
+		}
+
+		if ( shouldRunThemeSetup ) {
+			yield* runThemeSetupOnSite( siteSlug );
 		}
 
 		return activatedTheme;
-	}
-
-	function* runThemeSetupOnSite(
-		siteSlug: string,
-		selectedDesign: Design,
-		options?: DesignOptions
-	) {
-		const { recipe } = selectedDesign;
-
-		/*
-		 * Anchor themes are set up directly via Headstart on the server side
-		 * so exclude them from theme setup.
-		 */
-		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
-		if ( anchorDesigns.indexOf( selectedDesign.template ) >= 0 ) {
-			return;
-		}
-
-		const themeSetupOptions: ThemeSetupOptions = {
-			trim_content: options?.trimContent ?? true,
-		};
-
-		if ( options?.posts_source_site_id ) {
-			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
-		}
-
-		if ( recipe?.pattern_ids ) {
-			themeSetupOptions.pattern_ids = recipe?.pattern_ids;
-		}
-
-		if ( recipe?.header_pattern_ids ) {
-			themeSetupOptions.header_pattern_ids = recipe?.header_pattern_ids;
-		}
-
-		if ( recipe?.footer_pattern_ids ) {
-			themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
-		}
-
-		const response: { blog: string } = yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup/?_locale=user`,
-			apiNamespace: 'wpcom/v2',
-			body: themeSetupOptions,
-			method: 'POST',
-		} );
-
-		return response;
-	}
-
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
-		const theme = yield* setThemeOnSite(
-			siteSlug,
-			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
-			options
-		);
-
-		yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
-		return theme;
 	}
 
 	function* createCustomTemplate(
