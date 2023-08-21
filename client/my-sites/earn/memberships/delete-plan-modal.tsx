@@ -9,11 +9,13 @@ import { Product } from '../types';
 type RecurringPaymentsPlanDeleteModalProps = {
 	closeDialog: () => void;
 	product: Product;
+	annualProduct?: Product;
 };
 
 const RecurringPaymentsPlanDeleteModal = ( {
 	closeDialog,
 	product,
+	annualProduct,
 }: RecurringPaymentsPlanDeleteModalProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -25,6 +27,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 				requestDeleteProduct(
 					siteId,
 					product,
+					annualProduct,
 					translate( '"%s" was deleted.', { args: product.title } )
 				)
 			);
