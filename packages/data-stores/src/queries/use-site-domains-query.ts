@@ -103,7 +103,7 @@ export function useSiteDomainsQuery(
 				path: `/sites/${ siteIdOrSlug }/domains`,
 				apiVersion: '1.2',
 			} ),
-		enabled: Boolean( siteIdOrSlug ) && options.enabled,
 		...options,
+		enabled: Boolean( siteIdOrSlug ) && options.enabled,
 	} );
 }
