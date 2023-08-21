@@ -481,15 +481,6 @@ export interface LaunchPadCheckListTasksStatuses {
 	plan_completed?: boolean;
 }
 
-export interface ThemeSetupOptions {
-	trim_content?: boolean;
-	vertical_id?: string;
-	pattern_ids?: number[] | string[];
-	header_pattern_ids?: number[] | string[];
-	footer_pattern_ids?: number[] | string[];
-	posts_source_site_id?: number;
-}
-
 export interface ActiveTheme {
 	stylesheet: string;
 	_links: {
