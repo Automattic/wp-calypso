@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -364,17 +365,31 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
+	function* runThemeSetupOnSite( siteSlug: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup/?_locale=user`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				trim_content: true,
+			},
+			method: 'POST',
+		} );
+	}
+
 	function* setDesignOnSite(
 		siteSlug: string,
 		selectedDesign: Design,
 		options: DesignOptions = {}
 	) {
-		const { keepHomepage = false, styleVariation, globalStyles } = options;
+		const shouldRunThemeSetup = THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP.includes(
+			selectedDesign.slug
+		);
+		const { keepHomepage = shouldRunThemeSetup, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 			apiVersion: '1.1',
 			body: {
-				theme: selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
+				theme: selectedDesign.slug,
 				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
@@ -404,6 +419,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		if ( globalStyles ) {
 			yield setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
+		}
+
+		if ( shouldRunThemeSetup ) {
+			yield runThemeSetupOnSite( siteSlug );
 		}
 
 		return activatedTheme;
