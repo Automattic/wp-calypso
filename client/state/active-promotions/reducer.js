@@ -20,7 +20,11 @@ import { itemsSchema } from './schema';
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case ACTIVE_PROMOTIONS_RECEIVE:
-			return [ ...action.activePromotions ];
+			// Sometimes an empty PHP can be serialized as `{}` object, force to array in that case
+			if ( ! Array.isArray( action.activePromotions ) ) {
+				return [];
+			}
+			return action.activePromotions;
 	}
 
 	return state;
