@@ -19,6 +19,8 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
+const WOOEXPRESS_AFFILIATE_VENDOR_ID = 999;
+
 const wooexpress: Flow = {
 	name: 'wooexpress',
 
@@ -54,6 +56,9 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
+		const refererId = queryParams.get( 'reff' );
+		const campaignId = queryParams.get( 'campaign_id' );
+		const subId = queryParams.get( 'sub_id' );
 
 		if ( profilerData ) {
 			try {
@@ -64,6 +69,13 @@ const wooexpress: Flow = {
 				setProfilerData( decodedProfilerData );
 				// Ignore any bad/invalid data and prevent it from causing downstream issues.
 			} catch {}
+		}
+
+		const existingCookie = document.cookie.includes( 'wp-affiliate-tracker=' );
+
+		// Check if refererId exists and the cookie doesn't exist
+		if ( refererId && ! existingCookie ) {
+			setAffiliateCookie( WOOEXPRESS_AFFILIATE_VENDOR_ID, refererId, campaignId, subId );
 		}
 
 		const getStartUrl = () => {
@@ -187,5 +199,40 @@ const wooexpress: Flow = {
 		return { submit, exitFlow };
 	},
 };
+
+/**
+ * Set the affiliate tracking cookie with provided data.
+ *
+ * @param {string} vendorId - The product vendor id.
+ * @param {string} refererId - The affiliate's referer ID.
+ * @param {string} campaignId - The campaign ID (optional).
+ * @param {string} subId - The sub ID (optional).
+ */
+function setAffiliateCookie(
+	vendorId: number,
+	refererId: string,
+	campaignId: string | null,
+	subId: string | null
+) {
+	// Define cookie expiration date (30 days from now)
+	const expirationDate = new Date( new Date().getTime() + 30 * 24 * 60 * 60 * 1000 ).toUTCString();
+
+	// Define cookie options for path and expiration date
+	const cookieOptions = `path=/; expires=${ expirationDate };`;
+
+	// Construct the affiliate cookie data object
+	const affiliateCookieData = {
+		[ vendorId ]: {
+			affiliate_id: refererId,
+			campaign_id: campaignId || '',
+			sub_id: subId || '',
+		},
+	};
+
+	// Convert the affiliate cookie data object to a JSON string and set the cookie
+	document.cookie = `wp-affiliate-tracker=${ encodeURIComponent(
+		JSON.stringify( affiliateCookieData )
+	) }; ${ cookieOptions }`;
+}
 
 export default wooexpress;
