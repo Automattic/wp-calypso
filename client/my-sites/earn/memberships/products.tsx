@@ -6,7 +6,7 @@ import {
 import { Badge, Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -45,6 +45,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
+	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const features = useSelector( ( state ) => getFeaturesBySiteId( state, site?.ID ) );
 	const hasLoadedFeatures = features?.active.length > 0;
@@ -61,6 +62,21 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const hasRecurringPaymentsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_RECURRING_PAYMENTS )
 	);
+
+	useEffect( () => {
+		// Everytime we change the product, we set the according annualProduct
+		if ( products == null || product == null || ! product.ID ) {
+			setAnnualProduct( null );
+			return;
+		}
+
+		// We check for the right tier
+		const currentAnnualProduct = products.find(
+			( currentProduct ) => currentProduct.type === 'tier-' + product.ID
+		);
+		setAnnualProduct( currentAnnualProduct ?? null );
+	}, [ product, products ] );
+
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
 
@@ -146,33 +162,41 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 				</SectionHeader>
 			) }
 			{ hasLoadedFeatures &&
-				products.map( ( currentProduct ) => (
-					<CompactCard className="memberships__products-product-card" key={ currentProduct?.ID }>
-						<div className="memberships__products-product-details">
-							<div className="memberships__products-product-price">
-								{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
-							</div>
-							<div className="memberships__products-product-title">{ currentProduct?.title }</div>
-							{ currentProduct?.subscribe_as_site_subscriber && (
-								<div className="memberships__products-product-badge">
-									<Badge type="info">{ translate( 'Newsletter' ) }</Badge>
+				products
+					.filter(
+						( currentProduct ) =>
+							currentProduct.type == null || ! currentProduct.type.startsWith( 'tier' )
+					) // We remove the "tiers" (the annual products with "tier" type)
+					.map( ( currentProduct ) => (
+						<CompactCard className="memberships__products-product-card" key={ currentProduct?.ID }>
+							<div className="memberships__products-product-details">
+								<div className="memberships__products-product-price">
+									{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
 								</div>
-							) }
-						</div>
-
-						{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
-					</CompactCard>
-				) ) }
+								<div className="memberships__products-product-title">{ currentProduct?.title }</div>
+								{ currentProduct?.subscribe_as_site_subscriber && (
+									<div className="memberships__products-product-badge">
+										<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+									</div>
+								) }
+							</div>
+							{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
+						</CompactCard>
+					) ) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }
 					product={ Object.assign( product ?? {}, {
 						subscribe_as_site_subscriber: subscribe_as_site_subscriber,
 					} ) }
+					annual_product={ annualProduct }
 				/>
 			) }
 			{ hasLoadedFeatures && showDeleteDialog && product && (
-				<RecurringPaymentsPlanDeleteModal closeDialog={ closeDialog } product={ product } />
+				<RecurringPaymentsPlanDeleteModal
+					closeDialog={ closeDialog }
+					product={ product }
+					annual_product={ annualProduct } />
 			) }
 			{ ! hasLoadedFeatures && (
 				<div className="memberships__loading">
