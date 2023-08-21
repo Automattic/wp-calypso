@@ -32,12 +32,12 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@jest/globals": "^29.5.0",
-		"@types/node": "^18.11.18",
+		"@types/node": "^18.17.3",
 		"@types/node-fetch": "^2.6.1",
-		"@wordpress/i18n": "^4.38.0",
+		"@wordpress/i18n": "^4.39.0",
 		"asana-phrase": "^0.0.8",
 		"node-fetch": "^2.6.7",
-		"typescript": "^4.7.4"
+		"typescript": "^5.1.6"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",

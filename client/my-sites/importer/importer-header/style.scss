@@ -1,6 +1,17 @@
 .importer-header {
 	border-bottom: 1px solid var(--color-border-subtle);
+	display: flex;
+	flex-flow: row nowrap;
 	margin-bottom: 1.25em;
+	gap: 1em;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		gap: 1.75em;
+	}
+
+	.logo {
+		flex-basis: auto;
+	}
 }
 
 .importer-header__is-start {
@@ -15,18 +26,13 @@
 	}
 }
 
-.importer-header__service-info {
-	margin-left: 3.75em;
-
-	p {
-		margin-bottom: 1em;
-	}
+.importer-header__service-info p {
+	margin-bottom: 1em;
 }
 
 .importer-header__service-title {
 	font-size: $font-title-small;
 	color: var(--color-text-subtle);
-	clear: none;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		line-height: 1;

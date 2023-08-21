@@ -24,13 +24,23 @@
 
 	.design-picker__filters {
 		display: flex;
+		justify-content: space-between;
 
 		.design-picker__category-filter {
-			flex: 1;
+			width: 100%;
 		}
 
-		button {
-			height: 100%;
+		.design-picker__design-your-own-button {
+			flex-shrink: 0;
+			height: 32px;
+			line-height: 14px;
+			margin-top: 9px;
+			margin-left: 10px;
+		}
+
+		.design-picker__design-your-own-button-without-categories {
+			margin-left: auto;
+			margin-top: -60px;
 		}
 	}
 
@@ -384,7 +394,7 @@
 	padding-bottom: 200px;
 
 	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
-		justify-content: flex-start;
+		justify-content: space-between;
 	}
 
 	.design-picker__grid {

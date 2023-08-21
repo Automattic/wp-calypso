@@ -1,11 +1,15 @@
 import config from '@automattic/calypso-config';
 import {
+	getPlan,
 	isDomainTransfer,
 	isConciergeSession,
 	isPlan,
 	isDomainRegistration,
 	isMonthly,
 	isAkismetFreeProduct,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
@@ -284,7 +288,7 @@ class PurchaseNotice extends Component<
 	};
 
 	renderPurchaseExpiringNotice() {
-		const EXCLUDED_PRODUCTS = [ 'ecommerce-trial-bundle-monthly' ];
+		const EXCLUDED_PRODUCTS = [ PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ];
 		const {
 			moment,
 			purchase,
@@ -1029,26 +1033,33 @@ class PurchaseNotice extends Component<
 		);
 	}
 
-	renderECommerceTrialNotice() {
+	renderTrialNotice( productSlug: string ) {
 		const { moment, purchase, selectedSite, translate } = this.props;
 		const onClick = () => {
 			return page( `/plans/${ selectedSite?.slug }` );
 		};
 		const expiry = moment( purchase.expiryDate );
 		const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
-
+		const productType =
+			productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
+				? translate( 'ecommerce' )
+				: getPlan( PLAN_BUSINESS )?.getTitle();
 		return (
 			<Notice
 				showDismiss={ false }
 				status="is-info"
-				text={ translate(
-					'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your ecommerce features.',
-					{
-						args: {
-							expiry: daysToExpiry,
-						},
-					}
-				) }
+				text={
+					// translators: %expiry is the number of days remaining on the trial, %productType is the type of product (e.g. ecommerce)
+					translate(
+						'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your %(productType)s features.',
+						{
+							args: {
+								expiry: daysToExpiry,
+								productType: productType as string,
+							},
+						}
+					)
+				}
 			>
 				<NoticeAction onClick={ onClick }>{ translate( 'Upgrade Now' ) }</NoticeAction>
 			</Notice>
@@ -1066,8 +1077,11 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 
-		if ( purchase.productSlug === 'ecommerce-trial-bundle-monthly' ) {
-			return this.renderECommerceTrialNotice();
+		if (
+			purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
+			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY
+		) {
+			return this.renderTrialNotice( purchase.productSlug );
 		}
 
 		if ( purchase.isLocked && purchase.isInAppPurchase ) {

@@ -1,10 +1,11 @@
-import { localize } from 'i18n-calypso';
+import { englishLocales } from '@automattic/i18n-utils';
+import { Icon, info } from '@wordpress/icons';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
@@ -12,6 +13,8 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
+import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
+import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -35,9 +38,10 @@ class DnsRecords extends Component {
 		showPlaceholder: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		nameservers: PropTypes.array || null,
 	};
 
-	renderBreadcrumbs = () => {
+	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const pointsToWpcom = selectedDomain?.pointsToWpcom ?? false;
@@ -105,6 +109,64 @@ class DnsRecords extends Component {
 		);
 	};
 
+	hasWpcomNameservers = () => {
+		const { nameservers } = this.props;
+
+		if ( ! nameservers || nameservers.length === 0 ) {
+			return false;
+		}
+
+		return nameservers.every( ( nameserver ) => {
+			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
+
+	renderNotice = () => {
+		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers } = this.props;
+
+		if (
+			( ! englishLocales.includes( getLocaleSlug() ) &&
+				! i18n.hasTranslation(
+					'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.'
+				) ) ||
+			this.hasWpcomNameservers() ||
+			! nameservers ||
+			! nameservers.length
+		) {
+			return null;
+		}
+
+		return (
+			<div className="dns-records-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="dns-records-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="dns-records-notice__message">
+					{ translate(
+						'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit(
+											selectedSite.slug,
+											selectedDomainName,
+											currentRoute,
+											{ nameservers: true }
+										) }
+									></a>
+								),
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite, translate, domains } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
@@ -114,11 +176,11 @@ class DnsRecords extends Component {
 			<Main wideLayout className="dns-records">
 				<BodySectionCssClass bodyClass={ [ 'dns__body-white' ] } />
 				<DocumentHead title={ headerText } />
-				{ this.renderBreadcrumbs() }
-				<FormattedHeader brandFont headerText={ headerText } align="left" />
+				{ this.renderHeader() }
 				{ selectedDomain?.canManageDnsRecords ? (
 					<>
 						<DnsDetails />
+						{ this.renderNotice() }
 						<DnsRecordsList
 							dns={ dns }
 							selectedSite={ selectedSite }
@@ -140,7 +202,7 @@ class DnsRecords extends Component {
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
 				{ showPlaceholder ? (
-					<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+					<DomainMainPlaceholder breadcrumbs={ this.renderHeader } />
 				) : (
 					this.renderMain()
 				) }
@@ -166,4 +228,4 @@ export default connect(
 		};
 	},
 	{ successNotice, errorNotice, fetchDns }
-)( localize( DnsRecords ) );
+)( localize( withDomainNameservers( DnsRecords ) ) );

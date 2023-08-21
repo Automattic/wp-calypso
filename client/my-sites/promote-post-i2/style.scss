@@ -16,7 +16,7 @@
 	color: var(--studio-gray-40);
 	font-size: 0.75rem;
 	font-weight: 400;
-	line-height: 1.125;
+	line-height: 1.5;
 }
 
 @mixin blazepress-data-row {
@@ -29,8 +29,16 @@
 			display: none;
 			margin-top: 20px;
 
+			.post-item__actions-mobile {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 20px;
+				width: 100%;
+			}
+
 			.post-item__stats-mobile,
 			.campaign-item__stats-mobile {
+				align-self: start;
 				@include blazepress-data-row-font-mobile;
 			}
 		}
@@ -229,6 +237,10 @@ body.is-section-promote-post-i2 {
 			.inline-support-link__nowrap {
 				color: var(--studio-gray-80);
 			}
+
+			&:hover {
+				border-color: var(--color-neutral-20);
+			}
 		}
 
 		&-buttons {
@@ -389,6 +401,10 @@ body.is-section-promote-post-i2 {
 }
 
 .is-mobile-app-view {
+
+	.blazepress-widget__content {
+		margin-top: 0 !important;
+	}
 	.layout {
 		&.has-no-masterbar.is-group-sites.is-section-promote-post-i2 .layout__content {
 			padding-top: 0;
@@ -401,8 +417,13 @@ body.is-section-promote-post-i2 {
 			.promote-post-i2 .posts-list-banner__container,
 			.promote-post-i2 .section-nav,
 			.promote-post-i2 .post-item__view-link,
-			.promote-post-i2 .campaign-item-details__support-buttons {
+			.promote-post-i2 .campaign-item-breadcrumb,
+			.promote-post-i2 .campaign-item-details__support-buttons .contact-support-button {
 				display: none;
+			}
+
+			.campaign-item-header {
+				margin-top: 8px;
 			}
 
 			.main {

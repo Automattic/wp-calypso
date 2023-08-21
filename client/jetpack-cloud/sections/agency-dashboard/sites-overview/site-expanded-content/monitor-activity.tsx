@@ -5,7 +5,7 @@ import useFetchMonitorData from 'calypso/data/agency-dashboard/use-fetch-monitor
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
-import { useToggleActivateMonitor } from '../../hooks';
+import useToggleActivateMonitor from '../../hooks/use-toggle-activate-monitor';
 import { getMonitorDowntimeText } from '../utils';
 import ExpandedCard from './expanded-card';
 import type { Site } from '../types';

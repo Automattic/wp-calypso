@@ -22,7 +22,6 @@ import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon'
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderNotificationsIcon from 'calypso/reader/components/icons/notifications-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
-import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -172,17 +171,15 @@ export class ReaderSidebar extends Component {
 					link="/read"
 				/>
 
-				{ isDiscoverEnabled() && (
-					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
-							'sidebar-streams__discover': true,
-						} ) }
-						label={ translate( 'Discover' ) }
-						onNavigate={ this.handleReaderSidebarDiscoverClicked }
-						customIcon={ <ReaderDiscoverIcon /> }
-						link="/discover"
-					/>
-				) }
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
+						'sidebar-streams__discover': true,
+					} ) }
+					label={ translate( 'Discover' ) }
+					onNavigate={ this.handleReaderSidebarDiscoverClicked }
+					customIcon={ <ReaderDiscoverIcon /> }
+					link="/discover"
+				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }

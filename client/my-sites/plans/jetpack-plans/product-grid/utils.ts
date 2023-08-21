@@ -1,13 +1,12 @@
 import {
 	JETPACK_RESET_PLANS,
-	JETPACK_MONTHLY_ONLY_PRODUCTS,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	JETPACK_BACKUP_ADDON_PRODUCTS,
 	JETPACK_STATS_PRODUCTS,
-	PRODUCT_JETPACK_STATS_FREE,
+	PRODUCT_JETPACK_STATS_YEARLY,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 } from '@automattic/calypso-products';
@@ -95,20 +94,13 @@ export const getProductsToDisplay = ( {
 		// Remove add-on products
 		.filter( removeAddons )
 		// Remove products that don't match the selected duration
-		// However, allow products that ONLY have a monthly term to come through in either view
-		.filter(
-			( product ): product is SelectorProduct =>
-				product?.term === duration ||
-				( JETPACK_MONTHLY_ONLY_PRODUCTS as ReadonlyArray< string > ).includes(
-					product?.productSlug
-				)
-		)
+		.filter( ( product ): product is SelectorProduct => product?.term === duration )
 		// TODO: Identify a suitable Stats plan according to the site classification.
 		.filter( ( product ) => {
 			if (
 				( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
 			) {
-				return product?.productSlug === PRODUCT_JETPACK_STATS_FREE;
+				return product?.productSlug === PRODUCT_JETPACK_STATS_YEARLY;
 			}
 
 			return true;

@@ -8,7 +8,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
-import { Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
@@ -204,13 +204,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} as React.CSSProperties;
 	}
 
-	const RedirectToFirstStep = () => {
-		window.location.replace(
-			`/setup/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }`
-		);
-		return null;
-	};
-
 	return (
 		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
@@ -231,7 +224,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						}
 					/>
 				) ) }
-				<Route path="*" element={ <RedirectToFirstStep /> } />
+				<Route
+					path="*"
+					element={
+						<Navigate
+							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` }
+							replace
+						/>
+					}
+				/>
 			</Routes>
 			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Suspense>

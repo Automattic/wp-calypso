@@ -167,18 +167,28 @@ export class EditorPage {
 	 * Select a template category from the sidebar of options.
 	 *
 	 * @param {TemplateCategory} category Name of the category to select.
+	 * @param param1 Keyed object parameter.
+	 * @param {number} param1.timeout Timeout to apply.
 	 */
-	async selectTemplateCategory( category: TemplateCategory ) {
-		return await this.editorTemplateModalComponent.selectTemplateCategory( category );
+	async selectTemplateCategory(
+		category: TemplateCategory,
+		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
+	) {
+		return await this.editorTemplateModalComponent.selectTemplateCategory( category, timeout );
 	}
 
 	/**
 	 * Select a template from the grid of options.
 	 *
 	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param param1 Keyed object parameter.
+	 * @param {number} param1.timeout Timeout to apply.
 	 */
-	async selectTemplate( label: string ) {
-		return await this.editorTemplateModalComponent.selectTemplate( label );
+	async selectTemplate(
+		label: string,
+		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
+	) {
+		return await this.editorTemplateModalComponent.selectTemplate( label, timeout );
 	}
 
 	/**

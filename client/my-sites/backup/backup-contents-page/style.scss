@@ -38,7 +38,6 @@
 	&__body {
 		border-top: 1px solid var(--studio-gray-5);
 		overflow-x: auto;
-		padding-top: 30px;
 		padding-bottom: 14px;
 	}
 
@@ -49,6 +48,7 @@
 
 		&.is-root {
 			margin-left: 0;
+			padding-top: 30px;
 		}
 
 		&.wordpress > .file-card .file-card__actions {
@@ -187,6 +187,60 @@
 
 				p {
 					font-size: 0.875rem;
+				}
+			}
+		}
+
+		.form-checkbox {
+			margin: 8px;
+			&.mixed {
+				background-color: var(--studio-gray-10);
+			}
+		}
+	}
+
+	.file-browser-header {
+		padding: 13px 0;
+		.file-browser-header__select {
+			display: flex;
+			justify-content: space-between;
+
+			.file-browser-header__select-button {
+				color: #000;
+			}
+
+			.file-browser-header__select-info {
+				margin: auto 0;
+				font-size: $font-body-extra-small;
+			}
+		}
+		.file-browser-header__selecting {
+			display: flex;
+
+			.bulk-select {
+				padding: 6px 0;
+			}
+			.count {
+				border: none;
+				font-weight: 400;
+				padding-top: 2px;
+			}
+			.file-browser-header__selecting-info {
+				flex-grow: 1;
+				font-size: $font-body-extra-small;
+				padding: 6px 0;
+			}
+			.file-browser-header__cancel-button {
+				padding: 0;
+			}
+			.button {
+				margin-left: 8px;
+				color: #000;
+				&.is-primary {
+					&:disabled {
+						color: #000;
+					}
+					color: #fff;
 				}
 			}
 		}

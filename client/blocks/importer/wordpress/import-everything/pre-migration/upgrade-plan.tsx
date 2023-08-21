@@ -1,14 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
-import { URL } from 'calypso/types';
+import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
+import type { URL } from 'calypso/types';
 
 interface Props {
 	sourceSiteSlug: string;
@@ -32,6 +33,12 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		onContentOnlyClick,
 		isBusy,
 	} = props;
+	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
+		targetSite.ID
+	);
+	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
+	const [ popoverVisible, setPopoverVisible ] = useState( false );
+	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
 
 	return (
 		<div
@@ -67,22 +74,40 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 				</NextButton>
 				{ isEnabled( 'plans/migration-trial' ) && (
 					<Button
+						ref={ trialBtnRef }
+						busy={ isBusy }
 						borderless={ true }
 						className="action-buttons__borderless"
-						onClick={ onFreeTrialClick }
+						onClick={ () => isEligibleForTrialPlan && onFreeTrialClick() }
+						onFocus={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
+						onBlur={ () => setPopoverVisible( false ) }
+						onMouseEnter={ () => ! isEligibleForTrialPlan && setPopoverVisible( true ) }
+						onMouseLeave={ () => setPopoverVisible( false ) }
 					>
-						{ /* Untranslated until we've confirmed the design */ }
-						Try for free
+						{ translate( 'Try it for free' ) }
 					</Button>
 				) }
-				<Button
-					borderless={ true }
-					className="action-buttons__borderless"
-					onClick={ onContentOnlyClick }
-				>
-					{ translate( 'Use the content-only import option' ) }
-				</Button>
+				{ ! isEligibleForTrialPlan && (
+					<Button
+						borderless={ true }
+						className="action-buttons__borderless"
+						onClick={ onContentOnlyClick }
+					>
+						{ translate( 'Use the content-only import option' ) }
+					</Button>
+				) }
 			</div>
+
+			<Popover
+				className="info-popover__tooltip info-popover__tooltip--trial-plan"
+				focusOnShow={ false }
+				context={ trialBtnRef.current }
+				isVisible={ popoverVisible }
+			>
+				{ translate(
+					'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
+				) }
+			</Popover>
 		</div>
 	);
 };

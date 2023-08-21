@@ -1,10 +1,9 @@
 .importer__service-icon {
 	box-sizing: border-box;
-	float: left;
+	min-width: 40px;
 	width: 40px;
 	height: 40px;
 	padding: 2px;
-	margin-right: 1em;
 
 	background-color: var(--color-neutral-70);
 	fill: var(--color-text-inverted);
@@ -36,9 +35,9 @@
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
+		min-width: 56px;
 		width: 56px;
 		height: 56px;
 		padding: 4px;
-		margin-right: 1.5em;
 	}
 }

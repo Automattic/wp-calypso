@@ -1,4 +1,5 @@
 import {
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
@@ -14,12 +15,16 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isRequestingSites } from 'calypso/state/sites/selectors';
 import getSiteProducts, { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import StatsPurchaseWizard from './stats-purchase-wizard';
+import StatsPurchaseWizard, {
+	SCREEN_PURCHASE,
+	SCREEN_TYPE_SELECTION,
+	TYPE_COMMERCIAL,
+} from './stats-purchase-wizard';
 
 const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: string ) => {
 	if ( ! ownedProducts ) {
@@ -42,13 +47,18 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	);
 
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const isRequestingSiteProducts = useSelector( isRequestingSites );
 
 	// Determine whether a product is owned.
+	// TODO we need to do plan check as well, because Stats products would be built into other plans.
 	const isFreeOwned = useMemo( () => {
 		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_FREE );
 	}, [ siteProducts ] );
 	const isCommercialOwned = useMemo( () => {
-		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_MONTHLY );
+		return (
+			isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_MONTHLY ) ||
+			isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_YEARLY )
+		);
 	}, [ siteProducts ] );
 	const isPWYWOwned = useMemo( () => {
 		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
@@ -68,6 +78,10 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	}, [ siteSlug, isCommercialOwned, isSiteJetpackNotAtomic ] );
 
 	const commercialProduct = useSelector( ( state ) =>
+		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
+	) as ProductsList.ProductsListItem | null;
+
+	const commercialMonthlyProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_MONTHLY )
 	) as ProductsList.ProductsListItem | null;
 
@@ -75,7 +89,21 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_PWYW_YEARLY )
 	) as ProductsList.ProductsListItem | null;
 
-	const isLoading = ! commercialProduct || ! pwywProduct;
+	const isLoading =
+		! commercialProduct ||
+		! commercialMonthlyProduct ||
+		! pwywProduct ||
+		( ! siteProducts && isRequestingSiteProducts );
+
+	const [ initialStep, initialSiteType ] = useMemo( () => {
+		if ( isPWYWOwned && ! isCommercialOwned ) {
+			return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
+		}
+		// if nothing is owned don't specify the type
+		return [ SCREEN_TYPE_SELECTION, null ];
+	}, [ isPWYWOwned, isCommercialOwned ] );
+
+	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
 	return (
 		<Main fullWidthLayout>
@@ -107,10 +135,14 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 						<StatsPurchaseWizard
 							siteSlug={ siteSlug }
 							commercialProduct={ commercialProduct }
+							maxSliderPrice={ maxSliderPrice ?? 10 }
 							pwywProduct={ pwywProduct }
 							siteId={ siteId }
 							redirectUri={ query.redirect_uri ?? '' }
 							from={ query.from ?? '' }
+							disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+							initialStep={ initialStep }
+							initialSiteType={ initialSiteType }
 						/>
 					</>
 				) }

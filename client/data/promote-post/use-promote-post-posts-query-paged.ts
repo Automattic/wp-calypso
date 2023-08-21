@@ -17,6 +17,9 @@ export const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 		if ( searchOptions.filter.status && searchOptions.filter.status !== 'all' ) {
 			searchQueryParams += `&status=${ searchOptions.filter.status }`;
 		}
+		if ( searchOptions.filter.postType && searchOptions.filter.postType !== 'all' ) {
+			searchQueryParams += `&filter_post_type=${ searchOptions.filter.postType }`;
+		}
 	}
 	if ( searchOptions.order ) {
 		searchQueryParams += `&order_by=${ searchOptions.order.orderBy }`;

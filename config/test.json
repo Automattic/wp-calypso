@@ -37,10 +37,12 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
+		"domains/management": false,
 		"cookie-banner": false,
 		"google-my-business": false,
 		"help": true,
 		"importers/substack": true,
+		"individual-subscriber-stats": false,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
@@ -78,7 +80,6 @@
 		"plugins/ssr-landing": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
-		"promote-post/redesign-i2": true,
 		"promote-post/widget-i2": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
@@ -97,7 +98,7 @@
 		"ssr/prefetch-timebox": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
-		"stats/paid-stats": false,
+		"stats/paid-stats": true,
 		"stats/paid-wpcom-stats": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
@@ -106,6 +107,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"yolo/hosting-metrics-i1": true
 	}
 }

@@ -1,17 +1,20 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { IntentScreen } from '@automattic/onboarding';
+import { IntentScreen, GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
+import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 
 interface Props {
 	onSubmit: () => void;
+	variantSlug: string | undefined;
 }
 
-const Intro: React.FC< Props > = ( { onSubmit } ) => {
+const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 	const { __, hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
+	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
 	return (
 		<>
@@ -21,11 +24,16 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 						key: 'unlock',
 						title: __( 'Unlock your domains' ),
 						description: (
-							<p>
-								{ __(
-									"Your current registrar's domain management interface should have an option for you to remove the lock."
+							<>
+								<p>
+									{ __(
+										"Your current registrar's domain management interface should have an option for you to remove the lock."
+									) }
+								</p>
+								{ isGoogleDomainsTransferFlow && (
+									<GoogleDomainsModal>{ __( 'Show me how' ) }</GoogleDomainsModal>
 								) }
-							</p>
+							</>
 						),
 						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',
@@ -48,15 +56,17 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						badge: __( 'Free for Google Domains' ),
+						badge: isGoogleDomainsTransferFlow
+							? __( 'We pay the first year' )
+							: __( 'We pay the first year for Google domains' ),
 						description: (
 							<p>
 								{ isEnglishLocale ||
 								hasTranslation(
-									"Review your payment and contact details. If you're transferring a domain from Google, we'll absorb the cost and give you an extra year of free registration."
+									"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
 								)
 									? __(
-											"Review your payment and contact details. If you're transferring a domain from Google, we'll absorb the cost and give you an extra year of free registration."
+											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
 									  )
 									: __(
 											'Review your payment and contact details. Google Domains transfers and the first year are free.'

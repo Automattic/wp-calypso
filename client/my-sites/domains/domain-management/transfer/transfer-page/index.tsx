@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -59,6 +58,10 @@ import './style.scss';
 type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
 const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
 
+type ErrResponse = {
+	error?: string;
+};
+
 const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
@@ -77,7 +80,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const [ isLockingOrUnlockingDomain, setIsLockingOrUnlockingDomain ] = useState( false );
 	const domain = getSelectedDomain( props );
 
-	const renderBreadcrumbs = () => {
+	const renderHeader = () => {
 		const items = [
 			{
 				// translators: Internet domains, e.g. mygroovydomain.com
@@ -216,9 +219,13 @@ const TransferPage = ( props: TransferPageProps ) => {
 					getNoticeOptions( selectedDomainName )
 				)
 			);
-		} catch ( { error } ) {
+		} catch ( error ) {
 			dispatch(
-				errorNotice( getDomainTransferCodeError( error ), getNoticeOptions( selectedDomainName ) )
+				errorNotice(
+					// Note: getDomainTransferCodeError handles undefined error codes.
+					getDomainTransferCodeError( ( error as ErrResponse )?.error ),
+					getNoticeOptions( selectedDomainName )
+				)
 			);
 		} finally {
 			setIsRequestingTransferCode( false );
@@ -377,8 +384,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 		<Main className="transfer-page" wideLayout>
 			<QueryDomainInfo domainName={ selectedDomainName } />
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<FormattedHeader brandFont headerText={ __( 'Transfer' ) } align="left" />
+			{ renderHeader() }
 			<Layout>
 				<Column type="main">{ renderContent() }</Column>
 				<Column type="sidebar">

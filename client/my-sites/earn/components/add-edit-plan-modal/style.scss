@@ -1,0 +1,69 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.memberships__dialog-sections {
+	display: grid;
+	grid-template: "item" 1fr / 1fr;
+
+	* {
+		font-size: $font-body-small;
+	}
+
+	@include break-medium {
+		min-width: 580px;
+	}
+	.memberships__dialog-advanced-options {
+		width: 100%;
+		box-shadow: none;
+		.foldable-card__header {
+			padding: 0;
+		}
+		&.foldable-card.is-expanded {
+			margin: 0;
+			.foldable-card__content {
+				border-top: none;
+				padding: 0;
+			}
+		}
+		.foldable-card__main {
+			display: block;
+			font-weight: 600;
+			.foldable-card__action {
+				right: unset;
+			}
+		}
+		fieldset {
+			margin-bottom: 0;
+		}
+
+		.foldable-card__expand .gridicon {
+			fill: var(--color-text);
+		}
+	}
+
+	.notice__content {
+		max-width: 500px;
+	}
+}
+
+.memberships__dialog-sections-price {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
+}
+
+.memberships__dialog-sections-price-field-container {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 25px;
+
+	@include break-medium {
+		margin-bottom: 0;
+		margin-right: 35px;
+		max-width: 200px;
+	}
+}

@@ -1,9 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	useLocalizeUrl,
-	removeLocaleFromPathLocaleInFront,
-	localeRegexString,
-} from '@automattic/i18n-utils';
+import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -68,8 +64,7 @@ const LayoutLoggedOut = ( {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
-	const pathNameWithoutLocale =
-		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -79,13 +74,13 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage = sectionName === 'reader' && currentRoute.startsWith( '/tag/' );
+	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
 
-	const isReaderDiscoverPage = sectionName === 'reader' && currentRoute.startsWith( '/discover' );
+	const isReaderDiscoverPage =
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
 
 	const isReaderSearchPage =
-		sectionName === 'reader' &&
-		currentRoute.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) );
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -115,7 +110,10 @@ const LayoutLoggedOut = ( {
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		} else if (
+			( isWooOAuth2Client( oauth2Client ) && wccomFrom ) ||
+			( isGravatar && sectionName === 'signup' )
+		) {
 			masterbar = null;
 		} else {
 			if ( ! isGravatar ) {
@@ -196,7 +194,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 						isLoggedIn={ isLoggedIn }
 						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
+							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
 							window.location.reload();
 						} }
 					/>
@@ -209,7 +207,7 @@ const LayoutLoggedOut = ( {
 			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
-						navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
+						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
 						window.location.reload();
 					} }
 					currentRoute={ currentRoute }
@@ -217,7 +215,9 @@ const LayoutLoggedOut = ( {
 				/>
 			) }
 
-			{ isGravatar && <PoweredByWPFooter clientTitle={ oauth2Client.title } /> }
+			{ isGravatar && sectionName === 'login' && (
+				<PoweredByWPFooter clientTitle={ oauth2Client.title } />
+			) }
 		</div>
 	);
 };

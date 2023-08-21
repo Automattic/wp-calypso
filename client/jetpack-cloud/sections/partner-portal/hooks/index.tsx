@@ -183,6 +183,41 @@ export function useProductDescription( productSlug: string ): {
 			case 'jetpack-ai':
 				description = translate( 'Unleash the power of AI to boost your content creation.' );
 				break;
+			case 'jetpack-monitor':
+				description = translate(
+					'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
+				);
+				break;
+			case 'woocommerce-bookings':
+				description = translate(
+					'Allow customers to book appointments, make reservations or rent equipment without leaving your site.'
+				);
+				break;
+			case 'woocommerce-subscriptions':
+				description = translate(
+					'Let customers subscribe to your products or services and pay on a weekly, monthly, or annual basis.'
+				);
+				break;
+			case 'woocommerce-product-bundles':
+				description = translate(
+					'Offer personalized product bundles, bulk discount packages, and assembled products.'
+				);
+				break;
+			case 'woocommerce-product-add-ons':
+				description = translate(
+					'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
+				);
+				break;
+			case 'woocommerce-minmax-quantities':
+				description = translate(
+					'Minimum and maximum quantity rules for products, orders, and categories.'
+				);
+				break;
+			case 'woocommerce-automatewoo':
+				description = translate(
+					'Powerful marketing automation for WooCommerce - grow your store and make more money.'
+				);
+				break;
 		}
 
 		return {

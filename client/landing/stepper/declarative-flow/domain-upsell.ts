@@ -7,6 +7,7 @@ import {
 	DOMAIN_UPSELL_FLOW,
 } from 'calypso/../packages/onboarding/src';
 import { useQuery } from '../hooks/use-query';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import DomainsStep from './internals/steps-repository/domains';
@@ -30,6 +31,7 @@ const domainUpsell: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = useQuery().get( 'flowToReturnTo' );
 		const siteSlug = useSiteSlug();
+		const siteId = useSiteIdParam();
 		const { getDomainCartItem, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
@@ -56,9 +58,12 @@ const domainUpsell: Flow = {
 				case 'domains':
 					if ( providedDependencies?.deferDomainSelection ) {
 						try {
-							await updateLaunchpadSettings( siteSlug, {
-								checklist_statuses: { domain_upsell_deferred: true },
-							} );
+							const siteIdentifier = siteSlug || siteId;
+							if ( siteIdentifier ) {
+								await updateLaunchpadSettings( siteIdentifier, {
+									checklist_statuses: { domain_upsell_deferred: true },
+								} );
+							}
 						} catch ( error ) {}
 
 						return window.location.assign( returnUrl );
