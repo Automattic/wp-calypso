@@ -127,7 +127,7 @@ class DnsRecords extends Component {
 		if (
 			( ! englishLocales.includes( getLocaleSlug() ) &&
 				! i18n.hasTranslation(
-					'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.'
+					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers {{a}}Update your nameservers now{{/a}}."
 				) ) ||
 			this.hasWpcomNameservers() ||
 			! nameservers ||
@@ -146,7 +146,7 @@ class DnsRecords extends Component {
 				/>
 				<div className="dns-records-notice__message">
 					{ translate(
-						'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.',
+						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers {{a}}Update your nameservers now{{/a}}.",
 						{
 							components: {
 								a: (
