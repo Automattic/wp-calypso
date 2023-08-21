@@ -5,7 +5,6 @@ import {
 	isConciergeSession,
 	isPlan,
 	isDomainRegistration,
-	isMonthly,
 	isAkismetFreeProduct,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -40,6 +39,7 @@ import {
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
+	isMonthlyPurchase,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
@@ -100,7 +100,7 @@ class PurchaseNotice extends Component<
 			return this.getExpiringLaterText( purchase );
 		}
 
-		if ( isMonthly( purchase.productSlug ) ) {
+		if ( isMonthlyPurchase( purchase ) ) {
 			const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
 
 			if ( isTemporarySitePurchase( purchase ) ) {
