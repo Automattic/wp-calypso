@@ -65,7 +65,7 @@
 		"external-media/openverse": true,
 		"fediverse/allow-opt-in": true,
 		"full-site-editing/beta-opt-in": true,
-		"cookie-banner": true,
+		"cookie-banner": false,
 		"github-integration-i1": false,
 		"google-drive": true,
 		"google-my-business": true,
