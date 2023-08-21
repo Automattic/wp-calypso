@@ -7,16 +7,16 @@ import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 
 const debug = debugFactory( 'calypso:query-site-purchases' );
 
-export const useQuerySitePurchases = ( siteId ) => {
+export const useQuerySitePurchases = ( siteId, skipSiteCheck = false ) => {
 	const isRequesting = useSelector( ( state ) => isFetchingSitePurchases( state ) );
 	const reduxDispatch = useDispatch();
 	const previousSiteId = useRef();
 
 	useEffect( () => {
-		if ( ! siteId || isRequesting ) {
+		if ( ! skipSiteCheck && ( ! siteId || isRequesting ) ) {
 			return;
 		}
-		if ( siteId === previousSiteId.current ) {
+		if ( ! skipSiteCheck && siteId === previousSiteId.current ) {
 			return;
 		}
 		debug(
@@ -25,14 +25,15 @@ export const useQuerySitePurchases = ( siteId ) => {
 		previousSiteId.current = siteId;
 
 		reduxDispatch( fetchSitePurchases( siteId ) );
-	}, [ siteId, reduxDispatch, isRequesting ] );
+	}, [ siteId, skipSiteCheck, reduxDispatch, isRequesting ] );
 };
 
-export default function QuerySitePurchases( { siteId } ) {
-	useQuerySitePurchases( siteId );
+export default function QuerySitePurchases( { siteId, skipSiteCheck } ) {
+	useQuerySitePurchases( siteId, skipSiteCheck );
 	return null;
 }
 
 QuerySitePurchases.propTypes = {
 	siteId: PropTypes.number,
+	skipSiteCheck: PropTypes.bool,
 };

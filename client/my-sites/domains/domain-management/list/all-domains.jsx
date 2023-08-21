@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -28,7 +27,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { infoNotice } from 'calypso/state/notices/actions';
 import {
 	getUserPurchases,
-	hasLoadedUserPurchasesFromServer,
+	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -694,7 +693,6 @@ class AllDomains extends Component {
 				<div>{ this.renderActionForm() }</div>
 				<div>
 					<QueryAllDomains />
-					<QueryUserPurchases />
 					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
@@ -772,7 +770,7 @@ export default connect( ( state, { context } ) => {
 		hasAllSitesLoaded: hasAllSitesList( state ),
 		isContactEmailEditContext: ListAllActions.editContactEmail === action,
 		purchases: getUserPurchases( state ) || [],
-		hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedUserPurchases: hasLoadedSitePurchasesFromServer( state ),
 		requestingFlatDomains: isRequestingAllDomains( state ),
 		requestingSiteDomains: getAllRequestingSiteDomains( state ),
 		sites,

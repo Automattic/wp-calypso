@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
+import { InView } from 'react-intersection-observer';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import DomainRow from './domain-row';
@@ -79,19 +80,51 @@ class DomainsTable extends PureComponent {
 	};
 
 	renderQuerySitePurchasesOnce( blogId ) {
-		if ( this.renderedQuerySitePurchases[ blogId ] ) {
-			return null;
-		}
-		this.renderedQuerySitePurchases[ blogId ] = true;
-		return <QuerySitePurchases key={ `query-purchases-${ blogId }` } siteId={ blogId } />;
+		return (
+			<InView>
+				{ ( { inView, ref } ) => {
+					if ( this.renderedQuerySitePurchases[ blogId ] ) {
+						return <div ref={ ref }></div>;
+					}
+					if ( inView ) {
+						this.renderedQuerySitePurchases[ blogId ] = true;
+					}
+					return (
+						<div ref={ ref }>
+							{ inView ? (
+								<QuerySitePurchases
+									key={ `query-purchases-${ blogId }` }
+									siteId={ blogId }
+									skipSiteCheck={ true }
+								/>
+							) : null }
+						</div>
+					);
+				} }
+			</InView>
+		);
 	}
 
 	renderQuerySiteDomainsOnce( blogId ) {
-		if ( this.renderedQuerySiteDomains[ blogId ] ) {
-			return null;
-		}
-		this.renderedQuerySiteDomains[ blogId ] = true;
-		return <QuerySiteDomains key={ `query-purchases-${ blogId }` } siteId={ blogId } />;
+		return (
+			<InView>
+				{ ( { inView, ref } ) => {
+					if ( this.renderedQuerySiteDomains[ blogId ] ) {
+						return <div ref={ ref }></div>;
+					}
+					if ( inView ) {
+						this.renderedQuerySiteDomains[ blogId ] = true;
+					}
+					return (
+						<div ref={ ref }>
+							{ inView ? (
+								<QuerySiteDomains key={ `query-purchases-${ blogId }` } siteId={ blogId } />
+							) : null }
+						</div>
+					);
+				} }
+			</InView>
+		);
 	}
 
 	render() {
@@ -153,9 +186,7 @@ class DomainsTable extends PureComponent {
 			// TODO: how can we optimize the data loading? Can we load the daomin data using `InView` component as in list-all.jsx?
 			return (
 				<Fragment key={ `${ domain.name }-${ index }` }>
-					{ ! isManagingAllSites &&
-						domain.blogId &&
-						this.renderQuerySitePurchasesOnce( domain.blogId ) }
+					{ domain.blogId && this.renderQuerySitePurchasesOnce( domain.blogId ) }
 					{ isManagingAllSites &&
 						domain.blogId &&
 						this.renderQuerySiteDomainsOnce( domain.blogId ) }
