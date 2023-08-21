@@ -6,13 +6,6 @@
 	padding-top: 11px;
 	cursor: default;
 
-	&.is-loading {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 6px;
-	}
-
 	.comments__toggle-expand {
 		cursor: pointer;
 		margin-left: 42px;

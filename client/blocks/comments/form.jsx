@@ -179,7 +179,6 @@ PostCommentForm.propTypes = {
 	onCommentSubmit: PropTypes.func,
 	isInlineComment: PropTypes.bool,
 	isLogedIn: PropTypes.bool,
-	redirectToSignup: PropTypes.func,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
