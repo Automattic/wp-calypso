@@ -28,7 +28,23 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 
 	useLayoutEffect( () => {
-		setSelectedDomains( new Set() );
+		if ( ! domains ) {
+			setSelectedDomains( new Set() );
+			return;
+		}
+
+		setSelectedDomains( ( selectedDomains ) => {
+			const domainUrls = domains.map( ( { domain } ) => domain );
+			const selectedDomainsCopy = new Set( selectedDomains );
+
+			for ( const selectedDomain of selectedDomainsCopy ) {
+				if ( ! domainUrls.includes( selectedDomain ) ) {
+					selectedDomainsCopy.delete( selectedDomain );
+				}
+			}
+
+			return selectedDomainsCopy;
+		} );
 	}, [ domains ] );
 
 	const handleSelectDomain = useCallback(

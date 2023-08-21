@@ -265,7 +265,7 @@ test( 'when all domains are checked and the user clicks the bulk checkbox, all d
 	expect( secondDomainsCheckbox ).not.toBeChecked();
 } );
 
-test( 'when the domains list changes, all domains become unchecked', () => {
+test( 'when the domains list changes, the bulk selection removes dangling domains', () => {
 	const { rerender } = render(
 		<DomainsTable
 			domains={ [
@@ -276,27 +276,22 @@ test( 'when the domains list changes, all domains become unchecked', () => {
 		/>
 	);
 
-	const bulkCheckbox = getBulkCheckbox();
-	const firstDomainsCheckbox = getDomainCheckbox( 'example1.com' );
-	const secondDomainsCheckbox = getDomainCheckbox( 'example2.com' );
-
-	fireEvent.click( bulkCheckbox );
-	expect( bulkCheckbox ).toBeChecked();
-	expect( firstDomainsCheckbox ).toBeChecked();
-	expect( secondDomainsCheckbox ).toBeChecked();
+	fireEvent.click( getBulkCheckbox() );
+	expect( getBulkCheckbox() ).toBeChecked();
+	expect( getDomainCheckbox( 'example1.com' ) ).toBeChecked();
+	expect( getDomainCheckbox( 'example2.com' ) ).toBeChecked();
 
 	rerender(
 		<DomainsTable
 			domains={ [
 				testPartialDomain( { domain: 'example1.com' } ),
-				testPartialDomain( { domain: 'example2.com' } ),
 				testPartialDomain( { domain: 'example3.com' } ),
 			] }
 			isAllSitesView
 		/>
 	);
 
-	expect( bulkCheckbox ).not.toBeChecked();
-	expect( firstDomainsCheckbox ).not.toBeChecked();
-	expect( secondDomainsCheckbox ).not.toBeChecked();
+	expect( getBulkCheckbox() ).toBePartiallyChecked();
+	expect( getDomainCheckbox( 'example1.com' ) ).toBeChecked();
+	expect( getDomainCheckbox( 'example3.com' ) ).not.toBeChecked();
 } );
