@@ -63,7 +63,7 @@ export const NewsletterSettingsSection = ( {
 
 	return (
 		<>
-			{ config.isEnabled( 'settings/newsletter-settings-page' ) && (
+			{ config.isEnabled( 'settings/newsletter-categories' ) && (
 				<Card className="site-settings__card">
 					<NewsletterCategoriesSettings
 						disabled={ disabled }
