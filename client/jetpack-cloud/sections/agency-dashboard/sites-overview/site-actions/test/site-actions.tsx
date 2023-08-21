@@ -72,12 +72,28 @@ describe( '<SiteActions>', () => {
 		);
 	} );
 
+	test( 'does not render a popover menu item to issue a new license if there is a site error', async () => {
+		render( <Wrapper siteError /> );
+		await openPopoverMenu();
+
+		expect(
+			screen.queryByRole( 'menuitem', { name: 'Issue new license' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'renders a popover menu item to view the activity log', async () => {
 		render( <Wrapper /> );
 		await openPopoverMenu();
 
 		const viewActivity = screen.getByRole( 'menuitem', { name: 'View activity' } );
 		expect( viewActivity.getAttribute( 'href' ) ).toEqual( '/activity-log/test.jurassic.ninja' );
+	} );
+
+	test( 'does not render a popover menu item to view the activity log if there is a site error', async () => {
+		render( <Wrapper siteError /> );
+		await openPopoverMenu();
+
+		expect( screen.queryByRole( 'menuitem', { name: 'View activity' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders a popover menu item to view the site', async () => {
@@ -98,22 +114,6 @@ describe( '<SiteActions>', () => {
 		expect( visitWpAdmin.getAttribute( 'href' ) ).toEqual(
 			'https://test.jurassic.ninja/wp-admin/admin.php?page=jetpack#/dashboard'
 		);
-	} );
-
-	test( 'does not render a popover menu item to issue a new license if there is a site error', async () => {
-		render( <Wrapper siteError /> );
-		await openPopoverMenu();
-
-		expect(
-			screen.queryByRole( 'menuitem', { name: 'Issue new license' } )
-		).not.toBeInTheDocument();
-	} );
-
-	test( 'does not render a popover menu item to view the activity log if there is a site error', async () => {
-		render( <Wrapper siteError /> );
-		await openPopoverMenu();
-
-		expect( screen.queryByRole( 'menuitem', { name: 'View activity' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders a popover menu item to copy the site if the site has Backup', async () => {
