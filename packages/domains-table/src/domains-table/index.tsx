@@ -25,21 +25,23 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		sortDirection: 'asc',
 	} );
 
-	const [ selectedDomains, setSelectedDomains ] = useState< PartialDomainData[] >( [] );
+	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 
 	useLayoutEffect( () => {
-		setSelectedDomains( [] );
+		setSelectedDomains( new Set() );
 	}, [ domains ] );
 
 	const handleSelectDomain = useCallback(
-		( domain: PartialDomainData ) => {
-			if ( selectedDomains.includes( domain ) ) {
-				setSelectedDomains(
-					selectedDomains.filter( ( selectedDomain ) => selectedDomain !== domain )
-				);
+		( { domain }: PartialDomainData ) => {
+			const selectedDomainsCopy = new Set( selectedDomains );
+
+			if ( selectedDomainsCopy.has( domain ) ) {
+				selectedDomainsCopy.delete( domain );
 			} else {
-				setSelectedDomains( [ ...selectedDomains, domain ] );
+				selectedDomainsCopy.add( domain );
 			}
+
+			setSelectedDomains( selectedDomainsCopy );
 		},
 		[ setSelectedDomains, selectedDomains ]
 	);
@@ -66,8 +68,8 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		} );
 	};
 
-	const hasSelectedDomains = selectedDomains.length > 0;
-	const areAllDomainsSelected = domains.length === selectedDomains.length;
+	const hasSelectedDomains = selectedDomains.size > 0;
+	const areAllDomainsSelected = domains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
 		if ( hasSelectedDomains && areAllDomainsSelected ) {
@@ -83,9 +85,9 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 
 	const changeBulkSelection = () => {
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
-			setSelectedDomains( domains );
+			setSelectedDomains( new Set( domains.map( ( { domain } ) => domain ) ) );
 		} else {
-			setSelectedDomains( [] );
+			setSelectedDomains( new Set() );
 		}
 	};
 
@@ -106,7 +108,7 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 					<DomainsTableRow
 						key={ domain.domain }
 						domain={ domain }
-						isSelected={ selectedDomains.includes( domain ) }
+						isSelected={ selectedDomains.has( domain.domain ) }
 						onSelect={ handleSelectDomain }
 						fetchSiteDomains={ fetchSiteDomains }
 						isAllSitesView={ isAllSitesView }
