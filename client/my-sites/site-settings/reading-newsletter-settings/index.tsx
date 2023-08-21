@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSiteOption } from 'calypso/state/sites/hooks';
+import { NewsletterCategoriesSettings } from '../newsletter-categories-settings';
 import { SubscriptionOptions } from '../settings-reading/main';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
@@ -12,6 +14,7 @@ import { SubscribeModalSetting } from './SubscribeModalSetting';
 
 type Fields = {
 	wpcom_featured_image_in_email?: boolean;
+	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	subscription_options?: SubscriptionOptions;
 	sm_enabled?: boolean;
@@ -19,6 +22,7 @@ type Fields = {
 
 type NewsletterSettingsSectionProps = {
 	fields: Fields;
+	handleAutosavingToggle: ( field: string ) => ( value: boolean ) => void;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
@@ -29,6 +33,7 @@ type NewsletterSettingsSectionProps = {
 
 export const NewsletterSettingsSection = ( {
 	fields,
+	handleAutosavingToggle,
 	handleToggle,
 	handleSubmitForm,
 	disabled,
@@ -41,6 +46,7 @@ export const NewsletterSettingsSection = ( {
 	const translate = useTranslate();
 	const {
 		wpcom_featured_image_in_email,
+		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		subscription_options,
 		sm_enabled,
@@ -57,6 +63,15 @@ export const NewsletterSettingsSection = ( {
 
 	return (
 		<>
+			{ config.isEnabled( 'settings/newsletter-settings-page' ) && (
+				<Card className="site-settings__card">
+					<NewsletterCategoriesSettings
+						disabled={ disabled }
+						handleAutosavingToggle={ handleAutosavingToggle }
+						toggleValue={ wpcom_newsletter_categories_enabled }
+					/>
+				</Card>
+			) }
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="newsletter-settings"
