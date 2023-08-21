@@ -20,6 +20,10 @@ interface BundlesSectionProps {
 const BundlesSection: FC< BundlesSectionProps > = ( { bundles } ) => {
 	const locale = useLocale();
 
+	if ( ! bundles || Array( bundles.items ).length < 1 ) {
+		return null;
+	}
+
 	const getBundleIcons = ( bundle: string ) => {
 		// Using a soft match in case the menu item gets deleted and recreated in wp-admin
 		// causing the name to change to `complete-2` or something similar.
@@ -50,7 +54,7 @@ const BundlesSection: FC< BundlesSectionProps > = ( { bundles } ) => {
 	return (
 		<div className="header__submenu-bottom-section">
 			<div className="header__submenu-bundles">
-				<p className="header__submenu-category-heading">{ bundles?.label }</p>
+				<p className="header__submenu-category-heading">{ bundles.label }</p>
 
 				<ul className="header__submenu-links-list">
 					{ bundles &&
