@@ -12,7 +12,7 @@ if ( url ) {
 
 		const blocks = [];
 
-		if ( text ) {
+		if ( text && text !== title ) {
 			const link = `<a href="${ url }">${ title }</a>`;
 			blocks.push(
 				createBlock( 'core/quote', {
