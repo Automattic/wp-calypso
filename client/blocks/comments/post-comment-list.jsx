@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { get, size, delay } from 'lodash';
+import { get, size, delay, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -318,30 +318,41 @@ class PostCommentList extends Component {
 		commentIds,
 		displayedCommentsCount,
 		actualCommentsCount,
-		commentsTree
+		// In many cases commentsTreeToShow === commentsTreeAvailable. For inline comments in
+		// collapsed view: commentsTreeToShow represents the tree shown in the collapsed view, while
+		// commentsTreeAvailable represents the comments tree available for expanded view.
+		commentsTreeToShow,
+		commentsTreeAvailable
 	) => {
+		// Comments in trees may be less than actualCommentCount since we may filter pingbacks out of
+		// the tree. We need to use commentsTreeAvailable to determine whether to show
+		// expand/collapse toggle for inline comments, but actualCommentsCount to determine whether
+		// to show the link to view all comments (including pingbacks) on the post page.
 		const shouldShowExpandToggle =
 			this.props.expandableView &&
-			( displayedCommentsCount < actualCommentsCount || this.state.isExpanded );
+			( displayedCommentsCount < this.getCommentsCount( commentsTreeAvailable.children ) ||
+				this.state.isExpanded );
+		const shouldShowLinkToFullPost =
+			this.props.expandableView &&
+			( this.state.isExpanded || ! shouldShowExpandToggle ) &&
+			displayedCommentsCount < actualCommentsCount;
 		return (
 			<>
 				{ shouldShowExpandToggle && (
-					<>
-						<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
-							{ this.state.isExpanded
-								? translate( 'View less comments' )
-								: translate( 'View more comments' ) }
-						</button>
-
-						{ this.state.isExpanded && displayedCommentsCount < actualCommentsCount && (
-							<button className="comments__open-post" onClick={ this.props.openPostPageAtComments }>
-								{ '• ' + translate( 'view more comments on the full post' ) }
-							</button>
-						) }
-					</>
+					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
+						{ this.state.isExpanded
+							? translate( 'View less comments' )
+							: translate( 'View more comments' ) }
+					</button>
+				) }
+				{ shouldShowLinkToFullPost && (
+					<button className="comments__open-post" onClick={ this.props.openPostPageAtComments }>
+						{ shouldShowExpandToggle && '• ' }
+						{ translate( 'View more comments on the full post' ) }
+					</button>
 				) }
 				<ol className="comments__list is-root">
-					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTree ) ) }
+					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
 				</ol>
 			</>
 		);
@@ -417,6 +428,14 @@ class PostCommentList extends Component {
 		const lastCommentArr = commentsTree.children.slice( -1 );
 		const lastComment = lastCommentArr[ 0 ];
 
+		if ( ! lastComment ) {
+			return {
+				displayedComments: [],
+				displayedCommentsCount: 0,
+				commentsTreeToUse: commentsTree,
+			};
+		}
+
 		// Setup a new comment tree to customize replies rendered.
 		const newCommentTree = { children: lastCommentArr };
 		newCommentTree[ lastComment ] = {
@@ -448,6 +467,17 @@ class PostCommentList extends Component {
 		};
 	};
 
+	removePingAndTrackbacks = ( commentsTree ) => {
+		const newTree = pickBy(
+			commentsTree,
+			( comment ) =>
+				comment.data && comment.data.type !== 'pingback' && comment.data.type !== 'trackback'
+		);
+		// Ensure we add the new children array.
+		newTree.children = commentsTree.children.filter( ( commentId ) => newTree[ commentId ] );
+		return newTree;
+	};
+
 	render() {
 		if ( ! this.props.commentsTree ) {
 			return null;
@@ -456,12 +486,16 @@ class PostCommentList extends Component {
 		const {
 			post: { ID: postId, site_ID: siteId },
 			commentsFilter,
-			commentsTree,
 			showFilters,
 			commentCount,
 			followSource,
 			expandableView,
 		} = this.props;
+
+		const commentsTree = expandableView
+			? this.removePingAndTrackbacks( this.props.commentsTree )
+			: this.props.commentsTree;
+
 		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } =
 			this.props.commentsFetchingStatus;
 
@@ -493,7 +527,9 @@ class PostCommentList extends Component {
 		const actualCommentsCount =
 			haveEarlierCommentsToFetch || haveLaterCommentsToFetch
 				? commentCount
-				: this.getCommentsCount( commentsTree.children );
+				: // Use commentsTree on props since 'commentsTree' var here may have pingbacks
+				  // filtered out above.
+				  this.getCommentsCount( this.props.commentsTree.children );
 
 		const showConversationFollowButton =
 			this.props.showConversationFollowButton &&
@@ -576,7 +612,8 @@ class PostCommentList extends Component {
 					displayedComments,
 					displayedCommentsCount,
 					actualCommentsCount,
-					commentsTreeToUse
+					commentsTreeToUse,
+					commentsTree
 				) }
 				{ showViewMoreComments && this.props.startingCommentId && (
 					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
