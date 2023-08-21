@@ -122,7 +122,7 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 	};
 };
 
-export const requestDeleteProduct = ( siteId, product, noticeText ) => {
+export const requestDeleteProduct = ( siteId, product, annualProduct, noticeText ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_DELETE,
@@ -130,12 +130,33 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 			product,
 		} );
 
-		return wpcom.req
-			.post( {
+		if ( annualProduct ) {
+			dispatch( {
+				type: MEMBERSHIPS_PRODUCT_DELETE,
+				siteId,
+				annual_product: annualProduct,
+			} );
+		}
+
+		const requests = [
+			wpcom.req.post( {
 				method: 'DELETE',
 				path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
 				apiNamespace: 'wpcom/v2',
-			} )
+			} ),
+		];
+
+		if ( annualProduct ) {
+			requests.push(
+				wpcom.req.post( {
+					method: 'DELETE',
+					path: `/sites/${ siteId }/memberships/product/${ annualProduct.ID }`,
+					apiNamespace: 'wpcom/v2',
+				} )
+			);
+		}
+
+		return Promise.all( requests )
 			.then( () => {
 				dispatch(
 					successNotice( noticeText, {
@@ -151,6 +172,14 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 					error,
 					product,
 				} );
+				if ( annualProduct ) {
+					dispatch( {
+						type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
+						siteId,
+						error,
+						annual_product: annualProduct,
+					} );
+				}
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,
@@ -161,25 +190,39 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 };
 
 const addNewAnnualProduct = ( annualProduct, siteId, noticeText ) => ( membershipProduct ) => {
-	debugger;
-	const newMembershipProductId = membershipProduct.id;
+	const newMembershipProductId = membershipProduct.ID;
 	annualProduct.type = 'tier-' + newMembershipProductId;
-	return requestAddProduct( siteId, annualProduct, noticeText );
+	return ( dispatch ) => {
+		requestAddProduct( siteId, annualProduct, noticeText )( dispatch );
+	};
 };
 
 export const requestAddTier = ( siteId, product, annualProduct, noticeText ) => {
-	return requestAddProduct( siteId, product, noticeText ).then(
-		addNewAnnualProduct( annualProduct, siteId, noticeText )
-	);
+	return ( dispatch ) =>
+		requestAddProduct(
+			siteId,
+			product,
+			noticeText
+		)( dispatch ).then( ( membershipProduct ) => {
+			addNewAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )( dispatch );
+		} );
 };
 
 export const requestUpdateTier = ( siteId, product, annualProduct, noticeText ) => {
-	return requestUpdateProduct( siteId, product, noticeText ).then( ( membershipProduct ) => {
-		if ( annualProduct.ID ) {
-			return requestUpdateProduct( siteId, annualProduct, noticeText );
-		}
+	return ( dispatch ) => {
+		return requestUpdateProduct(
+			siteId,
+			product,
+			noticeText
+		)( dispatch ).then( ( membershipProduct ) => {
+			if ( annualProduct.ID ) {
+				return requestUpdateProduct( siteId, annualProduct, noticeText )( dispatch );
+			}
 
-		// The annual product does not exist yet
-		return addNewAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct );
-	} );
+			// The annual product does not exist yet
+			return addNewAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )(
+				dispatch
+			);
+		} );
+	};
 };
