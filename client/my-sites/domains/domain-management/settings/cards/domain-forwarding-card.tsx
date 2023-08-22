@@ -15,7 +15,9 @@ import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
@@ -36,6 +38,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const pointsToWpcom = domain.pointsToWpcom;
+	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
 
 	// Display success notices when the forwarding is updated
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
@@ -212,7 +215,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const renderNoticeForPrimaryDomain = () => {
-		if ( ! domain?.isPrimary ) {
+		if ( ! domain?.isPrimary || isDomainOnly ) {
 			return;
 		}
 
@@ -245,7 +248,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset
-					disabled={ domain?.isPrimary || ! pointsToWpcom }
+					disabled={ ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom }
 					className="domain-forwarding-card__fields"
 				>
 					<FormTextInputWithAffixes
