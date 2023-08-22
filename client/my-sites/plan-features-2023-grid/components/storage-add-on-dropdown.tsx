@@ -15,7 +15,7 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
 	const selectedStorage = useSelect(
 		( select ) => {
-			return select( WpcomPlansUI.store ).getSelectedStorageOptionsForPlan( planSlug );
+			return select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug );
 		},
 		[ planSlug ]
 	);
