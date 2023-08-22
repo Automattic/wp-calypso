@@ -13,6 +13,7 @@ import {
 	envVariables,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -102,7 +103,10 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		} );
 	} );
 
-	describe( 'Store', function () {
+	// While not strictly true (there can be AT sites without stores enabled),
+	// for the purpose of test accounts this is a sufficient comparison.
+	// The Store tab is only available to those on Business and higher plans.
+	skipDescribeIf( envVariables.TEST_ON_ATOMIC === false )( 'Store', function () {
 		it( 'Click on the Store tab', async function () {
 			await statsPage.clickTab( 'Store' );
 		} );
