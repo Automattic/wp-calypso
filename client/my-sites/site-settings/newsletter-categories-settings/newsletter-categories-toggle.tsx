@@ -27,7 +27,7 @@ const NewsletterCategoriesToggle = ( {
 			/>
 			<FormSettingExplanation>
 				{ translate(
-					'This will allow your visitors to specifically subscribed to the selected categories. When this is enabled, only posts published under the created newsletter categories will be send out to your subscribers.'
+					'This will allow your visitors to specifically subscribe to the selected categories. When this is enabled, only posts published under the created newsletter categories will be sent out to your subscribers.'
 				) }
 			</FormSettingExplanation>
 		</div>

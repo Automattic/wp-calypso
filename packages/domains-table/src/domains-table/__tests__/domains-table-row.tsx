@@ -31,21 +31,15 @@ test( 'domain name is rendered in the row', () => {
 } );
 
 test( 'wpcom domains do not link to management interface', async () => {
-	const [ partialDomain, fullDomain ] = testDomain( {
+	const partialDomain = testPartialDomain( {
 		domain: 'example.wordpress.com',
 		blog_id: 123,
-		primary_domain: false,
 		wpcom_domain: true,
-	} );
-
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
-		domains: [ fullDomain ],
 	} );
 
 	render(
 		<DomainsTableRow
 			domain={ partialDomain }
-			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView
 			isSelected={ false }
 			onSelect={ noop }
@@ -56,40 +50,40 @@ test( 'wpcom domains do not link to management interface', async () => {
 } );
 
 test( 'domain name links to management interface', async () => {
-	const [ partialDomain, fullDomain ] = testDomain( {
+	const partialDomain = testPartialDomain( {
 		domain: 'example.com',
 		blog_id: 123,
-		primary_domain: true,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
-		domains: [ fullDomain ],
+	const fetchSite = jest.fn().mockResolvedValue( {
+		URL: 'https://my-site.com',
+		options: { is_redirect: false },
 	} );
 
 	const { rerender } = render(
 		<DomainsTableRow
 			domain={ partialDomain }
-			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
 			isAllSitesView
 			isSelected={ false }
 			onSelect={ noop }
 		/>
 	);
 
-	// Expect the row to fetch detailed domain data
-	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
+	// Expect the row to fetch detailed site data
+	expect( fetchSite ).toHaveBeenCalledWith( 123 );
 
-	// Before detailed domain data has loaded the link will use the blog ID
+	// Before site data has loaded the link will use the blog ID
 	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
 		'href',
 		'/domains/manage/all/example.com/edit/123'
 	);
 
-	// After detailed domain data is loaded we expect the site's primary domain to be used in the URL fragment
+	// After detailed domain data is loaded we expect the site slug to be used in the URL fragment
 	await waitFor( () =>
 		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
 			'href',
-			'/domains/manage/all/example.com/edit/example.com'
+			'/domains/manage/all/example.com/edit/my-site.com'
 		)
 	);
 
@@ -97,7 +91,7 @@ test( 'domain name links to management interface', async () => {
 	rerender(
 		<DomainsTableRow
 			domain={ partialDomain }
-			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
 			isAllSitesView={ false }
 			isSelected={ false }
 			onSelect={ noop }
@@ -106,63 +100,11 @@ test( 'domain name links to management interface', async () => {
 
 	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
 		'href',
-		'/domains/manage/example.com/edit/example.com'
+		'/domains/manage/example.com/edit/my-site.com'
 	);
 } );
 
-test( 'non primary domain uses the primary domain as the site slug in its link URL', async () => {
-	const [ partialDomain, fullDomain ] = testDomain( {
-		domain: 'not-primary-domain.blog',
-		blog_id: 123,
-		primary_domain: false,
-	} );
-	const [ , primaryDomain ] = testDomain( {
-		domain: 'primary-domain.blog',
-		blog_id: 123,
-		primary_domain: true,
-	} );
-
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
-		domains: [ fullDomain, primaryDomain ],
-	} );
-
-	const { rerender } = render(
-		<DomainsTableRow
-			domain={ partialDomain }
-			fetchSiteDomains={ fetchSiteDomains }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
-
-	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
-
-	await waitFor( () =>
-		expect( screen.getByRole( 'link', { name: 'not-primary-domain.blog' } ) ).toHaveAttribute(
-			'href',
-			'/domains/manage/all/not-primary-domain.blog/edit/primary-domain.blog'
-		)
-	);
-
-	// Test site-specific link
-	rerender(
-		<DomainsTableRow
-			domain={ partialDomain }
-			fetchSiteDomains={ fetchSiteDomains }
-			isAllSitesView={ false }
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
-
-	expect( screen.getByRole( 'link', { name: 'not-primary-domain.blog' } ) ).toHaveAttribute(
-		'href',
-		'/domains/manage/not-primary-domain.blog/edit/primary-domain.blog'
-	);
-} );
-
-test( 'redirect links use the unmapped domain for the site slug', async () => {
+test( `redirect links use the site's unmapped URL for the site slug`, async () => {
 	const [ partialRedirectDomain, fullRedirectDomain ] = testDomain( {
 		domain: 'redirect.blog',
 		primary_domain: true,
@@ -178,6 +120,11 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 		blog_id: 123,
 	} );
 
+	const fetchSite = jest.fn().mockResolvedValue( {
+		URL: 'http://redirect.blog',
+		options: { is_redirect: true, unmapped_url: 'http://redirect-site.wordpress.com' },
+	} );
+
 	const fetchSiteDomains = jest.fn().mockResolvedValue( {
 		domains: [ fullRedirectDomain, fullUnmappedDomain ],
 	} );
@@ -186,6 +133,7 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 		<DomainsTableRow
 			domain={ partialRedirectDomain }
 			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
 			isAllSitesView
 			isSelected={ false }
 			onSelect={ noop }
@@ -218,7 +166,7 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 	);
 } );
 
-test( 'transfer links use the unmapped domain for the site slug', async () => {
+test( 'transfer domains link to the transfer management interface', async () => {
 	const [ partialDomain, fullDomain ] = testDomain( {
 		domain: 'example.com',
 		blog_id: 123,
@@ -231,10 +179,16 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 		domains: [ fullDomain ],
 	} );
 
+	const fetchSite = jest.fn().mockResolvedValue( {
+		URL: 'http://example.com',
+		options: { is_redirect: false },
+	} );
+
 	const { rerender } = render(
 		<DomainsTableRow
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
 			isAllSitesView
 			isSelected={ false }
 			onSelect={ noop }

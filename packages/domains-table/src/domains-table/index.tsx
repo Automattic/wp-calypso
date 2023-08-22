@@ -1,11 +1,13 @@
 import { useState, useCallback, useLayoutEffect } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
+import { getDomainId } from '../get-domain-id';
 import { DomainsTableRow } from './domains-table-row';
 import type {
 	DomainData,
 	PartialDomainData,
 	SiteDomainsQueryFnData,
+	SiteDetails,
 } from '@automattic/data-stores';
 import './style.scss';
 
@@ -18,9 +20,15 @@ interface DomainsTableProps {
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
+	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 }
 
-export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: DomainsTableProps ) {
+export function DomainsTable( {
+	domains,
+	fetchSiteDomains,
+	fetchSite,
+	isAllSitesView,
+}: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
 		sortDirection: 'asc' | 'desc';
@@ -38,11 +46,11 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		}
 
 		setSelectedDomains( ( selectedDomains ) => {
-			const domainUrls = domains.map( ( { domain } ) => domain );
+			const domainIds = domains.map( getDomainId );
 			const selectedDomainsCopy = new Set( selectedDomains );
 
 			for ( const selectedDomain of selectedDomainsCopy ) {
-				if ( ! domainUrls.includes( selectedDomain ) ) {
+				if ( ! domainIds.includes( selectedDomain ) ) {
 					selectedDomainsCopy.delete( selectedDomain );
 				}
 			}
@@ -52,13 +60,14 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 	}, [ domains ] );
 
 	const handleSelectDomain = useCallback(
-		( { domain }: PartialDomainData ) => {
+		( domain: PartialDomainData ) => {
+			const domainId = getDomainId( domain );
 			const selectedDomainsCopy = new Set( selectedDomains );
 
-			if ( selectedDomainsCopy.has( domain ) ) {
-				selectedDomainsCopy.delete( domain );
+			if ( selectedDomainsCopy.has( domainId ) ) {
+				selectedDomainsCopy.delete( domainId );
 			} else {
-				selectedDomainsCopy.add( domain );
+				selectedDomainsCopy.add( domainId );
 			}
 
 			setSelectedDomains( selectedDomainsCopy );
@@ -105,7 +114,7 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 
 	const changeBulkSelection = () => {
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
-			setSelectedDomains( new Set( domains.map( ( { domain } ) => domain ) ) );
+			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
 		} else {
 			setSelectedDomains( new Set() );
 		}
@@ -147,11 +156,12 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 			<tbody>
 				{ domains.map( ( domain ) => (
 					<DomainsTableRow
-						key={ domain.domain }
+						key={ getDomainId( domain ) }
 						domain={ domain }
-						isSelected={ selectedDomains.has( domain.domain ) }
+						isSelected={ selectedDomains.has( getDomainId( domain ) ) }
 						onSelect={ handleSelectDomain }
 						fetchSiteDomains={ fetchSiteDomains }
+						fetchSite={ fetchSite }
 						isAllSitesView={ isAllSitesView }
 					/>
 				) ) }
