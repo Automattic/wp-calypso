@@ -200,18 +200,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	margin-right: 2px;
 }
 
-.highlight-card.is-compact .highlight-card-count.is-pointer {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-.highlight-card.is-compact .highlight-card-count-value,
-.highlight-card.is-compact .highlight-card-difference {
-	flex: 1 0 100%;
-}
-
-.highlight-card.is-compact div.highlight-card-icon {
-	margin-bottom: 0;
+// Remove the border and background from the compact highlight cards
+.highlight-card.is-compact {
+	box-shadow: 0 0 0 0;
+	background: none;
 }
 
 
