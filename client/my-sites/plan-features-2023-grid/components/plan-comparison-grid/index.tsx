@@ -21,24 +21,24 @@ import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { usePlansGridContext } from '../grid-context';
-import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
-import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
-import { sortPlans } from '../lib/sort-plan-properties';
-import { plansBreakSmall } from '../media-queries';
-import { getStorageStringFromFeature, usePricingBreakpoint } from '../util';
-import PlanFeatures2023GridActions from './actions';
-import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
-import PlanFeatures2023GridHeaderPrice from './header-price';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
-import PopularBadge from './popular-badge';
+import { usePlansGridContext } from '../../grid-context';
+import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
+import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
+import { sortPlans } from '../../lib/sort-plan-properties';
+import { plansBreakSmall } from '../../media-queries';
+import { getStorageStringFromFeature, usePricingBreakpoint } from '../../util';
+import PlanFeatures2023GridActions from '../actions';
+import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
+import PlanFeatures2023GridHeaderPrice from '../header-price';
+import { Plans2023Tooltip } from '../plans-2023-tooltip';
+import PopularBadge from '../popular-badge';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
-} from '../hooks/npm-ready/data-store/use-grid-plans';
-import type { PlanActionOverrides } from '../types';
+} from '../../hooks/npm-ready/data-store/use-grid-plans';
+import type { PlanActionOverrides, PlanComparisonGridProps } from '../../types';
 import type { FeatureObject, Feature, FeatureGroup, PlanSlug } from '@automattic/calypso-products';
-import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import '../../style.scss';
 
 function DropdownIcon() {
 	return (
@@ -58,15 +58,6 @@ const JetpackIconContainer = styled.div`
 	display: inline-block;
 	vertical-align: middle;
 	line-height: 1;
-`;
-
-const PlanComparisonHeader = styled.h1`
-	.plans .step-container .step-container__content &&,
-	&& {
-		font-size: 2rem;
-		text-align: center;
-		margin: 48px 0;
-	}
 `;
 
 const Title = styled.div< { isHiddenInMobile?: boolean } >`
@@ -301,25 +292,6 @@ const FeatureFootnote = styled.span`
 	}
 `;
 
-type PlanComparisonGridProps = {
-	intervalType?: string;
-	planTypeSelectorProps: PlanTypeSelectorProps;
-	isInSignup?: boolean;
-	isLaunchPage?: boolean | null;
-	flowName?: string | null;
-	currentSitePlanSlug?: string | null;
-	manageHref: string;
-	canUserPurchasePlan?: boolean | null;
-	selectedSiteSlug: string | null;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
-	siteId?: number | null;
-	planActionOverrides?: PlanActionOverrides;
-	selectedPlan?: string;
-	selectedFeature?: string;
-	isGlobalStylesOnPersonal?: boolean;
-	showLegacyStorageFeature?: boolean;
-};
-
 type PlanComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
@@ -448,7 +420,6 @@ const PlanComparisonGridHeaderCell = ( {
 				currentSitePlanSlug={ currentSitePlanSlug }
 				manageHref={ manageHref }
 				canUserPurchasePlan={ canUserPurchasePlan }
-				current={ gridPlan.current ?? false }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
@@ -719,7 +690,16 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	);
 };
 
-export const PlanComparisonGrid = ( {
+// TODO clk: These `Internal...` props should gradually be factored out as more dependencies are moved to plans-features-main
+interface InternalPlanComparisonGridProps
+	extends Omit< PlanComparisonGridProps, 'onUpgradeClick' > {
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	canUserPurchasePlan: boolean | null;
+	manageHref: string;
+	selectedSiteSlug: string | null;
+}
+
+const PlanComparisonGrid = ( {
 	intervalType,
 	planTypeSelectorProps,
 	isInSignup,
@@ -734,8 +714,7 @@ export const PlanComparisonGrid = ( {
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
-}: PlanComparisonGridProps ) => {
-	const translate = useTranslate();
+}: InternalPlanComparisonGridProps ) => {
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -896,9 +875,6 @@ export const PlanComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			<PlanComparisonHeader className="wp-brand-font">
-				{ translate( 'Compare our plans and find yours' ) }
-			</PlanComparisonHeader>
 			<PlanTypeSelector
 				{ ...planTypeSelectorProps }
 				kind="interval"
@@ -1000,3 +976,5 @@ export const PlanComparisonGrid = ( {
 		</div>
 	);
 };
+
+export default PlanComparisonGrid;

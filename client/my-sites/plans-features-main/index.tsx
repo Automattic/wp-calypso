@@ -27,7 +27,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
+import {
+	PlanComparisonGrid2023,
+	PlanFeaturesGrid2023,
+} from 'calypso/my-sites/plan-features-2023-grid';
 import useGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
@@ -170,6 +173,15 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 		/>
 	);
 };
+
+const PlanComparisonHeader = styled.h1`
+	.plans .step-container .step-container__content &&,
+	&& {
+		font-size: 2rem;
+		text-align: center;
+		margin: 48px 0;
+	}
+`;
 
 const PlansFeaturesMain = ( {
 	paidDomainName,
@@ -634,9 +646,8 @@ const PlansFeaturesMain = ( {
 						data-e2e-plans="wpcom"
 					>
 						<div className="plans-wrapper">
-							<PlanFeatures2023Grid
-								gridPlansForFeaturesGrid={ gridPlansForFeaturesGrid }
-								gridPlansForComparisonGrid={ gridPlansForComparisonGrid }
+							<PlanFeaturesGrid2023
+								gridPlans={ gridPlansForFeaturesGrid }
 								gridPlanForSpotlight={ gridPlanForSpotlight }
 								paidDomainName={ paidDomainName }
 								wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
@@ -650,7 +661,6 @@ const PlansFeaturesMain = ( {
 								siteId={ siteId }
 								isReskinned={ isReskinned }
 								intervalType={ intervalType }
-								hidePlansFeatureComparison={ hidePlansFeatureComparison }
 								hideUnavailableFeatures={ hideUnavailableFeatures }
 								currentSitePlanSlug={ sitePlanSlug }
 								planActionOverrides={ planActionOverrides }
@@ -670,19 +680,50 @@ const PlansFeaturesMain = ( {
 										setIsVisible( true );
 									}
 								} }
-								showPlansComparisonGrid={ showPlansComparisonGrid }
-								toggleShowPlansComparisonGrid={ toggleShowPlansComparisonGrid }
-								planTypeSelectorProps={ planTypeSelectorProps }
-								ref={ plansComparisonGridRef }
 							/>
-							<ComparisonGridToggle
-								onClick={ toggleShowPlansComparisonGrid }
-								label={
-									showPlansComparisonGrid
-										? translate( 'Hide comparison' )
-										: translate( 'Compare plans' )
-								}
-							/>
+							{ ! hidePlansFeatureComparison && (
+								<ComparisonGridToggle
+									onClick={ toggleShowPlansComparisonGrid }
+									label={
+										showPlansComparisonGrid
+											? translate( 'Hide comparison' )
+											: translate( 'Compare plans' )
+									}
+								/>
+							) }
+							{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
+								<div
+									ref={ plansComparisonGridRef }
+									className="plan-features-2023-grid__plan-comparison-grid-container"
+								>
+									<PlanComparisonHeader className="wp-brand-font">
+										{ translate( 'Compare our plans and find yours' ) }
+									</PlanComparisonHeader>
+									<PlanComparisonGrid2023
+										gridPlans={ gridPlansForComparisonGrid }
+										isInSignup={ isInSignup }
+										isLaunchPage={ isLaunchPage }
+										onUpgradeClick={ handleUpgradeClick }
+										flowName={ flowName }
+										selectedFeature={ selectedFeature }
+										selectedPlan={ selectedPlan }
+										siteId={ siteId }
+										intervalType={ intervalType }
+										currentSitePlanSlug={ sitePlanSlug }
+										planActionOverrides={ planActionOverrides }
+										intent={ intent }
+										isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
+										showLegacyStorageFeature={ showLegacyStorageFeature }
+										usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
+										allFeaturesList={ FEATURES_LIST }
+										planTypeSelectorProps={ planTypeSelectorProps }
+									/>
+									<ComparisonGridToggle
+										onClick={ toggleShowPlansComparisonGrid }
+										label={ translate( 'Hide comparison' ) }
+									/>
+								</div>
+							) : null }
 						</div>
 					</div>
 				</>
