@@ -2,7 +2,11 @@ import { useState, useCallback, useLayoutEffect } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { DomainsTableRow } from './domains-table-row';
-import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data-stores';
+import type {
+	DomainData,
+	PartialDomainData,
+	SiteDomainsQueryFnData,
+} from '@automattic/data-stores';
 import './style.scss';
 
 interface DomainsTableProps {
@@ -115,7 +119,11 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		domains.sort( ( first, second ) => {
 			let result = 0;
 			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
-				result = sortFunction( first, second, sortDirection === 'asc' ? 1 : -1 );
+				result = sortFunction(
+					first as DomainData, //type was casted to fix type error, this will be removed once the type is fixed
+					second as DomainData,
+					sortDirection === 'asc' ? 1 : -1
+				);
 				if ( 0 !== result ) {
 					break;
 				}
