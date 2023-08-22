@@ -6,9 +6,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CAPTURE_URL_RGX_SOFT } from 'calypso/blocks/import/util';
+import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/use-delete-domain-forwarding-mutation';
 import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
@@ -34,6 +38,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
+	const [ forwardPaths, setForwardPaths ] = useState( false );
+	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const pointsToWpcom = domain.pointsToWpcom;
 
@@ -94,6 +100,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			if ( url.hostname !== '_invalid_.domain' ) {
 				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
 				setProtocol( forwarding.isSecure ? 'https' : 'http' );
+				setIsPermanent( forwarding.isPermanent );
+				setForwardPaths( forwarding.forwardPaths );
 			}
 		} catch ( e ) {
 			// ignore
@@ -169,8 +177,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			targetHost,
 			targetPath,
 			isSecure,
-			forwardPaths: true, // v1 always forward paths
-			isPermanent: false, // v1 always temporary
+			forwardPaths,
+			isPermanent,
 			isActive: true, // v1 always active
 			sourcePath: null, // v1 always using domain only
 		} );
@@ -233,6 +241,30 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		);
 	};
 
+	const redirectHasChanged = () => {
+		if ( ! forwarding ) {
+			return false;
+		}
+
+		if ( forwarding.targetHost + forwarding.targetPath !== targetUrl ) {
+			return true;
+		}
+
+		if ( ( forwarding.isSecure ? 'https' : 'http' ) !== protocol ) {
+			return true;
+		}
+
+		if ( forwarding.isPermanent !== isPermanent ) {
+			return true;
+		}
+
+		if ( forwarding.forwardPaths !== forwardPaths ) {
+			return true;
+		}
+
+		return false;
+	};
+
 	return (
 		<>
 			{ renderNotice() }
@@ -275,19 +307,77 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							</Button>
 						}
 					/>
+					<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
+						<strong>{ translate( 'Redirect type' ) }</strong>
+						<p>{ translate( 'Select the HTTP redirect type' ) }</p>
+						<FormLabel className="something">
+							<FormRadio
+								name="redirect_type"
+								value="0"
+								checked={ ! isPermanent }
+								onChange={ () => {
+									setIsPermanent( false );
+								} }
+								label={ translate( 'Temporary redirect (307)' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>
+							{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
+						</FormSettingExplanation>
+						<FormLabel className="something">
+							<FormRadio
+								name="redirect_type"
+								value="0"
+								checked={ isPermanent }
+								onChange={ () => {
+									setIsPermanent( true );
+								} }
+								label={ translate( 'Permanent redirect (301)' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>
+							{ translate(
+								'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
+							) }
+						</FormSettingExplanation>
+
+						<strong>{ translate( 'Path forwarding' ) }</strong>
+						<p>
+							{ translate(
+								'Redirects the path after the domain name to the corresponding path at the new address.'
+							) }
+						</p>
+						<FormLabel className="something">
+							<FormRadio
+								name="path_forwarding"
+								value="0"
+								checked={ ! forwardPaths }
+								onChange={ () => {
+									setForwardPaths( false );
+								} }
+								label={ translate( 'Do not forward' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>{ 'Domainname 1 -> domainname 2' }</FormSettingExplanation>
+						<FormLabel className="something">
+							<FormRadio
+								name="path_forwarding"
+								value="0"
+								checked={ forwardPaths }
+								onChange={ () => {
+									setForwardPaths( true );
+								} }
+								label={ translate( 'Forward path' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>{ 'Domainname 1 -> domainname 2' }</FormSettingExplanation>
+					</Accordion>
 				</FormFieldset>
 				<p className="domain-forwarding-card__error-field">
 					{ ! isValidUrl ? <FormInputValidation isError={ true } text={ errorMessage } /> : ' ' }
 				</p>
 				<FormButton
-					disabled={
-						! isValidUrl ||
-						isLoading ||
-						( forwarding &&
-							forwarding.targetHost + forwarding.targetPath === targetUrl &&
-							( forwarding.isSecure ? 'https' : 'http' ) === protocol ) ||
-						( ! forwarding && targetUrl === '' )
-					}
+					disabled={ ! isValidUrl || isLoading || ! redirectHasChanged() || targetUrl === '' }
 				>
 					{ translate( 'Save' ) }
 				</FormButton>
