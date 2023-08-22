@@ -54,7 +54,6 @@ const PostCardComments = ( { post, handleClick } ) => {
 			showConversationFollowButton={ false }
 			showNestingReplyArrow={ true }
 			initialSize={ 5 }
-			pageSize={ 15 }
 			maxDepth={ 1 }
 			openPostPageAtComments={ onOpenPostPageAtCommentsClick }
 		/>
