@@ -836,14 +836,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					allFeaturesList={ allFeaturesList }
 				>
 					{ this.renderSpotlightPlan() }
-				</PlansGridContextProvider>
-				<div className="plan-features">
-					<PlansGridContextProvider
-						intent={ intent }
-						gridPlans={ gridPlansForFeaturesGrid }
-						usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
-						allFeaturesList={ allFeaturesList }
-					>
+					<div className="plan-features">
 						<div className="plan-features-2023-grid__content">
 							<div>
 								<div className="plan-features-2023-grid__desktop-view">
@@ -857,8 +850,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								</div>
 							</div>
 						</div>
-					</PlansGridContextProvider>
-				</div>
+					</div>
+				</PlansGridContextProvider>
+
 				{ ! hidePlansFeatureComparison && (
 					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 						<Button onClick={ toggleShowPlansComparisonGrid } ref={ this.buttonRef }>
