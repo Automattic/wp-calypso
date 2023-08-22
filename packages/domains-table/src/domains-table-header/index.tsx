@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { DomainData } from '@automattic/data-stores';
+import { DomainData, SiteDetails } from '@automattic/data-stores';
 import { Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -12,7 +12,14 @@ export type DomainsTableColumn =
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';
 			supportsOrderSwitching?: boolean;
-			sortFunctions?: [ ( first: DomainData, second: DomainData, sortOrder: number ) => number ];
+			sortFunctions?: Array<
+				(
+					first: DomainData,
+					second: DomainData,
+					sortOrder: number,
+					sites?: SiteDetails[]
+				) => number
+			>;
 			headerComponent?: React.ReactNode;
 	  }
 	| {
@@ -21,7 +28,14 @@ export type DomainsTableColumn =
 			isSortable?: false;
 			initialSortDirection?: never;
 			supportsOrderSwitching?: never;
-			sortFunctions?: [ ( first: DomainData, second: DomainData, sortOrder: number ) => number ];
+			sortFunctions?: [
+				(
+					first: DomainData,
+					second: DomainData,
+					sortOrder: number,
+					sites?: SiteDetails[]
+				) => number
+			];
 			headerComponent?: React.ReactNode;
 	  };
 
@@ -40,11 +54,7 @@ export const DomainsTableHeader = ( {
 	onChangeSortOrder,
 	headerClasses,
 }: DomainsTableHeaderProps ) => {
-	const listHeaderClasses = classNames(
-		'domains-table-header',
-		'domains-table-header__desktop',
-		headerClasses
-	);
+	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
 
 	const renderSortIcon = (
 		column: DomainsTableColumn,

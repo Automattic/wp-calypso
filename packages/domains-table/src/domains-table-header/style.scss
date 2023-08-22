@@ -5,14 +5,10 @@
 @import "@wordpress/base-styles/colors";
 
 .domains-table-header {
-	display: flex;
-	justify-content: space-between;
-	padding: 8px 0 16px;
 	font-size: $font-body-small;
 	font-weight: 500;
 	color: var(--color-neutral-60);
 	border-bottom: 1px solid #f0f0f0;
-
 	.button-plain {
 		text-align: left;
 		line-height: 20px;
@@ -31,9 +27,6 @@
 		}
 	}
 
-	&.domains-table-header__desktop {
-		display: none;
-	}
 	&.domains-table-header__mobile {
 		display: flex;
 		padding: 16px;
@@ -50,9 +43,6 @@
 	}
 
 	@include break-large {
-		&.domains-table-header__desktop {
-			display: flex;
-		}
 		&.domains-table-header__mobile {
 			display: none;
 		}
