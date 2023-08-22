@@ -55,6 +55,7 @@ export interface MonitorSettings {
 	is_over_limit: boolean;
 	sms_sent_count: number;
 	sms_monthly_limit: number;
+	check_interval: number;
 }
 
 interface StatsObject {

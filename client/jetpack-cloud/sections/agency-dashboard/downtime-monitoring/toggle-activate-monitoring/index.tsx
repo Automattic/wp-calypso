@@ -75,7 +75,7 @@ export default function ToggleActivateMonitoring( {
 	const smsLimitReached = settings?.is_over_limit;
 
 	const currentSettings = () => {
-		const minutes = settings?.monitor_deferment_time;
+		const minutes = settings?.check_interval;
 		if ( ! minutes ) {
 			return null;
 		}
