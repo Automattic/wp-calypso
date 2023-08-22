@@ -125,5 +125,15 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await publishedPostPage.validateCategory( category );
 			await publishedPostPage.validateTags( tag );
 		} );
+
+		// Press This button is not available in AT.
+		// @see: paYJgx-1lp-p2
+		it.each( [ { name: 'Twitter' }, { name: 'Facebook' } ] )(
+			'Social sharing button for $name can be clicked',
+			async function ( { name } ) {
+				publishedPostPage = new PublishedPostPage( page );
+				await publishedPostPage.validateSocialButton( name, { click: true } );
+			}
+		);
 	} );
 } );

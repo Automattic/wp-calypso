@@ -132,4 +132,27 @@ export class PublishedPostPage {
 	async validateTags( tag: string ): Promise< void > {
 		await this.page.waitForSelector( `a:text-is("${ tag }")` );
 	}
+
+	/**
+	 * Validates the presence of a social sharing button on the published content.
+	 *
+	 * If optional parameter `click` is set, the button will be clicked to verify
+	 * functionality.
+	 *
+	 * @param {string} name Name of the social sharing button.
+	 */
+	async validateSocialButton( name: string, { click }: { click?: boolean } = {} ) {
+		const button = this.anchor
+			.getByRole( 'list' )
+			.getByRole( 'listitem' )
+			.filter( { hasText: new RegExp( name, 'i' ) } );
+
+		if ( click ) {
+			const popupPromise = this.page.waitForEvent( 'popup' );
+			await button.click();
+			const popup = await popupPromise;
+			await popup.waitForLoadState( 'load' );
+			await popup.close();
+		}
+	}
 }
