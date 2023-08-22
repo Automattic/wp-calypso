@@ -162,6 +162,13 @@ export function useProductDescription( productSlug: string ): {
 			case 'jetpack-backup-t2':
 				description = translate( 'Real-time cloud backups with one-click restores.' );
 				break;
+			case 'jetpack-backup-addon-storage-10gb-monthly':
+			case 'jetpack-backup-addon-storage-100gb-monthly':
+			case 'jetpack-backup-addon-storage-1tb-monthly':
+			case 'jetpack-backup-addon-storage-3tb-monthly':
+			case 'jetpack-backup-addon-storage-5tb-monthly':
+				description = translate( 'Additional storage for your Jetpack VaultPress Backup plan.' );
+				break;
 			case 'jetpack-boost':
 				description = translate( 'Essential tools to speed up your site - no developer required.' );
 				break;

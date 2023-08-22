@@ -25,6 +25,7 @@ import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
+import PostCardComments from './post-card-comments';
 import StandardPost from './standard';
 import './style.scss';
 
@@ -39,6 +40,7 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
+		handleClick: PropTypes.func,
 		showSiteName: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
@@ -51,6 +53,7 @@ class ReaderPostCard extends Component {
 	static defaultProps = {
 		onClick: noop,
 		onCommentClick: noop,
+		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
 		showFollowButton: true,
@@ -85,6 +88,11 @@ class ReaderPostCard extends Component {
 
 		// ignore clicks on comments
 		if ( closest( event.target, '.conversations__comment-list', rootNode ) ) {
+			return;
+		}
+
+		// ignore clicks on inline comments
+		if ( closest( event.target, '.comments__comment-list', rootNode ) ) {
 			return;
 		}
 
@@ -261,6 +269,9 @@ class ReaderPostCard extends Component {
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
+				{ ! isConversations && (
+					<PostCardComments post={ post } handleClick={ this.props.handleClick } />
+				) }
 			</Card>
 		);
 	}
