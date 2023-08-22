@@ -694,7 +694,7 @@ const PlansFeaturesMain = ( {
 							{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
 								<div
 									ref={ plansComparisonGridRef }
-									className="plan-features-2023-grid__plan-comparison-grid-container"
+									className="plans-features-main__plan-comparison-grid-container"
 								>
 									<PlanComparisonHeader className="wp-brand-font">
 										{ translate( 'Compare our plans and find yours' ) }
