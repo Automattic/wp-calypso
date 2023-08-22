@@ -239,7 +239,12 @@ $videopress-background: #010101;
 		align-self: baseline;
 		flex: 1;
 		white-space: nowrap;
+
+		@media (max-width: 1080px) {
+			margin-left: 0;
+		}
 	}
+
 
 	.featured-domain-suggestion.card .domain-product-price {
 		align-items: flex-start;
