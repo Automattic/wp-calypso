@@ -289,7 +289,7 @@ export const useComparisonData = () => {
 						name: translate( 'Newsletter' ),
 						url: links.newsletter,
 						info: allChecked,
-          },  
+					},
 					{
 						id: 'seo',
 						name: translate( '{{abbr}}SEO{{/abbr}} tools', {
@@ -315,12 +315,6 @@ export const useComparisonData = () => {
 							SECURITY: { content: <CheckIcon /> },
 							COMPLETE: { content: <CheckIcon /> },
 						},
-					},
-					{
-						id: 'paid_newsletter',
-						name: translate( 'Paid Newsletter' ),
-						url: links.paid_newsletter,
-						info: allChecked,
 					},
 					{
 						id: 'payments_block',
