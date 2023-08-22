@@ -18,6 +18,7 @@ export * from './slideshow';
 export * from './tiled-gallery';
 export * from './youtube';
 export * from './layout-grid';
+export * from './ai-assistant';
 
 /* Types */
 export * from './types';
