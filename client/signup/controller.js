@@ -297,10 +297,13 @@ export default {
 
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
-		// Set theme parameter in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		// Set design parameters in signup depencency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;
+		const headerPatternIds = query && query.header_pattern_ids;
+		const footerPatternIds = query && query.footer_pattern_ids;
+		const sectionPatternIds = query && query.pattern_ids;
 		// Set plugin parameter in signup dependency store so we can retrieve it in getWithPluginDestination().
 		const pluginParameter = query && query.plugin;
 		const pluginBillingPeriod = query && query.billing_period;
@@ -310,6 +313,9 @@ export default {
 			...( themeParameter && { themeParameter } ),
 			...( themeType && { themeType } ),
 			...( styleVariation && { styleVariation } ),
+			...( headerPatternIds && { headerPatternIds } ),
+			...( footerPatternIds && { footerPatternIds } ),
+			...( sectionPatternIds && { sectionPatternIds } ),
 			...( pluginParameter && { pluginParameter } ),
 			...( pluginBillingPeriod && { pluginBillingPeriod } ),
 		};
