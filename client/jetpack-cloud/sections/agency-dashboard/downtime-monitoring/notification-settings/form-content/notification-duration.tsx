@@ -34,7 +34,7 @@ export default function NotificationDuration( {
 	return (
 		<div className="notification-settings__content-block">
 			<div className="notification-settings__content-heading">
-				{ translate( 'Notify me about downtime:' ) }
+				{ translate( 'Monitor my site every:' ) }
 			</div>
 			<SelectDropdown
 				onToggle={ ( { open: isOpen }: { open: boolean } ) => {
