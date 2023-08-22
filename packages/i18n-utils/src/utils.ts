@@ -247,16 +247,20 @@ export function isTranslatedIncompletely( locale: string ) {
  * Will replace existing locale slug, if present.
  *
  * @param path - original path
+ * @param locale - the locale to add to the path (Optional)
+ *
  * @returns original path with new locale slug
  */
-export function addLocaleToPathLocaleInFront( path: string ) {
-	const locale = getLocaleSlug();
+export function addLocaleToPathLocaleInFront( path: string, locale?: string ) {
+	const localeOrDefault = locale || getLocaleSlug();
 	const urlParts = getUrlParts( path );
 	const queryString = urlParts.search || '';
-	if ( ! locale || isDefaultLocale( locale ) ) {
+	if ( ! localeOrDefault || isDefaultLocale( localeOrDefault ) ) {
 		return path;
 	}
-	return `/${ locale }` + removeLocaleFromPathLocaleInFront( urlParts.pathname ) + queryString;
+	return (
+		`/${ localeOrDefault }` + removeLocaleFromPathLocaleInFront( urlParts.pathname ) + queryString
+	);
 }
 
 /**

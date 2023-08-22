@@ -34,7 +34,7 @@ describe( '#addLocaleToPathLocaleInFront', () => {
 	test( 'should correctly return the real path when locale is at the beginning of the path', () => {
 		expect( addLocaleToPathLocaleInFront( '/en/themes', 'fr' ) ).toBe( '/fr/themes' );
 		expect( addLocaleToPathLocaleInFront( '/themes?thing=stuff', 'en' ) ).toBe(
-			'/en/themes?thing=stuff'
+			'/themes?thing=stuff'
 		);
 	} );
 } );
