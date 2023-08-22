@@ -17,3 +17,11 @@ export const allDomainsSchema = {
 		},
 	},
 };
+
+export const navigationSchema = {
+	type: 'object',
+	required: [ 'currentPage' ],
+	properties: {
+		currentPage: { type: 'number' },
+	},
+};
