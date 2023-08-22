@@ -1514,22 +1514,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 } );
 
-const get100YearPlanDetails = (): Partial< IncompleteWPcomPlan > => ( {
-	group: GROUP_WPCOM,
-	type: TYPE_CENTENNIAL,
-	// Todo: ¯\_(ツ)_/¯ on the copy.
-	getTitle: () => i18n.translate( '100 Year Plan' ),
-	getAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-	getBlogAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-	getPortfolioAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-	getStoreAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-	getPlanTagline: () => i18n.translate( 'A plan for the future of your website.' ),
-	getDescription: () => i18n.translate( 'A plan for the future of your website.' ),
-	getShortDescription: () => i18n.translate( 'A plan for the future of your website.' ),
-	getTagline: () => i18n.translate( 'A plan for the future of your website.' ),
-	getBlogOnboardingTagLine: () => i18n.translate( 'A plan for the future of your website.' ),
-} );
-
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -2730,8 +2714,20 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_100_YEARS ]: {
 		...getPlanBusinessDetails(),
-		...get100YearPlanDetails(),
 		term: TERM_CENTENNIALLY,
+		group: GROUP_WPCOM,
+		type: TYPE_CENTENNIAL,
+		// Todo: ¯\_(ツ)_/¯ on the copy.
+		getTitle: () => i18n.translate( '100 Year Plan' ),
+		getAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getBlogAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getPortfolioAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getStoreAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getPlanTagline: () => i18n.translate( 'A plan for the future of your website.' ),
+		getDescription: () => i18n.translate( 'A plan for the future of your website.' ),
+		getShortDescription: () => i18n.translate( 'A plan for the future of your website.' ),
+		getTagline: () => i18n.translate( 'A plan for the future of your website.' ),
+		getBlogOnboardingTagLine: () => i18n.translate( 'A plan for the future of your website.' ),
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
 			[
@@ -2752,7 +2748,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			].includes( plan ),
 		getProductId: () => 1061,
 		getStoreSlug: () => PLAN_100_YEARS,
-		getPathSlug: () => '100-year-plan',
+		getPathSlug: () => 'wp_bundle_hundred_year',
 	},
 
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
