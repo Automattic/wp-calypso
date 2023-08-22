@@ -317,7 +317,7 @@ const Settings = ( {
 		if (
 			( ! englishLocales.includes( getLocaleSlug() || '' ) &&
 				! i18n.hasTranslation(
-					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers {{a}}Update your nameservers now{{/a}}."
+					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
 				) ) ||
 			areAllWpcomNameServers()
 		) {
@@ -334,7 +334,7 @@ const Settings = ( {
 				/>
 				<div className="dns-records-card-notice__message">
 					{ translate(
-						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers {{a}}Update your nameservers now{{/a}}.",
+						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
 						{
 							components: {
 								a: (
