@@ -46,6 +46,7 @@ export default function useUpdateMonitorSettings(
 									monitor_user_wp_note_notifications: data.settings.wp_note_notifications,
 									monitor_notify_additional_user_emails: data.settings.contacts?.emails ?? [],
 									monitor_notify_additional_user_sms: data.settings.contacts?.sms_numbers ?? [],
+									monitor_urls: data.settings.urls,
 								},
 							};
 						}
