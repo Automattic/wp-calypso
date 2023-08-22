@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
@@ -121,12 +122,14 @@ export class StatsPage {
 		await target.waitFor();
 		await target.click();
 
-		// The chart legend will update.
-		await this.anchor
-			.locator( '.chart__legend-options' )
-			.getByRole( 'listitem' )
-			.filter( { hasText: activityType.type } )
-			.waitFor();
+		// The chart legend will update, but this only happens on Desktop viewports.
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.anchor
+				.locator( '.chart__legend-options' )
+				.getByRole( 'listitem' )
+				.filter( { hasText: activityType.type } )
+				.waitFor();
+		}
 
 		// Query param changes when the stats type is changed, but only for the Traffic tab.
 		// Selecting different stats types in the Store tab does not add query params.
