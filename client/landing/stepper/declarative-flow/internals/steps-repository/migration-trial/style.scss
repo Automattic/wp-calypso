@@ -44,8 +44,8 @@
 		flex-direction: column;
 		border: solid var(--studio-gray-5) 1px;
 		border-radius: 4px;
-		padding: 1.75em;
-		margin-bottom: 2.5rem;
+		padding: 1rem;
+		margin-bottom: 1rem;
 		gap: 1.5rem;
 
 		@include break-medium {
@@ -86,33 +86,55 @@
 			width: 100%;
 			margin: 0;
 			list-style: none;
+			column-gap: 0;
 			column-count: 1;
-			column-gap: 2rem;
 
 			@include break-small {
-				column-count: 2;
+				column-count: 3;
 			}
 		}
 
 		li + li {
-			margin-top: 0.85rem;
+			margin-top: 0.25rem;
 		}
 
 		li {
 			font-size: 0.875rem;
-			color: var(--studio-gray-40);
+			letter-spacing: -0.1px;
 
-			&::before {
-				content: "\2022";
-				color: var(--studio-blue-20);
-				font-weight: bold;
-				display: inline-block;
-				width: 1rem;
+			svg {
+				fill: var(--color-success);
 				position: relative;
-				top: -1px;
+				top: 4px;
 			}
 		}
 	}
+
+	.trial-plan--details-limitation {
+		text-align: start;
+		padding-left: 1.5rem;
+		position: relative;
+
+		strong {
+			font-size: 0.875rem;
+		}
+
+		small {
+			color: var(--studio-gray-60);
+		}
+
+		img {
+			position: absolute;
+			inset-block-start: 4px;
+			inset-inline-start: 0;
+			width: 1rem;
+			height: 1rem;
+		}
+	}
+}
+
+.popover.info-popover__tooltip--trial-plan .popover__inner {
+	max-width: 280px;
 }
 
 .trial-plan-features-modal {

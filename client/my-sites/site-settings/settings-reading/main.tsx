@@ -1,12 +1,17 @@
 import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { useSelector } from 'calypso/state';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSettingsSection from '../reader-settings';
@@ -15,8 +20,6 @@ import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
-
-const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
 export type SubscriptionOptions = {
 	invitation: string;
@@ -40,6 +43,8 @@ type Fields = {
 	wpcom_reader_views_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
+	date_format?: string;
+	timezone_string?: string;
 };
 
 const getFormSettings = ( settings: unknown & Fields ) => {
@@ -64,6 +69,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
+		date_format,
+		timezone_string,
 	} = settings;
 
 	return {
@@ -83,15 +90,19 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 		wpcom_reader_views_enabled: !! wpcom_reader_views_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
+		date_format: date_format,
+		timezone_string: timezone_string,
 	};
 };
 
 const connectComponent = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = siteId && getSiteSlug( state, siteId );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	return {
+		...( siteSlug && { siteSlug } ),
 		...( siteUrl && { siteUrl } ),
 		siteIsJetpack,
 		isAtomic,
@@ -109,6 +120,7 @@ type ReadingSettingsFormProps = {
 	isSavingSettings: boolean;
 	settings: { subscription_options?: SubscriptionOptions };
 	siteIsJetpack: boolean | null;
+	siteSlug?: string;
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -126,9 +138,11 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isSavingSettings,
 			settings,
 			siteIsJetpack,
+			siteSlug,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
+			const translate = useTranslate();
 			const disabled = isRequestingSettings || isSavingSettings;
 			const savedSubscriptionOptions = settings?.subscription_options;
 			return (
@@ -143,15 +157,35 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
 					/>
-					<NewsletterSettingsSection
-						fields={ fields }
-						handleToggle={ handleToggle }
-						handleSubmitForm={ handleSubmitForm }
-						disabled={ disabled }
-						isSavingSettings={ isSavingSettings }
-						savedSubscriptionOptions={ savedSubscriptionOptions }
-						updateFields={ updateFields }
-					/>
+					{ config.isEnabled( 'settings/newsletter-settings-page' ) ? (
+						<>
+							{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+							<SettingsSectionHeader
+								id="newsletter-settings"
+								title={ translate( 'Newsletter settings' ) }
+							/>
+							<Card className="site-settings__card">
+								<em>
+									{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {
+										components: {
+											a: <a href={ `/settings/newsletter/${ siteSlug }` } />,
+										},
+									} ) }
+								</em>
+							</Card>
+						</>
+					) : (
+						<NewsletterSettingsSection
+							fields={ fields }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							handleToggle={ handleToggle }
+							handleSubmitForm={ handleSubmitForm }
+							disabled={ disabled }
+							isSavingSettings={ isSavingSettings }
+							savedSubscriptionOptions={ savedSubscriptionOptions }
+							updateFields={ updateFields }
+						/>
+					) }
 					<ReaderSettingsSection
 						fields={ fields }
 						handleAutosavingToggle={ handleAutosavingToggle }
@@ -178,14 +212,18 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 
 const ReadingSettings = () => {
 	const translate = useTranslate();
-
-	if ( ! isEnabled ) {
-		return null;
-	}
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
+		isJetpackConnectionProblem( state, siteId as number )
+	);
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">
 			<ScreenOptionsTab wpAdminPath="options-reading.php" />
+			{ isJetpack && isPossibleJetpackConnectionProblem && siteId && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
 			<ReadingSettingsForm />

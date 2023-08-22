@@ -33,14 +33,17 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
+		"design-picker/query-marketplace-themes": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
+		"domains/management": false,
 		"cookie-banner": false,
 		"google-my-business": false,
 		"help": true,
 		"importers/substack": true,
+		"individual-subscriber-stats": false,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
@@ -78,7 +81,6 @@
 		"plugins/ssr-landing": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
-		"promote-post/redesign-i2": true,
 		"promote-post/widget-i2": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
@@ -107,7 +109,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/hosting-metrics-i1": true,
-		"yolo/jetpack-error-ux-i1": true
+		"yolo/hosting-metrics-i1": true
 	}
 }

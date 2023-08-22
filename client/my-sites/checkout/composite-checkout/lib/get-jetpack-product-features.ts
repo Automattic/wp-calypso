@@ -111,7 +111,6 @@ function getFeatureStrings(
 		case 'stats':
 			return [
 				translate( 'Instant access to upcoming features' ),
-				translate( 'Priority support' ),
 				translate( 'Ad-free experience' ),
 			];
 		case 'support':

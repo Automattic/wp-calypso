@@ -155,6 +155,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-newsletter',
+		paths: [ '/settings/newsletter' ],
+		module: 'calypso/my-sites/site-settings/settings-newsletter',
+		group: 'sites',
+	},
+	{
 		name: 'settings-security',
 		paths: [ '/settings/security' ],
 		module: 'calypso/my-sites/site-settings/settings-security',
@@ -328,7 +334,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/discover' ],
+		paths: [ '/discover', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/discover' ],
 		module: 'calypso/reader/discover',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -351,7 +357,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tag' ],
+		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -600,9 +606,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'promote-post',
+		name: 'promote-post-i2',
 		paths: [ '/advertising' ],
-		module: 'calypso/my-sites/promote-post',
+		module: 'calypso/my-sites/promote-post-i2',
 		group: 'sites',
 	},
 	{

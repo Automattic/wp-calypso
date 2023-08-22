@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react-hooks';
 import React from 'react';
 import request from 'wpcom-proxy-request';
+import { NewsletterCategories } from '../types';
 import useMarkAsNewsletterCategoryMutation from '../use-mark-as-newsletter-category-mutation';
 
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
@@ -69,7 +70,7 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 			await result.current.mutateAsync( categoryId );
 		} );
 
-		expect( invalidateQueriesSpy ).toHaveBeenCalledWith( [ `newsletter-categories-123` ] );
+		expect( invalidateQueriesSpy ).toHaveBeenCalledWith( [ 'newsletter-categories', 123 ] );
 	} );
 
 	it( 'should throw an error when ID is missing', async () => {
@@ -111,5 +112,70 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 		);
 
 		console.error = consoleError;
+	} );
+
+	it( 'should update optimistically newsletter categories cache', async () => {
+		( request as jest.MockedFunction< typeof request > ).mockResolvedValue( {
+			success: true,
+		} );
+
+		const mockedCategories = [
+			{
+				id: 200,
+				count: 15,
+				description: 'Fascinating art styles',
+				link: 'https://mocksite.wordpress.com/category/art-styles/',
+				name: 'Creative Expressions',
+				slug: 'creative-expressions',
+				taxonomy: 'category',
+				parent: 0,
+				meta: [ { key: 'theme', value: 'imagination' } ],
+				_links: {},
+			},
+			{
+				id: 10,
+				count: 7,
+				description: 'Exploring the unknown',
+				link: 'https://mocksite.wordpress.com/category/adventures/',
+				name: 'Adventures Beyond',
+				slug: 'adventures-beyond',
+				taxonomy: 'category',
+				parent: 0,
+				meta: [ { key: 'discovery', value: 'thrills' } ],
+				_links: {},
+			},
+		];
+
+		queryClient.setQueryData( [ 'categories', siteId ], mockedCategories );
+
+		const { result } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
+			wrapper,
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( 200 );
+		} );
+
+		const updatedData = queryClient.getQueryData< NewsletterCategories >( [
+			'newsletter-categories',
+			siteId,
+		] );
+
+		expect( updatedData?.newsletterCategories ).toEqual(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					id: 200,
+					count: 15,
+					description: 'Fascinating art styles',
+					link: 'https://mocksite.wordpress.com/category/art-styles/',
+					name: 'Creative Expressions',
+					slug: 'creative-expressions',
+					taxonomy: 'category',
+					parent: 0,
+					meta: [ { key: 'theme', value: 'imagination' } ],
+					_links: {},
+				} ),
+			] )
+		);
 	} );
 } );

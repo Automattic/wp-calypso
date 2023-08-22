@@ -6,6 +6,7 @@ import {
 	updateLaunchpadSettings,
 	useStarterDesignBySlug,
 	useStarterDesignsQuery,
+	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
 import {
 	isDefaultGlobalStylesVariationSlug,
@@ -32,7 +33,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { setActiveTheme } from 'calypso/state/themes/actions';
+import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
@@ -65,6 +66,8 @@ import type {
 } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
@@ -317,7 +320,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for unlocking a selected premium design
 
-	useQueryThemes( 'wpcom', { tier: '-marketplace', number: 1000 } );
+	useQueryThemes( 'wpcom', {
+		number: 1000,
+		...( ! isEnabled( 'design-picker/query-marketplace-themes' ) ? { tier: '-marketplace' } : {} ),
+	} );
 	useQuerySitePurchases( site ? site.ID : -1 );
 	useQuerySiteFeatures( [ site?.ID ] );
 
@@ -482,15 +488,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for submitting the selected design
 
-	const { setDesignOnSite, applyThemeWithPatterns } = useDispatch( SITE_STORE );
+	const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	async function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 
-		await updateLaunchpadSettings( siteSlug, {
-			checklist_statuses: { design_completed: true },
-		} );
+		if ( siteSlugOrId ) {
+			await updateLaunchpadSettings( siteSlugOrId, {
+				checklist_statuses: { design_completed: true },
+			} );
+		}
 
 		if ( siteSlugOrId && _selectedDesign ) {
 			const positionIndex = designs.findIndex(
@@ -499,10 +507,29 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 			setPendingAction( () => {
 				if ( _selectedDesign?.is_virtual ) {
-					return applyThemeWithPatterns( siteSlugOrId, _selectedDesign ).then(
-						( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
-					);
+					const themeId = getThemeIdFromStylesheet( _selectedDesign.recipe?.stylesheet ?? '' );
+					return Promise.resolve()
+						.then( () =>
+							reduxDispatch(
+								activateOrInstallThenActivate(
+									themeId ?? '',
+									site?.ID ?? 0,
+									'assembler',
+									false,
+									false
+								) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+							)
+						)
+						.then( ( activeThemeStylesheet: string ) =>
+							assembleSite( siteSlugOrId, activeThemeStylesheet, {
+								homeHtml: _selectedDesign.recipe?.pattern_html,
+								headerHtml: _selectedDesign.recipe?.header_html,
+								footerHtml: _selectedDesign.recipe?.footer_html,
+								siteSetupOption: 'assembler-virtual-theme',
+							} )
+						);
 				}
+
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
 					styleVariation: selectedStyleVariation,
 					globalStyles,

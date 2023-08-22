@@ -35,10 +35,10 @@
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
-		"@wordpress/api-fetch": "^6.35.0",
-		"@wordpress/data-controls": "^3.7.0",
-		"@wordpress/deprecated": "^3.38.0",
-		"@wordpress/url": "^3.39.0",
+		"@wordpress/api-fetch": "^6.36.0",
+		"@wordpress/data-controls": "^3.8.0",
+		"@wordpress/deprecated": "^3.39.0",
+		"@wordpress/url": "^3.40.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
@@ -49,11 +49,12 @@
 		"validator": "^13.5.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.8.0",
+		"@wordpress/data": "^9.9.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@remix-run/router": "^1.5.0",
 		"@types/validator": "^13.7.1",

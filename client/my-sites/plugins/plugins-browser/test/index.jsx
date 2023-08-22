@@ -62,6 +62,15 @@ jest.mock( 'calypso/lib/route/path', () => ( {
 	getMessagePathForJITM: jest.fn( () => '/plugins/' ),
 } ) );
 
+jest.mock(
+	'calypso/components/jetpack/connection-health/use-check-jetpack-connection-health',
+	() => ( {
+		useCheckJetpackConnectionHealth: jest.fn( () => ( {
+			data: { is_healthy: false },
+		} ) ),
+	} )
+);
+
 import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,
@@ -77,6 +86,7 @@ import {
 import { screen } from '@testing-library/react';
 import { merge } from 'lodash';
 import documentHead from 'calypso/state/document-head/reducer';
+import { jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import plugins from 'calypso/state/plugins/reducer';
 import productsList from 'calypso/state/products-list/reducer';
 import siteConnection from 'calypso/state/site-connection/reducer';
@@ -106,7 +116,7 @@ const render = ( el, options = {} ) =>
 	renderWithProvider( el, {
 		...options,
 		initialState: merge( initialReduxState, options.initialState ),
-		reducers: { ui, plugins, documentHead, productsList, siteConnection },
+		reducers: { ui, plugins, documentHead, productsList, siteConnection, jetpackConnectionHealth },
 	} );
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
@@ -205,12 +215,14 @@ describe( 'PluginsBrowser basic tests', () => {
 	test( 'should show notice if site is not connected to wpcom', () => {
 		const initialState = {
 			ui: { selectedSiteId: 1 },
-			siteConnection: { items: { 1: false } },
+			jetpackConnectionHealth: {
+				1: { jetpack_connection_problem: true },
+			},
 			sites: {
-				items: { 1: { jetpack: false } },
+				items: { 1: { jetpack: true } },
 			},
 		};
 		render( <PluginsBrowser />, { initialState } );
-		expect( screen.getByText( 'I’d like to fix this now' ) ).toBeVisible();
+		expect( screen.getByText( 'Learn how to fix' ) ).toBeVisible();
 	} );
 } );

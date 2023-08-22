@@ -15,24 +15,19 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn(),
 } ) );
-jest.mock( '../../hooks/use-plan-prices-display', () => ( { usePlanPricesDisplay: jest.fn() } ) );
+jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
 
+import { type PlanSlug, PLAN_ANNUAL_PERIOD, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { usePlanPricesDisplay } from '../../hooks/use-plan-prices-display';
+import { usePlansGridContext } from '../../grid-context';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
-import type { PlanProperties } from '../../types';
-
-type PlanPricesDisplay = ReturnType< typeof usePlanPricesDisplay >;
 
 describe( 'PlanFeatures2023GridHeaderPrice', () => {
-	const planProperties = {
-		planName: 'foo',
-		showMonthlyPrice: false,
-	} as PlanProperties;
 	const defaultProps = {
 		isLargeCurrency: false,
-		planProperties,
+		planSlug: PLAN_PERSONAL as PlanSlug,
+		isPlanUpgradeCreditEligible: false,
 	};
 
 	beforeEach( () => {
@@ -40,44 +35,56 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	} );
 
 	test( 'should render raw and discounted prices when discount exists', () => {
-		const planPrices: PlanPricesDisplay = {
-			discountedPrice: 50,
-			originalPrice: 100,
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: 60, monthly: 5 },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
 		};
-		usePlanPricesDisplay.mockImplementation( () => planPrices );
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_PERSONAL ]: {
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridHeaderPrice
-				isPlanUpgradeCreditEligible={ false }
-				currentSitePlanSlug=""
-				{ ...defaultProps }
-			/>
+			<PlanFeatures2023GridHeaderPrice isPlanUpgradeCreditEligible={ false } { ...defaultProps } />
 		);
 		const rawPrice = container.querySelector( '.plan-price.is-original' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
-		expect( rawPrice ).toHaveTextContent( '100' );
-		expect( discountedPrice ).toHaveTextContent( '50' );
+		expect( rawPrice ).toHaveTextContent( '10' );
+		expect( discountedPrice ).toHaveTextContent( '5' );
 	} );
 
 	test( 'should render just the raw price when no discount exists', () => {
-		const planPrices: PlanPricesDisplay = {
-			discountedPrice: 0,
-			originalPrice: 100,
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
 		};
-		usePlanPricesDisplay.mockImplementation( () => planPrices );
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_PERSONAL ]: {
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+		} ) );
 
 		const { container } = render(
-			<PlanFeatures2023GridHeaderPrice
-				isPlanUpgradeCreditEligible={ false }
-				currentSitePlanSlug=""
-				{ ...defaultProps }
-			/>
+			<PlanFeatures2023GridHeaderPrice isPlanUpgradeCreditEligible={ false } { ...defaultProps } />
 		);
 		const rawPrice = container.querySelector( '.plan-price' );
 		const discountedPrice = container.querySelector( '.plan-price.is-discounted' );
 
-		expect( rawPrice ).toHaveTextContent( '100' );
+		expect( rawPrice ).toHaveTextContent( '10' );
 		expect( discountedPrice ).toBeNull();
 	} );
 } );

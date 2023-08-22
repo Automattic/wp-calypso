@@ -891,8 +891,7 @@ function PartnerLogo( { className }: { className?: string } ) {
 function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
-	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
-	if ( isFreeBundledDomainRegistration ) {
+	if ( product.is_bundled ) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 

@@ -3,6 +3,7 @@ import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
+import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -13,11 +14,8 @@ import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-si
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
-import FeedbackNotice from './feedback-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
-import LegacyStatsNotices from './legacy-notices';
 import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
-import OptOutNotice from './opt-out-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { StatsNoticesProps } from './types';
 import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
@@ -49,6 +47,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
 
+	const { data: isDoYouLoveJetpackStatsVisible } = useNoticeVisibilityQuery(
+		siteId,
+		'do_you_love_jetpack_stats'
+	);
+
 	// Gate notices for WPCOM sites behind a flag.
 	const showUpgradeNoticeForWpcomSites =
 		config.isEnabled( 'stats/paid-wpcom-stats' ) &&
@@ -62,6 +65,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
 
 	const showDoYouLoveJetpackStatsNotice =
+		isDoYouLoveJetpackStatsVisible &&
 		( showUpgradeNoticeOnOdyssey ||
 			showUpgradeNoticeForJetpackNotAtomic ||
 			showUpgradeNoticeForWpcomSites ) &&
@@ -74,8 +78,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 			{ showDoYouLoveJetpackStatsNotice && (
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
 			) }
-			{ isOdysseyStats && <OptOutNotice siteId={ siteId } /> }
-			{ isOdysseyStats && <FeedbackNotice siteId={ siteId } /> }
 		</>
 	);
 };
@@ -140,7 +142,11 @@ export default function StatsNotices( {
 		! isOdysseyStats ||
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.10.0-alpha', '>=' ) );
 
-	return supportNewStatsNotices ? (
+	if ( ! supportNewStatsNotices ) {
+		return null;
+	}
+
+	return (
 		<>
 			<PostPurchaseNotices
 				siteId={ siteId }
@@ -151,7 +157,5 @@ export default function StatsNotices( {
 				<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }
 		</>
-	) : (
-		<LegacyStatsNotices siteId={ siteId } />
 	);
 }

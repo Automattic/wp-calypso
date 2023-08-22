@@ -14,7 +14,7 @@
 	z-index: 1;
 	transition: margin-inline-start 0.2s ease-out;
 
-	.pattern-assembler__pattern-panel-list--is-open & {
+	.pattern-assembler__panel--is-open & {
 		margin-inline-start: 360px;
 
 		@include break-wide {
@@ -30,6 +30,15 @@
 	list-style-type: none;
 	overflow: auto;
 	background: var(--pattern-large-preview-background);
+
+	/**
+	 * Hides the scrollbar to avoid the layout keeps changes forever
+	 * See https://github.com/Automattic/wp-calypso/issues/78357.
+	 */
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .pattern-large-preview__pattern {

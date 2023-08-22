@@ -185,7 +185,7 @@ export function useProductDescription( productSlug: string ): {
 				break;
 			case 'jetpack-monitor':
 				description = translate(
-					'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+					'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
 				);
 				break;
 			case 'woocommerce-bookings':
@@ -208,7 +208,7 @@ export function useProductDescription( productSlug: string ): {
 					'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
 				);
 				break;
-			case 'woocommerce-product-minxmax-quantities':
+			case 'woocommerce-minmax-quantities':
 				description = translate(
 					'Minimum and maximum quantity rules for products, orders, and categories.'
 				);

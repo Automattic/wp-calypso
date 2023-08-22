@@ -57,28 +57,17 @@ export function useCategorization(
 
 export function useCategorizationFromApi(
 	categoryMap: Record< string, Category >,
-	{ defaultSelection }: UseCategorizationOptions
+	{ defaultSelection, sort }: UseCategorizationOptions
 ): Categorization {
-	const { __ } = useI18n();
-
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
-		const hasCategories = !! categoryMapKeys.length;
-
 		const result = categoryMapKeys.map( ( slug ) => ( {
 			...categoryMap[ slug ],
 			slug,
 		} ) );
 
-		if ( hasCategories ) {
-			result.unshift( {
-				name: __( 'Show All', __i18n_text_domain__ ),
-				slug: SHOW_ALL_SLUG,
-			} );
-		}
-
-		return result;
-	}, [ categoryMap, __ ] );
+		return result.sort( sort );
+	}, [ categoryMap ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
 		chooseDefaultSelection( categories, defaultSelection )

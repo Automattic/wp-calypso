@@ -3,7 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso/types';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { getMobileDeviceInfo, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getMobileDeviceInfo, isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import versionCompare from 'calypso/lib/version-compare';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
@@ -15,6 +15,16 @@ import {
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+const DSP_ERROR_NO_LOCAL_USER = 'no_local_user';
+const DSP_URL_CHECK_UPSERT_USER = '/user/check';
+
+type NewDSPUserResult = {
+	new_dsp_user: boolean;
+};
+
+type DSPError = {
+	errorCode: string;
+};
 
 declare global {
 	interface Window {
@@ -56,16 +66,26 @@ declare global {
 	}
 }
 
+const shouldUseTestWidgetURL = () => getMobileDeviceInfo()?.version === '22.9.blaze';
+
+const getWidgetDSPJSURL = () => {
+	let dspWidgetJS: string = shouldUseTestWidgetURL()
+		? config( 'dsp_widget_js_test_src' )
+		: config( 'dsp_widget_js_src' );
+
+	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
+		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
+	}
+	return dspWidgetJS;
+};
+
 export async function loadDSPWidgetJS(): Promise< void > {
 	// check if already loaded
 	if ( window.BlazePress ) {
 		return;
 	}
-	let dspWidgetJS: string = config( 'dsp_widget_js_src' );
-	if ( config.isEnabled( 'promote-post/widget-i2' ) ) {
-		dspWidgetJS = dspWidgetJS.replace( '/promote/', '/promote-v2/' );
-	}
-	const src = dspWidgetJS + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
+
+	const src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
 	await loadScript( src );
 	// Load the strings so that translations get associated with the module and loaded properly.
 	// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,
@@ -74,9 +94,9 @@ export async function loadDSPWidgetJS(): Promise< void > {
 }
 
 const shouldHideGoToCampaignButton = () => {
-	// App versions higher or equal than 22.9.rc-1 should hide the button
+	// App versions higher or equal than 22.9-rc-1 should hide the button
 	const deviceInfo = getMobileDeviceInfo();
-	return versionCompare( deviceInfo?.version, '22.9.rc-1', '>=' );
+	return versionCompare( deviceInfo?.version, '22.9-rc-1', '>=' );
 };
 
 const getWidgetOptions = () => {
@@ -143,22 +163,27 @@ export async function showDSP(
 	} );
 }
 
+export const getDSPOrigin = () => {
+	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		return 'jetpack';
+	} else if ( isWpMobileApp() ) {
+		return 'wp-mobile-app';
+	} else if ( isWcMobileApp() ) {
+		return 'wc-mobile-app';
+	}
+
+	return 'calypso';
+};
+
 /**
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
  *
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
-	let origin = 'wpcom';
-	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-		origin = 'jetpack';
-	} else if ( isWpMobileApp() ) {
-		origin = 'wp-mobile-app';
-	}
-
 	const eventProps = {
 		entry_point: entryPoint,
-		origin,
+		origin: getDSPOrigin(),
 	};
 
 	return composeAnalytics(
@@ -194,6 +219,32 @@ export const requestDSP = async < T >(
 			return await wpcom.req.del( params );
 		default:
 			return await wpcom.req.get( params );
+	}
+};
+
+const handleDSPError = async < T >(
+	error: DSPError,
+	siteId: number,
+	currentURL: string
+): Promise< T > => {
+	if ( error.errorCode === DSP_ERROR_NO_LOCAL_USER ) {
+		const createUserQuery = await requestDSP< NewDSPUserResult >(
+			siteId,
+			DSP_URL_CHECK_UPSERT_USER
+		);
+		if ( createUserQuery.new_dsp_user ) {
+			// then we should retry the original query
+			return await requestDSP< T >( siteId, currentURL );
+		}
+	}
+	throw error;
+};
+
+export const requestDSPHandleErrors = async < T >( siteId: number, url: string ): Promise< T > => {
+	try {
+		return await requestDSP( siteId, url );
+	} catch ( e ) {
+		return await handleDSPError( e as DSPError, siteId, url );
 	}
 };
 

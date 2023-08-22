@@ -8,7 +8,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { calculateTimeRange } from '../components/time-range-picker';
-import { useSiteMetricsData } from '../main';
+import { useSiteMetricsData } from '../metrics-tab';
 import { useSiteMetricsQuery } from '../use-metrics-query';
 
 jest.mock( 'calypso/my-sites/site-monitoring/use-metrics-query.ts', () => ( {
@@ -58,7 +58,12 @@ describe( 'useSiteMetrics test', () => {
 	it( 'should return formattedData for the case with an empty array for dimension', () => {
 		useSiteMetricsQuery.mockReturnValueOnce( {
 			data: {
-				data: { periods: [ { timestamp: 1685577600, dimension: [] } ] },
+				data: { periods: [ { timestamp: 1685577600, dimension: {} } ] },
+			},
+		} );
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: { periods: [ { timestamp: 1685577600, dimension: {} } ] },
 			},
 		} );
 
@@ -79,10 +84,20 @@ describe( 'useSiteMetrics test', () => {
 		expect( formattedData ).toEqual( [
 			[ 1685577600 ], // Array of timestamps
 			[ 0 ], // Array of dimension values
+			[ 0 ], // Array of dimension values
 		] );
 	} );
 
 	it( 'should return formattedData for the case with an object for dimension', () => {
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+					],
+				},
+			},
+		} );
 		useSiteMetricsQuery.mockReturnValueOnce( {
 			data: {
 				data: {
@@ -103,7 +118,11 @@ describe( 'useSiteMetrics test', () => {
 
 		const { formattedData } = result.current;
 
-		expect( formattedData ).toEqual( [ [ 1685577600 ], [ 0.0030000000000000005 ] ] );
+		expect( formattedData ).toEqual( [
+			[ 1685577600 ],
+			[ 0.18000000000000002 ],
+			[ 3.0000000000000004 ],
+		] );
 	} );
 
 	it( 'should return formattedData for the case with dimension being an array and an object', () => {
@@ -112,7 +131,17 @@ describe( 'useSiteMetrics test', () => {
 				data: {
 					periods: [
 						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
-						{ timestamp: 1685577800, dimension: [] },
+						{ timestamp: 1685577800, dimension: {} },
+					],
+				},
+			},
+		} );
+		useSiteMetricsQuery.mockReturnValueOnce( {
+			data: {
+				data: {
+					periods: [
+						{ timestamp: 1685577600, dimension: { 'example.com': 0.0030000000000000005 } },
+						{ timestamp: 1685577800, dimension: {} },
 					],
 				},
 			},
@@ -130,7 +159,8 @@ describe( 'useSiteMetrics test', () => {
 
 		expect( formattedData ).toEqual( [
 			[ 1685577600, 1685577800 ],
-			[ 0.0030000000000000005, 0 ],
+			[ 0.18000000000000002, 0 ],
+			[ 3.0000000000000004, 0 ],
 		] );
 	} );
 } );

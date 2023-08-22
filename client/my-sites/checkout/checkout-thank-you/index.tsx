@@ -14,6 +14,7 @@ import {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
+	isP2Plus,
 	isPersonal,
 	isPlan,
 	isPremium,
@@ -71,6 +72,7 @@ import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
@@ -105,7 +107,7 @@ import './redesign-v2/style.scss';
 import { isBulkDomainTransfer } from './utils';
 import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';
 import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
@@ -167,6 +169,7 @@ export interface CheckoutThankYouConnectedProps {
 		purchased?: boolean,
 		keepCurrentHomepage?: boolean
 	) => void;
+	requestSite: ( siteId: number ) => void;
 }
 
 interface CheckoutThankYouState {
@@ -251,7 +254,7 @@ export class CheckoutThankYou extends Component<
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
 			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
-				dispatch( imports.ONBOARD_STORE ).resetOnboardStore()
+				( dispatch( imports.ONBOARD_STORE ) as OnboardActions ).resetOnboardStore()
 			);
 
 			if ( mayWeTrackByTracker( 'googleAds' ) ) {
@@ -301,10 +304,22 @@ export class CheckoutThankYou extends Component<
 		if (
 			! prevProps.receipt.hasLoadedFromServer &&
 			this.props.receipt.hasLoadedFromServer &&
-			this.hasPlanOrDomainProduct() &&
-			this.props.selectedSite
+			this.hasPlanOrDomainProduct()
 		) {
-			this.props.refreshSitePlans( this.props.selectedSite.ID );
+			if ( this.props.selectedSite ) {
+				this.props.refreshSitePlans( this.props.selectedSite.ID );
+			}
+
+			if ( this.props.domainOnlySiteFlow ) {
+				const [ domainOnlyPurchase ] = findPurchaseAndDomain(
+					getPurchases( this.props ),
+					isDomainRegistration
+				);
+
+				if ( domainOnlyPurchase?.blogId ) {
+					this.props.requestSite( domainOnlyPurchase.blogId );
+				}
+			}
 		}
 
 		// If the site has been transferred to Atomc and we're not already requesting the site plugins, request them.
@@ -618,7 +633,7 @@ export class CheckoutThankYou extends Component<
 			);
 		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
 			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
-			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
+			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
 
 			if ( selectedFeature === 'email-license' && domainName ) {
 				return (
@@ -638,14 +653,16 @@ export class CheckoutThankYou extends Component<
 			);
 
 			const emailFallback = email ? email : this.props.user?.email ?? '';
-
+			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
 			return (
 				<DomainThankYou
 					domain={ domainName ?? '' }
 					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
 					hasProfessionalEmail={ wasTitanEmailProduct }
 					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }
-					selectedSiteSlug={ this.props.selectedSiteSlug ?? '' }
+					selectedSiteSlug={ siteSlug ?? '' }
+					isDomainOnly={ this.props.domainOnlySiteFlow }
+					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
 					type={ purchaseType as DomainThankYouType }
 				/>
 			);
@@ -819,6 +836,10 @@ export class CheckoutThankYou extends Component<
 		if ( purchases.some( isChargeback ) ) {
 			return [ 'chargeback-details', purchases.find( isChargeback ) ];
 		}
+		if ( purchases.some( isP2Plus ) ) {
+			return [ 'p2-plus-details', purchases.find( isP2Plus ) ];
+		}
+
 		return [];
 	};
 
@@ -913,13 +934,24 @@ function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
 
 export default connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
-		const siteId = getSelectedSiteId( state );
+		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
 		const sitePlugins = getInstalledPlugins( state, [ siteId ] );
+		const receipt = getReceiptById( state, props.receiptId );
+
+		if ( props.domainOnlySiteFlow && receipt.hasLoadedFromServer ) {
+			const [ domainOnlyPurchase ] = findPurchaseAndDomain(
+				receipt.data?.purchases ?? [],
+				isDomainRegistration
+			);
+			if ( domainOnlyPurchase?.blogId ) {
+				siteId = domainOnlyPurchase.blogId;
+			}
+		}
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
-			receipt: getReceiptById( state, props.receiptId ),
+			receipt,
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			isWooCommerceInstalled: isWooCommercePluginInstalled( sitePlugins ),
@@ -949,6 +981,7 @@ export default connect(
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
 		requestThenActivate,
+		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
 

@@ -47,8 +47,8 @@ export function subscribers( context, next ) {
 }
 
 export function subscriberDetails( context, next ) {
-	const { path, query } = context;
-	const userId = path.split( '/' ).pop();
+	const { query } = context;
+	const userId = context.params?.user;
 	const filterOption = query[ FILTER_KEY ];
 	const pageNumber = sanitizeInt( query[ PAGE_KEY ] ) ?? 1;
 	const searchTerm = query[ SEARCH_KEY ];
@@ -68,8 +68,8 @@ export function subscriberDetails( context, next ) {
 }
 
 export function externalSubscriberDetails( context, next ) {
-	const { path, query } = context;
-	const subscriberId = path.split( '/' ).pop();
+	const { query } = context;
+	const subscriptionId = context.params?.subscriber;
 	const filterOption = query[ FILTER_KEY ];
 	const pageNumber = sanitizeInt( query[ PAGE_KEY ] ) ?? 1;
 	const searchTerm = query[ SEARCH_KEY ];
@@ -77,7 +77,7 @@ export function externalSubscriberDetails( context, next ) {
 
 	context.primary = (
 		<SubscriberDetailsPage
-			subscriptionId={ subscriberId }
+			subscriptionId={ subscriptionId }
 			filterOption={ filterOption }
 			pageNumber={ pageNumber }
 			searchTerm={ searchTerm }

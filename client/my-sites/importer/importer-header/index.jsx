@@ -41,7 +41,7 @@ class ImporterHeader extends PureComponent {
 				<ImporterLogo icon={ icon } />
 				<div className="importer-header__service-info">
 					<h1 className="importer-header__service-title">{ title }</h1>
-					{ ! showStart && <p>{ description }</p> }
+					{ ! showStart && description }
 				</div>
 			</header>
 		);

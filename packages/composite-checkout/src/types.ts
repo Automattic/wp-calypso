@@ -98,7 +98,27 @@ export interface FormStatusController extends FormStatusState {
 
 export type FormStatusSetter = ( newStatus: FormStatus ) => void;
 
-export type FormStatusManager = [ FormStatus, FormStatusSetter ];
+export type FormStatusManager = {
+	formStatus: FormStatus;
+	setFormStatus: FormStatusSetter;
+};
+
+export interface FormStatusContextInterface {
+	formStatus: FormStatus;
+	setFormStatus: ( newStatus: FormStatus ) => void;
+}
+
+export interface CheckoutContextInterface {
+	allPaymentMethods: PaymentMethod[];
+	disabledPaymentMethodIds: string[];
+	setDisabledPaymentMethodIds: ( methods: string[] ) => void;
+	paymentMethodId: string | null;
+	setPaymentMethodId: ( id: string ) => void;
+	transactionStatusManager: TransactionStatusManager | null;
+	paymentProcessors: PaymentProcessorProp;
+	onPageLoadError?: CheckoutPageErrorCallback;
+	onPaymentMethodChanged?: PaymentMethodChangedCallback;
+}
 
 export type ReactStandardAction< T = string, P = unknown > = P extends void
 	? {

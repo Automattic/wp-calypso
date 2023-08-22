@@ -14,7 +14,7 @@ import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { SubscribersFilterBy, SubscribersSortBy } from './constants';
 import { getSubscriberDetailsUrl, getSubscribersUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
-import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
+import { useSubscriberDetailsQuery } from './queries';
 import './subscriber-details-style.scss';
 
 type SubscriberDetailsPageProps = {
@@ -99,7 +99,14 @@ const SubscriberDetailsPage = ( {
 			<FixedNavigationHeader navigationItems={ navigationItems }>
 				<SubscriberPopover onUnsubscribe={ unsubscribeClickHandler } />
 			</FixedNavigationHeader>
-			{ subscriber && ! isLoading && <SubscriberDetails subscriber={ subscriber } /> }
+			{ subscriber && ! isLoading && selectedSiteId && (
+				<SubscriberDetails
+					subscriber={ subscriber }
+					siteId={ selectedSiteId }
+					subscriptionId={ subscriptionId }
+					userId={ userId }
+				/>
+			) }
 			<UnsubscribeModal
 				subscriber={ modalSubscriber }
 				onCancel={ resetSubscriber }

@@ -153,7 +153,7 @@ describe( 'FTME: Sell', function () {
 	} );
 
 	describe( 'Sell', function () {
-		const themeName = 'Winkel';
+		const themeName = 'Attar';
 		let startSiteFlow: StartSiteFlow;
 
 		beforeAll( async function () {

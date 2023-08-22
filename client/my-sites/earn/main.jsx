@@ -1,4 +1,3 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localize } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -35,14 +34,6 @@ class EarningsMain extends Component {
 		site: PropTypes.object,
 		query: PropTypes.object,
 	};
-
-	constructor( props ) {
-		super( props );
-		// Mark the task as done
-		updateLaunchpadSettings( props.siteSlug, {
-			checklist_statuses: { earn_money: true },
-		} );
-	}
 
 	getSelectedText() {
 		const selected = find( this.getFilters(), { path: this.props.path } );

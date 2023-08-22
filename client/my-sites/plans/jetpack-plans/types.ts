@@ -5,6 +5,13 @@ import type {
 	TERM_MONTHLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	TERM_QUADRENNIALLY,
+	TERM_QUINQUENNIALLY,
+	TERM_SEXENNIALLY,
+	TERM_SEPTENNIALLY,
+	TERM_OCTENNIALLY,
+	TERM_NOVENNIALLY,
+	TERM_DECENNIALLY,
 	JetpackProductCategory,
 	JetpackTag,
 	FAQ,
@@ -17,7 +24,14 @@ export type Duration =
 	| typeof TERM_ANNUALLY
 	| typeof TERM_MONTHLY
 	| typeof TERM_BIENNIALLY
-	| typeof TERM_TRIENNIALLY;
+	| typeof TERM_TRIENNIALLY
+	| typeof TERM_QUADRENNIALLY
+	| typeof TERM_QUINQUENNIALLY
+	| typeof TERM_SEXENNIALLY
+	| typeof TERM_SEPTENNIALLY
+	| typeof TERM_OCTENNIALLY
+	| typeof TERM_NOVENNIALLY
+	| typeof TERM_DECENNIALLY;
 export type DurationString = 'annual' | 'monthly';
 export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_PRODUCT;
 

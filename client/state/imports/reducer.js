@@ -58,6 +58,7 @@ function importerStatus( state = {}, action ) {
 					...state[ action.importerId ],
 					importerState: appStates.UPLOAD_FAILURE,
 					errorData: { type: 'preUploadError', description: action.error, code: action.errorCode },
+					file: action.file,
 				},
 			};
 

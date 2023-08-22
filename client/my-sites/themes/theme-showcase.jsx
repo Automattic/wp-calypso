@@ -8,15 +8,13 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SearchThemes from 'calypso/components/search-themes';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
@@ -32,8 +30,6 @@ import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
-	getThemeShowcaseDescription,
-	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
@@ -46,9 +42,8 @@ import {
 	trackClick,
 	localizeThemesPath,
 } from './helpers';
-import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
-import ThemesHeader from './themes-header';
+import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
@@ -60,6 +55,21 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
+const staticFilters = {
+	MYTHEMES: {
+		key: 'my-themes',
+		text: translate( 'My Themes' ),
+	},
+	RECOMMENDED: {
+		key: 'recommended',
+		text: translate( 'Recommended' ),
+	},
+	ALL: {
+		key: 'all',
+		text: translate( 'All' ),
+	},
+};
+
 class ThemeShowcase extends Component {
 	constructor( props ) {
 		super( props );
@@ -68,10 +78,6 @@ class ThemeShowcase extends Component {
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
-
-		this.state = {
-			tabFilter: this.getTabFilterFromUrl( props.filter ),
-		};
 	}
 
 	static propTypes = {
@@ -136,7 +142,7 @@ class ThemeShowcase extends Component {
 	}
 
 	isStaticFilter = ( tabFilter ) => {
-		return Object.values( this.getStaticFilters() ).some(
+		return Object.values( staticFilters ).some(
 			( staticFilter ) => tabFilter.key === staticFilter.key
 		);
 	};
@@ -157,28 +163,13 @@ class ThemeShowcase extends Component {
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
-		const staticFilters = this.getStaticFilters();
 		return {
 			...( shouldShowMyThemesFilter && {
 				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
-			ALL: staticFilters.ALL,
+			RECOMMENDED: staticFilters.RECOMMENDED,
 			...this.subjectFilters,
-		};
-	};
-
-	getStaticFilters = () => {
-		return {
-			MYTHEMES: {
-				key: 'my-themes',
-				text: this.props.translate( 'My Themes' ),
-				order: 3,
-			},
-			ALL: {
-				key: 'all',
-				text: this.props.translate( 'Recommended' ),
-				order: 4,
-			},
+			ALL: staticFilters.ALL,
 		};
 	};
 
@@ -205,16 +196,17 @@ class ThemeShowcase extends Component {
 
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		this.getStaticFilters().ALL;
+		staticFilters.RECOMMENDED;
 
-	getTabFilterFromUrl = ( filterString = '' ) => {
-		const filterArray = filterString.split( '+' );
+	getSelectedTabFilter = () => {
+		const filter = this.props.filter ?? '';
+		const filterArray = filter.split( '+' );
 		const matches = Object.values( this.subjectTermTable ).filter( ( value ) =>
 			filterArray.includes( value )
 		);
 
 		if ( ! matches.length ) {
-			return this.findTabFilter( this.getStaticFilters(), this.state?.tabFilter.key );
+			return this.findTabFilter( staticFilters, this.props.category );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
@@ -244,19 +236,28 @@ class ThemeShowcase extends Component {
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable } = this.props;
+		const { filterToTermTable, search: prevSearch } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
 
+		const search = searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim();
+
 		const url = this.constructUrl( {
 			filter: filterString,
 			// Strip filters and excess whitespace
-			search: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
+			search,
+			// Activate the "All" tab when searching on "Recommended", since the
+			// search might include some results that are not in the recommended
+			// themes (e.g. WP.org themes).
+			...( search &&
+				prevSearch !== search &&
+				this.getSelectedTabFilter().key === staticFilters.RECOMMENDED.key && {
+					category: staticFilters.ALL.key,
+				} ),
 		} );
 
-		this.setState( { tabFilter: this.getTabFilterFromUrl( filterString ) } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -273,18 +274,20 @@ class ThemeShowcase extends Component {
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { vertical, tier, filter, siteSlug, search, locale, isLoggedIn } = {
+		const { category, vertical, tier, filter, siteSlug, search, locale, isLoggedIn } = {
 			...this.props,
 			...sections,
 		};
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
+		const categorySection =
+			category && category !== staticFilters.RECOMMENDED.key ? `/${ category }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
 		const url = localizeThemesPath(
-			`/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
+			`/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
 			locale,
 			! isLoggedIn
 		);
@@ -292,21 +295,17 @@ class ThemeShowcase extends Component {
 	};
 
 	onTierSelect = ( { value: tier } ) => {
-		// Due to the search backend limitation, static filters other than "All"
-		// can only have "All" tier.
-		const staticFilters = this.getStaticFilters();
-		if (
-			tier !== 'all' &&
-			this.isStaticFilter( this.state.tabFilter ) &&
-			this.state.tabFilter.key !== staticFilters.ALL.key
-		) {
-			this.setState( { tabFilter: staticFilters.ALL } );
-		}
-
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
 
-		const url = this.constructUrl( { tier } );
+		const url = this.constructUrl( {
+			tier,
+			// Due to the search backend limitation, "My Themes" can only have "All" tier.
+			...( tier !== 'all' &&
+				this.props.category === staticFilters.MYTHEMES.key && {
+					category: staticFilters.RECOMMENDED.key,
+				} ),
+		} );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -315,35 +314,30 @@ class ThemeShowcase extends Component {
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 
-		let callback = () => null;
-		// Due to the search backend limitation, static filters other than "All"
-		// can only have "All" tier.
-		if (
-			this.isStaticFilter( tabFilter ) &&
-			tabFilter.key !== this.getStaticFilters().ALL.key &&
-			this.props.tier !== 'all'
-		) {
-			callback = () => {
-				this.onTierSelect( { value: 'all' } );
-				this.scrollToSearchInput();
-			};
-		}
-
 		const { filter = '', filterToTermTable } = this.props;
-		const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 		const subjectFilters = Object.values( this.subjectTermTable );
 		const filterWithoutSubjects = filter
 			.split( '+' )
 			.filter( ( key ) => ! subjectFilters.includes( key ) )
 			.join( '+' );
 
-		const newFilter = ! this.isStaticFilter( tabFilter )
-			? [ filterWithoutSubjects, subjectTerm ].join( '+' )
-			: filterWithoutSubjects;
+		const newUrlParams = {};
+		if ( this.isStaticFilter( tabFilter ) ) {
+			newUrlParams.category = tabFilter.key;
+			newUrlParams.filter = filterWithoutSubjects;
+			// Due to the search backend limitation, "My Themes" can only have "All" tier.
+			if ( tabFilter.key === staticFilters.MYTHEMES.key && this.props.tier !== 'all' ) {
+				newUrlParams.tier = 'all';
+			}
+		} else {
+			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
+			newUrlParams.filter = [ filterWithoutSubjects, subjectTerm ].join( '+' );
+			newUrlParams.category = null;
+		}
 
-		page( this.constructUrl( { filter: newFilter } ) );
+		page( this.constructUrl( newUrlParams ) );
 
-		this.setState( { tabFilter }, callback );
+		this.scrollToSearchInput();
 	};
 
 	allThemes = ( { themeProps } ) => {
@@ -406,9 +400,8 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const tabKey = this.state.tabFilter.key;
+		const tabKey = this.getSelectedTabFilter().key;
 
-		const staticFilters = this.getStaticFilters();
 		if (
 			tabKey !== staticFilters.MYTHEMES?.key &&
 			! isExpertBannerDissmissed &&
@@ -421,6 +414,7 @@ class ThemeShowcase extends Component {
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
+				case staticFilters.RECOMMENDED.key:
 				case staticFilters.ALL.key:
 					location = 'all-theme-banner';
 					refURLParam = 'themes';
@@ -433,9 +427,9 @@ class ThemeShowcase extends Component {
 	};
 
 	renderThemes = ( themeProps ) => {
-		const tabKey = this.state.tabFilter.key;
+		const tabKey = this.getSelectedTabFilter().key;
 		switch ( tabKey ) {
-			case this.getStaticFilters().MYTHEMES?.key:
+			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
@@ -451,24 +445,14 @@ class ThemeShowcase extends Component {
 			filter,
 			isLoggedIn,
 			pathName,
-			title,
 			filterString,
 			isMultisite,
 			locale,
 			premiumThemesEnabled,
 			isSiteWooExpressOrEcomFreeTrial,
 		} = this.props;
-		const tier = this.props.tier || '';
-
+		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-
-		const metas = [
-			{ name: 'description', property: 'og:description', content: this.props.description },
-			{ property: 'og:title', content: title },
-			{ property: 'og:url', content: canonicalUrl },
-			{ property: 'og:type', content: 'website' },
-			{ property: 'og:site_name', content: 'WordPress.com' },
-		];
 
 		const themeProps = {
 			forceWpOrgSearch: true,
@@ -479,7 +463,7 @@ class ThemeShowcase extends Component {
 			upsellBanner: this.props.upsellBanner,
 			search: search,
 			tier: this.props.tier,
-			tabFilter: this.state.tabFilter.key,
+			tabFilter: this.getSelectedTabFilter().key,
 			defaultOption: this.props.defaultOption,
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
@@ -520,77 +504,53 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase">
-				<DocumentHead title={ title } meta={ metas } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<ThemesHeader
-					title={
-						isLoggedIn
-							? translate( 'Themes' )
-							: translate( 'Find the perfect theme for your website' )
-					}
-					description={
-						isLoggedIn
-							? translate(
-									'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-									{
-										components: {
-											learnMoreLink: (
-												<InlineSupportLink supportContext="themes" showIcon={ false } />
-											),
-										},
-									}
-							  )
-							: translate(
-									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, activate the one that is right for you.'
-							  )
-					}
-				>
-					{ isLoggedIn && (
-						<>
-							<div className="themes__install-theme-button-container">
-								<InstallThemeButton />
-							</div>
-							<ScreenOptionsTab wpAdminPath="themes.php" />
-						</>
-					) }
-				</ThemesHeader>
+				<ThemeShowcaseHeader
+					canonicalUrl={ canonicalUrl }
+					filter={ this.props.filter }
+					tier={ this.props.tier }
+					vertical={ this.props.vertical }
+				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
 					<div className="themes__controls">
-						<SearchThemes
-							query={ filterString + search }
-							onSearch={ this.doSearch }
-							recordTracksEvent={ this.recordSearchThemesTracksEvent }
-						/>
-						{ tabFilters && (
-							<div className="theme__filters">
-								{ ! isSiteWooExpressOrEcomFreeTrial && (
-									<ThemesToolbarGroup
-										items={ Object.values( tabFilters ) }
-										selectedKey={ this.state.tabFilter.key }
-										onSelect={ ( key ) =>
-											this.onFilterClick(
-												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-											)
-										}
-									/>
-								) }
-								{ premiumThemesEnabled && ! isMultisite && (
-									<SimplifiedSegmentedControl
-										key={ tier }
-										initialSelected={ tier || 'all' }
-										options={ tiers }
-										onSelect={ this.onTierSelect }
-									/>
-								) }
+						<div className="theme__search">
+							<div className="theme__search-input">
+								<SearchThemes
+									query={ filterString + search }
+									onSearch={ this.doSearch }
+									recordTracksEvent={ this.recordSearchThemesTracksEvent }
+								/>
 							</div>
+							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+								<SelectDropdown
+									className="section-nav-tabs__dropdown"
+									onSelect={ this.onTierSelect }
+									selectedText={ translate( 'View: %s', {
+										args: getOptionLabel( tiers, tier ) || '',
+									} ) }
+									options={ tiers }
+									initialSelected={ this.props.tier }
+								></SelectDropdown>
+							) }
+						</div>
+						{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
+							<ThemesToolbarGroup
+								items={ Object.values( tabFilters ) }
+								selectedKey={ this.getSelectedTabFilter().key }
+								onSelect={ ( key ) =>
+									this.onFilterClick(
+										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+									)
+								}
+							/>
 						) }
 					</div>
 					<div className="themes__showcase">
@@ -610,7 +570,7 @@ class ThemeShowcase extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+const mapStateToProps = ( state, { siteId, filter } ) => {
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
@@ -618,8 +578,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
-		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),

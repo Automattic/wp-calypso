@@ -10,7 +10,7 @@ import './style.scss';
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data ) {
+function transformData( data, { donut = false, startAngle = -Math.PI } ) {
 	const sortedData = sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
@@ -19,11 +19,11 @@ function transformData( data ) {
 		} ) );
 
 	const arcs = d3Pie()
-		.startAngle( -Math.PI )
+		.startAngle( startAngle )
 		.value( ( datum ) => datum.value )( sortedData );
 
 	const arcGen = d3Arc()
-		.innerRadius( 0 )
+		.innerRadius( donut ? SVG_SIZE / 4 : 0 )
 		.outerRadius( SVG_SIZE / 2 );
 
 	const paths = arcs.map( ( arc ) => arcGen( arc ) );
@@ -37,6 +37,8 @@ function transformData( data ) {
 class PieChart extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
+		donut: PropTypes.bool,
+		startAngle: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
@@ -51,7 +53,10 @@ class PieChart extends Component {
 			return {
 				data: nextProps.data,
 				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
-				transformedData: transformData( nextProps.data ),
+				transformedData: transformData( nextProps.data, {
+					donut: nextProps.donut,
+					startAngle: nextProps.startAngle,
+				} ),
 			};
 		}
 
@@ -64,7 +69,7 @@ class PieChart extends Component {
 		return transformedData.map( ( datum ) => {
 			return (
 				<path
-					className={ `pie-chart__chart-section-${ datum.sectionNum }` }
+					className={ `pie-chart__chart-section-${ datum.sectionNum } pie-chart__chart-section-${ datum.className }` }
 					key={ datum.name }
 					d={ datum.path }
 				/>

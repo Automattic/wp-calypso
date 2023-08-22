@@ -17,6 +17,7 @@ import {
 	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
+	getIsLivePreviewStarted,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
 	hasActivatedTheme,
@@ -235,7 +236,12 @@ class ThanksModal extends Component {
 	};
 
 	getEditSiteLabel = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive, isLivePreviewStarted } =
+			this.props;
+
+		if ( isLivePreviewStarted ) {
+			return this.props.translate( 'Preparing the live preview…' );
+		}
 
 		if ( ! hasActivated ) {
 			return this.props.translate( 'Activating theme…' );
@@ -356,6 +362,8 @@ const ConnectedThanksModal = connect(
 
 		const activatingThemeId = state.themes.activationRequests?.themeId;
 
+		const isLivePreviewStarted = getIsLivePreviewStarted( state );
+
 		return {
 			siteId,
 			siteUrl,
@@ -371,11 +379,12 @@ const ConnectedThanksModal = connect(
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
-			isActivating: !! isActivatingTheme( state, siteId ),
-			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
+			isActivating: !! isActivatingTheme( state, siteId ),
 			isFSEActive,
+			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
+			isLivePreviewStarted,
+			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
 	{

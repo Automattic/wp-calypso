@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -269,7 +268,7 @@ export default function IssueMultipleLicensesForm( {
 					</div>
 				</>
 			) }
-			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions.length > 0 && (
+			{ wooExtensions.length > 0 && (
 				<>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">

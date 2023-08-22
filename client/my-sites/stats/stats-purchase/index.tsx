@@ -1,4 +1,5 @@
 import {
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
@@ -23,7 +24,6 @@ import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
 	TYPE_COMMERCIAL,
-	TYPE_PERSONAL,
 } from './stats-purchase-wizard';
 
 const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: string ) => {
@@ -55,7 +55,10 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_FREE );
 	}, [ siteProducts ] );
 	const isCommercialOwned = useMemo( () => {
-		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_MONTHLY );
+		return (
+			isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_MONTHLY ) ||
+			isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_YEARLY )
+		);
 	}, [ siteProducts ] );
 	const isPWYWOwned = useMemo( () => {
 		return isProductOwned( siteProducts, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
@@ -75,6 +78,10 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	}, [ siteSlug, isCommercialOwned, isSiteJetpackNotAtomic ] );
 
 	const commercialProduct = useSelector( ( state ) =>
+		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
+	) as ProductsList.ProductsListItem | null;
+
+	const commercialMonthlyProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_MONTHLY )
 	) as ProductsList.ProductsListItem | null;
 
@@ -83,14 +90,20 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 	) as ProductsList.ProductsListItem | null;
 
 	const isLoading =
-		! commercialProduct || ! pwywProduct || ( ! siteProducts && isRequestingSiteProducts );
+		! commercialProduct ||
+		! commercialMonthlyProduct ||
+		! pwywProduct ||
+		( ! siteProducts && isRequestingSiteProducts );
 
 	const [ initialStep, initialSiteType ] = useMemo( () => {
 		if ( isPWYWOwned && ! isCommercialOwned ) {
 			return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
 		}
-		return [ SCREEN_TYPE_SELECTION, TYPE_PERSONAL ];
+		// if nothing is owned don't specify the type
+		return [ SCREEN_TYPE_SELECTION, null ];
 	}, [ isPWYWOwned, isCommercialOwned ] );
+
+	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
 	return (
 		<Main fullWidthLayout>
@@ -122,6 +135,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 						<StatsPurchaseWizard
 							siteSlug={ siteSlug }
 							commercialProduct={ commercialProduct }
+							maxSliderPrice={ maxSliderPrice ?? 10 }
 							pwywProduct={ pwywProduct }
 							siteId={ siteId }
 							redirectUri={ query.redirect_uri ?? '' }

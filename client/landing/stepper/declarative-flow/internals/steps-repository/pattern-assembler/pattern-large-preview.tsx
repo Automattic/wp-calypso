@@ -1,16 +1,15 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { Button, DeviceSwitcher } from '@automattic/components';
+import { DeviceSwitcher } from '@automattic/components';
 import { useGlobalStyle } from '@automattic/global-styles';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
-import { NAVIGATOR_PATHS, STYLES_PATHS } from './constants';
+import { STYLES_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
-import type { MouseEvent } from 'react';
 import './pattern-large-preview.scss';
 
 interface Props {
@@ -60,16 +59,6 @@ const PatternLargePreview = ( {
 		'--pattern-large-preview-background': backgroundColor,
 	} as CSSProperties );
 
-	const goToSelectHeaderPattern = () => {
-		navigator.goTo( NAVIGATOR_PATHS.HEADER );
-	};
-
-	const handleAddHeaderClick = ( event: MouseEvent ) => {
-		event.preventDefault();
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK );
-		goToSelectHeaderPattern();
-	};
-
 	const getTitle = () => {
 		if ( ! shouldShowSelectPatternHint ) {
 			return translate( 'Welcome to your homepage.' );
@@ -84,14 +73,6 @@ const PatternLargePreview = ( {
 		}
 
 		return translate( 'You can view your color and font selections after you select a pattern.' );
-	};
-
-	const getAction = () => {
-		if ( ! shouldShowSelectPatternHint ) {
-			return null;
-		}
-
-		return <Button onClick={ handleAddHeaderClick }>{ translate( 'Add header' ) }</Button>;
 	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
@@ -212,7 +193,6 @@ const PatternLargePreview = ( {
 				<div className="pattern-large-preview__placeholder">
 					<h2>{ getTitle() }</h2>
 					<span>{ getDescription() }</span>
-					{ getAction() }
 				</div>
 			) }
 		</DeviceSwitcher>

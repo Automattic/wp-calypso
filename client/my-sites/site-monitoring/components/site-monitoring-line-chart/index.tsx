@@ -1,12 +1,12 @@
 import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
-import useScaleGradient from '@automattic/components/src/chart-uplot/hooks/use-scale-gradient';
-import getGradientFill from '@automattic/components/src/chart-uplot/lib/get-gradient-fill';
-import getPeriodDateFormat from '@automattic/components/src/chart-uplot/lib/get-period-date-format';
+import { Spinner } from '@wordpress/components';
 import classnames from 'classnames';
-import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { numberFormat } from 'i18n-calypso';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import { TimeRange } from '../../metrics-tab';
+import { TIME_RANGE_OPTIONS } from '../time-range-picker';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -15,6 +15,8 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	title?: string;
+	subtitle?: string | React.ReactNode;
+	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: uPlot.AlignedData;
 	fillColor?: string;
@@ -22,149 +24,227 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
+	series: Array< SeriesProp >;
+	timeRange: TimeRange;
+	isLoading?: boolean;
 }
 
-export function formatChatHour( date: Date ): string {
+interface SeriesProp {
+	fill: string;
+	label: string;
+	stroke: string;
+	scale?: string;
+	unit?: string;
+}
+
+export function formatChartHour( date: Date ): string {
 	const hours = String( date.getHours() ).padStart( 2, '0' );
 	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
 	return `${ hours }:${ minutes }`;
 }
 
+function formatDaysChartHour( date: Date ): string {
+	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+	const day = String( date.getDate() ).padStart( 2, '0' );
+	const hours = String( date.getHours() ).padStart( 2, '0' );
+	const minutes = String( date.getMinutes() ).padStart( 2, '0' );
+	return `${ hours }:${ minutes }\n ${ month }/${ day } `;
+}
+
+function determineTimeRange( timeRange: TimeRange ) {
+	const { start, end } = timeRange;
+	const hours = ( end - start ) / 60 / 60;
+	if ( hours <= 6 ) {
+		return TIME_RANGE_OPTIONS[ '6-hours' ];
+	} else if ( hours <= 24 ) {
+		return TIME_RANGE_OPTIONS[ '24-hours' ];
+	} else if ( hours <= 3 * 24 ) {
+		return TIME_RANGE_OPTIONS[ '3-days' ];
+	} else if ( hours <= 7 * 24 ) {
+		return TIME_RANGE_OPTIONS[ '7-days' ];
+	}
+
+	return TIME_RANGE_OPTIONS[ '24-hours' ]; // Default value
+}
+
+function createSeries( series: Array< SeriesProp > ) {
+	const { spline } = uPlot.paths;
+	const configuredSeries: uPlot.Series[] = series.map( function ( serie ) {
+		return {
+			...serie,
+			...{
+				width: 2,
+				paths: ( u: uPlot, seriesIdx: number, idx0: number, idx1: number ) => {
+					return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+				},
+				points: {
+					show: false,
+				},
+				value: ( self: uPlot, rawValue: number ) => {
+					if ( ! rawValue ) {
+						return '-';
+					}
+
+					return numberFormat( rawValue, 0 );
+				},
+			},
+		};
+	} );
+
+	return [ { label: ' ' }, ...configuredSeries ];
+}
+
+function addExtraScaleIfDefined( series: Array< SeriesProp > ) {
+	const serie = series.find( ( serie ) => serie.scale );
+
+	if ( serie?.scale ) {
+		return [
+			{
+				scale: serie.scale,
+				side: 1,
+				grid: {
+					show: false,
+				},
+				stroke: '#787C82',
+				ticks: {
+					show: false,
+				},
+				values: ( u: uPlot, ticks: number[] ) =>
+					ticks.map( ( rawValue ) => {
+						return rawValue + ( serie?.unit ? ' ' + serie.unit : '' );
+					} ),
+			},
+		];
+	}
+	return [];
+}
+
 export const SiteMonitoringLineChart = ( {
 	title,
+	subtitle,
 	className,
 	data,
-	fillColor = 'rgba(48, 87, 220, 0.4)',
 	legendContainer,
 	options: propOptions,
-	solidFill = false,
-	period,
+	series,
+	timeRange,
+	isLoading = false,
 }: UplotChartProps ) => {
-	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
-	const uplotContainer = useRef( null );
-	const { spline } = uPlot.paths;
-	const scaleGradient = useScaleGradient( fillColor );
+	const uplotContainer = useRef< HTMLDivElement | null >( null );
+	const [ chartDimensions, setChartDimensions ] = useState( DEFAULT_DIMENSIONS );
+	const localTz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-	const [ options ] = useState< uPlot.Options >(
-		useMemo( () => {
-			const defaultOptions: uPlot.Options = {
-				class: 'calypso-uplot-chart',
-				...DEFAULT_DIMENSIONS,
-				// Set incoming dates as UTC.
-				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
-				fmtDate: () => {
-					return ( date ) => {
-						const chatHour = formatChatHour( date );
-						return `${ chatHour }`;
-					};
-				},
-				axes: [
-					{
-						// x-axis
-						grid: {
-							show: false,
-						},
-						ticks: {
-							stroke: '#646970',
-							width: 1,
-							size: 3,
-						},
+	const options = useMemo( () => {
+		const extraScale = addExtraScaleIfDefined( series );
+		const defaultOptions: uPlot.Options = {
+			class: 'calypso-uplot-chart',
+			...chartDimensions,
+			// Set incoming dates as UTC.
+			tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), localTz ),
+			fmtDate: () => {
+				return ( date ) => {
+					const chatHour = formatChartHour( date );
+					const dayHour = formatDaysChartHour( date );
+					const timeRangeResult = determineTimeRange( timeRange );
+
+					if (
+						timeRangeResult === TIME_RANGE_OPTIONS[ '6-hours' ] ||
+						timeRangeResult === TIME_RANGE_OPTIONS[ '24-hours' ]
+					) {
+						return chatHour;
+					} else if (
+						timeRangeResult === TIME_RANGE_OPTIONS[ '3-days' ] ||
+						timeRangeResult === TIME_RANGE_OPTIONS[ '7-days' ]
+					) {
+						return dayHour;
+					}
+
+					return dayHour;
+				};
+			},
+			axes: [
+				{
+					// x-axis
+					grid: {
+						show: false,
 					},
-					{
-						// y-axis
-						side: 1, // sets y axis side to left
-						gap: 8,
-						space: 40,
-						size: 50,
-						grid: {
-							stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
-							width: 1,
-						},
-						ticks: {
-							show: false,
-						},
-					},
-				],
-				cursor: {
-					x: false,
-					y: false,
-					points: {
-						size: ( u, seriesIdx ) => ( u.series[ seriesIdx ].points?.size || 1 ) * 2,
-						width: ( u, seriesIdx, size ) => size / 4,
-						stroke: ( u, seriesIdx ) => {
-							const stroke = u.series[ seriesIdx ]?.points?.stroke;
-							return typeof stroke === 'function'
-								? ( stroke( u, seriesIdx ) as CanvasRenderingContext2D[ 'strokeStyle' ] )
-								: ( stroke as CanvasRenderingContext2D[ 'strokeStyle' ] );
-						},
-						fill: () => '#fff',
+					stroke: '#787C82',
+					ticks: {
+						stroke: '#787C82',
+						width: 1,
+						size: 3,
 					},
 				},
-				series: [
-					{
-						label: translate( 'Time period' ),
-						value: ( self: uPlot, rawValue: number ) => {
-							// outputs legend content - value available when mouse is hovering the chart
-							if ( ! rawValue ) {
-								return '-';
-							}
-
-							return getPeriodDateFormat(
-								period,
-								new Date( rawValue * 1000 ),
-								getLocaleSlug() || 'en'
-							);
-						},
+				{
+					// y-axis
+					gap: 8,
+					space: 40,
+					size: 50,
+					stroke: '#787C82',
+					grid: {
+						stroke: '#DCDCDE',
+						width: 1,
 					},
-					{
-						fill: solidFill ? fillColor : getGradientFill( fillColor, scaleGradient ),
-						label: translate( 'HTTP requests per sec' ),
-						stroke: '#0675C4',
-						width: 2,
-						paths: ( u, seriesIdx, idx0, idx1 ) => {
-							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
-						},
-						points: {
-							show: false,
-						},
-						value: ( self: uPlot, rawValue: number ) => {
-							if ( ! rawValue ) {
-								return '-';
-							}
-
-							return numberFormat( rawValue, 0 );
-						},
-					},
-				],
-				legend: {
-					isolate: true,
-					mount: ( self: uPlot, el: HTMLElement ) => {
-						// If legendContainer is defined, move the legend into it.
-						if ( legendContainer?.current ) {
-							legendContainer?.current.append( el );
-						}
+					ticks: {
+						show: false,
 					},
 				},
-			};
+				...extraScale,
+			],
+			cursor: {
+				x: false,
+				y: false,
+				points: {
+					size: ( u, seriesIdx ) => ( u.series[ seriesIdx ].points?.size || 1 ) * 2,
+					width: ( u, seriesIdx, size ) => size / 4,
+					stroke: ( u, seriesIdx ) => {
+						const stroke = u.series[ seriesIdx ]?.points?.stroke;
+						return typeof stroke === 'function'
+							? ( stroke( u, seriesIdx ) as CanvasRenderingContext2D[ 'strokeStyle' ] )
+							: ( stroke as CanvasRenderingContext2D[ 'strokeStyle' ] );
+					},
+					fill: () => '#fff',
+				},
+				drag: {
+					setScale: false,
+				},
+			},
+			select: {
+				show: false,
+				width: 0,
+				height: 0,
+				left: 0,
+				top: 0,
+			},
+			series: createSeries( series ),
+			legend: {
+				isolate: true,
+				mount: ( self: uPlot, el: HTMLElement ) => {
+					// If legendContainer is defined, move the legend into it.
+					if ( legendContainer?.current ) {
+						legendContainer?.current.append( el );
+					}
+				},
+			},
+		};
 
-			return {
-				...defaultOptions,
-				...( typeof propOptions === 'object' ? propOptions : {} ),
-			};
-		}, [
-			fillColor,
-			legendContainer,
-			period,
-			propOptions,
-			scaleGradient,
-			solidFill,
-			spline,
-			translate,
-		] )
-	);
+		return {
+			...defaultOptions,
+			...( typeof propOptions === 'object' ? propOptions : {} ),
+		};
+	}, [ chartDimensions, series, propOptions, localTz, timeRange, legendContainer ] );
 
 	useResize( uplot, uplotContainer );
+
+	useEffect( () => {
+		if ( uplotContainer.current ) {
+			const { width } = uplotContainer.current.getBoundingClientRect();
+			if ( width !== chartDimensions.width ) {
+				setChartDimensions( { width, height: DEFAULT_DIMENSIONS.height } );
+			}
+		}
+	}, [ chartDimensions, data ] );
 
 	const classes = [ 'site-monitoring-line-chart', 'site-monitoring__chart' ];
 	if ( className ) {
@@ -175,8 +255,10 @@ export const SiteMonitoringLineChart = ( {
 		<div className={ classnames( classes ) }>
 			<header className="site-monitoring__chart-header">
 				<h2 className="site-monitoring__chart-title">{ title }</h2>
+				{ subtitle && <p className="site-monitoring__chart-subtitle">{ subtitle }</p> }
 			</header>
 			<div ref={ uplotContainer }>
+				{ isLoading && <Spinner /> }
 				<UplotReact
 					data={ data }
 					onCreate={ ( chart ) => ( uplot.current = chart ) }
