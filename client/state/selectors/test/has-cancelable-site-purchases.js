@@ -1,3 +1,7 @@
+import {
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 
@@ -25,6 +29,22 @@ describe( 'hasCancelableSitePurchases', () => {
 			ID: 3,
 			product_name: 'premium theme',
 			product_slug: 'premium_theme',
+			blog_id: targetSiteId,
+			user_id: targetUserId,
+			active: true,
+		},
+		{
+			ID: 4,
+			product_name: 'ecommerce trial plan',
+			product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+			blog_id: targetSiteId,
+			user_id: targetUserId,
+			active: true,
+		},
+		{
+			ID: 5,
+			product_name: 'migration trial plan',
+			product_slug: PLAN_MIGRATION_TRIAL_MONTHLY,
 			blog_id: targetSiteId,
 			user_id: targetUserId,
 			active: true,
@@ -164,5 +184,76 @@ describe( 'hasCancelableSitePurchases', () => {
 		} );
 
 		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
+	} );
+
+	test( 'should return true because a purchase is active and has ecommerce trial plan', () => {
+		const state = deepFreeze( {
+			purchases: {
+				data: [ examplePurchases[ 0 ], examplePurchases[ 3 ] ],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( true );
+	} );
+
+	test( 'should return false because the only purchase is a ecommerce trial plan', () => {
+		const state = deepFreeze( {
+			purchases: {
+				data: examplePurchases[ 3 ],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
+	} );
+
+	test( 'should return false because the only purchase is a migration trial plan', () => {
+		const state = deepFreeze( {
+			purchases: {
+				data: examplePurchases[ 4 ],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
+	} );
+
+	test( 'should return false because one the only purchases are a refundable theme and a trial plan', () => {
+		const state = deepFreeze( {
+			purchases: {
+				data: [
+					{
+						ID: 3,
+						product_name: 'premium theme',
+						product_slug: 'premium_theme',
+						blog_id: targetSiteId,
+						user_id: targetUserId,
+						is_refundable: true,
+						active: true,
+					},
+					examplePurchases[ 3 ],
+				],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( true );
 	} );
 } );
