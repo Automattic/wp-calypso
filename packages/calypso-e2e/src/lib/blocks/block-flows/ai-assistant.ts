@@ -105,7 +105,9 @@ export class AIAssistantFlow implements BlockFlow {
 	private async improve( editorCanvas: Locator ) {
 		const anchor = editorCanvas.getByRole( 'toolbar', { name: 'Block tools' } );
 
-		await anchor.getByRole( 'button', { name: 'Improve' } ).click();
+		const improveButton = anchor.getByRole( 'button', { name: 'Improve' } );
+		await improveButton.waitFor();
+		await improveButton.click();
 		await editorCanvas
 			.getByRole( 'menu', { name: 'Improve' } )
 			.getByRole( 'menuitem', { name: this.configurationData.improve } )
