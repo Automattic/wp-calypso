@@ -333,9 +333,9 @@ export const useComparisonData = () => {
 						name: translate( 'Transaction fees' ),
 						url: links.transaction_fees,
 						info: {
-							FREE: { content: translate( '10% + Stripe fees' ) },
-							SECURITY: { content: translate( '4% + Stripe fees' ) },
-							COMPLETE: { content: translate( '2% + Stripe fees' ) },
+							FREE: { content: translate( '10%' ) },
+							SECURITY: { content: translate( '4%' ) },
+							COMPLETE: { content: translate( '2%' ) },
 						},
 					},
 				],
