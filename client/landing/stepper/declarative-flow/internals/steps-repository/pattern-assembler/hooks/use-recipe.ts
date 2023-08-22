@@ -106,7 +106,14 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		return `${ incrementIndexRef.current }-${ pattern.ID }`;
 	};
 
+	// Adds a unique "key" prop to each section pattern,
+	// so that when the patterns are rendered in a list,
+	// they are not re-rendered unnecessarily when the list
+	// is manipulated (some elements get appended / removed).
 	const [ keyedSections, setKeyedSections ] = useState< Pattern[] >( [] );
+
+	// Initializes the keys once,
+	// when the patterns and categories are finally loaded.
 	useEffect( () => {
 		const initialKeyedSections = sections.map( ( pattern ) => ( {
 			...pattern,
