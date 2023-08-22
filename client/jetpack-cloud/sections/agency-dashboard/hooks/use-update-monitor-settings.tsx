@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext } from 'react';
@@ -10,9 +11,7 @@ import type { Site, UpdateMonitorSettingsParams } from '../sites-overview/types'
 
 const NOTIFICATION_DURATION = 3000;
 
-export default function useUpdateMonitorSettings(
-	sites: Array< { blog_id: number; url: string } >
-): {
+export default function useUpdateMonitorSettings( sites: Array< Site > ): {
 	updateMonitorSettings: ( params: UpdateMonitorSettingsParams ) => void;
 	isLoading: boolean;
 	isComplete: boolean;
@@ -57,6 +56,27 @@ export default function useUpdateMonitorSettings(
 		},
 	} );
 
+	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+
+	const getArgs = useCallback(
+		( site: Site, params: UpdateMonitorSettingsParams ) => {
+			const args = {
+				...params,
+				...( isPaidTierEnabled && {
+					urls: [
+						{
+							check_interval: params.jetmon_defer_status_down_minutes,
+							options: [],
+							monitor_url: site.url_with_scheme,
+						},
+					],
+				} ),
+			};
+			return { siteId: site.blog_id, params: args };
+		},
+		[ isPaidTierEnabled ]
+	);
+
 	const update = useCallback(
 		async ( params: UpdateMonitorSettingsParams ) => {
 			setStatus( 'loading' );
@@ -65,7 +85,7 @@ export default function useUpdateMonitorSettings(
 			sites.forEach( ( site ) =>
 				requests.push( {
 					site,
-					mutation: updateMonitorSettings.mutateAsync( { siteId: site.blog_id, params } ),
+					mutation: updateMonitorSettings.mutateAsync( getArgs( site, params ) ),
 				} )
 			);
 			const promises = await Promise.allSettled(
@@ -143,7 +163,7 @@ export default function useUpdateMonitorSettings(
 				dispatch( errorNotice( errorMessage, { duration: NOTIFICATION_DURATION } ) );
 			}
 		},
-		[ dispatch, sites, translate, updateMonitorSettings ]
+		[ dispatch, getArgs, sites, translate, updateMonitorSettings ]
 	);
 
 	return {

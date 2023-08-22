@@ -208,15 +208,6 @@ export default function NotificationSettings( {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
 			jetmon_defer_status_down_minutes: selectedDuration?.time,
-			...( isPaidTierEnabled && {
-				urls: [
-					{
-						check_interval: selectedDuration?.time,
-						options: [],
-						monitor_url: '',
-					},
-				],
-			} ),
 		} as UpdateMonitorSettingsParams;
 
 		const eventParams = { ...params } as any; // Adding eventParams since parameters for tracking events should be flat, not nested.
