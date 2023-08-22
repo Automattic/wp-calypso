@@ -40,9 +40,8 @@ const getRelatedPluginsQueryParams = (
 			.get(
 				{
 					path: `/marketplace/${ pluginSlug }/related`,
-					apiNamespace: 'rest/v1.3',
 				},
-				{ size }
+				{ size, apiVersion: '1.3' }
 			)
 			.then( ( { data }: { data: Array< ESRelatedPluginsResult > } ) =>
 				mapESDataToReatedPluginData( data )
