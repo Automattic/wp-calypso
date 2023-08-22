@@ -1,0 +1,63 @@
+# Updates the Priority field on a project board when a [Pri] label gets added to an issue.
+name: Update Priority Field
+
+# Triggers the workflow when a label is added to an issue.
+on:
+  issues:
+    types:
+      - labeled
+
+# Details needed to update a project field.
+env:
+  LABEL_PREFIX: "[Pri] "
+  PROJECT_NUMBER: 391
+  PROJECT_FIELD: "Priority"
+  ORGANIZATION: "Automattic"
+
+jobs:
+
+  # Updates the Priority field with the appropriate priority level.
+  update_priority: 
+
+    runs-on: ubuntu-latest
+
+    # Only runs if a priority label is added.
+    if:  contains(github.event.label.name, '[Pri]')
+
+    steps:
+    
+      # Generate a token for the GitHub App, which has special permissions to update projects.
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PEM }} 
+
+      # Read the priority label.
+      - name: Get priority
+        id: get_priority
+        env:
+          PRIORITY_LABEL: ${{github.event.label.name}}
+
+        # Store the priority without the label prefix.
+        run: |
+          prefix="${{env.LABEL_PREFIX}}"
+          label="${{github.event.label.name}}"
+          priority=${label#"$prefix"}
+          echo "PRIORITY_LABEL=$priority" >> $GITHUB_ENV
+          echo $PRIORITY_LABEL
+
+      # Update the project field with the priority.
+      # Note: if this step fails, the issue is most likely not in the project.
+      - name: Update project field
+        id: update_project_field
+        uses: github/update-project-action@v2
+        with:
+          github_token: ${{ steps.generate_token.outputs.token }}
+          organization: ${{ env.ORGANIZATION }}
+          project_number: ${{ env.PROJECT_NUMBER }}
+          field: ${{ env.PROJECT_FIELD }}
+          content_id: ${{ github.event.issue.node_id }}
+          value: ${{ env.PRIORITY_LABEL }}
+      
