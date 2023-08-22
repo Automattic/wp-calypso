@@ -153,9 +153,7 @@ class DomainsTable extends PureComponent {
 			// TODO: how can we optimize the data loading? Can we load the daomin data using `InView` component as in list-all.jsx?
 			return (
 				<Fragment key={ `${ domain.name }-${ index }` }>
-					{ ! isManagingAllSites &&
-						domain.blogId &&
-						this.renderQuerySitePurchasesOnce( domain.blogId ) }
+					{ domain.blogId && this.renderQuerySitePurchasesOnce( domain.blogId ) }
 					{ isManagingAllSites &&
 						domain.blogId &&
 						this.renderQuerySiteDomainsOnce( domain.blogId ) }

@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import Pagination from 'calypso/components/pagination';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import {
 	resolveDomainStatus,
@@ -53,7 +53,6 @@ import {
 	getReverseSimpleSortFunctionBy,
 	ListAllActions,
 } from './utils';
-import Pagination from 'calypso/components/pagination';
 
 class AllDomains extends Component {
 	static propTypes = {
@@ -705,7 +704,6 @@ class AllDomains extends Component {
 				<div>{ this.renderActionForm() }</div>
 				<div>
 					<QueryAllDomains />
-					<QueryUserPurchases />
 					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
