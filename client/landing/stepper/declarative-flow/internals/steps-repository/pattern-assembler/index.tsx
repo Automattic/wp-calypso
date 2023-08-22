@@ -49,7 +49,7 @@ import ScreenPatternListPanel from './screen-pattern-list-panel';
 import ScreenStyles from './screen-styles';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
-import type { Pattern } from './types';
+import type { Pattern, PatternType } from './types';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
@@ -309,7 +309,7 @@ const PatternAssembler = ( {
 	};
 
 	const onSelect = (
-		type: string,
+		type: PatternType,
 		selectedPattern: Pattern | null,
 		selectedCategory?: string | null
 	) => {

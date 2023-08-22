@@ -1,7 +1,7 @@
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PatternListPanel from './pattern-list-panel';
-import type { Pattern, Category, PanelObject } from './types';
+import type { Pattern, PatternType, Category, PanelObject } from './types';
 
 interface Props {
 	categories: Category[];
@@ -10,7 +10,7 @@ interface Props {
 	selectedSections: Pattern[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	onSelect: (
-		type: string,
+		type: PatternType,
 		selectedPattern: Pattern | null,
 		selectedCategory: string | null
 	) => void;
@@ -20,6 +20,7 @@ const ScreenPatternListPanel = ( {
 	selectedHeader,
 	selectedFooter,
 	selectedSections,
+	onSelect,
 	...props
 }: Props ) => {
 	const translate = useTranslate();
@@ -28,7 +29,7 @@ const ScreenPatternListPanel = ( {
 	const panels: Record< string, PanelObject > = {
 		header: {
 			type: 'header',
-			title: translate( 'Header' ),
+			label: translate( 'Header' ),
 			description: translate(
 				'Pick the header that appears at the top of every page and shows your site logo, title and navigation.'
 			),
@@ -37,7 +38,7 @@ const ScreenPatternListPanel = ( {
 		},
 		footer: {
 			type: 'footer',
-			title: translate( 'Footer' ),
+			label: translate( 'Footer' ),
 			description: translate(
 				'Pick the footer that appears at the bottom of every page and shows useful links and contact information.'
 			),
@@ -53,8 +54,17 @@ const ScreenPatternListPanel = ( {
 
 	const currentPanel = panels[ selectedCategory ] || panels.default;
 
+	const handleSelect = ( selectedPattern: Pattern | null ) => {
+		onSelect( currentPanel.type, selectedPattern, selectedCategory );
+	};
+
 	return (
-		<PatternListPanel { ...props } { ...currentPanel } selectedCategory={ selectedCategory } />
+		<PatternListPanel
+			{ ...props }
+			{ ...currentPanel }
+			selectedCategory={ selectedCategory }
+			onSelect={ handleSelect }
+		/>
 	);
 };
 

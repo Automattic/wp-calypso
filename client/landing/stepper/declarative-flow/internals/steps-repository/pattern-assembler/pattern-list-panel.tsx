@@ -3,30 +3,24 @@ import PatternSelector from './pattern-selector';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
 
-export type PatternListPanelProps = {
-	type: string;
+type PatternListPanelProps = {
+	onSelect: ( selectedPattern: Pattern | null ) => void;
 	selectedPattern: Pattern | null;
 	categories: Category[];
 	selectedCategory: string | null;
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	selectedPatterns?: Pattern[];
-	title?: string;
+	label?: string;
 	description?: string;
-	onSelect: (
-		type: string,
-		selectedPattern: Pattern | null,
-		selectedCategory: string | null
-	) => void;
 };
 
 const PatternListPanel = ( {
-	type,
 	selectedPattern,
 	selectedPatterns,
 	selectedCategory,
 	categories,
 	patternsMapByCategory,
-	title,
+	label,
 	description,
 	onSelect,
 }: PatternListPanelProps ) => {
@@ -43,13 +37,13 @@ const PatternListPanel = ( {
 
 	return (
 		<div key="pattern-list-panel" className="pattern-list-panel__wrapper">
-			<div className="pattern-list-panel__title">{ title ?? category?.label }</div>
+			<div className="pattern-list-panel__title">{ label ?? category?.label }</div>
 			<div className="pattern-list-panel__description">
 				{ description ?? category?.description }
 			</div>
 			<PatternSelector
 				patterns={ categoryPatterns }
-				onSelect={ ( selectedPattern ) => onSelect( type, selectedPattern, selectedCategory ) }
+				onSelect={ onSelect }
 				selectedPattern={ selectedPattern }
 				selectedPatterns={ selectedPatterns }
 			/>

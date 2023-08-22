@@ -10,6 +10,8 @@ export type Pattern = {
 	html?: string;
 };
 
+export type PatternType = 'header' | 'footer' | 'section';
+
 export interface NavigatorLocation {
 	path: string;
 	isInitial: boolean;
@@ -23,8 +25,8 @@ export type Category = {
 };
 
 export type PanelObject = {
-	type: 'header' | 'footer' | 'section';
-	title?: string;
+	type: PatternType;
+	label?: string;
 	description?: string;
 	category?: string;
 	selectedPattern: Pattern | null;
