@@ -20,7 +20,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
-import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../../hooks/npm-ready/use-is-large-currency';
@@ -701,7 +700,6 @@ interface InternalPlanComparisonGridProps
 
 const PlanComparisonGrid = ( {
 	intervalType,
-	planTypeSelectorProps,
 	isInSignup,
 	isLaunchPage,
 	flowName,
@@ -875,11 +873,6 @@ const PlanComparisonGrid = ( {
 
 	return (
 		<div className="plan-comparison-grid">
-			<PlanTypeSelector
-				{ ...planTypeSelectorProps }
-				kind="interval"
-				plans={ displayedGridPlans.map( ( { planSlug } ) => planSlug ) }
-			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader
 					siteId={ siteId }

@@ -699,6 +699,7 @@ const PlansFeaturesMain = ( {
 									<PlanComparisonHeader className="wp-brand-font">
 										{ translate( 'Compare our plans and find yours' ) }
 									</PlanComparisonHeader>
+									{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 									<PlanComparisonGrid2023
 										gridPlans={ gridPlansForComparisonGrid }
 										isInSignup={ isInSignup }
@@ -716,7 +717,6 @@ const PlansFeaturesMain = ( {
 										showLegacyStorageFeature={ showLegacyStorageFeature }
 										usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 										allFeaturesList={ FEATURES_LIST }
-										planTypeSelectorProps={ planTypeSelectorProps }
 									/>
 									<ComparisonGridToggle
 										onClick={ toggleShowPlansComparisonGrid }

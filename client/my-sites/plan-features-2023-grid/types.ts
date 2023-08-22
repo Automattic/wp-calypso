@@ -6,7 +6,6 @@ import type {
 import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type TransformedFeatureObject = FeatureObject & {
@@ -55,9 +54,7 @@ interface SharedPlansGridProps extends ContextProps {
 	showLegacyStorageFeature?: boolean;
 }
 
-export interface PlanComparisonGridProps extends SharedPlansGridProps {
-	planTypeSelectorProps: PlanTypeSelectorProps;
-}
+export type PlanComparisonGridProps = SharedPlansGridProps;
 
 export interface PlanFeaturesGridProps extends SharedPlansGridProps {
 	gridPlanForSpotlight?: GridPlan;

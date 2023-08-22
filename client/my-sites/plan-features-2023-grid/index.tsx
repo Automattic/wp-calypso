@@ -17,7 +17,6 @@ import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 const PlanComparisonGrid2023 = ( {
-	planTypeSelectorProps,
 	intervalType,
 	isInSignup,
 	isLaunchPage,
@@ -81,7 +80,6 @@ const PlanComparisonGrid2023 = ( {
 						gridPlans={ gridPlans }
 						usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 						allFeaturesList={ allFeaturesList }
-						planTypeSelectorProps={ planTypeSelectorProps }
 						intervalType={ intervalType }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
@@ -116,7 +114,6 @@ const PlanComparisonGrid2023 = ( {
 					gridPlans={ gridPlans }
 					usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 					allFeaturesList={ allFeaturesList }
-					planTypeSelectorProps={ planTypeSelectorProps }
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
