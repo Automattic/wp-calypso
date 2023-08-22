@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { useSiteOption } from 'calypso/state/sites/hooks';
 import { NewsletterCategoriesSettings } from '../newsletter-categories-settings';
 import { SubscriptionOptions } from '../settings-reading/main';
 import { EmailsTextSetting } from './EmailsTextSetting';
@@ -41,8 +40,6 @@ export const NewsletterSettingsSection = ( {
 	savedSubscriptionOptions,
 	updateFields,
 }: NewsletterSettingsSectionProps ) => {
-	const siteIntent = useSiteOption( 'site_intent' );
-	const isNewsletterSite = siteIntent === 'newsletter';
 	const translate = useTranslate();
 	const {
 		wpcom_featured_image_in_email,
@@ -95,15 +92,13 @@ export const NewsletterSettingsSection = ( {
 					disabled={ disabled }
 				/>
 			</Card>
-			{ isNewsletterSite && (
-				<Card className="site-settings__card">
-					<SubscribeModalSetting
-						value={ sm_enabled }
-						handleToggle={ handleToggle }
-						disabled={ disabled }
-					/>
-				</Card>
-			) }
+			<Card className="site-settings__card">
+				<SubscribeModalSetting
+					value={ sm_enabled }
+					handleToggle={ handleToggle }
+					disabled={ disabled }
+				/>
+			</Card>
 			<Card className="site-settings__card">
 				<ExcerptSetting
 					value={ wpcom_subscription_emails_use_excerpt }
