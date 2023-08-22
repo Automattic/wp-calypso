@@ -42,6 +42,7 @@ import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
+import ScreenStyles from './screen-styles';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
@@ -67,8 +68,8 @@ const PatternAssembler = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
-	const [ selectedMainItem, setSelectedMainItem ] = useState< string | null >( null );
-	const [ isPanelOpen, setIsPanelOpen ] = useState( false );
+	const [ selectedMainItem, setSelectedMainItem ] = useState< string | null >( 'header' );
+	const [ isPanelOpen, setIsPanelOpen ] = useState( true );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -491,28 +492,12 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const onScreenColorsBack = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_BACK_CLICK );
-	};
-
-	const onScreenColorsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
-	};
-
 	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
 		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
 			font_variation_title: getVariationTitle( variation ),
 			font_variation_type: getVariationType( variation ),
 		} );
-	};
-
-	const onScreenFontsBack = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_BACK_CLICK );
-	};
-
-	const onScreenFontsDone = () => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK );
 	};
 
 	if ( ! site?.ID || ! selectedDesign ) {
@@ -556,26 +541,30 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
-					<ScreenColorPalettes
-						siteId={ site?.ID }
-						stylesheet={ stylesheet }
-						selectedColorPaletteVariation={ colorVariation }
-						onSelect={ onScreenColorsSelect }
-						onBack={ onScreenColorsBack }
-						onDoneClick={ onScreenColorsDone }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES }>
+					<ScreenStyles
+						onMainItemSelect={ onMainItemSelect }
+						onContinueClick={ onContinueClick }
+						selectedMainItem={ selectedMainItem }
+						hasColor={ Boolean( colorVariation ) }
+						hasFont={ Boolean( fontVariation ) }
 					/>
-				</NavigatorScreen>
-
-				<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
-					<ScreenFontPairings
-						siteId={ site?.ID }
-						stylesheet={ stylesheet }
-						selectedFontPairingVariation={ fontVariation }
-						onSelect={ onScreenFontsSelect }
-						onBack={ onScreenFontsBack }
-						onDoneClick={ onScreenFontsDone }
-					/>
+					{ selectedMainItem === 'color-palettes' && (
+						<ScreenColorPalettes
+							siteId={ site?.ID }
+							stylesheet={ stylesheet }
+							selectedColorPaletteVariation={ colorVariation }
+							onSelect={ onScreenColorsSelect }
+						/>
+					) }
+					{ selectedMainItem === 'font-pairings' && (
+						<ScreenFontPairings
+							siteId={ site?.ID }
+							stylesheet={ stylesheet }
+							selectedFontPairingVariation={ fontVariation }
+							onSelect={ onScreenFontsSelect }
+						/>
+					) }
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">

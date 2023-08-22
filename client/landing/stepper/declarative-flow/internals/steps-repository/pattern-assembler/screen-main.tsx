@@ -1,16 +1,11 @@
-import { Button } from '@automattic/components';
+import { NavigatorHeader, NavigatorItem, NavigatorItemGroup } from '@automattic/onboarding';
 import {
-	NavigatorButtonAsItem,
-	NavigatorHeader,
-	NavigatorItem,
-	NavigatorItemGroup,
-} from '@automattic/onboarding';
-import {
+	Button,
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { focus } from '@wordpress/dom';
-import { header, footer, layout, color, typography } from '@wordpress/icons';
+import { header, footer, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { CATEGORY_ALL_SLUG, NAVIGATOR_PATHS } from './constants';
@@ -47,7 +42,6 @@ interface Props {
 const ScreenMain = ( {
 	onSelect,
 	onMainItemSelect,
-	onContinueClick,
 	recordTracksEvent,
 	surveyDismissed,
 	setSurveyDismissed,
@@ -55,32 +49,23 @@ const ScreenMain = ( {
 	selectedSections,
 	selectedHeader,
 	selectedFooter,
-	hasColor,
-	hasFont,
 	updateActivePatternPosition,
 	categories,
 	patternsMapByCategory,
 }: Props ) => {
 	const translate = useTranslate();
-	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const { location } = useNavigator();
+	const navigator = useNavigator();
+	const { location } = navigator;
 	const isInitialLocation = location.isInitial && ! location.isBack;
 	const headerDescription = translate(
 		'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 	);
-
-	// Use the mousedown event to prevent either the button focusing or text selection
-	const handleMouseDown = ( event: React.MouseEvent ) => {
-		if ( disabled ) {
-			event.preventDefault();
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
-		}
-	};
+	const isButtonDisabled = ! selectedHeader && ! selectedHeader && ! selectedSections.length;
 
 	const handleClick = () => {
-		if ( ! disabled ) {
-			onContinueClick();
+		if ( ! isButtonDisabled ) {
+			navigator.goTo( NAVIGATOR_PATHS.STYLES );
 		}
 	};
 
@@ -133,14 +118,6 @@ const ScreenMain = ( {
 	const getIsActiveButton = ( name: string ) => {
 		return name === selectedMainItem;
 	};
-
-	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
-	useEffect( () => {
-		const timeoutId = window.setTimeout( () => setDisabled( false ), 300 );
-		return () => {
-			window.clearTimeout( timeoutId );
-		};
-	}, [] );
 
 	useEffect( () => {
 		if ( ! isInitialLocation || ! wrapperRef.current ) {
@@ -210,40 +187,19 @@ const ScreenMain = ( {
 							{ translate( 'Footer' ) }
 						</NavigatorItem>
 					</NavigatorItemGroup>
-					<NavigatorItemGroup title={ translate( 'Styles' ) }>
-						<>
-							<NavigatorButtonAsItem
-								checked={ hasColor }
-								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
-								icon={ color }
-								aria-label={ translate( 'Colors' ) }
-								onClick={ () => onMainItemSelect( { name: 'color-palettes' } ) }
-							>
-								{ translate( 'Colors' ) }
-							</NavigatorButtonAsItem>
-							<NavigatorButtonAsItem
-								checked={ hasFont }
-								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
-								icon={ typography }
-								aria-label={ translate( 'Fonts' ) }
-								onClick={ () => onMainItemSelect( { name: 'font-pairings' } ) }
-							>
-								{ translate( 'Fonts' ) }
-							</NavigatorButtonAsItem>
-						</>
-					</NavigatorItemGroup>
 				</VStack>
 				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
 			</div>
 			<div className="screen-container__footer">
 				<Button
 					className="pattern-assembler__button"
-					primary
-					aria-disabled={ disabled }
-					onMouseDown={ handleMouseDown }
+					aria-disabled={ isButtonDisabled }
 					onClick={ handleClick }
+					label="Add your first pattern to get started."
+					showTooltip={ isButtonDisabled }
+					variant="primary"
 				>
-					{ translate( 'Save and continue' ) }
+					{ translate( 'Pick your style' ) }
 				</Button>
 			</div>
 			{ selectedMainItem && (

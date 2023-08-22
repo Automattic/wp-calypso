@@ -10,12 +10,9 @@ export const NAVIGATOR_PATHS = {
 	HEADER: '/header',
 	SECTION_PATTERNS: '/section/patterns',
 	FOOTER: '/footer',
-	COLOR_PALETTES: '/color-palettes',
-	FONT_PAIRINGS: '/font-pairings',
+	STYLES: '/styles',
 	ACTIVATION: '/activation',
 };
-
-export const STYLES_PATHS = [ NAVIGATOR_PATHS.COLOR_PALETTES, NAVIGATOR_PATHS.FONT_PAIRINGS ];
 
 /* Category list of the patterns fetched via PTK API from Dotcompatterns
  *
