@@ -443,6 +443,12 @@ const PatternAssembler = ( {
 
 	const onMainItemSelect = ( name: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
+		if ( 'header' === name ) {
+			return updateActivePatternPosition( -1 );
+		}
+		if ( 'footer' === name ) {
+			return activateFooterPosition( !! footer );
+		}
 	};
 
 	const onDeleteSection = ( position: number ) => {
