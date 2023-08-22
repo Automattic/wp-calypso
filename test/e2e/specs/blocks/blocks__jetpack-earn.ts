@@ -6,6 +6,7 @@ import {
 	BlockFlow,
 	PayWithPaypalBlockFlow,
 	OpenTableFlow,
+	AIAssistantFlow,
 	// PaymentsBlockFlow,
 	// envVariables,
 } from '@automattic/calypso-e2e';
@@ -19,6 +20,11 @@ const blockFlows: BlockFlow[] = [
 	} ),
 	new OpenTableFlow( {
 		restaurant: 'Miku Restaurant - Vancouver',
+	} ),
+	new AIAssistantFlow( {
+		query: 'In three sentences, tell me about Vancouver, Canada.',
+		tone: 'Passionate',
+		improve: 'Make shorter',
 	} ),
 ];
 
