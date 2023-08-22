@@ -24,6 +24,8 @@ import wpcom from 'calypso/lib/wp';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { setAllDomainsNavigationPage } from 'calypso/state/all-domains/actions';
+import { getCurrentNavigationPage } from 'calypso/state/all-domains/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import {
@@ -78,10 +80,10 @@ class AllDomains extends Component {
 	};
 
 	componentDidMount() {
-		const { context } = this.props;
-		const currentPage = Number( parse( context.querystring )?.page );
-		if ( ! isNaN( currentPage ) ) {
-			this.setPage( currentPage );
+		const { currentPage } = this.props;
+		const currentPageParsed = Number( currentPage );
+		if ( ! isNaN( currentPageParsed ) ) {
+			this.setCurrentPage( currentPageParsed );
 		}
 	}
 
@@ -91,7 +93,8 @@ class AllDomains extends Component {
 		}
 	}
 
-	setPage = ( currentPage ) => {
+	setCurrentPage = ( currentPage ) => {
+		this.props.setCurrentPage( currentPage );
 		this.setState( { currentPage } );
 	};
 
@@ -721,7 +724,7 @@ class AllDomains extends Component {
 							page={ this.state.currentPage }
 							perPage={ this.state.domainsPerPage }
 							total={ domains.length }
-							pageClick={ ( currentPage ) => this.setState( { currentPage } ) }
+							pageClick={ ( currentPage ) => this.setCurrentPage( currentPage ) }
 							compact
 						/>
 					</>
@@ -784,23 +787,29 @@ const getFilteredDomainsList = ( state, context ) => {
 	}
 };
 
-export default connect( ( state, { context } ) => {
-	const sites = getSitesById( state );
-	const action = parse( context.querystring )?.action;
+export default connect(
+	( state, { context } ) => {
+		const sites = getSitesById( state );
+		const action = parse( context.querystring )?.action;
 
-	return {
-		action,
-		canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
-		currentRoute: getCurrentRoute( state ),
-		domainsList: getFlatDomainsList( state ),
-		domainsDetails: getAllDomains( state ),
-		filteredDomainsList: getFilteredDomainsList( state, context ),
-		hasAllSitesLoaded: hasAllSitesList( state ),
-		isContactEmailEditContext: ListAllActions.editContactEmail === action,
-		purchases: getUserPurchases( state ) || [],
-		hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
-		requestingFlatDomains: isRequestingAllDomains( state ),
-		requestingSiteDomains: getAllRequestingSiteDomains( state ),
-		sites,
-	};
-} )( localize( AllDomains ) );
+		return {
+			action,
+			canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
+			currentRoute: getCurrentRoute( state ),
+			domainsList: getFlatDomainsList( state ),
+			domainsDetails: getAllDomains( state ),
+			filteredDomainsList: getFilteredDomainsList( state, context ),
+			hasAllSitesLoaded: hasAllSitesList( state ),
+			isContactEmailEditContext: ListAllActions.editContactEmail === action,
+			purchases: getUserPurchases( state ) || [],
+			hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
+			requestingFlatDomains: isRequestingAllDomains( state ),
+			requestingSiteDomains: getAllRequestingSiteDomains( state ),
+			currentPage: getCurrentNavigationPage( state ),
+			sites,
+		};
+	},
+	{
+		setCurrentPage: setAllDomainsNavigationPage,
+	}
+)( localize( AllDomains ) );
