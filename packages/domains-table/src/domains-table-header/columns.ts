@@ -10,6 +10,7 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		width: '30%',
 	},
 	{
 		name: 'site',
@@ -18,6 +19,7 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: getSiteSortFunctions(),
+		width: '20%',
 	},
 	{
 		name: 'status',
@@ -26,6 +28,7 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
 		sortFunctions: [],
+		width: '10%',
 	},
 	{
 		name: 'registered-until',
@@ -34,6 +37,7 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
+		width: '15%',
 	},
 	{ name: 'auto-renew', label: __( 'Auto-renew', __i18n_text_domain__ ) },
 	{ name: 'action', label: __( 'Actions', __i18n_text_domain__ ) },

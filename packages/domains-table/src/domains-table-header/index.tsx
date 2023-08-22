@@ -24,6 +24,7 @@ export type DomainsTableColumn =
 				) => number
 			>;
 			headerComponent?: React.ReactNode;
+			width?: string;
 	  }
 	| {
 			name: string;
@@ -40,6 +41,7 @@ export type DomainsTableColumn =
 				) => number
 			];
 			headerComponent?: React.ReactNode;
+			width?: string;
 	  };
 
 type DomainsTableHeaderProps = {
@@ -92,7 +94,7 @@ export const DomainsTableHeader = ( {
 					/>
 				</th>
 				{ columns.map( ( column ) => (
-					<th key={ column.name }>
+					<th key={ column.name } style={ { width: column.width } }>
 						<Button
 							plain
 							onClick={ () => onChangeSortOrder( column ) }
