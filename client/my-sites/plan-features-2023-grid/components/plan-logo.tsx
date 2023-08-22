@@ -17,6 +17,7 @@ import { Plans2023Tooltip } from '../components/plans-2023-tooltip';
 import PopularBadge from '../components/popular-badge';
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
+import PlanDivOrTdContainer from './plan-div-td-container';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 
 const PlanLogo: React.FunctionComponent< {
@@ -25,16 +26,7 @@ const PlanLogo: React.FunctionComponent< {
 	isInSignup?: boolean;
 	isTableCell?: boolean;
 	planIndex: number;
-	Container: (
-		props: (
-			| React.HTMLAttributes< HTMLDivElement >
-			| React.HTMLAttributes< HTMLTableCellElement >
-		 ) & {
-			isTableCell?: boolean | undefined;
-			scope?: string | undefined;
-		}
-	) => JSX.Element;
-} > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, Container, planIndex } ) => {
+} > = ( { planSlug, isInSignup, renderedGridPlans, isTableCell, planIndex } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const shouldShowWooLogo = isEcommercePlan( planSlug ) && ! isWooExpressPlan( planSlug );
@@ -71,7 +63,11 @@ const PlanLogo: React.FunctionComponent< {
 	} );
 
 	return (
-		<Container key={ planSlug } className={ tableItemClasses } isTableCell={ isTableCell }>
+		<PlanDivOrTdContainer
+			key={ planSlug }
+			className={ tableItemClasses }
+			isTableCell={ isTableCell }
+		>
 			<PopularBadge
 				isInSignup={ isInSignup }
 				planSlug={ planSlug }
@@ -111,7 +107,7 @@ const PlanLogo: React.FunctionComponent< {
 					</Plans2023Tooltip>
 				) }
 			</header>
-		</Container>
+		</PlanDivOrTdContainer>
 	);
 };
 

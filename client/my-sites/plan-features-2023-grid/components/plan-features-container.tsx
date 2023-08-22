@@ -3,6 +3,7 @@ import { LocalizeProps } from 'i18n-calypso';
 import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
 import { DataResponse } from '../types';
 import PlanFeatures2023GridFeatures from './features';
+import PlanDivOrTdContainer from './plan-div-td-container';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { GridPlan } from '../hooks/npm-ready/data-store/use-grid-plans';
 import type { DomainSuggestion } from '@automattic/data-stores';
@@ -16,15 +17,6 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
-	Container: (
-		props: (
-			| React.HTMLAttributes< HTMLDivElement >
-			| React.HTMLAttributes< HTMLTableCellElement >
-		 ) & {
-			isTableCell?: boolean | undefined;
-			scope?: string | undefined;
-		}
-	) => JSX.Element;
 } > = ( {
 	plansWithFeatures,
 	paidDomainName,
@@ -34,14 +26,13 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
 	isTableCell,
-	Container,
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
 			return (
-				<Container
+				<PlanDivOrTdContainer
 					key={ `${ planSlug }-${ mapIndex }` }
 					isTableCell={ isTableCell }
 					className="plan-features-2023-grid__table-item"
@@ -81,7 +72,7 @@ const PlanFeaturesContainer: React.FC< {
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		}
 	);
