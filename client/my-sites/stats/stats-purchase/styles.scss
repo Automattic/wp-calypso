@@ -203,8 +203,7 @@
 		min-width: 24px;
 		height: 24px;
 		margin-right: 8px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 14px;
+		font-size: $font-body-small;
 		border: 1.5px solid var(--jp-black);
 		border-radius: 50%;
 
@@ -212,6 +211,24 @@
 			color: var(--jp-white);
 			background: var(--jp-green-50);
 			border-color: var(--jp-green-50);
+		}
+	}
+
+	.stats-purchase-wizard__card-panel-title {
+		h2 > button {
+			cursor: auto;
+
+		}
+
+		&.stats-purchase-wizard__card-panel--type-selected {
+			h2 > button {
+				cursor: pointer;
+			}
+
+			.stats-purchase-wizard__card-title-indicator {
+				color: var(--jp-white);
+				background: var(--jp-black);
+			}
 		}
 	}
 
@@ -249,8 +266,16 @@
 	}
 
 	// override panel
-	.components-panel__body > .components-panel__body-title:hover {
-		background-color: transparent;
+	.components-panel__body {
+		& > .components-panel__body-title:hover {
+			background-color: transparent;
+		}
+
+		&.is-opened {
+			& > .components-panel__body-title {
+				margin-bottom: 8px;
+			}
+		}
 	}
 
 	.components-panel__body-toggle.components-button {

@@ -31,13 +31,14 @@
 }
 
 .is-reader-page .reader__card.card.is-placeholder {
-	border-bottom: 1px solid var(--color-neutral-10);
+	border-bottom: 1px solid #e9e9ea;
 	box-shadow: none;
-	margin-bottom: 0;
-	padding: 6px 0 30px;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
+	margin-bottom: 16px;
+	padding: 6px 16px 30px;
 
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 15px;
+		margin: 0 15px 16px;
 	}
 
 	.reader__post-footer {
@@ -441,7 +442,6 @@
 
 // In-stream Recommendations
 .reader-stream__recommended-posts {
-	border-bottom: 1px solid var(--color-neutral-10);
 	padding-bottom: 12px;
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -509,7 +509,6 @@
 
 	.card.reader-related-card {
 		margin: 0;
-		padding-top: 6px;
 
 		.reader-related-card__meta .gravatar {
 			margin: 3px 8px 0 0;
@@ -667,7 +666,7 @@
 				width: 225px;
 			}
 			.stream__two-column &::after {
-				@include long-content-fade( $size: 5% );
+				@include long-content-fade( $size: 5%, $color: var(--color-neutral-0) );
 			}
 		}
 	}

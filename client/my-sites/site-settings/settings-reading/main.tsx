@@ -21,8 +21,6 @@ import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
 
-const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
-
 export type SubscriptionOptions = {
 	invitation: string;
 	comment_follow: string;
@@ -179,6 +177,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 					) : (
 						<NewsletterSettingsSection
 							fields={ fields }
+							handleAutosavingToggle={ handleAutosavingToggle }
 							handleToggle={ handleToggle }
 							handleSubmitForm={ handleSubmitForm }
 							disabled={ disabled }
@@ -218,10 +217,6 @@ const ReadingSettings = () => {
 	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
 		isJetpackConnectionProblem( state, siteId as number )
 	);
-
-	if ( ! isEnabled ) {
-		return null;
-	}
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">

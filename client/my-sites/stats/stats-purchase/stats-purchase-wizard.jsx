@@ -50,7 +50,7 @@ const ProductCard = ( {
 	from,
 	disableFreeProduct = false,
 	initialStep = SCREEN_TYPE_SELECTION,
-	initialSiteType = TYPE_PERSONAL,
+	initialSiteType,
 } ) => {
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
@@ -68,8 +68,29 @@ const ProductCard = ( {
 
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
-	const selectedTypeLabel = siteType === TYPE_PERSONAL ? personalLabel : commercialLabel;
+	const personalProductTitle = translate( 'What is Jetpack Stats worth to you?' );
+	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
+
+	// Default titles for no site type selected.
+	let typeSelectionScreenLabel = translate( 'What site type is %(site)s?', {
+		args: {
+			site: siteSlug,
+		},
+	} );
+	let purchaseScreenLabel = personalProductTitle;
+
+	if ( siteType === TYPE_PERSONAL ) {
+		typeSelectionScreenLabel = personalLabel;
+		purchaseScreenLabel = personalProductTitle;
+	}
+
+	if ( siteType === TYPE_COMMERCIAL ) {
+		typeSelectionScreenLabel = commercialLabel;
+		purchaseScreenLabel = commercialProductTitle;
+	}
+
 	const showCelebration =
+		siteType &&
 		wizardStep === SCREEN_PURCHASE &&
 		( siteType === TYPE_COMMERCIAL || subscriptionValue >= uiImageCelebrationTier );
 
@@ -94,6 +115,7 @@ const ProductCard = ( {
 		}
 
 		setWizardStep( SCREEN_TYPE_SELECTION );
+		setSiteType( null );
 	};
 
 	// change the plan to commercial on the personal plan confirmation
@@ -107,15 +129,7 @@ const ProductCard = ( {
 	const firstStepTitleNode = (
 		<TitleNode
 			indicatorNumber="1"
-			label={
-				! siteType
-					? translate( 'What site type is %(site)s?', {
-							args: {
-								site: siteSlug,
-							},
-					  } )
-					: selectedTypeLabel
-			}
+			label={ typeSelectionScreenLabel }
 			active={ wizardStep === SCREEN_TYPE_SELECTION }
 		/>
 	);
@@ -123,7 +137,7 @@ const ProductCard = ( {
 	const secondStepTitleNode = (
 		<TitleNode
 			indicatorNumber="2"
-			label={ translate( 'What is Jetpack Stats worth to you?' ) }
+			label={ purchaseScreenLabel }
 			active={ wizardStep === SCREEN_PURCHASE }
 		/>
 	);
@@ -139,6 +153,9 @@ const ProductCard = ( {
 								initialOpen
 								onToggle={ ( shouldOpen ) => toggleFirstStep( shouldOpen ) }
 								opened={ wizardStep === SCREEN_TYPE_SELECTION }
+								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title`, {
+									[ `${ COMPONENT_CLASS_NAME }__card-panel--type-selected` ]: !! siteType,
+								} ) }
 							>
 								<PanelRow>
 									<div className={ `${ COMPONENT_CLASS_NAME }__card-grid` }>
@@ -164,18 +181,22 @@ const ProductCard = ( {
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
 											<Button variant="primary" onClick={ setPersonalSite }>
-												{ translate( 'Personal site' ) }
+												{ personalLabel }
 											</Button>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
 											<Button variant="primary" onClick={ setCommercialSite }>
-												{ translate( 'Commercial site' ) }
+												{ commercialLabel }
 											</Button>
 										</div>
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody title={ secondStepTitleNode } opened={ wizardStep === SCREEN_PURCHASE }>
+							<PanelBody
+								title={ secondStepTitleNode }
+								opened={ wizardStep === SCREEN_PURCHASE }
+								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
+							>
 								<PanelRow>
 									{ siteType === TYPE_PERSONAL ? (
 										<PersonalPurchase

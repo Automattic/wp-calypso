@@ -33,6 +33,7 @@ export default function DashboardBanners() {
 			component: () => <SiteSurveyBanner isDashboardView />,
 			preference: useSelector( ( state ) => getPreference( state, surveyBannerPreferenceName ) ),
 			showDays: 30,
+			hideBanner: true,
 		},
 	];
 

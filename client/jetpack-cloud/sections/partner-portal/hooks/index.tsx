@@ -162,6 +162,13 @@ export function useProductDescription( productSlug: string ): {
 			case 'jetpack-backup-t2':
 				description = translate( 'Real-time cloud backups with one-click restores.' );
 				break;
+			case 'jetpack-backup-addon-storage-10gb-monthly':
+			case 'jetpack-backup-addon-storage-100gb-monthly':
+			case 'jetpack-backup-addon-storage-1tb-monthly':
+			case 'jetpack-backup-addon-storage-3tb-monthly':
+			case 'jetpack-backup-addon-storage-5tb-monthly':
+				description = translate( 'Additional storage for your Jetpack VaultPress Backup plan.' );
+				break;
 			case 'jetpack-boost':
 				description = translate( 'Essential tools to speed up your site - no developer required.' );
 				break;
@@ -185,7 +192,7 @@ export function useProductDescription( productSlug: string ): {
 				break;
 			case 'jetpack-monitor':
 				description = translate(
-					'Swift 1-minute monitoring interval alerts, multiple email recipient and SMS notifications.'
+					'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
 				);
 				break;
 			case 'woocommerce-bookings':
@@ -208,7 +215,7 @@ export function useProductDescription( productSlug: string ): {
 					'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
 				);
 				break;
-			case 'woocommerce-product-minxmax-quantities':
+			case 'woocommerce-minmax-quantities':
 				description = translate(
 					'Minimum and maximum quantity rules for products, orders, and categories.'
 				);
@@ -218,6 +225,8 @@ export function useProductDescription( productSlug: string ): {
 					'Powerful marketing automation for WooCommerce - grow your store and make more money.'
 				);
 				break;
+			case 'jetpack-stats':
+				description = translate( 'Powerful analytics to help you understand your audience.' );
 		}
 
 		return {

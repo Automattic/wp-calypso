@@ -1,8 +1,3 @@
-// Adds a top border to first card in the Site Stream
-.is-reader-page .is-site-stream .reader-post-card.card:nth-child(2) {
-	border-top: 1px solid var(--color-neutral-10);
-}
-
 .reader-post-options-menu__ellipsis-menu {
 	margin-left: 16px;
 
@@ -14,9 +9,12 @@
 
 .reader-post-card.card {
 	border-bottom: 5px solid var(--color-neutral-0);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
 	box-shadow: none;
 	margin: 0;
-	padding: 20px 0;
+	margin-bottom: 16px;
+	padding: 16px;
 	position: relative;
 
 	@include breakpoint-deprecated( ">660px" ) {
@@ -217,6 +215,14 @@
 		&::before {
 			top: inherit;
 		}
+	}
+
+	// When comment list is attached to reader post card, remove top border and margin to feel more
+	// cohesive.
+	.comments__comment-list {
+		border-top: none;
+		margin: 20px 0 0 10px;
+		padding-top: 0;
 	}
 }
 

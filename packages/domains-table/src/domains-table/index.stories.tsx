@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import React from 'react';
+import { testDomain } from '../test-utils';
 import { DomainsTable } from './index';
 
 const queryClient = new QueryClient();
@@ -22,20 +23,37 @@ export default {
 	},
 } as Meta;
 
-const defaultDomains = [
-	{ domain: 'example1.com', blog_id: 1, primary_domain: true },
-	{ domain: 'example2.com', blog_id: 1, primary_domain: false },
-	{ domain: 'example3.com', blog_id: 2, primary_domain: true },
+const testDomains = [
+	testDomain( { domain: 'example1.com', blog_id: 1, primary_domain: true } ),
+	testDomain( {
+		domain: 'example1.wordpress.com',
+		blog_id: 1,
+		primary_domain: false,
+		wpcom_domain: true,
+	} ),
+	testDomain( { domain: 'example3.com', blog_id: 2, primary_domain: true } ),
 ];
 
 const defaultArgs = {
-	domains: defaultDomains,
+	domains: testDomains.map( ( [ partial ] ) => partial ),
+	isAllSitesView: true,
 	fetchSiteDomains: ( siteId ) =>
-		Promise.resolve( { domains: defaultDomains.filter( ( d ) => d.blog_id === siteId ) } ),
+		Promise.resolve( {
+			domains: testDomains.map( ( [ , full ] ) => full ).filter( ( d ) => d.blog_id === siteId ),
+		} ),
 };
 
 const storyDefaults = {
 	args: defaultArgs,
 };
 
-export const TableWithRows = { ...storyDefaults };
+export const AllSitesTable = { ...storyDefaults };
+
+export const SiteSpecificTable = {
+	...storyDefaults,
+	args: {
+		...defaultArgs,
+		domains: defaultArgs.domains.filter( ( d ) => d.blog_id === 1 ),
+		isAllSitesView: false,
+	},
+};

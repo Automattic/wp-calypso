@@ -79,7 +79,10 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type {
+	CheckoutPageErrorCallback,
+	StepChangedCallback,
+} from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { ReactNode } from 'react';
@@ -211,9 +214,11 @@ export default function WPCheckout( {
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingContent,
+	onStepChanged,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
+	onStepChanged?: StepChangedCallback;
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
@@ -241,7 +246,7 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const reduxDispatch = useReduxDispatch();
-	usePresalesChat( 'wpcom', true, true );
+	usePresalesChat( 'wpcom' );
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
@@ -427,7 +432,7 @@ export default function WPCheckout( {
 			<WPCheckoutMainContent>
 				<CheckoutOrderBanner />
 				<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-				<CheckoutStepGroup loadingContent={ loadingContent }>
+				<CheckoutStepGroup loadingContent={ loadingContent } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
 					<CheckoutStepBody

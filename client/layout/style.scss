@@ -371,3 +371,12 @@ body.is-focus-sites {
 		outline: 1px solid var(--color-sidebar-border);
 	}
 }
+
+// Ensure reader streams have the neutral background.
+.layout.is-section-reader {
+	background: var(--color-neutral-0);
+	min-height: 100vh;
+	.layout__content {
+		background: var(--color-neutral-0);
+	}
+}

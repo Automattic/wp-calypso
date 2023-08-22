@@ -660,7 +660,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 }
 
 export function UsePresalesChat() {
-	usePresalesChat( 'wpcom', true, true );
+	usePresalesChat( 'wpcom' );
 }
 
 export default connect(

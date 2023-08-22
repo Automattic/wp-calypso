@@ -44,11 +44,6 @@ export const StatsReach = ( props ) => {
 		label: translate( 'Email' ),
 	};
 
-	const socialData = {
-		value: publicizeFollowCount,
-		label: translate( 'Social' ),
-	};
-
 	const data = [ wpData, emailData ];
 
 	if ( ! isOdysseyStats ) {
@@ -69,8 +64,7 @@ export const StatsReach = ( props ) => {
 	}
 
 	if ( publicizeFollowCount > 0 ) {
-		socialData.children = publicizeData;
-		data.push( socialData ); // Only push socialData if publicizeFollowCount is greater than 0
+		data.push( ...publicizeData ); // Spread the publicizeData into the data array if there are any publicize followers
 	}
 
 	// sort descending

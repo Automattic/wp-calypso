@@ -2,6 +2,7 @@ import {
 	JETPACK_AI_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_BACKUP_ADDON_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
@@ -51,6 +52,10 @@ interface IconResource {
 
 const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 	...setProductsIcon( JETPACK_BACKUP_PRODUCTS, {
+		regular: JetpackProductIconBackup,
+		light: JetpackProductIconBackupLight,
+	} ),
+	...setProductsIcon( JETPACK_BACKUP_ADDON_PRODUCTS, {
 		regular: JetpackProductIconBackup,
 		light: JetpackProductIconBackupLight,
 	} ),

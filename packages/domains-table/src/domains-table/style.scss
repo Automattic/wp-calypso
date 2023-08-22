@@ -3,13 +3,21 @@
 .domains-table {
 	th {
 		padding-bottom: 16px;
-		border-bottom: 1px solid #f0f0f0;
-
 		color: var(--studio-gray-60);
+		vertical-align: middle;
 		font-size: $font-body-small;
 		font-style: normal;
 		font-weight: 500;
 		line-height: 20px;
+	}
+
+	.domains-table__bulk-action-container {
+		width: 0;
+		min-width: fit-content;
+
+		.components-checkbox-control__input-container {
+			margin-right: 16px;
+		}
 	}
 
 	td {
@@ -31,5 +39,9 @@
 		&:hover {
 			color: var(--color-link);
 		}
+	}
+
+	.domains-table__primary-domain-label {
+		margin-bottom: 4px;
 	}
 }

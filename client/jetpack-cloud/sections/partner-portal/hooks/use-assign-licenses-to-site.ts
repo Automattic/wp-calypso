@@ -51,32 +51,50 @@ const useAssignLicensesToSite = (
 						( p ) => p.slug.substring( 0, 38 ) === productSlug
 					);
 
+					if ( ! selectedProduct ) {
+						return null;
+					}
+
 					return {
 						key,
 						product: selectedProduct,
 					};
 				} )
-				// If we can't determine which product a license is meant for, filter it out
-				.filter( ( { product } ) => Boolean( product ) )
+				// If we can't determine which product a license is meant for, filter it out.
+				// The Exclude<> usage here is to let Typescript know that the null case has been eliminated.
+				.filter( ( item ): item is Exclude< typeof item, null > => item !== null )
+				// Sort ascending by product id as a quick and dirty way to avoid race conditions between add-on
+				// products and their dependencies. For example, Jetpack Backup Add-on Storage requires that Jetpack
+				// Backup is present on the site, so we need to assign the Jetpack Backup license first.
+				// We rely on the product id because add-ons should practically always have a higher product id
+				// than the product they are an add-on for.
+				.sort( ( a, b ) => b.product.product_id - a.product.product_id )
 				// We only need the product's title/display name
 				.map( ( { key, product } ) => ( {
 					key,
 					name: getProductTitle( ( product as APIProductFamilyProduct ).name ),
 				} ) );
 
+			const apiRequests = [];
+
 			// Purposely catch any error responses and let them through,
 			// so we can pass all their information along as ProductInfo objects
 			// (not currently available via PromiseSettledResult<T>)
-			const apiRequests = keysWithProductNames.map( ( { key, name } ) =>
-				assignLicense
-					.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
-					.then( () => ( { key, name, status: 'fulfilled' } as ProductInfo ) )
-					.catch( () => ( { key, name, status: 'rejected' } as ProductInfo ) )
-			);
+			for ( let i = 0; i < keysWithProductNames.length; i++ ) {
+				const { key, name } = keysWithProductNames[ i ];
+				apiRequests.push(
+					// Assign the products sequentially to guarantee products that depend on other products have their
+					// dependencies assigned first.
+					await assignLicense
+						.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
+						.then( () => ( { key, name, status: 'fulfilled' } as ProductInfo ) )
+						.catch( () => ( { key, name, status: 'rejected' } as ProductInfo ) )
+				);
+			}
 
 			return {
 				selectedSite: selectedSite?.domain || '',
-				selectedProducts: await Promise.all( apiRequests ),
+				selectedProducts: apiRequests,
 			};
 		},
 		[ selectedSite, assignLicense, products ]

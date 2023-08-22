@@ -19,10 +19,12 @@ export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
+export * from './theme';
 export * from './user/types';
 export * from './queries/use-launchpad';
 export * from './queries/use-all-domains-query';
 export * from './queries/use-site-domains-query';
+export * from './queries/use-site-query';
 
 const { SubscriptionManager } = Reader;
 
