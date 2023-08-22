@@ -131,6 +131,7 @@ const ReaderPostActions = ( props ) => {
 				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
+						commentCount={ post.discussion.comment_count }
 						post={ post }
 						onClick={ onCommentClick }
 						tagName="button"
