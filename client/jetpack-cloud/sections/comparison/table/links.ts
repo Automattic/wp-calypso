@@ -24,7 +24,6 @@ export const links = {
 		'https://apps.wordpress.com/get?utm_source=jetpack-com-comparison-tables&amp;utm_medium=direct&amp;utm_campaign=get-apps-promo'
 	),
 	newsletter: localizeUrl( 'https://jetpack.com/newsletter/' ),
-	paid_newsletter: 'https://jetpack.com/support/paid-newsletters/',
 	payments_block: 'https://jetpack.com/support/jetpack-blocks/payments-block/',
 	priority_support: 'https://jetpack.com/features/security/expert-priority-support/',
 	related_posts: 'https://jetpack.com/features/traffic/related-posts/',
