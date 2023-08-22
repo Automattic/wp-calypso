@@ -7,9 +7,7 @@ export const CATEGORY_ALL_SLUG = 'featured';
 
 export const NAVIGATOR_PATHS = {
 	MAIN: '/main',
-	HEADER: '/main/header',
 	PATTERNS: '/main/:categorySlug',
-	FOOTER: '/main/footer',
 	STYLES: '/styles/:styleSlug',
 	ACTIVATION: '/activation',
 };

@@ -23,9 +23,9 @@ interface Props {
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
-	selectedSections: Pattern[];
-	selectedHeader: Pattern | null;
-	selectedFooter: Pattern | null;
+	hasSections: boolean;
+	hasHeader: boolean;
+	hasFooter: boolean;
 	categories: Category[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 }
@@ -35,9 +35,9 @@ const ScreenMain = ( {
 	recordTracksEvent,
 	surveyDismissed,
 	setSurveyDismissed,
-	selectedSections,
-	selectedHeader,
-	selectedFooter,
+	hasSections,
+	hasHeader,
+	hasFooter,
 	categories,
 	patternsMapByCategory,
 }: Props ) => {
@@ -50,7 +50,7 @@ const ScreenMain = ( {
 	const selectedCategory = params.categorySlug as string;
 	const shouldOpenCategoryList =
 		!! selectedCategory && selectedCategory !== 'header' && selectedCategory !== 'footer';
-	const isButtonDisabled = ! selectedHeader && ! selectedFooter && ! selectedSections.length;
+	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
 
 	const handleClick = () => {
 		if ( ! isButtonDisabled ) {
@@ -109,16 +109,16 @@ const ScreenMain = ( {
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigatorItem
-							checked={ Boolean( selectedHeader ) }
+							checked={ hasHeader }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => handleNavigatorItemSelect( 'header', 'header' ) }
-							active={ location.path === NAVIGATOR_PATHS.HEADER }
+							active={ selectedCategory === 'header' }
 						>
 							{ translate( 'Header' ) }
 						</NavigatorItem>
 						<NavigatorItem
-							checked={ Boolean( selectedSections.length ) }
+							checked={ hasSections }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
 							onClick={ () => handleNavigatorItemSelect( 'section', CATEGORY_ALL_SLUG ) }
@@ -138,11 +138,11 @@ const ScreenMain = ( {
 						) }
 
 						<NavigatorItem
-							checked={ Boolean( selectedFooter ) }
+							checked={ hasFooter }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => handleNavigatorItemSelect( 'footer', 'footer' ) }
-							active={ location.path === NAVIGATOR_PATHS.FOOTER }
+							active={ selectedCategory === 'footer' }
 						>
 							{ translate( 'Footer' ) }
 						</NavigatorItem>

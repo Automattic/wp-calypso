@@ -510,11 +510,11 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						selectedSections={ sections }
-						selectedHeader={ header }
-						selectedFooter={ footer }
-						hasColor={ Boolean( colorVariation ) }
-						hasFont={ Boolean( fontVariation ) }
+						hasSections={ sections.length > 0 }
+						hasHeader={ !! header }
+						hasFooter={ !! footer }
+						hasColor={ !! colorVariation }
+						hasFont={ !! fontVariation }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
 					/>
