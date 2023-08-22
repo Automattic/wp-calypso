@@ -61,7 +61,7 @@ const Task = ( {
 	illustration?: string;
 	illustrationAlwaysShow?: boolean;
 	illustrationHeader?: ReactNode;
-	illustrationTopActions: boolean;
+	illustrationTopActions?: boolean;
 	isLoading?: boolean;
 	isUrgent?: boolean;
 	showSkip?: boolean;
