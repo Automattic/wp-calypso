@@ -1,0 +1,21 @@
+.related-plugins {
+    margin-bottom: 32px;
+}
+
+.related-plugins__header {
+    display: flex;
+    flex-direction: row;
+    line-height: 40px;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    h2 {
+        font-family: $brand-serif;
+        font-size: $font-title-large;
+        overflow-wrap: anywhere;
+        color: var(--studio-gray-100);
+    }
+
+}
+    
+
