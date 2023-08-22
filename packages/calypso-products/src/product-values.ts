@@ -34,7 +34,7 @@ export { isBiennially } from './is-biennially';
 export { isBlogger } from './is-blogger';
 export { isBundled } from './is-bundled';
 export { isBusiness } from './is-business';
-export { isCentennial } from './is-centennial';
+export { isHundredYearPlan } from './is-hundred-year-plan';
 export { isPro } from './is-pro';
 export { isStarter } from './is-starter';
 export { isChargeback } from './is-chargeback';
