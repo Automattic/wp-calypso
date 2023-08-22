@@ -74,7 +74,7 @@ class AllDomains extends Component {
 		whoisData: {},
 		contactInfoSaveResults: {},
 		currentPage: 1,
-		domainsPerPage: 3,
+		domainsPerPage: 5,
 	};
 
 	componentDidUpdate() {
@@ -417,7 +417,7 @@ class AllDomains extends Component {
 		}
 
 		return (
-			<>
+			<div className="all-domains__domains-table">
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 				<DomainsTable
 					currentRoute={ currentRoute }
@@ -434,7 +434,7 @@ class AllDomains extends Component {
 					hasLoadedPurchases={ hasLoadedUserPurchases }
 					isSavingContactInfo={ isSavingContactInfo }
 				/>
-			</>
+			</div>
 		);
 	}
 
@@ -701,16 +701,16 @@ class AllDomains extends Component {
 		return (
 			<>
 				<div>{ this.renderActionForm() }</div>
-				<div>
+				<div className="all-domains__container">
 					<QueryAllDomains />
 					<>
-						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
-						<div>{ this.renderDomainsList() }</div>
+						{ this.renderDomainsList() }
 						<Pagination
 							page={ this.state.currentPage }
 							perPage={ this.state.domainsPerPage }
 							total={ domains.length }
 							pageClick={ ( currentPage ) => this.setState( { currentPage } ) }
+							compact
 						/>
 					</>
 				</div>

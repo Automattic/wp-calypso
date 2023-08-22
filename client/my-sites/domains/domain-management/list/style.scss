@@ -337,3 +337,24 @@
 		border-top: 1px solid var(--studio-gray-5);
 	}
 }
+
+.all-domains__container {
+	height: 80vh;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+
+	@include break-small {
+		height: 85vh;
+
+		.all-domains__domains-table {
+			overflow-y: auto;
+		}
+	}
+
+	.pagination {
+		padding: 10px 0 0 0;
+	}
+}
+
