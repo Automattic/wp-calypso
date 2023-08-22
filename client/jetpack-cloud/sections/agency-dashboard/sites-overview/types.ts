@@ -258,6 +258,12 @@ export interface APIToggleFavorite {
 	[ key: string ]: any;
 }
 
+interface MonitorURLS {
+	monitor_url: string;
+	options: Array< string >;
+	check_interval: number;
+}
+
 export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
@@ -266,6 +272,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
+		urls?: MonitorURLS[];
 	};
 }
 
@@ -275,6 +282,7 @@ export interface UpdateMonitorSettingsParams {
 	sms_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
 	contacts?: MonitorContacts;
+	urls?: MonitorURLS[];
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;
