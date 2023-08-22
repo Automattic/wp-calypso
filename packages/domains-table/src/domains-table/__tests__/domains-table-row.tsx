@@ -6,6 +6,8 @@ import React from 'react';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { DomainsTableRow } from '../domains-table-row';
 
+const noop = jest.fn();
+
 const render = ( el ) =>
 	renderWithProvider( el, {
 		wrapper: ( { children } ) => (
@@ -17,7 +19,12 @@ const render = ( el ) =>
 
 test( 'domain name is rendered in the row', () => {
 	render(
-		<DomainsTableRow domain={ testPartialDomain( { domain: 'example1.com' } ) } isAllSitesView />
+		<DomainsTableRow
+			domain={ testPartialDomain( { domain: 'example1.com' } ) }
+			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
+		/>
 	);
 
 	expect( screen.queryByText( 'example1.com' ) ).toBeInTheDocument();
@@ -40,6 +47,8 @@ test( 'wpcom domains do not link to management interface', async () => {
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -62,6 +71,8 @@ test( 'domain name links to management interface', async () => {
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -88,6 +99,8 @@ test( 'domain name links to management interface', async () => {
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -118,6 +131,8 @@ test( 'non primary domain uses the primary domain as the site slug in its link U
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -136,6 +151,8 @@ test( 'non primary domain uses the primary domain as the site slug in its link U
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -170,6 +187,8 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 			domain={ partialRedirectDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -188,6 +207,8 @@ test( 'redirect links use the unmapped domain for the site slug', async () => {
 			domain={ partialRedirectDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -215,6 +236,8 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 
@@ -233,6 +256,8 @@ test( 'transfer links use the unmapped domain for the site slug', async () => {
 			domain={ partialDomain }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
+			isSelected={ false }
+			onSelect={ noop }
 		/>
 	);
 

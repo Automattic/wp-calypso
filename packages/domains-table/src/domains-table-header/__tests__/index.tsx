@@ -6,6 +6,8 @@ import React from 'react';
 import { renderWithProvider } from '../../test-utils';
 import { DomainsTableColumn, DomainsTableHeader } from '../index';
 
+const noop = jest.fn();
+
 const render = ( el ) =>
 	renderWithProvider( el, {
 		wrapper: ( { children } ) => <table>{ children }</table>,
@@ -33,6 +35,8 @@ test( 'domain columns are rendered in the header', () => {
 			activeSortKey="domain"
 			activeSortDirection="asc"
 			onChangeSortOrder={ jest.fn() }
+			bulkSelectionStatus="no-domains"
+			onBulkSelectionChange={ noop }
 		/>
 	);
 
@@ -56,6 +60,8 @@ test( 'renders custom header component', () => {
 			activeSortKey="domain"
 			activeSortDirection="asc"
 			onChangeSortOrder={ jest.fn() }
+			bulkSelectionStatus="no-domains"
+			onBulkSelectionChange={ noop }
 		/>
 	);
 
@@ -70,6 +76,8 @@ test( 'renders a chevron next to sortable columns', () => {
 			activeSortKey="domain"
 			activeSortDirection="asc"
 			onChangeSortOrder={ jest.fn() }
+			bulkSelectionStatus="no-domains"
+			onBulkSelectionChange={ noop }
 		/>
 	);
 
@@ -87,6 +95,8 @@ test( 'columns that are not sortable do not renders a chevron', () => {
 			activeSortKey="domain"
 			activeSortDirection="asc"
 			onChangeSortOrder={ jest.fn() }
+			bulkSelectionStatus="no-domains"
+			onBulkSelectionChange={ noop }
 		/>
 	);
 

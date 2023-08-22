@@ -1,9 +1,12 @@
 import { Button } from '@automattic/components';
 import { DomainData, SiteDetails } from '@automattic/data-stores';
-import { Icon } from '@wordpress/components';
+import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import './style.scss';
+
+export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'all-domains';
 
 export type DomainsTableColumn =
 	| {
@@ -44,6 +47,8 @@ type DomainsTableHeaderProps = {
 	activeSortKey: string;
 	activeSortDirection: 'asc' | 'desc';
 	onChangeSortOrder: ( selectedColumn: DomainsTableColumn ) => void;
+	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
+	onBulkSelectionChange(): void;
 	headerClasses?: string;
 };
 
@@ -51,9 +56,12 @@ export const DomainsTableHeader = ( {
 	columns,
 	activeSortKey,
 	activeSortDirection,
+	bulkSelectionStatus,
+	onBulkSelectionChange,
 	onChangeSortOrder,
 	headerClasses,
 }: DomainsTableHeaderProps ) => {
+	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
 
 	const renderSortIcon = (
@@ -74,6 +82,15 @@ export const DomainsTableHeader = ( {
 	return (
 		<thead className={ listHeaderClasses }>
 			<tr>
+				<th className="domains-table__bulk-action-container">
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						onChange={ onBulkSelectionChange }
+						indeterminate={ bulkSelectionStatus === 'some-domains' }
+						checked={ bulkSelectionStatus === 'all-domains' }
+						aria-label={ __( 'Select all tick boxes for domains in table', __i18n_text_domain__ ) }
+					/>
+				</th>
 				{ columns.map( ( column ) => (
 					<th key={ column.name }>
 						<Button
