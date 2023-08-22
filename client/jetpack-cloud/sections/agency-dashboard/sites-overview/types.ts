@@ -40,6 +40,11 @@ interface MonitorContacts {
 	emails?: Array< MonitorContactEmail >;
 	sms_numbers?: Array< MonitorContactSMS >;
 }
+interface MonitorURLS {
+	monitor_url: string;
+	options: Array< string >;
+	check_interval: number;
+}
 
 export interface MonitorSettings {
 	monitor_active: boolean;
@@ -52,6 +57,7 @@ export interface MonitorSettings {
 	monitor_user_wp_note_notifications: boolean;
 	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
 	monitor_notify_additional_user_sms: Array< MonitorContactSMS >;
+	monitor_urls: Array< MonitorURLS >;
 	is_over_limit: boolean;
 	sms_sent_count: number;
 	sms_monthly_limit: number;
@@ -265,6 +271,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
+		urls?: MonitorURLS[];
 	};
 }
 

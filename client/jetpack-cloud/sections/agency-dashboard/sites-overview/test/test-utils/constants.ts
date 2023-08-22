@@ -27,6 +27,7 @@ const site: Site = {
 		monitor_user_sms_notifications: false,
 		monitor_notify_additional_user_emails: [],
 		monitor_notify_additional_user_sms: [],
+		monitor_urls: [],
 		is_over_limit: false,
 		sms_sent_count: 10,
 		sms_monthly_limit: 20,
