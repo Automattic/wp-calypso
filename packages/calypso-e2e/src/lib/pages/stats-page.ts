@@ -2,17 +2,23 @@ import { Locator, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
-export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers';
-type StatsTrafficActivityCategory = 'Views' | 'Visitors' | 'Likes' | 'Comments';
+export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers' | 'Store';
+type TrafficActivityType = 'Views' | 'Visitors' | 'Likes' | 'Comments';
+type StoreActivityType = 'Gross Sales' | 'Net sales' | 'Orders' | 'Avg. Order Value';
+// Discriminated Union type.
+type ActivityTypes =
+	| { tab: 'Traffic'; type: TrafficActivityType }
+	| { tab: 'Store'; type: StoreActivityType };
 type HighlightStatsPeriod = '7-day' | '30-day';
 type StatsPeriod = 'Days' | 'Weeks' | 'Months' | 'Years';
+type SubscriberOrigin = 'WordPress.com' | 'Email';
 
 const selectors = {
 	highlightPeriodSelectButton: '.highlight-cards-heading__settings-action',
 };
 
 /**
- * Represents the Statistics page.
+ * Represents the Stats page, powered by Jetpack.
  */
 export class StatsPage {
 	private page: Page;
@@ -28,24 +34,30 @@ export class StatsPage {
 		this.anchor = this.page.getByRole( 'main' );
 	}
 
+	// General
+
 	/**
+	 * Visits the site.
 	 *
-	 * @param siteSlug
+	 * If optional parameter `siteSlug` is defined the stats page
+	 * for the speicfic site will be loaded.
+	 *
+	 * @param {string} [siteSlug] Site slug of the test site.
 	 */
 	async visit( siteSlug?: string ) {
 		await this.page.goto( getCalypsoURL( `/stats/${ siteSlug }` ) );
 	}
 
 	/**
-	 *
+	 * Dismisses the tooltip which appears in the Traffic tab.
 	 */
-	private async dismissModal() {
+	private async dismissTooltip() {
 		// Sometimes a modal appears when accessing Stats > Traffic.
-		const dismissModalButton = this.page.getByRole( 'button', { name: 'Got it' } );
+		const tooltipButton = this.page.getByRole( 'button', { name: 'Got it' } );
 
-		if ( ( await dismissModalButton.count() ) > 0 ) {
-			await dismissModalButton.click();
-			await dismissModalButton.waitFor( { state: 'hidden' } );
+		if ( ( await tooltipButton.count() ) > 0 ) {
+			await tooltipButton.click();
+			await tooltipButton.waitFor( { state: 'hidden' } );
 		}
 	}
 
@@ -56,10 +68,11 @@ export class StatsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
-		await this.dismissModal();
+		await this.dismissTooltip();
 		await clickNavTab( this.page, name );
 
 		// Wait for the expected URL scheme to load.
+		// Note, the Store tab is only available for Business and above plans.
 		if ( name === 'Traffic' ) {
 			await this.page.waitForURL( /stats\/day/ );
 		}
@@ -69,17 +82,76 @@ export class StatsPage {
 		if ( name === 'Subscribers' ) {
 			await this.page.waitForURL( /stats\/subscribers/ );
 		}
+		if ( name === 'Store' ) {
+			await this.page.waitForURL( /store\/stats\/orders/ );
+		}
+	}
+
+	/**
+	 * Selects the period to show for the stats, including the graph.
+	 *
+	 * @param {StatsPeriod} period Stats period to show.
+	 */
+	async selectStatsPeriod( period: StatsPeriod ) {
+		const target = this.anchor.getByRole( 'radiogroup' ).getByRole( 'radio', { name: period } );
+		await target.click();
+
+		if ( ! ( await target.isChecked() ) ) {
+			throw new Error( `Failed to select the Stats Period ${ period }` );
+		}
+	}
+
+	/**
+	 * Changes the stats view to specific activities.
+	 *
+	 * @param {ActivityTypes} activityType Type of activity to show.
+	 */
+	async showStatsOfType( activityType: ActivityTypes ): Promise< void > {
+		// Wait for the charts to load first, even if no activity is present.
+		// CSS selector has to be used here because there is no a11y selector
+		// for this element.
+		await this.page.locator( '.chart__bars' ).waitFor();
+
+		// CSS selector is used to narrow down to the Stats Activity tab for
+		// similar reason to above.
+		const target = this.anchor
+			.locator( '.stats-tabs' )
+			.getByRole( 'listitem' )
+			.filter( { hasText: activityType.type } );
+		await target.waitFor();
+		await target.click();
+
+		// The chart legend will update.
+		await this.anchor
+			.locator( '.chart__legend-options' )
+			.getByRole( 'listitem' )
+			.filter( { hasText: activityType.type } )
+			.waitFor();
+
+		// Query param changes when the stats type is changed, but only for the Traffic tab.
+		// Selecting different stats types in the Store tab does not add query params.
+		if ( activityType.tab === 'Traffic' ) {
+			await this.page.waitForURL( new RegExp( `tab=${ activityType.type }`, 'i' ) );
+		}
+
+		// Verify the selected stats type is now active.
+		const classes = await target.getAttribute( 'class' );
+		if ( ! classes?.includes( 'is-selected' ) ) {
+			throw new Error( `Failed to click and filter traffic data category to ${ activityType }.` );
+		}
 	}
 
 	// Traffic
 
 	/**
+	 * Selects the period to show for the highlights.
 	 *
-	 * @param period
+	 * @param {HighlightStatsPeriod} period Highlight period to show.
 	 */
 	async selectHighlightPeriod( period: HighlightStatsPeriod ): Promise< void > {
-		await this.dismissModal();
+		await this.dismissTooltip();
 
+		// CSS selector has to be used here because of lack of accessible locators.
 		const switcherButton = this.anchor.locator( selectors.highlightPeriodSelectButton );
 		await switcherButton.click();
 
@@ -92,45 +164,12 @@ export class StatsPage {
 		await switcherButton.click();
 	}
 
-	/**
-	 *
-	 * @param period
-	 */
-	async selectStatsPeriod( period: StatsPeriod ) {
-		const target = this.anchor.getByRole( 'radiogroup' ).getByRole( 'radio', { name: period } );
-		await target.click();
-
-		if ( ! ( await target.isChecked() ) ) {
-			throw new Error( `Failed to select the Stats Period ${ period }` );
-		}
-	}
-
-	/**
-	 *
-	 * @param category
-	 */
-	async showTrafficOfType( category: StatsTrafficActivityCategory ): Promise< void > {
-		await this.page.locator( '.chart__bars' ).waitFor();
-
-		const target = this.anchor
-			.locator( '.stats-tabs' )
-			.getByRole( 'listitem' )
-			.filter( { hasText: category } );
-		await target.waitFor();
-		await target.click();
-
-		await this.page.waitForURL( new RegExp( `tab=${ category }`, 'i' ) );
-
-		const classes = await target.getAttribute( 'class' );
-		if ( ! classes?.includes( 'is-selected' ) ) {
-			throw new Error( `Failed to click and filter traffic data category to ${ category }.` );
-		}
-	}
-
 	// Insights
 
 	/**
+	 * Clicks on the link to see annual insights.
 	 *
+	 * This link is only available in site specific view.
 	 */
 	async clickViewAllAnnualInsights() {
 		await this.anchor.getByRole( 'link', { name: 'View all annual insights' } ).click();
@@ -139,8 +178,9 @@ export class StatsPage {
 	}
 
 	/**
+	 * Verifies that annual insight for a specific year is present.
 	 *
-	 * @param year
+	 * @param {number} year Expected year to be present.
 	 */
 	async annualInsightPresentForYear( year: number ) {
 		await this.page
@@ -154,10 +194,11 @@ export class StatsPage {
 	// Subscribers
 
 	/**
+	 * Selects the subscriber type to show in the Subscribers tab.
 	 *
-	 * @param type
+	 * @param {SubscriberOrigin} type Subscriber type.
 	 */
-	async selectSubscriberType( type: 'WordPress.com' | 'Email' ) {
+	async selectSubscriberType( type: SubscriberOrigin ) {
 		const target = this.anchor.getByRole( 'radiogroup' ).getByRole( 'radio', { name: type } );
 		await target.click();
 
@@ -165,4 +206,6 @@ export class StatsPage {
 			throw new Error( `Failed to select the Subscriber type ${ type }` );
 		}
 	}
+
+	// Store
 }

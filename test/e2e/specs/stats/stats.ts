@@ -16,6 +16,11 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
+/**
+ * Shallowly tests the Stats feature, including Jetpack/Odyssey stats.
+ *
+ * Keywords: Stats, Jetpack, Odyssey Stats
+ */
 describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	let page: Page;
 	let testAccount: TestAccount;
@@ -38,10 +43,15 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	} );
 
 	it( 'Navigate to Stats', async function () {
+		statsPage = new StatsPage( page );
+
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			return await statsPage.visit(
+				DataHelper.getAccountSiteURL( accountName, { protocol: false } )
+			);
+		}
 		const sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.navigate( 'Stats' );
-
-		statsPage = new StatsPage( page );
 	} );
 
 	describe( 'Traffic', function () {
@@ -58,11 +68,11 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		} );
 
 		it( 'Filter traffic activity to Likes', async function () {
-			await statsPage.showTrafficOfType( 'Likes' );
+			await statsPage.showStatsOfType( { tab: 'Traffic', type: 'Likes' } );
 		} );
 
 		it( 'Filter traffic activity to Comments', async function () {
-			await statsPage.showTrafficOfType( 'Views' );
+			await statsPage.showStatsOfType( { tab: 'Traffic', type: 'Visitors' } );
 		} );
 	} );
 
@@ -89,6 +99,20 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 
 		it( 'Click link to see all annual insights', async function () {
 			await statsPage.selectSubscriberType( 'Email' );
+		} );
+	} );
+
+	describe( 'Store', function () {
+		it( 'Click on the Store tab', async function () {
+			await statsPage.clickTab( 'Store' );
+		} );
+
+		it( 'Select "Years" stats period', async function () {
+			await statsPage.selectStatsPeriod( 'Years' );
+		} );
+
+		it( 'Select "Gross sales" stats type', async function () {
+			await statsPage.showStatsOfType( { tab: 'Store', type: 'Gross Sales' } );
 		} );
 	} );
 } );
