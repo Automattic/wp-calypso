@@ -21,6 +21,7 @@ import {
 	WPCOM_FEATURES_WORDADS,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
+	TYPE_CENTENNIAL,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -377,6 +378,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
 				[ TYPE_PRO ]: () => this.getProFeatuers(),
+				[ TYPE_CENTENNIAL ]: () => this.getBusinessFeatures(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),
