@@ -2,7 +2,11 @@ import { useState, useCallback, useLayoutEffect } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { DomainsTableRow } from './domains-table-row';
-import type { PartialDomainData, SiteDomainsQueryFnData } from '@automattic/data-stores';
+import type {
+	PartialDomainData,
+	SiteDomainsQueryFnData,
+	SiteDetails,
+} from '@automattic/data-stores';
 import './style.scss';
 
 interface DomainsTableProps {
@@ -14,9 +18,15 @@ interface DomainsTableProps {
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
+	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 }
 
-export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: DomainsTableProps ) {
+export function DomainsTable( {
+	domains,
+	fetchSiteDomains,
+	fetchSite,
+	isAllSitesView,
+}: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
 		sortDirection: 'asc' | 'desc';
@@ -127,6 +137,7 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 						isSelected={ selectedDomains.has( domain.domain ) }
 						onSelect={ handleSelectDomain }
 						fetchSiteDomains={ fetchSiteDomains }
+						fetchSite={ fetchSite }
 						isAllSitesView={ isAllSitesView }
 					/>
 				) ) }
