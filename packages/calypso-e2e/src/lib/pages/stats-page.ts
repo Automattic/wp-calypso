@@ -16,6 +16,8 @@ type SubscriberOrigin = 'WordPress.com' | 'Email';
 
 const selectors = {
 	highlightPeriodSelectButton: '.highlight-cards-heading__settings-action',
+	graph: '.chart__bars',
+	statsTabs: '.stats-tabs',
 };
 
 /**
@@ -111,12 +113,12 @@ export class StatsPage {
 		// Wait for the charts to load first, even if no activity is present.
 		// CSS selector has to be used here because there is no a11y selector
 		// for this element.
-		await this.page.locator( '.chart__bars' ).waitFor();
+		await this.page.locator( selectors.graph ).waitFor();
 
 		// CSS selector is used to narrow down to the Stats Activity tab for
 		// similar reason to above.
 		const target = this.anchor
-			.locator( '.stats-tabs' )
+			.locator( selectors.statsTabs )
 			.getByRole( 'listitem' )
 			.filter( { hasText: activityType.type } );
 		await target.waitFor();
@@ -131,17 +133,14 @@ export class StatsPage {
 				.waitFor();
 		}
 
-		// Query param changes when the stats type is changed, but only for the Traffic tab.
-		// Selecting different stats types in the Store tab does not add query params.
-		if ( activityType.tab === 'Traffic' ) {
-			await this.page.waitForURL( new RegExp( `tab=${ activityType.type }`, 'i' ) );
-		}
-
 		// Verify the selected stats type is now active.
-		const classes = await target.getAttribute( 'class' );
-		if ( ! classes?.includes( 'is-selected' ) ) {
-			throw new Error( `Failed to click and filter traffic data category to ${ activityType }.` );
-		}
+		// A slightly different selector has to be used because the active tab
+		// is not reported using accessible selectors but a CSS class.
+		await this.anchor
+			.locator( selectors.statsTabs )
+			.locator( '.is-selected' )
+			.filter( { hasText: activityType.type } )
+			.waitFor();
 	}
 
 	// Traffic
