@@ -339,10 +339,8 @@ export default function NotificationSettings( {
 
 			// Set duration
 			let foundDuration = defaultDuration;
-			if ( settings?.monitor_deferment_time ) {
-				foundDuration = durations.find(
-					( duration ) => duration.time === settings.monitor_deferment_time
-				);
+			if ( settings?.check_interval ) {
+				foundDuration = durations.find( ( duration ) => duration.time === settings.check_interval );
 
 				// We need to make sure that we are not setting a paid duration if there is no license.
 				if ( hasPaidLicenses || ! foundDuration?.isPaid ) {

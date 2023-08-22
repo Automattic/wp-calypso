@@ -21,6 +21,7 @@ const site: Site = {
 		monitor_site_status: true,
 		last_down_time: '2021-01-01T00:00:00+00:00',
 		monitor_deferment_time: 5,
+		check_interval: 5,
 		monitor_user_emails: [ 'test.com' ],
 		monitor_user_email_notifications: true,
 		monitor_user_wp_note_notifications: true,

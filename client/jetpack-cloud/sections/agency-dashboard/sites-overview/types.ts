@@ -46,6 +46,7 @@ export interface MonitorSettings {
 	monitor_site_status: boolean;
 	last_down_time: string;
 	monitor_deferment_time: number;
+	check_interval: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
 	monitor_user_sms_notifications: boolean;
