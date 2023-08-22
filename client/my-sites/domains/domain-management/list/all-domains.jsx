@@ -719,6 +719,7 @@ class AllDomains extends Component {
 				<div className="all-domains__container">
 					<QueryAllDomains />
 					<>
+						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						{ this.renderDomainsList() }
 						<Pagination
 							page={ this.state.currentPage }
