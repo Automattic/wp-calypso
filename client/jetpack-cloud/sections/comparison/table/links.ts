@@ -4,8 +4,10 @@ export const links = {
 	activity_log: 'https://jetpack.com/features/security/activity-log/',
 	ad_network: 'https://jetpack.com/features/traffic/ads/',
 	akismet_antispam: localizeUrl( 'https://jetpack.com/upgrade/anti-spam/' ),
+	ai: localizeUrl( 'https://jetpack.com/ai/' ),
 	auto_plugin_updates: 'https://jetpack.com/features/security/automatic-plugin-updates/',
 	backup: localizeUrl( 'https://jetpack.com/upgrade/backup/' ),
+	blaze: localizeUrl( 'https://jetpack.com/blaze/' ),
 	boost: localizeUrl( 'https://jetpack.com/boost/' ),
 	brute_force_attack_protection:
 		'https://jetpack.com/features/security/brute-force-attack-protection/',

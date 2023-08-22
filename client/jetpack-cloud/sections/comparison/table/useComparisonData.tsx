@@ -8,6 +8,7 @@ import LockIcon from 'calypso/assets/images/jetpack/jetpack-icon-lock.svg';
 import MobileAppIcon from 'calypso/assets/images/jetpack/jetpack-icon-mobile-app.svg';
 import PerformanceIcon from 'calypso/assets/images/jetpack/jetpack-icon-performance.svg';
 import SupportIcon from 'calypso/assets/images/jetpack/jetpack-icon-support.svg';
+import AIIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-ai.svg';
 import AntiSpamIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-antispam.svg';
 import BackupIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-backup.svg';
 import BoostIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-boost.svg';
@@ -227,24 +228,20 @@ export const useComparisonData = () => {
 				icon: GrowthIcon,
 				features: [
 					{
-						id: 'crm',
-						name: translate( '{{abbr}}CRM{{/abbr}}', {
-							components: {
-								abbr: <abbr title={ translate( 'Customer Relationship Management' ) } />,
-							},
-						} ),
-						url: links.crm,
-						icon: CRMIcon,
+						id: 'stats',
+						name: translate( 'Stats' ),
+						url: links.stats,
+						icon: StatsIcon,
 						info: {
 							FREE: {
-								content: translate( 'Free' ),
+								content: translate( 'Basic Stats' ),
 							},
 							SECURITY: {
-								content: translate( 'Free' ),
+								content: translate( 'Basic Stats' ),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'Entrepreneur' ),
+								content: translate( 'All Stats' ),
 							},
 						},
 					},
@@ -267,22 +264,39 @@ export const useComparisonData = () => {
 						},
 					},
 					{
-						id: 'stats',
-						name: translate( 'Stats' ),
-						url: links.stats,
-						icon: StatsIcon,
+						id: 'crm',
+						name: translate( '{{abbr}}CRM{{/abbr}}', {
+							components: {
+								abbr: <abbr title={ translate( 'Customer Relationship Management' ) } />,
+							},
+						} ),
+						url: links.crm,
+						icon: CRMIcon,
 						info: {
 							FREE: {
-								content: translate( 'Basic Stats' ),
+								content: translate( 'Free' ),
 							},
 							SECURITY: {
-								content: translate( 'Basic Stats' ),
+								content: translate( 'Free' ),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'All Stats' ),
+								content: translate( 'Entrepreneur' ),
 							},
 						},
+					},
+					{
+						id: 'ai',
+						name: translate( 'AI' ),
+						url: links.ai,
+						icon: AIIcon,
+						info: allChecked,
+					},
+					{
+						id: 'blaze',
+						name: translate( 'Blaze' ),
+						url: links.blaze,
+						info: allChecked,
 					},
 					{
 						id: 'newsletter',
