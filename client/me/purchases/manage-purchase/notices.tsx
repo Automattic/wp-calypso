@@ -1038,29 +1038,42 @@ class PurchaseNotice extends Component<
 		const onClick = () => {
 			return page( `/plans/${ selectedSite?.slug }` );
 		};
-		const expiry = moment( purchase.expiryDate );
-		const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
+		const expiry = moment.utc( purchase.expiryDate );
+		const daysToExpiry = isExpired( purchase )
+			? 0
+			: Math.floor( expiry.diff( moment().utc(), 'days', true ) );
 		const productType =
 			productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
 				? translate( 'ecommerce' )
 				: getPlan( PLAN_BUSINESS )?.getTitle();
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-info"
-				text={
-					// translators: %expiry is the number of days remaining on the trial, %productType is the type of product (e.g. ecommerce)
-					translate(
-						'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your %(productType)s features.',
-						{
-							args: {
-								expiry: daysToExpiry,
-								productType: productType as string,
-							},
-						}
-					)
+		let noticeText;
+		if ( ! daysToExpiry ) {
+			// translators: %productType is the type of product (e.g. ecommerce)
+			noticeText = translate(
+				'Your free trial has expired. Upgrade your plan to keep your %(productType)s features.',
+				{
+					args: {
+						productType: productType as string,
+					},
 				}
-			>
+			);
+		} else {
+			// translators: %expiry is the number of days remaining on the trial, %productType is the type of product (e.g. ecommerce)
+			noticeText = translate(
+				'You have %(expiry)s day remaining on your free trial. Upgrade your plan to keep your %(productType)s features.',
+				'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your %(productType)s features.',
+				{
+					count: daysToExpiry,
+					args: {
+						expiry: daysToExpiry,
+						productType: productType as string,
+					},
+				}
+			);
+		}
+
+		return (
+			<Notice showDismiss={ false } status="is-info" text={ noticeText }>
 				<NoticeAction onClick={ onClick }>{ translate( 'Upgrade Now' ) }</NoticeAction>
 			</Notice>
 		);
