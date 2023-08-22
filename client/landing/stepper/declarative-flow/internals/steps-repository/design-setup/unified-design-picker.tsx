@@ -36,6 +36,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import { isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
@@ -336,13 +337,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
 			: false
 	);
+	const isMarketplaceThemeSubscribed = useSelector(
+		( state ) =>
+			site &&
+			selectedDesignThemeId &&
+			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
+	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( selectedDesign?.is_externally_managed && ! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.is_externally_managed && ! isMarketplaceThemeSubscribed ) ||
 		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
