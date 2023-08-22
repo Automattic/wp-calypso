@@ -107,6 +107,23 @@ export function DomainsTable( { domains, fetchSiteDomains, isAllSitesView }: Dom
 		}
 	};
 
+	const selectedColumnDefinition = domainsTableColumns.find(
+		( column ) => column.name === sortKey
+	);
+
+	if ( sortKey && sortDirection ) {
+		domains.sort( ( first, second ) => {
+			let result = 0;
+			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
+				result = sortFunction( first, second, sortDirection === 'asc' ? 1 : -1 );
+				if ( 0 !== result ) {
+					break;
+				}
+			}
+			return result;
+		} );
+	}
+
 	return (
 		<table className="domains-table">
 			<DomainsTableHeader
