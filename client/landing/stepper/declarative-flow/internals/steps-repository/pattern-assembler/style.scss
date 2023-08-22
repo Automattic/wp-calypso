@@ -66,6 +66,19 @@ $font-family: "SF Pro Text", $sans;
 		}
 	}
 
+	.pattern-assembler__sidebar-panel {
+		margin-inline-end: 22px;
+
+		// Disable the animation of the transform on the panel
+		.components-navigator-screen {
+			transform: none !important;
+		}
+
+		&:empty {
+			display: none;
+		}
+	}
+
 	/**
 	 * Pattern Layout
 	 */

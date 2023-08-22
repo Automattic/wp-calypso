@@ -8,66 +8,53 @@ import {
 import { focus } from '@wordpress/dom';
 import { header, footer, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { CATEGORY_ALL_SLUG, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
 import PatternCategoryList from './pattern-category-list';
-import PatternListPanel from './pattern-list-panel';
 import Survey from './survey';
 import { Pattern, Category } from './types';
 import { replaceCategoryAllName } from './utils';
 
 interface Props {
-	onSelect: (
-		type: string,
-		selectedPattern: Pattern | null,
-		selectedCategory: string | null
-	) => void;
 	onMainItemSelect: ( name: string ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
-	selectedMainItem: string | null;
 	selectedSections: Pattern[];
 	selectedHeader: Pattern | null;
 	selectedFooter: Pattern | null;
-	hasColor: boolean;
-	hasFont: boolean;
-	updateActivePatternPosition: () => void;
 	categories: Category[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
 }
 
 const ScreenMain = ( {
-	onSelect,
 	onMainItemSelect,
 	recordTracksEvent,
 	surveyDismissed,
 	setSurveyDismissed,
-	selectedMainItem,
 	selectedSections,
 	selectedHeader,
 	selectedFooter,
-	updateActivePatternPosition,
 	categories,
 	patternsMapByCategory,
 }: Props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const navigator = useNavigator();
-	const { location } = navigator;
+	const { location, params, goTo, goBack } = useNavigator();
+	const navigatorOptions = { replace: ! location.isInitial };
 	const isInitialLocation = location.isInitial && ! location.isBack;
-	const headerDescription = translate(
-		'Create your homepage by first adding patterns and then choosing a color palette and font style.'
-	);
+	const selectedCategory = params.categorySlug as string;
+	const shouldOpenCategoryList =
+		!! selectedCategory && selectedCategory !== 'header' && selectedCategory !== 'footer';
 	const isButtonDisabled = ! selectedHeader && ! selectedFooter && ! selectedSections.length;
 
 	const handleClick = () => {
 		if ( ! isButtonDisabled ) {
-			navigator.goTo( NAVIGATOR_PATHS.STYLES );
+			goTo( NAVIGATOR_PATHS.STYLES );
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONTINUE_CLICK, {
 				screen_from: 'main',
 				screen_to: 'styles',
@@ -75,54 +62,23 @@ const ScreenMain = ( {
 		}
 	};
 
-	const [ selectedSectionCategory, setSelectedSectionCategory ] = useState( CATEGORY_ALL_SLUG );
+	const handleNavigatorItemSelect = ( type: string, category: string ) => {
+		onMainItemSelect( type );
+		if (
+			category === selectedCategory ||
+			( shouldOpenCategoryList && category === CATEGORY_ALL_SLUG )
+		) {
+			goBack();
+		} else {
+			goTo( `/main/${ category }`, navigatorOptions );
+		}
+	};
+
 	const onSelectSectionCategory = ( category: string ) => {
-		setSelectedSectionCategory( category );
+		goTo( `/main/${ category }`, navigatorOptions );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
 			pattern_category: replaceCategoryAllName( category ),
 		} );
-	};
-
-	const getSelectedPattern = () => {
-		if ( 'header' === selectedMainItem ) {
-			return selectedHeader;
-		}
-		if ( 'footer' === selectedMainItem ) {
-			return selectedFooter;
-		}
-		return null;
-	};
-
-	const getSelectedPatterns = () => {
-		if ( 'section' === selectedMainItem ) {
-			return selectedSections;
-		}
-	};
-
-	const getLabel = () => {
-		if ( 'header' === selectedMainItem ) {
-			return translate( 'Header' );
-		}
-		if ( 'footer' === selectedMainItem ) {
-			return translate( 'Footer' );
-		}
-	};
-
-	const getDescription = () => {
-		if ( 'header' === selectedMainItem ) {
-			return translate(
-				'Pick the header that appears at the top of every page and shows your site logo, title and navigation.'
-			);
-		}
-		if ( 'footer' === selectedMainItem ) {
-			return translate(
-				'Pick the footer that appears at the bottom of every page and shows useful links and contact information.'
-			);
-		}
-	};
-
-	const getIsActiveButton = ( name: string ) => {
-		return name === selectedMainItem;
 	};
 
 	useEffect( () => {
@@ -140,22 +96,13 @@ const ScreenMain = ( {
 		elementToFocus.focus();
 	}, [ isInitialLocation ] );
 
-	useEffect( () => {
-		updateActivePatternPosition();
-	}, [ updateActivePatternPosition ] );
-
-	useEffect( () => {
-		if ( selectedMainItem !== 'header' ) {
-			// Open Header initially
-			setTimeout( () => onMainItemSelect( 'header' ), 250 );
-		}
-	}, [] );
-
 	return (
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Design your own' ) } /> }
-				description={ headerDescription }
+				description={ translate(
+					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
+				) }
 				hideBack
 			/>
 			<div className="screen-container__body" ref={ wrapperRef }>
@@ -165,8 +112,8 @@ const ScreenMain = ( {
 							checked={ Boolean( selectedHeader ) }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
-							onClick={ () => onMainItemSelect( 'header' ) }
-							active={ getIsActiveButton( 'header' ) }
+							onClick={ () => handleNavigatorItemSelect( 'header', 'header' ) }
+							active={ location.path === NAVIGATOR_PATHS.HEADER }
 						>
 							{ translate( 'Header' ) }
 						</NavigatorItem>
@@ -174,18 +121,18 @@ const ScreenMain = ( {
 							checked={ Boolean( selectedSections.length ) }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
-							onClick={ () => onMainItemSelect( 'section' ) }
-							active={ getIsActiveButton( 'section' ) }
+							onClick={ () => handleNavigatorItemSelect( 'section', CATEGORY_ALL_SLUG ) }
+							active={ shouldOpenCategoryList }
 							hasNestedItems
 						>
 							{ translate( 'Sections' ) }
 						</NavigatorItem>
 
-						{ selectedMainItem === 'section' && (
+						{ shouldOpenCategoryList && (
 							<PatternCategoryList
 								categories={ categories }
 								patternsMapByCategory={ patternsMapByCategory }
-								selectedCategory={ selectedSectionCategory }
+								selectedCategory={ selectedCategory }
 								onSelectCategory={ onSelectSectionCategory }
 							/>
 						) }
@@ -194,8 +141,8 @@ const ScreenMain = ( {
 							checked={ Boolean( selectedFooter ) }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
-							onClick={ () => onMainItemSelect( 'footer' ) }
-							active={ getIsActiveButton( 'footer' ) }
+							onClick={ () => handleNavigatorItemSelect( 'footer', 'footer' ) }
+							active={ location.path === NAVIGATOR_PATHS.FOOTER }
 						>
 							{ translate( 'Footer' ) }
 						</NavigatorItem>
@@ -217,22 +164,6 @@ const ScreenMain = ( {
 						: translate( 'Save and continue' ) }
 				</Button>
 			</div>
-			{ selectedMainItem && (
-				<PatternListPanel
-					onSelect={ ( selectedPattern: Pattern | null ) =>
-						onSelect( selectedMainItem, selectedPattern, selectedMainItem )
-					}
-					selectedPattern={ getSelectedPattern() }
-					selectedPatterns={ getSelectedPatterns() }
-					label={ getLabel() }
-					description={ getDescription() }
-					selectedCategory={
-						selectedMainItem === 'section' ? selectedSectionCategory : selectedMainItem
-					}
-					categories={ categories }
-					patternsMapByCategory={ patternsMapByCategory }
-				/>
-			) }
 		</>
 	);
 };

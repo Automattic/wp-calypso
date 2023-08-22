@@ -5,15 +5,18 @@ import {
 	getVariationType,
 } from '@automattic/global-styles';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, isSiteAssemblerFlow, isSiteSetupFlow } from '@automattic/onboarding';
+import {
+	StepContainer,
+	isSiteAssemblerFlow,
+	isSiteSetupFlow,
+	NavigatorScreen,
+} from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
-	__experimentalNavigatorScreen as NavigatorScreen,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
@@ -26,7 +29,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_PATH, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
@@ -42,6 +45,7 @@ import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
+import ScreenPatternListPanel from './screen-pattern-list-panel';
 import ScreenStyles from './screen-styles';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
@@ -68,8 +72,11 @@ const PatternAssembler = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
+<<<<<<< HEAD
 	const [ selectedMainItem, setSelectedMainItem ] = useState< string | null >( 'header' );
 	const [ isPanelOpen, setIsPanelOpen ] = useState( true );
+=======
+>>>>>>> a71d601964 (Assembler: Use the navigator path to control the selected category)
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -435,16 +442,6 @@ const PatternAssembler = ( {
 	};
 
 	const onMainItemSelect = ( name: string ) => {
-		if ( name === selectedMainItem ) {
-			// Toggle panel
-			setIsPanelOpen( false );
-			setSelectedMainItem( null );
-			return;
-		}
-
-		// Open panel
-		setIsPanelOpen( true );
-		setSelectedMainItem( name );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 	};
 
@@ -503,24 +500,16 @@ const PatternAssembler = ( {
 	}
 
 	const stepContent = (
-		<div
-			className={ classnames( 'pattern-assembler__wrapper', {
-				'pattern-assembler__panel--is-open': isPanelOpen,
-			} ) }
-			ref={ wrapperRef }
-			tabIndex={ -1 }
-		>
+		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			{ noticeUI }
 			<div className="pattern-assembler__sidebar">
-				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
+				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						onSelect={ onSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
-						selectedMainItem={ selectedMainItem }
 						selectedSections={ sections }
 						selectedHeader={ header }
 						selectedFooter={ footer }
@@ -528,14 +517,6 @@ const PatternAssembler = ( {
 						hasFont={ Boolean( fontVariation ) }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
-						updateActivePatternPosition={ () => {
-							if ( 'header' === selectedMainItem ) {
-								return updateActivePatternPosition( -1 );
-							}
-							if ( 'footer' === selectedMainItem ) {
-								return activateFooterPosition( !! footer );
-							}
-						} }
 					/>
 				</NavigatorScreen>
 
@@ -570,6 +551,18 @@ const PatternAssembler = ( {
 					<ScreenActivation onActivate={ onActivate } />
 				</NavigatorScreen>
 			</div>
+			<div className="pattern-assembler__sidebar-panel">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.PATTERNS }>
+					<ScreenPatternListPanel
+						categories={ categories }
+						selectedHeader={ header }
+						selectedSections={ sections }
+						selectedFooter={ footer }
+						patternsMapByCategory={ patternsMapByCategory }
+						onSelect={ onSelect }
+					/>
+				</NavigatorScreen>
+			</div>
 			<PatternLargePreview
 				header={ header }
 				sections={ sections }
@@ -593,10 +586,10 @@ const PatternAssembler = ( {
 			stepName="pattern-assembler"
 			hideBack={
 				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
-				navigator.location.path !== NAVIGATOR_PATHS.MAIN
+				! navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
 			}
 			backLabelText={
-				isSiteAssemblerFlow( flow ) && navigator.location.path === NAVIGATOR_PATHS.MAIN
+				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
 					? translate( 'Back to themes' )
 					: undefined
 			}
@@ -622,7 +615,7 @@ const PatternAssembler = ( {
 };
 
 const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => (
-	<NavigatorProvider initialPath={ NAVIGATOR_PATHS.MAIN } tabIndex={ -1 }>
+	<NavigatorProvider initialPath={ INITIAL_PATH } tabIndex={ -1 }>
 		<PatternAssembler { ...props } />
 	</NavigatorProvider>
 );

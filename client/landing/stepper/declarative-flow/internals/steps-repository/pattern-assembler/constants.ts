@@ -6,13 +6,15 @@ export const SITE_TAGLINE = 'Site Tagline';
 export const CATEGORY_ALL_SLUG = 'featured';
 
 export const NAVIGATOR_PATHS = {
-	MAIN: '/',
-	HEADER: '/header',
-	SECTION_PATTERNS: '/section/patterns',
-	FOOTER: '/footer',
-	STYLES: '/styles',
+	MAIN: '/main',
+	HEADER: '/main/header',
+	PATTERNS: '/main/:categorySlug',
+	FOOTER: '/main/footer',
+	STYLES: '/styles/:styleSlug',
 	ACTIVATION: '/activation',
 };
+
+export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN;
 
 /* Category list of the patterns fetched via PTK API from Dotcompatterns
  *

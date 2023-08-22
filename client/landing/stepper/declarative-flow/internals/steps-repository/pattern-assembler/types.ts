@@ -21,3 +21,12 @@ export type Category = {
 	label?: string;
 	description?: string;
 };
+
+export type PanelObject = {
+	type: 'header' | 'footer' | 'section';
+	title?: string;
+	description?: string;
+	category?: string;
+	selectedPattern: Pattern | null;
+	selectedPatterns?: Pattern[];
+};
