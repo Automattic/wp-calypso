@@ -44,6 +44,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
+import { LoadingPlaceHolder } from './components/loading-placeholder';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
@@ -606,18 +607,34 @@ const PlansFeaturesMain = ( {
 						} ) }
 				/>
 			) }
-			{ intent === 'plans-paid-media' && (
-				<FreePlanSubHeader>
-					{ translate(
-						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-						{
+			{ intent === 'plans-paid-media' &&
+				( isCustomDomainAllowedOnFreePlan.isLoading ? (
+					<FreePlanSubHeader>
+						{ translate( `Unlock a powerful bundle of features. Or {{loader}}{{/loader}}`, {
 							components: {
-								link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+								loader: (
+									<LoadingPlaceHolder
+										display="inline-block"
+										width="155px"
+										height="15px"
+										borderRadius="2px"
+									/>
+								),
 							},
-						}
-					) }
-				</FreePlanSubHeader>
-			) }
+						} ) }
+					</FreePlanSubHeader>
+				) : (
+					<FreePlanSubHeader>
+						{ translate(
+							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+							{
+								components: {
+									link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+								},
+							}
+						) }
+					</FreePlanSubHeader>
+				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 			{ ! intentFromSiteMeta.processing && (
 				<>
