@@ -77,11 +77,23 @@ class AllDomains extends Component {
 		domainsPerPage: 5,
 	};
 
+	componentDidMount() {
+		const { context } = this.props;
+		const currentPage = Number( parse( context.querystring )?.page );
+		if ( ! isNaN( currentPage ) ) {
+			this.setPage( currentPage );
+		}
+	}
+
 	componentDidUpdate() {
 		if ( this.props.isContactEmailEditContext && ! this.isLoadingDomainDetails() ) {
 			this.setSelectedDomains();
 		}
 	}
+
+	setPage = ( currentPage ) => {
+		this.setState( { currentPage } );
+	};
 
 	setSelectedDomains = () => {
 		const newFilteredDomains = ( this.props.filteredDomainsList ?? [] ).filter( ( domain ) => {
