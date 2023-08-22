@@ -11,6 +11,7 @@ import {
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
 	TYPE_BUSINESS,
+	TYPE_CENTENNIAL,
 	TYPE_ECOMMERCE,
 	TYPE_PRO,
 	TYPE_FREE,
@@ -38,6 +39,7 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
 	WOO_EXPRESS_PLANS,
+	TERM_CENTENNIALLY,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -326,6 +328,10 @@ export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
 
+export function isCentennialPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_CENTENNIAL } );
+}
+
 // Checks if it is an Enterprise plan (a.k.a VIP), introduced as part of pdgrnI-1Qp-p2.
 // This is not a real plan, but added to display Enterprise in the pricing grid.
 export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
@@ -573,6 +579,8 @@ export function getBillingMonthsForTerm( term: string ): number {
 		return 108;
 	} else if ( term === TERM_DECENNIALLY ) {
 		return 120;
+	} else if ( term === TERM_CENTENNIALLY ) {
+		return 1200;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -586,6 +594,8 @@ export function getBillingYearsForTerm( term: string ): number {
 		return 2;
 	} else if ( term === TERM_TRIENNIALLY ) {
 		return 3;
+	} else if ( term === TERM_CENTENNIALLY ) {
+		return 100;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -613,6 +623,8 @@ export function getBillingTermForMonths( term: number ): string {
 		return TERM_NOVENNIALLY;
 	} else if ( term === 120 ) {
 		return TERM_DECENNIALLY;
+	} else if ( term === 1200 ) {
+		return TERM_CENTENNIALLY;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -736,6 +748,8 @@ export function getPlanTermLabel(
 			return translate( 'Two year subscription' );
 		case TERM_TRIENNIALLY:
 			return translate( 'Three year subscription' );
+		case TERM_CENTENNIALLY:
+			return translate( 'Hundred year subscription' );
 	}
 }
 
