@@ -87,7 +87,9 @@ export class AIAssistantFlow implements BlockFlow {
 	private async changeTone( editorCanvas: Locator ) {
 		const anchor = editorCanvas.getByRole( 'toolbar', { name: 'Block tools' } );
 
-		await anchor.getByRole( 'button', { name: 'Change tone' } ).click();
+		const changeToneButton = anchor.getByRole( 'button', { name: 'Change tone' } );
+		await changeToneButton.waitFor();
+		await changeToneButton.click();
 		await editorCanvas
 			.getByRole( 'menu', { name: 'Change tone' } )
 			.getByRole( 'menuitem', { name: this.configurationData.tone } )
