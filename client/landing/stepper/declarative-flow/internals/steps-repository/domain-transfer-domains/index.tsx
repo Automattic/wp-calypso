@@ -13,7 +13,7 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
 
-	usePresalesChat( 'wpcom', true, true );
+	usePresalesChat( 'wpcom' );
 
 	const handleSubmit = () => {
 		submit?.();

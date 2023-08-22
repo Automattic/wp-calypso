@@ -69,7 +69,7 @@ class DomainManagementData extends Component {
 }
 
 export function UsePresalesChat() {
-	usePresalesChat( 'wpcom', true, true );
+	usePresalesChat( 'wpcom' );
 	return null;
 }
 
