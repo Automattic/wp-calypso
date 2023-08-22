@@ -33,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+		if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
 			// eCommerce plan sites attempt to load Calypso, but with
 			// third-party cookies disabled the fallback route to WP-Admin
 			// kicks in after some time.
@@ -103,10 +103,9 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		} );
 	} );
 
-	// While not strictly true (there can be AT sites without stores enabled),
-	// for the purpose of test accounts this is a sufficient comparison.
-	// The Store tab is only available to those on Business and higher plans.
-	skipDescribeIf( envVariables.TEST_ON_ATOMIC === false )( 'Store', function () {
+	// The Store tab is not present unless Business or higher plan is on the site and the
+	// site has gone AT.
+	skipDescribeIf( accountName !== 'jetpackAtomicEcommPlanUser' )( 'Store', function () {
 		it( 'Click on the Store tab', async function () {
 			await statsPage.clickTab( 'Store' );
 		} );
