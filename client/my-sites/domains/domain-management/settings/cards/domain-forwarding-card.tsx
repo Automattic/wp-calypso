@@ -308,9 +308,9 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						}
 					/>
 					<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
-						<strong>{ translate( 'Redirect type' ) }</strong>
-						<p>{ translate( 'Select the HTTP redirect type' ) }</p>
-						<FormLabel className="something">
+						<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
+						<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
+						<FormLabel>
 							<FormRadio
 								name="redirect_type"
 								value="0"
@@ -324,7 +324,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						<FormSettingExplanation>
 							{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
 						</FormSettingExplanation>
-						<FormLabel className="something">
+						<FormLabel>
 							<FormRadio
 								name="redirect_type"
 								value="0"
@@ -341,13 +341,13 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							) }
 						</FormSettingExplanation>
 
-						<strong>{ translate( 'Path forwarding' ) }</strong>
-						<p>
+						<p className="accordion__title path__forwarding">{ translate( 'Path forwarding' ) }</p>
+						<p className="accordion__subtitle">
 							{ translate(
 								'Redirects the path after the domain name to the corresponding path at the new address.'
 							) }
 						</p>
-						<FormLabel className="something">
+						<FormLabel>
 							<FormRadio
 								name="path_forwarding"
 								value="0"
@@ -358,8 +358,11 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 								label={ translate( 'Do not forward' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation>{ 'Domainname 1 -> domainname 2' }</FormSettingExplanation>
-						<FormLabel className="something">
+						<FormSettingExplanation>
+							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
+							{ ` -> ${ targetUrl }` }
+						</FormSettingExplanation>
+						<FormLabel>
 							<FormRadio
 								name="path_forwarding"
 								value="0"
@@ -370,7 +373,10 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 								label={ translate( 'Forward path' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation>{ 'Domainname 1 -> domainname 2' }</FormSettingExplanation>
+						<FormSettingExplanation>
+							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
+							{ ` -> ${ targetUrl }` }/{ translate( 'somepage.html' ) }
+						</FormSettingExplanation>
 					</Accordion>
 				</FormFieldset>
 				<p className="domain-forwarding-card__error-field">
