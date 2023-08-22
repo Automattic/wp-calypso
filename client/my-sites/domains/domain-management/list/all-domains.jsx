@@ -53,6 +53,7 @@ import {
 	getReverseSimpleSortFunctionBy,
 	ListAllActions,
 } from './utils';
+import Pagination from 'calypso/components/pagination';
 
 class AllDomains extends Component {
 	static propTypes = {
@@ -73,6 +74,8 @@ class AllDomains extends Component {
 		transferLockOptOut: false,
 		whoisData: {},
 		contactInfoSaveResults: {},
+		currentPage: 1,
+		domainsPerPage: 3,
 	};
 
 	componentDidUpdate() {
@@ -257,6 +260,11 @@ class AllDomains extends Component {
 			: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
 	};
 
+	filterDomainsByPage( domains ) {
+		const { currentPage, domainsPerPage } = this.state;
+		return domains.slice( ( currentPage - 1 ) * domainsPerPage, currentPage * domainsPerPage );
+	}
+
 	renderDomainsList() {
 		if ( this.isLoading() ) {
 			return Array.from( { length: 3 } ).map( ( _, n ) => (
@@ -278,6 +286,8 @@ class AllDomains extends Component {
 		const { isSavingContactInfo } = this.state;
 
 		const domains = this.getDomainsList();
+
+		const currentPageDomains = this.filterDomainsByPage( domains );
 
 		if ( domains.length === 0 && this.getSelectedFilter() === 'all-domains' ) {
 			return (
@@ -413,7 +423,7 @@ class AllDomains extends Component {
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 				<DomainsTable
 					currentRoute={ currentRoute }
-					domains={ domains }
+					domains={ currentPageDomains }
 					handleDomainItemToggle={ this.handleDomainItemToggle }
 					domainsTableColumns={ domainsTableColumns }
 					isManagingAllSites={ true }
@@ -689,6 +699,7 @@ class AllDomains extends Component {
 			);
 		}
 
+		const domains = this.getDomainsList();
 		return (
 			<>
 				<div>{ this.renderActionForm() }</div>
@@ -698,6 +709,12 @@ class AllDomains extends Component {
 					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
+						<Pagination
+							page={ this.state.currentPage }
+							perPage={ this.state.domainsPerPage }
+							total={ domains.length }
+							pageClick={ ( currentPage ) => this.setState( { currentPage } ) }
+						/>
 					</>
 				</div>
 			</>
