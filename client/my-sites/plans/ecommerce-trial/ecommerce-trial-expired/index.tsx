@@ -101,10 +101,6 @@ const ECommerceTrialExpired = (): JSX.Element => {
 						<Gridicon icon="cloud-download" />
 						<span>{ translate( 'Export your content' ) }</span>
 					</Button>
-					<Button href={ `/settings/delete-site/${ siteSlug }` } scary>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Delete your site permanently' ) }</span>
-					</Button>
 				</div>
 			</Main>
 		</>
