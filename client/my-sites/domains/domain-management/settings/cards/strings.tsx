@@ -5,9 +5,10 @@ import { useTranslate } from 'i18n-calypso';
 	translate( 'Advanced settings' );
 	translate( 'Redirect type' );
 	translate( 'Select the HTTP redirect type' );
-	translate( 'Temporary redirect' );
+	translate( 'Temporary redirect (302)' );
+	translate( 'Temporary redirect (307)' );
 	translate( 'Enables quick propagation of changes to your forwarding address.' );
-	translate( 'Permanent redirect' );
+	translate( 'Permanent redirect (301)' );
 	translate(
 		'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
 	);
