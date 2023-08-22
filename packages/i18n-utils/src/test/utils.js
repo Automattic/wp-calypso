@@ -4,7 +4,11 @@ import {
 	addLocaleToPathLocaleInFront,
 } from '../';
 
-jest.mock( '@automattic/calypso-config', () => ( {} ) );
+jest.mock( '@automattic/calypso-config', () => ( key ) => {
+	if ( 'i18n_default_locale_slug' === key ) {
+		return 'en';
+	}
+} );
 
 describe( '#getMappedLanguageSlug', () => {
 	test( 'should Norwegian `no` locale slug to `nb`.', () => {
