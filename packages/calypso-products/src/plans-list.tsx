@@ -219,7 +219,7 @@ import {
 	TYPE_SECURITY_T2,
 	TYPE_JETPACK_STARTER,
 	TYPE_FLEXIBLE,
-	TYPE_CENTENNIAL,
+	TYPE_100_YEAR,
 	TYPE_PRO,
 	TYPE_STARTER,
 	TYPE_GOLDEN_TOKEN,
@@ -2716,7 +2716,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanBusinessDetails(),
 		term: TERM_CENTENNIALLY,
 		group: GROUP_WPCOM,
-		type: TYPE_CENTENNIAL,
+		type: TYPE_100_YEAR,
 		// Todo: ¯\_(ツ)_/¯ on the copy.
 		getTitle: () => i18n.translate( '100 Year Plan' ),
 		getAudience: () => i18n.translate( 'Best for long-term thinkers' ),

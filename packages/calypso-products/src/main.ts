@@ -11,7 +11,7 @@ import {
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
 	TYPE_BUSINESS,
-	TYPE_CENTENNIAL,
+	TYPE_100_YEAR,
 	TYPE_ECOMMERCE,
 	TYPE_PRO,
 	TYPE_FREE,
@@ -328,8 +328,8 @@ export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
 
-export function isCentennialPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_CENTENNIAL } );
+export function is100YearPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_100_YEAR } );
 }
 
 // Checks if it is an Enterprise plan (a.k.a VIP), introduced as part of pdgrnI-1Qp-p2.

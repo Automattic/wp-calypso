@@ -76,7 +76,7 @@ import {
 	PLAN_WPCOM_PRO_2_YEARS,
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
-	TYPE_CENTENNIAL,
+	TYPE_100_YEAR,
 } from '../src/constants';
 import {
 	getPlan,
@@ -1154,7 +1154,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 		] );
 
-		expect( findPlansKeys( { type: TYPE_CENTENNIAL } ) ).toEqual( [ PLAN_100_YEARS ] );
+		expect( findPlansKeys( { type: TYPE_100_YEAR } ) ).toEqual( [ PLAN_100_YEARS ] );
 	} );
 
 	test( 'all matching plans keys - by group', () => {
