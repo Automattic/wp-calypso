@@ -149,7 +149,7 @@ export const getPurchaseURLCallback =
 			const yearlySlug = getYearlySlugFromMonthly( slug );
 			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 		}
-		if ( siteSlug && purchase ) {
+		if ( purchase ) {
 			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.id );
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 		}
