@@ -231,10 +231,9 @@ function FlatPriceDisplay( {
 	className?: string;
 	isSmallestUnit?: boolean;
 } ) {
-	const { symbol: currencySymbol, symbolPosition } = getCurrencyObject(
-		smallerPrice,
-		currencyCode
-	);
+	const { symbol, symbolPosition } = getCurrencyObject( smallerPrice, currencyCode );
+	const currencySymbol = symbol.replace( /^US/, '' );
+
 	const translate = useTranslate();
 
 	if ( ! higherPrice ) {
