@@ -10,6 +10,7 @@ type callApiParams = {
 	body?: object;
 	isLoggedIn?: boolean;
 	apiVersion?: string;
+	formData?: ( string | File )[][];
 };
 
 // Get cookie named subkey
@@ -25,6 +26,7 @@ async function callApi< ReturnType >( {
 	body,
 	isLoggedIn = false,
 	apiVersion = '1.1',
+	formData,
 }: callApiParams ): Promise< ReturnType > {
 	if ( isLoggedIn ) {
 		const res = await wpcomRequest( {
@@ -33,6 +35,7 @@ async function callApi< ReturnType >( {
 			apiVersion,
 			method,
 			body: method === 'POST' ? body : undefined,
+			formData,
 		} );
 		return res as ReturnType;
 	}

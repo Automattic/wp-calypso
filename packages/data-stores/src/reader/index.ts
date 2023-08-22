@@ -1,6 +1,7 @@
 import { SiteSubscriptionsQueryPropsProvider, useSiteSubscriptionsQueryProps } from './contexts';
 import { useCacheKey, useIsLoggedIn, useSubscriberEmailAddress } from './hooks';
 import {
+	useImportSiteSubscriptionsMutation,
 	usePendingPostConfirmMutation,
 	usePendingPostDeleteMutation,
 	usePendingSiteConfirmMutation,
@@ -30,6 +31,7 @@ export const SubscriptionManager = {
 	siteSubscriptionsQueryKeyPrefix,
 	useCacheKey,
 	useIsLoggedIn,
+	useImportSiteSubscriptionsMutation,
 	usePendingPostConfirmMutation,
 	usePendingPostDeleteMutation,
 	usePendingPostSubscriptionsQuery,
