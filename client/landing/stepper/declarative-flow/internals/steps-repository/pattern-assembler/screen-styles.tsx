@@ -46,6 +46,12 @@ const ScreenStyles = ( {
 		}
 	};
 
+	const handleBackClick = () => {
+		navigator.goBack();
+		togglePanel();
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_STYLES_BACK_CLICK );
+	};
+
 	const handleContinueClick = () => {
 		if ( ! disabled ) {
 			togglePanel();
@@ -81,10 +87,7 @@ const ScreenStyles = ( {
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Pick your style' ) } /> }
 				description={ headerDescription }
-				onBack={ () => {
-					navigator.goBack();
-					togglePanel();
-				} }
+				onBack={ handleBackClick }
 			/>
 			<div className="screen-container__body" ref={ wrapperRef }>
 				<VStack spacing="4">

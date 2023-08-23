@@ -13,18 +13,11 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
 
 	/**
-	 * Screen Colors
+	 * Screen Styles
 	 */
+	SCREEN_STYLES_BACK_CLICK: 'calypso_signup_pattern_assembler_screen_styles_back_click',
 	SCREEN_COLORS_PREVIEW_CLICK: 'calypso_signup_pattern_assembler_screen_colors_preview_click',
-	SCREEN_COLORS_BACK_CLICK: 'calypso_signup_pattern_assembler_screen_colors_back_click',
-	SCREEN_COLORS_DONE_CLICK: 'calypso_signup_pattern_assembler_screen_colors_done_click',
-
-	/**
-	 * Screen Fonts
-	 */
 	SCREEN_FONTS_PREVIEW_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_preview_click',
-	SCREEN_FONTS_BACK_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_back_click',
-	SCREEN_FONTS_DONE_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_done_click',
 
 	/**
 	 * Screen Activation
@@ -36,8 +29,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	 * Pattern Panels
 	 */
 	PATTERN_SELECT_CLICK: 'calypso_signup_pattern_assembler_pattern_select_click',
-	PATTERN_SELECT_BACK_CLICK: 'calypso_signup_pattern_assembler_pattern_select_back_click',
-	PATTERN_SELECT_DONE_CLICK: 'calypso_signup_pattern_assembler_pattern_select_done_click',
 
 	/**
 	 * Pattern Actions
