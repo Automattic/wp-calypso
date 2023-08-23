@@ -214,6 +214,5 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: getCurrentUser( state )
 		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 		: true,
-	isCurrentPlan100YearPlan:
-		getSitePlanSlug( state, getSelectedSiteId( state ) ) === PLAN_100_YEARS ?? false,
+	isCurrentPlan100YearPlan: getSitePlanSlug( state, getSelectedSiteId( state ) ) === PLAN_100_YEARS,
 } ) )( localize( DomainProductPrice ) );
