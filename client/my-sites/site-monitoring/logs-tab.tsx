@@ -115,6 +115,11 @@ export const LogsTab = ( {
 		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
+	const headerTitles =
+		logType === 'php'
+			? [ 'severity', 'timestamp', 'message' ]
+			: [ 'request_type', 'date', 'status', 'request_url' ];
+
 	return (
 		<>
 			<SiteLogsToolbar
@@ -130,7 +135,12 @@ export const LogsTab = ( {
 					onChange={ handleAutoRefreshClick }
 				/>
 			</SiteLogsToolbar>
-			<SiteLogsTable logs={ data?.logs } logType={ logType } isLoading={ isFetching } />
+			<SiteLogsTable
+				logs={ data?.logs }
+				logType={ logType }
+				isLoading={ isFetching }
+				headerTitles={ headerTitles }
+			/>
 			{ paginationText && (
 				<div className="site-monitoring__pagination-text">{ paginationText }</div>
 			) }

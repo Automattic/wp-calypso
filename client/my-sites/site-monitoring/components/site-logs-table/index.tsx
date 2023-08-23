@@ -15,15 +15,17 @@ interface SiteLogsTableProps {
 	logs?: SiteLogs;
 	logType?: string;
 	isLoading?: boolean;
+	headerTitles: string[];
 }
 
 export const SiteLogsTable = memo( function SiteLogsTable( {
 	logs,
 	logType,
 	isLoading,
+	headerTitles,
 }: SiteLogsTableProps ) {
 	const { __ } = useI18n();
-	const columns = useSiteColumns( logs );
+	const columns = useSiteColumns( logs, headerTitles );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 	const previousLogType = usePrevious( logType );
 
@@ -44,8 +46,8 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 			<thead>
 				<tr>
 					<th />
-					{ columns.map( ( column ) => (
-						<th key={ column }>{ column }</th>
+					{ columns.map( ( column, index ) => (
+						<th key={ column }>{ headerTitles[ index ] }</th>
 					) ) }
 				</tr>
 			</thead>
@@ -98,31 +100,12 @@ function generateRowKey( log: SiteLogs[ 0 ], index: number ): React.Key {
 	return index;
 }
 
-function useSiteColumns( logs: SiteLogs | undefined ) {
+function useSiteColumns( logs: SiteLogs | undefined, headerTitles: string[] ) {
 	return useMemo( () => {
 		if ( ! logs ) {
 			return [];
 		}
 
-		const columns = new Set< string >();
-		for ( const log of logs ) {
-			for ( const key of Object.keys( log ) ) {
-				columns.add( key );
-			}
-		}
-
-		// The webserver logs have both `date` and `timestamp` columns and we want date to take
-		// precedence, so check for presence of `date` column first.
-		if ( columns.has( 'date' ) ) {
-			columns.delete( 'date' );
-			return [ 'date', ...columns ];
-		}
-
-		if ( columns.has( 'timestamp' ) ) {
-			columns.delete( 'timestamp' );
-			return [ 'timestamp', ...columns ];
-		}
-
-		return Array.from( columns );
-	}, [ logs ] );
+		return headerTitles;
+	}, [ logs, headerTitles ] );
 }
