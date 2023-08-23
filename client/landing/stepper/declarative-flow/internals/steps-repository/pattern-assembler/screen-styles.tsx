@@ -11,7 +11,7 @@ import { NAVIGATOR_PATHS } from './constants';
 import NavigatorTitle from './navigator-title';
 
 interface Props {
-	onMainItemSelect: ( { name, isPanel }: { name: string; isPanel?: boolean } ) => void;
+	onMainItemSelect: ( name: string ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
 	selectedMainItem: string | null;
 	hasColor: boolean;
@@ -38,7 +38,7 @@ const ScreenStyles = ( {
 	const togglePanel = () => {
 		if ( selectedMainItem ) {
 			// Toggle panel before continue
-			onMainItemSelect( { name: selectedMainItem, isPanel: true } );
+			onMainItemSelect( selectedMainItem );
 		}
 	};
 
@@ -50,7 +50,7 @@ const ScreenStyles = ( {
 	useEffect( () => {
 		if ( selectedMainItem !== 'color-palettes' ) {
 			// Open Colors initially
-			setTimeout( () => onMainItemSelect( { name: 'color-palettes', isPanel: true } ), 250 );
+			setTimeout( () => onMainItemSelect( 'color-palettes' ), 250 );
 		}
 	}, [] );
 
@@ -73,7 +73,7 @@ const ScreenStyles = ( {
 								path={ NAVIGATOR_PATHS.STYLES }
 								icon={ color }
 								aria-label={ translate( 'Colors' ) }
-								onClick={ () => onMainItemSelect( { name: 'color-palettes', isPanel: true } ) }
+								onClick={ () => onMainItemSelect( 'color-palettes' ) }
 								active={ getIsActiveButton( 'color-palettes' ) }
 							>
 								{ translate( 'Colors' ) }
@@ -83,7 +83,7 @@ const ScreenStyles = ( {
 								path={ NAVIGATOR_PATHS.STYLES }
 								icon={ typography }
 								aria-label={ translate( 'Fonts' ) }
-								onClick={ () => onMainItemSelect( { name: 'font-pairings', isPanel: true } ) }
+								onClick={ () => onMainItemSelect( 'font-pairings' ) }
 								active={ getIsActiveButton( 'font-pairings' ) }
 							>
 								{ translate( 'Fonts' ) }
