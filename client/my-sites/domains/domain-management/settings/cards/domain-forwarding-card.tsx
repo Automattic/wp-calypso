@@ -323,6 +323,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
 						<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
 						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 							<FormRadio
 								name="redirect_type"
 								value="0"
@@ -337,6 +338,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
 						</FormSettingExplanation>
 						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 							<FormRadio
 								name="redirect_type"
 								value="0"
@@ -360,6 +362,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							) }
 						</p>
 						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 							<FormRadio
 								name="path_forwarding"
 								value="0"
@@ -375,6 +378,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }
 						</FormSettingExplanation>
 						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 							<FormRadio
 								name="path_forwarding"
 								value="0"
