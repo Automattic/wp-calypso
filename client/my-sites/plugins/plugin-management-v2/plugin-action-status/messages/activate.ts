@@ -5,7 +5,7 @@ import {
 } from 'calypso/state/plugins/installed/status/constants';
 import type { PluginActionMessagesByStatus } from './types';
 
-const ActivateMessageGetters: PluginActionMessagesByStatus = {
+const ActivateMessages: PluginActionMessagesByStatus = {
 	[ IN_PROGRESS ]: ( { hasSelectedSite, siteCount } ) =>
 		hasSelectedSite
 			? ( translate ) => translate( 'Activating' )
@@ -36,4 +36,4 @@ const ActivateMessageGetters: PluginActionMessagesByStatus = {
 					),
 };
 
-export default ActivateMessageGetters;
+export default ActivateMessages;

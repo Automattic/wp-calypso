@@ -6,7 +6,7 @@ import {
 } from 'calypso/state/plugins/installed/status/constants';
 import type { PluginActionMessagesByStatus } from './types';
 
-const ActivateMessages: PluginActionMessagesByStatus = {
+const UpdateMessages: PluginActionMessagesByStatus = {
 	[ IN_PROGRESS ]: () => ( translate ) => translate( 'Updating' ),
 	[ COMPLETED ]: () => ( translate ) => translate( 'Update successful' ),
 	[ ERROR ]: ( { hasSelectedSite, siteCount } ) =>
@@ -20,4 +20,4 @@ const ActivateMessages: PluginActionMessagesByStatus = {
 	[ UP_TO_DATE ]: () => ( translate ) => translate( 'Plugin already up to date' ),
 };
 
-export default ActivateMessages;
+export default UpdateMessages;

@@ -5,10 +5,10 @@ import {
 } from 'calypso/state/plugins/installed/status/constants';
 import type { PluginActionMessagesByStatus } from './types';
 
-const InstallMessageGetters: PluginActionMessagesByStatus = {
+const InstallMessages: PluginActionMessagesByStatus = {
 	[ IN_PROGRESS ]: () => ( translate ) => translate( 'Installing' ),
 	[ COMPLETED ]: () => ( translate ) => translate( 'Installed' ),
 	[ ERROR ]: () => ( translate ) => translate( 'Failed to install' ),
 };
 
-export default InstallMessageGetters;
+export default InstallMessages;
