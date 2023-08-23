@@ -69,7 +69,8 @@ const BusinessUpgradeConfirmation = () => {
 								title={ feature.title }
 								subtitle={ feature.text }
 								illustration={ feature.illustration }
-								onCardClick={ feature.buttonClick }
+								buttonText={ feature.buttonText }
+								onButtonClick={ feature.buttonClick }
 							/>
 						) ) }
 				</div>
