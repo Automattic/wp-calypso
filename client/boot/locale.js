@@ -68,8 +68,8 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		// For logged out Calypso pages, set the locale from query param
 		const pathLocaleSlug = getLocaleFromQueryParam();
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
-	} else {
-		// For logged out Calypso pages, set the locale from slug
+	} else if ( ! window.hasOwnProperty( 'localeFromPathname' ) ) {
+		// For logged out Calypso pages, set the locale from path if we cannot get the locale from the pathname on the server side
 		const pathLocaleSlug = getLocaleFromPathname();
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	}

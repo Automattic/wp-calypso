@@ -112,7 +112,8 @@ export async function getFile( url ) {
 }
 
 export function getLanguageFile( targetLocaleSlug ) {
-	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
+	const languageRevisions = typeof window !== 'undefined' ? window.languageRevisions : {};
+	const url = getLanguageFileUrl( targetLocaleSlug, 'json', languageRevisions );
 
 	return getFile( url );
 }
