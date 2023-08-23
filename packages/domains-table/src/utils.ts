@@ -6,10 +6,14 @@ export const getSimpleSortFunctionBy =
 			return -1;
 		}
 
-		const firstValue = first[ column ] as string;
-		const secondValue = second[ column ] as string;
+		const firstValue = first[ column ];
+		const secondValue = second[ column ];
 
-		if ( firstValue === secondValue ) {
+		if (
+			firstValue === secondValue ||
+			typeof firstValue !== 'string' ||
+			typeof secondValue !== 'string'
+		) {
 			return 0;
 		}
 
