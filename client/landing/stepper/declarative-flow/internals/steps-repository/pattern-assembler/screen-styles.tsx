@@ -48,7 +48,6 @@ const ScreenStyles = ( {
 
 	const handleBackClick = () => {
 		navigator.goBack();
-		togglePanel();
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_STYLES_BACK_CLICK );
 	};
 
