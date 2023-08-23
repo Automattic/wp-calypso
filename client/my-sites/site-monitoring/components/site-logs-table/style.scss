@@ -24,6 +24,13 @@ $border-color: #d3dae6;
 .site-logs-table td {
 	padding: 0.6em 1em;
 	vertical-align: middle;
+	font-size: 0.875rem;
+}
+
+.site-logs-table th {
+	font-family: "SF Pro Text", $sans;
+	color: var(--color-neutral-60);
+	font-weight: 400;
 }
 
 .site-logs-table__empty-cell::before {
