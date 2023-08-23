@@ -20,7 +20,7 @@ import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-succ
 import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { StatsNoticesProps } from './types';
-import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
+import useSitePurchasesOnOdysseyStats from './use-site-purchases-on-odyssey-stats';
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
@@ -47,10 +47,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	);
 
 	// TODO: Display error messages on the notice.
-	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
-	const hasLoadedSitePurchasesOnWPCom = useSelector( ( state ) =>
-		hasLoadedSitePurchasesFromServer( state )
-	);
+	useSitePurchasesOnOdysseyStats( isOdysseyStats, siteId );
+	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
 
 	const { data: isDoYouLoveJetpackStatsVisible } = useNoticeVisibilityQuery(
 		siteId,
@@ -76,11 +74,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 			showUpgradeNoticeForWpcomSites ) &&
 		// Show the notice if the site has not purchased the paid stats product.
 		! hasPaidStats &&
-		hasLoadedPurchases &&
-		hasLoadedSitePurchasesOnWPCom;
+		hasLoadedPurchases;
 
 	return (
 		<>
+			{ /* Only query site purchases on Calypso via existing data component */ }
 			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
 			{ showDoYouLoveJetpackStatsNotice && (
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
