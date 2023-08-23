@@ -185,6 +185,7 @@ class DomainsTable extends PureComponent {
 						}
 						hasLoadedPurchases={ hasLoadedPurchases }
 						purchase={ purchase }
+						hasLoadedDetails={ hasLoadedDomainDetails }
 					/>
 				</Fragment>
 			);
