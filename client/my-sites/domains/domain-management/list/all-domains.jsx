@@ -183,7 +183,7 @@ class AllDomains extends Component {
 
 	isLoading() {
 		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
-		return ! hasAllSitesLoaded || ( requestingFlatDomains && domainsList.length === 0 );
+		return requestingFlatDomains && domainsList.length === 0;
 	}
 
 	isRequestingSiteDomains() {
@@ -605,9 +605,7 @@ class AllDomains extends Component {
 		}
 
 		// filter on sites we can manage, that aren't `wpcom` type
-		return domainsList.filter(
-			( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
-		);
+		return domainsList.filter( ( domain ) => domain.type !== domainTypes.WPCOM );
 	}
 
 	renderDomainTableFilterButton() {
@@ -782,9 +780,7 @@ const getFilteredDomainsList = ( state, context ) => {
 			} );
 
 		default:
-			return domainsList.filter(
-				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
-			);
+			return domainsList.filter( ( domain ) => domain.type !== domainTypes.WPCOM );
 	}
 };
 
@@ -795,7 +791,6 @@ export default connect(
 
 		return {
 			action,
-			canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
