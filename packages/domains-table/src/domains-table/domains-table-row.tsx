@@ -9,7 +9,6 @@ import type {
 	PartialDomainData,
 	SiteDomainsQueryFnData,
 	SiteDetails,
-	DomainData,
 } from '@automattic/data-stores';
 
 interface DomainsTableRowProps {
@@ -22,7 +21,6 @@ interface DomainsTableRowProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
-	onSiteDomainsFetched?: ( blogId: number, domains: DomainData[] ) => void;
 }
 
 export function DomainsTableRow( {
@@ -32,7 +30,6 @@ export function DomainsTableRow( {
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
-	onSiteDomainsFetched,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -40,9 +37,6 @@ export function DomainsTableRow( {
 	const { data: allSiteDomains } = useSiteDomainsQuery( domain.blog_id, {
 		enabled: inView,
 		...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
-		onSuccess( data ) {
-			onSiteDomainsFetched?.( domain.blog_id, data.domains );
-		},
 	} );
 
 	const isPrimaryDomain = useMemo(
