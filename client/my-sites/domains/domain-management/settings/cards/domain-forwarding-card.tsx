@@ -15,9 +15,7 @@ import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
-import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
@@ -36,23 +34,21 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
+	const [ forwardPaths, setForwardPaths ] = useState( false );
+	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const pointsToWpcom = domain.pointsToWpcom;
-	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
 
 	// Display success notices when the forwarding is updated
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			dispatch(
-				successNotice( translate( 'Domain forward updated and enabled.' ), noticeOptions )
+				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice(
-					translate( 'An error occurred while updating the domain forward.' ),
-					noticeOptions
-				)
+				errorNotice( translate( 'An error occurred while updating the redirect.' ), noticeOptions )
 			);
 		},
 	} );
@@ -62,15 +58,12 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
-				successNotice( translate( 'Domain forward deleted successfully.' ), noticeOptions )
+				successNotice( translate( 'Domain redirect deleted successfully.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice(
-					translate( 'An error occurred while deleting the domain forward.' ),
-					noticeOptions
-				)
+				errorNotice( translate( 'An error occurred while deleting the redirect.' ), noticeOptions )
 			);
 		},
 	} );
@@ -80,7 +73,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		if ( isError ) {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while fetching your domain forwarding.' ),
+					translate( 'An error occurred while fetching your domain redirects.' ),
 					noticeOptions
 				)
 			);
@@ -103,6 +96,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			if ( url.hostname !== '_invalid_.domain' ) {
 				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
 				setProtocol( forwarding.isSecure ? 'https' : 'http' );
+				setIsPermanent( forwarding.isPermanent );
+				setForwardPaths( forwarding.forwardPaths );
 			}
 		} catch ( e ) {
 			// ignore
@@ -127,7 +122,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
 			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
-				setErrorMessage( translate( 'Forwarding to the same domain is not allowed.' ) );
+				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
 				setIsValidUrl( false );
 				return;
 			}
@@ -178,8 +173,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			targetHost,
 			targetPath,
 			isSecure,
-			forwardPaths: true, // v1 always forward paths
-			isPermanent: false, // v1 always temporary
+			forwardPaths,
+			isPermanent,
 			isActive: true, // v1 always active
 			sourcePath: null, // v1 always using domain only
 		} );
@@ -215,7 +210,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const renderNoticeForPrimaryDomain = () => {
-		if ( ! domain?.isPrimary || isDomainOnly ) {
+		if ( ! domain?.isPrimary ) {
 			return;
 		}
 
@@ -242,13 +237,37 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		);
 	};
 
+	const redirectHasChanged = () => {
+		if ( ! forwarding ) {
+			return false;
+		}
+
+		if ( forwarding.targetHost + forwarding.targetPath !== targetUrl ) {
+			return true;
+		}
+
+		if ( ( forwarding.isSecure ? 'https' : 'http' ) !== protocol ) {
+			return true;
+		}
+
+		if ( forwarding.isPermanent !== isPermanent ) {
+			return true;
+		}
+
+		if ( forwarding.forwardPaths !== forwardPaths ) {
+			return true;
+		}
+
+		return false;
+	};
+
 	return (
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset
-					disabled={ ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom }
+					disabled={ domain?.isPrimary || ! pointsToWpcom }
 					className="domain-forwarding-card__fields"
 				>
 					<FormTextInputWithAffixes
@@ -289,14 +308,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					{ ! isValidUrl ? <FormInputValidation isError={ true } text={ errorMessage } /> : ' ' }
 				</p>
 				<FormButton
-					disabled={
-						! isValidUrl ||
-						isLoading ||
-						( forwarding &&
-							forwarding.targetHost + forwarding.targetPath === targetUrl &&
-							( forwarding.isSecure ? 'https' : 'http' ) === protocol ) ||
-						( ! forwarding && targetUrl === '' )
-					}
+					disabled={ ! isValidUrl || isLoading || ! redirectHasChanged() || targetUrl === '' }
 				>
 					{ translate( 'Save' ) }
 				</FormButton>
