@@ -24,7 +24,9 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props
 		<Fragment>
 			<tr>
 				{ columns.map( ( column ) => (
-					<td key={ column }>{ renderCell( column, log[ column ], moment, siteGmtOffset ) }</td>
+					<td key={ column } className={ column }>
+						{ renderCell( column, log[ column ], moment, siteGmtOffset ) }
+					</td>
 				) ) }
 				<td>
 					<Button
