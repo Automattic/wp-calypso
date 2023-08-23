@@ -539,6 +539,7 @@ const PatternAssembler = ( {
 					<ScreenStyles
 						onMainItemSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
+						recordTracksEvent={ recordTracksEvent }
 						selectedMainItem={ selectedMainItem }
 						hasColor={ Boolean( colorVariation ) }
 						hasFont={ Boolean( fontVariation ) }

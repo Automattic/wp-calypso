@@ -6,13 +6,15 @@ import {
 } from '@wordpress/components';
 import { color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { NAVIGATOR_PATHS } from './constants';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	selectedMainItem: string | null;
 	hasColor: boolean;
 	hasFont: boolean;
@@ -21,11 +23,13 @@ interface Props {
 const ScreenStyles = ( {
 	onMainItemSelect,
 	onContinueClick,
+	recordTracksEvent,
 	selectedMainItem,
 	hasColor,
 	hasFont,
 }: Props ) => {
 	const translate = useTranslate();
+	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const navigator = useNavigator();
 	const headerDescription = translate(
@@ -43,8 +47,18 @@ const ScreenStyles = ( {
 	};
 
 	const handleContinueClick = () => {
-		togglePanel();
-		onContinueClick();
+		if ( ! disabled ) {
+			togglePanel();
+			onContinueClick();
+		}
+	};
+
+	// Use the mousedown event to prevent either the button focusing or text selection
+	const handleMouseDown = ( event: React.MouseEvent ) => {
+		if ( disabled ) {
+			event.preventDefault();
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
+		}
 	};
 
 	useEffect( () => {
@@ -52,6 +66,14 @@ const ScreenStyles = ( {
 			// Open Colors initially
 			setTimeout( () => onMainItemSelect( 'color-palettes' ), 250 );
 		}
+	}, [] );
+
+	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
+	useEffect( () => {
+		const timeoutId = window.setTimeout( () => setDisabled( false ), 300 );
+		return () => {
+			window.clearTimeout( timeoutId );
+		};
 	}, [] );
 
 	return (
@@ -96,6 +118,8 @@ const ScreenStyles = ( {
 				<Button
 					className="pattern-assembler__button"
 					primary
+					aria-disabled={ disabled }
+					onMouseDown={ handleMouseDown }
 					onClick={ () => handleContinueClick() }
 				>
 					{ translate( 'Save and continue' ) }
