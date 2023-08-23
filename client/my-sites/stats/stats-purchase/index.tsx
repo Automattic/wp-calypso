@@ -116,7 +116,7 @@ const StatsPurchasePage = ( {
 		}
 		// if nothing is owned don't specify the type
 		return [ SCREEN_TYPE_SELECTION, null ];
-	}, [ isPWYWOwned, isCommercialOwned, options?.isCommercial, isTypeDetectionEnabled ] );
+	}, [ isPWYWOwned, isCommercialOwned, options.isCommercial, isTypeDetectionEnabled ] );
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
