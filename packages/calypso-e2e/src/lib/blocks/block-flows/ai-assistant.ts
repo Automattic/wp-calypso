@@ -23,6 +23,7 @@ interface ConfigurationData {
 export class AIAssistantFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
 	private generatedText: string;
+
 	/**
 	 * Constructs an instance of this block flow with data to be used when
 	 * configuring and validating the block.
