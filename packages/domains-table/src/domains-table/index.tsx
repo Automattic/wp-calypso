@@ -1,13 +1,16 @@
-import { useState, useCallback, useLayoutEffect } from 'react';
+import {
+	type DomainData,
+	type PartialDomainData,
+	type SiteDomainsQueryFnData,
+	type SiteDetails,
+	getSiteDomainsQueryObject,
+} from '@automattic/data-stores';
+import { useQueries } from '@tanstack/react-query';
+import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
 import { DomainsTableRow } from './domains-table-row';
-import type {
-	PartialDomainData,
-	SiteDomainsQueryFnData,
-	SiteDetails,
-} from '@automattic/data-stores';
 import './style.scss';
 
 interface DomainsTableProps {
@@ -38,6 +41,25 @@ export function DomainsTable( {
 
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 
+	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
+	const allSiteDomains = useQueries( {
+		queries: allSiteIds.map( ( siteId ) =>
+			getSiteDomainsQueryObject( siteId, {
+				...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( siteId ) } ),
+			} )
+		),
+	} );
+	const fetchedSiteDomains = useMemo( () => {
+		const fetchedSiteDomains: Record< number, DomainData[] > = {};
+		for ( const { data } of allSiteDomains ) {
+			const siteId = data?.domains?.[ 0 ]?.blog_id;
+			if ( typeof siteId === 'number' ) {
+				fetchedSiteDomains[ siteId ] = data?.domains || [];
+			}
+		}
+		return fetchedSiteDomains;
+	}, [ allSiteDomains ] );
+
 	useLayoutEffect( () => {
 		if ( ! domains ) {
 			setSelectedDomains( new Set() );
@@ -57,6 +79,33 @@ export function DomainsTable( {
 			return selectedDomainsCopy;
 		} );
 	}, [ domains ] );
+
+	const sortedDomains = useMemo( () => {
+		const selectedColumnDefinition = domainsTableColumns.find(
+			( column ) => column.name === sortKey
+		);
+
+		const getFullDomainData = ( domain: PartialDomainData ) =>
+			fetchedSiteDomains?.[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
+
+		return domains?.sort( ( first, second ) => {
+			let result = 0;
+
+			const fullFirst = getFullDomainData( first );
+			const fullSecond = getFullDomainData( second );
+			if ( ! fullFirst || ! fullSecond ) {
+				return result;
+			}
+
+			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
+				result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
+				if ( result !== 0 ) {
+					break;
+				}
+			}
+			return result;
+		} );
+	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
 
 	const handleSelectDomain = useCallback(
 		( domain: PartialDomainData ) => {
@@ -127,12 +176,10 @@ export function DomainsTable( {
 				activeSortDirection={ sortDirection }
 				bulkSelectionStatus={ getBulkSelectionStatus() }
 				onBulkSelectionChange={ changeBulkSelection }
-				onChangeSortOrder={ ( selectedColumn ) => {
-					onSortChange( selectedColumn );
-				} }
+				onChangeSortOrder={ onSortChange }
 			/>
 			<tbody>
-				{ domains.map( ( domain ) => (
+				{ sortedDomains?.map( ( domain ) => (
 					<DomainsTableRow
 						key={ getDomainId( domain ) }
 						domain={ domain }

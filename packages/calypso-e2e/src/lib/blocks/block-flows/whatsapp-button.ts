@@ -7,7 +7,6 @@ interface ConfigurationData {
 
 const selectors = {
 	// Editor
-	settings: 'button[aria-label="WhatsApp Button Settings"]',
 	phoneNumberInput: 'input[placeholder="Your phone number…"]',
 	buttonLabel: 'a.whatsapp-block__button',
 
@@ -43,17 +42,30 @@ export class WhatsAppButtonFlow implements BlockFlow {
 	async configure( context: EditorContext ): Promise< void > {
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 
+		// Update the button text if config data is present.
 		if ( this.configurationData.buttonText ) {
 			const buttonLabelLocator = editorCanvas.locator( selectors.buttonLabel );
+			// First clear the text.
+			await buttonLabelLocator.fill( '' );
 			await buttonLabelLocator.fill( this.configurationData.buttonText );
 		}
 
 		const editorParent = await context.editorPage.getEditorParent();
-		const settingsLocator = editorParent.locator( selectors.settings );
+		const settingsLocator = editorParent.getByRole( 'button', {
+			name: 'WhatsApp Button Settings',
+		} );
+
+		// Open the block settings dialog.
 		await settingsLocator.click();
 
+		// Enter phone number.
 		const phoneInputLocator = editorParent.locator( selectors.phoneNumberInput );
 		await phoneInputLocator.fill( this.configurationData.phoneNumber.toString() );
+
+		// Dismiss the block settings dialog.
+		await settingsLocator.click();
+
+		await phoneInputLocator.waitFor( { state: 'detached' } );
 	}
 
 	/**

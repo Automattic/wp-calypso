@@ -53,9 +53,11 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
+	PLAN_100_YEARS,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	TERM_CENTENNIALLY,
 	TERM_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_PERSONAL,
@@ -74,6 +76,7 @@ import {
 	PLAN_WPCOM_PRO_2_YEARS,
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	TYPE_100_YEAR,
 } from '../src/constants';
 import {
 	getPlan,
@@ -1110,6 +1113,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 		];
 
+		expect( findPlansKeys( { term: TERM_CENTENNIALLY } ) ).toEqual( [ PLAN_100_YEARS ] );
+
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).toEqual( termMonthlyPaid );
 	} );
 
@@ -1148,6 +1153,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 		] );
+
+		expect( findPlansKeys( { type: TYPE_100_YEAR } ) ).toEqual( [ PLAN_100_YEARS ] );
 	} );
 
 	test( 'all matching plans keys - by group', () => {
@@ -1167,6 +1174,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
+			PLAN_100_YEARS,
 			PLAN_ECOMMERCE_MONTHLY,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,

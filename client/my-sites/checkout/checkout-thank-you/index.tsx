@@ -1,4 +1,5 @@
 import {
+	is100Year,
 	isBlogger,
 	isBusiness,
 	isChargeback,
@@ -803,6 +804,9 @@ export class CheckoutThankYou extends Component<
 		if ( purchases.some( isBusiness ) ) {
 			return [ 'business-plan-details', purchases.find( isBusiness ) ];
 		}
+		if ( purchases.some( is100Year ) ) {
+			return [ 'business-plan-details', purchases.find( is100Year ) ];
+		}
 		if ( purchases.some( isPro ) ) {
 			return [ 'pro-plan-details', purchases.find( isPro ) ];
 		}
@@ -1061,7 +1065,7 @@ function PurchaseDetailsWrapper(
 			/>
 		);
 	}
-	if ( purchases.some( isBusiness ) && props.selectedSite ) {
+	if ( ( purchases.some( isBusiness ) || purchases.some( is100Year ) ) && props.selectedSite ) {
 		return (
 			<BusinessPlanDetails
 				purchases={ purchases }

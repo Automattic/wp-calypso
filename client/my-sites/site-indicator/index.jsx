@@ -23,7 +23,7 @@ import './style.scss';
 
 const WPAdminLink = ( props ) => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 
-class SiteIndicator extends Component {
+export class SiteIndicator extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 
@@ -263,7 +263,11 @@ class SiteIndicator extends Component {
 			<div className={ indicatorClass }>
 				{ ! this.state.expand && (
 					<Animate type="appear">
-						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+						<button
+							data-testid="site-indicator-button"
+							className="site-indicator__button"
+							onClick={ this.toggleExpand }
+						>
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon={ this.getIcon() } size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
@@ -271,7 +275,7 @@ class SiteIndicator extends Component {
 					</Animate>
 				) }
 				{ this.state.expand && (
-					<div className="site-indicator__message">
+					<div data-testid="site-indicator-message" className="site-indicator__message">
 						<div className="site-indicator__action">{ this.getText() }</div>
 						<button className="site-indicator__button" onClick={ this.toggleExpand }>
 							<Animate type="appear">

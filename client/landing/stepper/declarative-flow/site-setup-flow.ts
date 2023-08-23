@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, isAssemblerDesign } from '@automattic/design-picker';
+import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -273,8 +273,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const { selectedDesign: _selectedDesign, shouldGoToAssembler } = providedDependencies;
-					if ( isAssemblerDesign( _selectedDesign as Design ) && shouldGoToAssembler ) {
+					const { selectedDesign: _selectedDesign } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
 						return navigate( 'patternAssembler' );
 					}
 

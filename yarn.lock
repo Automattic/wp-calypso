@@ -366,9 +366,9 @@ __metadata:
     form-data: ^4.0.0
     jest-docblock: ^29.4.3
     mailosaur: ^8.4.0
-    nock: ^12.0.3
+    nock: ^13.3.2
     node-fetch: ^2.6.7
-    playwright: ^1.34
+    playwright: ^1.37
     totp-generator: ^0.0.12
     typescript: ^5.1.6
   languageName: unknown
@@ -538,7 +538,6 @@ __metadata:
     "@testing-library/dom": ^9.3.1
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
-    "@testing-library/react-hooks": 7.0.2
     "@testing-library/user-event": ^14.4.3
     "@types/canvas-confetti": ^1.6.0
     "@types/react-slider": ^1.3.1
@@ -579,7 +578,7 @@ __metadata:
     "@emotion/styled": ^11.11.0
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
-    "@testing-library/dom": ^8.20.1
+    "@testing-library/dom": ^9.3.1
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
@@ -626,7 +625,7 @@ __metadata:
     fast-json-stable-stringify: ^2.1.0
     i18n-calypso: "workspace:^"
     jest-fetch-mock: ^3.0.3
-    nock: ^12.0.3
+    nock: ^13.3.2
     node-fetch: ^2.6.6
     qs: ^6.9.1
     redux: ^4.2.1
@@ -853,7 +852,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@testing-library/react": ^14.0.0
-    "@testing-library/react-hooks": ^7.0.2
     react: ^18.2.0
     react-dom: ^18.2.0
     tslib: ">=2.3.0"
@@ -970,7 +968,6 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
-    "@testing-library/react-hooks": 7.0.2
     "@types/react": ^18.2.6
     "@wordpress/compose": ^6.16.0
     "@wordpress/i18n": ^4.39.0
@@ -1390,7 +1387,6 @@ __metadata:
     "@storybook/react": ^7.0.18
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
-    "@testing-library/react-hooks": 7.0.2
     "@types/classnames": ^2.3.1
     classnames: ^2.3.1
     postcss: ^8.4.5
@@ -1438,7 +1434,7 @@ __metadata:
     "@storybook/addon-actions": ^7.0.18
     "@storybook/cli": ^7.0.18
     "@storybook/react": ^7.0.18
-    "@testing-library/dom": ^8.20.1
+    "@testing-library/dom": ^9.3.1
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
@@ -6517,22 +6513,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.20.1":
-  version: 8.20.1
-  resolution: "@testing-library/dom@npm:8.20.1"
-  dependencies:
-    "@babel/code-frame": ^7.10.4
-    "@babel/runtime": ^7.12.5
-    "@types/aria-query": ^5.0.1
-    aria-query: 5.1.3
-    chalk: ^4.1.0
-    dom-accessibility-api: ^0.5.9
-    lz-string: ^1.5.0
-    pretty-format: ^27.0.2
-  checksum: 614013756706467f2a7f3f693c18377048c210ec809884f0f9be866f7d865d075805ad15f5d100e8a699467fdde09085bf79e23a00ea0a6ab001d9583ef15e5d
-  languageName: node
-  linkType: hard
-
 "@testing-library/dom@npm:^9.0.0, @testing-library/dom@npm:^9.3.1":
   version: 9.3.1
   resolution: "@testing-library/dom@npm:9.3.1"
@@ -6563,28 +6543,6 @@ __metadata:
     lodash: ^4.17.15
     redent: ^3.0.0
   checksum: 24e09c5779ea44644945ec26f2e4e5f48aecfe57d469decf2317a3253a5db28d865c55ad0ea4818d8d1df7572a6486c45daa06fa09644a833a7dd84563881939
-  languageName: node
-  linkType: hard
-
-"@testing-library/react-hooks@npm:7.0.2, @testing-library/react-hooks@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "@testing-library/react-hooks@npm:7.0.2"
-  dependencies:
-    "@babel/runtime": ^7.12.5
-    "@types/react": ">=16.9.0"
-    "@types/react-dom": ">=16.9.0"
-    "@types/react-test-renderer": ">=16.9.0"
-    react-error-boundary: ^3.1.0
-  peerDependencies:
-    react: ">=16.9.0"
-    react-dom: ">=16.9.0"
-    react-test-renderer: ">=16.9.0"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-test-renderer:
-      optional: true
-  checksum: 249fa57551a1ce63fdfbc7944eeaa2ca4eaae160b6f64b631ceeb150b2d82c1478190471961d04b640e87c6d5417f2e7649600b69068485cd2a20de664716859
   languageName: node
   linkType: hard
 
@@ -7298,7 +7256,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:>=16.9.0, @types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.0.6":
+"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.0.6":
   version: 18.2.6
   resolution: "@types/react-dom@npm:18.2.6"
   dependencies:
@@ -7343,15 +7301,6 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 3b45b86fc1e7ddfa3723aa6a2fb73a34254cd1e1a7ac591874c4bcc400283e9a9b18257a398d103e1cc666c67cffd7394887f4da8db118bc6b7a4e6292b5172a
-  languageName: node
-  linkType: hard
-
-"@types/react-test-renderer@npm:>=16.9.0":
-  version: 17.0.1
-  resolution: "@types/react-test-renderer@npm:17.0.1"
-  dependencies:
-    "@types/react": "*"
-  checksum: 72666dd38a55112088c3f338316d4e4d00c29cc9442c45e7150cd47a1169df14c8bec07500c9b3677b9cf43188cd97c6de093b6e6ff051de92d4f1457c4bc413
   languageName: node
   linkType: hard
 
@@ -9253,7 +9202,7 @@ __metadata:
     js-yaml: ^4.0.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.34
+    playwright: ^1.37
     postcss: ^8.4.5
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -11199,10 +11148,9 @@ __metadata:
     "@tanstack/react-query": ^4.29.1
     "@tanstack/react-query-devtools": ^4.29.1
     "@tanstack/react-query-persist-client": ^4.29.1
-    "@testing-library/dom": ^8.20.1
+    "@testing-library/dom": ^9.3.1
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
-    "@testing-library/react-hooks": 7.0.2
     "@testing-library/user-event": ^14.4.3
     "@types/react": ^18.2.14
     "@types/redux-mock-store": 1.0.3
@@ -11289,7 +11237,7 @@ __metadata:
     moment: ^2.26.0
     moment-timezone: ^0.5.40
     moment-timezone-data-webpack-plugin: ^1.5.1
-    nock: ^12.0.3
+    nock: ^13.3.2
     page: ^1.11.5
     path-browserify: ^1.0.1
     percentage-regex: ^3.0.0
@@ -20705,7 +20653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
+"lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
@@ -22186,15 +22134,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^12.0.3":
-  version: 12.0.3
-  resolution: "nock@npm:12.0.3"
+"nock@npm:^13.3.2":
+  version: 13.3.3
+  resolution: "nock@npm:13.3.3"
   dependencies:
     debug: ^4.1.0
     json-stringify-safe: ^5.0.1
-    lodash: ^4.17.13
+    lodash: ^4.17.21
     propagate: ^2.0.0
-  checksum: a0a76707762daac50a442d82fd96faac9e80fbd48a5a8fc491d405903d6ae5fc755d5ccbd27d2d7997e69ad409699c9e1a172aedf527c94a4278d855a6fe730b
+  checksum: c6e53164d21708533d48f507da25586493b51f869adacc12fd9f2cfd1516a1ed4005b024cc668c6f37f5d68e9749cda16ebc454d3c7c71e6eb26ca1c866997ee
   languageName: node
   linkType: hard
 
@@ -23604,23 +23552,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.34.3":
-  version: 1.34.3
-  resolution: "playwright-core@npm:1.34.3"
+"playwright-core@npm:1.37.0":
+  version: 1.37.0
+  resolution: "playwright-core@npm:1.37.0"
   bin:
     playwright-core: cli.js
-  checksum: 2e3ec8394b69bcd55db3a01a0a2cf63ee4b924bd79852c237d3eb045273f056b5784ab2147f60a7bb2db7998b8f7c5ec34d8554dd7648cc77d5affc9d91a85c8
+  checksum: 1778ba865f1ca5d5022cbaafac3b9cca98ee589171825da81f0408c48b66c7d6ba03ed53ceacb1e79093caa106f57c5e0fbc4bbb42266a4502746e54571bd14b
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.34":
-  version: 1.34.3
-  resolution: "playwright@npm:1.34.3"
+"playwright@npm:^1.37":
+  version: 1.37.0
+  resolution: "playwright@npm:1.37.0"
   dependencies:
-    playwright-core: 1.34.3
+    playwright-core: 1.37.0
   bin:
     playwright: cli.js
-  checksum: e17c0dbfc87f8764d1e34762b27d561d34a1e3dccc5d4e5d08edbf58e582d49e86ecf161f7f21af103a35045ae5a9cf0169204aa9c0a808046116cb2cc9f415c
+  checksum: 78a711fe8e7faff8012bd277a8d8dd73faeb795e266d6ce07d07a9c5f9a2333f823dc70813ec34dbf3d3177c84d9c152287c02c3545b4ee33f47a3e716ef14f8
   languageName: node
   linkType: hard
 
@@ -24935,17 +24883,6 @@ __metadata:
     react: ^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0
     react-dom: ^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0
   checksum: 0d60a0ea758529c32a706d0c69d70b69fb94de3c46442fffdee34f08f51ffceddbb5395b41dfd1565895653e9f60f98ca525835be9d5db1f16d6b22be12f4cd4
-  languageName: node
-  linkType: hard
-
-"react-error-boundary@npm:^3.1.0":
-  version: 3.1.1
-  resolution: "react-error-boundary@npm:3.1.1"
-  dependencies:
-    "@babel/runtime": ^7.12.5
-  peerDependencies:
-    react: ">=16.13.1"
-  checksum: 817a9b542f32ac557e909b8acd84b4b8bc8a94a150ae822f4159f059184c8a03684488e67078bd0c2eddf831ddad9a50492f846cc42e48e4ce219dbd4cfad9e6
   languageName: node
   linkType: hard
 
@@ -27888,7 +27825,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
   peerDependencies:
-    mocha: ^8.4.0
+    mocha: ^10.2.0
     mocha-junit-reporter: ^2.2.1
   languageName: unknown
   linkType: soft
@@ -27899,7 +27836,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
   peerDependencies:
-    mocha: ^5.2.0
+    mocha: ^10.2.0
   languageName: unknown
   linkType: soft
 
@@ -31186,7 +31123,7 @@ __metadata:
     mkdirp: ^1.0.4
     moment: ^2.26.0
     ncp: ^2.0.0
-    nock: ^12.0.3
+    nock: ^13.3.2
     node-fetch: ^2.6.6
     npm-run-all: ^4.1.5
     photon: "workspace:^"
@@ -31258,7 +31195,7 @@ __metadata:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.34
+    playwright: ^1.37
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown
