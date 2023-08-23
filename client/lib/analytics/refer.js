@@ -33,11 +33,10 @@ export function referRecordPageView() {
 /**
  * Determines the appropriate vendor ID based on the URL.
  *
- * @param {URL} parsedUrl - Parsed URL object from urlParseAmpCompatible function.
  * @returns {number} - The appropriate affiliate vendor ID.
  */
-function getVendor( parsedUrl ) {
-	if ( parsedUrl.pathname === '/setup/wooexpress/' ) {
+function getVendor() {
+	if ( window.location.href.includes( 'http://wordpress.com/setup/wooexpress/' ) ) {
 		return WOOEXPRESS_AFFILIATE_VENDOR_ID;
 	}
 	return WPCOM_AFFILIATE_VENDOR_ID;
