@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, chevronDown, chevronRight } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import moment from 'moment';
 import { Fragment, useRef, useState } from 'react';
@@ -32,7 +32,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props
 						aria-expanded={ isExpanded }
 						aria-controls={ expandedId }
 					>
-						<Icon icon={ isExpanded ? chevronDown : chevronRight } />
+						<Icon icon={ isExpanded ? chevronUp : chevronDown } />
 					</Button>
 				</td>
 				{ columns.map( ( column ) => (
