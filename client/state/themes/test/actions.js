@@ -1,6 +1,5 @@
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
-import config from '@automattic/calypso-config';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -197,11 +196,7 @@ describe( 'actions', () => {
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
-				const url =
-					'/rest/v1.2/themes' +
-					( config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-						? '?include_blankcanvas_theme=true'
-						: '?include_blankcanvas_theme=' );
+				const url = '/rest/v1.2/themes?include_blankcanvas_theme=';
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
 					.get( url )
 					.reply( 200, {
@@ -213,8 +208,8 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wpcom' )( spy );
+			test( 'should dispatch fetch action when thunk triggered', async () => {
+				await requestThemes( 'wpcom' )( spy );
 
 				expect( spy ).toBeCalledWith( {
 					type: THEMES_REQUEST,
