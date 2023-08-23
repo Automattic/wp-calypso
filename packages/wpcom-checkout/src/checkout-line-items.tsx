@@ -631,44 +631,6 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		);
 	}
 
-	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
-		if ( isMonthlyProduct( product ) ) {
-			return (
-				<>
-					<DefaultLineItemSublabel product={ product } />:{ ' ' }
-					{ translate( '%(price)s per month', { args: { price } } ) }
-				</>
-			);
-		}
-
-		if ( isYearly( product ) ) {
-			return (
-				<>
-					<DefaultLineItemSublabel product={ product } />:{ ' ' }
-					{ translate( '%(price)s per year', { args: { price } } ) }
-				</>
-			);
-		}
-
-		if ( isBiennially( product ) ) {
-			return (
-				<>
-					<DefaultLineItemSublabel product={ product } />:{ ' ' }
-					{ translate( '%(price)s per two years', { args: { price } } ) }
-				</>
-			);
-		}
-
-		if ( isTriennially( product ) ) {
-			return (
-				<>
-					<DefaultLineItemSublabel product={ product } />:{ ' ' }
-					{ translate( '%(price)s per three years', { args: { price } } ) }
-				</>
-			);
-		}
-	}
-
 	if (
 		isGoogleWorkspaceProductSlug( productSlug ) ||
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
@@ -759,6 +721,44 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				<DefaultLineItemSublabel product={ product } />: { translate( 'billed annually' ) }{ ' ' }
 				{ price }
+			</>
+		);
+	}
+
+	const shouldRenderBasicTermSublabel =
+		isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug );
+	if ( shouldRenderBasicTermSublabel && isMonthlyProduct( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per month', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isYearly( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per year', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isBiennially( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per two years', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isTriennially( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per three years', { args: { price } } ) }
 			</>
 		);
 	}
