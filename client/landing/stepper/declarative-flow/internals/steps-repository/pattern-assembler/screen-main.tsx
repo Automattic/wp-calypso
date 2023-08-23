@@ -5,10 +5,9 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
-import { focus } from '@wordpress/dom';
 import { header, footer, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { CATEGORY_ALL_SLUG, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
@@ -46,7 +45,6 @@ const ScreenMain = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location, params, goTo } = useNavigator();
 	const navigatorOptions = { replace: true };
-	const isInitialLocation = location.isInitial && ! location.isBack;
 	const selectedCategory = params.categorySlug as string;
 	const shouldOpenCategoryList =
 		!! selectedCategory && selectedCategory !== 'header' && selectedCategory !== 'footer';
@@ -75,21 +73,6 @@ const ScreenMain = ( {
 			pattern_category: replaceCategoryAllName( category ),
 		} );
 	};
-
-	useEffect( () => {
-		if ( ! isInitialLocation || ! wrapperRef.current ) {
-			return;
-		}
-
-		const activeElement = wrapperRef.current.ownerDocument.activeElement;
-		if ( wrapperRef.current.contains( activeElement ) ) {
-			return;
-		}
-
-		const firstTabbable = ( focus.tabbable.find( wrapperRef.current ) as HTMLElement[] )[ 0 ];
-		const elementToFocus = firstTabbable ?? wrapperRef.current;
-		elementToFocus.focus();
-	}, [ isInitialLocation ] );
 
 	return (
 		<>
@@ -152,17 +135,11 @@ const ScreenMain = ( {
 					onClick={ handleClick }
 					label="Add your first pattern to get started."
 					variant="primary"
-<<<<<<< HEAD
-				>
-					{ isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
+					text={ isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
 						? translate( 'Pick your style' )
 						: translate( 'Save and continue' ) }
-				</Button>
-=======
-					text={ translate( 'Pick your style' ) }
 					__experimentalIsFocusable
 				/>
->>>>>>> 8beb892848 (Resolve conflicts)
 			</div>
 		</>
 	);
