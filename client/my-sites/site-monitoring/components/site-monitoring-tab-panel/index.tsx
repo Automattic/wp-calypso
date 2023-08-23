@@ -1,7 +1,10 @@
-import { TabPanel } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { updatePageQueryParam } from '../../site-monitoring-filter-params';
+import { useSelector } from 'react-redux';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { SiteMonitoringTab } from '../../site-monitoring-filter-params';
 import './style.scss';
 
@@ -12,29 +15,32 @@ export const tabs = [
 ];
 
 interface SiteMonitoringTabPanelProps {
-	children: React.ComponentProps< typeof TabPanel >[ 'children' ];
 	selectedTab?: SiteMonitoringTab;
 	className?: string;
-	onSelected?: ( tabName: SiteMonitoringTab ) => void;
 }
 
 export const SiteMonitoringTabPanel = ( {
-	children: renderContents,
 	selectedTab = 'metrics',
 	className,
-	onSelected,
 }: SiteMonitoringTabPanelProps ) => {
+	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 	return (
-		<TabPanel
-			initialTabName={ selectedTab }
+		<SectionNav
+			selectedText={ selectedTab }
 			className={ classnames( 'site-monitoring-tab-panel', className ) }
-			tabs={ tabs }
-			onSelect={ ( tabName ) => {
-				updatePageQueryParam( tabName as SiteMonitoringTab );
-				onSelected?.( tabName as SiteMonitoringTab );
-			} }
 		>
-			{ ( tab ) => renderContents( tab ) }
-		</TabPanel>
+			<NavTabs>
+				{ tabs.map( ( { name, title } ) => {
+					return (
+						<NavItem
+							key={ name }
+							path={ `/site-monitoring/${ siteSlug }/${ name }` }
+							selected={ selectedTab === name }
+							children={ title }
+						/>
+					);
+				} ) }
+			</NavTabs>
+		</SectionNav>
 	);
 };
