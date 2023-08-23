@@ -3,6 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
+import transformIcon from './transform.svg';
 import './style.scss';
 
 interface BulkActionsToolbarProps {
@@ -67,7 +68,19 @@ export function BulkActionsToolbar( {
 				showSelectedOption={ false }
 				onSelect={ handleAutoRenewSelect }
 				options={ [
-					{ value: 'button-label', label: __( 'Auto-renew settings', __i18n_text_domain__ ) },
+					{
+						value: 'button-label',
+						label: __( 'Auto-renew settings', __i18n_text_domain__ ),
+						icon: (
+							<img
+								className="domains-table-bulk-actions-toolbar__icon"
+								src={ transformIcon }
+								width={ 18 }
+								height={ 18 }
+								alt=""
+							/>
+						),
+					},
 					{ value: 'enable', label: enableLabel },
 					{ value: 'disable', label: disableLabel },
 				] }
