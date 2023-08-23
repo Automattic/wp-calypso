@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
@@ -37,8 +38,15 @@ const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: s
 		.includes( searchedProduct );
 };
 
-const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: string } } ) => {
+const StatsPurchasePage = ( {
+	query,
+	options,
+}: {
+	query: { redirect_uri: string; from: string };
+	options: { isCommercial: boolean | null };
+} ) => {
 	const translate = useTranslate();
+	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -96,12 +104,19 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 		( ! siteProducts && isRequestingSiteProducts );
 
 	const [ initialStep, initialSiteType ] = useMemo( () => {
+		// if the site is detected as commercial
+		if ( isTypeDetectionEnabled ) {
+			if ( options.isCommercial && ! isCommercialOwned ) {
+				return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
+			}
+		}
+
 		if ( isPWYWOwned && ! isCommercialOwned ) {
 			return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
 		}
 		// if nothing is owned don't specify the type
 		return [ SCREEN_TYPE_SELECTION, null ];
-	}, [ isPWYWOwned, isCommercialOwned ] );
+	}, [ isPWYWOwned, isCommercialOwned, options.isCommercial, isTypeDetectionEnabled ] );
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
@@ -116,7 +131,7 @@ const StatsPurchasePage = ( { query }: { query: { redirect_uri: string; from: st
 			<div className="stats">
 				<QueryProductsList type="jetpack" />
 				{
-					// TODO: style loading state
+					// TODO: if the page is commercial and already has a commercial plan we can either redirect them or display a message
 				 }
 				{ isLoading && (
 					<div className="stats-purchase-page__loader">
