@@ -44,34 +44,29 @@ const ScreenMain = ( {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const { location, params, goTo, goBack } = useNavigator();
-	const navigatorOptions = { replace: ! location.isInitial };
+	const { location, params, goTo } = useNavigator();
+	const navigatorOptions = { replace: true };
 	const isInitialLocation = location.isInitial && ! location.isBack;
 	const selectedCategory = params.categorySlug as string;
 	const shouldOpenCategoryList =
 		!! selectedCategory && selectedCategory !== 'header' && selectedCategory !== 'footer';
-	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
 
 	const handleClick = () => {
-		if ( ! isButtonDisabled ) {
-			goTo( NAVIGATOR_PATHS.STYLES );
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONTINUE_CLICK, {
-				screen_from: 'main',
-				screen_to: 'styles',
-			} );
-		}
+		goTo( NAVIGATOR_PATHS.STYLES_COLORS );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONTINUE_CLICK, {
+			screen_from: 'main',
+			screen_to: 'styles',
+		} );
 	};
 
 	const handleNavigatorItemSelect = ( type: string, category: string ) => {
+		const nextPath =
+			category === selectedCategory || ( shouldOpenCategoryList && category === CATEGORY_ALL_SLUG )
+				? NAVIGATOR_PATHS.MAIN
+				: `/main/${ category }`;
+
+		goTo( nextPath, navigatorOptions );
 		onMainItemSelect( type );
-		if (
-			category === selectedCategory ||
-			( shouldOpenCategoryList && category === CATEGORY_ALL_SLUG )
-		) {
-			goBack();
-		} else {
-			goTo( `/main/${ category }`, navigatorOptions );
-		}
 	};
 
 	const onSelectSectionCategory = ( category: string ) => {
@@ -113,7 +108,7 @@ const ScreenMain = ( {
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
 							onClick={ () => handleNavigatorItemSelect( 'header', 'header' ) }
-							active={ selectedCategory === 'header' }
+							active={ location.path === NAVIGATOR_PATHS.MAIN_HEADER }
 						>
 							{ translate( 'Header' ) }
 						</NavigatorItem>
@@ -142,7 +137,7 @@ const ScreenMain = ( {
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
 							onClick={ () => handleNavigatorItemSelect( 'footer', 'footer' ) }
-							active={ selectedCategory === 'footer' }
+							active={ location.path === NAVIGATOR_PATHS.MAIN_FOOTER }
 						>
 							{ translate( 'Footer' ) }
 						</NavigatorItem>
@@ -153,16 +148,21 @@ const ScreenMain = ( {
 			<div className="screen-container__footer">
 				<Button
 					className="pattern-assembler__button"
-					aria-disabled={ isButtonDisabled }
+					disabled={ ! hasSections && ! hasHeader && ! hasFooter }
 					onClick={ handleClick }
 					label="Add your first pattern to get started."
-					showTooltip={ isButtonDisabled }
 					variant="primary"
+<<<<<<< HEAD
 				>
 					{ isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
 						? translate( 'Pick your style' )
 						: translate( 'Save and continue' ) }
 				</Button>
+=======
+					text={ translate( 'Pick your style' ) }
+					__experimentalIsFocusable
+				/>
+>>>>>>> 8beb892848 (Resolve conflicts)
 			</div>
 		</>
 	);

@@ -1,7 +1,7 @@
-import { Button } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { NavigatorButtonAsItem, NavigatorHeader, NavigatorItemGroup } from '@automattic/onboarding';
+import { NavigatorItem, NavigatorHeader, NavigatorItemGroup } from '@automattic/onboarding';
 import {
+	Button,
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
@@ -16,7 +16,6 @@ interface Props {
 	onMainItemSelect: ( name: string ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
-	selectedMainItem: string | null;
 	hasColor: boolean;
 	hasFont: boolean;
 }
@@ -25,7 +24,6 @@ const ScreenStyles = ( {
 	onMainItemSelect,
 	onContinueClick,
 	recordTracksEvent,
-	selectedMainItem,
 	hasColor,
 	hasFont,
 }: Props ) => {
@@ -33,23 +31,16 @@ const ScreenStyles = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const navigator = useNavigator();
-	const headerDescription = translate(
-		'Create your homepage by first adding patterns and then choosing a color palette and font style.'
-	);
-	const getIsActiveButton = ( name: string ) => {
-		return name === selectedMainItem;
-	};
+	const { location, goTo, goBack } = useNavigator();
 
-	const togglePanel = () => {
-		if ( selectedMainItem ) {
-			// Toggle panel before continue
-			onMainItemSelect( selectedMainItem );
-		}
+	const handleNavigatorItemSelect = ( type: string, path: string ) => {
+		const nextPath = path !== location.path ? path : NAVIGATOR_PATHS.STYLES;
+		goTo( nextPath, { replace: true } );
+		onMainItemSelect( type );
 	};
 
 	const handleBackClick = () => {
-		navigator.goBack();
+		goBack();
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
 			screen_from: 'styles',
 			screen_to: 'main',
@@ -58,7 +49,6 @@ const ScreenStyles = ( {
 
 	const handleContinueClick = () => {
 		if ( ! disabled ) {
-			togglePanel();
 			onContinueClick();
 		}
 	};
@@ -70,13 +60,6 @@ const ScreenStyles = ( {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
 		}
 	};
-
-	useEffect( () => {
-		if ( selectedMainItem !== 'color-palettes' ) {
-			// Open Colors initially
-			setTimeout( () => onMainItemSelect( 'color-palettes' ), 250 );
-		}
-	}, [] );
 
 	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
 	useEffect( () => {
@@ -98,33 +81,37 @@ const ScreenStyles = ( {
 						}
 					/>
 				}
-				description={ headerDescription }
+				description={ translate(
+					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
+				) }
 				onBack={ handleBackClick }
 			/>
 			<div className="screen-container__body" ref={ wrapperRef }>
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Styles' ) }>
 						<>
-							<NavigatorButtonAsItem
+							<NavigatorItem
 								checked={ hasColor }
-								path={ NAVIGATOR_PATHS.STYLES }
 								icon={ color }
 								aria-label={ translate( 'Colors' ) }
-								onClick={ () => onMainItemSelect( 'color-palettes' ) }
-								active={ getIsActiveButton( 'color-palettes' ) }
+								active={ location.path === NAVIGATOR_PATHS.STYLES_COLORS }
+								onClick={ () =>
+									handleNavigatorItemSelect( 'color-palettes', NAVIGATOR_PATHS.STYLES_COLORS )
+								}
 							>
 								{ translate( 'Colors' ) }
-							</NavigatorButtonAsItem>
-							<NavigatorButtonAsItem
+							</NavigatorItem>
+							<NavigatorItem
 								checked={ hasFont }
-								path={ NAVIGATOR_PATHS.STYLES }
 								icon={ typography }
 								aria-label={ translate( 'Fonts' ) }
-								onClick={ () => onMainItemSelect( 'font-pairings' ) }
-								active={ getIsActiveButton( 'font-pairings' ) }
+								active={ location.path === NAVIGATOR_PATHS.STYLES_FONTS }
+								onClick={ () =>
+									handleNavigatorItemSelect( 'font-pairings', NAVIGATOR_PATHS.STYLES_FONTS )
+								}
 							>
 								{ translate( 'Fonts' ) }
-							</NavigatorButtonAsItem>
+							</NavigatorItem>
 						</>
 					</NavigatorItemGroup>
 				</VStack>
@@ -132,8 +119,9 @@ const ScreenStyles = ( {
 			<div className="screen-container__footer">
 				<Button
 					className="pattern-assembler__button"
-					primary
-					aria-disabled={ disabled }
+					variant="primary"
+					disabled={ disabled }
+					__experimentalIsFocusable
 					onMouseDown={ handleMouseDown }
 					onClick={ () => handleContinueClick() }
 				>

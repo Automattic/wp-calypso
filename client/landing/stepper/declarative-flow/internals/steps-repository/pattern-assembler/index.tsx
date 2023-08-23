@@ -72,11 +72,6 @@ const PatternAssembler = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
-<<<<<<< HEAD
-	const [ selectedMainItem, setSelectedMainItem ] = useState< string | null >( 'header' );
-	const [ isPanelOpen, setIsPanelOpen ] = useState( true );
-=======
->>>>>>> a71d601964 (Assembler: Use the navigator path to control the selected category)
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -519,38 +514,19 @@ const PatternAssembler = ( {
 						hasSections={ sections.length > 0 }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
-						hasColor={ !! colorVariation }
-						hasFont={ !! fontVariation }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES }>
+				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES } partialMatch>
 					<ScreenStyles
 						onMainItemSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 						recordTracksEvent={ recordTracksEvent }
-						selectedMainItem={ selectedMainItem }
-						hasColor={ Boolean( colorVariation ) }
-						hasFont={ Boolean( fontVariation ) }
+						hasColor={ !! colorVariation }
+						hasFont={ !! fontVariation }
 					/>
-					{ selectedMainItem === 'color-palettes' && (
-						<ScreenColorPalettes
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedColorPaletteVariation={ colorVariation }
-							onSelect={ onScreenColorsSelect }
-						/>
-					) }
-					{ selectedMainItem === 'font-pairings' && (
-						<ScreenFontPairings
-							siteId={ site?.ID }
-							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ fontVariation }
-							onSelect={ onScreenFontsSelect }
-						/>
-					) }
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
@@ -558,7 +534,7 @@ const PatternAssembler = ( {
 				</NavigatorScreen>
 			</div>
 			<div className="pattern-assembler__sidebar-panel">
-				<NavigatorScreen path={ NAVIGATOR_PATHS.PATTERNS }>
+				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN_PATTERNS }>
 					<ScreenPatternListPanel
 						categories={ categories }
 						selectedHeader={ header }
@@ -566,6 +542,22 @@ const PatternAssembler = ( {
 						selectedFooter={ footer }
 						patternsMapByCategory={ patternsMapByCategory }
 						onSelect={ onSelect }
+					/>
+				</NavigatorScreen>
+				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_COLORS }>
+					<ScreenColorPalettes
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedColorPaletteVariation={ colorVariation }
+						onSelect={ onScreenColorsSelect }
+					/>
+				</NavigatorScreen>
+				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_FONTS }>
+					<ScreenFontPairings
+						siteId={ site?.ID }
+						stylesheet={ stylesheet }
+						selectedFontPairingVariation={ fontVariation }
+						onSelect={ onScreenFontsSelect }
 					/>
 				</NavigatorScreen>
 			</div>
