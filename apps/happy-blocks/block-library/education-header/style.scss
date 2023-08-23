@@ -218,9 +218,17 @@ body.archive {
 
 		&.is-webinars,
 		&.is-courses {
+			@media ( max-width: $breakpoint-mobile ) {
+				margin-top: 23px;
+			}
 			.happy-blocks-global-header-site__title__wrapper {
 				@media ( max-width: $breakpoint-mobile ) {
 					margin-top: 0;
+
+					p {
+						font-size: 1rem;
+						margin-top: 2px;
+					}
 				}
 			}
 		}
