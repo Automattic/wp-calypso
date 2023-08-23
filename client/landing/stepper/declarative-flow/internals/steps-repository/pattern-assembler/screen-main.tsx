@@ -23,7 +23,7 @@ interface Props {
 		selectedPattern: Pattern | null,
 		selectedCategory: string | null
 	) => void;
-	onMainItemSelect: ( { name, isPanel }: { name: string; isPanel?: boolean } ) => void;
+	onMainItemSelect: ( name: string ) => void;
 	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
@@ -61,7 +61,7 @@ const ScreenMain = ( {
 	const headerDescription = translate(
 		'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 	);
-	const isButtonDisabled = ! selectedHeader && ! selectedHeader && ! selectedSections.length;
+	const isButtonDisabled = ! selectedHeader && ! selectedFooter && ! selectedSections.length;
 
 	const handleClick = () => {
 		if ( ! isButtonDisabled ) {
@@ -141,7 +141,7 @@ const ScreenMain = ( {
 	useEffect( () => {
 		if ( selectedMainItem !== 'header' ) {
 			// Open Header initially
-			setTimeout( () => onMainItemSelect( { name: 'header', isPanel: true } ), 250 );
+			setTimeout( () => onMainItemSelect( 'header' ), 250 );
 		}
 	}, [] );
 
@@ -159,7 +159,7 @@ const ScreenMain = ( {
 							checked={ Boolean( selectedHeader ) }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
-							onClick={ () => onMainItemSelect( { name: 'header', isPanel: true } ) }
+							onClick={ () => onMainItemSelect( 'header' ) }
 							active={ getIsActiveButton( 'header' ) }
 						>
 							{ translate( 'Header' ) }
@@ -168,7 +168,7 @@ const ScreenMain = ( {
 							checked={ Boolean( selectedSections.length ) }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
-							onClick={ () => onMainItemSelect( { name: 'section', isPanel: true } ) }
+							onClick={ () => onMainItemSelect( 'section' ) }
 							active={ getIsActiveButton( 'section' ) }
 							hasNestedItems
 						>
@@ -188,7 +188,7 @@ const ScreenMain = ( {
 							checked={ Boolean( selectedFooter ) }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
-							onClick={ () => onMainItemSelect( { name: 'footer', isPanel: true } ) }
+							onClick={ () => onMainItemSelect( 'footer' ) }
 							active={ getIsActiveButton( 'footer' ) }
 						>
 							{ translate( 'Footer' ) }

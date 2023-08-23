@@ -430,15 +430,7 @@ const PatternAssembler = ( {
 		onSubmit();
 	};
 
-	const onMainItemSelect = ( { name, isPanel = false }: { name: string; isPanel?: boolean } ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
-
-		if ( ! isPanel ) {
-			setIsPanelOpen( false );
-			setSelectedMainItem( null );
-			return;
-		}
-
+	const onMainItemSelect = ( name: string ) => {
 		if ( name === selectedMainItem ) {
 			// Toggle panel
 			setIsPanelOpen( false );
@@ -446,8 +438,10 @@ const PatternAssembler = ( {
 			return;
 		}
 
+		// Open panel
 		setIsPanelOpen( true );
 		setSelectedMainItem( name );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 	};
 
 	const onDeleteSection = ( position: number ) => {
