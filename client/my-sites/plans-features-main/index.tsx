@@ -439,22 +439,27 @@ const PlansFeaturesMain = ( {
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 	};
 
-	const planActionOverrides: PlanActionOverrides | undefined =
-		sitePlanSlug && isFreePlan( sitePlanSlug )
-			? {
-					loggedInFreePlan: domainFromHomeUpsellFlow
-						? {
-								callback: showDomainUpsellDialog,
-								text: translate( 'Keep my plan', { context: 'verb' } ),
-						  }
-						: {
-								callback: () => {
-									page.redirect( `/add-ons/${ siteSlug }` );
-								},
-								text: translate( 'Manage add-ons', { context: 'verb' } ),
-						  },
-			  }
-			: undefined;
+	const planActionOverrides: PlanActionOverrides | undefined = {
+		loggedInFreePlan: {
+			status: isPlanUpsellEnabledOnFreeDomain.isLoading ? 'blocked' : 'enabled',
+		},
+	};
+	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
+		planActionOverrides.loggedInFreePlan = {
+			...planActionOverrides.loggedInFreePlan,
+			callback: () => {
+				page.redirect( `/add-ons/${ siteSlug }` );
+			},
+			text: translate( 'Manage add-ons', { context: 'verb' } ),
+		};
+		if ( domainFromHomeUpsellFlow ) {
+			planActionOverrides.loggedInFreePlan = {
+				...planActionOverrides.loggedInFreePlan,
+				callback: showDomainUpsellDialog,
+				text: translate( 'Keep my plan', { context: 'verb' } ),
+			};
+		}
+	}
 
 	/**
 	 * The spotlight in smaller grids looks broken.
@@ -598,7 +603,7 @@ const PlansFeaturesMain = ( {
 				/>
 			) }
 			{ intent === 'plans-paid-media' &&
-				( isCustomDomainAllowedOnFreePlan.isLoading ? (
+				( isPlanUpsellEnabledOnFreeDomain.isLoading ? (
 					<FreePlanSubHeader>
 						{ translate( `Unlock a powerful bundle of features. Or {{loader}}{{/loader}}`, {
 							components: {

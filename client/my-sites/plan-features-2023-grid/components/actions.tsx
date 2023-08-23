@@ -70,6 +70,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck,
 	isLargeCurrency,
 	handleUpgradeButtonClick,
+	busy,
 }: {
 	freePlan: boolean;
 	planTitle: TranslateResult;
@@ -78,6 +79,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	handleUpgradeButtonClick: () => void;
+	busy?: boolean;
 } ) => {
 	const translate = useTranslate();
 	let btnText;
@@ -102,7 +104,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	}
 
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick }>
+		<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
 			{ btnText }
 		</Button>
 	);
@@ -456,6 +458,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
+				busy={ freePlan && planActionOverrides?.loggedInFreePlan?.status === 'blocked' }
 			/>
 		);
 	}
