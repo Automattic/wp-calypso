@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { useSelector, useDispatch } from 'calypso/state';
+import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -30,6 +31,9 @@ const TEAM51_OWNER_ID = 70055110;
  * New notices are based on async API call and hence is faster than the old notices.
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
+	const dispatch = useDispatch();
+
+	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
@@ -75,6 +79,14 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		// Show the notice if the site has not purchased the paid stats product.
 		! hasPaidStats &&
 		hasLoadedPurchases;
+
+	// Clear loaded flag when switching sites on Calypso.
+	useEffect( () => {
+		if ( siteId !== currentSiteId ) {
+			setCurrentSiteId( siteId );
+			dispatch( resetSiteState() );
+		}
+	}, [ siteId, currentSiteId, setCurrentSiteId, dispatch ] );
 
 	return (
 		<>
