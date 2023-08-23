@@ -392,7 +392,12 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					{ ! isValidUrl ? <FormInputValidation isError={ true } text={ errorMessage } /> : ' ' }
 				</p>
 				<FormButton
-					disabled={ ! isValidUrl || isLoading || ! redirectHasChanged() || targetUrl === '' }
+					disabled={
+						! isValidUrl ||
+						isLoading ||
+						( forwarding && ! redirectHasChanged() ) ||
+						targetUrl === ''
+					}
 				>
 					{ translate( 'Save' ) }
 				</FormButton>
