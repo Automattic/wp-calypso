@@ -3,6 +3,9 @@ import { Locator, Page } from 'playwright';
 const selectors = {
 	// Post body
 	postPasswordInput: 'input[name="post_password"]',
+
+	// Published content
+	socialShareSection: '.sharedaddy',
 };
 
 /**
@@ -142,7 +145,11 @@ export class PublishedPostPage {
 	 * @param {string} name Name of the social sharing button.
 	 */
 	async validateSocialButton( name: string, { click }: { click?: boolean } = {} ) {
-		const button = this.anchor.getByRole( 'link', { name: name } );
+		// CSS selector have to be used due to no accessible locator for narrowing
+		// to the social icons.
+		const button = this.anchor
+			.locator( selectors.socialShareSection )
+			.getByRole( 'link', { name: name } );
 
 		await button.waitFor();
 
