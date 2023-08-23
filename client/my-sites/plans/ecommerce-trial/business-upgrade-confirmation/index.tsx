@@ -43,13 +43,13 @@ const BusinessUpgradeConfirmation = () => {
 				/>
 				<div className="trial-upgrade-confirmation__header">
 					<h1 className="trial-upgrade-confirmation__title">
-						{ translate( 'Welcome to Business plan' ) }
+						{ translate( 'Welcome to the Business plan' ) }
 					</h1>
 					<div className="trial-upgrade-confirmation__subtitle">
 						<span className="trial-upgrade-confirmation__subtitle-line">
 							{ currentPlanName &&
 								translate(
-									"Your purchase is complete and you're now on the {{strong}}%(planName)s plan{{/strong}}. Now it's time to take your website to the next level. What would you like to do next?",
+									"Your purchase is complete, and you're now on the {{strong}}%(planName)s plan{{/strong}}. It's time to take your website to the next level. What would you like to do next?",
 									{
 										args: { planName: currentPlanName },
 										components: { strong: <strong /> },
