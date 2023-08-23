@@ -9,8 +9,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
 import page from 'page';
-import { FunctionComponent, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useState, useEffect } from 'react';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
@@ -20,58 +19,80 @@ import PromoSection, { Props as PromoSectionProps } from 'calypso/components/pro
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
+import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
-import { IAppState } from 'calypso/state/types';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import CommissionFees from './components/commission-fees';
 import type { Image } from 'calypso/components/promo-section/promo-card/index';
-import type { SiteSlug } from 'calypso/types';
+
 import './style.scss';
 
-interface ConnectedProps {
-	siteId: number;
-	selectedSiteSlug: SiteSlug | null;
-	isNonAtomicJetpack: boolean;
-	isLoading: boolean;
-	hasSimplePayments: boolean;
-	hasWordAdsFeature: boolean;
-	hasConnectedAccount: boolean | null;
-	hasSetupAds: boolean;
-	eligibleForProPlan?: boolean;
-	trackUpgrade: ( plan: string, feature: string ) => void;
-	trackLearnLink: ( feature: string ) => void;
-	trackCtaButton: ( feature: string ) => void;
-	isUserAdmin?: boolean;
-	commission: number | null;
-}
-
-const Home: FunctionComponent< ConnectedProps > = ( {
-	commission,
-	siteId,
-	selectedSiteSlug,
-	isNonAtomicJetpack,
-	isUserAdmin,
-	isLoading,
-	hasSimplePayments,
-	hasConnectedAccount,
-	hasSetupAds,
-	eligibleForProPlan,
-	trackUpgrade,
-	trackLearnLink,
-	trackCtaButton,
-	hasWordAdsFeature,
-} ) => {
+const Home = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const { commission } = useSelector( ( state ) =>
+		getEarningsWithDefaultsForSiteId( state, site?.ID )
+	);
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ?? 0 ) );
+	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const isSiteTransfer = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
+	const isUserAdmin = useSelector( ( state ) =>
+		canCurrentUser( state, site?.ID, 'manage_options' )
+	);
+	const connectedAccountId = useSelector( ( state ) =>
+		getConnectedAccountIdForSiteId( state, site?.ID )
+	);
+	const hasSimplePayments = useSelector( ( state ) =>
+		siteHasFeature( state, site?.ID ?? null, FEATURE_SIMPLE_PAYMENTS )
+	);
+	const eligibleForProPlan = useSelector( ( state ) => isEligibleForProPlan( state, site?.ID ) );
+	const isRequestingWordAds = useSelector( ( state ) =>
+		isRequestingWordAdsApprovalForSite( state, site )
+	);
+
+	const hasConnectedAccount = Boolean( connectedAccountId );
+	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
+	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
+	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
+
+	function trackUpgrade( plan: string, feature: string ) {
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_earn_page_upgrade_button_click', { plan, feature } ),
+				bumpStat( 'calypso_earn_page', 'upgrade-button-' + feature )
+			)
+		);
+	}
+
+	function trackLearnLink( feature: string ) {
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_earn_page_learn_link_click', { feature } ),
+				bumpStat( 'calypso_earn_page', 'learn-link-' + feature )
+			)
+		);
+	}
+
+	function trackCtaButton( feature: string ) {
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
+				bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
+			)
+		);
+	}
 
 	useEffect( () => {
 		if ( peerReferralLink ) {
@@ -135,7 +156,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
 						page(
-							addQueryArgs( `/plans/${ selectedSiteSlug }`, {
+							addQueryArgs( `/plans/${ site?.slug }`, {
 								feature: FEATURE_SIMPLE_PAYMENTS,
 								plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
 							} )
@@ -179,7 +200,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			text: ctaTitle,
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
-				page( `/earn/payments/${ selectedSiteSlug }` );
+				page( `/earn/payments/${ site?.slug }` );
 			},
 		};
 		const title = translate( 'Collect payments' );
@@ -198,11 +219,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		const learnMoreLink = ! hasConnectedAccount
 			? {
-					url: 'https://wordpress.com/payments-donations/',
+					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
 					onClick: () => trackLearnLink( 'recurring-payments' ),
 			  }
 			: {
-					url: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block',
+					url: localizeUrl(
+						'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block'
+					),
 					onClick: () => trackLearnLink( 'recurring-payments' ),
 					label: translate( 'Support documentation' ),
 			  };
@@ -230,7 +253,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			text: ctaTitle,
 			action: () => {
 				trackCtaButton( 'donations' );
-				page( `/earn/payments/${ selectedSiteSlug }` );
+				page( `/earn/payments/${ site?.slug }` );
 			},
 		};
 		const title = translate( 'Accept donations and tips' );
@@ -286,7 +309,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			text: ctaTitle,
 			action: () => {
 				trackCtaButton( 'premium-content' );
-				page( `/earn/payments/${ selectedSiteSlug }` );
+				page( `/earn/payments/${ site?.slug }` );
 			},
 		};
 		const title = translate( 'Profit from subscriber-only content' );
@@ -298,7 +321,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		);
 		const body = <>{ hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText }</>;
 		const learnMoreLink = {
-			url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
+			url: localizeUrl(
+				'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
+			),
 			onClick: () => trackLearnLink( 'premium-content' ),
 			label: hasConnectedAccount ? translate( 'Support documentation' ) : null,
 		};
@@ -413,9 +438,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
-							page(
-								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
-							);
+							page( `/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }` );
 						},
 				  }
 				: {
@@ -423,7 +446,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );
 							page(
-								`/plans/${ selectedSiteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`
+								`/plans/${ site?.slug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`
 							);
 						},
 				  };
@@ -471,7 +494,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						components: {
 							a: (
 								<a
-									href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
+									href={ localizeUrl(
+										'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/'
+									) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -485,7 +510,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					className="earn__notes"
 					commission={ commission }
 					iconSize={ 14 }
-					siteSlug={ selectedSiteSlug }
+					siteSlug={ site?.slug }
 				/>
 			</>
 		),
@@ -519,8 +544,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	return (
 		<>
-			<QueryMembershipsEarnings siteId={ siteId } />
-			<QueryMembershipsSettings siteId={ siteId } />
+			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
+			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection
@@ -534,58 +559,4 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect(
-	( state: IAppState ) => {
-		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
-		const siteId = getSelectedSiteId( state ) ?? 0;
-		const selectedSiteSlug = getSelectedSiteSlug( state );
-		const site = getSiteBySlug( state, selectedSiteSlug );
-		const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
-
-		const hasConnectedAccount =
-			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
-		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const hasWordAdsFeature = siteHasWordAds( state, siteId );
-		const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
-		const isJetpack = isJetpackSite( state, siteId );
-
-		return {
-			commission: earnings.commission,
-			siteId,
-			selectedSiteSlug,
-			isNonAtomicJetpack: Boolean( isJetpack && ! isSiteAutomatedTransfer( state, siteId ) ),
-			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-			hasWordAdsFeature,
-			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
-			hasConnectedAccount,
-			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
-			isLoading,
-			hasSetupAds: Boolean(
-				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
-			),
-		};
-	},
-	( dispatch ) => ( {
-		trackUpgrade: ( plan: string, feature: string ) =>
-			dispatch(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_upgrade_button_click', { plan, feature } ),
-					bumpStat( 'calypso_earn_page', 'upgrade-button-' + feature )
-				)
-			),
-		trackLearnLink: ( feature: string ) =>
-			dispatch(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_learn_link_click', { feature } ),
-					bumpStat( 'calypso_earn_page', 'learn-link-' + feature )
-				)
-			),
-		trackCtaButton: ( feature: string ) =>
-			dispatch(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
-					bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
-				)
-			),
-	} )
-)( Home );
+export default Home;
