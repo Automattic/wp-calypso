@@ -35,29 +35,34 @@ export function useSiteMigrateInfo(
 		);
 	};
 
-	const onMigrationEnabledSuccess = ( data: MigrationEnabledResponse ) => {
-		const canMigrate = checkCanSiteMigrate( data );
-		if ( canMigrate ) {
-			setSiteCanMigrate( true );
-			setSourceSiteId( data.source_blog_id );
-		} else {
-			resetMigrationEnabled();
-		}
-		onfetchCallback && onfetchCallback( canMigrate );
-	};
+	const {
+		refetch,
+		isFetching: isMigrationEnabledFetching,
+		isError,
+		isSuccess,
+		data,
+	} = useMigrationEnabledInfoQuery( targetSiteId, sourceSiteSlug, fetchMigrationEnabledOnMount );
 
-	const onMigrationEnabledError = () => {
-		resetMigrationEnabled();
-		const canMigrate = false;
-		onfetchCallback && onfetchCallback( canMigrate );
-	};
-	const { refetch, isFetching: isMigrationEnabledFetching } = useMigrationEnabledInfoQuery(
-		targetSiteId,
-		sourceSiteSlug,
-		fetchMigrationEnabledOnMount,
-		onMigrationEnabledSuccess,
-		onMigrationEnabledError
-	);
+	useEffect( () => {
+		if ( isSuccess && data ) {
+			const canMigrate = checkCanSiteMigrate( data );
+			if ( canMigrate ) {
+				setSiteCanMigrate( true );
+				setSourceSiteId( data.source_blog_id );
+			} else {
+				resetMigrationEnabled();
+			}
+			onfetchCallback?.( canMigrate );
+		}
+	}, [ data, isSuccess, onfetchCallback ] );
+
+	useEffect( () => {
+		if ( isError ) {
+			resetMigrationEnabled();
+			const canMigrate = false;
+			onfetchCallback && onfetchCallback( canMigrate );
+		}
+	}, [ isError, onfetchCallback ] );
 
 	useEffect( () => {
 		// If has source site id and we do not have the source site, it means the data is not up to date, so we request the site
