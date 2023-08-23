@@ -77,6 +77,7 @@ class AllDomains extends Component {
 		currentPage: 1,
 		domainsPerPage: 5,
 		searchTerm: '',
+		sortedDomains: [],
 	};
 
 	componentDidMount() {
@@ -85,6 +86,7 @@ class AllDomains extends Component {
 		if ( ! isNaN( currentPageParsed ) ) {
 			this.setCurrentPage( currentPageParsed );
 		}
+		this.setSortedDomains( this.getDomainsList() );
 	}
 
 	componentDidUpdate() {
@@ -295,7 +297,6 @@ class AllDomains extends Component {
 			hasLoadedUserPurchases,
 			isContactEmailEditContext,
 			translate,
-			dispatch,
 			domainsDetails,
 		} = this.props;
 
@@ -320,7 +321,53 @@ class AllDomains extends Component {
 			);
 		}
 
-		const domainsTableColumns = [
+		const domainsTableColumns = this.getDomainsTableColumns( domains );
+
+		if ( isContactEmailEditContext ) {
+			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
+				( [ , selected ] ) => selected
+			);
+			domainsTableColumns.unshift( {
+				name: 'select-domain',
+				label: (
+					<FormCheckbox
+						onChange={ this.handleSelectAllDomains }
+						checked={ areAllCheckboxesChecked }
+						disabled={ this.state.isSavingContactInfo }
+					/>
+				),
+			} );
+		}
+
+		return (
+			<div className="all-domains__domains-table">
+				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+				<DomainsTable
+					currentRoute={ currentRoute }
+					domains={ currentPageDomains }
+					handleDomainItemToggle={ this.handleDomainItemToggle }
+					domainsTableColumns={ domainsTableColumns }
+					isManagingAllSites={ true }
+					isContactEmailEditContext={ isContactEmailEditContext }
+					goToEditDomainRoot={ this.handleDomainItemClick }
+					isLoading={ this.isLoading() }
+					purchases={ purchases }
+					sites={ sites }
+					requestingSiteDomains={ requestingSiteDomains }
+					hasLoadedPurchases={ hasLoadedUserPurchases }
+					isSavingContactInfo={ isSavingContactInfo }
+					domainsDetails={ domainsDetails }
+					onSortingChange={ ( sortKey, sortOrder ) => {
+						this.setSortedDomains( sortKey, sortOrder, this.getDomainsList() );
+					} }
+				/>
+			</div>
+		);
+	}
+
+	getDomainsTableColumns( domains ) {
+		const { translate, dispatch } = this.props;
+		return [
 			{
 				name: 'domain',
 				label: translate( 'Domain' ),
@@ -411,44 +458,31 @@ class AllDomains extends Component {
 			},
 			{ name: 'action', label: translate( 'Actions' ) },
 		];
+	}
 
-		if ( isContactEmailEditContext ) {
-			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
-				( [ , selected ] ) => selected
-			);
-			domainsTableColumns.unshift( {
-				name: 'select-domain',
-				label: (
-					<FormCheckbox
-						onChange={ this.handleSelectAllDomains }
-						checked={ areAllCheckboxesChecked }
-						disabled={ this.state.isSavingContactInfo }
-					/>
-				),
-			} );
+	setSortedDomains( sortKey, sortOrder, domains ) {
+		if ( ! sortKey || ! sortOrder ) {
+			return domains;
 		}
 
-		return (
-			<div className="all-domains__domains-table">
-				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
-				<DomainsTable
-					currentRoute={ currentRoute }
-					domains={ currentPageDomains }
-					handleDomainItemToggle={ this.handleDomainItemToggle }
-					domainsTableColumns={ domainsTableColumns }
-					isManagingAllSites={ true }
-					isContactEmailEditContext={ isContactEmailEditContext }
-					goToEditDomainRoot={ this.handleDomainItemClick }
-					isLoading={ this.isLoading() }
-					purchases={ purchases }
-					sites={ sites }
-					requestingSiteDomains={ requestingSiteDomains }
-					hasLoadedPurchases={ hasLoadedUserPurchases }
-					isSavingContactInfo={ isSavingContactInfo }
-					domainsDetails={ domainsDetails }
-				/>
-			</div>
+		const domainsTableColumns = this.getDomainsTableColumns( domains );
+
+		const selectedColumnDefinition = domainsTableColumns.find(
+			( column ) => column.name === sortKey
 		);
+
+		return this.setState( {
+			sortedDomains: domains.sort( ( first, second ) => {
+				let result = 0;
+				for ( const sortFunction of selectedColumnDefinition.sortFunctions ) {
+					result = sortFunction( first, second, sortOrder );
+					if ( 0 !== result ) {
+						break;
+					}
+				}
+				return result;
+			} ),
+		} );
 	}
 
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
@@ -592,10 +626,13 @@ class AllDomains extends Component {
 	}
 
 	filteredDomains() {
+		const { sortedDomains } = this.state;
 		const { filteredDomainsList, domainsList, isContactEmailEditContext } = this.props;
 		if ( ! domainsList ) {
 			return [];
 		}
+
+		const domains = sortedDomains && sortedDomains.length ? sortedDomains : domainsList;
 
 		if ( isContactEmailEditContext ) {
 			return filteredDomainsList;
@@ -604,7 +641,7 @@ class AllDomains extends Component {
 		const { searchTerm } = this.state;
 
 		// filter on sites we can manage, that aren't `wpcom` type
-		return domainsList.filter( ( domain ) => {
+		return domains.filter( ( domain ) => {
 			const isTypeValid = domain.type !== domainTypes.WPCOM;
 
 			if ( searchTerm ) {

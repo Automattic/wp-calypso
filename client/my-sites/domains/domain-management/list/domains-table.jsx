@@ -27,6 +27,7 @@ class DomainsTable extends PureComponent {
 		shouldUpgradeToMakeDomainPrimary: PropTypes.func,
 		sites: PropTypes.object,
 		translate: PropTypes.func,
+		onSortingChange: PropTypes.func,
 	};
 
 	renderedQuerySiteDomains = {};
@@ -75,8 +76,13 @@ class DomainsTable extends PureComponent {
 				sortKey: selectedColumn,
 				sortOrder: newSortOrder,
 			};
-		} );
+		}, this.updateSorting );
 	};
+
+	updateSorting() {
+		const { sortKey, sortOrder } = this.state;
+		this.props.onSortingChange( sortKey, sortOrder );
+	}
 
 	renderQuerySitePurchasesOnce( blogId ) {
 		if ( this.renderedQuerySitePurchases[ blogId ] ) {
