@@ -40,7 +40,8 @@ export class AIAssistantFlow implements BlockFlow {
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
 	 *
-	 * @param {EditorContext} context The current context for the editor at the point of test execution
+	 * @param {EditorContext} context The current context for the editor at the point of
+	 * test execution.
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		const editorCanvas = await context.editorPage.getEditorCanvas();
@@ -90,6 +91,7 @@ export class AIAssistantFlow implements BlockFlow {
 		const changeToneButton = anchor.getByRole( 'button', { name: 'Change tone' } );
 		await changeToneButton.waitFor();
 		await changeToneButton.click();
+
 		await editorCanvas
 			.getByRole( 'menu', { name: 'Change tone' } )
 			.getByRole( 'menuitem', { name: this.configurationData.tone } )
@@ -110,6 +112,7 @@ export class AIAssistantFlow implements BlockFlow {
 		const improveButton = anchor.getByRole( 'button', { name: 'Improve' } );
 		await improveButton.waitFor();
 		await improveButton.click();
+
 		await editorCanvas
 			.getByRole( 'menu', { name: 'Improve' } )
 			.getByRole( 'menuitem', { name: this.configurationData.improve } )
@@ -142,15 +145,21 @@ export class AIAssistantFlow implements BlockFlow {
 	 * @param {Locator} anchor The root locator of the block.
 	 */
 	private async waitForQuery( anchor: Locator ) {
-		await anchor
-			.getByRole( 'button', { name: 'Stop request' } )
-			.waitFor( { state: 'detached', timeout: 15 * 1000 } );
+		await Promise.all( [
+			anchor
+				.getByRole( 'button', { name: 'Stop request' } )
+				.waitFor( { state: 'detached', timeout: 15 * 1000 } ),
+			anchor
+				.getByRole( 'textbox', { name: 'Ask Jetpack AI', disabled: true } )
+				.waitFor( { state: 'detached', timeout: 15 * 1000 } ),
+		] );
 	}
 
 	/**
 	 * Validate the block in the published post
 	 *
-	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
+	 * @param {PublishedPostContext} context The current context for the published post at
+	 * the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		await context.page.getByRole( 'main' ).getByText( this.generatedText ).waitFor();
