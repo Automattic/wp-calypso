@@ -27,6 +27,7 @@ import jetpackStatsIcon from '../icons/jetpack-stats';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
+import useAddOnCost from './use-add-on-cost';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 
@@ -36,11 +37,13 @@ export interface AddOnMeta {
 	icon: JSX.Element;
 	featured?: boolean; // irrelevant to "featureSlugs"
 	name: string | null;
-	quantity?: number;
+	quantity?: number; // used for determining checkout costs for quantity based products
 	description: string | null;
 	displayCost: TranslateResult | null;
 	purchased?: boolean;
 	isLoading?: boolean;
+	// TODO: Complete type description
+	costData?: { formattedMonthlyCost: number };
 }
 
 // some memoization. executes far too many times
@@ -77,10 +80,12 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 50 ),
 			icon: spaceUpgradeIcon,
 			quantity: 50,
 			name: translate( '50 GB Storage' ),
 			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+			costData: useAddOnCost( PRODUCT_1GB_SPACE, 50 ),
 			description: translate(
 				'Make more space for high-quality photos, videos, and other media. '
 			),
@@ -89,10 +94,12 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 100 ),
 			icon: spaceUpgradeIcon,
 			quantity: 100,
 			name: translate( '100 GB Storage' ),
 			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+			costData: useAddOnCost( PRODUCT_1GB_SPACE, 100 ),
 			description: translate(
 				'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
 			),
