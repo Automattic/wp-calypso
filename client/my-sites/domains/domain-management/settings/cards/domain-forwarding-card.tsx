@@ -149,6 +149,9 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const handleDelete = () => {
+		setTargetUrl( '' );
+		setIsValidUrl( true );
+
 		if ( isLoading || ! forwarding ) {
 			return;
 		}
@@ -388,9 +391,11 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						</FormSettingExplanation>
 					</Accordion>
 				</FormFieldset>
-				<p className="domain-forwarding-card__error-field">
-					{ ! isValidUrl ? <FormInputValidation isError={ true } text={ errorMessage } /> : ' ' }
-				</p>
+				{ ! isValidUrl && (
+					<div className="domain-forwarding-card__error-field">
+						<FormInputValidation isError={ true } text={ errorMessage } />
+					</div>
+				) }
 				<FormButton
 					disabled={
 						! isValidUrl ||
