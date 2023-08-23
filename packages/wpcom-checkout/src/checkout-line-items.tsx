@@ -620,18 +620,18 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		);
 	}
 
-	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
-		if ( isTieredVolumeSpaceAddon( product ) ) {
-			const spaceQuantity = product?.quantity ?? 1;
-			return (
-				<>
-					{ translate( '%(quantity)s GB extra space, %(price)s per year', {
-						args: { quantity: spaceQuantity, price },
-					} ) }
-				</>
-			);
-		}
+	if ( isTieredVolumeSpaceAddon( product ) ) {
+		const spaceQuantity = product?.quantity ?? 1;
+		return (
+			<>
+				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
+					args: { quantity: spaceQuantity, price },
+				} ) }
+			</>
+		);
+	}
 
+	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isMonthlyProduct( product ) ) {
 			return (
 				<>
