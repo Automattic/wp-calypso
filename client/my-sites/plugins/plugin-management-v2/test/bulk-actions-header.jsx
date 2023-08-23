@@ -35,7 +35,7 @@ describe( 'BulkActionsHeader', () => {
 	it( 'shows a button labeled "Edit All" when loaded', () => {
 		render( <BulkActionsHeader /> );
 
-		expect( screen.queryByText( 'Edit All', { role: 'button' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Edit All', { role: 'button' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'calls `onClickEditAll` when the "Edit All" button is clicked', async () => {
@@ -57,6 +57,6 @@ describe( 'BulkActionsHeader', () => {
 
 	it( 'shows <UpdatePlugins /> when `showUpdatePlugins` is true', () => {
 		render( <BulkActionsHeader showUpdatePlugins /> );
-		expect( screen.queryByText( UPDATE_PLUGINS_ELEMENT_TEXT ) ).toBeInTheDocument();
+		expect( screen.getByText( UPDATE_PLUGINS_ELEMENT_TEXT ) ).toBeInTheDocument();
 	} );
 } );
