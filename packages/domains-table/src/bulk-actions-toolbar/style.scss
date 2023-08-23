@@ -2,3 +2,16 @@
 	display: flex;
 	flex-direction: row;
 }
+
+// Undo some dropdown styling that causes the items within the dropdown to be truncated with ellipsis.
+.domains-table-bulk-actions-toolbar__select {
+	.select-dropdown__item {
+		padding-right: 16px;
+	}
+	.select-dropdown__item::before {
+		content: "";
+	}
+	.select-dropdown__item-text {
+		position: static;
+	}
+}

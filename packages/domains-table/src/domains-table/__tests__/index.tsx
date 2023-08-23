@@ -309,9 +309,9 @@ test( 'bulk actions controls appear when a domain is selected', async () => {
 
 	fireEvent.click( getDomainCheckbox( 'example1.com' ) );
 
-	expect( screen.getByRole( 'button', { name: 'Enable auto-renew' } ) ).toBeInTheDocument();
+	expect( screen.getByRole( 'button', { name: 'Auto-renew settings' } ) ).toBeInTheDocument();
 
 	fireEvent.click( getDomainCheckbox( 'example1.com' ) );
 
-	expect( screen.queryByRole( 'button', { name: 'Enable auto-renew' } ) ).not.toBeInTheDocument();
+	expect( screen.queryByRole( 'button', { name: 'Auto-renew settings' } ) ).not.toBeInTheDocument();
 } );

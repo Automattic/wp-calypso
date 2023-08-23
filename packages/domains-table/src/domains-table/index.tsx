@@ -181,7 +181,12 @@ export function DomainsTable( {
 
 	return (
 		<div className="domains-table">
-			{ hasSelectedDomains && <BulkActionsToolbar onAutoRenew={ handlAutoRenew } /> }
+			{ hasSelectedDomains && (
+				<BulkActionsToolbar
+					onAutoRenew={ handlAutoRenew }
+					selectedDomainCount={ selectedDomains.size }
+				/>
+			) }
 			<table>
 				<DomainsTableHeader
 					columns={ domainsTableColumns }
