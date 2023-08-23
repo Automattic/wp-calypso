@@ -1,4 +1,7 @@
-import { renderHook } from '@testing-library/react-hooks';
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from '@testing-library/react';
 import { PluginActions } from '../types';
 import useGetDialogText from '../use-get-dialog-text';
 import type { Site, Plugin } from '../types';
