@@ -6,13 +6,19 @@
 	padding-top: 11px;
 	cursor: default;
 
-	.comments__toggle-expand {
+	.comments__toggle-expand,
+	.comments__open-post {
 		cursor: pointer;
+		&:hover {
+			color: var(--color-link);
+		}
+	}
+
+	.comments__toggle-expand {
 		margin-left: 42px;
 	}
 
 	.comments__open-post {
-		cursor: pointer;
 		margin-left: 5px;
 	}
 
