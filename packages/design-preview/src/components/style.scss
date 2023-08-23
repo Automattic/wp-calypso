@@ -40,6 +40,7 @@ $design-preview-sidebar-width: 311px;
 		border: 10px solid var(--color-print);
 		border-radius: 40px; /* stylelint-disable-line scales/radii */
 		margin-bottom: 70px;
+		margin-top: 60px;
 
 		@include break-large {
 			margin-bottom: 0;
