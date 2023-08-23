@@ -8,7 +8,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -18,19 +18,17 @@ import './style.scss';
 
 const ReferAFriendSection = () => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
 
-	const trackCtaButton = ( feature: string ) =>
-		dispatch(
-			composeAnalytics(
-				recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
-				bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
-			)
+	const trackCtaButton = ( feature: string ) => {
+		composeAnalytics(
+			recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
+			bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
 		);
+	};
 
 	useEffect( () => {
 		if ( peerReferralLink ) {
