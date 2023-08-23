@@ -2,8 +2,10 @@ import config from '@automattic/calypso-config';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -46,6 +48,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 
 	// TODO: Display error messages on the notice.
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
+	const hasLoadedSitePurchasesOnWPCom = useSelector( ( state ) =>
+		hasLoadedSitePurchasesFromServer( state )
+	);
 
 	const { data: isDoYouLoveJetpackStatsVisible } = useNoticeVisibilityQuery(
 		siteId,
@@ -71,10 +76,12 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 			showUpgradeNoticeForWpcomSites ) &&
 		// Show the notice if the site has not purchased the paid stats product.
 		! hasPaidStats &&
-		hasLoadedPurchases;
+		hasLoadedPurchases &&
+		hasLoadedSitePurchasesOnWPCom;
 
 	return (
 		<>
+			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
 			{ showDoYouLoveJetpackStatsNotice && (
 				<DoYouLoveJetpackStatsNotice siteId={ siteId } hasFreeStats={ hasFreeStats } />
 			) }
