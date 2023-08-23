@@ -25,6 +25,8 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import './upgrade-modal.scss';
+import { useSelector } from 'calypso/state';
+import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
 
 interface UpgradeModalProps {
 	/* Theme slug */
@@ -48,6 +50,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	// Check current theme: Does it have a plugin bundled?
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
 	const showBundleVersion = theme_software_set;
+	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
 
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
@@ -133,6 +136,37 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 		};
 	};
 
+	const getExternallyManagedPurchaseModalData = (): UpgradeModalContent => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		return {
+			header: (
+				<>
+					<img src={ wooCommerceImage } alt="WooCommerce" className="upgrade-modal__woo-logo" />
+					<h1 className="upgrade-modal__heading bundle">{ translate( 'Upgrade to Buy' ) }</h1>
+				</>
+			),
+			text: (
+				<p>
+					{ translate(
+						'This partner theme is only available to buy on the Business or eCommerce plans.'
+					) }
+				</p>
+			),
+			price: null,
+			action: (
+				<div className="upgrade-modal__actions bundle">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+						{ translate( 'Continue' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
+
 	const getStandardPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
@@ -162,6 +196,14 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 		] );
 	};
 
+	const getExternallyManagedFeatureList = () => {
+		return getPlanFeaturesObject( [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_PREMIUM_THEMES_V2,
+			FEATURE_LIVE_CHAT_SUPPORT,
+		] );
+	};
+
 	let modalData = null;
 	let featureList = null;
 	let featureListHeader = null;
@@ -169,6 +211,13 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	if ( showBundleVersion ) {
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
+		featureListHeader =
+			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
+				? translate( 'Included with your Business plan' )
+				: translate( 'Included with your purchase' );
+	} else if ( isExternallyManaged ) {
+		modalData = getExternallyManagedPurchaseModalData();
+		featureList = getExternallyManagedFeatureList();
 		featureListHeader =
 			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
 				? translate( 'Included with your Business plan' )
