@@ -4,7 +4,7 @@ jest.mock( 'i18n-calypso', () => ( {
 jest.mock( '../bulk-actions-header', () => jest.fn() );
 jest.mock( '../plugins-list', () => jest.fn() );
 
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import { useEmptyMessage } from '..';
 
