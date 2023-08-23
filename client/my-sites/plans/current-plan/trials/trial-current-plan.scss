@@ -57,11 +57,15 @@ body.is-section-plans.is-business-trial-plan {
 
 		@media (min-width: $break-large) {
 			flex-direction: column;
-			width: calc(25% - 24px);
+			width: calc(50% - 24px);
 			margin-right: 12px;
 			margin-left: 12px;
 			margin-bottom: 24px;
 			padding: 48px 24px 24px;
+		}
+
+		@media (min-width: $break-wide) {
+			width: calc(25% - 24px);
 		}
 
 		.feature-included-card__content {
