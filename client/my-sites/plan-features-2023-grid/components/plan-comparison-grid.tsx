@@ -412,7 +412,7 @@ const PlanComparisonGridHeaderCell = ( {
 						className="plan-comparison-grid__title-select"
 						value={ planSlug }
 					>
-						{ displayedGridPlans.map( ( { planSlug: otherPlan, planConstantObj } ) => {
+						{ displayedGridPlans.map( ( { planSlug: otherPlan, planTitle } ) => {
 							const isVisiblePlan = visibleGridPlans.find(
 								( { planSlug } ) => planSlug === otherPlan
 							);
@@ -423,14 +423,14 @@ const PlanComparisonGridHeaderCell = ( {
 
 							return (
 								<option key={ otherPlan } value={ otherPlan }>
-									{ planConstantObj.getTitle() }
+									{ planTitle }
 								</option>
 							);
 						} ) }
 					</select>
 				) }
 				<h4 className="plan-comparison-grid__title">
-					<span>{ gridPlan.planConstantObj.getTitle() }</span>
+					<span>{ gridPlan.planTitle }</span>
 					{ showPlanSelect && <DropdownIcon /> }
 				</h4>
 			</PlanSelector>
@@ -442,23 +442,18 @@ const PlanComparisonGridHeaderCell = ( {
 				siteId={ siteId }
 			/>
 			<div className="plan-comparison-grid__billing-info">
-				<PlanFeatures2023GridBillingTimeframe
-					planSlug={ planSlug }
-					billingTimeframe={ gridPlan.planConstantObj.getBillingTimeFrame() }
-				/>
+				<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
 				manageHref={ manageHref }
 				canUserPurchasePlan={ canUserPurchasePlan }
-				current={ gridPlan.current ?? false }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
 				isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
-				planTitle={ gridPlan.planConstantObj.getTitle() }
 				planSlug={ planSlug }
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }
