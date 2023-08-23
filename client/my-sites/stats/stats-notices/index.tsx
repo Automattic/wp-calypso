@@ -32,7 +32,6 @@ type StatsNoticeType = {
 	noticeId: keyof Notices;
 	isVisibleFunc: ( options: StatsNoticeProps ) => boolean;
 	disabled: boolean;
-	caculatedIsVisible: boolean | null;
 };
 
 /** Sorted by priority */
@@ -72,7 +71,6 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			);
 		},
 		disabled: false,
-		caculatedIsVisible: null,
 	},
 ];
 
