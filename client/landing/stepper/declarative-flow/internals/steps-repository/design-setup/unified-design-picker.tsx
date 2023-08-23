@@ -724,6 +724,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						shouldLimitGlobalStyles
 					}
 					title={ headerDesignTitle }
+					selectedDesignTitle={ designTitle }
 					description={ selectedDesign.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []

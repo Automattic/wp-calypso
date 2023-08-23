@@ -19,6 +19,7 @@ interface DesignPreviewProps {
 	pricingBadge?: React.ReactNode;
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
+	selectedDesignTitle: string;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
@@ -68,6 +69,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	selectedFontVariation,
 	onSelectFontVariation,
 	onGlobalStylesChange,
+	selectedDesignTitle,
 	limitGlobalStyles,
 	globalStylesInPersonalPlan,
 	onScreenSelect,
@@ -138,8 +140,8 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
 				animated={ ! isDesktop && screens.length > 0 }
-				description={ description }
 				screenshot={ screenshot }
+				title={ selectedDesignTitle }
 				isExternallyManaged={ isExternallyManaged }
 				recordDeviceClick={ recordDeviceClick }
 			/>

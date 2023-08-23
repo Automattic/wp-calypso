@@ -1,5 +1,6 @@
 import { ThemePreview } from '@automattic/design-picker';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import AnimatedFullscreen from './animated-fullscreen';
 
 interface SitePreviewProps {
@@ -7,9 +8,9 @@ interface SitePreviewProps {
 	inlineCss?: string;
 	isFullscreen?: boolean;
 	animated?: boolean;
-	description?: string;
 	isExternallyManaged?: boolean;
 	screenshot?: string;
+	title: string;
 	recordDeviceClick: ( device: string ) => void;
 }
 
@@ -20,13 +21,21 @@ const SitePreview: React.FC< SitePreviewProps > = ( {
 	animated,
 	isExternallyManaged,
 	screenshot,
-	description,
+	title,
 	recordDeviceClick,
 } ) => {
+	const translate = useTranslate();
+
 	if ( isExternallyManaged ) {
 		return (
 			<div className="design-preview__screenshot-wrapper">
-				<img className="design-preview__screenshot" src={ screenshot } alt={ description } />
+				<img
+					className="design-preview__screenshot"
+					src={ screenshot }
+					alt={ translate( 'Screenshot of the %(themeName)s theme', {
+						args: { themeName: title },
+					} ).toString() }
+				/>
 			</div>
 		);
 	}
