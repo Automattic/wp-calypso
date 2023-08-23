@@ -467,7 +467,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderBillingTimeframe( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		return renderedGridPlans.map( ( { planConstantObj, planSlug } ) => {
+		return renderedGridPlans.map( ( { planSlug } ) => {
 			const classes = classNames(
 				'plan-features-2023-grid__table-item',
 				'plan-features-2023-grid__header-billing-info'
@@ -475,10 +475,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 			return (
 				<Container className={ classes } isTableCell={ options?.isTableCell } key={ planSlug }>
-					<PlanFeatures2023GridBillingTimeframe
-						planSlug={ planSlug }
-						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
-					/>
+					<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
 				</Container>
 			);
 		} );
@@ -502,7 +499,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanHeaders( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		return renderedGridPlans.map( ( { planSlug, planConstantObj } ) => {
+		return renderedGridPlans.map( ( { planSlug, planTitle } ) => {
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header',
 				getPlanClass( planSlug )
@@ -515,9 +512,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					isTableCell={ options?.isTableCell }
 				>
 					<header className={ headerClasses }>
-						<h4 className="plan-features-2023-grid__header-title">
-							{ planConstantObj.getTitle() }
-						</h4>
+						<h4 className="plan-features-2023-grid__header-title">{ planTitle }</h4>
 					</header>
 				</Container>
 			);
@@ -571,59 +566,55 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			isLargeCurrency,
 		} = this.props;
 
-		return renderedGridPlans.map(
-			( { planSlug, planConstantObj, current, availableForPurchase } ) => {
-				const classes = classNames(
-					'plan-features-2023-grid__table-item',
-					'is-top-buttons',
-					'is-bottom-aligned'
-				);
+		return renderedGridPlans.map( ( { planSlug, availableForPurchase } ) => {
+			const classes = classNames(
+				'plan-features-2023-grid__table-item',
+				'is-top-buttons',
+				'is-bottom-aligned'
+			);
 
-				// Leaving it `undefined` makes it use the default label
-				let buttonText;
+			// Leaving it `undefined` makes it use the default label
+			let buttonText;
 
-				if (
-					isWooExpressMediumPlan( planSlug ) &&
-					! isWooExpressMediumPlan( currentSitePlanSlug || '' )
-				) {
-					buttonText = translate( 'Get Performance', { textOnly: true } );
-				} else if (
-					isWooExpressSmallPlan( planSlug ) &&
-					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
-				) {
-					buttonText = translate( 'Get Essential', { textOnly: true } );
-				}
-
-				return (
-					<Container key={ planSlug } className={ classes } isTableCell={ options?.isTableCell }>
-						<PlanFeatures2023GridActions
-							manageHref={ manageHref }
-							canUserPurchasePlan={ canUserPurchasePlan }
-							availableForPurchase={ availableForPurchase }
-							className={ getPlanClass( planSlug ) }
-							freePlan={ isFreePlan( planSlug ) }
-							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
-							isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							onUpgradeClick={ () => this.handleUpgradeClick( planSlug ) }
-							planTitle={ planConstantObj.getTitle() }
-							planSlug={ planSlug }
-							flowName={ flowName }
-							current={ current ?? false }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							selectedSiteSlug={ selectedSiteSlug }
-							buttonText={ buttonText }
-							planActionOverrides={ planActionOverrides }
-							showMonthlyPrice={ true }
-							siteId={ siteId }
-							isStuck={ options?.isStuck || false }
-							isLargeCurrency={ isLargeCurrency }
-						/>
-					</Container>
-				);
+			if (
+				isWooExpressMediumPlan( planSlug ) &&
+				! isWooExpressMediumPlan( currentSitePlanSlug || '' )
+			) {
+				buttonText = translate( 'Get Performance', { textOnly: true } );
+			} else if (
+				isWooExpressSmallPlan( planSlug ) &&
+				! isWooExpressSmallPlan( currentSitePlanSlug || '' )
+			) {
+				buttonText = translate( 'Get Essential', { textOnly: true } );
 			}
-		);
+
+			return (
+				<Container key={ planSlug } className={ classes } isTableCell={ options?.isTableCell }>
+					<PlanFeatures2023GridActions
+						manageHref={ manageHref }
+						canUserPurchasePlan={ canUserPurchasePlan }
+						availableForPurchase={ availableForPurchase }
+						className={ getPlanClass( planSlug ) }
+						freePlan={ isFreePlan( planSlug ) }
+						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
+						isWooExpressPlusPlan={ isWooExpressPlusPlan( planSlug ) }
+						isInSignup={ isInSignup }
+						isLaunchPage={ isLaunchPage }
+						onUpgradeClick={ () => this.handleUpgradeClick( planSlug ) }
+						planSlug={ planSlug }
+						flowName={ flowName }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						selectedSiteSlug={ selectedSiteSlug }
+						buttonText={ buttonText }
+						planActionOverrides={ planActionOverrides }
+						showMonthlyPrice={ true }
+						siteId={ siteId }
+						isStuck={ options?.isStuck || false }
+						isLargeCurrency={ isLargeCurrency }
+					/>
+				</Container>
+			);
+		} );
 	}
 
 	maybeRenderRefundNotice( gridPlan: GridPlan[], options?: PlanRowOptions ) {

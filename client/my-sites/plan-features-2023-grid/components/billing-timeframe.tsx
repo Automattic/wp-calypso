@@ -11,7 +11,7 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 
 function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
@@ -132,13 +132,12 @@ const DiscountPromotion = styled.div`
 
 interface Props {
 	planSlug: PlanSlug;
-	billingTimeframe: TranslateResult;
 }
 
-const PlanFeatures2023GridBillingTimeframe = ( { planSlug, billingTimeframe }: Props ) => {
+const PlanFeatures2023GridBillingTimeframe = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
-	const { isMonthlyPlan } = gridPlansIndex[ planSlug ];
+	const { isMonthlyPlan, billingTimeframe } = gridPlansIndex[ planSlug ];
 	const perMonthDescription = usePerMonthDescription( { planSlug } );
 	const description = perMonthDescription || billingTimeframe;
 

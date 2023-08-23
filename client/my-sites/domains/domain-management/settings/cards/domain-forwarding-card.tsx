@@ -19,7 +19,9 @@ import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
@@ -42,17 +44,21 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const pointsToWpcom = domain.pointsToWpcom;
+	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
 
 	// Display success notices when the forwarding is updated
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			dispatch(
-				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
+				successNotice( translate( 'Domain forward updated and enabled.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice( translate( 'An error occurred while updating the redirect.' ), noticeOptions )
+				errorNotice(
+					translate( 'An error occurred while updating the domain forward.' ),
+					noticeOptions
+				)
 			);
 		},
 	} );
@@ -62,12 +68,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
-				successNotice( translate( 'Domain redirect deleted successfully.' ), noticeOptions )
+				successNotice( translate( 'Domain forward deleted successfully.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice( translate( 'An error occurred while deleting the redirect.' ), noticeOptions )
+				errorNotice(
+					translate( 'An error occurred while deleting the domain forward.' ),
+					noticeOptions
+				)
 			);
 		},
 	} );
@@ -77,7 +86,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		if ( isError ) {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while fetching your domain redirects.' ),
+					translate( 'An error occurred while fetching your domain forwarding.' ),
 					noticeOptions
 				)
 			);
@@ -126,7 +135,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
 			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
-				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
+				setErrorMessage( translate( 'Forwarding to the same domain is not allowed.' ) );
 				setIsValidUrl( false );
 				return;
 			}
@@ -214,7 +223,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const renderNoticeForPrimaryDomain = () => {
-		if ( ! domain?.isPrimary ) {
+		if ( ! domain?.isPrimary || isDomainOnly ) {
 			return;
 		}
 
@@ -271,7 +280,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset
-					disabled={ domain?.isPrimary || ! pointsToWpcom }
+					disabled={ ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom }
 					className="domain-forwarding-card__fields"
 				>
 					<FormTextInputWithAffixes
@@ -303,7 +312,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 								} ) }
 								onClick={ handleDelete }
 							>
-								<Icon icon={ trash } size={ 18 } />
+								<Icon icon={ trash } size={ 18 } fill="currentColor" />
 							</Button>
 						}
 					/>

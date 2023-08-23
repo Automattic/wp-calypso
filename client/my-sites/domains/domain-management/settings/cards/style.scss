@@ -135,25 +135,38 @@
 .domain-forwarding-card__fields {
 	margin-bottom: 0 !important;
 
+	.form-text-input:disabled {
+		border: 1px solid var(--color-neutral-5) !important;
+	}
+
 	.form-text-input-with-affixes__prefix,
-	.form-text-input-with-affixes__suffix {
+	.form-text-input-with-affixes__suffix, {
 		padding: 0;
-		border: 0;
+		border: 0 !important;
 
 		.form-select {
 			border-right: 0;
 			height: 100%;
+			border-radius: 2px 0 0 2px;
+		}
+		.form-select:disabled {
+			cursor: default;
+			border-color: var(--color-neutral-5);
+		}
+		.form-select:hover:enabled {
+			border-color: var(--color-neutral-20);
 		}
 		.domain-forwarding-card__delete {
 			border-left: 0;
+			border-radius: 0 2px 2px 0;
 
 			svg {
 				margin-top: 5px;
 			}
-
-			&.is-disabled {
-				background: var(--color-neutral-0);
-			}
+		}
+		.domain-forwarding-card__delete:disabled {
+			background: var(--color-neutral-0);
+			border-color: var(--color-neutral-5);
 		}
 	}
 

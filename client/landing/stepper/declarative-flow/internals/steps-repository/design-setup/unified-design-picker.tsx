@@ -15,6 +15,7 @@ import {
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
 	isAssemblerDesign,
+	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -22,6 +23,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
@@ -324,6 +326,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		number: 1000,
 		...( ! isEnabled( 'design-picker/query-marketplace-themes' ) ? { tier: '-marketplace' } : {} ),
 	} );
+	useQueryProductsList();
 	useQuerySitePurchases( site ? site.ID : -1 );
 	useQuerySiteFeatures( [ site?.ID ] );
 
@@ -548,7 +551,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}
 
-	function designYourOwn( design: Design, shouldGoToAssembler: boolean ) {
+	function designYourOwn( design: Design ) {
+		const shouldGoToAssembler = isAssemblerSupported();
 		if ( shouldGoToAssembler ) {
 			const _selectedDesign = {
 				...design,
@@ -578,7 +582,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			'calypso_signup_design_picker_design_your_own_top_button_click',
 			getDesignEventProps( { flow, intent, design } )
 		);
-		designYourOwn( design, true );
+		designYourOwn( design );
 	}
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
@@ -724,6 +728,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }

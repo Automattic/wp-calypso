@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { useCountries } from '../use-countries';
 
@@ -24,11 +24,11 @@ describe( 'use-countries hook', () => {
 			.get( '/wpcom/v2/woocommerce/countries/regions/' )
 			.reply( 200, expected );
 
-		const { result, waitFor } = renderHook( () => useCountries(), {
+		const { result } = renderHook( () => useCountries(), {
 			wrapper,
 		} );
 
-		await waitFor( () => result.current.isSuccess );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( expected );
 	} );

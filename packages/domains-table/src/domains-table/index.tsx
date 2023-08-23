@@ -1,12 +1,16 @@
-import { useState, useCallback, useLayoutEffect } from 'react';
+import {
+	type DomainData,
+	type PartialDomainData,
+	type SiteDomainsQueryFnData,
+	type SiteDetails,
+	getSiteDomainsQueryObject,
+} from '@automattic/data-stores';
+import { useQueries } from '@tanstack/react-query';
+import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
+import { getDomainId } from '../get-domain-id';
 import { DomainsTableRow } from './domains-table-row';
-import type {
-	PartialDomainData,
-	SiteDomainsQueryFnData,
-	SiteDetails,
-} from '@automattic/data-stores';
 import './style.scss';
 
 interface DomainsTableProps {
@@ -37,6 +41,25 @@ export function DomainsTable( {
 
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 
+	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
+	const allSiteDomains = useQueries( {
+		queries: allSiteIds.map( ( siteId ) =>
+			getSiteDomainsQueryObject( siteId, {
+				...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( siteId ) } ),
+			} )
+		),
+	} );
+	const fetchedSiteDomains = useMemo( () => {
+		const fetchedSiteDomains: Record< number, DomainData[] > = {};
+		for ( const { data } of allSiteDomains ) {
+			const siteId = data?.domains?.[ 0 ]?.blog_id;
+			if ( typeof siteId === 'number' ) {
+				fetchedSiteDomains[ siteId ] = data?.domains || [];
+			}
+		}
+		return fetchedSiteDomains;
+	}, [ allSiteDomains ] );
+
 	useLayoutEffect( () => {
 		if ( ! domains ) {
 			setSelectedDomains( new Set() );
@@ -44,11 +67,11 @@ export function DomainsTable( {
 		}
 
 		setSelectedDomains( ( selectedDomains ) => {
-			const domainUrls = domains.map( ( { domain } ) => domain );
+			const domainIds = domains.map( getDomainId );
 			const selectedDomainsCopy = new Set( selectedDomains );
 
 			for ( const selectedDomain of selectedDomainsCopy ) {
-				if ( ! domainUrls.includes( selectedDomain ) ) {
+				if ( ! domainIds.includes( selectedDomain ) ) {
 					selectedDomainsCopy.delete( selectedDomain );
 				}
 			}
@@ -57,14 +80,42 @@ export function DomainsTable( {
 		} );
 	}, [ domains ] );
 
+	const sortedDomains = useMemo( () => {
+		const selectedColumnDefinition = domainsTableColumns.find(
+			( column ) => column.name === sortKey
+		);
+
+		const getFullDomainData = ( domain: PartialDomainData ) =>
+			fetchedSiteDomains?.[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
+
+		return domains?.sort( ( first, second ) => {
+			let result = 0;
+
+			const fullFirst = getFullDomainData( first );
+			const fullSecond = getFullDomainData( second );
+			if ( ! fullFirst || ! fullSecond ) {
+				return result;
+			}
+
+			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
+				result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
+				if ( result !== 0 ) {
+					break;
+				}
+			}
+			return result;
+		} );
+	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
+
 	const handleSelectDomain = useCallback(
-		( { domain }: PartialDomainData ) => {
+		( domain: PartialDomainData ) => {
+			const domainId = getDomainId( domain );
 			const selectedDomainsCopy = new Set( selectedDomains );
 
-			if ( selectedDomainsCopy.has( domain ) ) {
-				selectedDomainsCopy.delete( domain );
+			if ( selectedDomainsCopy.has( domainId ) ) {
+				selectedDomainsCopy.delete( domainId );
 			} else {
-				selectedDomainsCopy.add( domain );
+				selectedDomainsCopy.add( domainId );
 			}
 
 			setSelectedDomains( selectedDomainsCopy );
@@ -111,7 +162,7 @@ export function DomainsTable( {
 
 	const changeBulkSelection = () => {
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
-			setSelectedDomains( new Set( domains.map( ( { domain } ) => domain ) ) );
+			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
 		} else {
 			setSelectedDomains( new Set() );
 		}
@@ -125,16 +176,14 @@ export function DomainsTable( {
 				activeSortDirection={ sortDirection }
 				bulkSelectionStatus={ getBulkSelectionStatus() }
 				onBulkSelectionChange={ changeBulkSelection }
-				onChangeSortOrder={ ( selectedColumn ) => {
-					onSortChange( selectedColumn );
-				} }
+				onChangeSortOrder={ onSortChange }
 			/>
 			<tbody>
-				{ domains.map( ( domain ) => (
+				{ sortedDomains?.map( ( domain ) => (
 					<DomainsTableRow
-						key={ domain.domain }
+						key={ getDomainId( domain ) }
 						domain={ domain }
-						isSelected={ selectedDomains.has( domain.domain ) }
+						isSelected={ selectedDomains.has( getDomainId( domain ) ) }
 						onSelect={ handleSelectDomain }
 						fetchSiteDomains={ fetchSiteDomains }
 						fetchSite={ fetchSite }

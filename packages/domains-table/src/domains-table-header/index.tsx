@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { DomainData } from '@automattic/data-stores';
+import { DomainData, SiteDetails } from '@automattic/data-stores';
 import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,8 +15,16 @@ export type DomainsTableColumn =
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';
 			supportsOrderSwitching?: boolean;
-			sortFunctions?: [ ( first: DomainData, second: DomainData, sortOrder: number ) => number ];
+			sortFunctions?: Array<
+				(
+					first: DomainData,
+					second: DomainData,
+					sortOrder: number,
+					sites?: SiteDetails[]
+				) => number
+			>;
 			headerComponent?: React.ReactNode;
+			width?: string;
 	  }
 	| {
 			name: string;
@@ -24,8 +32,16 @@ export type DomainsTableColumn =
 			isSortable?: false;
 			initialSortDirection?: never;
 			supportsOrderSwitching?: never;
-			sortFunctions?: [ ( first: DomainData, second: DomainData, sortOrder: number ) => number ];
+			sortFunctions?: [
+				(
+					first: DomainData,
+					second: DomainData,
+					sortOrder: number,
+					sites?: SiteDetails[]
+				) => number
+			];
 			headerComponent?: React.ReactNode;
+			width?: string;
 	  };
 
 type DomainsTableHeaderProps = {
@@ -48,11 +64,7 @@ export const DomainsTableHeader = ( {
 	headerClasses,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
-	const listHeaderClasses = classNames(
-		'domains-table-header',
-		'domains-table-header__desktop',
-		headerClasses
-	);
+	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
 
 	const renderSortIcon = (
 		column: DomainsTableColumn,
@@ -82,7 +94,7 @@ export const DomainsTableHeader = ( {
 					/>
 				</th>
 				{ columns.map( ( column ) => (
-					<th key={ column.name }>
+					<th key={ column.name } style={ { width: column.width } }>
 						<Button
 							plain
 							onClick={ () => onChangeSortOrder( column ) }

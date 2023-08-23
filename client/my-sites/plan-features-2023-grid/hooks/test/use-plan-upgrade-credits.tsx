@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,

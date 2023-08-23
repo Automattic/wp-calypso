@@ -5,7 +5,6 @@ import {
 	isConciergeSession,
 	isPlan,
 	isDomainRegistration,
-	isMonthly,
 	isAkismetFreeProduct,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -40,11 +39,12 @@ import {
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
+	isMonthlyPurchase,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getAddNewPaymentMethodPath } from '../utils';
+import { getAddNewPaymentMethodPath, isTemporarySitePurchase } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	GetManagePurchaseUrlFor,
@@ -100,18 +100,36 @@ class PurchaseNotice extends Component<
 			return this.getExpiringLaterText( purchase );
 		}
 
-		if ( isMonthly( purchase.productSlug ) ) {
-			const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
+		if ( isMonthlyPurchase( purchase ) ) {
+			const daysToExpiry = expiry.diff( moment(), 'days' );
+
+			if ( isTemporarySitePurchase( purchase ) ) {
+				return translate( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.', {
+					args: {
+						purchaseName: getName( purchase ),
+						daysToExpiry,
+					},
+				} );
+			}
 
 			return translate(
-				'%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
+				'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d days.',
 				{
 					args: {
 						purchaseName: getName( purchase ),
-						expiry: daysToExpiry,
+						daysToExpiry,
 					},
 				}
 			);
+		}
+
+		if ( isTemporarySitePurchase( purchase ) ) {
+			return translate( '%(purchaseName)s will expire and be removed %(expiry)s.', {
+				args: {
+					purchaseName: getName( purchase ),
+					expiry: expiry.fromNow(),
+				},
+			} );
 		}
 
 		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.', {
