@@ -1016,7 +1016,6 @@ function CheckoutLineItem( {
 
 	const containsPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
-		products: [ product ],
 	} );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
