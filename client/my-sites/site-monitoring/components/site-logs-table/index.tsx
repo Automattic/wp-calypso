@@ -47,7 +47,9 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 				<tr>
 					<th />
 					{ columns.map( ( column, index ) => (
-						<th key={ column }>{ headerTitles[ index ] }</th>
+						<th key={ column }>
+							{ headerTitles[ index ].charAt( 0 ).toUpperCase() + headerTitles[ index ].slice( 1 ) }
+						</th>
 					) ) }
 				</tr>
 			</thead>
