@@ -45,7 +45,6 @@ export interface MonitorSettings {
 	monitor_active: boolean;
 	monitor_site_status: boolean;
 	last_down_time: string;
-	monitor_deferment_time: number;
 	check_interval: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
@@ -270,7 +269,6 @@ export interface UpdateMonitorSettingsAPIResponse {
 		email_notifications: boolean;
 		sms_notifications: boolean;
 		wp_note_notifications: boolean;
-		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
 		urls?: MonitorURLS[];
 	};
@@ -280,7 +278,6 @@ export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	sms_notifications?: boolean;
-	jetmon_defer_status_down_minutes?: number;
 	contacts?: MonitorContacts;
 	urls?: MonitorURLS[];
 }

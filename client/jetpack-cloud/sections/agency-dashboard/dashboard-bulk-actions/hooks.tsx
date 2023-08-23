@@ -7,10 +7,7 @@ import {
 	useUpdateMonitorSettings,
 } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
-import {
-	availableNotificationDurations as durations,
-	getSiteCountText,
-} from '../sites-overview/utils';
+import { getSiteCountText } from '../sites-overview/utils';
 import type { Site } from '../sites-overview/types';
 
 const dialogContent = (
@@ -91,11 +88,7 @@ export function useHandleResetNotification(
 	const resetMonitorDuration = useCallback(
 		( accepted: boolean ) => {
 			if ( accepted ) {
-				const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
-				const params = {
-					jetmon_defer_status_down_minutes: defaultDuration?.time,
-				};
-				updateMonitorSettings( params );
+				updateMonitorSettings( {} );
 				recordEvent( 'reset_notification_save' );
 			}
 		},

@@ -1,17 +1,20 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext } from 'react';
 import { useDispatch } from 'calypso/state';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_DOWNTIME_MONITORING_DURATION } from '../constants';
 import SitesOverviewContext from '../sites-overview/context';
 import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-requests-util';
 import type { Site, UpdateMonitorSettingsParams } from '../sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
 
-export default function useUpdateMonitorSettings( sites: Array< Site > ): {
+export default function useUpdateMonitorSettings(
+	sites: Array< Site >,
+	checkInterval: number = DEFAULT_DOWNTIME_MONITORING_DURATION
+): {
 	updateMonitorSettings: ( params: UpdateMonitorSettingsParams ) => void;
 	isLoading: boolean;
 	isComplete: boolean;
@@ -39,7 +42,6 @@ export default function useUpdateMonitorSettings( sites: Array< Site > ): {
 								...site,
 								monitor_settings: {
 									...site.monitor_settings,
-									monitor_deferment_time: data.settings.jetmon_defer_status_down_minutes,
 									monitor_user_email_notifications: data.settings.email_notifications,
 									monitor_user_sms_notifications: data.settings.sms_notifications,
 									monitor_user_wp_note_notifications: data.settings.wp_note_notifications,
@@ -56,25 +58,21 @@ export default function useUpdateMonitorSettings( sites: Array< Site > ): {
 		},
 	} );
 
-	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
-
-	const getArgs = useCallback(
-		( site: Site, params: UpdateMonitorSettingsParams ) => {
-			const args = {
+	const getUpdatedParams = useCallback(
+		( { blog_id: siteId, url_with_scheme }: Site, params: UpdateMonitorSettingsParams ) => {
+			const updatedParams = {
 				...params,
-				...( isPaidTierEnabled && {
-					urls: [
-						{
-							check_interval: params.jetmon_defer_status_down_minutes,
-							options: [],
-							monitor_url: site.url_with_scheme,
-						},
-					],
-				} ),
+				urls: [
+					{
+						check_interval: checkInterval,
+						options: [],
+						monitor_url: url_with_scheme,
+					},
+				],
 			};
-			return { siteId: site.blog_id, params: args };
+			return { siteId, params: updatedParams };
 		},
-		[ isPaidTierEnabled ]
+		[ checkInterval ]
 	);
 
 	const update = useCallback(
@@ -85,7 +83,7 @@ export default function useUpdateMonitorSettings( sites: Array< Site > ): {
 			sites.forEach( ( site ) =>
 				requests.push( {
 					site,
-					mutation: updateMonitorSettings.mutateAsync( getArgs( site, params ) ),
+					mutation: updateMonitorSettings.mutateAsync( getUpdatedParams( site, params ) ),
 				} )
 			);
 			const promises = await Promise.allSettled(
@@ -163,7 +161,7 @@ export default function useUpdateMonitorSettings( sites: Array< Site > ): {
 				dispatch( errorNotice( errorMessage, { duration: NOTIFICATION_DURATION } ) );
 			}
 		},
-		[ dispatch, getArgs, sites, translate, updateMonitorSettings ]
+		[ dispatch, getUpdatedParams, sites, translate, updateMonitorSettings ]
 	);
 
 	return {
