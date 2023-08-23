@@ -3,11 +3,9 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
-import { WOOEXPRESS_AFFILIATE_VENDOR_ID } from '../constants';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
-import { setAffiliateCookie } from '../utils/affiliate';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
@@ -56,9 +54,6 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
-		const affiliateId = queryParams.get( 'aff' );
-		const campaignId = queryParams.get( 'cid' );
-		const subId = queryParams.get( 'sid' );
 
 		if ( profilerData ) {
 			try {
@@ -69,13 +64,6 @@ const wooexpress: Flow = {
 				setProfilerData( decodedProfilerData );
 				// Ignore any bad/invalid data and prevent it from causing downstream issues.
 			} catch {}
-		}
-
-		const existingCookie = document.cookie.includes( 'wp-affiliate-tracker=' );
-
-		// Check if affiliateId exists and the cookie doesn't exist
-		if ( affiliateId && ! existingCookie ) {
-			setAffiliateCookie( WOOEXPRESS_AFFILIATE_VENDOR_ID, affiliateId, campaignId, subId );
 		}
 
 		const getStartUrl = () => {
