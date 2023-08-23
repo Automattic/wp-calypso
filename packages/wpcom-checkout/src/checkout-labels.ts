@@ -24,34 +24,32 @@ export function DefaultLineItemSublabel( { product }: { product: ResponseCartPro
 
 	if ( isDotComPlan( product ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Plan Renewal' ) );
+			return translate( 'Plan Renewal' );
 		}
 	}
 
 	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
-			return String( translate( 'Monthly subscription' ) );
+			return translate( 'Monthly subscription' );
 		}
 
-		return isRenewalItem
-			? String( translate( 'Plan Renewal' ) )
-			: String( translate( 'Plan Subscription' ) );
+		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
 	}
 
 	if ( isGoogleWorkspace( product ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Mailboxes and Productivity Tools Renewal' ) );
+			return translate( 'Mailboxes and Productivity Tools Renewal' );
 		}
 
-		return String( translate( 'Mailboxes and Productivity Tools' ) );
+		return translate( 'Mailboxes and Productivity Tools' );
 	}
 
 	if ( isTitanMail( product ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Mailboxes Renewal' ) );
+			return translate( 'Mailboxes Renewal' );
 		}
 
-		return String( translate( 'Mailboxes' ) );
+		return translate( 'Mailboxes' );
 	}
 
 	if ( meta && ( isDomainProduct( product ) || isDomainTransfer( product ) ) ) {
@@ -60,32 +58,32 @@ export function DefaultLineItemSublabel( { product }: { product: ResponseCartPro
 		}
 
 		if ( productName ) {
-			return String( translate( '%(productName)s Renewal', { args: { productName } } ) );
+			return translate( '%(productName)s Renewal', { args: { productName } } );
 		}
 	}
 
 	if ( isAddOn( product ) && ! isRenewalItem ) {
-		return String( translate( 'Add-On' ) );
+		return translate( 'Add-On' );
 	}
 
 	if ( isRenewalItem ) {
-		return String( translate( 'Renewal' ) );
+		return translate( 'Renewal' );
 	}
 
 	if ( isMonthlyProduct( product ) ) {
-		return String( translate( 'Billed monthly' ) );
+		return translate( 'Billed monthly' );
 	}
 
 	if ( isYearly( product ) ) {
-		return String( translate( 'Billed annually' ) );
+		return translate( 'Billed annually' );
 	}
 
 	if ( isBiennially( product ) ) {
-		return String( translate( 'Billed every two years' ) );
+		return translate( 'Billed every two years' );
 	}
 
 	if ( isTriennially( product ) ) {
-		return String( translate( 'Billed every three years' ) );
+		return translate( 'Billed every three years' );
 	}
 
 	return null;
