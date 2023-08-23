@@ -340,8 +340,8 @@ class ThemeSheet extends Component {
 		return null;
 	}
 
-	previewAction = ( event, type ) => {
-		const { demoUrl, isExternallyManagedTheme, isWpcomTheme } = this.props;
+	previewAction = ( event, type, position ) => {
+		const { demoUrl, isExternallyManagedTheme, isWpcomTheme, isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -350,6 +350,8 @@ class ThemeSheet extends Component {
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
 			theme: this.props.themeId,
 			type,
+			position,
+			has_live_preview_cta: isLivePreviewSupported,
 		} );
 
 		// The embed live demo works only for WP.com themes
@@ -466,7 +468,7 @@ class ThemeSheet extends Component {
 					className="theme__sheet-screenshot is-active"
 					href={ demoUrl }
 					onClick={ ( e ) => {
-						this.previewAction( e, 'screenshot' );
+						this.previewAction( e, 'screenshot', 'preview' );
 					} }
 					rel="noopener noreferrer"
 				>
@@ -486,7 +488,7 @@ class ThemeSheet extends Component {
 					<Button
 						className="theme__sheet-preview-demo-site"
 						onClick={ ( e ) => {
-							this.previewAction( e, 'link' );
+							this.previewAction( e, 'link', 'preview' );
 						} }
 					>
 						{ translate( 'Preview demo site' ) }
@@ -523,7 +525,7 @@ class ThemeSheet extends Component {
 					<Button
 						className="theme__sheet-preview-demo-site"
 						onClick={ ( e ) => {
-							this.previewAction( e, 'link' );
+							this.previewAction( e, 'link', 'preview' );
 						} }
 					>
 						{ translate( 'Preview demo site' ) }
@@ -609,7 +611,7 @@ class ThemeSheet extends Component {
 						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
 								onClick={ ( e ) => {
-									this.previewAction( e, 'link' );
+									this.previewAction( e, 'link', 'actions' );
 								} }
 							>
 								{ translate( 'Demo site', {
