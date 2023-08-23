@@ -38,7 +38,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium WordPress Themes' ),
 					header: translate( 'Find the perfect premium WordPress theme for your blog or website.' ),
 					description: translate(
-						"Browse all premium themes for WordPress.com. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Browse all premium themes for WordPress.com. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -68,7 +68,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Blog WordPress Themes' ),
 					header: translate( 'Choose premium themes for your blog.' ),
 					description: translate(
-						"Enhance your blog with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your blog with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -98,7 +98,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Business WordPress Themes' ),
 					header: translate( 'Choose premium themes for your business website.' ),
 					description: translate(
-						"Enhance your business website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your business website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -128,7 +128,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Portfolio WordPress Themes' ),
 					header: translate( 'Choose premium themes for your portfolio.' ),
 					description: translate(
-						"Enhance your portfolio website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your portfolio website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -158,7 +158,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Store WordPress Themes' ),
 					header: translate( 'Choose premium themes for your online store.' ),
 					description: translate(
-						"Enhance your online store with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your online store with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -188,7 +188,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium About Me WordPress Themes' ),
 					header: translate( 'Choose premium themes for your About Me website.' ),
 					description: translate(
-						"Enhance your About Me website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your About Me website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -218,7 +218,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Link in Bio WordPress Themes' ),
 					header: translate( 'Choose premium themes for your link in bio website.' ),
 					description: translate(
-						"Enhance your link in bio website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your link in bio website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -248,7 +248,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Newsletter WordPress Themes' ),
 					header: translate( 'Choose premium themes for your site-hosted newsletter.' ),
 					description: translate(
-						"Enhance your newsletter with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your newsletter with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -278,7 +278,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Entertainment WordPress Themes' ),
 					header: translate( 'Choose premium themes for your entertainment website.' ),
 					description: translate(
-						"Enhance your entertainment website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your entertainment website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -308,7 +308,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Coming Soon WordPress Themes' ),
 					header: translate( 'Choose premium coming soon themes for your website.' ),
 					description: translate(
-						"Enhance your website with the perfect premium coming soon theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your website with the perfect premium coming soon theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -338,7 +338,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Podcast WordPress Themes' ),
 					header: translate( 'Choose premium themes for your podcast website.' ),
 					description: translate(
-						"Enhance your podcast website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your podcast website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -374,7 +374,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 						"Choose premium themes for your non-profit or community organization's website."
 					),
 					description: translate(
-						"Enhance your non-profit or community organization's website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your non-profit or community organization's website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -408,7 +408,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Fashion & Beauty WordPress Themes' ),
 					header: translate( 'Choose premium themes for your fashion and beauty website.' ),
 					description: translate(
-						"Enhance your fashion and beauty website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your fashion and beauty website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -440,7 +440,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Travel & Lifestyle WordPress Themes' ),
 					header: translate( 'Choose premium themes for your travel and lifestyle website.' ),
 					description: translate(
-						"Enhance your travel and lifestyle website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your travel and lifestyle website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -470,7 +470,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Restaurant WordPress Themes' ),
 					header: translate( 'Choose premium themes for your restaurant website.' ),
 					description: translate(
-						"Enhance your restaurant website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your restaurant website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -500,7 +500,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Music WordPress Themes' ),
 					header: translate( 'Choose premium themes for your music website.' ),
 					description: translate(
-						"Enhance your music website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your music website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -530,7 +530,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Magazine WordPress Themes' ),
 					header: translate( 'Choose premium themes for your magazine website.' ),
 					description: translate(
-						"Enhance your magazine website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your magazine website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -560,7 +560,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Education WordPress Themes' ),
 					header: translate( 'Choose premium themes for your education website.' ),
 					description: translate(
-						"Enhance your education website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your education website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -590,7 +590,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Author & Writer WordPress Themes' ),
 					header: translate( 'Choose premium themes for your author or writer website.' ),
 					description: translate(
-						"Enhance your author or writer website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your author or writer website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -622,7 +622,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Health & Wellness WordPress Themes' ),
 					header: translate( 'Choose premium themes for your health and wellness website.' ),
 					description: translate(
-						"Enhance your health and wellness website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your health and wellness website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -652,7 +652,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Real Estate WordPress Themes' ),
 					header: translate( 'Choose premium themes for your real estate website.' ),
 					description: translate(
-						"Enhance your real estate website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your real estate website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -682,7 +682,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Video WordPress Themes' ),
 					header: translate( 'Choose premium themes for your video website.' ),
 					description: translate(
-						"Enhance your video website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your video website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
@@ -712,7 +712,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					title: translate( 'Premium Art and Design WordPress Themes' ),
 					header: translate( 'Choose premium themes for your art and design website.' ),
 					description: translate(
-						"Enhance your art and design website with the perfect premium theme. Available on all Premium, Business, and Ecommerce plans. Activate the one that's right for you."
+						"Enhance your art and design website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
 					),
 				},
 				marketplace: {
