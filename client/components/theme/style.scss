@@ -1,6 +1,6 @@
 $theme-info-height: 54px;
 
-.theme {
+.card.theme-card {
 	&.is-placeholder {
 		background-color: var(--color-neutral-10);
 		animation: loading-fade 1.6s ease-in-out infinite;
