@@ -3,8 +3,7 @@ import {
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
 	MARKETPLACE_THEME,
-	// eslint-disable-next-line import/named
-	shouldGoToAssembler,
+	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { get, includes, reject } from 'lodash';
@@ -118,7 +117,7 @@ function getThankYouNoSiteDestination() {
 function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
 	if ( isSiteAssemblerFlow( flowName ) ) {
 		// Check whether to go to the assembler. If not, go to the site editor directly
-		if ( shouldGoToAssembler() ) {
+		if ( isAssemblerSupported() ) {
 			return addQueryArgs(
 				{
 					theme: themeParameter,

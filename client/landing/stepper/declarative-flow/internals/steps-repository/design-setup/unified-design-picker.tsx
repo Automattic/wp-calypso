@@ -15,6 +15,7 @@ import {
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
 	isAssemblerDesign,
+	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -550,7 +551,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}
 
-	function designYourOwn( design: Design, shouldGoToAssembler: boolean ) {
+	function designYourOwn( design: Design ) {
+		const shouldGoToAssembler = isAssemblerSupported();
 		if ( shouldGoToAssembler ) {
 			const _selectedDesign = {
 				...design,
@@ -580,7 +582,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			'calypso_signup_design_picker_design_your_own_top_button_click',
 			getDesignEventProps( { flow, intent, design } )
 		);
-		designYourOwn( design, true );
+		designYourOwn( design );
 	}
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
@@ -726,6 +728,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }

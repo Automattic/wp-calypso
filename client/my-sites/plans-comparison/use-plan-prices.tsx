@@ -10,6 +10,7 @@ import {
 	TERM_OCTENNIALLY,
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
+	TERM_CENTENNIALLY,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
@@ -50,6 +51,8 @@ function toMonthlyPrice( plan: WPComPlan ) {
 				return yearlyPrice / 108;
 			case TERM_DECENNIALLY:
 				return yearlyPrice / 120;
+			case TERM_CENTENNIALLY:
+				return yearlyPrice / 1200;
 		}
 	};
 }

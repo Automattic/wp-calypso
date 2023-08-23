@@ -1,4 +1,7 @@
-import { renderHook } from '@testing-library/react-hooks';
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from '@testing-library/react';
 import { useGroupByTime } from '../hooks/use-group-by-time';
 import { PeriodData } from '../use-metrics-query';
 

@@ -2,7 +2,7 @@ import {
 	Design,
 	StyleVariation,
 	isAssemblerDesign,
-	shouldGoToAssembler,
+	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { getVariationTitle, getVariationType } from '@automattic/global-styles';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
@@ -81,7 +81,7 @@ export function recordSelectedDesign( {
 
 export function getDesignTypeProps( design?: Design ) {
 	return {
-		goes_to_assembler_step: isAssemblerDesign( design ) && shouldGoToAssembler(),
+		goes_to_assembler_step: isAssemblerDesign( design ) && isAssemblerSupported(),
 		assembler_source: getAssemblerSource( design ),
 	};
 }
