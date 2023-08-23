@@ -186,7 +186,7 @@ const PatternAssembler = ( {
 		const patterns = getPatterns();
 		const categories = Array.from( new Set( patterns.map( ( { category } ) => category?.name ) ) );
 
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_CLICK, {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_TO_EDITOR_CLICK, {
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),

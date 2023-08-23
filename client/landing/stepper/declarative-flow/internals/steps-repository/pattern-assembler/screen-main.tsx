@@ -66,6 +66,7 @@ const ScreenMain = ( {
 	const handleClick = () => {
 		if ( ! isButtonDisabled ) {
 			navigator.goTo( NAVIGATOR_PATHS.STYLES );
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_TO_STYLES_CLICK );
 		}
 	};
 
