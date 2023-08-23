@@ -1,4 +1,4 @@
-import { useState, useCallback, useLayoutEffect } from 'react';
+import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
@@ -38,6 +38,17 @@ export function DomainsTable( {
 	} );
 
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
+	const [ fetchedSiteDomains, setFetchedSiteDomains ] = useState< {
+		[ blogId: number ]: Array< DomainData >;
+	} >();
+
+	const onSiteDomainsFetched = ( blogId: number, domains: Array< DomainData > ) => {
+		setFetchedSiteDomains( ( fetchedSiteDomains ) => {
+			const fetchedSiteDomainsCopy = { ...fetchedSiteDomains };
+			fetchedSiteDomainsCopy[ blogId ] = domains;
+			return fetchedSiteDomainsCopy;
+		} );
+	};
 
 	useLayoutEffect( () => {
 		if ( ! domains ) {
@@ -58,6 +69,27 @@ export function DomainsTable( {
 			return selectedDomainsCopy;
 		} );
 	}, [ domains ] );
+
+	const sortedDomains = useMemo( () => {
+		const selectedColumnDefinition = domainsTableColumns.find(
+			( column ) => column.name === sortKey
+		);
+
+		return fetchedSiteDomains
+			? Object.values( fetchedSiteDomains )
+					.flat()
+					.sort( ( first, second ) => {
+						let result = 0;
+						for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
+							result = sortFunction( first, second, sortDirection === 'asc' ? 1 : -1 );
+							if ( result !== 0 ) {
+								break;
+							}
+						}
+						return result;
+					} )
+			: domains;
+	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
 
 	const handleSelectDomain = useCallback(
 		( domain: PartialDomainData ) => {
@@ -120,27 +152,6 @@ export function DomainsTable( {
 		}
 	};
 
-	const selectedColumnDefinition = domainsTableColumns.find(
-		( column ) => column.name === sortKey
-	);
-
-	if ( sortKey && sortDirection ) {
-		domains.sort( ( first, second ) => {
-			let result = 0;
-			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
-				result = sortFunction(
-					first as DomainData, //type was casted to fix type error, this will be removed once the type is fixed
-					second as DomainData,
-					sortDirection === 'asc' ? 1 : -1
-				);
-				if ( 0 !== result ) {
-					break;
-				}
-			}
-			return result;
-		} );
-	}
-
 	return (
 		<table className="domains-table">
 			<DomainsTableHeader
@@ -154,7 +165,7 @@ export function DomainsTable( {
 				} }
 			/>
 			<tbody>
-				{ domains.map( ( domain ) => (
+				{ sortedDomains?.map( ( domain ) => (
 					<DomainsTableRow
 						key={ getDomainId( domain ) }
 						domain={ domain }
@@ -163,6 +174,7 @@ export function DomainsTable( {
 						fetchSiteDomains={ fetchSiteDomains }
 						fetchSite={ fetchSite }
 						isAllSitesView={ isAllSitesView }
+						onSiteDomainsFetched={ onSiteDomainsFetched }
 					/>
 				) ) }
 			</tbody>
