@@ -140,16 +140,13 @@ const EarningsMain = ( { section, adsProgramName, query, path } ) => {
 		}
 	};
 
-	/**
-	 * Goes back to Earn home.
-	 *
-	 * @returns {string} Path to Earn home. Has site slug append if it exists.
-	 */
-	const goBack = () => ( site?.slug ? '/earn/' + site.slug : '' );
-
 	const getHeaderCake = () => {
 		const headerText = getHeaderText();
-		return headerText && <HeaderCake backHref={ goBack() }>{ headerText }</HeaderCake>;
+		return (
+			headerText && (
+				<HeaderCake backHref={ `/earn/${ site?.slug ?? '' }` }>{ headerText }</HeaderCake>
+			)
+		);
 	};
 
 	const getSectionNav = ( currentSection ) => {
