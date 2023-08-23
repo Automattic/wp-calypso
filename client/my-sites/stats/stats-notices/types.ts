@@ -4,8 +4,16 @@ export interface PaidPlanPurchaseSuccessJetpackStatsNoticeProps {
 
 export interface StatsNoticeProps {
 	siteId: number | null;
+	isOdysseyStats: boolean;
 	onNoticeViewed?: () => void;
+	onNoticeDismissed?: () => void;
+	isWpcom?: boolean;
+	isVip?: boolean;
+	isP2?: boolean;
+	isOwnedByTeam51?: boolean;
+	hasPaidStats?: boolean;
 	hasFreeStats?: boolean;
+	isSiteJetpackNotAtomic?: boolean;
 }
 
 export interface NoticeBodyProps {
@@ -19,6 +27,6 @@ export interface FeedbackNoticeBodyProps extends NoticeBodyProps {
 
 export interface StatsNoticesProps {
 	siteId: number | null;
-	isOdysseyStats?: boolean;
+	isOdysseyStats: boolean;
 	statsPurchaseSuccess?: string;
 }

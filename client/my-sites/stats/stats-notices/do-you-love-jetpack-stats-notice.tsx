@@ -1,11 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
@@ -18,11 +16,14 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 	return `https://wordpress.com${ purchasePath }`;
 };
 
-const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps ) => {
+const DoYouLoveJetpackStatsNotice = ( {
+	siteId,
+	hasFreeStats,
+	isOdysseyStats,
+	onNoticeDismissed,
+}: StatsNoticeProps ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
-	const { data: showNotice } = useNoticeVisibilityQuery( siteId, 'do_you_love_jetpack_stats' );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
 		'do_you_love_jetpack_stats',
@@ -37,6 +38,7 @@ const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps
 
 		setNoticeDismissed( true );
 		postponeNoticeAsync();
+		onNoticeDismissed && onNoticeDismissed();
 	};
 
 	const gotoJetpackStatsProduct = () => {
@@ -56,14 +58,14 @@ const DoYouLoveJetpackStatsNotice = ( { siteId, hasFreeStats }: StatsNoticeProps
 	};
 
 	useEffect( () => {
-		if ( ! noticeDismissed && showNotice ) {
+		if ( ! noticeDismissed ) {
 			isOdysseyStats
 				? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed' )
 				: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_viewed' );
 		}
-	}, [ noticeDismissed, showNotice, isOdysseyStats ] );
+	}, [ noticeDismissed, isOdysseyStats ] );
 
-	if ( noticeDismissed || ! showNotice ) {
+	if ( noticeDismissed ) {
 		return null;
 	}
 

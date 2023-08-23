@@ -10,6 +10,12 @@ export type Notices = {
 	do_you_love_jetpack_stats: boolean;
 };
 
+const QUERY_OPTIONS = {
+	staleTime: 1000 * 30, // 30 seconds
+	retry: 1,
+	retryDelay: 3 * 1000, // 3 seconds
+};
+
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< keyof Notices > > = {
@@ -48,8 +54,14 @@ export default function useNoticeVisibilityQuery( siteId: number | null, noticeI
 		queryKey: [ 'stats', 'notices-visibility', siteId ],
 		queryFn: () => queryNotices( siteId ),
 		select: ( payload: Record< string, boolean > ): boolean => !! payload?.[ noticeId ],
-		staleTime: 1000 * 30, // 30 seconds
-		retry: 1,
-		retryDelay: 3 * 1000, // 3 seconds
+		...QUERY_OPTIONS,
+	} );
+}
+
+export function useNoticesVisibilityQuery( siteId: number | null ) {
+	return useQuery( {
+		queryKey: [ 'stats', 'notices-visibility', siteId ],
+		queryFn: () => queryNotices( siteId ),
+		...QUERY_OPTIONS,
 	} );
 }

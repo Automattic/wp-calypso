@@ -476,7 +476,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const isJetpack = isJetpackSite( state, siteId );
-		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const isOdysseyStats = !! config.isEnabled( 'is_running_in_jetpack_site' );
 
 		// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 		const showEnableStatsModule =
