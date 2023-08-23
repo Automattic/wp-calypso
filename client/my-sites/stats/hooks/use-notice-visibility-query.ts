@@ -1,14 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-const DEFAULT_NOTICES_VISIBILITY = {
+const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	opt_in_new_stats: false,
 	traffic_page_highlights_module_settings: false,
 	traffic_page_settings: false,
 	do_you_love_jetpack_stats: false,
-	// These notices are client only, so we need to set the initial values.
-	paid_plan_purchase_success_client_only: true,
-	free_plan_purchase_success_client_only: true,
+};
+const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
+	client_paid_plan_purchase_success: true,
+	client_free_plan_purchase_success: true,
+};
+const DEFAULT_NOTICES_VISIBILITY = {
+	...DEFAULT_CLIENT_NOTICES_VISIBILITY,
+	...DEFAULT_SERVER_NOTICES_VISIBILITY,
 };
 export type Notices = typeof DEFAULT_NOTICES_VISIBILITY;
 export type NoticeIdType = keyof Notices;
@@ -24,8 +29,8 @@ const QUERY_OPTIONS = {
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 	settings_tool_tips: [ 'traffic_page_settings', 'traffic_page_highlights_module_settings' ],
 	dashboard_notices: [
-		'paid_plan_purchase_success_client_only',
-		'free_plan_purchase_success_client_only',
+		'client_paid_plan_purchase_success',
+		'client_free_plan_purchase_success',
 		'do_you_love_jetpack_stats',
 	],
 };

@@ -16,14 +16,14 @@ type StatsNoticeType = {
 const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: PaidPlanPurchaseSuccessJetpackStatsNotice,
-		noticeId: 'paid_plan_purchase_success_client_only',
+		noticeId: 'client_paid_plan_purchase_success',
 		isVisibleFunc: ( { statsPurchaseSuccess }: StatsNoticeProps ) =>
 			statsPurchaseSuccess === 'paid',
 		disabled: false,
 	},
 	{
 		component: FreePlanPurchaseSuccessJetpackStatsNotice,
-		noticeId: 'free_plan_purchase_success_client_only',
+		noticeId: 'client_free_plan_purchase_success',
 		isVisibleFunc: ( { statsPurchaseSuccess }: StatsNoticeProps ) =>
 			statsPurchaseSuccess === 'free',
 		disabled: false,
