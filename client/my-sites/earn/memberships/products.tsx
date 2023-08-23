@@ -63,20 +63,6 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 		siteHasFeature( state, site?.ID ?? null, FEATURE_RECURRING_PAYMENTS )
 	);
 
-	useEffect( () => {
-		// Everytime we change the product, we set the according annualProduct
-		if ( products == null || product == null || ! product.ID ) {
-			setAnnualProduct( null );
-			return;
-		}
-
-		// We check for the right tier
-		const currentAnnualProduct = products.find(
-			( currentProduct ) => currentProduct.tier === product.ID
-		);
-		setAnnualProduct( currentAnnualProduct ?? null );
-	}, [ product, products ] );
-
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
 
@@ -106,20 +92,25 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 
 	function openAddEditDialog( productId: string | null ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( currentProduct ) => currentProduct.ID === productId );
+			const currentProduct = products.find( ( prod ) => prod.ID === productId );
+			const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
 			setShowAddEditDialog( true );
 			setProduct( currentProduct ?? null );
+			setAnnualProduct( currentAnnualProduct ?? null );
 		} else {
 			setShowAddEditDialog( true );
 			setProduct( null );
+			setAnnualProduct( null );
 		}
 	}
 
 	function openDeleteDialog( productId: string | null ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( currentProduct ) => currentProduct.ID === productId );
+			const currentProduct = products.find( ( prod ) => prod.ID === productId );
+			const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
 			setShowDeleteDialog( true );
 			setProduct( currentProduct ?? null );
+			setAnnualProduct( currentAnnualProduct ?? null );
 		}
 	}
 
@@ -163,26 +154,43 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 			) }
 			{ hasLoadedFeatures &&
 				products
-					.filter(
-						( currentProduct ) =>
-							currentProduct.type == null || ! currentProduct.type.startsWith( 'tier' )
-					) // We remove the "tiers" (the annual products with "tier" type)
-					.map( ( currentProduct ) => (
-						<CompactCard className="memberships__products-product-card" key={ currentProduct?.ID }>
-							<div className="memberships__products-product-details">
-								<div className="memberships__products-product-price">
-									{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
-								</div>
-								<div className="memberships__products-product-title">{ currentProduct?.title }</div>
-								{ currentProduct?.subscribe_as_site_subscriber && (
-									<div className="memberships__products-product-badge">
-										<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+					.filter( ( currentProduct ) => currentProduct.tier === null ) // We remove the "tiers" (the annual products with "tier" type)
+					.map( ( currentProduct ) => {
+						const currentAnnualProduct = products.find(
+							( _prod ) => _prod.tier === currentProduct.ID
+						);
+						console.info( '______' );
+						console.info( currentProduct );
+						console.info( currentAnnualProduct );
+						console.info( '______' );
+						return (
+							<CompactCard
+								className="memberships__products-product-card"
+								key={ currentProduct?.ID }
+							>
+								<div className="memberships__products-product-details">
+									<div className="memberships__products-product-price">
+										{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
+										{ currentAnnualProduct && (
+											formatCurrency(
+												currentAnnualProduct?.price || 0,
+												currentAnnualProduct?.currency || ''
+											)
+										}
 									</div>
-								) }
-							</div>
-							{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
-						</CompactCard>
-					) ) }
+									<div className="memberships__products-product-title">
+										{ currentProduct?.title }
+									</div>
+									{ currentProduct?.subscribe_as_site_subscriber && (
+										<div className="memberships__products-product-badge">
+											<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+										</div>
+									) }
+								</div>
+								{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
+							</CompactCard>
+						);
+					} ) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }

@@ -11,6 +11,7 @@ export const metadataSchema = {
 	stripe_account: { type: 'string' },
 	renewal_schedule: { type: 'string' },
 	type: { type: 'string' },
+	tier: { type: 'number' },
 };
 
 /**

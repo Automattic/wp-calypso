@@ -27,6 +27,7 @@ export const membershipProductFromApi = ( product ) => ( {
 	subscribe_as_site_subscriber: product.subscribe_as_site_subscriber,
 	welcome_email_content: product.welcome_email_content,
 	type: product.type,
+	tier: product.tier,
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
