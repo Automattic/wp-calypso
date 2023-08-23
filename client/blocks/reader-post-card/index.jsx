@@ -156,12 +156,16 @@ class ReaderPostCard extends Component {
 		);
 
 		const isReaderA8CPage = currentRoute.startsWith( '/read/a8c' );
+		const isReaderListPage = currentRoute.startsWith( '/read/list/' );
 		const isDiscoverPage =
 			removeLocaleFromPathLocaleInFront( currentRoute ).startsWith( '/discover' );
 		const isTagPage = removeLocaleFromPathLocaleInFront( currentRoute ).startsWith( '/tag/' );
 
 		const shouldShowPostCardComments =
-			! isConversations && ! isReaderA8CPage && ( ! compact || isDiscoverPage || isTagPage );
+			! isConversations &&
+			! isReaderA8CPage &&
+			! isReaderListPage &&
+			( ! compact || isDiscoverPage || isTagPage );
 
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
