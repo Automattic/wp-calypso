@@ -1,11 +1,10 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
 import {
 	Notices,
-	useNoticesVisibilityQuery,
+	useNoticesVisibilityQueryRaw,
 	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
@@ -17,7 +16,7 @@ import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-si
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
+import ALL_STATS_NOTICES from './all-notice-definitions';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import removeStatsPurchaseSuccessParam from './lib/remove-stats-purchase-success-param';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
@@ -26,53 +25,6 @@ import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-pro
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
-
-type StatsNoticeType = {
-	component: React.ComponentType< StatsNoticeProps >;
-	noticeId: keyof Notices;
-	isVisibleFunc: ( options: StatsNoticeProps ) => boolean;
-	disabled: boolean;
-};
-
-/** Sorted by priority */
-const ALL_STATS_NOTICES: StatsNoticeType[] = [
-	{
-		component: DoYouLoveJetpackStatsNotice,
-		noticeId: 'do_you_love_jetpack_stats' as keyof Notices,
-		isVisibleFunc: ( {
-			isOdysseyStats,
-			isWpcom,
-			isVip,
-			isP2,
-			isOwnedByTeam51,
-			hasPaidStats,
-			isSiteJetpackNotAtomic,
-		}: StatsNoticeProps ) => {
-			// Gate notices for WPCOM sites behind a flag.
-			const showUpgradeNoticeForWpcomSites =
-				config.isEnabled( 'stats/paid-wpcom-stats' ) &&
-				isWpcom &&
-				! isVip &&
-				! isP2 &&
-				! isOwnedByTeam51;
-
-			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showUpgradeNoticeOnOdyssey = config.isEnabled( 'stats/paid-stats' ) && isOdysseyStats;
-
-			const showUpgradeNoticeForJetpackNotAtomic =
-				config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
-
-			return !! (
-				( showUpgradeNoticeOnOdyssey ||
-					showUpgradeNoticeForJetpackNotAtomic ||
-					showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats
-			);
-		},
-		disabled: false,
-	},
-];
 
 const ensureOnlyOneNoticeVisible = (
 	serverNoticesVisibility: Notices,
@@ -86,7 +38,7 @@ const ensureOnlyOneNoticeVisible = (
 				serverNoticesVisibility[ notice.noticeId ] &&
 				notice.isVisibleFunc( noticeOptions ) )
 	);
-	return processConflictNotices( calculatedNoticesVisibility, 'dashboard_notices' );
+	return processConflictNotices( calculatedNoticesVisibility );
 };
 
 /**
@@ -123,7 +75,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		isSiteJetpackNotAtomic,
 	};
 
-	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
+	const {
+		isLoading,
+		isError,
+		data: serverNoticesVisibility,
+	} = useNoticesVisibilityQueryRaw( siteId );
 
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
 
@@ -142,6 +98,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 	);
 };
 
+/**
+ * Post purchase notices have the highest priority.
+ */
 const PostPurchaseNotices = ( {
 	siteId,
 	statsPurchaseSuccess,
@@ -209,11 +168,13 @@ export default function StatsNotices( {
 
 	return (
 		<>
-			<PostPurchaseNotices
-				siteId={ siteId }
-				statsPurchaseSuccess={ statsPurchaseSuccess }
-				isOdysseyStats={ isOdysseyStats }
-			/>
+			{ statsPurchaseSuccess && (
+				<PostPurchaseNotices
+					siteId={ siteId }
+					statsPurchaseSuccess={ statsPurchaseSuccess }
+					isOdysseyStats={ isOdysseyStats }
+				/>
+			) }
 			{ ! statsPurchaseSuccess && (
 				<NewStatsNotices siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }

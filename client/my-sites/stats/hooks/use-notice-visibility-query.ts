@@ -24,11 +24,8 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< keyof Notices > > = {
 /**
  * Only allow one notice in a conflict group to be active at a time.
  */
-export const processConflictNotices = ( notices: Notices, noticeGroup?: string ): Notices => {
+export const processConflictNotices = ( notices: Notices ): Notices => {
 	for ( const conflictNoticeGroup in CONFLICT_NOTICE_ID_GROUPS ) {
-		if ( noticeGroup && noticeGroup !== conflictNoticeGroup ) {
-			continue;
-		}
 		let foundActiveNotice = false;
 		for ( const confilictNoticeId of CONFLICT_NOTICE_ID_GROUPS[ conflictNoticeGroup ] ) {
 			if ( foundActiveNotice ) {
@@ -41,26 +38,24 @@ export const processConflictNotices = ( notices: Notices, noticeGroup?: string )
 	return notices;
 };
 
-export async function queryNotices( siteId: number | null ): Promise< Notices > {
-	const payload = await wpcom.req.get( {
+export function queryNotices( siteId: number | null ): Promise< Notices > {
+	return wpcom.req.get( {
 		method: 'GET',
 		apiNamespace: 'wpcom/v2',
 		path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
 	} );
-
-	return processConflictNotices( payload );
 }
 
 export default function useNoticeVisibilityQuery( siteId: number | null, noticeId: string ) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', siteId ],
-		queryFn: () => queryNotices( siteId ),
+		queryFn: () => queryNotices( siteId ).then( processConflictNotices ),
 		select: ( payload: Record< string, boolean > ): boolean => !! payload?.[ noticeId ],
 		...QUERY_OPTIONS,
 	} );
 }
 
-export function useNoticesVisibilityQuery( siteId: number | null ) {
+export function useNoticesVisibilityQueryRaw( siteId: number | null ) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', siteId ],
 		queryFn: () => queryNotices( siteId ),
