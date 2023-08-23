@@ -280,16 +280,6 @@ const PlansFeaturesMain = ( {
 			recordTracksEvent( 'calypso_signup_free_plan_click' );
 
 			/**
-			 * Delay showing modal until the experiments have loaded
-			 */
-			if (
-				isCustomDomainAllowedOnFreePlan.isLoading ||
-				isPlanUpsellEnabledOnFreeDomain.isLoading
-			) {
-				return;
-			}
-
-			/**
 			 * After the experiments are loaded now open the relevant modal based on previous step parameters
 			 */
 			if ( paidDomainName ) {
