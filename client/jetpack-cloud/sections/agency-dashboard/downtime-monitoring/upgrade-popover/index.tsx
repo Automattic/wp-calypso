@@ -86,8 +86,13 @@ export default function UpgradePopover( {
 		>
 			<h2 className="upgrade-popover__heading">{ translate( 'Maximise uptime' ) }</h2>
 			{ dismissibleWithPreference && (
-				<Button borderless className="upgrade-popover__close-button">
-					<Icon icon={ close } onClick={ handleClose } size={ 16 } />
+				<Button
+					borderless
+					className="upgrade-popover__close-button"
+					aria-label={ translate( 'Close' ) }
+					onClick={ handleClose }
+				>
+					<Icon icon={ close } size={ 16 } />
 				</Button>
 			) }
 
