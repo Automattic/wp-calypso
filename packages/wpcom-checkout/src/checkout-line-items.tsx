@@ -72,7 +72,7 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	}
 `;
 
-export const LineItem = styled( WPLineItem )< {
+export const LineItem = styled( CheckoutLineItem )< {
 	theme?: Theme;
 } >`
 	display: flex;
@@ -937,7 +937,7 @@ const DesktopGiftWrapper = styled.div`
 	}
 `;
 
-function WPLineItem( {
+function CheckoutLineItem( {
 	children,
 	product,
 	className,
