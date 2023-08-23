@@ -127,7 +127,12 @@ class ReaderShare extends Component {
 						} )
 					) : (
 						<>
-							<Gridicon icon="reblog" size={ this.props.iconSize } title={ reblogTitle } />
+							<Gridicon
+								icon="reblog"
+								size={ this.props.iconSize }
+								title={ reblogTitle }
+								style={ { height: this.props.iconSize, width: this.props.iconSize } }
+							/>
 							{ this.props.showReblogLabel && (
 								<span className="reader-share__reblog-label" title={ reblogTitle }>
 									{ translate( 'Reblog' ) }
