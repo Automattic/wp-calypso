@@ -118,8 +118,8 @@ function getChecklistThemeDestination( {
 	flowName,
 	siteSlug,
 	themeParameter,
-	headerPatternIds,
-	footerPatternIds,
+	headerPatternId,
+	footerPatternId,
 	sectionPatternIds,
 } ) {
 	if ( isSiteAssemblerFlow( flowName ) ) {
@@ -130,8 +130,8 @@ function getChecklistThemeDestination( {
 					theme: themeParameter,
 					siteSlug: siteSlug,
 					isNewSite: true,
-					header_pattern_ids: headerPatternIds,
-					footer_pattern_ids: footerPatternIds,
+					header_pattern_id: headerPatternId,
+					footer_pattern_id: footerPatternId,
 					pattern_ids: sectionPatternIds,
 				},
 				`/setup/with-theme-assembler`

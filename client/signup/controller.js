@@ -301,8 +301,8 @@ export default {
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;
-		const headerPatternIds = query && query.header_pattern_ids;
-		const footerPatternIds = query && query.footer_pattern_ids;
+		const headerPatternId = query && query.header_pattern_id;
+		const footerPatternId = query && query.footer_pattern_id;
 		const sectionPatternIds = query && query.pattern_ids;
 		// Set plugin parameter in signup dependency store so we can retrieve it in getWithPluginDestination().
 		const pluginParameter = query && query.plugin;
@@ -313,8 +313,8 @@ export default {
 			...( themeParameter && { themeParameter } ),
 			...( themeType && { themeType } ),
 			...( styleVariation && { styleVariation } ),
-			...( headerPatternIds && { headerPatternIds } ),
-			...( footerPatternIds && { footerPatternIds } ),
+			...( headerPatternId && { headerPatternId } ),
+			...( footerPatternId && { footerPatternId } ),
 			...( sectionPatternIds && { sectionPatternIds } ),
 			...( pluginParameter && { pluginParameter } ),
 			...( pluginBillingPeriod && { pluginBillingPeriod } ),

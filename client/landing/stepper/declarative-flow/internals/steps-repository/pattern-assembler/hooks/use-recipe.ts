@@ -12,13 +12,8 @@ import type { GlobalStylesObject } from '@automattic/global-styles';
 const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 
-	const header_pattern_ids = ( searchParams.get( 'header_pattern_ids' ) || '' )
-		.split( ',' )
-		.filter( Boolean );
-
-	const footer_pattern_ids = ( searchParams.get( 'footer_pattern_ids' ) || '' )
-		.split( ',' )
-		.filter( Boolean );
+	const header_pattern_id = searchParams.get( 'header_pattern_id' );
+	const footer_pattern_id = searchParams.get( 'footer_pattern_id' );
 
 	const section_pattern_ids = ( searchParams.get( 'pattern_ids' ) || '' )
 		.split( ',' )
@@ -30,15 +25,8 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 	const patternsById = keyBy( patterns, 'ID' );
 	const categoriesByName = keyBy( categories, 'name' );
 
-	const header =
-		header_pattern_ids.length === 0
-			? null
-			: patternsById[ decodePatternId( header_pattern_ids[ 0 ] ) ];
-
-	const footer =
-		footer_pattern_ids.length === 0
-			? null
-			: patternsById[ decodePatternId( footer_pattern_ids[ 0 ] ) ];
+	const header = header_pattern_id ? patternsById[ decodePatternId( header_pattern_id ) ] : null;
+	const footer = footer_pattern_id ? patternsById[ decodePatternId( footer_pattern_id ) ] : null;
 
 	const sections = section_pattern_ids
 		.map( ( patternId ) => patternsById[ decodePatternId( patternId ) ] )
@@ -76,9 +64,9 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		setSearchParams(
 			( currentSearchParams ) => {
 				if ( pattern === null ) {
-					currentSearchParams.delete( 'header_pattern_ids' );
+					currentSearchParams.delete( 'header_pattern_id' );
 				} else {
-					currentSearchParams.set( 'header_pattern_ids', '' + pattern.ID );
+					currentSearchParams.set( 'header_pattern_id', '' + pattern.ID );
 				}
 				return currentSearchParams;
 			},
@@ -90,9 +78,9 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		setSearchParams(
 			( currentSearchParams ) => {
 				if ( pattern === null ) {
-					currentSearchParams.delete( 'footer_pattern_ids' );
+					currentSearchParams.delete( 'footer_pattern_id' );
 				} else {
-					currentSearchParams.set( 'footer_pattern_ids', '' + pattern.ID );
+					currentSearchParams.set( 'footer_pattern_id', '' + pattern.ID );
 				}
 				return currentSearchParams;
 			},
