@@ -187,6 +187,11 @@ export interface PluginRemovalResponse {
 	log: string[];
 }
 
+export interface JetpackSearchResponse {
+	total: number;
+	// Right now we just need count, there's more we can add later.
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {
