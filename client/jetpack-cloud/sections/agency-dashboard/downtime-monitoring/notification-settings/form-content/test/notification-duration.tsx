@@ -62,7 +62,7 @@ describe( 'NotificationDuration', () => {
 			/>
 		);
 
-		expect( screen.getByText( /monitor my site every/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /Monitor my site every/i ) ).toBeInTheDocument();
 
 		const selectedText = screen.getByRole( 'img', { name: 'Schedules' } );
 		expect( selectedText.parentElement ).toHaveTextContent( '15 minutes' );

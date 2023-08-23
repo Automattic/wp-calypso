@@ -40,7 +40,7 @@ describe( 'NotificationSettings', () => {
 		expect( screen.getByText( /set custom notification/i ) ).toBeInTheDocument();
 		expect( screen.getByText( site.url ) ).toBeInTheDocument();
 
-		expect( screen.getByText( /monitor my site every/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /Monitor my site every/i ) ).toBeInTheDocument();
 		expect( screen.getAllByText( /\d+ minutes/i ).at( 0 ) ).toBeInTheDocument();
 
 		expect( screen.getByText( 'SMS Notification' ) ).toBeInTheDocument();

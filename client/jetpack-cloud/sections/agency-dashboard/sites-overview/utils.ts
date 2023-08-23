@@ -504,8 +504,16 @@ export const availableNotificationDurations = [
 		isPaid: true,
 	},
 	{
+		time: 3,
+		label: translate( '3 minutes' ),
+	},
+	{
 		time: 5,
 		label: translate( '5 minutes' ),
+	},
+	{
+		time: 10,
+		label: translate( '10 minutes' ),
 	},
 	{
 		time: 15,
@@ -514,10 +522,6 @@ export const availableNotificationDurations = [
 	{
 		time: 30,
 		label: translate( '30 minutes' ),
-	},
-	{
-		time: 45,
-		label: translate( '45 minutes' ),
 	},
 	{
 		time: 60,
