@@ -1,6 +1,7 @@
 import {
 	getPlan,
 	JETPACK_LEGACY_PLANS,
+	PLAN_100_YEARS,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -163,9 +164,12 @@ class CurrentPlan extends Component {
 		const isLoading = this.isLoading();
 		const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 		const planTitle = getPlan( currentPlanSlug ).getTitle();
-		const planFeaturesHeader = translate( '{{planName/}} plan features', {
-			components: { planName: <>{ planTitle }</> },
-		} );
+		const planFeaturesHeader =
+			currentPlanSlug === PLAN_100_YEARS
+				? translate( 'Features includes in your 100 year plan' )
+				: translate( '{{planName/}} plan features', {
+						components: { planName: <>{ planTitle }</> },
+				  } );
 
 		return (
 			<>

@@ -23,6 +23,8 @@ import {
 	TERM_NOVENNIALLY,
 	TERM_OCTENNIALLY,
 	TERM_SEPTENNIALLY,
+	PLAN_CENTENNIAL_PERIOD,
+	TERM_CENTENNIALLY,
 } from './constants';
 
 export { getPlanSlugForTermVariant } from './get-plan-term-variant';
@@ -61,6 +63,8 @@ export function getTermDuration( term: string ): number | undefined {
 			return PLAN_NOVENNIAL_PERIOD;
 		case TERM_DECENNIALLY:
 			return PLAN_DECENNIAL_PERIOD;
+		case TERM_CENTENNIALLY:
+			return PLAN_CENTENNIAL_PERIOD;
 	}
 }
 
