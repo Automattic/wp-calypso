@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
+import photon from 'photon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG, DEFAULT_ASSEMBLER_DESIGN } from '../constants';
@@ -35,6 +36,20 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	styleVariation,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
+
+	if ( design.is_externally_managed && design.screenshot ) {
+		const fit = '479,360';
+		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
+		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+
+		return (
+			<img
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+				alt={ design.description }
+			/>
+		);
+	}
 
 	return (
 		<MShotsImage

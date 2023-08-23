@@ -47,6 +47,7 @@ export const TASK_USE_BUILT_BY = 'home-task-use-built-by';
 export const TASK_STAGING = 'home-task-staging';
 export const TASK_FIVERR = 'home-task-fiverr';
 export const TASK_DOMAIN_UPSELL = 'home-task-domain-upsell';
+export const TASK_GOOGLE_DOMAIN_OWNERS = 'home-task-google-domain-owners';
 export const LAUNCHPAD_INTENT_BUILD = 'home-launchpad-intent-build';
 export const LAUNCHPAD_INTENT_WRITE = 'home-launchpad-intent-write';
 export const LAUNCHPAD_INTENT_FREE_NEWSLETTER = 'home-launchpad-intent-free-newsletter';

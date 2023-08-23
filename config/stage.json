@@ -30,7 +30,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
-		"design-picker/query-marketplace-themes": true,
+		"design-picker/query-marketplace-themes": false,
 		"desktop-promo": true,
 		"dev/preferences-helper": true,
 		"domains/gdpr-consent-page": true,

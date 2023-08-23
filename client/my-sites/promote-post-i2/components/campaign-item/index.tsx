@@ -3,6 +3,7 @@ import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
+import { Moment } from 'moment';
 import page from 'page';
 import { Fragment, useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -24,7 +25,7 @@ import './style.scss';
 interface Props {
 	campaign: Campaign;
 }
-const getCampaignEndText = ( localizedMomentInstance: any, status: string, end_date: string ) => {
+const getCampaignEndText = ( end_date: Moment, status: string ) => {
 	if (
 		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
 	) {
@@ -33,7 +34,7 @@ const getCampaignEndText = ( localizedMomentInstance: any, status: string, end_d
 		return __( 'Ongoing' );
 	} else if ( [ campaignStatus.CANCELED, campaignStatus.FINISHED ].includes( status ) ) {
 		// return moment in format similar to 27 June
-		return localizedMomentInstance( end_date ).format( 'D MMMM' );
+		return end_date.format( 'D MMMM' );
 	}
 	return '-';
 };
@@ -157,7 +158,7 @@ export default function CampaignItem( props: Props ) {
 				<div>{ statusBadge }</div>
 			</td>
 			<td className="campaign-item__ends">
-				<div>{ getCampaignEndText( moment, campaign.status, campaign.end_date ) }</div>
+				<div>{ getCampaignEndText( moment( campaign.end_date ), campaign.status ) }</div>
 			</td>
 			<td className="campaign-item__budget">
 				<div>{ budgetString }</div>
