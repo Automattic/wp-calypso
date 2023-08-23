@@ -30,7 +30,6 @@ import MembershipsSection from './';
 import './style.scss';
 
 type MembersProductsSectionProps = {
-	section: string;
 	query?: {
 		[ key: string ]: string;
 	};
@@ -40,7 +39,7 @@ const showAddEditDialogInitially =
 	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
 	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
-function MembershipsProductsSection( { section, query }: MembersProductsSectionProps ) {
+function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( showAddEditDialogInitially );
@@ -138,9 +137,7 @@ function MembershipsProductsSection( { section, query }: MembersProductsSectionP
 				/>
 			) }
 
-			{ hasLoadedFeatures && ! connectedAccountId && (
-				<MembershipsSection section={ section } query={ query } />
-			) }
+			{ hasLoadedFeatures && ! connectedAccountId && <MembershipsSection query={ query } /> }
 			{ hasLoadedFeatures && hasStripeFeature && connectedAccountId && (
 				<SectionHeader>
 					<Button primary compact onClick={ () => openAddEditDialog( null ) }>
