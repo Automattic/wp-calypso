@@ -27,6 +27,7 @@ interface DesignPreviewProps {
 	siteId: number;
 	stylesheet: string;
 	isVirtual?: boolean;
+	isExternallyManaged?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -139,14 +140,20 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	);
 };
 
-const DesignPreview = ( props: DesignPreviewProps ) => (
-	<GlobalStylesProvider
-		siteId={ props.siteId }
-		stylesheet={ props.stylesheet }
-		placeholder={ null }
-	>
-		<Preview { ...props } />
-	</GlobalStylesProvider>
-);
+const DesignPreview = ( props: DesignPreviewProps ) => {
+	if ( props.isExternallyManaged ) {
+		return <Preview { ...props } />;
+	}
+
+	return (
+		<GlobalStylesProvider
+			siteId={ props.siteId }
+			stylesheet={ props.stylesheet }
+			placeholder={ null }
+		>
+			<Preview { ...props } />
+		</GlobalStylesProvider>
+	);
+};
 
 export default DesignPreview;
