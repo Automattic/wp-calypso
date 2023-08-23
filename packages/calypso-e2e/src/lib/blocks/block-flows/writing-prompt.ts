@@ -1,7 +1,7 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 /**
- * Represents the flow of using an Ad block.
+ * Represents the flow of using a Writing Prompt block.
  */
 export class WritingPromptFlow implements BlockFlow {
 	blockSidebarName = 'Writing Prompt';
