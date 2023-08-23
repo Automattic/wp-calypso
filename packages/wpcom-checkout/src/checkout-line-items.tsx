@@ -593,34 +593,34 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		stripZeros: true,
 	} );
 
+	if ( isP2Plus( product ) ) {
+		// This is the price for one item for products with a quantity (eg. seats in a license).
+		const itemPrice = formatCurrency(
+			product.item_original_cost_for_quantity_one_integer,
+			product.currency,
+			{ isSmallestUnit: true, stripZeros: true }
+		);
+		const members = product?.current_quantity || 1;
+		const p2Options = {
+			args: {
+				itemPrice,
+				members,
+			},
+			count: members,
+		};
+
+		return (
+			<>
+				{ translate(
+					'Monthly subscription: %(itemPrice)s x %(members)s member',
+					'Monthly subscription: %(itemPrice)s x %(members)s members',
+					p2Options
+				) }
+			</>
+		);
+	}
+
 	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
-		if ( isP2Plus( product ) ) {
-			// This is the price for one item for products with a quantity (eg. seats in a license).
-			const itemPrice = formatCurrency(
-				product.item_original_cost_for_quantity_one_integer,
-				product.currency,
-				{ isSmallestUnit: true, stripZeros: true }
-			);
-			const members = product?.current_quantity || 1;
-			const p2Options = {
-				args: {
-					itemPrice,
-					members,
-				},
-				count: members,
-			};
-
-			return (
-				<>
-					{ translate(
-						'Monthly subscription: %(itemPrice)s x %(members)s member',
-						'Monthly subscription: %(itemPrice)s x %(members)s members',
-						p2Options
-					) }
-				</>
-			);
-		}
-
 		if ( isTieredVolumeSpaceAddon( product ) ) {
 			const spaceQuantity = product?.quantity ?? 1;
 			return (
