@@ -2,7 +2,7 @@
  * @group gutenberg
  * @group jetpack-wpcom-integration
  */
-import { BlockFlow, AIAssistantFlow } from '@automattic/calypso-e2e';
+import { BlockFlow, AIAssistantFlow, WritingPromptFlow } from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -11,6 +11,7 @@ const blockFlows: BlockFlow[] = [
 		tone: 'Passionate',
 		improve: 'Make shorter',
 	} ),
+	new WritingPromptFlow(),
 ];
 
 createBlockTests( 'Blocks: Jetpack Writing', blockFlows );
