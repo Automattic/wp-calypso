@@ -166,7 +166,7 @@ class CurrentPlan extends Component {
 		const planTitle = getPlan( currentPlanSlug ).getTitle();
 		const planFeaturesHeader =
 			currentPlanSlug === PLAN_100_YEARS
-				? translate( 'Features includes in your 100 year plan' )
+				? translate( 'Features included in your 100-Year Plan' )
 				: translate( '{{planName/}} plan features', {
 						components: { planName: <>{ planTitle }</> },
 				  } );
