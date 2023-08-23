@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
-import { Notices } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
+import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
+import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import { StatsNoticeProps } from './types';
 
 type StatsNoticeType = {
 	component: React.ComponentType< StatsNoticeProps >;
-	noticeId: keyof Notices;
+	noticeId: NoticeIdType;
 	isVisibleFunc: ( options: StatsNoticeProps ) => boolean;
 	disabled: boolean;
 };
@@ -13,8 +15,22 @@ type StatsNoticeType = {
 /** Sorted by priority */
 const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
+		component: PaidPlanPurchaseSuccessJetpackStatsNotice,
+		noticeId: 'paid_plan_purchase_success_client_only',
+		isVisibleFunc: ( { statsPurchaseSuccess }: StatsNoticeProps ) =>
+			statsPurchaseSuccess === 'paid',
+		disabled: false,
+	},
+	{
+		component: FreePlanPurchaseSuccessJetpackStatsNotice,
+		noticeId: 'free_plan_purchase_success_client_only',
+		isVisibleFunc: ( { statsPurchaseSuccess }: StatsNoticeProps ) =>
+			statsPurchaseSuccess === 'free',
+		disabled: false,
+	},
+	{
 		component: DoYouLoveJetpackStatsNotice,
-		noticeId: 'do_you_love_jetpack_stats' as keyof Notices,
+		noticeId: 'do_you_love_jetpack_stats',
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,

@@ -1,5 +1,6 @@
 export interface PaidPlanPurchaseSuccessJetpackStatsNoticeProps {
 	onNoticeViewed?: () => void;
+	isOdysseyStats: boolean;
 }
 
 export interface StatsNoticeProps {
@@ -14,6 +15,7 @@ export interface StatsNoticeProps {
 	hasPaidStats?: boolean;
 	hasFreeStats?: boolean;
 	isSiteJetpackNotAtomic?: boolean;
+	statsPurchaseSuccess?: string;
 }
 
 export interface NoticeBodyProps {
