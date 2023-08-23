@@ -187,6 +187,8 @@ export function DomainsTable( {
 					selectedDomainCount={ selectedDomains.size }
 				/>
 			) }
+			{ /* This spacer will be replaced by searching and filtering controls. In the meantime it stops the table jumping around when selecting domains. */ }
+			{ ! hasSelectedDomains && <div style={ { height: 40 } } /> }
 			<table>
 				<DomainsTableHeader
 					columns={ domainsTableColumns }
