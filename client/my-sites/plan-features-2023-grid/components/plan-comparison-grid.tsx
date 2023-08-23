@@ -448,7 +448,6 @@ const PlanComparisonGridHeaderCell = ( {
 				currentSitePlanSlug={ currentSitePlanSlug }
 				manageHref={ manageHref }
 				canUserPurchasePlan={ canUserPurchasePlan }
-				current={ gridPlan.current ?? false }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
