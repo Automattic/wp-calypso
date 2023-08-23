@@ -49,7 +49,8 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 
 		&:nth-of-type(1) {
-			.upgrade-modal__included {
+			.upgrade-modal__included,
+			.upgrade-modal__theme-features {
 				display: block;
 				margin-bottom: 36px;
 
@@ -69,6 +70,20 @@ $design-button-primary-hover-color: var(--color-primary-60);
 				display: block;
 			}
 		}
+	}
+
+	.upgrade-modal__price-item {
+		display: flex;
+		justify-content: space-between;
+		padding: 15px 0;
+
+		&:not(:first-child) {
+			border-top: 1px solid var(--studio-gray-10);
+		}
+	}
+
+	.upgrade-modal__price-summary {
+		padding-bottom: 30px;
 	}
 
 	.upgrade-modal__theme-price {
@@ -168,6 +183,24 @@ $design-button-primary-hover-color: var(--color-primary-60);
 
 		@include break-medium {
 			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.upgrade-modal__theme-features {
+		margin-top: 36px;
+
+		.upgrade-modal__theme-features-list {
+			margin: 0;
+
+			.upgrade-modal__theme-feature {
+				display: inline-block;
+				padding-top: 4px;
+				padding-right: 4px;
+			}
+
+			.upgrade-modal__theme-feature-badge {
+				border-radius: 4px;
+			}
 		}
 	}
 

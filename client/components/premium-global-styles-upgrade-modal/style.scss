@@ -46,7 +46,8 @@
 		}
 
 		&:nth-of-type(1) {
-			.upgrade-modal__included {
+			.upgrade-modal__included,
+			.upgrade-modal__theme-features {
 				display: block;
 				margin-bottom: 36px;
 
