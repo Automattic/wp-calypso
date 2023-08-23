@@ -189,15 +189,13 @@ export const requestDeleteProduct = ( siteId, product, annualProduct, noticeText
 	};
 };
 
-const addOrUpdateAnnualProduct = ( annualProduct, siteId, noticeText ) => ( membershipProduct ) => {
+const addOrUpdateAnnualProduct = ( siteId, annualProduct, noticeText ) => ( membershipProduct ) => {
 	const newMembershipProductId = membershipProduct.ID;
 	annualProduct.tier = newMembershipProductId;
-	return ( dispatch ) => {
-		if ( annualProduct.ID ) {
-			return requestAddProduct( siteId, annualProduct, noticeText )( dispatch );
-		}
-		return requestUpdateProduct( siteId, annualProduct, noticeText )( dispatch );
-	};
+	if ( annualProduct.ID ) {
+		return requestUpdateProduct( siteId, annualProduct, noticeText );
+	}
+	return requestAddProduct( siteId, annualProduct, noticeText );
 };
 
 export const requestAddTier = ( siteId, product, annualProduct, noticeText ) => {
@@ -207,7 +205,7 @@ export const requestAddTier = ( siteId, product, annualProduct, noticeText ) => 
 			product,
 			noticeText
 		)( dispatch ).then( ( membershipProduct ) => {
-			addOrUpdateAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )(
+			addOrUpdateAnnualProduct( siteId, annualProduct, noticeText )( membershipProduct )(
 				dispatch
 			);
 		} );
@@ -220,12 +218,8 @@ export const requestUpdateTier = ( siteId, product, annualProduct, noticeText ) 
 			product,
 			noticeText
 		)( dispatch ).then( ( membershipProduct ) => {
-			if ( annualProduct.ID ) {
-				return requestUpdateProduct( siteId, annualProduct, noticeText )( dispatch );
-			}
-
 			// The annual product does not exist yet
-			return addOrUpdateAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )(
+			return addOrUpdateAnnualProduct( siteId, annualProduct, noticeText )( membershipProduct )(
 				dispatch
 			);
 		} );
