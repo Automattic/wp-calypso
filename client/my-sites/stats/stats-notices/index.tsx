@@ -115,6 +115,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		return null;
 	}
 
+	// TODO iterate the notice to only show one notice at a time.
 	return ALL_STATS_NOTICES.map(
 		( notice ) =>
 			! notice.disabled &&
