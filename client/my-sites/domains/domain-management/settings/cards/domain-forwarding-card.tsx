@@ -360,7 +360,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						</FormLabel>
 						<FormSettingExplanation>
 							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
-							{ ` -> ${ targetUrl }` }
+							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }
 						</FormSettingExplanation>
 						<FormLabel>
 							<FormRadio
@@ -375,7 +375,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						</FormLabel>
 						<FormSettingExplanation>
 							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
-							{ ` -> ${ targetUrl }` }/{ translate( 'somepage.html' ) }
+							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
 						</FormSettingExplanation>
 					</Accordion>
 				</FormFieldset>
