@@ -138,6 +138,13 @@ const ScreenMain = ( {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
 
+	useEffect( () => {
+		if ( selectedMainItem !== 'header' ) {
+			// Open Colors initially
+			setTimeout( () => onMainItemSelect( { name: 'header', isPanel: true } ), 250 );
+		}
+	}, [] );
+
 	return (
 		<>
 			<NavigatorHeader
