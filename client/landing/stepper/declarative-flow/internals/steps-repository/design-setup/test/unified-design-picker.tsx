@@ -43,6 +43,18 @@ jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
 } ) );
 
+jest.mock( 'calypso/state/themes/actions/add-external-managed-theme-to-cart', () => ( {
+	getPreferredBillingCycleProductSlug: () => {
+		return;
+	},
+} ) );
+
+jest.mock( 'calypso/my-sites/themes/helpers', () => ( {
+	marketplaceThemeBillingProductSlug: () => {
+		return;
+	},
+} ) );
+
 jest.mock( 'calypso/components/data/query-site-features', () => ( {
 	useQuerySiteFeatures: () => {
 		return;
