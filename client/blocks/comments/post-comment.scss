@@ -3,6 +3,10 @@
 	margin-top: 20px;
 	position: relative;
 
+	&.is-clickable {
+		cursor: pointer;
+	}
+
 	&.depth-0,
 	&.depth-1,
 	&.depth-2 {

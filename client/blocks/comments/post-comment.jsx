@@ -394,11 +394,12 @@ class PostComment extends PureComponent {
 		const postCommentClassnames = classnames( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 			'is-highlighted': isHighlighted,
+			'is-clickable': this.props.onCommentClick,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
-			<li className={ postCommentClassnames }>
+			<li className={ postCommentClassnames } onClick={ this.props.onCommentClick }>
 				<div className="comments__comment-author">
 					{ commentAuthorUrl ? (
 						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick }>

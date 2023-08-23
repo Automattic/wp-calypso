@@ -226,6 +226,9 @@ class PostCommentList extends Component {
 				commentText={ this.state.commentText }
 				onUpdateCommentText={ this.onUpdateCommentText }
 				onCommentSubmit={ this.resetActiveReplyComment }
+				onCommentClick={
+					this.props.expandableView && ! this.state.isExpanded && this.toggleExpanded
+				}
 				depth={ 0 }
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
