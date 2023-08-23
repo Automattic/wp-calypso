@@ -36,7 +36,7 @@ const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) =>
  * @param products list of products
  * @returns string
  */
-function getPreferredBillingCycleProductSlug(
+export function getPreferredBillingCycleProductSlug(
 	products: Array< ProductListItem >,
 	currentPlan?: SitePlanData | any
 ): string {

@@ -13,6 +13,7 @@ interface GoToCheckoutProps {
 	destination: string;
 	plan?: string;
 	cancelDestination?: string;
+	extraProducts?: string[];
 }
 
 const useCheckout = () => {
@@ -23,6 +24,7 @@ const useCheckout = () => {
 		destination,
 		plan,
 		cancelDestination,
+		extraProducts = [],
 	}: GoToCheckoutProps ) => {
 		const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
 		const params = new URLSearchParams( {
@@ -42,7 +44,7 @@ const useCheckout = () => {
 			// See https://github.com/Automattic/wp-calypso/pull/64899
 			window.location.href = `/checkout/${ encodeURIComponent( siteSlug ) }?${ params }`;
 		} else {
-			openCheckoutModal( [ plan ], { redirect_to: destination } );
+			openCheckoutModal( [ plan, ...extraProducts ], { redirect_to: destination } );
 		}
 	};
 
