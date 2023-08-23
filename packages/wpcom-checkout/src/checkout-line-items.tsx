@@ -29,7 +29,7 @@ import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
-import { getLabel, getSublabel } from './checkout-labels';
+import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
@@ -588,7 +588,10 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 export function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
-	const sublabel = getSublabel( product );
+	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 
 	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
@@ -618,41 +621,51 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			);
 		}
 
-		const options = {
-			args: {
-				sublabel,
-				price: formatCurrency( product.item_original_subtotal_integer, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
-			},
-		};
-
 		if ( isTieredVolumeSpaceAddon( product ) ) {
 			const spaceQuantity = product?.quantity ?? 1;
 			return (
 				<>
 					{ translate( '%(quantity)s GB extra space, %(price)s per year', {
-						args: { quantity: spaceQuantity, price: options.args.price },
+						args: { quantity: spaceQuantity, price },
 					} ) }
 				</>
 			);
 		}
 
 		if ( isMonthlyProduct( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />:{ ' ' }
+					{ translate( '%(price)s per month', { args: { price } } ) }
+				</>
+			);
 		}
 
 		if ( isYearly( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per year', options ) }</>;
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />:{ ' ' }
+					{ translate( '%(price)s per year', { args: { price } } ) }
+				</>
+			);
 		}
 
 		if ( isBiennially( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />:{ ' ' }
+					{ translate( '%(price)s per two years', { args: { price } } ) }
+				</>
+			);
 		}
 
 		if ( isTriennially( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per three years', options ) }</>;
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />:{ ' ' }
+					{ translate( '%(price)s per three years', { args: { price } } ) }
+				</>
+			);
 		}
 	}
 
@@ -661,32 +674,25 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product )
 	) {
-		let billingInterval = null;
-
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			billingInterval = translate( 'billed annually' );
+			const billingInterval = translate( 'billed annually' );
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+				</>
+			);
 		}
 
 		if ( product.months_per_bill_period === 1 ) {
-			billingInterval = translate( 'billed monthly' );
+			const billingInterval = translate( 'billed monthly' );
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+				</>
+			);
 		}
 
-		if ( billingInterval === null ) {
-			return <>{ sublabel }</>;
-		}
-
-		return (
-			<>
-				{ translate( '%(productDescription)s: %(billingInterval)s', {
-					args: {
-						productDescription: sublabel,
-						billingInterval,
-					},
-					comment:
-						"Product description and billing interval (already translated) separated by a colon (e.g. 'Mailboxes and Productivity Tools: billed annually')",
-				} ) }
-			</>
-		);
+		return <DefaultLineItemSublabel product={ product } />;
 	}
 
 	if ( isDIFMProduct( product ) ) {
@@ -742,15 +748,8 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 		return (
 			<>
-				{ translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
-					args: {
-						premiumLabel,
-						sublabel: sublabel,
-						interval: translate( 'billed annually' ),
-					},
-					comment:
-						'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
-				} ) }
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( 'billed annually' ) }
 			</>
 		);
 	}
@@ -758,22 +757,13 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	if ( isDomainTransfer ) {
 		return (
 			<>
-				{ translate( ' %(sublabel)s: %(interval)s %(cost)s ', {
-					args: {
-						sublabel: sublabel,
-						cost: formatCurrency( product.item_original_cost_integer, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-						interval: translate( 'billed annually' ),
-					},
-					comment: 'Domain transfer and billing interval, separated by a colon. ',
-				} ) }
+				<DefaultLineItemSublabel product={ product } />: { translate( 'billed annually' ) }{ ' ' }
+				{ price }
 			</>
 		);
 	}
 
-	return <>{ sublabel || null }</>;
+	return <DefaultLineItemSublabel product={ product } />;
 }
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
