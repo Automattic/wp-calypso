@@ -225,9 +225,7 @@ const PlansFeaturesMain = ( {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const [ isFreeFreeUpsellOpen, setIsFreeFreeUpsellOpen ] = useState( false );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
-	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
-	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -260,8 +258,6 @@ const PlansFeaturesMain = ( {
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
-
-	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
 
 	const isDisplayingPlansNeededForFeature = () => {
 		if (
@@ -492,6 +488,7 @@ const PlansFeaturesMain = ( {
 			  )
 			: undefined;
 
+	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	/**
 	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
 	 * for the sticky CTA bar.
@@ -528,6 +525,10 @@ const PlansFeaturesMain = ( {
 		};
 	}, [] );
 
+	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
+	/**
+	 * Scrolls the comparison grid smoothly into view when rendered.
+	 */
 	useLayoutEffect( () => {
 		if ( showPlansComparisonGrid ) {
 			setTimeout( () => {
@@ -542,6 +543,47 @@ const PlansFeaturesMain = ( {
 			} );
 		}
 	}, [ showPlansComparisonGrid ] );
+
+	const comparisonGridToggleRef = useRef< HTMLButtonElement | null >( null );
+	const {
+		isVisible: isOdieVisible,
+		setIsVisible: setIsOdieVisible,
+		trackEvent: trackOdieEvent,
+	} = useOdieAssistantContext();
+	/**
+	 * Shows the Odie AI assistant when comparison grid is toggled into view
+	 * This should run once on mount - akin to componentDidMount
+	 */
+	useEffect( () => {
+		if ( ! window.IntersectionObserver ) {
+			return;
+		}
+
+		const observer = new IntersectionObserver( ( entries ) => {
+			entries.forEach( ( entry ) => {
+				if ( entry.isIntersecting ) {
+					if ( ! isOdieVisible ) {
+						trackOdieEvent( 'calypso_odie_chat_toggle_visibility', {
+							visibility: true,
+							trigger: 'scroll',
+						} );
+						setIsOdieVisible( true );
+					}
+
+					observer?.disconnect();
+				}
+			} );
+		} );
+
+		if ( comparisonGridToggleRef.current ) {
+			observer.observe( comparisonGridToggleRef.current );
+		}
+
+		return () => {
+			observer?.disconnect();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_wp_plans_test_view' );
@@ -671,15 +713,6 @@ const PlansFeaturesMain = ( {
 								stickyRowOffset={ masterbarHeight }
 								usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
 								allFeaturesList={ FEATURES_LIST }
-								showOdie={ () => {
-									if ( ! isVisible ) {
-										trackEvent( 'calypso_odie_chat_toggle_visibility', {
-											visibility: true,
-											trigger: 'scroll',
-										} );
-										setIsVisible( true );
-									}
-								} }
 							/>
 							{ ! hidePlansFeatureComparison && (
 								<ComparisonGridToggle
@@ -689,6 +722,7 @@ const PlansFeaturesMain = ( {
 											? translate( 'Hide comparison' )
 											: translate( 'Compare plans' )
 									}
+									ref={ comparisonGridToggleRef }
 								/>
 							) }
 							{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (

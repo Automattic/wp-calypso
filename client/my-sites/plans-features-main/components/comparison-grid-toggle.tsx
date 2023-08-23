@@ -2,16 +2,17 @@ import { Button } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type TranslateResult } from 'i18n-calypso';
+import { forwardRef } from 'react';
 import { plansBreakSmall } from 'calypso/my-sites/plan-features-2023-grid/media-queries';
 import '../style.scss';
 
-const ComparisonGridToggle = ( {
-	onClick,
-	label,
-}: {
-	onClick: () => void;
-	label: TranslateResult;
-} ) => {
+const ComparisonGridToggle = forwardRef<
+	HTMLAnchorElement | HTMLButtonElement,
+	{
+		onClick: () => void;
+		label: TranslateResult;
+	}
+>( ( { onClick, label }, ref ) => {
 	const Container = styled.div`
 		display: flex;
 		justify-content: center;
@@ -50,11 +51,11 @@ const ComparisonGridToggle = ( {
 
 	return (
 		<Container>
-			<Button onClick={ onClick } ref={ null }>
+			<Button onClick={ onClick } ref={ ref }>
 				{ label }
 			</Button>
 		</Container>
 	);
-};
+} );
 
 export default ComparisonGridToggle;

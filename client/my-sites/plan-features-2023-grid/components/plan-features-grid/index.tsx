@@ -30,7 +30,7 @@ import {
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { type LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { usePlansGridContext } from '../../grid-context';
 import useHighlightAdjacencyMatrix from '../../hooks/npm-ready/use-highlight-adjacency-matrix';
@@ -153,30 +153,6 @@ export interface InternalPlanFeaturesGridProps
 }
 
 export class FunkyHtmlTableOrCards extends Component< InternalPlanFeaturesGridProps > {
-	observer: IntersectionObserver | null = null;
-	buttonRef: React.RefObject< HTMLButtonElement > = createRef< HTMLButtonElement >();
-
-	componentDidMount() {
-		this.observer = new IntersectionObserver( ( entries ) => {
-			entries.forEach( ( entry ) => {
-				if ( entry.isIntersecting ) {
-					this.props.showOdie?.();
-					this.observer?.disconnect();
-				}
-			} );
-		} );
-
-		if ( this.buttonRef.current ) {
-			this.observer.observe( this.buttonRef.current );
-		}
-	}
-
-	componentWillUnmount() {
-		if ( this.observer ) {
-			this.observer.disconnect();
-		}
-	}
-
 	renderTable( renderedGridPlans: GridPlan[] ) {
 		const { translate, gridPlanForSpotlight, stickyRowOffset, isInSignup } = this.props;
 		// Do not render the spotlight plan if it exists

@@ -65,5 +65,4 @@ export interface PlanFeaturesGridProps extends SharedPlansGridProps {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
-	showOdie?: () => void;
 }
