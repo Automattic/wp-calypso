@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { color, typography } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
@@ -30,7 +30,6 @@ const ScreenStyles = ( {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ disabled, setDisabled ] = useState( true );
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location, goTo, goBack } = useNavigator();
 
 	const handleNavigatorItemSelect = ( type: string, path: string ) => {
@@ -86,7 +85,7 @@ const ScreenStyles = ( {
 				) }
 				onBack={ handleBackClick }
 			/>
-			<div className="screen-container__body" ref={ wrapperRef }>
+			<div className="screen-container__body">
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Styles' ) }>
 						<>
