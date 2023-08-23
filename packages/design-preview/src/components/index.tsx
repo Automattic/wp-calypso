@@ -89,6 +89,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		siteId,
 		stylesheet,
 		isVirtual,
+		isExternallyManaged,
 		limitGlobalStyles,
 		globalStylesInPersonalPlan,
 		variations,
@@ -127,7 +128,6 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				description={ description }
 				shortDescription={ shortDescription }
 				pricingBadge={ pricingBadge }
-				isExternallyManaged={ isExternallyManaged }
 				screens={ screens }
 				actionButtons={ actionButtons }
 				onClickCategory={ onClickCategory }

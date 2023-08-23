@@ -33,7 +33,6 @@ interface SidebarProps {
 	description?: string;
 	shortDescription?: string;
 	pricingBadge?: React.ReactNode;
-	isExternallyManaged?: boolean;
 	screens: NavigatorScreenObject[];
 	actionButtons: React.ReactNode;
 	onClickCategory?: ( category: Category ) => void;
@@ -47,7 +46,6 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	pricingBadge,
 	description,
 	shortDescription,
-	isExternallyManaged,
 	screens,
 	actionButtons,
 	onClickCategory,
@@ -56,7 +54,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
-	const navigatorButtons = useNavigatorButtons( screens, isExternallyManaged );
+	const navigatorButtons = useNavigatorButtons( screens );
 
 	const decodedDescription = useMemo(
 		() => ( description ? decodeEntities( description ) : undefined ),
