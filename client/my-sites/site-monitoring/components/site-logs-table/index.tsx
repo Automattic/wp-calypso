@@ -45,12 +45,12 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		<table className={ classnames( 'site-logs-table', { 'is-loading': isLoading } ) }>
 			<thead>
 				<tr>
-					<th />
 					{ columns.map( ( column, index ) => (
 						<th key={ column }>
 							{ headerTitles[ index ].charAt( 0 ).toUpperCase() + headerTitles[ index ].slice( 1 ) }
 						</th>
 					) ) }
+					<th />
 				</tr>
 			</thead>
 			<tbody>

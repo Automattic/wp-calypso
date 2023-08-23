@@ -23,6 +23,9 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props
 	return (
 		<Fragment>
 			<tr>
+				{ columns.map( ( column ) => (
+					<td key={ column }>{ renderCell( column, log[ column ], moment, siteGmtOffset ) }</td>
+				) ) }
 				<td>
 					<Button
 						borderless
@@ -35,14 +38,11 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props
 						<Icon icon={ isExpanded ? chevronUp : chevronDown } />
 					</Button>
 				</td>
-				{ columns.map( ( column ) => (
-					<td key={ column }>{ renderCell( column, log[ column ], moment, siteGmtOffset ) }</td>
-				) ) }
 			</tr>
 
 			{ isExpanded && (
 				<tr className="site-logs-table__table-row-expanded" id={ expandedId }>
-					<td colSpan={ Object.keys( log ).length + 1 }>
+					<td colSpan={ columns.length + 1 }>
 						<SiteLogsExpandedContent log={ log } />
 					</td>
 				</tr>
