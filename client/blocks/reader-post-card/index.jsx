@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { localeRegexString } from '@automattic/i18n-utils';
+import { localeRegexString, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import closest from 'component-closest';
 import { truncate } from 'lodash';
@@ -155,6 +155,14 @@ class ReaderPostCard extends Component {
 			currentRoute
 		);
 
+		const isReaderA8CPage = currentRoute.startsWith( '/read/a8c' );
+		const isDiscoverPage =
+			removeLocaleFromPathLocaleInFront( currentRoute ).startsWith( '/discover' );
+		const isTagPage = removeLocaleFromPathLocaleInFront( currentRoute ).startsWith( '/tag/' );
+
+		const shouldShowPostCardComments =
+			! isConversations && ! isReaderA8CPage && ( ! compact || isDiscoverPage || isTagPage );
+
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
@@ -269,7 +277,7 @@ class ReaderPostCard extends Component {
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
-				{ ! isConversations && (
+				{ shouldShowPostCardComments && (
 					<PostCardComments post={ post } handleClick={ this.props.handleClick } />
 				) }
 			</Card>
