@@ -276,9 +276,13 @@ class AllDomains extends Component {
 
 	renderDomainsList() {
 		if ( this.isLoading() ) {
-			return Array.from( { length: 3 } ).map( ( _, n ) => (
-				<ListItemPlaceholder key={ `item-${ n }` } />
-			) );
+			return (
+				<div>
+					{ Array.from( { length: 3 } ).map( ( _, n ) => (
+						<ListItemPlaceholder key={ `item-${ n }` } />
+					) ) }
+				</div>
+			);
 		}
 
 		const {
