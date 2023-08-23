@@ -98,6 +98,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/add-ons@workspace:packages/add-ons":
+  version: 0.0.0-use.local
+  resolution: "@automattic/add-ons@workspace:packages/add-ons"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: ^5.1.6
+  languageName: unknown
+  linkType: soft
+
 "@automattic/babel-plugin-i18n-calypso@workspace:^, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
