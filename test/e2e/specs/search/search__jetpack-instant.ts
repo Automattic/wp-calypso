@@ -25,7 +25,6 @@ async function waitForIndexToUpdate(
 	const RETRY_INTERVAL_MS = 3000;
 	for ( let i = 0; i < MAX_RETRIES; i++ ) {
 		const response = await restAPIClient.jetpackSearch( siteId, expectedQuery );
-		console.log( response );
 		if ( response.total > 0 ) {
 			return;
 		}

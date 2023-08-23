@@ -1113,8 +1113,6 @@ export class RestAPIClient {
 			`/sites/${ siteId }/search?query=${ encodeURIComponent( query ) }`
 		);
 
-		console.log( requestUrl.href );
-
 		const response = await this.sendRequest( requestUrl, params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
