@@ -22,6 +22,7 @@ import {
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
+import DomainsTableInputFilter from 'calypso/my-sites/domains/domain-management/list/domains-table-input-filter';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { setAllDomainsNavigationPage } from 'calypso/state/all-domains/actions';
@@ -75,6 +76,7 @@ class AllDomains extends Component {
 		contactInfoSaveResults: {},
 		currentPage: 1,
 		domainsPerPage: 5,
+		searchTerm: '',
 	};
 
 	componentDidMount() {
@@ -599,8 +601,34 @@ class AllDomains extends Component {
 			return filteredDomainsList;
 		}
 
+		const { searchTerm } = this.state;
+
 		// filter on sites we can manage, that aren't `wpcom` type
-		return domainsList.filter( ( domain ) => domain.type !== domainTypes.WPCOM );
+		return domainsList.filter( ( domain ) => {
+			const isTypeValid = domain.type !== domainTypes.WPCOM;
+
+			if ( searchTerm ) {
+				const domainName = domain.name;
+				const searchTermLowerCase = searchTerm.toLowerCase();
+
+				return isTypeValid && domainName.includes( searchTermLowerCase );
+			}
+
+			return isTypeValid;
+		} );
+	}
+
+	renderDomainTableFilterInput() {
+		return (
+			<DomainsTableInputFilter
+				onSearch={ ( searchTerm ) => {
+					this.setState( {
+						searchTerm,
+						currentPage: 1,
+					} );
+				} }
+			/>
+		);
 	}
 
 	renderDomainTableFilterButton() {
@@ -675,6 +703,7 @@ class AllDomains extends Component {
 		const buttons = hasNoDomains
 			? []
 			: [
+					this.renderDomainTableFilterInput(),
 					this.renderDomainTableFilterButton(),
 					<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
 			  ];
