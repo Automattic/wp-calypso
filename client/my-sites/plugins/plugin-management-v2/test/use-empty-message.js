@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: jest.fn(),
 } ) );
