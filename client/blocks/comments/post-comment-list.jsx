@@ -541,6 +541,8 @@ class PostCommentList extends Component {
 			<div
 				className={ classnames( 'comments__comment-list', {
 					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
+					'is-inline': expandableView,
+					'is-collapsed': isCollapsedInline,
 				} ) }
 			>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
