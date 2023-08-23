@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -8,7 +7,6 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 	onNoticeViewed,
 }: PaidPlanPurchaseSuccessJetpackStatsNoticeProps ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
 	useEffect( () => {

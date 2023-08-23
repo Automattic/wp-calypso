@@ -6,6 +6,7 @@ import version_compare from 'calypso/lib/version-compare';
 import {
 	Notices,
 	useNoticesVisibilityQuery,
+	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -31,6 +32,7 @@ type StatsNoticeType = {
 	noticeId: keyof Notices;
 	isVisibleFunc: ( options: StatsNoticeProps ) => boolean;
 	disabled: boolean;
+	caculatedIsVisible: boolean | null;
 };
 
 /** Sorted by priority */
@@ -70,8 +72,24 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			);
 		},
 		disabled: false,
+		caculatedIsVisible: null,
 	},
 ];
+
+const ensureOnlyOneNoticeVisible = (
+	serverNoticesVisibility: Notices,
+	noticeOptions: StatsNoticeProps
+) => {
+	const calculatedNoticesVisibility = { ...serverNoticesVisibility };
+	ALL_STATS_NOTICES.map(
+		( notice ) =>
+			( calculatedNoticesVisibility[ notice.noticeId ] =
+				! notice.disabled &&
+				serverNoticesVisibility[ notice.noticeId ] &&
+				notice.isVisibleFunc( noticeOptions ) )
+	);
+	return processConflictNotices( calculatedNoticesVisibility, 'dashboard_notices' );
+};
 
 /**
  * New notices aim to support Calypso and Odyssey stats.
@@ -115,12 +133,14 @@ const NewStatsNotices = ( { siteId, isOdysseyStats }: StatsNoticesProps ) => {
 		return null;
 	}
 
-	// TODO iterate the notice to only show one notice at a time.
+	const calculatedNoticesVisibility = ensureOnlyOneNoticeVisible(
+		serverNoticesVisibility,
+		noticeOptions
+	);
+
 	return ALL_STATS_NOTICES.map(
 		( notice ) =>
-			! notice.disabled &&
-			serverNoticesVisibility[ notice.noticeId ] &&
-			notice.isVisibleFunc( noticeOptions ) && <notice.component { ...noticeOptions } />
+			calculatedNoticesVisibility[ notice.noticeId ] && <notice.component { ...noticeOptions } />
 	);
 };
 
@@ -162,6 +182,7 @@ const PostPurchaseNotices = ( {
 				<FreePlanPurchaseSuccessJetpackStatsNotice
 					siteId={ siteId }
 					onNoticeViewed={ removeParam }
+					isOdysseyStats={ isOdysseyStats }
 				/>
 			) }
 		</>

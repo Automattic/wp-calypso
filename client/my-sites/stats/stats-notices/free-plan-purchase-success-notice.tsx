@@ -33,9 +33,9 @@ const handleUpgradeClick = (
 const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
 	siteId,
 	onNoticeViewed,
+	isOdysseyStats,
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 
 	useEffect( () => {

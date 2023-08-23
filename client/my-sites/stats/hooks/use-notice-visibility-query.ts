@@ -2,9 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export type Notices = {
-	new_stats_feedback: boolean;
 	opt_in_new_stats: boolean;
-	opt_out_new_stats: boolean;
 	traffic_page_highlights_module_settings: boolean;
 	traffic_page_settings: boolean;
 	do_you_love_jetpack_stats: boolean;
@@ -20,13 +18,17 @@ const QUERY_OPTIONS = {
 // The IDs are sorted by priory from high to low.
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< keyof Notices > > = {
 	settings_tool_tips: [ 'traffic_page_settings', 'traffic_page_highlights_module_settings' ],
+	dashboard_notices: [ 'do_you_love_jetpack_stats' ],
 };
 
 /**
  * Only allow one notice in a conflict group to be active at a time.
  */
-const processConflictNotices = ( notices: Notices ): Notices => {
+export const processConflictNotices = ( notices: Notices, noticeGroup?: string ): Notices => {
 	for ( const conflictNoticeGroup in CONFLICT_NOTICE_ID_GROUPS ) {
+		if ( noticeGroup && noticeGroup !== conflictNoticeGroup ) {
+			continue;
+		}
 		let foundActiveNotice = false;
 		for ( const confilictNoticeId of CONFLICT_NOTICE_ID_GROUPS[ conflictNoticeGroup ] ) {
 			if ( foundActiveNotice ) {
