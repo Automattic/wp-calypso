@@ -142,10 +142,9 @@ export class PublishedPostPage {
 	 * @param {string} name Name of the social sharing button.
 	 */
 	async validateSocialButton( name: string, { click }: { click?: boolean } = {} ) {
-		const button = this.anchor
-			.getByRole( 'list' )
-			.getByRole( 'listitem' )
-			.filter( { hasText: new RegExp( name, 'i' ) } );
+		const button = this.anchor.getByRole( 'link', { name: name } );
+
+		await button.waitFor();
 
 		if ( click ) {
 			const popupPromise = this.page.waitForEvent( 'popup' );
