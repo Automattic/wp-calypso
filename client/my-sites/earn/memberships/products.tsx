@@ -72,7 +72,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 
 		// We check for the right tier
 		const currentAnnualProduct = products.find(
-			( currentProduct ) => currentProduct.type === 'tier-' + product.ID
+			( currentProduct ) => currentProduct.tier === product.ID
 		);
 		setAnnualProduct( currentAnnualProduct ?? null );
 	}, [ product, products ] );

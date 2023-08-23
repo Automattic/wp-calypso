@@ -189,11 +189,14 @@ export const requestDeleteProduct = ( siteId, product, annualProduct, noticeText
 	};
 };
 
-const addNewAnnualProduct = ( annualProduct, siteId, noticeText ) => ( membershipProduct ) => {
+const addOrUpdateAnnualProduct = ( annualProduct, siteId, noticeText ) => ( membershipProduct ) => {
 	const newMembershipProductId = membershipProduct.ID;
-	annualProduct.type = 'tier-' + newMembershipProductId;
+	annualProduct.tier = newMembershipProductId;
 	return ( dispatch ) => {
-		requestAddProduct( siteId, annualProduct, noticeText )( dispatch );
+		if ( annualProduct.ID ) {
+			return requestAddProduct( siteId, annualProduct, noticeText )( dispatch );
+		}
+		return requestUpdateProduct( siteId, annualProduct, noticeText )( dispatch );
 	};
 };
 
@@ -204,7 +207,9 @@ export const requestAddTier = ( siteId, product, annualProduct, noticeText ) => 
 			product,
 			noticeText
 		)( dispatch ).then( ( membershipProduct ) => {
-			addNewAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )( dispatch );
+			addOrUpdateAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )(
+				dispatch
+			);
 		} );
 };
 
@@ -220,7 +225,7 @@ export const requestUpdateTier = ( siteId, product, annualProduct, noticeText ) 
 			}
 
 			// The annual product does not exist yet
-			return addNewAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )(
+			return addOrUpdateAnnualProduct( annualProduct, siteId, noticeText )( membershipProduct )(
 				dispatch
 			);
 		} );
