@@ -99,8 +99,13 @@ export class EditorPage {
 	 * Example "new post": {@link https://wordpress.com/post}
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
-	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( type ), { timeout: 30 * 1000 } );
+	async visit(
+		type: 'post' | 'page' = 'post',
+		{ siteSlug = '' }: { siteSlug?: string } = {}
+	): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
+			timeout: 30 * 1000,
+		} );
 		await this.waitUntilLoaded();
 
 		return request;
