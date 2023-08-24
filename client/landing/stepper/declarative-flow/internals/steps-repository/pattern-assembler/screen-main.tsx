@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NavigatorHeader, NavigatorItem, NavigatorItemGroup } from '@automattic/onboarding';
 import {
 	Button,
@@ -6,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { focus } from '@wordpress/dom';
 import { header, footer, layout } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { CATEGORY_ALL_SLUG, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
@@ -54,6 +55,7 @@ const ScreenMain = ( {
 	patternsMapByCategory,
 }: Props ) => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const navigator = useNavigator();
 	const { location } = navigator;
@@ -207,7 +209,9 @@ const ScreenMain = ( {
 					showTooltip={ isButtonDisabled }
 					variant="primary"
 				>
-					{ translate( 'Pick your style' ) }
+					{ isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
+						? translate( 'Pick your style' )
+						: translate( 'Save and continue' ) }
 				</Button>
 			</div>
 			{ selectedMainItem && (

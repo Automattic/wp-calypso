@@ -1,11 +1,12 @@
 import { Button } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NavigatorButtonAsItem, NavigatorHeader, NavigatorItemGroup } from '@automattic/onboarding';
 import {
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { color, typography } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState } from 'react';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
@@ -29,6 +30,7 @@ const ScreenStyles = ( {
 	hasFont,
 }: Props ) => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const [ disabled, setDisabled ] = useState( true );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const navigator = useNavigator();
@@ -84,7 +86,15 @@ const ScreenStyles = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Pick your style' ) } /> }
+				title={
+					<NavigatorTitle
+						title={
+							isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
+								? translate( 'Pick your style' )
+								: translate( 'Styles' )
+						}
+					/>
+				}
 				description={ headerDescription }
 				onBack={ handleBackClick }
 			/>
