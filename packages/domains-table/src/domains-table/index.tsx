@@ -75,20 +75,29 @@ export function DomainsTable( {
 			( column ) => column.name === sortKey
 		);
 
-		return fetchedSiteDomains
-			? Object.values( fetchedSiteDomains )
-					.flat()
-					.sort( ( first, second ) => {
-						let result = 0;
-						for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
-							result = sortFunction( first, second, sortDirection === 'asc' ? 1 : -1 );
-							if ( result !== 0 ) {
-								break;
-							}
-						}
-						return result;
-					} )
-			: domains;
+		if ( ! fetchedSiteDomains ) {
+			return domains;
+		}
+
+		const sorted = Object.values( fetchedSiteDomains )
+			.flat()
+			.sort( ( first, second ) => {
+				let result = 0;
+				for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
+					result = sortFunction( first, second, sortDirection === 'asc' ? 1 : -1 );
+					if ( result !== 0 ) {
+						break;
+					}
+				}
+				return result;
+			} );
+
+		const domainsNotInSortedList = domains?.filter(
+			( { domain } ) => ! sorted.some( ( sortedDomain ) => sortedDomain.domain === domain )
+		);
+
+		domainsNotInSortedList?.unshift( ...sorted );
+		return domainsNotInSortedList;
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
 
 	const handleSelectDomain = useCallback(
