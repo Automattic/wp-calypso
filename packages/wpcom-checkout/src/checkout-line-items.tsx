@@ -27,7 +27,7 @@ import {
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
@@ -731,7 +731,12 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per month', { args: { price } } ) }
+				{ getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( '%(price)s per month' )
+					? translate( '%(price)s per month', { args: { price } } )
+					: translate( '%(sublabel)s: %(price)s per month', {
+							textOnly: true,
+							args: { sublabel: '_', price },
+					  } ).replace( '_:', '' ) }
 			</>
 		);
 	}
@@ -740,7 +745,12 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per year', { args: { price } } ) }
+				{ getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( '%(price)s per year' )
+					? translate( '%(price)s per year', { args: { price } } )
+					: translate( '%(sublabel)s: %(price)s per year', {
+							textOnly: true,
+							args: { sublabel: '_', price },
+					  } ).replace( '_:', '' ) }
 			</>
 		);
 	}
@@ -749,7 +759,12 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per two years', { args: { price } } ) }
+				{ getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( '%(price)s per two years' )
+					? translate( '%(price)s per two years', { args: { price } } )
+					: translate( '%(sublabel)s: %(price)s per two years', {
+							textOnly: true,
+							args: { sublabel: '_', price },
+					  } ).replace( '_:', '' ) }
 			</>
 		);
 	}
@@ -758,7 +773,12 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per three years', { args: { price } } ) }
+				{ getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( '%(price)s per three years' )
+					? translate( '%(price)s per three years', { args: { price } } )
+					: translate( '%(sublabel)s: %(price)s per three years', {
+							textOnly: true,
+							args: { sublabel: '_', price },
+					  } ).replace( '_:', '' ) }
 			</>
 		);
 	}
