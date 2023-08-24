@@ -38,11 +38,13 @@ const useCheckout = () => {
 		setSignupCompleteFlowName( flowName );
 		setSignupCompleteStepName( stepName );
 
-		// If the plan is not provided, we might have added plan to the cart so we just go to the checkout page directly
-		if ( ! plan ) {
+		// If the plan not extra products are provided, we might have added plan to the cart so we just go to the checkout page directly
+		if ( ! plan && extraProducts.length === 0 ) {
 			// The theme upsell link does not work with siteId and requires a siteSlug.
 			// See https://github.com/Automattic/wp-calypso/pull/64899
 			window.location.href = `/checkout/${ encodeURIComponent( siteSlug ) }?${ params }`;
+		} else if ( ! plan ) {
+			openCheckoutModal( extraProducts, { redirect_to: destination } );
 		} else {
 			openCheckoutModal( [ plan, ...extraProducts ], { redirect_to: destination } );
 		}

@@ -43,6 +43,7 @@ import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/action
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
+	isSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import useCheckout from '../../../../hooks/use-checkout';
@@ -365,13 +366,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			selectedDesignThemeId &&
 			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
 	);
+	const isExternallyManagedThemeAvailable = useSelector(
+		( state ) => site?.ID && isSiteEligibleForManagedExternalThemes( state, site.ID )
+	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( selectedDesign?.is_externally_managed && ! isMarketplaceThemeSubscribed ) ||
+		( selectedDesign?.is_externally_managed &&
+			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
 		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
@@ -426,8 +431,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		);
 
 		let plan;
-		if ( themeHasWooCommerce || selectedDesign?.is_externally_managed ) {
+		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
+		} else if ( selectedDesign?.is_externally_managed ) {
+			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS : '';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
@@ -441,7 +448,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				destination: window.location.href.replace( window.location.origin, '' ),
 				plan,
 				extraProducts:
-					selectedDesign?.is_externally_managed && marketplaceProductSlug
+					selectedDesign?.is_externally_managed &&
+					marketplaceProductSlug &&
+					! isMarketplaceThemeSubscribed
 						? [ marketplaceProductSlug ]
 						: [],
 			} );
