@@ -9,7 +9,7 @@ import { Product } from '../types';
 type RecurringPaymentsPlanDeleteModalProps = {
 	closeDialog: () => void;
 	product: Product;
-	annualProduct?: Product;
+	annualProduct: Product | null;
 };
 
 const RecurringPaymentsPlanDeleteModal = ( {
