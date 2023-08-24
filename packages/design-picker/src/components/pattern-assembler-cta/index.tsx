@@ -12,7 +12,7 @@ type PatternAssemblerCtaData = {
 };
 
 type PatternAssemblerCtaProps = {
-	onButtonClick: ( shouldGoToAssemblerStep: boolean ) => void;
+	onButtonClick: () => void;
 };
 
 export function usePatternAssemblerCtaData(): PatternAssemblerCtaData {
@@ -38,10 +38,6 @@ export function usePatternAssemblerCtaData(): PatternAssemblerCtaData {
 const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 	const data = usePatternAssemblerCtaData();
 
-	const handleButtonClick = () => {
-		onButtonClick( data.shouldGoToAssemblerStep );
-	};
-
 	return (
 		<div className="pattern-assembler-cta-wrapper">
 			<div className="pattern-assembler-cta__image-wrapper">
@@ -49,7 +45,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 			</div>
 			<h3 className="pattern-assembler-cta__title">{ data.title }</h3>
 			<p className="pattern-assembler-cta__subtitle">{ data.subtitle }</p>
-			<Button className="pattern-assembler-cta__button" onClick={ handleButtonClick } primary>
+			<Button className="pattern-assembler-cta__button" onClick={ onButtonClick } primary>
 				{ data.buttonText }
 			</Button>
 		</div>

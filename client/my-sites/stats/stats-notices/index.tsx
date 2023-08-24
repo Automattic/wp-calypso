@@ -1,10 +1,14 @@
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import version_compare from 'calypso/lib/version-compare';
 import {
 	Notices,
 	useNoticesVisibilityQuery,
 	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { useSelector, useDispatch } from 'calypso/state';
+import { resetSiteState } from 'calypso/state/purchases/actions';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -16,7 +20,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
-import usePurchasesToUpdateSiteProducts from './use-purchases-to-update-site-products';
+import useSitePurchasesOnOdysseyStats from './use-site-purchases-on-odyssey-stats';
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
@@ -41,6 +45,17 @@ const ensureOnlyOneNoticeVisible = (
  * New notices are based on async API call and hence is faster than the old notices.
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: StatsNoticesProps ) => {
+	const dispatch = useDispatch();
+
+	// Clear loaded flag when switching sites on Calypso.
+	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
+	useEffect( () => {
+		if ( siteId !== currentSiteId ) {
+			setCurrentSiteId( siteId );
+			dispatch( resetSiteState() );
+		}
+	}, [ siteId, currentSiteId, setCurrentSiteId, dispatch ] );
+
 	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
@@ -73,7 +88,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
-	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
+	// TODO: Display error messages on the notice.
+	useSitePurchasesOnOdysseyStats( isOdysseyStats, siteId );
+	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
 
 	if ( ! hasLoadedPurchases || isLoading || isError ) {
 		return null;
@@ -87,6 +104,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	// TODO: The dismiss logic could potentially be extracted too.
 	return (
 		<>
+			{ /* Only query site purchases on Calypso via existing data component */ }
+			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
 			{ ALL_STATS_NOTICES.map(
 				( notice ) =>
 					calculatedNoticesVisibility[ notice.noticeId ] && (

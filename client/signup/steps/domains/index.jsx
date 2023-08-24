@@ -293,11 +293,13 @@ class DomainsStep extends Component {
 					loadExperimentAssignment(
 						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
 					);
+					loadExperimentAssignment( 'calypso_onboarding_plans_paid_domain_on_free_plan' );
 					break;
 				case 'onboarding-pm':
 					loadExperimentAssignment(
 						'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
 					);
+					loadExperimentAssignment( 'calypso_onboardingpm_plans_paid_domain_on_free_plan' );
 			}
 		}
 

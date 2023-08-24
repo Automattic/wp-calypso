@@ -641,11 +641,17 @@ export function emailSummary( context, next ) {
 }
 
 export function purchase( context, next ) {
+	const givenSiteId = context.params.site;
+	const isCommercial = getSiteOption( context.store.getState(), givenSiteId, 'is_commercial' );
+
 	context.primary = (
 		<AsyncLoad
 			require="calypso/my-sites/stats/stats-purchase"
 			placeholder={ PageLoading }
 			query={ context.query }
+			options={ {
+				isCommercial,
+			} }
 		/>
 	);
 	next();

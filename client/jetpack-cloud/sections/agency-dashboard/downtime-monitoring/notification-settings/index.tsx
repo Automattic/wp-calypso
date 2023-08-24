@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import AlertBanner from 'calypso/components/jetpack/alert-banner';
+import { DEFAULT_DOWNTIME_MONITORING_DURATION } from '../../constants';
 import DashboardModalForm from '../../dashboard-modal-form';
 import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
@@ -31,6 +32,7 @@ import type {
 	MonitorSettingsContact,
 	StateMonitoringSettingsContact,
 } from '../../sites-overview/types';
+
 import './style.scss';
 import '../style.scss';
 
@@ -52,13 +54,11 @@ export default function NotificationSettings( {
 	const isBulkUpdate = !! bulkUpdateSettings;
 	const translate = useTranslate();
 
-	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
-	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
-	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
-
 	const { verifiedContacts } = useContext( DashboardDataContext );
 
-	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
+	const defaultDuration = durations.find(
+		( duration ) => duration.time === DEFAULT_DOWNTIME_MONITORING_DURATION
+	);
 
 	const [ enableSMSNotification, setEnableSMSNotification ] = useState< boolean >( false );
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
@@ -86,6 +86,13 @@ export default function NotificationSettings( {
 		phoneContacts: [],
 	} );
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState< boolean >( false );
+
+	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings(
+		sites,
+		selectedDuration?.time
+	);
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
+	const { verifiedItem, handleSetVerifiedItem } = useShowVerifiedBadge();
 
 	const isMultipleEmailEnabled: boolean = isEnabled(
 		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
@@ -207,7 +214,6 @@ export default function NotificationSettings( {
 		const params = {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
-			jetmon_defer_status_down_minutes: selectedDuration?.time,
 		} as UpdateMonitorSettingsParams;
 
 		const eventParams = { ...params } as any; // Adding eventParams since parameters for tracking events should be flat, not nested.
@@ -339,10 +345,8 @@ export default function NotificationSettings( {
 
 			// Set duration
 			let foundDuration = defaultDuration;
-			if ( settings?.monitor_deferment_time ) {
-				foundDuration = durations.find(
-					( duration ) => duration.time === settings.monitor_deferment_time
-				);
+			if ( settings?.check_interval ) {
+				foundDuration = durations.find( ( duration ) => duration.time === settings.check_interval );
 
 				// We need to make sure that we are not setting a paid duration if there is no license.
 				if ( hasPaidLicenses || ! foundDuration?.isPaid ) {

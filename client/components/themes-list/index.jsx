@@ -1,6 +1,10 @@
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { PatternAssemblerCta, usePatternAssemblerCtaData } from '@automattic/design-picker';
+import {
+	PatternAssemblerCta,
+	usePatternAssemblerCtaData,
+	isAssemblerSupported,
+} from '@automattic/design-picker';
 import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -94,7 +98,8 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		[ props.fetchNextPage ]
 	);
 
-	const goToSiteAssemblerFlow = ( shouldGoToAssemblerStep ) => {
+	const goToSiteAssemblerFlow = () => {
+		const shouldGoToAssemblerStep = isAssemblerSupported();
 		props.recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_cta_click', {
 			goes_to_assembler_step: shouldGoToAssemblerStep,
 		} );

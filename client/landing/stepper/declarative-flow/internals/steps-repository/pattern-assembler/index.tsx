@@ -110,8 +110,6 @@ const PatternAssembler = ( {
 		setSections,
 		setColorVariation,
 		setFontVariation,
-		generateKey,
-		snapshotRecipe,
 	} = useRecipe( site?.ID, allPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
@@ -249,10 +247,7 @@ const PatternAssembler = ( {
 		if ( position !== null ) {
 			setSections( [
 				...sections.slice( 0, position ),
-				{
-					...pattern,
-					key: sections[ position ].key,
-				},
+				pattern,
 				...sections.slice( position + 1 ),
 			] );
 			updateActivePatternPosition( position );
@@ -261,13 +256,7 @@ const PatternAssembler = ( {
 	};
 
 	const addSection = ( pattern: Pattern ) => {
-		setSections( [
-			...( sections as Pattern[] ),
-			{
-				...pattern,
-				key: generateKey( pattern ),
-			},
-		] );
+		setSections( [ ...( sections as Pattern[] ), pattern ] );
 		updateActivePatternPosition( sections.length );
 		noticeOperations.showPatternInsertedNotice( pattern );
 	};
@@ -408,7 +397,6 @@ const PatternAssembler = ( {
 		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
-		onCheckout: snapshotRecipe,
 		onUpgradeLater: handleContinue,
 		recordTracksEvent,
 	} );

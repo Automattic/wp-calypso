@@ -61,6 +61,15 @@ jest.mock( 'calypso/components/data/query-products-list', () => ( {
 	},
 } ) );
 
+jest.mock( 'calypso/state/themes/selectors', () => ( {
+	isMarketplaceThemeSubscribed: () => {
+		return;
+	},
+	getTheme: () => {
+		return;
+	},
+} ) );
+
 /**
  * Mock wpcom-proxy-request so that we could use wpcom-xhr-request to call the endpoint
  * and get the response from nock

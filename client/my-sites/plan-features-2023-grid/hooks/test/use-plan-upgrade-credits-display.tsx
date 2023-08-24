@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_BUSINESS,

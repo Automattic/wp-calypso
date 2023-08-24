@@ -1,6 +1,16 @@
 @import "@automattic/typography/styles/variables";
 
 .domains-table {
+	border-collapse: collapse;
+
+	table {
+		margin-top: 30px;
+
+		tr {
+			border-bottom: 1px solid var(--studio-gray-5);
+		}
+	}
+
 	th {
 		padding-bottom: 16px;
 		color: var(--studio-gray-60);
@@ -22,7 +32,6 @@
 
 	td {
 		padding: 20px 0;
-		border-bottom: 1px solid var(--studio-gray-5);
 		height: 44px;
 		vertical-align: middle;
 
