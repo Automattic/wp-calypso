@@ -349,10 +349,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		useSelector( ( state ) =>
 			getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( selectedDesignThemeId ) )
 		) || [];
-	const marketplaceProductSlug = getPreferredBillingCycleProductSlug(
-		marketplaceThemeProducts,
-		PLAN_BUSINESS
-	);
+	const marketplaceProductSlug =
+		marketplaceThemeProducts.length !== 0
+			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
+			: null;
 
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
@@ -440,7 +440,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
 				plan,
-				extraProducts: selectedDesign?.is_externally_managed ? [ marketplaceProductSlug ] : [],
+				extraProducts:
+					selectedDesign?.is_externally_managed && marketplaceProductSlug
+						? [ marketplaceProductSlug ]
+						: [],
 			} );
 
 			setShowUpgradeModal( false );
