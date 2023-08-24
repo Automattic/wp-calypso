@@ -82,15 +82,16 @@ export function DomainsTableRow( {
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 				{ isManageableDomain ? (
 					<a
-						className="domains-table__domain-link"
+						className="domains-table__domain-name"
 						href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
 					>
 						{ domain.domain }
 					</a>
 				) : (
-					domain.domain
+					<span className="domains-table__domain-name">{ domain.domain }</span>
 				) }
 			</td>
+			<td>{ site?.name }</td>
 		</tr>
 	);
 }
