@@ -26,7 +26,7 @@ const ensureOnlyOneNoticeVisible = (
 	noticeOptions: StatsNoticeProps
 ) => {
 	const calculatedNoticesVisibility = { ...serverNoticesVisibility };
-	ALL_STATS_NOTICES.map(
+	ALL_STATS_NOTICES.forEach(
 		( notice ) =>
 			( calculatedNoticesVisibility[ notice.noticeId ] =
 				! notice.disabled &&
