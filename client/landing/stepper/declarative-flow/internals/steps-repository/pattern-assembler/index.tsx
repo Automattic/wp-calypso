@@ -19,7 +19,6 @@ import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
-import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -34,7 +33,7 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import {
 	useCurrentScreen,
 	useDotcomPatterns,
-	useGlobalStylesUpgradeModal,
+	useGlobalStylesUpgradeProps,
 	useInitialPath,
 	usePatternCategories,
 	usePatternsMapByCategory,
@@ -52,6 +51,7 @@ import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
 import ScreenStyles from './screen-styles';
+import ScreenUpsell from './screen-upsell';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern, PatternType } from './types';
@@ -77,6 +77,7 @@ const PatternAssembler = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
+	const [ resetCustomStyles, setResetCustomStyles ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -139,8 +140,11 @@ const PatternAssembler = ( {
 	);
 
 	const selectedVariations = useMemo(
-		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
-		[ colorVariation, fontVariation ]
+		() =>
+			! resetCustomStyles
+				? ( [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[] )
+				: [],
+		[ colorVariation, fontVariation, resetCustomStyles ]
 	);
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
@@ -400,7 +404,7 @@ const PatternAssembler = ( {
 						homeHtml: sections.map( ( pattern ) => pattern.html ).join( '' ),
 						headerHtml: header?.html,
 						footerHtml: footer?.html,
-						globalStyles: syncedGlobalStylesUserConfig,
+						globalStyles: ! resetCustomStyles ? syncedGlobalStylesUserConfig : undefined,
 						// Newly created sites with blog patterns reset the starter content created from the default Headstart annotation
 						// TODO: Ask users whether they want all their pages and posts to be replaced with the content from theme demo site
 						shouldResetContent: isNewSite && hasBlogPatterns,
@@ -417,28 +421,25 @@ const PatternAssembler = ( {
 
 	const onUpgradeLater = () => {
 		if ( isNewSite ) {
-			onSubmit();
+			navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
 		} else {
 			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
 		}
 	};
 
-	const {
-		shouldUnlockGlobalStyles,
-		openModal: openGlobalStylesUpgradeModal,
-		globalStylesUpgradeModalProps,
-	} = useGlobalStylesUpgradeModal( {
+	const { shouldUnlockGlobalStyles, ...globalStylesUpgradeProps } = useGlobalStylesUpgradeProps( {
 		flowName: flow,
 		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onUpgradeLater,
+		resetCustomStyles,
 		recordTracksEvent,
 	} );
 
 	const onContinueClick = () => {
 		if ( shouldUnlockGlobalStyles ) {
-			openGlobalStylesUpgradeModal();
+			navigator.goTo( NAVIGATOR_PATHS.UPSELL );
 			return;
 		}
 
@@ -558,6 +559,15 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
 					<ScreenConfirmation onConfirm={ onConfirm } />
 				</NavigatorScreen>
+				
+				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
+					<ScreenUpsell
+						{ ...globalStylesUpgradeProps }
+						resetCustomStyles={ resetCustomStyles }
+						setResetCustomStyles={ setResetCustomStyles }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				</NavigatorScreen>
 			</div>
 			<div className="pattern-assembler__sidebar-panel">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN_PATTERNS }>
@@ -600,7 +610,6 @@ const PatternAssembler = ( {
 				onShuffle={ onShuffle }
 				recordTracksEvent={ recordTracksEvent }
 			/>
-			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</div>
 	);
 

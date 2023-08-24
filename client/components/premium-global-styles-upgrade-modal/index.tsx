@@ -6,7 +6,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-
+import useGlobalStylesUpgradeTranslations from './use-global-styles-upgrade-translations';
 import './style.scss';
 
 export interface PremiumGlobalStylesUpgradeModalProps {
@@ -29,21 +29,14 @@ export default function PremiumGlobalStylesUpgradeModal( {
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
+	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 	const isLoading = ! premiumPlanProduct;
-	const features = [
-		<strong>{ translate( 'Free domain for one year' ) }</strong>,
-		<strong>{ translate( 'Premium themes' ) }</strong>,
-		translate( 'Style customization' ),
-		translate( 'Live chat support' ),
-		translate( 'Ad-free experience' ),
-		translate( 'Earn with WordAds' ),
-	];
 
 	const featureList = (
 		<div className="upgrade-modal__included">
-			<h2>{ translate( 'Included with your Premium plan' ) }</h2>
+			<h2>{ translations.featuresTitle }</h2>
 			<ul>
-				{ features.map( ( feature, i ) => (
+				{ translations.features.map( ( feature, i ) => (
 					<li key={ i } className="upgrade-modal__included-item">
 						<Gridicon icon="checkmark" size={ 16 } />
 						{ feature }
@@ -71,33 +64,21 @@ export default function PremiumGlobalStylesUpgradeModal( {
 							<h1 className="upgrade-modal__heading">{ translate( 'Unlock custom styles' ) }</h1>
 							{ description ?? (
 								<>
-									<p>
-										{ translate(
-											'You’ve selected a custom style that will only be visible to visitors after upgrading to the Premium plan or higher.',
-											'You’ve selected custom styles that will only be visible to visitors after upgrading to the Premium plan or higher.',
-											{ count: numOfSelectedGlobalStyles }
-										) }
-									</p>
-									<p>
-										{ translate(
-											'Upgrade now to unlock your custom style and get access to tons of other features. Or you can decide later and try it out first.',
-											'Upgrade now to unlock your custom styles and get access to tons of other features. Or you can decide later and try them out first.',
-											{ count: numOfSelectedGlobalStyles }
-										) }
-									</p>
+									<p>{ translations.description }</p>
+									<p>{ translations.promotion }</p>
 								</>
 							) }
 							{ featureList }
 							<div className="upgrade-modal__actions bundle">
 								<Button className="upgrade-modal__cancel" onClick={ () => tryStyle() }>
-									{ translate( 'Decide later' ) }
+									{ translations.cancel }
 								</Button>
 								<Button
 									className="upgrade-modal__upgrade-plan"
 									primary
 									onClick={ () => checkout() }
 								>
-									{ translate( 'Upgrade plan' ) }
+									{ translations.upgrade }
 								</Button>
 							</div>
 						</div>
