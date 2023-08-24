@@ -10,12 +10,15 @@ import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRow } from './domains-table-row';
 import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
+	dispatch: any;
+	domainStatusPurchaseActions: DomainStatusPurchaseActions< any >;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
