@@ -5,11 +5,11 @@ import {
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const setUrlParam = ( url: URL, paramName: string, paramValue: string ): void => {
-	if ( paramValue ) {
-		url.searchParams.set( paramName, paramValue );
-	} else {
+const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ): void => {
+	if ( paramValue === null || paramValue === undefined || paramValue === '' ) {
 		url.searchParams.delete( paramName );
+	} else {
+		url.searchParams.set( paramName, paramValue );
 	}
 };
 
