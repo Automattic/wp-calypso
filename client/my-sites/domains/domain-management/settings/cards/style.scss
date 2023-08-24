@@ -132,7 +132,7 @@
 	}
 }
 
-.domain-forwarding-card__fields {
+.domain-forwarding-card__accordion {
 	margin-bottom: 0 !important;
 
 	.form-text-input:disabled {
@@ -140,7 +140,7 @@
 	}
 
 	.form-text-input-with-affixes__prefix,
-	.form-text-input-with-affixes__suffix, {
+	.form-text-input-with-affixes__suffix {
 		padding: 0;
 		border: 0 !important;
 
@@ -170,8 +170,22 @@
 		}
 	}
 
+	.foldable-card__content {
+		padding: 0 !important;
+	}
+
+	.form-text-input-with-affixes {
+		padding: 0 24px;
+		box-sizing: border-box;
+	}
+
+	.form-button.is-primary {
+		margin: 0 24px 24px;
+	}
+
 	.accordion .foldable-card {
 		box-shadow: none;
+		padding-left: 24px;
 
 		.foldable-card__header {
 			padding-left: 0;
@@ -208,7 +222,7 @@
 
 .domain-forwarding-card__error-field {
 	height: 35px;
-	margin-bottom: 17px;
+	margin: 0 0 17px 24px;
 }
 
 .ownership-verification-card {
