@@ -1,5 +1,6 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -33,6 +34,7 @@ export function DomainsTableRow( {
 	fetchSite,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
+	const localeSlug = useLocale();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const { data: allSiteDomains } = useSiteDomainsQuery( domain.blog_id, {
@@ -107,6 +109,12 @@ export function DomainsTableRow( {
 				) : (
 					siteColumn
 				) }
+			</td>
+			<td></td>
+			<td>
+				{ domain.has_registration
+					? new Date( domain.expiry ).toLocaleDateString( localeSlug, { dateStyle: 'medium' } )
+					: '-' }
 			</td>
 		</tr>
 	);
