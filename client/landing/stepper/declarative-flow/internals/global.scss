@@ -70,6 +70,8 @@ button {
 .site-setup,
 .import-focused,
 .plugin-bundle,
+.podcast-setup,
+.podcast-feed,
 .newsletter-setup,
 .newsletter-goals,
 .newsletter-post-setup,
@@ -219,6 +221,7 @@ button {
 }
 
 .intro {
+	&:not(.podcast).signup-header,
 	&:not(.newsletter).signup-header {
 		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
@@ -227,6 +230,7 @@ button {
 /**
  * Tailored flow stylings
  */
+.podcast:not(.domains),
 .newsletter:not(.domains),
 .link-in-bio:not(.domains),
 .link-in-bio-tld:not(.domains) {
@@ -250,8 +254,10 @@ button {
 }
 
 /*
- * Override font sizes for all newsletter onboarding screens
+ * Override font sizes for all newsletter and podcasting onboarding screens
  */
+.podcast,
+.podcast:not(.domains),
 .newsletter,
 .newsletter:not(.domains) {
 	.step-container {
@@ -275,6 +281,7 @@ button {
 
 .store-profiler__form,
 .newsletter,
+.podcast,
 .link-in-bio,
 .link-in-bio-tld,
 .setup-form__form {
@@ -284,9 +291,13 @@ button {
 			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
-				border-radius: 50%;
+				border-radius: 0;
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
+
+				&.is-circle {
+					border-radius: 50%;
+				}
 
 				svg {
 					fill: var(--studio-gray-30);

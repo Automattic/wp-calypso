@@ -38,6 +38,7 @@ interface SetupFormProps {
 	isSubmitError?: boolean;
 	className?: string;
 	children?: ReactNode;
+	siteIconIsCircle?: boolean;
 }
 
 const SetupForm = ( {
@@ -57,6 +58,7 @@ const SetupForm = ( {
 	isSubmitError = false,
 	className = '',
 	children,
+	siteIconIsCircle = true,
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
 	const usesSite = !! useSiteSlugParam();
@@ -87,6 +89,7 @@ const SetupForm = ( {
 				} }
 				disabled={ usesSite ? ! site : false }
 				selectedFile={ selectedFile }
+				isCircle={ siteIconIsCircle }
 			/>
 			<FormFieldset>
 				<TextControl

@@ -1,5 +1,6 @@
 import {
 	NEWSLETTER_FLOW,
+	PODCAST_FLOW,
 	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	ECOMMERCE_FLOW,
@@ -43,6 +44,7 @@ interface DomainSuggestionsVendorOptions {
 	isPremium?: boolean;
 	flowName?:
 		| typeof NEWSLETTER_FLOW
+		| typeof PODCAST_FLOW
 		| typeof LINK_IN_BIO_FLOW
 		| typeof LINK_IN_BIO_TLD_FLOW
 		| typeof ECOMMERCE_FLOW
@@ -68,6 +70,9 @@ export function getDomainSuggestionsVendor(
 	}
 	if ( options.flowName === NEWSLETTER_FLOW ) {
 		return 'newsletter';
+	}
+	if ( options.flowName === PODCAST_FLOW ) {
+		return 'newsletter'; // @ TODO needs podcast specific domain suggestion
 	}
 	if ( options.flowName === ECOMMERCE_FLOW || options.flowName === WOOEXPRESS_FLOW ) {
 		return 'ecommerce';

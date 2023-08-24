@@ -3,6 +3,7 @@ import {
 	ECOMMERCE_FLOW,
 	FREE_FLOW,
 	NEWSLETTER_FLOW,
+	PODCAST_FLOW,
 	SENSEI_FLOW,
 	VIDEOPRESS_FLOW,
 	isLinkInBioFlow,
@@ -147,6 +148,16 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			return {
 				title: createInterpolateElement(
 					__( 'You’re 1 minute away from<br />a beautiful, free website.<br />Ready? ' ),
+					{ br: <br /> }
+				),
+				buttonText: __( 'Get started' ),
+			};
+		}
+
+		if ( flowName === PODCAST_FLOW ) {
+			return {
+				title: createInterpolateElement(
+					__( 'You’re 3 minutes away from<br />a launch-ready podcast. ' ),
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),

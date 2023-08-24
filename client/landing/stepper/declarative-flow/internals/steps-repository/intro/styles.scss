@@ -43,6 +43,107 @@
 		}
 	}
 
+	&.podcast {
+		.signup-header {
+			h1 {
+				color: var(--studio-white);
+			}
+			.wordpress-logo {
+				fill: var(--studio-white);
+			}
+		}
+
+		.step-container {
+			background-color: var(--studio-gray-100);
+			color: var(--studio-white);
+
+			.intro__button {
+				color: var(--studio-gray-100);
+				background: var(--studio-white);
+			}
+
+			@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
+				background-size: cover;
+				background-position-y: 35vh;
+			}
+
+			@include break-huge {
+				background-size: cover;
+				background-position-y: 10vh;
+			}
+		}
+
+		.intro__description {
+			max-width: 510px;
+			margin: auto;
+		}
+		/*
+		.intro__button-row {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			position: relative;
+			max-width: 300px;
+		}
+		*/
+		.intro__button {
+			// display: flex;
+			// align-items: center;
+			// justify-content: center;
+			// position: relative;
+			border: none;
+			box-shadow: 10px 10px 33px #403a3e;
+			outline: none;
+			/*
+			&:before,
+			&:after {
+				content: '';
+				position: absolute;
+				top: calc(50% - 50px);
+				left: calc(50% - 50px);
+				width: 100px;
+				height: 100px;
+				border-radius: 50%;
+				border: 2px solid rgba(#403a3e, 0.7);
+				filter: blur(0);
+				transform-origin: 50%;
+				z-index: -1;
+				//opacity: 0;
+			}
+			&:hover {
+				&:before,
+				&:after {
+					//opacity: 1;
+					border-color: transparent;
+					filter: blur(2px);
+					transform: scale(4);
+					transition:
+						1000ms transform ease,
+						2100ms blur ease,
+						900ms border-color ease;
+				}
+				&:after {
+					transition-delay: 100ms;
+				}
+			}
+			*/
+		}
+		/*
+		.intro__button::before {
+			content: " ";
+			height: 16px;
+			width: 16px;
+			background-image: url(calypso/assets/images/onboarding/podcast-intro-button-icon.svg);
+			background-size: contain;
+			background-repeat: no-repeat;
+			display: inline-block;
+			position: relative;
+			padding-right: 6px;
+			top: 4px;
+		}
+		*/
+	}
+
 	&.link-in-bio {
 		background-color: #d0cce3;
 

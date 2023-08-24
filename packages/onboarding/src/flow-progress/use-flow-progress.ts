@@ -1,5 +1,7 @@
 import {
 	ECOMMERCE_FLOW,
+	NEWSLETTER_FLOW,
+	PODCAST_FLOW,
 	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_DOMAIN_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
@@ -17,7 +19,16 @@ interface FlowProgress {
 }
 
 const flows: Record< string, { [ step: string ]: number } > = {
-	newsletter: {
+	[ PODCAST_FLOW ]: {
+		intro: 0,
+		user: 0,
+		podcastSetup: 1,
+		podcastFeed: 2,
+		domains: 3,
+		'plans-newsletter': 4,
+		launchpad: 5,
+	},
+	[ NEWSLETTER_FLOW ]: {
 		intro: 0,
 		user: 0,
 		newsletterSetup: 0,

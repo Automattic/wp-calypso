@@ -2,6 +2,7 @@ import {
 	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
+	PODCAST_FLOW,
 	VIDEOPRESS_FLOW,
 	FREE_FLOW,
 	WRITE_FLOW,
@@ -20,10 +21,15 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 	};
 
 	switch ( flow ) {
-		case NEWSLETTER_FLOW:
+		case PODCAST_FLOW:
 			translatedStrings.flowName = translate( 'Newsletter' );
 			translatedStrings.title = translate( "Your newsletter's ready!" );
 			translatedStrings.subtitle = translate( 'Now it’s time to let your readers know.' );
+			break;
+		case NEWSLETTER_FLOW:
+			translatedStrings.flowName = translate( 'Podcast' );
+			translatedStrings.title = translate( "Your podcast's ready!" );
+			translatedStrings.subtitle = translate( 'Now it’s time to let your listeners know.' );
 			break;
 		case LINK_IN_BIO_FLOW:
 		case LINK_IN_BIO_TLD_FLOW:

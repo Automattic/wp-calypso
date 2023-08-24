@@ -1,0 +1,58 @@
+@import "../style";
+
+.podcast-setup {
+
+	.step-container {
+		padding-top: 20px;
+		@include break-medium {
+			padding-top: 0;
+		}
+	}
+
+	.step-container__content {
+		display: flex;
+		justify-content: center;
+
+		input,
+		form-textarea {
+			&::placeholder {
+				color: var(--studio-gray-30);
+			}
+		}
+	}
+
+	.step-container__header {
+		margin-bottom: 40px;
+		@include break-medium {
+			margin-top: 36px;
+			margin-bottom: 58px;
+		}
+
+		.formatted-header p.formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+
+	.podcast-setup-form {
+		textarea,
+		pre {
+			color: var(--studio-gray-100);
+			font-size: $font-body-small;
+			padding: 12px 16px;
+		}
+
+		textarea {
+			font-family: "SF Pro Text", $sans;
+			font-weight: 400;
+
+			&::placeholder {
+				color: var(--studio-gray-30);
+			}
+		}
+
+		pre {
+			border: none;
+			line-height: 20px;
+		}
+	}
+}

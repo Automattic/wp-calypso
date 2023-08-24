@@ -5,6 +5,7 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
+	PODCAST_FLOW,
 	NEWSLETTER_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
@@ -151,6 +152,13 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		}
 
 		switch ( flow ) {
+			case PODCAST_FLOW:
+				return createInterpolateElement(
+					__(
+						'Make your podcast stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+					),
+					decideLaterComponent
+				);
 			case NEWSLETTER_FLOW:
 				return createInterpolateElement(
 					__(
@@ -187,7 +195,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === NEWSLETTER_FLOW ) {
+		if ( flow === NEWSLETTER_FLOW || flow === PODCAST_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
