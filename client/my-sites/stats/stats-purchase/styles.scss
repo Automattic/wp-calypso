@@ -320,3 +320,12 @@
 		font-size: var(--font-body);
 	}
 }
+
+.stats-purchase-wizard__notice {
+	h2 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 20px;
+		font-weight: 500;
+		margin-bottom: 1.5em;
+	}
+}

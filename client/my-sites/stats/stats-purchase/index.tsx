@@ -21,6 +21,7 @@ import getSiteProducts, { SiteProduct } from 'calypso/state/sites/selectors/get-
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
+import StatsPurchaseNotice from './stats-purchase-notice';
 import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
@@ -79,8 +80,7 @@ const StatsPurchasePage = ( {
 		const trafficPageUrl = `/stats/day/${ siteSlug }`;
 		// Redirect to Calypso Stats if:
 		// - the site is not Jetpack.
-		// - the site already has a commercial stats plan.
-		if ( ! isSiteJetpackNotAtomic || isCommercialOwned ) {
+		if ( ! isSiteJetpackNotAtomic ) {
 			page.redirect( trafficPageUrl );
 		}
 	}, [ siteSlug, isCommercialOwned, isSiteJetpackNotAtomic ] );
@@ -130,9 +130,6 @@ const StatsPurchasePage = ( {
 			/>
 			<div className="stats">
 				<QueryProductsList type="jetpack" />
-				{
-					// TODO: if the page is commercial and already has a commercial plan we can either redirect them or display a message
-				 }
 				{ isLoading && (
 					<div className="stats-purchase-page__loader">
 						<LoadingEllipsis />
@@ -140,25 +137,34 @@ const StatsPurchasePage = ( {
 				) }
 				{ ! isLoading && (
 					<>
-						{ ( isFreeOwned || isCommercialOwned || isPWYWOwned ) && (
+						{ isCommercialOwned && (
+							<div className="stats-purchase-page__notice">
+								<StatsPurchaseNotice
+									message={ translate( 'You have already purchased a licence.' ) }
+								/>
+							</div>
+						) }
+						{ ( isFreeOwned || isPWYWOwned ) && (
 							<>
 								{
 									// TODO: add a banner handling information about existing purchase
 								 }
 							</>
 						) }
-						<StatsPurchaseWizard
-							siteSlug={ siteSlug }
-							commercialProduct={ commercialProduct }
-							maxSliderPrice={ maxSliderPrice ?? 10 }
-							pwywProduct={ pwywProduct }
-							siteId={ siteId }
-							redirectUri={ query.redirect_uri ?? '' }
-							from={ query.from ?? '' }
-							disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
-							initialStep={ initialStep }
-							initialSiteType={ initialSiteType }
-						/>
+						{ ! isCommercialOwned && (
+							<StatsPurchaseWizard
+								siteSlug={ siteSlug }
+								commercialProduct={ commercialProduct }
+								maxSliderPrice={ maxSliderPrice ?? 10 }
+								pwywProduct={ pwywProduct }
+								siteId={ siteId }
+								redirectUri={ query.redirect_uri ?? '' }
+								from={ query.from ?? '' }
+								disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+								initialStep={ initialStep }
+								initialSiteType={ initialSiteType }
+							/>
+						) }
 					</>
 				) }
 				<JetpackColophon />
