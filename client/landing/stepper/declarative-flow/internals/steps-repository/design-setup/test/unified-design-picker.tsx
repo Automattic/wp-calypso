@@ -43,7 +43,7 @@ jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
 } ) );
 
-jest.mock( 'calypso/state/themes/actions/add-external-managed-theme-to-cart', () => ( {
+jest.mock( 'calypso/state/themes/theme-utils', () => ( {
 	getPreferredBillingCycleProductSlug: () => {
 		return;
 	},
@@ -78,6 +78,9 @@ jest.mock( 'calypso/state/themes/selectors', () => ( {
 		return;
 	},
 	getTheme: () => {
+		return;
+	},
+	isSiteEligibleForManagedExternalThemes: () => {
 		return;
 	},
 } ) );
