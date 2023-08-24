@@ -93,3 +93,37 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 		width: calc(100vw - 80px);
 	}
 }
+
+.badge.badge--warning {
+	text-transform: uppercase;
+	border-radius: 4px;
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.badge.badge--POST,
+.badge.badge--Deprecated {
+	background-color: rgba(187, 224, 250, 1);
+	color: rgba(2, 57, 92, 1);
+}
+
+.badge.badge--GET {
+	background-color: rgba(184, 230, 191, 1);
+	color: rgba(0, 69, 12, 1);
+}
+
+.badge.badge--DELETE,
+.badge.badge--Error {
+	background-color: rgba(250, 207, 210, 1);
+	color: rgba(105, 28, 28, 1);
+}
+
+.badge.badge--Warning {
+	background-color: rgba(245, 230, 179, 1);
+	color: rgba(79, 53, 0, 1);
+}
+
+.badge.badge--User {
+	background-color: rgba(220, 220, 222, 1);
+	color: rgba(44, 51, 56, 1);
+}

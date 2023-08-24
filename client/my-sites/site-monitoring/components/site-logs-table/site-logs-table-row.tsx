@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Badge } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import moment from 'moment';
@@ -20,12 +20,18 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const expandedId = useRef( uuidv4() ).current;
 
+	const firstColumnValue = log[ columns[ 0 ] ]; // Get the value of the first column
+
 	return (
 		<Fragment>
-			<tr>
-				{ columns.map( ( column ) => (
+			<tr className={ firstColumnValue }>
+				{ columns.map( ( column, index ) => (
 					<td key={ column } className={ column }>
-						{ renderCell( column, log[ column ], moment, siteGmtOffset ) }
+						{ index === 0 ? (
+							<Badge className={ `badge--${ firstColumnValue }` }>{ log[ column ] }</Badge>
+						) : (
+							renderCell( column, log[ column ], moment, siteGmtOffset )
+						) }
 					</td>
 				) ) }
 				<td>
