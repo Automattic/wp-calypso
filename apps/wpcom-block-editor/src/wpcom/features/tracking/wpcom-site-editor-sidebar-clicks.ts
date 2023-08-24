@@ -1,7 +1,7 @@
 import tracksRecordEvent from './track-record-event';
 import { DelegateEventHandler } from './types';
 
-export const wpcomSiteEditorSidebarNavigationClick = () => {
+export const wpcomSiteEditorSidebarNavigationClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_navigation_click',
 		// \2f is the encoded slash.
@@ -14,7 +14,7 @@ export const wpcomSiteEditorSidebarNavigationClick = () => {
 	};
 };
 
-export const wpcomSiteEditorSidebarPagesClick = () => {
+export const wpcomSiteEditorSidebarPagesClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_pages_click',
 		// \2f is the encoded slash.
@@ -27,7 +27,7 @@ export const wpcomSiteEditorSidebarPagesClick = () => {
 	};
 };
 
-export const wpcomSiteEditorSidebarPatternsClick = () => {
+export const wpcomSiteEditorSidebarPatternsClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_patterns_click',
 		// \2f is the encoded slash.
@@ -61,7 +61,7 @@ export const wpcomSiteEditorSidebarStylesClick = (): DelegateEventHandler => {
 	};
 };
 
-export const wpcomSiteEditorSidebarTemplatesClick = () => {
+export const wpcomSiteEditorSidebarTemplatesClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_templates_click',
 		// \2f is the encoded slash.
