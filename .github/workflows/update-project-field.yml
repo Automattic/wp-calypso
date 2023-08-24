@@ -1,0 +1,71 @@
+name: Update Project Field to Match Label
+
+# Triggers the workflow when a label is added to an issue.
+on:
+  issues:
+    types:
+      - labeled
+
+# Details needed to update a project field.
+env:
+  ORGANIZATION: "Automattic"
+  PROJECT_NUMBER: 391
+  PRIORITY_PREFIX: "[Pri]"
+  PRIORITY_FIELD: "Priority"
+
+jobs:
+
+  # Updates project fields to match label changes.
+  update_project_field: 
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checks if the issue is already in the project. If not, the next steps will be skipped.
+      - name: Check if issue is in project
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
+          ISSUE_ID: ${{ github.event.issue.node_id }}
+        # Iterates through an issue's projects and looks for a match on the project number.
+        run: |
+          gh api graphql -f query='
+            query($id: ID!){
+              node(id: $id) {
+              ... on Issue {
+                  projectItems(first: 10) {
+                    ... on ProjectV2ItemConnection {
+                      nodes {
+                        ... on ProjectV2Item {
+                          project {
+                            ... on ProjectV2 {
+                              number
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }' -f id=$ISSUE_ID > project_data.json
+          echo 'ISSUE_IN_PROJECT='$(jq 'any(.data.node.projectItems.nodes[]; .project.number == ${{ env.PROJECT_NUMBER }})' project_data.json) >> $GITHUB_ENV
+
+      # Get the value of the label by removing the prefix.
+      - name: Get label value
+        if: contains(github.event.label.name, env.PRIORITY_PREFIX) && env.ISSUE_IN_PROJECT == 'true'
+        run: |
+          prefix="${{env.PRIORITY_PREFIX}} "
+          label="${{github.event.label.name}}"
+          value=${label#"$prefix"}
+          echo "PRIORITY_VALUE=$value" >> $GITHUB_ENV
+
+      # Update the corresponding project field with the label value.
+      - name: Update project field
+        if: contains(github.event.label.name, env.PRIORITY_PREFIX) && env.ISSUE_IN_PROJECT == 'true'
+        uses: github/update-project-action@v2
+        with:
+          github_token: ${{ secrets.PROJECT_AUTOMATION_TOKEN }}
+          organization: ${{ env.ORGANIZATION }}
+          project_number: ${{ env.PROJECT_NUMBER }}
+          field: ${{ env.PRIORITY_FIELD }}
+          content_id: ${{ github.event.issue.node_id }}
+          value: ${{ env.PRIORITY_VALUE }}
