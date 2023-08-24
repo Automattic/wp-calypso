@@ -129,7 +129,7 @@ const AkismetModule: FunctionComponent< AkismetModuleProps > = ( { siteId, manag
 	return (
 		<ModuleCard
 			icon={ akismet }
-			title={ translate( 'Total blocked spam comments' ) }
+			title={ translate( 'Blocked spam comments' ) }
 			value={ akismetData as number }
 			isError={ isAkismetError }
 			error={ akismetError instanceof Error ? akismetError.message : '' }
@@ -169,7 +169,7 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 	return (
 		<ModuleCard
 			icon={ protect }
-			title={ translate( 'Total blocked login attempts' ) }
+			title={ translate( 'Blocked login attempts' ) }
 			value={ protectData as number }
 			isError={ isProtectError }
 			error={ protectError instanceof Error ? protectError.message : '' }

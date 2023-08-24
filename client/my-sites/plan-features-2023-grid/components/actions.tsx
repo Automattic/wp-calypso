@@ -18,6 +18,7 @@ import classNames from 'classnames';
 import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
 import { useSelector } from 'calypso/state';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../grid-context';
@@ -68,6 +69,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck,
 	isLargeCurrency,
 	handleUpgradeButtonClick,
+	busy,
 }: {
 	freePlan: boolean;
 	planTitle: TranslateResult;
@@ -76,6 +78,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	handleUpgradeButtonClick: () => void;
+	busy?: boolean;
 } ) => {
 	const translate = useTranslate();
 	let btnText;
@@ -100,7 +103,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	}
 
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick }>
+		<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
 			{ btnText }
 		</Button>
 	);
@@ -197,6 +200,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const { current } = gridPlansIndex[ planSlug ];
@@ -319,7 +323,13 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( ! availableForPurchase ) {
 		return (
-			<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
+			<Plans2023Tooltip
+				text={ translate( 'Please contact support to downgrade your plan.' ) }
+				setActiveTooltipId={ setActiveTooltipId }
+				activeTooltipId={ activeTooltipId }
+				showOnMobile={ false }
+				id="downgrade"
+			>
 				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
@@ -453,6 +463,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
+				busy={ freePlan && planActionOverrides?.loggedInFreePlan?.status === 'blocked' }
 			/>
 		);
 	}

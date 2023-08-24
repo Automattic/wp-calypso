@@ -2,13 +2,9 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { PluginActions } from '../types';
-import useGetDialogText from '../use-get-dialog-text';
-import type { Site, Plugin } from '../types';
-jest.mock( 'i18n-calypso', () => ( {
-	translate: jest.fn().mockReturnValue( ( input ) => input ),
-	...jest.requireActual( 'i18n-calypso' ),
-} ) );
+import useGetDialogText from '..';
+import { PluginActions } from '../../types';
+import type { Site, Plugin } from '../../types';
 
 const ACTION_HEADING_TEXTS = [
 	{ action: PluginActions.ACTIVATE, text: 'Activate' },
@@ -238,7 +234,7 @@ describe( 'useGetDialogText', () => {
 
 			const { message } = getDialogText( action, testPlugins, testSites );
 			expect( message ).toEqual(
-				`You are about to ${ text } ${ testPlugins.length } plugins installed on ${ testSites.length } sites.`
+				`You are about to ${ text } ${ testPlugins.length } plugins. This will impact ${ testSites.length } sites.`
 			);
 		}
 	);

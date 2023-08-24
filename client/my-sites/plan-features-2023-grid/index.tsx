@@ -1,23 +1,16 @@
 import {
 	getPlanClass,
 	isFreePlan,
-	isPersonalPlan,
-	isEcommercePlan,
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
-	isBusinessPlan,
-	isPremiumPlan,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
-	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
 	FeatureList,
 } from '@automattic/calypso-products';
 import {
-	JetpackLogo,
 	BloombergLogo,
-	CloudLogo,
 	CNNLogo,
 	CondenastLogo,
 	DisneyLogo,
@@ -25,8 +18,6 @@ import {
 	SalesforceLogo,
 	SlackLogo,
 	TimeLogo,
-	VIPLogo,
-	WooLogo,
 } from '@automattic/components';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -46,20 +37,18 @@ import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provi
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
-import PlanFeatures2023GridFeatures from './components/features';
 import PlanFeatures2023GridHeaderPrice from './components/header-price';
 import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
-import { Plans2023Tooltip } from './components/plans-2023-tooltip';
-import PopularBadge from './components/popular-badge';
+import PlanDivOrTdContainer from './components/plan-div-td-container';
+import PlanFeaturesContainer from './components/plan-features-container';
+import PlanLogo from './components/plan-logo';
 import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
-import PlansGridContextProvider, { usePlansGridContext } from './grid-context';
-import useHighlightAdjacencyMatrix from './hooks/npm-ready/use-highlight-adjacency-matrix';
+import PlansGridContextProvider, { type PlansIntent } from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import { DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
-import type { PlansIntent } from './grid-context';
 import type {
 	GridPlan,
 	UsePricingMetaForGridPlans,
@@ -72,20 +61,6 @@ import './style.scss';
 type PlanRowOptions = {
 	isTableCell?: boolean;
 	isStuck?: boolean;
-};
-
-const Container = (
-	props: (
-		| React.HTMLAttributes< HTMLDivElement >
-		| React.HTMLAttributes< HTMLTableCellElement >
-	 ) & { isTableCell?: boolean; scope?: string }
-) => {
-	const { children, isTableCell, ...otherProps } = props;
-	return isTableCell ? (
-		<td { ...otherProps }>{ children }</td>
-	) : (
-		<div { ...otherProps }>{ children }</div>
-	);
 };
 
 export interface PlanFeatures2023GridProps {
@@ -136,79 +111,6 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
 }
-
-const PlanLogo: React.FunctionComponent< {
-	planIndex: number;
-	planSlug: PlanSlug;
-	renderedGridPlans: GridPlan[];
-	isTableCell?: boolean;
-	isInSignup?: boolean;
-} > = ( { planIndex, planSlug, renderedGridPlans, isTableCell, isInSignup } ) => {
-	const { gridPlansIndex } = usePlansGridContext();
-	const { current } = gridPlansIndex[ planSlug ];
-	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
-		renderedPlans: renderedGridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
-	} );
-	const headerClasses = classNames(
-		'plan-features-2023-grid__header-logo',
-		getPlanClass( planSlug )
-	);
-	const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-		'popular-plan-parent-class': gridPlansIndex[ planSlug ]?.highlightLabel,
-		'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
-		'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
-		'is-only-highlight': highlightAdjacencyMatrix[ planSlug ]?.isOnlyHighlight,
-		'is-current-plan': current,
-		'is-first-in-row': planIndex === 0,
-		'is-last-in-row': planIndex === renderedGridPlans.length - 1,
-	} );
-	const popularBadgeClasses = classNames( {
-		'with-plan-logo': ! (
-			isFreePlan( planSlug ) ||
-			isPersonalPlan( planSlug ) ||
-			isPremiumPlan( planSlug )
-		),
-		'is-current-plan': current,
-	} );
-
-	const shouldShowWooLogo = isEcommercePlan( planSlug ) && ! isWooExpressPlan( planSlug );
-
-	return (
-		<Container key={ planSlug } className={ tableItemClasses } isTableCell={ isTableCell }>
-			<PopularBadge
-				isInSignup={ isInSignup }
-				planSlug={ planSlug }
-				additionalClassName={ popularBadgeClasses }
-			/>
-			<header className={ headerClasses }>
-				{ isBusinessPlan( planSlug ) && (
-					<Plans2023Tooltip
-						text={ translate(
-							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
-						) }
-					>
-						<CloudLogo />
-					</Plans2023Tooltip>
-				) }
-				{ shouldShowWooLogo && (
-					<Plans2023Tooltip
-						text={ translate( 'Make your online store a reality with the power of WooCommerce.' ) }
-					>
-						<WooLogo />
-					</Plans2023Tooltip>
-				) }
-				{ isWpcomEnterpriseGridPlan( planSlug ) && (
-					<Plans2023Tooltip
-						text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
-					>
-						<VIPLogo />
-					</Plans2023Tooltip>
-				) }
-			</header>
-		</Container>
-	);
-};
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
 	observer: IntersectionObserver | null = null;
@@ -443,7 +345,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			} );
 
 			return (
-				<Container
+				<PlanDivOrTdContainer
 					scope="col"
 					key={ planSlug }
 					className={ classes }
@@ -461,7 +363,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 							{ translate( 'Speak to our team for a custom quote.' ) }
 						</div>
 					) }
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		} );
 	}
@@ -474,9 +376,13 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			);
 
 			return (
-				<Container className={ classes } isTableCell={ options?.isTableCell } key={ planSlug }>
+				<PlanDivOrTdContainer
+					className={ classes }
+					isTableCell={ options?.isTableCell }
+					key={ planSlug }
+				>
 					<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		} );
 	}
@@ -488,11 +394,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			return (
 				<PlanLogo
 					key={ planSlug }
-					planIndex={ index }
 					planSlug={ planSlug }
+					planIndex={ index }
 					renderedGridPlans={ renderedGridPlans }
-					isTableCell={ options?.isTableCell }
 					isInSignup={ isInSignup }
+					isTableCell={ options?.isTableCell }
 				/>
 			);
 		} );
@@ -506,7 +412,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			);
 
 			return (
-				<Container
+				<PlanDivOrTdContainer
 					key={ planSlug }
 					className="plan-features-2023-grid__table-item"
 					isTableCell={ options?.isTableCell }
@@ -514,7 +420,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					<header className={ headerClasses }>
 						<h4 className="plan-features-2023-grid__header-title">{ planTitle }</h4>
 					</header>
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		} );
 	}
@@ -522,13 +428,13 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	renderPlanTagline( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		return renderedGridPlans.map( ( { planSlug, tagline } ) => {
 			return (
-				<Container
+				<PlanDivOrTdContainer
 					key={ planSlug }
 					className="plan-features-2023-grid__table-item"
 					isTableCell={ options?.isTableCell }
 				>
 					<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		} );
 	}
@@ -589,7 +495,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			}
 
 			return (
-				<Container key={ planSlug } className={ classes } isTableCell={ options?.isTableCell }>
+				<PlanDivOrTdContainer
+					key={ planSlug }
+					className={ classes }
+					isTableCell={ options?.isTableCell }
+				>
 					<PlanFeatures2023GridActions
 						manageHref={ manageHref }
 						canUserPurchasePlan={ canUserPurchasePlan }
@@ -612,7 +522,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						isStuck={ options?.isStuck || false }
 						isLargeCurrency={ isLargeCurrency }
 					/>
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		} );
 	}
@@ -625,7 +535,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		}
 
 		return gridPlan.map( ( { planSlug, pricing: { billingPeriod } } ) => (
-			<Container
+			<PlanDivOrTdContainer
 				key={ planSlug }
 				className="plan-features-2023-grid__table-item"
 				isTableCell={ options?.isTableCell }
@@ -639,7 +549,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						} ) }
 					</div>
 				) }
-			</Container>
+			</PlanDivOrTdContainer>
 		) );
 	}
 
@@ -684,7 +594,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			const rowspanProp =
 				options?.isTableCell && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
 			return (
-				<Container
+				<PlanDivOrTdContainer
 					key={ planSlug }
 					isTableCell={ options?.isTableCell }
 					className="plan-features-2023-grid__table-item"
@@ -692,7 +602,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				>
 					{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
 					{ shouldRenderEnterpriseLogos && this.renderEnterpriseClientLogos() }
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		} );
 	}
@@ -712,45 +622,17 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				! isWooExpressPlusPlan( gridPlan.planSlug )
 		);
 
-		return plansWithFeatures.map(
-			( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
-				return (
-					<Container
-						key={ `${ planSlug }-${ mapIndex }` }
-						isTableCell={ options?.isTableCell }
-						className="plan-features-2023-grid__table-item"
-					>
-						<PlanFeatures2023GridFeatures
-							features={ wpcomFeatures }
-							planSlug={ planSlug }
-							paidDomainName={ paidDomainName }
-							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							selectedFeature={ selectedFeature }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						/>
-						{ jetpackFeatures.length !== 0 && (
-							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-								<Plans2023Tooltip
-									text={ translate(
-										'Security, performance and growth tools made by the WordPress experts.'
-									) }
-								>
-									<JetpackLogo size={ 16 } />
-								</Plans2023Tooltip>
-							</div>
-						) }
-						<PlanFeatures2023GridFeatures
-							features={ jetpackFeatures }
-							planSlug={ planSlug }
-							paidDomainName={ paidDomainName }
-							wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						/>
-					</Container>
-				);
-			}
+		return (
+			<PlanFeaturesContainer
+				plansWithFeatures={ plansWithFeatures }
+				paidDomainName={ paidDomainName }
+				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
+				translate={ translate }
+				hideUnavailableFeatures={ hideUnavailableFeatures }
+				selectedFeature={ selectedFeature }
+				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+				isTableCell={ options?.isTableCell }
+			/>
 		);
 	}
 
@@ -784,7 +666,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			);
 
 			return (
-				<Container
+				<PlanDivOrTdContainer
 					key={ planSlug }
 					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
 					isTableCell={ options?.isTableCell }
@@ -793,7 +675,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						<div className="plan-features-2023-grid__storage-title">{ translate( 'Storage' ) }</div>
 					) : null }
 					{ storageJSX }
-				</Container>
+				</PlanDivOrTdContainer>
 			);
 		} );
 	}

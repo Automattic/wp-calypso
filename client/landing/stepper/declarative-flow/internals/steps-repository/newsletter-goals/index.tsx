@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Onboard } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -5,7 +6,6 @@ import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import FlowCard from '../components/flow-card';
 import { IconPaid, IconFree, IconImport } from './icons';
 import type { Step } from '../../types';
@@ -25,6 +25,10 @@ const NewsletterGoals: Step = ( { navigation } ) => {
 			// We could instead just avoid doing anything if nothing wasn't set ever.
 			resetGoals();
 		}
+
+		recordTracksEvent( 'calypso_signup_newsletter_goal_click', {
+			goal: goal?.toString() ?? 'free',
+		} );
 
 		submit?.();
 	};

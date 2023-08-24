@@ -4,9 +4,11 @@ import {
 	type SiteDomainsQueryFnData,
 	type SiteDetails,
 	getSiteDomainsQueryObject,
+	useDomainsBulkActionsMutation,
 } from '@automattic/data-stores';
 import { useQueries } from '@tanstack/react-query';
 import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
+import { BulkActionsToolbar } from '../bulk-actions-toolbar';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
@@ -59,6 +61,8 @@ export function DomainsTable( {
 		}
 		return fetchedSiteDomains;
 	}, [ allSiteDomains ] );
+
+	const { setAutoRenew } = useDomainsBulkActionsMutation();
 
 	useLayoutEffect( () => {
 		if ( ! domains ) {
@@ -168,29 +172,46 @@ export function DomainsTable( {
 		}
 	};
 
+	const handlAutoRenew = ( enable: boolean ) => {
+		const domainsToBulkUpdate = domains
+			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
+			.map( ( domain ) => domain.domain );
+		setAutoRenew( domainsToBulkUpdate, enable );
+	};
+
 	return (
-		<table className="domains-table">
-			<DomainsTableHeader
-				columns={ domainsTableColumns }
-				activeSortKey={ sortKey }
-				activeSortDirection={ sortDirection }
-				bulkSelectionStatus={ getBulkSelectionStatus() }
-				onBulkSelectionChange={ changeBulkSelection }
-				onChangeSortOrder={ onSortChange }
-			/>
-			<tbody>
-				{ sortedDomains?.map( ( domain ) => (
-					<DomainsTableRow
-						key={ getDomainId( domain ) }
-						domain={ domain }
-						isSelected={ selectedDomains.has( getDomainId( domain ) ) }
-						onSelect={ handleSelectDomain }
-						fetchSiteDomains={ fetchSiteDomains }
-						fetchSite={ fetchSite }
-						isAllSitesView={ isAllSitesView }
-					/>
-				) ) }
-			</tbody>
-		</table>
+		<div className="domains-table">
+			{ hasSelectedDomains && (
+				<BulkActionsToolbar
+					onAutoRenew={ handlAutoRenew }
+					selectedDomainCount={ selectedDomains.size }
+				/>
+			) }
+			{ /* This spacer will be replaced by searching and filtering controls. In the meantime it stops the table jumping around when selecting domains. */ }
+			{ ! hasSelectedDomains && <div style={ { height: 40 } } /> }
+			<table>
+				<DomainsTableHeader
+					columns={ domainsTableColumns }
+					activeSortKey={ sortKey }
+					activeSortDirection={ sortDirection }
+					bulkSelectionStatus={ getBulkSelectionStatus() }
+					onBulkSelectionChange={ changeBulkSelection }
+					onChangeSortOrder={ onSortChange }
+				/>
+				<tbody>
+					{ sortedDomains?.map( ( domain ) => (
+						<DomainsTableRow
+							key={ getDomainId( domain ) }
+							domain={ domain }
+							isSelected={ selectedDomains.has( getDomainId( domain ) ) }
+							onSelect={ handleSelectDomain }
+							fetchSiteDomains={ fetchSiteDomains }
+							fetchSite={ fetchSite }
+							isAllSitesView={ isAllSitesView }
+						/>
+					) ) }
+				</tbody>
+			</table>
+		</div>
 	);
 }

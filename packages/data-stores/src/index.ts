@@ -25,6 +25,7 @@ export * from './queries/use-launchpad';
 export * from './queries/use-all-domains-query';
 export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';
+export * from './mutations/use-domains-bulk-actions-mutation';
 
 const { SubscriptionManager } = Reader;
 
