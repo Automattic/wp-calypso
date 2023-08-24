@@ -118,7 +118,9 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				errorText={ translate(
 					"Jetpack can’t communicate with your site because it hasn't seen your site for 7 days."
 				) }
-				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/resolve-jetpack-errors/#jetpack-plugin-is-deactivated'
+				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
