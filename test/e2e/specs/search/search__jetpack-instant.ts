@@ -86,8 +86,14 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 	} );
 
 	it( 'Enter search term and launch search modal', async function () {
-		const inputLocator = page.getByRole( 'search' ).getByRole( 'searchbox', { name: 'Search' } );
-		const buttonLocator = page.getByRole( 'search' ).getByRole( 'button', { name: 'Search' } );
+		const inputLocator = page
+			.getByRole( 'search' )
+			.getByRole( 'searchbox', { name: 'Search' } )
+			.first();
+		const buttonLocator = page
+			.getByRole( 'search' )
+			.getByRole( 'button', { name: 'Search' } )
+			.first();
 
 		await inputLocator.fill( searchString );
 		await Promise.all( [ searchModalComponent.expectAndWaitForSearch(), buttonLocator.click() ] );
