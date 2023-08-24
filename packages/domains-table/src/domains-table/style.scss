@@ -3,9 +3,14 @@
 .domains-table {
 	border-collapse: collapse;
 
-	tbody tr {
-		border-bottom: 1px solid var(--studio-gray-5);
+	table {
+		margin-top: 30px;
+
+		tr {
+			border-bottom: 1px solid var(--studio-gray-5);
+		}
 	}
+
 	th {
 		padding-bottom: 16px;
 		color: var(--studio-gray-60);
