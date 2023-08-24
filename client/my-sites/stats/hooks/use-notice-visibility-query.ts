@@ -79,6 +79,6 @@ export function useNoticeVisibilityQuery( siteId: number | null, noticeId: Notic
 	return useNoticesVisibilityQueryRaw< boolean >( siteId, selectVisibilityForSingleNotice );
 }
 
-export function useDashboardNoticesVisibilityQuery( siteId: number | null ) {
+export function useNoticesVisibilityQuery( siteId: number | null ) {
 	return useNoticesVisibilityQueryRaw< Notices >( siteId );
 }
