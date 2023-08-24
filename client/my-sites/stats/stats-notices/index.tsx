@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import version_compare from 'calypso/lib/version-compare';
 import {
 	Notices,
-	useNoticesVisibilityQueryRaw,
+	useDashboardNoticesVisibilityQuery,
 	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
@@ -75,7 +75,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isLoading,
 		isError,
 		data: serverNoticesVisibility,
-	} = useNoticesVisibilityQueryRaw( siteId );
+	} = useDashboardNoticesVisibilityQuery( siteId );
 
 	const { hasLoadedPurchases } = usePurchasesToUpdateSiteProducts( isOdysseyStats, siteId );
 

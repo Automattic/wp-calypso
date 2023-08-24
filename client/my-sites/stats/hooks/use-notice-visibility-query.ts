@@ -18,12 +18,6 @@ const DEFAULT_NOTICES_VISIBILITY = {
 export type Notices = typeof DEFAULT_NOTICES_VISIBILITY;
 export type NoticeIdType = keyof Notices;
 
-const QUERY_OPTIONS = {
-	staleTime: 1000 * 30, // 30 seconds
-	retry: 1,
-	retryDelay: 3 * 1000, // 3 seconds
-};
-
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
 const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
@@ -39,6 +33,7 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
  * Only allow one notice in a conflict group to be active at a time.
  */
 export const processConflictNotices = ( notices: Notices ): Notices => {
+	notices = { ...notices };
 	for ( const conflictNoticeGroup in CONFLICT_NOTICE_ID_GROUPS ) {
 		let foundActiveNotice = false;
 		for ( const confilictNoticeId of CONFLICT_NOTICE_ID_GROUPS[ conflictNoticeGroup ] ) {
@@ -52,7 +47,7 @@ export const processConflictNotices = ( notices: Notices ): Notices => {
 	return notices;
 };
 
-export async function queryNotices( siteId: number | null ): Promise< Notices > {
+const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
 	const payload = await wpcom.req.get( {
 		method: 'GET',
 		apiNamespace: 'wpcom/v2',
@@ -60,21 +55,30 @@ export async function queryNotices( siteId: number | null ): Promise< Notices > 
 	} );
 
 	return { ...DEFAULT_NOTICES_VISIBILITY, ...payload };
-}
+};
 
-export default function useNoticeVisibilityQuery( siteId: number | null, noticeId: string ) {
-	return useQuery( {
-		queryKey: [ 'stats', 'notices-visibility', siteId ],
-		queryFn: () => queryNotices( siteId ).then( processConflictNotices ),
-		select: ( payload: Record< string, boolean > ): boolean => !! payload?.[ noticeId ],
-		...QUERY_OPTIONS,
-	} );
-}
-
-export function useNoticesVisibilityQueryRaw( siteId: number | null ) {
+const useNoticesVisibilityQueryRaw = function < T >(
+	siteId: number | null,
+	select: undefined | ( ( payload: Notices ) => T ) = undefined
+) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
 		queryFn: () => queryNotices( siteId ),
-		...QUERY_OPTIONS,
+		select,
+		staleTime: 1000 * 30, // 30 seconds
+		retry: 1,
+		retryDelay: 3 * 1000, // 3 seconds,
 	} );
+};
+
+export function useNoticeVisibilityQuery( siteId: number | null, noticeId: NoticeIdType ) {
+	const selectVisibilityForSingleNotice = ( payload: Notices ): boolean => {
+		payload = processConflictNotices( payload );
+		return !! payload?.[ noticeId ];
+	};
+	return useNoticesVisibilityQueryRaw< boolean >( siteId, selectVisibilityForSingleNotice );
+}
+
+export function useDashboardNoticesVisibilityQuery( siteId: number | null ) {
+	return useNoticesVisibilityQueryRaw< Notices >( siteId );
 }
