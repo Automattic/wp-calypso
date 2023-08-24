@@ -30,7 +30,7 @@ import './style.scss';
 type RecurringPaymentsPlanAddEditModalProps = {
 	closeDialog: () => void;
 	product: Product;
-	annualProduct?: Product;
+	annualProduct: Product | null;
 	siteId?: number;
 };
 
