@@ -277,7 +277,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				is_editable: true,
 			};
 
-			if ( editedPostPaidNewsletter ) {
+			if ( ! editedPostPaidNewsletter ) {
 				dispatch(
 					requestUpdateProduct(
 						siteId ?? selectedSiteId,
