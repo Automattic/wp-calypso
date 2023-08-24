@@ -91,9 +91,19 @@ export class DonationsFormFlow implements BlockFlow {
 			.click();
 
 		// Verify the donation popup.
-		await context.page
-			.frameLocator( 'iframe[id=TB_iframeContent]' )
-			.locator( '.wpsm-modal' )
-			.waitFor();
+		// For sitse with plans Premium or lower, the block cannot be used and so the popup modal
+		// states as such.
+		// For sites where sales are allowed, ther are two variants in how this flow can behave:
+		// 	1. on normal, user-controlled browsers, a Stripe-powered overlay appears.
+		// 	2. on Playwright-controlled browsers, the page navigates to show a similar
+		//     Stripe-powered overlay as 1.
+		// Since this is used for automated E2E testing, we're disregarding and not checking for
+		// variant 1.
+		await Promise.race( [
+			context.page.getByRole( 'button', { name: /pay now/i } ).waitFor(),
+			context.page
+				.frameLocator( 'iframe[id=TB_iframeContent]' )
+				.getByRole( 'heading', { name: 'Sales disabled' } ),
+		] );
 	}
 }
