@@ -199,6 +199,14 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
 }
+
+// Remove the border and background from the compact highlight cards
+.highlight-card.is-compact {
+	box-shadow: 0 0 0 0;
+	background: none;
+}
+
+
 .highlight-year-navigation {
 	display: flex;
 	justify-content: space-between;
