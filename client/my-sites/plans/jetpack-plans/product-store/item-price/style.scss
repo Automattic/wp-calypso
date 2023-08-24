@@ -66,6 +66,10 @@
 		max-height: 24px;
 	}
 
+	.plan-price {
+		font-weight: 700;
+	}
+
 	.plan-price.is-original {
 		color: var(--studio-gray-50);
 		font-weight: 600;
@@ -87,7 +91,6 @@
 
 	.plan-price.is-discounted {
 		color: var(--studio-gray-100);
-		font-weight: 700;
 	}
 
 	.plan-price.is-discounted .plan-price__fraction {
