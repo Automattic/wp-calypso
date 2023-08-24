@@ -89,4 +89,16 @@ export class EditorBlockToolbarComponent {
 		const locator = editorParent.locator( selectors.button( { ariaLabel: 'Move down' } ) );
 		await locator.click();
 	}
+
+	/**
+	 *
+	 */
+	async clickParentBlockButton(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const locator = editorParent
+			.locator( parentSelector )
+			.locator( 'button.block-editor-block-parent-selector__button' );
+		await locator.click();
+		await locator.waitFor( { state: 'detached' } );
+	}
 }

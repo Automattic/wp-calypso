@@ -450,6 +450,14 @@ export class EditorPage {
 		await this.editorBlockToolbarComponent.clickPrimaryButton( name );
 	}
 
+	/**
+	 * Select the parent block of the current block using the block toolbar.
+	 * This will fail and throw if the currently focused block doesn't have a parent.
+	 */
+	async selectBlockParent(): Promise< void > {
+		await this.editorBlockToolbarComponent.clickParentBlockButton();
+	}
+
 	//#endregion
 
 	//#region Settings Sidebar
