@@ -358,3 +358,18 @@
 	}
 }
 
+div.all-domains__search-input.search {
+	margin-bottom: 0;
+	height: 40px;
+	flex: 1;
+	border-color: var(--color-neutral-10);
+	border-width: 1px;
+	border-radius: 2px;
+	border-style: solid;
+	box-sizing: border-box;
+
+	input.search__input {
+		font-size: $font-body-extra-small;
+	}
+}
+

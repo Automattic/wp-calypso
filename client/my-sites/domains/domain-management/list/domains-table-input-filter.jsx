@@ -12,6 +12,7 @@ class DomainsTableInputFilter extends Component {
 				onSearch={ this.props.onSearch }
 				delayTimeout={ 1000 }
 				delaySearch
+				isOpen={ true }
 			/>
 		);
 	}
