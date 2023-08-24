@@ -18,7 +18,6 @@ import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/u
 import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
-import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -204,10 +203,16 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 
 		const noticeText = translate(
-			'Connect your domain to WordPress.com to enable domain forwarding. {{a}}Learn more{{/a}}.',
+			'To enable domain forwarding please "restore default A records." {{a}}Learn more{{/a}}.',
 			{
 				components: {
-					a: <a href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
+					a: (
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/domains/custom-dns/#default-records'
+							) }
+						/>
+					),
 				},
 			}
 		);
