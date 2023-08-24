@@ -337,8 +337,8 @@ const PatternAssembler = ( {
 		if ( navigator.location.path === NAVIGATOR_PATHS.ACTIVATION ) {
 			navigator.goBack();
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
-				from: 'activation',
-				to: 'styles',
+				screen_from: 'activation',
+				screen_to: 'styles',
 			} );
 			return;
 		}
