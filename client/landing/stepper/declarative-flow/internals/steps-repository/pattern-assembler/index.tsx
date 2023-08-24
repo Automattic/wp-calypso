@@ -47,6 +47,7 @@ import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
+import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
@@ -412,7 +413,7 @@ const PatternAssembler = ( {
 		submit?.();
 	};
 
-	const handleContinue = () => {
+	const onUpgradeLater = () => {
 		if ( isNewSite ) {
 			onSubmit();
 		} else {
@@ -429,7 +430,7 @@ const PatternAssembler = ( {
 		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
-		onUpgradeLater: handleContinue,
+		onUpgradeLater,
 		recordTracksEvent,
 	} );
 
@@ -441,11 +442,20 @@ const PatternAssembler = ( {
 			return;
 		}
 
-		handleContinue();
+		if ( isNewSite ) {
+			navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
+		} else {
+			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
+		}
 	};
 
 	const onActivate = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
+		onSubmit();
+	};
+
+	const onConfirm = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONFIRMATION_CONFIRM_CLICK );
 		onSubmit();
 	};
 
@@ -543,6 +553,10 @@ const PatternAssembler = ( {
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
 					<ScreenActivation onActivate={ onActivate } />
+				</NavigatorScreen>
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
+					<ScreenConfirmation onConfirm={ onConfirm } />
 				</NavigatorScreen>
 			</div>
 			<div className="pattern-assembler__sidebar-panel">

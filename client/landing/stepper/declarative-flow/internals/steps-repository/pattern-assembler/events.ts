@@ -31,6 +31,12 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 		'calypso_signup_pattern_assembler_screen_activation_activate_click',
 
 	/**
+	 * Screen Activation
+	 */
+	SCREEN_CONFIRMATION_CONFIRM_CLICK:
+		'calypso_signup_pattern_assembler_screen_confirmation_confirm_click',
+
+	/**
 	 * Pattern Panels
 	 */
 	PATTERN_SELECT_CLICK: 'calypso_signup_pattern_assembler_pattern_select_click',
