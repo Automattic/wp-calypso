@@ -328,10 +328,7 @@ class PostCommentList extends Component {
 		// the tree. We need to use commentsTreeAvailable to determine whether to show
 		// expand/collapse toggle for inline comments, but actualCommentsCount to determine whether
 		// to show the link to view all comments (including pingbacks) on the post page.
-		const shouldShowExpandToggle =
-			this.props.expandableView &&
-			( displayedCommentsCount < this.getCommentsCount( commentsTreeAvailable.children ) ||
-				this.state.isExpanded );
+		const shouldShowExpandToggle = this.props.expandableView && actualCommentsCount > 0;
 		const shouldShowLinkToFullPost =
 			this.props.expandableView &&
 			( this.state.isExpanded || ! shouldShowExpandToggle ) &&
@@ -344,8 +341,8 @@ class PostCommentList extends Component {
 				{ shouldShowExpandToggle && (
 					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
 						{ this.state.isExpanded
-							? translate( 'View less comments' )
-							: translate( 'View more comments' ) }
+							? translate( 'Collapse comments' )
+							: translate( 'Expand comments' ) }
 					</button>
 				) }
 				{ shouldShowLinkToFullPost && (
@@ -443,21 +440,21 @@ class PostCommentList extends Component {
 			children: [],
 		};
 
-		// Go through the children of the last comment to find replies by the current user.
-		const authorReplies = commentsTree[ lastComment ]?.children.filter( ( replyId ) => {
-			return commentsTree[ replyId ]?.data.author?.ID === this.props.currentUserId;
-		} );
+		// // Go through the children of the last comment to find replies by the current user.
+		// const authorReplies = commentsTree[ lastComment ]?.children.filter( ( replyId ) => {
+		// 	return commentsTree[ replyId ]?.data.author?.ID === this.props.currentUserId;
+		// } );
 
-		// Add the latest reply of the current user to the comments children array and comment tree.
-		if ( authorReplies?.length ) {
-			const lastReply = authorReplies.pop();
-			newCommentTree[ lastComment ].children.push( lastReply );
-			newCommentTree[ lastReply ] = {
-				data: commentsTree[ lastReply ].data,
-				// Ensure no children since this is the last reply we want rendered.
-				children: [],
-			};
-		}
+		// // Add the latest reply of the current user to the comments children array and comment tree.
+		// if ( authorReplies?.length ) {
+		// 	const lastReply = authorReplies.pop();
+		// 	newCommentTree[ lastComment ].children.push( lastReply );
+		// 	newCommentTree[ lastReply ] = {
+		// 		data: commentsTree[ lastReply ].data,
+		// 		// Ensure no children since this is the last reply we want rendered.
+		// 		children: [],
+		// 	};
+		// }
 
 		return {
 			displayedComments: lastCommentArr,
@@ -541,6 +538,8 @@ class PostCommentList extends Component {
 			<div
 				className={ classnames( 'comments__comment-list', {
 					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
+					'is-inline': expandableView,
+					'is-collapsed': isCollapsedInline,
 				} ) }
 			>
 				{ ( this.props.showCommentCount ||
