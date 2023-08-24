@@ -25,7 +25,7 @@ export class EditorPopoverMenuComponent {
 	async clickMenuButton( name: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const locator = editorParent.getByRole( 'menu' ).getByRole( 'menuitem', { name: name } );
+		const locator = editorParent.getByRole( 'menuitem', { name: name } );
 		await locator.click();
 	}
 }
