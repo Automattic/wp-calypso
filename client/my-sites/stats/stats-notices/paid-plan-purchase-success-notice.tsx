@@ -18,7 +18,7 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 		// Ensure it runs only once.
 		setParamRemoved( true );
 		removeStatsPurchaseSuccessParamFromCurrentUrl( isOdysseyStats );
-	} );
+	}, [ paramRemoved, isOdysseyStats ] );
 
 	const dismissNotice = () => {
 		setNoticeDismissed( true );
