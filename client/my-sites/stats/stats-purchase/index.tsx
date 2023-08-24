@@ -112,7 +112,7 @@ const StatsPurchasePage = ( {
 			}
 		}
 
-		// if the site is detected as non-commercial (private)
+		// if the site is detected as personal (non-commercial)
 		if ( isTypeDetectionEnabled ) {
 			if ( ! options.isCommercial && ! isCommercialOwned ) {
 				return [ SCREEN_PURCHASE, TYPE_PERSONAL ];
