@@ -7,8 +7,8 @@ import {
 	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
-	FEATURE_50GB_STORAGE_ADD_ON,
-	FEATURE_100GB_STORAGE_ADD_ON,
+	ADD_ON_50GB_STORAGE,
+	ADD_ON_100GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -1048,7 +1048,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
 		let storageOptionSlugs = [];
-		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
+		const storageAddOns = [ ADD_ON_50GB_STORAGE, ADD_ON_100GB_STORAGE ];
 
 		if ( showLegacyStorageFeature && isCurrentPlan ) {
 			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
@@ -1667,7 +1667,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
 		let storageOptionSlugs = [];
-		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
+		const storageAddOns = [ ADD_ON_50GB_STORAGE, ADD_ON_100GB_STORAGE ];
 
 		if ( showLegacyStorageFeature ) {
 			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
