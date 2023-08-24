@@ -85,6 +85,7 @@ describe( 'PreMigration', () => {
 			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
+			siteCanMigrate: true,
 		} );
 
 		renderPreMigrationScreen( {
@@ -107,18 +108,12 @@ describe( 'PreMigration', () => {
 	test( 'should show "Move to wordpress.com" plugin update', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		useSiteMigrateInfo.mockImplementationOnce(
-			( targetSiteId, sourceSiteSlug, fetchMigrationEnabledOnMount, onfetchCallback ) => {
-				onfetchCallback( false );
-
-				return {
-					sourceSiteId: 777712,
-					sourceSite: sourceSite as SiteDetails,
-					fetchMigrationEnabledStatus: jest.fn(),
-					isFetchingData: false,
-				};
-			}
-		);
+		useSiteMigrateInfo.mockImplementationOnce( () => ( {
+			sourceSiteId: 777712,
+			sourceSite: sourceSite as SiteDetails,
+			fetchMigrationEnabledStatus: jest.fn(),
+			isFetchingData: false,
+		} ) );
 
 		renderPreMigrationScreen( {
 			targetSite: targetSite,
@@ -134,18 +129,12 @@ describe( 'PreMigration', () => {
 	test( 'should show "Jetpack" plugin update', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		useSiteMigrateInfo.mockImplementationOnce(
-			( targetSiteId, sourceSiteSlug, fetchMigrationEnabledOnMount, onfetchCallback ) => {
-				onfetchCallback( false );
-
-				return {
-					sourceSiteId: 777712,
-					sourceSite: sourceSite as SiteDetails,
-					fetchMigrationEnabledStatus: jest.fn(),
-					isFetchingData: false,
-				};
-			}
-		);
+		useSiteMigrateInfo.mockImplementationOnce( () => ( {
+			sourceSiteId: 777712,
+			sourceSite: sourceSite as SiteDetails,
+			fetchMigrationEnabledStatus: jest.fn(),
+			isFetchingData: false,
+		} ) );
 
 		renderPreMigrationScreen( {
 			targetSite: targetSite,
@@ -167,6 +156,7 @@ describe( 'PreMigration', () => {
 			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
+			siteCanMigrate: true,
 		} );
 
 		renderPreMigrationScreen( {
