@@ -54,6 +54,7 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
+		const aff = queryParams.get( 'aff' );
 
 		if ( profilerData ) {
 			try {
@@ -78,12 +79,20 @@ const wooexpress: Flow = {
 			const redirectTarget =
 				`/setup/wooexpress` +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			// Early return approach
-			if ( locale || locale === 'en' ) {
-				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+
+			let startUrl = '/start/account/user';
+
+			if ( locale ) {
+				startUrl += `/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 			}
 
-			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			startUrl += `?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+
+			if ( aff ) {
+				startUrl += `&aff=${ aff }`; // Add 'aff' parameter if it's not empty
+			}
+
+			return startUrl;
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
