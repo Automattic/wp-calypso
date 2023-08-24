@@ -1,4 +1,5 @@
 import tracksRecordEvent from './track-record-event';
+import { DelegateEventHandler } from './types';
 
 export const wpcomSiteEditorSidebarNavigationClick = () => {
 	return {
@@ -39,16 +40,24 @@ export const wpcomSiteEditorSidebarPatternsClick = () => {
 	};
 };
 
-export const wpcomSiteEditorSidebarStylesClick = () => {
+export const wpcomSiteEditorSidebarStylesClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_styles_click',
-		// \2f is the encoded slash.
-		selector: '#\\2fwp_global_styles',
+		/**
+		 * There is no id attribute (`#/wp_global_styles`) for themes that do not have style variations.
+		 * Make this selector generic so as to not depend on the DOM structure.
+		 */
+		selector: '.edit-site-sidebar-navigation-item',
 		type: 'click',
-		handler: () =>
+		handler: ( event ) => {
+			const target = event.target as HTMLElement | null;
+			if ( target?.textContent !== 'Styles' ) {
+				return;
+			}
 			tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_main_item_click', {
 				item_type: 'styles',
-			} ),
+			} );
+		},
 	};
 };
 
