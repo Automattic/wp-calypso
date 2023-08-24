@@ -290,16 +290,22 @@ class DomainsStep extends Component {
 		if ( ! isPurchasingItem ) {
 			switch ( flowName ) {
 				case 'onboarding':
-					loadExperimentAssignment(
-						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
-					);
-					loadExperimentAssignment( 'calypso_onboarding_plans_paid_domain_on_free_plan' );
+					if ( isPurchasingItem ) {
+						loadExperimentAssignment( 'calypso_onboarding_plans_paid_domain_on_free_plan' );
+					} else {
+						loadExperimentAssignment(
+							'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
+						);
+					}
 					break;
 				case 'onboarding-pm':
-					loadExperimentAssignment(
-						'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
-					);
-					loadExperimentAssignment( 'calypso_onboardingpm_plans_paid_domain_on_free_plan' );
+					if ( isPurchasingItem ) {
+						loadExperimentAssignment( 'calypso_onboardingpm_plans_paid_domain_on_free_plan' );
+					} else {
+						loadExperimentAssignment(
+							'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
+						);
+					}
 			}
 		}
 
