@@ -1093,8 +1093,10 @@ export class RestAPIClient {
 		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
 	}
 
+	/* Search */
+
 	/**
-	 * Execute a primitive Jetpack site search request. Right now, only the query is supported.
+	 * Execute a primitive Jetpack site search request.
 	 * Useful for checking if something has been indexed yet.
 	 *
 	 * @param {number} siteId ID of the target site.
