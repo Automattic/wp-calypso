@@ -78,13 +78,20 @@ const StatsPurchasePage = ( {
 			return;
 		}
 		const trafficPageUrl = `/stats/day/${ siteSlug }`;
+		const pwywPageUrl = `/stats/day/${ siteSlug }`; //todo add in correct PWYW page path
+
 		// Redirect to Calypso Stats if:
 		// - the site is not Jetpack.
 		// - the site already has a commercial stats plan.
 		if ( ! isSiteJetpackNotAtomic || isCommercialOwned ) {
 			page.redirect( trafficPageUrl );
+			// Redirect to PWYW Page if:
+			// - the site is personal (not commercial)
+			// - AND the site is not already PWYW Owned
+		} else if ( ! options.isCommercial && ! isPWYWOwned ) {
+			page.redirect( pwywPageUrl );
 		}
-	}, [ siteSlug, isCommercialOwned, isSiteJetpackNotAtomic ] );
+	}, [ siteSlug, isCommercialOwned, isSiteJetpackNotAtomic, options.isCommercial, isPWYWOwned ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
