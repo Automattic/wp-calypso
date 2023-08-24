@@ -439,18 +439,19 @@ const PlansFeaturesMain = ( {
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 	};
 
-	const planActionOverrides: PlanActionOverrides | undefined = {
-		loggedInFreePlan: {
-			status: isPlanUpsellEnabledOnFreeDomain.isLoading ? 'blocked' : 'enabled',
-		},
-	};
+	/**
+	 * The effects on /plans page need to be checked if this variable is initialized
+	 */
+	let planActionOverrides: PlanActionOverrides | undefined = undefined;
 	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
-		planActionOverrides.loggedInFreePlan = {
-			...planActionOverrides.loggedInFreePlan,
-			callback: () => {
-				page.redirect( `/add-ons/${ siteSlug }` );
+		planActionOverrides = {
+			loggedInFreePlan: {
+				status: isPlanUpsellEnabledOnFreeDomain.isLoading ? 'blocked' : 'enabled',
+				callback: () => {
+					page.redirect( `/add-ons/${ siteSlug }` );
+				},
+				text: translate( 'Manage add-ons', { context: 'verb' } ),
 			},
-			text: translate( 'Manage add-ons', { context: 'verb' } ),
 		};
 		if ( domainFromHomeUpsellFlow ) {
 			planActionOverrides.loggedInFreePlan = {
