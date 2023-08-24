@@ -25,6 +25,7 @@ import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
 	TYPE_COMMERCIAL,
+	TYPE_PRIVATE,
 } from './stats-purchase-wizard';
 
 const isProductOwned = ( ownedProducts: SiteProduct[] | null, searchedProduct: string ) => {
@@ -108,6 +109,13 @@ const StatsPurchasePage = ( {
 		if ( isTypeDetectionEnabled ) {
 			if ( options.isCommercial && ! isCommercialOwned ) {
 				return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
+			}
+		}
+
+		// if the site is detected as non-commercial (private)
+		if ( isTypeDetectionEnabled ) {
+			if ( ! options.isCommercial && ! isCommercialOwned ) {
+				return [ SCREEN_PURCHASE, TYPE_PRIVATE ];
 			}
 		}
 
