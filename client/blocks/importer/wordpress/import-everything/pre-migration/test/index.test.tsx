@@ -113,6 +113,7 @@ describe( 'PreMigration', () => {
 			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
+			siteCanMigrate: false,
 		} ) );
 
 		renderPreMigrationScreen( {
@@ -134,6 +135,7 @@ describe( 'PreMigration', () => {
 			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
+			siteCanMigrate: false,
 		} ) );
 
 		renderPreMigrationScreen( {
