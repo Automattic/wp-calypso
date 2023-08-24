@@ -11,4 +11,5 @@ export type Product = {
 	renewal_schedule?: string;
 	type?: string;
 	is_editable?: boolean;
+	tier?: number;
 };
