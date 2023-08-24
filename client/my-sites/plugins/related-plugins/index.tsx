@@ -1,6 +1,8 @@
 import { Gridicon, Button } from '@automattic/components';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
 import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+
 import './style.scss';
 
 type RelatedPluginProps = {
@@ -26,18 +28,27 @@ function RelatedPlugins( { slug, size = 4, options }: RelatedPluginProps ) {
 				</Button>
 			</div>
 			<div className="related-plugins__list">
-				{ relatedPlugins.map( ( plugin: RelatedPlugin ) => (
-					<RelatedPluginCard key={ plugin.slug } plugin={ plugin } />
-				) ) }
+				{ relatedPlugins &&
+					relatedPlugins.map( ( plugin: RelatedPlugin ) => (
+						<RelatedPluginCard key={ plugin.slug } plugin={ plugin } />
+					) ) }
 			</div>
 		</div>
 	);
 }
 
-function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element {
+function RelatedPluginCard( {
+	plugin: { icon, title, excerpt },
+}: {
+	plugin: RelatedPlugin;
+} ): JSX.Element {
 	return (
-		<div>
-			<div>{ plugin.title }</div>
+		<div className="related-plugins-item">
+			<PluginIcon image={ icon } className="related-plugins-item__icon" />
+			<div className="related-plugins-item__details">
+				<h3 className="related-plugins-item__title">{ title }</h3>
+				<p className="related-plugins-item__excerpt">{ excerpt }</p>
+			</div>
 		</div>
 	);
 }

@@ -1,4 +1,5 @@
 .related-plugins {
+	margin-top: 48px;
 	margin-bottom: 32px;
 }
 
@@ -16,4 +17,40 @@
 		color: var(--studio-gray-100);
 	}
 
+}
+
+.related-plugins__list {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	column-gap: 24px;
+
+	.related-plugins-item {
+		width: 50%;
+
+		.related-plugins-item__title {
+			color: var(--color-neutral-100);
+			font-weight: 500;
+			font-size: $font-body;
+			line-height: 24px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.related-plugins-item__excerpt {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.related-plugins-item__icon {
+			float: left;
+			margin-right: 16px;
+		}
+
+		.related-plugins-item__details {
+			overflow: hidden;
+		}
+
+
+	}
 }
