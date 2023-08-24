@@ -134,7 +134,7 @@ export const requestDeleteProduct = ( siteId, product, annualProduct, noticeText
 			dispatch( {
 				type: MEMBERSHIPS_PRODUCT_DELETE,
 				siteId,
-				annual_product: annualProduct,
+				product: annualProduct,
 			} );
 		}
 
@@ -177,7 +177,7 @@ export const requestDeleteProduct = ( siteId, product, annualProduct, noticeText
 						type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 						siteId,
 						error,
-						annual_product: annualProduct,
+						product: annualProduct,
 					} );
 				}
 				dispatch(

@@ -73,7 +73,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 	const trackUpgrade = () =>
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 
-	function renderEllipsisMenu( productId: string | null ) {
+	function renderEllipsisMenu( productId: number ) {
 		return (
 			<EllipsisMenu position="bottom left">
 				{ hasStripeFeature && (
@@ -90,7 +90,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 		);
 	}
 
-	function openAddEditDialog( productId: string | null ) {
+	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
 			const currentProduct = products.find( ( prod ) => prod.ID === productId );
 			const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
@@ -104,7 +104,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 		}
 	}
 
-	function openDeleteDialog( productId: string | null ) {
+	function openDeleteDialog( productId: number ) {
 		if ( productId ) {
 			const currentProduct = products.find( ( prod ) => prod.ID === productId );
 			const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
@@ -147,7 +147,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 			{ hasLoadedFeatures && ! connectedAccountId && <MembershipsSection query={ query } /> }
 			{ hasLoadedFeatures && hasStripeFeature && connectedAccountId && (
 				<SectionHeader>
-					<Button primary compact onClick={ () => openAddEditDialog( null ) }>
+					<Button primary compact onClick={ () => openAddEditDialog() }>
 						{ translate( 'Add a new payment plan' ) }
 					</Button>
 				</SectionHeader>
@@ -182,7 +182,7 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 										</div>
 									) }
 								</div>
-								{ renderEllipsisMenu( currentProduct?.ID ?? null ) }
+								{ currentProduct && currentProduct.ID && renderEllipsisMenu( currentProduct.ID ) }
 							</CompactCard>
 						);
 					} ) }
