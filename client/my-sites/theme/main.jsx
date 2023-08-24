@@ -351,6 +351,11 @@ class ThemeSheet extends Component {
 			theme: this.props.themeId,
 			type,
 			position,
+			/**
+			 * To see tracks as the UI changes depending on whether Live Preview is available or not.
+			 *
+			 * @see https://github.com/Automattic/wp-calypso/pull/80540
+			 */
 			has_live_preview_cta: isLivePreviewSupported,
 		} );
 
