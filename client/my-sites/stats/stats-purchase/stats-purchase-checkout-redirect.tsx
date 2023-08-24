@@ -5,20 +5,29 @@ import {
 } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
+const setUrlParam = ( url: URL, paramName: string, paramValue?: string | null ): void => {
+	if ( paramValue === null || paramValue === undefined || paramValue === '' ) {
+		url.searchParams.delete( paramName );
+	} else {
+		url.searchParams.set( paramName, paramValue );
+	}
+};
+
 const getStatsPurchaseURL = (
 	siteSlug: string,
 	product: string,
 	redirectUrl: string,
 	checkoutBackUrl: string
 ) => {
+	// Get the checkout URL for the product, or the siteless checkout URL if no siteSlug is provided
 	const checkoutProductUrl = new URL(
-		`/checkout/${ siteSlug }/${ product }`,
+		`/checkout/${ siteSlug || 'jetpack' }/${ product }`,
 		window.location.origin
 	);
 
 	// Add redirect_to parameter
-	checkoutProductUrl.searchParams.set( 'redirect_to', redirectUrl );
-	checkoutProductUrl.searchParams.set( 'checkoutBackUrl', checkoutBackUrl );
+	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
+	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
 	return checkoutProductUrl.pathname + checkoutProductUrl.search;
 };
@@ -29,7 +38,8 @@ const getYearlyPrice = ( monthlyPrice: number ) => {
 
 const addPurchaseTypeToUri = ( uri: string, statsPurchaseSuccess: string ) => {
 	const url = new URL( uri, window.location.origin );
-	url.searchParams.set( 'statsPurchaseSuccess', statsPurchaseSuccess );
+	setUrlParam( url, 'statsPurchaseSuccess', statsPurchaseSuccess );
+
 	return url.pathname + url.search;
 };
 
@@ -49,6 +59,10 @@ const getCheckoutBackUrl = ( {
 
 	// Use full URL even though redirecting on Calypso.
 	if ( ! isFromWPAdmin ) {
+		if ( ! siteSlug ) {
+			return 'https://cloud.jetpack.com/pricing/';
+		}
+
 		return (
 			window.location.origin +
 			( isFromPlansPage ? `/plans/${ siteSlug }` : `/stats/day/${ siteSlug }` )
@@ -74,6 +88,12 @@ const getRedirectUrl = ( {
 } ) => {
 	const isStartedFromJetpackSite = from.startsWith( 'jetpack' );
 	const statsPurchaseSuccess = type === 'free' ? 'free' : 'paid';
+
+	// If it's a siteless checkout, let it redirect to the thank you page,
+	// which is the default page if nothing is passed
+	if ( ! siteSlug ) {
+		return '';
+	}
 
 	if ( ! isStartedFromJetpackSite ) {
 		redirectUri = addPurchaseTypeToUri(
