@@ -59,7 +59,7 @@ const queryNotices = async function ( siteId: number | null ): Promise< Notices 
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
-	select: undefined | ( ( payload: Notices ) => T ) = undefined
+	select?: ( payload: Notices ) => T
 ) {
 	return useQuery( {
 		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
@@ -72,7 +72,7 @@ const useNoticesVisibilityQueryRaw = function < T >(
 };
 
 export function useNoticeVisibilityQuery( siteId: number | null, noticeId: NoticeIdType ) {
-	const selectVisibilityForSingleNotice = ( payload: Notices ): boolean => {
+	const selectVisibilityForSingleNotice = ( payload: Notices ) => {
 		payload = processConflictNotices( payload );
 		return !! payload?.[ noticeId ];
 	};
