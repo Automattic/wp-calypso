@@ -46,6 +46,11 @@
 			}
 		}
 	}
+
+	.comments__list.is-root {
+		display: flex;
+		flex-direction: column-reverse;
+	}
 }
 
 .comments__info-bar {
