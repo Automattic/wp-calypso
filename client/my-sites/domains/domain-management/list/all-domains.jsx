@@ -388,7 +388,7 @@ class AllDomains extends Component {
 				supportsOrderSwitching: true,
 				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 			},
-			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
+			// { name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			{ name: 'action', label: translate( 'Actions' ) },
 		];
 
