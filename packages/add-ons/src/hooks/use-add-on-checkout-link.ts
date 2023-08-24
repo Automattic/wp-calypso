@@ -1,5 +1,4 @@
-import { useSelector } from 'react-redux';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * Returns a function that will return a formatted checkout link for the given add-on and quantity.
@@ -8,9 +7,11 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * @returns {Function} A function returnig a formatted checkout link for the given add-on and quantity
  */
 
-const useAddOnCheckoutLink = (): ( ( addOnSlug: string, quantity?: number ) => string ) => {
-	const selectedSite = useSelector( getSelectedSite );
-
+export const useAddOnCheckoutLink = (): ( (
+	selectedSite: SiteDetails | null | undefined,
+	addOnSlug: string,
+	quantity?: number
+) => string ) => {
 	return ( addOnSlug: string, quantity?: number ): string => {
 		// If no site is provided, return the checkout link with the add-on (will render site-selector).
 		if ( ! selectedSite ) {
@@ -25,5 +26,3 @@ const useAddOnCheckoutLink = (): ( ( addOnSlug: string, quantity?: number ) => s
 		return checkoutLinkFormat;
 	};
 };
-
-export default useAddOnCheckoutLink;

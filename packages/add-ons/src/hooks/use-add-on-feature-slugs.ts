@@ -11,7 +11,7 @@ import {
  * Returns any relevant feature slugs for a given add-on.
  * Add-ons are currently uniquely identified by their product slugs.
  */
-const useAddOnFeatureSlugs = ( addOnProductSlug: string ) => {
+export const useAddOnFeatureSlugs = ( addOnProductSlug: string ) => {
 	switch ( addOnProductSlug ) {
 		case PRODUCT_WPCOM_UNLIMITED_THEMES:
 			return [ WPCOM_FEATURES_PREMIUM_THEMES ];
@@ -23,5 +23,3 @@ const useAddOnFeatureSlugs = ( addOnProductSlug: string ) => {
 			return null;
 	}
 };
-
-export default useAddOnFeatureSlugs;

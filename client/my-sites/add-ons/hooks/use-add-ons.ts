@@ -1,3 +1,4 @@
+import { useAddOnFeatureSlugs } from '@automattic/add-ons';
 import config from '@automattic/calypso-config';
 import {
 	FEATURE_STATS_PAID,
@@ -28,7 +29,6 @@ import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
-import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 
 export interface AddOnMeta {
 	productSlug: string;

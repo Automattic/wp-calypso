@@ -1,3 +1,4 @@
+import { useAddOnCheckoutLink } from '@automattic/add-ons';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -15,9 +16,9 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
-import useAddOnCheckoutLink from './hooks/use-add-on-checkout-link';
 import useAddOnPurchaseStatus from './hooks/use-add-on-purchase-status';
 import useAddOns from './hooks/use-add-ons';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 const globalOverrides = css`
@@ -134,8 +135,12 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 		return <NoAccess />;
 	}
 
-	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
-		page.redirect( `${ checkoutLink( addOnSlug, quantity ) }` );
+	const handleActionPrimary = (
+		selectedSite: SiteDetails | null | undefined,
+		addOnSlug: string,
+		quantity?: number
+	) => {
+		page.redirect( `${ checkoutLink( selectedSite, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {
