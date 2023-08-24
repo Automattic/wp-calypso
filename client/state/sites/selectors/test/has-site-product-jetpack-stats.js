@@ -7,14 +7,18 @@ describe( 'hasSiteProductJetpackStats()', () => {
 				items: {
 					2916288: {
 						plan: {},
-						products: [
-							{
-								product_slug: 'jetpack_stats_free_yearly',
-								expired: false,
-							},
-						],
+						products: [],
 					},
 				},
+			},
+			purchases: {
+				data: [
+					{
+						blog_id: 2916288,
+						product_slug: 'jetpack_stats_free_yearly',
+						expiry_status: 'manual-renew',
+					},
+				],
 			},
 		};
 		const hasPaidJetpackStats = hasSiteProductJetpackStats( stateWithFreeStats, true, 2916288 );
@@ -28,14 +32,18 @@ describe( 'hasSiteProductJetpackStats()', () => {
 				items: {
 					2916288: {
 						plan: {},
-						products: [
-							{
-								product_slug: 'jetpack_stats_free_yearly',
-								expired: false,
-							},
-						],
+						products: [],
 					},
 				},
+			},
+			purchases: {
+				data: [
+					{
+						blog_id: 2916288,
+						product_slug: 'jetpack_stats_free_yearly',
+						expiry_status: 'manual-renew',
+					},
+				],
 			},
 		};
 		const hasJetpackStats = hasSiteProductJetpackStats( stateWithFreeStats, false, 2916288 );
@@ -49,14 +57,18 @@ describe( 'hasSiteProductJetpackStats()', () => {
 				items: {
 					2916288: {
 						plan: {},
-						products: [
-							{
-								product_slug: 'jetpack_stats_monthly',
-								expired: false,
-							},
-						],
+						products: [],
 					},
 				},
+			},
+			purchases: {
+				data: [
+					{
+						blog_id: 2916288,
+						product_slug: 'jetpack_stats_monthly',
+						expiry_status: 'manual-renew',
+					},
+				],
 			},
 		};
 		const hasPaidJetpackStats = hasSiteProductJetpackStats( stateWithPaidStats, true, 2916288 );
@@ -70,14 +82,18 @@ describe( 'hasSiteProductJetpackStats()', () => {
 				items: {
 					2916288: {
 						plan: {},
-						products: [
-							{
-								product_slug: 'jetpack_stats_monthly',
-								expired: true,
-							},
-						],
+						products: [],
 					},
 				},
+			},
+			purchases: {
+				data: [
+					{
+						blog_id: 2916288,
+						product_slug: 'jetpack_stats_monthly',
+						expiry_status: 'expired',
+					},
+				],
 			},
 		};
 		const hasJetpackStats = hasSiteProductJetpackStats( stateWithExpiredStats, false, 2916288 );
