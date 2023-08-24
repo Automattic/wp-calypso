@@ -340,7 +340,7 @@ class ThemeSheet extends Component {
 		return null;
 	}
 
-	previewAction = ( event, type, position ) => {
+	previewAction = ( event, type, source ) => {
 		const { demoUrl, isExternallyManagedTheme, isWpcomTheme, isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
@@ -350,7 +350,7 @@ class ThemeSheet extends Component {
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
 			theme: this.props.themeId,
 			type,
-			position,
+			source,
 			/**
 			 * To see tracks as the UI changes depending on whether Live Preview is available or not.
 			 *
