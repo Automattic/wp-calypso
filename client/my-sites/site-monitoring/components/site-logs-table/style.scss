@@ -3,12 +3,11 @@ $border-color: #d3dae6;
 .site-logs-table {
 	display: block;
 	overflow-x: auto;
-	white-space: nowrap;
-	font-family: monospace;
+	white-space: normal;
 	border-collapse: collapse;
-	border: 1px solid $border-color;
 	background-color: var(--studio-white);
 	margin: 0 0 1.5rem;
+	font-family: "SF Pro Text", $sans;
 
 	&.is-loading {
 		opacity: 0.5;
