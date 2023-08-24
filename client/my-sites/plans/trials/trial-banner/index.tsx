@@ -26,7 +26,7 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 		( state ) => ( {
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			trialExpired: isTrialExpired( state, selectedSiteId ),
-			trialDaysLeft: Math.floor( getTrialDaysLeft( state, selectedSiteId ) || 0 ),
+			trialDaysLeft: Math.ceil( getTrialDaysLeft( state, selectedSiteId ) || 0 ),
 			trialExpiration: getTrialExpiration( state, selectedSiteId ),
 		} )
 	);
