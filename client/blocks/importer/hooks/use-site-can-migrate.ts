@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useMigrationEnabledInfoQuery } from 'calypso/data/site-migration/use-migration-enabled';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSites } from 'calypso/state/sites/actions';
@@ -14,6 +14,7 @@ export function useSiteMigrateInfo(
 		refetch,
 		isFetching: isMigrationEnabledFetching,
 		data,
+		status,
 	} = useMigrationEnabledInfoQuery( targetSiteId, sourceSiteSlug, fetchMigrationEnabledOnMount );
 
 	const isRequestingAllSites = useSelector( ( state ) => isRequestingSites( state ) );
@@ -27,10 +28,21 @@ export function useSiteMigrateInfo(
 		}
 	}, [ data?.source_blog_id, sourceSite, isRequestingAllSites, dispatch ] );
 
+	// use an effect that sets `siteCanMigrate` depending on whether the request ran to `true` or `false`, it should stay undefined until it's fetched the first time
+	const [ siteCanMigrate, setSiteCanMigrate ] = useState< boolean | undefined >( undefined );
+
+	useEffect( () => {
+		if ( status === 'success' ) {
+			setSiteCanMigrate( data?.can_migrate );
+		} else if ( status === 'error' ) {
+			setSiteCanMigrate( false );
+		}
+	}, [ status, data?.can_migrate ] );
+
 	return {
 		sourceSiteId: data?.source_blog_id,
 		sourceSite,
-		siteCanMigrate: data?.can_migrate,
+		siteCanMigrate,
 		fetchMigrationEnabledStatus: refetch,
 		isFetchingData: isMigrationEnabledFetching || isRequestingAllSites,
 	};

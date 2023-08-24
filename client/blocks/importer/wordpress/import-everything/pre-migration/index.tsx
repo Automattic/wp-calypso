@@ -76,7 +76,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		siteCanMigrate,
 	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
 
-	const showUpdatePluginInfo = ! siteCanMigrate;
+	const showUpdatePluginInfo = typeof siteCanMigrate === 'boolean' ? ! siteCanMigrate : false;
 
 	const migrationTrackingProps = {
 		source_site_id: sourceSiteId,
