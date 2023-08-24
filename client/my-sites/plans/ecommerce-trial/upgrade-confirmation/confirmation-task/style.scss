@@ -16,7 +16,11 @@
 		}
 	}
 
-	&:hover {
+	&.confirmation-task__card-with-cta {
+		cursor: inherit;
+	}
+
+	&:hover:not(.confirmation-task__card-with-cta) {
 		box-shadow: 0 0 0 2px var(--color-accent-50);
 	}
 
