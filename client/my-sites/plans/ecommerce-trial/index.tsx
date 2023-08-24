@@ -30,7 +30,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
 			<div className="e-commerce-trial-plans__banner-wrapper">
-				<TrialBanner />
+				<TrialBanner isEcommerceTrial />
 			</div>
 
 			<WooExpressPlans

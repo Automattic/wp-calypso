@@ -379,9 +379,7 @@ class Plans extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
-		const wooExpressSubHeaderText = translate(
-			"Discover what's available in your Woo Express plan."
-		);
+		const wooExpressSubHeaderText = translate( "Discover what's available in Woo Express." );
 		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
 		const subHeaderText = isWooExpressPlan || isEcommerceTrial ? wooExpressSubHeaderText : null;
 
