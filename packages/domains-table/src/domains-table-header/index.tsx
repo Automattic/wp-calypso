@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { DomainData, SiteDetails } from '@automattic/data-stores';
+import { AllDomainsQueryParams, DomainData, SiteDetails } from '@automattic/data-stores';
 import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -10,7 +10,7 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 
 export type DomainsTableColumn =
 	| {
-			name: string;
+			name: Exclude< AllDomainsQueryParams[ 'sortKey' ], undefined >;
 			label: string;
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';

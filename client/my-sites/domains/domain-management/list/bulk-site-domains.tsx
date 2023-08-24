@@ -1,5 +1,4 @@
-import { useSiteDomainsQuery } from '@automattic/data-stores';
-import { DomainsTable } from '@automattic/domains-table';
+import { DomainsTable, useSiteDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -18,7 +17,7 @@ interface BulkSiteDomainsProps {
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const { data } = useSiteDomainsQuery( siteSlug );
+	const domainsTable = useSiteDomainsTable( siteSlug );
 	const translate = useTranslate();
 
 	const item = {
@@ -43,7 +42,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				<DomainsTable domains={ data?.domains } isAllSitesView={ false } />
+				<DomainsTable { ...domainsTable } />
 			</Main>
 			<UsePresalesChat />
 		</>

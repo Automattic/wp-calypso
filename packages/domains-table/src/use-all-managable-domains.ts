@@ -1,17 +1,24 @@
-import { useAllDomainsQuery, AllDomainsQueryFnData } from '@automattic/data-stores';
+import {
+	useAllDomainsQuery,
+	type AllDomainsQueryFnData,
+	type AllDomainsQueryParams,
+} from '@automattic/data-stores';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import type { UseQueryOptions } from '@tanstack/react-query';
 
 const EMPTY_STATE = Object.freeze( {} );
 
-export function useDomainsTable( queryOptions: UseQueryOptions< AllDomainsQueryFnData > = {} ) {
+export function useAllManagableDomains(
+	params: AllDomainsQueryParams = {},
+	queryOptions: UseQueryOptions< AllDomainsQueryFnData > = {}
+) {
 	const { capabilities, sites } = useSelector( ( state: any ) => ( {
 		capabilities: state?.currentUser?.capabilities || EMPTY_STATE,
 		sites: state?.sites?.items || EMPTY_STATE,
 	} ) );
 
-	const { data: allDomains, ...queryResult } = useAllDomainsQuery( queryOptions );
+	const { data: allDomains, ...queryResult } = useAllDomainsQuery( params, queryOptions );
 
 	const filteredDomains = useMemo( () => {
 		const sitesUserCanManage = new Set(
@@ -26,5 +33,5 @@ export function useDomainsTable( queryOptions: UseQueryOptions< AllDomainsQueryF
 		);
 	}, [ allDomains, capabilities, sites ] );
 
-	return { ...queryResult, domains: filteredDomains };
+	return { ...queryResult, data: filteredDomains };
 }

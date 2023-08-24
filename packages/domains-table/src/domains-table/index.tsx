@@ -1,22 +1,22 @@
 import {
-	type DomainData,
 	type PartialDomainData,
 	type SiteDomainsQueryFnData,
 	type SiteDetails,
-	getSiteDomainsQueryObject,
 	useDomainsBulkActionsMutation,
 } from '@automattic/data-stores';
-import { useQueries } from '@tanstack/react-query';
-import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
+import { useState, useCallback, useLayoutEffect } from 'react';
 import { BulkActionsToolbar } from '../bulk-actions-toolbar';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
+import { Sorting } from '../use-sort-state';
 import { DomainsTableRow } from './domains-table-row';
 import './style.scss';
 
-interface DomainsTableProps {
+export interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
+	sorting: Sorting;
+	onSortChange: ( selectedColumn: DomainsTableColumn ) => void;
 	isAllSitesView: boolean;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
@@ -29,38 +29,13 @@ interface DomainsTableProps {
 
 export function DomainsTable( {
 	domains,
+	sorting: { sortKey, sortDirection },
+	onSortChange,
 	fetchSiteDomains,
 	fetchSite,
 	isAllSitesView,
 }: DomainsTableProps ) {
-	const [ { sortKey, sortDirection }, setSort ] = useState< {
-		sortKey: string;
-		sortDirection: 'asc' | 'desc';
-	} >( {
-		sortKey: 'domain',
-		sortDirection: 'asc',
-	} );
-
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
-
-	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
-	const allSiteDomains = useQueries( {
-		queries: allSiteIds.map( ( siteId ) =>
-			getSiteDomainsQueryObject( siteId, {
-				...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( siteId ) } ),
-			} )
-		),
-	} );
-	const fetchedSiteDomains = useMemo( () => {
-		const fetchedSiteDomains: Record< number, DomainData[] > = {};
-		for ( const { data } of allSiteDomains ) {
-			const siteId = data?.domains?.[ 0 ]?.blog_id;
-			if ( typeof siteId === 'number' ) {
-				fetchedSiteDomains[ siteId ] = data?.domains || [];
-			}
-		}
-		return fetchedSiteDomains;
-	}, [ allSiteDomains ] );
 
 	const { setAutoRenew } = useDomainsBulkActionsMutation();
 
@@ -84,33 +59,6 @@ export function DomainsTable( {
 		} );
 	}, [ domains ] );
 
-	const sortedDomains = useMemo( () => {
-		const selectedColumnDefinition = domainsTableColumns.find(
-			( column ) => column.name === sortKey
-		);
-
-		const getFullDomainData = ( domain: PartialDomainData ) =>
-			fetchedSiteDomains?.[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
-
-		return domains?.sort( ( first, second ) => {
-			let result = 0;
-
-			const fullFirst = getFullDomainData( first );
-			const fullSecond = getFullDomainData( second );
-			if ( ! fullFirst || ! fullSecond ) {
-				return result;
-			}
-
-			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
-				result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
-				if ( result !== 0 ) {
-					break;
-				}
-			}
-			return result;
-		} );
-	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
-
 	const handleSelectDomain = useCallback(
 		( domain: PartialDomainData ) => {
 			const domainId = getDomainId( domain );
@@ -130,24 +78,6 @@ export function DomainsTable( {
 	if ( ! domains ) {
 		return null;
 	}
-
-	const onSortChange = ( selectedColumn: DomainsTableColumn ) => {
-		if ( ! selectedColumn.isSortable ) {
-			return;
-		}
-
-		const newSortDirection =
-			selectedColumn.name === sortKey &&
-			selectedColumn.supportsOrderSwitching &&
-			sortDirection === 'asc'
-				? 'desc'
-				: selectedColumn.initialSortDirection;
-
-		setSort( {
-			sortKey: selectedColumn.name,
-			sortDirection: newSortDirection,
-		} );
-	};
 
 	const hasSelectedDomains = selectedDomains.size > 0;
 	const areAllDomainsSelected = domains.length === selectedDomains.size;
@@ -199,7 +129,7 @@ export function DomainsTable( {
 					onChangeSortOrder={ onSortChange }
 				/>
 				<tbody>
-					{ sortedDomains?.map( ( domain ) => (
+					{ domains.map( ( domain ) => (
 						<DomainsTableRow
 							key={ getDomainId( domain ) }
 							domain={ domain }

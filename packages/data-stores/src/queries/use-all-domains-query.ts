@@ -1,4 +1,5 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { DomainData } from './use-site-domains-query';
 
@@ -17,15 +18,29 @@ export type PartialDomainData = Pick<
 	| 'current_user_is_owner'
 >;
 
+export interface AllDomainsQueryParams {
+	sortKey?: 'domain' | 'site' | 'status' | 'registered-until';
+	sortOrder?: 'asc' | 'desc';
+}
+
 export interface AllDomainsQueryFnData {
 	domains: PartialDomainData[];
 }
 
-export function useAllDomainsQuery( options: UseQueryOptions< AllDomainsQueryFnData > = {} ) {
+export function useAllDomainsQuery(
+	{ sortKey, sortOrder }: AllDomainsQueryParams = {},
+	options: UseQueryOptions< AllDomainsQueryFnData > = {}
+) {
 	return useQuery( {
-		queryKey: [ 'all-domains' ],
+		queryKey: [ 'all-domains', sortKey, sortOrder ],
 		queryFn: () =>
-			wpcomRequest< AllDomainsQueryFnData >( { path: '/all-domains', apiVersion: '1.1' } ),
+			wpcomRequest< AllDomainsQueryFnData >( {
+				path: addQueryArgs( '/all-domains', {
+					sort_key: sortKey,
+					sort_order: sortOrder,
+				} ),
+				apiVersion: '1.1',
+			} ),
 		...options,
 	} );
 }

@@ -1,4 +1,4 @@
-import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
+import { DomainsTable, useAllDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -14,7 +14,7 @@ interface BulkAllDomainsProps {
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
-	const { domains } = useDomainsTable();
+	const domainsTable = useAllDomainsTable();
 	const translate = useTranslate();
 
 	const item = {
@@ -47,7 +47,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				<DomainsTable domains={ domains } isAllSitesView />
+				<DomainsTable { ...domainsTable } />
 			</Main>
 			<UsePresalesChat />
 		</>
