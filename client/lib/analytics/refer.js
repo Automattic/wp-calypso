@@ -42,17 +42,28 @@ export function referRecordPageView() {
 }
 
 /**
+ * Determines the url path is for setting up a new Wooexpress account on WPCOM
+ *
+ * @param {URL} parsedUrl - Parsed URL object from urlParseAmpCompatible function.
+ * @returns {boolean} - Whether the path has the required parameters for Wooexpress.
+ */
+function isNewWooexpressPath( parsedUrl ) {
+	const path = parsedUrl.pathname;
+	return (
+		parsedUrl.searchParams.get( 'variationName' ) === 'wooexpress' &&
+		path &&
+		path.includes( '/start/account/user' )
+	);
+}
+
+/**
  * Determines the appropriate affiliate vendor ID based on the URL.
  *
  * @param {URL} parsedUrl - Parsed URL object from urlParseAmpCompatible function.
  * @returns {number} - The appropriate affiliate vendor ID.
  */
 function getVendor( parsedUrl ) {
-	const hasWooexpressParams =
-		parsedUrl.searchParams.get( 'variationName' ) === 'wooexpress' &&
-		parsedUrl.searchParams.get( 'redirect_to' ) === '/setup/wooexpress?variationName=wooexpress';
-
-	if ( hasWooexpressParams ) {
+	if ( isNewWooexpressPath( parsedUrl ) ) {
 		return WOOEXPRESS_AFFILIATE_VENDOR_ID;
 	}
 	return WPCOM_AFFILIATE_VENDOR_ID;
