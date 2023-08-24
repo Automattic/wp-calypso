@@ -135,9 +135,11 @@ const ScreenMain = ( {
 					onClick={ handleClick }
 					label="Add your first pattern to get started."
 					variant="primary"
-					text={ isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
-						? translate( 'Pick your style' )
-						: translate( 'Save and continue' ) }
+					text={
+						isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
+							? translate( 'Pick your style' )
+							: translate( 'Save and continue' )
+					}
 					__experimentalIsFocusable
 				/>
 			</div>
