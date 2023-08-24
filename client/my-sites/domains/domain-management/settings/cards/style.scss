@@ -170,22 +170,40 @@
 		}
 	}
 
-	.foldable-card__content {
+	> .foldable-card__content {
 		padding: 0 !important;
 	}
 
 	.form-text-input-with-affixes {
-		padding: 0 24px;
+		padding: 0 16px;
+
+		@include break-mobile {
+			padding: 0 24px;
+		}
+
 		box-sizing: border-box;
 	}
 
 	.form-button.is-primary {
-		margin: 0 24px 24px;
+		margin: 10px 16px 16px;
+
+		@include break-mobile {
+			margin: 10px 24px 24px;
+		}
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
 	}
 
 	.accordion .foldable-card {
 		box-shadow: none;
-		padding-left: 24px;
+
+		padding-left: 16px;
+
+		@include break-mobile {
+			padding-left: 24px;
+		}
 
 		.foldable-card__header {
 			padding-left: 0;
@@ -196,6 +214,12 @@
 		}
 
 		.foldable-card__content {
+			padding-right: 16px;
+
+			@include break-mobile {
+				padding-right: 24px;
+			}
+
 			.form-label {
 				margin-top: 16px;
 				margin-bottom: 0;
