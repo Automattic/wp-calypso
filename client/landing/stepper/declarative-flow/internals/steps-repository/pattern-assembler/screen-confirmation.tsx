@@ -39,6 +39,7 @@ const ScreenConfirmation = ( { onConfirm }: Props ) => {
 								{ translate( 'Upload your photos' ) }
 							</strong>
 							<p className="screen-confirmation__list-item-description">
+								{ /* @TODO: Update copy */ }
 								{ translate( 'Morbi pellentesque mauris eget laoreet.' ) }
 							</p>
 						</VStack>
@@ -52,6 +53,7 @@ const ScreenConfirmation = ( { onConfirm }: Props ) => {
 								{ translate( 'Write your content' ) }
 							</strong>
 							<p className="screen-confirmation__list-item-description">
+								{ /* @TODO: Update copy */ }
 								{ translate( 'Morbi pellentesque mauris eget laoreet.' ) }
 							</p>
 						</VStack>
@@ -65,6 +67,7 @@ const ScreenConfirmation = ( { onConfirm }: Props ) => {
 								{ translate( 'Customize every detail' ) }
 							</strong>
 							<p className="screen-confirmation__list-item-description">
+								{ /* @TODO: Update copy */ }
 								{ translate( 'Morbi pellentesque mauris eget laoreet.' ) }
 							</p>
 						</VStack>
