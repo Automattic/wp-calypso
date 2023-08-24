@@ -55,7 +55,6 @@ export class EditorBlockToolbarComponent {
 
 		if ( identifier.name ) {
 			// Accessible names don't need to have the selector built.
-			await editorParent.getByRole( 'button', { name: identifier.name } ).click( { trial: true } );
 			await editorParent.getByRole( 'button', { name: identifier.name } ).click();
 		} else {
 			// Other identifers need to have the selector built.
