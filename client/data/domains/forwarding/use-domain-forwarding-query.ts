@@ -3,6 +3,7 @@ import wp from 'calypso/lib/wp';
 import { domainForwardingQueryKey } from './domain-forwarding-query-key';
 
 type DomainForwardingResponse = {
+	domain_redirect_id: number;
 	domain: string;
 	target_host: string;
 	target_path: string;
@@ -21,6 +22,7 @@ export default function useDomainForwardingQuery( domainName: string ) {
 		select: ( forwarding: DomainForwardingResponse ) => {
 			if ( forwarding?.domain ) {
 				return {
+					domain_redirect_id: forwarding.domain_redirect_id,
 					domain: forwarding.domain,
 					targetHost: forwarding.target_host,
 					targetPath: forwarding.target_path,

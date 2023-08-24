@@ -37,6 +37,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domain.name );
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
+	const [ subdomain, setSubdomain ] = useState( '' );
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
@@ -111,11 +112,24 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				setProtocol( forwarding.isSecure ? 'https' : 'http' );
 				setIsPermanent( forwarding.isPermanent );
 				setForwardPaths( forwarding.forwardPaths );
+				setSubdomain( forwarding.domain );
 			}
 		} catch ( e ) {
 			// ignore
 		}
 	}, [ isLoading, forwarding, setTargetUrl, setProtocol ] );
+
+	const handleDomainOriginChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		setSubdomain( withoutHttp( event.target.value ) );
+
+		if ( event.target.value.length > 0 && ! CAPTURE_URL_RGX_SOFT.test( event.target.value ) ) {
+			setIsValidUrl( false );
+			setErrorMessage( translate( 'Please enter a valid URL.' ) );
+			return;
+		}
+
+		setIsValidUrl( true );
+	};
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setTargetUrl( withoutHttp( event.target.value ) );
@@ -186,6 +200,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 
 		updateDomainForwarding( {
+			domain_redirect_id: forwarding?.domain_redirect_id || 0,
+			subdomain,
 			targetHost,
 			targetPath,
 			isSecure,
@@ -288,12 +304,23 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				>
 					<FormTextInputWithAffixes
 						disabled={ isLoading }
+						name="origin"
+						noWrap
+						onChange={ handleDomainOriginChange }
+						value={ subdomain.split( '.' + domain.domain )[ 0 ] ?? '' }
+						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						id="domain-forwarding__origin-input"
+						maxLength={ 1000 }
+						suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
+					/>
+					<FormTextInputWithAffixes
+						disabled={ isLoading }
 						name="destination"
 						noWrap
 						onChange={ handleChange }
 						value={ targetUrl }
 						className={ classNames( { 'is-error': ! isValidUrl } ) }
-						id="domain-forwarding__input"
+						id="domain-forwarding__destination-input"
 						maxLength={ 1000 }
 						prefix={
 							<FormSelect
