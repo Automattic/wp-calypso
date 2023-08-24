@@ -297,6 +297,7 @@ class AllDomains extends Component {
 			hasLoadedUserPurchases,
 			isContactEmailEditContext,
 			translate,
+			domainsList: unfilteredDomains,
 			domainsDetails,
 		} = this.props;
 
@@ -306,7 +307,16 @@ class AllDomains extends Component {
 
 		const currentPageDomains = this.filterDomainsByPage( domains );
 
-		if ( domains.length === 0 && this.getSelectedFilter() === 'all-domains' ) {
+		if ( domains.length === 0 && unfilteredDomains.length > 0 ) {
+			return (
+				<div className="all-domains__domains-table">
+					<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+					<EmptyContent title={ translate( 'No results found.' ) } />
+				</div>
+			);
+		}
+
+		if ( unfilteredDomains.length === 0 && this.getSelectedFilter() === 'all-domains' ) {
 			return (
 				<EmptyDomainsListCardSkeleton
 					title={ translate( 'All Domains' ) }
@@ -713,7 +723,7 @@ class AllDomains extends Component {
 	}
 
 	renderHeader() {
-		const { translate } = this.props;
+		const { translate, domainsList } = this.props;
 
 		const item = {
 			label: translate( 'All Domains' ),
@@ -734,8 +744,7 @@ class AllDomains extends Component {
 				}
 			),
 		};
-
-		const hasNoDomains = this.getDomainsList( 'all-domains' ).length === 0;
+		const hasNoDomains = domainsList.length === 0;
 
 		const buttons = hasNoDomains
 			? []
