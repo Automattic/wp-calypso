@@ -22,8 +22,9 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 	const color_variation_title = searchParams.get( 'color_variation_title' );
 	const font_variation_title = searchParams.get( 'font_variation_title' );
 
-	const patternsById = keyBy( patterns, 'ID' );
-	const categoriesByName = keyBy( categories, 'name' );
+	// Initialize the mappings once, when the patterns and categories are finally loaded
+	const patternsById = useMemo( () => keyBy( patterns, 'ID' ), [ patterns.length ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	const categoriesByName = useMemo( () => keyBy( categories, 'name' ), [ categories.length ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const header = header_pattern_id ? patternsById[ decodePatternId( header_pattern_id ) ] : null;
 	const footer = footer_pattern_id ? patternsById[ decodePatternId( footer_pattern_id ) ] : null;
@@ -51,13 +52,10 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 						category,
 					};
 				} ),
-		/* We initialize the sections (at most) once when the patterns and categories are finally loaded
-		   (hence the ".length"s in the dependency array).
-
-		   We are ignoring the changes from the search params (section_pattern_ids),
+		/* We are ignoring the changes from the search params (section_pattern_ids),
 	       since after this point, the changes will be handled by setSections().
 	    */
-		[ patterns.length, categories.length ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ patternsById, categoriesByName ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	const uniqueSectionPatternKeyRef = useRef( 0 );
