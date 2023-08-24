@@ -515,7 +515,7 @@ class DomainRow extends PureComponent {
 					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }
 					{ this.renderExpiryDate( expiryDate ) }
-					{ /*{ this.renderAutoRenew() }*/ }
+					{ this.renderAutoRenew() }
 					{ ! isManagingAllSites && this.renderEmail() }
 					{ this.renderEllipsisMenu() }
 				</div>
