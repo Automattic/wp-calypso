@@ -4,11 +4,10 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import BusinessTrialIncluded from 'calypso/my-sites/plans/current-plan/trials/business-trial-included';
 import { useSelector } from 'calypso/state';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import useBusinessTrialIncludedFeatures from '../../current-plan/trials/use-business-trial-included-features';
-import ConfirmationTask from '../upgrade-confirmation/confirmation-task';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -16,11 +15,6 @@ import './style.scss';
 const BusinessUpgradeConfirmation = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
-	const wpAdminUrl = selectedSite?.URL ? selectedSite.URL + '/wp-admin/' : '';
-	const includedFeatures = useBusinessTrialIncludedFeatures(
-		selectedSite?.slug ?? '',
-		wpAdminUrl ?? ''
-	);
 
 	const isFetchingSitePlan = useSelector( ( state: AppState ) => {
 		if ( ! selectedSite?.ID ) {
@@ -59,20 +53,7 @@ const BusinessUpgradeConfirmation = () => {
 					</div>
 				</div>
 				<div className="trial-upgrade-confirmation__tasks">
-					{ includedFeatures
-						.filter( ( x ) => x.showButton )
-						.map( ( feature ) => (
-							<ConfirmationTask
-								id={ feature.id }
-								key={ feature.id }
-								context="business_trial"
-								title={ feature.title }
-								subtitle={ feature.text }
-								illustration={ feature.illustration }
-								buttonText={ feature.buttonText }
-								onButtonClick={ feature.buttonClick }
-							/>
-						) ) }
+					<BusinessTrialIncluded displayAll={ true } />
 				</div>
 			</Main>
 		</>
