@@ -3,6 +3,9 @@ import { Locator, Page } from 'playwright';
 const selectors = {
 	// Post body
 	postPasswordInput: 'input[name="post_password"]',
+
+	// Published content
+	socialShareSection: '.sharedaddy',
 };
 
 /**
@@ -131,5 +134,31 @@ export class PublishedPostPage {
 	 */
 	async validateTags( tag: string ): Promise< void > {
 		await this.page.waitForSelector( `a:text-is("${ tag }")` );
+	}
+
+	/**
+	 * Validates the presence of a social sharing button on the published content.
+	 *
+	 * If optional parameter `click` is set, the button will be clicked to verify
+	 * functionality.
+	 *
+	 * @param {string} name Name of the social sharing button.
+	 */
+	async validateSocialButton( name: string, { click }: { click?: boolean } = {} ) {
+		// CSS selector have to be used due to no accessible locator for narrowing
+		// to the social icons.
+		const button = this.anchor
+			.locator( selectors.socialShareSection )
+			.getByRole( 'link', { name: name } );
+
+		await button.waitFor();
+
+		if ( click ) {
+			const popupPromise = this.page.waitForEvent( 'popup' );
+			await button.click();
+			const popup = await popupPromise;
+			await popup.waitForLoadState( 'load' );
+			await popup.close();
+		}
 	}
 }
