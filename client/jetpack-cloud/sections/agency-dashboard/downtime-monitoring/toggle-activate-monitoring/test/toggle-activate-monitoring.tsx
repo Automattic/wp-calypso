@@ -136,7 +136,7 @@ describe( 'ToggleActivateMonitoring', () => {
 			...defaultProps,
 			settings: {
 				...defaultProps.settings,
-				monitor_deferment_time: 60,
+				check_interval: 60,
 			},
 		};
 		render( <ToggleActivateMonitoring { ...props } />, {
