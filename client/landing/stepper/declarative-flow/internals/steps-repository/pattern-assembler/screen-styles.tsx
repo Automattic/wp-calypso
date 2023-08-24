@@ -50,7 +50,10 @@ const ScreenStyles = ( {
 
 	const handleBackClick = () => {
 		navigator.goBack();
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_STYLES_BACK_CLICK );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
+			screen_from: 'styles',
+			screen_to: 'main',
+		} );
 	};
 
 	const handleContinueClick = () => {
