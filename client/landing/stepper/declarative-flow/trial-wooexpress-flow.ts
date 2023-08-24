@@ -83,7 +83,7 @@ const wooexpress: Flow = {
 			let startUrl = '/start/account/user';
 
 			if ( locale ) {
-				startUrl += `/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+				startUrl += `/${ locale }`;
 			}
 
 			startUrl += `?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
