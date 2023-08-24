@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import Pagination from 'calypso/components/pagination';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import {
 	resolveDomainStatus,
@@ -22,15 +22,17 @@ import {
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
+import DomainsTableInputFilter from 'calypso/my-sites/domains/domain-management/list/domains-table-input-filter';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { setAllDomainsNavigationPage } from 'calypso/state/all-domains/actions';
+import { getCurrentNavigationPage } from 'calypso/state/all-domains/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
@@ -39,7 +41,6 @@ import {
 	getAllRequestingSiteDomains,
 	getFlatDomainsList,
 } from 'calypso/state/sites/domains/selectors';
-import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
@@ -73,13 +74,31 @@ class AllDomains extends Component {
 		transferLockOptOut: false,
 		whoisData: {},
 		contactInfoSaveResults: {},
+		currentPage: 1,
+		domainsPerPage: 5,
+		searchTerm: '',
+		sortedDomains: [],
 	};
+
+	componentDidMount() {
+		const { currentPage } = this.props;
+		const currentPageParsed = Number( currentPage );
+		if ( ! isNaN( currentPageParsed ) ) {
+			this.setCurrentPage( currentPageParsed );
+		}
+		this.setSortedDomains( this.getDomainsList() );
+	}
 
 	componentDidUpdate() {
 		if ( this.props.isContactEmailEditContext && ! this.isLoadingDomainDetails() ) {
 			this.setSelectedDomains();
 		}
 	}
+
+	setCurrentPage = ( currentPage ) => {
+		this.props.setCurrentPage( currentPage );
+		this.setState( { currentPage } );
+	};
 
 	setSelectedDomains = () => {
 		const newFilteredDomains = ( this.props.filteredDomainsList ?? [] ).filter( ( domain ) => {
@@ -138,14 +157,13 @@ class AllDomains extends Component {
 	};
 
 	handleDomainItemClick = ( domain ) => {
-		const { sites, currentRoute } = this.props;
-		const site = sites[ domain.blogId ];
+		const { currentRoute } = this.props;
 
 		if ( this.props.isContactEmailEditContext ) {
 			return;
 		}
 
-		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
+		page( getDomainManagementPath( domain.name, domain.type, domain.blogId, currentRoute ) );
 	};
 
 	handleDomainItemToggle = ( domain, selected ) => {
@@ -165,8 +183,8 @@ class AllDomains extends Component {
 	};
 
 	isLoading() {
-		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
-		return ! hasAllSitesLoaded || ( requestingFlatDomains && domainsList.length === 0 );
+		const { domainsList, requestingFlatDomains } = this.props;
+		return requestingFlatDomains && domainsList.length === 0;
 	}
 
 	isRequestingSiteDomains() {
@@ -250,18 +268,25 @@ class AllDomains extends Component {
 	};
 
 	getDomainsList = ( selectedFilter = this.getSelectedFilter() ) => {
-		const { sites } = this.props;
-
 		return selectedFilter === 'domain-only'
-			? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
+			? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails() )
 			: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
 	};
 
+	filterDomainsByPage( domains ) {
+		const { currentPage, domainsPerPage } = this.state;
+		return domains.slice( ( currentPage - 1 ) * domainsPerPage, currentPage * domainsPerPage );
+	}
+
 	renderDomainsList() {
 		if ( this.isLoading() ) {
-			return Array.from( { length: 3 } ).map( ( _, n ) => (
-				<ListItemPlaceholder key={ `item-${ n }` } />
-			) );
+			return (
+				<div>
+					{ Array.from( { length: 3 } ).map( ( _, n ) => (
+						<ListItemPlaceholder key={ `item-${ n }` } />
+					) ) }
+				</div>
+			);
 		}
 
 		const {
@@ -272,14 +297,26 @@ class AllDomains extends Component {
 			hasLoadedUserPurchases,
 			isContactEmailEditContext,
 			translate,
-			dispatch,
+			domainsList: unfilteredDomains,
+			domainsDetails,
 		} = this.props;
 
 		const { isSavingContactInfo } = this.state;
 
 		const domains = this.getDomainsList();
 
-		if ( domains.length === 0 && this.getSelectedFilter() === 'all-domains' ) {
+		const currentPageDomains = this.filterDomainsByPage( domains );
+
+		if ( domains.length === 0 && unfilteredDomains.length > 0 ) {
+			return (
+				<div className="all-domains__domains-table">
+					<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+					<EmptyContent title={ translate( 'No results found.' ) } />
+				</div>
+			);
+		}
+
+		if ( unfilteredDomains.length === 0 && this.getSelectedFilter() === 'all-domains' ) {
 			return (
 				<EmptyDomainsListCardSkeleton
 					title={ translate( 'All Domains' ) }
@@ -294,7 +331,53 @@ class AllDomains extends Component {
 			);
 		}
 
-		const domainsTableColumns = [
+		const domainsTableColumns = this.getDomainsTableColumns( domains );
+
+		if ( isContactEmailEditContext ) {
+			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
+				( [ , selected ] ) => selected
+			);
+			domainsTableColumns.unshift( {
+				name: 'select-domain',
+				label: (
+					<FormCheckbox
+						onChange={ this.handleSelectAllDomains }
+						checked={ areAllCheckboxesChecked }
+						disabled={ this.state.isSavingContactInfo }
+					/>
+				),
+			} );
+		}
+
+		return (
+			<div className="all-domains__domains-table">
+				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+				<DomainsTable
+					currentRoute={ currentRoute }
+					domains={ currentPageDomains }
+					handleDomainItemToggle={ this.handleDomainItemToggle }
+					domainsTableColumns={ domainsTableColumns }
+					isManagingAllSites={ true }
+					isContactEmailEditContext={ isContactEmailEditContext }
+					goToEditDomainRoot={ this.handleDomainItemClick }
+					isLoading={ this.isLoading() }
+					purchases={ purchases }
+					sites={ sites }
+					requestingSiteDomains={ requestingSiteDomains }
+					hasLoadedPurchases={ hasLoadedUserPurchases }
+					isSavingContactInfo={ isSavingContactInfo }
+					domainsDetails={ domainsDetails }
+					onSortingChange={ ( sortKey, sortOrder ) => {
+						this.setSortedDomains( sortKey, sortOrder, this.getDomainsList() );
+					} }
+				/>
+			</div>
+		);
+	}
+
+	getDomainsTableColumns( domains ) {
+		const { translate, dispatch } = this.props;
+		return [
 			{
 				name: 'domain',
 				label: translate( 'Domain' ),
@@ -312,29 +395,24 @@ class AllDomains extends Component {
 				sortFunctions: [
 					( first, second, sortOrder ) => {
 						// sort all domain olny sites after/before the other sites
-						const firstSite = sites[ first?.blogId ];
-						const secondSite = sites[ second?.blogId ];
 
-						if ( firstSite?.options?.is_domain_only && secondSite?.options?.is_domain_only ) {
+						if ( first.isDomainOnlySite && second.isDomainOnlySite ) {
 							return 0;
 						}
 
-						if ( firstSite?.options?.is_domain_only ) {
+						if ( first.isDomainOnlySite ) {
 							return 1 * sortOrder;
 						}
 
-						if ( secondSite?.options?.is_domain_only ) {
+						if ( second.isDomainOnlySite ) {
 							return -1 * sortOrder;
 						}
 
 						return 0;
 					},
 					( first, second, sortOrder ) => {
-						const firstSite = sites[ first?.blogId ];
-						const secondSite = sites[ second?.blogId ];
-
-						const firstTitle = firstSite?.title || firstSite?.slug;
-						const secondTitle = secondSite?.title || secondSite?.slug;
+						const firstTitle = first?.blogName || first?.siteSlug;
+						const secondTitle = second?.blogName || second?.siteSlug;
 
 						return firstTitle.localeCompare( secondTitle ) * sortOrder;
 					},
@@ -375,7 +453,7 @@ class AllDomains extends Component {
 					domains.map( ( domain ) =>
 						resolveDomainStatus( domain, null, translate, dispatch, {
 							getMappingErrors: true,
-							siteSlug: sites[ domain.blogId ].slug,
+							siteSlug: domain.siteSlug,
 						} )
 					)
 				),
@@ -388,46 +466,33 @@ class AllDomains extends Component {
 				supportsOrderSwitching: true,
 				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 			},
-			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			{ name: 'action', label: translate( 'Actions' ) },
 		];
+	}
 
-		if ( isContactEmailEditContext ) {
-			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
-				( [ , selected ] ) => selected
-			);
-			domainsTableColumns.unshift( {
-				name: 'select-domain',
-				label: (
-					<FormCheckbox
-						onChange={ this.handleSelectAllDomains }
-						checked={ areAllCheckboxesChecked }
-						disabled={ this.state.isSavingContactInfo }
-					/>
-				),
-			} );
+	setSortedDomains( sortKey, sortOrder, domains ) {
+		if ( ! sortKey || ! sortOrder ) {
+			return domains;
 		}
 
-		return (
-			<>
-				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
-				<DomainsTable
-					currentRoute={ currentRoute }
-					domains={ domains }
-					handleDomainItemToggle={ this.handleDomainItemToggle }
-					domainsTableColumns={ domainsTableColumns }
-					isManagingAllSites={ true }
-					isContactEmailEditContext={ isContactEmailEditContext }
-					goToEditDomainRoot={ this.handleDomainItemClick }
-					isLoading={ this.isLoading() }
-					purchases={ purchases }
-					sites={ sites }
-					requestingSiteDomains={ requestingSiteDomains }
-					hasLoadedPurchases={ hasLoadedUserPurchases }
-					isSavingContactInfo={ isSavingContactInfo }
-				/>
-			</>
+		const domainsTableColumns = this.getDomainsTableColumns( domains );
+
+		const selectedColumnDefinition = domainsTableColumns.find(
+			( column ) => column.name === sortKey
 		);
+
+		return this.setState( {
+			sortedDomains: domains.sort( ( first, second ) => {
+				let result = 0;
+				for ( const sortFunction of selectedColumnDefinition.sortFunctions ) {
+					result = sortFunction( first, second, sortOrder );
+					if ( 0 !== result ) {
+						break;
+					}
+				}
+				return result;
+			} ),
+		} );
 	}
 
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
@@ -571,24 +636,50 @@ class AllDomains extends Component {
 	}
 
 	filteredDomains() {
-		const { filteredDomainsList, domainsList, canManageSitesMap, isContactEmailEditContext } =
-			this.props;
+		const { sortedDomains } = this.state;
+		const { filteredDomainsList, domainsList, isContactEmailEditContext } = this.props;
 		if ( ! domainsList ) {
 			return [];
 		}
+
+		const domains = sortedDomains && sortedDomains.length ? sortedDomains : domainsList;
 
 		if ( isContactEmailEditContext ) {
 			return filteredDomainsList;
 		}
 
+		const { searchTerm } = this.state;
+
 		// filter on sites we can manage, that aren't `wpcom` type
-		return domainsList.filter(
-			( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
+		return domains.filter( ( domain ) => {
+			const isTypeValid = domain.type !== domainTypes.WPCOM;
+
+			if ( searchTerm ) {
+				const domainName = domain.name;
+				const searchTermLowerCase = searchTerm.toLowerCase();
+
+				return isTypeValid && domainName.includes( searchTermLowerCase );
+			}
+
+			return isTypeValid;
+		} );
+	}
+
+	renderDomainTableFilterInput() {
+		return (
+			<DomainsTableInputFilter
+				onSearch={ ( searchTerm ) => {
+					this.setState( {
+						searchTerm,
+						currentPage: 1,
+					} );
+				} }
+			/>
 		);
 	}
 
 	renderDomainTableFilterButton() {
-		const { context, translate, sites } = this.props;
+		const { context, translate } = this.props;
 
 		const selectedFilter = context?.query?.filter || 'all-domains';
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
@@ -616,7 +707,7 @@ class AllDomains extends Component {
 				label: translate( 'Parked domains' ),
 				value: 'domain-only',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'domain-only' } ),
-				count: filterDomainOnlyDomains( nonWpcomDomains, sites )?.length,
+				count: filterDomainOnlyDomains( nonWpcomDomains )?.length,
 			},
 		];
 
@@ -632,7 +723,7 @@ class AllDomains extends Component {
 	}
 
 	renderHeader() {
-		const { translate } = this.props;
+		const { translate, domainsList } = this.props;
 
 		const item = {
 			label: translate( 'All Domains' ),
@@ -653,19 +744,22 @@ class AllDomains extends Component {
 				}
 			),
 		};
-
-		const hasNoDomains = this.getDomainsList( 'all-domains' ).length === 0;
+		const hasNoDomains = domainsList.length === 0;
 
 		const buttons = hasNoDomains
 			? []
 			: [
+					this.renderDomainTableFilterInput(),
 					this.renderDomainTableFilterButton(),
 					<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
 			  ];
 
 		const mobileButtons = hasNoDomains
 			? []
-			: [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList /> ];
+			: [
+					this.renderDomainTableFilterInput(),
+					<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
+			  ];
 
 		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
@@ -689,15 +783,22 @@ class AllDomains extends Component {
 			);
 		}
 
+		const domains = this.getDomainsList();
 		return (
 			<>
 				<div>{ this.renderActionForm() }</div>
-				<div>
+				<div className="all-domains__container">
 					<QueryAllDomains />
-					<QueryUserPurchases />
 					<>
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
-						<div>{ this.renderDomainsList() }</div>
+						{ this.renderDomainsList() }
+						<Pagination
+							page={ this.state.currentPage }
+							perPage={ this.state.domainsPerPage }
+							total={ domains.length }
+							pageClick={ ( currentPage ) => this.setCurrentPage( currentPage ) }
+							compact
+						/>
 					</>
 				</div>
 			</>
@@ -724,8 +825,6 @@ const getSitesById = ( state ) => {
 
 const getFilteredDomainsList = ( state, context ) => {
 	const action = parse( context.querystring )?.action;
-	const sites = getSitesById( state );
-	const canManageSitesMap = canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' );
 	const domainsList = getFlatDomainsList( state );
 	const domainsDetails = getAllDomains( state );
 
@@ -752,29 +851,31 @@ const getFilteredDomainsList = ( state, context ) => {
 			} );
 
 		default:
-			return domainsList.filter(
-				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
-			);
+			return domainsList.filter( ( domain ) => domain.type !== domainTypes.WPCOM );
 	}
 };
 
-export default connect( ( state, { context } ) => {
-	const sites = getSitesById( state );
-	const action = parse( context.querystring )?.action;
+export default connect(
+	( state, { context } ) => {
+		const sites = getSitesById( state );
+		const action = parse( context.querystring )?.action;
 
-	return {
-		action,
-		canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
-		currentRoute: getCurrentRoute( state ),
-		domainsList: getFlatDomainsList( state ),
-		domainsDetails: getAllDomains( state ),
-		filteredDomainsList: getFilteredDomainsList( state, context ),
-		hasAllSitesLoaded: hasAllSitesList( state ),
-		isContactEmailEditContext: ListAllActions.editContactEmail === action,
-		purchases: getUserPurchases( state ) || [],
-		hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
-		requestingFlatDomains: isRequestingAllDomains( state ),
-		requestingSiteDomains: getAllRequestingSiteDomains( state ),
-		sites,
-	};
-} )( localize( AllDomains ) );
+		return {
+			action,
+			currentRoute: getCurrentRoute( state ),
+			domainsList: getFlatDomainsList( state ),
+			domainsDetails: getAllDomains( state ),
+			filteredDomainsList: getFilteredDomainsList( state, context ),
+			isContactEmailEditContext: ListAllActions.editContactEmail === action,
+			purchases: getUserPurchases( state ) || [],
+			hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
+			requestingFlatDomains: isRequestingAllDomains( state ),
+			requestingSiteDomains: getAllRequestingSiteDomains( state ),
+			currentPage: getCurrentNavigationPage( state ),
+			sites,
+		};
+	},
+	{
+		setCurrentPage: setAllDomainsNavigationPage,
+	}
+)( localize( AllDomains ) );

@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import {
+	ALL_DOMAINS_NAVIGATION_SET,
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_FAILURE,
 	ALL_DOMAINS_REQUEST_SUCCESS,
@@ -52,6 +53,22 @@ export const getAllDomainsRequestFailure = ( error ) => {
 	const action = {
 		type: ALL_DOMAINS_REQUEST_FAILURE,
 		error,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Returns an action object for setting the current page for the all domains management navigation.
+ *
+ * @param {number} page - current page number
+ * @returns {Object} action object
+ */
+export const setAllDomainsNavigationPage = ( page ) => {
+	const action = {
+		type: ALL_DOMAINS_NAVIGATION_SET,
+		currentPage: page,
 	};
 
 	debug( 'returning action: %o', action );

@@ -1,18 +1,22 @@
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import type { SiteDetails } from '@automattic/data-stores';
+
+type AllDomainsDomainType = {
+	isDomainOnlySite: boolean;
+	siteSlug: string;
+};
+
 type FilterDomainsByOwnerType = (
-	domains: Array< ResponseDomain >,
+	domains: Array< ResponseDomain & AllDomainsDomainType >,
 	filter: 'owned-by-me' | 'owned-by-others' | undefined
-) => Array< ResponseDomain >;
+) => Array< ResponseDomain & AllDomainsDomainType >;
 
 type FilterDomainsDomainOnlyType = (
-	domains: Array< ResponseDomain >,
-	sites: Array< SiteDetails >
-) => Array< ResponseDomain >;
+	domains: Array< ResponseDomain & AllDomainsDomainType >
+) => Array< ResponseDomain & AllDomainsDomainType >;
 
 export const filterDomainsByOwner: FilterDomainsByOwnerType = ( domains, filter ) => {
-	return domains.filter( ( domain: ResponseDomain ) => {
+	return domains.filter( ( domain ) => {
 		if ( 'owned-by-me' === filter ) {
 			return domain.currentUserIsOwner;
 		} else if ( 'owned-by-others' === filter ) {
@@ -22,8 +26,8 @@ export const filterDomainsByOwner: FilterDomainsByOwnerType = ( domains, filter 
 	} );
 };
 
-export const filterDomainOnlyDomains: FilterDomainsDomainOnlyType = ( domains, sites ) => {
-	return domains.filter( ( domain: ResponseDomain ) => {
-		return domain.type === domainTypes.REGISTERED && sites[ domain.blogId ].options?.is_domain_only;
+export const filterDomainOnlyDomains: FilterDomainsDomainOnlyType = ( domains ) => {
+	return domains.filter( ( domain ) => {
+		return domain.type === domainTypes.REGISTERED && domain.isDomainOnlySite;
 	} );
 };
