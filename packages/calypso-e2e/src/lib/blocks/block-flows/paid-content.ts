@@ -62,14 +62,15 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Since we're viewing as the publishing user, we should see the subscriber version of the content.
-		const expectedTitle = context.page.locator(
-			`text="${ this.configurationData.subscriberTitle }"`
-		);
-		await expectedTitle.waitFor();
+		await context.page
+			.getByRole( 'heading', {
+				name: this.configurationData.subscriberTitle,
+			} )
+			.waitFor();
 
-		const expectedText = context.page.locator(
-			`text="${ this.configurationData.subscriberText }"`
-		);
-		await expectedText.waitFor();
+		await context.page
+			.getByRole( 'paragraph' )
+			.filter( { hasText: this.configurationData.subscriberText } )
+			.waitFor();
 	}
 }
