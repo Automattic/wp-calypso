@@ -338,6 +338,9 @@ class PostCommentList extends Component {
 			displayedCommentsCount < actualCommentsCount;
 		return (
 			<>
+				<ol className="comments__list is-root">
+					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
+				</ol>
 				{ shouldShowExpandToggle && (
 					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
 						{ this.state.isExpanded
@@ -351,9 +354,6 @@ class PostCommentList extends Component {
 						{ translate( 'View more comments on the full post' ) }
 					</button>
 				) }
-				<ol className="comments__list is-root">
-					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
-				</ol>
 			</>
 		);
 	};
@@ -543,7 +543,8 @@ class PostCommentList extends Component {
 					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
 				} ) }
 			>
-				{ ( this.props.showCommentCount || showViewMoreComments ) && (
+				{ ( this.props.showCommentCount ||
+					( showViewMoreComments && this.props.startingCommentId ) ) && (
 					<div className="comments__info-bar">
 						<div className="comments__info-bar-title-links">
 							{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
@@ -562,8 +563,8 @@ class PostCommentList extends Component {
 								) }
 							</div>
 						</div>
-						{ showViewMoreComments && (
-							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
+						{ showViewMoreComments && this.props.startingCommentId && (
+							<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 									args: {
 										shown: displayedCommentsCount,
@@ -608,23 +609,6 @@ class PostCommentList extends Component {
 						</SegmentedControl.Item>
 					</SegmentedControl>
 				) }
-				{ this.renderCommentsList(
-					displayedComments,
-					displayedCommentsCount,
-					actualCommentsCount,
-					commentsTreeToUse,
-					commentsTree
-				) }
-				{ showViewMoreComments && this.props.startingCommentId && (
-					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
-							args: {
-								shown: displayedCommentsCount,
-								total: actualCommentsCount,
-							},
-						} ) }
-					</button>
-				) }
 				<PostCommentFormRoot
 					post={ this.props.post }
 					commentsTree={ commentsTreeToUse }
@@ -633,6 +617,26 @@ class PostCommentList extends Component {
 					activeReplyCommentId={ this.props.activeReplyCommentId }
 					isInlineComment={ this.props.expandableView }
 				/>
+				{ this.renderCommentsList(
+					displayedComments,
+					displayedCommentsCount,
+					actualCommentsCount,
+					commentsTreeToUse,
+					commentsTree
+				) }
+				{ showViewMoreComments && (
+					<button
+						className="comments__view-more comments__view-more-last"
+						onClick={ this.viewEarlierCommentsHandler }
+					>
+						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+							args: {
+								shown: displayedCommentsCount,
+								total: actualCommentsCount,
+							},
+						} ) }
+					</button>
+				) }
 			</div>
 		);
 	}

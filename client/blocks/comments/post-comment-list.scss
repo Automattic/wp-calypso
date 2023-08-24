@@ -9,6 +9,7 @@
 	.comments__toggle-expand,
 	.comments__open-post {
 		cursor: pointer;
+		margin-top: 16px;
 		&:hover {
 			color: var(--color-link);
 		}
@@ -51,6 +52,10 @@
 		display: flex;
 		flex-direction: column-reverse;
 	}
+
+	.comments__form .form-fieldset {
+		margin: 0;
+	}
 }
 
 .comments__info-bar {
@@ -89,6 +94,10 @@
 	font-size: $font-body-small;
 	line-height: 1;
 	margin-bottom: 15px !important; // to overwrite 10px value
+
+	&.comments__view-more-last {
+		margin-top: 16px;
+	}
 
 	&:hover {
 		color: var(--color-primary-light);
