@@ -89,9 +89,15 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	);
 
 	// TODO: The dismiss logic could potentially be extracted too.
-	return ALL_STATS_NOTICES.map(
-		( notice ) =>
-			calculatedNoticesVisibility[ notice.noticeId ] && <notice.component { ...noticeOptions } />
+	return (
+		<>
+			{ ALL_STATS_NOTICES.map(
+				( notice ) =>
+					calculatedNoticesVisibility[ notice.noticeId ] && (
+						<notice.component { ...noticeOptions } />
+					)
+			) }
+		</>
 	);
 };
 
