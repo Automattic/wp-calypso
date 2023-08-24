@@ -6,7 +6,7 @@ import {
 import { Badge, Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -159,10 +159,6 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 						const currentAnnualProduct = products.find(
 							( _prod ) => _prod.tier === currentProduct.ID
 						);
-						console.info( '______' );
-						console.info( currentProduct );
-						console.info( currentAnnualProduct );
-						console.info( '______' );
 						return (
 							<CompactCard
 								className="memberships__products-product-card"
@@ -171,12 +167,11 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 								<div className="memberships__products-product-details">
 									<div className="memberships__products-product-price">
 										{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
-										{ currentAnnualProduct && (
+										{ currentAnnualProduct &&
 											formatCurrency(
 												currentAnnualProduct?.price || 0,
 												currentAnnualProduct?.currency || ''
-											)
-										}
+											) }
 									</div>
 									<div className="memberships__products-product-title">
 										{ currentProduct?.title }
@@ -197,14 +192,15 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 					product={ Object.assign( product ?? {}, {
 						subscribe_as_site_subscriber: subscribe_as_site_subscriber,
 					} ) }
-					annual_product={ annualProduct }
+					annualProduct={ annualProduct }
 				/>
 			) }
 			{ hasLoadedFeatures && showDeleteDialog && product && (
 				<RecurringPaymentsPlanDeleteModal
 					closeDialog={ closeDialog }
 					product={ product }
-					annual_product={ annualProduct } />
+					annualProduct={ annualProduct }
+				/>
 			) }
 			{ ! hasLoadedFeatures && (
 				<div className="memberships__loading">
