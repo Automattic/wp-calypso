@@ -10,6 +10,7 @@ const blockFlows: BlockFlow[] = [
 		query: 'In two short sentences, tell me about Vancouver, Canada.',
 		tone: 'Passionate',
 		improve: 'Make shorter',
+		keywords: [ 'Vancouver, Canada' ],
 	} ),
 ];
 
