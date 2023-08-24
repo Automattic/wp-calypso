@@ -1362,6 +1362,27 @@ describe( 'actions', () => {
 				res();
 			} )
 		);
+		const analyticsAction = {
+			type: 'ANALYTICS_EVENT_RECORD',
+			meta: {
+				analytics: [
+					{
+						payload: {
+							name: 'calypso_block_theme_live_preview_click',
+							properties: {
+								active_theme: 'twentyfifteen',
+								site_id: 2211667,
+								source: 'detail',
+								theme: 'pendant',
+								theme_type: 'free',
+							},
+							service: 'tracks',
+						},
+						type: 'ANALYTICS_EVENT_RECORD',
+					},
+				],
+			},
+		};
 		describe( 'on a WordPress.com site', () => {
 			const state = () => ( {
 				sites: {
@@ -1371,10 +1392,25 @@ describe( 'actions', () => {
 						},
 					},
 				},
+				themes: {
+					activeThemes: {
+						2211667: 'twentyfifteen',
+					},
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: {},
+						} ),
+					},
+				},
 			} );
 			test( 'should redirect users to the Live Preview', () => {
 				return new Promise( ( done ) => {
-					livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
+					livePreview(
+						'pendant',
+						2211667,
+						'detail'
+					)( dispatch, state ).then( () => {
+						expect( dispatch ).toBeCalledWith( analyticsAction );
 						expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
 						expect( dispatch ).toBeCalledWith(
 							expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
@@ -1394,11 +1430,17 @@ describe( 'actions', () => {
 						},
 					},
 				},
+				themes: {
+					activeThemes: {
+						2211667: 'twentyfifteen',
+					},
+				},
 			};
 			describe( 'if the theme is already installed', () => {
 				const state = () => ( {
 					...baseState,
 					themes: {
+						...baseState.themes,
 						queries: {
 							2211667: new ThemeQueryManager( {
 								items: { pendant: {} },
@@ -1408,7 +1450,12 @@ describe( 'actions', () => {
 				} );
 				test( 'should redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
-						livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
+						livePreview(
+							'pendant',
+							2211667,
+							'detail'
+						)( dispatch, state ).then( () => {
+							expect( dispatch ).toBeCalledWith( analyticsAction );
 							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
 							expect( dispatch ).toBeCalledWith(
 								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
@@ -1423,12 +1470,18 @@ describe( 'actions', () => {
 				const state = () => ( {
 					...baseState,
 					themes: {
+						...baseState.themes,
 						queries: {},
 					},
 				} );
 				test( 'should install the theme and then redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
-						livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
+						livePreview(
+							'pendant',
+							2211667,
+							'detail'
+						)( dispatch, state ).then( () => {
+							expect( dispatch ).toBeCalledWith( analyticsAction );
 							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
 							expect( dispatch ).toBeCalledWith(
 								expect.toMatchFunction( installAndLivePreview( 'pendant', 2211667 ) )

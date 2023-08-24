@@ -10,13 +10,15 @@ import { suffixThemeIdForInstall } from './suffix-theme-id-for-install';
 
 export function livePreview( themeId: string, siteId: number, source?: 'list' | 'detail' ) {
 	return ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
-		recordTracksEvent( 'calypso_block_theme_live_preview_click', {
-			active_theme: getActiveTheme( getState(), siteId ),
-			site_id: siteId,
-			source,
-			theme_type: getThemeType( getState(), themeId ),
-			theme: themeId,
-		} );
+		dispatch(
+			recordTracksEvent( 'calypso_block_theme_live_preview_click', {
+				active_theme: getActiveTheme( getState(), siteId ),
+				site_id: siteId,
+				source,
+				theme_type: getThemeType( getState(), themeId ),
+				theme: themeId,
+			} )
+		);
 
 		dispatch( { type: LIVE_PREVIEW_START } );
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
