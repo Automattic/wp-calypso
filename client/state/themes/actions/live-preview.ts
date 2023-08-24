@@ -1,4 +1,4 @@
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { LIVE_PREVIEW_START } from 'calypso/state/themes/action-types';
 import { getActiveTheme, getTheme, getThemeType } from 'calypso/state/themes/selectors';
@@ -10,17 +10,14 @@ import { suffixThemeIdForInstall } from './suffix-theme-id-for-install';
 
 export function livePreview( themeId: string, siteId: number, source?: 'list' | 'detail' ) {
 	return ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_block_theme_live_preview_click', {
-				active_theme: getActiveTheme( getState(), siteId ),
-				site_id: siteId,
-				source,
-				theme_type: getThemeType( getState(), themeId ),
-				theme: themeId,
-			} )
-		);
-
-		dispatch( { type: LIVE_PREVIEW_START } );
+		const analysis = recordTracksEvent( 'calypso_block_theme_live_preview_click', {
+			active_theme: getActiveTheme( getState(), siteId ),
+			site_id: siteId,
+			source,
+			theme_type: getThemeType( getState(), themeId ),
+			theme: themeId,
+		} );
+		dispatch( withAnalytics( analysis, { type: LIVE_PREVIEW_START } ) );
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail, and we just switch to the Live Preview.

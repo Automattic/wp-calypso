@@ -517,6 +517,32 @@ describe( 'actions', () => {
 			test( 'should refresh the admin bar', () => {
 				themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetState );
 				expect( spy ).toBeCalledWith( {
+					type: 'THEME_ACTIVATE_SUCCESS',
+					themeStylesheet: 'pub/mayland-blocks',
+					siteId: 2211667,
+					meta: {
+						analytics: [
+							{
+								payload: {
+									name: 'calypso_themeshowcase_theme_activate',
+									properties: {
+										previous_theme: 'twentyfifteen',
+										purchased: false,
+										search_taxonomies: '',
+										search_term: 'simple, white',
+										source: 'unknown',
+										style_variation_slug: '',
+										theme: 'mayland-blocks',
+										theme_type: 'free',
+									},
+									service: 'tracks',
+								},
+								type: 'ANALYTICS_EVENT_RECORD',
+							},
+						],
+					},
+				} );
+				expect( spy ).toBeCalledWith( {
 					type: 'ADMIN_MENU_REQUEST',
 					siteId: 2211667,
 				} );
@@ -551,6 +577,32 @@ describe( 'actions', () => {
 				siteId: 2211667,
 			};
 			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
+			expect( spy ).toBeCalledWith( {
+				type: 'THEME_ACTIVATE_SUCCESS',
+				themeStylesheet: 'pub/twentysixteen',
+				siteId: 2211667,
+				meta: {
+					analytics: [
+						{
+							payload: {
+								name: 'calypso_themeshowcase_theme_activate',
+								properties: {
+									previous_theme: 'twentyfifteen',
+									purchased: false,
+									search_taxonomies: '',
+									search_term: 'simple, white',
+									source: 'unknown',
+									style_variation_slug: '',
+									theme: 'twentysixteen',
+									theme_type: 'free',
+								},
+								service: 'tracks',
+							},
+							type: 'ANALYTICS_EVENT_RECORD',
+						},
+					],
+				},
+			} );
 			expect( spy ).toBeCalledWith( expectedActivationSuccess );
 		} );
 	} );
@@ -1362,8 +1414,8 @@ describe( 'actions', () => {
 				res();
 			} )
 		);
-		const analyticsAction = {
-			type: 'ANALYTICS_EVENT_RECORD',
+		const livePreviewStartAction = {
+			type: 'LIVE_PREVIEW_START',
 			meta: {
 				analytics: [
 					{
@@ -1410,8 +1462,7 @@ describe( 'actions', () => {
 						2211667,
 						'detail'
 					)( dispatch, state ).then( () => {
-						expect( dispatch ).toBeCalledWith( analyticsAction );
-						expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+						expect( dispatch ).toBeCalledWith( livePreviewStartAction );
 						expect( dispatch ).toBeCalledWith(
 							expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 						);
@@ -1455,8 +1506,7 @@ describe( 'actions', () => {
 							2211667,
 							'detail'
 						)( dispatch, state ).then( () => {
-							expect( dispatch ).toBeCalledWith( analyticsAction );
-							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+							expect( dispatch ).toBeCalledWith( livePreviewStartAction );
 							expect( dispatch ).toBeCalledWith(
 								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 							);
@@ -1481,8 +1531,7 @@ describe( 'actions', () => {
 							2211667,
 							'detail'
 						)( dispatch, state ).then( () => {
-							expect( dispatch ).toBeCalledWith( analyticsAction );
-							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+							expect( dispatch ).toBeCalledWith( livePreviewStartAction );
 							expect( dispatch ).toBeCalledWith(
 								expect.toMatchFunction( installAndLivePreview( 'pendant', 2211667 ) )
 							);
