@@ -1,9 +1,5 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
 import { EditorComponent } from '../components';
-
-const selectors = {
-	internalFrame: '.components-sandbox',
-};
 
 /**
  * Represents the VideoPress block.
@@ -41,28 +37,27 @@ export class VideoPressBlock {
 		await block.getByText( 'Upload Complete!' ).waitFor( { timeout: 25 * 1000 } );
 		await block.getByRole( 'button', { name: 'Done' } ).click();
 
-		await block
-			.frameLocator( '.components-sandbox' )
-			.frameLocator( 'VideoPress Video Player' )
-			.getByRole( 'button', { name: 'Play Video' } )
-			.waitFor( { timeout: 30 * 1000 } );
+		await block.getByText( 'We are converting this video for optimal playback' ).waitFor( {
+			timeout: 15 * 1000,
+			state: 'hidden',
+		} );
 	}
 
 	/**
+	 * Clicks a matching button on the block.
 	 *
+	 * @param {string} text Text of the button to click.
 	 */
-	async clickButton( action: string ) {
+	async clickButton( text: string ) {
 		const editorCanvas = await this.editor.canvas();
 		const block = editorCanvas.getByRole( 'document', {
 			name: `Block: ${ VideoPressBlock.blockName }`,
 		} );
 
 		const target = block
-			.frameLocator( selectors.internalFrame )
-			.getByRole( 'button', { name: action } );
+			.frameLocator( '.components-sandbox' )
+			.getByRole( 'button', { name: text } );
 
-		await target.hover();
-		await target.waitFor();
 		await target.click();
 	}
 
@@ -72,16 +67,8 @@ export class VideoPressBlock {
 	 * @param {Page} page Page on which to verify the presence of the block.
 	 */
 	static async validatePublishedContent( page: Page ) {
-		const videoPlayer = page
-			.frameLocator( 'VideoPress Video Player' )
-			.getByRole( 'region', { name: 'Video Player' } );
-
-		const playButton = videoPlayer.getByRole( 'button', { name: 'Play Video' } );
-		await playButton.hover();
-		await playButton.click();
-
-		const pauseButton = videoPlayer.getByRole( 'button', { name: 'Pause' } );
-		await pauseButton.hover();
-		await pauseButton.click();
+		// According to p1692879768772799/1692861705.317909-slack-C02LT75D3, it is
+		// not necessary to check whether the video can actually playback.
+		await page.locator( '.wp-block-jetpack-videopress' ).waitFor();
 	}
 }

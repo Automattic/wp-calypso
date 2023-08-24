@@ -23,10 +23,16 @@ import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_VIDEO_PATH } from '../constants'
 
 declare const browser: Browser;
 
+/**
+ * Tests the media-related blocks.
+ *
+ * Keywords: Media, Video, VideoPress, Image, Audio, File1
+ */
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	const features = envToFeatureKey( envVariables );
-	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
-	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
+
+	// Default to `defaultUser` as it has WordPress.com Premium enabled, which is required
+	// for VideoPress block testing.
 	const accountName = getTestAccountByFeature( features, [
 		{
 			gutenberg: 'stable',
@@ -40,9 +46,9 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		},
 	] );
 
-	let editorPage: EditorPage;
 	let page: Page;
 	let testAccount: TestAccount;
+	let editorPage: EditorPage;
 	let testFiles: {
 		image: TestFile;
 		imageReservedName: TestFile;
@@ -74,46 +80,47 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	} );
 
 	describe( 'Populate post with media blocks', function () {
-		// it( `${ ImageBlock.blockName } block: upload image file with reserved URL characters`, async function () {
-		// 	const blockHandle = await editorPage.addBlockFromSidebar(
-		// 		ImageBlock.blockName,
-		// 		ImageBlock.blockEditorSelector,
-		// 		{ noSearch: true }
-		// 	);
-		// 	const imageBlock = new ImageBlock( page, blockHandle );
-		// 	await imageBlock.upload( testFiles.imageReservedName.fullpath );
-		// } );
+		it( `${ ImageBlock.blockName } block: upload image file with reserved URL characters`, async function () {
+			const blockHandle = await editorPage.addBlockFromSidebar(
+				ImageBlock.blockName,
+				ImageBlock.blockEditorSelector,
+				{ noSearch: true }
+			);
+			const imageBlock = new ImageBlock( page, blockHandle );
+			await imageBlock.upload( testFiles.imageReservedName.fullpath );
+		} );
 
-		// it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
-		// 	const blockHandle = await editorPage.addBlockFromSidebar(
-		// 		ImageBlock.blockName,
-		// 		ImageBlock.blockEditorSelector,
-		// 		{ noSearch: true }
-		// 	);
-		// 	const imageBlock = new ImageBlock( page, blockHandle );
-		// 	await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
-		// } );
+		it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
+			const blockHandle = await editorPage.addBlockFromSidebar(
+				ImageBlock.blockName,
+				ImageBlock.blockEditorSelector,
+				{ noSearch: true }
+			);
+			const imageBlock = new ImageBlock( page, blockHandle );
+			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
+		} );
 
-		// it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
-		// 	const blockHandle = await editorPage.addBlockFromSidebar(
-		// 		AudioBlock.blockName,
-		// 		AudioBlock.blockEditorSelector,
-		// 		{ noSearch: true }
-		// 	);
-		// 	const audioBlock = new AudioBlock( blockHandle );
-		// 	await audioBlock.upload( testFiles.audio.fullpath );
-		// } );
+		it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
+			const blockHandle = await editorPage.addBlockFromSidebar(
+				AudioBlock.blockName,
+				AudioBlock.blockEditorSelector,
+				{ noSearch: true }
+			);
+			const audioBlock = new AudioBlock( blockHandle );
+			await audioBlock.upload( testFiles.audio.fullpath );
+		} );
 
-		// it( `${ FileBlock.blockName } block: upload audio file`, async function () {
-		// 	const blockHandle = await editorPage.addBlockFromSidebar(
-		// 		FileBlock.blockName,
-		// 		FileBlock.blockEditorSelector,
-		// 		{ noSearch: true }
-		// 	);
-		// 	const fileBlock = new FileBlock( page, blockHandle );
-		// 	await fileBlock.upload( testFiles.audio.fullpath );
-		// } );
+		it( `${ FileBlock.blockName } block: upload audio file`, async function () {
+			const blockHandle = await editorPage.addBlockFromSidebar(
+				FileBlock.blockName,
+				FileBlock.blockEditorSelector,
+				{ noSearch: true }
+			);
+			const fileBlock = new FileBlock( page, blockHandle );
+			await fileBlock.upload( testFiles.audio.fullpath );
+		} );
 
+		// If this starts failing, check whether Premium or higher plan is enabled.
 		it( `${ VideoPressBlock.blockName } block: upload video file`, async function () {
 			await editorPage.addBlockFromSidebar(
 				VideoPressBlock.blockName,
@@ -132,23 +139,23 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	} );
 
 	describe( 'Validate published post', function () {
-		// it( `Image with reserved characters in filename is visible`, async function () {
-		// 	await ImageBlock.validatePublishedContent( page, [
-		// 		testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
-		// 	] );
-		// } );
+		it( `Image with reserved characters in filename is visible`, async function () {
+			await ImageBlock.validatePublishedContent( page, [
+				testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
+			] );
+		} );
 
-		// it( 'Image added via Calypso modal is visible', async function () {
-		// 	await ImageBlock.validatePublishedContent( page, [ testFiles.image.filename ] );
-		// } );
+		it( 'Image added via Calypso modal is visible', async function () {
+			await ImageBlock.validatePublishedContent( page, [ testFiles.image.filename ] );
+		} );
 
-		// it( `Audio block is visible`, async function () {
-		// 	await AudioBlock.validatePublishedContent( page );
-		// } );
+		it( `Audio block is visible`, async function () {
+			await AudioBlock.validatePublishedContent( page );
+		} );
 
-		// it( `File block is visible`, async function () {
-		// 	await FileBlock.validatePublishedContent( page, [ testFiles.audio.filename ] );
-		// } );
+		it( `File block is visible`, async function () {
+			await FileBlock.validatePublishedContent( page, [ testFiles.audio.filename ] );
+		} );
 
 		it( `VideoPress block is visible`, async function () {
 			await VideoPressBlock.validatePublishedContent( page );
