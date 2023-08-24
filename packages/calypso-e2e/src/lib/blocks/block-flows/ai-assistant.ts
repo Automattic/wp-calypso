@@ -19,7 +19,7 @@ interface ConfigurationData {
 }
 
 /**
- * Represents the flow of using an Ad block.
+ * Represents the flow of using the AI Assistant block.
  */
 export class AIAssistantFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
