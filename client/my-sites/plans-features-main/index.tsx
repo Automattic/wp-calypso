@@ -36,7 +36,6 @@ import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-gri
 import useRestructuredPlanFeaturesForComparisonGrid from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-restructured-plan-features-for-comparison-grid';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -53,6 +52,7 @@ import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useIsCustomDomainAllowedOnFreePlan from './hooks/use-is-custom-domain-allowed-on-free-plan';
 import useIsPlanUpsellEnabledOnFreeDomain from './hooks/use-is-plan-upsell-enabled-on-free-domain';
+import useObservableForOddie from './hooks/use-observable-for-oddie';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -250,6 +250,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const observableForOddie = useObservableForOddie();
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -544,47 +545,6 @@ const PlansFeaturesMain = ( {
 		}
 	}, [ showPlansComparisonGrid ] );
 
-	const comparisonGridToggleRef = useRef< HTMLButtonElement | null >( null );
-	const {
-		isVisible: isOdieVisible,
-		setIsVisible: setIsOdieVisible,
-		trackEvent: trackOdieEvent,
-	} = useOdieAssistantContext();
-	/**
-	 * Shows the Odie AI assistant when comparison grid is toggled into view
-	 * This should run once on mount - akin to componentDidMount
-	 */
-	useEffect( () => {
-		if ( ! window.IntersectionObserver ) {
-			return;
-		}
-
-		const observer = new IntersectionObserver( ( entries ) => {
-			entries.forEach( ( entry ) => {
-				if ( entry.isIntersecting ) {
-					if ( ! isOdieVisible ) {
-						trackOdieEvent( 'calypso_odie_chat_toggle_visibility', {
-							visibility: true,
-							trigger: 'scroll',
-						} );
-						setIsOdieVisible( true );
-					}
-
-					observer?.disconnect();
-				}
-			} );
-		} );
-
-		if ( comparisonGridToggleRef.current ) {
-			observer.observe( comparisonGridToggleRef.current );
-		}
-
-		return () => {
-			observer?.disconnect();
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
-
 	useEffect( () => {
 		recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -722,7 +682,7 @@ const PlansFeaturesMain = ( {
 											? translate( 'Hide comparison' )
 											: translate( 'Compare plans' )
 									}
-									ref={ comparisonGridToggleRef }
+									ref={ observableForOddie }
 								/>
 							) }
 							{ ! hidePlansFeatureComparison && showPlansComparisonGrid ? (
