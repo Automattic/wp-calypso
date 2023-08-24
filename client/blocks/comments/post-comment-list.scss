@@ -60,13 +60,13 @@
 	&.is-inline.is-collapsed {
 		.comments__toggle-expand {
 			margin-top: 8px;
-			margin-left: 48px;
+			margin-left: 64px;
 		}
 
 		.comments__comment {
 			display: flex;
 			align-items: center;
-			padding-left: 16px;
+			padding-left: 32px;
 			margin-top: 10px;
 
 			.comments__comment-author {
