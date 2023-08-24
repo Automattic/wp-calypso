@@ -84,8 +84,9 @@ class Document extends Component {
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
 			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
+			// Inject the locale if we can get it from the route via `getLanguageRouteParam`
 			( params && params.hasOwnProperty( 'lang' )
-				? `var localeFromPathname = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
+				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
 
 		const isJetpackWooCommerceFlow =
