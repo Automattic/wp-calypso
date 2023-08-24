@@ -18,31 +18,40 @@ declare const browser: Browser;
 async function waitForIndexToUpdate(
 	restAPIClient: RestAPIClient,
 	siteId: number,
-	expectedQuery: string
+	expectedSearch: string
 ) {
 	const sleep = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
-	const MAX_RETRIES = 5;
-	const RETRY_INTERVAL_MS = 3000;
+	const MAX_RETRIES = 10;
+	const RETRY_INTERVAL_MS = 2000;
 	for ( let i = 0; i < MAX_RETRIES; i++ ) {
-		const response = await restAPIClient.jetpackSearch( siteId, expectedQuery );
-		if ( response.total > 0 ) {
+		// We start with the sleep because, c'mon, it's not going to index immediately!
+		// So puting the polling delay upfront makes the most sense. The test is still very fast!
+		await sleep( RETRY_INTERVAL_MS );
+		const response = await restAPIClient.jetpackSearch( siteId, {
+			query: expectedSearch,
+			// We are incrementing size here to bust the ElasticSearch cache.
+			// Otherwise, if it hasn't indexed the post by the first search request, the ES cache will
+			// continue to return NO results, even after the post has been indexed!!!!
+			// We just need there to be any hit for the post name, so we can just keep bumping the size
+			// to do the cache busting.
+			size: i + 1,
+		} );
+		if ( response.results.length > 0 ) {
 			return;
-		}
-		// Only sleep if it's not the last iteration
-		if ( i < MAX_RETRIES - 1 ) {
-			await sleep( RETRY_INTERVAL_MS );
 		}
 	}
 
 	throw new Error(
-		`Could not find any Jetpack Search results for query ${ expectedQuery } after 15 seconds. The index may not be updating.`
+		`Could not find any Jetpack Search results for query ${ expectedSearch } after 15 seconds. The index may not be updating.`
 	);
 }
 
 describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
-	const searchString = 'bazbatquxbigword';
+	const searchString = DataHelper.getRandomPhrase();
 	let page: Page;
 	let testAccount: TestAccount;
+	let restAPIClient: RestAPIClient;
+	let siteId: number;
 
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features );
@@ -53,16 +62,18 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		const siteId = testAccount.credentials.testSites?.primary.id as number;
+		siteId = testAccount.credentials.testSites?.primary.id as number;
+		restAPIClient = new RestAPIClient( testAccount.credentials );
+	} );
 
-		const restAPIClient = new RestAPIClient( testAccount.credentials );
-
+	it( 'Create a new post using the REST API', async function () {
 		await restAPIClient.createPost( siteId, {
 			title: searchString,
 			content: searchString,
 		} );
+	} );
 
-		// TODO: this check isn't working -- something's messed up in the index query.
+	it( 'Wait for index to update using the REST API', async function () {
 		await waitForIndexToUpdate( restAPIClient, siteId, searchString );
 	} );
 

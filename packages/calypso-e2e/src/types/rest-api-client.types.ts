@@ -187,9 +187,15 @@ export interface PluginRemovalResponse {
 	log: string[];
 }
 
+export interface JetpackSearchParams {
+	query: string;
+	size?: number;
+	// Lots more of course -- add as needed!
+}
+
 export interface JetpackSearchResponse {
-	total: number;
-	// Right now we just need count, there's more we can add later.
+	results: unknown[];
+	// Lots more of course -- add as needed!
 }
 
 /* Error Responses */

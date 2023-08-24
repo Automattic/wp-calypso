@@ -37,6 +37,7 @@ import type {
 	AllWidgetsResponse,
 	CommentLikeResponse,
 	JetpackSearchResponse,
+	JetpackSearchParams,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -1097,23 +1098,29 @@ export class RestAPIClient {
 	 * Useful for checking if something has been indexed yet.
 	 *
 	 * @param {number} siteId ID of the target site.
-	 * @param {string} query The search query.
+	 * @param {JetpackSearchParams} searchParams The search parameters.
 	 */
-	async jetpackSearch( siteId: number, query: string ): Promise< JetpackSearchResponse > {
+	async jetpackSearch(
+		siteId: number,
+		searchParams: JetpackSearchParams
+	): Promise< JetpackSearchResponse > {
 		// Private sites require auth, so always auth!
-		const params: RequestParams = {
+		const requestParams: RequestParams = {
 			method: 'get',
 			headers: {
 				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 			},
 		};
 
-		const requestUrl = this.getRequestURL(
-			'1.3',
-			`/sites/${ siteId }/search?query=${ encodeURIComponent( query ) }`
-		);
+		const requestUrl = this.getRequestURL( '1.3', `/sites/${ siteId }/search` );
 
-		const response = await this.sendRequest( requestUrl, params );
+		const { query, size } = searchParams;
+		requestUrl.searchParams.append( 'query', query );
+		if ( size ) {
+			requestUrl.searchParams.append( 'size', size.toString() );
+		}
+
+		const response = await this.sendRequest( requestUrl, requestParams );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
