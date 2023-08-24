@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	isDefaultLocale,
@@ -72,6 +73,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		// For logged out Calypso pages, set the locale from path if we cannot get the locale from the pathname on the server side
 		const pathLocaleSlug = getLocaleFromPathname();
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
+		recordTracksEvent( 'calypso_locale_set', { path: window.location.pathname } );
 	}
 
 	// If user is logged out and translations are not bootstrapped, we assume default locale
