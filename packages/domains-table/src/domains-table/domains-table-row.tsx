@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -44,7 +45,7 @@ export function DomainsTableRow( {
 		[ allSiteDomains, domain.domain ]
 	);
 
-	const { data: site } = useSiteQuery( domain.blog_id, {
+	const { data: site, isLoading: isLoadingSiteDetails } = useSiteQuery( domain.blog_id, {
 		enabled: inView,
 		...( fetchSite && { queryFn: () => fetchSite( domain.blog_id ) } ),
 	} );
@@ -64,6 +65,15 @@ export function DomainsTableRow( {
 
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
+
+	const placeholderWidth = useMemo( () => {
+		const MIN = 70;
+		const MAX = 100;
+
+		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
+	}, [] );
+
+	const siteColumn = site?.name;
 
 	return (
 		<tr key={ domain.domain } ref={ ref }>
@@ -91,7 +101,13 @@ export function DomainsTableRow( {
 					<span className="domains-table__domain-name">{ domain.domain }</span>
 				) }
 			</td>
-			<td>{ site?.name }</td>
+			<td>
+				{ isLoadingSiteDetails ? (
+					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+				) : (
+					siteColumn
+				) }
+			</td>
 		</tr>
 	);
 }
