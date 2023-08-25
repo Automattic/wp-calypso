@@ -390,3 +390,22 @@ body.is-section-jetpack-cloud-pricing.is-group-jetpack-cloud .mini-cart {
 		}
 	}
 }
+
+// Override Split button styles for Jetpack Cloud
+.split-button {
+	.button {
+		height: 40px;
+
+		&:focus {
+			border-color: var(--studio-jetpack-green-70);
+			border-width: 1px;
+			box-shadow: none;
+		}
+	}
+
+	.gridicon {
+		width: 20px;
+		height: 20px;
+		fill: var(--studio-white);
+	}
+}

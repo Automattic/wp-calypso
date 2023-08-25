@@ -1,4 +1,5 @@
-import { Button, Count } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, Count, WordPressLogo } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
@@ -8,10 +9,13 @@ import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import SplitButton from 'calypso/components/split-button';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -199,6 +203,10 @@ export default function SitesOverview() {
 		const dispatch = useDispatch();
 		const translate = useTranslate();
 
+		const isWPCOMAtomicSiteCreationEnabled = isEnabled(
+			'jetpack/pro-dashboard-wpcom-atomic-hosting'
+		);
+
 		return (
 			<div className="sites-overview__add-site-issue-license-buttons">
 				<Button
@@ -212,17 +220,63 @@ export default function SitesOverview() {
 				>
 					{ translate( 'Issue License', { context: 'button label' } ) }
 				</Button>
-				<Button
-					primary
-					href="https://wordpress.com/jetpack/connect"
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click' )
-						)
-					}
-				>
-					{ translate( 'Add New Site', { context: 'button label' } ) }
-				</Button>
+
+				{ ! isWPCOMAtomicSiteCreationEnabled && (
+					<Button
+						primary
+						href="https://wordpress.com/jetpack/connect"
+						onClick={ () =>
+							dispatch(
+								recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click' )
+							)
+						}
+					>
+						{ translate( 'Add New Site', { context: 'button label' } ) }
+					</Button>
+				) }
+
+				{ isWPCOMAtomicSiteCreationEnabled && (
+					<SplitButton
+						primary
+						whiteSeparator
+						label={ isMobile ? undefined : translate( 'Add new site' ) }
+						onClick={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
+								)
+							)
+						}
+						href="/partner-portal/create-site"
+						toggleIcon={ isMobile ? 'plus' : undefined }
+					>
+						<PopoverMenuItem
+							onClick={ () => {
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
+								);
+							} }
+							href="/partner-portal/create-site"
+						>
+							<WordPressLogo className="gridicon" size={ 18 } />
+							<span>{ translate( 'Create a new WordPress.com site' ) }</span>
+						</PopoverMenuItem>
+
+						<PopoverMenuItem
+							onClick={ () =>
+								dispatch(
+									recordTracksEvent(
+										'calypso_jetpack_agency_dashboard_connect_jetpack_site_button_click'
+									)
+								)
+							}
+							href="https://wordpress.com/jetpack/connect"
+						>
+							<JetpackLogo className="gridicon" size={ 18 } />
+							<span>{ translate( 'Connect a site to jetpack' ) }</span>
+						</PopoverMenuItem>
+					</SplitButton>
+				) }
 			</div>
 		);
 	};
