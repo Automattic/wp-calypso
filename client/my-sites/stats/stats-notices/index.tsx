@@ -104,8 +104,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	// TODO: The dismiss logic could potentially be extracted too.
 	return (
 		<>
-			{ /* Only query site purchases on Calypso via existing data component */ }
-			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
 			{ ALL_STATS_NOTICES.map(
 				( notice ) =>
 					calculatedNoticesVisibility[ notice.noticeId ] && (
@@ -137,10 +135,14 @@ export default function StatsNotices( {
 	}
 
 	return (
-		<NewStatsNotices
-			siteId={ siteId }
-			isOdysseyStats={ isOdysseyStats }
-			statsPurchaseSuccess={ statsPurchaseSuccess }
-		/>
+		<>
+			{ /* Only query site purchases on Calypso via existing data component */ }
+			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
+			<NewStatsNotices
+				siteId={ siteId }
+				isOdysseyStats={ isOdysseyStats }
+				statsPurchaseSuccess={ statsPurchaseSuccess }
+			/>
+		</>
 	);
 }
