@@ -45,19 +45,16 @@ export const wpcomSiteEditorSidebarStylesClick = (): DelegateEventHandler => {
 		id: 'wpcom_site_editor_sidebar_styles_click',
 		/**
 		 * There is no id attribute (`#/wp_global_styles`) for themes that do not have style variations.
-		 * Make this selector generic so as to not depend on the DOM structure.
+		 *
+		 * @see https://github.com/okmttdhr/gutenberg/blob/70ccdefe1fd0b02638f5a8ae4f1c03e6f7fe27cc/packages/edit-site/src/components/sidebar-navigation-screen-global-styles/index.js#L63-L83
 		 */
-		selector: '.edit-site-sidebar-navigation-item',
+		selector:
+			'.edit-site-sidebar-navigation-screen__content [role=listitem]:nth-child(2) .edit-site-sidebar-navigation-item',
 		type: 'click',
-		handler: ( event ) => {
-			const target = event.target as HTMLElement | null;
-			if ( target?.textContent !== 'Styles' ) {
-				return;
-			}
+		handler: () =>
 			tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_main_item_click', {
 				item_type: 'styles',
-			} );
-		},
+			} ),
 	};
 };
 
