@@ -13,7 +13,10 @@ export default function useDeleteDomainForwardingMutation(
 ) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: () => wp.req.post( `/sites/all/domain/${ domainName }/redirects/delete` ),
+		mutationFn: ( domain_redirect_id: number ) =>
+			wp.req.post( `/sites/all/domain/${ domainName }/redirects/delete`, {
+				domain_redirect_id,
+			} ),
 		...queryOptions,
 		onSuccess() {
 			queryClient.removeQueries( domainForwardingQueryKey( domainName ) );
@@ -23,7 +26,9 @@ export default function useDeleteDomainForwardingMutation(
 
 	const { mutate } = mutation;
 
-	const deleteDomainForwarding = useCallback( () => mutate(), [ mutate ] );
-
+	const deleteDomainForwarding = useCallback(
+		( domain_redirect_id: number ) => mutate( domain_redirect_id ),
+		[ mutate ]
+	);
 	return { deleteDomainForwarding, ...mutation };
 }

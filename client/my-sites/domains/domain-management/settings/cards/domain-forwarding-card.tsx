@@ -122,9 +122,11 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const handleDomainOriginChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setSubdomain( withoutHttp( event.target.value ) );
 
-		if ( event.target.value.length > 0 && ! CAPTURE_URL_RGX_SOFT.test( event.target.value ) ) {
+		const CAPTURE_SUBDOMAIN_RGX = /^[a-zA-Z0-9-]{0,}$/i;
+
+		if ( event.target.value.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( event.target.value ) ) {
 			setIsValidUrl( false );
-			setErrorMessage( translate( 'Please enter a valid URL.' ) );
+			setErrorMessage( translate( 'Please enter a valid subdomain name.' ) );
 			return;
 		}
 
@@ -164,12 +166,13 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 
 	const handleDelete = () => {
 		setTargetUrl( '' );
+		setSubdomain( '' );
 		setIsValidUrl( true );
 
 		if ( isLoading || ! forwarding ) {
 			return;
 		}
-		deleteDomainForwarding();
+		deleteDomainForwarding( forwarding?.domain_redirect_id );
 	};
 
 	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
@@ -201,7 +204,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 
 		updateDomainForwarding( {
 			domain_redirect_id: forwarding?.domain_redirect_id || 0,
-			subdomain,
+			subdomain: subdomain.split( '.' + domain.domain )[ 0 ] ?? '',
 			targetHost,
 			targetPath,
 			isSecure,
@@ -287,6 +290,10 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 
 		if ( forwarding.forwardPaths !== forwardPaths ) {
+			return true;
+		}
+
+		if ( forwarding.domain !== subdomain ) {
 			return true;
 		}
 
