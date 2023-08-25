@@ -8,13 +8,12 @@ import {
 import { header, footer, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
-import { CATEGORY_ALL_SLUG, NAVIGATOR_PATHS } from './constants';
+import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
 import PatternCategoryList from './pattern-category-list';
 import Survey from './survey';
 import { Pattern, Category } from './types';
-import { replaceCategoryAllName } from './utils';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
@@ -59,7 +58,7 @@ const ScreenMain = ( {
 
 	const handleNavigatorItemSelect = ( type: string, category: string ) => {
 		const nextPath =
-			category === selectedCategory || ( shouldOpenCategoryList && category === CATEGORY_ALL_SLUG )
+			category === selectedCategory || ( shouldOpenCategoryList && category === INITIAL_CATEGORY )
 				? NAVIGATOR_PATHS.MAIN
 				: `/main/${ category }`;
 
@@ -70,7 +69,7 @@ const ScreenMain = ( {
 	const onSelectSectionCategory = ( category: string ) => {
 		goTo( `/main/${ category }`, navigatorOptions );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
-			pattern_category: replaceCategoryAllName( category ),
+			pattern_category: category,
 		} );
 	};
 
@@ -99,7 +98,7 @@ const ScreenMain = ( {
 							checked={ hasSections }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
-							onClick={ () => handleNavigatorItemSelect( 'section', CATEGORY_ALL_SLUG ) }
+							onClick={ () => handleNavigatorItemSelect( 'section', INITIAL_CATEGORY ) }
 							active={ shouldOpenCategoryList }
 							hasNestedItems
 						>

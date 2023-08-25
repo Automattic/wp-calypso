@@ -2,9 +2,6 @@ export const PATTERN_SOURCE_SITE_ID = 174455321; // dotcompatterns
 export const PUBLIC_API_URL = 'https://public-api.wordpress.com';
 export const SITE_TAGLINE = 'Site Tagline';
 
-// Workaround to put the category All in the first position using featured as slug
-export const CATEGORY_ALL_SLUG = 'featured';
-
 export const NAVIGATOR_PATHS = {
 	MAIN: '/main',
 	MAIN_HEADER: '/main/header',
@@ -17,6 +14,7 @@ export const NAVIGATOR_PATHS = {
 };
 
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
+export const INITIAL_CATEGORY = 'posts';
 
 /* Category list of the patterns fetched via PTK API from Dotcompatterns
  *
@@ -25,7 +23,7 @@ export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
  *  - don't exist in Dotcompatterns source site
  */
 export const PATTERN_CATEGORIES = [
-	'featured', // Reused for "All" category
+	'featured', // -- Not exists
 	'about',
 	//'buttons', -- Not exist
 	//'banner', -- Not exist
@@ -43,12 +41,12 @@ export const PATTERN_CATEGORIES = [
 	//'link-in-bio', -- Hidden
 	//'media', -- Not exist
 	'newsletter',
-	'podcast',
-	'portfolio',
+	// 'podcast', -- Hidden
+	// 'portfolio', -- Hidden
 	'quotes',
 	'services',
 	'store',
 	//'team', -- Not exist
 	'testimonials',
-	'text',
+	// 'text', -- Hidden
 ];
