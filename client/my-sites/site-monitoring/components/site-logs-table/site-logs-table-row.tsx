@@ -42,16 +42,19 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 					</td>
 				) ) }
 				<td>
-					<Button
-						borderless
-						onClick={ () => setIsExpanded( ! isExpanded ) }
-						compact
-						aria-label={ __( 'Expand row' ) }
-						aria-expanded={ isExpanded }
-						aria-controls={ expandedId }
-					>
-						<Icon icon={ isExpanded ? chevronUp : chevronDown } />
-					</Button>
+					<div className="chevron-container">
+						<Button
+							borderless
+							onClick={ () => setIsExpanded( ! isExpanded ) }
+							compact
+							aria-label={ __( 'Expand row' ) }
+							aria-expanded={ isExpanded }
+							aria-controls={ expandedId }
+							className="site-metrics__chevron"
+						>
+							<Icon icon={ isExpanded ? chevronUp : chevronDown } />
+						</Button>
+					</div>
 				</td>
 			</tr>
 

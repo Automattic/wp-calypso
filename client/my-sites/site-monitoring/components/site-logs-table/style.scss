@@ -126,3 +126,23 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 td.request_url {
 	word-break: break-word;
 }
+
+@media (max-width: 600px) {
+	.site-logs-table thead {
+		display: none;
+	}
+
+	.site-logs-table tbody tr {
+		display: block;
+		margin-bottom: 1rem;
+		border-bottom: none;
+	}
+
+	.site-logs-table td {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+		padding: 0.6em 1em;
+		font-size: 0.875rem;
+	}
+}
