@@ -10,6 +10,7 @@ import './style.scss';
 type RelatedPluginProps = {
 	slug: string;
 	size: number;
+	seeAllLink?: string;
 	options: {
 		enabled?: boolean;
 		staleTime?: number;
@@ -17,17 +18,19 @@ type RelatedPluginProps = {
 	};
 };
 
-function RelatedPlugins( { slug, size = 4, options }: RelatedPluginProps ) {
+function RelatedPlugins( { slug, size = 4, seeAllLink, options }: RelatedPluginProps ) {
 	const { data: relatedPlugins } = useGetRelatedPlugins( slug, size, { ...options } );
 
 	return (
 		<div className="related-plugins">
 			<div className="related-plugins__header">
 				<h2>Related plugins</h2>
-				<Button borderless primary>
-					<span>See all</span>
-					<Gridicon icon="chevron-right" />
-				</Button>
+				{ seeAllLink && (
+					<Button borderless primary>
+						<span>See all</span>
+						<Gridicon icon="chevron-right" />
+					</Button>
+				) }
 			</div>
 			<div className="related-plugins__list">
 				{ relatedPlugins &&
