@@ -270,6 +270,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/webmaster-tools/',
 		post_id: 5022,
 	},
+	'site-monitoring': {
+		link: 'https://wordpress.com/support/site-monitoring/',
+		post_id: 259521,
+	},
 };
 
 export default contextLinks;

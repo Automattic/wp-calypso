@@ -36,6 +36,8 @@ import type {
 	PluginRemovalResponse,
 	AllWidgetsResponse,
 	CommentLikeResponse,
+	JetpackSearchResponse,
+	JetpackSearchParams,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -1089,5 +1091,45 @@ export class RestAPIClient {
 		const widgets = await this.getAllWidgets( siteID );
 
 		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
+	}
+
+	/* Search */
+
+	/**
+	 * Execute a primitive Jetpack site search request.
+	 * Useful for checking if something has been indexed yet.
+	 *
+	 * @param {number} siteId ID of the target site.
+	 * @param {JetpackSearchParams} searchParams The search parameters.
+	 */
+	async jetpackSearch(
+		siteId: number,
+		searchParams: JetpackSearchParams
+	): Promise< JetpackSearchResponse > {
+		// Private sites require auth, so always auth!
+		const requestParams: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const requestUrl = this.getRequestURL( '1.3', `/sites/${ siteId }/search` );
+
+		const { query, size } = searchParams;
+		requestUrl.searchParams.append( 'query', query );
+		if ( size ) {
+			requestUrl.searchParams.append( 'size', size.toString() );
+		}
+
+		const response = await this.sendRequest( requestUrl, requestParams );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 }
