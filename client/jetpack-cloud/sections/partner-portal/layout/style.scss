@@ -32,7 +32,7 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		// We need these negative margin values because we want to make the container full-width,
 		// but our element is inside a limited-width parent.
-		margin-inline: -73px;
+		margin-inline-start: -73px;
 		padding-inline: 73px;
 	}
 }
@@ -69,7 +69,7 @@
 
 .main.partner-portal-layout.is-with-border {
 	.partner-portal-layout__body {
-		padding: 16px 0;
+		padding-block: 16px;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
