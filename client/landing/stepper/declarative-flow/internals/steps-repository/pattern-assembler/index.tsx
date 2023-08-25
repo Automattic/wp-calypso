@@ -29,15 +29,18 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_PATH } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import useDotcomPatterns from './hooks/use-dotcom-patterns';
-import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
-import usePatternCategories from './hooks/use-pattern-categories';
-import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
-import { usePrefetchImages } from './hooks/use-prefetch-images';
-import useRecipe from './hooks/use-recipe';
-import useSyncNavigatorScreen from './hooks/use-sync-navigator-screen';
+import {
+	useDotcomPatterns,
+	useGlobalStylesUpgradeModal,
+	useInitialPath,
+	usePatternCategories,
+	usePatternsMapByCategory,
+	usePrefetchImages,
+	useRecipe,
+	useSyncNavigatorScreen,
+} from './hooks';
 import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
@@ -599,11 +602,15 @@ const PatternAssembler = ( {
 	);
 };
 
-const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => (
-	<NavigatorProvider initialPath={ INITIAL_PATH } tabIndex={ -1 }>
-		<PatternAssembler { ...props } />
-	</NavigatorProvider>
-);
+const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => {
+	const initialPath = useInitialPath();
+
+	return (
+		<NavigatorProvider initialPath={ initialPath } tabIndex={ -1 }>
+			<PatternAssembler { ...props } />
+		</NavigatorProvider>
+	);
+};
 
 export default compose(
 	withGlobalStylesProvider,
