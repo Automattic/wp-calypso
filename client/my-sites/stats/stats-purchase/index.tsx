@@ -83,7 +83,7 @@ const StatsPurchasePage = ( {
 		if ( ! isSiteJetpackNotAtomic ) {
 			page.redirect( trafficPageUrl );
 		}
-	}, [ siteSlug, isCommercialOwned, isSiteJetpackNotAtomic ] );
+	}, [ siteSlug, isSiteJetpackNotAtomic ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
@@ -139,9 +139,7 @@ const StatsPurchasePage = ( {
 					<>
 						{ isCommercialOwned && (
 							<div className="stats-purchase-page__notice">
-								<StatsPurchaseNotice
-									message={ translate( 'You have already purchased a licence.' ) }
-								/>
+								<StatsPurchaseNotice siteSlug={ siteSlug } />
 							</div>
 						) }
 						{ ( isFreeOwned || isPWYWOwned ) && (

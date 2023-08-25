@@ -321,11 +321,12 @@
 	}
 }
 
-.stats-purchase-wizard__notice {
-	h2 {
+.stats-purchase-wizard--single {
+	h1 {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 20px;
-		font-weight: 500;
-		margin-bottom: 1.5em;
+		font-size: 36px;
+		font-weight: 700;
+		line-height: 40px;
+		margin-bottom: 24px;
 	}
 }
