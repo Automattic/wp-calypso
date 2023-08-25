@@ -1,4 +1,4 @@
-import { useAddOnCheckoutLink } from '@automattic/add-ons';
+import { useAddOnCheckoutLink, useAddOnPurchaseStatus } from '@automattic/add-ons';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -16,7 +16,6 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
-import useAddOnPurchaseStatus from './hooks/use-add-on-purchase-status';
 import useAddOns from './hooks/use-add-ons';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';

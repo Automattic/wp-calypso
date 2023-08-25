@@ -5,8 +5,10 @@ import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { getSitePurchases } from 'state/purchases/selectors';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 type ActionPrimary = {
@@ -136,7 +138,24 @@ const AddOnCard = ( {
 	highlightFeatured,
 }: Props ) => {
 	const translate = useTranslate();
-	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta );
+	const { isSiteFeature, sitePurchases } = useSelector( ( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSiteFeature =
+			selectedSiteId &&
+			addOnMeta?.featureSlugs?.find( ( slug ) => siteHasFeature( state, selectedSiteId, slug ) );
+
+		return {
+			isSiteFeature,
+			sitePurchases: getSitePurchases( state, selectedSiteId ),
+		};
+	} );
+
+	const availabilityStatus = useAddOnAvailabilityStatus?.(
+		addOnMeta.productSlug,
+		isSiteFeature,
+		sitePurchases
+	);
+
 	const name = useAddonName( addOnMeta );
 	const actionPrimary = useModifiedActionPrimary( actionPrimaryFromProps, addOnMeta );
 

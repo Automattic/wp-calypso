@@ -106,6 +106,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    i18n-calypso: "workspace:^"
     typescript: ^5.1.6
   languageName: unknown
   linkType: soft

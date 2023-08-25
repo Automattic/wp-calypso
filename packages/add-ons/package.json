@@ -32,7 +32,8 @@
 	"dependencies": {
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/format-currency": "workspace:^"
+		"@automattic/format-currency": "workspace:^",
+		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
