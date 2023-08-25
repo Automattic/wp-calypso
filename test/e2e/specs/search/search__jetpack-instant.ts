@@ -73,7 +73,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 			await testAccount.authenticate( page );
 		}
 
-		await page.goto( testAccount.getSiteURL( { protocol: true } ) );
+		await page.goto( testAccount.getSiteURL( { protocol: true } ), { timeout: 20 * 1000 } );
 
 		if ( isPrivateAtomicSite ) {
 			// On private Atomic sites, still have to click the blue Log In button to use your cookie.
