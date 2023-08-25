@@ -121,7 +121,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					connectedAccountMinimumCurrency,
 					currentCurrency,
 					connectedAccountDefaultCurrency
-			)
+				)
 	);
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
 	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
@@ -347,11 +347,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-type">
 					<ToggleControl
-						onChange={ handleMarkAsDonation }
-						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Mark this plan as a donation' ) }
-					/>
-					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
 						checked={ editedPostPaidNewsletter }
 						disabled={ !! product.ID }
@@ -473,14 +468,43 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						</div>
 					</FormFieldset>
 				) }
-				<FormFieldset className="memberships__dialog-sections-type">
-					<ToggleControl
-						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
-						checked={ editedPostPaidNewsletter }
-						disabled={ !! product.ID }
-						label={ translate( 'Paid newsletter tier' ) }
+
+				{ /* Error fields */ }
+				{ ! isFormValid( 'price' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a price higher than %s', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										connectedAccountMinimumCurrency,
+										currentCurrency,
+										connectedAccountDefaultCurrency
+									),
+									currentCurrency
+								),
+							],
+						} ) }
 					/>
-				</FormFieldset>
+				) }
+				{ editedPostPaidNewsletter && ! isFormValid( 'prices' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a annual price higher than the monthly price', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										connectedAccountMinimumCurrency,
+										currentCurrency,
+										connectedAccountDefaultCurrency
+									),
+									currentCurrency
+								),
+							],
+						} ) }
+					/>
+				) }
+
 				<FormFieldset className="memberships__dialog-sections-message">
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
