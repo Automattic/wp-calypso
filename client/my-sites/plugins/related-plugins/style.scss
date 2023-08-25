@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/colors.native";
+
 .related-plugins {
 	margin-top: 48px;
 	margin-bottom: 32px;
@@ -14,7 +16,7 @@
 		font-family: $brand-serif;
 		font-size: $font-title-large;
 		overflow-wrap: anywhere;
-		color: var(--studio-gray-100);
+		color: $gray-100;
 	}
 
 }
@@ -40,20 +42,25 @@
 	}
 
 	.related-plugins-item__details {
-		color: var(--studio-gray-60);
+		color: $gray-60;
 		font-family: var(--font-sf-pro-text);
 		font-size: $font-body-small;
 		line-height: 24px;
 	}
 
 	.related-plugins-item__title {
-		color: var(--color-neutral-100);
+		color: $gray-100;
 		font-weight: 500;
 		font-size: $font-body;
 		line-height: 24px;
 	}
 
 	.related-plugins-item__excerpt {
-		color: var(--studio-gray-60);
+		color: $gray-60;
+	}
+
+	.related-plugins-item__price {
+		color: $gray-70;
+		margin-top: 14px;
 	}
 }

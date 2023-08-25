@@ -68,7 +68,7 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 				<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 					{ ( { isFetching, price, period } ) => {
 						if ( isFetching ) {
-							return <div className="related-plugins-item__price-placeholder">...</div>;
+							return <div className="related-plugins-item__price">...</div>;
 						}
 
 						if ( price ) {
