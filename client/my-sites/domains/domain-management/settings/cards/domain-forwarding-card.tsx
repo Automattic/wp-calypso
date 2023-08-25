@@ -309,50 +309,57 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					disabled={ ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom }
 					className="domain-forwarding-card__fields"
 				>
-					<FormTextInputWithAffixes
-						disabled={ isLoading }
-						name="origin"
-						noWrap
-						onChange={ handleDomainOriginChange }
-						value={ subdomain.split( '.' + domain.domain )[ 0 ] ?? '' }
-						className={ classNames( { 'is-error': ! isValidUrl } ) }
-						id="domain-forwarding__origin-input"
-						maxLength={ 1000 }
-						suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
-					/>
-					<FormTextInputWithAffixes
-						disabled={ isLoading }
-						name="destination"
-						noWrap
-						onChange={ handleChange }
-						value={ targetUrl }
-						className={ classNames( { 'is-error': ! isValidUrl } ) }
-						id="domain-forwarding__destination-input"
-						maxLength={ 1000 }
-						prefix={
-							<FormSelect
-								name="protocol"
-								id="protocol-type"
-								value={ protocol }
-								onChange={ handleChangeProtocol }
-								disabled={ isLoading }
-							>
-								<option value="https">https://</option>
-								<option value="http">http://</option>
-							</FormSelect>
-						}
-						suffix={
-							<Button
-								disabled={ isLoading || targetUrl === '' }
-								className={ classNames( 'domain-forwarding-card__delete', {
-									'is-disabled': isLoading || targetUrl === '',
-								} ) }
-								onClick={ handleDelete }
-							>
-								<Icon icon={ trash } size={ 18 } fill="currentColor" />
-							</Button>
-						}
-					/>
+					<FormLabel>{ translate( 'Subdomain (optional)' ) }</FormLabel>
+					<div className="subdomain">
+						<FormTextInputWithAffixes
+							placeholder={ translate( 'Enter subdomain' ) }
+							disabled={ isLoading }
+							name="origin"
+							noWrap
+							onChange={ handleDomainOriginChange }
+							value={ subdomain.split( '.' + domain.domain )[ 0 ] ?? '' }
+							className={ classNames( { 'is-error': ! isValidUrl } ) }
+							id="domain-forwarding__origin-input"
+							maxLength={ 1000 }
+							suffix={ <FormLabel>.{ domain.domain }</FormLabel> }
+						/>
+					</div>
+					<FormLabel>{ translate( 'Forwards to:' ) }</FormLabel>
+					<div className="forwards-to">
+						<FormTextInputWithAffixes
+							disabled={ isLoading }
+							name="destination"
+							noWrap
+							onChange={ handleChange }
+							value={ targetUrl }
+							className={ classNames( { 'is-error': ! isValidUrl } ) }
+							id="domain-forwarding__destination-input"
+							maxLength={ 1000 }
+							prefix={
+								<FormSelect
+									name="protocol"
+									id="protocol-type"
+									value={ protocol }
+									onChange={ handleChangeProtocol }
+									disabled={ isLoading }
+								>
+									<option value="https">https://</option>
+									<option value="http">http://</option>
+								</FormSelect>
+							}
+							suffix={
+								<Button
+									disabled={ isLoading || targetUrl === '' }
+									className={ classNames( 'domain-forwarding-card__delete', {
+										'is-disabled': isLoading || targetUrl === '',
+									} ) }
+									onClick={ handleDelete }
+								>
+									<Icon icon={ trash } size={ 18 } fill="currentColor" />
+								</Button>
+							}
+						/>
+					</div>
 					<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
 						<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
 						<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
