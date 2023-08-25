@@ -6,6 +6,7 @@ import {
 	BlockFlow,
 	PayWithPaypalBlockFlow,
 	OpenTableFlow,
+	DonationsFormFlow,
 	// PaymentsBlockFlow,
 	// envVariables,
 } from '@automattic/calypso-e2e';
@@ -20,6 +21,17 @@ const blockFlows: BlockFlow[] = [
 	new OpenTableFlow( {
 		restaurant: 'Miku Restaurant - Vancouver',
 	} ),
+	new DonationsFormFlow(
+		{
+			frequency: 'Yearly',
+			currency: 'CAD',
+		},
+		{
+			frequency: 'Yearly',
+			customAmount: 50,
+			predefinedAmount: 5,
+		}
+	),
 ];
 
 // We're just skipping the Payments Button test for now due to this bug:
