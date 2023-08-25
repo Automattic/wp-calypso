@@ -421,6 +421,7 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 	TERM_CENTENNIALLY,
+	FEATURE_STATS_PAID,
 } from './constants';
 import type {
 	BillingTerm,
@@ -2322,6 +2323,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			WPCOM_FEATURES_SCAN,
 			WPCOM_FEATURES_ANTISPAM,
 			WPCOM_FEATURES_BACKUPS,
+			FEATURE_STATS_PAID,
 		] ),
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
