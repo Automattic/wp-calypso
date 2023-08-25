@@ -1,6 +1,7 @@
 import {
 	getPlan,
 	getYearlyPlanByMonthly,
+	is100YearPlan,
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleWorkspace,
@@ -492,18 +493,29 @@ function CheckoutSummaryFlowFeaturesList( {
 
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const bundledDomain = translate(
-		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
-		{
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				domain: domain.meta,
-			},
-			comment: 'domain name and bundling message',
-		}
-	);
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
+
+	const bundledDomain = is100YearPlan( planInCart.product_slug )
+		? translate( '{{strong}}%(domain)s{{/strong}} included with your purchase', {
+				components: {
+					strong: <strong />,
+				},
+				args: {
+					domain: domain.meta,
+				},
+				comment: 'domain name and bundling message for hundred year plan',
+		  } )
+		: translate( '{{strong}}%(domain)s{{/strong}} domain registration free for one year', {
+				components: {
+					strong: <strong />,
+				},
+				args: {
+					domain: domain.meta,
+				},
+				comment: 'domain name and bundling message',
+		  } );
 
 	// If domain is using existing credit or bundled with cart, show bundled text.
 	if ( domain.is_bundled ) {
