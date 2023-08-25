@@ -54,11 +54,7 @@ export class VideoPressBlock {
 			name: `Block: ${ VideoPressBlock.blockName }`,
 		} );
 
-		const target = block
-			.frameLocator( '.components-sandbox' )
-			.getByRole( 'button', { name: text } );
-
-		await target.click();
+		await block.frameLocator( '.components-sandbox' ).getByRole( 'button', { name: text } ).click();
 	}
 
 	/**
