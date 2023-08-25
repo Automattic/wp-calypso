@@ -157,7 +157,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		) {
 			return false;
 		}
-		if ( ( field === 'prices' || ! field ) && currentPrice >= currentAnnualPrice ) {
+		if (
+			( field === 'prices' || ( editedPostPaidNewsletter && ! field ) ) &&
+			currentPrice >= currentAnnualPrice
+		) {
 			return false;
 		}
 		if ( ( field === 'name' || ! field ) && editedProductName.length === 0 ) {
