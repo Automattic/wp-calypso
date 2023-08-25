@@ -103,6 +103,7 @@ class PostCommentList extends Component {
 		amountOfCommentsToTake: this.props.initialSize,
 		commentText: '',
 		isExpanded: false,
+		hasClampedComments: false,
 	};
 
 	shouldFetchInitialComment = () => {
@@ -186,9 +187,28 @@ class PostCommentList extends Component {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
 		this.resetActiveReplyComment();
+		this.checkForClampedComments();
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
+		// After closing inline comments, we need to determine if CSS is line-clamping the newly
+		// rendered comments. Thus we need to evaluate this after update when the isExpanded state
+		// has been set to false or new comments have been posted. We avoid the setState loops by
+		// not running this check when the state it would set is already present.
+		if (
+			this.props.expandableView &&
+			! this.state.isExpanded &&
+			( prevState.isExpanded ||
+				Object.keys( prevProps.commentsTree ).length !==
+					Object.keys( this.props.commentsTree ).length ) &&
+			// Do not check if hasClampedComments is true.
+			! prevState.hasClampedComments &&
+			this.listRef.current
+		) {
+			// Might set state to 'true' for hasClampedComments.
+			this.checkForClampedComments();
+		}
+
 		// If only the state is changing, do nothing. (Avoids setState loops.)
 		if ( prevState !== this.state && prevProps === this.props ) {
 			return;
@@ -203,6 +223,26 @@ class PostCommentList extends Component {
 			this.scrollWhenDOMReady();
 		}
 	}
+
+	checkForClampedComments = () => {
+		// We line-clamp comments in the non-expanded expandable view. We need to know if a comment
+		// is being affected by this so that we may show a button to expand to see the rest of the
+		// comment. This is mostly relevant in the case that there are no other comments to display,
+		// and thus no 'view more comments' button to expand the view.
+		const commentContentEles = this.listRef.current.querySelectorAll(
+			'.comments__comment-content'
+		);
+		let isClampedComment = false;
+		// Check if either the comment or reply that might be shown are line clamped.
+		commentContentEles.forEach( ( comment ) => {
+			if ( comment.scrollHeight > comment.clientHeight ) {
+				isClampedComment = true;
+			}
+		} );
+		// We can only get away with using this in componentDidUpdate if we condition to not fire
+		// this function when hasClampedComments is already true.
+		isClampedComment && this.setState( { hasClampedComments: true } );
+	};
 
 	commentIsOnDOM = ( commentId ) => !! window.document.getElementById( `comment-${ commentId }` );
 
@@ -327,7 +367,7 @@ class PostCommentList extends Component {
 				this.maybeScrollToListTop();
 			}
 
-			this.setState( { isExpanded: ! this.state.isExpanded } );
+			this.setState( { isExpanded: ! this.state.isExpanded, hasClampedComments: false } );
 		}
 	};
 
@@ -357,52 +397,33 @@ class PostCommentList extends Component {
 		// the tree. We need to use commentsTreeAvailable to determine whether to show
 		// expand/collapse toggle for inline comments, but actualCommentsCount to determine whether
 		// to show the link to view all comments (including pingbacks) on the post page.
-		const shouldShowExpandToggle =
+		const shouldShowViewMoreToggle =
 			this.props.expandableView &&
 			( displayedCommentsCount < this.getCommentsCount( commentsTreeAvailable.children ) ||
 				this.state.isExpanded );
 		const shouldShowLinkToFullPost =
 			this.props.expandableView &&
-			( this.state.isExpanded || ! shouldShowExpandToggle ) &&
+			( this.state.isExpanded || ! shouldShowViewMoreToggle ) &&
 			displayedCommentsCount < actualCommentsCount;
 
-		// We line-clamp comments in the non-expanded expandable view. We need to know if we are
-		// doing so that we may show a button to expand to see more, especially in the case that
-		// there are no other comments to display.
-		let isClampedComment = false;
-		if (
-			this.props.expandableView &&
-			! this.state.isExpanded &&
-			! shouldShowExpandToggle &&
-			this.listRef.current
-		) {
-			const commentContentEles = this.listRef.current.querySelectorAll(
-				'.comments__comment-content'
-			);
-			// Check if either the comment or reply that might be shown are line clamped.
-			commentContentEles.forEach( ( comment ) => {
-				if ( comment.scrollHeight > comment.clientHeight ) {
-					isClampedComment = true;
-				}
-			} );
-		}
-		const viewMoreText = isClampedComment
-			? translate( 'View more' )
-			: translate( 'View more comments' );
+		const viewMoreText =
+			! shouldShowViewMoreToggle && this.state.hasClampedComments
+				? translate( 'View more' )
+				: translate( 'View more comments' );
 
 		return (
 			<>
 				<ol className="comments__list is-root">
 					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
 				</ol>
-				{ ( shouldShowExpandToggle || isClampedComment ) && (
+				{ ( shouldShowViewMoreToggle || this.state.hasClampedComments ) && (
 					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
 						{ this.state.isExpanded ? translate( 'View fewer comments' ) : viewMoreText }
 					</button>
 				) }
 				{ shouldShowLinkToFullPost && (
 					<button className="comments__open-post" onClick={ this.onOpenPostPageAtComments }>
-						{ shouldShowExpandToggle && '• ' }
+						{ shouldShowViewMoreToggle && '• ' }
 						{ translate( 'View more comments on the full post' ) }
 					</button>
 				) }
