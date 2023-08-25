@@ -283,30 +283,24 @@ class DomainsStep extends Component {
 			  } )
 			: undefined;
 
-		/**
-		 * If we do not select a paid domain.
-		 * We want to pre load an experiment to show a plan upsell modal in the plans step
-		 */
-		if ( ! isPurchasingItem ) {
-			switch ( flowName ) {
-				case 'onboarding':
-					if ( isPurchasingItem ) {
-						loadExperimentAssignment( 'calypso_onboarding_plans_paid_domain_on_free_plan' );
-					} else {
-						loadExperimentAssignment(
-							'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
-						);
-					}
-					break;
-				case 'onboarding-pm':
-					if ( isPurchasingItem ) {
-						loadExperimentAssignment( 'calypso_onboardingpm_plans_paid_domain_on_free_plan' );
-					} else {
-						loadExperimentAssignment(
-							'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
-						);
-					}
-			}
+		switch ( flowName ) {
+			case 'onboarding':
+				if ( isPurchasingItem ) {
+					loadExperimentAssignment( 'calypso_onboarding_plans_paid_domain_on_free_plan' );
+				} else {
+					loadExperimentAssignment(
+						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
+					);
+				}
+				break;
+			case 'onboarding-pm':
+				if ( isPurchasingItem ) {
+					loadExperimentAssignment( 'calypso_onboardingpm_plans_paid_domain_on_free_plan' );
+				} else {
+					loadExperimentAssignment(
+						'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
+					);
+				}
 		}
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
