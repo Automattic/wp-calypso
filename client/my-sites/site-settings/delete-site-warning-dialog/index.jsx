@@ -17,9 +17,11 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose, isTrialSit
 				</Button>
 			);
 		} else if ( isTrialSite ) {
-			<Button primary href={ purchasesRoot }>
-				{ translate( 'Cancel trial', { context: 'button label' } ) }
-			</Button>;
+			buttons.push(
+				<Button primary href={ purchasesRoot }>
+					{ translate( 'Cancel trial', { context: 'button label' } ) }
+				</Button>
+			);
 		} else {
 			buttons.push(
 				<Button primary href={ purchasesRoot }>
