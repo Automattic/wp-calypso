@@ -382,38 +382,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						showDismiss={ false }
 					/>
 				) }
-				{ ! isFormValid( 'price' ) && (
-					<FormInputValidation
-						isError
-						text={ translate( 'Please enter a price higher than %s', {
-							args: [
-								formatCurrency(
-									minimumCurrencyTransactionAmount(
-										currentCurrency,
-										connectedAccountDefaultCurrency
-									),
-									currentCurrency
-								),
-							],
-						} ) }
-					/>
-				) }
-				{ editedPostPaidNewsletter && ! isFormValid( 'prices' ) && (
-					<FormInputValidation
-						isError
-						text={ translate( 'Please enter a annual price higher than the monthly price', {
-							args: [
-								formatCurrency(
-									minimumCurrencyTransactionAmount(
-										currentCurrency,
-										connectedAccountDefaultCurrency
-									),
-									currentCurrency
-								),
-							],
-						} ) }
-					/>
-				) }
 				{ /* Price settings for a tier plan */ }
 				{ editedPostPaidNewsletter && (
 					<>
@@ -487,6 +455,41 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						</div>
 					</FormFieldset>
 				) }
+
+				{ /* Error fields */ }
+				{ ! isFormValid( 'price' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a price higher than %s', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										currentCurrency,
+										connectedAccountDefaultCurrency
+									),
+									currentCurrency
+								),
+							],
+						} ) }
+					/>
+				) }
+				{ editedPostPaidNewsletter && ! isFormValid( 'prices' ) && (
+					<FormInputValidation
+						isError
+						text={ translate( 'Please enter a annual price higher than the monthly price', {
+							args: [
+								formatCurrency(
+									minimumCurrencyTransactionAmount(
+										currentCurrency,
+										connectedAccountDefaultCurrency
+									),
+									currentCurrency
+								),
+							],
+						} ) }
+					/>
+				) }
+
 				<FormFieldset className="memberships__dialog-sections-message">
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
