@@ -187,6 +187,17 @@ export interface PluginRemovalResponse {
 	log: string[];
 }
 
+export interface JetpackSearchParams {
+	query: string;
+	size?: number;
+	// Lots more of course -- add as needed!
+}
+
+export interface JetpackSearchResponse {
+	results: unknown[];
+	// Lots more of course -- add as needed!
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {
