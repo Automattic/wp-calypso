@@ -116,10 +116,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const [ currentAnnualPrice, setCurrentAnnualPrice ] = useState(
 		annualProduct?.price ??
-			minimumCurrencyTransactionAmount(
-				connectedAccountMinimumCurrency,
-				currentCurrency,
-				connectedAccountDefaultCurrency
+			12 *
+				minimumCurrencyTransactionAmount(
+					connectedAccountMinimumCurrency,
+					currentCurrency,
+					connectedAccountDefaultCurrency
 			)
 	);
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
