@@ -90,24 +90,32 @@ describe( 'Site Assembler', () => {
 		} );
 
 		it( 'Select "Header"', async function () {
-			await siteAssemblerFlow.selectLayoutComponentType( 'Header' );
+			// The pane is now open by default.
+			// @see https://github.com/Automattic/wp-calypso/pull/80924
 			await siteAssemblerFlow.selectLayoutComponent( 'Simple Header' );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 1 );
 		} );
 
 		it( 'Select "Sections"', async function () {
-			await siteAssemblerFlow.selectLayoutComponentType( 'Sections' );
+			await siteAssemblerFlow.clickLayoutComponentType( 'Sections' );
 			await siteAssemblerFlow.selectLayoutComponent( 'Heading with two images and descriptions' );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
 		} );
 
 		it( 'Select "Footer"', async function () {
-			await siteAssemblerFlow.selectLayoutComponentType( 'Footer' );
+			await siteAssemblerFlow.clickLayoutComponentType( 'Footer' );
 			await siteAssemblerFlow.selectLayoutComponent( 'Simple centered footer' );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 3 );
+		} );
+
+		it( 'Pick default style', async function () {
+			// The visible button text is "Pick your style" but the accessible name is
+			// as below. Introduced in https://github.com/Automattic/wp-calypso/pull/80924.
+			await siteAssemblerFlow.clickButton( 'Add your first pattern to get started.' );
+			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
 		} );
 
 		it( 'Click "Save and continue" and land on the Site Editor', async function () {
