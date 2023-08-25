@@ -65,6 +65,7 @@ class PostCommentList extends Component {
 		showConversationFollowButton: PropTypes.bool,
 		commentsFilter: PropTypes.string,
 		followSource: PropTypes.string,
+		fixedHeaderHeight: PropTypes.number,
 
 		// To show only the most recent comment by default, and allow expanding to see the longer
 		// list.
@@ -334,8 +335,10 @@ class PostCommentList extends Component {
 		if ( this.listRef.current ) {
 			const listEle = this.listRef.current;
 			const rect = listEle.getBoundingClientRect();
-			if ( rect.top < 0 ) {
+			const visualCutoff = this.props.fixedHeaderHeight || 0;
+			if ( rect.top < visualCutoff ) {
 				listEle.scrollIntoView( true );
+				window.scrollBy( 0, -1 * visualCutoff );
 			}
 		}
 	};
