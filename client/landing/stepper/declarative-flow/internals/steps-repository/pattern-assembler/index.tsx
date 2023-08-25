@@ -352,6 +352,11 @@ const PatternAssembler = ( {
 	};
 
 	const onBack = () => {
+		// Turn off the resetting custom styles when going back from the upsell screen
+		if ( resetCustomStyles ) {
+			setResetCustomStyles( false );
+		}
+
 		if ( currentScreen.previousScreen ) {
 			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
 				navigator.goTo( currentScreen.previousScreen.initialPath, { replace: true } );
@@ -566,7 +571,6 @@ const PatternAssembler = ( {
 						{ ...globalStylesUpgradeProps }
 						resetCustomStyles={ resetCustomStyles }
 						setResetCustomStyles={ setResetCustomStyles }
-						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
 			</div>

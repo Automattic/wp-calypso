@@ -3,7 +3,7 @@ import { NavigatorHeader } from '@automattic/onboarding';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import useGlobalStylesUpgradeTranslations from 'calypso/components/premium-global-styles-upgrade-modal/use-global-styles-upgrade-translations';
-import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import './screen-upsell.scss';
 
@@ -15,7 +15,6 @@ interface Props {
 	onCheckout: () => void;
 	onTryStyle: () => void;
 	onContinue: () => void;
-	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 const ScreenUpsell = ( {
@@ -26,28 +25,20 @@ const ScreenUpsell = ( {
 	onCheckout,
 	onTryStyle,
 	onContinue,
-	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
+	const { title } = useScreen( 'upsell' );
 	const translations = useGlobalStylesUpgradeTranslations( {
 		globalStylesInPersonalPlan,
 		numOfSelectedGlobalStyles,
 	} );
 
-	const handleBackClick = () => {
-		setResetCustomStyles( false );
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
-			screen_from: 'upsell',
-			screen_to: 'styles',
-		} );
-	};
-
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Custom styles' ) } /> }
+				title={ <NavigatorTitle title={ title } /> }
 				description={ translate( "You've chosen a custom style and action is required." ) }
-				onBack={ handleBackClick }
+				hideBack
 			/>
 			<div className="screen-container__body">
 				<strong className="screen-upsell__heading">
