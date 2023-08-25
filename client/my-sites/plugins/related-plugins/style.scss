@@ -25,12 +25,6 @@
 	column-gap: 24px;
 	row-gap: 32px;
 
-	.related-plugins-item__title {
-		color: var(--color-neutral-100);
-		font-weight: 500;
-		font-size: $font-body;
-		line-height: 24px;
-	}
 
 	.related-plugins-item__icon {
 		float: left;
@@ -43,6 +37,20 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.related-plugins-item__details {
+		color: var(--studio-gray-60);
+		font-family: var(--font-sf-pro-text);
+		font-size: $font-body-small;
+		line-height: 24px;
+	}
+
+	.related-plugins-item__title {
+		color: var(--color-neutral-100);
+		font-weight: 500;
+		font-size: $font-body;
+		line-height: 24px;
 	}
 
 	.related-plugins-item__excerpt {
