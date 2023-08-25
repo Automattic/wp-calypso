@@ -26,6 +26,7 @@ import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
 	TYPE_COMMERCIAL,
+	TYPE_PERSONAL,
 } from './stats-purchase-wizard';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -109,6 +110,10 @@ const StatsPurchasePage = ( {
 		if ( isTypeDetectionEnabled ) {
 			if ( options.isCommercial && ! isCommercialOwned ) {
 				return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
+			}
+			// If the site is detected as personal
+			else if ( options.isCommercial === false && ! isCommercialOwned ) {
+				return [ SCREEN_PURCHASE, TYPE_PERSONAL ];
 			}
 		}
 
