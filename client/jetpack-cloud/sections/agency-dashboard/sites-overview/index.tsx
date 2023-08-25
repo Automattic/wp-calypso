@@ -208,7 +208,11 @@ export default function SitesOverview() {
 		);
 
 		return (
-			<div className="sites-overview__add-site-issue-license-buttons">
+			<div
+				className={ classNames( 'sites-overview__add-site-issue-license-buttons', {
+					'is-with-split-button': isWPCOMAtomicSiteCreationEnabled,
+				} ) }
+			>
 				<Button
 					className="sites-overview__issue-license-button"
 					href="/partner-portal/issue-license"
@@ -223,6 +227,7 @@ export default function SitesOverview() {
 
 				{ ! isWPCOMAtomicSiteCreationEnabled && (
 					<Button
+						className="sites-overview__issue-license-button"
 						primary
 						href="https://wordpress.com/jetpack/connect"
 						onClick={ () =>
