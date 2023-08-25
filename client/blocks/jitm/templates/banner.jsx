@@ -15,6 +15,7 @@ export default function BannerTemplate( props ) {
 				callToAction={ CTA.message }
 				iconPath={ iconPath }
 				onClick={ onClick }
+				compactButton={ false }
 				disableCircle
 			/>
 		</>
