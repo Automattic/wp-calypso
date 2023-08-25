@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { envVariables } from '../..';
 import { EditorComponent } from './editor-component';
 
 const parentSelector = '[aria-label="Block tools"]';
@@ -94,11 +95,17 @@ export class EditorBlockToolbarComponent {
 	 *
 	 */
 	async clickParentBlockButton(): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent
-			.locator( parentSelector )
-			.locator( 'button.block-editor-block-parent-selector__button' );
-		await locator.click();
-		await locator.waitFor( { state: 'detached' } );
+		// On mobile, you select the parent block in a separate options menu item.
+		// That interaction should be driven by the parent method in Editor pages.
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			const editorParent = await this.editor.parent();
+			const locator = editorParent
+				.locator( parentSelector )
+				.locator( 'button.block-editor-block-parent-selector__button' );
+			await locator.click();
+			await locator.waitFor( { state: 'detached' } );
+		} else {
+			throw new Error( 'The separate parent block button is not available on mobile.' );
+		}
 	}
 }
