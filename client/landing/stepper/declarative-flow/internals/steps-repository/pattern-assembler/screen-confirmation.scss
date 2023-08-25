@@ -21,6 +21,7 @@
 	display: flex;
 	padding-top: 2px;
 	flex-direction: column;
+	flex-grow: 1;
 	gap: 4px;
 	font-size: $font-body-small;
 	line-height: 20px;
@@ -29,5 +30,6 @@
 
 .screen-confirmation__list-item-description {
 	color: var(--studio-gray-60);
+	text-wrap: pretty;
 }
 
