@@ -203,7 +203,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 interface DesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design ) => void;
 	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
@@ -280,11 +280,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
-				<PatternAssemblerCta
-					onButtonClick={ ( shouldGoToAssemblerStep ) =>
-						onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN, shouldGoToAssemblerStep )
-					}
-				/>
+				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN ) } />
 			</div>
 		</div>
 	);
@@ -292,7 +288,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design ) => void;
 	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;

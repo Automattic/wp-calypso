@@ -85,6 +85,7 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 				( highlight ) =>
 					highlight.show && (
 						<CountComparisonCard
+							compact={ true }
 							key={ highlight.heading }
 							heading={ highlight.heading }
 							count={ highlight.count }

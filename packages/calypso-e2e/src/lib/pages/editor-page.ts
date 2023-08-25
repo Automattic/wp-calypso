@@ -16,7 +16,9 @@ import {
 	EditorWelcomeTourComponent,
 	EditorBlockToolbarComponent,
 	EditorTemplateModalComponent,
+	EditorPopoverMenuComponent,
 	TemplateCategory,
+	BlockToolbarButtonIdentifier,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
@@ -57,6 +59,7 @@ export class EditorPage {
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorTemplateModalComponent: EditorTemplateModalComponent;
+	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -85,6 +88,7 @@ export class EditorPage {
 			this.editor
 		);
 		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -423,6 +427,27 @@ export class EditorPage {
 	 */
 	async moveBlockDown(): Promise< void > {
 		await this.editorBlockToolbarComponent.moveDown();
+	}
+
+	/**
+	 * Selects the matching option from the popover triggered by clicking
+	 * on a block toolbar button.
+	 *
+	 * @param {string} name Accessible name of the element.
+	 */
+	async selectFromToolbarPopover( name: string ) {
+		await this.editorPopoverMenuComponent.clickMenuButton( name );
+	}
+
+	/**
+	 * Clicks on a button with either the name or aria-label on the
+	 * editor toolbar.
+	 *
+	 * @param {BlockToolbarButtonIdentifier} name Object specifying either the
+	 * 	text label or aria-label of the button to be clicked.
+	 */
+	async clickBlockToolbarButton( name: BlockToolbarButtonIdentifier ): Promise< void > {
+		await this.editorBlockToolbarComponent.clickPrimaryButton( name );
 	}
 
 	//#endregion

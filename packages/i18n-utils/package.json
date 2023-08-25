@@ -39,7 +39,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^5.17.0",
 		"@testing-library/react": "^14.0.0",
-		"@testing-library/react-hooks": "7.0.2",
 		"@types/react": "^18.2.6",
 		"react-dom": "^18.2.0",
 		"react-test-renderer": "^18.2.0",

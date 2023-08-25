@@ -1,10 +1,13 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableSiteCell } from './domains-table-site-cell';
 import type {
 	PartialDomainData,
 	SiteDomainsQueryFnData,
@@ -34,17 +37,24 @@ export function DomainsTableRow( {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
-	const { data: allSiteDomains } = useSiteDomainsQuery( domain.blog_id, {
-		enabled: inView,
-		...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
-	} );
+	const { data: allSiteDomains, isLoading: isLoadingSiteDomainsDetails } = useSiteDomainsQuery(
+		domain.blog_id,
+		{
+			enabled: inView,
+			...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
+		}
+	);
+
+	const currentDomainData = useMemo( () => {
+		return allSiteDomains?.domains.find( ( d ) => d.domain === domain.domain );
+	}, [ allSiteDomains, domain.domain ] );
 
 	const isPrimaryDomain = useMemo(
 		() => allSiteDomains?.domains?.find( ( d ) => d.primary_domain )?.domain === domain.domain,
 		[ allSiteDomains, domain.domain ]
 	);
 
-	const { data: site } = useSiteQuery( domain.blog_id, {
+	const { data: site, isLoading: isLoadingSiteDetails } = useSiteQuery( domain.blog_id, {
 		enabled: inView,
 		...( fetchSite && { queryFn: () => fetchSite( domain.blog_id ) } ),
 	} );
@@ -65,6 +75,13 @@ export function DomainsTableRow( {
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
 
+	const [ placeholderWidth ] = useState( () => {
+		const MIN = 40;
+		const MAX = 100;
+
+		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
+	} );
+
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
@@ -82,14 +99,29 @@ export function DomainsTableRow( {
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 				{ isManageableDomain ? (
 					<a
-						className="domains-table__domain-link"
+						className="domains-table__domain-name"
 						href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
 					>
 						{ domain.domain }
 					</a>
 				) : (
-					domain.domain
+					<span className="domains-table__domain-name">{ domain.domain }</span>
 				) }
+			</td>
+			<td>
+				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+				) : (
+					<DomainsTableSiteCell
+						site={ site }
+						siteSlug={ siteSlug }
+						currentDomainData={ currentDomainData }
+					/>
+				) }
+			</td>
+			<td></td>
+			<td>
+				<DomainsTableRegisteredUntilCell domain={ domain } />
 			</td>
 		</tr>
 	);

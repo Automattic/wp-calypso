@@ -2,7 +2,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createInterpolateElement, render, useCallback, useEffect } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	render,
+	useCallback,
+	useEffect,
+	useState,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCanvas } from './use-canvas';
 import { useGlobalStylesConfig } from './use-global-styles-config';
@@ -63,8 +69,10 @@ function GlobalStylesWarningNotice() {
 function GlobalStylesViewNotice() {
 	const { canvas } = useCanvas();
 
+	const [ isRendered, setIsRendered ] = useState( false );
+
 	useEffect( () => {
-		if ( canvas !== 'view' ) {
+		if ( isRendered || canvas !== 'view' ) {
 			return;
 		}
 
@@ -81,7 +89,9 @@ function GlobalStylesViewNotice() {
 		container.insertBefore( noticeContainer, saveHub );
 
 		render( <GlobalStylesWarningNotice />, noticeContainer );
-	}, [ canvas ] );
+
+		setIsRendered( true );
+	}, [ isRendered, canvas ] );
 
 	return null;
 }

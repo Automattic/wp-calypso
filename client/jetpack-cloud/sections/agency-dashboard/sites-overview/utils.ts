@@ -500,28 +500,32 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 export const availableNotificationDurations = [
 	{
 		time: 1,
-		label: translate( 'After 1 minute' ),
+		label: translate( '1 minute' ),
 		isPaid: true,
 	},
 	{
+		time: 3,
+		label: translate( '3 minutes' ),
+	},
+	{
 		time: 5,
-		label: translate( 'After 5 minutes' ),
+		label: translate( '5 minutes' ),
+	},
+	{
+		time: 10,
+		label: translate( '10 minutes' ),
 	},
 	{
 		time: 15,
-		label: translate( 'After 15 minutes' ),
+		label: translate( '15 minutes' ),
 	},
 	{
 		time: 30,
-		label: translate( 'After 30 minutes' ),
-	},
-	{
-		time: 45,
-		label: translate( 'After 45 minutes' ),
+		label: translate( '30 minutes' ),
 	},
 	{
 		time: 60,
-		label: translate( 'After 1 hour' ),
+		label: translate( '1 hour' ),
 	},
 ];
 
