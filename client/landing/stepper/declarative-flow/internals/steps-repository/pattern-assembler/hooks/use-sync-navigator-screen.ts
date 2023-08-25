@@ -2,9 +2,13 @@ import { useNavigatorListener } from '@automattic/onboarding';
 import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { INITIAL_SCREEN } from '../constants';
+import useScreen from './use-screen';
+import type { ScreenName } from '../types';
 
 const useSyncNavigatorScreen = () => {
-	const [ , setSearchParams ] = useSearchParams();
+	const [ searchParams, setSearchParams ] = useSearchParams();
+	const currentScreenName = ( searchParams.get( 'screen' ) ?? INITIAL_SCREEN ) as ScreenName;
+	const currentScreen = useScreen( currentScreenName );
 	const handleNavigatorPathChange = useCallback(
 		( path = '' ) => {
 			setSearchParams(
@@ -25,6 +29,8 @@ const useSyncNavigatorScreen = () => {
 	);
 
 	useNavigatorListener( handleNavigatorPathChange );
+
+	return currentScreen;
 };
 
 export default useSyncNavigatorScreen;

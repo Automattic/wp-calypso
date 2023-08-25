@@ -10,6 +10,7 @@ import i18n, { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import PatternCategoryList from './pattern-category-list';
 import Survey from './survey';
@@ -40,6 +41,7 @@ const ScreenMain = ( {
 	patternsMapByCategory,
 }: Props ) => {
 	const translate = useTranslate();
+	const { title } = useScreen( 'main' );
 	const isEnglishLocale = useIsEnglishLocale();
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location, params, goTo } = useNavigator();
@@ -81,7 +83,7 @@ const ScreenMain = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Design your own' ) } /> }
+				title={ <NavigatorTitle title={ title } /> }
 				description={ translate(
 					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				) }

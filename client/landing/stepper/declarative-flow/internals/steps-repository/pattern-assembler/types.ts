@@ -32,3 +32,5 @@ export type PanelObject = {
 	selectedPattern: Pattern | null;
 	selectedPatterns?: Pattern[];
 };
+
+export type ScreenName = 'main' | 'styles' | 'confirmation' | 'activation' | 'upsell';

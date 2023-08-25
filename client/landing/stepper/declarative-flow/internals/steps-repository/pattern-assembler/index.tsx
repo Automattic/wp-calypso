@@ -29,7 +29,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, NAVIGATOR_PATHS } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_SCREEN } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import {
 	useDotcomPatterns,
@@ -142,8 +142,9 @@ const PatternAssembler = ( {
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
+	const currentScreen = useSyncNavigatorScreen();
+
 	usePrefetchImages();
-	useSyncNavigatorScreen();
 
 	const siteInfo = {
 		title: site?.name,
@@ -327,12 +328,31 @@ const PatternAssembler = ( {
 		}
 	};
 
+	const getBackLabel = () => {
+		if ( ! currentScreen.previousScreen ) {
+			return undefined;
+		}
+
+		// Commit the following string for the translation
+		// translate( 'Back to %(pageTitle)s' );
+		return translate( 'Back to %(clientTitle)s', {
+			args: {
+				clientTitle: currentScreen.previousScreen.title,
+			},
+		} );
+	};
+
 	const onBack = () => {
-		if ( navigator.location.path === NAVIGATOR_PATHS.ACTIVATION ) {
-			navigator.goBack();
+		if ( currentScreen.previousScreen ) {
+			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
+				navigator.goTo( currentScreen.previousScreen.initialPath, { replace: true } );
+			} else {
+				navigator.goBack();
+			}
+
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
-				screen_from: 'activation',
-				screen_to: 'styles',
+				screen_from: currentScreen.name,
+				screen_to: currentScreen.previousScreen.name,
 			} );
 			return;
 		}
@@ -572,14 +592,10 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={
-				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
-				! navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
-			}
 			backLabelText={
 				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
 					? translate( 'Back to themes' )
-					: undefined
+					: getBackLabel()
 			}
 			goBack={ onBack }
 			goNext={ goNext }
