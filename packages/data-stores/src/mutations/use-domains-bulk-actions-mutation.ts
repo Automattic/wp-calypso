@@ -5,7 +5,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 interface UpdateContactInfoVariables {
 	type: 'update-contact-info';
 	domains: string[];
-	transferLock: false;
+	transferLock: boolean;
 	whois: Record< string, string >;
 }
 
@@ -33,21 +33,31 @@ export function useDomainsBulkActionsMutation() {
 					} );
 
 				case 'update-contact-info':
-					// TODO: implement this in a later PR
-					return Promise.resolve();
+					return await wpcomRequest( {
+						path: `/domains/bulk-actions/${ variables.type }`,
+						apiNamespace: 'wpcom/v2',
+						method: 'POST',
+						body: {
+							domains: variables.domains,
+							transfer_lock: variables.transferLock,
+							whois: variables.whois,
+						},
+					} );
 			}
 		},
 	} );
 
 	const setAutoRenew = useCallback(
-		( domains: string[], autoRenew: boolean ) => {
-			mutate( { type: 'set-auto-renew', domains, autoRenew } );
-		},
+		( domains: string[], autoRenew: boolean ) =>
+			mutate( { type: 'set-auto-renew', domains, autoRenew } ),
 		[ mutate ]
 	);
 
-	// TODO: implement this in a later PR
-	// const updateContactInfo = ...
+	const updateContactInfo = useCallback(
+		( domains: string[], transferLock: boolean, whois: Record< string, string > ) =>
+			mutate( { type: 'update-contact-info', domains, transferLock, whois } ),
+		[ mutate ]
+	);
 
-	return { setAutoRenew, /* updateContactInfo, */ ...rest };
+	return { setAutoRenew, updateContactInfo, ...rest };
 }

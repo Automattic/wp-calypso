@@ -56,6 +56,7 @@ type Value = {
 	sortKey: string;
 	sortDirection: 'asc' | 'desc';
 	handleAutoRenew: ( enable: boolean ) => void;
+	handleUpdateContactInfo: () => void;
 	changeBulkSelection: () => void;
 	getBulkSelectionStatus: () => 'all-domains' | 'some-domains' | 'no-domains';
 	onSortChange: ( selectedColumn: DomainsTableColumn ) => void;
@@ -116,7 +117,7 @@ export const DomainsTable = ( {
 		return fetchedSiteDomains;
 	}, [ allSiteDomains ] );
 
-	const { setAutoRenew } = useDomainsBulkActionsMutation();
+	const { setAutoRenew, updateContactInfo } = useDomainsBulkActionsMutation();
 
 	const { completedJobs, domainResults, handleRestartDomainStatusPolling } =
 		useDomainBulkUpdateStatus();
@@ -266,6 +267,26 @@ export const DomainsTable = ( {
 		handleRestartDomainStatusPolling();
 	};
 
+	const handleUpdateContactInfo = () => {
+		const domainsToBulkUpdate = domains
+			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
+			.map( ( domain ) => domain.domain );
+		updateContactInfo( domainsToBulkUpdate, true, {
+			firstName: '',
+			lastName: '',
+			organization: '',
+			email: '',
+			phone: '',
+			address1: '',
+			address2: '',
+			city: '',
+			state: '',
+			postalCode: '',
+			countryCode: '',
+			fax: '',
+		} );
+	};
+
 	const hideOwnerColumn = shouldHideOwnerColumn(
 		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
 	);
@@ -282,6 +303,7 @@ export const DomainsTable = ( {
 		sortKey,
 		sortDirection,
 		handleAutoRenew,
+		handleUpdateContactInfo,
 		changeBulkSelection,
 		getBulkSelectionStatus,
 		onSortChange,
