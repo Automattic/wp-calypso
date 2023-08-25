@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PlansSelect, SiteSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
@@ -13,6 +14,7 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { PLANS_STORE, SITE_STORE, USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
+import Intro from './internals/steps-repository/intro';
 import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
@@ -28,8 +30,11 @@ const videopress: Flow = {
 		return translate( 'Video' );
 	},
 	useSteps() {
+		const isIntentEnabled = config.isEnabled( 'videopress-onboarding-user-intent' );
+		const introComponent = isIntentEnabled ? VideoPressOnboardingIntent : Intro;
+
 		return [
-			{ slug: 'intro', component: VideoPressOnboardingIntent },
+			{ slug: 'intro', component: introComponent },
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
 			{ slug: 'options', component: SiteOptions },
 			{ slug: 'chooseADomain', component: ChooseADomain },
