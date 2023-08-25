@@ -77,7 +77,6 @@ const PatternAssembler = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ surveyDismissed, setSurveyDismissed ] = useState( false );
-	const [ resetCustomStyles, setResetCustomStyles ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -114,11 +113,13 @@ const PatternAssembler = ( {
 		sections,
 		colorVariation,
 		fontVariation,
+		resetCustomStyles,
 		setHeader,
 		setFooter,
 		setSections,
 		setColorVariation,
 		setFontVariation,
+		setResetCustomStyles,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
@@ -148,8 +149,6 @@ const PatternAssembler = ( {
 	);
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
-
-	const currentScreen = useCurrentScreen();
 
 	useSyncNavigatorScreen();
 	usePrefetchImages();
@@ -337,49 +336,6 @@ const PatternAssembler = ( {
 		}
 	};
 
-	const getBackLabel = () => {
-		if ( ! currentScreen.previousScreen ) {
-			return undefined;
-		}
-
-		// Commit the following string for the translation
-		// translate( 'Back to %(pageTitle)s' );
-		return translate( 'Back to %(clientTitle)s', {
-			args: {
-				clientTitle: currentScreen.previousScreen.title,
-			},
-		} );
-	};
-
-	const onBack = () => {
-		// Turn off the resetting custom styles when going back from the upsell screen
-		if ( resetCustomStyles ) {
-			setResetCustomStyles( false );
-		}
-
-		if ( currentScreen.previousScreen ) {
-			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
-				navigator.goTo( currentScreen.previousScreen.initialPath, { replace: true } );
-			} else {
-				navigator.goBack();
-			}
-
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
-				screen_from: currentScreen.name,
-				screen_to: currentScreen.previousScreen.name,
-			} );
-			return;
-		}
-
-		const patterns = getPatterns();
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
-			has_selected_patterns: patterns.length > 0,
-			pattern_count: patterns.length,
-		} );
-
-		goBack?.();
-	};
-
 	const onSubmit = () => {
 		const design = getDesign();
 		const stylesheet = design.recipe?.stylesheet ?? '';
@@ -453,6 +409,51 @@ const PatternAssembler = ( {
 		onContinue,
 		recordTracksEvent,
 	} );
+
+	const currentScreen = useCurrentScreen( shouldUnlockGlobalStyles );
+
+	const getBackLabel = () => {
+		if ( ! currentScreen.previousScreen ) {
+			return undefined;
+		}
+
+		// Commit the following string for the translation
+		// translate( 'Back to %(pageTitle)s' );
+		return translate( 'Back to %(clientTitle)s', {
+			args: {
+				clientTitle: currentScreen.previousScreen.title,
+			},
+		} );
+	};
+
+	const onBack = () => {
+		// Turn off the resetting custom styles when going back from the upsell screen
+		if ( resetCustomStyles ) {
+			setResetCustomStyles( false );
+		}
+
+		if ( currentScreen.previousScreen ) {
+			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
+				navigator.goTo( currentScreen.previousScreen.initialPath, { replace: true } );
+			} else {
+				navigator.goBack();
+			}
+
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
+				screen_from: currentScreen.name,
+				screen_to: currentScreen.previousScreen.name,
+			} );
+			return;
+		}
+
+		const patterns = getPatterns();
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
+			has_selected_patterns: patterns.length > 0,
+			pattern_count: patterns.length,
+		} );
+
+		goBack?.();
+	};
 
 	const onActivate = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );

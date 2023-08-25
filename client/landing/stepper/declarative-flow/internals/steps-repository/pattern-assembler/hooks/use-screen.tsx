@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
-const useScreen = ( screenName: ScreenName ) => {
+const useScreen = ( screenName: ScreenName, shouldUnlockGlobalStyles = false ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const screens = {
@@ -22,6 +22,7 @@ const useScreen = ( screenName: ScreenName ) => {
 		upsell: {
 			name: 'upsell',
 			title: translate( 'Custom styles' ),
+			initialPath: NAVIGATOR_PATHS.UPSELL,
 		},
 		activation: {
 			name: 'activation',
@@ -35,13 +36,12 @@ const useScreen = ( screenName: ScreenName ) => {
 		},
 	};
 
-	/** @todo Handle the upsell screen in the following PR */
 	const previousScreens = {
 		main: null,
 		styles: screens.main,
 		upsell: screens.styles,
-		activation: screens.styles,
-		confirmation: screens.styles,
+		activation: shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+		confirmation: shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
 	};
 
 	return {

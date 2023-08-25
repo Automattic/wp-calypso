@@ -96,6 +96,8 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 	const fontVariation =
 		( fontVariations || [] ).find( ( { title } ) => title === font_variation_title ) || null;
 
+	const resetCustomStyles = !! searchParams.get( 'reset_custom_styles' );
+
 	const setHeader = ( pattern: Pattern | null ) => {
 		setSearchParams(
 			( currentSearchParams ) => {
@@ -177,17 +179,33 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		);
 	};
 
+	const setResetCustomStyles = ( value: boolean ) => {
+		setSearchParams(
+			( currentSearchParams ) => {
+				if ( value ) {
+					currentSearchParams.set( 'reset_custom_styles', value );
+				} else {
+					currentSearchParams.delete( 'reset_custom_styles' );
+				}
+				return currentSearchParams;
+			},
+			{ replace: true }
+		);
+	};
+
 	return {
 		header,
 		footer,
 		sections: keyedSections,
 		colorVariation,
 		fontVariation,
+		resetCustomStyles,
 		setHeader,
 		setFooter,
 		setSections,
 		setColorVariation,
 		setFontVariation,
+		setResetCustomStyles,
 	};
 };
 

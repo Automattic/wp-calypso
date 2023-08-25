@@ -11,7 +11,7 @@ interface Props {
 	resetCustomStyles: boolean;
 	globalStylesInPersonalPlan?: boolean;
 	numOfSelectedGlobalStyles?: number;
-	setResetCustomStyles: React.Dispatch< React.SetStateAction< boolean > >;
+	setResetCustomStyles: ( value: boolean ) => void;
 	onCheckout: () => void;
 	onTryStyle: () => void;
 	onContinue: () => void;
@@ -54,7 +54,7 @@ const ScreenUpsell = ( {
 					<ToggleControl
 						label={ translate( 'Reset custom styles' ) }
 						checked={ resetCustomStyles }
-						onChange={ () => setResetCustomStyles( ( value ) => ! value ) }
+						onChange={ () => setResetCustomStyles( ! resetCustomStyles ) }
 					/>
 				</div>
 				<strong>{ translations.featuresTitle }</strong>
