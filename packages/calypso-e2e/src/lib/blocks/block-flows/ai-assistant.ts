@@ -96,9 +96,11 @@ export class AIAssistantFlow implements BlockFlow {
 	 * @param {Locator} block Locator to the block.
 	 */
 	private async waitForQuery( block: Locator ) {
+		// Some users on AT are very slow to process queries, hence the very long
+		// timeout.
 		await block
 			.getByRole( 'button', { name: 'Stop request' } )
-			.waitFor( { state: 'detached', timeout: 15 * 1000 } );
+			.waitFor( { state: 'detached', timeout: 30 * 1000 } );
 	}
 
 	/**
