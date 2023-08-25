@@ -6,8 +6,8 @@ import {
 	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
-	ADD_ON_50GB_STORAGE,
-	ADD_ON_100GB_STORAGE,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
@@ -1782,8 +1782,8 @@ export const FEATURES_LIST: FeatureList = {
 		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
-	[ ADD_ON_50GB_STORAGE ]: {
-		getSlug: () => ADD_ON_50GB_STORAGE,
+	[ FEATURE_50GB_STORAGE_ADD_ON ]: {
+		getSlug: () => FEATURE_50GB_STORAGE_ADD_ON,
 		getUnitProductSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 50,
 		getTitle: () => i18n.translate( '50 GB' ),
@@ -1791,8 +1791,8 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
-	[ ADD_ON_100GB_STORAGE ]: {
-		getSlug: () => ADD_ON_100GB_STORAGE,
+	[ FEATURE_100GB_STORAGE_ADD_ON ]: {
+		getSlug: () => FEATURE_100GB_STORAGE_ADD_ON,
 		getUnitProductSlug: () => PRODUCT_1GB_SPACE,
 		getQuantity: () => 100,
 		getTitle: () => i18n.translate( '100 GB' ),

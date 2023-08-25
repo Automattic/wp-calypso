@@ -102,9 +102,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/add-ons@workspace:packages/add-ons"
   dependencies:
-    "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    i18n-calypso: "workspace:^"
     typescript: ^5.1.6
   languageName: unknown
   linkType: soft
