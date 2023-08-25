@@ -16,6 +16,8 @@ export const NAVIGATOR_PATHS = {
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
 export const INITIAL_CATEGORY = 'posts';
 
+export const INITIAL_SCREEN = 'main';
+
 /* Category list of the patterns fetched via PTK API from Dotcompatterns
  *
  * The categories that are commented are not fetched because they
