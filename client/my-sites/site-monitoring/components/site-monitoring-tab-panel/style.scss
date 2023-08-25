@@ -22,7 +22,7 @@ $section-max-width: 1224px;
 		border: 0;
 		&.is-selected .section-nav-tab__link {
 			box-shadow: inset 0 -2px 0 0 var(--wp-admin-theme-color);
-			color: var(--studio-gray-100);
+			color: var(--color-neutral-100);
 			@media ( max-width: 481px ) {
 				background-color: var(--color-primary);
 				color: var(--color-text-inverted);
@@ -52,10 +52,12 @@ $section-max-width: 1224px;
 			line-height: 20px;
 		}
 	}
-	& .section-nav-tab__link:hover {
-		color: var(--studio-gray-100);
+
+	& .notouch .section-nav-tab__link:hover,
+	.section-nav-tab__link:hover {
+		color: var(--color-neutral-60);
 		background-color: var(--color-surface);
-		box-shadow: inset 0 -2px 0 0 var(--wp-admin-theme-color);
+		box-shadow: inset 0 -2px 0 0 var(--color-primary-0);
 		border: 0;
 	}
 }

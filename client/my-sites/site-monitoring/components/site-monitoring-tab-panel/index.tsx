@@ -34,7 +34,11 @@ export const SiteMonitoringTabPanel = ( {
 					return (
 						<NavItem
 							key={ name }
-							path={ `/site-monitoring/${ siteSlug }/${ name }` }
+							path={
+								name === 'metrics'
+									? `/site-monitoring/${ siteSlug }`
+									: `/site-monitoring/${ siteSlug }/${ name }`
+							}
 							selected={ selectedTab === name }
 							children={ title }
 						/>

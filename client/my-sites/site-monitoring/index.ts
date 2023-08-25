@@ -7,7 +7,7 @@ export default function () {
 	page( '/site-monitoring', siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		'/site-monitoring/:siteId/:tab(php|web|metrics)?',
+		'/site-monitoring/:siteId/:tab(php|web|null)?',
 		siteSelection,
 		redirectHomeIfIneligible,
 		navigation,
