@@ -85,7 +85,9 @@ class DnsRecordData extends Component {
 		const domain = this.props.selectedDomainName;
 
 		if ( 'SRV' === type ) {
-			return `${ service }.${ protocol }.${ name }`;
+			return `${ service }.${ protocol }.${
+				name.replace( /\.$/, '' ) === domain ? name : name + '.' + domain + '.'
+			}`;
 		}
 
 		if ( name.replace( /\.$/, '' ) === domain ) {

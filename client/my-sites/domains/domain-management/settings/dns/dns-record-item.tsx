@@ -50,7 +50,11 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 		const { name, service, protocol, type } = dnsRecord;
 
 		if ( 'SRV' === type ) {
-			return `_${ service }._${ protocol }.${ name }`;
+			return `${ service }.${ protocol }.${
+				name.replace( /\.$/, '' ) === selectedDomainName
+					? name
+					: name + '.' + selectedDomainName + '.'
+			}`;
 		}
 
 		if ( name.replace( /\.$/, '' ) === selectedDomainName ) {
