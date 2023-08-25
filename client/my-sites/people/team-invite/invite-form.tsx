@@ -106,6 +106,9 @@ function InviteForm( props: Props ) {
 		tokenValues[ i ] && dispatch( validateTokens( siteId, tokenValues, role ) );
 	}
 
+	/**
+	 * Add debouncedCallback to prevent API requests on evert keystroke
+	 */
 	const [ debouncedTokenValidation ] = useDebouncedCallback( tokenValidation, 3000 );
 
 	function onTokenChange( val: string, i: number ) {
@@ -114,7 +117,6 @@ function InviteForm( props: Props ) {
 
 		_tokenValues[ i ] = value;
 		setTokenValues( _tokenValues );
-
 		debouncedTokenValidation( i, _tokenValues );
 	}
 
