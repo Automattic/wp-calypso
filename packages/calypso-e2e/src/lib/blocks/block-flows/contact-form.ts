@@ -1,17 +1,8 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
-	nameLabel: string;
+	labelPrefix: string;
 }
-
-const blockParentSelector = 'div[aria-label="Block: Form"]';
-const selectors = {
-	// Editor
-	nameLabel: `${ blockParentSelector } label[role="textbox"]:text("Name")`,
-
-	// Published
-	publishedBlock: '.wp-block-jetpack-contact-form',
-};
 
 /**
  * Class representing the flow of using an block in the editor.
@@ -29,7 +20,7 @@ export class ContactFormFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'Contact Form';
-	blockEditorSelector = blockParentSelector;
+	blockEditorSelector = 'div[aria-label="Block: Form"]';
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
@@ -37,9 +28,37 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		const nameLabelSelector = editorCanvas.locator( selectors.nameLabel );
-		await nameLabelSelector.fill( this.configurationData.nameLabel );
+		// Name and Email are common fields shared amongst most Form patterns.
+		// So let's make them unique here!
+		await this.labelFieldBlock( context, 'Name Field' );
+		await this.labelFieldBlock( context, 'Email Field' );
+	}
+
+	/** */
+	private async labelFieldBlock( context: EditorContext, blockName: string ) {
+		const parentFormBlock = context.addedBlockLocator;
+		await parentFormBlock
+			.locator( this.makeBlockSelector( blockName ) )
+			.getByRole( 'textbox', { name: 'Add label…' } )
+			.fill( this.addLabelPrefix( blockName ) );
+	}
+
+	/**
+	 *
+	 * @param label
+	 * @returns
+	 */
+	private addLabelPrefix( label: string ): string {
+		return `${ this.configurationData.labelPrefix } ${ label }`;
+	}
+
+	/**
+	 *
+	 * @param blockName
+	 * @returns
+	 */
+	private makeBlockSelector( blockName: string ): string {
+		return `div[aria-label="Block: ${ blockName }"]`;
 	}
 
 	/**
@@ -48,9 +67,24 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedNameLabelLocator = context.page.locator(
-			`${ selectors.publishedBlock } :text("${ this.configurationData.nameLabel }")`
-		);
-		await expectedNameLabelLocator.waitFor();
+		interface ExpectedField {
+			type: 'textbox' | 'checkbox' | 'radio' | 'combobox' | 'button';
+			accessibleName: string;
+		}
+
+		const expectedFields: ExpectedField[] = [
+			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name Field' ) },
+			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email Field' ) },
+			// This is the default label pulled in by the Contact Form pattern.
+			// It's unique-ish and a good validation of that pattern, so we've left it alone.
+			{ type: 'textbox', accessibleName: 'Message' },
+			// Same with the default text on the submit button.
+			{ type: 'button', accessibleName: 'Contact Us' },
+		];
+
+		for ( const expectedField of expectedFields ) {
+			const { type, accessibleName } = expectedField;
+			await context.page.getByRole( type, { name: accessibleName } ).first().waitFor();
+		}
 	}
 }
