@@ -1,6 +1,5 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { CheckboxControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -8,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import type {
 	PartialDomainData,
 	SiteDomainsQueryFnData,
@@ -35,7 +35,6 @@ export function DomainsTableRow( {
 	fetchSite,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
-	const localeSlug = useLocale();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const { data: allSiteDomains, isLoading: isLoadingSiteDomainsDetails } = useSiteDomainsQuery(
@@ -150,9 +149,7 @@ export function DomainsTableRow( {
 			</td>
 			<td></td>
 			<td>
-				{ domain.has_registration
-					? new Date( domain.expiry ).toLocaleDateString( localeSlug, { dateStyle: 'medium' } )
-					: '-' }
+				<DomainsTableRegisteredUntilCell domain={ domain } />
 			</td>
 		</tr>
 	);
