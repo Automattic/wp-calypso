@@ -96,7 +96,11 @@ export class JetpackInstantSearchModalComponent {
 	 * @throws If no highlted match is found.
 	 */
 	async validateHighlightedMatch( text: string ): Promise< void > {
-		return await this.resultsListLocator.locator( `mark:has-text("${ text }")` ).first().waitFor();
+		return await this.resultsListLocator
+			.locator( 'mark' )
+			.filter( { hasText: text } )
+			.first()
+			.waitFor();
 	}
 
 	/**
