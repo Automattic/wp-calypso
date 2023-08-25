@@ -3,7 +3,7 @@ import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
@@ -75,12 +75,12 @@ export function DomainsTableRow( {
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
 
-	const placeholderWidth = useMemo( () => {
+	const [ placeholderWidth ] = useState( () => {
 		const MIN = 40;
 		const MAX = 100;
 
 		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
-	}, [] );
+	} );
 
 	return (
 		<tr key={ domain.domain } ref={ ref }>
