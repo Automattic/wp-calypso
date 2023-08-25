@@ -269,7 +269,6 @@ function enqueue_override_preview_button_url() {
 
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_override_preview_button_url' );
 
-
 /**
  * Force-show the settings button icon in the post editor to fix a bug introduced in
  * Gutenberg 16.5 where the icon disappears in some mobile viewport sizes.
@@ -278,8 +277,7 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_override_pr
  * Gutenberg issue: https://github.com/WordPress/gutenberg/issues/53899#
  *
  * This is meant to be a temporary workaround until a proper fix is implemented in core.
- *
-*/
+ */
 function enqueue_force_show_settings_button_icon_mobile_style() {
 	$style_file = is_rtl()
 		? 'force-show-settings-button-icon-mobile.rtl.css'
