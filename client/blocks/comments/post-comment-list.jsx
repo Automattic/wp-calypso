@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
@@ -92,6 +92,11 @@ class PostCommentList extends Component {
 		showConversationFollowButton: false,
 		expandableView: false,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.listRef = createRef();
+	}
 
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
@@ -277,6 +282,15 @@ class PostCommentList extends Component {
 		this.resetActiveReplyComment();
 	};
 
+	onOpenPostPageAtComments = () => {
+		if ( ! this.props.openPostPageAtComments ) {
+			return;
+		}
+		this.maybeScrollToListTop();
+		// Use setTimeout at 0ms to ensure this is called after scroll states are updated.
+		return setTimeout( this.props.openPostPageAtComments, 0 );
+	};
+
 	onUpdateCommentText = ( commentText ) => {
 		this.setState( { commentText: commentText } );
 	};
@@ -308,9 +322,21 @@ class PostCommentList extends Component {
 				recordAction( 'click_inline_comments_expand' );
 				recordGaEvent( 'Clicked Inline Comments Expand' );
 				recordTrackForPost( 'calypso_reader_inline_comments_expand_click', this.props.post );
+			} else {
+				this.maybeScrollToListTop();
 			}
 
 			this.setState( { isExpanded: ! this.state.isExpanded } );
+		}
+	};
+
+	maybeScrollToListTop = () => {
+		if ( this.listRef.current ) {
+			const listEle = this.listRef.current;
+			const rect = listEle.getBoundingClientRect();
+			if ( rect.top < 0 ) {
+				listEle.scrollIntoView( true );
+			}
 		}
 	};
 
@@ -349,7 +375,7 @@ class PostCommentList extends Component {
 					</button>
 				) }
 				{ shouldShowLinkToFullPost && (
-					<button className="comments__open-post" onClick={ this.props.openPostPageAtComments }>
+					<button className="comments__open-post" onClick={ this.onOpenPostPageAtComments }>
 						{ shouldShowExpandToggle && '• ' }
 						{ translate( 'View more comments on the full post' ) }
 					</button>
@@ -542,6 +568,7 @@ class PostCommentList extends Component {
 				className={ classnames( 'comments__comment-list', {
 					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
 				} ) }
+				ref={ this.listRef }
 			>
 				{ ( this.props.showCommentCount ||
 					( showViewMoreComments && this.props.startingCommentId ) ) && (
