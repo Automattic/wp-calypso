@@ -18,16 +18,23 @@ import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-s
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
 const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
-export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
+export const StagingSiteCard = ( {
+	currentUserId,
+	disabled,
+	siteId,
+	siteOwnerId,
+	translate,
+	isPossibleJetpackConnectionProblem,
+} ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
@@ -258,7 +265,11 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			<NewStagingSiteCardContent
 				onAddClick={ onAddClick }
 				isButtonDisabled={
-					disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota
+					disabled ||
+					addingStagingSite ||
+					isLoadingQuotaValidation ||
+					! hasValidQuota ||
+					isPossibleJetpackConnectionProblem
 				}
 				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }
 			/>
@@ -277,6 +288,7 @@ export default connect( ( state ) => {
 
 	return {
 		currentUserId,
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		siteId,
 		siteOwnerId,
 	};

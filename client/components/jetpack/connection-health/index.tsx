@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
+	DATABASE_ERROR,
 	FATAL_ERROR,
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
@@ -56,6 +57,20 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-domain-name'
+				) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
+			/>
+		);
+	}
+
+	if ( errorType === DATABASE_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ errorType }
+				errorText={ translate( 'Jetpack can’t establish a connection with your site’s database.' ) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }

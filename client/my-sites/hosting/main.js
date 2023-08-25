@@ -11,11 +11,13 @@ import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -34,6 +36,7 @@ import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -43,6 +46,7 @@ import {
 	isSiteOnECommerceTrial,
 	isSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
@@ -219,6 +223,8 @@ class Hosting extends Component {
 			isLoadingSftpData,
 			hasAtomicFeature,
 			hasStagingSitesFeature,
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -306,6 +312,7 @@ class Hosting extends Component {
 
 			return (
 				<>
+					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 					{ isGithubIntegrationEnabled && (
 						<>
 							<QueryKeyringServices />
@@ -314,6 +321,9 @@ class Hosting extends Component {
 					) }
 					<Layout className="hosting__layout">
 						<Column type="main" className="hosting__main-layout-col">
+							{ isJetpack && isPossibleJetpackConnectionProblem && (
+								<JetpackConnectionHealthBanner siteId={ siteId } />
+							) }
 							<MainCards
 								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ isAdvancedHostingDisabled }
@@ -388,6 +398,8 @@ export default connect(
 
 		return {
 			teams: getReaderTeams( state ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),

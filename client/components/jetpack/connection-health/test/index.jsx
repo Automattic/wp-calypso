@@ -7,6 +7,7 @@ import { jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackConnectionHealthBanner } from '..';
 import {
+	DATABASE_ERROR,
 	FATAL_ERROR,
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
@@ -54,6 +55,23 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect( screen.queryByText( /Jetpack can’t communicate with your site./i ) ).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+		} );
+
+		test( 'shows a database connection error message', () => {
+			mockError.mockReturnValue( DATABASE_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.queryByText( /Jetpack can’t establish a connection with your site’s database./i )
+			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
