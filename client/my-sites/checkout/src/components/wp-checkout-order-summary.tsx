@@ -496,7 +496,19 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
-	let bundledDomain;
+
+	let bundledDomain = translate(
+		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
+		{
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domain: domain.meta,
+			},
+			comment: 'domain name and bundling message',
+		}
+	);
 
 	if ( planInCart && is100YearPlan( planInCart.product_slug ) ) {
 		bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} included with your plan', {
@@ -509,19 +521,6 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 			comment: 'domain name and bundling message for hundred year plan',
 		} );
 	}
-
-	bundledDomain = translate(
-		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
-		{
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				domain: domain.meta,
-			},
-			comment: 'domain name and bundling message',
-		}
-	);
 
 	// If domain is using existing credit or bundled with cart, show bundled text.
 	if ( domain.is_bundled ) {
