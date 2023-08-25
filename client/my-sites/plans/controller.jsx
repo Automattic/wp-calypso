@@ -17,7 +17,7 @@ function showJetpackPlans( context ) {
 function is100YearPlanUser( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	return selectedSite.plan.product_slug === PLAN_100_YEARS;
+	return selectedSite?.plan?.product_slug === PLAN_100_YEARS;
 }
 
 export function plans( context, next ) {

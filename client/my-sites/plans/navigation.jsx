@@ -41,7 +41,7 @@ class PlansNavigation extends Component {
 
 	isSiteOn100YearPlan() {
 		const { site } = this.props;
-		return site && site.plan && site.plan.product_slug === PLAN_100_YEARS;
+		return site?.plan?.product_slug === PLAN_100_YEARS;
 	}
 
 	render() {
