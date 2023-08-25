@@ -411,13 +411,13 @@ class AllDomains extends Component {
 
 		return (
 			<>
-				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
-
 				<AsyncLoad
 					require="calypso/blocks/jitm"
 					template="banner"
 					messagePath="calypso:domains:admin_notices"
 				/>
+
+				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 
 				<DomainsTable
 					currentRoute={ currentRoute }

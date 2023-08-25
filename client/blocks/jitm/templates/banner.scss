@@ -1,22 +1,38 @@
-.banner-jitm {
-	&.card.banner {
-		border-left: none;
-		padding: 21px 40px 21px 43px;
-	}
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-	display: flex;
-	align-items: center;
-	gap: 20px;
-
+.banner-jitm.card.banner {
 	border-radius: 2px;
 	border: 1px solid var(--gray-gray-5);
-
+	display: flex;
+	flex-direction: column;
+	padding: 29px 20px 20px 20px;
 	background:
-		radial-gradient(circle at top, rgba(235, 206, 224, 1), transparent 70%),
-		linear-gradient(20deg, rgba(8, 117, 196, 0.8), transparent 60%),
-		linear-gradient(240deg, rgba(0, 126, 101, 1), transparent 70%);
+		radial-gradient(ellipse at top left, rgba(235, 206, 224, 0.9), transparent 60%),
+		linear-gradient(10deg, rgba(8, 117, 196, 0.6), transparent 60%),
+		linear-gradient(240deg, rgba(0, 126, 101, 0.5), transparent 60%);
+
 	background-repeat: no-repeat;
-	background-size: 66px 100%;
+	background-size: 100% 52px;
+
+	margin-top: 9px;
+	margin-left: 17px;
+	margin-right: 17px;
+
+	@include break-medium {
+		flex-direction: row;
+		gap: 20px;
+		align-items: center;
+		padding: 21px 40px 21px 43px;
+		background-size: 66px 100%;
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.banner__icons,
+	.banner__content {
+		justify-content: flex-start;
+	}
 
 	.banner__icons {
 		.banner__icon,
@@ -28,36 +44,51 @@
 		}
 	}
 
-	.banner__info {
-		.banner__title {
-			color: var(--gray-gray-100);
-			font-size: $font-body;
-			line-height: 24px; /* 150% */
-			letter-spacing: -0.32px;
+	.banner__content {
+		margin-top: 11px;
+		@include break-medium {
+			margin-top: 0;
 		}
-		.banner_description {
-			color: var(--gray-gray-70);
-			font-size: $font-body-small;
-			line-height: 20px; /* 142.857% */
-			letter-spacing: -0.15px;
+
+		.banner__info {
+			.banner__title {
+				color: var(--studio-gray-100);
+				font-size: $font-body;
+				line-height: 24px; /* 150% */
+			}
+			.banner__description {
+				color: var(--studio-gray-70);
+				font-size: $font-body-small;
+				line-height: 20px; /* 142.857% */
+
+				margin-top: 12px;
+				@include break-medium {
+					margin-top: 0;
+				}
+			}
 		}
-	}
 
-	.banner__action {
-		button,
-		button:hover,
-		button:focus {
-			display: flex;
-			height: 40px;
-			padding: 10px 24px;
-			justify-content: center;
-			align-items: center;
-			gap: 8px;
+		.banner__action {
+			margin-top: 20px;
+			@include break-medium {
+				margin-top: 0;
+			}
 
-			border-radius: 4px;
-			background: var(--black-white-black, #000);
-			box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-			border-color: var(--black-white-black, #000);
+			button,
+			button:hover,
+			button:focus {
+				display: flex;
+				height: 40px;
+				padding: 10px 24px;
+				justify-content: center;
+				align-items: center;
+				gap: 8px;
+
+				border-radius: 4px;
+				background: var(--black-white-black, #000);
+				box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+				border-color: var(--black-white-black, #000);
+			}
 		}
 	}
 }
