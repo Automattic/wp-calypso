@@ -344,7 +344,7 @@ class PostCommentList extends Component {
 				{ shouldShowExpandToggle && (
 					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
 						{ this.state.isExpanded
-							? translate( 'View less comments' )
+							? translate( 'View fewer comments' )
 							: translate( 'View more comments' ) }
 					</button>
 				) }
