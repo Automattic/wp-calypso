@@ -70,7 +70,7 @@ const ScreenUpsell = ( {
 				</div>
 				<strong>{ translations.featuresTitle }</strong>
 				<ul className="screen-upsell__features">
-					{ translations.features.map( ( feature, i ) => (
+					{ translations.features.map( ( feature: JSX.Element, i: number ) => (
 						<li key={ i }>
 							<Gridicon icon="checkmark" size={ 16 } />
 							{ feature }
