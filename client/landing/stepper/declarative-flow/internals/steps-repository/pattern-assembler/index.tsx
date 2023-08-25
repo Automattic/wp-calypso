@@ -32,6 +32,7 @@ import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record
 import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_SCREEN } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import {
+	useCurrentScreen,
 	useDotcomPatterns,
 	useGlobalStylesUpgradeModal,
 	useInitialPath,
@@ -142,8 +143,9 @@ const PatternAssembler = ( {
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
-	const currentScreen = useSyncNavigatorScreen();
+	const currentScreen = useCurrentScreen();
 
+	useSyncNavigatorScreen();
 	usePrefetchImages();
 
 	const siteInfo = {
