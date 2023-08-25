@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -353,7 +354,9 @@ function PluginDetails( props ) {
 										status="is-warning"
 										showDismiss={ false }
 									>
-										<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+										<NoticeAction
+											href={ localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' ) }
+										>
 											{ translate( 'More info' ) }
 										</NoticeAction>
 									</Notice>
