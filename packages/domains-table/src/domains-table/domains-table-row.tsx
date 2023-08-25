@@ -46,7 +46,7 @@ export function DomainsTableRow( {
 		}
 	);
 
-	const currentSiteDomains = useMemo( () => {
+	const currentDomainData = useMemo( () => {
 		return allSiteDomains?.domains.find( ( d ) => d.domain === domain.domain );
 	}, [ allSiteDomains, domain.domain ] );
 
@@ -84,11 +84,11 @@ export function DomainsTableRow( {
 	}, [] );
 
 	const getSiteColumn = () => {
-		if ( ! site || ! currentSiteDomains ) {
+		if ( ! site || ! currentDomainData ) {
 			return null;
 		}
 
-		if ( currentSiteDomains.current_user_can_create_site_from_domain_only ) {
+		if ( currentDomainData.current_user_can_create_site_from_domain_only ) {
 			return createInterpolateElement(
 				/* translators: ariaHidden means that the component will be skipped by screen readers. */
 				__(

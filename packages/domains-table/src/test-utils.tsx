@@ -19,6 +19,13 @@ export function renderWithProvider(
 	return rtlRender( ui, { ...renderOptions, wrapper: Wrapper } );
 }
 
+export function testSite( { blog_id = 0, name }: { blog_id: number; name?: string } ) {
+	return {
+		ID: blog_id,
+		name,
+	};
+}
+
 export function testDomain(
 	defaults: Partial< DomainData > = {}
 ): [ PartialDomainData, DomainData ] {
