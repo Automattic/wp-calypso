@@ -112,9 +112,7 @@ describe( 'Site Assembler', () => {
 		} );
 
 		it( 'Pick default style', async function () {
-			// The visible button text is "Pick your style" but the accessible name is
-			// as below. Introduced in https://github.com/Automattic/wp-calypso/pull/80924.
-			await siteAssemblerFlow.clickButton( 'Add your first pattern to get started.' );
+			await siteAssemblerFlow.clickButton( 'Pick your style' );
 			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
 		} );
 
