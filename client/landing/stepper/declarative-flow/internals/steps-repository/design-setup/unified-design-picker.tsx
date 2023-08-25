@@ -373,7 +373,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
-	const shouldUpgrade =
+	const isLockedTheme =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
@@ -680,7 +680,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function getPrimaryActionButton() {
-		if ( shouldUpgrade ) {
+		if ( isLockedTheme ) {
 			return (
 				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
 					{ translate( 'Unlock theme' ) }
