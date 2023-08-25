@@ -2,7 +2,6 @@ import { Button, Gridicon, PremiumBadge } from '@automattic/components';
 import { NavigatorHeader } from '@automattic/onboarding';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import useGlobalStylesUpgradeTranslations from 'calypso/components/premium-global-styles-upgrade-modal/use-global-styles-upgrade-translations';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
@@ -45,7 +44,6 @@ const ScreenUpsell = ( {
 
 	return (
 		<>
-			<QueryProductsList />
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Custom styles' ) } /> }
 				description={ translate( "You've chosen a custom style and action is required." ) }
