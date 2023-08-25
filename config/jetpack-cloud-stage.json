@@ -50,6 +50,7 @@
 		"jetpack/pro-dashboard-monitor-paid-tier": true,
 		"jetpack/pro-dashboard-monitor-sms-notification": true,
 		"jetpack/search-product": true,
+		"jetpack/pro-dashboard-wpcom-atomic-hosting": false,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
