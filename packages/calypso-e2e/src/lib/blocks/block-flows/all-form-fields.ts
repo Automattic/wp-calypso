@@ -142,8 +142,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 
 	/** */
 	private async labelFieldBlock( context: EditorContext, blockName: string ) {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		await editorCanvas
+		const parentFormBlock = context.addedBlockLocator;
+		await parentFormBlock
 			.locator( this.makeBlockSelector( blockName ) )
 			.getByRole( 'textbox', { name: 'Add label…' } )
 			.fill( this.addLabelPrefix( blockName ) );
@@ -154,8 +154,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param context
 	 */
 	private async configureSingleChoiceOption( context: EditorContext ) {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		await editorCanvas
+		const parentFormBlock = context.addedBlockLocator;
+		await parentFormBlock
 			.locator( this.makeBlockSelector( 'Single Choice (Radio)' ) )
 			.getByRole( 'textbox', { name: 'Add option…' } )
 			.fill( this.addLabelPrefix( 'Single Option' ) );
@@ -166,8 +166,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param context
 	 */
 	private async configureMultipleChoiceOption( context: EditorContext ) {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		await editorCanvas
+		const parentFormBlock = context.addedBlockLocator;
+		await parentFormBlock
 			.locator( this.makeBlockSelector( 'Multiple Choice (Checkbox)' ) )
 			.getByRole( 'textbox', { name: 'Add option…' } )
 			.fill( this.addLabelPrefix( 'Multiple Option' ) );
@@ -178,8 +178,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param context
 	 */
 	private async configureTermsConsent( context: EditorContext ) {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		await editorCanvas
+		const parentFormBlock = context.addedBlockLocator;
+		await parentFormBlock
 			.locator( this.makeBlockSelector( 'Terms Consent' ) )
 			.getByRole( 'textbox', { name: 'Add implicit consent message…' } )
 			.fill( this.addLabelPrefix( 'Terms Consent Message' ) );
@@ -190,8 +190,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param context
 	 */
 	private async configureSubmitButton( context: EditorContext ) {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		await editorCanvas
+		const parentFormBlock = context.addedBlockLocator;
+		await parentFormBlock
 			.locator( this.makeBlockSelector( 'Button' ) )
 			.getByRole( 'textbox', { name: 'Add text…' } )
 			.fill( `${ this.configurationData.labelPrefix } Submit` );
