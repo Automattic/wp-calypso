@@ -70,7 +70,7 @@ describe( 'Site Assembler', () => {
 		} );
 
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {
-			await startSiteFlow.clickButton( 'Start designing' );
+			await startSiteFlow.clickButton( 'Get started' );
 			await page.waitForURL(
 				DataHelper.getCalypsoURL(
 					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
