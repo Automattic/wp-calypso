@@ -20,11 +20,6 @@ class SecurityKeyForm extends Component {
 		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		showOrDivider: PropTypes.bool,
-		isWoo: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		isWoo: false,
 	};
 
 	state = {
@@ -43,7 +38,7 @@ class SecurityKeyForm extends Component {
 	};
 
 	render() {
-		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
+		const { translate, switchTwoFactorAuthType } = this.props;
 
 		return (
 			<form
@@ -63,13 +58,9 @@ class SecurityKeyForm extends Component {
 								} ) }
 							</p>
 							<p>
-								{ isWoo
-									? translate(
-											'Insert your security key into your USB port, then tap the button or gold disc.'
-									  )
-									: translate(
-											'Insert your security key into your USB port. Then tap the button or gold disc.'
-									  ) }
+								{ translate(
+									'Insert your hardware security key, or follow the instructions in your browser or phone to use your finger print or facial recognition.'
+								) }
 							</p>
 						</div>
 					) }
@@ -79,7 +70,11 @@ class SecurityKeyForm extends Component {
 							<p className="security-key-form__add-wait-for-key-heading">
 								{ translate( 'Waiting for security key' ) }
 							</p>
-							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
+							<p>
+								{ translate(
+									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
+								) }
+							</p>
 						</div>
 					) }
 					<FormButton
