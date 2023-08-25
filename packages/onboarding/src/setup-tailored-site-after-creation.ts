@@ -9,6 +9,7 @@ import {
 	LINK_IN_BIO_FLOW,
 	FREE_FLOW,
 	isFreeFlow,
+	isPodcastFlow,
 } from './utils';
 import type { ActiveTheme } from '@automattic/data-stores';
 
@@ -59,6 +60,11 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			launchpad_screen?: string;
 			site_goals?: Array< string >;
 			site_intent?: string;
+			podcast_category1?: string;
+			podcast_category2?: string;
+			podcast_category3?: string;
+			podcast_host?: string;
+			podcast_summary?: string;
 		} = {
 			blogname: siteTitle,
 			blogdescription: siteDescription,
@@ -91,6 +97,15 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			}
 
 			settings.launchpad_screen = 'full';
+		}
+
+		// Podcast flow sets podcasting settings
+		if ( isPodcastFlow( flowName ) ) {
+			settings.podcast_category1 = '';
+			settings.podcast_category2 = '';
+			settings.podcast_category3 = '';
+			settings.podcast_host = '';
+			settings.podcast_summary = '';
 		}
 
 		// Newsletter flow sets "paid-newsletter" goal as an indication to setup paid newsletter later on

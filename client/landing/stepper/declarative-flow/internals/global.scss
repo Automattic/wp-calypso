@@ -291,11 +291,18 @@ button {
 			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
-				border-radius: 0;
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
 
-				&.is-circle {
+				// Square by default
+				&,
+				img {
+					border-radius: 0;
+				}
+
+				// Can be made into circle
+				&.is-circle,
+				&.is-circle img {
 					border-radius: 50%;
 				}
 

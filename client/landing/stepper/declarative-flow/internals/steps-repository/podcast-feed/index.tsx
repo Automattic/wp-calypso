@@ -9,7 +9,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSite } from '../../../../hooks/use-site';
 import PodcastTopicSelector from './podcast-topic-selector';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -18,45 +17,32 @@ import './style.scss';
 const PodcastFeed: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const site = useSite();
 
-	// const { setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
+	// const { setUserRealName, setPodcastCategories } = useDispatch( ONBOARD_STORE );
 
-	// const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
-	// const [ siteTitle, setComponentSiteTitle ] = useState( '' );
-	// const [ tagline, setTagline ] = useState( '' );
 	const [ name, setName ] = useState( '' );
+	/*
+	const [ podcastCategory1, setPodcastCategory1 ] = useState( '' );
+	const [ podcastCategory2, setPodcastCategory2 ] = useState( '' );
+	const [ podcastCategory3, setPodcastCategory3 ] = useState( '' );
+	*/
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] ).getState();
 
 	useEffect( () => {
-		// const { siteTitle, siteDescription } = state;
-		// setTagline( siteDescription );
-		// setComponentSiteTitle( siteTitle );
+		//const { name, podcastCategory1, podcastCategory2, podcastCategory3 } = state;
+		// setName( name );
+		// setPodcastCategory1( podcastCategory1 );
+		// setPodcastCategory2( podcastCategory1 );
+		// setPodcastCategory3( podcastCategory1 );
 	}, [ state ] );
-
-	useEffect( () => {
-		if ( ! site ) {
-			return;
-		}
-
-		// setComponentSiteTitle( site.name || '' );
-		// setTagline( site.description );
-	}, [ site ] );
-
-	const isLoading = false;
 
 	const handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
-		/*
-		setInvalidSiteTitle( ! siteTitle.trim().length );
 
-		setSiteDescription( tagline );
-		setSiteTitle( siteTitle );
+		// setUserRealName( name );
+		//setPodcastCategories( [ podcastCategory1, podcastCategory2, podcastCategory3 ] );
 
-		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
-		}
-		*/
+		//submit?.( { name, podcastCategory1, podcastCategory2, podcastCategory3 } );
 		submit?.();
 	};
 
@@ -75,7 +61,7 @@ const PodcastFeed: Step = ( { navigation } ) => {
 				/>
 			}
 			stepContent={
-				<form onSubmit={ handleSubmit }>
+				<form onSubmit={ handleSubmit } className="setup-form__form">
 					<FormFieldset>
 						<FormLabel htmlFor="setup-form-input-name">{ __( 'Your name' ) }</FormLabel>
 						<TextControl
@@ -88,10 +74,10 @@ const PodcastFeed: Step = ( { navigation } ) => {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="podcasting_category_1">{ __( 'Podcast Topics' ) }</FormLabel>
+						<FormLabel htmlFor="podcasting_category_1">{ __( 'Podcast topics' ) }</FormLabel>
 						<FormSettingExplanation>
 							{ __(
-								'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services.'
+								'Choose up to three categories how your podcast should be categorized within Apple Podcasts and other podcasting services.'
 							) }
 						</FormSettingExplanation>
 						<PodcastTopicSelector
@@ -120,13 +106,8 @@ const PodcastFeed: Step = ( { navigation } ) => {
 							} }
 							category="podcasting_category_3"
 						/>
-						<Button
-							className="setup-form__submit"
-							disabled={ isLoading }
-							variant="primary"
-							type="submit"
-						>
-							{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
+						<Button className="setup-form__submit" variant="primary" type="submit">
+							{ __( 'Continue' ) }
 						</Button>
 					</FormFieldset>
 				</form>
