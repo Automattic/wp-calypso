@@ -194,7 +194,7 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const trackEventContinue = () => {
+	const trackSubmit = () => {
 		const patterns = getPatterns();
 		const categories = Array.from( new Set( patterns.map( ( { category } ) => category?.name ) ) );
 
@@ -416,8 +416,8 @@ const PatternAssembler = ( {
 		);
 
 		recordSelectedDesign( { flow, intent, design } );
+		trackSubmit();
 		submit?.();
-		trackEventContinue();
 	};
 
 	const onUpgradeLater = () => {
