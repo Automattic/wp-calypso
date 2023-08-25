@@ -10,6 +10,7 @@ import PreinstalledPremiumPluginPriceDisplay from 'calypso/my-sites/plugins/plug
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
+import { getFirstCategoryFromTags } from '../categories/use-categories';
 
 type RelatedPluginProps = {
 	slug: string;
@@ -62,29 +63,36 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 	return (
 		<a className="related-plugins-item" href={ pluginLink }>
 			<PluginIcon image={ plugin.icon } className="related-plugins-item__icon" />
-			<div className="related-plugins-item__details">
+			<div className="related-plugins-item__info">
 				<h3 className="related-plugins-item__title">{ plugin.title }</h3>
 				<div className="related-plugins-item__excerpt">{ plugin.excerpt }</div>
-				<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-					{ ( { isFetching, price, period } ) => {
-						if ( isFetching ) {
-							return <div className="related-plugins-item__price">...</div>;
-						}
+				<div className="related-plugins-item__details">
+					<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
+						{ ( { isFetching, price, period } ) => {
+							if ( isFetching ) {
+								return '...';
+							}
 
-						if ( price ) {
-							return (
-								<PreinstalledPremiumPluginPriceDisplay
-									className="related-plugins-item__price"
-									period={ period }
-									pluginSlug={ plugin.slug }
-									price={ price }
-								/>
-							);
-						}
+							if ( price ) {
+								return (
+									<PreinstalledPremiumPluginPriceDisplay
+										className="related-plugins-item__price-interval"
+										period={ period }
+										pluginSlug={ plugin.slug }
+										price={ price }
+									/>
+								);
+							}
 
-						return <>{ translate( 'Free' ) }</>;
-					} }
-				</PluginPrice>
+							return <>{ translate( 'Free' ) }</>;
+						} }
+					</PluginPrice>
+					{ plugin.categories && (
+						<span className="related-plugins-item__category">
+							{ getFirstCategoryFromTags( plugin.categories ) }
+						</span>
+					) }
+				</div>
 			</div>
 		</a>
 	);

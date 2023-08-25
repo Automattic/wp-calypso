@@ -33,7 +33,7 @@
 		margin-right: 16px;
 	}
 
-	.related-plugins-item__details,
+	.related-plugins-item__info,
 	.related-plugins-item__excerpt,
 	.related-plugins-item__title {
 		overflow: hidden;
@@ -41,7 +41,7 @@
 		white-space: nowrap;
 	}
 
-	.related-plugins-item__details {
+	.related-plugins-item__info {
 		color: $gray-60;
 		font-family: var(--font-sf-pro-text);
 		font-size: $font-body-small;
@@ -59,8 +59,20 @@
 		color: $gray-60;
 	}
 
-	.related-plugins-item__price {
-		color: $gray-70;
+	.related-plugins-item__details {
 		margin-top: 14px;
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+		color: $gray-70;
+	}
+
+	.related-plugins-item__category {
+		color: $gray-60;
+
+		&::before {
+			color: $gray-20;
+			content: "•";
+			margin: 0 8px;
+		}
 	}
 }
