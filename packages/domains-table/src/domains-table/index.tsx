@@ -33,6 +33,7 @@ export function DomainsTable( {
 	fetchSiteDomains,
 	fetchSite,
 	isAllSitesView,
+	dispatch,
 }: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
@@ -189,6 +190,7 @@ export function DomainsTable( {
 						isSelected={ selectedDomains.has( getDomainId( domain ) ) }
 						onSelect={ handleSelectDomain }
 						fetchSiteDomains={ fetchSiteDomains }
+						dispatch={ dispatch }
 						fetchSite={ fetchSite }
 						isAllSitesView={ isAllSitesView }
 					/>

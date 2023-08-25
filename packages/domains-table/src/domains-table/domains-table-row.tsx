@@ -2,9 +2,13 @@ import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { createSiteDomainObject } from '../utils/assembler';
+import { resolveDomainStatus } from '../utils/resolve-domain-status';
 import type {
 	PartialDomainData,
 	SiteDomainsQueryFnData,
@@ -16,6 +20,7 @@ interface DomainsTableRowProps {
 	isAllSitesView: boolean;
 	isSelected: boolean;
 	onSelect( domain: PartialDomainData ): void;
+	dispatch: any;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -30,21 +35,25 @@ export function DomainsTableRow( {
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
+	dispatch,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
-	const { data: allSiteDomains } = useSiteDomainsQuery( domain.blog_id, {
-		enabled: inView,
-		...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
-	} );
+	const { data: allSiteDomains, isLoading: isLoadingSiteDomainsDetails } = useSiteDomainsQuery(
+		domain.blog_id,
+		{
+			enabled: inView,
+			...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
+		}
+	);
 
 	const isPrimaryDomain = useMemo(
 		() => allSiteDomains?.domains?.find( ( d ) => d.primary_domain )?.domain === domain.domain,
 		[ allSiteDomains, domain.domain ]
 	);
 
-	const { data: site } = useSiteQuery( domain.blog_id, {
+	const { data: site, isLoading: isLoadingSite } = useSiteQuery( domain.blog_id, {
 		enabled: inView,
 		...( fetchSite && { queryFn: () => fetchSite( domain.blog_id ) } ),
 	} );
@@ -64,6 +73,35 @@ export function DomainsTableRow( {
 
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
+
+	const currentDomainData = useMemo( () => {
+		return allSiteDomains?.domains.find( ( d ) => d.domain === domain.domain );
+	}, [ allSiteDomains, domain.domain ] );
+
+	const translate = useTranslate();
+
+	const renderDomainStatus = () => {
+		if ( ! currentDomainData || isLoadingSiteDomainsDetails || isLoadingSite ) {
+			return null;
+		}
+		const domainObject = createSiteDomainObject( currentDomainData );
+		const currentRoute = window.location.pathname;
+		const { status, statusClass } = resolveDomainStatus( domainObject, null, translate, dispatch, {
+			siteSlug: siteSlug,
+			getMappingErrors: true,
+			currentRoute,
+		} );
+
+		const domainStatusClass = classnames( 'domain-row__status-cell', {
+			'is-loading': isLoadingSiteDomainsDetails,
+		} );
+
+		return (
+			<div className={ domainStatusClass }>
+				<span className={ `domain-row__${ statusClass }-dot` }></span> { status }
+			</div>
+		);
+	};
 
 	return (
 		<tr key={ domain.domain } ref={ ref }>
@@ -91,6 +129,8 @@ export function DomainsTableRow( {
 					domain.domain
 				) }
 			</td>
+			<td></td>
+			<td>{ renderDomainStatus() }</td>
 		</tr>
 	);
 }

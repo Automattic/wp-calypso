@@ -15,13 +15,13 @@ import {
 	domainMappingSetup,
 	domainUseMyDomain,
 } from './paths';
+import { ResponseDomain } from './types';
 import {
 	SETTING_PRIMARY_DOMAIN,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
 	DOMAIN_EXPIRATION,
 } from './url-support';
-import type { ResponseDomain } from './types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
 type ResolveDomainStatusReturn =
@@ -51,8 +51,8 @@ export type ResolveDomainStatusOptionsBag = {
 };
 
 export type DomainStatusPurchaseActions< T > = {
-	shouldRenderExpiringCreditCard: ( purchase: T ) => boolean;
-	handleRenewNowClick: ( purchase: T, siteSlug: string ) => void;
+	shouldRenderExpiringCreditCard?: ( purchase: T ) => boolean;
+	handleRenewNowClick?: ( purchase: T, siteSlug: string ) => void;
 };
 
 export function resolveDomainStatus(
@@ -68,7 +68,7 @@ export function resolveDomainStatus(
 		getMappingErrors = false,
 		currentRoute = null,
 	}: ResolveDomainStatusOptionsBag = {},
-	{ shouldRenderExpiringCreditCard, handleRenewNowClick }: DomainStatusPurchaseActions< any >
+	{ shouldRenderExpiringCreditCard, handleRenewNowClick }: DomainStatusPurchaseActions< any > = {}
 ): ResolveDomainStatusReturn {
 	const transferOptions = {
 		components: {
@@ -234,7 +234,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
+			if ( purchase && shouldRenderExpiringCreditCard?.( purchase ) ) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
@@ -305,7 +305,7 @@ export function resolveDomainStatus(
 											a: (
 												<Button
 													plain
-													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+													onClick={ () => dispatch( handleRenewNowClick?.( purchase, siteSlug ) ) }
 												/>
 											),
 										},
@@ -334,7 +334,7 @@ export function resolveDomainStatus(
 											a: (
 												<Button
 													plain
-													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+													onClick={ () => dispatch( handleRenewNowClick?.( purchase, siteSlug ) ) }
 												/>
 											),
 										},
@@ -387,7 +387,7 @@ export function resolveDomainStatus(
 									a: (
 										<Button
 											plain
-											onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+											onClick={ () => dispatch( handleRenewNowClick?.( purchase, siteSlug ) ) }
 										/>
 									),
 								},
@@ -543,7 +543,7 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.SITE_REDIRECT:
-			if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
+			if ( purchase && shouldRenderExpiringCreditCard?.( purchase ) ) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
