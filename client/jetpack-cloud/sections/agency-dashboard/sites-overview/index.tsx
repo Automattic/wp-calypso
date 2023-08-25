@@ -278,7 +278,7 @@ export default function SitesOverview() {
 							href="https://wordpress.com/jetpack/connect"
 						>
 							<JetpackLogo className="gridicon" size={ 18 } />
-							<span>{ translate( 'Connect a site to jetpack' ) }</span>
+							<span>{ translate( 'Connect a site to Jetpack' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
 				) }
