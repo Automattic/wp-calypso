@@ -1,3 +1,8 @@
+import {
+	labelFormFieldBlock,
+	makeSelectorFromBlockName,
+	validatePublishedFormFields,
+} from './shared';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -20,7 +25,7 @@ export class ContactFormFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'Contact Form';
-	blockEditorSelector = 'div[aria-label="Block: Form"]';
+	blockEditorSelector = makeSelectorFromBlockName( 'Form' );
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
@@ -28,37 +33,37 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		// Name and Email are common fields shared amongst most Form patterns.
+		// Name and Email are common fields shared amongst all Form patterns.
 		// So let's make them unique here!
-		await this.labelFieldBlock( context, 'Name Field' );
-		await this.labelFieldBlock( context, 'Email Field' );
+		await labelFormFieldBlock( context.addedBlockLocator, {
+			blockName: 'Name Field',
+			accessibleLabelName: 'Add label…',
+			labelText: this.addLabelPrefix( 'Name Field' ),
+		} );
+		await labelFormFieldBlock( context.addedBlockLocator, {
+			blockName: 'Email Field',
+			accessibleLabelName: 'Add label…',
+			labelText: this.addLabelPrefix( 'Email Field' ),
+		} );
 	}
 
 	/** */
 	private async labelFieldBlock( context: EditorContext, blockName: string ) {
 		const parentFormBlock = context.addedBlockLocator;
 		await parentFormBlock
-			.locator( this.makeBlockSelector( blockName ) )
+			.locator( makeSelectorFromBlockName( blockName ) )
 			.getByRole( 'textbox', { name: 'Add label…' } )
 			.fill( this.addLabelPrefix( blockName ) );
 	}
 
 	/**
+	 * This flow uses a prefix for labels to make them unique. This function adds that prefix to a label.
 	 *
-	 * @param label
-	 * @returns
+	 * @param {string} label
+	 * @returns The label with the prefix added.
 	 */
 	private addLabelPrefix( label: string ): string {
 		return `${ this.configurationData.labelPrefix } ${ label }`;
-	}
-
-	/**
-	 *
-	 * @param blockName
-	 * @returns
-	 */
-	private makeBlockSelector( blockName: string ): string {
-		return `div[aria-label="Block: ${ blockName }"]`;
 	}
 
 	/**
@@ -67,12 +72,7 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		interface ExpectedField {
-			type: 'textbox' | 'checkbox' | 'radio' | 'combobox' | 'button';
-			accessibleName: string;
-		}
-
-		const expectedFields: ExpectedField[] = [
+		await validatePublishedFormFields( context.page, [
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email Field' ) },
 			// This is the default label pulled in by the Contact Form pattern.
@@ -80,11 +80,6 @@ export class ContactFormFlow implements BlockFlow {
 			{ type: 'textbox', accessibleName: 'Message' },
 			// Same with the default text on the submit button.
 			{ type: 'button', accessibleName: 'Contact Us' },
-		];
-
-		for ( const expectedField of expectedFields ) {
-			const { type, accessibleName } = expectedField;
-			await context.page.getByRole( type, { name: accessibleName } ).first().waitFor();
-		}
+		] );
 	}
 }

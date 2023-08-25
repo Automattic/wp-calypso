@@ -92,20 +92,23 @@ export class EditorBlockToolbarComponent {
 	}
 
 	/**
+	 * Clicks the parent block button on the toolbar. Note, this only applies to desktop, as this button
+	 * is hidden under more options on mobile.
 	 *
+	 * @param {string} expectedParentBlockName The expected name of the parent block.
 	 */
-	async clickParentBlockButton(): Promise< void > {
+	async clickParentBlockButton( expectedParentBlockName: string ): Promise< void > {
 		// On mobile, you select the parent block in a separate options menu item.
 		// That interaction should be driven by the parent method in Editor pages.
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			const editorParent = await this.editor.parent();
 			const locator = editorParent
 				.locator( parentSelector )
-				.locator( 'button.block-editor-block-parent-selector__button' );
+				.getByRole( 'button', { name: `Select ${ expectedParentBlockName }` } );
 			await locator.click();
 			await locator.waitFor( { state: 'detached' } );
 		} else {
-			throw new Error( 'The separate parent block button is not available on mobile.' );
+			throw new Error( 'The separate parent block toolbar button is not available on mobile.' );
 		}
 	}
 }

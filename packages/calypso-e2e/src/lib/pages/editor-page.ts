@@ -456,7 +456,7 @@ export class EditorPage {
 	 */
 	async selectBlockParent( expectedParentBlockName: string ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.editorBlockToolbarComponent.clickParentBlockButton();
+			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
 		} else {
 			await this.editorBlockToolbarComponent.clickOptionsButton();
 			await this.editorPopoverMenuComponent.clickMenuButton(

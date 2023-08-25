@@ -1,4 +1,10 @@
+import { envVariables } from '../../..';
 import { OpenInlineInserter } from '../../pages';
+import {
+	labelFormFieldBlock,
+	makeSelectorFromBlockName,
+	validatePublishedFormFields,
+} from './shared';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -23,7 +29,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 	// You add an individual input field...
 	blockSidebarName = 'Text Input Field';
 	// ... but a full Form block is added and marked as selected in the editor!
-	blockEditorSelector = "[aria-label='Block: Form']";
+	blockEditorSelector = makeSelectorFromBlockName( 'Form' );
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
@@ -31,37 +37,49 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		// The first block, the "Text Input Field", gets added by the shared block flow code.
-		// We need to label it though still.
-		await this.labelFieldBlock( context, 'Text Input Field' );
+		// Text Input Field is already added by the first step, so let's start by labeling it.
+		await labelFormFieldBlock( context.addedBlockLocator, {
+			blockName: 'Text Input Field',
+			accessibleLabelName: 'Add label…',
+			labelText: this.addLabelPrefix( 'Text Input Field' ),
+		} );
 
-		// Next, we need to add an label all the other fields!
-		const blockNames = [
-			'Name Field',
-			'Email Field',
-			'URL Field',
-			'Date Picker',
-			'Phone Number Field',
-			'Multi-line Text Field',
-			'Checkbox',
-			'Multiple Choice (Checkbox)',
-			'Single Choice (Radio)',
-			'Dropdown Field',
+		// Add remaining field blocks, labeling as we go.
+		const remainingBlocksToAdd = [
+			[ 'Name Field', 'Add label…' ],
+			[ 'Email Field', 'Add label…' ],
+			[ 'URL Field', 'Add label…' ],
+			[ 'Date Picker', 'Add label…' ],
+			[ 'Phone Number Field', 'Add label…' ],
+			[ 'Multi-line Text Field', 'Add label…' ],
+			[ 'Checkbox', 'Add label…' ],
+			[ 'Multiple Choice (Checkbox)', 'Add label' ],
+			[ 'Single Choice (Radio)', 'Add label' ],
+			[ 'Dropdown Field', 'Add label' ],
+			[ 'Terms Consent', 'Add implicit consent message…' ],
 		];
-		for ( const blockName of blockNames ) {
+		for ( const [ blockName, accessibleLabelName ] of remainingBlocksToAdd ) {
 			await this.addFieldBlockToForm( context, blockName );
-			await this.labelFieldBlock( context, blockName );
+			await labelFormFieldBlock( context.addedBlockLocator, {
+				blockName,
+				accessibleLabelName,
+				labelText: this.addLabelPrefix( blockName ),
+			} );
 		}
 
-		// Finally we add the Terms Consent block. It's a unique case in that its "label" is really its full text
-		// and looks different in the DOM.
-		await this.addFieldBlockToForm( context, 'Terms Consent' );
-
-		// Now, we just need to add any final configuration pieces!
-		await this.configureSingleChoiceOption( context );
-		await this.configureMultipleChoiceOption( context );
-		await this.configureTermsConsent( context );
-		await this.configureSubmitButton( context );
+		// And we just wrap up labeling the auto-added blocks.
+		const otherBlocksToLabel = [
+			[ 'Button', 'Add text…' ],
+			[ 'Single Choice Option', 'Add option…' ],
+			[ 'Multiple Choice Option', 'Add option…' ],
+		];
+		for ( const [ blockName, accessibleLabelName ] of otherBlocksToLabel ) {
+			await labelFormFieldBlock( context.addedBlockLocator, {
+				blockName,
+				accessibleLabelName,
+				labelText: this.addLabelPrefix( blockName ),
+			} );
+		}
 	}
 
 	/**
@@ -70,12 +88,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		interface ExpectedField {
-			type: 'textbox' | 'checkbox' | 'radio' | 'combobox' | 'button';
-			accessibleName: string;
-		}
-
-		const expectedFields: ExpectedField[] = [
+		await validatePublishedFormFields( context.page, [
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Text Input Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email Field' ) },
@@ -83,22 +96,17 @@ export class AllFormFieldsFlow implements BlockFlow {
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Phone Number Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Multi-line Text Field' ) },
 			{ type: 'checkbox', accessibleName: this.addLabelPrefix( 'Checkbox' ) },
-			{ type: 'radio', accessibleName: this.addLabelPrefix( 'Single Option' ) },
-			{ type: 'checkbox', accessibleName: this.addLabelPrefix( 'Multiple Option' ) },
+			{ type: 'radio', accessibleName: this.addLabelPrefix( 'Single Choice Option' ) },
+			{ type: 'checkbox', accessibleName: this.addLabelPrefix( 'Multiple Choice Option' ) },
+			{ type: 'button', accessibleName: this.addLabelPrefix( 'Button' ) },
 			// Currently broken, sadly! See: https://github.com/Automattic/jetpack/issues/30762
 			// { type: 'combobox', accessibleName: this.addLabelPrefix( 'Dropdown Field' ) },
-			{ type: 'button', accessibleName: this.addLabelPrefix( 'Submit' ) },
-		];
+		] );
 
-		for ( const expectedField of expectedFields ) {
-			const { type, accessibleName } = expectedField;
-			await context.page.getByRole( type, { name: accessibleName } ).first().waitFor();
-		}
-
-		// The terms consent is kind of weird because it's applied to a hidden checkbox.
+		// The terms consent is kind of weird because it's applied to a hidden checkbox, so we validate that here.
 		await context.page
 			.getByRole( 'checkbox', {
-				name: this.addLabelPrefix( 'Terms Consent Message' ),
+				name: this.addLabelPrefix( 'Terms Consent' ),
 				includeHidden: true,
 			} )
 			.first()
@@ -106,99 +114,39 @@ export class AllFormFieldsFlow implements BlockFlow {
 	}
 
 	/**
+	 * A helper to for adding the configuration prefix to any given label name.
 	 *
-	 * @param label
-	 * @returns
+	 * @param {string} label The label to prefix.
+	 * @returns A string with the prefix from the config data applied.
 	 */
 	private addLabelPrefix( label: string ): string {
 		return `${ this.configurationData.labelPrefix } ${ label }`;
 	}
 
 	/**
+	 * Adds a field block to the form using the inline inserter.
 	 *
-	 * @param blockName
-	 * @returns
-	 */
-	private makeBlockSelector( blockName: string ): string {
-		return `div[aria-label="Block: ${ blockName }"]`;
-	}
-
-	/**
-	 *
-	 * @param context
-	 * @param blockName
+	 * @param {EditorContext} context The editor context object.
+	 * @param {string} blockName Name of the block.
 	 */
 	private async addFieldBlockToForm( context: EditorContext, blockName: string ) {
 		const openInlineInserter: OpenInlineInserter = async ( editorCanvas ) => {
 			await context.editorPage.selectBlockParent( 'Form' );
 			const addBlockLocater = await editorCanvas.getByRole( 'button', { name: 'Add block' } );
-			// See: https://github.com/Automattic/jetpack/issues/32695
-			// On mobile, we can't click the inline button directly due to an overlay z-index bug.
-			// So we force the click via dispatchEvent.
-			await addBlockLocater.waitFor();
-			await addBlockLocater.dispatchEvent( 'click' );
+			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+				// See: https://github.com/Automattic/jetpack/issues/32695
+				// On mobile, we can't click the inline button directly due to an overlay z-index bug.
+				// So we force the click via dispatchEvent.
+				await addBlockLocater.waitFor();
+				await addBlockLocater.dispatchEvent( 'click' );
+			} else {
+				await addBlockLocater.click();
+			}
 		};
 		await context.editorPage.addBlockInline(
 			blockName,
-			this.makeBlockSelector( blockName ),
+			makeSelectorFromBlockName( blockName ),
 			openInlineInserter
 		);
-	}
-
-	/** */
-	private async labelFieldBlock( context: EditorContext, blockName: string ) {
-		const parentFormBlock = context.addedBlockLocator;
-		await parentFormBlock
-			.locator( this.makeBlockSelector( blockName ) )
-			.getByRole( 'textbox', { name: 'Add label…' } )
-			.fill( this.addLabelPrefix( blockName ) );
-	}
-
-	/**
-	 *
-	 * @param context
-	 */
-	private async configureSingleChoiceOption( context: EditorContext ) {
-		const parentFormBlock = context.addedBlockLocator;
-		await parentFormBlock
-			.locator( this.makeBlockSelector( 'Single Choice (Radio)' ) )
-			.getByRole( 'textbox', { name: 'Add option…' } )
-			.fill( this.addLabelPrefix( 'Single Option' ) );
-	}
-
-	/**
-	 *
-	 * @param context
-	 */
-	private async configureMultipleChoiceOption( context: EditorContext ) {
-		const parentFormBlock = context.addedBlockLocator;
-		await parentFormBlock
-			.locator( this.makeBlockSelector( 'Multiple Choice (Checkbox)' ) )
-			.getByRole( 'textbox', { name: 'Add option…' } )
-			.fill( this.addLabelPrefix( 'Multiple Option' ) );
-	}
-
-	/**
-	 *
-	 * @param context
-	 */
-	private async configureTermsConsent( context: EditorContext ) {
-		const parentFormBlock = context.addedBlockLocator;
-		await parentFormBlock
-			.locator( this.makeBlockSelector( 'Terms Consent' ) )
-			.getByRole( 'textbox', { name: 'Add implicit consent message…' } )
-			.fill( this.addLabelPrefix( 'Terms Consent Message' ) );
-	}
-
-	/**
-	 *
-	 * @param context
-	 */
-	private async configureSubmitButton( context: EditorContext ) {
-		const parentFormBlock = context.addedBlockLocator;
-		await parentFormBlock
-			.locator( this.makeBlockSelector( 'Button' ) )
-			.getByRole( 'textbox', { name: 'Add text…' } )
-			.fill( `${ this.configurationData.labelPrefix } Submit` );
 	}
 }
