@@ -140,7 +140,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 		addOnSlug: string,
 		quantity?: number
 	) => {
-		page.redirect( `${ checkoutLink( selectedSite, addOnSlug, quantity ) }` );
+		page.redirect( `${ checkoutLink( selectedSite?.slug, addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {

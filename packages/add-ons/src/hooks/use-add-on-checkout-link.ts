@@ -1,5 +1,3 @@
-import type { SiteDetails } from '@automattic/data-stores';
-
 /**
  * Returns a function that will return a formatted checkout link for the given add-on and quantity.
  * E.g. https://wordpress.com/checkout/<siteSlug>/<addOnSlug>>:-q-<quantity>
@@ -8,17 +6,17 @@ import type { SiteDetails } from '@automattic/data-stores';
  */
 
 export const useAddOnCheckoutLink = (): ( (
-	selectedSite: SiteDetails | null | undefined,
+	selectedSiteSlug: string | undefined,
 	addOnSlug: string,
 	quantity?: number
 ) => string ) => {
-	return ( addOnSlug: string, quantity?: number ): string => {
+	return ( selectedSiteSlug: string | undefined, addOnSlug: string, quantity?: number ): string => {
 		// If no site is provided, return the checkout link with the add-on (will render site-selector).
-		if ( ! selectedSite ) {
+		if ( ! selectedSiteSlug ) {
 			return `/checkout/${ addOnSlug }`;
 		}
 
-		const checkoutLinkFormat = `/checkout/${ selectedSite?.slug }/${ addOnSlug }`;
+		const checkoutLinkFormat = `/checkout/${ selectedSiteSlug }/${ addOnSlug }`;
 
 		if ( quantity ) {
 			return checkoutLinkFormat + `:-q-${ quantity }`;
