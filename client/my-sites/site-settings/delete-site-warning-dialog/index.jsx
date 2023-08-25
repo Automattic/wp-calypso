@@ -5,7 +5,7 @@ import { purchasesRoot } from 'calypso/me/purchases/paths';
 
 import './style.scss';
 
-function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
+function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose, isTrialSite = false } ) {
 	const translate = useTranslate();
 
 	const getButtons = () => {
@@ -16,6 +16,10 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 					{ translate( 'Go to your site listing' ) }
 				</Button>
 			);
+		} else if ( isTrialSite ) {
+			<Button primary href={ purchasesRoot }>
+				{ translate( 'Cancel trial', { context: 'button label' } ) }
+			</Button>;
 		} else {
 			buttons.push(
 				<Button primary href={ purchasesRoot }>
@@ -30,6 +34,11 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 		if ( p2HubP2Count ) {
 			return translate( 'P2 workspace' );
 		}
+
+		if ( isTrialSite ) {
+			return translate( 'Free Trial Active' );
+		}
+
 		return translate( 'Paid Upgrades' );
 	};
 
@@ -46,6 +55,13 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 				}
 			);
 		}
+
+		if ( isTrialSite ) {
+			return translate(
+				'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
+			);
+		}
+
 		return translate(
 			'You have active paid upgrades on your site. Please cancel your upgrades prior to deleting your site.'
 		);
@@ -68,6 +84,7 @@ DeleteSiteWarningDialog.propTypes = {
 	isVisible: PropTypes.bool.isRequired,
 	p2HubP2Count: PropTypes.number,
 	onClose: PropTypes.func.isRequired,
+	isTrialSite: PropTypes.bool,
 };
 
 export default DeleteSiteWarningDialog;
