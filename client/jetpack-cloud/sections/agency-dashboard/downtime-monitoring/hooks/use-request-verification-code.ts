@@ -8,6 +8,7 @@ export default function useRequestVerificationCode(): {
 	isLoading: boolean;
 	isSuccess: boolean;
 	isVerified: boolean;
+	data: any;
 } {
 	const [ isAlreadyVerifed, setIsAlreadyVerifed ] = useState( false );
 
