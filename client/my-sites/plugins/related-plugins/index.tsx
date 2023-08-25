@@ -1,8 +1,10 @@
 import { Gridicon, Button } from '@automattic/components';
+import { useMemo } from 'react';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
 import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-
+import { useSelector } from 'calypso/state';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 type RelatedPluginProps = {
@@ -38,18 +40,28 @@ function RelatedPlugins( { slug, size = 4, options }: RelatedPluginProps ) {
 }
 
 function RelatedPluginCard( {
-	plugin: { icon, title, excerpt },
+	plugin: { icon, title, excerpt, slug },
 }: {
 	plugin: RelatedPlugin;
 } ): JSX.Element {
+	const selectedSite = useSelector( getSelectedSite );
+
+	const pluginLink = useMemo( () => {
+		let url = '/plugins/' + slug;
+		if ( selectedSite ) {
+			url += '/' + selectedSite.slug;
+		}
+		return url;
+	}, [ slug, selectedSite ] );
+
 	return (
-		<div className="related-plugins-item">
+		<a className="related-plugins-item" href={ pluginLink }>
 			<PluginIcon image={ icon } className="related-plugins-item__icon" />
 			<div className="related-plugins-item__details">
 				<h3 className="related-plugins-item__title">{ title }</h3>
-				<p className="related-plugins-item__excerpt">{ excerpt }</p>
+				<div className="related-plugins-item__excerpt">{ excerpt }</div>
 			</div>
-		</div>
+		</a>
 	);
 }
 
