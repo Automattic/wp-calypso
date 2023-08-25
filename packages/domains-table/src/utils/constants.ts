@@ -1,9 +1,9 @@
 export const type = {
-	MAPPED: 'MAPPED',
-	REGISTERED: 'REGISTERED',
-	SITE_REDIRECT: 'SITE_REDIRECT',
-	WPCOM: 'WPCOM',
-	TRANSFER: 'TRANSFER',
+	MAPPED: 'mapping',
+	REGISTERED: 'registered',
+	SITE_REDIRECT: 'redirect',
+	WPCOM: 'wpcom',
+	TRANSFER: 'transfer',
 };
 
 export const useMyDomainInputMode = {
