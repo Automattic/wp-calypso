@@ -17,12 +17,16 @@ interface ConfigurationData {
 	improve?: 'Summarize' | 'Make longer' | 'Make shorter';
 	keywords: string[];
 }
+interface ValidationData {
+	keywords: string[];
+}
 
 /**
  * Represents the flow of using the AI Assistant block.
  */
 export class AIAssistantFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
+	private validationData: ValidationData;
 
 	/**
 	 * Constructs an instance of this block flow with data to be used when
@@ -30,8 +34,9 @@ export class AIAssistantFlow implements BlockFlow {
 	 *
 	 * @param {ConfigurationData} configurationData Configuration data for the block.
 	 */
-	constructor( configurationData: ConfigurationData ) {
+	constructor( configurationData: ConfigurationData, validationData: ValidationData ) {
 		this.configurationData = configurationData;
+		this.validationData = validationData;
 	}
 
 	blockSidebarName = 'AI Assistant (Experimental)';
@@ -110,7 +115,7 @@ export class AIAssistantFlow implements BlockFlow {
 	 * the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		for ( const keyword of this.configurationData.keywords ) {
+		for ( const keyword of this.validationData.keywords ) {
 			await context.page.getByRole( 'main' ).filter( { hasText: keyword } ).waitFor();
 		}
 	}
