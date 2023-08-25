@@ -15,7 +15,6 @@ interface ConfigurationData {
 		| 'Passionate'
 		| 'Provocative';
 	improve?: 'Summarize' | 'Make longer' | 'Make shorter';
-	keywords: string[];
 }
 interface ValidationData {
 	keywords: string[];
