@@ -14,12 +14,10 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { PLANS_STORE, SITE_STORE, USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
-import Intro from './internals/steps-repository/intro';
 import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import VideomakerSetup from './internals/steps-repository/videomaker-setup';
-import VideoPressOnboardingIntent from './internals/steps-repository/videopress-onboarding-intent';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -31,10 +29,15 @@ const videopress: Flow = {
 	},
 	useSteps() {
 		const isIntentEnabled = config.isEnabled( 'videopress-onboarding-user-intent' );
-		const introComponent = isIntentEnabled ? VideoPressOnboardingIntent : Intro;
 
 		return [
-			{ slug: 'intro', component: introComponent },
+			{
+				slug: 'intro',
+				asyncComponent: () =>
+					isIntentEnabled
+						? import( './internals/steps-repository/videopress-onboarding-intent' )
+						: import( './internals/steps-repository/intro' ),
+			},
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
 			{ slug: 'options', component: SiteOptions },
 			{ slug: 'chooseADomain', component: ChooseADomain },
