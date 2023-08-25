@@ -1,3 +1,37 @@
 .videopress-onboarding-intent__step-content {
+	display: grid;
+	grid-template: "a b c" 1fr;
+	gap: 48px;
+	padding: 24px;
+}
+
+@media (max-width: 850px) {
+	.videopress-onboarding-intent__step-content {
+		grid-template: "a b" 1fr;
+	}
+}
+
+@media (max-width: 600px) {
+	.videopress-onboarding-intent__step-content {
+		grid-template: "a" 1fr;
+	}
+}
+
+.videopress-intent-item__preview {
+	width: 100%;
+	height: 220px;
+	border: solid 8px #212121;
+	border-radius: 8px; /* stylelint-disable-line */
+	cursor: pointer;
+}
+
+.videopress-intent-item {
 	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.videopress-intent-item__description {
+	display: flex;
+	flex-direction: column;
 }
