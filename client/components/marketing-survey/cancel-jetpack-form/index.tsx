@@ -6,18 +6,14 @@ import page from 'page';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as React from 'react';
 import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
+import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationOfferStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer';
 import JetpackCancellationOfferAccepted from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer-accepted';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import {
-	canReenableAutoRenewal,
-	getName,
-	isAutoRenewing,
-	isPurchaseCancelable,
-} from 'calypso/lib/purchases';
+import { getName, isExpired } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -57,6 +53,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const initialCancellationStep = useMemo( () => {
+		// If the subscription is expired, the only step in the survey is the removal confirmation
+		if ( isExpired( purchase ) ) {
+			return steps.CANCEL_CONFIRM_STEP;
+		}
+
 		// In these cases, the subscription is getting removed.
 		// Show the benefits step first.
 		if (
@@ -144,6 +145,13 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const availableSurveySteps = useMemo( () => {
 		const availableSteps = [];
 
+		// If the plan is already expired, we only need one "confirm" step for the user to click to confirm
+		// Don't need to show any benefits lost (plan is not working anymore)
+		// Don't need to show a survey, the product did not get renewed - it's already "cancelled"
+		if ( isExpired( purchase ) ) {
+			return [ steps.CANCEL_CONFIRM_STEP ];
+		}
+
 		if (
 			CANCEL_FLOW_TYPE.REMOVE === flowType ||
 			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
@@ -152,12 +160,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 
 		if (
-			// A purchase that is not cancellable ( can only be removed ),
-			// OR a purchase that is currently set to auto-renew ( has not been cancelled yet ).
+			// A purchase that is currently set to auto-renew ( has not been cancelled yet ).
 			// If a purchase that meets these criteria is being removed, present the survey step.
-			( CANCEL_FLOW_TYPE.REMOVE === flowType &&
-				( ( ! isPurchaseCancelable( purchase ) && ! canReenableAutoRenewal( purchase ) ) ||
-					isAutoRenewing( purchase ) ) ) ||
 			CANCEL_FLOW_TYPE.CANCEL_AUTORENEW === flowType ||
 			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
 		) {
@@ -363,6 +367,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			return [ backToPurchases ];
 		}
 
+		// Cancel confirm step only shows the remove button
+		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
+			return firstButtons.concat( [ cancel ] );
+		}
+
 		// on the last step or the offer step
 		// show the cancel button here
 		if ( lastStep === cancellationStep || steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
@@ -385,6 +394,30 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 */
 	const renderCurrentStep = () => {
 		const productName = getName( purchase );
+
+		if ( steps.CANCEL_CONFIRM_STEP === cancellationStep ) {
+			return (
+				<>
+					<FormattedHeader
+						headerText={ translate( 'Confirm removal' ) }
+						subHeaderText={
+							/* Translators: %(percentDiscount)d%% should be a percentage like 15% or 20% */
+							translate(
+								'We’re sorry to see you go. Click Remove subscription to confirm and remove %(productName)s from your account.',
+								{
+									args: {
+										productName,
+									},
+								}
+							)
+						}
+						align="center"
+						isSecondary={ true }
+					/>
+					<p></p>
+				</>
+			);
+		}
 
 		// Step 1: what will be lost by removing the subscription
 		if ( steps.FEATURES_LOST_STEP === cancellationStep ) {
