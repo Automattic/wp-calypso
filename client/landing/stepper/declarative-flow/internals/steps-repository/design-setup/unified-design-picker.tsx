@@ -26,6 +26,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
@@ -36,6 +37,10 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import {
+	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
+	getTheme,
+} from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
@@ -331,10 +336,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	useQuerySiteFeatures( [ site?.ID ] );
 
 	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
+	// This is needed while the screenshots property is not being indexed on ElasticSearch
+	// It should be removed when this property is ready on useQueryThemes
+	useQueryTheme( 'wpcom', selectedDesignThemeId );
+	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
+	const fullLengthScreenshot = theme?.screenshots?.[ 0 ]?.replace( /\?.*/, '' );
+
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
 			: false
+	);
+	const isMarketplaceThemeSubscribed = useSelector(
+		( state ) =>
+			site &&
+			selectedDesignThemeId &&
+			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
@@ -342,6 +359,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.is_externally_managed && ! isMarketplaceThemeSubscribed ) ||
 		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
@@ -716,6 +734,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						shouldLimitGlobalStyles
 					}
 					title={ headerDesignTitle }
+					selectedDesignTitle={ designTitle }
 					description={ selectedDesign.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
@@ -728,6 +747,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					screenshot={ fullLengthScreenshot }
 					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
 					selectedColorVariation={ selectedColorVariation }

@@ -78,6 +78,11 @@ const ProductCard = ( {
 	} );
 	let purchaseScreenLabel = personalProductTitle;
 
+	if ( ! siteSlug ) {
+		// Default to a generic label if no site slug is provided.
+		typeSelectionScreenLabel = translate( 'Which type is your site?' );
+	}
+
 	if ( siteType === TYPE_PERSONAL ) {
 		typeSelectionScreenLabel = personalLabel;
 		purchaseScreenLabel = personalProductTitle;
