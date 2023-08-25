@@ -361,6 +361,19 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
+				<FormFieldset className="memberships__dialog-sections-type">
+					<ToggleControl
+						onChange={ handleMarkAsDonation }
+						checked={ 'donation' === editedMarkAsDonation }
+						label={ translate( 'Mark this plan as a donation' ) }
+					/>
+					<ToggleControl
+						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
+						checked={ editedPostPaidNewsletter }
+						disabled={ !! product.ID }
+						label={ translate( 'Paid newsletter tier' ) }
+					/>
+				</FormFieldset>
 				{ editing && editedPrice && (
 					<Notice
 						text={ translate(
@@ -474,19 +487,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						</div>
 					</FormFieldset>
 				) }
-				<FormFieldset className="memberships__dialog-sections-type">
-					<ToggleControl
-						onChange={ ( newValue ) => setEditedPostPaidNewsletter( newValue ) }
-						checked={ editedPostPaidNewsletter }
-						disabled={ !! product.ID }
-						label={ translate( 'Paid newsletter tier' ) }
-					/>
-					<ToggleControl
-						onChange={ handleMarkAsDonation }
-						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Mark this plan as a donation' ) }
-					/>
-				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-message">
 					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
 					<CountedTextArea
