@@ -51,7 +51,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 			<div className="pattern-assembler-cta__content">
 				<h3 className="pattern-assembler-cta__title">{ data.title }</h3>
 				<div className="pattern-assembler-cta__subtitle">{ data.subtitle }</div>
-				<Button className="pattern-assembler-cta__button" onClick={ handleButtonClick } primary>
+				<Button className="pattern-assembler-cta__button" onClick={ onButtonClick } primary>
 					{ data.buttonText }
 				</Button>
 			</div>
