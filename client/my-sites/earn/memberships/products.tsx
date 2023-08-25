@@ -159,23 +159,32 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 						const currentAnnualProduct = products.find(
 							( _prod ) => _prod.tier === currentProduct.ID
 						);
+						const price = formatCurrency(
+							currentProduct?.price || 0,
+							currentProduct?.currency || ''
+						);
+						let annualPrice = '';
+						if ( currentAnnualProduct ) {
+							annualPrice = formatCurrency(
+								currentAnnualProduct?.price || 0,
+								currentAnnualProduct?.currency || ''
+							);
+						}
 						return (
 							<CompactCard
 								className="memberships__products-product-card"
 								key={ currentProduct?.ID }
 							>
 								<div className="memberships__products-product-details">
-									<div className="memberships__products-product-price">
-										{ formatCurrency( currentProduct?.price || 0, currentProduct?.currency || '' ) }
-										{ currentAnnualProduct &&
-											formatCurrency(
-												currentAnnualProduct?.price || 0,
-												currentAnnualProduct?.currency || ''
-											) }
-									</div>
 									<div className="memberships__products-product-title">
 										{ currentProduct?.title }
 									</div>
+									<sub className="memberships__products-product-price">
+										{ currentProduct.subscribe_as_site_subscriber
+											? translate( '%s/month', { args: price } )
+											: price }
+										{ currentAnnualProduct && translate( ' (%s/year)', { args: annualPrice } ) }
+									</sub>
 									{ currentProduct?.subscribe_as_site_subscriber && (
 										<div className="memberships__products-product-badge">
 											<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>

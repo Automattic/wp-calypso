@@ -277,13 +277,14 @@
 	flex-grow: 1;
 }
 .memberships__products-product-price {
-	color: var(--color-neutral-70);
-	font-size: $font-body;
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
 	line-height: 1.5;
 }
 .memberships__products-product-title {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
+	color: var(--color-text);
+	font-size: $font-body;
+	font-weight: bold;
 }
 .memberships__products-product-badge {
 	margin-top: 10px;
