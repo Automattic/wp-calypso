@@ -8,6 +8,7 @@ import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
+import { DomainsTableStatusCell } from './domains-table-status-cell';
 import type {
 	PartialDomainData,
 	SiteDomainsQueryFnData,
@@ -34,6 +35,7 @@ export function DomainsTableRow( {
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
+	dispatch,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -120,7 +122,17 @@ export function DomainsTableRow( {
 					/>
 				) }
 			</td>
-			<td></td>
+			<td>
+				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+				) : (
+					<DomainsTableStatusCell
+						siteSlug={ siteSlug }
+						currentDomainData={ currentDomainData }
+						dispatch={ dispatch }
+					/>
+				) }
+			</td>
 			<td>
 				<DomainsTableRegisteredUntilCell domain={ domain } />
 			</td>

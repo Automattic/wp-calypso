@@ -212,6 +212,7 @@ export function DomainsTable( {
 							fetchSiteDomains={ fetchSiteDomains }
 							fetchSite={ fetchSite }
 							isAllSitesView={ isAllSitesView }
+							dispatch={ dispatch }
 						/>
 					) ) }
 				</tbody>
