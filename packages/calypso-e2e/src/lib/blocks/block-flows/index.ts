@@ -18,6 +18,8 @@ export * from './slideshow';
 export * from './tiled-gallery';
 export * from './youtube';
 export * from './layout-grid';
+export * from './ai-assistant';
+export * from './donations-form';
 
 /* Types */
 export * from './types';

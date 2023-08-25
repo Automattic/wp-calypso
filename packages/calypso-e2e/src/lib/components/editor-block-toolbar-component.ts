@@ -24,6 +24,7 @@ const selectors = {
 export interface BlockToolbarButtonIdentifier {
 	text?: string;
 	ariaLabel?: string;
+	name?: string;
 }
 
 /**
@@ -51,8 +52,15 @@ export class EditorBlockToolbarComponent {
 	 */
 	async clickPrimaryButton( identifier: BlockToolbarButtonIdentifier ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.button( identifier ) );
-		await locator.click();
+
+		if ( identifier.name ) {
+			// Accessible names don't need to have the selector built.
+			await editorParent.getByRole( 'button', { name: identifier.name } ).click();
+		} else {
+			// Other identifers need to have the selector built.
+			const locator = editorParent.locator( selectors.button( identifier ) );
+			await locator.click();
+		}
 	}
 
 	/**

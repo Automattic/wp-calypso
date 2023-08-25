@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
@@ -31,6 +32,7 @@ export const SubscribeModalSetting = ( {
 }: SubscribeModalSettingProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
 	// Construct a link to edit the modal
 	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
@@ -65,7 +67,7 @@ export const SubscribeModalSetting = ( {
 					: translate(
 							'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll.'
 					  ) }
-				{ isModalEditTranslated && subscribeModalEditorUrl && (
+				{ isModalEditTranslated && subscribeModalEditorUrl && ! isAtomicSite && (
 					<>
 						{ ' ' }
 						<ExternalLink href={ subscribeModalEditorUrl }>

@@ -125,5 +125,16 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await publishedPostPage.validateCategory( category );
 			await publishedPostPage.validateTags( tag );
 		} );
+
+		// Not checking the `Press This` button as it is not available on AT.
+		// @see: paYJgx-1lp-p2
+		// Skip test on Private user because social sharing only works on public sites.
+		skipItIf( accountName === 'jetpackAtomicPrivateUser' ).each( [
+			{ name: 'Twitter' },
+			{ name: 'Facebook' },
+		] )( 'Social sharing button for $name can be clicked', async function ( { name } ) {
+			publishedPostPage = new PublishedPostPage( page );
+			await publishedPostPage.validateSocialButton( name, { click: true } );
+		} );
 	} );
 } );

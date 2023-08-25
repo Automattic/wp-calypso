@@ -57,25 +57,25 @@ describe( 'NotificationDuration', () => {
 	it( 'renders the component with selected duration and no restriction', () => {
 		render(
 			<NotificationDuration
-				selectedDuration={ { time: 15, label: 'After 15 minutes' } }
+				selectedDuration={ { time: 15, label: '15 minutes' } }
 				{ ...defaultProps }
 			/>
 		);
 
-		expect( screen.getByText( 'Notify me about downtime:' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Monitor my site every/i ) ).toBeInTheDocument();
 
 		const selectedText = screen.getByRole( 'img', { name: 'Schedules' } );
-		expect( selectedText.parentElement ).toHaveTextContent( 'After 15 minutes' );
+		expect( selectedText.parentElement ).toHaveTextContent( '15 minutes' );
 	} );
 
 	it( 'handles dropdown toggle and clicks', () => {
 		render( <NotificationDuration { ...defaultProps } /> );
 
-		fireEvent.click( screen.getByRole( 'menuitem', { name: /after 30 minutes/i } ) );
+		fireEvent.click( screen.getByRole( 'menuitem', { name: /30 minutes/i } ) );
 		expect( defaultProps.recordEvent ).toHaveBeenCalledWith( 'notification_duration_toggle' );
 		expect( defaultProps.selectDuration ).toHaveBeenCalledWith( {
 			time: 30,
-			label: 'After 30 minutes',
+			label: '30 minutes',
 		} );
 	} );
 
@@ -89,9 +89,9 @@ describe( 'NotificationDuration', () => {
 			}
 		);
 
-		const dropdownToggle = screen.getByRole( 'menuitem', { name: /after 1 minute/i } );
+		const dropdownToggle = screen.getByRole( 'menuitem', { name: /1 minute/i } );
 		expect( dropdownToggle ).toHaveClass( 'is-disabled' );
-		expect( dropdownToggle ).toHaveTextContent( 'After 1 minute' );
+		expect( dropdownToggle ).toHaveTextContent( '1 minute' );
 		expect( dropdownToggle ).toHaveTextContent( 'Upgrade' );
 		expect( dropdownToggle ).toHaveTextContent( 'Upgrade ($1.00/m)' );
 	} );

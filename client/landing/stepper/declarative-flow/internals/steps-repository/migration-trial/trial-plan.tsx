@@ -138,7 +138,7 @@ const TrialPlan = function ( props: Props ) {
 					<p>
 						<strong>{ __( 'Trial limitations' ) }</strong>
 						<br />
-						<small>{ __( 'No custom domains, 100 subscribers, no SSH or SFTP access' ) }</small>
+						<small>{ __( '100 subscribers, no SSH or SFTP access' ) }</small>
 					</p>
 				</div>
 

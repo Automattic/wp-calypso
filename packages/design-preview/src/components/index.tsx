@@ -19,6 +19,7 @@ interface DesignPreviewProps {
 	pricingBadge?: React.ReactNode;
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
+	selectedDesignTitle: string;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
@@ -27,6 +28,7 @@ interface DesignPreviewProps {
 	siteId: number;
 	stylesheet: string;
 	isVirtual?: boolean;
+	screenshot?: string;
 	isExternallyManaged?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
@@ -59,12 +61,15 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	screenshot,
 	isVirtual,
+	isExternallyManaged,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
 	onSelectFontVariation,
 	onGlobalStylesChange,
+	selectedDesignTitle,
 	limitGlobalStyles,
 	globalStylesInPersonalPlan,
 	onScreenSelect,
@@ -86,6 +91,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		siteId,
 		stylesheet,
 		isVirtual,
+		isExternallyManaged,
 		limitGlobalStyles,
 		globalStylesInPersonalPlan,
 		variations,
@@ -134,6 +140,9 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
 				animated={ ! isDesktop && screens.length > 0 }
+				screenshot={ screenshot }
+				title={ selectedDesignTitle }
+				isExternallyManaged={ isExternallyManaged }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>

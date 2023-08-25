@@ -51,8 +51,7 @@ export default function () {
 	statsPage( `/stats/:period(${ validPeriods })`, overview );
 
 	// Stat Purchase Page
-	statsPage( '/stats/purchase', sites );
-	statsPage( '/stats/purchase/:site', purchase );
+	statsPage( '/stats/purchase/:site?', purchase );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights', sites );
