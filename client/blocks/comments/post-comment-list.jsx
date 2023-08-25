@@ -518,6 +518,8 @@ class PostCommentList extends Component {
 			expandableView,
 		} = this.props;
 
+		const shouldShowFilters = showFilters && ! expandableView;
+
 		const commentsTree = expandableView
 			? this.removePingAndTrackbacks( this.props.commentsTree )
 			: this.props.commentsTree;
@@ -571,7 +573,8 @@ class PostCommentList extends Component {
 				ref={ this.listRef }
 			>
 				{ ( this.props.showCommentCount ||
-					( showViewMoreComments && this.props.startingCommentId ) ) && (
+					showManageCommentsButton ||
+					showConversationFollowButton ) && (
 					<div className="comments__info-bar">
 						<div className="comments__info-bar-title-links">
 							{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
@@ -590,19 +593,17 @@ class PostCommentList extends Component {
 								) }
 							</div>
 						</div>
-						{ showViewMoreComments && this.props.startingCommentId && (
-							<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
-									args: {
-										shown: displayedCommentsCount,
-										total: actualCommentsCount,
-									},
-								} ) }
-							</button>
-						) }
 					</div>
 				) }
-				{ showFilters && (
+				<PostCommentFormRoot
+					post={ this.props.post }
+					commentsTree={ commentsTreeToUse }
+					commentText={ this.state.commentText }
+					onUpdateCommentText={ this.onUpdateCommentText }
+					activeReplyCommentId={ this.props.activeReplyCommentId }
+					isInlineComment={ this.props.expandableView }
+				/>
+				{ shouldShowFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
 							selected={ commentsFilter === 'all' }
@@ -636,14 +637,16 @@ class PostCommentList extends Component {
 						</SegmentedControl.Item>
 					</SegmentedControl>
 				) }
-				<PostCommentFormRoot
-					post={ this.props.post }
-					commentsTree={ commentsTreeToUse }
-					commentText={ this.state.commentText }
-					onUpdateCommentText={ this.onUpdateCommentText }
-					activeReplyCommentId={ this.props.activeReplyCommentId }
-					isInlineComment={ this.props.expandableView }
-				/>
+				{ showViewMoreComments && this.props.startingCommentId && (
+					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+							args: {
+								shown: displayedCommentsCount,
+								total: actualCommentsCount,
+							},
+						} ) }
+					</button>
+				) }
 				{ this.renderCommentsList(
 					displayedComments,
 					displayedCommentsCount,
