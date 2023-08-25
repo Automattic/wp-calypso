@@ -70,7 +70,7 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.queryByText( /Jetpack can’t establish a connection with your site’s database./i )
+				screen.queryByText( /Jetpack can’t establish a connection to your site’s database./i )
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
