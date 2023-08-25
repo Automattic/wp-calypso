@@ -365,16 +365,39 @@ class PostCommentList extends Component {
 			this.props.expandableView &&
 			( this.state.isExpanded || ! shouldShowExpandToggle ) &&
 			displayedCommentsCount < actualCommentsCount;
+
+		// We line-clamp comments in the non-expanded expandable view. We need to know if we are
+		// doing so that we may show a button to expand to see more, especially in the case that
+		// there are no other comments to display.
+		let isClampedComment = false;
+		if (
+			this.props.expandableView &&
+			! this.state.isExpanded &&
+			! shouldShowExpandToggle &&
+			this.listRef.current
+		) {
+			const commentContentEles = this.listRef.current.querySelectorAll(
+				'.comments__comment-content'
+			);
+			// Check if either the comment or reply that might be shown are line clamped.
+			commentContentEles.forEach( ( comment ) => {
+				if ( comment.scrollHeight > comment.clientHeight ) {
+					isClampedComment = true;
+				}
+			} );
+		}
+		const viewMoreText = isClampedComment
+			? translate( 'View more' )
+			: translate( 'View more comments' );
+
 		return (
 			<>
 				<ol className="comments__list is-root">
 					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
 				</ol>
-				{ shouldShowExpandToggle && (
+				{ ( shouldShowExpandToggle || isClampedComment ) && (
 					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
-						{ this.state.isExpanded
-							? translate( 'View fewer comments' )
-							: translate( 'View more comments' ) }
+						{ this.state.isExpanded ? translate( 'View fewer comments' ) : viewMoreText }
 					</button>
 				) }
 				{ shouldShowLinkToFullPost && (
@@ -572,6 +595,8 @@ class PostCommentList extends Component {
 			<div
 				className={ classnames( 'comments__comment-list', {
 					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
+					'is-inline': expandableView,
+					'is-collapsed': isCollapsedInline,
 				} ) }
 				ref={ this.listRef }
 			>
