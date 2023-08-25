@@ -1,6 +1,7 @@
 import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS_INSTANT,
+	PLAN_100_YEARS,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
@@ -61,6 +62,8 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
+
+	const isPlan100YearPlan = sitePlanSlug === PLAN_100_YEARS;
 
 	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
@@ -511,6 +514,7 @@ const Home = () => {
 					commission={ commission }
 					iconSize={ 14 }
 					siteSlug={ site?.slug }
+					isPlan100YearPlan={ isPlan100YearPlan }
 				/>
 			</>
 		),

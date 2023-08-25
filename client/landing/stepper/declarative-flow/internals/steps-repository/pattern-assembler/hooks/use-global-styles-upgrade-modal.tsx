@@ -12,7 +12,6 @@ interface Props {
 	stepName: string;
 	hasSelectedColorVariation?: boolean;
 	hasSelectedFontVariation?: boolean;
-	onCheckout?: () => void;
 	onUpgradeLater?: () => void;
 	recordTracksEvent: ( eventName: string, eventProps?: { [ key: string ]: unknown } ) => void;
 }
@@ -22,7 +21,6 @@ const useGlobalStylesUpgradeModal = ( {
 	stepName,
 	hasSelectedColorVariation = false,
 	hasSelectedFontVariation = false,
-	onCheckout,
 	onUpgradeLater,
 	recordTracksEvent,
 }: Props ) => {
@@ -50,7 +48,6 @@ const useGlobalStylesUpgradeModal = ( {
 
 	const checkout = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_CHECKOUT_BUTTON_CLICK );
-		onCheckout?.();
 
 		// When the user is done with checkout, send them back to the current url
 		const redirectUrl = window.location.href.replace( window.location.origin, '' );

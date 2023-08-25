@@ -4,6 +4,6 @@ export interface DomainUpsellDialog {
 	show: boolean;
 }
 
-export interface selectedStorageAddOnsForPlans {
+export interface selectedStorageOptionForPlans {
 	[ key: string ]: WPComStorageAddOnSlug;
 }
