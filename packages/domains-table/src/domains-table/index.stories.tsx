@@ -40,9 +40,9 @@ const testDomains = [
 ];
 
 const testSites = [
-	testSite( { blog_id: 1, name: 'Example 1' } ),
-	testSite( { blog_id: 2 } ),
-	testSite( { blog_id: 4, name: 'domainonly' } ),
+	testSite( { ID: 1, name: 'Example 1' } ),
+	testSite( { ID: 2 } ),
+	testSite( { ID: 4, name: 'domainonly' } ),
 ];
 
 const defaultArgs = {

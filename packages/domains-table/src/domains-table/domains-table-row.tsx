@@ -92,10 +92,10 @@ export function DomainsTableRow( {
 			return createInterpolateElement(
 				/* translators: ariaHidden means that the component will be skipped by screen readers. */
 				__(
-					'<add>Create</add> <ariaHidden>or</ariaHidden> <connect>connect</connect> <ariaHidden>a site</ariaHidden>'
+					'<create>Create</create> <ariaHidden>or</ariaHidden> <connect>connect</connect> <ariaHidden>a site</ariaHidden>'
 				),
 				{
-					add: (
+					create: (
 						<a
 							href={ domainOnlySiteCreationLink( siteSlug, site?.ID ) }
 							aria-label={ __( 'Create a site for this domain' ) }
