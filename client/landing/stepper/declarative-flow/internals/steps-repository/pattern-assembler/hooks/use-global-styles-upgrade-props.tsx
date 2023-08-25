@@ -11,7 +11,6 @@ interface Props {
 	stepName: string;
 	hasSelectedColorVariation?: boolean;
 	hasSelectedFontVariation?: boolean;
-	resetCustomStyles?: boolean;
 	nextScreenName: ScreenName;
 	onUpgradeLater?: () => void;
 	onContinue?: () => void;
@@ -23,7 +22,6 @@ const useGlobalStylesUpgradeProps = ( {
 	stepName,
 	hasSelectedColorVariation = false,
 	hasSelectedFontVariation = false,
-	resetCustomStyles,
 	nextScreenName,
 	onUpgradeLater,
 	onContinue,
@@ -66,8 +64,7 @@ const useGlobalStylesUpgradeProps = ( {
 	};
 
 	return {
-		shouldUnlockGlobalStyles:
-			numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles && ! resetCustomStyles,
+		shouldUnlockGlobalStyles: numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles,
 		globalStylesInPersonalPlan,
 		numOfSelectedGlobalStyles,
 		onCheckout: handleCheckout,

@@ -403,7 +403,6 @@ const PatternAssembler = ( {
 		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
-		resetCustomStyles,
 		nextScreenName: isNewSite ? 'confirmation' : 'activation',
 		onUpgradeLater: onContinue,
 		onContinue,
@@ -428,7 +427,7 @@ const PatternAssembler = ( {
 
 	const onBack = () => {
 		// Turn off the resetting custom styles when going back from the upsell screen
-		if ( resetCustomStyles ) {
+		if ( currentScreen.name === 'upsell' && resetCustomStyles ) {
 			setResetCustomStyles( false );
 		}
 
@@ -535,7 +534,6 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						onContinueClick={ onContinueWithUpsell }
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }

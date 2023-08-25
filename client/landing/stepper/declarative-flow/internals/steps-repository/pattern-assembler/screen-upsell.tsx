@@ -78,7 +78,7 @@ const ScreenUpsell = ( {
 					primary
 					onClick={ ! resetCustomStyles ? onCheckout : onContinue }
 				>
-					{ ! resetCustomStyles ? translations.upgradeWithPlan : translate( 'Edit your content' ) }
+					{ ! resetCustomStyles ? translations.upgradeWithPlan : translate( 'Continue' ) }
 				</Button>
 			</div>
 		</>
