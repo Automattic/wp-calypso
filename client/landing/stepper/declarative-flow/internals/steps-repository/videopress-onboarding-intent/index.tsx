@@ -2,6 +2,12 @@
 
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import BlogIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-blog.png';
+import ChannelIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-channel.png';
+import JetpackIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-jetpack.png';
+import OtherIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-other.png';
+import PortfolioIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-portfolio.png';
+import SingleVideoIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-single-video.png';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoPressOnboardingIntentItem from './intent-item';
@@ -41,19 +47,19 @@ const VideoPressOnboardingIntent: Step = () => {
 			<VideoPressOnboardingIntentItem
 				title={ __( 'Get a video portfolio' ) }
 				description={ __( 'Share your work with the world.' ) }
-				image=""
+				image={ PortfolioIntentImage }
 				onClick={ onVideoPortfolioIntentClicked }
 			/>
 			<VideoPressOnboardingIntentItem
 				title={ __( 'Create a channel for your videos' ) }
 				description={ __( 'The easiest way to upload videos and create a community around them.' ) }
-				image=""
+				image={ ChannelIntentImage }
 				onClick={ onVideoChannelIntentClicked }
 			/>
 			<VideoPressOnboardingIntentItem
 				title={ __( 'Upload a video' ) }
 				description={ __( 'Just put a video on the internet.' ) }
-				image=""
+				image={ SingleVideoIntentImage }
 				onClick={ onUploadVideoIntentClicked }
 			/>
 			<VideoPressOnboardingIntentItem
@@ -61,19 +67,19 @@ const VideoPressOnboardingIntent: Step = () => {
 				description={ __(
 					'All the advantages and features from VideoPress, on your own WordPress site.'
 				) }
-				image=""
+				image={ JetpackIntentImage }
 				onClick={ onAddVideoIntentClicked }
 			/>
 			<VideoPressOnboardingIntentItem
 				title={ __( 'Start a blog with video content' ) }
 				description={ __( 'Use advanced media formats to enhance your storytelling.' ) }
-				image=""
+				image={ BlogIntentImage }
 				onClick={ onVideoBlogIntentClicked }
 			/>
 			<VideoPressOnboardingIntentItem
 				title={ __( 'Other' ) }
 				description={ __( 'What are you looking for? Let us know!' ) }
-				image=""
+				image={ OtherIntentImage }
 				onClick={ onOtherIntentClicked }
 			/>
 		</div>
