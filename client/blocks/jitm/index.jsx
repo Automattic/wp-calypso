@@ -53,6 +53,14 @@ function renderTemplate( template, props ) {
 					placeholder={ null }
 				/>
 			);
+		case 'banner':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/banner"
+					placeholder={ null }
+				/>
+			);
 		default:
 			return (
 				<AsyncLoad

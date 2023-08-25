@@ -1,0 +1,21 @@
+.banner-jitm {
+	&.card.banner {
+		border-left: none;
+	}
+
+	background:
+		linear-gradient(170deg, rgba(225, 212, 229, 1), rgba(225, 212, 229, 0) 60%),
+		linear-gradient(5deg, rgba(101, 162, 215, 1), rgba(101, 162, 215, 0) 70%),
+		linear-gradient(220deg, rgba(102, 171, 160, 1), rgba(102, 171, 160, 0) 60%);
+	background-repeat: no-repeat;
+	background-size: 56px 100%;
+
+	.banner__icons {
+		.banner__icon,
+		.banner__icon-no-circle {
+			width: 46px;
+			height: 46px;
+		}
+
+	}
+}

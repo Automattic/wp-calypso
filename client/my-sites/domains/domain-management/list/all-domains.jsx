@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
@@ -411,6 +412,13 @@ class AllDomains extends Component {
 		return (
 			<>
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+
+				<AsyncLoad
+					require="calypso/blocks/jitm"
+					template="banner"
+					messagePath="calypso:domains:admin_notices"
+				/>
+
 				<DomainsTable
 					currentRoute={ currentRoute }
 					domains={ domains }

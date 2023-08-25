@@ -10,6 +10,7 @@ import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
@@ -179,19 +180,6 @@ export class SiteDomains extends Component {
 
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
-				{ wpcomDomain && (
-					<FreeDomainItem
-						key="wpcom-domain-item"
-						isAtomicSite={ isAtomicSite }
-						currentRoute={ currentRoute }
-						domain={ wpcomDomain }
-						disabled={ disabled }
-						isBusy={ settingPrimaryDomain }
-						site={ selectedSite }
-						onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
-					/>
-				) }
-
 				<div
 					className={ classnames( 'domain-management-list__items', {
 						[ 'has-no-wpcom-domain' ]: ! wpcomDomain,
@@ -200,6 +188,13 @@ export class SiteDomains extends Component {
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
 					</div>
+					{ ! this.isLoading() && (
+						<AsyncLoad
+							require="calypso/blocks/jitm"
+							template="banner"
+							messagePath="calypso:domains:admin_notices"
+						/>
+					) }
 					<DomainsTable
 						currentRoute={ currentRoute }
 						domains={ nonWpcomDomains }
@@ -214,7 +209,20 @@ export class SiteDomains extends Component {
 						sites={ { [ selectedSite.ID ]: selectedSite } }
 						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
+					{ wpcomDomain && (
+						<FreeDomainItem
+							key="wpcom-domain-item"
+							isAtomicSite={ isAtomicSite }
+							currentRoute={ currentRoute }
+							domain={ wpcomDomain }
+							disabled={ disabled }
+							isBusy={ settingPrimaryDomain }
+							site={ selectedSite }
+							onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
+						/>
+					) }
 				</div>
+
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
