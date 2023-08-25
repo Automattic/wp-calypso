@@ -1,13 +1,13 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableSiteCell } from './domains-table-site-cell';
 import type {
 	PartialDomainData,
 	SiteDomainsQueryFnData,
@@ -82,38 +82,6 @@ export function DomainsTableRow( {
 		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
 	}, [] );
 
-	const getSiteColumn = () => {
-		if ( ! site || ! currentDomainData ) {
-			return null;
-		}
-
-		if ( currentDomainData.current_user_can_create_site_from_domain_only ) {
-			return createInterpolateElement(
-				/* translators: ariaHidden means that the component will be skipped by screen readers. */
-				__(
-					'<create>Create</create> <ariaHidden>or</ariaHidden> <connect>connect</connect> <ariaHidden>a site</ariaHidden>'
-				),
-				{
-					create: (
-						<a
-							href={ domainOnlySiteCreationLink( siteSlug, site?.ID ) }
-							aria-label={ __( 'Create a site for this domain' ) }
-						/>
-					),
-					connect: (
-						<a
-							href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }
-							aria-label={ __( 'Connect this domain to an existing site' ) }
-						/>
-					),
-					ariaHidden: <span aria-hidden={ true } />,
-				}
-			);
-		}
-
-		return site.name ?? '-';
-	};
-
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
@@ -144,7 +112,11 @@ export function DomainsTableRow( {
 				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 				) : (
-					getSiteColumn()
+					<DomainsTableSiteCell
+						site={ site }
+						siteSlug={ siteSlug }
+						currentDomainData={ currentDomainData }
+					/>
 				) }
 			</td>
 			<td></td>
@@ -153,16 +125,6 @@ export function DomainsTableRow( {
 			</td>
 		</tr>
 	);
-}
-
-export function domainOnlySiteCreationLink( siteSlug: string, siteId: number ) {
-	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
-		siteSlug
-	) }&siteId=${ encodeURIComponent( siteId ) }`;
-}
-
-export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `/domains/manage/all/${ domainName }/transfer/other-site/${ siteSlug }`;
 }
 
 function domainManagementLink(
