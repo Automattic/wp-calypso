@@ -1,3 +1,7 @@
+.videopress-onboarding-intent {
+	max-width: 1200px !important;
+}
+
 .videopress-onboarding-intent__step-content {
 	display: grid;
 	grid-template: "a b c" 1fr;
@@ -41,4 +45,17 @@
 .videopress-intent-item__description {
 	display: flex;
 	flex-direction: column;
+	text-align: center;
+	gap: 4px;
+
+	.videopress-intent-item__title {
+		font-size: 17px; /* stylelint-disable-line */
+		font-weight: 600;
+	}
+
+	.videopress-intent-item__description {
+		font-size: 14px; /* stylelint-disable-line */
+		font-weight: 400;
+		color: #a7aaad;
+	}
 }
