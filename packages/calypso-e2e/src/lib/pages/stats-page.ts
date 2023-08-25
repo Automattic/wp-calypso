@@ -113,7 +113,7 @@ export class StatsPage {
 		// Wait for the charts to load first, even if no activity is present.
 		// CSS selector has to be used here because there is no a11y selector
 		// for this element.
-		await this.page.locator( selectors.graph ).waitFor();
+		await this.page.locator( '.is-loading' ).waitFor( { state: 'detached' } );
 
 		// CSS selector is used to narrow down to the Stats Activity tab for
 		// similar reason to above.
