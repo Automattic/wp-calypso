@@ -126,3 +126,7 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 	background-color: rgba(220, 220, 222, 1);
 	color: rgba(44, 51, 56, 1);
 }
+
+td.request_url {
+	word-break: break-word;
+}
