@@ -14,7 +14,11 @@ export interface DomainData {
 	connection_mode: unknown;
 	current_user_can_add_email: boolean;
 	current_user_can_create_site_from_domain_only: boolean;
-	current_user_cannot_add_email_reason: unknown;
+	current_user_cannot_add_email_reason: {
+		errors: {
+			[ key: string ]: string[];
+		};
+	};
 	current_user_can_manage: boolean;
 	current_user_is_owner: boolean;
 	can_set_as_primary: boolean;
@@ -56,36 +60,45 @@ export interface DomainData {
 	};
 	pending_whois_update: boolean;
 	tld_maintenance_end_time: 0;
-	ssl_status: string;
+	ssl_status: 'active' | 'pending' | 'disabled' | null;
+	gdpr_consent_status: string;
 	supports_gdpr_consent_management: boolean;
 	supports_transfer_approval: boolean;
 	domain_registration_agreement_url: string;
 	contact_info_disclosure_available: boolean;
 	contact_info_disclosed: boolean;
 	renewable_until: string;
-	redeemable_until: unknown;
-	bundled_plan_subscription_id: unknown;
+	redeemable_until: string;
+	bundled_plan_subscription_id: string | number | null | undefined;
 	product_slug: string;
 	owner: string;
 	pending_renewal: boolean;
 	aftermarket_auction: boolean;
 	aftermarket_auction_start: unknown;
-	aftermarket_auction_end: unknown;
+	aftermarket_auction_end: string | null;
 	nominet_pending_contact_verification_request: boolean;
 	nominet_domain_suspended: boolean;
 	transfer_status: unknown;
 	last_transfer_error: string;
 	has_private_registration: boolean;
 	is_pending_icann_verification: boolean;
+	is_icann_verification_suspended: boolean;
 	manual_transfer_required: boolean;
 	registrar: string;
 	domain_locking_available: boolean;
 	is_premium: boolean;
 	transfer_lock_on_whois_update_optional: boolean;
+	transfer_start_date: string;
 	whois_update_unmodifiable_fields: [];
 	is_whois_editable: boolean;
 	pending_transfer: boolean;
 	has_wpcom_nameservers: boolean;
+	admin_email: string;
+	a_records_required_for_mapping: [];
+	begin_transfer_until_date: string;
+	must_remove_privacy_before_contact_update: boolean;
+	registry_expiry_date: string;
+	subdomain_part: string;
 }
 
 export interface SiteDomainsQueryFnData {
