@@ -6,6 +6,7 @@ import { Fragment, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
+import { LogType } from '../../logs-tab';
 import SiteLogsExpandedContent from './site-logs-expanded-content';
 import './style.scss';
 
@@ -13,14 +14,20 @@ interface Props {
 	columns: string[];
 	log: SiteLogsData[ 'logs' ][ 0 ];
 	siteGmtOffset: number;
+	logType?: LogType;
 }
 
-export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props ) {
+export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType }: Props ) {
 	const { __ } = useI18n();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const expandedId = useRef( uuidv4() ).current;
 
 	const firstColumnValue = log[ columns[ 0 ] ]; // Get the value of the first column
+
+	const specifiedLogs =
+		logType === 'php'
+			? [ 'message', 'timestamp', 'kind', 'name', 'file', 'line' ]
+			: [ 'timestamp', 'body_bytes_sent', 'cached', 'http_host', 'http_referer' ];
 
 	return (
 		<Fragment>
@@ -51,7 +58,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props
 			{ isExpanded && (
 				<tr className="site-logs-table__table-row-expanded" id={ expandedId }>
 					<td colSpan={ columns.length + 1 }>
-						<SiteLogsExpandedContent log={ log } />
+						<SiteLogsExpandedContent log={ log } specifiedLogs={ specifiedLogs } />
 					</td>
 				</tr>
 			) }

@@ -60,6 +60,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 						columns={ columns }
 						log={ log }
 						siteGmtOffset={ siteGmtOffset }
+						logType={ logType }
 					/>
 				) ) }
 			</tbody>

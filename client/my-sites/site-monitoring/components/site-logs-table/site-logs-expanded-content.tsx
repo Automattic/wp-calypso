@@ -5,23 +5,25 @@ import './style.scss';
 
 interface Props {
 	log: SiteLogsData[ 'logs' ][ 0 ];
+	specifiedLogs: string[];
 }
 
-export default function SiteLogsExpandedContent( { log }: Props ) {
+export default function SiteLogsExpandedContent( { log, specifiedLogs }: Props ) {
 	return (
 		<div className="site-logs-table__expanded-content">
-			{ Object.keys( log ).map( ( key ) => (
-				<Fragment key={ key }>
-					<div>
-						<strong>{ key }</strong>
-					</div>
-					<div>
-						<div className="site-logs-table__expanded-content-info">
-							{ renderCell( key, log[ key ] ) }
+			{ specifiedLogs &&
+				specifiedLogs.map( ( key ) => (
+					<Fragment key={ key }>
+						<div>
+							<strong>{ key }</strong>
 						</div>
-					</div>
-				</Fragment>
-			) ) }
+						<div>
+							<div className="site-logs-table__expanded-content-info">
+								{ renderCell( key, log[ key ] ) }
+							</div>
+						</div>
+					</Fragment>
+				) ) }
 		</div>
 	);
 }

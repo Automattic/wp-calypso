@@ -13,7 +13,7 @@ import { SiteLogsToolbar } from './components/site-logs-toolbar';
 import { getDateRangeQueryParam, updateDateRangeQueryParam } from './site-monitoring-filter-params';
 import type { Moment } from 'moment';
 
-type LogType = 'php' | 'web';
+export type LogType = 'php' | 'web';
 
 const DEFAULT_PAGE_SIZE = 50;
 
