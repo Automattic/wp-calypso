@@ -4,6 +4,7 @@ import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
+import type { ScreenName } from '../types';
 
 interface Props {
 	flowName: string;
@@ -11,6 +12,7 @@ interface Props {
 	hasSelectedColorVariation?: boolean;
 	hasSelectedFontVariation?: boolean;
 	resetCustomStyles?: boolean;
+	nextScreenName: ScreenName;
 	onUpgradeLater?: () => void;
 	onContinue?: () => void;
 	recordTracksEvent: ( eventName: string, eventProps?: { [ key: string ]: unknown } ) => void;
@@ -22,6 +24,7 @@ const useGlobalStylesUpgradeProps = ( {
 	hasSelectedColorVariation = false,
 	hasSelectedFontVariation = false,
 	resetCustomStyles,
+	nextScreenName,
 	onUpgradeLater,
 	onContinue,
 	recordTracksEvent,
@@ -38,8 +41,10 @@ const useGlobalStylesUpgradeProps = ( {
 	const handleCheckout = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_UPSELL_CHECKOUT_BUTTON_CLICK );
 
-		// When the user is done with checkout, send them back to the current url
-		const redirectUrl = window.location.href.replace( window.location.origin, '' );
+		// When the user is done with checkout, send them back to the next screen
+		const searchParams = new URLSearchParams( window.location.search );
+		searchParams.set( 'screen', nextScreenName );
+		const redirectUrl = `${ window.location.pathname }?${ searchParams }`;
 
 		goToCheckout( {
 			flowName,

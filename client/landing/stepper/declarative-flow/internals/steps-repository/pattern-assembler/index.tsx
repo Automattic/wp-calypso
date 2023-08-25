@@ -425,36 +425,34 @@ const PatternAssembler = ( {
 		submit?.();
 	};
 
-	const onUpgradeLater = () => {
+	const onContinue = () => {
 		if ( isNewSite ) {
 			navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
 		} else {
 			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
 		}
 	};
+
+	const onContinueWithUpsell = () => {
+		if ( shouldUnlockGlobalStyles ) {
+			navigator.goTo( NAVIGATOR_PATHS.UPSELL );
+			return;
+		}
+
+		onContinue();
+	}
 
 	const { shouldUnlockGlobalStyles, ...globalStylesUpgradeProps } = useGlobalStylesUpgradeProps( {
 		flowName: flow,
 		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
-		onUpgradeLater,
 		resetCustomStyles,
+		nextScreenName: isNewSite ? 'confirmation' : 'activation',
+		onUpgradeLater: onContinue,
+		onContinue,
 		recordTracksEvent,
 	} );
-
-	const onContinueClick = () => {
-		if ( shouldUnlockGlobalStyles ) {
-			navigator.goTo( NAVIGATOR_PATHS.UPSELL );
-			return;
-		}
-
-		if ( isNewSite ) {
-			navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
-		} else {
-			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
-		}
-	};
 
 	const onActivate = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
@@ -536,7 +534,7 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						onContinueClick={ onContinueClick }
+						onContinueClick={ onContinueWithUpsell }
 						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
@@ -551,7 +549,7 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES } partialMatch>
 					<ScreenStyles
 						onMainItemSelect={ onMainItemSelect }
-						onContinueClick={ onContinueClick }
+						onContinueClick={ onContinueWithUpsell }
 						recordTracksEvent={ recordTracksEvent }
 						hasColor={ !! colorVariation }
 						hasFont={ !! fontVariation }
