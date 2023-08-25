@@ -8,6 +8,7 @@ export type Pattern = {
 	key?: string;
 	pattern_meta?: Record< string, boolean | undefined >;
 	html?: string;
+	tags: Record< string, Tag >;
 };
 
 export type PatternType = 'header' | 'footer' | 'section';
@@ -34,3 +35,9 @@ export type PanelObject = {
 };
 
 export type ScreenName = 'main' | 'styles' | 'confirmation' | 'activation' | 'upsell';
+
+export type Tag = {
+	slug: string;
+	title: string;
+	description: string;
+};

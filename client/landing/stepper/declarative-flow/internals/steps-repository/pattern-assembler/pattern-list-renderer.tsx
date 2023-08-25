@@ -98,9 +98,15 @@ const PatternListRenderer = ( {
 	composite,
 	onSelect,
 }: PatternListRendererProps ) => {
+	const filterPriorityPatterns = ( pattern: Pattern ) => {
+		if ( ! pattern.tags.assembler_priority ) {
+			return pattern;
+		}
+	};
+
 	return (
 		<>
-			{ patterns?.map( ( pattern, index ) => (
+			{ patterns?.filter( filterPriorityPatterns ).map( ( pattern, index ) => (
 				<PatternListItem
 					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
