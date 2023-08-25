@@ -28,12 +28,12 @@ import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
-import useDashboardShowLargeScreen from './site-content/use-dashboard-show-large-screen';
+import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
-import { getProductSlugFromProductType } from './utils';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
@@ -188,7 +188,7 @@ export default function SitesOverview() {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
 			product_slug: selectedLicenses
-				?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+				?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
 				// If multiple products are selected, pass them as a comma-separated list.
 				.join( ',' ),
 			source: 'dashboard',
@@ -246,7 +246,7 @@ export default function SitesOverview() {
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
 								site_id: selectedLicensesSiteId,
 								products: selectedLicenses
-									?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+									?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
 									// If multiple products are selected, pass them as a comma-separated list.
 									.join( ',' ),
 							} )
