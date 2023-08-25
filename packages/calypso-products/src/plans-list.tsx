@@ -2748,7 +2748,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			].includes( plan ),
 		getProductId: () => 1061,
 		getStoreSlug: () => PLAN_100_YEARS,
-		getPathSlug: () => '100-year-plan',
+		getPathSlug: () => 'wp_bundle_hundred_year',
 	},
 
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
