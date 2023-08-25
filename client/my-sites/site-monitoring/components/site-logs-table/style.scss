@@ -64,10 +64,6 @@ tr.site-logs-table__table-row-expanded {
 	grid-template-columns: auto 1fr;
 	gap: 0.6em 1em;
 
-	// This makes the expanded content fit inside the viewport
-	// The 440px takes into account the Calypso sidebar and the necessary table padding
-	width: calc(100vw - 440px);
-
 	@media (max-width: 800px) {
 		padding-left: 16px;
 		width: calc(100vw - 80px);
