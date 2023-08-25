@@ -15,6 +15,8 @@ interface ConfigurationData {
 		| 'Passionate'
 		| 'Provocative';
 	improve?: 'Summarize' | 'Make longer' | 'Make shorter';
+}
+interface ValidationData {
 	keywords: string[];
 }
 
@@ -23,6 +25,7 @@ interface ConfigurationData {
  */
 export class AIAssistantFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
+	private validationData: ValidationData;
 
 	/**
 	 * Constructs an instance of this block flow with data to be used when
@@ -30,8 +33,9 @@ export class AIAssistantFlow implements BlockFlow {
 	 *
 	 * @param {ConfigurationData} configurationData Configuration data for the block.
 	 */
-	constructor( configurationData: ConfigurationData ) {
+	constructor( configurationData: ConfigurationData, validationData: ValidationData ) {
 		this.configurationData = configurationData;
+		this.validationData = validationData;
 	}
 
 	blockSidebarName = 'AI Assistant (Experimental)';
@@ -96,9 +100,11 @@ export class AIAssistantFlow implements BlockFlow {
 	 * @param {Locator} block Locator to the block.
 	 */
 	private async waitForQuery( block: Locator ) {
+		// Some users on AT are very slow to process queries, hence the very long
+		// timeout.
 		await block
 			.getByRole( 'button', { name: 'Stop request' } )
-			.waitFor( { state: 'detached', timeout: 15 * 1000 } );
+			.waitFor( { state: 'detached', timeout: 30 * 1000 } );
 	}
 
 	/**
@@ -108,7 +114,7 @@ export class AIAssistantFlow implements BlockFlow {
 	 * the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		for ( const keyword of this.configurationData.keywords ) {
+		for ( const keyword of this.validationData.keywords ) {
 			await context.page.getByRole( 'main' ).filter( { hasText: keyword } ).waitFor();
 		}
 	}
