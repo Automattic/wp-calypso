@@ -3,10 +3,6 @@
 @import "@automattic/typography/styles/variables.scss";
 
 .pattern-list-panel__wrapper {
-	position: absolute;
-	top: 0;
-	left: 0;
-	margin-inline-start: 300px;
 	width: 340px;
 	padding: 20px;
 	background: var(--studio-gray-0);
@@ -20,7 +16,6 @@
 	font-family: "SF Pro Text", $sans;
 
 	@include break-wide {
-		margin-inline-start: 348px;
 		width: 348px;
 		padding: 24px;
 	}
@@ -41,4 +36,5 @@
 	font-weight: 400;
 	color: var(--studio-gray-60);
 	letter-spacing: -0.15px;
+	text-wrap: pretty;
 }

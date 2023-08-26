@@ -1,43 +1,49 @@
-import { sortPlans } from '../sort-plan-properties';
-import type { PlanProperties } from '../../types';
-
+/**
+ * @jest-environment jsdom
+ */
+/**
+ * Default mock implementations
+ */
 jest.mock( '../../hooks/npm-ready/data-store/is-popular-plan', () => ( {
-	isPopularPlan: ( planSlug ) => planSlug === 'premium',
+	isPopularPlan: ( planSlug ) => planSlug === 'value_bundle',
 } ) );
 jest.mock( '@automattic/calypso-products', () => ( {
-	isFreePlan: ( planSlug ) => planSlug === 'free',
+	isFreePlan: ( planSlug ) => planSlug === 'free_plan',
 } ) );
 
+import { sortPlans } from '../sort-plan-properties';
+import type { GridPlan } from '../../hooks/npm-ready/data-store/use-grid-plans';
+
+const planFree = {
+	pricing: { originalPrice: { full: 0, monthly: 0 } },
+	planSlug: 'free_plan',
+} as GridPlan;
+
+const planPersonal = {
+	pricing: { originalPrice: { full: 100, monthly: 0 } },
+	planSlug: 'personal-bundle',
+} as GridPlan;
+
+const planPremium = {
+	pricing: { originalPrice: { full: 200, monthly: 0 } },
+	planSlug: 'value_bundle',
+} as GridPlan;
+
+const planBusiness = {
+	pricing: { originalPrice: { full: 300, monthly: 0 } },
+	planSlug: 'business-bundle',
+} as GridPlan;
+
+const planEcommerce = {
+	pricing: { originalPrice: { full: 500, monthly: 0 } },
+	planSlug: 'ecommerce-bundle',
+} as GridPlan;
+
+const plansInDefaultOrder = [ planFree, planPersonal, planPremium, planBusiness, planEcommerce ];
+
 describe( 'sortPlans', () => {
-	const planFree = {
-		rawPrice: 0,
-		planName: 'free',
-	} as unknown as PlanProperties;
-
-	const planPersonal = {
-		rawPrice: 100,
-		planName: 'personal',
-	} as unknown as PlanProperties;
-
-	const planPremium = {
-		rawPrice: 200,
-		planName: 'premium',
-	} as unknown as PlanProperties;
-
-	const planBusiness = {
-		rawPrice: 300,
-		planName: 'business',
-	} as unknown as PlanProperties;
-
-	const planEcommerce = {
-		rawPrice: 500,
-		planName: 'ecommerce',
-	} as unknown as PlanProperties;
-
-	const plansInDefaultOrder = [ planFree, planPersonal, planPremium, planBusiness, planEcommerce ];
-
 	it( 'should sort plans in descending order of value when current plan slug is personal', () => {
-		expect( sortPlans( plansInDefaultOrder, 'personal' ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'personal-bundle' ) ).toEqual( [
 			planPersonal,
 			planPremium,
 			planBusiness,
@@ -47,7 +53,7 @@ describe( 'sortPlans', () => {
 	} );
 
 	it( 'should sort plans in descending order of value when current plan slug is ecommerce', () => {
-		expect( sortPlans( plansInDefaultOrder, 'ecommerce' ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'ecommerce-bundle' ) ).toEqual( [
 			planEcommerce,
 			planBusiness,
 			planPremium,
@@ -77,7 +83,7 @@ describe( 'sortPlans', () => {
 	} );
 
 	it( 'should show the popular plan first if current plan slug is the free plan', () => {
-		expect( sortPlans( plansInDefaultOrder, 'free' ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'free_plan' ) ).toEqual( [
 			planPremium,
 			planBusiness,
 			planEcommerce,
@@ -87,7 +93,7 @@ describe( 'sortPlans', () => {
 	} );
 
 	it( 'should show the popular plan second if current plan slug is empty/free and user is on mobile', () => {
-		expect( sortPlans( plansInDefaultOrder, 'free', true ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'free_plan', true ) ).toEqual( [
 			planPersonal,
 			planPremium,
 			planBusiness,

@@ -1,6 +1,9 @@
-import { isDefaultGlobalStylesVariationSlug, isAssemblerDesign } from '@automattic/design-picker';
+import {
+	isDefaultGlobalStylesVariationSlug,
+	isAssemblerDesign,
+	isAssemblerSupported,
+} from '@automattic/design-picker';
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -12,12 +15,11 @@ import type { GlobalStylesObject } from '@automattic/global-styles';
 const useRecipe = (
 	siteId = 0,
 	allDesigns: StarterDesigns | undefined,
-	pickDesign: ( design?: Design ) => void,
+	pickDesign: ( design?: Design, options?: { shouldGoToAssembler: boolean } ) => void,
 	recordPreviewDesign: ( design: Design, styleVariation?: StyleVariation ) => void,
 	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
-	const isDesktop = useViewportMatch( 'large' );
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const { selectedDesign, selectedStyleVariation } = useSelect( ( select ) => {
 		const { getSelectedDesign, getSelectedStyleVariation } = select(
@@ -138,12 +140,10 @@ const useRecipe = (
 	};
 
 	const previewDesign = ( design: Design, styleVariation?: StyleVariation ) => {
-		// Redirect to Site Assembler if the design_type is set to "assembler".
-		const shouldGoToAssembler = isDesktop && isAssemblerDesign( design );
-
 		recordPreviewDesign( design, styleVariation );
 
-		if ( shouldGoToAssembler ) {
+		// Redirect to Site Assembler if the design_type is set to "assembler".
+		if ( isAssemblerDesign( design ) && isAssemblerSupported() ) {
 			pickDesign( design );
 			return;
 		}

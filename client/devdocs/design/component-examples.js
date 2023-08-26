@@ -13,7 +13,7 @@ export { default as Checklist } from 'calypso/components/checklist/docs/example'
 export { default as ClipboardButtonInput } from 'calypso/components/clipboard-button-input/docs/example';
 export { default as ClipboardButtons } from 'calypso/components/forms/clipboard-button/docs/example';
 export { default as Collection } from 'calypso/devdocs/design/search-collection';
-export { default as Count } from 'calypso/components/count/docs/example';
+export { default as Count } from '@automattic/components/src/count/docs/example';
 export { default as CountedTextareas } from 'calypso/components/forms/counted-textarea/docs/example';
 export { default as DatePicker } from 'calypso/components/date-picker/docs/example';
 export { default as DateRange } from 'calypso/components/date-range/docs/example';
@@ -62,7 +62,7 @@ export { default as SearchDemo } from 'calypso/components/search/docs/example';
 export { default as SectionHeader } from 'calypso/components/section-header/docs/example';
 export { default as SectionNav } from 'calypso/components/section-nav/docs/example';
 export { default as SegmentedControl } from 'calypso/components/segmented-control/docs/example';
-export { default as SelectDropdown } from 'calypso/components/select-dropdown/docs/example';
+export { default as SelectDropdown } from '@automattic/components/src/select-dropdown/docs/example';
 export { default as ShareButton } from 'calypso/components/share-button/docs/example';
 export { default as SocialLogos } from 'calypso/components/social-logo/docs/example';
 export { Spinner } from '@automattic/components';

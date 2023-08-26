@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
-import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import SectionNav from 'calypso/components/section-nav';
@@ -29,11 +28,12 @@ import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
+import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
-import { getProductSlugFromProductType } from './utils';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
@@ -46,6 +46,9 @@ export default function SitesOverview() {
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const containerRef = createRef< any >();
+	const siteTableRef = createRef< HTMLTableElement >();
+
+	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
@@ -185,7 +188,7 @@ export default function SitesOverview() {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
 			product_slug: selectedLicenses
-				?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+				?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
 				// If multiple products are selected, pass them as a comma-separated list.
 				.join( ',' ),
 			source: 'dashboard',
@@ -243,7 +246,7 @@ export default function SitesOverview() {
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
 								site_id: selectedLicensesSiteId,
 								products: selectedLicenses
-									?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+									?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
 									// If multiple products are selected, pass them as a comma-separated list.
 									.join( ',' ),
 							} )
@@ -341,6 +344,7 @@ export default function SitesOverview() {
 										},
 									},
 									products: products ?? [],
+									isLargeScreen: showLargeScreen,
 								} }
 							>
 								<>
@@ -350,7 +354,7 @@ export default function SitesOverview() {
 										isLoading={ isLoading }
 										currentPage={ currentPage }
 										isFavoritesTab={ isFavoritesTab }
-										ref={ containerRef }
+										ref={ siteTableRef }
 									/>
 								</>
 							</DashboardDataContext.Provider>

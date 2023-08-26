@@ -93,7 +93,7 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 				<div className="home-site-preview__site-info">
 					<h2 className="home-site-preview__info-title">{ selectedSite.name }</h2>
 					<SiteUrl href={ selectedSite.URL } title={ selectedSite.URL }>
-						<Truncated>{ selectedSite.URL }</Truncated>
+						<Truncated>{ selectedSite.slug }</Truncated>
 					</SiteUrl>
 				</div>
 				<SitePreviewEllipsisMenu />

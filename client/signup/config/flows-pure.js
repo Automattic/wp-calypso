@@ -109,7 +109,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-plugin',
-			steps: [ 'user', 'domains', 'plans-business' ],
+			steps: [ 'user', 'domains', 'plans-business-with-plugin' ],
 			destination: getWithPluginDestination,
 			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
 			lastModified: '2023-07-19',
@@ -332,10 +332,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'site-selected',
-			steps: [ 'themes-site-selected', 'plans-site-selected-legacy' ],
-			destination: getSiteDestination,
+			steps: [ 'plans-site-selected-legacy' ],
+			destination: getSignupDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
-			optionalDependenciesInQuery: [ 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
 		},

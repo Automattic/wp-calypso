@@ -1,3 +1,4 @@
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { withStorageKey } from '@automattic/state-utils';
 import { mapValues, omit, map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -7,6 +8,8 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
+	LIVE_PREVIEW_END,
+	LIVE_PREVIEW_START,
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
@@ -54,7 +57,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
-import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
+import { getSerializedThemesQuery } from './utils';
 
 /**
  * Returns the updated active theme state after an action has been
@@ -364,6 +367,21 @@ const queriesReducer = ( state = {}, action ) => {
 				() => new ThemeQueryManager( null, { itemKey: 'id' } )
 			);
 		}
+		case THEMES_REQUEST_FAILURE: {
+			const { siteId, query } = action;
+			return withQueryManager(
+				state,
+				siteId,
+				( m ) =>
+					m.receive( [], {
+						query,
+						found: 0,
+						patch: true,
+						dontShareQueryResultsWhenQueriesAreDifferent: true,
+					} ),
+				() => new ThemeQueryManager( null, { itemKey: 'id' } )
+			);
+		}
 		case THEME_DELETE_SUCCESS: {
 			const { siteId, themeId } = action;
 			return withQueryManager( state, siteId, ( m ) => m.removeItem( themeId ) );
@@ -649,6 +667,24 @@ export function startActivationSync( state = {}, { type, siteId, themeId } ) {
 
 	return state;
 }
+
+export function livePreview( state = {}, { type } ) {
+	switch ( type ) {
+		case LIVE_PREVIEW_START:
+			return {
+				...state,
+				started: true,
+			};
+		case LIVE_PREVIEW_END:
+			return {
+				...state,
+				started: false,
+			};
+	}
+
+	return state;
+}
+
 export const themeHasAtomicTransferDialog = ( state = null, action ) => {
 	switch ( action.type ) {
 		case THEME_SHOW_ATOMIC_TRANSFER_DIALOG: {
@@ -701,6 +737,7 @@ const combinedReducer = combineReducers( {
 	isLoadingCart,
 	startActivationSync,
 	themeHasAtomicTransferDialog,
+	livePreview,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

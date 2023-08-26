@@ -1,0 +1,61 @@
+@import "@automattic/typography/styles/variables";
+
+.domains-table {
+	border-collapse: collapse;
+
+	table {
+		margin-top: 30px;
+
+		tr {
+			border-bottom: 1px solid var(--studio-gray-5);
+		}
+	}
+
+	th {
+		padding-bottom: 16px;
+		color: var(--studio-gray-60);
+		vertical-align: middle;
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	.domains-table__bulk-action-container {
+		width: 0;
+		min-width: fit-content;
+
+		.components-checkbox-control__input-container {
+			margin-right: 16px;
+		}
+	}
+
+	td {
+		padding: 20px 0;
+		height: 44px;
+		vertical-align: middle;
+
+		color: var(--studio-gray-50);
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-style: normal;
+
+		a,
+		a:hover {
+			text-decoration: underline;
+			color: var(--color-link);
+		}
+	}
+
+	.domains-table__domain-name {
+		text-decoration: none;
+		color: var(--studio-gray-100);
+		font-size: $font-body;
+		line-height: 24px;
+		font-weight: 500;
+	}
+
+	.domains-table__primary-domain-label {
+		margin-bottom: 4px;
+	}
+}

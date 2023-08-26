@@ -1,0 +1,44 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.newsletter-categories-settings {
+	&,
+	.newsletter-categories-settings__term-tree-selector {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+
+		&.hidden {
+			display: none;
+		}
+
+		.term-tree-selector__add-term {
+			margin-bottom: 0;
+
+			&.is-compact {
+				border: 1px solid $studio-gray-10;
+				border-top: none;
+				padding: 8px;
+			}
+		}
+
+		.term-tree-selector.is-small {
+			border: 1px solid $studio-gray-10;
+			min-height: 34px;
+		}
+	}
+
+	.newsletter-categories-settings__description {
+		color: $studio-gray-70;
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body-small;
+		font-weight: 400;
+		line-height: 20px;
+		margin-bottom: 0;
+	}
+
+	.newsletter-categories-settings__save-button {
+		align-self: flex-start;
+		line-height: 20px;
+	}
+}

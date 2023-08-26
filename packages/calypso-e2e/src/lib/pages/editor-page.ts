@@ -16,7 +16,9 @@ import {
 	EditorWelcomeTourComponent,
 	EditorBlockToolbarComponent,
 	EditorTemplateModalComponent,
+	EditorPopoverMenuComponent,
 	TemplateCategory,
+	BlockToolbarButtonIdentifier,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
@@ -57,6 +59,7 @@ export class EditorPage {
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorTemplateModalComponent: EditorTemplateModalComponent;
+	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -85,6 +88,7 @@ export class EditorPage {
 			this.editor
 		);
 		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -167,18 +171,28 @@ export class EditorPage {
 	 * Select a template category from the sidebar of options.
 	 *
 	 * @param {TemplateCategory} category Name of the category to select.
+	 * @param param1 Keyed object parameter.
+	 * @param {number} param1.timeout Timeout to apply.
 	 */
-	async selectTemplateCategory( category: TemplateCategory ) {
-		return await this.editorTemplateModalComponent.selectTemplateCategory( category );
+	async selectTemplateCategory(
+		category: TemplateCategory,
+		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
+	) {
+		return await this.editorTemplateModalComponent.selectTemplateCategory( category, timeout );
 	}
 
 	/**
 	 * Select a template from the grid of options.
 	 *
 	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param param1 Keyed object parameter.
+	 * @param {number} param1.timeout Timeout to apply.
 	 */
-	async selectTemplate( label: string ) {
-		return await this.editorTemplateModalComponent.selectTemplate( label );
+	async selectTemplate(
+		label: string,
+		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
+	) {
+		return await this.editorTemplateModalComponent.selectTemplate( label, timeout );
 	}
 
 	/**
@@ -413,6 +427,27 @@ export class EditorPage {
 	 */
 	async moveBlockDown(): Promise< void > {
 		await this.editorBlockToolbarComponent.moveDown();
+	}
+
+	/**
+	 * Selects the matching option from the popover triggered by clicking
+	 * on a block toolbar button.
+	 *
+	 * @param {string} name Accessible name of the element.
+	 */
+	async selectFromToolbarPopover( name: string ) {
+		await this.editorPopoverMenuComponent.clickMenuButton( name );
+	}
+
+	/**
+	 * Clicks on a button with either the name or aria-label on the
+	 * editor toolbar.
+	 *
+	 * @param {BlockToolbarButtonIdentifier} name Object specifying either the
+	 * 	text label or aria-label of the button to be clicked.
+	 */
+	async clickBlockToolbarButton( name: BlockToolbarButtonIdentifier ): Promise< void > {
+		await this.editorBlockToolbarComponent.clickPrimaryButton( name );
 	}
 
 	//#endregion

@@ -46,8 +46,8 @@ export default function ToggleActivateMonitoring( {
 
 	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
-	// TODO: Need to figure out if current site has no existing paid version of downtime monitoring.
-	const shouldDisplayUpgradePopover = status === 'success' && isPaidTierEnabled;
+	const shouldDisplayUpgradePopover =
+		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -72,14 +72,14 @@ export default function ToggleActivateMonitoring( {
 
 	const isChecked = status !== 'disabled';
 	const isLoading = statuses?.[ site.blog_id ] === 'loading';
-	const smsLimitReached = false; // TODO: Get the sms limit reached status from the API.
+	const smsLimitReached = settings?.is_over_limit;
 
 	const currentSettings = () => {
-		const minutes = settings?.monitor_deferment_time;
+		const minutes = settings?.check_interval;
 		if ( ! minutes ) {
 			return null;
 		}
-		// Convert minutes to moment duration to show "hr" if monitor_deferment_time is greater than 60
+		// Convert minutes to moment duration to show "hr" if check_interval is greater than 60
 		const duration = moment.duration( minutes, 'minutes' );
 		const hours = Math.floor( duration.asHours() );
 		const currentDurationText = hours
@@ -132,7 +132,7 @@ export default function ToggleActivateMonitoring( {
 						) as string
 					}
 				>
-					{ smsLimitReached ? (
+					{ isPaidTierEnabled && smsLimitReached ? (
 						<img src={ alertIcon } alt={ translate( 'Alert' ) } />
 					) : (
 						<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />

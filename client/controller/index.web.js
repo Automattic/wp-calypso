@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { getLanguageSlugs } from '@automattic/i18n-utils';
+import {
+	getLanguage,
+	getLanguageSlugs,
+	removeLocaleFromPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -105,6 +109,19 @@ export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, smartHydrate );
 }
 
+export const redirectInvalidLanguage = ( context, next ) => {
+	const langParam = context.params.lang;
+	const language = getLanguage( langParam );
+	if ( langParam && ! language ) {
+		// redirect unsupported language to the default language
+		return page.redirect( context.path.replace( `/${ langParam }`, '' ) );
+	} else if ( langParam && language.langSlug !== langParam ) {
+		// redirect unsupported child language to the parent language
+		return page.redirect( context.path.replace( `/${ langParam }`, `/${ language.langSlug }` ) );
+	}
+	next();
+};
+
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
 	if ( isUserLoggedIn( state ) ) {
@@ -173,11 +190,11 @@ export function redirectLoggedOutToSignup( context, next ) {
  * @returns {void}
  */
 export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
-	const langSlugs = getLanguageSlugs();
-	const langSlugPathSegmentMatcher = new RegExp( `\\/(${ langSlugs.join( '|' ) })(\\/|\\?|$)` );
-	const pathWithoutLocale = context.path.replace( langSlugPathSegmentMatcher, '$2' );
+	if ( isUserLoggedIn( context.store.getState() ) && context.params.lang ) {
+		const langSlugs = getLanguageSlugs();
+		const langSlugPathSegmentMatcher = new RegExp( `\\/(${ langSlugs.join( '|' ) })(\\/|\\?|$)` );
+		const pathWithoutLocale = context.path.replace( langSlugPathSegmentMatcher, '$2' );
 
-	if ( isUserLoggedIn( context.store.getState() ) && pathWithoutLocale !== context.path ) {
 		return page.redirect( pathWithoutLocale );
 	}
 
@@ -196,5 +213,15 @@ export const notFound = ( context, next ) => {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
+	next();
+};
+
+export const redirectLoggedInUrl = ( context, next ) => {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
+		if ( pathWithoutLocale !== context.path ) {
+			return page.redirect( pathWithoutLocale );
+		}
+	}
 	next();
 };

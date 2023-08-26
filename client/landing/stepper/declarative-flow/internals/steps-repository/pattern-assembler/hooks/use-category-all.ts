@@ -11,15 +11,26 @@ const useCategoryAll = ( dotcomPatterns: Pattern[] ) => {
 		}
 		// Shuffle patterns for better stats of popular patterns
 		return shuffle(
-			dotcomPatterns.map( ( pattern ) => ( {
-				...pattern,
-				categories: {
-					...pattern.categories,
-					[ CATEGORY_ALL_SLUG ]: {
-						slug: CATEGORY_ALL_SLUG,
+			dotcomPatterns.map( ( pattern ) => {
+				const isHeader = pattern.categories.header;
+				const isFooter = pattern.categories.footer;
+
+				if ( isHeader || isFooter ) {
+					// Exclude headers and footers
+					return pattern;
+				}
+
+				return {
+					...pattern,
+					categories: {
+						...pattern.categories,
+						// Add category all to patterns
+						[ CATEGORY_ALL_SLUG ]: {
+							slug: CATEGORY_ALL_SLUG,
+						},
 					},
-				},
-			} ) )
+				};
+			} )
 		);
 	}, [ dotcomPatterns ] );
 };

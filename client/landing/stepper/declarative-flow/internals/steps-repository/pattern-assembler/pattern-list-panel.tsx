@@ -9,16 +9,20 @@ type PatternListPanelProps = {
 	categories: Category[];
 	selectedCategory: string | null;
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
-	selectedPatterns: Pattern[];
+	selectedPatterns?: Pattern[];
+	label?: string;
+	description?: string;
 };
 
 const PatternListPanel = ( {
-	onSelect,
 	selectedPattern,
 	selectedPatterns,
 	selectedCategory,
 	categories,
 	patternsMapByCategory,
+	label,
+	description,
+	onSelect,
 }: PatternListPanelProps ) => {
 	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
 
@@ -33,8 +37,10 @@ const PatternListPanel = ( {
 
 	return (
 		<div key="pattern-list-panel" className="pattern-list-panel__wrapper">
-			<div className="pattern-list-panel__title">{ category?.label }</div>
-			<div className="pattern-list-panel__description">{ category?.description }</div>
+			<div className="pattern-list-panel__title">{ label ?? category?.label }</div>
+			<div className="pattern-list-panel__description">
+				{ description ?? category?.description }
+			</div>
 			<PatternSelector
 				patterns={ categoryPatterns }
 				onSelect={ onSelect }

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -6,7 +7,6 @@ import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { captureException } from 'calypso/lib/sentry';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { useSelector } from 'calypso/state';

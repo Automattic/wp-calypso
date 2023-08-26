@@ -3,32 +3,26 @@
  */
 export const PATTERN_ASSEMBLER_EVENTS = {
 	/**
+	 * Common for screens
+	 */
+	SCREEN_BACK_CLICK: 'calypso_signup_pattern_assembler_screen_back_click',
+	SCREEN_CONTINUE_CLICK: 'calypso_signup_pattern_assembler_screen_continue_click',
+
+	/**
 	 * Screen Main
 	 */
 	MAIN_ITEM_SELECT: 'calypso_signup_pattern_assembler_main_item_select',
-	CONTINUE_CLICK: 'calypso_signup_pattern_assembler_continue_click',
-	CONTINUE_MISCLICK: 'calypso_signup_pattern_assembler_continue_misclick',
 	BACK_CLICK: 'calypso_signup_pattern_assembler_back_click',
 	PATTERN_FINAL_SELECT: 'calypso_signup_pattern_assembler_pattern_final_select',
+	CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
 
 	/**
-	 * Screen Colors
+	 * Screen Styles
 	 */
 	SCREEN_COLORS_PREVIEW_CLICK: 'calypso_signup_pattern_assembler_screen_colors_preview_click',
-	SCREEN_COLORS_BACK_CLICK: 'calypso_signup_pattern_assembler_screen_colors_back_click',
-	SCREEN_COLORS_DONE_CLICK: 'calypso_signup_pattern_assembler_screen_colors_done_click',
-
-	/**
-	 * Screen Fonts
-	 */
 	SCREEN_FONTS_PREVIEW_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_preview_click',
-	SCREEN_FONTS_BACK_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_back_click',
-	SCREEN_FONTS_DONE_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_done_click',
-
-	/**
-	 * Screen Category List
-	 */
-	SCREEN_CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
+	CONTINUE_TO_EDITOR_CLICK: 'calypso_signup_pattern_assembler_continue_click',
+	CONTINUE_MISCLICK: 'calypso_signup_pattern_assembler_continue_misclick',
 
 	/**
 	 * Screen Activation
@@ -40,8 +34,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	 * Pattern Panels
 	 */
 	PATTERN_SELECT_CLICK: 'calypso_signup_pattern_assembler_pattern_select_click',
-	PATTERN_SELECT_BACK_CLICK: 'calypso_signup_pattern_assembler_pattern_select_back_click',
-	PATTERN_SELECT_DONE_CLICK: 'calypso_signup_pattern_assembler_pattern_select_done_click',
 
 	/**
 	 * Pattern Actions

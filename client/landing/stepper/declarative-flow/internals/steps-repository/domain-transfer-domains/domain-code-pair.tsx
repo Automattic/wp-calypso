@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl, englishLocales, useLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
@@ -65,8 +65,7 @@ const domainInputFieldIcon = ( isValidDomain: boolean, shouldReportError: boolea
 };
 
 const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceProps ) => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 
 	if ( ! rawPrice ) {
 		return <div className="domains__domain-price-number disabled"></div>;
@@ -80,10 +79,7 @@ const DomainPrice = ( { rawPrice, saleCost, currencyCode = 'USD' }: DomainPriceP
 		);
 	}
 
-	let pricetext = __( 'First year free' );
-	if ( englishLocales.includes( locale ) || hasTranslation( 'We’ll pay for an extra year' ) ) {
-		pricetext = __( 'We’ll pay for an extra year' );
-	}
+	const pricetext = __( 'We’ll pay for an extra year' );
 
 	return (
 		<div className="domains__domain-price-value">
@@ -206,7 +202,7 @@ export function DomainCodePair( {
 				<div>
 					<Button
 						href={ localizeUrl(
-							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-obtain-your-domain-transfer-authorization-code'
+							'https://wordpress.com/support/domains/incoming-domain-transfer/#step-2-unlock-your-domain-and-obtain-your-auth-code'
 						) }
 						target="_blank"
 						variant="link"

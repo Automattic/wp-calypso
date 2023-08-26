@@ -14,8 +14,8 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"private": true,
 	"peerDependencies": {
-		"mocha": "^8.1.3",
-		"mocha-junit-reporter": "^2.0.2"
+		"mocha": "^10.2.0",
+		"mocha-junit-reporter": "^2.2.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

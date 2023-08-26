@@ -1,0 +1,21 @@
+@import "@automattic/typography/styles/variables";
+
+.domains-table__primary-domain-label {
+	// Uses the extra class selector to bump up the specificty so we can more reliably
+	// override the usual badge styles.
+	&.badge {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		width: max-content;
+		line-height: 1;
+		height: 20px;
+		border-radius: 4px;
+	}
+
+	&-popover-content {
+		padding: 16px;
+		font-size: $font-body-small;
+		color: var(--studio-gray-50);
+	}
+}

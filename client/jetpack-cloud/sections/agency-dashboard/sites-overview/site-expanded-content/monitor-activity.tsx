@@ -5,9 +5,9 @@ import useFetchMonitorData from 'calypso/data/agency-dashboard/use-fetch-monitor
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
-import { useToggleActivateMonitor } from '../../hooks';
-import { getMonitorDowntimeText } from '../utils';
+import useToggleActivateMonitor from '../../hooks/use-toggle-activate-monitor';
 import ExpandedCard from './expanded-card';
+import useGetMonitorDowntimeText from './hooks/use-get-monitor-downtime-text';
 import type { Site } from '../types';
 
 interface Props {
@@ -21,6 +21,7 @@ const START_INDEX = 10;
 
 const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
+	const getMonitorDowntimeText = useGetMonitorDowntimeText();
 
 	const { data } = useFetchMonitorData( siteId, '30 days' );
 

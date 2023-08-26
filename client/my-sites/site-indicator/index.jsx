@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,13 +8,14 @@ import { connect } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 
@@ -21,7 +23,7 @@ import './style.scss';
 
 const WPAdminLink = ( props ) => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 
-class SiteIndicator extends Component {
+export class SiteIndicator extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 
@@ -51,8 +53,7 @@ class SiteIndicator extends Component {
 		return (
 			userCanManage &&
 			siteIsJetpack &&
-			! siteIsAutomatedTransfer &&
-			( this.hasUpdate() || this.hasError() )
+			( ( ! siteIsAutomatedTransfer && this.hasUpdate() ) || this.hasError() )
 		);
 	}
 
@@ -191,22 +192,34 @@ class SiteIndicator extends Component {
 		);
 	};
 
+	handleJetpackConnectionHealthSidebarLinkClick = () => {
+		const { siteIsAutomatedTransfer } = this.props;
+		this.props.recordTracksEvent( 'calypso_jetpack_connection_health_issue_sidebar_click', {
+			is_atomic: siteIsAutomatedTransfer,
+		} );
+	};
+
 	errorAccessing() {
-		const { site, translate } = this.props;
+		const { site, translate, siteIsAutomatedTransfer } = this.props;
 
 		// Don't show the button if the site is not defined.
 		if ( site ) {
 			return (
 				<span>
-					{ translate( 'This site cannot be accessed.' ) }
+					<TrackComponentView
+						eventName="calypso_jetpack_connection_health_issue_sidebar_view"
+						eventProperties={ {
+							is_atomic: siteIsAutomatedTransfer,
+						} }
+					/>
+					{ translate( 'Jetpack can’t communicate with your site.' ) }
 					<Button
-						borderless
-						compact
-						scary
-						href={ `/settings/disconnect-site/${ site.slug }?type=down` }
-						onClick={ this.props.trackSiteDisconnect }
+						plain
+						href={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+						target="_blank"
+						onClick={ this.handleJetpackConnectionHealthSidebarLinkClick }
 					>
-						{ translate( 'I’d like to fix this now' ) }
+						{ translate( 'Learn how to fix' ) }
 					</Button>
 				</span>
 			);
@@ -250,7 +263,11 @@ class SiteIndicator extends Component {
 			<div className={ indicatorClass }>
 				{ ! this.state.expand && (
 					<Animate type="appear">
-						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+						<button
+							data-testid="site-indicator-button"
+							className="site-indicator__button"
+							onClick={ this.toggleExpand }
+						>
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon={ this.getIcon() } size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
@@ -258,7 +275,7 @@ class SiteIndicator extends Component {
 					</Animate>
 				) }
 				{ this.state.expand && (
-					<div className="site-indicator__message">
+					<div data-testid="site-indicator-message" className="site-indicator__message">
 						<div className="site-indicator__action">{ this.getText() }</div>
 						<button className="site-indicator__button" onClick={ this.toggleExpand }>
 							<Animate type="appear">
@@ -289,7 +306,7 @@ class SiteIndicator extends Component {
 export default connect(
 	( state, { site } ) => {
 		return {
-			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
+			siteIsConnected: site && ! isJetpackConnectionUnhealthy( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
 			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),

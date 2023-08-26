@@ -7,6 +7,8 @@ import {
 	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -152,6 +154,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
+	PLAN_100_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -216,6 +219,7 @@ import {
 	TYPE_SECURITY_T2,
 	TYPE_JETPACK_STARTER,
 	TYPE_FLEXIBLE,
+	TYPE_100_YEAR,
 	TYPE_PRO,
 	TYPE_STARTER,
 	TYPE_GOLDEN_TOKEN,
@@ -411,6 +415,12 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	FEATURE_PAYMENT_BUTTONS_JP,
 	FEATURE_PAYPAL_JP,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+	FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
+	TERM_CENTENNIALLY,
 } from './constants';
 import type {
 	BillingTerm,
@@ -558,6 +568,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_MULTI_SITE,
 		FEATURE_SECURITY_MALWARE,
 		FEATURE_SECURITY_DDOS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
@@ -580,7 +591,14 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
-	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
+	get2023PricingGridSignupStorageOptions: () => {
+		return [
+			{
+				slug: FEATURE_1GB_STORAGE,
+				isAddOn: false,
+			},
+		];
+	},
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getNewsletterSignupFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
@@ -820,7 +838,14 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
-	get2023PricingGridSignupStorageOptions: () => [ FEATURE_6GB_STORAGE ],
+	get2023PricingGridSignupStorageOptions: () => {
+		return [
+			{
+				slug: FEATURE_6GB_STORAGE,
+				isAddOn: false,
+			},
+		];
+	},
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getNewsletterDescription: () =>
 		i18n.translate(
@@ -1015,17 +1040,30 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STREAMLINED_CHECKOUT,
 		FEATURE_SELL_60_COUNTRIES,
 		FEATURE_SHIPPING_INTEGRATIONS,
-		FEATURE_PAYMENT_TRANSACTION_FEES_0,
+		i18n.hasTranslation( '%(commission)d%% transaction fee for all payment features' ) ||
+		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+			? FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL
+			: FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature, isCurrentPlan ) => {
+		let storageOptionSlugs = [];
+		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
+
 		if ( showLegacyStorageFeature && isCurrentPlan ) {
-			return [ FEATURE_200GB_STORAGE ];
+			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
+		} else {
+			storageOptionSlugs = isEnabled( 'plans/updated-storage-labels' )
+				? [ FEATURE_50GB_STORAGE, ...storageAddOns ]
+				: [ FEATURE_200GB_STORAGE ];
 		}
 
-		return isEnabled( 'plans/updated-storage-labels' )
-			? [ FEATURE_50GB_STORAGE ]
-			: [ FEATURE_200GB_STORAGE ];
+		return storageOptionSlugs.map( ( slug ) => {
+			return {
+				slug: slug,
+				isAddOn: storageAddOns.includes( slug ),
+			};
+		} );
 	},
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getHostingSignupFeatures: ( term ) => () =>
@@ -1203,7 +1241,14 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
 	get2023PlanComparisonFeatureOverride: () => getWooExpressMediumPlanCompareFeatures(),
-	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
+	get2023PricingGridSignupStorageOptions: () => {
+		return [
+			{
+				slug: FEATURE_200GB_STORAGE,
+				isAddOn: false,
+			},
+		];
+	},
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
@@ -1231,7 +1276,14 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
 	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
-	get2023PricingGridSignupStorageOptions: () => [ FEATURE_50GB_STORAGE ],
+	get2023PricingGridSignupStorageOptions: () => {
+		return [
+			{
+				slug: FEATURE_50GB_STORAGE,
+				isAddOn: false,
+			},
+		];
+	},
 	getTitle: () => i18n.translate( 'Essential' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
@@ -1407,7 +1459,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
-	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
+	get2023PricingGridSignupStorageOptions: () => {
+		return [
+			{
+				slug: FEATURE_13GB_STORAGE,
+				isAddOn: false,
+			},
+		];
+	},
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	get2023PlanComparisonJetpackFeatureOverride: () => [ FEATURE_PAYPAL_JP, FEATURE_VIDEOPRESS_JP ],
 	// Features not displayed but used for checking plan abilities
@@ -1498,7 +1557,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ADVANCED,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-			FEATURE_200GB_STORAGE,
+			FEATURE_50GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
@@ -1571,7 +1630,13 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_STAGING_SITES,
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
-		FEATURE_PAYMENT_TRANSACTION_FEES_2,
+		...( ( i18n.hasTranslation(
+			'%(commission)d%% transaction fee for WooCommerce payment features'
+		) &&
+			i18n.hasTranslation( '%(commission)d%% transaction fee for regular payment features' ) ) ||
+		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+			? [ FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO, FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR ]
+			: [ FEATURE_PAYMENT_TRANSACTION_FEES_2 ] ),
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_REALTIME_BACKUPS_JP,
@@ -1601,13 +1666,23 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
 	get2023PricingGridSignupStorageOptions: ( showLegacyStorageFeature ) => {
+		let storageOptionSlugs = [];
+		const storageAddOns = [ FEATURE_50GB_STORAGE_ADD_ON, FEATURE_100GB_STORAGE_ADD_ON ];
+
 		if ( showLegacyStorageFeature ) {
-			return [ FEATURE_200GB_STORAGE ];
+			storageOptionSlugs = [ FEATURE_200GB_STORAGE ];
+		} else {
+			storageOptionSlugs = isEnabled( 'plans/updated-storage-labels' )
+				? [ FEATURE_50GB_STORAGE, ...storageAddOns ]
+				: [ FEATURE_200GB_STORAGE ];
 		}
 
-		return isEnabled( 'plans/updated-storage-labels' )
-			? [ FEATURE_50GB_STORAGE ]
-			: [ FEATURE_200GB_STORAGE ];
+		return storageOptionSlugs.map( ( slug ) => {
+			return {
+				slug: slug,
+				isAddOn: storageAddOns.includes( slug ),
+			};
+		} );
 	},
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
@@ -2637,6 +2712,45 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'business-3-years',
 	},
 
+	[ PLAN_100_YEARS ]: {
+		...getPlanBusinessDetails(),
+		term: TERM_CENTENNIALLY,
+		group: GROUP_WPCOM,
+		type: TYPE_100_YEAR,
+		// Todo: ¯\_(ツ)_/¯ on the copy.
+		getTitle: () => i18n.translate( '100-Year Plan' ),
+		getAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getBlogAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getPortfolioAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getStoreAudience: () => i18n.translate( 'Best for long-term thinkers' ),
+		getPlanTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getDescription: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getShortDescription: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getBlogOnboardingTagLine: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_BUSINESS_MONTHLY,
+				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_MIGRATION_TRIAL_MONTHLY,
+			].includes( plan ),
+		getProductId: () => 1061,
+		getStoreSlug: () => PLAN_100_YEARS,
+		getPathSlug: () => 'wp_bundle_hundred_year',
+	},
+
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
 		...getPlanEcommerceDetails(),
 		...getMonthlyTimeframe(),
@@ -2993,6 +3107,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_BOOST,
 			PRODUCT_JETPACK_SOCIAL_ADVANCED,
 			PRODUCT_JETPACK_SEARCH,
+			PRODUCT_JETPACK_STATS_YEARLY,
 			PRODUCT_JETPACK_CRM,
 		],
 		getWhatIsIncluded: () => [
@@ -3026,6 +3141,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_BOOST_MONTHLY,
 			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 			PRODUCT_JETPACK_SEARCH_MONTHLY,
+			PRODUCT_JETPACK_STATS_MONTHLY,
 			PRODUCT_JETPACK_CRM_MONTHLY,
 		],
 		getWhatIsIncluded: () => [

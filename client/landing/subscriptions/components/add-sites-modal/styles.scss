@@ -1,0 +1,16 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.add-sites-modal {
+	.components-modal__content {
+		margin-top: 60px;
+	}
+
+	.add-sites-modal__subtitle {
+		color: $studio-gray-50;
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+	}
+}

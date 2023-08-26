@@ -64,48 +64,58 @@ export default function () {
 		clientRender
 	);
 
+	// Download 3rd party products after assigning
+	page(
+		`/partner-portal/download-products`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.requireValidPaymentMethod,
+		controller.downloadProductsContext,
+		makeLayout,
+		clientRender
+	);
+
 	// Manage payment methods.
-	if ( config.isEnabled( 'jetpack/partner-portal-payment' ) ) {
-		page(
-			`/partner-portal/payment-methods`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.paymentMethodListContext,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/partner-portal/payment-methods`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.paymentMethodListContext,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/partner-portal/payment-methods/add`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.paymentMethodAddContext,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/partner-portal/payment-methods/add`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.paymentMethodAddContext,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/partner-portal/invoices`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.invoicesDashboardContext,
-			makeLayout,
-			clientRender
-		);
+	page(
+		`/partner-portal/invoices`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.invoicesDashboardContext,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			`/partner-portal/company-details`,
-			controller.requireAccessContext,
-			controller.requireTermsOfServiceConsentContext,
-			controller.requireSelectedPartnerKeyContext,
-			controller.companyDetailsDashboardContext,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		`/partner-portal/company-details`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.companyDetailsDashboardContext,
+		makeLayout,
+		clientRender
+	);
 
 	// Pricing page
 	page(
@@ -139,4 +149,17 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// WPCOM Atomic Hosting Page
+	if ( config.isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) ) {
+		page(
+			`/partner-portal/create-site`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.wpcomAtomicHostingContext,
+			makeLayout,
+			clientRender
+		);
+	}
 }

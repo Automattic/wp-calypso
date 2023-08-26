@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +6,10 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
-import { isJetpackBundle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import {
+	isJetpackBundle,
+	isWooCommerceProduct,
+} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -61,17 +63,16 @@ export default function IssueMultipleLicensesForm( {
 				( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-backup-storage'
 			)
 			.sort( ( a, b ) => a.product_id - b.product_id ) || [];
-	const wooExtensions =
-		allProducts?.filter(
-			( { family_slug }: { family_slug: string } ) =>
-				family_slug.substring( 0, 'woocommerce-'.length ) === 'woocommerce-'
-		) || [];
 	const products =
 		allProducts?.filter(
 			( { family_slug }: { family_slug: string } ) =>
 				family_slug !== 'jetpack-packs' &&
 				family_slug !== 'jetpack-backup-storage' &&
-				family_slug.substring( 0, 'woocommerce-'.length ) !== 'woocommerce-'
+				! isWooCommerceProduct( family_slug )
+		) || [];
+	const wooExtensions =
+		allProducts?.filter( ( { family_slug }: { family_slug: string } ) =>
+			isWooCommerceProduct( family_slug )
 		) || [];
 
 	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
@@ -245,14 +246,14 @@ export default function IssueMultipleLicensesForm( {
 					</div>
 				</>
 			) }
-			{ backupAddons.length > 0 && (
+			{ wooExtensions.length > 0 && (
 				<>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">
-						{ translate( 'VaultPress Backup Add-on Storage:' ) }
+						{ translate( 'WooCommerce Extensions:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ backupAddons.map( ( productOption, i ) => (
+						{ wooExtensions.map( ( productOption, i ) => (
 							<LicenseProductCard
 								isMultiSelect
 								key={ productOption.slug }
@@ -267,14 +268,14 @@ export default function IssueMultipleLicensesForm( {
 					</div>
 				</>
 			) }
-			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions.length > 0 && (
+			{ backupAddons.length > 0 && (
 				<>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">
-						{ translate( 'WooCommerce Extensions:' ) }
+						{ translate( 'VaultPress Backup Add-on Storage:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ wooExtensions.map( ( productOption, i ) => (
+						{ backupAddons.map( ( productOption, i ) => (
 							<LicenseProductCard
 								isMultiSelect
 								key={ productOption.slug }

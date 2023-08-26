@@ -13,7 +13,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
-import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post/utils';
+import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -168,13 +168,18 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						}
 					>
 						<Dialog
+							showCloseIcon={ true }
 							additionalOverlayClassNames="blazepress-widget"
 							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
 						>
 							<h1>{ translate( 'Are you sure you want to quit?' ) }</h1>
-							<p>{ translate( 'All progress in this session will be lost.' ) }</p>
+							<p>
+								{ translate(
+									'If you quit, all of the work that has been done during this session will be lost.'
+								) }
+							</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
 						<div className="blazepress-widget__widget-container" ref={ widgetContainer }></div>

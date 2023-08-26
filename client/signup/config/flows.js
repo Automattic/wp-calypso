@@ -3,7 +3,7 @@ import {
 	DOT_ORG_THEME,
 	WOOCOMMERCE_THEME,
 	MARKETPLACE_THEME,
-	shouldGoToAssembler,
+	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { get, includes, reject } from 'lodash';
@@ -71,7 +71,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) 
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug };
+	let queryParam = { siteSlug, siteId };
 	if ( domainItem ) {
 		// If the user is purchasing a domain then the site's primary url might change from
 		// `siteSlug` to something else during the checkout process, which means the
@@ -114,15 +114,25 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
+function getChecklistThemeDestination( {
+	flowName,
+	siteSlug,
+	themeParameter,
+	headerPatternId,
+	footerPatternId,
+	sectionPatternIds,
+} ) {
 	if ( isSiteAssemblerFlow( flowName ) ) {
 		// Check whether to go to the assembler. If not, go to the site editor directly
-		if ( shouldGoToAssembler() ) {
+		if ( isAssemblerSupported() ) {
 			return addQueryArgs(
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
 					isNewSite: true,
+					header_pattern_id: headerPatternId,
+					footer_pattern_id: footerPatternId,
+					pattern_ids: sectionPatternIds,
 				},
 				`/setup/with-theme-assembler`
 			);

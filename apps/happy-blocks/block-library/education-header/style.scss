@@ -117,7 +117,7 @@ body.archive {
 			border-style: none;
 			border-radius: 4px;
 			width: 366px;
-			height: 56px;
+			height: 55px;
 
 			&,
 			&::placeholder {
@@ -172,10 +172,11 @@ body.archive {
 	&.happy-blocks-header {
 		&.is-learn {
 			margin-top: 120px;
-			margin-bottom: 70px;
+			margin-bottom: 6px;
 
 			@media ( max-width: $breakpoint-mobile ) {
-				margin: 56px 0;
+				margin-top: 56px;
+				margin-bottom: 8px;
 			}
 
 			.happy-blocks-global-header-site__title {
@@ -184,6 +185,9 @@ body.archive {
 
 				.happy-blocks-global-header-site__title__wrapper {
 					margin-bottom: 32px;
+					@media ( max-width: $breakpoint-mobile ) {
+						margin-top: 0;
+					}
 				}
 
 				h1 {
@@ -211,6 +215,25 @@ body.archive {
 				}
 			}
 		}
+
+		&.is-webinars,
+		&.is-courses {
+			@media ( max-width: $breakpoint-mobile ) {
+				margin-top: 23px;
+			}
+			.happy-blocks-global-header-site__title__wrapper {
+				@media ( max-width: $breakpoint-mobile ) {
+					margin-top: 0;
+
+					p {
+						font-size: 1rem;
+						margin-top: 2px;
+					}
+				}
+			}
+		}
+
+
 		.happy-blocks-search__inside-wrapper {
 			input {
 				background-color: var(--studio-gray-0);
@@ -234,6 +257,7 @@ body.archive {
 		margin: 0;
 		@media ( max-width: $breakpoint-tablet ) {
 			font-size: 1.75rem;
+			line-height: 29px;
 		}
 	}
 

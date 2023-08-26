@@ -41,7 +41,6 @@ import {
 	JETPACK_SECURITY_T1_PLANS,
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
-	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
@@ -174,8 +173,6 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 		items: [],
 	},
 	hidePrice: true,
-	// TODO: Refactor the checkout URL.
-	externalUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
 
 	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
 	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
@@ -190,23 +187,9 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 		comment:
 			'Used to describe price of Jetpack Stats, which can be either a pay-what-you-want product or fixed price product. In the future, it can also be a metered product.',
 	} ),
-} );
 
-// TODO: We'll need to internationalize currencies like we did for the purchase page.
-const STATS_COMMERCIAL_PRICE = 10;
-const STATS_COMMERCIAL_CURRENCY = 'USD';
-
-export const INDIRECT_CHECKOUT_PRODUCT_STATS = (): SelectorProduct => ( {
-	...INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY(),
-	displayName: translate( 'Stats (Commercial)' ),
-	shortName: translate( 'Stats (Commercial)' ),
-	productSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	costProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	term: TERM_MONTHLY,
-	displayTerm: TERM_ANNUALLY,
-	monthlyProductSlug: PRODUCT_JETPACK_STATS_MONTHLY,
-	displayPrice: STATS_COMMERCIAL_PRICE,
-	displayCurrency: STATS_COMMERCIAL_CURRENCY,
+	moreAboutUrl: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing',
+	indirectCheckoutUrl: '/stats/purchase/{siteSlug}?from=calypso-plans',
 } );
 
 export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
@@ -220,14 +203,12 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_FREE = (): SelectorProduct => ( {
 
 // List of products showcased in the Plans grid but not sold via checkout URL directly.
 export const INDIRECT_CHECKOUT_PRODUCTS_LIST = [
-	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 ];
 
 // Indirect checkout Product slugs to SelectorProduct.
 export const INDIRECT_CHECKOUT_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct > = {
-	[ PRODUCT_JETPACK_STATS_MONTHLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS,
 	[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY,
 	[ PRODUCT_JETPACK_STATS_FREE ]: INDIRECT_CHECKOUT_PRODUCT_STATS_FREE,
 };

@@ -16,6 +16,9 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
+	const step2Text = __(
+		'Click on the name of the domain that you\'d like to transfer in the "My domains" section.'
+	);
 
 	return (
 		<>
@@ -56,12 +59,12 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 					</details>
 					<details open={ 2 === focusedStep }>
 						<summary>{ __( 'Step 2: Select your domain' ) }</summary>
-						<p>{ __( 'Select the domain you want to transfer in the "My domains" section.' ) }</p>
+						<p>{ step2Text }</p>
 						<img
 							className="google-domains-transfer-instructions__image"
 							src={ pickDomainImgSrc }
 							loading="lazy"
-							alt={ __( 'Select the domain you want to transfer in the "My domains" section.' ) }
+							alt={ step2Text }
 							width={ 737 }
 							height={ 410 }
 						/>
@@ -74,8 +77,11 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
-						<video autoPlay loop>
-							<source src="https://cldup.com/bYWgYH_hoP.mp4" type="video/mp4" />
+						<video autoPlay loop width={ 1188 } height={ 720 } style={ { aspectRatio: '1.65' } }>
+							<source
+								src="https://videos.files.wordpress.com/BoWqyRoi/step-03-720p.mp4"
+								type="video/mp4"
+							/>
 						</video>
 					</details>
 					<details open={ 3 === focusedStep || 4 === focusedStep }>
@@ -86,8 +92,17 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
-						<video autoPlay loop>
-							<source src="https://cldup.com/IM6wEuLIbc.mp4" type="video/mp4" />
+						<video
+							autoPlay
+							loop
+							width={ 1184 }
+							height={ 720 }
+							style={ { aspectRatio: '1.64444444' } }
+						>
+							<source
+								src="https://videos.files.wordpress.com/dZY2deS5/step-04-720p.mp4"
+								type="video/mp4"
+							/>
 							<track />
 						</video>
 					</details>

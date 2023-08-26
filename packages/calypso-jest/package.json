@@ -23,8 +23,8 @@
 		"@babel/core": "^7.17.5",
 		"babel-jest": "^29.6.1",
 		"enhanced-resolve": "^5.8.3",
-		"jest": "^29.6.1",
-		"jest-config": "^29.6.1"
+		"jest": "^29.6.2",
+		"jest-config": "^29.6.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

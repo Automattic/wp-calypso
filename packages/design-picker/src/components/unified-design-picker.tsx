@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
+import photon from 'photon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG, DEFAULT_ASSEMBLER_DESIGN } from '../constants';
@@ -35,6 +36,20 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	styleVariation,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
+
+	if ( design.is_externally_managed && design.screenshot ) {
+		const fit = '479,360';
+		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
+		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+
+		return (
+			<img
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+				alt={ design.description }
+			/>
+		);
+	}
 
 	return (
 		<MShotsImage
@@ -188,7 +203,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 interface DesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design ) => void;
 	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
@@ -235,7 +250,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && (
 					<Button
-						className="design-picker__design-your-own-button"
+						className={ classnames( 'design-picker__design-your-own-button', {
+							'design-picker__design-your-own-button-without-categories': ! hasCategories,
+						} ) }
 						onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }
 					>
 						{ assemblerCtaData.title }
@@ -263,11 +280,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
-				<PatternAssemblerCta
-					onButtonClick={ ( shouldGoToAssemblerStep ) =>
-						onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN, shouldGoToAssemblerStep )
-					}
-				/>
+				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN ) } />
 			</div>
 		</div>
 	);
@@ -275,7 +288,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	onDesignYourOwn: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
+	onDesignYourOwn: ( design: Design ) => void;
 	onClickDesignYourOwnTopButton: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;

@@ -1,8 +1,11 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 
 const selectors = {
 	// Post body
 	postPasswordInput: 'input[name="post_password"]',
+
+	// Published content
+	socialShareSection: '.sharedaddy',
 };
 
 /**
@@ -10,6 +13,7 @@ const selectors = {
  */
 export class PublishedPostPage {
 	private page: Page;
+	private anchor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -18,6 +22,7 @@ export class PublishedPostPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.anchor = this.page.getByRole( 'main' );
 	}
 
 	/**
@@ -83,10 +88,13 @@ export class PublishedPostPage {
 	 *
 	 * @param {string} title Title text to check.
 	 */
-	async validateTitle( title: string ): Promise< void > {
-		const dash = /-/g;
-		title = title.replace( dash, '–' );
-		await this.page.waitForSelector( `:text("${ title }")` );
+	async validateTitle( title: string ) {
+		// The dash is used in the title of the published post is
+		// not a "standard" dash, instead being U+2013.
+		// We have to replace any expectatiosn of "normal" dashes
+		// with the U+2013 version, otherwise the match will fail.
+		const sanitizedTitle = title.replace( /-/g, '–' );
+		await this.anchor.getByRole( 'heading', { name: sanitizedTitle } ).waitFor();
 	}
 
 	/**
@@ -126,5 +134,31 @@ export class PublishedPostPage {
 	 */
 	async validateTags( tag: string ): Promise< void > {
 		await this.page.waitForSelector( `a:text-is("${ tag }")` );
+	}
+
+	/**
+	 * Validates the presence of a social sharing button on the published content.
+	 *
+	 * If optional parameter `click` is set, the button will be clicked to verify
+	 * functionality.
+	 *
+	 * @param {string} name Name of the social sharing button.
+	 */
+	async validateSocialButton( name: string, { click }: { click?: boolean } = {} ) {
+		// CSS selector have to be used due to no accessible locator for narrowing
+		// to the social icons.
+		const button = this.anchor
+			.locator( selectors.socialShareSection )
+			.getByRole( 'link', { name: name } );
+
+		await button.waitFor();
+
+		if ( click ) {
+			const popupPromise = this.page.waitForEvent( 'popup' );
+			await button.click();
+			const popup = await popupPromise;
+			await popup.waitForLoadState( 'load' );
+			await popup.close();
+		}
 	}
 }
