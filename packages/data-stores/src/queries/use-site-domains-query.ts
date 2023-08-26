@@ -1,5 +1,7 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { ResponseDomain } from '../domains/types';
+import { createSiteDomainObject } from '../domains/utils/assembler';
 
 export interface DomainData {
 	primary_domain: boolean;
@@ -109,7 +111,17 @@ export function useSiteDomainsQuery(
 	siteIdOrSlug: number | string | null | undefined,
 	options: UseQueryOptions< SiteDomainsQueryFnData > = {}
 ) {
-	return useQuery( getSiteDomainsQueryObject( siteIdOrSlug, options ) );
+	const transformedQuery = useQuery( getSiteDomainsQueryObject( siteIdOrSlug, options ) );
+
+	return {
+		...transformedQuery,
+		data: transformedQuery.data
+			? {
+					...transformedQuery.data,
+					domains: transformedQuery.data.domains.map( createSiteDomainObject ) as ResponseDomain[],
+			  }
+			: null,
+	};
 }
 
 export function getSiteDomainsQueryObject(
