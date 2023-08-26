@@ -56,6 +56,7 @@ import { saveContactDetailsCache } from 'calypso/state/domains/management/action
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -235,6 +236,7 @@ export default function WPCheckout( {
 	customizedPreviousPath?: string;
 	loadingContent: ReactNode;
 } ) {
+	const selectedSiteData = useSelector( getSelectedSite );
 	const locale = useLocale();
 	const cartKey = useCartKey();
 	const {
@@ -452,6 +454,7 @@ export default function WPCheckout( {
 								couponFieldStateProps={ couponFieldStateProps }
 								onChangeSelection={ changeSelection }
 								siteUrl={ siteUrl }
+								selectedSiteData={ selectedSiteData }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							/>
 						}
