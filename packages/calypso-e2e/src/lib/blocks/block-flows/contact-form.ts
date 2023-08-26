@@ -47,15 +47,6 @@ export class ContactFormFlow implements BlockFlow {
 		} );
 	}
 
-	/** */
-	private async labelFieldBlock( context: EditorContext, blockName: string ) {
-		const parentFormBlock = context.addedBlockLocator;
-		await parentFormBlock
-			.locator( makeSelectorFromBlockName( blockName ) )
-			.getByRole( 'textbox', { name: 'Add label…' } )
-			.fill( this.addLabelPrefix( blockName ) );
-	}
-
 	/**
 	 * This flow uses a prefix for labels to make them unique. This function adds that prefix to a label.
 	 *
