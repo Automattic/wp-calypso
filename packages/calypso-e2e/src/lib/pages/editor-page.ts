@@ -454,7 +454,7 @@ export class EditorPage {
 	 * Select the parent block of the current block using the block toolbar.
 	 * This will fail and throw if the currently focused block doesn't have a parent.
 	 */
-	async selectBlockParent( expectedParentBlockName: string ): Promise< void > {
+	async selectParentBlock( expectedParentBlockName: string ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
 		} else {
