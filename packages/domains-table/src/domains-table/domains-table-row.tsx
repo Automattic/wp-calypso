@@ -49,11 +49,11 @@ export function DomainsTableRow( {
 	);
 
 	const currentDomainData = useMemo( () => {
-		return allSiteDomains?.domains.find( ( d ) => d.domain === domain.domain );
+		return allSiteDomains?.domains.find( ( d ) => d.name === domain.domain );
 	}, [ allSiteDomains, domain.domain ] );
 
 	const isPrimaryDomain = useMemo(
-		() => allSiteDomains?.domains?.find( ( d ) => d.primary_domain )?.domain === domain.domain,
+		() => allSiteDomains?.domains?.find( ( d ) => d.isPrimary )?.name === domain.domain,
 		[ allSiteDomains, domain.domain ]
 	);
 

@@ -1,10 +1,10 @@
-import { DomainData, SiteDetails } from '@automattic/data-stores';
+import { ResponseDomain, SiteDetails } from '@automattic/data-stores';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 
 interface DomainsTableSiteCellProps {
 	site?: Pick< SiteDetails, 'ID' | 'name' >;
-	currentDomainData?: DomainData;
+	currentDomainData?: ResponseDomain;
 	siteSlug: string;
 }
 
@@ -19,7 +19,7 @@ export const DomainsTableSiteCell = ( {
 		return null;
 	}
 
-	if ( currentDomainData.current_user_can_create_site_from_domain_only ) {
+	if ( currentDomainData.currentUserCanCreateSiteFromDomainOnly ) {
 		return createInterpolateElement(
 			/* translators: ariaHidden means that the component will be skipped by screen readers. */
 			__(
