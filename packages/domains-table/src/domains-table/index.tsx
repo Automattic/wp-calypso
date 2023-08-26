@@ -20,7 +20,7 @@ interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
 	dispatch: any;
-	domainStatusPurchaseActions: DomainStatusPurchaseActions< any >;
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
@@ -35,7 +35,7 @@ export function DomainsTable( {
 	fetchSiteDomains,
 	fetchSite,
 	isAllSitesView,
-	dispatch,
+	domainStatusPurchaseActions,
 }: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
@@ -212,7 +212,7 @@ export function DomainsTable( {
 							fetchSiteDomains={ fetchSiteDomains }
 							fetchSite={ fetchSite }
 							isAllSitesView={ isAllSitesView }
-							dispatch={ dispatch }
+							domainStatusPurchaseActions={ domainStatusPurchaseActions }
 						/>
 					) ) }
 				</tbody>

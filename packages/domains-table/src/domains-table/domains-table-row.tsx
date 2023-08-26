@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
@@ -20,7 +21,7 @@ interface DomainsTableRowProps {
 	isAllSitesView: boolean;
 	isSelected: boolean;
 	onSelect( domain: PartialDomainData ): void;
-	dispatch: any;
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -35,7 +36,7 @@ export function DomainsTableRow( {
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
-	dispatch,
+	domainStatusPurchaseActions,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -129,7 +130,7 @@ export function DomainsTableRow( {
 					<DomainsTableStatusCell
 						siteSlug={ siteSlug }
 						currentDomainData={ currentDomainData }
-						dispatch={ dispatch }
+						domainStatusPurchaseActions={ domainStatusPurchaseActions }
 					/>
 				) }
 			</td>

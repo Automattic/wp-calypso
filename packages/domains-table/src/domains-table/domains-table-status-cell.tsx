@@ -1,34 +1,33 @@
 import { ResponseDomain } from '@automattic/data-stores/src/domains/types';
 import { useTranslate } from 'i18n-calypso';
-import { resolveDomainStatus } from '../utils/resolve-domain-status';
+import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 
 interface DomainsTableStatusCellProps {
 	currentDomainData?: ResponseDomain;
 	siteSlug?: string;
-	dispatch: any;
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 }
 
 export const DomainsTableStatusCell = ( {
 	currentDomainData,
 	siteSlug,
-	dispatch,
+	domainStatusPurchaseActions,
 }: DomainsTableStatusCellProps ) => {
 	const translate = useTranslate();
 	if ( ! currentDomainData ) {
 		return null;
 	}
 	const currentRoute = window.location.pathname;
-	const { status, statusClass } = resolveDomainStatus(
-		currentDomainData,
-		null,
+	const { status, statusClass } = resolveDomainStatus( currentDomainData, {
+		siteSlug: siteSlug,
 		translate,
-		dispatch,
-		{
-			siteSlug: siteSlug,
-			getMappingErrors: true,
-			currentRoute,
-		}
-	);
+		getMappingErrors: true,
+		currentRoute,
+		isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
+		isCreditCardExpiring: domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+		onRenewNowClick: () =>
+			domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
+	} );
 
 	return (
 		<div className="domain-row__status-cell">

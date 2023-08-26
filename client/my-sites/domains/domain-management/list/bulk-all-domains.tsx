@@ -1,3 +1,4 @@
+import { ResponseDomain } from '@automattic/data-stores';
 import {
 	DomainsTable,
 	useDomainsTable,
@@ -49,9 +50,35 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
 	];
 
-	const purchaseActions: DomainStatusPurchaseActions< Purchase > = {
-		shouldRenderExpiringCreditCard,
-		handleRenewNowClick,
+	const isCreditCardExpiring = ( purchases: Purchase[] ) => ( domain: ResponseDomain ) => {
+		const purchase = purchases?.find(
+			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
+		);
+
+		return ( purchase && dispatch( shouldRenderExpiringCreditCard( purchase ) ) ) ?? false;
+	};
+
+	const isPurchasedDomain = ( purchases: Purchase[] ) => ( domain: ResponseDomain ) => {
+		const purchase = purchases?.find(
+			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
+		);
+		return !! purchase;
+	};
+
+	const onRenewNowClick =
+		( purchases: Purchase[] ) => ( siteSlug: string, domain: ResponseDomain ) => {
+			const purchase = purchases?.find(
+				( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
+			);
+			if ( purchase ) {
+				dispatch( handleRenewNowClick( purchase, siteSlug ) );
+			}
+		};
+
+	const purchaseActions: DomainStatusPurchaseActions = {
+		isCreditCardExpiring: isCreditCardExpiring( [] ),
+		isPurchasedDomain: isPurchasedDomain( [] ),
+		onRenewNowClick: onRenewNowClick( [] ),
 	};
 
 	return (
