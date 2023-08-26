@@ -143,6 +143,7 @@ export default function WPCheckoutOrderReview( {
 					removeCoupon={ removeCouponAndClearField }
 					onChangeSelection={ onChangeSelection }
 					isSummary={ isSummary }
+					selectedSiteData={ selectedSiteData }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					responseCart={ responseCart }
 					isPwpoUser={ isPwpoUser ?? false }
