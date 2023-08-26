@@ -49,6 +49,7 @@ import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -57,10 +58,12 @@ import type { TranslateResult } from 'i18n-calypso';
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
+	selectedSiteData,
 	onChangeSelection,
 	nextDomainIsFree = false,
 }: {
 	siteId: number | undefined;
+	selectedSiteData: SiteDetails | null | undefined;
 	onChangeSelection: (
 		uuid: string,
 		productSlug: string,
@@ -98,7 +101,11 @@ export default function WPCheckoutOrderSummary( {
 				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
-					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
+					<CheckoutSummaryFeaturesWrapper
+						siteId={ siteId }
+						nextDomainIsFree={ nextDomainIsFree }
+						selectedSiteData={ selectedSiteData }
+					/>
 				) }
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
@@ -180,8 +187,9 @@ function SwitchToAnnualPlan( {
 function CheckoutSummaryFeaturesWrapper( props: {
 	siteId: number | undefined;
 	nextDomainIsFree: boolean;
+	selectedSiteData: SiteDetails | null | undefined;
 } ) {
-	const { siteId, nextDomainIsFree } = props;
+	const { siteId, nextDomainIsFree, selectedSiteData } = props;
 	const signupFlowName = getSignupCompleteFlowName();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -202,11 +210,18 @@ function CheckoutSummaryFeaturesWrapper( props: {
 			<CheckoutSummaryFlowFeaturesList
 				flowName={ signupFlowName }
 				nextDomainIsFree={ nextDomainIsFree }
+				selectedSiteData={ selectedSiteData }
 			/>
 		);
 	}
 
-	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
+	return (
+		<CheckoutSummaryFeaturesList
+			siteId={ siteId }
+			nextDomainIsFree={ nextDomainIsFree }
+			selectedSiteData={ selectedSiteData }
+		/>
+	);
 }
 
 function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
@@ -332,8 +347,9 @@ function CheckoutSummaryRefundWindows( {
 function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
 	nextDomainIsFree: boolean;
+	selectedSiteData: SiteDetails | null | undefined;
 } ) {
-	const { siteId, nextDomainIsFree } = props;
+	const { siteId, nextDomainIsFree, selectedSiteData } = props;
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -380,7 +396,13 @@ function CheckoutSummaryFeaturesList( props: {
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
-					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
+					return (
+						<CheckoutSummaryFeaturesListDomainItem
+							domain={ domain }
+							selectedSiteData={ selectedSiteData }
+							key={ domain.uuid }
+						/>
+					);
 				} ) }
 
 			{ hasSingleProduct && hasJetpackProductOrPlan && (
@@ -442,9 +464,11 @@ function CheckoutSummaryFeaturesList( props: {
 function CheckoutSummaryFlowFeaturesList( {
 	flowName,
 	nextDomainIsFree,
+	selectedSiteData,
 }: {
 	flowName: string;
 	nextDomainIsFree: boolean;
+	selectedSiteData: SiteDetails | null | undefined;
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -470,7 +494,13 @@ function CheckoutSummaryFlowFeaturesList( {
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
-					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
+					return (
+						<CheckoutSummaryFeaturesListDomainItem
+							domain={ domain }
+							selectedSiteData={ selectedSiteData }
+							key={ domain.uuid }
+						/>
+					);
 				} ) }
 			{ planFeatures.map( ( feature ) => {
 				return (
@@ -491,11 +521,18 @@ function CheckoutSummaryFlowFeaturesList( {
 	);
 }
 
-function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
+function CheckoutSummaryFeaturesListDomainItem( {
+	domain,
+	selectedSiteData,
+}: {
+	domain: ResponseCartProduct;
+	selectedSiteData: SiteDetails | null | undefined;
+} ) {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
+	const currentSitePlan = selectedSiteData?.plan?.product_slug;
 
 	let bundledDomain = translate(
 		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
@@ -511,6 +548,18 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 	);
 
 	if ( planInCart && is100YearPlan( planInCart.product_slug ) ) {
+		bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} included with your plan', {
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domain: domain.meta,
+			},
+			comment: 'domain name and bundling message for hundred year plan',
+		} );
+	}
+
+	if ( currentSitePlan && is100YearPlan( currentSitePlan ) ) {
 		bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} included with your plan', {
 			components: {
 				strong: <strong />,
