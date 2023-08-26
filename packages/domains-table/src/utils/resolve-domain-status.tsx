@@ -42,33 +42,32 @@ type ResolveDomainStatusReturn =
 	| Record< string, never >;
 
 export type ResolveDomainStatusOptionsBag = {
-	isJetpackSite?: boolean | null;
-	isSiteAutomatedTransfer?: boolean | null;
-	isDomainOnlySite?: boolean | null;
 	siteSlug?: string | null;
 	currentRoute?: string | null;
 	getMappingErrors?: boolean | null;
+	translate: I18N[ 'translate' ];
+	isPurchasedDomain?: boolean | null;
+	onRenewNowClick?: any;
+	isCreditCardExpiring?: boolean | null;
 };
 
-export type DomainStatusPurchaseActions< T > = {
-	shouldRenderExpiringCreditCard?: ( purchase: T ) => boolean;
-	handleRenewNowClick?: ( purchase: T, siteSlug: string ) => void;
+export type DomainStatusPurchaseActions = {
+	isCreditCardExpiring: ( domain: ResponseDomain ) => boolean;
+	onRenewNowClick?: ( siteSlug: string, domain: ResponseDomain ) => void;
+	isPurchasedDomain?: ( domain: ResponseDomain ) => boolean;
 };
 
 export function resolveDomainStatus(
 	domain: ResponseDomain,
-	purchase = null,
-	translate: I18N[ 'translate' ],
-	dispatch: any,
 	{
-		isJetpackSite = null,
-		isSiteAutomatedTransfer = null,
-		isDomainOnlySite = null,
 		siteSlug = null,
 		getMappingErrors = false,
 		currentRoute = null,
-	}: ResolveDomainStatusOptionsBag = {},
-	{ shouldRenderExpiringCreditCard, handleRenewNowClick }: DomainStatusPurchaseActions< any > = {}
+		translate,
+		isPurchasedDomain = false,
+		onRenewNowClick = null,
+		isCreditCardExpiring = false,
+	}: ResolveDomainStatusOptionsBag
 ): ResolveDomainStatusReturn {
 	const transferOptions = {
 		components: {
@@ -157,25 +156,6 @@ export function resolveDomainStatus(
 				}
 			}
 
-			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
-				return {
-					statusText: translate( 'Verifying' ),
-					statusClass: 'status-success',
-					status: translate( 'Verifying' ),
-					icon: 'verifying',
-					noticeText: translate(
-						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but {{strong}}%(domainName)s{{/strong}} won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
-						{
-							components: mappingSetupComponents,
-							args: {
-								domainName: domain.name,
-							},
-						}
-					),
-					listStatusWeight: 600,
-				};
-			}
-
 			return {
 				statusText: translate( 'Active' ),
 				statusClass: 'status-success',
@@ -234,7 +214,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( purchase && shouldRenderExpiringCreditCard?.( purchase ) ) {
+			if ( isPurchasedDomain && isCreditCardExpiring ) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
@@ -296,18 +276,13 @@ export function resolveDomainStatus(
 					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
 
 					renewCta =
-						purchase && siteSlug && domain.currentUserIsOwner
+						isPurchasedDomain && siteSlug && domain.currentUserIsOwner
 							? translate(
 									'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Renew now{{/a}}',
 									{
 										components: {
 											strong: <strong />,
-											a: (
-												<Button
-													plain
-													onClick={ () => dispatch( handleRenewNowClick?.( purchase, siteSlug ) ) }
-												/>
-											),
+											a: <Button plain onClick={ () => onRenewNowClick?.() } />,
 										},
 										args: { renewableUntil },
 									}
@@ -325,18 +300,13 @@ export function resolveDomainStatus(
 					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
 
 					renewCta =
-						purchase && siteSlug && domain.currentUserIsOwner
+						isPurchasedDomain && siteSlug && domain.currentUserIsOwner
 							? translate(
 									'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee. {{a}}Renew now{{/a}}',
 									{
 										components: {
 											strong: <strong />,
-											a: (
-												<Button
-													plain
-													onClick={ () => dispatch( handleRenewNowClick?.( purchase, siteSlug ) ) }
-												/>
-											),
+											a: <Button plain onClick={ () => onRenewNowClick?.() } />,
 										},
 										args: { redeemableUntil },
 									}
@@ -381,15 +351,10 @@ export function resolveDomainStatus(
 
 			if ( isExpiringSoon( domain, 30 ) ) {
 				const renewCta =
-					purchase && siteSlug && domain.currentUserIsOwner
+					isPurchasedDomain && siteSlug && domain.currentUserIsOwner
 						? translate( '{{a}}Renew now{{/a}}', {
 								components: {
-									a: (
-										<Button
-											plain
-											onClick={ () => dispatch( handleRenewNowClick?.( purchase, siteSlug ) ) }
-										/>
-									),
+									a: <Button plain onClick={ () => onRenewNowClick?.() } />,
 								},
 						  } )
 						: translate( 'It can be renewed by the owner.' );
@@ -468,15 +433,6 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( isDomainOnlySite ) {
-				return {
-					statusText: translate( 'Parked' ),
-					statusClass: 'status-neutral',
-					status: translate( 'Parked' ),
-					icon: 'download_done',
-				};
-			}
-
 			if ( domain?.isPremium ) {
 				return {
 					statusText: translate( 'Active' ),
@@ -543,7 +499,7 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.SITE_REDIRECT:
-			if ( purchase && shouldRenderExpiringCreditCard?.( purchase ) ) {
+			if ( isPurchasedDomain && isCreditCardExpiring ) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
