@@ -1,5 +1,5 @@
-import { DomainData } from '@automattic/data-stores';
-import { type as domainTypes } from './constants';
+import { DomainData } from '../../queries/use-site-domains-query';
+import { type as domainTypes } from '../constants';
 
 export function getDomainType( domainFromApi: DomainData ) {
 	if ( domainFromApi.type === 'redirect' ) {

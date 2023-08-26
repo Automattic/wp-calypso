@@ -1,5 +1,5 @@
-import { DomainData } from '@automattic/data-stores';
-import { transferStatus } from './constants';
+import { DomainData } from '../../queries/use-site-domains-query';
+import { transferStatus } from '../constants';
 
 export function getTransferStatus( domainFromApi: DomainData ) {
 	if ( domainFromApi.transfer_status === 'pending_owner' ) {

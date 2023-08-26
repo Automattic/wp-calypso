@@ -1,5 +1,5 @@
-import { DomainData } from '@automattic/data-stores';
-import { gdprConsentStatus } from './constants';
+import { DomainData } from '../../queries/use-site-domains-query';
+import { gdprConsentStatus } from '../constants';
 
 export function getGdprConsentStatus( domainFromApi: DomainData ) {
 	switch ( domainFromApi.gdpr_consent_status ) {
