@@ -7,10 +7,7 @@ import {
 	useUpdateMonitorSettings,
 } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
-import {
-	availableNotificationDurations as durations,
-	getSiteCountText,
-} from '../sites-overview/utils';
+import useSiteCountText from '../sites-overview/hooks/use-site-count-text';
 import type { Site } from '../sites-overview/types';
 
 const dialogContent = (
@@ -46,11 +43,12 @@ export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScr
 		[ recordEvent, toggleActivateMonitor ]
 	);
 
+	const siteCountText = useSiteCountText( selectedSites ) as string;
+
 	const handleToggleActivateMonitor = useCallback(
 		( activate: boolean ) => {
 			const heading = activate ? translate( 'Resume Monitor' ) : translate( 'Pause Monitor' );
 			const monitorAction = activate ? translate( 'resume' ) : translate( 'pause' );
-			const siteCountText = getSiteCountText( selectedSites ) as string;
 			const content =
 				selectedSites.length > 1
 					? translate( 'You are about to %(monitorAction)s the monitor for %(siteCountText)s.', {
@@ -74,7 +72,7 @@ export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScr
 				toggleMonitor( accepted, activate )
 			);
 		},
-		[ selectedSites, toggleMonitor, translate ]
+		[ selectedSites.length, siteCountText, toggleMonitor, translate ]
 	);
 
 	return handleToggleActivateMonitor;
@@ -85,17 +83,14 @@ export function useHandleResetNotification(
 	isLargeScreen?: boolean
 ) {
 	const translate = useTranslate();
+	const siteCountText = useSiteCountText( selectedSites ) as string;
 	const { updateMonitorSettings } = useUpdateMonitorSettings( selectedSites );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
 	const resetMonitorDuration = useCallback(
 		( accepted: boolean ) => {
 			if ( accepted ) {
-				const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
-				const params = {
-					jetmon_defer_status_down_minutes: defaultDuration?.time,
-				};
-				updateMonitorSettings( params );
+				updateMonitorSettings( {} );
 				recordEvent( 'reset_notification_save' );
 			}
 		},
@@ -108,8 +103,6 @@ export function useHandleResetNotification(
 			em: <em />,
 			strong: <strong />,
 		};
-
-		const siteCountText = getSiteCountText( selectedSites ) as string;
 
 		const content =
 			selectedSites.length > 1
@@ -130,7 +123,7 @@ export function useHandleResetNotification(
 				  );
 
 		return dialogContent( heading, content, resetMonitorDuration );
-	}, [ resetMonitorDuration, selectedSites, translate ] );
+	}, [ resetMonitorDuration, selectedSites.length, siteCountText, translate ] );
 
 	return handleResetNotification;
 }

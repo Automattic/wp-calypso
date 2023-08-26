@@ -3,7 +3,12 @@ import { recordTrackForPost, recordAction } from 'calypso/reader/stats';
 import { showSelectedPost } from 'calypso/reader/utils';
 import Post from './post';
 
-export default function EmptySearchRecommendedPost( { post, postKey, streamKey } ) {
+export default function EmptySearchRecommendedPost( {
+	post,
+	postKey,
+	streamKey,
+	fixedHeaderHeight,
+} ) {
 	const dispatch = useDispatch();
 
 	function handlePostClick() {
@@ -22,5 +27,7 @@ export default function EmptySearchRecommendedPost( { post, postKey, streamKey }
 		return null;
 	}
 
-	return <Post post={ post } handleClick={ handlePostClick } />;
+	return (
+		<Post post={ post } handleClick={ handlePostClick } fixedHeaderHeight={ fixedHeaderHeight } />
+	);
 }

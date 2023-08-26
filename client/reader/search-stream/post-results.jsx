@@ -13,12 +13,13 @@ class PostResults extends Component {
 	static propTypes = {
 		query: PropTypes.string,
 		streamKey: PropTypes.string,
+		fixedHeaderHeight: PropTypes.number,
 	};
 
 	placeholderFactory = ( { key, ...rest } ) => {
 		if ( ! this.props.query ) {
 			return (
-				<div className="search-stream__recommendation-list-item" key={ key }>
+				<div className="search-stream__recommendation-list-item is-placeholder" key={ key }>
 					<RelatedPostCard { ...rest } />
 				</div>
 			);
@@ -33,6 +34,7 @@ class PostResults extends Component {
 			! query || query === ''
 				? ( postKey ) => ( { ...postKey, isRecommendation: true } )
 				: defaultTransform;
+
 		return (
 			<Stream
 				{ ...this.props }
@@ -42,6 +44,7 @@ class PostResults extends Component {
 				placeholderFactory={ this.placeholderFactory }
 				transformStreamItems={ transformStreamItems }
 				isMain={ false }
+				fixedHeaderHeight={ this.props.fixedHeaderHeight }
 			>
 				{ this.props.showBack && <HeaderBack /> }
 				<div ref={ this.handleStreamMounted } />

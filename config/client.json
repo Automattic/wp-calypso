@@ -27,6 +27,7 @@
 	"stats/subscribers-chart-section",
 	"stats/paid-stats",
 	"stats/paid-wpcom-stats",
+	"stats/type-detection",
 	"wpcom_concierge_schedule_id",
 	"wpcom_signup_id",
 	"wpcom_signup_key",

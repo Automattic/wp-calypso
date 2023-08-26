@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -247,14 +246,14 @@ export default function IssueMultipleLicensesForm( {
 					</div>
 				</>
 			) }
-			{ backupAddons.length > 0 && (
+			{ wooExtensions.length > 0 && (
 				<>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">
-						{ translate( 'VaultPress Backup Add-on Storage:' ) }
+						{ translate( 'WooCommerce Extensions:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ backupAddons.map( ( productOption, i ) => (
+						{ wooExtensions.map( ( productOption, i ) => (
 							<LicenseProductCard
 								isMultiSelect
 								key={ productOption.slug }
@@ -269,14 +268,14 @@ export default function IssueMultipleLicensesForm( {
 					</div>
 				</>
 			) }
-			{ config.isEnabled( 'jetpack/pro-dashboard-woo-extensions' ) && wooExtensions.length > 0 && (
+			{ backupAddons.length > 0 && (
 				<>
 					<hr className="issue-multiple-licenses-form__separator" />
 					<p className="issue-multiple-licenses-form__description">
-						{ translate( 'WooCommerce Extensions:' ) }
+						{ translate( 'VaultPress Backup Add-on Storage:' ) }
 					</p>
 					<div className="issue-multiple-licenses-form__bottom">
-						{ wooExtensions.map( ( productOption, i ) => (
+						{ backupAddons.map( ( productOption, i ) => (
 							<LicenseProductCard
 								isMultiSelect
 								key={ productOption.slug }

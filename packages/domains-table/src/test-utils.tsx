@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render as rtlRender, RenderResult, RenderOptions } from '@testing-library/react';
 import React from 'react';
-import type { PartialDomainData, DomainData } from '@automattic/data-stores';
+import type { PartialDomainData, DomainData, SiteDetails } from '@automattic/data-stores';
 
 export function renderWithProvider(
 	ui: React.ReactElement,
@@ -9,11 +9,23 @@ export function renderWithProvider(
 ): RenderResult {
 	const queryClient = new QueryClient();
 
-	const Wrapper = ( { children }: { children: React.ReactElement } ) => (
-		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-	);
+	const Wrapper = ( { children }: { children: React.ReactElement } ) => {
+		if ( renderOptions.wrapper ) {
+			children = <renderOptions.wrapper>{ children }</renderOptions.wrapper>;
+		}
+		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+	};
 
-	return rtlRender( ui, { wrapper: Wrapper, ...renderOptions } );
+	return rtlRender( ui, { ...renderOptions, wrapper: Wrapper } );
+}
+
+export function testSite( defaults: Partial< SiteDetails > ) {
+	return {
+		...defaults,
+		options: {
+			...defaults.options,
+		},
+	};
 }
 
 export function testDomain(

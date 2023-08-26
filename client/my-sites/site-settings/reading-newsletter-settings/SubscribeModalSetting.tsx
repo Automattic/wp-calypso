@@ -1,7 +1,12 @@
-import { ToggleControl } from '@wordpress/components';
+import { ExternalLink, ToggleControl } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
 type SubscribeModalSettingProps = {
@@ -10,6 +15,8 @@ type SubscribeModalSettingProps = {
 	disabled?: boolean;
 };
 
+const isModalEditTranslated =
+	getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Preview and edit the popup' );
 const isModalToggleTranslated =
 	getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Enable subscriber pop-up' );
 const isModalToggleHelpTranslated =
@@ -24,6 +31,21 @@ export const SubscribeModalSetting = ( {
 	disabled,
 }: SubscribeModalSettingProps ) => {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+
+	// Construct a link to edit the modal
+	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+	const themeSlug = activeThemeData?.[ 0 ]?.template;
+	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
+	const subscribeModalEditorUrl = isFSEActive
+		? addQueryArgs( siteEditorUrl, {
+				postType: 'wp_template_part',
+				postId: `${ themeSlug }//jetpack-subscribe-modal`,
+				canvas: 'edit',
+		  } )
+		: false;
 
 	return (
 		<>
@@ -45,6 +67,14 @@ export const SubscribeModalSetting = ( {
 					: translate(
 							'Grow your subscriber list by enabling a popup modal with a subscribe form. This will show as readers scroll.'
 					  ) }
+				{ isModalEditTranslated && subscribeModalEditorUrl && ! isAtomicSite && (
+					<>
+						{ ' ' }
+						<ExternalLink href={ subscribeModalEditorUrl }>
+							{ translate( 'Preview and edit the popup' ) }
+						</ExternalLink>
+					</>
+				) }
 			</FormSettingExplanation>
 		</>
 	);

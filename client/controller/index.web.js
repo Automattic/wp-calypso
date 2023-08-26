@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { getLanguage, getLanguageSlugs } from '@automattic/i18n-utils';
+import {
+	getLanguage,
+	getLanguageSlugs,
+	removeLocaleFromPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -186,11 +190,11 @@ export function redirectLoggedOutToSignup( context, next ) {
  * @returns {void}
  */
 export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
-	const langSlugs = getLanguageSlugs();
-	const langSlugPathSegmentMatcher = new RegExp( `\\/(${ langSlugs.join( '|' ) })(\\/|\\?|$)` );
-	const pathWithoutLocale = context.path.replace( langSlugPathSegmentMatcher, '$2' );
+	if ( isUserLoggedIn( context.store.getState() ) && context.params.lang ) {
+		const langSlugs = getLanguageSlugs();
+		const langSlugPathSegmentMatcher = new RegExp( `\\/(${ langSlugs.join( '|' ) })(\\/|\\?|$)` );
+		const pathWithoutLocale = context.path.replace( langSlugPathSegmentMatcher, '$2' );
 
-	if ( isUserLoggedIn( context.store.getState() ) && pathWithoutLocale !== context.path ) {
 		return page.redirect( pathWithoutLocale );
 	}
 
@@ -209,5 +213,15 @@ export const notFound = ( context, next ) => {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
+	next();
+};
+
+export const redirectLoggedInUrl = ( context, next ) => {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
+		if ( pathWithoutLocale !== context.path ) {
+			return page.redirect( pathWithoutLocale );
+		}
+	}
 	next();
 };

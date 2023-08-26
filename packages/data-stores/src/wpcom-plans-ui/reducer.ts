@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import type { WpcomPlansUIAction } from './actions';
-import type { selectedStorageAddOnsForPlans } from './types';
+import type { selectedStorageOptionForPlans } from './types';
 import type { Reducer } from 'redux';
 
 const showDomainUpsellDialog: Reducer< boolean | undefined, WpcomPlansUIAction > = (
@@ -15,11 +15,11 @@ const showDomainUpsellDialog: Reducer< boolean | undefined, WpcomPlansUIAction >
 	return state;
 };
 
-const selectedStorageAddOnsForPlans: Reducer<
-	selectedStorageAddOnsForPlans | undefined,
+const selectedStorageOptionForPlans: Reducer<
+	selectedStorageOptionForPlans | undefined,
 	WpcomPlansUIAction
 > = ( state, action ) => {
-	if ( action.type === 'WPCOM_PLANS_UI_SET_STORAGE_ADD_ON_FOR_PLAN' ) {
+	if ( action.type === 'WPCOM_PLANS_UI_SET_SELECTED_STORAGE_OPTION_FOR_PLAN' ) {
 		return { ...state, [ action.planSlug ]: action.addOnSlug };
 	}
 	return state;
@@ -27,7 +27,7 @@ const selectedStorageAddOnsForPlans: Reducer<
 
 const reducer = combineReducers( {
 	showDomainUpsellDialog,
-	selectedStorageAddOnsForPlans,
+	selectedStorageOptionForPlans,
 } );
 
 export type State = ReturnType< typeof reducer >;

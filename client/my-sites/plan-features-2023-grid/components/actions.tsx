@@ -18,6 +18,7 @@ import classNames from 'classnames';
 import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
 import { useSelector } from 'calypso/state';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import { usePlansGridContext } from '../grid-context';
@@ -29,14 +30,12 @@ type PlanFeaturesActionsButtonProps = {
 	canUserPurchasePlan?: boolean | null;
 	className: string;
 	currentSitePlanSlug?: string | null;
-	current: boolean;
 	freePlan: boolean;
 	manageHref: string;
 	isPopular?: boolean;
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	onUpgradeClick: () => void;
-	planTitle: TranslateResult;
 	planSlug: PlanSlug;
 	flowName?: string | null;
 	buttonText?: string;
@@ -70,6 +69,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck,
 	isLargeCurrency,
 	handleUpgradeButtonClick,
+	busy,
 }: {
 	freePlan: boolean;
 	planTitle: TranslateResult;
@@ -78,6 +78,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	handleUpgradeButtonClick: () => void;
+	busy?: boolean;
 } ) => {
 	const translate = useTranslate();
 	let btnText;
@@ -102,7 +103,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	}
 
 	return (
-		<Button className={ classes } onClick={ handleUpgradeButtonClick }>
+		<Button className={ classes } onClick={ handleUpgradeButtonClick } busy={ busy }>
 			{ btnText }
 		</Button>
 	);
@@ -177,7 +178,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle,
 	handleUpgradeButtonClick,
 	planSlug,
-	current,
 	manageHref,
 	canUserPurchasePlan,
 	currentSitePlanSlug,
@@ -193,7 +193,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planTitle: TranslateResult;
 	handleUpgradeButtonClick: () => void;
 	planSlug: string;
-	current?: boolean;
 	manageHref?: string;
 	canUserPurchasePlan?: boolean | null;
 	currentSitePlanSlug?: string | null;
@@ -201,7 +200,10 @@ const LoggedInPlansFeatureActionButton = ( {
 	selectedSiteSlug: string | null;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
+	const { gridPlansIndex } = usePlansGridContext();
+	const { current } = gridPlansIndex[ planSlug ];
 	const currentPlanBillPeriod = useSelector( ( state ) => {
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
@@ -321,7 +323,13 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( ! availableForPurchase ) {
 		return (
-			<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
+			<Plans2023Tooltip
+				text={ translate( 'Please contact support to downgrade your plan.' ) }
+				setActiveTooltipId={ setActiveTooltipId }
+				activeTooltipId={ activeTooltipId }
+				showOnMobile={ false }
+				id="downgrade"
+			>
 				<DummyDisabledButton>{ translate( 'Downgrade', { context: 'verb' } ) }</DummyDisabledButton>
 				{ isMobile() && (
 					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
@@ -340,13 +348,11 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	canUserPurchasePlan,
 	className,
 	currentSitePlanSlug,
-	current = false,
 	freePlan = false,
 	manageHref,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick,
-	planTitle,
 	planSlug,
 	flowName,
 	buttonText,
@@ -360,14 +366,15 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const { gridPlansIndex } = usePlansGridContext();
+	const {
+		planTitle,
+		current,
+		pricing: { currencyCode, originalPrice, discountedPrice },
+	} = gridPlansIndex[ planSlug ];
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
 		'is-current-plan': current,
 	} );
-
-	const {
-		pricing: { currencyCode, originalPrice, discountedPrice },
-	} = gridPlansIndex[ planSlug ];
 
 	const handleUpgradeButtonClick = () => {
 		if ( ! freePlan ) {
@@ -456,6 +463,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
+				busy={ freePlan && planActionOverrides?.loggedInFreePlan?.status === 'blocked' }
 			/>
 		);
 	}
@@ -467,7 +475,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			availableForPurchase={ availableForPurchase }
 			classes={ classes }
 			handleUpgradeButtonClick={ handleUpgradeButtonClick }
-			current={ current }
 			manageHref={ manageHref }
 			canUserPurchasePlan={ canUserPurchasePlan }
 			currentSitePlanSlug={ currentSitePlanSlug }

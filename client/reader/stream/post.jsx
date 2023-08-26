@@ -44,6 +44,7 @@ class ReaderPostCardAdapter extends Component {
 				feed={ this.props.feed }
 				onClick={ this.onClick }
 				onCommentClick={ this.onCommentClick }
+				handleClick={ this.props.handleClick }
 				isSelected={ this.props.isSelected }
 				followSource={ this.props.followSource }
 				showSiteName={ this.props.showSiteName }
@@ -51,6 +52,7 @@ class ReaderPostCardAdapter extends Component {
 				postKey={ this.props.postKey }
 				compact={ this.props.compact }
 				showFollowButton={ this.props.showFollowButton }
+				fixedHeaderHeight={ this.props.fixedHeaderHeight }
 			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }

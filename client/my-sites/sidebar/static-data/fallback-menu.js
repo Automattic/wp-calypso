@@ -550,9 +550,7 @@ export default function buildFallbackResponse( {
 					slug: 'options-reading-php',
 					title: translate( 'Reading' ),
 					type: 'submenu-item',
-					url: config.isEnabled( 'settings/modernize-reading-settings' )
-						? `/settings/reading/${ siteDomain }`
-						: `https://${ siteDomain }/wp-admin/options-reading.php`,
+					url: `/settings/reading/${ siteDomain }`,
 				},
 				...( config.isEnabled( 'settings/newsletter-settings-page' )
 					? [

@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { removeStatsPurchaseSuccessParamFromCurrentUrl } from './lib/remove-stats-purchase-success-param';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null ) => {
@@ -32,15 +33,20 @@ const handleUpgradeClick = (
 
 const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
 	siteId,
-	onNoticeViewed,
+	isOdysseyStats,
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+	const [ paramRemoved, setParamRemoved ] = useState( false );
 
 	useEffect( () => {
-		onNoticeViewed && onNoticeViewed();
-	} );
+		if ( paramRemoved ) {
+			return;
+		}
+		// Ensure it runs only once.
+		setParamRemoved( true );
+		removeStatsPurchaseSuccessParamFromCurrentUrl( isOdysseyStats );
+	}, [ paramRemoved, isOdysseyStats ] );
 
 	const dismissNotice = () => setNoticeDismissed( true );
 

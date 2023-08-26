@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import './style.scss';
-import { useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -9,7 +9,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { BlazablePost, Campaign } from 'calypso/data/promote-post/types';
+import {
+	BlazablePost,
+	BlazePagedItem,
+	Campaign,
+	CampaignQueryResult,
+	PostQueryResult,
+} from 'calypso/data/promote-post/types';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
@@ -56,7 +62,7 @@ export type DSPMessage = {
 export type PagedBlazeContentData = {
 	has_more_pages: boolean;
 	total_items?: number;
-	items?: Campaign[] | BlazablePost[];
+	items?: BlazePagedItem[];
 };
 
 export type PagedBlazeSearchResponse = {
@@ -108,7 +114,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
 		'campaigns',
-		initialCampaignQueryState?.data as PagedBlazeSearchResponse
+		initialCampaignQueryState?.data as InfiniteData< CampaignQueryResult >
 	);
 
 	/* query for posts */
@@ -140,7 +146,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 	const { total_items: totalPostsUnfiltered } = getPagedBlazeSearchData(
 		'posts',
-		initialPostQueryState?.data as PagedBlazeSearchResponse
+		initialPostQueryState?.data as InfiniteData< PostQueryResult >
 	);
 
 	const tabs: TabOption[] = [

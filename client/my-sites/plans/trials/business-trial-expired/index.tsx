@@ -59,7 +59,7 @@ const BusinessTrialExpired = (): JSX.Element => {
 						</h1>
 						<div className="business-trial-expired__subtitle">
 							{ translate(
-								'Don’t lose all that hard work! Upgrade to a paid plan to continue working on your site.'
+								'Don’t lose all that hard work! Upgrade to a paid plan to launch your migrated website.'
 							) }
 						</div>
 						{ nonBusinessTrialPurchases && nonBusinessTrialPurchases.length > 0 && (

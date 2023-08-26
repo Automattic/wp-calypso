@@ -348,7 +348,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags' ],
+		paths: [ '/tags', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tags' ],
 		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,
@@ -606,9 +606,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'promote-post',
+		name: 'promote-post-i2',
 		paths: [ '/advertising' ],
-		module: 'calypso/my-sites/promote-post',
+		module: 'calypso/my-sites/promote-post-i2',
 		group: 'sites',
 	},
 	{

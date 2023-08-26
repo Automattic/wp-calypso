@@ -1,6 +1,5 @@
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
-import config from '@automattic/calypso-config';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -197,11 +196,7 @@ describe( 'actions', () => {
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
-				const url =
-					'/rest/v1.2/themes' +
-					( config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-						? '?include_blankcanvas_theme=true'
-						: '?include_blankcanvas_theme=' );
+				const url = '/rest/v1.2/themes?include_blankcanvas_theme=';
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
 					.get( url )
 					.reply( 200, {
@@ -213,8 +208,8 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wpcom' )( spy );
+			test( 'should dispatch fetch action when thunk triggered', async () => {
+				await requestThemes( 'wpcom' )( spy );
 
 				expect( spy ).toBeCalledWith( {
 					type: THEMES_REQUEST,
@@ -522,6 +517,32 @@ describe( 'actions', () => {
 			test( 'should refresh the admin bar', () => {
 				themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetState );
 				expect( spy ).toBeCalledWith( {
+					type: 'THEME_ACTIVATE_SUCCESS',
+					themeStylesheet: 'pub/mayland-blocks',
+					siteId: 2211667,
+					meta: {
+						analytics: [
+							{
+								payload: {
+									name: 'calypso_themeshowcase_theme_activate',
+									properties: {
+										previous_theme: 'twentyfifteen',
+										purchased: false,
+										search_taxonomies: '',
+										search_term: 'simple, white',
+										source: 'unknown',
+										style_variation_slug: '',
+										theme: 'mayland-blocks',
+										theme_type: 'free',
+									},
+									service: 'tracks',
+								},
+								type: 'ANALYTICS_EVENT_RECORD',
+							},
+						],
+					},
+				} );
+				expect( spy ).toBeCalledWith( {
 					type: 'ADMIN_MENU_REQUEST',
 					siteId: 2211667,
 				} );
@@ -556,6 +577,32 @@ describe( 'actions', () => {
 				siteId: 2211667,
 			};
 			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
+			expect( spy ).toBeCalledWith( {
+				type: 'THEME_ACTIVATE_SUCCESS',
+				themeStylesheet: 'pub/twentysixteen',
+				siteId: 2211667,
+				meta: {
+					analytics: [
+						{
+							payload: {
+								name: 'calypso_themeshowcase_theme_activate',
+								properties: {
+									previous_theme: 'twentyfifteen',
+									purchased: false,
+									search_taxonomies: '',
+									search_term: 'simple, white',
+									source: 'unknown',
+									style_variation_slug: '',
+									theme: 'twentysixteen',
+									theme_type: 'free',
+								},
+								service: 'tracks',
+							},
+							type: 'ANALYTICS_EVENT_RECORD',
+						},
+					],
+				},
+			} );
 			expect( spy ).toBeCalledWith( expectedActivationSuccess );
 		} );
 	} );
@@ -599,9 +646,9 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'twentysixteen' } )
+				.post( '/rest/v1.1/sites/2211667/themes/mine?_locale=user', { theme: 'twentysixteen' } )
 				.reply( 200, { id: 'karuna', version: '1.0.3' } )
-				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'badTheme' } )
+				.post( '/rest/v1.1/sites/2211667/themes/mine?_locale=user', { theme: 'badTheme' } )
 				.reply( 404, {
 					error: 'theme_not_found',
 					message: 'The specified theme was not found',
@@ -1367,6 +1414,27 @@ describe( 'actions', () => {
 				res();
 			} )
 		);
+		const livePreviewStartAction = {
+			type: 'LIVE_PREVIEW_START',
+			meta: {
+				analytics: [
+					{
+						payload: {
+							name: 'calypso_block_theme_live_preview_click',
+							properties: {
+								active_theme: 'twentyfifteen',
+								site_id: 2211667,
+								source: 'detail',
+								theme: 'pendant',
+								theme_type: 'free',
+							},
+							service: 'tracks',
+						},
+						type: 'ANALYTICS_EVENT_RECORD',
+					},
+				],
+			},
+		};
 		describe( 'on a WordPress.com site', () => {
 			const state = () => ( {
 				sites: {
@@ -1376,11 +1444,25 @@ describe( 'actions', () => {
 						},
 					},
 				},
+				themes: {
+					activeThemes: {
+						2211667: 'twentyfifteen',
+					},
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: {},
+						} ),
+					},
+				},
 			} );
 			test( 'should redirect users to the Live Preview', () => {
 				return new Promise( ( done ) => {
-					livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
-						expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+					livePreview(
+						'pendant',
+						2211667,
+						'detail'
+					)( dispatch, state ).then( () => {
+						expect( dispatch ).toBeCalledWith( livePreviewStartAction );
 						expect( dispatch ).toBeCalledWith(
 							expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 						);
@@ -1399,11 +1481,17 @@ describe( 'actions', () => {
 						},
 					},
 				},
+				themes: {
+					activeThemes: {
+						2211667: 'twentyfifteen',
+					},
+				},
 			};
 			describe( 'if the theme is already installed', () => {
 				const state = () => ( {
 					...baseState,
 					themes: {
+						...baseState.themes,
 						queries: {
 							2211667: new ThemeQueryManager( {
 								items: { pendant: {} },
@@ -1413,8 +1501,12 @@ describe( 'actions', () => {
 				} );
 				test( 'should redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
-						livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
-							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+						livePreview(
+							'pendant',
+							2211667,
+							'detail'
+						)( dispatch, state ).then( () => {
+							expect( dispatch ).toBeCalledWith( livePreviewStartAction );
 							expect( dispatch ).toBeCalledWith(
 								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 							);
@@ -1428,13 +1520,18 @@ describe( 'actions', () => {
 				const state = () => ( {
 					...baseState,
 					themes: {
+						...baseState.themes,
 						queries: {},
 					},
 				} );
 				test( 'should install the theme and then redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
-						livePreview( 'pendant', 2211667 )( dispatch, state ).then( () => {
-							expect( dispatch ).toBeCalledWith( { type: 'LIVE_PREVIEW_START' } );
+						livePreview(
+							'pendant',
+							2211667,
+							'detail'
+						)( dispatch, state ).then( () => {
+							expect( dispatch ).toBeCalledWith( livePreviewStartAction );
 							expect( dispatch ).toBeCalledWith(
 								expect.toMatchFunction( installAndLivePreview( 'pendant', 2211667 ) )
 							);

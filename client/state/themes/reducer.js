@@ -1,3 +1,4 @@
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { withStorageKey } from '@automattic/state-utils';
 import { mapValues, omit, map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -56,7 +57,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
-import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
+import { getSerializedThemesQuery } from './utils';
 
 /**
  * Returns the updated active theme state after an action has been
@@ -360,6 +361,21 @@ const queriesReducer = ( state = {}, action ) => {
 					m.receive( map( themes, fromApi ), {
 						query,
 						found,
+						patch: true,
+						dontShareQueryResultsWhenQueriesAreDifferent: true,
+					} ),
+				() => new ThemeQueryManager( null, { itemKey: 'id' } )
+			);
+		}
+		case THEMES_REQUEST_FAILURE: {
+			const { siteId, query } = action;
+			return withQueryManager(
+				state,
+				siteId,
+				( m ) =>
+					m.receive( [], {
+						query,
+						found: 0,
 						patch: true,
 						dontShareQueryResultsWhenQueriesAreDifferent: true,
 					} ),
