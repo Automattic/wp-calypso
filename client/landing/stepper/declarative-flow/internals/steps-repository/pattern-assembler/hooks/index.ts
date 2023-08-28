@@ -1,5 +1,6 @@
 export { default as useCategoriesOrder } from './use-categories-order';
 export { default as useCurrentScreen } from './use-current-screen';
+export { default as useCustomStyles } from './use-custom-styles';
 export { default as useDotcomPatterns } from './use-dotcom-patterns';
 export { default as useGlobalStylesUpgradeProps } from './use-global-styles-upgrade-props';
 export { default as useInitialPath } from './use-initial-path';

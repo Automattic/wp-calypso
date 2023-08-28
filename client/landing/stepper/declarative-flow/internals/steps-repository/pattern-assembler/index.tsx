@@ -21,7 +21,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -33,6 +32,7 @@ import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_SCREEN } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import {
 	useCurrentScreen,
+	useCustomStyles,
 	useDotcomPatterns,
 	useGlobalStylesUpgradeProps,
 	useInitialPath,
@@ -95,7 +95,6 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	// New sites are created from 'site-setup' and 'with-site-assembler' flows
 	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
@@ -115,18 +114,23 @@ const PatternAssembler = ( {
 		sections,
 		colorVariation,
 		fontVariation,
-		resetCustomStyles,
 		setHeader,
 		setFooter,
 		setSections,
 		setColorVariation,
 		setFontVariation,
-		setResetCustomStyles,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
-	const numOfSelectedGlobalStyles = [ colorVariation, fontVariation ].filter( Boolean ).length;
-
-	const shouldUnlockGlobalStyles = numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles;
+	const {
+		shouldUnlockGlobalStyles,
+		numOfSelectedGlobalStyles,
+		resetCustomStyles,
+		setResetCustomStyles,
+	} = useCustomStyles( {
+		siteID: site?.ID,
+		hasColor: !! colorVariation,
+		hasFont: !! fontVariation,
+	} );
 
 	const currentScreen = useCurrentScreen( { isNewSite, shouldUnlockGlobalStyles } );
 
