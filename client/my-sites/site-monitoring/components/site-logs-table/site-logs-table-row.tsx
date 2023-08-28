@@ -22,7 +22,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const expandedId = useRef( uuidv4() ).current;
 
-	const firstColumnValue = log[ columns[ 0 ] ]; // Get the value of the first column
+	const firstColumnValue = log[ columns[ 0 ] ] as string; // Get the value of the first column
 
 	const specifiedLogs =
 		logType === 'php'
