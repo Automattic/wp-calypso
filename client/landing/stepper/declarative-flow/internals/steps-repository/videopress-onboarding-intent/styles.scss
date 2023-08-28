@@ -34,7 +34,8 @@
 		cursor: pointer;
 		transition: border-color 0.3s ease-in-out;
 
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			border-color: #ffe61c;
 		}
 	}
@@ -115,6 +116,11 @@
 
 			button {
 				cursor: pointer;
+				padding: 4px;
+
+				&:focus-visible {
+					border: 1px solid var(--color-text);
+				}
 			}
 		}
 
