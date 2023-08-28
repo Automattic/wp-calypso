@@ -12,6 +12,18 @@ function capitalizeFirstLetter( str: string ) {
 	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 }
 
+function replaceKey( key: string ) {
+	if ( key === 'http_referer' ) {
+		return 'Referrer';
+	} else if ( key === 'body_bytes_sent' ) {
+		return 'Body bytes sent';
+	} else if ( key === 'http_host' ) {
+		return 'HTTP host';
+	}
+
+	return capitalizeFirstLetter( key );
+}
+
 export default function SiteLogsExpandedContent( { log, specifiedLogs }: Props ) {
 	return (
 		<div className="site-logs-table__expanded-content">
@@ -19,7 +31,7 @@ export default function SiteLogsExpandedContent( { log, specifiedLogs }: Props )
 				specifiedLogs.map( ( key ) => (
 					<Fragment key={ key }>
 						<div>
-							<strong>{ capitalizeFirstLetter( key ) }</strong>
+							<strong>{ replaceKey( key ) }</strong>
 						</div>
 						<div>
 							<div className="site-logs-table__expanded-content-info">
