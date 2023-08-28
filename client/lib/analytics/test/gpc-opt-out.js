@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { isRegionInCcpaZone } from '@automattic/calypso-analytics';
 import { mayWeTrackUserGpcInCcpaRegion } from '../utils';
-import isRegionInCcpaZone from '../utils/is-region-in-ccpa-zone';
 
 // Return a predictable value for whether the user is in a CCPA region.
-jest.mock( '../utils/is-region-in-ccpa-zone' );
+jest.mock( '@automattic/calypso-analytics' );
 
 let windowSpy = jest.SpyInstance;
 
