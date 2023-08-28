@@ -20,10 +20,16 @@ import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/ty
 
 import './styles.scss';
 
-const VideoPressOnboardingIntent: Step = () => {
+const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
 	const [ modal, setModal ] = useState< ReactElement | null >( null );
+
+	const { submit } = navigation;
+
+	const handleSubmit = () => {
+		submit?.();
+	};
 
 	const sendTracksIntent = ( intent: string ) => {
 		recordTracksEvent( 'calypso_videopress_onboarding_intent_clicked', {
@@ -35,7 +41,7 @@ const VideoPressOnboardingIntent: Step = () => {
 
 	const onVideoPortfolioIntentClicked = () => {
 		sendTracksIntent( 'portfolio' );
-		setModal( <VideoPressOnboardingIntentModalPortfolio onSubmit={ () => false } /> );
+		setModal( <VideoPressOnboardingIntentModalPortfolio onSubmit={ handleSubmit } /> );
 	};
 
 	const onVideoChannelIntentClicked = () => {
