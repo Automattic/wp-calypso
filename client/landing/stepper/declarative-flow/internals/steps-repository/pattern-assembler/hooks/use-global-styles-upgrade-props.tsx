@@ -1,5 +1,4 @@
 import { urlToSlug } from 'calypso/lib/url';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
@@ -9,8 +8,6 @@ import type { ScreenName } from '../types';
 interface Props {
 	flowName: string;
 	stepName: string;
-	hasSelectedColorVariation?: boolean;
-	hasSelectedFontVariation?: boolean;
 	nextScreenName: ScreenName;
 	onUpgradeLater?: () => void;
 	onContinue?: () => void;
@@ -20,8 +17,6 @@ interface Props {
 const useGlobalStylesUpgradeProps = ( {
 	flowName,
 	stepName,
-	hasSelectedColorVariation = false,
-	hasSelectedFontVariation = false,
 	nextScreenName,
 	onUpgradeLater,
 	onContinue,
@@ -30,11 +25,7 @@ const useGlobalStylesUpgradeProps = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { goToCheckout } = useCheckout();
-	const numOfSelectedGlobalStyles = [ hasSelectedColorVariation, hasSelectedFontVariation ].filter(
-		Boolean
-	).length;
 
 	const handleCheckout = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_UPSELL_CHECKOUT_BUTTON_CLICK );
@@ -64,9 +55,6 @@ const useGlobalStylesUpgradeProps = ( {
 	};
 
 	return {
-		shouldUnlockGlobalStyles: numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles,
-		globalStylesInPersonalPlan,
-		numOfSelectedGlobalStyles,
 		onCheckout: handleCheckout,
 		onTryStyle: handleTryStyle,
 		onContinue: handleContinue,

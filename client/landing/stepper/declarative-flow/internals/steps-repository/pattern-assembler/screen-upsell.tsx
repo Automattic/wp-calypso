@@ -9,7 +9,6 @@ import './screen-upsell.scss';
 
 interface Props {
 	resetCustomStyles: boolean;
-	globalStylesInPersonalPlan?: boolean;
 	numOfSelectedGlobalStyles?: number;
 	setResetCustomStyles: ( value: boolean ) => void;
 	onCheckout: () => void;
@@ -19,7 +18,6 @@ interface Props {
 
 const ScreenUpsell = ( {
 	resetCustomStyles,
-	globalStylesInPersonalPlan,
 	numOfSelectedGlobalStyles = 1,
 	setResetCustomStyles,
 	onCheckout,
@@ -28,10 +26,7 @@ const ScreenUpsell = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const { title } = useScreen( 'upsell' );
-	const translations = useGlobalStylesUpgradeTranslations( {
-		globalStylesInPersonalPlan,
-		numOfSelectedGlobalStyles,
-	} );
+	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
 
 	return (
 		<>

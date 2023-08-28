@@ -3,7 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
-const useScreen = ( screenName: ScreenName, shouldUnlockGlobalStyles = false ) => {
+export type UseScreenOptions = {
+	isNewSite?: boolean;
+	shouldUnlockGlobalStyles?: boolean;
+};
+
+const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const screens = {
@@ -40,13 +45,28 @@ const useScreen = ( screenName: ScreenName, shouldUnlockGlobalStyles = false ) =
 		main: null,
 		styles: screens.main,
 		upsell: screens.styles,
-		activation: shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
-		confirmation: shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+		activation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+		confirmation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+	};
+
+	const nextScreens = {
+		main: screens.styles,
+		styles: ( () => {
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return options.isNewSite ? screens.confirmation : screens.activation;
+		} )(),
+		upsell: options.isNewSite ? screens.confirmation : screens.activation,
+		activation: null,
+		confirmation: null,
 	};
 
 	return {
 		...screens[ screenName ],
 		previousScreen: previousScreens[ screenName ],
+		nextScreen: nextScreens[ screenName ],
 	};
 };
 

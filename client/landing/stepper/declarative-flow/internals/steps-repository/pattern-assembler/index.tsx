@@ -21,6 +21,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -94,6 +95,7 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	// New sites are created from 'site-setup' and 'with-site-assembler' flows
 	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
@@ -121,6 +123,12 @@ const PatternAssembler = ( {
 		setFontVariation,
 		setResetCustomStyles,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
+
+	const numOfSelectedGlobalStyles = [ colorVariation, fontVariation ].filter( Boolean ).length;
+
+	const shouldUnlockGlobalStyles = numOfSelectedGlobalStyles > 0 && shouldLimitGlobalStyles;
+
+	const currentScreen = useCurrentScreen( { isNewSite, shouldUnlockGlobalStyles } );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
@@ -382,34 +390,27 @@ const PatternAssembler = ( {
 	};
 
 	const onContinue = () => {
-		if ( isNewSite ) {
-			navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
-		} else {
-			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
-		}
-	};
-
-	const onContinueWithUpsell = () => {
-		if ( shouldUnlockGlobalStyles ) {
-			navigator.goTo( NAVIGATOR_PATHS.UPSELL );
+		if ( ! currentScreen.nextScreen ) {
+			onSubmit();
 			return;
 		}
 
-		onContinue();
-	}
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONTINUE_CLICK, {
+			screen_from: currentScreen.name,
+			screen_to: currentScreen.nextScreen.name,
+		} );
 
-	const { shouldUnlockGlobalStyles, ...globalStylesUpgradeProps } = useGlobalStylesUpgradeProps( {
+		navigator.goTo( currentScreen.nextScreen.initialPath );
+	};
+
+	const globalStylesUpgradeProps = useGlobalStylesUpgradeProps( {
 		flowName: flow,
 		stepName,
-		hasSelectedColorVariation: !! colorVariation,
-		hasSelectedFontVariation: !! fontVariation,
 		nextScreenName: isNewSite ? 'confirmation' : 'activation',
 		onUpgradeLater: onContinue,
 		onContinue,
 		recordTracksEvent,
 	} );
-
-	const currentScreen = useCurrentScreen( shouldUnlockGlobalStyles );
 
 	const getBackLabel = () => {
 		if ( ! currentScreen.previousScreen ) {
@@ -456,12 +457,12 @@ const PatternAssembler = ( {
 
 	const onActivate = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
-		onSubmit();
+		onContinue();
 	};
 
 	const onConfirm = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONFIRMATION_CONFIRM_CLICK );
-		onSubmit();
+		onContinue();
 	};
 
 	const onMainItemSelect = ( name: string ) => {
@@ -542,13 +543,14 @@ const PatternAssembler = ( {
 						hasFooter={ !! footer }
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
+						onContinueClick={ onContinue }
 					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES } partialMatch>
 					<ScreenStyles
 						onMainItemSelect={ onMainItemSelect }
-						onContinueClick={ onContinueWithUpsell }
+						onContinueClick={ onContinue }
 						recordTracksEvent={ recordTracksEvent }
 						hasColor={ !! colorVariation }
 						hasFont={ !! fontVariation }
@@ -562,10 +564,11 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
 					<ScreenConfirmation onConfirm={ onConfirm } />
 				</NavigatorScreen>
-				
+
 				<NavigatorScreen path={ NAVIGATOR_PATHS.UPSELL } className="screen-upsell">
 					<ScreenUpsell
 						{ ...globalStylesUpgradeProps }
+						numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
 						resetCustomStyles={ resetCustomStyles }
 						setResetCustomStyles={ setResetCustomStyles }
 					/>
