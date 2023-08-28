@@ -1,6 +1,7 @@
-import { ResponseDomain, SiteDetails } from '@automattic/data-stores';
+import { SiteDetails } from '@automattic/data-stores';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { ResponseDomain } from '../utils/types';
 
 interface DomainsTableSiteCellProps {
 	site?: Pick< SiteDetails, 'ID' | 'name' >;
