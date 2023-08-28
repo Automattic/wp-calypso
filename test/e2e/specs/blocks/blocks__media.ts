@@ -26,7 +26,7 @@ declare const browser: Browser;
 /**
  * Tests the media-related blocks.
  *
- * Keywords: Media, Video, VideoPress, Image, Audio, File1
+ * Keywords: Media, Video, VideoPress, Image, Audio, File
  */
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	const features = envToFeatureKey( envVariables );
