@@ -18,7 +18,7 @@ export const membershipProductFromApi = ( product ) => ( {
 	ID: parseInt( product.id || product.connected_account_product_id ),
 	currency: product.currency,
 	formatted_price: product.price,
-	price: product.price,
+	price: parseFloat( product.price ),
 	title: product.title,
 	stripe_account: product.connected_destination_account_id,
 	renewal_schedule: product.interval,
