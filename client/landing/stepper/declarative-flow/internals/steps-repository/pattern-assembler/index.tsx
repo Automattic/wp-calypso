@@ -29,9 +29,8 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_PATH, CATEGORY_ALL_SLUG } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_PATH } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import useCategoryAll from './hooks/use-category-all';
 import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
@@ -94,14 +93,13 @@ const PatternAssembler = ( {
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
-	// Fetching all patterns and categories from PTK api
+	// Fetching curated patterns and categories from PTK api
 	const dotcomPatterns = useDotcomPatterns( locale );
-	const allPatterns = useCategoryAll( dotcomPatterns );
 	const patternIds = useMemo(
-		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
-		[ allPatterns ]
+		() => dotcomPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
+		[ dotcomPatterns ]
 	);
-	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
+	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns, categories );
 	const {
 		header,
 		footer,
@@ -113,7 +111,7 @@ const PatternAssembler = ( {
 		setSections,
 		setColorVariation,
 		setFontVariation,
-	} = useRecipe( site?.ID, allPatterns, categories );
+	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
@@ -454,8 +452,7 @@ const PatternAssembler = ( {
 	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
 		const [ firstCategory ] = Object.keys( pattern.categories );
 		const selectedCategory = pattern.category?.name || firstCategory;
-		const patterns =
-			patternsMapByCategory[ selectedCategory ] || patternsMapByCategory[ CATEGORY_ALL_SLUG ];
+		const patterns = patternsMapByCategory[ selectedCategory ];
 		const shuffledPattern = getShuffledPattern( patterns, pattern );
 		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
 
