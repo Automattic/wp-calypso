@@ -36,12 +36,15 @@ export const SiteMonitoringTabPanel = ( {
 							key={ name }
 							path={
 								name === 'metrics'
-									? `/site-monitoring/${ siteSlug }`
-									: `/site-monitoring/${ siteSlug }/${ name }`
+									? `/site-monitoring/${ siteSlug }${ new URL( window.location.href ).search }`
+									: `/site-monitoring/${ siteSlug }/${ name }${
+											new URL( window.location.href ).search
+									  }`
 							}
 							selected={ selectedTab === name }
-							children={ title }
-						/>
+						>
+							{ title }
+						</NavItem>
 					);
 				} ) }
 			</NavTabs>

@@ -116,7 +116,7 @@ export const LogsTab = ( {
 	};
 
 	return (
-		<div class="site-logs-container">
+		<div className="site-logs-container">
 			<SiteLogsToolbar
 				logType={ logType }
 				startDateTime={ dateRange.startTime }
