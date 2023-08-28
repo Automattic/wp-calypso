@@ -1,6 +1,10 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import {
+	domainManagementTransferToOtherSiteLink,
+	domainOnlySiteCreationLink,
+} from '../domain-routes';
 import { ResponseDomain } from '../utils/types';
 
 interface DomainsTableSiteCellProps {
@@ -46,13 +50,3 @@ export const DomainsTableSiteCell = ( {
 
 	return site.name ?? '-';
 };
-
-export function domainOnlySiteCreationLink( siteSlug: string, siteId: number ) {
-	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
-		siteSlug
-	) }&siteId=${ encodeURIComponent( siteId ) }`;
-}
-
-export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `/domains/manage/all/${ domainName }/transfer/other-site/${ siteSlug }`;
-}
