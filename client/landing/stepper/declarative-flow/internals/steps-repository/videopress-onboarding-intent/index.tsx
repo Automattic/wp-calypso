@@ -2,6 +2,7 @@
 
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import { useState } from 'react';
 import BlogIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-blog.png';
 import ChannelIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-channel.png';
 import JetpackIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-jetpack.png';
@@ -17,29 +18,38 @@ import './styles.scss';
 
 const VideoPressOnboardingIntent: Step = () => {
 	const { __ } = useI18n();
+	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
+
+	const sendTracksIntent = ( intent: string ) => {
+		recordTracksEvent( 'calypso_videopress_onboarding_intent_clicked', {
+			intent,
+			click_number: intentClickNumber,
+		} );
+		setIntentClicksNumber( intentClickNumber + 1 );
+	};
 
 	const onVideoPortfolioIntentClicked = () => {
-		// console.log( 'Video portfolio' );
+		sendTracksIntent( 'portfolio' );
 	};
 
 	const onVideoChannelIntentClicked = () => {
-		// console.log( 'Video channel' );
+		sendTracksIntent( 'videochannel' );
 	};
 
 	const onUploadVideoIntentClicked = () => {
-		// console.log( 'Upload video' );
+		sendTracksIntent( 'videoupload' );
 	};
 
 	const onAddVideoIntentClicked = () => {
-		// console.log( 'Add video' );
+		sendTracksIntent( 'jetpack' );
 	};
 
 	const onVideoBlogIntentClicked = () => {
-		// console.log( 'Video blog' );
+		sendTracksIntent( 'blog' );
 	};
 
 	const onOtherIntentClicked = () => {
-		// console.log( 'Other' );
+		sendTracksIntent( 'other' );
 	};
 
 	const stepContent = (
