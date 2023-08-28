@@ -1,8 +1,8 @@
-import { ResponseDomain } from '@automattic/data-stores';
 import {
 	DomainsTable,
 	useDomainsTable,
 	DomainStatusPurchaseActions,
+	ResponseDomain,
 } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';

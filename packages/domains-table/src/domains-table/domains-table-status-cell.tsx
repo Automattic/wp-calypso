@@ -1,6 +1,6 @@
-import { ResponseDomain } from '@automattic/data-stores/src/domains/types';
 import { useTranslate } from 'i18n-calypso';
 import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
+import { ResponseDomain } from '../utils/types';
 
 interface DomainsTableStatusCellProps {
 	currentDomainData?: ResponseDomain;
