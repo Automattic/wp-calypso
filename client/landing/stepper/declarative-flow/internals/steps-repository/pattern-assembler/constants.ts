@@ -11,10 +11,13 @@ export const NAVIGATOR_PATHS = {
 	STYLES_COLORS: '/styles/colors',
 	STYLES_FONTS: '/styles/fonts',
 	ACTIVATION: '/activation',
+	CONFIRMATION: '/confirmation',
 };
 
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
 export const INITIAL_CATEGORY = 'posts';
+
+export const INITIAL_SCREEN = 'main';
 
 /* Category list of the patterns fetched via PTK API from Dotcompatterns
  *
