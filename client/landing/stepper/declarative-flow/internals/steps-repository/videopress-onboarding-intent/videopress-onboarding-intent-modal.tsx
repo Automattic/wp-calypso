@@ -31,8 +31,8 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 			<div className="intro__description">{ description }</div>
 			{ featuresList && (
 				<ul className="videopress-intro-modal__list">
-					{ featuresList?.map( ( feature ) => (
-						<li>
+					{ featuresList?.map( ( feature, index ) => (
+						<li key={ index }>
 							<CheckmarkIcon />
 							<span>{ feature }</span>
 						</li>
