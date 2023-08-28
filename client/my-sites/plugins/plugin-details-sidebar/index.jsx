@@ -8,10 +8,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './style.scss';
-import { useWPVersion } from 'calypso/data/wp-version/use-wp-version-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
-import { preventWidows } from 'calypso/lib/formatting';
 import { PlanUSPS, USPS } from 'calypso/my-sites/plugins/plugin-details-CTA/usps';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
@@ -79,10 +77,6 @@ const PluginDetailsSidebar = ( {
 			site: selectedSite?.ID,
 		} );
 	}, [ premium_slug, selectedSite?.ID, slug ] );
-
-	const { data: wpVersions } = useWPVersion();
-
-	const isDeprecated = isVersionGreater( wpVersions?.[ 3 ], tested );
 
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
@@ -177,16 +171,6 @@ const PluginDetailsSidebar = ( {
 						{ translate( 'Tested up to' ) }
 					</div>
 					<div className="plugin-details-sidebar__tested-value value">{ tested }</div>
-					{ isDeprecated && (
-						<div className="plugin-details-sidebar__deprecated-notice">
-							{ preventWidows(
-								translate(
-									'This plugin seems outdated and not maintained anymore. We advise that you {{a}}search{{/a}} for another similar plugin.',
-									{ components: { a: <a href="/plugins" /> } }
-								)
-							) }
-						</div>
-					) }
 				</div>
 			) }
 		</div>
@@ -194,38 +178,3 @@ const PluginDetailsSidebar = ( {
 };
 
 export default PluginDetailsSidebar;
-
-/**
- * Compares two version strings and returns true if the first version is greater
- * than the second version.
- *
- * If any of the arguments are not valid version strings, returns false.
- *
- * @param {string} v1 - The first version string to compare.
- * @param {string} v2 - The second version string to compare.
- * @returns {boolean} True if the first version is greater than the second version, false otherwise.
- */
-export function isVersionGreater( v1, v2 ) {
-	try {
-		const v1parts = v1.split( '.' );
-		const v2parts = v2.split( '.' );
-
-		// Compare each part of the version strings
-		for ( let i = 0; i < v1parts.length; i++ ) {
-			const v1part = parseInt( v1parts[ i ], 10 );
-			const v2part = parseInt( v2parts[ i ], 10 );
-
-			if ( v1part > v2part ) {
-				return true;
-			} else if ( v1part < v2part ) {
-				return false;
-			}
-		}
-	} catch {
-		// If there is an error parsing the version strings, return false
-		return false;
-	}
-
-	// If all parts are equal, the versions are equal
-	return false;
-}

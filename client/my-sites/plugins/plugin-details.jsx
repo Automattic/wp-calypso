@@ -71,6 +71,7 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
+import usePluginIsMaintained from './use-plugin-is-maintained';
 
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
@@ -268,6 +269,8 @@ function PluginDetails( props ) {
 		setBreadcrumbs( breadcrumbs );
 	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
+	const isMaintained = usePluginIsMaintained( fullPlugin?.tested );
+
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
 			args: { pluginName: fullPlugin.name },
@@ -359,6 +362,19 @@ function PluginDetails( props ) {
 										>
 											{ translate( 'More info' ) }
 										</NoticeAction>
+									</Notice>
+								) }
+
+								{ ! isMaintained && (
+									<Notice showDismiss={ false } status="is-warning">
+										{ translate(
+											'This plugin seems outdated and not maintaianed anymore. We advise that you {{a}}search{{/a}} for another similar plugin.',
+											{
+												components: {
+													a: <a href={ `/plugins/${ selectedSite?.slug ?? '' }` } />,
+												},
+											}
+										) }
 									</Notice>
 								) }
 
