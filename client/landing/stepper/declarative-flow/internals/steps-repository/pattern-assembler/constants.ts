@@ -23,7 +23,7 @@ export const INITIAL_CATEGORY = 'posts';
  *  - don't exist in Dotcompatterns source site
  */
 export const PATTERN_CATEGORIES = [
-	'featured', // -- Not exists
+	//'featured', // -- Not exists
 	'about',
 	//'buttons', -- Not exist
 	//'banner', -- Not exist
