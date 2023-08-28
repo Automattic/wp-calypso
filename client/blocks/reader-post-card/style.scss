@@ -216,6 +216,14 @@
 			top: inherit;
 		}
 	}
+
+	// When comment list is attached to reader post card, remove top border and margin to feel more
+	// cohesive.
+	.comments__comment-list {
+		border-top: none;
+		margin: 20px 0 0 10px;
+		padding-top: 0;
+	}
 }
 
 .reader-post-card__conversation-post {

@@ -30,7 +30,7 @@ export class SiteAssemblerFlow {
 	 *
 	 * @param {LayoutType} type Type of the layout component.
 	 */
-	async selectLayoutComponentType( type: LayoutType ): Promise< void > {
+	async clickLayoutComponentType( type: LayoutType ): Promise< void > {
 		await this.page.getByRole( 'button', { name: type } ).click();
 	}
 
@@ -68,6 +68,18 @@ export class SiteAssemblerFlow {
 			.getByRole( 'listitem' )
 			.last()
 			.waitFor( { timeout: 15 * 1000 } );
+	}
+
+	/**
+	 * Given an accessible name of the color style, waits for and clicks on the style.
+	 *
+	 * @param {string} name Accessible name of the color style to pick.
+	 */
+	async pickStyle( name: string ) {
+		const anchor = this.page.getByRole( 'listbox', { name: 'Color palette variations' } );
+		await anchor.waitFor();
+
+		await anchor.getByRole( 'option', { name: name } ).click();
 	}
 
 	/**

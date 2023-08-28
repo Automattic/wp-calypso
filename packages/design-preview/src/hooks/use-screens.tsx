@@ -17,6 +17,7 @@ interface Props {
 	siteId: number;
 	stylesheet: string;
 	isVirtual?: boolean;
+	isExternallyManaged?: boolean;
 	limitGlobalStyles?: boolean;
 	globalStylesInPersonalPlan: boolean;
 	variations?: StyleVariation[];
@@ -36,6 +37,7 @@ const useScreens = ( {
 	siteId,
 	stylesheet,
 	isVirtual,
+	isExternallyManaged,
 	limitGlobalStyles,
 	globalStylesInPersonalPlan,
 	variations,
@@ -52,7 +54,7 @@ const useScreens = ( {
 }: Props ) => {
 	const translate = useTranslate();
 
-	return useMemo(
+	const screens = useMemo(
 		() =>
 			[
 				variations &&
@@ -153,6 +155,12 @@ const useScreens = ( {
 			selectedFontVariation,
 		]
 	);
+
+	if ( isExternallyManaged ) {
+		return [];
+	}
+
+	return screens;
 };
 
 export default useScreens;

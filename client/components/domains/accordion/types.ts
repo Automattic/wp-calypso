@@ -8,4 +8,5 @@ export type AccordionProps = {
 	onClose?: () => void;
 
 	isPlaceholder?: boolean;
+	className?: string;
 };

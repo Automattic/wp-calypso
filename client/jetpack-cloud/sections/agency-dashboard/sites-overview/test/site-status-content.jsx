@@ -13,6 +13,10 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn().mockReturnValue( () => null ),
 	useDispatch: jest.fn().mockReturnValue( () => {} ),
 } ) );
+jest.mock( 'i18n-calypso', () => ( {
+	...jest.requireActual( 'i18n-calypso' ),
+	useTranslate: jest.fn().mockReturnValue( ( str ) => str ),
+} ) );
 jest.mock( '../site-set-favorite' );
 
 describe( 'SiteStatusContent', () => {

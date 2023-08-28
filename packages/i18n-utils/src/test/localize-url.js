@@ -1,6 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
-
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { localizeUrl, useLocalizeUrl } from '../';
 
 jest.mock( '../locale-context', () => {

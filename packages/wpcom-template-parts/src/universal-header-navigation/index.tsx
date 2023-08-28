@@ -380,13 +380,23 @@ const UniversalNavbarHeader = ( {
 									<ul className="x-menu-grid">
 										<ClickableItem
 											titleValue=""
-											content={ __( 'Sign Up', __i18n_text_domain__ ) }
+											content={
+												<>
+													{ __( 'Sign Up', __i18n_text_domain__ ) }{ ' ' }
+													<span className="x-menu-link-chevron" />
+												</>
+											}
 											urlValue={ startUrl }
 											type="menu"
 										/>
 										<ClickableItem
 											titleValue=""
-											content={ __( 'Log In', __i18n_text_domain__ ) }
+											content={
+												<>
+													{ __( 'Log In', __i18n_text_domain__ ) }{ ' ' }
+													<span className="x-menu-link-chevron" />
+												</>
+											}
 											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ) }
 											type="menu"
 										/>
@@ -496,8 +506,6 @@ const UniversalNavbarHeader = ( {
 												urlValue={ localizeUrl( '//wordpress.com/features/' ) }
 												type="menu"
 											/>
-										</ul>
-										<ul className="x-menu-grid">
 											<ClickableItem
 												titleValue=""
 												content={ __( 'WordPress Themes', __i18n_text_domain__ ) }

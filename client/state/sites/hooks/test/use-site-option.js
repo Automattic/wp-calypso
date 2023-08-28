@@ -1,4 +1,7 @@
-import { renderHook } from '@testing-library/react-hooks';
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { useSiteOption } from '../';
@@ -15,8 +18,7 @@ describe( '#useSiteOption()', () => {
 		} );
 
 		const { result } = renderHook( () => useSiteOption( 'site_intent' ), {
-			wrapper: Provider,
-			initialProps: { store },
+			wrapper: ( props ) => <Provider store={ store } { ...props } />,
 		} );
 
 		expect( result.current ).toBe( null );
@@ -40,8 +42,7 @@ describe( '#useSiteOption()', () => {
 		} );
 
 		const { result } = renderHook( () => useSiteOption( 'site_intent' ), {
-			wrapper: Provider,
-			initialProps: { store },
+			wrapper: ( props ) => <Provider store={ store } { ...props } />,
 		} );
 
 		expect( result.current ).toBe( siteIntent );

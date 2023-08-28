@@ -1,21 +1,28 @@
 import { Button, FormInputValidation } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import { Icon, trash, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CAPTURE_URL_RGX_SOFT } from 'calypso/blocks/import/util';
+import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/use-delete-domain-forwarding-mutation';
 import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
@@ -27,6 +34,7 @@ const noticeOptions = {
 export default function DomainForwardingCard( { domain }: { domain: ResponseDomain } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domain.name );
 
@@ -34,19 +42,25 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ protocol, setProtocol ] = useState( 'https' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
+	const [ forwardPaths, setForwardPaths ] = useState( false );
+	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const pointsToWpcom = domain.pointsToWpcom;
+	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
 
 	// Display success notices when the forwarding is updated
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
 		onSuccess() {
 			dispatch(
-				successNotice( translate( 'Domain redirect updated and enabled.' ), noticeOptions )
+				successNotice( translate( 'Domain forward updated and enabled.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice( translate( 'An error occurred while updating the redirect.' ), noticeOptions )
+				errorNotice(
+					translate( 'An error occurred while updating the domain forward.' ),
+					noticeOptions
+				)
 			);
 		},
 	} );
@@ -56,12 +70,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		onSuccess() {
 			setTargetUrl( '' );
 			dispatch(
-				successNotice( translate( 'Domain redirect deleted successfully.' ), noticeOptions )
+				successNotice( translate( 'Domain forward deleted successfully.' ), noticeOptions )
 			);
 		},
 		onError() {
 			dispatch(
-				errorNotice( translate( 'An error occurred while deleting the redirect.' ), noticeOptions )
+				errorNotice(
+					translate( 'An error occurred while deleting the domain forward.' ),
+					noticeOptions
+				)
 			);
 		},
 	} );
@@ -71,7 +88,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		if ( isError ) {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while fetching your domain redirects.' ),
+					translate( 'An error occurred while fetching your domain forwarding.' ),
 					noticeOptions
 				)
 			);
@@ -94,6 +111,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			if ( url.hostname !== '_invalid_.domain' ) {
 				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
 				setProtocol( forwarding.isSecure ? 'https' : 'http' );
+				setIsPermanent( forwarding.isPermanent );
+				setForwardPaths( forwarding.forwardPaths );
 			}
 		} catch ( e ) {
 			// ignore
@@ -118,7 +137,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
 			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
-				setErrorMessage( translate( 'Redirects to the same domain are not allowed.' ) );
+				setErrorMessage( translate( 'Forwarding to the same domain is not allowed.' ) );
 				setIsValidUrl( false );
 				return;
 			}
@@ -132,6 +151,9 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const handleDelete = () => {
+		setTargetUrl( '' );
+		setIsValidUrl( true );
+
 		if ( isLoading || ! forwarding ) {
 			return;
 		}
@@ -169,8 +191,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			targetHost,
 			targetPath,
 			isSecure,
-			forwardPaths: true, // v1 always forward paths
-			isPermanent: false, // v1 always temporary
+			forwardPaths,
+			isPermanent,
 			isActive: true, // v1 always active
 			sourcePath: null, // v1 always using domain only
 		} );
@@ -183,14 +205,35 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			return null;
 		}
 
-		const noticeText = translate(
-			'Connect your domain to WordPress.com to enable domain forwarding. {{a}}Learn more{{/a}}.',
-			{
-				components: {
-					a: <a href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
-				},
-			}
-		);
+		const newNoticeText =
+			'To enable domain forwarding please "restore default A records." {{a}}Learn more{{/a}}.';
+
+		let noticeText;
+		if ( hasTranslation( newNoticeText ) || isEnglishLocale ) {
+			noticeText = translate(
+				'To enable domain forwarding please "restore default A records." {{a}}Learn more{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ localizeUrl(
+									'https://wordpress.com/support/domains/custom-dns/#default-records'
+								) }
+							/>
+						),
+					},
+				}
+			);
+		} else {
+			noticeText = translate(
+				'Connect your domain to WordPress.com to enable domain forwarding. {{a}}Learn more{{/a}}.',
+				{
+					components: {
+						a: <a href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
+					},
+				}
+			);
+		}
 
 		return (
 			<div className="domain-forwarding-card-notice">
@@ -206,7 +249,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const renderNoticeForPrimaryDomain = () => {
-		if ( ! domain?.isPrimary ) {
+		if ( ! domain?.isPrimary || isDomainOnly ) {
 			return;
 		}
 
@@ -233,13 +276,37 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		);
 	};
 
+	const redirectHasChanged = () => {
+		if ( ! forwarding ) {
+			return false;
+		}
+
+		if ( forwarding.targetHost + forwarding.targetPath !== targetUrl ) {
+			return true;
+		}
+
+		if ( ( forwarding.isSecure ? 'https' : 'http' ) !== protocol ) {
+			return true;
+		}
+
+		if ( forwarding.isPermanent !== isPermanent ) {
+			return true;
+		}
+
+		if ( forwarding.forwardPaths !== forwardPaths ) {
+			return true;
+		}
+
+		return false;
+	};
+
 	return (
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset
-					disabled={ domain?.isPrimary || ! pointsToWpcom }
+					disabled={ ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom }
 					className="domain-forwarding-card__fields"
 				>
 					<FormTextInputWithAffixes
@@ -271,22 +338,97 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 								} ) }
 								onClick={ handleDelete }
 							>
-								<Icon icon={ trash } size={ 18 } />
+								<Icon icon={ trash } size={ 18 } fill="currentColor" />
 							</Button>
 						}
 					/>
+					<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
+						<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
+						<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
+						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+							<FormRadio
+								name="redirect_type"
+								value="0"
+								checked={ ! isPermanent }
+								onChange={ () => {
+									setIsPermanent( false );
+								} }
+								label={ translate( 'Temporary redirect (307)' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>
+							{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
+						</FormSettingExplanation>
+						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+							<FormRadio
+								name="redirect_type"
+								value="0"
+								checked={ isPermanent }
+								onChange={ () => {
+									setIsPermanent( true );
+								} }
+								label={ translate( 'Permanent redirect (301)' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>
+							{ translate(
+								'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
+							) }
+						</FormSettingExplanation>
+
+						<p className="accordion__title path__forwarding">{ translate( 'Path forwarding' ) }</p>
+						<p className="accordion__subtitle">
+							{ translate(
+								'Redirects the path after the domain name to the corresponding path at the new address.'
+							) }
+						</p>
+						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+							<FormRadio
+								name="path_forwarding"
+								value="0"
+								checked={ ! forwardPaths }
+								onChange={ () => {
+									setForwardPaths( false );
+								} }
+								label={ translate( 'Do not forward' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>
+							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
+							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }
+						</FormSettingExplanation>
+						<FormLabel>
+							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+							<FormRadio
+								name="path_forwarding"
+								value="0"
+								checked={ forwardPaths }
+								onChange={ () => {
+									setForwardPaths( true );
+								} }
+								label={ translate( 'Forward path' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>
+							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
+							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
+						</FormSettingExplanation>
+					</Accordion>
 				</FormFieldset>
-				<p className="domain-forwarding-card__error-field">
-					{ ! isValidUrl ? <FormInputValidation isError={ true } text={ errorMessage } /> : ' ' }
-				</p>
+				{ ! isValidUrl && (
+					<div className="domain-forwarding-card__error-field">
+						<FormInputValidation isError={ true } text={ errorMessage } />
+					</div>
+				) }
 				<FormButton
 					disabled={
 						! isValidUrl ||
 						isLoading ||
-						( forwarding &&
-							forwarding.targetHost + forwarding.targetPath === targetUrl &&
-							( forwarding.isSecure ? 'https' : 'http' ) === protocol ) ||
-						( ! forwarding && targetUrl === '' )
+						( forwarding && ! redirectHasChanged() ) ||
+						targetUrl === ''
 					}
 				>
 					{ translate( 'Save' ) }

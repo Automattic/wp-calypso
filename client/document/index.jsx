@@ -59,6 +59,7 @@ class Document extends Component {
 			useTranslationChunks,
 			target,
 			featuresHelper,
+			params,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -82,7 +83,11 @@ class Document extends Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
-			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n`;
+			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
+			// Inject the locale if we can get it from the route via `getLanguageRouteParam`
+			( params && params.hasOwnProperty( 'lang' )
+				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
+				: '' );
 
 		const isJetpackWooCommerceFlow =
 			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;

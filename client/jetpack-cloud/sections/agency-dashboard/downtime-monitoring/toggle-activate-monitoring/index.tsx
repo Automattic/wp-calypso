@@ -75,11 +75,11 @@ export default function ToggleActivateMonitoring( {
 	const smsLimitReached = settings?.is_over_limit;
 
 	const currentSettings = () => {
-		const minutes = settings?.monitor_deferment_time;
+		const minutes = settings?.check_interval;
 		if ( ! minutes ) {
 			return null;
 		}
-		// Convert minutes to moment duration to show "hr" if monitor_deferment_time is greater than 60
+		// Convert minutes to moment duration to show "hr" if check_interval is greater than 60
 		const duration = moment.duration( minutes, 'minutes' );
 		const hours = Math.floor( duration.asHours() );
 		const currentDurationText = hours

@@ -24,7 +24,7 @@ export interface PureFooterProps extends FooterProps {
 }
 
 export interface MenuItemProps {
-	content: string;
+	content: string | React.ReactNode;
 	className?: string;
 }
 

@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { localeRegexString } from '@automattic/i18n-utils';
+import { localeRegexString, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import closest from 'component-closest';
 import { truncate } from 'lodash';
@@ -25,6 +25,7 @@ import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
+import PostCardComments from './post-card-comments';
 import StandardPost from './standard';
 import './style.scss';
 
@@ -39,6 +40,7 @@ class ReaderPostCard extends Component {
 		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
+		handleClick: PropTypes.func,
 		showSiteName: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
@@ -46,11 +48,13 @@ class ReaderPostCard extends Component {
 		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
+		fixedHeaderHeight: PropTypes.number,
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		onCommentClick: noop,
+		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
 		showFollowButton: true,
@@ -85,6 +89,11 @@ class ReaderPostCard extends Component {
 
 		// ignore clicks on comments
 		if ( closest( event.target, '.conversations__comment-list', rootNode ) ) {
+			return;
+		}
+
+		// ignore clicks on inline comments
+		if ( closest( event.target, '.comments__comment-list', rootNode ) ) {
 			return;
 		}
 
@@ -146,6 +155,18 @@ class ReaderPostCard extends Component {
 		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
 			currentRoute
 		);
+
+		const isReaderA8CPage = currentRoute.startsWith( '/read/a8c' );
+		const isReaderListPage = currentRoute.startsWith( '/read/list/' );
+		const isDiscoverPage =
+			removeLocaleFromPathLocaleInFront( currentRoute ).startsWith( '/discover' );
+		const isTagPage = removeLocaleFromPathLocaleInFront( currentRoute ).startsWith( '/tag/' );
+
+		const shouldShowPostCardComments =
+			! isConversations &&
+			! isReaderA8CPage &&
+			! isReaderListPage &&
+			( ! compact || isDiscoverPage || isTagPage );
 
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
@@ -261,6 +282,13 @@ class ReaderPostCard extends Component {
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
+				{ shouldShowPostCardComments && (
+					<PostCardComments
+						post={ post }
+						handleClick={ this.props.handleClick }
+						fixedHeaderHeight={ this.props.fixedHeaderHeight }
+					/>
+				) }
 			</Card>
 		);
 	}

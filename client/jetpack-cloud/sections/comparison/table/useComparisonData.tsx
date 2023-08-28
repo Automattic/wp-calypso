@@ -2,11 +2,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Checkmark from 'calypso/assets/images/checkbox-icons/checkmark-jetpack.svg';
 import DesignIcon from 'calypso/assets/images/jetpack/jetpack-icon-design.svg';
+import EarnIcon from 'calypso/assets/images/jetpack/jetpack-icon-earn.svg';
 import GrowthIcon from 'calypso/assets/images/jetpack/jetpack-icon-growth.svg';
 import LockIcon from 'calypso/assets/images/jetpack/jetpack-icon-lock.svg';
 import MobileAppIcon from 'calypso/assets/images/jetpack/jetpack-icon-mobile-app.svg';
 import PerformanceIcon from 'calypso/assets/images/jetpack/jetpack-icon-performance.svg';
 import SupportIcon from 'calypso/assets/images/jetpack/jetpack-icon-support.svg';
+import AIIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-ai.svg';
 import AntiSpamIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-antispam.svg';
 import BackupIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-backup.svg';
 import BoostIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-boost.svg';
@@ -226,24 +228,20 @@ export const useComparisonData = () => {
 				icon: GrowthIcon,
 				features: [
 					{
-						id: 'crm',
-						name: translate( '{{abbr}}CRM{{/abbr}}', {
-							components: {
-								abbr: <abbr title={ translate( 'Customer Relationship Management' ) } />,
-							},
-						} ),
-						url: links.crm,
-						icon: CRMIcon,
+						id: 'stats',
+						name: translate( 'Stats' ),
+						url: links.stats,
+						icon: StatsIcon,
 						info: {
 							FREE: {
-								content: translate( 'Free' ),
+								content: translate( 'Basic Stats' ),
 							},
 							SECURITY: {
-								content: translate( 'Free' ),
+								content: translate( 'Basic Stats' ),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'Entrepreneur' ),
+								content: translate( 'All Stats' ),
 							},
 						},
 					},
@@ -266,39 +264,45 @@ export const useComparisonData = () => {
 						},
 					},
 					{
-						id: 'stats',
-						name: translate( 'Stats' ),
-						url: links.stats,
-						icon: StatsIcon,
+						id: 'crm',
+						name: translate( '{{abbr}}CRM{{/abbr}}', {
+							components: {
+								abbr: <abbr title={ translate( 'Customer Relationship Management' ) } />,
+							},
+						} ),
+						url: links.crm,
+						icon: CRMIcon,
 						info: {
 							FREE: {
-								content: translate( 'Basic Stats' ),
+								content: translate( 'Free' ),
 							},
 							SECURITY: {
-								content: translate( 'Basic Stats' ),
+								content: translate( 'Free' ),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'All Stats' ),
+								content: translate( 'Entrepreneur' ),
 							},
 						},
 					},
 					{
-						id: 'payments_block',
-						name: translate( 'Collect payments' ),
-						url: links.payments_block,
-						info: {
-							COMPLETE: { content: <CheckIcon /> },
-						},
+						id: 'ai',
+						name: translate( 'AI' ),
+						url: links.ai,
+						icon: AIIcon,
+						info: allChecked,
 					},
 					{
-						id: 'ad_network',
-						name: translate( 'Ad network' ),
-						url: links.ad_network,
-						info: {
-							SECURITY: { content: <CheckIcon /> },
-							COMPLETE: { content: <CheckIcon /> },
-						},
+						id: 'blaze',
+						name: translate( 'Blaze' ),
+						url: links.blaze,
+						info: allChecked,
+					},
+					{
+						id: 'newsletter',
+						name: translate( 'Newsletter' ),
+						url: links.newsletter,
+						info: allChecked,
 					},
 					{
 						id: 'seo',
@@ -309,6 +313,38 @@ export const useComparisonData = () => {
 						} ),
 						url: links.seo,
 						info: allChecked,
+					},
+				],
+			},
+			{
+				sectionId: 'earn',
+				sectionName: translate( 'Earn' ),
+				icon: EarnIcon,
+				features: [
+					{
+						id: 'ad_network',
+						name: translate( 'Ad network' ),
+						url: links.ad_network,
+						info: {
+							SECURITY: { content: <CheckIcon /> },
+							COMPLETE: { content: <CheckIcon /> },
+						},
+					},
+					{
+						id: 'payments_block',
+						name: translate( 'Collect payments' ),
+						url: links.payments_block,
+						info: allChecked,
+					},
+					{
+						id: 'transaction_fees',
+						name: translate( 'Transaction fees' ),
+						url: links.transaction_fees,
+						info: {
+							FREE: { content: translate( '10%' ) },
+							SECURITY: { content: translate( '4%' ) },
+							COMPLETE: { content: translate( '2%' ) },
+						},
 					},
 				],
 			},
@@ -337,12 +373,6 @@ export const useComparisonData = () => {
 						id: 'galleries_and_slideshows',
 						name: translate( 'Gallery and slideshow tools' ),
 						url: links.galleries_and_slideshows,
-						info: allChecked,
-					},
-					{
-						id: 'subscriptions',
-						name: translate( 'Subscriptions' ),
-						url: links.subscriptions,
 						info: allChecked,
 					},
 					{

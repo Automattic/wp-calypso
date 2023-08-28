@@ -1,5 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import request from 'wpcom-proxy-request';
 import { NewsletterCategories } from '../types';
@@ -38,7 +41,7 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 			success: true,
 		} );
 
-		const { result, waitFor } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
+		const { result } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
@@ -74,7 +77,7 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 	} );
 
 	it( 'should throw an error when ID is missing', async () => {
-		const { result, waitFor } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
+		const { result } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 
@@ -94,7 +97,7 @@ describe( 'useMarkAsNewsletterCategoryMutation', () => {
 	it( 'should throw an error when API response is unsuccessful', async () => {
 		( request as jest.Mock ).mockResolvedValue( { success: false } );
 
-		const { result, waitFor } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
+		const { result } = renderHook( () => useMarkAsNewsletterCategoryMutation( siteId ), {
 			wrapper,
 		} );
 

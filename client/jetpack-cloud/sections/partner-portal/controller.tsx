@@ -33,6 +33,7 @@ import {
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import Header from './header';
+import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 import type PageJS from 'page';
 
 export function partnerContext( context: PageJS.Context, next: () => void ): void {
@@ -161,6 +162,13 @@ export function pricesContext( context: PageJS.Context, next: () => void ): void
 export function landingPageContext() {
 	page.redirect( '/partner-portal/licenses' );
 	return;
+}
+
+export function wpcomAtomicHostingContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <WPCOMAtomicHosting />;
+	next();
 }
 
 /**
