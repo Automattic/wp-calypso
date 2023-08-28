@@ -191,21 +191,20 @@ class PostCommentList extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		// After closing inline comments, we need to determine if CSS is line-clamping the newly
-		// rendered comments. Thus we need to evaluate this after update when the isExpanded state
-		// has been set to false or new comments have been posted. We avoid the setState loops by
-		// not running this check when the state it would set is already present.
+		// We need to determine if CSS is line-clamping comments so we can show a button to expand
+		// when necessary. We evaluate this after update when the isExpanded state has been set to
+		// false or new comments have been posted. We avoid the setState loops by not running this
+		// check when the state it would set is already present.
 		if (
 			this.props.expandableView &&
 			! this.state.isExpanded &&
+			// The view has been collapsed, or the amount of comments have changed.
 			( prevState.isExpanded ||
 				Object.keys( prevProps.commentsTree ).length !==
 					Object.keys( this.props.commentsTree ).length ) &&
-			// Do not check if hasClampedComments is true.
-			! prevState.hasClampedComments &&
-			this.listRef.current
+			// hasClampedComments is not already true.
+			! this.state.hasClampedComments
 		) {
-			// Might set state to 'true' for hasClampedComments.
 			this.checkForClampedComments();
 		}
 
@@ -224,11 +223,17 @@ class PostCommentList extends Component {
 		}
 	}
 
+	// Determines if CSS rules are line-clamping displayed comments in inline-collapsed mode
+	// (expandableView and ! isExpanded) so that a 'view more' link to expand can be displayed when
+	// necessary.
 	checkForClampedComments = () => {
-		// We line-clamp comments in the non-expanded expandable view. We need to know if a comment
-		// is being affected by this so that we may show a button to expand to see the rest of the
-		// comment. This is mostly relevant in the case that there are no other comments to display,
-		// and thus no 'view more comments' button to expand the view.
+		// Return early if hasClampedComments is already set true in state to make this safe for
+		// componentDidUpdate. Return early if we have no listRef to query, or the list is expanded
+		// and not line clamping in the first place.
+		if ( ! this.listRef.current || this.state.hasClampedComments || this.state.isExpanded ) {
+			return;
+		}
+		// Query selector ALL since we might be showing the readers reply as well.
 		const commentContentEles = this.listRef.current.querySelectorAll(
 			'.comments__comment-content'
 		);
@@ -239,8 +244,7 @@ class PostCommentList extends Component {
 				isClampedComment = true;
 			}
 		} );
-		// We can only get away with using this in componentDidUpdate if we condition to not fire
-		// this function when hasClampedComments is already true.
+		// There is no need to set false, as it already is false if this is running.
 		isClampedComment && this.setState( { hasClampedComments: true } );
 	};
 
