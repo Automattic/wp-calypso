@@ -124,7 +124,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			<div className={ modalClasses } aria-modal="true">
 				<div className="intro__more-modal-container">
 					<div className="intro__more-modal-header">
-						<Button plain onClick={ () => setModal( null ) }>
+						<Button plain onClick={ () => setModal( null ) } aria-label={ __( 'Close' ) }>
 							<CloseIcon />
 						</Button>
 					</div>
