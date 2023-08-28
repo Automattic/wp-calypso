@@ -86,9 +86,8 @@ function InviteForm( props: Props ) {
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
 
-	const onFormSubmit = ( e: FormEvent ) => {
+	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
-
 		if ( ! readyForSubmit || invitingProgress ) {
 			return;
 		}
@@ -97,7 +96,7 @@ function InviteForm( props: Props ) {
 
 		dispatch( sendInvites( siteId, _tokenValues, role, message, contractor ) );
 		dispatch( recordTracksEvent( 'calypso_invite_people_form_submit' ) );
-	};
+	}
 
 	function tokenValidation( i: number, tokenValues: unknown[] ) {
 		tokenValues[ i ] && dispatch( validateTokens( siteId, tokenValues, role ) );
