@@ -48,6 +48,11 @@ const ScreenMain = ( {
 	const selectedCategory = params.categorySlug as string;
 	const shouldOpenCategoryList =
 		!! selectedCategory && selectedCategory !== 'header' && selectedCategory !== 'footer';
+	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
+	const buttonText =
+		isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
+			? translate( 'Pick your style' )
+			: translate( 'Save and continue' );
 
 	const handleClick = () => {
 		goTo( NAVIGATOR_PATHS.STYLES_COLORS );
@@ -131,15 +136,14 @@ const ScreenMain = ( {
 			<div className="screen-container__footer">
 				<Button
 					className="pattern-assembler__button"
-					disabled={ ! hasSections && ! hasHeader && ! hasFooter }
+					disabled={ isButtonDisabled }
+					showTooltip={ isButtonDisabled }
 					onClick={ handleClick }
-					label="Add your first pattern to get started."
-					variant="primary"
-					text={
-						isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
-							? translate( 'Pick your style' )
-							: translate( 'Save and continue' )
+					label={
+						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : buttonText
 					}
+					variant="primary"
+					text={ buttonText }
 					__experimentalIsFocusable
 				/>
 			</div>
