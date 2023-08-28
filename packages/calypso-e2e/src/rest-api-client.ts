@@ -9,6 +9,8 @@ import {
 	PluginParams,
 	AllDomainsResponse,
 	DomainData,
+	PublicizeConnectionDeletedResponse,
+	PublicizeConnection,
 } from './types';
 import type { Roles } from './lib';
 import type {
@@ -1131,5 +1133,64 @@ export class RestAPIClient {
 		}
 
 		return response;
+	}
+
+	/* Publicize */
+
+	/**
+	 * Returns an array of existing publicize (social) connections.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @returns {Promise<Array<PublicizeConnection>>} Array of Publicize connections.
+	 */
+	async getAllPublicizeConnections( siteID: number ): Promise< Array< PublicizeConnection > > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/publicize-connections` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response[ 'connections' ];
+	}
+
+	/**
+	 * Given siteID and connectionID, deletes the connection.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @param {number} connectionID Publicize connection ID.
+	 * @returns {Promise<PublicizeConnectionDeletedResponse>} Confirmation of connection being deleted.
+	 */
+	async deletePublicizeConnection(
+		siteID: number,
+		connectionID: number
+	): Promise< PublicizeConnectionDeletedResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/publicize-connections/${ connectionID }/delete`
+			),
+			params
+		);
 	}
 }
