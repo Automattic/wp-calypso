@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { PATTERN_CATEGORIES } from '../constants';
+import { isPriorityPattern } from '../utils';
 import type { Pattern, Category } from '../types';
 
 const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] ) => {
@@ -15,7 +16,11 @@ const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] )
 				if ( ! categoriesMap[ category ] ) {
 					categoriesMap[ category ] = [];
 				}
-				categoriesMap[ category ].push( pattern );
+				if ( isPriorityPattern( pattern ) ) {
+					categoriesMap[ category ].unshift( pattern );
+				} else {
+					categoriesMap[ category ].push( pattern );
+				}
 			} );
 		} );
 		return categoriesMap;

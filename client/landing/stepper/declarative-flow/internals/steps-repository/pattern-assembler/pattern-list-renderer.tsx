@@ -3,7 +3,7 @@ import { Tooltip, __unstableCompositeItem as CompositeItem } from '@wordpress/co
 import classnames from 'classnames';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { encodePatternId } from './utils';
+import { encodePatternId, isPriorityPattern } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
 
@@ -25,6 +25,7 @@ interface PatternListRendererProps {
 	activeClassName: string;
 	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
+	isShowMorePatterns?: boolean;
 }
 
 const PLACEHOLDER_HEIGHT = 100;
@@ -97,9 +98,13 @@ const PatternListRenderer = ( {
 	activeClassName,
 	composite,
 	onSelect,
+	isShowMorePatterns,
 }: PatternListRendererProps ) => {
 	const filterPriorityPatterns = ( pattern: Pattern ) => {
-		if ( ! pattern.tags.assembler_priority ) {
+		if ( isShowMorePatterns ) {
+			return pattern;
+		}
+		if ( isPriorityPattern( pattern ) ) {
 			return pattern;
 		}
 	};

@@ -1,4 +1,7 @@
-import { useMemo } from 'react';
+import { Button } from '@wordpress/components';
+import { chevronDown } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo, useState } from 'react';
 import PatternSelector from './pattern-selector';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
@@ -24,8 +27,9 @@ const PatternListPanel = ( {
 	description,
 	onSelect,
 }: PatternListPanelProps ) => {
+	const translate = useTranslate();
+	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState( false );
 	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
-
 	const category = useMemo(
 		() => selectedCategory && categories.find( ( { name } ) => name === selectedCategory ),
 		[ categories, selectedCategory ]
@@ -46,7 +50,22 @@ const PatternListPanel = ( {
 				onSelect={ onSelect }
 				selectedPattern={ selectedPattern }
 				selectedPatterns={ selectedPatterns }
+				isShowMorePatterns={ isShowMorePatterns }
 			/>
+			{ ! isShowMorePatterns && (
+				<div className="pattern-list-panel__show-more">
+					<Button
+						onClick={ () => {
+							// recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, eventProps );
+							setIsShowMorePatterns( true );
+						} }
+						icon={ chevronDown }
+						iconSize={ 23 }
+						iconPosition="right"
+						text={ translate( 'Show more patterns' ) }
+					/>
+				</div>
+			) }
 		</div>
 	);
 };

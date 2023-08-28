@@ -60,6 +60,7 @@ const ScreenPatternListPanel = ( {
 
 	return (
 		<PatternListPanel
+			key={ selectedCategory }
 			{ ...props }
 			{ ...currentPanel }
 			selectedCategory={ selectedCategory }
