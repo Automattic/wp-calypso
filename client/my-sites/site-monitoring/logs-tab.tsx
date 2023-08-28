@@ -137,9 +137,9 @@ export const LogsTab = ( {
 			</SiteLogsToolbar>
 			<SiteLogsTable
 				logs={ data?.logs }
-				logType={ logType }
 				isLoading={ isFetching }
 				headerTitles={ headerTitles }
+				currentPageIndex={ currentPageIndex }
 			/>
 			{ paginationText && (
 				<div className="site-monitoring__pagination-text">{ paginationText }</div>
