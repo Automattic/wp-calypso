@@ -129,6 +129,10 @@ export class MarketingPage {
 	 * @param {string} param1.password Tumblr password.
 	 */
 	async setupTumblr( popup: Page, { username, password }: { username: string; password: string } ) {
+		// Wait for the page load to complete. Otherwise, a `Cannot POST /login` error
+		// is shown.
+		await popup.waitForLoadState( 'networkidle' );
+
 		// Fill in the email and password.
 		await popup.getByRole( 'textbox', { name: 'email' } ).fill( username );
 		await popup.getByPlaceholder( 'Password' ).fill( password );

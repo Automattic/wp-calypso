@@ -9,7 +9,6 @@ import {
 	DataHelper,
 	MarketingPage,
 	RestAPIClient,
-	SidebarComponent,
 	TestAccount,
 	SecretsManager,
 } from '@automattic/calypso-e2e';
@@ -52,15 +51,15 @@ describe( DataHelper.createSuiteTitle( 'Social Connections: Set up Tumblr' ), fu
 				await restAPIClient.deletePublicizeConnection( connection.site_ID, connection.ID );
 			}
 		}
+
+		marketingPage = new MarketingPage( page );
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Tools', 'Marketing' );
+		await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 	} );
 
 	it( 'Click on Connections tab', async function () {
-		marketingPage = new MarketingPage( page );
 		await marketingPage.clickTab( 'Connections' );
 	} );
 
