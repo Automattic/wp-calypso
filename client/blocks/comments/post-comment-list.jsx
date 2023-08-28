@@ -421,6 +421,18 @@ class PostCommentList extends Component {
 				? translate( 'View more' )
 				: translate( 'View more comments' );
 
+		let viewFewerText = translate( 'View fewer comments' );
+		if ( this.state.isExpanded ) {
+			const { displayedCommentsCount: collapsedDisplayedCommentsCount } =
+				this.getDisplayedCollapsedInlineComments( commentsTreeToShow );
+
+			// If collapsing will not reduce the number of comments shown (only line-clamp them
+			// visually), display 'View less' instead of 'View fewer comments'.
+			if ( displayedCommentsCount === collapsedDisplayedCommentsCount ) {
+				viewFewerText = translate( 'View less' );
+			}
+		}
+
 		return (
 			<>
 				<ol className="comments__list is-root">
@@ -428,7 +440,7 @@ class PostCommentList extends Component {
 				</ol>
 				{ ( shouldShowViewMoreToggle || this.state.showExpandWhenOnlyComments ) && (
 					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
-						{ this.state.isExpanded ? translate( 'View fewer comments' ) : viewMoreText }
+						{ this.state.isExpanded ? viewFewerText : viewMoreText }
 					</button>
 				) }
 				{ shouldShowLinkToFullPost && (
