@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CloseIcon from '../intro/icons/close-icon';
 import VideoPressOnboardingIntentItem from './intent-item';
 import VideoPressOnboardingIntentModalBlog from './videopress-onboarding-intent-modal-blog';
+import VideoPressOnboardingIntentModalJetpack from './videopress-onboarding-intent-modal-jetpack';
 import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
@@ -53,8 +54,9 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		sendTracksIntent( 'videoupload' );
 	};
 
-	const onAddVideoIntentClicked = () => {
+	const onJetpackIntentClicked = () => {
 		sendTracksIntent( 'jetpack' );
+		setModal( <VideoPressOnboardingIntentModalJetpack /> );
 	};
 
 	const onVideoBlogIntentClicked = () => {
@@ -99,7 +101,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 						'All the advantages and features from VideoPress, on your own WordPress site.'
 					) }
 					image={ JetpackIntentImage }
-					onClick={ onAddVideoIntentClicked }
+					onClick={ onJetpackIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
 					title={ __( 'Start a blog with video content' ) }

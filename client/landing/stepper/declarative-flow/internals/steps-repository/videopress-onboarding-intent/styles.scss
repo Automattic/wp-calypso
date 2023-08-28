@@ -189,12 +189,16 @@
 			align-items: center;
 			flex: 1;
 
+			a.is-primary,
 			button.is-primary {
 				width: auto;
 				max-width: initial;
 				font-weight: 500;
 				padding: 12px 24px;
 				border-radius: 4px;
+				background-color: #ffe61c;
+				color: #000;
+				border: none;
 			}
 
 			.learn-more {
