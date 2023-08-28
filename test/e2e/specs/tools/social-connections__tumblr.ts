@@ -46,12 +46,12 @@ describe( DataHelper.createSuiteTitle( 'Social Connections: Set up Tumblr' ), fu
 		);
 
 		// If it does, remove the connection.
-		Object.values( connections ).forEach( async ( connection ) => {
+		for ( const connection of connections ) {
 			if ( connection.label === 'Tumblr' ) {
 				console.info( `Removing existing connection for Tumblr for accountName ${ accountName }.` );
 				await restAPIClient.deletePublicizeConnection( connection.site_ID, connection.ID );
 			}
-		} );
+		}
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
@@ -73,7 +73,6 @@ describe( DataHelper.createSuiteTitle( 'Social Connections: Set up Tumblr' ), fu
 	} );
 
 	it( 'Tumblr is connected', async function () {
-		const connected = await marketingPage.validateSocialConnected( 'Tumblr' );
-		expect( connected ).toBe( true );
+		await marketingPage.validateSocialConnected( 'Tumblr' );
 	} );
 } );
