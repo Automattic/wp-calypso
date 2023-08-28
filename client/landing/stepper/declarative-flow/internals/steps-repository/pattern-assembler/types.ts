@@ -8,7 +8,7 @@ export type Pattern = {
 	key?: string;
 	pattern_meta?: Record< string, boolean | undefined >;
 	html?: string;
-	tags: Record< string, Tag >;
+	tags: Record< string, Tag | undefined >;
 };
 
 export type PatternType = 'header' | 'footer' | 'section';
