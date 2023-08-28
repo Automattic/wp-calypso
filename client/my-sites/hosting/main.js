@@ -17,7 +17,6 @@ import QueryKeyringServices from 'calypso/components/data/query-keyring-services
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -36,7 +35,6 @@ import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -224,7 +222,6 @@ class Hosting extends Component {
 			hasAtomicFeature,
 			hasStagingSitesFeature,
 			isJetpack,
-			isPossibleJetpackConnectionProblem,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -321,9 +318,6 @@ class Hosting extends Component {
 					) }
 					<Layout className="hosting__layout">
 						<Column type="main" className="hosting__main-layout-col">
-							{ isJetpack && isPossibleJetpackConnectionProblem && (
-								<JetpackConnectionHealthBanner siteId={ siteId } />
-							) }
 							<MainCards
 								hasStagingSitesFeature={ hasStagingSitesFeature }
 								isAdvancedHostingDisabled={ isAdvancedHostingDisabled }
@@ -399,7 +393,6 @@ export default connect(
 		return {
 			teams: getReaderTeams( state ),
 			isJetpack: isJetpackSite( state, siteId ),
-			isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
