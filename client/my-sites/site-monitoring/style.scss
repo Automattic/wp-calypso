@@ -155,7 +155,7 @@
 		color: var(--studio-gray-100);
 
 		// Disable rendering first u-marker, which is for "Date" and is empty.
-		> .u-series:first-child {
+		> tbody > .u-series:first-child {
 			display: none;
 		}
 
@@ -164,7 +164,7 @@
 		}
 
 		// Use increased specificity to override original uPlot styles.
-		> tr.u-series > th {
+		> tbody > tr.u-series > th {
 			cursor: initial;
 			pointer-events: none;
 
