@@ -35,7 +35,9 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 				{ columns.map( ( column, index ) => (
 					<td key={ column } className={ column }>
 						{ index === 0 ? (
-							<Badge className={ `badge--${ firstColumnValue }` }>{ log[ column ] }</Badge>
+							<Badge className={ `badge--${ firstColumnValue }` }>
+								{ log[ column ] as React.ReactNode }
+							</Badge>
 						) : (
 							renderCell( column, log[ column ], moment, siteGmtOffset )
 						) }
