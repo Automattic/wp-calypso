@@ -1,5 +1,4 @@
 export { default as useCategoriesOrder } from './use-categories-order';
-export { default as useCategoryAll } from './use-category-all';
 export { default as useCurrentScreen } from './use-current-screen';
 export { default as useDotcomPatterns } from './use-dotcom-patterns';
 export { default as useGlobalStylesUpgradeModal } from './use-global-styles-upgrade-modal';
