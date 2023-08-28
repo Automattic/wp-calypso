@@ -4,6 +4,7 @@
 
 .videopress-onboarding-intent {
 	max-width: 1200px !important;
+	font-family: "SF Pro Display", $sans;
 
 	.videopress-onboarding-intent__step-content {
 		display: grid;
@@ -140,10 +141,15 @@
 		align-items: center;
 		height: 100%;
 		padding: 24px 32px;
+		font-size: 18px; /* stylelint-disable-line */
+		font-weight: 400;
 
 		.intro__title {
 			margin-top: 16px;
 			text-align: center;
+			font-size: 44px; /* stylelint-disable-line */
+			font-weight: 400;
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		}
 
 		.intro__description {
@@ -184,11 +190,11 @@
 			flex: 1;
 
 			button.is-primary {
-				width: 100%;
-				max-width: 220px;
+				width: auto;
+				max-width: initial;
 				font-weight: 500;
-				padding-top: 10px;
-				padding-bottom: 10px;
+				padding: 12px 24px;
+				border-radius: 4px;
 			}
 
 			.learn-more {
