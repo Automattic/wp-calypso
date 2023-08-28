@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import PATTERN_ASSEMBLER_EVENTS from './events';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternSelector from './pattern-selector';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
