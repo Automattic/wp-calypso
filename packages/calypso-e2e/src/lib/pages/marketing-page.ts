@@ -109,19 +109,15 @@ export class MarketingPage {
 	 * Validates the specified Social service button now is connected.
 	 *
 	 * @param {SocialConnection} target Social service.
+	 * @throws {Error} If the social connection was not made for any reason.
 	 */
-	async validateSocialConnected( target: SocialConnection ): Promise< boolean > {
-		try {
-			await this.page
-				.getByRole( 'main' )
-				.getByRole( 'listitem' )
-				.filter( { hasText: target } )
-				.getByRole( 'button', { name: 'Disconnect' } )
-				.waitFor();
-			return true;
-		} catch {
-			return false;
-		}
+	async validateSocialConnected( target: SocialConnection ): Promise< void > {
+		await this.page
+			.getByRole( 'main' )
+			.getByRole( 'listitem' )
+			.filter( { hasText: target } )
+			.getByRole( 'button', { name: 'Disconnect' } )
+			.waitFor();
 	}
 
 	/**
