@@ -10,6 +10,7 @@ import {
 	LAUNCHPAD_INTENT_WRITE,
 	LAUNCHPAD_INTENT_FREE_NEWSLETTER,
 	LAUNCHPAD_INTENT_PAID_NEWSLETTER,
+	LAUNCHPAD_PRE_LAUNCH,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
@@ -20,6 +21,7 @@ import {
 	LaunchpadIntentPaidNewsletter,
 } from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
+import LaunchpadPreLaunch from 'calypso/my-sites/customer-home/cards/launchpad/write';
 import LearnGrow from './learn-grow';
 
 const cardComponents = {
@@ -32,6 +34,7 @@ const cardComponents = {
 	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
 	[ LAUNCHPAD_INTENT_FREE_NEWSLETTER ]: LaunchpadIntentFreeNewsletter,
 	[ LAUNCHPAD_INTENT_PAID_NEWSLETTER ]: LaunchpadIntentPaidNewsletter,
+	[ LAUNCHPAD_PRE_LAUNCH ]: LaunchpadPreLaunch,
 };
 
 const Secondary = ( { cards, siteId } ) => {
