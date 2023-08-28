@@ -19,6 +19,7 @@ import VideoPressOnboardingIntentModalBlog from './videopress-onboarding-intent-
 import VideoPressOnboardingIntentModalChannel from './videopress-onboarding-intent-modal-channel';
 import VideoPressOnboardingIntentModalJetpack from './videopress-onboarding-intent-modal-jetpack';
 import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
+import VideoPressOnboardingIntentModalVideoUpload from './videopress-onboarding-intent-modal-video-upload';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 import './styles.scss';
@@ -54,6 +55,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 
 	const onUploadVideoIntentClicked = () => {
 		sendTracksIntent( 'videoupload' );
+		setModal( <VideoPressOnboardingIntentModalVideoUpload onSubmit={ handleSubmit } /> );
 	};
 
 	const onJetpackIntentClicked = () => {
