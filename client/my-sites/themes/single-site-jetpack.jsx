@@ -41,7 +41,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const {
 		currentPlan,
 		currentThemeId,
-		emptyContent,
 		filter,
 		getScreenshotOption,
 		isAtomic,
@@ -143,7 +142,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							} }
 							trackScrollPage={ props.trackScrollPage }
 							source="wpcom"
-							emptyContent={ emptyContent }
 							upsellUrl={ upsellUrl }
 							forceWpOrgSearch
 						/>
@@ -164,7 +162,6 @@ export default connect( ( state, { siteId, tier } ) => {
 		currentThemeId,
 		tier,
 		showWpcomThemesList,
-		emptyContent: null,
 		isAtomic: isAtomicSite( state, siteId ),
 		isMultisite,
 		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),

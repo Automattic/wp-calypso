@@ -295,3 +295,23 @@ test( 'when the domains list changes, the bulk selection removes dangling domain
 	expect( getDomainCheckbox( 'example1.com' ) ).toBeChecked();
 	expect( getDomainCheckbox( 'example3.com' ) ).not.toBeChecked();
 } );
+
+test( 'bulk actions controls appear when a domain is selected', async () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	fireEvent.click( getDomainCheckbox( 'example1.com' ) );
+
+	expect( screen.getByRole( 'button', { name: 'Auto-renew settings' } ) ).toBeInTheDocument();
+
+	fireEvent.click( getDomainCheckbox( 'example1.com' ) );
+
+	expect( screen.queryByRole( 'button', { name: 'Auto-renew settings' } ) ).not.toBeInTheDocument();
+} );

@@ -1,3 +1,4 @@
+import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import page from 'page';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
@@ -13,7 +14,17 @@ function showJetpackPlans( context ) {
 	return ! isWpcom;
 }
 
+function is100YearPlanUser( context ) {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	return selectedSite?.plan?.product_slug === PLAN_100_YEARS;
+}
+
 export function plans( context, next ) {
+	// Redirecting users for the 100-Year plan to the my-plan page.
+	if ( is100YearPlanUser( context ) ) {
+		return page.redirect( `/plans/my-plan/${ context.params.site }` );
+	}
 	if ( showJetpackPlans( context ) ) {
 		if ( context.params.intervalType ) {
 			return page.redirect( `/plans/${ context.params.site }` );

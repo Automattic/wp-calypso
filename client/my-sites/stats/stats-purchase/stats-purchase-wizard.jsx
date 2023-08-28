@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -78,6 +77,11 @@ const ProductCard = ( {
 		},
 	} );
 	let purchaseScreenLabel = personalProductTitle;
+
+	if ( ! siteSlug ) {
+		// Default to a generic label if no site slug is provided.
+		typeSelectionScreenLabel = translate( 'Which type is your site?' );
+	}
 
 	if ( siteType === TYPE_PERSONAL ) {
 		typeSelectionScreenLabel = personalLabel;

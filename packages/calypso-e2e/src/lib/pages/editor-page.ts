@@ -16,7 +16,10 @@ import {
 	EditorWelcomeTourComponent,
 	EditorBlockToolbarComponent,
 	EditorTemplateModalComponent,
+	EditorPopoverMenuComponent,
 	TemplateCategory,
+	BlockToolbarButtonIdentifier,
+	CookieBannerComponent,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
@@ -57,6 +60,8 @@ export class EditorPage {
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorTemplateModalComponent: EditorTemplateModalComponent;
+	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
+	private cookieBannerComponent: CookieBannerComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -85,6 +90,8 @@ export class EditorPage {
 			this.editor
 		);
 		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
+		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -95,8 +102,13 @@ export class EditorPage {
 	 * Example "new post": {@link https://wordpress.com/post}
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
-	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( type ), { timeout: 30 * 1000 } );
+	async visit(
+		type: 'post' | 'page' = 'post',
+		{ siteSlug = '' }: { siteSlug?: string } = {}
+	): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
+			timeout: 30 * 1000,
+		} );
 		await this.waitUntilLoaded();
 
 		return request;
@@ -116,6 +128,9 @@ export class EditorPage {
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+
+		// Accept the Cookie banner.
+		await this.cookieBannerComponent.acceptCookie();
 	}
 
 	/**
@@ -423,6 +438,27 @@ export class EditorPage {
 	 */
 	async moveBlockDown(): Promise< void > {
 		await this.editorBlockToolbarComponent.moveDown();
+	}
+
+	/**
+	 * Selects the matching option from the popover triggered by clicking
+	 * on a block toolbar button.
+	 *
+	 * @param {string} name Accessible name of the element.
+	 */
+	async selectFromToolbarPopover( name: string ) {
+		await this.editorPopoverMenuComponent.clickMenuButton( name );
+	}
+
+	/**
+	 * Clicks on a button with either the name or aria-label on the
+	 * editor toolbar.
+	 *
+	 * @param {BlockToolbarButtonIdentifier} name Object specifying either the
+	 * 	text label or aria-label of the button to be clicked.
+	 */
+	async clickBlockToolbarButton( name: BlockToolbarButtonIdentifier ): Promise< void > {
+		await this.editorBlockToolbarComponent.clickPrimaryButton( name );
 	}
 
 	//#endregion

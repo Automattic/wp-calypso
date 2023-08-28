@@ -1,6 +1,6 @@
 import { PureComponent } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import Gridicon from '../gridicon';
+import Gridicon from '../../gridicon';
 
 class SelectDropdownExample extends PureComponent {
 	static displayName = 'SelectDropdownExample';

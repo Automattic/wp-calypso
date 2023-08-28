@@ -421,6 +421,7 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 	TERM_CENTENNIALLY,
+	FEATURE_STATS_PAID,
 } from './constants';
 import type {
 	BillingTerm,
@@ -2322,6 +2323,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			WPCOM_FEATURES_SCAN,
 			WPCOM_FEATURES_ANTISPAM,
 			WPCOM_FEATURES_BACKUPS,
+			FEATURE_STATS_PAID,
 		] ),
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -2718,16 +2720,16 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		group: GROUP_WPCOM,
 		type: TYPE_100_YEAR,
 		// Todo: ¯\_(ツ)_/¯ on the copy.
-		getTitle: () => i18n.translate( '100 Year Plan' ),
+		getTitle: () => i18n.translate( '100-Year Plan' ),
 		getAudience: () => i18n.translate( 'Best for long-term thinkers' ),
 		getBlogAudience: () => i18n.translate( 'Best for long-term thinkers' ),
 		getPortfolioAudience: () => i18n.translate( 'Best for long-term thinkers' ),
 		getStoreAudience: () => i18n.translate( 'Best for long-term thinkers' ),
-		getPlanTagline: () => i18n.translate( 'A plan for the future of your website.' ),
-		getDescription: () => i18n.translate( 'A plan for the future of your website.' ),
-		getShortDescription: () => i18n.translate( 'A plan for the future of your website.' ),
-		getTagline: () => i18n.translate( 'A plan for the future of your website.' ),
-		getBlogOnboardingTagLine: () => i18n.translate( 'A plan for the future of your website.' ),
+		getPlanTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getDescription: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getShortDescription: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getTagline: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
+		getBlogOnboardingTagLine: () => i18n.translate( 'A plan to leave a lasting mark on the web.' ),
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
 			[
