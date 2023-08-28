@@ -19,7 +19,6 @@ import './style.scss';
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
-	dispatch: any;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
