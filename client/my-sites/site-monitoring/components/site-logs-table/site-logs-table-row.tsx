@@ -43,7 +43,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 						) }
 					</td>
 				) ) }
-				<td>
+				<td className="chevron-cell">
 					<div className="chevron-container">
 						<Button
 							borderless

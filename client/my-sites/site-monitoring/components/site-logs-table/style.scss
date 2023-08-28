@@ -138,9 +138,13 @@ td.timestamp {
 	}
 
 	.site-logs-table tbody tr {
-		display: block;
-		margin-bottom: 1rem;
-		border-bottom: none;
+		display: grid;
+		grid-template-columns: 5fr 1fr;
+	}
+
+	td.chevron-cell {
+		grid-column: 2;
+		grid-row: 1 / span 3;
 	}
 
 	.site-logs-table td {
