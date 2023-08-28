@@ -140,6 +140,7 @@ export const LogsTab = ( {
 				isLoading={ isFetching }
 				headerTitles={ headerTitles }
 				currentPageIndex={ currentPageIndex }
+				logType={ logType }
 			/>
 			{ paginationText && (
 				<div className="site-monitoring__pagination-text">{ paginationText }</div>

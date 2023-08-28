@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { memo, useMemo } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
+import { LogType } from '../../logs-tab';
 import SiteLogsTableRow from './site-logs-table-row';
 import { Skeleton } from './skeleton';
 
@@ -13,6 +14,7 @@ type SiteLogs = SiteLogsData[ 'logs' ];
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
 	currentPageIndex?: number;
+	logType?: LogType;
 	isLoading?: boolean;
 	headerTitles: string[];
 }
@@ -22,6 +24,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	isLoading,
 	headerTitles,
 	currentPageIndex,
+	logType,
 }: SiteLogsTableProps ) {
 	const { __ } = useI18n();
 	const columns = useSiteColumns( logs, headerTitles );
@@ -57,6 +60,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 						key={ key }
 						columns={ columns }
 						log={ log }
+						logType={ logType }
 						siteGmtOffset={ siteGmtOffset }
 					/>
 				) ) }
