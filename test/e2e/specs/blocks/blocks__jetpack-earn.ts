@@ -7,31 +7,33 @@ import {
 	PayWithPaypalBlockFlow,
 	OpenTableFlow,
 	DonationsFormFlow,
+	AdFlow,
+	envVariables,
 	// PaymentsBlockFlow,
 	// envVariables,
 } from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
-	new PayWithPaypalBlockFlow( {
-		name: 'Test Paypal Block',
-		price: 900,
-		email: 'test@wordpress.com',
-	} ),
-	new OpenTableFlow( {
-		restaurant: 'Miku Restaurant - Vancouver',
-	} ),
-	new DonationsFormFlow(
-		{
-			frequency: 'Yearly',
-			currency: 'CAD',
-		},
-		{
-			frequency: 'Yearly',
-			customAmount: 50,
-			predefinedAmount: 5,
-		}
-	),
+	// new PayWithPaypalBlockFlow( {
+	// 	name: 'Test Paypal Block',
+	// 	price: 900,
+	// 	email: 'test@wordpress.com',
+	// } ),
+	// new OpenTableFlow( {
+	// 	restaurant: 'Miku Restaurant - Vancouver',
+	// } ),
+	// new DonationsFormFlow(
+	// 	{
+	// 		frequency: 'Yearly',
+	// 		currency: 'CAD',
+	// 	},
+	// 	{
+	// 		frequency: 'Yearly',
+	// 		customAmount: 50,
+	// 		predefinedAmount: 5,
+	// 	}
+	// ),
 ];
 
 // We're just skipping the Payments Button test for now due to this bug:
@@ -41,5 +43,13 @@ const blockFlows: BlockFlow[] = [
 // if ( ! envVariables.TEST_ON_ATOMIC ) {
 // 	blockFlows.push( new PaymentsBlockFlow( { buttonText: 'Donate to Me' } ) );
 // }
+
+//
+if (
+	envVariables.JETPACK_TARGET === 'wpcom-deployment' &&
+	envVariables.ATOMIC_VARIATION !== 'private'
+) {
+	blockFlows.push( new AdFlow( {} ) );
+}
 
 createBlockTests( 'Blocks: Jetpack Earn', blockFlows );

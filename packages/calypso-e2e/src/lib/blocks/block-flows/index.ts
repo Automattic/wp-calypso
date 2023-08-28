@@ -22,6 +22,7 @@ export * from './ai-assistant';
 export * from './donations-form';
 export * from './all-form-fields';
 export * from './form-patterns';
+export * from './ad';
 
 /* Types */
 export * from './types';
