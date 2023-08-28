@@ -270,7 +270,8 @@ $design-preview-sidebar-width: 311px;
 	width: 100%;
 	padding: 16px 20px 8px;
 	box-sizing: border-box;
-	overflow: auto;
+	overflow-x: auto;
+	overflow-y: hidden;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -313,10 +314,18 @@ $design-preview-sidebar-width: 311px;
 	}
 
 	@include break-large {
-		padding: 8px 16px 0;
-		margin: 0 -16px;
-		box-sizing: content-box;
+		padding: 0;
+		margin: 8px 0 0;
 		animation: none;
+		// Increase width to ensure the scrollbar doesn't "push" the content to the left.
+		width: calc(100% + 16px);
+		overflow-x: hidden;
+		overflow-y: scroll;
+
+		@supports ( scrollbar-gutter: stable ) {
+			overflow-y: auto;
+			scrollbar-gutter: stable;
+		}
 
 		> p {
 			display: block;
