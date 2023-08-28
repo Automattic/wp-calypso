@@ -1,15 +1,15 @@
+import { DomainData } from '@automattic/data-stores';
 import { camelCase, mapKeys } from 'lodash';
-import { DomainData } from '../../queries/use-site-domains-query';
+import { getDomainType } from './get-domain-type';
+import { getGdprConsentStatus } from './get-gdpr-consent-status';
+import { getTransferStatus } from './get-transfer-status';
 import {
 	DomainType,
 	GDPRConsentStatus,
 	GoogleEmailSubscription,
 	TitanEmailSubscription,
 	TransferStatus,
-} from '../types';
-import { getDomainType } from './get-domain-type';
-import { getGdprConsentStatus } from './get-gdpr-consent-status';
-import { getTransferStatus } from './get-transfer-status';
+} from './types';
 
 function assembleGoogleAppsSubscription( googleAppsSubscription: {
 	status: string;
