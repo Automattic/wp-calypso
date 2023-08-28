@@ -1,4 +1,5 @@
 import { select } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { getEditorType } from '../utils';
 import tracksRecordEvent from './track-record-event';
 
@@ -12,14 +13,16 @@ export const wpcomBlockEditorSaveClick = () => ( {
 	selector:
 		'.editor-entities-saved-states__save-button, .editor-post-publish-button:not(.has-changes-dot)',
 	type: 'click',
-	handler: () => {
+	handler: ( event ) => {
 		const isSiteEditor = getEditorType() === 'site';
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const isEditedPostBeingScheduled = select( 'core/editor' ).isEditedPostBeingScheduled();
 		let actionType = 'publish';
 
 		if ( isSiteEditor ) {
-			const isPreviewingBlockTheme = window.location.search.includes( 'wp_theme_preview' );
+			const isPreviewingBlockTheme =
+				event.target?.textContent.includes( __( 'Activate' ) ) ||
+				event.target?.textContent.includes( __( 'Activate & Save' ) );
 			if ( isPreviewingBlockTheme ) {
 				actionType = 'activate';
 			} else {
