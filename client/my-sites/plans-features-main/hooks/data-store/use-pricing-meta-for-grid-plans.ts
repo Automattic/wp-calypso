@@ -1,3 +1,4 @@
+import { Plans } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
@@ -28,11 +29,15 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
 }: Props ) => {
+	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const currentSitePlanSlug = useSelector( ( state: IAppState ) =>
+		getSitePlanSlug( state, selectedSiteId )
+	);
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId, planSlugs } );
+
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
-			const selectedSiteId = getSelectedSiteId( state );
-			const currentSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 			const availableForPurchase =
 				! currentSitePlanSlug ||
 				( selectedSiteId ? isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) : false );

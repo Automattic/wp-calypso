@@ -2,6 +2,7 @@ import { PERIOD_LIST } from './constants';
 import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
 import type { SelectFromMap } from '../mapped-types';
+import type { IntroductoryOfferTimeUnit, ProductIntroductoryOffer } from '../products-list';
 
 export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
 export type PlanSlug = ( typeof plansSlugs )[ number ];
@@ -50,6 +51,15 @@ export interface PlanProduct {
 	annualPrice: string;
 }
 
+export interface PlanIntroductoryOffer {
+	costPerInterval: number;
+	intervalCount: number;
+	intervalUnit: IntroductoryOfferTimeUnit;
+	shouldProrateWhenOfferEnds: boolean;
+	transitionAfterRenewalCount: number;
+	usageLimit: number | null;
+}
+
 /**
  * Item returned from https://public-api.wordpress.com/rest/v1.5/plans response
  * Only the properties that are actually used in the store are typed
@@ -77,6 +87,9 @@ export interface PricedAPIPlan {
 	orig_cost?: number | null;
 	currency_code: string;
 }
+
+export interface PricedAPISitePlan extends PricedAPIPlan, ProductIntroductoryOffer {}
+
 export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_id: 1;
 	cost: 0;

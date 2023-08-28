@@ -254,7 +254,6 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
-
 	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
 
 	return availablePlanSlugs.map( ( planSlug ) => {

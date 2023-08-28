@@ -1,5 +1,5 @@
 import 'calypso/state/products-list/init';
-import type { ProductIntroductoryOffer } from './get-products-list';
+import type { ProductsList } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -12,6 +12,6 @@ import type { AppState } from 'calypso/types';
 export function getProductIntroductoryOffer(
 	state: AppState,
 	productSlug: string
-): ProductIntroductoryOffer | null {
+): ProductsList.ProductIntroductoryOffer | null {
 	return state.productsList?.items?.[ productSlug ]?.introductory_offer ?? null;
 }

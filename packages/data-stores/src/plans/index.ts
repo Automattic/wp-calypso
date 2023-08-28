@@ -18,6 +18,9 @@ export type {
 	PlanSimplifiedFeature,
 } from './types';
 
+export { default as usePricedAPISitePlans } from './queries/use-priced-api-site-plans';
+export { default as useIntroOffers } from './hooks/use-intro-offers';
+
 // plansSlugs is a list with the identifiers for each plan and they are agnostic of billing period; eg: 'free', 'personal'
 // plansSlugs is also used to construct the route that accepts plan slugs like '/free', '/personal', '/business'
 // plansProductSlugs is a list with the identifiers for each plan product (including the billing period); eg: 'personal-bundle', 'personal-bundle-monthly'

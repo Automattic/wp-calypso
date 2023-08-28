@@ -1,18 +1,7 @@
 import type { PriceTierEntry } from '@automattic/calypso-products';
+import type { ProductsList } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';
 import 'calypso/state/products-list/init';
-
-export type IntroductoryOfferTimeUnit = 'day' | 'week' | 'month' | 'year';
-
-export interface ProductIntroductoryOffer {
-	cost_per_interval: number;
-	interval_count: number;
-	interval_unit: IntroductoryOfferTimeUnit;
-	should_prorate_when_offer_ends: boolean;
-	transition_after_renewal_count: number;
-	usage_limit: number | null;
-}
-
 export interface ProductListItem {
 	product_id: number;
 	product_name: string;
@@ -25,7 +14,7 @@ export interface ProductListItem {
 	cost: number;
 	cost_smallest_unit: number;
 	currency_code: string;
-	introductory_offer?: ProductIntroductoryOffer;
+	introductory_offer?: ProductsList.ProductIntroductoryOffer;
 	price_tier_list: PriceTierEntry[];
 	price_tier_usage_quantity: null | number;
 	price_tier_slug: string;
