@@ -8,6 +8,10 @@ interface Props {
 	specifiedLogs: string[];
 }
 
+function capitalizeFirstLetter( str: string ) {
+	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
+}
+
 export default function SiteLogsExpandedContent( { log, specifiedLogs }: Props ) {
 	return (
 		<div className="site-logs-table__expanded-content">
@@ -15,7 +19,7 @@ export default function SiteLogsExpandedContent( { log, specifiedLogs }: Props )
 				specifiedLogs.map( ( key ) => (
 					<Fragment key={ key }>
 						<div>
-							<strong>{ key }</strong>
+							<strong>{ capitalizeFirstLetter( key ) }</strong>
 						</div>
 						<div>
 							<div className="site-logs-table__expanded-content-info">
