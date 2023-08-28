@@ -1,8 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import classNames from 'classnames';
+import { ReactElement, useState } from 'react';
 import BlogIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-blog.png';
 import ChannelIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-channel.png';
 import JetpackIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-jetpack.png';
@@ -11,7 +13,9 @@ import PortfolioIntentImage from 'calypso/assets/images/onboarding/videopress-on
 import SingleVideoIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-single-video.png';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import CloseIcon from '../intro/icons/close-icon';
 import VideoPressOnboardingIntentItem from './intent-item';
+import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 import './styles.scss';
@@ -19,6 +23,7 @@ import './styles.scss';
 const VideoPressOnboardingIntent: Step = () => {
 	const { __ } = useI18n();
 	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
+	const [ modal, setModal ] = useState< ReactElement | null >( null );
 
 	const sendTracksIntent = ( intent: string ) => {
 		recordTracksEvent( 'calypso_videopress_onboarding_intent_clicked', {
@@ -30,6 +35,7 @@ const VideoPressOnboardingIntent: Step = () => {
 
 	const onVideoPortfolioIntentClicked = () => {
 		sendTracksIntent( 'portfolio' );
+		setModal( <VideoPressOnboardingIntentModalPortfolio onSubmit={ () => false } /> );
 	};
 
 	const onVideoChannelIntentClicked = () => {
@@ -52,47 +58,66 @@ const VideoPressOnboardingIntent: Step = () => {
 		sendTracksIntent( 'other' );
 	};
 
+	const modalClasses = classNames( 'intro__more-modal videopress-intro-modal', {
+		show: modal ? true : false,
+	} );
+
 	const stepContent = (
-		<div className="videopress-onboarding-intent__step-content">
-			<VideoPressOnboardingIntentItem
-				title={ __( 'Get a video portfolio' ) }
-				description={ __( 'Share your work with the world.' ) }
-				image={ PortfolioIntentImage }
-				onClick={ onVideoPortfolioIntentClicked }
-			/>
-			<VideoPressOnboardingIntentItem
-				title={ __( 'Create a channel for your videos' ) }
-				description={ __( 'The easiest way to upload videos and create a community around them.' ) }
-				image={ ChannelIntentImage }
-				onClick={ onVideoChannelIntentClicked }
-			/>
-			<VideoPressOnboardingIntentItem
-				title={ __( 'Upload a video' ) }
-				description={ __( 'Just put a video on the internet.' ) }
-				image={ SingleVideoIntentImage }
-				onClick={ onUploadVideoIntentClicked }
-			/>
-			<VideoPressOnboardingIntentItem
-				title={ __( 'Add video to an existing site' ) }
-				description={ __(
-					'All the advantages and features from VideoPress, on your own WordPress site.'
-				) }
-				image={ JetpackIntentImage }
-				onClick={ onAddVideoIntentClicked }
-			/>
-			<VideoPressOnboardingIntentItem
-				title={ __( 'Start a blog with video content' ) }
-				description={ __( 'Use advanced media formats to enhance your storytelling.' ) }
-				image={ BlogIntentImage }
-				onClick={ onVideoBlogIntentClicked }
-			/>
-			<VideoPressOnboardingIntentItem
-				title={ __( 'Other' ) }
-				description={ __( 'What are you looking for? Let us know!' ) }
-				image={ OtherIntentImage }
-				onClick={ onOtherIntentClicked }
-			/>
-		</div>
+		<>
+			<div className="videopress-onboarding-intent__step-content">
+				<VideoPressOnboardingIntentItem
+					title={ __( 'Get a video portfolio' ) }
+					description={ __( 'Share your work with the world.' ) }
+					image={ PortfolioIntentImage }
+					onClick={ onVideoPortfolioIntentClicked }
+				/>
+				<VideoPressOnboardingIntentItem
+					title={ __( 'Create a channel for your videos' ) }
+					description={ __(
+						'The easiest way to upload videos and create a community around them.'
+					) }
+					image={ ChannelIntentImage }
+					onClick={ onVideoChannelIntentClicked }
+				/>
+				<VideoPressOnboardingIntentItem
+					title={ __( 'Upload a video' ) }
+					description={ __( 'Just put a video on the internet.' ) }
+					image={ SingleVideoIntentImage }
+					onClick={ onUploadVideoIntentClicked }
+				/>
+				<VideoPressOnboardingIntentItem
+					title={ __( 'Add video to an existing site' ) }
+					description={ __(
+						'All the advantages and features from VideoPress, on your own WordPress site.'
+					) }
+					image={ JetpackIntentImage }
+					onClick={ onAddVideoIntentClicked }
+				/>
+				<VideoPressOnboardingIntentItem
+					title={ __( 'Start a blog with video content' ) }
+					description={ __( 'Use advanced media formats to enhance your storytelling.' ) }
+					image={ BlogIntentImage }
+					onClick={ onVideoBlogIntentClicked }
+				/>
+				<VideoPressOnboardingIntentItem
+					title={ __( 'Other' ) }
+					description={ __( 'What are you looking for? Let us know!' ) }
+					image={ OtherIntentImage }
+					onClick={ onOtherIntentClicked }
+				/>
+			</div>
+
+			<div className={ modalClasses }>
+				<div className="intro__more-modal-container">
+					<div className="intro__more-modal-header">
+						<Button plain onClick={ () => setModal( null ) }>
+							<CloseIcon />
+						</Button>
+					</div>
+					{ modal && <modal.type { ...modal.props } /> }
+				</div>
+			</div>
+		</>
 	);
 
 	return (
