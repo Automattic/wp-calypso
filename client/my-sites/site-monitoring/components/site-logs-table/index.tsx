@@ -19,6 +19,15 @@ interface SiteLogsTableProps {
 	headerTitles: string[];
 }
 
+function formatColumnName( column: string ) {
+	if ( column === 'request_type' ) {
+		return 'Request type';
+	} else if ( column === 'request_url' ) {
+		return 'Request URL';
+	}
+	return column.charAt( 0 ).toUpperCase() + column.slice( 1 );
+}
+
 export const SiteLogsTable = memo( function SiteLogsTable( {
 	logs,
 	isLoading,
@@ -46,10 +55,8 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		<table className={ classnames( 'site-logs-table', { 'is-loading': isLoading } ) }>
 			<thead>
 				<tr>
-					{ columns.map( ( column, index ) => (
-						<th key={ column }>
-							{ headerTitles[ index ].charAt( 0 ).toUpperCase() + headerTitles[ index ].slice( 1 ) }
-						</th>
+					{ columns.map( ( column ) => (
+						<th key={ column }>{ formatColumnName( column ) }</th>
 					) ) }
 					<th />
 				</tr>

@@ -30,6 +30,7 @@ $border-color: #d3dae6;
 	font-family: "SF Pro Text", $sans;
 	color: var(--color-neutral-60);
 	font-weight: 400;
+	white-space: nowrap;
 }
 
 .site-logs-table__empty-cell::before {
