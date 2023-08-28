@@ -1,12 +1,12 @@
 import { Button } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { Icon, image, verse, layout } from '@wordpress/icons';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
 import './screen-confirmation.scss';
@@ -18,35 +18,31 @@ interface Props {
 
 const ScreenConfirmation = ( { onConfirm, recordTracksEvent }: Props ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const list = [
 		{
 			icon: image,
 			title: translate( 'Upload images' ),
-			description:
-				isEnglishLocale || i18n.hasTranslation( 'Showcase your photos in their best light.' )
-					? translate( 'Showcase your photos in their best light.' )
-					: null,
+			description: hasEnTranslation( 'Showcase your photos in their best light.' )
+				? translate( 'Showcase your photos in their best light.' )
+				: null,
 		},
 		{
 			icon: verse,
 			title: translate( 'Start writing' ),
-			description:
-				isEnglishLocale || i18n.hasTranslation( 'Get things going and share your insights.' )
-					? translate( 'Get things going and share your insights.' )
-					: null,
+			description: hasEnTranslation( 'Get things going and share your insights.' )
+				? translate( 'Get things going and share your insights.' )
+				: null,
 		},
 		{
 			icon: layout,
-			title:
-				isEnglishLocale || i18n.hasTranslation( 'Customize every detail' )
-					? translate( 'Customize every detail' )
-					: translate( 'Customize in editor' ),
-			description:
-				isEnglishLocale || i18n.hasTranslation( 'Make your site even more unique.' )
-					? translate( 'Make your site even more unique.' )
-					: null,
+			title: hasEnTranslation( 'Customize every detail' )
+				? translate( 'Customize every detail' )
+				: translate( 'Customize in editor' ),
+			description: hasEnTranslation( 'Make your site even more unique.' )
+				? translate( 'Make your site even more unique.' )
+				: null,
 		},
 	];
 
@@ -55,8 +51,7 @@ const ScreenConfirmation = ( { onConfirm, recordTracksEvent }: Props ) => {
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ translate( 'Great job!' ) } /> }
 				description={
-					isEnglishLocale ||
-					i18n.hasTranslation( 'Time to add some content and bring your site to life!' )
+					hasEnTranslation( 'Time to add some content and bring your site to life!' )
 						? translate( 'Time to add some content and bring your site to life!' )
 						: translate( 'Bring your site to life with some content.' )
 				}
@@ -84,7 +79,7 @@ const ScreenConfirmation = ( { onConfirm, recordTracksEvent }: Props ) => {
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" primary onClick={ onConfirm }>
-					{ isEnglishLocale || i18n.hasTranslation( 'Start adding content' )
+					{ hasEnTranslation( 'Start adding content' )
 						? translate( 'Start adding content' )
 						: translate( 'Continue' ) }
 				</Button>
