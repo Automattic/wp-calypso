@@ -1,6 +1,6 @@
 import cookie from 'cookie';
-import { getTrackingPrefs, TRACKING_PREFS_COOKIE_V2 } from '.';
-import type { TrackingPrefs } from '.';
+import { default as getTrackingPrefs, TRACKING_PREFS_COOKIE_V2 } from './get-tracking-prefs';
+import type { TrackingPrefs } from './get-tracking-prefs';
 
 type TrackingPrefsData = Partial<
 	Omit< TrackingPrefs, 'buckets' > & { buckets: Partial< TrackingPrefs[ 'buckets' ] > }

@@ -1,7 +1,6 @@
+import { TrackingPrefs, isCountryInGdprZone } from '@automattic/calypso-analytics';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { TrackingPrefs } from './get-tracking-prefs';
-import isCountryInGdprZone from './is-country-in-gdpr-zone';
 
 const isServer = typeof document === 'undefined';
 

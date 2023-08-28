@@ -1,9 +1,8 @@
-import { getDoNotTrack } from '@automattic/calypso-analytics';
+import { getDoNotTrack, getTrackingPrefs } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
-	getTrackingPrefs,
 	mayWeTrackUserGpcInCcpaRegion,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
