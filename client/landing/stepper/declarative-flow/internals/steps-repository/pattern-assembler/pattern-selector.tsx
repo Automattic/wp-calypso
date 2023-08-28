@@ -12,7 +12,6 @@ type PatternSelectorProps = {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	selectedPattern: Pattern | null;
 	selectedPatterns?: Pattern[];
-	emptyPatternText?: string;
 };
 
 const PatternSelector = ( {
@@ -20,7 +19,6 @@ const PatternSelector = ( {
 	onSelect,
 	selectedPattern,
 	selectedPatterns,
-	emptyPatternText,
 }: PatternSelectorProps ) => {
 	const translate = useTranslate();
 	const shownPatterns = useAsyncList( patterns );
@@ -40,7 +38,6 @@ const PatternSelector = ( {
 						shownPatterns={ shownPatterns }
 						selectedPattern={ selectedPattern }
 						selectedPatterns={ selectedPatterns }
-						emptyPatternText={ emptyPatternText }
 						activeClassName="pattern-selector__block-list--selected-pattern"
 						composite={ composite }
 						onSelect={ onSelect }

@@ -98,6 +98,14 @@ describe( 'logged-out', () => {
 	test( 'renders without error when no themes are present', async () => {
 		const store = createReduxStore();
 		setStore( store );
+		store.dispatch(
+			receiveThemes(
+				[],
+				'wpcom',
+				{ ...DEFAULT_THEME_QUERY, collection: 'recommended' },
+				themes.length
+			)
+		);
 		render( <TestComponent store={ store } /> );
 
 		await waitFor( () => {
@@ -133,7 +141,7 @@ describe( 'logged-out', () => {
 		store.dispatch( {
 			type: THEMES_REQUEST_FAILURE,
 			siteId: 'wpcom',
-			query: {},
+			query: { ...DEFAULT_THEME_QUERY, collection: 'recommended' },
 			error: 'Error',
 		} );
 		render( <TestComponent store={ store } /> );

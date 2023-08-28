@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	Onboard,
@@ -34,14 +34,18 @@ import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
+	isSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
@@ -342,6 +346,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
 	const fullLengthScreenshot = theme?.screenshots?.[ 0 ]?.replace( /\?.*/, '' );
 
+	const marketplaceThemeProducts =
+		useSelector( ( state ) =>
+			getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( selectedDesignThemeId ) )
+		) || [];
+	const marketplaceProductSlug =
+		marketplaceThemeProducts.length !== 0
+			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
+			: null;
+
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
@@ -353,13 +366,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			selectedDesignThemeId &&
 			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
 	);
+	const isExternallyManagedThemeAvailable = useSelector(
+		( state ) => site?.ID && isSiteEligibleForManagedExternalThemes( state, site.ID )
+	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
-	const shouldUpgrade =
+	const isLockedTheme =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( selectedDesign?.is_externally_managed && ! isMarketplaceThemeSubscribed ) ||
+		( selectedDesign?.is_externally_managed &&
+			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
 		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
@@ -416,6 +433,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		let plan;
 		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
+		} else if ( selectedDesign?.is_externally_managed ) {
+			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS : '';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
@@ -428,6 +447,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
 				plan,
+				extraProducts:
+					selectedDesign?.is_externally_managed &&
+					marketplaceProductSlug &&
+					! isMarketplaceThemeSubscribed
+						? [ marketplaceProductSlug ]
+						: [],
 			} );
 
 			setShowUpgradeModal( false );
@@ -655,7 +680,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function getPrimaryActionButton() {
-		if ( shouldUpgrade ) {
+		if ( isLockedTheme ) {
 			return (
 				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
 					{ translate( 'Unlock theme' ) }

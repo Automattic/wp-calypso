@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
 import * as controller from './controller';
@@ -148,4 +149,17 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// WPCOM Atomic Hosting Page
+	if ( config.isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) ) {
+		page(
+			`/partner-portal/create-site`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.wpcomAtomicHostingContext,
+			makeLayout,
+			clientRender
+		);
+	}
 }
