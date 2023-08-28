@@ -163,6 +163,12 @@ export class SecretsManager {
 			martechTosUploadCredentials: {
 				bearer_token: 'FAKE_VALUE',
 			},
+			socialAccounts: {
+				tumblr: {
+					username: 'FAKE_VALUE',
+					password: 'FAKE_VALUE',
+				},
+			},
 			mailosaur: {
 				apiKey: 'FAKE_VALUE',
 				inviteInboxId: 'FAKE_VALUE',
