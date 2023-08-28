@@ -70,6 +70,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	annualProduct /* annual product for tiers */,
 	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
+	const monthlyFrequency = '1 month';
+	const annualFrequency = '1 year';
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -229,7 +231,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			};
 
 			if ( editedPostPaidNewsletter ) {
-				const annualProductDetails = { ...productDetails, price: currentAnnualPrice };
+				const annualProductDetails = {
+					...productDetails,
+					interval: annualFrequency,
+					price: currentAnnualPrice,
+				};
 				dispatch(
 					requestAddTier(
 						siteId ?? selectedSiteId,
@@ -276,6 +282,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				const annualProductDetails = {
 					...productDetails,
 					price: currentAnnualPrice,
+					interval: annualFrequency,
 					ID: annualProduct?.ID,
 				};
 
@@ -291,9 +298,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		}
 		closeDialog();
 	};
-
-	const monthlyFrequency = '1 month';
-	const annualFrequency = '1 year';
 
 	const addPlan = editedPostPaidNewsletter
 		? translate( 'Set up newsletter tier options' )
