@@ -15,6 +15,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CloseIcon from '../intro/icons/close-icon';
 import VideoPressOnboardingIntentItem from './intent-item';
+import VideoPressOnboardingIntentModalBlog from './videopress-onboarding-intent-modal-blog';
 import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
@@ -58,6 +59,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 
 	const onVideoBlogIntentClicked = () => {
 		sendTracksIntent( 'blog' );
+		setModal( <VideoPressOnboardingIntentModalBlog onSubmit={ handleSubmit } /> );
 	};
 
 	const onOtherIntentClicked = () => {
