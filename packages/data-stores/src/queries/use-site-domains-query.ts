@@ -96,7 +96,14 @@ export function useSiteDomainsQuery(
 	siteIdOrSlug: number | string | null | undefined,
 	options: UseQueryOptions< SiteDomainsQueryFnData > = {}
 ) {
-	return useQuery( {
+	return useQuery( getSiteDomainsQueryObject( siteIdOrSlug, options ) );
+}
+
+export function getSiteDomainsQueryObject(
+	siteIdOrSlug: number | string | null | undefined,
+	options: UseQueryOptions< SiteDomainsQueryFnData > = {}
+) {
+	return {
 		queryKey: [ 'site-domains', siteIdOrSlug ],
 		queryFn: () =>
 			wpcomRequest< SiteDomainsQueryFnData >( {
@@ -105,5 +112,5 @@ export function useSiteDomainsQuery(
 			} ),
 		...options,
 		enabled: Boolean( siteIdOrSlug ) && options.enabled,
-	} );
+	};
 }

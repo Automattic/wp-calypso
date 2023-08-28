@@ -6,13 +6,20 @@
 	padding-top: 11px;
 	cursor: default;
 
-	.comments__toggle-expand {
+	.comments__toggle-expand,
+	.comments__open-post {
 		cursor: pointer;
+		margin-top: 16px;
+		&:hover {
+			color: var(--color-link);
+		}
+	}
+
+	.comments__toggle-expand {
 		margin-left: 42px;
 	}
 
 	.comments__open-post {
-		cursor: pointer;
 		margin-left: 5px;
 	}
 
@@ -39,6 +46,15 @@
 				display: none;
 			}
 		}
+	}
+
+	.comments__list.is-root {
+		display: flex;
+		flex-direction: column-reverse;
+	}
+
+	.comments__form .form-fieldset {
+		margin: 0;
 	}
 }
 
@@ -78,6 +94,10 @@
 	font-size: $font-body-small;
 	line-height: 1;
 	margin-bottom: 15px !important; // to overwrite 10px value
+
+	&.comments__view-more-last {
+		margin-top: 16px;
+	}
 
 	&:hover {
 		color: var(--color-primary-light);

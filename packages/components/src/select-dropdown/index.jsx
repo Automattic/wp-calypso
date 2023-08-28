@@ -3,7 +3,7 @@ import { filter, find, get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
 import { v4 as uuid } from 'uuid';
-import { Count } from '../count';
+import Count from '../count';
 import Gridicon from '../gridicon';
 import DropdownItem from './item';
 import DropdownLabel from './label';

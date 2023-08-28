@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { render } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { render, renderHook } from '@testing-library/react';
 import { PluginActions } from '../types';
 import useShowPluginActionDialog from '../use-show-plugin-action-dialog';
 

@@ -31,6 +31,7 @@ import {
 	TASK_REACTIVATE_RESTORE_BACKUP,
 	TASK_FIVERR,
 	TASK_DOMAIN_UPSELL,
+	TASK_GOOGLE_DOMAIN_OWNERS,
 	LAUNCHPAD_INTENT_BUILD,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
@@ -46,6 +47,7 @@ import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upse
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
+import GoogleDomainOwners from 'calypso/my-sites/customer-home/cards/tasks/google-domain-owners';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
@@ -87,6 +89,7 @@ const cardComponents = {
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
+	[ TASK_GOOGLE_DOMAIN_OWNERS ]: GoogleDomainOwners,
 	[ TASK_FIVERR ]: Fiverr,
 };
 

@@ -1,14 +1,7 @@
 import { useMemo } from 'react';
 import type { Category } from '../types';
 
-const patternCategoriesOrder = [
-	'featured',
-	'posts',
-	'text',
-	'gallery',
-	'call-to-action',
-	'banner',
-];
+const patternCategoriesOrder = [ 'posts', 'gallery', 'call-to-action' ];
 
 const useCategoriesOrder = ( categories: Category[] ) => {
 	return useMemo(

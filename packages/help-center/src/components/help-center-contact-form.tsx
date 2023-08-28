@@ -38,6 +38,7 @@ import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
+import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
 import type { AnalysisReport } from '../types';
 import type { HelpCenterSelect, SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
@@ -102,6 +103,7 @@ export const HelpCenterContactForm = () => {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
+	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
 	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -301,7 +303,15 @@ export const HelpCenterContactForm = () => {
 						section: sectionName,
 					} );
 
-					openChatWidget( message, supportSite.URL, () => setHasSubmittingError( true ) );
+					let initialChatMessage = message;
+					if ( gptResponse ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
+						initialChatMessage += gptResponse.response;
+					}
+					openChatWidget( initialChatMessage, supportSite.URL, () =>
+						setHasSubmittingError( true )
+					);
 					break;
 				}
 				break;
@@ -513,7 +523,7 @@ export const HelpCenterContactForm = () => {
 		return (
 			<div className="help-center__articles-page">
 				<BackButton />
-				<HelpCenterGPT />
+				<HelpCenterGPT onResponseReceived={ setGptResponse } />
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }

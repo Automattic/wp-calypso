@@ -8,7 +8,6 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { siteColumns } from '../../utils';
 import SiteCard from '../index';
 import type { SiteData } from '../../types';
 
@@ -103,7 +102,7 @@ describe( '<SiteCard>', () => {
 		const { container } = render(
 			<Provider store={ store }>
 				<QueryClientProvider client={ queryClient }>
-					<SiteCard rows={ rows } columns={ siteColumns } />
+					<SiteCard rows={ rows } columns={ [] } />
 				</QueryClientProvider>
 			</Provider>
 		);

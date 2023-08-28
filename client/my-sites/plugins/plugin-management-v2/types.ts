@@ -11,7 +11,6 @@ import {
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_ERROR,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
-	PLUGIN_INSTALLATION_UP_TO_DATE,
 } from 'calypso/state/plugins/installed/status/constants';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Plugin } from 'calypso/state/plugins/installed/types';
@@ -59,15 +58,6 @@ export type CurrentSiteStatus = {
 	pluginId: string;
 	siteId: string;
 	status: PluginActionStatus;
-};
-
-export type PluginActionStatusMessage = {
-	[ key in PluginActionTypes ]: {
-		[ PLUGIN_INSTALLATION_IN_PROGRESS ]: ReactNode;
-		[ PLUGIN_INSTALLATION_COMPLETED ]?: ReactNode;
-		[ PLUGIN_INSTALLATION_ERROR ]: ReactNode;
-		[ PLUGIN_INSTALLATION_UP_TO_DATE ]?: ReactNode;
-	};
 };
 
 // Some component code adds properties onto the plugin objects and then passes that to other components.

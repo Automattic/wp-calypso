@@ -22,7 +22,7 @@ export {
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
-	shouldGoToAssembler,
+	isAssemblerSupported,
 } from './utils';
 export {
 	FONT_PAIRINGS,

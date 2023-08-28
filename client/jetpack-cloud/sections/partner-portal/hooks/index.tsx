@@ -225,6 +225,8 @@ export function useProductDescription( productSlug: string ): {
 					'Powerful marketing automation for WooCommerce - grow your store and make more money.'
 				);
 				break;
+			case 'jetpack-stats':
+				description = translate( 'Powerful analytics to help you understand your audience.' );
 		}
 
 		return {

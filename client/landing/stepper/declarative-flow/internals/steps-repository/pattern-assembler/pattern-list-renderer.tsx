@@ -3,7 +3,6 @@ import { Tooltip, __unstableCompositeItem as CompositeItem } from '@wordpress/co
 import classnames from 'classnames';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
-import EmptyPattern from './empty-pattern';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
@@ -24,7 +23,6 @@ interface PatternListRendererProps {
 	selectedPattern: Pattern | null;
 	selectedPatterns?: Pattern[];
 	activeClassName: string;
-	emptyPatternText?: string;
 	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
@@ -97,22 +95,11 @@ const PatternListRenderer = ( {
 	selectedPattern,
 	selectedPatterns,
 	activeClassName,
-	emptyPatternText,
 	composite,
 	onSelect,
 }: PatternListRendererProps ) => {
 	return (
 		<>
-			{ emptyPatternText && (
-				<EmptyPattern
-					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
-						[ activeClassName ]: ! selectedPattern,
-					} ) }
-					text={ emptyPatternText }
-					composite={ composite }
-					onSelect={ () => onSelect( null ) }
-				/>
-			) }
 			{ patterns?.map( ( pattern, index ) => (
 				<PatternListItem
 					key={ `${ index }-${ pattern.ID }` }

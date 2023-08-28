@@ -348,7 +348,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags' ],
+		paths: [ '/tags', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tags' ],
 		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,

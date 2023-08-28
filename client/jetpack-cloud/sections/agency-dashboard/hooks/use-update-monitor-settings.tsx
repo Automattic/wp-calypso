@@ -4,6 +4,7 @@ import { useCallback, useState, useContext } from 'react';
 import { useDispatch } from 'calypso/state';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_DOWNTIME_MONITORING_DURATION } from '../constants';
 import SitesOverviewContext from '../sites-overview/context';
 import getRejectedAndFulfilledRequests from './get-rejected-and-fulfilled-requests-util';
 import type { Site, UpdateMonitorSettingsParams } from '../sites-overview/types';
@@ -11,7 +12,8 @@ import type { Site, UpdateMonitorSettingsParams } from '../sites-overview/types'
 const NOTIFICATION_DURATION = 3000;
 
 export default function useUpdateMonitorSettings(
-	sites: Array< { blog_id: number; url: string } >
+	sites: Array< Site >,
+	checkInterval: number = DEFAULT_DOWNTIME_MONITORING_DURATION
 ): {
 	updateMonitorSettings: ( params: UpdateMonitorSettingsParams ) => void;
 	isLoading: boolean;
@@ -40,12 +42,12 @@ export default function useUpdateMonitorSettings(
 								...site,
 								monitor_settings: {
 									...site.monitor_settings,
-									monitor_deferment_time: data.settings.jetmon_defer_status_down_minutes,
 									monitor_user_email_notifications: data.settings.email_notifications,
 									monitor_user_sms_notifications: data.settings.sms_notifications,
 									monitor_user_wp_note_notifications: data.settings.wp_note_notifications,
 									monitor_notify_additional_user_emails: data.settings.contacts?.emails ?? [],
 									monitor_notify_additional_user_sms: data.settings.contacts?.sms_numbers ?? [],
+									check_interval: data.settings.urls?.[ 0 ].check_interval,
 								},
 							};
 						}
@@ -56,6 +58,23 @@ export default function useUpdateMonitorSettings(
 		},
 	} );
 
+	const getUpdatedParams = useCallback(
+		( { blog_id: siteId, url_with_scheme }: Site, params: UpdateMonitorSettingsParams ) => {
+			const updatedParams = {
+				...params,
+				urls: [
+					{
+						check_interval: checkInterval,
+						options: [],
+						monitor_url: url_with_scheme,
+					},
+				],
+			};
+			return { siteId, params: updatedParams };
+		},
+		[ checkInterval ]
+	);
+
 	const update = useCallback(
 		async ( params: UpdateMonitorSettingsParams ) => {
 			setStatus( 'loading' );
@@ -64,7 +83,7 @@ export default function useUpdateMonitorSettings(
 			sites.forEach( ( site ) =>
 				requests.push( {
 					site,
-					mutation: updateMonitorSettings.mutateAsync( { siteId: site.blog_id, params } ),
+					mutation: updateMonitorSettings.mutateAsync( getUpdatedParams( site, params ) ),
 				} )
 			);
 			const promises = await Promise.allSettled(
@@ -142,7 +161,7 @@ export default function useUpdateMonitorSettings(
 				dispatch( errorNotice( errorMessage, { duration: NOTIFICATION_DURATION } ) );
 			}
 		},
-		[ dispatch, sites, translate, updateMonitorSettings ]
+		[ dispatch, getUpdatedParams, sites, translate, updateMonitorSettings ]
 	);
 
 	return {

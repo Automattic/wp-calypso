@@ -12,6 +12,7 @@ import type {
 	TERM_OCTENNIALLY,
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
+	TERM_CENTENNIALLY,
 	JetpackProductCategory,
 	JetpackTag,
 	FAQ,
@@ -31,7 +32,8 @@ export type Duration =
 	| typeof TERM_SEPTENNIALLY
 	| typeof TERM_OCTENNIALLY
 	| typeof TERM_NOVENNIALLY
-	| typeof TERM_DECENNIALLY;
+	| typeof TERM_DECENNIALLY
+	| typeof TERM_CENTENNIALLY;
 export type DurationString = 'annual' | 'monthly';
 export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_PRODUCT;
 

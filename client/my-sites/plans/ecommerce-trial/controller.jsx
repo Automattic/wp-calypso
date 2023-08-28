@@ -2,6 +2,7 @@ import wasBusinessTrialSite from 'calypso/state/selectors/was-business-trial-sit
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BusinessTrialExpired from '../trials/business-trial-expired';
+import BusinessUpgradeConfirmation from './business-upgrade-confirmation';
 import ECommerceTrialExpired from './ecommerce-trial-expired';
 import TrialUpgradeConfirmation from './upgrade-confirmation';
 
@@ -19,6 +20,14 @@ export function trialExpired( context, next ) {
 }
 
 export function trialUpgradeConfirmation( context, next ) {
-	context.primary = <TrialUpgradeConfirmation />;
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
+		context.primary = <TrialUpgradeConfirmation />;
+	} else if ( wasBusinessTrialSite( state, selectedSite.ID ) ) {
+		context.primary = <BusinessUpgradeConfirmation />;
+	}
+
 	next();
 }
