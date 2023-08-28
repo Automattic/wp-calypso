@@ -1138,7 +1138,10 @@ export class RestAPIClient {
 	/* Publicize */
 
 	/**
+	 * Returns an array of existing publicize (social) connections.
 	 *
+	 * @param {number} siteID Site ID.
+	 * @returns {Promise<Array<PublicizeConnection>>} Array of Publicize connections.
 	 */
 	async getAllPublicizeConnections( siteID: number ): Promise< Array< PublicizeConnection > > {
 		const params: RequestParams = {
@@ -1164,7 +1167,11 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Given siteID and connectionID, deletes the connection.
 	 *
+	 * @param {number} siteID Site ID.
+	 * @param {number} connectionID Publicize connection ID.
+	 * @returns {Promise<PublicizeConnectionDeletedResponse>} Confirmation of connection being deleted.
 	 */
 	async deletePublicizeConnection(
 		siteID: number,
