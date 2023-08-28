@@ -11282,7 +11282,7 @@ __metadata:
     tracekit: ^0.4.5
     twemoji: ^12.1.4
     ua-parser-js: ^0.7.22
-    uplot: ^1.6.24
+    uplot: ^1.6.25
     uplot-react: ^1.1.4
     use-debounce: ^3.1.0
     util: ^0.12.3
@@ -30010,10 +30010,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uplot@npm:^1.6.24":
-  version: 1.6.24
-  resolution: "uplot@npm:1.6.24"
-  checksum: 90282fd1ef29440c20b2f73a038a8e5c421adafd1e896ea298739d3a8e687bfd94bbf48d8ed5b98f8dbad2c67d46a1be74f17c4c8bcf171360f216abd5d13f48
+"uplot@npm:^1.6.25":
+  version: 1.6.25
+  resolution: "uplot@npm:1.6.25"
+  checksum: a5dddfdae92d90a817ae63fe3ac70f2ef38622410e2c5b8bf6d480becf0b1528916a0e5906b1b3b2b238bb2852ebdc455e26026a0ba48801b830f0fa4267bfd7
   languageName: node
   linkType: hard
 
