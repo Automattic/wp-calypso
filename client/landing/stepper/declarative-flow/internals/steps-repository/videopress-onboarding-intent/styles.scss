@@ -224,5 +224,87 @@
 				max-width: 80%;
 			}
 		}
+
+		.videopress-intro-modal__coming-soon {
+			text-transform: uppercase;
+			background-color: #fff;
+			color: #000;
+			border-radius: 30px; /* stylelint-disable-line */
+			font-size: 12px; /* stylelint-disable-line */
+			font-weight: 600;
+			padding: 5px 12px;
+		}
+
+		.videopress-intro-modal__waitlist {
+			display: flex;
+			gap: 8px;
+
+			input {
+				min-width: 300px;
+			}
+
+			.button {
+				white-space: nowrap;
+				width: auto;
+				box-sizing: border-box;
+				max-width: none;
+				min-width: fit-content;
+			}
+		}
+
+		.videopress-intro-modal__waitlist-presentation {
+			display: flex;
+			flex-direction: column;
+			align-content: center;
+			gap: 16px;
+
+			.videopress-intro-modal__waitlist-description {
+				max-width: 460px;
+			}
+
+			.videopress-intro-modal__waitlist-description,
+			.videopress-intro-modal__waitlist-description a,
+			.videopress-intro-modal__waitlist-description button {
+				font-size: 15px; /* stylelint-disable-line */
+				font-weight: 400;
+				text-align: center;
+				color: #a7aaad;
+			}
+
+			.videopress-intro-modal__waitlist-description button,
+			.videopress-intro-modal__waitlist-description a {
+				text-decoration: underline;
+			}
+
+			.videopress-intro-modal__waitlist-description button {
+				background: none;
+				border: none;
+				padding: 0;
+				margin: 0;
+			}
+		}
+
+		.videopress-intro-modal__survey {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: linear-gradient(116.82deg, #fffc1b 0%, #ffe61c 0.01%, #ffc700 100%);
+			color: #000;
+			padding: 32px;
+			display: flex;
+			justify-content: space-around;
+
+			button {
+				background: none !important;
+				border: 1px solid #000 !important;
+				border-radius: 4px;
+				font-weight: 500;
+			}
+
+			.videopress-intro-modal__survey-title {
+				font-weight: 600;
+			}
+		}
 	}
 }
