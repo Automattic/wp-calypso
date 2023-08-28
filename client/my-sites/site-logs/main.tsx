@@ -159,7 +159,12 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 							endDateTime={ dateRange.endTime }
 							onDateTimeChange={ handleDateTimeChange }
 						/>
-						<SiteLogsTable logs={ data?.logs } logType={ logType } isLoading={ isFetching } />
+						<SiteLogsTable
+							logs={ data?.logs }
+							logType={ logType }
+							isLoading={ isFetching }
+							headerTitles={ [] }
+						/>
 						{ paginationText && (
 							<div className="site-logs__pagination-text">{ paginationText }</div>
 						) }

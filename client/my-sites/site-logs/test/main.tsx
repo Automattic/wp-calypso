@@ -10,6 +10,7 @@ import documentHead from 'calypso/state/document-head/reducer';
 import siteSettings from 'calypso/state/site-settings/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { SiteLogsTable, formatColumnName } from '../../site-monitoring/components/site-logs-table';
 import { SiteLogs } from '../main';
 
 // PageJS breaks the tests due to failing to read the document title.
@@ -78,6 +79,29 @@ test( 'displays the last 7 days worth of logs in descending order on mount', asy
 	render( <SiteLogs />, { initialState: makeTestState( { siteId: 113 } ) } );
 
 	await waitFor( () => expect( screen.getByText( /log entry/ ) ).toBeInTheDocument() );
+} );
+
+test( 'the number of columns equals to the amount of headerTitles + 1', async () => {
+	const apiData = [ { date: '2023-03-24T04:36:04.238Z', request_type: 'GET' } ];
+
+	mockSuccessfulLogApis( apiData );
+
+	const headerTitles = [ 'date', 'request_type' ];
+
+	const { container } = render(
+		<SiteLogsTable logs={ apiData } isLoading={ false } headerTitles={ headerTitles } />,
+		{ initialState: makeTestState() }
+	);
+
+	const headerCells = container.querySelectorAll( 'thead th' );
+	expect( headerCells.length ).toBe( headerTitles.length + 1 ); // Plus one for the empty last column with chevron
+
+	headerTitles.forEach( ( title, index ) => {
+		expect( headerCells[ index ] ).toHaveTextContent( formatColumnName( title ) );
+	} );
+
+	// Add assertion for the empty last column cell
+	expect( headerCells[ headerTitles.length ] ).toHaveTextContent( '' );
 } );
 
 test( `date is rendered in site's timestamp`, async () => {

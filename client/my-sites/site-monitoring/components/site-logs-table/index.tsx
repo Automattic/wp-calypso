@@ -19,7 +19,7 @@ interface SiteLogsTableProps {
 	headerTitles: string[];
 }
 
-function formatColumnName( column: string ) {
+export function formatColumnName( column: string ) {
 	if ( column === 'request_type' ) {
 		return 'Request type';
 	} else if ( column === 'request_url' ) {
