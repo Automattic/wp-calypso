@@ -9,7 +9,7 @@
 .screen-confirmation__list-item-icon {
 	fill: var(--studio-gray-60);
 	height: 24px;
-	width: 24px;
+	min-width: 24px;
 	border-radius: 2px;
 	background: var(--studio-gray-0);
 	display: flex;
