@@ -1,7 +1,5 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { ResponseDomain } from '../domains/types';
-import { createSiteDomainObject } from '../domains/utils/assembler';
 
 export interface DomainData {
 	primary_domain: boolean;
@@ -107,27 +105,17 @@ export interface SiteDomainsQueryFnData {
 	domains: DomainData[];
 }
 
-export function useSiteDomainsQuery(
+export function useSiteDomainsQuery< TError = unknown, TData = SiteDomainsQueryFnData >(
 	siteIdOrSlug: number | string | null | undefined,
-	options: UseQueryOptions< SiteDomainsQueryFnData > = {}
+	options: UseQueryOptions< SiteDomainsQueryFnData, TError, TData > = {}
 ) {
-	const transformedQuery = useQuery( getSiteDomainsQueryObject( siteIdOrSlug, options ) );
-
-	return {
-		...transformedQuery,
-		data: transformedQuery.data
-			? {
-					...transformedQuery.data,
-					domains: transformedQuery.data.domains.map( createSiteDomainObject ) as ResponseDomain[],
-			  }
-			: null,
-	};
+	return useQuery( getSiteDomainsQueryObject( siteIdOrSlug, options ) );
 }
 
-export function getSiteDomainsQueryObject(
+export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomainsQueryFnData >(
 	siteIdOrSlug: number | string | null | undefined,
-	options: UseQueryOptions< SiteDomainsQueryFnData > = {}
-) {
+	options: UseQueryOptions< SiteDomainsQueryFnData, TError, TData > = {}
+): UseQueryOptions< SiteDomainsQueryFnData, TError, TData > {
 	return {
 		queryKey: [ 'site-domains', siteIdOrSlug ],
 		queryFn: () =>
