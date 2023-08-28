@@ -12,18 +12,15 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
-import SitesOverviewContext from './context';
-import SiteBackupStaging from './site-backup-staging';
-import SiteSelectCheckbox from './site-select-checkbox';
-import SiteSetFavorite from './site-set-favorite';
-import {
-	getRowMetaData,
-	getProductSlugFromProductType,
-	getBoostRating,
-	getBoostRatingClass,
-} from './utils';
-import type { AllowedTypes, SiteData } from './types';
+import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
+import SitesOverviewContext from '../context';
+import { getBoostRating, getBoostRatingClass } from '../lib/boost';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
+import SiteBackupStaging from '../site-backup-staging';
+import SiteSelectCheckbox from '../site-select-checkbox';
+import SiteSetFavorite from '../site-set-favorite';
+import useRowMetadata from './hooks/use-row-metadata';
+import type { AllowedTypes, SiteData } from '../types';
 
 interface Props {
 	rows: SiteData;
@@ -50,7 +47,7 @@ export default function SiteStatusContent( {
 		siteDown,
 		eventName,
 		...metadataRest
-	} = getRowMetaData( rows, type, isLargeScreen );
+	} = useRowMetadata( rows, type, isLargeScreen );
 
 	let { tooltip } = metadataRest;
 
@@ -90,7 +87,7 @@ export default function SiteStatusContent( {
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: siteId,
-			product_slug: getProductSlugFromProductType( type ),
+			product_slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
 			source: 'dashboard',
 		} );
 	}, [ siteId, type ] );

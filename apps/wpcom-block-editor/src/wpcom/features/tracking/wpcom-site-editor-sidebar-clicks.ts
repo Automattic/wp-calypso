@@ -1,6 +1,8 @@
+import { __ } from '@wordpress/i18n';
 import tracksRecordEvent from './track-record-event';
+import { DelegateEventHandler } from './types';
 
-export const wpcomSiteEditorSidebarNavigationClick = () => {
+export const wpcomSiteEditorSidebarNavigationClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_navigation_click',
 		// \2f is the encoded slash.
@@ -13,7 +15,7 @@ export const wpcomSiteEditorSidebarNavigationClick = () => {
 	};
 };
 
-export const wpcomSiteEditorSidebarPagesClick = () => {
+export const wpcomSiteEditorSidebarPagesClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_pages_click',
 		// \2f is the encoded slash.
@@ -26,7 +28,7 @@ export const wpcomSiteEditorSidebarPagesClick = () => {
 	};
 };
 
-export const wpcomSiteEditorSidebarPatternsClick = () => {
+export const wpcomSiteEditorSidebarPatternsClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_patterns_click',
 		// \2f is the encoded slash.
@@ -39,20 +41,28 @@ export const wpcomSiteEditorSidebarPatternsClick = () => {
 	};
 };
 
-export const wpcomSiteEditorSidebarStylesClick = () => {
+export const wpcomSiteEditorSidebarStylesClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_styles_click',
-		// \2f is the encoded slash.
-		selector: '#\\2fwp_global_styles',
+		/**
+		 * There is no id attribute (`#/wp_global_styles`) for themes that do not have style variations.
+		 * Make this selector generic so as to not depend on the DOM structure.
+		 */
+		selector: '.edit-site-sidebar-navigation-item',
 		type: 'click',
-		handler: () =>
+		handler: ( event ) => {
+			const target = event.target as HTMLElement | null;
+			if ( target?.textContent !== __( 'Styles' ) ) {
+				return;
+			}
 			tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_main_item_click', {
 				item_type: 'styles',
-			} ),
+			} );
+		},
 	};
 };
 
-export const wpcomSiteEditorSidebarTemplatesClick = () => {
+export const wpcomSiteEditorSidebarTemplatesClick = (): DelegateEventHandler => {
 	return {
 		id: 'wpcom_site_editor_sidebar_templates_click',
 		// \2f is the encoded slash.
