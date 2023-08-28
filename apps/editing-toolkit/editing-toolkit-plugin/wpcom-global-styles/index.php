@@ -434,8 +434,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$plan        = wpcom_site_has_global_styles_in_personal_plan() ? 'personal-bundle' : 'value_bundle';
-	$upgrade_url = "https://wordpress.com/plans/$site_slug?plan=$plan&feature=style-customization";
+	$upgrade_url = "https://wordpress.com/plans/$site_slug?plan=value_bundle&feature=style-customization";
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$preview_location = add_query_arg( 'hide-global-styles', '' );
@@ -472,26 +471,14 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</div>
 				<div class="launch-bar-global-styles-message">
 					<?php
-					// @TODO Remove after global styles on personal plans A/B test is complete.
-					if ( wpcom_site_has_global_styles_in_personal_plan() ) {
-						$message = sprintf(
+					$message = sprintf(
 						/* translators: %s - documentation URL. */
-							__(
-								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Personal plan or higher.',
-								'full-site-editing'
-							),
-							'https://wordpress.com/support/using-styles/'
-						);
-					} else {
-						$message = sprintf(
-						/* translators: %s - documentation URL. */
-							__(
-								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
-								'full-site-editing'
-							),
-							'https://wordpress.com/support/using-styles/'
-						);
-					}
+						__(
+							'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+							'full-site-editing'
+						),
+						'https://wordpress.com/support/using-styles/'
+					);
 					echo sprintf(
 						wp_kses(
 							$message,
