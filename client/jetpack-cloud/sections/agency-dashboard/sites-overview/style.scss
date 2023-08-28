@@ -66,6 +66,10 @@
 	}
 }
 
+.sites-overview__add-new-site {
+	white-space: nowrap;
+}
+
 .sites-overview__content {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.

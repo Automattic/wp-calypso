@@ -1,12 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, WordPressLogo } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import SplitButton from 'calypso/components/split-button';
+import AddNewSiteButton from 'calypso/components/jetpack/add-new-site-button';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import WPCOMHostingPopover from './wpcom-hosting-popover';
@@ -20,7 +18,7 @@ export default function SiteTopHeaderButtons() {
 		'jetpack/pro-dashboard-wpcom-atomic-hosting'
 	);
 
-	const buttonRef = useRef< any | null >( null );
+	const buttonRef = useRef< HTMLElement | null >( null );
 	const [ toggleIsOpen, setToggleIsOpen ] = useState( false );
 
 	return (
@@ -43,49 +41,32 @@ export default function SiteTopHeaderButtons() {
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
 				<span>
-					<SplitButton
-						primary
-						whiteSeparator
-						label={ isMobile ? undefined : translate( 'Add new site' ) }
-						onClick={ () =>
+					<AddNewSiteButton
+						showMainButtonLabel={ ! isMobile }
+						popoverContext={ buttonRef }
+						onToggleMenu={ ( isOpen: boolean ) => setToggleIsOpen( isOpen ) }
+						onClickAddNewSite={ () =>
 							dispatch(
 								recordTracksEvent(
-									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
+									'calypso_jetpack_agency_dashboard_sites_overview_add_new_site_click'
 								)
 							)
 						}
-						href="/partner-portal/create-site"
-						toggleIcon={ isMobile ? 'plus' : undefined }
-						onToggle={ ( isOpen: boolean ) => setToggleIsOpen( isOpen ) }
-						popoverContext={ buttonRef }
-					>
-						<PopoverMenuItem
-							onClick={ () => {
+						onClickWpcomMenuItem={ () =>
+							dispatch(
 								recordTracksEvent(
-									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_menu_item_click'
-								);
-							} }
-							href="/partner-portal/create-site"
-						>
-							<WordPressLogo className="gridicon" size={ 18 } />
-							<span>{ translate( 'Create a new WordPress.com site' ) }</span>
-						</PopoverMenuItem>
-
-						<PopoverMenuItem
-							onClick={ () =>
-								dispatch(
-									recordTracksEvent(
-										'calypso_jetpack_agency_dashboard_connect_jetpack_site_menu_item_click'
-									)
+									'calypso_jetpack_agency_dashboard_sites_overview_create_wpcom_site_click'
 								)
-							}
-							href="https://wordpress.com/jetpack/connect"
-							isExternalLink
-						>
-							<JetpackLogo className="gridicon" size={ 18 } />
-							<span>{ translate( 'Connect a site to Jetpack' ) }</span>
-						</PopoverMenuItem>
-					</SplitButton>
+							)
+						}
+						onClickJetpackMenuItem={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_sites_overview_connect_jetpack_site_click'
+								)
+							)
+						}
+					/>
 					<WPCOMHostingPopover
 						context={ buttonRef.current }
 						// Show the popover only when the split button is closed
