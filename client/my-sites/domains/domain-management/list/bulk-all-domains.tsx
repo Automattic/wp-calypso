@@ -89,7 +89,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				<DomainsTable
 					domains={ domains }
-					dispatch={ dispatch }
 					isAllSitesView
 					domainStatusPurchaseActions={ purchaseActions }
 				/>
