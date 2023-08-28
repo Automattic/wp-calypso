@@ -4,6 +4,7 @@ import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
+import { shuffle } from 'lodash';
 import { ReactElement, useState } from 'react';
 import BlogIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-blog.png';
 import ChannelIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-channel.png';
@@ -28,6 +29,9 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
 	const [ modal, setModal ] = useState< ReactElement | null >( null );
+	const [ randomizedItems, setRandomizedItems ] = useState< VideoPressOnboardingIntentItem | null >(
+		null
+	);
 
 	const { submit } = navigation;
 
@@ -76,43 +80,55 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		show: modal ? true : false,
 	} );
 
+	const stepItems = [
+		<VideoPressOnboardingIntentItem
+			key={ 1 }
+			title={ __( 'Get a video portfolio' ) }
+			description={ __( 'Share your work with the world.' ) }
+			image={ PortfolioIntentImage }
+			onClick={ onVideoPortfolioIntentClicked }
+		/>,
+		<VideoPressOnboardingIntentItem
+			key={ 2 }
+			title={ __( 'Create a channel for your videos' ) }
+			description={ __( 'The easiest way to upload videos and create a community around them.' ) }
+			image={ ChannelIntentImage }
+			onClick={ onVideoChannelIntentClicked }
+		/>,
+		<VideoPressOnboardingIntentItem
+			key={ 3 }
+			title={ __( 'Upload a video' ) }
+			description={ __( 'Just put a video on the internet.' ) }
+			image={ SingleVideoIntentImage }
+			onClick={ onUploadVideoIntentClicked }
+		/>,
+		<VideoPressOnboardingIntentItem
+			key={ 4 }
+			title={ __( 'Add video to an existing site' ) }
+			description={ __(
+				'All the advantages and features from VideoPress, on your own WordPress site.'
+			) }
+			image={ JetpackIntentImage }
+			onClick={ onJetpackIntentClicked }
+		/>,
+		<VideoPressOnboardingIntentItem
+			key={ 5 }
+			title={ __( 'Start a blog with video content' ) }
+			description={ __( 'Use advanced media formats to enhance your storytelling.' ) }
+			image={ BlogIntentImage }
+			onClick={ onVideoBlogIntentClicked }
+		/>,
+	];
+
+	if ( ! randomizedItems ) {
+		setRandomizedItems( shuffle( stepItems ) );
+	}
+
 	const stepContent = (
 		<>
 			<div className="videopress-onboarding-intent__step-content">
-				<VideoPressOnboardingIntentItem
-					title={ __( 'Get a video portfolio' ) }
-					description={ __( 'Share your work with the world.' ) }
-					image={ PortfolioIntentImage }
-					onClick={ onVideoPortfolioIntentClicked }
-				/>
-				<VideoPressOnboardingIntentItem
-					title={ __( 'Create a channel for your videos' ) }
-					description={ __(
-						'The easiest way to upload videos and create a community around them.'
-					) }
-					image={ ChannelIntentImage }
-					onClick={ onVideoChannelIntentClicked }
-				/>
-				<VideoPressOnboardingIntentItem
-					title={ __( 'Upload a video' ) }
-					description={ __( 'Just put a video on the internet.' ) }
-					image={ SingleVideoIntentImage }
-					onClick={ onUploadVideoIntentClicked }
-				/>
-				<VideoPressOnboardingIntentItem
-					title={ __( 'Add video to an existing site' ) }
-					description={ __(
-						'All the advantages and features from VideoPress, on your own WordPress site.'
-					) }
-					image={ JetpackIntentImage }
-					onClick={ onJetpackIntentClicked }
-				/>
-				<VideoPressOnboardingIntentItem
-					title={ __( 'Start a blog with video content' ) }
-					description={ __( 'Use advanced media formats to enhance your storytelling.' ) }
-					image={ BlogIntentImage }
-					onClick={ onVideoBlogIntentClicked }
-				/>
+				{ randomizedItems &&
+					randomizedItems.map( ( item: typeof VideoPressOnboardingIntentItem ) => item ) }
 				<VideoPressOnboardingIntentItem
 					title={ __( 'Other' ) }
 					description={ __( 'What are you looking for? Let us know!' ) }
