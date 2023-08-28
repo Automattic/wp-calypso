@@ -196,14 +196,10 @@ class PostCommentList extends Component {
 		// false or new comments have been posted. We avoid the setState loops by not running this
 		// check when the state it would set is already present.
 		if (
-			this.props.expandableView &&
-			! this.state.isExpanded &&
 			// The view has been collapsed, or the amount of comments have changed.
-			( prevState.isExpanded ||
-				Object.keys( prevProps.commentsTree ).length !==
-					Object.keys( this.props.commentsTree ).length ) &&
-			// showExpandWhenOnlyComments is not already true.
-			! this.state.showExpandWhenOnlyComments
+			// Note more safety conditions are contained generally in checkForClampedComments.
+			prevState.isExpanded ||
+			Object.keys( prevProps.commentsTree ).length !== Object.keys( this.props.commentsTree ).length
 		) {
 			this.checkForClampedComments();
 		}
@@ -223,17 +219,16 @@ class PostCommentList extends Component {
 		}
 	}
 
-	// Determines if CSS rules are line-clamping displayed comments in inline-collapsed mode
-	// (expandableView and ! isExpanded) so that a 'view more' link to expand can be displayed when
-	// necessary.
 	checkForClampedComments = () => {
-		// Return early if showExpandWhenOnlyComments is already set true in state to make this safe for
-		// componentDidUpdate. Return early if we have no listRef to query, or the list is expanded
-		// and not line clamping in the first place.
 		if (
+			// This check isnt necessary if we arent in expandableView or are expanded.
+			! this.props.expandableView ||
+			this.state.isExpanded ||
+			// Bail early if there is no listRef to query.
 			! this.listRef.current ||
-			this.state.showExpandWhenOnlyComments ||
-			this.state.isExpanded
+			// Bail early if this state is already flagged, avoids setState loops in methods like
+			// componentDidUpdate.
+			this.state.showExpandWhenOnlyComments
 		) {
 			return;
 		}
