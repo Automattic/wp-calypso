@@ -184,6 +184,9 @@ export function getProductTitle( product: string ): string {
 		return 'AI Assistant';
 	}
 
+	if ( 'Jetpack Stats (Commercial license)' === product ) {
+		return 'Stats';
+	}
 	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
 }
 

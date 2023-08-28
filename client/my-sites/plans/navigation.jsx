@@ -1,3 +1,4 @@
+import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -38,6 +39,11 @@ class PlansNavigation extends Component {
 		}
 	}
 
+	isSiteOn100YearPlan() {
+		const { site } = this.props;
+		return site?.plan?.product_slug === PLAN_100_YEARS;
+	}
+
 	render() {
 		const { site, shouldShowNavigation, translate, isTrial } = this.props;
 		const path = sectionify( this.props.path );
@@ -57,17 +63,19 @@ class PlansNavigation extends Component {
 							>
 								{ myPlanItemTitle }
 							</NavItem>
-							<NavItem
-								path={ `/plans/${ site.slug }` }
-								selected={
-									path === '/plans' ||
-									path === '/plans/monthly' ||
-									path === '/plans/yearly' ||
-									path === '/plans/2yearly'
-								}
-							>
-								{ translate( 'Plans' ) }
-							</NavItem>
+							{ ! this.isSiteOn100YearPlan() && (
+								<NavItem
+									path={ `/plans/${ site.slug }` }
+									selected={
+										path === '/plans' ||
+										path === '/plans/monthly' ||
+										path === '/plans/yearly' ||
+										path === '/plans/2yearly'
+									}
+								>
+									{ translate( 'Plans' ) }
+								</NavItem>
+							) }
 						</NavTabs>
 					</SectionNav>
 				</div>

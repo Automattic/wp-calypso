@@ -1,3 +1,4 @@
+import { TranslateResult } from 'i18n-calypso';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 // All types based on which the data is populated on the agency dashboard table rows
@@ -45,7 +46,7 @@ export interface MonitorSettings {
 	monitor_active: boolean;
 	monitor_site_status: boolean;
 	last_down_time: string;
-	monitor_deferment_time: number;
+	check_interval: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
 	monitor_user_sms_notifications: boolean;
@@ -128,7 +129,7 @@ export interface ScanNode {
 	threats: number;
 }
 
-interface PluginNode {
+export interface PluginNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
 	value: string;
@@ -161,7 +162,7 @@ export interface RowMetaData {
 	};
 	link: string;
 	isExternalLink: boolean;
-	tooltip?: string;
+	tooltip?: TranslateResult;
 	tooltipId: string;
 	siteDown?: boolean;
 	eventName: string | undefined;
@@ -257,14 +258,20 @@ export interface APIToggleFavorite {
 	[ key: string ]: any;
 }
 
+interface MonitorURLS {
+	monitor_url: string;
+	options: Array< string >;
+	check_interval: number;
+}
+
 export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
 		email_notifications: boolean;
 		sms_notifications: boolean;
 		wp_note_notifications: boolean;
-		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
+		urls?: MonitorURLS[];
 	};
 }
 
@@ -272,8 +279,8 @@ export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	sms_notifications?: boolean;
-	jetmon_defer_status_down_minutes?: number;
 	contacts?: MonitorContacts;
+	urls?: MonitorURLS[];
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;

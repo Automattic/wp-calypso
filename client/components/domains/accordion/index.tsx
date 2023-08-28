@@ -12,6 +12,7 @@ const Accordion = ( {
 	isPlaceholder,
 	expanded = false,
 	onClose,
+	className,
 }: AccordionProps ) => {
 	const classes = classNames( {
 		'is-placeholder': isPlaceholder,
@@ -30,6 +31,7 @@ const Accordion = ( {
 		<div className="accordion">
 			<FoldableCard
 				clickableHeader
+				className={ className }
 				header={ renderHeader() }
 				expanded={ expanded }
 				disabled={ isPlaceholder }

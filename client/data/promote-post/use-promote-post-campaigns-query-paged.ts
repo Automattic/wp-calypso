@@ -1,15 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { requestDSPHandleErrors } from 'calypso/lib/promote-post';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
-import { Campaign } from './types';
-
-type CampaignQueryResult = {
-	campaigns: Campaign[];
-	total_items: number;
-	total_pages: number;
-	page: number;
-	has_more_pages: boolean;
-};
+import { CampaignQueryResult } from './types';
 
 type CampaignQueryOptions = {
 	page?: number;

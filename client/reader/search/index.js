@@ -1,10 +1,11 @@
-import {
-	getLanguageRouteParam,
-	getAnyLanguageRouteParam,
-	removeLocaleFromPathLocaleInFront,
-} from '@automattic/i18n-utils';
+import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import page from 'page';
-import { makeLayout, redirectInvalidLanguage, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectInvalidLanguage,
+	redirectLoggedInUrl,
+	render as clientRender,
+} from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -14,16 +15,6 @@ import { search } from './controller';
 const fetchTrendingTagsIfLoggedOut = ( context, next ) => {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
 		return fetchTrendingTags( context, next );
-	}
-	next();
-};
-
-const redirectLoggedInUrl = ( context, next ) => {
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
-		if ( pathWithoutLocale !== context.path ) {
-			return page.redirect( pathWithoutLocale );
-		}
 	}
 	next();
 };

@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Design, isAssemblerDesign } from '@automattic/design-picker';
+import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -149,8 +149,8 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					const { selectedDesign: _selectedDesign, shouldGoToAssembler } = providedDependencies;
-					if ( isAssemblerDesign( _selectedDesign as Design ) && shouldGoToAssembler ) {
+					const { selectedDesign: _selectedDesign } = providedDependencies;
+					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
 						return navigate( 'patternAssembler' );
 					}
 

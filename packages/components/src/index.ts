@@ -18,6 +18,7 @@ export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
 export { useScrollToTop } from './scroll-to-top/use-scroll-to-top';
+export { default as SelectDropdown } from './select-dropdown';
 export { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from './site-thumbnail';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
