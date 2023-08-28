@@ -37,11 +37,7 @@ export const CheckoutUpgradeCreditsInfoDialog = ( {
 					<h1>{ translate( 'Upgrade Credits' ) }</h1>
 					<p>
 						{ translate(
-							'Upgrade credit allows you to use the remaining value of your current plan towards an upgrade to a higher-cost plan.'
-						) }
-						<br />
-						{ translate(
-							'Credit for the remaining time on your existing plan will automatically be applied to your upgrade. Upgrade credit cannot be applied to any other upgrade.'
+							'Upgrade now and we’ll automatically apply the remaining credit from your current plan. Remember, upgrade credit can only be used toward plan upgrades for the same website.'
 						) }
 					</p>
 				</>
