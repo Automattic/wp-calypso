@@ -103,7 +103,7 @@ class PostCommentList extends Component {
 		amountOfCommentsToTake: this.props.initialSize,
 		commentText: '',
 		isExpanded: false,
-		hasClampedComments: false,
+		showExpandWhenOnlyComments: false,
 	};
 
 	shouldFetchInitialComment = () => {
@@ -202,8 +202,8 @@ class PostCommentList extends Component {
 			( prevState.isExpanded ||
 				Object.keys( prevProps.commentsTree ).length !==
 					Object.keys( this.props.commentsTree ).length ) &&
-			// hasClampedComments is not already true.
-			! this.state.hasClampedComments
+			// showExpandWhenOnlyComments is not already true.
+			! this.state.showExpandWhenOnlyComments
 		) {
 			this.checkForClampedComments();
 		}
@@ -227,10 +227,14 @@ class PostCommentList extends Component {
 	// (expandableView and ! isExpanded) so that a 'view more' link to expand can be displayed when
 	// necessary.
 	checkForClampedComments = () => {
-		// Return early if hasClampedComments is already set true in state to make this safe for
+		// Return early if showExpandWhenOnlyComments is already set true in state to make this safe for
 		// componentDidUpdate. Return early if we have no listRef to query, or the list is expanded
 		// and not line clamping in the first place.
-		if ( ! this.listRef.current || this.state.hasClampedComments || this.state.isExpanded ) {
+		if (
+			! this.listRef.current ||
+			this.state.showExpandWhenOnlyComments ||
+			this.state.isExpanded
+		) {
 			return;
 		}
 		// Query selector ALL since we might be showing the readers reply as well.
@@ -245,7 +249,7 @@ class PostCommentList extends Component {
 			}
 		} );
 		// There is no need to set false, as it already is false if this is running.
-		isClampedComment && this.setState( { hasClampedComments: true } );
+		isClampedComment && this.setState( { showExpandWhenOnlyComments: true } );
 	};
 
 	commentIsOnDOM = ( commentId ) => !! window.document.getElementById( `comment-${ commentId }` );
@@ -371,7 +375,7 @@ class PostCommentList extends Component {
 				this.maybeScrollToListTop();
 			}
 
-			this.setState( { isExpanded: ! this.state.isExpanded, hasClampedComments: false } );
+			this.setState( { isExpanded: ! this.state.isExpanded } );
 		}
 	};
 
@@ -411,7 +415,7 @@ class PostCommentList extends Component {
 			displayedCommentsCount < actualCommentsCount;
 
 		const viewMoreText =
-			! shouldShowViewMoreToggle && this.state.hasClampedComments
+			! shouldShowViewMoreToggle && this.state.showExpandWhenOnlyComments
 				? translate( 'View more' )
 				: translate( 'View more comments' );
 
@@ -420,7 +424,7 @@ class PostCommentList extends Component {
 				<ol className="comments__list is-root">
 					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
 				</ol>
-				{ ( shouldShowViewMoreToggle || this.state.hasClampedComments ) && (
+				{ ( shouldShowViewMoreToggle || this.state.showExpandWhenOnlyComments ) && (
 					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
 						{ this.state.isExpanded ? translate( 'View fewer comments' ) : viewMoreText }
 					</button>
