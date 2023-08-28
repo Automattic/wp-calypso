@@ -183,7 +183,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		setSearchParams(
 			( currentSearchParams ) => {
 				if ( value ) {
-					currentSearchParams.set( 'reset_custom_styles', value );
+					currentSearchParams.set( 'reset_custom_styles', String( value ) );
 				} else {
 					currentSearchParams.delete( 'reset_custom_styles' );
 				}
