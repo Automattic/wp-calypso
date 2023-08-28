@@ -1,3 +1,4 @@
+import { addQueryArgs } from '@wordpress/url';
 import type { PartialDomainData } from '@automattic/data-stores';
 
 export function domainManagementLink(
@@ -37,7 +38,5 @@ function domainManagementViewSlug( type: PartialDomainData[ 'type' ] ) {
 }
 
 export function domainOnlySiteCreationLink( siteSlug: string, siteId: number ) {
-	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
-		siteSlug
-	) }&siteId=${ encodeURIComponent( siteId ) }`;
+	return addQueryArgs( '/start/site-selected/', { siteSlug, siteId } );
 }
