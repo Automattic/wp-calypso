@@ -4,7 +4,7 @@ import {
 	getVariationTitle,
 	getVariationType,
 } from '@automattic/global-styles';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
 	StepContainer,
 	isSiteAssemblerFlow,
@@ -94,6 +94,8 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
+	const isEnglishLocale = useIsEnglishLocale();
+
 	// New sites are created from 'site-setup' and 'with-site-assembler' flows
 	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
 
@@ -442,7 +444,12 @@ const PatternAssembler = ( {
 		}
 
 		if ( isNewSite ) {
-			navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
+			if ( isEnglishLocale ) {
+				navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
+			} else {
+				// Skip screen for other locales until translations are ready
+				onSubmit();
+			}
 		} else {
 			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
 		}
