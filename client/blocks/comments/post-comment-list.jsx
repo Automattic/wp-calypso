@@ -196,10 +196,12 @@ class PostCommentList extends Component {
 		// false or new comments have been posted. We avoid the setState loops by not running this
 		// check when the state it would set is already present.
 		if (
-			// The view has been collapsed, or the amount of comments have changed.
+			// The view is not expanded and has just been collapsed or the amount of comments have changed.
 			// Note more safety conditions are contained generally in checkForClampedComments.
-			prevState.isExpanded || // Current state isExpanded checked in function below.
-			Object.keys( prevProps.commentsTree ).length !== Object.keys( this.props.commentsTree ).length
+			! this.state.isExpanded &&
+			( prevState.isExpanded ||
+				Object.keys( prevProps.commentsTree ).length !==
+					Object.keys( this.props.commentsTree ).length )
 		) {
 			this.checkForClampedComments();
 		}
@@ -232,19 +234,24 @@ class PostCommentList extends Component {
 		) {
 			return;
 		}
+
 		// Query selector ALL since we might be showing the readers reply as well.
 		const commentContentEles = this.listRef.current.querySelectorAll(
 			'.comments__comment-content'
 		);
 		let isClampedComment = false;
+
 		// Check if either the comment or reply that might be shown are line clamped.
 		commentContentEles.forEach( ( comment ) => {
 			if ( comment.scrollHeight > comment.clientHeight ) {
 				isClampedComment = true;
 			}
 		} );
+
 		// There is no need to set false, as it already is false if this is running.
-		isClampedComment && this.setState( { showExpandWhenOnlyComments: true } );
+		if ( isClampedComment ) {
+			this.setState( { showExpandWhenOnlyComments: true } );
+		}
 	};
 
 	commentIsOnDOM = ( commentId ) => !! window.document.getElementById( `comment-${ commentId }` );
