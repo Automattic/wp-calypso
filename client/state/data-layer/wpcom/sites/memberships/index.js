@@ -18,7 +18,7 @@ export const membershipProductFromApi = ( product ) => ( {
 	ID: parseInt( product.id || product.connected_account_product_id ),
 	currency: product.currency,
 	formatted_price: product.price,
-	price: product.price,
+	price: parseFloat( product.price ),
 	title: product.title,
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
