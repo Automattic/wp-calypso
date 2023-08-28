@@ -1,13 +1,12 @@
 import { Button } from '@automattic/components';
-import {
-	transferStatus,
-	type as domainTypes,
-	gdprConsentStatus,
-	useMyDomainInputMode,
-	ResponseDomain,
-} from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import moment from 'moment';
+import {
+	gdprConsentStatus,
+	transferStatus,
+	useMyDomainInputMode,
+	type as domainTypes,
+} from './constants';
 import { isExpiringSoon } from './is-expiring-soon';
 import { isRecentlyRegistered } from './is-recently-registered';
 import {
@@ -16,6 +15,7 @@ import {
 	domainMappingSetup,
 	domainUseMyDomain,
 } from './paths';
+import { ResponseDomain } from './types';
 import {
 	SETTING_PRIMARY_DOMAIN,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
