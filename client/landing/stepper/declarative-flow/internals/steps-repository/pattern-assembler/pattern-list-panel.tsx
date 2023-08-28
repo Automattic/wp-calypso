@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
+import PATTERN_ASSEMBLER_EVENTS from './events';
 import PatternSelector from './pattern-selector';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
@@ -15,6 +16,7 @@ type PatternListPanelProps = {
 	selectedPatterns?: Pattern[];
 	label?: string;
 	description?: string;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 };
 
 const PatternListPanel = ( {
@@ -26,6 +28,7 @@ const PatternListPanel = ( {
 	label,
 	description,
 	onSelect,
+	recordTracksEvent,
 }: PatternListPanelProps ) => {
 	const translate = useTranslate();
 	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState( false );
@@ -56,7 +59,7 @@ const PatternListPanel = ( {
 				<div className="pattern-list-panel__show-more">
 					<Button
 						onClick={ () => {
-							// recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, eventProps );
+							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SHOW_MORE_CLICK );
 							setIsShowMorePatterns( true );
 						} }
 						icon={ chevronDown }

@@ -14,6 +14,7 @@ interface Props {
 		selectedPattern: Pattern | null,
 		selectedCategory: string | null
 	) => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 const ScreenPatternListPanel = ( {
