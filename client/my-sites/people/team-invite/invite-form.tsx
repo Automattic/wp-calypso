@@ -86,21 +86,18 @@ function InviteForm( props: Props ) {
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
 
-	const onFormSubmit = useCallback(
-		( e: FormEvent ) => {
-			e.preventDefault();
+	const onFormSubmit = ( e: FormEvent ) => {
+		e.preventDefault();
 
-			if ( ! readyForSubmit || invitingProgress ) {
-				return;
-			}
+		if ( ! readyForSubmit || invitingProgress ) {
+			return;
+		}
 
-			const _tokenValues = tokenValues.filter( ( x ) => !! x );
+		const _tokenValues = tokenValues.filter( ( x ) => !! x );
 
-			dispatch( sendInvites( siteId, _tokenValues, role, message, contractor ) );
-			dispatch( recordTracksEvent( 'calypso_invite_people_form_submit' ) );
-		},
-		[ contractor, dispatch, invitingProgress, message, readyForSubmit, role, siteId, tokenValues ]
-	);
+		dispatch( sendInvites( siteId, _tokenValues, role, message, contractor ) );
+		dispatch( recordTracksEvent( 'calypso_invite_people_form_submit' ) );
+	};
 
 	function tokenValidation( i: number, tokenValues: unknown[] ) {
 		tokenValues[ i ] && dispatch( validateTokens( siteId, tokenValues, role ) );
@@ -109,7 +106,7 @@ function InviteForm( props: Props ) {
 	/**
 	 * Add debouncedCallback to prevent API requests on evert keystroke
 	 */
-	const [ debouncedTokenValidation ] = useDebouncedCallback( tokenValidation, 3000 );
+	const [ debouncedTokenValidation ] = useDebouncedCallback( tokenValidation, 2000 );
 
 	function onTokenChange( val: string, i: number ) {
 		const value = val.trim();
