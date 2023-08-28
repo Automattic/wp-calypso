@@ -198,7 +198,7 @@ class PostCommentList extends Component {
 		if (
 			// The view has been collapsed, or the amount of comments have changed.
 			// Note more safety conditions are contained generally in checkForClampedComments.
-			prevState.isExpanded ||
+			prevState.isExpanded || // Current state isExpanded checked in function below.
 			Object.keys( prevProps.commentsTree ).length !== Object.keys( this.props.commentsTree ).length
 		) {
 			this.checkForClampedComments();
