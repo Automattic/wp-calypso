@@ -47,6 +47,7 @@ const blockFlows: BlockFlow[] = [
 //
 if (
 	envVariables.JETPACK_TARGET === 'wpcom-deployment' &&
+	envVariables.TEST_ON_ATOMIC === true &&
 	envVariables.ATOMIC_VARIATION !== 'private'
 ) {
 	blockFlows.push( new AdFlow( {} ) );
