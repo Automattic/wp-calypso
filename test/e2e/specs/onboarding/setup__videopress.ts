@@ -38,6 +38,12 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await page.goto( DataHelper.getCalypsoURL( '/setup/videopress' ) );
 		} );
 
+		jest.mock( '@automattic/calypso-config', () => ( key ) => {
+			if ( 'videopress-onboarding-user-intent' === key ) {
+				return false;
+			}
+		} );
+
 		it( 'Click Get Started', async function () {
 			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
 		} );
