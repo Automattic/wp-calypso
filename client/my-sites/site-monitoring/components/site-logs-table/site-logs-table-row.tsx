@@ -84,7 +84,7 @@ function renderCell(
 	if ( ( column === 'date' || column === 'timestamp' ) && typeof value === 'string' ) {
 		const formattedDate = moment( value )
 			.utcOffset( siteGmtOffset * 60 )
-			.format( 'h:mm A [on] MMMM D, YYYY' );
+			.format( 'h:mm A [on] MMM D, YYYY' );
 		return <span>{ formattedDate }</span>;
 	}
 

@@ -127,6 +127,11 @@ td.request_url {
 	word-break: break-word;
 }
 
+td.date,
+td.timestamp {
+	white-space: nowrap;
+}
+
 @media (max-width: 600px) {
 	.site-logs-table thead {
 		display: none;
