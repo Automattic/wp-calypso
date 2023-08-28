@@ -87,7 +87,7 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 							return <>{ translate( 'Free' ) }</>;
 						} }
 					</PluginPrice>
-					{ plugin.categories && (
+					{ plugin.categories.length > 0 && (
 						<span className="related-plugins-item__category">
 							{ getFirstCategoryFromTags( plugin.categories ) }
 						</span>

@@ -68,6 +68,7 @@
 
 	.related-plugins-item__category {
 		color: $gray-60;
+		text-transform: capitalize;
 
 		&::before {
 			color: $gray-20;
