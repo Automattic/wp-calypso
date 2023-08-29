@@ -6,10 +6,7 @@ import {
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	FEATURE_STYLE_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import {
-	PLAN_PERSONAL,
-	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
-} from '@automattic/calypso-products/src';
+import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -921,10 +918,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	advancedCustomizationNotice() {
-		const { translate, selectedSite, siteSlug, globalStylesOnPersonalExperiment } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }?plan=${
-			globalStylesOnPersonalExperiment ? PLAN_PERSONAL : PLAN_PREMIUM
-		}&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
+		const { translate, selectedSite, siteSlug } = this.props;
+		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
 
 		return (
 			<>
@@ -932,13 +927,9 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__advanced-customization-notice-cta">
 						<Gridicon icon="info-outline" />
 						<span>
-							{ globalStylesOnPersonalExperiment
-								? translate(
-										'Your site contains customized styles that will only be visible once you upgrade to a Personal plan.'
-								  )
-								: translate(
-										'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
-								  ) }
+							{ translate(
+								'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
+							) }
 						</span>
 					</div>
 					<div className="site-settings__advanced-customization-notice-buttons">
@@ -1034,14 +1025,14 @@ const getFormSettings = ( settings ) => {
 };
 
 const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
-		useSiteGlobalStylesStatus( props.site?.ID );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus(
+		props.site?.ID
+	);
 
 	return (
 		<SiteSettingsFormGeneral
 			{ ...props }
 			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
-			globalStylesOnPersonalExperiment={ globalStylesInPersonalPlan }
 		/>
 	);
 };

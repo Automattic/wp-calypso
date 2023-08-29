@@ -317,7 +317,6 @@ type PlanComparisonGridProps = {
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 };
 
