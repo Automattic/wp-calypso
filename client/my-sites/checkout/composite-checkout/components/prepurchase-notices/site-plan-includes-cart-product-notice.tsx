@@ -4,8 +4,8 @@ import { FunctionComponent } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
-import type { Product } from '@automattic/calypso-products';
-import type { Plan } from 'calypso/state/plans/types';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 
 type Site = {
 	ID: number;
@@ -13,8 +13,8 @@ type Site = {
 };
 
 type Props = {
-	plan: Plan;
-	product: Product;
+	plan: SitePlan;
+	product: ResponseCartProduct;
 	selectedSite: Site;
 };
 
