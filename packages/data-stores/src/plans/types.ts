@@ -2,7 +2,6 @@ import { PERIOD_LIST } from './constants';
 import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
 import type { SelectFromMap } from '../mapped-types';
-import type { IntroductoryOfferTimeUnit, ProductIntroductoryOffer } from '../products-list';
 
 export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
 export type PlanSlug = ( typeof plansSlugs )[ number ];
@@ -52,12 +51,10 @@ export interface PlanProduct {
 }
 
 export interface PlanIntroductoryOffer {
-	costPerInterval: number;
-	intervalCount: number;
-	intervalUnit: IntroductoryOfferTimeUnit;
-	shouldProrateWhenOfferEnds: boolean;
-	transitionAfterRenewalCount: number;
-	usageLimit: number | null;
+	formattedPrice?: string;
+	rawPrice?: number;
+	intervalUnit?: string;
+	intervalCount?: number;
 }
 
 /**
@@ -88,7 +85,14 @@ export interface PricedAPIPlan {
 	currency_code: string;
 }
 
-export interface PricedAPISitePlan extends PricedAPIPlan, ProductIntroductoryOffer {}
+export interface PricedAPIPlanIntroductoryOffer {
+	introductory_offer_formatted_price?: string;
+	introductory_offer_raw_price?: number;
+	introductory_offer_interval_unit?: string;
+	introductory_offer_interval_count?: number;
+}
+
+export interface PricedAPISitePlan extends PricedAPIPlan, PricedAPIPlanIntroductoryOffer {}
 
 export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_id: 1;

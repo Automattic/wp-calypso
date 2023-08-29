@@ -20,19 +20,24 @@ const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
 	gap: 4px;
 `;
 
-const Badge = styled.div`
+const Badge = styled.div< { isForIntroOffer?: boolean } >`
 	text-align: center;
 	white-space: nowrap;
 	font-size: 0.75rem;
 	font-weight: 500;
 	letter-spacing: 0.2px;
 	line-height: 1.25rem;
-	padding: 0 12px;
 	border-radius: 4px;
 	height: 21px;
-	background-color: var( --studio-green-0 );
 	display: inline-block;
-	color: var( --studio-green-40 );
+	width: fit-content;
+	text-align: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'left' : 'center' ) };
+	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? '0 6px' : '0 12px' ) };
+	background-color: ${ ( { isForIntroOffer } ) =>
+		isForIntroOffer ? 'inherit' : 'var( --studio-green-0 )' };
+	color: ${ ( { isForIntroOffer } ) =>
+		isForIntroOffer ? 'var( --studio-blue-40 )' : 'var( --studio-green-40 )' };
+	text-transform: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'uppercase' : 'none' ) };
 `;
 
 const HeaderPriceContainer = styled.div`
@@ -128,7 +133,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
-		pricing: { currencyCode, originalPrice, discountedPrice },
+		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
 	} = gridPlansIndex[ planSlug ];
 	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
 	const isPricedPlan = null !== originalPrice.monthly;
@@ -141,7 +146,21 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		<>
 			{ isPricedPlan ? (
 				<HeaderPriceContainer>
-					{ shouldShowDiscountedPrice && (
+					{ introOffer && (
+						<>
+							<Badge className="plan-features-2023-grid__badge" isForIntroOffer={ true }>
+								{ translate( 'Limited Time Offer' ) }
+							</Badge>
+							<PlanPrice
+								currencyCode={ currencyCode }
+								rawPrice={ introOffer.rawPrice }
+								displayPerMonthNotation={ false }
+								isLargeCurrency={ isLargeCurrency }
+								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							/>
+						</>
+					) }
+					{ ! introOffer && shouldShowDiscountedPrice && (
 						<>
 							<Badge className="plan-features-2023-grid__badge">
 								{ isPlanUpgradeCreditEligible
@@ -168,7 +187,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							</PricesGroup>
 						</>
 					) }
-					{ ! shouldShowDiscountedPrice && (
+					{ ! introOffer && ! shouldShowDiscountedPrice && (
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ originalPrice.monthly }

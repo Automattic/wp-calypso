@@ -9,17 +9,19 @@ interface Props {
 
 const unpackAPIIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer | null => {
 	// these aren't grouped or separated. so no introductory offer if no cost or interval
-	if ( ! sitePlan.cost_per_interval && ! sitePlan.interval_count && ! sitePlan.interval_unit ) {
+	if (
+		! sitePlan.introductory_offer_raw_price &&
+		! sitePlan.introductory_offer_interval_unit &&
+		! sitePlan.introductory_offer_interval_count
+	) {
 		return null;
 	}
 
 	return {
-		costPerInterval: sitePlan.cost_per_interval,
-		intervalCount: sitePlan.interval_count,
-		intervalUnit: sitePlan.interval_unit,
-		shouldProrateWhenOfferEnds: sitePlan.should_prorate_when_offer_ends,
-		transitionAfterRenewalCount: sitePlan.transition_after_renewal_count,
-		usageLimit: sitePlan.usage_limit,
+		formattedPrice: sitePlan.introductory_offer_formatted_price,
+		rawPrice: sitePlan.introductory_offer_raw_price,
+		intervalUnit: sitePlan.introductory_offer_interval_unit,
+		intervalCount: sitePlan.introductory_offer_interval_count,
 	};
 };
 
