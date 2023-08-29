@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
 type LayoutType = 'Header' | 'Sections' | 'Footer';
 
 /**
@@ -58,38 +58,33 @@ export class SiteAssemblerFlow {
 			route.abort( 'aborted' );
 		} );
 
-		const initialCount = await this.getAssembledComponentsCount();
-
-		let target: Locator;
-		if ( name ) {
-			target = this.page
-				.getByRole( 'listbox', { name: 'Block patterns' } )
-				.getByRole( 'option', { name: name, exact: true } );
-		} else if ( index !== undefined ) {
-			target = this.page
+		// Convert index to the accessible name of a component.
+		if ( index !== undefined ) {
+			name = ( await this.page
 				.getByRole( 'listbox', { name: 'Block patterns' } )
 				.getByRole( 'option' )
-				.nth( index );
-		} else {
-			throw new Error(
-				`Must specify either name-based or index-based targeting of the component.`
-			);
+				.nth( index )
+				.getAttribute( 'aria-label' ) ) as string;
+		}
+
+		const target = this.page
+			.getByRole( 'listbox', { name: 'Block patterns' } )
+			.getByRole( 'option', { name: name, exact: true } );
+
+		// Double check that a valid target locator exists.
+		if ( ! target ) {
+			throw new Error( `Must specify a valid name or index that points to a valid component.` );
 		}
 
 		await target.scrollIntoViewIfNeeded();
 		await target.click();
 
-		// The inserted component may not immediately be inserted into the preview,
-		// especially on slower connections or a weaker CPU.
-		// Wait for the last component to be visible by comparing the number of components
-		// in the preview pane.
-		while ( true ) {
-			const newCount = await this.getAssembledComponentsCount();
-
-			if ( newCount > initialCount ) {
-				break;
-			}
-		}
+		// Narrowing the target using CSS selector to the preview pane, and verifying the
+		// expected component appears there.
+		await this.page
+			.locator( '.device-switcher__viewport' )
+			.getByRole( 'listitem', { name: name } )
+			.waitFor( { state: 'visible', timeout: 25 * 1000 } );
 	}
 
 	/**
