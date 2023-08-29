@@ -1,5 +1,6 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useMemo } from 'react';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
 import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';
@@ -25,14 +26,16 @@ type RelatedPluginProps = {
 
 export function RelatedPlugins( { slug, size = 4, seeAllLink, options }: RelatedPluginProps ) {
 	const translate = useTranslate();
-	const { data: relatedPlugins } = useGetRelatedPlugins( slug, size, { ...options } );
+	const { data: relatedPlugins } = useGetRelatedPlugins( slug, size, {
+		...options,
+	} ) as { data: RelatedPlugin[] };
 
 	return (
 		<div className="related-plugins">
 			<div className="related-plugins__header">
 				<h2>{ translate( 'Related plugins' ) }</h2>
 				{ seeAllLink && (
-					<Button borderless primary>
+					<Button borderless primary onClick={ () => page( seeAllLink ) }>
 						<span>{ translate( 'See all' ) }</span>
 						<Gridicon icon="chevron-right" />
 					</Button>
@@ -68,7 +71,15 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 				<div className="related-plugins-item__excerpt">{ plugin.excerpt }</div>
 				<div className="related-plugins-item__details">
 					<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-						{ ( { isFetching, price, period } ) => {
+						{ ( {
+							isFetching,
+							price,
+							period,
+						}: {
+							isFetching: boolean;
+							price: string;
+							period: string;
+						} ) => {
 							if ( isFetching ) {
 								return '...';
 							}
