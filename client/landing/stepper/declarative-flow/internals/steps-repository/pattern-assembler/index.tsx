@@ -556,7 +556,7 @@ const PatternAssembler = ( {
 				</NavigatorScreen>
 
 				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
-					<ScreenConfirmation onConfirm={ onConfirm } recordTracksEvent={ recordTracksEvent } />
+					<ScreenConfirmation onConfirm={ onConfirm } />
 				</NavigatorScreen>
 			</div>
 			<div className="pattern-assembler__sidebar-panel">
@@ -608,6 +608,7 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
+			stepSectionName={ currentScreen.name }
 			backLabelText={
 				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
 					? translate( 'Back to themes' )

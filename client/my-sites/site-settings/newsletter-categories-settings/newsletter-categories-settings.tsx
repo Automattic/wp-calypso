@@ -33,6 +33,7 @@ const NewsletterCategoriesSettings = ( {
 			/>
 
 			<div
+				aria-hidden={ ! toggleValue }
 				className={ classNames( 'newsletter-categories-settings__term-tree-selector', {
 					hidden: ! toggleValue,
 				} ) }

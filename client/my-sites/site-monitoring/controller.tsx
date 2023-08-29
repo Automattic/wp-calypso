@@ -9,7 +9,7 @@ export const siteMetrics: PageJS.Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker path="/site-monitoring/:site" title="Site Monitoring" delay={ 500 } />
-			<SiteMetrics />
+			<SiteMetrics tab={ context.params.tab } />
 		</>
 	);
 	next();

@@ -19,7 +19,7 @@ type Category = {
 	slug: string;
 };
 
-const convertToNewsletterCategory = ( category: Category ): NewsletterCategory => ( {
+export const convertToNewsletterCategory = ( category: Category ): NewsletterCategory => ( {
 	id: category.ID,
 	name: category.name,
 	slug: category.slug,
