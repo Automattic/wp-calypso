@@ -154,7 +154,7 @@ export function fetchTranslationsList( wpVersion ) {
  * Get the WP.org versions.
  * See: https://codex.wordpress.org/WordPress.org_API
  *
- * @returns {Promise.<Object>}  A promise that returns an object containing
+ * @returns {Promise<{ offers: [ { current: string } ] }>}  A promise that returns an object containing
  * 								an `offers` array with the WP versions
  */
 export function fetchWordPressVersions() {
