@@ -9,7 +9,7 @@ import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -214,9 +214,7 @@ const ReadingSettings = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
-		isJetpackConnectionProblem( state, siteId as number )
-	);
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( siteId );
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">
