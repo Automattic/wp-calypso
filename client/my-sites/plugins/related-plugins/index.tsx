@@ -88,15 +88,12 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 
 							if ( price ) {
 								return (
-									<>
-										<>From </>
-										<PreinstalledPremiumPluginPriceDisplay
-											className="related-plugins-item__price-interval"
-											period={ period }
-											pluginSlug={ plugin.slug }
-											price={ price }
-										/>
-									</>
+									<PreinstalledPremiumPluginPriceDisplay
+										className="related-plugins-item__price-interval"
+										period={ period }
+										pluginSlug={ plugin.slug }
+										price={ price }
+									/>
 								);
 							}
 
