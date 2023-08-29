@@ -259,14 +259,8 @@
 .is-reader-page {
 
 	.reader__card.card.is-x-post {
-		border-bottom: 1px solid var(--color-neutral-10);
 		margin: 0 15px;
-		padding: 20px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			margin: 0;
-			padding: 20px 52px;
-		}
+		padding: 0 0 20px;
 
 		.reader__post-title-link,
 		.reader__post-title-link:visited {
