@@ -746,6 +746,9 @@ describe( 'getYearlyPlanByMonthly', () => {
 		expect( getYearlyPlanByMonthly( PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ) ).toEqual(
 			PLAN_JETPACK_SECURITY_REALTIME
 		);
+		expect( getYearlyPlanByMonthly( PLAN_JETPACK_COMPLETE_MONTHLY ) ).toEqual(
+			PLAN_JETPACK_COMPLETE
+		);
 		expect( getYearlyPlanByMonthly( 'unknown_plan' ) ).toEqual( '' );
 	} );
 } );
