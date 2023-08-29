@@ -8,6 +8,7 @@ interface Props {
 }
 
 const unpackAPIIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer | null => {
+	// these aren't grouped or separated. so no introductory offer if no cost or interval
 	if ( ! sitePlan.cost_per_interval && ! sitePlan.interval_count && ! sitePlan.interval_unit ) {
 		return null;
 	}
