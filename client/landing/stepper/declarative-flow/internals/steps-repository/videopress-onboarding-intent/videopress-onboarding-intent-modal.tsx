@@ -36,7 +36,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	const translate = useTranslate();
 	const [ waitlistEmail, setWaitlistEmail ] = useState( '' );
 	const [ waitlistSubmitted, setWaitlistSubmitted ] = useState( false );
-	const [ isWaitlistValidEmail, setIsWaitlistValidEmail ] = useState( false );
+	const [ isWaitlistEmailValid, setIsWaitlistEmailValid ] = useState( false );
 
 	const handleWaitlistEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const newEmail = event?.target?.value;
@@ -45,11 +45,11 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	};
 
 	const handleWaitlistEmailBlur = () => {
-		setIsWaitlistValidEmail( emailValidator.validate( waitlistEmail ) );
+		setIsWaitlistEmailValid( emailValidator.validate( waitlistEmail ) );
 	};
 
 	const onWaitlistSubmit = () => {
-		if ( ! isWaitlistValidEmail ) {
+		if ( ! isWaitlistEmailValid ) {
 			return;
 		}
 
@@ -131,13 +131,13 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 										value={ waitlistEmail }
 										onChange={ handleWaitlistEmailChange }
 										onBlur={ handleWaitlistEmailBlur }
-										isError={ ! isWaitlistValidEmail }
+										isError={ ! isWaitlistEmailValid }
 									/>
 									<Button
 										className="intro__button"
 										primary
 										onClick={ onWaitlistSubmit }
-										disabled={ ! isWaitlistValidEmail }
+										disabled={ ! isWaitlistEmailValid }
 									>
 										{ translate( 'Join the waitlist' ) }
 									</Button>
