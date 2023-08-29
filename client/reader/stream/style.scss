@@ -260,7 +260,11 @@
 
 	.reader__card.card.is-x-post {
 		margin: 0 15px;
-		padding: 0 0 20px;
+		padding: 16px 0 16px;
+
+		+ .reader-post-card {
+			margin-top: 16px;
+		}
 
 		.reader__post-title-link,
 		.reader__post-title-link:visited {
