@@ -23,7 +23,7 @@
 
 .related-plugins__list {
 	display: grid;
-	grid-template-columns: 50% 50%;
+	grid-template-columns: repeat(2, calc(50% - 12px));
 	column-gap: 24px;
 	row-gap: 32px;
 
