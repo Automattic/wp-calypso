@@ -45,6 +45,9 @@ export function DomainsTable( {
 	} );
 
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
+	const [ domainsRequiringAttention, setDomainsRequiringAttention ] = useState<
+		number | undefined
+	>( undefined );
 
 	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
 	const allSiteDomains = useQueries( {
@@ -113,6 +116,10 @@ export function DomainsTable( {
 			return result;
 		} );
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
+
+	const onDomainsRequiringAttentionChange = useCallback( ( domainsRequiringAttention: number ) => {
+		setDomainsRequiringAttention( domainsRequiringAttention );
+	}, [] );
 
 	const handleSelectDomain = useCallback(
 		( domain: PartialDomainData ) => {
@@ -200,6 +207,7 @@ export function DomainsTable( {
 					bulkSelectionStatus={ getBulkSelectionStatus() }
 					onBulkSelectionChange={ changeBulkSelection }
 					onChangeSortOrder={ onSortChange }
+					domainsRequiringAttention={ domainsRequiringAttention }
 				/>
 				<tbody>
 					{ sortedDomains?.map( ( domain ) => (
@@ -212,6 +220,7 @@ export function DomainsTable( {
 							fetchSite={ fetchSite }
 							isAllSitesView={ isAllSitesView }
 							domainStatusPurchaseActions={ domainStatusPurchaseActions }
+							onDomainsRequiringAttentionChange={ onDomainsRequiringAttentionChange }
 						/>
 					) ) }
 				</tbody>
