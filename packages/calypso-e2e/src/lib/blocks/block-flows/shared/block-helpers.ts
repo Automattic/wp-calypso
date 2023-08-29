@@ -1,5 +1,16 @@
 import { Locator, Page } from 'playwright';
 
+export interface ExpectedFormField {
+	type: 'textbox' | 'checkbox' | 'radio' | 'combobox' | 'button';
+	accessibleName: string;
+}
+
+interface FieldLabelDetails {
+	blockName: string;
+	accessibleLabelName: string;
+	labelText: string;
+}
+
 /**
  * Makes a selector for a block based on the block name.
  * Blocks often follow a predictable pattern using aria-labels, and this centralizes that!
@@ -9,11 +20,6 @@ import { Locator, Page } from 'playwright';
  */
 export function makeSelectorFromBlockName( blockName: string ): string {
 	return `div[aria-label="Block: ${ blockName }"]`;
-}
-
-export interface ExpectedFormField {
-	type: 'textbox' | 'checkbox' | 'radio' | 'combobox' | 'button';
-	accessibleName: string;
 }
 
 /**
@@ -30,12 +36,6 @@ export async function validatePublishedFormFields(
 		const { type, accessibleName } = expectedField;
 		await publishedPage.getByRole( type, { name: accessibleName } ).first().waitFor();
 	}
-}
-
-interface FieldLabelDetails {
-	blockName: string;
-	accessibleLabelName: string;
-	labelText: string;
 }
 
 /**

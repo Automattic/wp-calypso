@@ -17,15 +17,19 @@ const blockFlows: BlockFlow[] = [
 	new ContactFormFlow( {
 		labelPrefix: 'Contact Form',
 	} ),
-	new FormPatternsFlow( {
-		labelPrefix: 'Form Patterns',
-		patternName: 'RSVP Form',
-		otherExpectedFields: [
-			{ type: 'radio', accessibleName: 'Yes' },
-			{ type: 'radio', accessibleName: 'No' },
-			{ type: 'button', accessibleName: 'Send RSVP' },
-		],
-	} ),
+	new FormPatternsFlow(
+		{
+			labelPrefix: 'Form Patterns',
+			patternName: 'RSVP Form',
+		},
+		{
+			otherExpectedFields: [
+				{ type: 'radio', accessibleName: 'Yes' },
+				{ type: 'radio', accessibleName: 'No' },
+				{ type: 'button', accessibleName: 'Send RSVP' },
+			],
+		}
+	),
 ];
 
 createBlockTests( 'Blocks: Jetpack Forms', blockFlows );

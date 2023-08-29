@@ -9,6 +9,9 @@ import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 interface ConfigurationData {
 	labelPrefix: string;
 	patternName: string;
+}
+
+interface ValidationData {
 	otherExpectedFields: ExpectedFormField[];
 }
 
@@ -17,14 +20,17 @@ interface ConfigurationData {
  */
 export class FormPatternsFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
+	private validationData: ValidationData;
 
 	/**
 	 * Constructs an instance of this block flow with data to be used when configuring and validating the block.
 	 *
 	 * @param {ConfigurationData} configurationData data with which to configure and validate the block
+	 * @param {ValidationData} validationData data with which to validate the block
 	 */
-	constructor( configurationData: ConfigurationData ) {
+	constructor( configurationData: ConfigurationData, validationData: ValidationData ) {
 		this.configurationData = configurationData;
+		this.validationData = validationData;
 	}
 
 	blockSidebarName = 'Form';
@@ -83,7 +89,7 @@ export class FormPatternsFlow implements BlockFlow {
 		// pass sometimes and then the modal will still get dismissed.
 		// There must be some slow-ish Editor rerender that is dismissing the dialog.
 		// This wait, although "against the rules", has proved to be the most reliable approach so far.
-		await context.page.waitForTimeout( 2000 );
+		await context.page.waitForTimeout( 2 * 1000 );
 		await context.addedBlockLocator
 			.getByRole( 'button', { name: 'Explore Form Patterns' } )
 			.click();
@@ -107,7 +113,7 @@ export class FormPatternsFlow implements BlockFlow {
 		await validatePublishedFormFields( context.page, [
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name Field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email Field' ) },
-			...this.configurationData.otherExpectedFields,
+			...this.validationData.otherExpectedFields,
 		] );
 	}
 }
