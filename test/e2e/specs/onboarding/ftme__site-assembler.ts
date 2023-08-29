@@ -114,13 +114,14 @@ describe( 'Site Assembler', () => {
 		it( 'Pick default style', async function () {
 			await siteAssemblerFlow.clickButton( 'Pick your style' );
 			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
+			await siteAssemblerFlow.clickButton( 'Save and continue' );
 		} );
 
 		it( 'Click "Save and continue" and land on the Site Editor', async function () {
-			await Promise.all( [
-				page.waitForURL( /processing/ ),
-				siteAssemblerFlow.clickButton( 'Save and continue' ),
-			] );
+			const urlPromise = page.waitForURL( /processing/ );
+			await siteAssemblerFlow.clickButton( 'Start adding content' );
+			await urlPromise;
+
 			await page.waitForURL( /site-editor/, {
 				timeout: 30 * 1000,
 			} );
