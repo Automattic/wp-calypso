@@ -17,4 +17,9 @@
 	.split-button__main {
 		flex-grow: 1;
 	}
+
+	.split-button__toggle {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
 }
