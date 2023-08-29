@@ -603,7 +603,7 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 
 	// Users who bought a Personal plan during the GS on Personal experiment should
 	// retain access to Global Styles.
-	if ( has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
 		if ( wpcom_site_has_personal_plan( $blog_id ) ) {
 			return true;
 		} else {
