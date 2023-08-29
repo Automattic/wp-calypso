@@ -566,6 +566,23 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 }
 
 /**
+ * Checks whether the site has a Personal plan.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site has a Personal plan.
+ */
+function wpcom_site_has_personal_plan( $blog_id ) {
+	$personal_plans = array_filter(
+		wpcom_get_site_purchases( $blog_id ),
+		function ( $purchase ) {
+			return strpos( $purchase->product_slug, 'personal-bundle' ) === 0;
+		}
+	);
+
+	return ! empty( $personal_plans );
+}
+
+/**
  * Checks whether the site has a plan that grants access to the Global Styles feature.
  *
  * @param  int $blog_id Blog ID.
@@ -586,7 +603,7 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 
 	// Users who bought a Personal plan during the GS on Personal experiment should
 	// retain access to Global Styles.
-	if ( has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+	if ( has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) && wpcom_site_has_personal_plan( $blog_id ) ) {
 		return true;
 	}
 
