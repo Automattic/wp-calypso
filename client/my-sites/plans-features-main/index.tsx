@@ -9,7 +9,7 @@ import {
 	PlanSlug,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -528,6 +528,8 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
+	const isLoadingPlansMeta = Boolean( intentFromSiteMeta.processing || ! gridPlans );
+
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -627,7 +629,8 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ ! intentFromSiteMeta.processing && gridPlans && (
+			{ isLoadingPlansMeta && <Spinner size={ 30 } /> }
+			{ ! isLoadingPlansMeta && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div
