@@ -60,4 +60,34 @@
 	.domains-table__primary-domain-label {
 		margin-bottom: 4px;
 	}
+
+	.domains-table-row__status-cell {
+		display: flex;
+		width: 100px;
+		align-items: center;
+		gap: 4px;
+		font-size: $font-body-small;
+
+		&__status-success,
+		&__status-verifying,
+		&__status-premium,
+		&__status-alert,
+		&__status-warning,
+		&__status-error {
+			color: var(--studio-green-50);
+			& svg {
+				color: var(--studio-green-50);
+			}
+		}
+
+		&__status-verifying,
+		&__status-alert,
+		&__status-warning,
+		&__status-error {
+			color: var(--studio-red-50);
+			& svg {
+				color: var(--studio-red-50);
+			}
+		}
+	}
 }

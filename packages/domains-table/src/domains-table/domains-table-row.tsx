@@ -3,11 +3,13 @@ import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { countDomainsRequiringAttention } from '../utils';
 import { createSiteDomainObject } from '../utils/assembler';
-import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
+import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
@@ -23,6 +25,7 @@ interface DomainsTableRowProps {
 	isSelected: boolean;
 	onSelect( domain: PartialDomainData ): void;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
+	onDomainsRequiringAttentionChange?( domainsRequiringAttention: number ): void;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -38,8 +41,10 @@ export function DomainsTableRow( {
 	fetchSiteDomains,
 	fetchSite,
 	domainStatusPurchaseActions,
+	onDomainsRequiringAttentionChange,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const { data: allSiteDomains, isLoading: isLoadingSiteDomainsDetails } = useSiteDomainsQuery(
@@ -77,6 +82,28 @@ export function DomainsTableRow( {
 
 		return new URL( site.URL ).host.replace( /\//g, '::' );
 	}, [ site, domain.blog_id ] );
+
+	const domainsRequiringAttention = useMemo( () => {
+		if ( ! currentDomainData ) {
+			return null;
+		}
+		return countDomainsRequiringAttention(
+			allSiteDomains?.map( ( domain ) =>
+				resolveDomainStatus( domain, {
+					siteSlug: siteSlug,
+					getMappingErrors: true,
+					translate,
+					isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
+					isCreditCardExpiring:
+						domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+				} )
+			)
+		);
+	}, [ allSiteDomains, currentDomainData, domainStatusPurchaseActions, siteSlug, translate ] );
+
+	if ( domainsRequiringAttention && domainsRequiringAttention > 0 ) {
+		onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
+	}
 
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
