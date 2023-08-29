@@ -50,7 +50,7 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 
 .site-logs-table__skeleton {
 	display: grid;
-	grid-template-columns: 400px 3fr 1fr;
+	grid-template-columns: 1fr 2fr 3fr 1fr;
 	gap: 20px;
 	overflow: hidden;
 	margin-top: 10px;

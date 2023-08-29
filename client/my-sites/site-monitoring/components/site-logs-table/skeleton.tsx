@@ -18,6 +18,7 @@ export const Skeleton = () => {
 			<LoadingPlaceholder className="site-logs-table__skeleton-table-cell" />
 			<LoadingPlaceholder className="site-logs-table__skeleton-table-cell" />
 			<LoadingPlaceholder className="site-logs-table__skeleton-table-cell" />
+			<LoadingPlaceholder className="site-logs-table__skeleton-table-cell" />
 		</div>
 	);
 };
