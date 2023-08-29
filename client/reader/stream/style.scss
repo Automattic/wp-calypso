@@ -874,23 +874,15 @@
 	margin: 6px 0 0 0;
 
 	@include breakpoint-deprecated(">660px") {
-		padding: 12px 0 4px 0;
+		padding: 0;
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
-		margin: 6px 0 0 15px;
+		margin: 0;
 	}
 
 	.blogging-prompt__menu {
 		display: none;
-	}
-
-	+ article.reader-post-card {
-		border-top: 5px solid var(--color-neutral-0);
-
-		@include breakpoint-deprecated(">660px") {
-			border-top: 1px solid var(--color-neutral-5);
-		}
 	}
 
 	.blogging-prompt__card,
