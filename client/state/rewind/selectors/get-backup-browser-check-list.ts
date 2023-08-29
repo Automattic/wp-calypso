@@ -14,6 +14,7 @@ const addChildrenToList = (
 	// If we're in a directory and we're checked, we just add the directory path and return to include all children
 	if ( currentNode.checkState === 'checked' ) {
 		currentList.includeList.push( currentNode.path );
+		currentList.totalItems++;
 		return currentList;
 	}
 
