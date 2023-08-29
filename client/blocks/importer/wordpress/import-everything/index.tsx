@@ -12,6 +12,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -107,32 +108,46 @@ export class ImportEverything extends SectionMigrate {
 	};
 
 	recordMigrationStatusChange = ( prevState: State ) => {
+		const trackEventProps = {
+			sourceSiteId: this.props.sourceSiteId,
+			sourceSiteUrl: this.props.sourceUrlAnalyzedData?.url,
+			targetSiteId: this.props.targetSiteId,
+			targetSiteSlug: this.props.targetSiteSlug,
+			isTrial: isMigrationTrialSite( this.props.targetSite ),
+		};
+
 		if (
 			prevState.migrationStatus !== MigrationStatus.BACKING_UP &&
 			this.state.migrationStatus === MigrationStatus.BACKING_UP
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_backing_up' );
+			this.props.recordTracksEvent(
+				'calypso_site_importer_import_progress_backing_up',
+				trackEventProps
+			);
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.RESTORING &&
 			this.state.migrationStatus === MigrationStatus.RESTORING
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_restoring' );
+			this.props.recordTracksEvent(
+				'calypso_site_importer_import_progress_restoring',
+				trackEventProps
+			);
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.ERROR &&
 			this.state.migrationStatus === MigrationStatus.ERROR
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_failure' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_failure', trackEventProps );
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.DONE &&
 			this.state.migrationStatus === MigrationStatus.DONE
 		) {
-			this.props.recordTracksEvent( 'calypso_site_importer_import_success' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_success', trackEventProps );
 		}
 	};
 
