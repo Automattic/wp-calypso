@@ -608,6 +608,7 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
+			stepSectionName={ currentScreen.name }
 			backLabelText={
 				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
 					? translate( 'Back to themes' )
