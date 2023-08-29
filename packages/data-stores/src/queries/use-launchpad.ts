@@ -87,13 +87,18 @@ export function sortLaunchpadTasksByCompletionStatus( response: LaunchpadRespons
 	return response;
 }
 
+const defaultSuccessCallback = ( response: LaunchpadResponse ) => {
+	const tasks = response.checklist || [];
+	response.checklist = tasks.map( addOrderToTask );
+	return response;
+};
+
 export const useLaunchpad = (
 	siteSlug: string | null,
 	checklist_slug?: string | 0 | null | undefined,
 	options?: UseLaunchpadOptions
 ) => {
 	const key = [ 'launchpad', siteSlug, checklist_slug ];
-	const defaultSuccessCallback = ( response: LaunchpadResponse ) => response;
 	const onSuccessCallback = options?.onSuccess || defaultSuccessCallback;
 
 	return useQuery( {
