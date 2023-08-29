@@ -128,6 +128,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 								<>
 									<FormTextInput
 										placeholder={ translate( 'Enter your email' ) }
+										value={ waitlistEmail }
 										onChange={ handleWaitlistEmailChange }
 										onBlur={ handleWaitlistEmailBlur }
 										isError={ ! isWaitlistValidEmail }
