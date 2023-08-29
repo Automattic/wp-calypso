@@ -28,12 +28,7 @@ const addChildrenToList = (
 	// This shouldn't hit, because the currentNode should be checked
 	if ( totalChildren === selectedChildren ) {
 		currentList.includeList.push( currentNode.path );
-		return currentList;
-	}
-
-	// If no children are selected we just return the currentList
-	// This should't hit. No children are selected, but the state wasn't unchecked
-	if ( 0 === selectedChildren ) {
+		currentList.totalItems++;
 		return currentList;
 	}
 
@@ -48,6 +43,10 @@ const addChildrenToList = (
 
 	if ( useExclusion ) {
 		currentList.includeList.push( currentNode.path );
+
+		// Lets sum only the selected children
+		currentList.totalItems = currentList.totalItems + selectedChildren;
+
 		currentNode.children.forEach( ( node: BackupBrowserItem ) => {
 			if ( node.checkState === 'unchecked' ) {
 				currentList.excludeList.push( node.path );
@@ -61,18 +60,13 @@ const addChildrenToList = (
 	currentNode.children.forEach( ( node: BackupBrowserItem ) => {
 		if ( 'checked' === node.checkState ) {
 			currentList.includeList.push( node.path );
+			currentList.totalItems++;
 		}
 		if ( 'mixed' === node.checkState ) {
 			currentList = addChildrenToList( node, currentList );
 		}
 	} );
 	return currentList;
-};
-
-// TODO: Properly calculate these values
-const calculateTotalItems = ( checkList: BackupBrowserItemCheckList ) => {
-	checkList.totalItems = checkList.includeList.length + checkList.excludeList.length;
-	return checkList;
 };
 
 /**
@@ -86,7 +80,7 @@ const getBackupBrowserCheckList = (
 	state: AppState,
 	siteId: number
 ): BackupBrowserItemCheckList => {
-	let retVal: BackupBrowserItemCheckList = {
+	let checkList: BackupBrowserItemCheckList = {
 		totalItems: 0,
 		includeList: [],
 		excludeList: [],
@@ -94,13 +88,12 @@ const getBackupBrowserCheckList = (
 
 	const currentNode = state.rewind[ siteId ]?.browser?.rootNode ?? undefined;
 	if ( currentNode === undefined ) {
-		return retVal;
+		return checkList;
 	}
 
-	retVal = addChildrenToList( currentNode, retVal );
-	retVal = calculateTotalItems( retVal );
+	checkList = addChildrenToList( currentNode, checkList );
 
-	return retVal;
+	return checkList;
 };
 
 export default getBackupBrowserCheckList;

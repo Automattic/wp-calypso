@@ -81,7 +81,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 						className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
 					/>
 					<div className="file-browser-header__selecting-info">
-						{ translate( 'files selected' ) }
+						{ browserCheckList.totalItems } { translate( 'files selected' ) }
 					</div>
 					<Button
 						className="file-browser-header__download-button"
