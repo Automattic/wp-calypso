@@ -205,6 +205,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 								targetSite={ targetSite }
 								startImport={ startImport }
 								selectedHost={ selectedHost }
+								migrationTrackingProps={ migrationTrackingProps }
 								onChangeProtocol={ changeCredentialsProtocol }
 							/>
 						</div>
