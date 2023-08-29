@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { renderWithProvider, testDomain } from '../../test-utils';
+import { createSiteDomainObject } from '../../utils/assembler';
 import { DomainsTableSiteCell } from '../domains-table-site-cell';
 
 test( 'when a site is associated with a domain, display its name', async () => {
@@ -12,13 +13,13 @@ test( 'when a site is associated with a domain, display its name', async () => {
 		blog_id: 123,
 		primary_domain: true,
 	} );
-
+	const currentDomainData = createSiteDomainObject( primaryFull );
 	const site = { ID: 123, name: 'Primary Domain Blog' };
 
 	renderWithProvider(
 		<DomainsTableSiteCell
 			site={ site }
-			currentDomainData={ primaryFull }
+			currentDomainData={ currentDomainData }
 			siteSlug="primary-domain.blog"
 		/>
 	);
@@ -35,11 +36,11 @@ test( 'when a site is not associated with a domain, display site linking ctas', 
 	} );
 
 	const site = { ID: 123, name: 'primarydomainblog.wordpress.com' };
-
+	const currentDomainData = createSiteDomainObject( primaryFull );
 	renderWithProvider(
 		<DomainsTableSiteCell
 			site={ site }
-			currentDomainData={ primaryFull }
+			currentDomainData={ currentDomainData }
 			siteSlug="primary-domain.blog"
 		/>
 	);
