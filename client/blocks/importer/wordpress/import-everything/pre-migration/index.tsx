@@ -35,6 +35,7 @@ interface PreMigrationProps {
 	initImportRun?: boolean;
 	isTargetSitePlanCompatible: boolean;
 	isMigrateFromWp: boolean;
+	isTrial?: boolean;
 	onContentOnlyClick: () => void;
 	onFreeTrialClick: () => void;
 }
@@ -48,6 +49,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		targetSite,
 		isTargetSitePlanCompatible,
 		isMigrateFromWp,
+		isTrial,
 		onContentOnlyClick,
 		onFreeTrialClick,
 	} = props;
@@ -92,6 +94,15 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledOnMount,
 		onfetchCallback
 	);
+
+	const migrationTrackingProps = {
+		sourceSiteId: sourceSiteId,
+		sourceSiteUrl: sourceSiteUrl,
+		targetSiteId: targetSite.ID,
+		targetSiteSlug: targetSite.slug,
+		isMigrateFromWp,
+		isTrial,
+	};
 
 	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
 		'init' | 'fetching' | 'fetched'
@@ -140,7 +151,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 
 	// Initiate the migration if initImportRun is set
 	useEffect( () => {
-		initImportRun && startImport( { type: 'without-credentials' } );
+		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
 	}, [] );
 
 	useEffect( () => {
@@ -156,7 +167,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return;
 		}
 		if ( sourceSite ) {
-			startImport();
+			startImport( migrationTrackingProps );
 		}
 	}, [ continueImport, sourceSite, startImport, showUpdatePluginInfo ] );
 
@@ -225,7 +236,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						onConfirm={ () => {
 							// reset migration confirmation to initial state
 							setMigrationConfirmed( false );
-							startImport( { type: 'without-credentials' } );
+							startImport( { type: 'without-credentials', ...migrationTrackingProps } );
 						} }
 					/>
 				) }
@@ -244,7 +255,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 								type="button"
 								onClick={ () => {
 									migrationConfirmed
-										? startImport( { type: 'without-credentials' } )
+										? startImport( { type: 'without-credentials', ...migrationTrackingProps } )
 										: setShowConfirmModal( true );
 								} }
 							>

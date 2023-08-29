@@ -190,6 +190,7 @@ export class ImportEverything extends SectionMigrate {
 					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 					targetSite={ targetSite }
 					isMigrateFromWp={ isMigrateFromWp }
+					isTrial={ isMigrationTrialSite( this.props.targetSite ) }
 					onContentOnlyClick={ onContentOnlySelection }
 					onFreeTrialClick={ () => {
 						stepNavigator?.navigate( `migrationTrial${ window.location.search }` );
