@@ -20,7 +20,6 @@ export const membershipProductFromApi = ( product ) => ( {
 	formatted_price: product.price,
 	price: parseFloat( product.price ),
 	title: product.title,
-	stripe_account: product.connected_destination_account_id,
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
 	multiple_per_user: product.multiple_per_user,

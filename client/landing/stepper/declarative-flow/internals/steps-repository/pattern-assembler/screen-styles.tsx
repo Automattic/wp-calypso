@@ -1,4 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NavigatorItem, NavigatorHeader, NavigatorItemGroup } from '@automattic/onboarding';
 import {
 	Button,
@@ -6,10 +5,11 @@ import {
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { color, typography } from '@wordpress/icons';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 
 interface Props {
@@ -28,22 +28,14 @@ const ScreenStyles = ( {
 	hasFont,
 }: Props ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const [ disabled, setDisabled ] = useState( true );
-	const { location, goTo, goBack } = useNavigator();
+	const { location, goTo } = useNavigator();
+	const { title } = useScreen( 'styles' );
 
 	const handleNavigatorItemSelect = ( type: string, path: string ) => {
 		const nextPath = path !== location.path ? path : NAVIGATOR_PATHS.STYLES;
 		goTo( nextPath, { replace: true } );
 		onMainItemSelect( type );
-	};
-
-	const handleBackClick = () => {
-		goBack();
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
-			screen_from: 'styles',
-			screen_to: 'main',
-		} );
 	};
 
 	const handleContinueClick = () => {
@@ -71,19 +63,11 @@ const ScreenStyles = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={
-					<NavigatorTitle
-						title={
-							isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
-								? translate( 'Pick your style' )
-								: translate( 'Styles' )
-						}
-					/>
-				}
+				title={ <NavigatorTitle title={ title } /> }
 				description={ translate(
 					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				) }
-				onBack={ handleBackClick }
+				hideBack
 			/>
 			<div className="screen-container__body">
 				<VStack spacing="4">

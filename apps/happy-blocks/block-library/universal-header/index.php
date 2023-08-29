@@ -273,7 +273,13 @@ if ( isset( $args['website'] ) ) {
 								<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 							</a>
 						</li>
-						<?php if ( $happy_blocks_is_english ) : ?>
+						<li>
+							<a role="menuitem" class="x-dropdown-link x-link"
+								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/discover/' ) ); ?>"
+								tabindex="-1">
+							<?php esc_html_e( 'Discover New Posts', 'happy-blocks' ); ?>
+							</a>
+						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
 								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>"
@@ -281,7 +287,13 @@ if ( isset( $args['website'] ) ) {
 							<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
 							</a>
 						</li>
-						<?php endif; ?>
+						<li>
+							<a role="menuitem" class="x-dropdown-link x-link"
+								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/read/search/' ) ); ?>"
+								tabindex="-1">
+							<?php esc_html_e( 'Blog Search', 'happy-blocks' ); ?>
+							</a>
+						</li>
 						<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
@@ -511,7 +523,13 @@ if ( isset( $args['website'] ) ) {
 									<?php esc_html_e( 'Logo Maker', 'happy-blocks' ); ?>
 								</a>
 							</li>
-							<?php if ( $happy_blocks_is_english ) : ?>
+							<li class="x-menu-grid-item">
+								<a role="menuitem" class="x-menu-link x-link"
+									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/discover/' ) ); ?>"
+									tabindex="-1">
+								<?php esc_html_e( 'Discover New Posts', 'happy-blocks' ); ?>
+								</a>
+							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
 									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/tags/' ) ); ?>"
@@ -519,7 +537,13 @@ if ( isset( $args['website'] ) ) {
 								<?php esc_html_e( 'Popular Tags', 'happy-blocks' ); ?>
 								</a>
 							</li>
-							<?php endif; ?>
+							<li class="x-menu-grid-item">
+								<a role="menuitem" class="x-menu-link x-link"
+									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/read/search/' ) ); ?>"
+									tabindex="-1">
+								<?php esc_html_e( 'Blog Search', 'happy-blocks' ); ?>
+								</a>
+							</li>
 							<?php if ( time() >= strtotime( '2021-02-17' ) ) : ?>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"

@@ -42,12 +42,14 @@
 		@media screen and (min-width: 320px) {
 			display: flex;
 			min-height: 24px;
+			align-items: center;
 		}
 	}
 
 	.featured-item-card .item-price .display-price .display-price__billing-time-frame {
 		@media screen and (min-width: 320px) {
 			margin-top: 0;
+			padding-left: 3px;
 		}
 	}
 }

@@ -7,12 +7,6 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import ThemeTypeBadge from '../';
 
-jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
-	useSiteGlobalStylesStatus: () => ( {
-		globalStylesInPersonalPlan: false,
-	} ),
-} ) );
-
 describe( 'ThemeTypeBadge', () => {
 	function renderWithState( content, { hasPremiumPlan = false, hasPurchasedTheme = false } = {} ) {
 		const initialState = {

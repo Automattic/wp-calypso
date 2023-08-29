@@ -213,6 +213,7 @@
 		"upsell/concierge-session": true,
 		"user-management-revamp": true,
 		"videopress-tv": true,
+		"videopress-onboarding-user-intent": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
