@@ -30,7 +30,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const yearlyVariantPricing = helpers?.usePricingMetaForGridPlans( {
 		planSlugs: [ yearlyVariantPlanSlug ],
 		withoutProRatedCredits: true,
-	} )[ yearlyVariantPlanSlug ];
+	} )?.[ yearlyVariantPlanSlug ];
 
 	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;

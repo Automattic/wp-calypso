@@ -7,7 +7,7 @@ interface Props {
 	planSlugs: PlanSlug[];
 }
 
-const packIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer | null => {
+const unpackAPIIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer | null => {
 	if ( ! sitePlan.cost_per_interval && ! sitePlan.interval_count && ! sitePlan.interval_unit ) {
 		return null;
 	}
@@ -22,14 +22,20 @@ const packIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer | 
 	};
 };
 
-const useIntroOffers = ( { siteId, planSlugs }: Props ) => {
+/**
+ * Hook to get introductory offers for a list of plans
+ *
+ * @returns {Object | null} - an object with keys matching the planSlugs, and values being the introductory offer for that plan
+ * or null if we haven't observed any metadata yet
+ */
+const useIntroOffers = ( {
+	siteId,
+	planSlugs,
+}: Props ): { [ key: string ]: PlanIntroductoryOffer | null } | null => {
 	const sitePlans = usePricedAPISitePlans( siteId );
 
 	if ( sitePlans.isFetching ) {
-		return {
-			processing: true,
-			introOffers: undefined, // undefined -> we haven't observed any metadata yet
-		};
+		return null;
 	}
 
 	const planObjects = Object.values( sitePlans.data ?? {} );
@@ -40,14 +46,11 @@ const useIntroOffers = ( { siteId, planSlugs }: Props ) => {
 
 		return {
 			...acc,
-			[ planSlug ]: planObject ? packIntroOffer( planObject ) : null,
+			[ planSlug ]: planObject ? unpackAPIIntroOffer( planObject ) : null,
 		};
 	}, {} as { [ key: string ]: PlanIntroductoryOffer | null } );
 
-	return {
-		processing: false,
-		introOffers: introOffers,
-	};
+	return introOffers;
 };
 
 export default useIntroOffers;

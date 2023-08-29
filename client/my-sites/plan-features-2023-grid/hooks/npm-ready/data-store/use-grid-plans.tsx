@@ -67,7 +67,7 @@ export type UsePricingMetaForGridPlans = ( {
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
-} ) => { [ planSlug: string ]: PricingMetaForGridPlan };
+} ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 // TODO clk: move to types. will consume plan properties
 export type GridPlan = {
@@ -222,7 +222,7 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
-}: Props ): Omit< GridPlan, 'features' >[] => {
+}: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent: 'default',
@@ -255,6 +255,10 @@ const useGridPlans = ( {
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
 	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
+
+	if ( ! pricingMeta || ! pricedAPIPlans ) {
+		return null;
+	}
 
 	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );

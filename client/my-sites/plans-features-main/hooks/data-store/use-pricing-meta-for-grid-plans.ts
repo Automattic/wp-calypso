@@ -111,6 +111,10 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		}, {} as { [ planSlug: string ]: Pick< PricingMetaForGridPlan, 'originalPrice' | 'discountedPrice' > } );
 	} );
 
+	if ( ! introOffers || ! pricedAPIPlans ) {
+		return null;
+	}
+
 	return planSlugs.reduce(
 		( acc, planSlug ) => ( {
 			...acc,

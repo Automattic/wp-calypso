@@ -332,7 +332,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
+		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
@@ -340,7 +340,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
+		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
@@ -349,7 +349,7 @@ const PlansFeaturesMain = ( {
 
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
 	const filteredPlansForPlanFeatures = useFilterPlansForPlanFeatures( {
-		plans: gridPlans,
+		plans: gridPlans || [],
 		isDisplayingPlansNeededForFeature: isDisplayingPlansNeededForFeature(),
 		selectedPlan,
 		hideFreePlan,
@@ -627,7 +627,7 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ ! intentFromSiteMeta.processing && (
+			{ ! intentFromSiteMeta.processing && gridPlans && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div
