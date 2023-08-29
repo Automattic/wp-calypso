@@ -71,7 +71,7 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
-import usePluginIsMaintained from './use-plugin-is-maintained';
+import { usePluginIsMaintained } from './use-plugin-is-maintained';
 
 function PluginDetails( props ) {
 	const dispatch = useDispatch();

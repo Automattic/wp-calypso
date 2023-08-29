@@ -11,7 +11,7 @@ const WP_VERSIONS_TO_CHECK = 3;
  * @returns {boolean} True if the plugin was tested less than WP_VERSIONS_TO_CHECK WordPress versions ago,
  *                    false otherwise.
  */
-export default function usePluginIsMaintained( testedVersion ) {
+export function usePluginIsMaintained( testedVersion ) {
 	const { data: wpVersions } = useWPVersion();
 	const wpVersionToCheck = wpVersions?.[ WP_VERSIONS_TO_CHECK ];
 	let isMaintained = true;
