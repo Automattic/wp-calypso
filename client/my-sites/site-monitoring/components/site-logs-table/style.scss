@@ -26,6 +26,16 @@ $border-color: #d3dae6;
 	font-size: 0.875rem;
 }
 
+/* Remove padding on the left for the first item in the row */
+.site-logs-table tr td:first-child {
+	padding-left: 0;
+}
+
+/* Remove padding on the right for the last item in the row */
+.site-logs-table tr td:last-child {
+	padding-right: 0;
+}
+
 .site-logs-table th {
 	font-family: "SF Pro Text", $sans;
 	color: var(--color-neutral-60);
