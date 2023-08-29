@@ -185,13 +185,11 @@ export class SiteDomains extends Component {
 						[ 'has-no-wpcom-domain' ]: ! wpcomDomain,
 					} ) }
 				>
-					{ ! this.isLoading() && (
-						<AsyncLoad
-							require="calypso/blocks/jitm"
-							template="banner"
-							messagePath="calypso:domains:admin_notices"
-						/>
-					) }
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="banner"
+						messagePath="calypso:domains:admin_notices"
+					/>
 
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }

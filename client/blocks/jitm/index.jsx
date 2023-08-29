@@ -176,10 +176,10 @@ JITM.defaultProps = {
 	isFetching: false,
 };
 
-const mapStateToProps = ( state, { messagePath } ) => {
+const mapStateToProps = ( state, { messagePath, selectedSiteOverride = false } ) => {
 	const currentSite = getSelectedSite( state );
 	return {
-		currentSite,
+		currentSite: selectedSiteOverride || currentSite,
 		jitm: getTopJITM( state, messagePath ),
 		isFetching: isFetchingJITM( state, messagePath ),
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),

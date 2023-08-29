@@ -33,6 +33,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSites from 'calypso/state/selectors/get-sites';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import {
@@ -41,6 +42,7 @@ import {
 	getFlatDomainsList,
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
+import getSite from 'calypso/state/sites/selectors/get-site';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
@@ -65,6 +67,7 @@ class AllDomains extends Component {
 		sites: PropTypes.object.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
+		primarySite: PropTypes.object,
 	};
 
 	state = {
@@ -411,11 +414,14 @@ class AllDomains extends Component {
 
 		return (
 			<>
-				<AsyncLoad
-					require="calypso/blocks/jitm"
-					template="banner"
-					messagePath="calypso:domains:admin_notices"
-				/>
+				{ this.props.primarySite && (
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="banner"
+						messagePath="calypso:domains:admin_notices"
+						selectedSiteOverride={ this.props.primarySite }
+					/>
+				) }
 
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 
@@ -784,5 +790,6 @@ export default connect( ( state, { context } ) => {
 		requestingFlatDomains: isRequestingAllDomains( state ),
 		requestingSiteDomains: getAllRequestingSiteDomains( state ),
 		sites,
+		primarySite: getSite( state, getPrimarySiteId( state ) ),
 	};
 } )( localize( AllDomains ) );
