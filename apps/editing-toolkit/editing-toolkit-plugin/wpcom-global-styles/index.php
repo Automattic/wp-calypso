@@ -603,8 +603,15 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 
 	// Users who bought a Personal plan during the GS on Personal experiment should
 	// retain access to Global Styles.
-	if ( has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) && wpcom_site_has_personal_plan( $blog_id ) ) {
-		return true;
+	if ( has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+		if ( wpcom_site_has_personal_plan( $blog_id ) ) {
+			return true;
+		} else {
+			$note = 'Automated sticker. See https://wp.me/paYJgx-3yE';
+			$user = 'a8c'; // A non-empty string avoids storing the current user as author of the sticker change.
+			remove_blog_sticker( 'wpcom-global-styles-personal-plan', $note, $user, $blog_id );
+			return false;
+		}
 	}
 
 	return false;
