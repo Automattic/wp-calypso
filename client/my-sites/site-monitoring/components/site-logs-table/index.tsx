@@ -44,7 +44,10 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	}, [ logs ] );
 
 	if ( isLoading && currentPageIndex === 0 ) {
-		return <Skeleton />;
+		const skeletonClassName =
+			logType === 'web' ? 'site-logs-table-webserver__skeleton' : 'site-logs-table__skeleton';
+
+		return <Skeleton className={ skeletonClassName } />;
 	}
 
 	if ( ! isLoading && ! logsWithKeys.length ) {

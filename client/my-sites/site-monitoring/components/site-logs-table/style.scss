@@ -57,6 +57,15 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 	margin-bottom: 1.5rem;
 }
 
+.site-logs-table-webserver__skeleton {
+	display: grid;
+	grid-template-columns: 1fr 2fr 1fr 2fr 1fr;
+	gap: 20px;
+	overflow: hidden;
+	margin-top: 10px;
+	margin-bottom: 1.5rem;
+}
+
 .site-logs-table__skeleton-table-cell {
 	height: 24px;
 }
