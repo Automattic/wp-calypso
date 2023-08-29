@@ -20,6 +20,7 @@ export interface VideoPressOnboardingIntentModalContentProps extends IntroModalC
 	};
 	isComingSoon?: boolean;
 	surveyTitle?: string;
+	source?: string;
 }
 
 const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModalContentProps > = ( {
@@ -30,6 +31,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	isComingSoon,
 	surveyTitle,
 	onSubmit,
+	source,
 } ) => {
 	const translate = useTranslate();
 	const [ waitlistEmail, setWaitlistEmail ] = useState( '' );
@@ -58,6 +60,9 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 		formData.append( 'r', '' );
 		formData.append( 'startTime', `${ Math.floor( new Date().getTime() / 1000 ) }` );
 		formData.append( 'q_8ca7e38c-cae2-4fd2-9f82-39aef59d792a[text]', waitlistEmail );
+		if ( source ) {
+			formData.append( 'q_e06e42f5-d190-4365-906e-3fc442287a35[text]', source );
+		}
 
 		fetch( `https://api.crowdsignal.com/v4/projects/${ projectId }/form`, {
 			method: 'POST',
