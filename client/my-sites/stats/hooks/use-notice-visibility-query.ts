@@ -5,6 +5,7 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	opt_in_new_stats: false,
 	traffic_page_highlights_module_settings: false,
 	traffic_page_settings: false,
+	commercial_site_upgrade: false,
 	do_you_love_jetpack_stats: false,
 };
 const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
@@ -25,6 +26,7 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 	dashboard_notices: [
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
+		'commercial_site_upgrade',
 		'do_you_love_jetpack_stats',
 	],
 };
