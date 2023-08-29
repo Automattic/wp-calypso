@@ -62,7 +62,7 @@ export interface PricingMetaForGridPlan {
 
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
 	[ planSlug: string ]: PricedAPIPlan | null | undefined;
-};
+} | null;
 
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
@@ -259,6 +259,7 @@ const useGridPlans = ( {
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
 	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
 
+	// null return would indicate that we are still loading the data. no grid without grid plans.
 	if ( ! pricingMeta || ! pricedAPIPlans ) {
 		return null;
 	}

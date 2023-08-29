@@ -31,7 +31,7 @@ const unpackAPIIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOff
 const useIntroOffers = ( {
 	siteId,
 	planSlugs,
-}: Props ): { [ key: string ]: PlanIntroductoryOffer | null } | null => {
+}: Props ): { [ planSlug: string ]: PlanIntroductoryOffer | null } | null => {
 	const sitePlans = usePricedAPISitePlans( siteId );
 
 	if ( sitePlans.isFetching ) {
