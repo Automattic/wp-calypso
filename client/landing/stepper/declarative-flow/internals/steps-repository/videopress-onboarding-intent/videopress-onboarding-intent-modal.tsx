@@ -118,17 +118,15 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 							{ translate( 'Answer a short survey and you’ll have the chance to win $50.' ) }
 						</div>
 					</div>
-					<div className="videopress-intro-modal__survey-button-wrapper">
-						<Button
-							className="intro__button button-survey"
-							href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
-							target="_blank"
-							plain
-						>
-							{ translate( 'Answer the survey' ) }
-							<Icon icon={ arrowRight } />
-						</Button>
-					</div>
+					<Button
+						className="intro__button button-survey"
+						href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
+						target="_blank"
+						plain
+					>
+						{ translate( 'Answer the survey' ) }
+						<Icon icon={ arrowRight } />
+					</Button>
 				</div>
 			) }
 		</div>
