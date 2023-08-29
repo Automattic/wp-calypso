@@ -23,7 +23,7 @@ import {
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -55,6 +55,9 @@ export interface PricingMetaForGridPlan {
 		monthly: number | null;
 		full: number | null;
 	};
+	// intro offers override billing and pricing info shown in the UI
+	// they are currently defined off the site plans (so not defined when siteId is not available)
+	introOffer?: PlanIntroductoryOffer | null;
 }
 
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
