@@ -566,16 +566,6 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 }
 
 /**
- * Checks whether the site has access to Global Styles with a Personal plan as part of an A/B test.
- *
- * @param  int $blog_id Blog ID.
- * @return bool Whether the site has access to Global Styles with a Personal plan.
- */
-function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-	return false;
-}
-
-/**
  * Checks whether the site has a plan that grants access to the Global Styles feature.
  *
  * @param  int $blog_id Blog ID.
@@ -594,7 +584,7 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		return true;
 	}
 
-	// Users who bought a personal plan during the personal/premium experiment should
+	// Users who bought a Personal plan during the GS on Personal experiment should
 	// retain access to Global Styles.
 	if ( has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
 		return true;
