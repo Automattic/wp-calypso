@@ -1,6 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -9,18 +8,13 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { SiteMonitoringTabPanel } from './components/site-monitoring-tab-panel';
 import { LogsTab } from './logs-tab';
 import { MetricsTab } from './metrics-tab';
-import { SiteMonitoringTab, getPageQueryParam } from './site-monitoring-filter-params';
+import { SiteMonitoringTab } from './site-monitoring-filter-params';
 
 import './style.scss';
 
-export function SiteMetrics() {
+export function SiteMetrics( { tab = 'metrics' }: { tab: SiteMonitoringTab } ) {
 	const { __ } = useI18n();
 	const titleHeader = __( 'Site Monitoring' );
-	const [ page, setPage ] = useState< SiteMonitoringTab >( () => getPageQueryParam() || 'metrics' );
-
-	const handleTabSelected = ( tabName: SiteMonitoringTab ) => {
-		setPage( tabName );
-	};
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>
@@ -45,14 +39,11 @@ export function SiteMetrics() {
 					}
 				) }
 			></FormattedHeader>
-			<SiteMonitoringTabPanel selectedTab={ page } onSelected={ handleTabSelected }>
-				{ () => (
-					<>
-						{ page === 'metrics' && <MetricsTab /> }
-						{ page !== 'metrics' && <LogsTab logType={ page } /> }
-					</>
-				) }
-			</SiteMonitoringTabPanel>
+			<SiteMonitoringTabPanel selectedTab={ tab }></SiteMonitoringTabPanel>
+			<div>
+				{ tab === 'metrics' && <MetricsTab /> }
+				{ tab !== 'metrics' && <LogsTab logType={ tab } /> }
+			</div>
 		</Main>
 	);
 }
