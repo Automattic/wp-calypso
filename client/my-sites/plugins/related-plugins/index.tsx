@@ -63,6 +63,8 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 		return url;
 	}, [ plugin.slug, selectedSite ] );
 
+	const mainCategory = getFirstCategoryFromTags( plugin.categories );
+
 	return (
 		<a className="related-plugins-item" href={ pluginLink }>
 			<PluginIcon image={ plugin.icon } className="related-plugins-item__icon" />
@@ -101,10 +103,8 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 							return <>{ translate( 'Free' ) }</>;
 						} }
 					</PluginPrice>
-					{ plugin.categories.length > 0 && (
-						<span className="related-plugins-item__category">
-							{ getFirstCategoryFromTags( plugin.categories ) }
-						</span>
+					{ mainCategory && (
+						<span className="related-plugins-item__category">{ mainCategory }</span>
 					) }
 				</div>
 			</div>
