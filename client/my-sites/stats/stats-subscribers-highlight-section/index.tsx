@@ -71,11 +71,13 @@ function SubscriberHighlightsHeader() {
 function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
+	// Check if the site has any paid subscription products added.
 	const products = useSelector(
 		( state ) => state.memberships?.productList?.items[ siteId as number ]
 	);
-	// Check if the site has any paid subscription products added.
+
 	// Odyssey Stats doesn't support the membership API endpoint yet.
+	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
 	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
 	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
 
