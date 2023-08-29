@@ -302,11 +302,23 @@
 			display: flex;
 			justify-content: space-around;
 
-			button {
+			.videopress-intro-modal__survey-button-wrapper {
+				display: flex;
+				align-items: center;
 				background: none !important;
 				border: 1px solid #000 !important;
 				border-radius: 4px;
+				font-size: 14px; /* stylelint-disable-line */
 				font-weight: 500;
+				padding: 4px 8px;
+
+				a {
+					display: inline-flex;
+					align-items: center;
+					gap: 4px;
+					color: #000;
+					white-space: nowrap;
+				}
 			}
 
 			.videopress-intro-modal__survey-title {

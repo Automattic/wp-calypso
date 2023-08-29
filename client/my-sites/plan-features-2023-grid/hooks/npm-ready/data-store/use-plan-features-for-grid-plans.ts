@@ -12,14 +12,12 @@ export type UsePlanFeaturesForGridPlans = ( {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList,
 	intent,
-	isGlobalStylesOnPersonal,
 	showLegacyStorageFeature,
 	selectedFeature,
 }: {
 	planSlugs: PlanSlug[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
-	isGlobalStylesOnPersonal?: boolean;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
@@ -33,7 +31,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	planSlugs,
 	allFeaturesList,
 	intent,
-	isGlobalStylesOnPersonal,
 	selectedFeature,
 	showLegacyStorageFeature,
 } ) => {
@@ -47,17 +44,17 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		if ( 'plans-newsletter' === intent ) {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.getNewsletterSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 			);
 		} else if ( 'plans-link-in-bio' === intent ) {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.getLinkInBioSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 			);
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.getBlogOnboardingSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
 			);
 
 			jetpackFeatures = getPlanFeaturesObject(
@@ -67,7 +64,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		} else {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
 			);
 
 			jetpackFeatures = getPlanFeaturesObject(

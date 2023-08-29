@@ -88,7 +88,6 @@ export interface PlanFeatures2023GridProps {
 	selectedFeature?: string;
 	intent?: PlansIntent;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
-	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
 	stickyRowOffset: number;
@@ -697,7 +696,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			selectedPlan,
 			selectedFeature,
 			intent,
-			isGlobalStylesOnPersonal,
 			gridPlansForFeaturesGrid,
 			gridPlansForComparisonGrid,
 			showLegacyStorageFeature,
@@ -775,7 +773,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								siteId={ siteId }
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
-								isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
 								showLegacyStorageFeature={ showLegacyStorageFeature }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">

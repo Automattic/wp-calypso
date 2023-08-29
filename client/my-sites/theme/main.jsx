@@ -1069,14 +1069,11 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
-		const { globalStylesInPersonalPlan } = this.props;
-		const plan = globalStylesInPersonalPlan ? 'personal' : 'premium';
-
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/${ plan }?${ params.toString() }` );
+		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -1397,16 +1394,9 @@ class ThemeSheet extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
-			useSiteGlobalStylesStatus( siteId );
+		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
-		return (
-			<Wrapped
-				{ ...props }
-				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
-			/>
-		);
+		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
 	},
 	'withSiteGlobalStylesStatus'
 );

@@ -18,14 +18,12 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	planSlugs,
 	allFeaturesList,
 	intent,
-	isGlobalStylesOnPersonal,
 	showLegacyStorageFeature,
 	selectedFeature,
 }: {
 	planSlugs: PlanSlug[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
-	isGlobalStylesOnPersonal?: boolean;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
@@ -35,14 +33,12 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		planSlugs,
 		allFeaturesList,
 		intent,
-		isGlobalStylesOnPersonal,
 		selectedFeature,
 		showLegacyStorageFeature,
 	}: {
 		planSlugs: PlanSlug[];
 		allFeaturesList: FeatureList;
 		intent?: PlansIntent;
-		isGlobalStylesOnPersonal?: boolean;
 		selectedFeature?: string | null;
 		showLegacyStorageFeature?: boolean;
 	} ) => {
@@ -50,7 +46,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			planSlugs,
 			allFeaturesList,
 			intent,
-			isGlobalStylesOnPersonal,
 			selectedFeature,
 			showLegacyStorageFeature,
 		} );
@@ -71,9 +66,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					  )
 					: getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj
-								.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal )
-								.slice()
+							planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
 					  );
 
 				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride
@@ -151,7 +144,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				previousPlan = planSlug;
 			}
 			return planFeatureMap;
-		}, [ allFeaturesList, isGlobalStylesOnPersonal, planFeaturesForGridPlans, planSlugs ] );
+		}, [ allFeaturesList, planFeaturesForGridPlans, planSlugs ] );
 
 		return restructuredFeatures;
 	};
