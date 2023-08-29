@@ -47,7 +47,7 @@
 		color: $gray-60;
 		font-family: var(--font-sf-pro-text);
 		font-size: $font-body-small;
-		line-height: 24px;
+		line-height: 20px;
 	}
 
 	.related-plugins-item__title {
@@ -62,9 +62,8 @@
 	}
 
 	.related-plugins-item__details {
-		margin-top: 14px;
+		margin-top: 8px;
 		font-size: $font-body-extra-small;
-		line-height: 20px;
 		color: $gray-70;
 	}
 
