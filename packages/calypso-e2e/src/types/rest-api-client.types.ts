@@ -187,6 +187,29 @@ export interface PluginRemovalResponse {
 	log: string[];
 }
 
+export interface JetpackSearchParams {
+	query: string;
+	size?: number;
+	// Lots more of course -- add as needed!
+}
+
+export interface JetpackSearchResponse {
+	results: unknown[];
+	// Lots more of course -- add as needed!
+}
+
+export interface PublicizeConnection {
+	ID: number;
+	site_ID: number;
+	label: string;
+	external_ID: string;
+}
+
+export interface PublicizeConnectionDeletedResponse {
+	ID: number;
+	deleted: boolean;
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {

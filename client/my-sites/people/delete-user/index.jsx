@@ -321,10 +321,19 @@ class DeleteUser extends Component {
 		}
 
 		// A user should not be able to remove the Atomic or non-Jetpack site owner.
-		if (
-			( ! isJetpack && user.ID === siteOwner ) ||
-			( isAtomic && user.linked_user_ID === siteOwner )
-		) {
+		if ( ( ! isJetpack && user.ID === siteOwner ) || user.linked_user_ID === siteOwner ) {
+			const supportLink =
+				! isJetpack || isAtomic ? (
+					<InlineSupportLink
+						supportPostId={ 102743 }
+						supportLink={ localizeUrl(
+							'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/'
+						) }
+					/>
+				) : (
+					<InlineSupportLink supportLink="https://jetpack.com/redirect?source=jetpack-transfer-connection" />
+				);
+
 			return (
 				<Card className="delete-user__single-site">
 					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
@@ -332,16 +341,7 @@ class DeleteUser extends Component {
 						{ translate(
 							'You cannot delete the site owner. Please transfer ownership of this site to a different account before deleting this user. {{supportLink}}Learn more.{{/supportLink}}',
 							{
-								components: {
-									supportLink: (
-										<InlineSupportLink
-											supportPostId={ 102743 }
-											supportLink={ localizeUrl(
-												'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/'
-											) }
-										/>
-									),
-								},
+								components: { supportLink },
 							}
 						) }
 					</p>

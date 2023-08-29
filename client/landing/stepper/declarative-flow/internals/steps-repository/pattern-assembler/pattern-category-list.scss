@@ -1,9 +1,5 @@
 .pattern-category-list {
 	margin: 10px -11px 0 -11px;
-	// Keep the other steps visible (Footer, Colors, and Fonts)
-	// 655px is the height reserved in sidebar
-	max-height: calc(100vh - 655px);
-	overflow-y: auto;
 
 	.components-item.navigator-item {
 		padding-left: 42px;

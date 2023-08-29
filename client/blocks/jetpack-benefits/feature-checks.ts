@@ -28,6 +28,8 @@ import {
 	FEATURE_CLOUD_CRITICAL_CSS,
 	isJetpackStatsSlug,
 	isJetpackStatsPaidProductSlug,
+	FEATURE_STATS_PAID,
+	FEATURE_STATS_FREE,
 } from '@automattic/calypso-products';
 
 export const productHasBackups = ( productSlug: string ): boolean => {
@@ -84,16 +86,13 @@ export const productHasStats = ( productSlug: string, onlyPaid = false ): boolea
 	if ( isJetpackStatsSlug( productSlug ) ) {
 		return ! onlyPaid || isJetpackStatsPaidProductSlug( productSlug );
 	}
-	// Check for stats features in plans
+	// Check for paid stats features in plans
 	if ( isJetpackPlanSlug( productSlug ) && onlyPaid ) {
-		return planHasAtLeastOneFeature( productSlug, [
-			/** TODO: STATS PAID FEATURE NAME */
-		] );
+		return planHasAtLeastOneFeature( productSlug, [ FEATURE_STATS_PAID ] );
 	}
+	// Check for all stats features in plans
 	if ( isJetpackPlanSlug( productSlug ) && ! onlyPaid ) {
-		return planHasAtLeastOneFeature( productSlug, [
-			/** TODO: STATS FEATURE NAME */
-		] );
+		return planHasAtLeastOneFeature( productSlug, [ FEATURE_STATS_PAID, FEATURE_STATS_FREE ] );
 	}
 	return false;
 };

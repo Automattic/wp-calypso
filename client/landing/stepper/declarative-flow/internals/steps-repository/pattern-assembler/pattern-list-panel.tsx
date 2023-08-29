@@ -15,7 +15,6 @@ type PatternListPanelProps = {
 };
 
 const PatternListPanel = ( {
-	onSelect,
 	selectedPattern,
 	selectedPatterns,
 	selectedCategory,
@@ -23,6 +22,7 @@ const PatternListPanel = ( {
 	patternsMapByCategory,
 	label,
 	description,
+	onSelect,
 }: PatternListPanelProps ) => {
 	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
 

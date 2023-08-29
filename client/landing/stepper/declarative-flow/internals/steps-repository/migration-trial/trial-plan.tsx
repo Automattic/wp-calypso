@@ -106,7 +106,9 @@ const TrialPlan = function ( props: Props ) {
 				<SubTitle>
 					{ sprintf(
 						/* translators: the planName could be "Pro" or "Business" */
-						__( 'Try the %(planName)s plan free for 7 days and migrate your site for free' ),
+						__(
+							'Give the %(planName)s plan a try with the 7-day free trial, and migrate your site without costs'
+						),
 						{ planName: plan?.getTitle() }
 					) }
 				</SubTitle>
@@ -138,7 +140,7 @@ const TrialPlan = function ( props: Props ) {
 					<p>
 						<strong>{ __( 'Trial limitations' ) }</strong>
 						<br />
-						<small>{ __( 'No custom domains, 100 subscribers, no SSH or SFTP access' ) }</small>
+						<small>{ __( '100 subscribers, no SSH or SFTP access' ) }</small>
 					</p>
 				</div>
 

@@ -6,7 +6,7 @@ import {
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import useCategoriesOrder from './hooks/use-categories-order';
+import { useCategoriesOrder } from './hooks';
 import type { Pattern, Category } from './types';
 import './pattern-category-list.scss';
 

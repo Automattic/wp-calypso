@@ -115,7 +115,11 @@
 }
 
 .domain-forwarding-card-notice {
-	margin-bottom: 16px;
+	margin: 0 16px 16px;
+
+	@include break-mobile {
+		margin: 0 24px 16px 24px;
+	}
 }
 
 .site-redirect-card__explanation,

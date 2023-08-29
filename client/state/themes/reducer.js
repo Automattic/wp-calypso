@@ -367,6 +367,21 @@ const queriesReducer = ( state = {}, action ) => {
 				() => new ThemeQueryManager( null, { itemKey: 'id' } )
 			);
 		}
+		case THEMES_REQUEST_FAILURE: {
+			const { siteId, query } = action;
+			return withQueryManager(
+				state,
+				siteId,
+				( m ) =>
+					m.receive( [], {
+						query,
+						found: 0,
+						patch: true,
+						dontShareQueryResultsWhenQueriesAreDifferent: true,
+					} ),
+				() => new ThemeQueryManager( null, { itemKey: 'id' } )
+			);
+		}
 		case THEME_DELETE_SUCCESS: {
 			const { siteId, themeId } = action;
 			return withQueryManager( state, siteId, ( m ) => m.removeItem( themeId ) );

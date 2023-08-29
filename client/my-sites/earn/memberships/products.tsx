@@ -158,6 +158,11 @@ function MembershipsProductsSection( { query }: MembersProductsSectionProps ) {
 									<Badge type="info">{ translate( 'Newsletter' ) }</Badge>
 								</div>
 							) }
+							{ currentProduct?.type === 'donation' && (
+								<div className="memberships__products-product-badge">
+									<Badge type="info">{ translate( 'Donation' ) }</Badge>
+								</div>
+							) }
 						</div>
 
 						{ renderEllipsisMenu( currentProduct?.ID ?? null ) }

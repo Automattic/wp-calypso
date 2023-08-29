@@ -30,5 +30,6 @@ export default function useDeleteDomainForwardingMutation(
 		( domain_redirect_id: number ) => mutate( domain_redirect_id ),
 		[ mutate ]
 	);
+
 	return { deleteDomainForwarding, ...mutation };
 }

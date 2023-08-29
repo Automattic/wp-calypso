@@ -1,6 +1,6 @@
 import { Badge, Card } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import QueryWordadsPayments from 'calypso/components/data/query-wordads-payments';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import Notice from 'calypso/components/notice';
@@ -10,7 +10,7 @@ import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsPayments } from 'calypso/state/wordads/payments/selectors';
 
-const WordAdsPayments = ( { numberFormat } ) => {
+const WordAdsPayments = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const payments = useSelector( ( state ) => getWordAdsPayments( state, siteId ) );

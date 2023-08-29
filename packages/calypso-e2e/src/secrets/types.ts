@@ -37,6 +37,12 @@ export interface Secrets {
 	martechTosUploadCredentials: {
 		bearer_token: string;
 	};
+	socialAccounts: {
+		tumblr: {
+			username: string;
+			password: string;
+		};
+	};
 	mailosaur: {
 		apiKey: string;
 		inviteInboxId: string;

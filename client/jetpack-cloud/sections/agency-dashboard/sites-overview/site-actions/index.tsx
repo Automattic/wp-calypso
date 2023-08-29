@@ -7,7 +7,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getActionEventName } from '../utils';
+import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
 import './style.scss';
