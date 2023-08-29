@@ -1,7 +1,8 @@
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import '../intro/videopress-intro-modal-styles.scss';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import CheckmarkIcon from '../intro/icons/checkmark-icon';
@@ -31,6 +32,45 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	onSubmit,
 } ) => {
 	const translate = useTranslate();
+	const [ waitlistEmail, setWaitlistEmail ] = useState( '' );
+	const [ waitlistSubmitted, setWaitlistSubmitted ] = useState( false );
+	const [ isWaitlistValidEmail, setIsWaitlistValidEmail ] = useState( false );
+
+	const handleWaitlistEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		const newEmail = event?.target?.value;
+
+		setWaitlistEmail( newEmail );
+	};
+
+	const handleWaitlistEmailBlur = () => {
+		setIsWaitlistValidEmail( emailValidator.validate( waitlistEmail ) );
+	};
+
+	const onWaitlistSubmit = () => {
+		if ( ! isWaitlistValidEmail ) {
+			return;
+		}
+
+		const projectId = '34A774AE45CB5DBB';
+
+		const formData = new window.FormData();
+		formData.append( 'p', '0' );
+		formData.append( 'r', '' );
+		formData.append( 'startTime', `${ Math.floor( new Date().getTime() / 1000 ) }` );
+		formData.append( 'q_8ca7e38c-cae2-4fd2-9f82-39aef59d792a[text]', waitlistEmail );
+
+		fetch( `https://api.crowdsignal.com/v4/projects/${ projectId }/form`, {
+			method: 'POST',
+			body: formData,
+		} )
+			.then( ( response ) => {
+				if ( response.ok ) {
+					setWaitlistSubmitted( true );
+				}
+			} )
+			// eslint-disable-next-line no-console
+			.catch( ( err ) => console.error( err ) );
+	};
 
 	return (
 		<div className="videopress-intro-modal">
@@ -79,10 +119,27 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 				{ isComingSoon && (
 					<div className="videopress-intro-modal__waitlist-presentation">
 						<div className="videopress-intro-modal__waitlist">
-							<FormTextInput placeholder={ translate( 'Enter your email' ) } />
-							<Button className="intro__button" primary>
-								{ translate( 'Join the waitlist' ) }
-							</Button>
+							{ ! waitlistSubmitted && (
+								<>
+									<FormTextInput
+										placeholder={ translate( 'Enter your email' ) }
+										onChange={ handleWaitlistEmailChange }
+										onBlur={ handleWaitlistEmailBlur }
+										isError={ ! isWaitlistValidEmail }
+									/>
+									<Button
+										className="intro__button"
+										primary
+										onClick={ onWaitlistSubmit }
+										disabled={ ! isWaitlistValidEmail }
+									>
+										{ translate( 'Join the waitlist' ) }
+									</Button>
+								</>
+							) }
+							{ waitlistSubmitted && (
+								<p className="videopress-intro-modal__waitlist-response">Thank You!</p>
+							) }
 						</div>
 						<div className="videopress-intro-modal__waitlist-description">
 							{ translate(

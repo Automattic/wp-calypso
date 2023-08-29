@@ -239,9 +239,14 @@
 		.videopress-intro-modal__waitlist {
 			display: flex;
 			gap: 8px;
+			min-height: 46px; /* so it doesn't shrink when the thank you message is presented */
 
 			input {
 				min-width: 300px;
+
+				&.is-error {
+					border: 1px solid #f00;
+				}
 			}
 
 			.button {
@@ -250,6 +255,13 @@
 				box-sizing: border-box;
 				max-width: none;
 				min-width: fit-content;
+			}
+
+			.videopress-intro-modal__waitlist-response {
+				width: 100%;
+				text-align: center;
+				font-size: 22px; /* stylelint-disable-line */
+				font-weight: 600;
 			}
 		}
 
