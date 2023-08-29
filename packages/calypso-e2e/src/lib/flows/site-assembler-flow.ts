@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 type LayoutType = 'Header' | 'Sections' | 'Footer';
 
 /**
@@ -35,39 +35,61 @@ export class SiteAssemblerFlow {
 	}
 
 	/**
-	 * Selects a site assembler component with the given name from the
-	 * list of available components, inserts it, then validate the insertion
+	 * Selects a site assembler component in one of two ways: name or index-based.
+	 *
+	 * If supplied with the an accessible name of the component or a valid index,
+	 * this method will locate the target, insert it, then validate the insertion
 	 * was successful.
 	 *
-	 * The name has to match exactly to the string in the tooltip.
+	 * The index is 0-indexed.
 	 *
-	 * @param {string} name Exact name of the component to select.
+	 * @param param0 Keyed object parameter.
+	 * @param {string} param0.name Exact name of the component to select.
+	 * @param {string} param0.index 0-indexed index of the component to select.
+	 * @throws {Error} If neither name or index was specified.
 	 */
-	async selectLayoutComponent( name: string ): Promise< void > {
+	async selectLayoutComponent( {
+		name,
+		index,
+	}: { name?: string; index?: number } = {} ): Promise< void > {
 		// To reduce network load times, abort any request for
 		// placeholder images.
 		await this.page.route( '**/*.png', ( route ) => {
 			route.abort( 'aborted' );
 		} );
 
-		const target = this.page
-			.getByRole( 'listbox', { name: 'Block patterns' } )
-			.getByRole( 'option', { name: name, exact: true } );
+		const initialCount = await this.getAssembledComponentsCount();
+
+		let target: Locator;
+		if ( name ) {
+			target = this.page
+				.getByRole( 'listbox', { name: 'Block patterns' } )
+				.getByRole( 'option', { name: name, exact: true } );
+		} else if ( index !== undefined ) {
+			target = this.page
+				.getByRole( 'listbox', { name: 'Block patterns' } )
+				.getByRole( 'option' )
+				.nth( index );
+		} else {
+			throw new Error(
+				`Must specify either name-based or index-based targeting of the component.`
+			);
+		}
 
 		await target.scrollIntoViewIfNeeded();
 		await target.click();
 
-		// The inserted component does not load immediately, especially on
-		// slower networks or a weaker CPU.
-		// Wait for the last component to be visible.
-		// Note, component being visible do not necessarily mean
-		// the preview images are visible.
-		await this.page
-			.locator( '.device-switcher__viewport' )
-			.getByRole( 'list' )
-			.getByRole( 'listitem' )
-			.last()
-			.waitFor( { timeout: 15 * 1000 } );
+		// The inserted component may not immediately be inserted into the preview,
+		// especially on slower connections or a weaker CPU.
+		// Wait for the last component to be visible by comparing the number of components
+		// in the preview pane.
+		while ( true ) {
+			const newCount = await this.getAssembledComponentsCount();
+
+			if ( newCount > initialCount ) {
+				break;
+			}
+		}
 	}
 
 	/**
