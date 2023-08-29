@@ -87,10 +87,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.multiple_per_user ?? false
 	);
 
-	const [ editedMarkAsDonation, setEditedMarkAsDonation ] = useState< string | null >(
-		product?.type ?? null
-	);
-
 	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
 		product?.buyer_can_change_amount ?? false
 	);
@@ -172,8 +168,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 	const handlePayWhatYouWant = ( newValue: boolean ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue: boolean ) => setEditedMultiplePerUser( newValue );
-	const handleMarkAsDonation = ( newValue: boolean ) =>
-		setEditedMarkAsDonation( true === newValue ? 'donation' : null );
 	const onNameChange = ( event: ChangeEvent< HTMLInputElement > ) =>
 		setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event: ChangeEvent< HTMLSelectElement > ) =>
@@ -184,9 +178,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	// break if they fall out of sync.
 	// https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/extensions/shared/components/product-management-controls/utils.js#L95
 	const defaultNames: DefaultNames = {
-		'false,1 month': translate( 'Monthly Subscription' ),
-		'true,1 month': translate( 'Monthly Donation' ),
-		'false,1 year': translate( 'Yearly Subscription' ),
+		'1 month': translate( 'Monthly Subscription' ),
+		'1 year': translate( 'Yearly Subscription' ),
+		'one-time': translate( 'Subscription' ),
 	};
 
 	useEffect( () => {
@@ -194,11 +188,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
 			return;
 		}
-		const name =
-			defaultNames[ `${ 'donation' === editedMarkAsDonation },${ editedSchedule }` ] ?? '';
+		const name = defaultNames[ `${ editedSchedule }` ] ?? '';
 
 		setEditedProductName( name );
-	}, [ editedMarkAsDonation, editedSchedule ] );
+	}, [ editedSchedule ] );
 
 	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
@@ -211,7 +204,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				multiple_per_user: editedMultiplePerUser,
 				welcome_email_content: editedCustomConfirmationMessage,
 				subscribe_as_site_subscriber: editedPostsEmail,
-				type: editedMarkAsDonation,
 				is_editable: true,
 			};
 			dispatch(
@@ -233,7 +225,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				multiple_per_user: editedMultiplePerUser,
 				welcome_email_content: editedCustomConfirmationMessage,
 				subscribe_as_site_subscriber: editedPostsEmail,
-				type: editedMarkAsDonation,
 				is_editable: true,
 			};
 			dispatch(
@@ -349,11 +340,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					</div>
 				</FormFieldset>
 				<FormFieldset className="memberships__dialog-sections-type">
-					<ToggleControl
-						onChange={ handleMarkAsDonation }
-						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Mark this plan as a donation' ) }
-					/>
 					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }

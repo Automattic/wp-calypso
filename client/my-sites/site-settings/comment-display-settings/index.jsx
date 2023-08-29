@@ -34,9 +34,7 @@ class CommentDisplaySettings extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="comments"
-					label={ translate(
-						'Let visitors use a WordPress.com, Twitter, Facebook, or Google account to comment.'
-					) }
+					label={ translate( 'Let visitors use a WordPress.com or Facebook account to comment.' ) }
 					disabled={ !! submittingForm }
 				/>
 				<div className="comment-display-settings__module-setting is-indented">

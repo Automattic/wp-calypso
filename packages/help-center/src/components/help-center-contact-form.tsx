@@ -306,7 +306,7 @@ export const HelpCenterContactForm = () => {
 					let initialChatMessage = message;
 					if ( gptResponse ) {
 						initialChatMessage += '<br /><br />';
-						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source }</strong>:<br />`;
+						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
 						initialChatMessage += gptResponse.response;
 					}
 					openChatWidget( initialChatMessage, supportSite.URL, () =>

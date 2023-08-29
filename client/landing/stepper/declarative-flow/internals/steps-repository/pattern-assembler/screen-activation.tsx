@@ -4,6 +4,7 @@ import { NavigatorHeader } from '@automattic/onboarding';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import './screen-activation.scss';
 
@@ -13,13 +14,14 @@ interface Props {
 
 const ScreenActivation = ( { onActivate }: Props ) => {
 	const translate = useTranslate();
+	const { title } = useScreen( 'activation' );
 	const [ isConfirmed, setIsConfirmed ] = useState( false );
 	const toggleConfirm = () => setIsConfirmed( ( value ) => ! value );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Activate this theme' ) } /> }
+				title={ <NavigatorTitle title={ title } /> }
 				description={ translate( 'Activating this theme will result in the following changes.' ) }
 				hideBack
 			/>

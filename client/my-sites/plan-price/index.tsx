@@ -231,10 +231,9 @@ function FlatPriceDisplay( {
 	className?: string;
 	isSmallestUnit?: boolean;
 } ) {
-	const { symbol: currencySymbol, symbolPosition } = getCurrencyObject(
-		smallerPrice,
-		currencyCode
-	);
+	const { symbol, symbolPosition } = getCurrencyObject( smallerPrice, currencyCode );
+	const currencySymbol = symbol.replace( /^US/, '' );
+
 	const translate = useTranslate();
 
 	if ( ! higherPrice ) {
@@ -305,15 +304,23 @@ function MultiPriceDisplay( {
 		smallerPrice,
 		currencyCode
 	);
+
+	// Sometimes the US currency symbol is displayed as `US$` instead of just `$`
+	// See: packages/format-currency/README.md (## geolocateCurrencySymbol()) for further details.
+	const hasUslocaleInSymbol = /^US\$$/.test( currencySymbol );
+
 	const translate = useTranslate();
 
 	return createElement(
 		tagName,
 		{ className },
 		<>
-			{ symbolPosition === 'before' ? (
-				<sup className="plan-price__currency-symbol">{ currencySymbol }</sup>
-			) : null }
+			{ symbolPosition === 'before' && (
+				<CurrencySymbolDisplay
+					currencySymbol={ currencySymbol }
+					hasUslocaleInSymbol={ hasUslocaleInSymbol }
+				/>
+			) }
 
 			{ ! higherPrice && (
 				<HtmlPriceDisplay
@@ -346,9 +353,12 @@ function MultiPriceDisplay( {
 					comment: 'The price range for a particular product',
 				} ) }
 
-			{ symbolPosition === 'after' ? (
-				<sup className="plan-price__currency-symbol">{ currencySymbol }</sup>
-			) : null }
+			{ symbolPosition === 'after' && (
+				<CurrencySymbolDisplay
+					currencySymbol={ currencySymbol }
+					hasUslocaleInSymbol={ hasUslocaleInSymbol }
+				/>
+			) }
 
 			{ taxText && (
 				<sup className="plan-price__tax-amount">
@@ -372,6 +382,23 @@ function MultiPriceDisplay( {
 				</Badge>
 			) }
 		</>
+	);
+}
+
+function CurrencySymbolDisplay( {
+	currencySymbol,
+	hasUslocaleInSymbol,
+}: {
+	currencySymbol: string;
+	hasUslocaleInSymbol: boolean;
+} ) {
+	return hasUslocaleInSymbol ? (
+		<>
+			<sup className="plan-price__symbol-locale">US</sup>
+			<sup className="plan-price__currency-symbol">$</sup>
+		</>
+	) : (
+		<sup className="plan-price__currency-symbol">{ currencySymbol }</sup>
 	);
 }
 
