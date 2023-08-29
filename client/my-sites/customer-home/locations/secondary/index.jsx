@@ -21,7 +21,7 @@ import {
 	LaunchpadIntentPaidNewsletter,
 } from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
-import LaunchpadPreLaunch from 'calypso/my-sites/customer-home/cards/launchpad/write';
+import LaunchpadPreLaunch from 'calypso/my-sites/customer-home/cards/launchpad/pre-launch';
 import LearnGrow from './learn-grow';
 
 const cardComponents = {
