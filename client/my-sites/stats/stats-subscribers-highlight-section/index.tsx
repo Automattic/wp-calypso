@@ -72,6 +72,7 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// Check if the site has any paid subscription products added.
+	// Intentionally not using `getProductsForSiteId` here because we want to show the loading state.
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Odyssey Stats doesn't support the membership API endpoint yet.
