@@ -266,15 +266,27 @@ const UniversalNavbarHeader = ( {
 															type="dropdown"
 															target="_self"
 														/>
-														{ isEnglishLocale && (
-															<ClickableItem
-																titleValue=""
-																content={ __( 'Popular Tags', __i18n_text_domain__ ) }
-																urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
-																type="dropdown"
-																target="_self"
-															/>
-														) }
+														<ClickableItem
+															titleValue=""
+															content={ __( 'Discover New Posts', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl( '//wordpress.com/discover/' ) }
+															type="dropdown"
+															target="_self"
+														/>
+														<ClickableItem
+															titleValue=""
+															content={ __( 'Popular Tags', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
+															type="dropdown"
+															target="_self"
+														/>
+														<ClickableItem
+															titleValue=""
+															content={ __( 'Blog Search', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
+															type="dropdown"
+															target="_self"
+														/>
 														<ClickableItem
 															titleValue=""
 															content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
@@ -571,14 +583,24 @@ const UniversalNavbarHeader = ( {
 												urlValue={ localizeUrl( '//wordpress.com/logo-maker/' ) }
 												type="menu"
 											/>
-											{ isEnglishLocale && (
-												<ClickableItem
-													titleValue=""
-													content={ __( 'Popular Tags', __i18n_text_domain__ ) }
-													urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
-													type="menu"
-												/>
-											) }
+											<ClickableItem
+												titleValue=""
+												content={ __( 'Discover New Posts', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/discover/' ) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue=""
+												content={ __( 'Popular Tags', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/tags/' ) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue=""
+												content={ __( 'Blog Search', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
+												type="menu"
+											/>
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Daily Webinars', __i18n_text_domain__ ) }

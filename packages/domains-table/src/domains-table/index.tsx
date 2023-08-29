@@ -12,12 +12,14 @@ import { BulkActionsToolbar } from '../bulk-actions-toolbar';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRow } from './domains-table-row';
 import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
@@ -32,6 +34,7 @@ export function DomainsTable( {
 	fetchSiteDomains,
 	fetchSite,
 	isAllSitesView,
+	domainStatusPurchaseActions,
 }: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
@@ -208,6 +211,7 @@ export function DomainsTable( {
 							fetchSiteDomains={ fetchSiteDomains }
 							fetchSite={ fetchSite }
 							isAllSitesView={ isAllSitesView }
+							domainStatusPurchaseActions={ domainStatusPurchaseActions }
 						/>
 					) ) }
 				</tbody>

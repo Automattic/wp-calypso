@@ -101,7 +101,7 @@ class GoogleSocialButton extends Component {
 	}
 
 	async loadGoogleIdentityServicesAPI() {
-		if ( ! window.google?.accounts?.oauth2 ) {
+		if ( ! window?.google?.accounts?.oauth2 ) {
 			try {
 				await loadScript( 'https://accounts.google.com/gsi/client' );
 			} catch {
@@ -110,7 +110,7 @@ class GoogleSocialButton extends Component {
 			}
 		}
 
-		return window.google.accounts.oauth2;
+		return window?.google?.accounts?.oauth2 ?? null;
 	}
 
 	async handleAuthorizationCode( { auth_code, redirect_uri } ) {
