@@ -44,6 +44,26 @@
 		flex-direction: column;
 		gap: 12px;
 		width: 328px;
+		position: relative;
+	}
+
+	.videopress-intent-item__coming-soon,
+	.videopress-intro-modal__coming-soon {
+		text-transform: uppercase;
+		background-color: #fff;
+		color: #000;
+		border-radius: 30px; /* stylelint-disable-line */
+		font-size: 12px; /* stylelint-disable-line */
+		font-weight: 600;
+		padding: 5px 12px;
+	}
+
+	.videopress-intent-item__coming-soon {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		font-size: 11px; /* stylelint-disable-line */
+		padding: 1px 8px;
 	}
 
 	.videopress-intent-item__description {
@@ -224,16 +244,6 @@
 			img {
 				max-width: 80%;
 			}
-		}
-
-		.videopress-intro-modal__coming-soon {
-			text-transform: uppercase;
-			background-color: #fff;
-			color: #000;
-			border-radius: 30px; /* stylelint-disable-line */
-			font-size: 12px; /* stylelint-disable-line */
-			font-weight: 600;
-			padding: 5px 12px;
 		}
 
 		.videopress-intro-modal__waitlist {
