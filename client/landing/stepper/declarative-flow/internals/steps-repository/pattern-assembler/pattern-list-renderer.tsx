@@ -100,14 +100,8 @@ const PatternListRenderer = ( {
 	onSelect,
 	isShowMorePatterns,
 }: PatternListRendererProps ) => {
-	const filterPriorityPatterns = ( pattern: Pattern ) => {
-		if ( isShowMorePatterns ) {
-			return pattern;
-		}
-		if ( isPriorityPattern( pattern ) ) {
-			return pattern;
-		}
-	};
+	const filterPriorityPatterns = ( pattern: Pattern ) =>
+		isShowMorePatterns || isPriorityPattern( pattern );
 
 	return (
 		<>
