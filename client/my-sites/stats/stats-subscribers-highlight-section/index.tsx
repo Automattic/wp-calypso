@@ -75,8 +75,9 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 		( state ) => state.memberships?.productList?.items[ siteId as number ]
 	);
 	// Check if the site has any paid subscription products added.
-	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
-	const isPaidSubscriptionProductsLoading = ! products;
+	// Odyssey Stats doesn't support the membership API endpoint yet.
+	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
+	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
 
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
