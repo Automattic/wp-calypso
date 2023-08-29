@@ -23,7 +23,7 @@ type RelatedPluginProps = {
 	};
 };
 
-function RelatedPlugins( { slug, size = 4, seeAllLink, options }: RelatedPluginProps ) {
+export function RelatedPlugins( { slug, size = 4, seeAllLink, options }: RelatedPluginProps ) {
 	const translate = useTranslate();
 	const { data: relatedPlugins } = useGetRelatedPlugins( slug, size, { ...options } );
 
@@ -75,12 +75,15 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 
 							if ( price ) {
 								return (
-									<PreinstalledPremiumPluginPriceDisplay
-										className="related-plugins-item__price-interval"
-										period={ period }
-										pluginSlug={ plugin.slug }
-										price={ price }
-									/>
+									<>
+										<>From </>
+										<PreinstalledPremiumPluginPriceDisplay
+											className="related-plugins-item__price-interval"
+											period={ period }
+											pluginSlug={ plugin.slug }
+											price={ price }
+										/>
+									</>
 								);
 							}
 
@@ -97,5 +100,3 @@ function RelatedPluginCard( { plugin }: { plugin: RelatedPlugin } ): JSX.Element
 		</a>
 	);
 }
-
-export default RelatedPlugins;

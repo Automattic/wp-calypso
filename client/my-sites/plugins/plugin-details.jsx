@@ -27,7 +27,7 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
-import RelatedPlugins from 'calypso/my-sites/plugins/related-plugins';
+import { RelatedPlugins } from 'calypso/my-sites/plugins/related-plugins';
 import {
 	siteObjectsToSiteIds,
 	useLocalizedPlugins,
@@ -354,7 +354,7 @@ function PluginDetails( props ) {
 										status="is-warning"
 										showDismiss={ false }
 									>
-										<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+										<NoticeAction href="/support/incompatible-plugins/">
 											{ translate( 'More info' ) }
 										</NoticeAction>
 									</Notice>
