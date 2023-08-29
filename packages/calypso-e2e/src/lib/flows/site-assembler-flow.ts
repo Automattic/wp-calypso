@@ -84,7 +84,7 @@ export class SiteAssemblerFlow {
 		await this.page
 			.locator( '.device-switcher__viewport' )
 			.getByRole( 'listitem', { name: name } )
-			.waitFor( { state: 'visible', timeout: 25 * 1000 } );
+			.waitFor( { state: 'attached', timeout: 15 * 1000 } );
 	}
 
 	/**
