@@ -22,6 +22,13 @@ export function getDiscoverStreamTags( tags, isLoggedIn ) {
 	return tags;
 }
 
+export function getSelectedTabTitle( selectedTab ) {
+	if ( selectedTab === DEFAULT_TAB || selectedTab === LATEST_TAB ) {
+		return '';
+	}
+	return selectedTab;
+}
+
 /**
  * Builds a stream key for the discover feed based on the selectedTab and tags for recommended feed.
  *

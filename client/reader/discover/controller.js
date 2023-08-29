@@ -10,6 +10,7 @@ import {
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import renderHeaderSection from '../lib/header-section';
+import { getSelectedTabTitle } from './helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -26,10 +27,16 @@ const exported = {
 		if ( ! isUserLoggedIn( context.store.getState() ) ) {
 			context.renderHeaderSection = renderHeaderSection;
 		}
+		const selectedTab = context.query.selectedTab;
+		const tabTitle = getSelectedTabTitle( selectedTab );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
-				<DocumentHead title={ translate( 'Browse Popular Blogs & Read Articles ‹ Reader' ) } />
+				<DocumentHead title={ translate( 'Browse Popular %s Blogs & Read Articles ‹ Reader', {
+					args: [ tabTitle ],
+					comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+				} ) } />
 				<AsyncLoad
 					require="calypso/reader/discover/discover-stream"
 					key="discover-page"
@@ -48,6 +55,8 @@ const exported = {
 					useCompactCards={ true }
 					showBack={ false }
 					className="is-discover-stream"
+					selectedTab={ selectedTab }
+
 				/>
 			</>
 		);
