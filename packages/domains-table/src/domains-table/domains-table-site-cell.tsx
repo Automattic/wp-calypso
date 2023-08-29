@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import {
 	domainManagementTransferToOtherSiteLink,
 	domainOnlySiteCreationLink,
-} from '../domain-routes';
+} from '../utils/paths';
 import { ResponseDomain } from '../utils/types';
 
 interface DomainsTableSiteCellProps {
