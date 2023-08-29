@@ -1,4 +1,5 @@
 import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 
 import './style.scss';
@@ -8,20 +9,28 @@ interface Props {
 	specifiedLogs: string[];
 }
 
-function capitalizeFirstLetter( str: string ) {
-	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
-}
-
 function replaceKey( key: string ) {
 	if ( key === 'http_referer' ) {
-		return 'Referrer';
+		return __( 'Referrer' );
 	} else if ( key === 'body_bytes_sent' ) {
-		return 'Body bytes sent';
+		return __( 'Body bytes sent' );
 	} else if ( key === 'http_host' ) {
-		return 'HTTP host';
+		return __( 'HTTP host' );
+	} else if ( key === 'timestamp' ) {
+		return __( 'Timestamp' );
+	} else if ( key === 'cached' ) {
+		return __( 'Cached' );
+	} else if ( key === 'message' ) {
+		return __( 'Message' );
+	} else if ( key === 'kind' ) {
+		return __( 'Kind' );
+	} else if ( key === 'name' ) {
+		return __( 'Name' );
+	} else if ( key === 'file' ) {
+		return __( 'File' );
+	} else if ( key === 'line' ) {
+		return __( 'Line' );
 	}
-
-	return capitalizeFirstLetter( key );
 }
 
 export default function SiteLogsExpandedContent( { log, specifiedLogs }: Props ) {
