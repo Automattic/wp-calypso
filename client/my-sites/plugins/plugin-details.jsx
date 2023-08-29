@@ -368,7 +368,7 @@ function PluginDetails( props ) {
 								{ ! isMaintained && (
 									<Notice showDismiss={ false } status="is-warning">
 										{ translate(
-											'This plugin seems outdated and not maintaianed anymore. We advise that you {{a}}search{{/a}} for another similar plugin.',
+											'This plugin seems outdated and not maintained anymore. We advise that you {{a}}search{{/a}} for another similar plugin.',
 											{
 												components: {
 													a: <a href={ `/plugins/${ selectedSite?.slug ?? '' }` } />,
