@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { memo, useMemo } from 'react';
@@ -21,11 +22,20 @@ interface SiteLogsTableProps {
 
 export function formatColumnName( column: string ) {
 	if ( column === 'request_type' ) {
-		return 'Request type';
+		return __( 'Request type' );
 	} else if ( column === 'request_url' ) {
-		return 'Request URL';
+		return __( 'Request URL' );
+	} else if ( column === 'date' ) {
+		return __( 'Date' );
+	} else if ( column === 'status' ) {
+		return __( 'Status' );
+	} else if ( column === 'severity' ) {
+		return 'Severity';
+	} else if ( column === 'timestamp' ) {
+		return __( 'Timestamp' );
+	} else if ( column === 'message' ) {
+		return __( 'Message' );
 	}
-	return column.charAt( 0 ).toUpperCase() + column.slice( 1 );
 }
 
 export const SiteLogsTable = memo( function SiteLogsTable( {
