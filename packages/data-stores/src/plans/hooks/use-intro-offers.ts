@@ -41,7 +41,7 @@ const useIntroOffers = ( {
 
 	const planObjects = Object.values( sitePlans.data ?? {} );
 
-	// can momoize this if needed
+	// can memoize this if needed
 	const introOffers = planSlugs.reduce( ( acc, planSlug ) => {
 		const planObject = planObjects.find( ( plan ) => plan?.product_slug === planSlug );
 
