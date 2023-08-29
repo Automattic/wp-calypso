@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { Icon, arrowRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import '../intro/videopress-intro-modal-styles.scss';
@@ -117,9 +118,17 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 							{ translate( 'Answer a short survey and you’ll have the chance to win $50.' ) }
 						</div>
 					</div>
-					<Button className="intro__button button-survey" primary>
-						{ translate( 'Answer the survey ->' ) }
-					</Button>
+					<div className="videopress-intro-modal__survey-button-wrapper">
+						<Button
+							className="intro__button button-survey"
+							href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
+							target="_blank"
+							plain
+						>
+							{ translate( 'Answer the survey' ) }
+							<Icon icon={ arrowRight } />
+						</Button>
+					</div>
 				</div>
 			) }
 		</div>
