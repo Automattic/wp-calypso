@@ -32,19 +32,23 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 	const {
 		title,
 		subTitle,
+		primaryCtaName,
 		primaryCtaText,
 		primaryCtaLink,
+		secondaryCtaName,
 		secondaryCtaText,
 		secondaryCtaLink,
-		dashboardText,
-		dashboardLink,
+		dashboardCtaName,
+		dashboardCtaText,
+		dashboardCtaLink,
 	} = useCelebrationData( {
 		flow,
 		siteSlug,
 		isFirstPostPublished: checklistStatuses?.first_post_published,
 	} );
 
-	const handleSubmit = ( destinationUrl: string ) => submit?.( { destinationUrl } );
+	const handleSubmit = ( destinationName: string, destinationUrl: string ) =>
+		submit?.( { destinationName, destinationUrl } );
 
 	if ( ! site ) {
 		return null;
@@ -78,13 +82,13 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 								<Button
 									className="celebration-step__top-content-cta-primary"
 									primary
-									onClick={ () => handleSubmit( primaryCtaLink ) }
+									onClick={ () => handleSubmit( primaryCtaName, primaryCtaLink ) }
 								>
 									{ primaryCtaText }
 								</Button>
 								<Button
 									className="celebration-step__top-content-cta-secondary"
-									onClick={ () => handleSubmit( secondaryCtaLink ) }
+									onClick={ () => handleSubmit( secondaryCtaName, secondaryCtaLink ) }
 								>
 									{ secondaryCtaText }
 								</Button>
@@ -96,10 +100,10 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 								className="celebration-step__footer-link"
 								transparent
 								borderless
-								href={ dashboardLink }
-								onClick={ () => handleSubmit( dashboardLink ) }
+								href={ dashboardCtaLink }
+								onClick={ () => handleSubmit( dashboardCtaName, dashboardCtaLink ) }
 							>
-								{ dashboardText }
+								{ dashboardCtaText }
 							</Button>
 						</footer>
 					</>

@@ -7,8 +7,14 @@ interface Props {
 	isFirstPostPublished?: boolean;
 }
 
-const useTranslations = ( { flow, siteSlug = '', isFirstPostPublished = false }: Props ) => {
+const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false }: Props ) => {
 	const translate = useTranslate();
+	const isStartWritingFlowOrFirstPostPublished = isStartWritingFlow( flow ) || isFirstPostPublished;
+	const defaultCelebrationData = {
+		dashboardCtaName: 'Go to dashboard',
+		dashboardCtaText: translate( 'Go to dashboard' ),
+		dashboardCtaLink: `/home/${ siteSlug }`,
+	};
 
 	if ( isSiteAssemblerFlow( flow ) ) {
 		const siteEditorParams = new URLSearchParams( {
@@ -17,36 +23,37 @@ const useTranslations = ( { flow, siteSlug = '', isFirstPostPublished = false }:
 		} );
 
 		return {
+			...defaultCelebrationData,
 			title: translate( 'Your site’s ready!' ),
 			subTitle: translate( 'Now it’s time to edit your content' ),
+			primaryCtaName: 'Edit your content',
 			primaryCtaText: translate( 'Edit your content' ),
 			primaryCtaLink: `/site-editor/${ siteSlug }?${ siteEditorParams }`,
+			secondaryCtaName: 'Visit your site',
 			secondaryCtaText: translate( 'Visit your site' ),
 			secondaryCtaLink: `https://${ siteSlug }`,
-			dashboardText: translate( 'Go to dashboard' ),
-			dashboardLink: `/home/${ siteSlug }`,
 		};
 	}
 
 	return {
+		...defaultCelebrationData,
 		title: translate( 'Your blog’s ready!' ),
-		subTitle:
-			isStartWritingFlow( flow ) || isFirstPostPublished
-				? translate( 'Now it’s time to connect your social accounts.' )
-				: translate( 'Now it’s time to start posting.' ),
-		primaryCtaText:
-			isStartWritingFlow( flow ) || isFirstPostPublished
-				? translate( 'Connect to social' )
-				: translate( 'Write your first post' ),
-		primaryCtaLink:
-			isStartWritingFlow( flow ) || isFirstPostPublished
-				? `/marketing/connections/${ siteSlug }`
-				: `/post/${ siteSlug }`,
+		subTitle: isStartWritingFlowOrFirstPostPublished
+			? translate( 'Now it’s time to connect your social accounts.' )
+			: translate( 'Now it’s time to start posting.' ),
+		primaryCtaName: isStartWritingFlowOrFirstPostPublished
+			? 'Connect to social'
+			: 'Write your first post',
+		primaryCtaText: isStartWritingFlowOrFirstPostPublished
+			? translate( 'Connect to social' )
+			: translate( 'Write your first post' ),
+		primaryCtaLink: isStartWritingFlowOrFirstPostPublished
+			? `/marketing/connections/${ siteSlug }`
+			: `/post/${ siteSlug }`,
+		secondaryCtaName: 'Visit your blog',
 		secondaryCtaText: translate( 'Visit your blog' ),
 		secondaryCtaLink: `https://${ siteSlug }`,
-		dashboardText: translate( 'Go to dashboard' ),
-		dashboardLink: `/home/${ siteSlug }`,
 	};
 };
 
-export default useTranslations;
+export default useCelebrationData;
