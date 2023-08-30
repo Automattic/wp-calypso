@@ -401,9 +401,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 					<FormattedHeader
 						headerText={ translate( 'Confirm removal' ) }
 						subHeaderText={
-							/* Translators: %(percentDiscount)d%% should be a percentage like 15% or 20% */
+							/* Translators: productName is the name of a Jetpack product. */
 							translate(
-								'We’re sorry to see you go. Click Remove subscription to confirm and remove %(productName)s from your account.',
+								'We’re sorry to see you go. Click "Remove subscription" to confirm and remove %(productName)s from your account.',
 								{
 									args: {
 										productName,
@@ -414,7 +414,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 						align="center"
 						isSecondary={ true }
 					/>
-					<p></p>
 				</>
 			);
 		}
