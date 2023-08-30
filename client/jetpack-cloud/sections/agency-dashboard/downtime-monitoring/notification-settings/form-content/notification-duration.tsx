@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import { availableNotificationDurations as durations } from '../../../sites-overview/utils';
+import useNotificationDurations from '../../../sites-overview/hooks/use-notification-durations';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
 import UpgradeLink from '../../upgrade-link';
 import type { MonitorDuration } from '../../../sites-overview/types';
@@ -26,9 +26,10 @@ export default function NotificationDuration( {
 
 	const showPaidDuration = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
+	const durations = useNotificationDurations();
 	const selectableDuration = useMemo(
 		() => ( showPaidDuration ? durations : durations.filter( ( duration ) => ! duration.isPaid ) ),
-		[ showPaidDuration ]
+		[ durations, showPaidDuration ]
 	);
 
 	return (

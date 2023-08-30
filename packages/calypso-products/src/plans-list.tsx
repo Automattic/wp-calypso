@@ -421,6 +421,7 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 	TERM_CENTENNIALLY,
+	FEATURE_STATS_PAID,
 } from './constants';
 import type {
 	BillingTerm,
@@ -758,30 +759,17 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Add a custom domain name, go ad-free, and unlock powerful design tools.' )
-			: i18n.translate( 'Create your home on the web with a custom domain name.' ),
-	getNewsletterTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Add a custom domain name, go ad-free, and unlock powerful design tools.' )
-			: i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
-	getLinkInBioTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Make a great first impression with a custom domain name and powerful design tools.'
-			  )
-			: i18n.translate(
-					'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
-			  ),
-	getBlogOnboardingTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Take the next step with a custom domain name, ad-free site, and powerful design tools.'
-			  )
-			: i18n.translate(
-					'Take the next step with gated content, paid subscribers, and an ad-free site.'
-			  ),
+	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate(
+			'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
+		),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate(
+			'Take the next step with gated content, paid subscribers, and an ad-free site.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -830,12 +818,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
-	get2023PricingGridSignupWpcomFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	get2023PricingGridSignupStorageOptions: () => {
@@ -851,10 +838,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
 		),
-	getNewsletterSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
@@ -868,18 +854,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
 		),
-	getLinkInBioSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 		FEATURE_PAID_SUBSCRIBERS_JP,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
-	getBlogOnboardingSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getBlogOnboardingSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
@@ -1302,32 +1286,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Make it even more unique with premium themes and layouts.' )
-			: i18n.translate( 'Build a unique website with powerful design tools.' ),
-	getNewsletterTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Set your Newsletter apart with premium themes and layouts.' )
-			: i18n.translate(
-					'Make it even more memorable with premium designs and style customization.'
-			  ),
-	getLinkInBioTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Take personalization to the next level with a range of premium themes and layouts.'
-			  )
-			: i18n.translate(
-					'Make a great first impression with premium designs and style customization.'
-			  ),
-	getBlogOnboardingTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Get more out of your blog with 4K video, extra storage, and premium designs.'
-			  )
-			: i18n.translate(
-					'Make it even more memorable with premium designs, 4K video, and style customization.'
-			  ),
+	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate( 'Make a great first impression with premium designs and style customization.' ),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate(
+			'Make it even more memorable with premium designs, 4K video, and style customization.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1377,10 +1344,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
-	getNewsletterSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_VIDEOPRESS_JP,
@@ -1398,20 +1365,20 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Take your site further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
-	getLinkInBioSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_WORDADS,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
-	getBlogOnboardingSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getBlogOnboardingSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PREMIUM_THEMES_V2,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_WORDADS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
@@ -1446,12 +1413,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
@@ -2322,6 +2289,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			WPCOM_FEATURES_SCAN,
 			WPCOM_FEATURES_ANTISPAM,
 			WPCOM_FEATURES_BACKUPS,
+			FEATURE_STATS_PAID,
 		] ),
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,

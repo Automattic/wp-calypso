@@ -113,7 +113,12 @@ export class StatsPage {
 		// Wait for the charts to load first, even if no activity is present.
 		// CSS selector has to be used here because there is no a11y selector
 		// for this element.
-		await this.page.locator( selectors.graph ).waitFor();
+		// A loop is used here because multiple locators can match the CSS locator
+		// and to be safe, it's best to wait for all placeholders to be detached.
+		const locators = await this.page.locator( '.is-loading' ).all();
+		for ( const locator of locators ) {
+			await locator.waitFor( { state: 'detached' } );
+		}
 
 		// CSS selector is used to narrow down to the Stats Activity tab for
 		// similar reason to above.

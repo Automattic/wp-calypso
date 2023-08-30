@@ -9,9 +9,9 @@ import useDateOffsetForSite from 'calypso/lib/jetpack/hooks/use-date-offset-for-
 import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { DASHBOARD_LICENSE_TYPES, getExtractedBackupTitle } from '../utils';
 import ExpandedCard from './expanded-card';
-import useDashboardAddRemoveLicense from './use-dashboard-add-remove-license';
+import useDashboardAddRemoveLicense from './hooks/use-dashboard-add-remove-license';
+import useExtractedBackupTitle from './hooks/use-extracted-backup-title';
 import type { Site, Backup } from '../types';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { Moment } from 'moment';
@@ -68,6 +68,7 @@ const BackupStorageContent = ( {
 		backup?.activityName.startsWith( 'plugin__' ) && backup.activityDescription[ 0 ]?.children[ 0 ];
 
 	const showLoader = isLoading || ! backup;
+	const extractedBackupTitle = useExtractedBackupTitle( backup );
 
 	return (
 		<div className="site-expanded-content__card-content-container">
@@ -81,7 +82,7 @@ const BackupStorageContent = ( {
 							<TextPlaceholder />
 						) : (
 							<>
-								{ getExtractedBackupTitle( backup ) }
+								{ extractedBackupTitle }
 								{ pluginName ? ` - ${ pluginName }` : '' }
 							</>
 						) }
@@ -126,7 +127,7 @@ export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 
 	const { isLicenseSelected, handleAddLicenseAction } = useDashboardAddRemoveLicense(
 		siteId,
-		DASHBOARD_LICENSE_TYPES.BACKUP
+		'backup'
 	);
 
 	const addBackupText = isLicenseSelected ? (

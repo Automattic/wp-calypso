@@ -19,6 +19,7 @@ import {
 	EditorPopoverMenuComponent,
 	TemplateCategory,
 	BlockToolbarButtonIdentifier,
+	CookieBannerComponent,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
@@ -60,6 +61,7 @@ export class EditorPage {
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorTemplateModalComponent: EditorTemplateModalComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
+	private cookieBannerComponent: CookieBannerComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -89,6 +91,7 @@ export class EditorPage {
 		);
 		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
+		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -99,8 +102,13 @@ export class EditorPage {
 	 * Example "new post": {@link https://wordpress.com/post}
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
-	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( type ), { timeout: 30 * 1000 } );
+	async visit(
+		type: 'post' | 'page' = 'post',
+		{ siteSlug = '' }: { siteSlug?: string } = {}
+	): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
+			timeout: 30 * 1000,
+		} );
 		await this.waitUntilLoaded();
 
 		return request;
@@ -120,6 +128,9 @@ export class EditorPage {
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+
+		// Accept the Cookie banner.
+		await this.cookieBannerComponent.acceptCookie();
 	}
 
 	/**
