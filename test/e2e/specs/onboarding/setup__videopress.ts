@@ -39,19 +39,7 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 		} );
 
 		it( 'Click Get Started', async function () {
-			const btnGetStarted = await page.$( 'text=Get started' );
-
-			// if Get Started is present, its the normal flow, otherwise its the User Intent flow
-			// -- if user intent, lets get on track to the normal flow
-			if ( null !== btnGetStarted ) {
-				await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
-			} else {
-				await Promise.all( [
-					page.waitForNavigation(),
-					page.click( 'img[alt="Get a video portfolio"]' ),
-					page.click( 'button.intro__button' ),
-				] );
-			}
+			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
 		} );
 
 		it( 'Navigate VideoMaker Setup', async function () {
