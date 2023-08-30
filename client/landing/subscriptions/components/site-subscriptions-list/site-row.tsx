@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { isValidId } from '@automattic/data-stores/src/reader';
@@ -150,6 +151,13 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
+			if (
+				config.isEnabled( 'reader/individual-subscription-page' ) &&
+				Reader.isValidId( blog_id )
+			) {
+				return `/read/subscriptions/site/${ blog_id }`;
+			}
+
 			return `/read/feeds/${ feed_id }`;
 		}
 
