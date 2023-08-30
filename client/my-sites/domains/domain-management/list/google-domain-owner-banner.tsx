@@ -27,6 +27,7 @@ const GoogleDomainOwnerBanner = () => {
 				tracksClickName="calypso_google_domain_owner_click"
 				tracksImpressionName="calypso_google_domain_owner_impression"
 				compactButton={ false }
+				target="_blank"
 			/>
 		)
 	);
