@@ -32,7 +32,7 @@ class UpworkBanner extends PureComponent {
 				className="upwork-banner__troubleshooting"
 				showIcon
 				onClick={ () => window.open( builtByWpUrl, '_blank' ) }
-				callToAction={ translate( 'Find your expert' ) }
+				callToAction={ translate( 'Let’s get started' ) }
 				dismissPreferenceName="upwork-dismissible-banner"
 				tracksClickName="calypso_upwork_banner_start_now_button_click"
 				tracksClickProperties={ { location, plan } }
@@ -40,9 +40,9 @@ class UpworkBanner extends PureComponent {
 				tracksDismissName="calypso_upwork_banner_dismiss_icon_click"
 				tracksDismissProperties={ { location, plan } }
 				href="#"
-				title={ translate( 'Let our WordPress.com experts build your site!' ) }
+				title={ translate( 'Let us launch your dream site' ) }
 				description={ translate(
-					'You want the website of your dreams. Our experts can create it for you.'
+					'Our professional website-building service can create the site of your dreams, no matter the scope of your project.'
 				) }
 			/>
 		);
