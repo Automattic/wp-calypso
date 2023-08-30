@@ -2,7 +2,7 @@ import { isJetpackProduct, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -136,7 +136,7 @@ const JetpackCheckoutSidebarPlanUpsell: FC = () => {
 			__( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ),
 			{ percentSavings }
 		),
-		{ strong: createElement( 'strong' ) }
+		{ strong: <strong /> }
 	);
 
 	return (
