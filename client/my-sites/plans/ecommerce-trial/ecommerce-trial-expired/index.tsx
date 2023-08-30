@@ -2,7 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import page from 'page';
+import React, { useCallback, useMemo, useState } from 'react';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
@@ -54,6 +55,21 @@ const ECommerceTrialExpired = (): JSX.Element => {
 		siteIsAtomic && selectedSite?.URL
 			? `${ selectedSite.URL }/wp-admin/export.php`
 			: `/export/${ siteSlug }`;
+	const settingsDeleteSiteUrl = `/settings/delete-site/${ siteSlug }`;
+
+	const onDeleteClick = useCallback(
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
+			e.preventDefault();
+
+			recordTracksEvent( 'calypso_plan_trial_expired_page_delete_site', {
+				site_id: siteId,
+				site_slug: siteSlug,
+				trial_type: 'ecommerce',
+			} );
+			page.redirect( settingsDeleteSiteUrl );
+		},
+		[ page, recordTracksEvent, settingsDeleteSiteUrl ]
+	);
 
 	return (
 		<>
@@ -101,7 +117,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 						<Gridicon icon="cloud-download" />
 						<span>{ translate( 'Export your content' ) }</span>
 					</Button>
-					<Button href={ `/settings/delete-site/${ siteSlug }` } scary>
+					<Button href={ settingsDeleteSiteUrl } onClick={ onDeleteClick } scary>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Delete your site permanently' ) }</span>
 					</Button>
