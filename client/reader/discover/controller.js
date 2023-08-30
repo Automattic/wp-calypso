@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
@@ -28,8 +29,7 @@ const exported = {
 			context.renderHeaderSection = renderHeaderSection;
 		}
 		const selectedTab = context.query.selectedTab;
-		const tabTitle = getSelectedTabTitle( selectedTab );
-
+		const tabTitle = titlecase( getSelectedTabTitle( selectedTab ) );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
