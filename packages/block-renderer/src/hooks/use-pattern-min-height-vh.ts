@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 const usePatternMinHeightVh = ( html = '' ) => {
 	return useMemo( () => {
-		const minHeightVhResults = html.match( /min-height:(\d+)vh/ );
+		const minHeightVhResults = html.match( /min-height:(\d+)vh;?/ );
 		const minHeightVhDeclaration = minHeightVhResults?.[ 0 ];
 		const minHeightVhValue = minHeightVhResults?.[ 1 ];
 
