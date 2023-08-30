@@ -9,6 +9,7 @@ const GoogleDomainOwnerBanner = () => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const currentUser = useSelector( getCurrentUser );
+	const targetUrl = localizeUrl( 'https://wordpress.com/transfer-google-domains/' );
 
 	return (
 		currentUser?.is_google_domain_owner && (
@@ -22,7 +23,7 @@ const GoogleDomainOwnerBanner = () => {
 				disableCircle
 				event="learn-more"
 				iconPath={ globe }
-				href={ localizeUrl( 'https://wordpress.com/transfer-google-domains/' ) }
+				href={ targetUrl }
 				tracksClickName="calypso_google_domain_owner_click"
 				tracksImpressionName="calypso_google_domain_owner_impression"
 				compactButton={ false }

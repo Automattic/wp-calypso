@@ -455,6 +455,9 @@ class PostCommentList extends Component {
 
 	scrollToComment = () => {
 		const comment = window.document.getElementById( window.location.hash.substring( 1 ) );
+		if ( ! comment ) {
+			return;
+		}
 		comment.scrollIntoView();
 		window.scrollBy( 0, -50 );
 		this.hasScrolledToComment = true;
