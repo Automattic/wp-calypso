@@ -115,8 +115,8 @@ describe( 'The celebration step', () => {
 			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Now it’s time to start posting.' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Write your first post' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Write your first post' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders correct content and CTAs when first post is published', () => {
@@ -129,8 +129,8 @@ describe( 'The celebration step', () => {
 				screen.getByText( 'Now it’s time to connect your social accounts.' )
 			).toBeInTheDocument();
 
-			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Connect to social' } ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -146,8 +146,8 @@ describe( 'The celebration step', () => {
 				screen.getByText( 'Now it’s time to connect your social accounts.' )
 			).toBeInTheDocument();
 
-			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Connect to social' } ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -160,8 +160,8 @@ describe( 'The celebration step', () => {
 			expect( screen.getByText( 'Your site’s ready!' ) ).toBeInTheDocument();
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Now it’s time to edit your content' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Visit your site' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Edit your content' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Visit your site' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Edit your content' } ) ).toBeInTheDocument();
 		} );
 	} );
 } );
