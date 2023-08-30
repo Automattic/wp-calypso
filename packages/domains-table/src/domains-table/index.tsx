@@ -6,18 +6,22 @@ import {
 	getSiteDomainsQueryObject,
 	useDomainsBulkActionsMutation,
 } from '@automattic/data-stores';
+import { useFuzzySearch } from '@automattic/search';
 import { useQueries } from '@tanstack/react-query';
 import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
 import { BulkActionsToolbar } from '../bulk-actions-toolbar';
+import { DomainsTableFilters, DomainsTableFilter } from '../domains-table-filters';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRow } from './domains-table-row';
 import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
@@ -32,6 +36,7 @@ export function DomainsTable( {
 	fetchSiteDomains,
 	fetchSite,
 	isAllSitesView,
+	domainStatusPurchaseActions,
 }: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
@@ -42,6 +47,7 @@ export function DomainsTable( {
 	} );
 
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
+	const [ filter, setFilter ] = useState< DomainsTableFilter >( () => ( { query: '' } ) );
 
 	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
 	const allSiteDomains = useQueries( {
@@ -111,6 +117,15 @@ export function DomainsTable( {
 		} );
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
 
+	const filteredData = useFuzzySearch( {
+		data: sortedDomains ?? [],
+		keys: [ 'domain' ],
+		query: filter.query,
+		options: {
+			threshold: 0.3,
+		},
+	} );
+
 	const handleSelectDomain = useCallback(
 		( domain: PartialDomainData ) => {
 			const domainId = getDomainId( domain );
@@ -165,6 +180,16 @@ export function DomainsTable( {
 	};
 
 	const changeBulkSelection = () => {
+		if ( filter.query ) {
+			if ( ! hasSelectedDomains ) {
+				setSelectedDomains( new Set( filteredData.map( getDomainId ) ) );
+			} else {
+				setSelectedDomains( new Set() );
+			}
+
+			return;
+		}
+
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
 			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
 		} else {
@@ -181,14 +206,18 @@ export function DomainsTable( {
 
 	return (
 		<div className="domains-table">
-			{ hasSelectedDomains && (
+			{ hasSelectedDomains ? (
 				<BulkActionsToolbar
 					onAutoRenew={ handlAutoRenew }
 					selectedDomainCount={ selectedDomains.size }
 				/>
+			) : (
+				<DomainsTableFilters
+					onSearch={ ( query ) => setFilter( ( filter ) => ( { ...filter, query } ) ) }
+					filter={ filter }
+				/>
 			) }
-			{ /* This spacer will be replaced by searching and filtering controls. In the meantime it stops the table jumping around when selecting domains. */ }
-			{ ! hasSelectedDomains && <div style={ { height: 40 } } /> }
+
 			<table>
 				<DomainsTableHeader
 					columns={ domainsTableColumns }
@@ -199,7 +228,7 @@ export function DomainsTable( {
 					onChangeSortOrder={ onSortChange }
 				/>
 				<tbody>
-					{ sortedDomains?.map( ( domain ) => (
+					{ filteredData.map( ( domain ) => (
 						<DomainsTableRow
 							key={ getDomainId( domain ) }
 							domain={ domain }
@@ -208,6 +237,7 @@ export function DomainsTable( {
 							fetchSiteDomains={ fetchSiteDomains }
 							fetchSite={ fetchSite }
 							isAllSitesView={ isAllSitesView }
+							domainStatusPurchaseActions={ domainStatusPurchaseActions }
 						/>
 					) ) }
 				</tbody>

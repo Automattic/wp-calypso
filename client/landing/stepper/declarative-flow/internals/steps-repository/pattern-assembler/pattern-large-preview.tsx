@@ -75,6 +75,7 @@ const PatternLargePreview = ( {
 		return (
 			<li
 				key={ key }
+				aria-label={ pattern.title }
 				className={ classnames(
 					'pattern-large-preview__pattern',
 					`pattern-large-preview__pattern-${ type }`

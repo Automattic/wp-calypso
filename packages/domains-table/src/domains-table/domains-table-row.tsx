@@ -6,8 +6,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { createSiteDomainObject } from '../utils/assembler';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
+import { DomainsTableStatusCell } from './domains-table-status-cell';
 import type {
 	PartialDomainData,
 	SiteDomainsQueryFnData,
@@ -19,6 +22,7 @@ interface DomainsTableRowProps {
 	isAllSitesView: boolean;
 	isSelected: boolean;
 	onSelect( domain: PartialDomainData ): void;
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -33,6 +37,7 @@ export function DomainsTableRow( {
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
+	domainStatusPurchaseActions,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -42,15 +47,16 @@ export function DomainsTableRow( {
 		{
 			enabled: inView,
 			...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
+			select: ( state ) => state.domains.map( createSiteDomainObject ),
 		}
 	);
 
 	const currentDomainData = useMemo( () => {
-		return allSiteDomains?.domains.find( ( d ) => d.domain === domain.domain );
+		return allSiteDomains?.find( ( d ) => d.name === domain.domain );
 	}, [ allSiteDomains, domain.domain ] );
 
 	const isPrimaryDomain = useMemo(
-		() => allSiteDomains?.domains?.find( ( d ) => d.primary_domain )?.domain === domain.domain,
+		() => allSiteDomains?.find( ( d ) => d.isPrimary )?.name === domain.domain,
 		[ allSiteDomains, domain.domain ]
 	);
 
@@ -119,7 +125,17 @@ export function DomainsTableRow( {
 					/>
 				) }
 			</td>
-			<td></td>
+			<td>
+				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+				) : (
+					<DomainsTableStatusCell
+						siteSlug={ siteSlug }
+						currentDomainData={ currentDomainData }
+						domainStatusPurchaseActions={ domainStatusPurchaseActions }
+					/>
+				) }
+			</td>
 			<td>
 				<DomainsTableRegisteredUntilCell domain={ domain } />
 			</td>

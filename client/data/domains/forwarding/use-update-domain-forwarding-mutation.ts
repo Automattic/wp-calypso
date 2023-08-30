@@ -5,6 +5,8 @@ import wp from 'calypso/lib/wp';
 import { domainForwardingQueryKey } from './domain-forwarding-query-key';
 
 export type DomainForwardingUpdate = {
+	domain_redirect_id: number;
+	subdomain: string;
 	targetHost: string;
 	targetPath: string;
 	forwardPaths: boolean;
@@ -25,7 +27,9 @@ export default function useUpdateDomainForwardingMutation(
 	const mutation = useMutation( {
 		mutationFn: ( forwarding: DomainForwardingUpdate ) =>
 			wp.req.post( `/sites/all/domain/${ domainName }/redirects`, {
+				domain_redirect_id: forwarding.domain_redirect_id,
 				domain: domainName,
+				subdomain: forwarding.subdomain,
 				target_host: forwarding.targetHost,
 				target_path: forwarding.targetPath,
 				forward_paths: forwarding.forwardPaths,
