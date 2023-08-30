@@ -220,3 +220,127 @@ test( 'transfer domains link to the transfer management interface', async () => 
 		'/domains/manage/example.com/transfer/in/example.com'
 	);
 } );
+
+test( 'when a site is associated with a domain, display its name', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ primaryFull ],
+	} );
+
+	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+
+	render(
+		<DomainsTableRow
+			domain={ primaryPartial }
+			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
+			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
+		/>
+	);
+
+	await waitFor( () => expect( screen.queryByText( 'Primary Domain Blog' ) ).toBeInTheDocument() );
+} );
+
+test( 'when a site is not associated with a domain, display the add a site cta', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		current_user_can_create_site_from_domain_only: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		domains: [ primaryFull ],
+	} );
+
+	const fetchSite = jest.fn().mockResolvedValue( {
+		ID: 123,
+		URL: 'https://primarydomainblog.wordpress.com',
+		options: { is_redirect: false },
+	} );
+
+	render(
+		<DomainsTableRow
+			domain={ primaryPartial }
+			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
+			isAllSitesView
+			isSelected={ false }
+			onSelect={ noop }
+		/>
+	);
+
+	await waitFor( () => {
+		const createLink = screen.queryByText( 'Add site' );
+
+		expect( createLink ).toBeInTheDocument();
+		expect( createLink ).toHaveAttribute(
+			'href',
+			'/start/site-selected/?siteSlug=primarydomainblog.wordpress.com&siteId=123'
+		);
+	} );
+} );
+
+describe( 'registered until cell', () => {
+	let dateTimeFormatSpy;
+
+	beforeAll( () => {
+		const OriginalTimeFormat = Intl.DateTimeFormat;
+		dateTimeFormatSpy = jest.spyOn( global.Intl, 'DateTimeFormat' );
+		dateTimeFormatSpy.mockImplementation(
+			( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
+		);
+	} );
+
+	afterAll( () => {
+		dateTimeFormatSpy.mockClear();
+	} );
+
+	test( 'when a domain is registered, display its expiration date', () => {
+		const partialDomain = testPartialDomain( {
+			domain: 'example.com',
+			blog_id: 123,
+			wpcom_domain: false,
+			has_registration: true,
+			expiry: '2024-08-01T00:00:00+00:00',
+		} );
+
+		render(
+			<DomainsTableRow
+				domain={ partialDomain }
+				isAllSitesView
+				isSelected={ false }
+				onSelect={ noop }
+			/>
+		);
+
+		expect( screen.getByText( 'Aug 1, 2024' ) ).toBeInTheDocument();
+	} );
+
+	test( 'when its not a registered domain, do not display an expiration date', () => {
+		const partialDomain = testPartialDomain( {
+			domain: 'example.wordpress.com',
+			blog_id: 123,
+			wpcom_domain: true,
+			has_registration: false,
+		} );
+
+		render(
+			<DomainsTableRow
+				domain={ partialDomain }
+				isAllSitesView
+				isSelected={ false }
+				onSelect={ noop }
+			/>
+		);
+
+		expect( screen.getByText( '-' ) ).toBeInTheDocument();
+	} );
+} );
