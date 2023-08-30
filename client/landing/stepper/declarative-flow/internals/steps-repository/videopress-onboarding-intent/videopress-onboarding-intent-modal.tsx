@@ -86,11 +86,16 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 						</div>
 						<div className="videopress-intro-modal__waitlist-description">
 							{ translate(
-								'In the meantime, you can {{a}}create a blog with video{{/a}}, a {{b}}video portfolio{{/b}}, or {{c}}add videos to your existing site{{/c}}.',
+								'In the meantime, you can {{a}}create a video portfolio{{/a}}, {{b}}a blog with video{{/b}}, or {{c}}add videos to your existing site{{/c}}.',
 								{
 									components: {
 										a: <Button onClick={ () => onSubmit?.() && false } />,
-										b: <Button onClick={ () => onSubmit?.() && false } />,
+										b: (
+											<a
+												href="https://wordpress.com/start/premium/?ref=videopress"
+												rel="external noreferrer noopener"
+											/>
+										),
 										c: (
 											<a
 												href="https://jetpack.com/videopress/"
