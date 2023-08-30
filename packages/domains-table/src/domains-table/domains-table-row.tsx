@@ -124,6 +124,26 @@ export function DomainsTableRow( {
 		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
 	} );
 
+	const userCanAddSiteToDomain = currentDomainData?.currentUserCanCreateSiteFromDomainOnly ?? false;
+
+	const renderSiteCell = () => {
+		if ( site && currentDomainData ) {
+			return (
+				<DomainsTableSiteCell
+					site={ site }
+					siteSlug={ siteSlug }
+					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+				/>
+			);
+		}
+
+		if ( isLoadingRowDetails ) {
+			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+		}
+
+		return null;
+	};
+
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
@@ -150,17 +170,7 @@ export function DomainsTableRow( {
 					<span className="domains-table__domain-name">{ domain.domain }</span>
 				) }
 			</td>
-			<td>
-				{ isLoadingRowDetails ? (
-					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-				) : (
-					<DomainsTableSiteCell
-						site={ site }
-						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData }
-					/>
-				) }
-			</td>
+			<td>{ renderSiteCell() }</td>
 			<td>
 				{ isLoadingRowDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
