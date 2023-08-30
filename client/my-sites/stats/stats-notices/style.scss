@@ -22,10 +22,18 @@
 			border-color: var(--color-accent);
 			color: var(--color-text-inverted);
 			border-radius: 2px;
+
+			&.is-dark {
+				background-color: var(--studio-black);
+			}
 		}
 
 		.notice-banner.is-info {
 			border-left-color: var(--color-accent);
+
+			&.is-dark {
+				border-left-color: var(--studio-black);
+			}
 		}
 
 		.notice-banner__action-link > span {
