@@ -64,7 +64,7 @@ const DiscoverStream = ( props ) => {
 		<FormattedHeader
 			brandFont
 			headerText={ translate( 'Discover' ) }
-			subHeaderText={ translate( 'Explore new %s blogs that inspire, educate, and entertain.', {
+			subHeaderText={ translate( 'Explore %s blogs that inspire, educate, and entertain.', {
 				args: [ tabTitle ],
 				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
 			} ) }

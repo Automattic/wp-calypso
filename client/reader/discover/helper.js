@@ -23,8 +23,11 @@ export function getDiscoverStreamTags( tags, isLoggedIn ) {
 }
 
 export function getSelectedTabTitle( selectedTab ) {
-	if ( selectedTab === DEFAULT_TAB || selectedTab === LATEST_TAB ) {
-		return '';
+	if ( selectedTab === DEFAULT_TAB ) {
+		return 'popular';
+	}
+	if ( selectedTab === LATEST_TAB ) {
+		return 'new';
 	}
 	return selectedTab;
 }

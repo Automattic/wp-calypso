@@ -33,10 +33,12 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
-				<DocumentHead title={ translate( 'Browse Popular %s Blogs & Read Articles ‹ Reader', {
-					args: [ tabTitle ],
-					comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-				} ) } />
+				<DocumentHead
+					title={ translate( 'Browse %s Blogs & Read Articles ‹ Reader', {
+						args: [ tabTitle ],
+						comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+					} ) }
+				/>
 				<AsyncLoad
 					require="calypso/reader/discover/discover-stream"
 					key="discover-page"
@@ -56,7 +58,6 @@ const exported = {
 					showBack={ false }
 					className="is-discover-stream"
 					selectedTab={ selectedTab }
-
 				/>
 			</>
 		);
