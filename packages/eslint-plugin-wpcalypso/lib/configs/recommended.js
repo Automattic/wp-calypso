@@ -129,7 +129,6 @@ module.exports = {
 		'jsdoc/check-values': 'error',
 		'jsdoc/empty-tags': 'error',
 		'jsdoc/implements-on-classes': 'error',
-		'jsdoc/newline-after-description': 'error',
 		'jsdoc/no-undefined-types': 'error',
 		'jsdoc/require-jsdoc': 'off',
 		'jsdoc/require-param': 'error',
