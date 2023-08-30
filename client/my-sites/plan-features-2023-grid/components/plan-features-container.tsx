@@ -17,6 +17,7 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
+	flowName?: string | null;
 } > = ( {
 	plansWithFeatures,
 	paidDomainName,
@@ -26,6 +27,7 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
 	isTableCell,
+	flowName,
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
@@ -47,6 +49,7 @@ const PlanFeaturesContainer: React.FC< {
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
+						flowName={ flowName }
 					/>
 					{ jetpackFeatures.length !== 0 && (
 						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">

@@ -1,4 +1,14 @@
-import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
+import {
+	getPlanClass,
+	isFreePlan,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_UNLIMITED_SUBSCRIBERS,
+	FEATURE_PAYMENT_TRANSACTION_FEES_10,
+	FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+} from '@automattic/calypso-products';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -63,6 +73,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	isCustomDomainAllowedOnFreePlan: DataResponse< boolean >;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	flowName?: string | null;
 } > = ( {
 	features,
 	planSlug,
@@ -73,6 +84,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	isCustomDomainAllowedOnFreePlan,
 	activeTooltipId,
 	setActiveTooltipId,
+	flowName,
 } ) => {
 	const translate = useTranslate();
 
@@ -92,10 +104,33 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					return null;
 				}
 
-				const isHighlightedFeature = selectedFeature
-					? currentFeature.getSlug() === selectedFeature
-					: currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
-					  ! currentFeature.availableForCurrentPlan;
+				const isHighlightedFeature = () => {
+					if ( selectedFeature ) {
+						return currentFeature.getSlug() === selectedFeature;
+					}
+
+					if (
+						currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN ||
+						! currentFeature.availableForCurrentPlan
+					) {
+						return true;
+					}
+
+					const isNewsletter = isNewsletterFlow( flowName ?? null );
+					const isHighlightedNewsletterFeature = [
+						FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+						FEATURE_UNLIMITED_SUBSCRIBERS,
+						FEATURE_PAYMENT_TRANSACTION_FEES_4,
+						FEATURE_PAYMENT_TRANSACTION_FEES_8,
+						FEATURE_PAYMENT_TRANSACTION_FEES_10,
+					].includes( currentFeature.getSlug() );
+
+					if ( isNewsletter && isHighlightedNewsletterFeature ) {
+						return true;
+					}
+
+					return false;
+				};
 
 				const divClasses = classNames( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
@@ -106,7 +141,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan,
 				} );
 				const itemTitleClasses = classNames( 'plan-features-2023-grid__item-title', {
-					'is-bold': isHighlightedFeature,
+					'is-bold': isHighlightedFeature(),
 				} );
 
 				return (
@@ -115,6 +150,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
+										// Erick - edit here
+										// Span just above this contains is-bold class (or not)
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
 												args: [ paidDomainName as string ],

@@ -614,6 +614,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			selectedFeature,
 			wpcomFreeDomainSuggestion,
 			isCustomDomainAllowedOnFreePlan,
+			flowName,
 		} = this.props;
 		const plansWithFeatures = renderedGridPlans.filter(
 			( gridPlan ) =>
@@ -623,6 +624,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 		return (
 			<PlanFeaturesContainer
+				flowName={ flowName }
 				plansWithFeatures={ plansWithFeatures }
 				paidDomainName={ paidDomainName }
 				wpcomFreeDomainSuggestion={ wpcomFreeDomainSuggestion }
