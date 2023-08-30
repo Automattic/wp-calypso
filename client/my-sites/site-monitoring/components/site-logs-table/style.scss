@@ -164,14 +164,9 @@ td.timestamp {
 	white-space: nowrap;
 }
 
-td.message::first-line {
-	font-size: 0.875rem;
-	color: var(--studio-gray-90);
-}
-
 td.message {
-	font-size: 0.75rem;
-	color: var(--studio-gray-60);
+	font-size: 0.875rem;
+	color: var(--studio-gray-100);
 }
 
 @media (max-width: 600px) {
