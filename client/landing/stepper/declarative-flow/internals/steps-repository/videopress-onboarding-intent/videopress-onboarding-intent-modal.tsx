@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../intro/videopress-intro-modal-styles.scss';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import CheckmarkIcon from '../intro/icons/checkmark-icon';
@@ -31,6 +31,11 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	onSubmit,
 } ) => {
 	const translate = useTranslate();
+
+	useEffect( () => {
+		// set focus somewhere in the modal to assist with keyboard-based navigation
+		document.getElementById( 'close-modal' )?.focus();
+	}, [] );
 
 	return (
 		<div className="videopress-intro-modal">
@@ -86,11 +91,16 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 						</div>
 						<div className="videopress-intro-modal__waitlist-description">
 							{ translate(
-								'In the meantime, you can {{a}}create a blog with video{{/a}}, a {{b}}video portfolio{{/b}}, or {{c}}add videos to your existing site{{/c}}.',
+								'In the meantime, you can {{a}}create a video portfolio{{/a}}, {{b}}a blog with video{{/b}}, or {{c}}add videos to your existing site{{/c}}.',
 								{
 									components: {
 										a: <Button onClick={ () => onSubmit?.() && false } />,
-										b: <Button onClick={ () => onSubmit?.() && false } />,
+										b: (
+											<a
+												href="https://wordpress.com/start/premium/?ref=videopress"
+												rel="external noreferrer noopener"
+											/>
+										),
 										c: (
 											<a
 												href="https://jetpack.com/videopress/"
@@ -115,20 +125,20 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 					<div className="videopress-intro-modal__survey-info">
 						<div className="videopress-intro-modal__survey-title">{ surveyTitle }</div>
 						<div className="videopress-intro-modal__survey-description">
-							{ translate( 'Answer a short survey and you’ll have the chance to win $50.' ) }
+							{ translate(
+								'Send your feedback and help us shape the future of VideoPress by answering this short survey.'
+							) }
 						</div>
 					</div>
-					<div className="videopress-intro-modal__survey-button-wrapper">
-						<Button
-							className="intro__button button-survey"
-							href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
-							target="_blank"
-							plain
-						>
-							{ translate( 'Answer the survey' ) }
-							<Icon icon={ arrowRight } />
-						</Button>
-					</div>
+					<Button
+						className="intro__button button-survey"
+						href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
+						target="_blank"
+						plain
+					>
+						{ translate( 'Answer the survey' ) }
+						<Icon icon={ arrowRight } />
+					</Button>
 				</div>
 			) }
 		</div>

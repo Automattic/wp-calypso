@@ -1,6 +1,8 @@
 @import "@automattic/typography/styles/variables";
 
 .domains-table {
+	--domains-table-toolbar-height: 40px;
+
 	border-collapse: collapse;
 
 	table {
