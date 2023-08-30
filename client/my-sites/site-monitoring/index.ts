@@ -15,4 +15,16 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// Legacy redirect for Site Logs.
+	const redirectSiteLogsToMonitoring: PageJS.Callback = ( context ) => {
+		if ( context.params?.siteId ) {
+			context.page.replace( `/site-monitoring/${ context.params.siteId }` );
+		} else {
+			context.page.replace( `/site-monitoring` );
+		}
+		return;
+	};
+	page( '/site-logs', redirectSiteLogsToMonitoring );
+	page( '/site-logs/:siteId', redirectSiteLogsToMonitoring );
 }
