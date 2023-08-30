@@ -39,11 +39,11 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
+import { LoadingPlaceHolder } from './components/loading-placeholder';
 import usePricedAPIPlans from './hooks/data-store/use-priced-api-plans';
 import usePricingMetaForGridPlans from './hooks/data-store/use-pricing-meta-for-grid-plans';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
@@ -211,7 +211,7 @@ const PlansFeaturesMain = ( {
 	isSpotlightOnCurrentPlan,
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
-	const [ isFreeFreeUpsellOpen, setIsFreeFreeUpsellOpen ] = useState( false );
+	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
@@ -230,13 +230,12 @@ const PlansFeaturesMain = ( {
 	const previousRoute = useSelector( ( state: IAppState ) => getPreviousRoute( state ) );
 	const isCustomDomainAllowedOnFreePlan = useIsCustomDomainAllowedOnFreePlan(
 		flowName,
-		paidDomainName
+		!! paidDomainName
 	);
 	const isPlanUpsellEnabledOnFreeDomain = useIsPlanUpsellEnabledOnFreeDomain(
 		flowName,
 		!! paidDomainName
 	);
-	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
@@ -279,16 +278,6 @@ const PlansFeaturesMain = ( {
 			recordTracksEvent( 'calypso_signup_free_plan_click' );
 
 			/**
-			 * Delay showing modal until the experiments have loaded
-			 */
-			if (
-				isCustomDomainAllowedOnFreePlan.isLoading ||
-				isPlanUpsellEnabledOnFreeDomain.isLoading
-			) {
-				return;
-			}
-
-			/**
 			 * After the experiments are loaded now open the relevant modal based on previous step parameters
 			 */
 			if ( paidDomainName ) {
@@ -296,7 +285,7 @@ const PlansFeaturesMain = ( {
 				return;
 			}
 			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
-				setIsFreeFreeUpsellOpen( true );
+				setIsFreePlanFreeDomainDialogOpen( true );
 				return;
 			}
 		}
@@ -340,14 +329,12 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
 		showLegacyStorageFeature,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
 		allFeaturesList: FEATURES_LIST,
 		intent,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		selectedFeature,
 		showLegacyStorageFeature,
 	} );
@@ -356,7 +343,6 @@ const PlansFeaturesMain = ( {
 		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
 		allFeaturesList: FEATURES_LIST,
 		intent,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		selectedFeature,
 		showLegacyStorageFeature,
 	} );
@@ -448,22 +434,28 @@ const PlansFeaturesMain = ( {
 		plans: gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ),
 	};
 
-	const planActionOverrides: PlanActionOverrides | undefined =
-		sitePlanSlug && isFreePlan( sitePlanSlug )
-			? {
-					loggedInFreePlan: domainFromHomeUpsellFlow
-						? {
-								callback: showDomainUpsellDialog,
-								text: translate( 'Keep my plan', { context: 'verb' } ),
-						  }
-						: {
-								callback: () => {
-									page.redirect( `/add-ons/${ siteSlug }` );
-								},
-								text: translate( 'Manage add-ons', { context: 'verb' } ),
-						  },
-			  }
-			: undefined;
+	/**
+	 * The effects on /plans page need to be checked if this variable is initialized
+	 */
+	let planActionOverrides: PlanActionOverrides | undefined = undefined;
+	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
+		planActionOverrides = {
+			loggedInFreePlan: {
+				status: isPlanUpsellEnabledOnFreeDomain.isLoading ? 'blocked' : 'enabled',
+				callback: () => {
+					page.redirect( `/add-ons/${ siteSlug }` );
+				},
+				text: translate( 'Manage add-ons', { context: 'verb' } ),
+			},
+		};
+		if ( domainFromHomeUpsellFlow ) {
+			planActionOverrides.loggedInFreePlan = {
+				...planActionOverrides.loggedInFreePlan,
+				callback: showDomainUpsellDialog,
+				text: translate( 'Keep my plan', { context: 'verb' } ),
+			};
+		}
+	}
 
 	/**
 	 * The spotlight in smaller grids looks broken.
@@ -570,11 +562,11 @@ const PlansFeaturesMain = ( {
 					} }
 				/>
 			) }
-			{ isFreeFreeUpsellOpen && (
+			{ isFreePlanFreeDomainDialogOpen && (
 				<FreePlanFreeDomainDialog
 					suggestedPlanSlug={ PLAN_PERSONAL }
 					freeSubdomain={ resolvedSubdomainName }
-					onClose={ () => setIsFreeFreeUpsellOpen( false ) }
+					onClose={ () => setIsFreePlanFreeDomainDialogOpen( false ) }
 					onFreePlanSelected={ () => {
 						if ( ! signupFlowSubdomain && wpcomFreeDomainSuggestion.result ) {
 							setSiteUrlAsFreeDomainSuggestion?.( wpcomFreeDomainSuggestion.result );
@@ -606,18 +598,34 @@ const PlansFeaturesMain = ( {
 						} ) }
 				/>
 			) }
-			{ intent === 'plans-paid-media' && (
-				<FreePlanSubHeader>
-					{ translate(
-						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-						{
+			{ intent === 'plans-paid-media' &&
+				( isPlanUpsellEnabledOnFreeDomain.isLoading ? (
+					<FreePlanSubHeader>
+						{ translate( `Unlock a powerful bundle of features. Or {{loader}}{{/loader}}`, {
 							components: {
-								link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+								loader: (
+									<LoadingPlaceHolder
+										display="inline-block"
+										width="155px"
+										height="15px"
+										borderRadius="2px"
+									/>
+								),
 							},
-						}
-					) }
-				</FreePlanSubHeader>
-			) }
+						} ) }
+					</FreePlanSubHeader>
+				) : (
+					<FreePlanSubHeader>
+						{ translate(
+							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+							{
+								components: {
+									link: <Button onClick={ () => handleUpgradeClick() } borderless />,
+								},
+							}
+						) }
+					</FreePlanSubHeader>
+				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 			{ ! intentFromSiteMeta.processing && (
 				<>
@@ -654,7 +662,6 @@ const PlansFeaturesMain = ( {
 							currentSitePlanSlug={ sitePlanSlug }
 							planActionOverrides={ planActionOverrides }
 							intent={ intent }
-							isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
 							showLegacyStorageFeature={ showLegacyStorageFeature }
 							showUpgradeableStorage={ showUpgradeableStorage }
 							stickyRowOffset={ masterbarHeight }

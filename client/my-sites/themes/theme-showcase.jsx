@@ -81,7 +81,6 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		pathName: PropTypes.string,
@@ -104,7 +103,6 @@ class ThemeShowcase extends Component {
 	static defaultProps = {
 		tier: '',
 		search: '',
-		emptyContent: null,
 		upsellBanner: false,
 		showUploadButton: true,
 	};
@@ -490,7 +488,6 @@ class ThemeShowcase extends Component {
 			},
 			getActionLabel: ( theme ) => getScreenshotOption( theme ).label,
 			trackScrollPage: this.props.trackScrollPage,
-			emptyContent: this.props.emptyContent,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: ( theme ) =>
 				pickBy(

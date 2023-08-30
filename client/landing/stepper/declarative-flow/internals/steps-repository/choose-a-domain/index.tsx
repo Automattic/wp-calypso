@@ -143,6 +143,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					onSkip={ onSkip }
 					products={ productsList }
 					useProvidedProductsList={ true }
+					isReskinned={ true }
 				/>
 				<div className="aside-sections">
 					<div className="aside-section">

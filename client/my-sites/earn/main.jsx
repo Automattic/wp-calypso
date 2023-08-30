@@ -1,8 +1,5 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
@@ -16,37 +13,30 @@ import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
 import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
+import { useSelector } from 'calypso/state';
 import { canAccessWordAds } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
 
-class EarningsMain extends Component {
-	static propTypes = {
-		section: PropTypes.string,
-		site: PropTypes.object,
-		query: PropTypes.object,
+const EarningsMain = ( { section, adsProgramName, query, path } ) => {
+	const translate = useTranslate();
+	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
+
+	const layoutTitles = {
+		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
+		settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+		payments: translate( 'Recurring Payments' ),
+		'payments-plans': translate( 'Recurring Payments plans' ),
+		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
-	getSelectedText() {
-		const selected = find( this.getFilters(), { path: this.props.path } );
-		if ( selected ) {
-			return selected.title;
-		}
-
-		return '';
-	}
-
-	getFilters() {
-		const { canAccessAds, siteSlug, translate } = this.props;
-		const pathSuffix = siteSlug ? '/' + siteSlug : '';
+	const getFilters = () => {
+		const pathSuffix = site?.slug ? '/' + site?.slug : '';
 		const tabs = [];
 
 		if ( canAccessAds ) {
@@ -68,33 +58,42 @@ class EarningsMain extends Component {
 		}
 
 		return tabs;
-	}
+	};
 
-	getComponent( section ) {
-		switch ( section ) {
+	const getSelectedText = () => {
+		const selected = find( getFilters(), { path: path } );
+		if ( selected ) {
+			return selected.title;
+		}
+
+		return '';
+	};
+
+	const getComponent = ( currentSection ) => {
+		switch ( currentSection ) {
 			case 'ads-earnings':
 				return (
-					<AdsWrapper section={ this.props.section }>
-						<WordAdsHighlightsSection siteId={ this.props.siteId } />
-						<WordAdsEarnings site={ this.props.site } />
+					<AdsWrapper section={ section }>
+						<WordAdsHighlightsSection siteId={ site?.ID } />
+						<WordAdsEarnings site={ site } />
 					</AdsWrapper>
 				);
 			case 'ads-payments':
 				return (
-					<AdsWrapper section={ this.props.section }>
-						<WordAdsPayments site={ this.props.site } />
+					<AdsWrapper section={ section }>
+						<WordAdsPayments site={ site } />
 					</AdsWrapper>
 				);
 			case 'ads-settings':
 				return (
-					<AdsWrapper section={ this.props.section }>
+					<AdsWrapper section={ section }>
 						<AdsSettings />
 					</AdsWrapper>
 				);
 			case 'payments':
-				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
+				return <MembershipsSection section={ section } query={ query } />;
 			case 'payments-plans':
-				return <MembershipsProductsSection section={ this.props.section } />;
+				return <MembershipsProductsSection section={ section } />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
@@ -102,11 +101,6 @@ class EarningsMain extends Component {
 			default:
 				return <Home />;
 		}
-	}
-
-	handleDismissWordAdsError = () => {
-		const { siteId } = this.props;
-		this.props.dismissWordAdsError( siteId );
 	};
 
 	/**
@@ -115,8 +109,8 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Path to current screen.
 	 */
-	getCurrentPath = () => {
-		let currentPath = this.props.path;
+	const getCurrentPath = () => {
+		let currentPath = path;
 		const queryStartPosition = currentPath.indexOf( '?' );
 		if ( queryStartPosition > -1 ) {
 			currentPath = currentPath.substring( 0, queryStartPosition );
@@ -129,10 +123,8 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Header text for current screen.
 	 */
-	getHeaderText = () => {
-		const { translate } = this.props;
-
-		switch ( this.props.section ) {
+	const getHeaderText = () => {
+		switch ( section ) {
 			case 'payments':
 				return translate( 'Payments' );
 			case 'ads-earnings':
@@ -148,27 +140,24 @@ class EarningsMain extends Component {
 		}
 	};
 
-	/**
-	 * Goes back to Earn home.
-	 *
-	 * @returns {string} Path to Earn home. Has site slug append if it exists.
-	 */
-	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
-
-	getHeaderCake = () => {
-		const headerText = this.getHeaderText();
-		return headerText && <HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>;
+	const getHeaderCake = () => {
+		const headerText = getHeaderText();
+		return (
+			headerText && (
+				<HeaderCake backHref={ `/earn/${ site?.slug ?? '' }` }>{ headerText }</HeaderCake>
+			)
+		);
 	};
 
-	getSectionNav = ( section ) => {
-		const currentPath = this.getCurrentPath();
+	const getSectionNav = ( currentSection ) => {
+		const currentPath = getCurrentPath();
 
 		return (
-			! section.startsWith( 'payments' ) &&
-			! section.startsWith( 'refer-a-friend' ) && (
-				<SectionNav selectedText={ this.getSelectedText() }>
+			! currentSection.startsWith( 'payments' ) &&
+			! currentSection.startsWith( 'refer-a-friend' ) && (
+				<SectionNav selectedText={ getSelectedText() }>
 					<NavTabs>
-						{ this.getFilters().map( ( filterItem ) => {
+						{ getFilters().map( ( filterItem ) => {
 							return (
 								<NavItem
 									key={ filterItem.id }
@@ -185,54 +174,32 @@ class EarningsMain extends Component {
 		);
 	};
 
-	render() {
-		const { adsProgramName, section, translate } = this.props;
-		const component = this.getComponent( this.props.section );
+	return (
+		<Main wideLayout={ true } className="earn">
+			<PageViewTracker
+				path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
+				title={ `${ adsProgramName } ${ capitalize( section ) }` }
+			/>
+			<DocumentHead title={ layoutTitles[ section ] } />
+			<FormattedHeader
+				brandFont
+				className="earn__page-header"
+				headerText={ translate( 'Earn' ) }
+				subHeaderText={ translate(
+					'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
+						},
+					}
+				) }
+				align="left"
+			/>
+			{ getHeaderCake() }
+			{ section && getSectionNav( section ) }
+			{ getComponent( section ) }
+		</Main>
+	);
+};
 
-		const layoutTitles = {
-			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
-			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
-			payments: translate( 'Recurring Payments' ),
-			'payments-plans': translate( 'Recurring Payments plans' ),
-			'refer-a-friend': translate( 'Refer-a-Friend Program' ),
-		};
-
-		return (
-			<Main wideLayout={ true } className="earn">
-				<PageViewTracker
-					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
-					title={ `${ adsProgramName } ${ capitalize( section ) }` }
-				/>
-				<DocumentHead title={ layoutTitles[ section ] } />
-				<FormattedHeader
-					brandFont
-					className="earn__page-header"
-					headerText={ translate( 'Earn' ) }
-					subHeaderText={ translate(
-						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
-							},
-						}
-					) }
-					align="left"
-				/>
-				{ this.getHeaderCake() }
-				{ section && this.getSectionNav( section ) }
-				{ component }
-			</Main>
-		);
-	}
-}
-
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		canAccessAds: canAccessWordAds( state, siteId ),
-		site: getSelectedSite( state ),
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-	};
-} )( localize( EarningsMain ) );
+export default EarningsMain;

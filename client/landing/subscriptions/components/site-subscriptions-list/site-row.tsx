@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { isValidId } from '@automattic/data-stores/src/reader';
@@ -150,6 +151,10 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
+			if ( config.isEnabled( 'reader/individual-subscription-page' ) ) {
+				return `/read/subscriptions/${ subscriptionId }`;
+			}
+
 			return `/read/feeds/${ feed_id }`;
 		}
 
@@ -160,7 +165,7 @@ const SiteRow = ( {
 			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
-	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal ] );
+	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, subscriptionId ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
@@ -265,7 +270,7 @@ const SiteRow = ( {
 						showOnHover={ true }
 					>
 						{ delivery_methods.email?.send_comments
-							? translate( 'You will receive emails notifications for new comments on this site.' )
+							? translate( 'You will receive email notifications for new comments on this site.' )
 							: translate(
 									"You won't receive email notifications for new comments on this site."
 							  ) }

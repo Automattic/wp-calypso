@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { getCurrencyObject } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';

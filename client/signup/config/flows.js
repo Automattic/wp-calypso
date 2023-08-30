@@ -114,7 +114,16 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
+function getChecklistThemeDestination( {
+	flowName,
+	siteSlug,
+	themeParameter,
+	headerPatternId,
+	footerPatternId,
+	sectionPatternIds,
+	screen,
+	screenParameter,
+} ) {
 	if ( isSiteAssemblerFlow( flowName ) ) {
 		// Check whether to go to the assembler. If not, go to the site editor directly
 		if ( isAssemblerSupported() ) {
@@ -123,6 +132,11 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 					theme: themeParameter,
 					siteSlug: siteSlug,
 					isNewSite: true,
+					header_pattern_id: headerPatternId,
+					footer_pattern_id: footerPatternId,
+					pattern_ids: sectionPatternIds,
+					screen,
+					screen_parameter: screenParameter,
 				},
 				`/setup/with-theme-assembler`
 			);

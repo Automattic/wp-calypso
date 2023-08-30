@@ -251,7 +251,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		label: translate( 'Live preview', {
 			comment: 'label for previewing a block theme',
 		} ),
-		action: livePreviewAction,
+		action: ( themeId, siteId ) => {
+			return livePreviewAction( themeId, siteId, 'list' );
+		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			! getIsLivePreviewSupported( state, themeId, siteId ),
 	};

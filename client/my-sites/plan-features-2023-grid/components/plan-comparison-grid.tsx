@@ -17,8 +17,9 @@ import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { useState, useCallback, useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
+import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-manage-tooltip-toggle';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { usePlansGridContext } from '../grid-context';
@@ -316,7 +317,6 @@ type PlanComparisonGridProps = {
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	isGlobalStylesOnPersonal?: boolean;
 	showLegacyStorageFeature?: boolean;
 };
 
@@ -412,7 +412,7 @@ const PlanComparisonGridHeaderCell = ( {
 						className="plan-comparison-grid__title-select"
 						value={ planSlug }
 					>
-						{ displayedGridPlans.map( ( { planSlug: otherPlan, planConstantObj } ) => {
+						{ displayedGridPlans.map( ( { planSlug: otherPlan, planTitle } ) => {
 							const isVisiblePlan = visibleGridPlans.find(
 								( { planSlug } ) => planSlug === otherPlan
 							);
@@ -423,14 +423,14 @@ const PlanComparisonGridHeaderCell = ( {
 
 							return (
 								<option key={ otherPlan } value={ otherPlan }>
-									{ planConstantObj.getTitle() }
+									{ planTitle }
 								</option>
 							);
 						} ) }
 					</select>
 				) }
 				<h4 className="plan-comparison-grid__title">
-					<span>{ gridPlan.planConstantObj.getTitle() }</span>
+					<span>{ gridPlan.planTitle }</span>
 					{ showPlanSelect && <DropdownIcon /> }
 				</h4>
 			</PlanSelector>
@@ -442,23 +442,18 @@ const PlanComparisonGridHeaderCell = ( {
 				siteId={ siteId }
 			/>
 			<div className="plan-comparison-grid__billing-info">
-				<PlanFeatures2023GridBillingTimeframe
-					planSlug={ planSlug }
-					billingTimeframe={ gridPlan.planConstantObj.getBillingTimeFrame() }
-				/>
+				<PlanFeatures2023GridBillingTimeframe planSlug={ planSlug } />
 			</div>
 			<PlanFeatures2023GridActions
 				currentSitePlanSlug={ currentSitePlanSlug }
 				manageHref={ manageHref }
 				canUserPurchasePlan={ canUserPurchasePlan }
-				current={ gridPlan.current ?? false }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				className={ getPlanClass( planSlug ) }
 				freePlan={ isFreePlan( planSlug ) }
 				isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planSlug ) }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
-				planTitle={ gridPlan.planConstantObj.getTitle() }
 				planSlug={ planSlug }
 				flowName={ flowName }
 				selectedSiteSlug={ selectedSiteSlug }
@@ -537,7 +532,17 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	intervalType?: string;
-} > = ( { feature, visibleGridPlans, planSlug, isStorageFeature, intervalType } ) => {
+	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	activeTooltipId: string;
+} > = ( {
+	feature,
+	visibleGridPlans,
+	planSlug,
+	isStorageFeature,
+	intervalType,
+	activeTooltipId,
+	setActiveTooltipId,
+} ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
@@ -614,9 +619,16 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getIcon() as React.ReactNode }
 								</span>
 							) }
-							<span className="plan-comparison-grid__plan-title">
-								{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
-							</span>
+							<Plans2023Tooltip
+								text={ feature?.getDescription?.() }
+								setActiveTooltipId={ setActiveTooltipId }
+								activeTooltipId={ activeTooltipId }
+								id={ `${ planSlug }-${ featureSlug }` }
+							>
+								<span className="plan-comparison-grid__plan-title">
+									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+								</span>
+							</Plans2023Tooltip>
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
 									{ feature.getCompareTitle() }
@@ -656,6 +668,8 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName?: string | null;
 	isHighlighted: boolean;
 	intervalType?: string;
+	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	activeTooltipId: string;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -666,6 +680,8 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	flowName,
 	isHighlighted,
 	intervalType,
+	activeTooltipId,
+	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -673,6 +689,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	} );
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
+	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
 
 	return (
 		<Row
@@ -682,14 +699,24 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 		>
 			<RowTitleCell key="feature-name" className="is-feature-group-row-title-cell">
 				{ isStorageFeature ? (
-					<Plans2023Tooltip text={ translate( 'Space to store your photos, media, and more.' ) }>
+					<Plans2023Tooltip
+						text={ translate( 'Space to store your photos, media, and more.' ) }
+						setActiveTooltipId={ setActiveTooltipId }
+						activeTooltipId={ activeTooltipId }
+						id={ tooltipId }
+					>
 						{ translate( 'Storage' ) }
 					</Plans2023Tooltip>
 				) : (
 					<>
 						{ feature && (
 							<>
-								<Plans2023Tooltip text={ feature.getDescription?.() }>
+								<Plans2023Tooltip
+									text={ feature.getDescription?.() }
+									setActiveTooltipId={ setActiveTooltipId }
+									activeTooltipId={ activeTooltipId }
+									id={ tooltipId }
+								>
 									{ feature.getTitle() }
 									{ footnote && (
 										<FeatureFootnote>
@@ -717,6 +744,8 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
 					intervalType={ intervalType }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
 				/>
 			) ) }
 		</Row>
@@ -741,6 +770,7 @@ export const PlanComparisonGrid = ( {
 }: PlanComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
 	const hasWooExpressFeatures = useMemo( () => {
@@ -953,6 +983,8 @@ export const PlanComparisonGrid = ( {
 									flowName={ flowName }
 									isHighlighted={ feature.getSlug() === selectedFeature }
 									intervalType={ intervalType }
+									activeTooltipId={ activeTooltipId }
+									setActiveTooltipId={ setActiveTooltipId }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -966,6 +998,8 @@ export const PlanComparisonGrid = ( {
 									flowName={ flowName }
 									isHighlighted={ false }
 									intervalType={ intervalType }
+									activeTooltipId={ activeTooltipId }
+									setActiveTooltipId={ setActiveTooltipId }
 								/>
 							) : null }
 						</div>

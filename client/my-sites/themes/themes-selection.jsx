@@ -35,7 +35,6 @@ import './themes-selection.scss';
 
 class ThemesSelection extends Component {
 	static propTypes = {
-		emptyContent: PropTypes.element,
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
@@ -62,7 +61,6 @@ class ThemesSelection extends Component {
 	};
 
 	static defaultProps = {
-		emptyContent: null,
 		showUploadButton: true,
 		forceWpOrgSearch: false,
 	};
@@ -276,7 +274,6 @@ class ThemesSelection extends Component {
 					getPrice={ this.props.getPremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ isRequesting }
-					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
@@ -320,18 +317,7 @@ function bindGetThemeType( state ) {
 export const ConnectedThemesSelection = connect(
 	(
 		state,
-		{
-			filter,
-			page,
-			search,
-			tier,
-			vertical,
-			siteId,
-			source,
-			forceWpOrgSearch,
-			isLoading: isCustomizedThemeListLoading,
-			tabFilter,
-		}
+		{ filter, page, search, tier, vertical, siteId, source, forceWpOrgSearch, tabFilter }
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
@@ -370,7 +356,7 @@ export const ConnectedThemesSelection = connect(
 			...( tabFilter === 'all' && { sort: 'date' } ),
 		};
 
-		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
+		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query );
 
 		const shouldFetchWpOrgThemes =
 			forceWpOrgSearch &&
@@ -401,9 +387,9 @@ export const ConnectedThemesSelection = connect(
 			source: sourceSiteId,
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes,
+			themes: themes || [],
 			isRequesting:
-				isCustomizedThemeListLoading ||
+				themes === null ||
 				isRequestingThemesForQuery( state, sourceSiteId, query ) ||
 				( shouldFetchWpOrgThemes && isRequestingThemesForQuery( state, 'wporg', wpOrgQuery ) ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),

@@ -11,11 +11,14 @@ import EditButton from '../../dashboard-bulk-actions/edit-button';
 import useJetpackAgencyDashboardRecordTrackEvent from '../../hooks/use-jetpack-agency-dashboard-record-track-event';
 import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
+import useDefaultSiteColumns from '../hooks/use-default-site-columns';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from '../lib/constants';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
-import { formatSites, getProductSlugFromProductType, siteColumns } from '../utils';
+import { Site } from '../types';
+import useFormattedSites from './hooks/use-formatted-sites';
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -25,7 +28,9 @@ const addPageArgs = ( pageNumber: number ) => {
 };
 
 interface Props {
-	data: { sites: Array< any >; total: number; perPage: number; totalFavorites: number } | undefined;
+	data:
+		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
+		| undefined;
 	isLoading: boolean;
 	currentPage: number;
 	isFavoritesTab: boolean;
@@ -42,16 +47,17 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const { products, isLargeScreen } = useContext( DashboardDataContext );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, ! isMobile );
 
-	const sites = formatSites( data?.sites );
+	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const handlePageClick = ( pageNumber: number ) => {
 		addPageArgs( pageNumber );
 	};
 
+	const siteColumns = useDefaultSiteColumns();
 	const firstColumn = siteColumns[ 0 ];
 
 	const currentLicenseProductSlug = currentLicenseInfo
-		? getProductSlugFromProductType( currentLicenseInfo )
+		? DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ currentLicenseInfo ]
 		: null;
 
 	const currentLicenseProduct = useMemo( () => {

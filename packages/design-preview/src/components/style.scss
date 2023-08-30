@@ -34,6 +34,26 @@ $design-preview-sidebar-width: 311px;
 		}
 	}
 
+	.design-preview__screenshot-wrapper {
+		width: 100%;
+		height: calc(100vh - 120px);
+		overflow: scroll;
+		border: 10px solid var(--color-print);
+		border-radius: 40px; /* stylelint-disable-line scales/radii */
+		margin-bottom: 70px;
+		margin-top: 0;
+
+		@include break-large {
+			margin-bottom: 0;
+			margin-top: 60px;
+		}
+
+		.design-preview__screenshot {
+			border-radius: 30px; /* stylelint-disable-line scales/radii */
+			min-width: 100%;
+		}
+	}
+
 	&.design-preview--is-fullscreen {
 		position: fixed;
 		top: 0;
@@ -251,7 +271,8 @@ $design-preview-sidebar-width: 311px;
 	width: 100%;
 	padding: 16px 20px 8px;
 	box-sizing: border-box;
-	overflow: auto;
+	overflow-x: auto;
+	overflow-y: hidden;
 
 	> p {
 		color: var(--studio-gray-100);
@@ -294,10 +315,18 @@ $design-preview-sidebar-width: 311px;
 	}
 
 	@include break-large {
-		padding: 8px 16px 0;
-		margin: 0 -16px;
-		box-sizing: content-box;
+		padding: 0;
+		margin: 8px 0 0;
 		animation: none;
+		// Increase width to ensure the scrollbar doesn't "push" the content to the left.
+		width: calc(100% + 16px);
+		overflow-x: hidden;
+		overflow-y: scroll;
+
+		@supports ( scrollbar-gutter: stable ) {
+			overflow-y: auto;
+			scrollbar-gutter: stable;
+		}
 
 		> p {
 			display: block;

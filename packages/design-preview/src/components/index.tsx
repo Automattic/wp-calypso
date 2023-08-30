@@ -19,6 +19,7 @@ interface DesignPreviewProps {
 	pricingBadge?: React.ReactNode;
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
+	selectedDesignTitle: string;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	splitDefaultVariation: boolean;
 	onClickCategory?: ( category: Category ) => void;
@@ -27,13 +28,14 @@ interface DesignPreviewProps {
 	siteId: number;
 	stylesheet: string;
 	isVirtual?: boolean;
+	screenshot?: string;
+	isExternallyManaged?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles?: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
-	globalStylesInPersonalPlan: boolean;
 	onNavigatorPathChange?: ( path?: string ) => void;
 	onScreenSelect?: ( screenSlug: string ) => void;
 	onScreenBack?: ( screenSlug: string ) => void;
@@ -58,14 +60,16 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	recordDeviceClick,
 	siteId,
 	stylesheet,
+	screenshot,
 	isVirtual,
+	isExternallyManaged,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
 	onSelectFontVariation,
 	onGlobalStylesChange,
+	selectedDesignTitle,
 	limitGlobalStyles,
-	globalStylesInPersonalPlan,
 	onScreenSelect,
 	onScreenBack,
 	onScreenSubmit,
@@ -85,8 +89,8 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		siteId,
 		stylesheet,
 		isVirtual,
+		isExternallyManaged,
 		limitGlobalStyles,
-		globalStylesInPersonalPlan,
 		variations,
 		splitDefaultVariation,
 		selectedVariation,
@@ -133,20 +137,29 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
 				animated={ ! isDesktop && screens.length > 0 }
+				screenshot={ screenshot }
+				title={ selectedDesignTitle }
+				isExternallyManaged={ isExternallyManaged }
 				recordDeviceClick={ recordDeviceClick }
 			/>
 		</div>
 	);
 };
 
-const DesignPreview = ( props: DesignPreviewProps ) => (
-	<GlobalStylesProvider
-		siteId={ props.siteId }
-		stylesheet={ props.stylesheet }
-		placeholder={ null }
-	>
-		<Preview { ...props } />
-	</GlobalStylesProvider>
-);
+const DesignPreview = ( props: DesignPreviewProps ) => {
+	if ( props.isExternallyManaged ) {
+		return <Preview { ...props } />;
+	}
+
+	return (
+		<GlobalStylesProvider
+			siteId={ props.siteId }
+			stylesheet={ props.stylesheet }
+			placeholder={ null }
+		>
+			<Preview { ...props } />
+		</GlobalStylesProvider>
+	);
+};
 
 export default DesignPreview;

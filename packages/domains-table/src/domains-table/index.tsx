@@ -4,18 +4,24 @@ import {
 	type SiteDomainsQueryFnData,
 	type SiteDetails,
 	getSiteDomainsQueryObject,
+	useDomainsBulkActionsMutation,
 } from '@automattic/data-stores';
+import { useFuzzySearch } from '@automattic/search';
 import { useQueries } from '@tanstack/react-query';
 import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
+import { BulkActionsToolbar } from '../bulk-actions-toolbar';
+import { DomainsTableFilters, DomainsTableFilter } from '../domains-table-filters';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRow } from './domains-table-row';
 import './style.scss';
 
 interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
 	// Detailed domain data is fetched on demand. The ability to customise fetching
 	// is provided to allow for testing.
@@ -30,6 +36,7 @@ export function DomainsTable( {
 	fetchSiteDomains,
 	fetchSite,
 	isAllSitesView,
+	domainStatusPurchaseActions,
 }: DomainsTableProps ) {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
@@ -40,6 +47,7 @@ export function DomainsTable( {
 	} );
 
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
+	const [ filter, setFilter ] = useState< DomainsTableFilter >( () => ( { query: '' } ) );
 
 	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
 	const allSiteDomains = useQueries( {
@@ -59,6 +67,8 @@ export function DomainsTable( {
 		}
 		return fetchedSiteDomains;
 	}, [ allSiteDomains ] );
+
+	const { setAutoRenew } = useDomainsBulkActionsMutation();
 
 	useLayoutEffect( () => {
 		if ( ! domains ) {
@@ -106,6 +116,15 @@ export function DomainsTable( {
 			return result;
 		} );
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
+
+	const filteredData = useFuzzySearch( {
+		data: sortedDomains ?? [],
+		keys: [ 'domain' ],
+		query: filter.query,
+		options: {
+			threshold: 0.3,
+		},
+	} );
 
 	const handleSelectDomain = useCallback(
 		( domain: PartialDomainData ) => {
@@ -161,6 +180,16 @@ export function DomainsTable( {
 	};
 
 	const changeBulkSelection = () => {
+		if ( filter.query ) {
+			if ( ! hasSelectedDomains ) {
+				setSelectedDomains( new Set( filteredData.map( getDomainId ) ) );
+			} else {
+				setSelectedDomains( new Set() );
+			}
+
+			return;
+		}
+
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
 			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
 		} else {
@@ -168,29 +197,51 @@ export function DomainsTable( {
 		}
 	};
 
+	const handlAutoRenew = ( enable: boolean ) => {
+		const domainsToBulkUpdate = domains
+			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
+			.map( ( domain ) => domain.domain );
+		setAutoRenew( domainsToBulkUpdate, enable );
+	};
+
 	return (
-		<table className="domains-table">
-			<DomainsTableHeader
-				columns={ domainsTableColumns }
-				activeSortKey={ sortKey }
-				activeSortDirection={ sortDirection }
-				bulkSelectionStatus={ getBulkSelectionStatus() }
-				onBulkSelectionChange={ changeBulkSelection }
-				onChangeSortOrder={ onSortChange }
-			/>
-			<tbody>
-				{ sortedDomains?.map( ( domain ) => (
-					<DomainsTableRow
-						key={ getDomainId( domain ) }
-						domain={ domain }
-						isSelected={ selectedDomains.has( getDomainId( domain ) ) }
-						onSelect={ handleSelectDomain }
-						fetchSiteDomains={ fetchSiteDomains }
-						fetchSite={ fetchSite }
-						isAllSitesView={ isAllSitesView }
-					/>
-				) ) }
-			</tbody>
-		</table>
+		<div className="domains-table">
+			{ hasSelectedDomains ? (
+				<BulkActionsToolbar
+					onAutoRenew={ handlAutoRenew }
+					selectedDomainCount={ selectedDomains.size }
+				/>
+			) : (
+				<DomainsTableFilters
+					onSearch={ ( query ) => setFilter( ( filter ) => ( { ...filter, query } ) ) }
+					filter={ filter }
+				/>
+			) }
+
+			<table>
+				<DomainsTableHeader
+					columns={ domainsTableColumns }
+					activeSortKey={ sortKey }
+					activeSortDirection={ sortDirection }
+					bulkSelectionStatus={ getBulkSelectionStatus() }
+					onBulkSelectionChange={ changeBulkSelection }
+					onChangeSortOrder={ onSortChange }
+				/>
+				<tbody>
+					{ filteredData.map( ( domain ) => (
+						<DomainsTableRow
+							key={ getDomainId( domain ) }
+							domain={ domain }
+							isSelected={ selectedDomains.has( getDomainId( domain ) ) }
+							onSelect={ handleSelectDomain }
+							fetchSiteDomains={ fetchSiteDomains }
+							fetchSite={ fetchSite }
+							isAllSitesView={ isAllSitesView }
+							domainStatusPurchaseActions={ domainStatusPurchaseActions }
+						/>
+					) ) }
+				</tbody>
+			</table>
+		</div>
 	);
 }

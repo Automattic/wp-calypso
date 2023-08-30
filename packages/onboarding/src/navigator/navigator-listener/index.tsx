@@ -1,18 +1,11 @@
-import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
-import { useEffect } from 'react';
+import { useNavigatorListener, OnNavigatorPathChange } from '../hooks';
 
 interface Props {
-	onNavigatorPathChange: ( path?: string ) => void;
+	onNavigatorPathChange?: OnNavigatorPathChange;
 }
 
 const NavigatorListener = ( { onNavigatorPathChange }: Props ) => {
-	const { location } = useNavigator();
-
-	useEffect( () => {
-		onNavigatorPathChange( location.path );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ location ] );
-
+	useNavigatorListener( onNavigatorPathChange );
 	return null;
 };
 

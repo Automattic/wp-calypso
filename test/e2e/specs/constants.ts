@@ -8,3 +8,4 @@ export const TEST_UNSUPPORTED_FILE_PATH = path.join(
 	TEST_FILES_FOLDER_PATH,
 	'test-unsupported-file-01.mkv'
 );
+export const TEST_VIDEO_PATH = path.join( TEST_FILES_FOLDER_PATH, 'test-video-01.mp4' );

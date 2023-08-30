@@ -30,44 +30,73 @@ export class SiteAssemblerFlow {
 	 *
 	 * @param {LayoutType} type Type of the layout component.
 	 */
-	async selectLayoutComponentType( type: LayoutType ): Promise< void > {
+	async clickLayoutComponentType( type: LayoutType ): Promise< void > {
 		await this.page.getByRole( 'button', { name: type } ).click();
 	}
 
 	/**
-	 * Selects a site assembler component with the given name from the
-	 * list of available components, inserts it, then validate the insertion
+	 * Selects a site assembler component in one of two ways: name or index-based.
+	 *
+	 * If supplied with the an accessible name of the component or a valid index,
+	 * this method will locate the target, insert it, then validate the insertion
 	 * was successful.
 	 *
-	 * The name has to match exactly to the string in the tooltip.
+	 * The index is 0-indexed.
 	 *
-	 * @param {string} name Exact name of the component to select.
+	 * @param param0 Keyed object parameter.
+	 * @param {string} param0.name Exact name of the component to select.
+	 * @param {string} param0.index 0-indexed index of the component to select.
+	 * @throws {Error} If neither name or index was specified.
 	 */
-	async selectLayoutComponent( name: string ): Promise< void > {
+	async selectLayoutComponent( {
+		name,
+		index,
+	}: { name?: string; index?: number } = {} ): Promise< void > {
 		// To reduce network load times, abort any request for
 		// placeholder images.
 		await this.page.route( '**/*.png', ( route ) => {
 			route.abort( 'aborted' );
 		} );
 
+		// Convert index to the accessible name of a component.
+		if ( index !== undefined ) {
+			name = ( await this.page
+				.getByRole( 'listbox', { name: 'Block patterns' } )
+				.getByRole( 'option' )
+				.nth( index )
+				.getAttribute( 'aria-label' ) ) as string;
+		}
+
 		const target = this.page
 			.getByRole( 'listbox', { name: 'Block patterns' } )
 			.getByRole( 'option', { name: name, exact: true } );
 
+		// Double check that a valid target locator exists.
+		if ( ! target ) {
+			throw new Error( `Must specify a valid name or index that points to a valid component.` );
+		}
+
 		await target.scrollIntoViewIfNeeded();
 		await target.click();
 
-		// The inserted component does not load immediately, especially on
-		// slower networks or a weaker CPU.
-		// Wait for the last component to be visible.
-		// Note, component being visible do not necessarily mean
-		// the preview images are visible.
+		// Narrowing the target using CSS selector to the preview pane, and verifying the
+		// expected component appears there.
 		await this.page
 			.locator( '.device-switcher__viewport' )
-			.getByRole( 'list' )
-			.getByRole( 'listitem' )
-			.last()
-			.waitFor( { timeout: 15 * 1000 } );
+			.getByRole( 'listitem', { name: name } )
+			.waitFor( { state: 'attached', timeout: 15 * 1000 } );
+	}
+
+	/**
+	 * Given an accessible name of the color style, waits for and clicks on the style.
+	 *
+	 * @param {string} name Accessible name of the color style to pick.
+	 */
+	async pickStyle( name: string ) {
+		const anchor = this.page.getByRole( 'listbox', { name: 'Color palette variations' } );
+		await anchor.waitFor();
+
+		await anchor.getByRole( 'option', { name: name } ).click();
 	}
 
 	/**

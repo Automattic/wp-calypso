@@ -4,7 +4,7 @@ import {
 	PLUGIN_INSTALLATION_ERROR,
 } from 'calypso/state/plugins/installed/status/constants';
 import { CurrentSiteStatus } from '../types';
-import RenderStatusMessage from './render-status-message';
+import StatusMessage from './status-message';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -54,7 +54,7 @@ export default function PluginActionStatus( {
 	return (
 		<div className="plugin-action-status-container">
 			{ filteredStatuses.map( ( groupKey: any ) => (
-				<RenderStatusMessage
+				<StatusMessage
 					key={ groupKey }
 					currentStatus={ groupKey }
 					selectedSite={ selectedSite }

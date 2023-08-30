@@ -1,4 +1,6 @@
+import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
 import {
 	trackPageLoad,
@@ -26,25 +28,28 @@ const exported = {
 		}
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
-			<AsyncLoad
-				require="calypso/reader/discover/discover-stream"
-				key="discover-page"
-				streamKey={ streamKey }
-				title="Discover"
-				trackScrollPage={ trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					ANALYTICS_PAGE_TITLE,
-					mcKey
-				) }
-				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-				suppressSiteNameLink={ true }
-				isDiscoverStream={ true }
-				useCompactCards={ true }
-				showBack={ false }
-				className="is-discover-stream"
-			/>
+			<>
+				<DocumentHead title={ translate( 'Browse Popular Blogs & Read Articles ‹ Reader' ) } />
+				<AsyncLoad
+					require="calypso/reader/discover/discover-stream"
+					key="discover-page"
+					streamKey={ streamKey }
+					title="Discover"
+					trackScrollPage={ trackScrollPage.bind(
+						null,
+						basePath,
+						fullAnalyticsPageTitle,
+						ANALYTICS_PAGE_TITLE,
+						mcKey
+					) }
+					onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+					suppressSiteNameLink={ true }
+					isDiscoverStream={ true }
+					useCompactCards={ true }
+					showBack={ false }
+					className="is-discover-stream"
+				/>
+			</>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();

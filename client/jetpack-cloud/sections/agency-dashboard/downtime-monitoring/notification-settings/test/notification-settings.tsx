@@ -40,8 +40,8 @@ describe( 'NotificationSettings', () => {
 		expect( screen.getByText( /set custom notification/i ) ).toBeInTheDocument();
 		expect( screen.getByText( site.url ) ).toBeInTheDocument();
 
-		expect( screen.getByText( /notify me about downtime/i ) ).toBeInTheDocument();
-		expect( screen.getAllByText( /after \d+ minutes/i ).at( 0 ) ).toBeInTheDocument();
+		expect( screen.getByText( /Monitor my site every/i ) ).toBeInTheDocument();
+		expect( screen.getAllByText( /\d+ minutes/i ).at( 0 ) ).toBeInTheDocument();
 
 		expect( screen.getByText( 'SMS Notification' ) ).toBeInTheDocument();
 		expect(
@@ -92,7 +92,7 @@ describe( 'NotificationSettings', () => {
 		const saveButton = screen.getByRole( 'button', { name: /save/i } );
 		expect( saveButton ).toBeDisabled();
 
-		fireEvent.click( screen.getByRole( 'menuitem', { name: /after 15 minutes/i } ) );
+		fireEvent.click( screen.getByRole( 'menuitem', { name: /15 minutes/i } ) );
 		expect( saveButton ).toBeEnabled();
 		fireEvent.click( saveButton );
 		expect( screen.getByText( /please select at least one contact method/i ) ).toBeInTheDocument();

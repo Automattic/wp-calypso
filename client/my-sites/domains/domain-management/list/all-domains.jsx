@@ -44,6 +44,7 @@ import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
+import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import { filterDomainsByOwner, filterDomainOnlyDomains } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
 import {
@@ -410,7 +411,10 @@ class AllDomains extends Component {
 
 		return (
 			<>
+				{ ! this.isLoading() && <GoogleDomainOwnerBanner /> }
+
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+
 				<DomainsTable
 					currentRoute={ currentRoute }
 					domains={ domains }

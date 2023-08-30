@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { DomainsTable } from '..';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
@@ -72,7 +73,7 @@ test( 'when two domains share the same underlying site, there is only one fetch 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 1337 );
 } );
 
-test( 'when shouldDisplayPrimaryDomainLabel is true, the primary domain label is displayed if a domain is marked as primary', async () => {
+test( 'when isAllSitesView is true, the primary domain label is displayed if a domain is marked as primary', async () => {
 	const [ primaryPartial, primaryFull ] = testDomain( {
 		domain: 'example.com',
 		blog_id: 123,
@@ -294,4 +295,44 @@ test( 'when the domains list changes, the bulk selection removes dangling domain
 	expect( getBulkCheckbox() ).toBePartiallyChecked();
 	expect( getDomainCheckbox( 'example1.com' ) ).toBeChecked();
 	expect( getDomainCheckbox( 'example3.com' ) ).not.toBeChecked();
+} );
+
+test( 'bulk actions controls appear when a domain is selected', async () => {
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	fireEvent.click( getDomainCheckbox( 'example1.com' ) );
+
+	expect( screen.getByRole( 'button', { name: 'Auto-renew settings' } ) ).toBeInTheDocument();
+
+	fireEvent.click( getDomainCheckbox( 'example1.com' ) );
+
+	expect( screen.queryByRole( 'button', { name: 'Auto-renew settings' } ) ).not.toBeInTheDocument();
+} );
+
+test( 'search for a domain hides other domains from table', async () => {
+	const user = userEvent.setup();
+
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'dog.com' } ),
+				testPartialDomain( { domain: 'cat.org' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const searchInput = screen.getByRole( 'searchbox', { name: 'Search' } );
+	await user.type( searchInput, 'dog.com' );
+
+	expect( screen.queryByText( 'dog.com' ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'cat.org' ) ).not.toBeInTheDocument();
 } );

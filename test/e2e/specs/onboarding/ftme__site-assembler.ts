@@ -70,7 +70,7 @@ describe( 'Site Assembler', () => {
 		} );
 
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {
-			await startSiteFlow.clickButton( 'Start designing' );
+			await startSiteFlow.clickButton( 'Design your own' );
 			await page.waitForURL(
 				DataHelper.getCalypsoURL(
 					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
@@ -90,31 +90,38 @@ describe( 'Site Assembler', () => {
 		} );
 
 		it( 'Select "Header"', async function () {
-			await siteAssemblerFlow.selectLayoutComponentType( 'Header' );
-			await siteAssemblerFlow.selectLayoutComponent( 'Simple Header' );
+			// The pane is now open by default.
+			// @see https://github.com/Automattic/wp-calypso/pull/80924
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 1 );
 		} );
 
 		it( 'Select "Sections"', async function () {
-			await siteAssemblerFlow.selectLayoutComponentType( 'Sections' );
-			await siteAssemblerFlow.selectLayoutComponent( 'Heading with two images and descriptions' );
+			await siteAssemblerFlow.clickLayoutComponentType( 'Sections' );
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
 		} );
 
 		it( 'Select "Footer"', async function () {
-			await siteAssemblerFlow.selectLayoutComponentType( 'Footer' );
-			await siteAssemblerFlow.selectLayoutComponent( 'Simple centered footer' );
+			await siteAssemblerFlow.clickLayoutComponentType( 'Footer' );
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 3 );
 		} );
 
+		it( 'Pick default style', async function () {
+			await siteAssemblerFlow.clickButton( 'Pick your style' );
+			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
+			await siteAssemblerFlow.clickButton( 'Save and continue' );
+		} );
+
 		it( 'Click "Save and continue" and land on the Site Editor', async function () {
-			await Promise.all( [
-				page.waitForURL( /processing/ ),
-				siteAssemblerFlow.clickButton( 'Save and continue' ),
-			] );
+			const urlPromise = page.waitForURL( /processing/ );
+			await siteAssemblerFlow.clickButton( 'Start adding content' );
+			await urlPromise;
+
 			await page.waitForURL( /site-editor/, {
 				timeout: 30 * 1000,
 			} );

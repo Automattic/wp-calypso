@@ -19,12 +19,12 @@ import {
 	type FeatureList,
 	type PlanSlug,
 	type FeatureObject,
-	type FilteredPlan,
 	type StorageOption,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
 export type TransformedFeatureObject = FeatureObject & {
@@ -73,7 +73,6 @@ export type UsePricingMetaForGridPlans = ( {
 export type GridPlan = {
 	planSlug: PlanSlug;
 	isVisible: boolean;
-	planConstantObj: FilteredPlan;
 	features: {
 		wpcomFeatures: TransformedFeatureObject[];
 		jetpackFeatures: TransformedFeatureObject[];
@@ -83,6 +82,8 @@ export type GridPlan = {
 	tagline: string;
 	availableForPurchase: boolean;
 	productNameShort?: string | null;
+	planTitle: TranslateResult;
+	billingTimeframe?: TranslateResult | null;
 	current?: boolean;
 	isMonthlyPlan?: boolean;
 	cartItemForPlan?: {
@@ -125,8 +126,6 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
-	// for AB Test experiment:
-	isGlobalStylesOnPersonal?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -223,7 +222,6 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
-	isGlobalStylesOnPersonal,
 }: Props ): Omit< GridPlan, 'features' >[] => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -267,13 +265,13 @@ const useGridPlans = ( {
 
 		let tagline = '';
 		if ( 'plans-newsletter' === intent ) {
-			tagline = planConstantObj.getNewsletterTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 		} else if ( 'plans-link-in-bio' === intent ) {
-			tagline = planConstantObj.getLinkInBioTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
 		} else if ( 'plans-blog-onboarding' === intent ) {
-			tagline = planConstantObj.getBlogOnboardingTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
 		} else {
-			tagline = planConstantObj.getPlanTagline?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getPlanTagline?.() ?? '';
 		}
 
 		const productNameShort =
@@ -292,10 +290,11 @@ const useGridPlans = ( {
 		return {
 			planSlug,
 			isVisible: planSlugsForIntent.includes( planSlug ),
-			planConstantObj,
 			tagline,
 			availableForPurchase,
 			productNameShort,
+			planTitle: planConstantObj.getTitle?.() ?? '',
+			billingTimeframe: planConstantObj.getBillingTimeFrame?.(),
 			current: sitePlanSlug === planSlug,
 			isMonthlyPlan,
 			cartItemForPlan,

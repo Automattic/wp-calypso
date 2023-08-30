@@ -121,7 +121,7 @@ export const LogsTab = ( {
 			: [ 'request_type', 'date', 'status', 'request_url' ];
 
 	return (
-		<>
+		<div className="site-logs-container">
 			<SiteLogsToolbar
 				logType={ logType }
 				startDateTime={ dateRange.startTime }
@@ -155,6 +155,6 @@ export const LogsTab = ( {
 					/>
 				</div>
 			) }
-		</>
+		</div>
 	);
 };
