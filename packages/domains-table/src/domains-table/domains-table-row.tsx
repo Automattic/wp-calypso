@@ -157,7 +157,7 @@ export function DomainsTableRow( {
 					{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
 						<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 					) : (
-						currentDomainData?.owner
+						currentDomainData?.owner ?? '-'
 					) }
 				</td>
 			) }

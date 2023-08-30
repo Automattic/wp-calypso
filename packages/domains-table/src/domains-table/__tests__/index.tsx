@@ -377,7 +377,6 @@ test( 'Owner column is not rendered when domains do not have an owner', async ()
 		domain: 'primary-domain.blog',
 		blog_id: 123,
 		primary_domain: true,
-		owner: '',
 	} );
 
 	const fetchSiteDomains = jest.fn().mockImplementation( () =>
