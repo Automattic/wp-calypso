@@ -131,7 +131,7 @@ export const setUpActionsForTasks = ( {
 							apiVersion: '1.1',
 							method: 'post',
 						} );
-						window.location.reload();
+						window.location.assign( `/home/${ siteSlug }?celebrateLaunch=true` );
 					};
 					break;
 				default:
