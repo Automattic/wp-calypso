@@ -2,7 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { BackupLsResponse, BackupPathInfoResponse, FileBrowserItem, FileBrowserItemInfo } from '../types';
+import {
+	BackupLsResponse,
+	BackupPathInfoResponse,
+	FileBrowserItem,
+	FileBrowserItemInfo,
+} from '../types';
 import {
 	convertBytes,
 	encodeToBase64,
