@@ -8,13 +8,13 @@ import {
 import { header, footer, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
-import { CATEGORY_ALL_SLUG, NAVIGATOR_PATHS } from './constants';
+import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import PatternCategoryList from './pattern-category-list';
 import Survey from './survey';
 import { Pattern, Category } from './types';
-import { replaceCategoryAllName } from './utils';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
@@ -41,6 +41,7 @@ const ScreenMain = ( {
 	patternsMapByCategory,
 }: Props ) => {
 	const translate = useTranslate();
+	const { title } = useScreen( 'main' );
 	const isEnglishLocale = useIsEnglishLocale();
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location, params, goTo } = useNavigator();
@@ -48,6 +49,11 @@ const ScreenMain = ( {
 	const selectedCategory = params.categorySlug as string;
 	const shouldOpenCategoryList =
 		!! selectedCategory && selectedCategory !== 'header' && selectedCategory !== 'footer';
+	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
+	const buttonText =
+		isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
+			? translate( 'Pick your style' )
+			: translate( 'Save and continue' );
 
 	const handleClick = () => {
 		goTo( NAVIGATOR_PATHS.STYLES_COLORS );
@@ -59,7 +65,7 @@ const ScreenMain = ( {
 
 	const handleNavigatorItemSelect = ( type: string, category: string ) => {
 		const nextPath =
-			category === selectedCategory || ( shouldOpenCategoryList && category === CATEGORY_ALL_SLUG )
+			category === selectedCategory || ( shouldOpenCategoryList && category === INITIAL_CATEGORY )
 				? NAVIGATOR_PATHS.MAIN
 				: `/main/${ category }`;
 
@@ -70,14 +76,14 @@ const ScreenMain = ( {
 	const onSelectSectionCategory = ( category: string ) => {
 		goTo( `/main/${ category }`, navigatorOptions );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
-			pattern_category: replaceCategoryAllName( category ),
+			pattern_category: category,
 		} );
 	};
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Design your own' ) } /> }
+				title={ <NavigatorTitle title={ title } /> }
 				description={ translate(
 					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
 				) }
@@ -99,7 +105,7 @@ const ScreenMain = ( {
 							checked={ hasSections }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
-							onClick={ () => handleNavigatorItemSelect( 'section', CATEGORY_ALL_SLUG ) }
+							onClick={ () => handleNavigatorItemSelect( 'section', INITIAL_CATEGORY ) }
 							active={ shouldOpenCategoryList }
 							hasNestedItems
 						>
@@ -131,15 +137,14 @@ const ScreenMain = ( {
 			<div className="screen-container__footer">
 				<Button
 					className="pattern-assembler__button"
-					disabled={ ! hasSections && ! hasHeader && ! hasFooter }
+					disabled={ isButtonDisabled }
+					showTooltip={ isButtonDisabled }
 					onClick={ handleClick }
-					label="Add your first pattern to get started."
-					variant="primary"
-					text={
-						isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
-							? translate( 'Pick your style' )
-							: translate( 'Save and continue' )
+					label={
+						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : buttonText
 					}
+					variant="primary"
+					text={ buttonText }
 					__experimentalIsFocusable
 				/>
 			</div>

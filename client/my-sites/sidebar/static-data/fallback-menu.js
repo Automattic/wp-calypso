@@ -39,7 +39,7 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
 	shouldShowAddOns = false,
-	showSiteLogs = false,
+	showSiteMonitoring = false,
 } = {} ) {
 	let inbox = [];
 	if ( shouldShowInbox ) {
@@ -518,14 +518,14 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
-				...( showSiteLogs
+				...( showSiteMonitoring
 					? [
 							{
 								parent: 'tools.php',
-								slug: 'tools-site-logs',
-								title: translate( 'Site Logs' ),
+								slug: 'tools-site-monitoring',
+								title: translate( 'Site Monitoring' ),
 								type: 'submenu-item',
-								url: `/site-logs/${ siteDomain }`,
+								url: `/site-monitoring/${ siteDomain }`,
 							},
 					  ]
 					: [] ),

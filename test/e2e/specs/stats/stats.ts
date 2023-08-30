@@ -71,10 +71,6 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		it( 'Filter traffic activity to Likes', async function () {
 			await statsPage.showStatsOfType( { tab: 'Traffic', type: 'Likes' } );
 		} );
-
-		it( 'Filter traffic activity to Comments', async function () {
-			await statsPage.showStatsOfType( { tab: 'Traffic', type: 'Visitors' } );
-		} );
 	} );
 
 	describe( 'Insights', function () {
