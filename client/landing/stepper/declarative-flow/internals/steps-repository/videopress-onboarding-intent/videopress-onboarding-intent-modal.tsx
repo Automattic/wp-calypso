@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../intro/videopress-intro-modal-styles.scss';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import CheckmarkIcon from '../intro/icons/checkmark-icon';
@@ -31,6 +31,11 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	onSubmit,
 } ) => {
 	const translate = useTranslate();
+
+	useEffect( () => {
+		// set focus somewhere in the modal to assist with keyboard-based navigation
+		document.getElementById( 'close-modal' )?.focus();
+	}, [] );
 
 	return (
 		<div className="videopress-intro-modal">
@@ -125,17 +130,15 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 							) }
 						</div>
 					</div>
-					<div className="videopress-intro-modal__survey-button-wrapper">
-						<Button
-							className="intro__button button-survey"
-							href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
-							target="_blank"
-							plain
-						>
-							{ translate( 'Answer the survey' ) }
-							<Icon icon={ arrowRight } />
-						</Button>
-					</div>
+					<Button
+						className="intro__button button-survey"
+						href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
+						target="_blank"
+						plain
+					>
+						{ translate( 'Answer the survey' ) }
+						<Icon icon={ arrowRight } />
+					</Button>
 				</div>
 			) }
 		</div>

@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import BlogIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-blog.png';
 import ChannelIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-channel.png';
 import JetpackIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-jetpack.png';
@@ -123,10 +123,15 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 				/>
 			</div>
 
-			<div className={ modalClasses }>
+			<div className={ modalClasses } aria-modal="true">
 				<div className="intro__more-modal-container">
 					<div className="intro__more-modal-header">
-						<Button plain onClick={ () => setModal( null ) }>
+						<Button
+							id="close-modal"
+							plain
+							onClick={ () => setModal( null ) }
+							aria-label={ __( 'Close' ) }
+						>
 							<CloseIcon />
 						</Button>
 					</div>
@@ -135,6 +140,16 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			</div>
 		</>
 	);
+
+	useEffect( () => {
+		const onCloseKeyPressed = ( event: KeyboardEvent ) => {
+			if ( 'Escape' === event.key ) {
+				setModal( null );
+			}
+		};
+		window.addEventListener( 'keydown', onCloseKeyPressed, false );
+		return () => window.removeEventListener( 'keydown', onCloseKeyPressed );
+	}, [] );
 
 	return (
 		<StepContainer

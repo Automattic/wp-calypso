@@ -34,7 +34,8 @@
 		cursor: pointer;
 		transition: border-color 0.3s ease-in-out;
 
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			border-color: #ffe61c;
 		}
 	}
@@ -135,6 +136,11 @@
 
 			button {
 				cursor: pointer;
+				padding: 4px;
+
+				&:focus-visible {
+					border: 1px solid var(--color-text);
+				}
 			}
 		}
 
@@ -306,23 +312,19 @@
 			display: flex;
 			justify-content: space-around;
 
-			.videopress-intro-modal__survey-button-wrapper {
-				display: flex;
+			.button-survey {
+				display: inline-flex;
 				align-items: center;
-				background: none !important;
-				border: 1px solid #000 !important;
+				gap: 4px;
+				color: #000;
+				white-space: nowrap;
+
+				background: none;
+				border: 1px solid #000;
 				border-radius: 4px;
 				font-size: 14px; /* stylelint-disable-line */
 				font-weight: 500;
 				padding: 4px 8px;
-
-				a {
-					display: inline-flex;
-					align-items: center;
-					gap: 4px;
-					color: #000;
-					white-space: nowrap;
-				}
 			}
 
 			.videopress-intro-modal__survey-title {
