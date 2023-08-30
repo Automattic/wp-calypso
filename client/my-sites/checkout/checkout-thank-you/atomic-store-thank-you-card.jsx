@@ -110,13 +110,13 @@ class AtomicStoreThankYouCard extends Component {
 
 		return (
 			<div className="checkout-thank-you__atomic-store-action-buttons">
-				<a
+				<Button
 					disabled={ ! isSiteAtomic }
 					className={ classNames( 'button', 'thank-you-card__button' ) }
-					href={ siteWooCommerceWizardUrl }
+					onClick={ () => ( window.location.href = siteWooCommerceWizardUrl ) }
 				>
-					{ isSiteAtomic ? translate( 'Create your store!' ) : translate( 'Please wait' ) }
-				</a>
+					{ isSiteAtomic ? translate( 'Create your store!' ) : 'Loading site' }
+				</Button>
 			</div>
 		);
 	};
