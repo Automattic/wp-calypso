@@ -53,6 +53,7 @@ type DomainsTableHeaderProps = {
 	onBulkSelectionChange(): void;
 	headerClasses?: string;
 	hideOwnerColumn?: boolean;
+	domainsRequiringAttention?: number;
 };
 
 export const DomainsTableHeader = ( {
@@ -64,6 +65,7 @@ export const DomainsTableHeader = ( {
 	onChangeSortOrder,
 	headerClasses,
 	hideOwnerColumn = false,
+	domainsRequiringAttention,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
@@ -95,6 +97,7 @@ export const DomainsTableHeader = ( {
 						aria-label={ __( 'Select all tick boxes for domains in table', __i18n_text_domain__ ) }
 					/>
 				</th>
+
 				{ columns.map( ( column ) => {
 					if ( column.name === 'owner' && hideOwnerColumn ) {
 						return null;
@@ -110,6 +113,9 @@ export const DomainsTableHeader = ( {
 								tabIndex={ column?.isSortable ? 0 : -1 }
 							>
 								{ column?.headerComponent || column?.label }
+								{ column?.name === 'status' && domainsRequiringAttention && (
+									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
+								) }
 								{ renderSortIcon( column, activeSortKey, activeSortDirection ) }
 							</Button>
 						</th>

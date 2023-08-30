@@ -1,4 +1,5 @@
 import { DomainData, SiteDetails } from '@automattic/data-stores';
+import { ResolveDomainStatusReturn } from './utils/resolve-domain-status';
 
 export const getSimpleSortFunctionBy =
 	( column: keyof DomainData ) => ( first: DomainData, second: DomainData, sortOrder: number ) => {
@@ -63,3 +64,11 @@ export const getSiteSortFunctions = () => {
 export const shouldHideOwnerColumn = ( domains: DomainData[] ) => {
 	return ! domains.some( ( domain ) => domain.owner !== '' );
 };
+export const countDomainsRequiringAttention = (
+	domainStatutes: ResolveDomainStatusReturn[] | undefined
+) =>
+	domainStatutes?.filter( ( domainStatus ) =>
+		[ 'status-neutral', 'status-alert', 'status-warning', 'status-error' ].includes(
+			domainStatus.statusClass
+		)
+	).length;

@@ -6,9 +6,11 @@ import {
 	getSiteDomainsQueryObject,
 	useDomainsBulkActionsMutation,
 } from '@automattic/data-stores';
+import { useFuzzySearch } from '@automattic/search';
 import { useQueries } from '@tanstack/react-query';
 import { useState, useCallback, useLayoutEffect, useMemo } from 'react';
 import { BulkActionsToolbar } from '../bulk-actions-toolbar';
+import { DomainsTableFilters, DomainsTableFilter } from '../domains-table-filters';
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
@@ -46,6 +48,10 @@ export function DomainsTable( {
 	} );
 
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
+	const [ filter, setFilter ] = useState< DomainsTableFilter >( () => ( { query: '' } ) );
+	const [ domainsRequiringAttention, setDomainsRequiringAttention ] = useState<
+		number | undefined
+	>( undefined );
 
 	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
 	const allSiteDomains = useQueries( {
@@ -115,6 +121,18 @@ export function DomainsTable( {
 		} );
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
 
+	const filteredData = useFuzzySearch( {
+		data: sortedDomains ?? [],
+		keys: [ 'domain' ],
+		query: filter.query,
+		options: {
+			threshold: 0.3,
+		},
+	} );
+	const onDomainsRequiringAttentionChange = useCallback( ( domainsRequiringAttention: number ) => {
+		setDomainsRequiringAttention( domainsRequiringAttention );
+	}, [] );
+
 	const handleSelectDomain = useCallback(
 		( domain: PartialDomainData ) => {
 			const domainId = getDomainId( domain );
@@ -169,6 +187,16 @@ export function DomainsTable( {
 	};
 
 	const changeBulkSelection = () => {
+		if ( filter.query ) {
+			if ( ! hasSelectedDomains ) {
+				setSelectedDomains( new Set( filteredData.map( getDomainId ) ) );
+			} else {
+				setSelectedDomains( new Set() );
+			}
+
+			return;
+		}
+
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
 			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
 		} else {
@@ -189,14 +217,18 @@ export function DomainsTable( {
 
 	return (
 		<div className="domains-table">
-			{ hasSelectedDomains && (
+			{ hasSelectedDomains ? (
 				<BulkActionsToolbar
 					onAutoRenew={ handlAutoRenew }
 					selectedDomainCount={ selectedDomains.size }
 				/>
+			) : (
+				<DomainsTableFilters
+					onSearch={ ( query ) => setFilter( ( filter ) => ( { ...filter, query } ) ) }
+					filter={ filter }
+				/>
 			) }
-			{ /* This spacer will be replaced by searching and filtering controls. In the meantime it stops the table jumping around when selecting domains. */ }
-			{ ! hasSelectedDomains && <div style={ { height: 40 } } /> }
+
 			<table>
 				<DomainsTableHeader
 					columns={ domainsTableColumns }
@@ -206,9 +238,10 @@ export function DomainsTable( {
 					onBulkSelectionChange={ changeBulkSelection }
 					onChangeSortOrder={ onSortChange }
 					hideOwnerColumn={ hideOwnerColumn }
+					domainsRequiringAttention={ domainsRequiringAttention }
 				/>
 				<tbody>
-					{ sortedDomains?.map( ( domain ) => (
+					{ filteredData.map( ( domain ) => (
 						<DomainsTableRow
 							key={ getDomainId( domain ) }
 							domain={ domain }
@@ -219,6 +252,7 @@ export function DomainsTable( {
 							isAllSitesView={ isAllSitesView }
 							domainStatusPurchaseActions={ domainStatusPurchaseActions }
 							hideOwnerColumn={ hideOwnerColumn }
+							onDomainsRequiringAttentionChange={ onDomainsRequiringAttentionChange }
 						/>
 					) ) }
 				</tbody>

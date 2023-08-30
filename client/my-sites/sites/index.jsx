@@ -145,9 +145,6 @@ class Sites extends Component {
 			case 'jetpack-search':
 				path = 'Jetpack Search';
 				break;
-			case 'site-logs':
-				path = translate( 'Site Logs' );
-				break;
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
 				break;

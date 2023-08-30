@@ -11,7 +11,7 @@ import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -124,11 +124,12 @@ const mapStateToProps = ( state, { siteFragment } ) => {
 
 	return {
 		isJetpack: isJetpackSite( state, siteId ),
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		siteId,
 		showCommentList,
 		showPermissionError,
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentsManagement ) );
+export default connect( mapStateToProps )(
+	localize( withJetpackConnectionProblem( CommentsManagement ) )
+);

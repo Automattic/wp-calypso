@@ -35,7 +35,7 @@ import {
 	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
-	getSiteLogsUrl,
+	getSiteMonitoringUrl,
 	isCustomDomain,
 	isNotAtomicJetpack,
 	isP2Site,
@@ -95,15 +95,15 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
-const SiteLogsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const SiteMonitoringItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
 		<MenuItemLink
-			href={ getSiteLogsUrl( site.slug ) }
-			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_logs_click' ) }
+			href={ getSiteMonitoringUrl( site.slug ) }
+			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_monitoring_click' ) }
 		>
-			{ __( 'Site logs' ) }
+			{ __( 'Site monitoring' ) }
 		</MenuItemLink>
 	);
 };
@@ -412,7 +412,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ site.is_wpcom_atomic && <SiteLogsItem { ...props } /> }
+					{ site.is_wpcom_atomic && <SiteMonitoringItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (

@@ -9,7 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
@@ -61,6 +61,5 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 	};
-} )( localize( SiteSettingsComponent ) );
+} )( localize( withJetpackConnectionProblem( SiteSettingsComponent ) ) );
