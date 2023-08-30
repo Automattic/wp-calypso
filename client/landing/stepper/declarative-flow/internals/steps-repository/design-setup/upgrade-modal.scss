@@ -170,6 +170,12 @@ $design-button-primary-hover-color: var(--color-primary-60);
 
 		&.externally-managed {
 			gap: 8px;
+			display: flex;
+			flex-direction: column-reverse;
+
+			@include break-medium {
+				display: grid;
+			}
 		}
 
 		.button {
