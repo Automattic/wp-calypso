@@ -38,14 +38,20 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await page.goto( DataHelper.getCalypsoURL( '/setup/videopress' ) );
 		} );
 
-		jest.mock( '@automattic/calypso-config', () => ( key ) => {
-			if ( 'videopress-onboarding-user-intent' === key ) {
-				return false;
-			}
-		} );
-
 		it( 'Click Get Started', async function () {
-			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
+			const btnGetStarted = await page.$( 'text=Get started' );
+
+			// if Get Started is present, its the normal flow, otherwise its the User Intent flow
+			// -- if user intent, lets get on track to the normal flow
+			if ( null !== btnGetStarted ) {
+				await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
+			} else {
+				await Promise.all( [
+					page.waitForNavigation(),
+					page.click( 'img[alt="Get a video portfolio"]' ),
+					page.click( 'button.intro__button' ),
+				] );
+			}
 		} );
 
 		it( 'Navigate VideoMaker Setup', async function () {
