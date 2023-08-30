@@ -177,6 +177,16 @@ export function DomainsTable( {
 	};
 
 	const changeBulkSelection = () => {
+		if ( filter.query ) {
+			if ( ! hasSelectedDomains ) {
+				setSelectedDomains( new Set( filteredData.map( getDomainId ) ) );
+			} else {
+				setSelectedDomains( new Set() );
+			}
+
+			return;
+		}
+
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
 			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
 		} else {
