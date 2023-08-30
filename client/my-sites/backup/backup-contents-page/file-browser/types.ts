@@ -16,6 +16,7 @@ export type FileType =
 	| 'other';
 
 export interface FileBrowserItem {
+	id?: string;
 	name: string;
 	type: FileType;
 	hasChildren: boolean;
@@ -36,6 +37,7 @@ export interface BackupLsResponse {
 
 export interface BackupLsResponseContents {
 	[ key: string ]: {
+		id?: string;
 		type: ApiFileType;
 		has_children: boolean;
 		period?: string;

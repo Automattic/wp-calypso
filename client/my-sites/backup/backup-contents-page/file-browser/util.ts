@@ -91,6 +91,7 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
 			...( item.type === 'table' && { rowCount: item.row_count } ),
 			...( item.extension_version && { extensionVersion: item.extension_version } ),
 			...( item.manifest_path && { manifestPath: item.manifest_path } ),
+			...( item.id && { id: item.id } ),
 		};
 	} );
 
