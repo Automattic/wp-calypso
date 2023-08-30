@@ -2,7 +2,7 @@ import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import globe from 'calypso/assets/images/domains/globe.svg';
-import { Banner } from 'calypso/components/banner';
+import Banner from 'calypso/components/banner';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const GoogleDomainOwnerBanner = () => {
