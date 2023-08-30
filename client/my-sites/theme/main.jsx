@@ -36,6 +36,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
+import FeatureUpsellModal from 'calypso/components/feature-upsell-modal';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -98,7 +99,6 @@ import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
-
 import './style.scss';
 
 const noop = () => {};
@@ -226,7 +226,11 @@ class ThemeSheet extends Component {
 			);
 		}
 
-		defaultOption.action && defaultOption.action( themeId );
+		if ( this.shouldUpgradeForTheme() ) {
+			this.setState( { showThemeUpgradeModal: true } );
+		} else {
+			defaultOption.action && defaultOption.action( themeId );
+		}
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -236,6 +240,18 @@ class ThemeSheet extends Component {
 		);
 
 		this.setState( { showUnlockStyleUpgradeModal: true } );
+	};
+
+	onCloseUpgradeThemeModalClick = () => {
+		this.setState( { showThemeUpgradeModal: false } );
+	};
+
+	onDismissUpgradeThemeModalClick = () => {
+		this.setState( { showThemeUpgradeModal: false } );
+	};
+
+	onCancelUpgradeThemeModalClick = () => {
+		this.setState( { showThemeUpgradeModal: false } );
 	};
 
 	onSecondaryButtonClick = () => {
@@ -901,6 +917,42 @@ class ThemeSheet extends Component {
 		return defaultOption.label;
 	};
 
+	shouldUpgradeForTheme = () => {
+		const {
+			isActive,
+			isLoggedIn,
+			isPremium,
+			isThemePurchased,
+			isExternallyManagedTheme,
+			isSiteEligibleForManagedExternalThemes,
+			isMarketplaceThemeSubscribed,
+		} = this.props;
+
+		if ( isActive ) {
+			return false;
+		}
+
+		if ( isLoggedIn ) {
+			if ( isPremium && ! isThemePurchased && ! isExternallyManagedTheme ) {
+				return true;
+			} else if (
+				isExternallyManagedTheme &&
+				! isMarketplaceThemeSubscribed &&
+				! isSiteEligibleForManagedExternalThemes
+			) {
+				return true;
+			} else if (
+				isExternallyManagedTheme &&
+				! isMarketplaceThemeSubscribed &&
+				isSiteEligibleForManagedExternalThemes
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
 	renderRetired = () => {
 		const { translate, locale, isLoggedIn } = this.props;
 		return (
@@ -939,20 +991,25 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderButton = () => {
+	getUrl = () => {
 		const { getUrl, key } = this.props.defaultOption;
+		const { isExternallyManagedTheme, isLoggedIn } = this.props;
+
+		return getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
+			? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
+			: null;
+	};
+
+	renderButton = () => {
+		const { key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
+		const { isActive } = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
-				href={
-					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
-						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
-						: null
-				}
+				href={ this.shouldUpgradeForTheme() ? null : this.getUrl() }
 				onClick={ () => {
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
@@ -1318,6 +1375,22 @@ class ThemeSheet extends Component {
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
+				<FeatureUpsellModal
+					slug={ this.props.themeId }
+					closeModal={ this.onCloseUpgradeThemeModalClick }
+					dismissModal={ this.onDismissUpgradeThemeModalClick }
+					isOpen={ this.state.showThemeUpgradeModal }
+					isWpOrgTheme={ this.props.isWporg }
+					isPartnerTheme={ this.props.isExternallyManagedTheme }
+					isSiteEligibleForPartnerThemes={ this.props.isSiteEligibleForManagedExternalThemes }
+					checkout={ () => {
+						if ( this.props.defaultOption.action ) {
+							this.props.defaultOption.action( this.props.themeId );
+						} else {
+							window.location.href = this.getUrl();
+						}
+					} }
+				/>
 				{
 					siteId && (
 						<QuerySitePurchases siteId={ siteId } />
