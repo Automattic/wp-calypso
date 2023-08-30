@@ -28,7 +28,7 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
 		sortFunctions: [],
-		width: '10%',
+		width: '15%',
 	},
 	{
 		name: 'registered-until',

@@ -52,6 +52,7 @@ type DomainsTableHeaderProps = {
 	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
 	onBulkSelectionChange(): void;
 	headerClasses?: string;
+	domainsRequiringAttention?: number;
 };
 
 export const DomainsTableHeader = ( {
@@ -62,6 +63,7 @@ export const DomainsTableHeader = ( {
 	onBulkSelectionChange,
 	onChangeSortOrder,
 	headerClasses,
+	domainsRequiringAttention,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
@@ -104,6 +106,9 @@ export const DomainsTableHeader = ( {
 							tabIndex={ column?.isSortable ? 0 : -1 }
 						>
 							{ column?.headerComponent || column?.label }
+							{ column?.name === 'status' && domainsRequiringAttention && (
+								<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
+							) }
 							{ renderSortIcon( column, activeSortKey, activeSortDirection ) }
 						</Button>
 					</th>
