@@ -182,13 +182,13 @@ const Home = ( {
 				<div className="customer-home__loading-placeholder"></div>
 			) : (
 				<>
-					<Primary cards={ layout.primary } />
+					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout.secondary } siteId={ siteId } />
+							<Secondary cards={ layout?.secondary } siteId={ siteId } />
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
-							<Tertiary cards={ layout.tertiary } />
+							<Tertiary cards={ layout?.tertiary } />
 						</div>
 					</div>
 				</>
