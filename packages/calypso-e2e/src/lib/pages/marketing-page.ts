@@ -8,14 +8,12 @@ type MarketingPageTab =
 	| 'Connections'
 	| 'Sharing Buttons'
 	| 'Business Tools';
+type SEOPageTitleStructureCategories = 'Front Page' | 'Posts' | 'Pages' | 'Tags' | 'Archives';
+type SEOExternalServices = 'Google search' | 'Facebook' | 'Twitter';
 type SocialConnection = 'Facebook' | 'LinkedIn' | 'Tumblr' | 'Mastodon' | 'Instagram Business';
 
 const selectors = {
-	// Traffic tab
-	websiteMetaTextArea: '#advanced_seo_front_page_description',
-	seoPreviewButton: '.seo-settings__preview-button',
-	seoPreviewPane: '.web-preview.is-seo',
-	seoPreviewPaneCloseButton: '.web-preview__close',
+	pageTitleStructureInput: '.title-format-editor',
 };
 
 /**
@@ -56,32 +54,65 @@ export class MarketingPage {
 	/**
 	 * Enters text into the Website Meta Information field.
 	 *
-	 * @param {string} [text] String to be used as the description of the web site in SEO.
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} text String to be used as the description of the web site in SEO.
 	 */
-	async enterWebsiteMetaInformation( text = 'test text' ): Promise< void > {
-		await this.page.fill( selectors.websiteMetaTextArea, text );
+	async enterExternalPreviewText( text: string ) {
+		await this.page.getByRole( 'textbox', { name: 'Front Page Meta Description' } ).fill( text );
 	}
 
 	/**
-	 * Open the preview of SEO changes.
+	 * Validates the external preview for the specified service contains the text.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {SEOExternalServices} service External service.
+	 * @param {string} text Text to validate.
 	 */
-	async openSEOPreview(): Promise< void > {
-		const locator = this.page.locator( selectors.seoPreviewButton );
-		await locator.click();
-		await this.page.waitForSelector( selectors.seoPreviewPane );
+	async validateExternalPreview( service: SEOExternalServices, text: string ) {
+		await this.page.locator( '.vertical-menu__social-item' ).filter( { hasText: service } ).click();
+
+		await this.page.locator( '.seo-preview-pane__preview' ).getByText( text ).waitFor();
 	}
 
 	/**
-	 * Close the preview of SEO changes.
+	 * Given an accessible name of the button, click on the button.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} name Accessible name of the button.
 	 */
-	async closeSEOPreview(): Promise< void > {
-		await this.page.click( selectors.seoPreviewPaneCloseButton );
-		await this.page.waitForSelector( selectors.seoPreviewButton );
+	async clickButton( name: string ) {
+		await this.page.getByRole( 'button', { name: name } ).click();
+	}
+
+	/**
+	 * Enters the specified text into the input of the specified category, changing the
+	 * page title structure.
+	 *
+	 * @param {SEOPageTitleStructureCategories} category Category to modify.
+	 * @param {string} text Text to enter.
+	 */
+	async enterPageTitleStructure( category: SEOPageTitleStructureCategories, text: string ) {
+		const target = this.page
+			.locator( selectors.pageTitleStructureInput )
+			.filter( { has: this.page.getByText( category ) } )
+			.getByRole( 'textbox' );
+
+		await target.scrollIntoViewIfNeeded();
+
+		await target.fill( text );
+	}
+
+	/**
+	 * Returns the preview text for the page title structure category.
+	 *
+	 * @param {SEOPageTitleStructureCategories} category Category to return preview text for.
+	 * @returns {Promise<string>} Preview text.
+	 */
+	async getPreviewTextForPageStructureCategory(
+		category: SEOPageTitleStructureCategories
+	): Promise< string > {
+		return await this.page
+			.locator( selectors.pageTitleStructureInput )
+			.filter( { has: this.page.getByText( category ) } )
+			.locator( '.title-format-editor__preview' )
+			.innerText();
 	}
 
 	/* Social Connectisons */
