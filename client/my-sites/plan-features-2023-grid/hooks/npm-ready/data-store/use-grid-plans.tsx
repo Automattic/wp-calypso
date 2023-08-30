@@ -68,9 +68,11 @@ export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => 
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
+	storageAddOns,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
+	storageAddOns: AddOnMeta[];
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan };
 
 // TODO clk: move to types. will consume plan properties
@@ -261,8 +263,10 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
-
-	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
+	const pricingMeta = usePricingMetaForGridPlans( {
+		planSlugs: availablePlanSlugs,
+		storageAddOns,
+	} );
 
 	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );

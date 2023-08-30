@@ -42,8 +42,12 @@ export interface AddOnMeta {
 	displayCost: TranslateResult | null;
 	purchased?: boolean;
 	isLoading?: boolean;
-	// TODO: Complete type description
-	costData?: { formattedMonthlyCost: number };
+	costData?: {
+		monthlyCost: number;
+		yearlyCost: number;
+		formattedMonthlyCost: string;
+		formattedYearlyCost: string;
+	};
 }
 
 // some memoization. executes far too many times
