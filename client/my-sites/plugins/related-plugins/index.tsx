@@ -1,6 +1,5 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useMemo } from 'react';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
 import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';
@@ -35,7 +34,7 @@ export function RelatedPlugins( { slug, size = 4, seeAllLink, options }: Related
 			<div className="related-plugins__header">
 				<h2>{ translate( 'Related plugins' ) }</h2>
 				{ seeAllLink && (
-					<Button borderless primary onClick={ () => page( seeAllLink ) }>
+					<Button className="is-link" borderless href={ seeAllLink }>
 						<span>{ translate( 'See all' ) }</span>
 						<Gridicon icon="chevron-right" />
 					</Button>

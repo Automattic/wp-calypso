@@ -10,6 +10,7 @@
 	flex-direction: row;
 	line-height: 40px;
 	justify-content: space-between;
+	align-items: center;
 	margin-bottom: 32px;
 
 	h2 {
@@ -17,9 +18,6 @@
 		font-size: $font-title-large;
 		overflow-wrap: anywhere;
 		color: $gray-100;
-	}
-	button.is-borderless.is-primary {
-		color: var(--color-link);
 	}
 
 }
