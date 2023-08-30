@@ -510,6 +510,7 @@ export class UserStep extends Component {
 			<>
 				<SignupForm
 					{ ...omit( this.props, [ 'translate' ] ) }
+					email={ this.props.queryObject?.email_address || '' }
 					redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
 					disabled={ this.userCreationStarted() }
 					submitting={ this.userCreationStarted() }
