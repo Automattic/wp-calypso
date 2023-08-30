@@ -1,12 +1,9 @@
 // Refer platform tracking.
 
 import { urlParseAmpCompatible } from 'calypso/lib/analytics/utils';
+import { WOOEXPRESS_AFFILIATE_VENDOR_ID, WPCOM_AFFILIATE_VENDOR_ID } from './ad-tracking/constants';
 import { trackAffiliateReferral } from './track-affiliate-referral';
 import { recordTracksEvent } from './tracks';
-
-// Constants for Affiliate Vendor IDs
-const WOOEXPRESS_AFFILIATE_VENDOR_ID = 67386441;
-const WPCOM_AFFILIATE_VENDOR_ID = 67402;
 
 export function referRecordPageView() {
 	if ( ! window || ! window.location ) {
