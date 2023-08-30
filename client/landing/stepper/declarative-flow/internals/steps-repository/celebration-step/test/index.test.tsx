@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -24,6 +25,7 @@ const siteSlug = 'testcelebrationscreen.wordpress.com';
 
 const stepContentProps = {
 	siteSlug,
+	stepName: 'celebration-step',
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
 	goNext: () => {},
@@ -73,7 +75,7 @@ const navigation = {
 	submit: jest.fn(),
 };
 
-function renderCelebrationScreen() {
+function renderCelebrationScreen( flow ) {
 	const initialState = getInitialState( initialReducer, user.ID );
 	const reduxStore = createReduxStore(
 		{
@@ -92,56 +94,59 @@ function renderCelebrationScreen() {
 	render(
 		<Provider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
-				<CelebrationStep { ...stepContentProps } flow="site-setup" navigation={ navigation } />
+				<CelebrationStep { ...stepContentProps } flow={ flow } navigation={ navigation } />
 			</QueryClientProvider>
 		</Provider>
 	);
 }
 
-describe( 'StepContent', () => {
-	describe( 'when the celebration screen is ready', () => {
-		it( 'renders correct content and CTAs when first post is NOT published', () => {
-			mockIsFirstPostPublished = false;
-			renderCelebrationScreen();
+describe( 'Celebration Step', () => {
+	describe( 'Design first flow', () => {
+		const flow = DESIGN_FIRST_FLOW;
+		describe( 'when the celebration screen is ready', () => {
+			it( 'renders correct content and CTAs when first post is NOT published', () => {
+				mockIsFirstPostPublished = false;
+				renderCelebrationScreen( flow );
 
-			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
-			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Now it’s time to start posting.' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
+				expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Now it’s time to start posting.' ) ).toBeInTheDocument();
 
-			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toHaveAttribute(
-				'href',
-				'https://' + siteSlug
-			);
+				expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
+				expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toHaveAttribute(
+					'href',
+					'https://' + siteSlug
+				);
 
-			expect( screen.getByRole( 'link', { name: 'Write your first post' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Write your first post' } ) ).toHaveAttribute(
-				'href',
-				'/post/' + siteSlug
-			);
-		} );
+				expect( screen.getByRole( 'link', { name: 'Write your first post' } ) ).toBeInTheDocument();
+				expect( screen.getByRole( 'link', { name: 'Write your first post' } ) ).toHaveAttribute(
+					'href',
+					'/post/' + siteSlug
+				);
+			} );
 
-		it( 'renders correct content and CTAs when first post is published', () => {
-			mockIsFirstPostPublished = true;
-			renderCelebrationScreen();
+			it( 'renders correct content and CTAs when first post is published', () => {
+				mockIsFirstPostPublished = true;
+				renderCelebrationScreen( flow );
 
-			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
-			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( 'Now it’s time to connect your social accounts.' )
-			).toBeInTheDocument();
+				expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
+				expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
+				expect(
+					screen.getByText( 'Now it’s time to connect your social accounts.' )
+				).toBeInTheDocument();
 
-			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toHaveAttribute(
-				'href',
-				'https://' + siteSlug
-			);
+				expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
+				expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toHaveAttribute(
+					'href',
+					'https://' + siteSlug
+				);
 
-			expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toHaveAttribute(
-				'href',
-				'/marketing/connections/' + siteSlug
-			);
+				expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toBeInTheDocument();
+				expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toHaveAttribute(
+					'href',
+					'/marketing/connections/' + siteSlug
+				);
+			} );
 		} );
 	} );
 } );

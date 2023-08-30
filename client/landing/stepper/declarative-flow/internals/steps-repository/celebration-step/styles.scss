@@ -8,7 +8,7 @@
 		max-width: none;
 		min-height: 100vh;
 
-		.web-preview__inner {
+		.site-preview__wrapper .web-preview__inner {
 			width: 100%;
 			height: 680px;
 
@@ -20,7 +20,7 @@
 		}
 	}
 
-	.step-container__header .formatted-header {
+	.step-container .step-container__header .formatted-header {
 		margin: 16px;
 
 		.formatted-header__title {
@@ -82,13 +82,13 @@
 			}
 		}
 
-		&-cta-social {
+		&-cta-primary {
 			@include break-small {
 				margin-left: 16px;
 			}
 		}
 
-		&-cta-blog {
+		&-cta-secondary {
 			margin-top: 16px;
 			margin-bottom: 80px;
 			@include break-small {
