@@ -80,7 +80,7 @@ const write: Flow = {
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
 					}
-					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
 
 				default:
 					return navigate( 'freeSetup' );
