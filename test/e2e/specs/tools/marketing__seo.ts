@@ -48,15 +48,20 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 		] );
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+
+		marketingPage = new MarketingPage( page );
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Tools', 'Marketing' );
+		if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
+			await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+		} else {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Tools', 'Marketing' );
+		}
 	} );
 
 	it( 'Click on Traffic tab', async function () {
-		marketingPage = new MarketingPage( page );
 		await marketingPage.clickTab( 'Traffic' );
 	} );
 
