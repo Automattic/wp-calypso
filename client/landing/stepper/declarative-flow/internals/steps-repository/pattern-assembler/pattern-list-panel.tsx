@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternSelector from './pattern-selector';
+import { isPriorityPattern } from './utils';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
 
@@ -38,6 +39,10 @@ const PatternListPanel = ( {
 		[ categories, selectedCategory ]
 	);
 
+	const hasNonPriorityPatterns = categoryPatterns?.find(
+		( pattern ) => ! isPriorityPattern( pattern )
+	);
+
 	if ( ! category ) {
 		return null;
 	}
@@ -55,7 +60,7 @@ const PatternListPanel = ( {
 				selectedPatterns={ selectedPatterns }
 				isShowMorePatterns={ isShowMorePatterns }
 			/>
-			{ ! isShowMorePatterns && (
+			{ ! isShowMorePatterns && hasNonPriorityPatterns && (
 				<div className="pattern-list-panel__show-more">
 					<Button
 						onClick={ () => {
