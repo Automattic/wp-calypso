@@ -14,6 +14,8 @@ const UniversalNavbarHeader = ( {
 	sectionName,
 	logoColor,
 	variant = 'default',
+	startUrl,
+	loginUrl,
 }: HeaderProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
@@ -21,18 +23,20 @@ const UniversalNavbarHeader = ( {
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const startUrl = addQueryArgs(
-		// url
-		sectionName === 'plugins'
-			? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
-			: localizeUrl( '//wordpress.com/start', locale, isLoggedIn ),
-		// query
-		sectionName
-			? {
-					ref: sectionName + '-lp',
-			  }
-			: {}
-	);
+	if ( ! startUrl ) {
+		startUrl = addQueryArgs(
+			// url
+			sectionName === 'plugins'
+				? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
+				: localizeUrl( '//wordpress.com/start', locale, isLoggedIn ),
+			// query
+			sectionName
+				? {
+						ref: sectionName + '-lp',
+				  }
+				: {}
+		);
+	}
 
 	return (
 		<div className={ className }>
@@ -323,7 +327,10 @@ const UniversalNavbarHeader = ( {
 											className="x-nav-item x-nav-item__wide"
 											titleValue=""
 											content={ __( 'Log In', __i18n_text_domain__ ) }
-											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ) }
+											urlValue={
+												loginUrl ||
+												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
+											}
 											type="nav"
 										/>
 									) }
