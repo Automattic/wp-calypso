@@ -18,6 +18,9 @@
 		overflow-wrap: anywhere;
 		color: $gray-100;
 	}
+	button.is-borderless.is-primary {
+		color: var(--color-link);
+	}
 
 }
 
