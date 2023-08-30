@@ -2,6 +2,7 @@ import { Gridicon, Popover } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useState, useRef } from 'react';
+import { useDebounce } from 'use-debounce';
 import './style.scss';
 
 type StatusPopoverProps = {
@@ -11,22 +12,17 @@ type StatusPopoverProps = {
 
 export const StatusPopover = ( { children, className }: StatusPopoverProps ) => {
 	const iconRef = useRef( null );
-	const [ showPopover, setShowPopover ] = useState( false );
 	const [ inPopover, setInPopover ] = useState( false );
+	const [ inButton, setInButton ] = useState( false );
+	const [ showPopover ] = useDebounce( inPopover || inButton, 250 );
 	const { __ } = useI18n();
 
 	const handleOnMouseEnterButton = () => {
-		setShowPopover( true );
+		setInButton( true );
 	};
 
 	const handleOnMouseLeave = () => {
-		setTimeout( () => {
-			if ( inPopover ) {
-				return;
-			}
-
-			setShowPopover( false );
-		}, 250 );
+		setInButton( false );
 	};
 
 	const handleOnMouseEnterPopover = () => {
@@ -35,7 +31,6 @@ export const StatusPopover = ( { children, className }: StatusPopoverProps ) => 
 
 	const handleOnMouseLeavePopover = () => {
 		setInPopover( false );
-		handleOnMouseLeave();
 	};
 
 	return (
