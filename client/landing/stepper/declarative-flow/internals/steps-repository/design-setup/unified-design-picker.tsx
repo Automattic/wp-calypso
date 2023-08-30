@@ -422,6 +422,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function handleCheckout() {
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 			theme: selectedDesign?.slug,
+			is_externally_managed: selectedDesign?.is_externally_managed,
 		} );
 
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
