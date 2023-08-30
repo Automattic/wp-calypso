@@ -65,7 +65,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 
 	const onVideoBlogIntentClicked = () => {
 		sendTracksIntent( 'blog' );
-		setModal( <VideoPressOnboardingIntentModalBlog onSubmit={ handleSubmit } /> );
+		setModal( <VideoPressOnboardingIntentModalBlog /> );
 	};
 
 	const onOtherIntentClicked = () => {
