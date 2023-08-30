@@ -59,6 +59,10 @@ const withThemeAssemblerFlow: Flow = {
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: ErrorStep },
+			{
+				slug: 'celebration-step',
+				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
+			},
 		];
 	},
 
@@ -68,20 +72,10 @@ const withThemeAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
-
-		const exitFlow = ( to: string ) => {
-			setPendingAction( () => {
-				return new Promise( () => {
-					window.location.assign( to );
-				} );
-			} );
-
-			return navigate( 'processing' );
-		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
@@ -92,16 +86,15 @@ const withThemeAssemblerFlow: Flow = {
 						return navigate( 'error' );
 					}
 
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					return navigate( 'celebration-step' );
 				}
 
 				case 'patternAssembler': {
 					return navigate( 'processing' );
+				}
+
+				case 'celebration-step': {
+					return window.location.assign( providedDependencies.destinationUrl as string );
 				}
 			}
 		};
