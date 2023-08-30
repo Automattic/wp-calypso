@@ -11,6 +11,15 @@ type StorageAddOnDropdownProps = {
 	storageOptions: StorageOption[];
 };
 
+const getStorageOptionName = ( storageAddOnsForPlan, storageOptionSlug: string ) => {
+	const cost = storageAddOnsForPlan?.find( ( addOn ) => {
+		return addOn?.featureSlugs?.includes( storageOptionSlug );
+	} )?.costData?.formattedMonthlyCost;
+	const title = getStorageStringFromFeature( storageOptionSlug );
+
+	return `${ title } ${ cost ? '+ ' + cost : '' }`;
+};
+
 export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
@@ -25,17 +34,11 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce( ( acc, storageOption ) => {
-		const cost = storageAddOnsForPlan?.find( ( addOn ) => {
-			return addOn?.featureSlugs?.includes( storageOption.slug );
-		} )?.costData?.formattedMonthlyCost;
-		const title = getStorageStringFromFeature( storageOption.slug );
-		const name = `${ title } ${ cost ? cost : '' }`;
-		if ( title ) {
-			acc.push( {
-				key: storageOption?.slug,
-				name,
-			} );
-		}
+		const name = getStorageOptionName( storageAddOnsForPlan, storageOption.slug );
+		acc.push( {
+			key: storageOption?.slug,
+			name,
+		} );
 
 		return acc;
 	}, [] as { key: string; name: TranslateResult }[] );
@@ -44,7 +47,7 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 	const selectedOptionKey = selectedStorageOptionForPlan || defaultStorageOption?.slug || '';
 	const selectedOption = {
 		key: selectedOptionKey,
-		name: getStorageStringFromFeature( selectedOptionKey ),
+		name: getStorageOptionName( storageAddOnsForPlan, selectedOptionKey ),
 	};
 	return (
 		<CustomSelectControl
