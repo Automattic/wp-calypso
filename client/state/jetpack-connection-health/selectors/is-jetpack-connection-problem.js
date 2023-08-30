@@ -8,7 +8,7 @@ import 'calypso/state/jetpack-connection-health/init';
  * Returns true if the current site has possible Jetpack connection problem
  *
  * @param  {Object}  state         Global state tree
- * @param  {number}  siteId        Site ID
+ * @param  {?number}  siteId        Site ID
  * @returns {?boolean}             Whether the current site can have connection problem
  */
 export default function isJetpackConnectionProblem( state, siteId ) {
@@ -29,7 +29,7 @@ export default function isJetpackConnectionProblem( state, siteId ) {
  *
  * Returns true if the current site has possible Jetpack connection problem
  *
- * @param  {number}  siteId        Site ID
+ * @param  {?number}  siteId        Site ID
  */
 export const useIsJetpackConnectionProblem = ( siteId ) => {
 	const dispatch = useDispatch();

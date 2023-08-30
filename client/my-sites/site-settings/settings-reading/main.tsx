@@ -214,7 +214,7 @@ const ReadingSettings = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( siteId );
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( siteId as number );
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">
