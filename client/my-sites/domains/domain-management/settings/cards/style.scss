@@ -143,8 +143,16 @@
 		border: 1px solid var(--color-neutral-5) !important;
 	}
 
-	.subdomain .form-text-input-with-affixes__suffix .form-label {
-		margin: 0;
+	.forwards-from {
+
+		.form-text-input-with-affixes__prefix {
+			padding: 0;
+			border: 0 !important;
+		}
+
+		.form-text-input-with-affixes__suffix .form-label {
+			margin: 0;
+		}
 	}
 
 	.forwards-to {
