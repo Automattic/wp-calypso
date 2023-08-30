@@ -315,3 +315,28 @@ test( 'bulk actions controls appear when a domain is selected', async () => {
 
 	expect( screen.queryByRole( 'button', { name: 'Auto-renew settings' } ) ).not.toBeInTheDocument();
 } );
+
+test( 'Owner column is not rendered when hideOwnerColumn is true', () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( ( siteId ) =>
+		Promise.resolve( {
+			domains: siteId === 123 ? [ primaryFull ] : [],
+		} )
+	);
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial ] }
+			isAllSitesView
+			fetchSiteDomains={ fetchSiteDomains }
+		/>
+	);
+
+	expect( screen.queryByText( 'Owner' ) ).not.toBeInTheDocument();
+} );

@@ -59,3 +59,7 @@ export const getSiteSortFunctions = () => {
 		getSimpleSortFunctionBy( 'domain' ),
 	];
 };
+
+export const shouldHideOwnerColumn = ( domains: DomainData[] ) => {
+	return ! domains.some( ( domain ) => domain.owner !== '' );
+};

@@ -21,6 +21,7 @@ interface DomainsTableRowProps {
 	domain: PartialDomainData;
 	isAllSitesView: boolean;
 	isSelected: boolean;
+	hideOwnerColumn?: boolean;
 	onSelect( domain: PartialDomainData ): void;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 
@@ -34,6 +35,7 @@ export function DomainsTableRow( {
 	domain,
 	isAllSitesView,
 	isSelected,
+	hideOwnerColumn = false,
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
@@ -114,6 +116,15 @@ export function DomainsTableRow( {
 					<span className="domains-table__domain-name">{ domain.domain }</span>
 				) }
 			</td>
+			{ ! hideOwnerColumn && (
+				<td>
+					{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+						<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+					) : (
+						currentDomainData?.owner
+					) }
+				</td>
+			) }
 			<td>
 				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
