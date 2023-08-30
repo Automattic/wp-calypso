@@ -16,6 +16,7 @@ import {
 import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { ExternalLink, Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
@@ -59,6 +60,8 @@ const UpgradeModal = ( {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const theme = useThemeDetails( slug );
+	const isDesktop = useBreakpoint( '>782px' );
+
 	// Check current theme: Does it have a plugin bundled?
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
 	const showBundleVersion = theme_software_set;
@@ -153,7 +156,13 @@ const UpgradeModal = ( {
 		const productPrice = marketplaceProduct?.cost_display;
 
 		return {
-			header: <h1 className="upgrade-modal__heading bundle">{ translate( 'Upgrade to buy' ) }</h1>,
+			header: (
+				<h1 className="upgrade-modal__heading bundle externally-managed">
+					{ isDesktop
+						? translate( 'Unlock this partner theme' )
+						: translate( 'Unlock this theme' ) }
+				</h1>
+			),
 			text: (
 				<>
 					<p>
@@ -189,7 +198,7 @@ const UpgradeModal = ( {
 			),
 			price: null,
 			action: (
-				<div className="upgrade-modal__actions bundle">
+				<div className="upgrade-modal__actions bundle externally-managed">
 					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
 						{ translate( 'Cancel' ) }
 					</Button>
@@ -298,7 +307,8 @@ const UpgradeModal = ( {
 						{ modalData.header }
 						{ modalData.text }
 						{ modalData.price }
-						{ features }
+						{ /* We don't want to show features on mobile for Partner themes */ }
+						{ ! isExternallyManaged && features }
 						{ modalData.action }
 					</div>
 					<div className="upgrade-modal__col">{ features }</div>
