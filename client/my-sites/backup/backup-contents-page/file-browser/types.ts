@@ -27,6 +27,7 @@ export interface FileBrowserItem {
 	extensionVersion?: string;
 	manifestPath?: string;
 	extensionType?: string;
+	totalItems?: number;
 }
 
 export interface BackupLsResponse {
@@ -46,6 +47,7 @@ export interface BackupLsResponseContents {
 		label?: string;
 		row_count?: number;
 		extension_version?: string;
+		total_items?: number;
 	};
 }
 
