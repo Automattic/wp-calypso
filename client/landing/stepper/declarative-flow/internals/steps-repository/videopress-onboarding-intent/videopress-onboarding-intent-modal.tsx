@@ -41,6 +41,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	const handleWaitlistEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const newEmail = event?.target?.value;
 
+		setIsWaitlistEmailValid( emailValidator.validate( newEmail ) );
 		setWaitlistEmail( newEmail );
 	};
 
@@ -136,7 +137,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 										value={ waitlistEmail }
 										onChange={ handleWaitlistEmailChange }
 										onBlur={ handleWaitlistEmailBlur }
-										isError={ ! isWaitlistEmailValid }
+										isError={ ! isWaitlistEmailValid && '' !== waitlistEmail }
 									/>
 									<Button
 										className="intro__button"
