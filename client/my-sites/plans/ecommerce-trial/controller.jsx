@@ -1,3 +1,4 @@
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import wasBusinessTrialSite from 'calypso/state/selectors/was-business-trial-site';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -9,6 +10,14 @@ import TrialUpgradeConfirmation from './upgrade-confirmation';
 export function trialExpired( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	context.store.dispatch(
+		recordTracksEvent( 'calypso_plan_trial_expired_page', {
+			site_id: selectedSite.ID,
+			was_ecommerce_trial_site: wasEcommerceTrialSite( state, selectedSite.ID ),
+			was_business_trial_site: wasBusinessTrialSite( state, selectedSite.ID ),
+		} )
+	);
 
 	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
 		context.primary = <ECommerceTrialExpired />;
