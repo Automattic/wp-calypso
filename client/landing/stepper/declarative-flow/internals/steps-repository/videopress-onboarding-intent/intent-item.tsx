@@ -8,6 +8,9 @@ interface Props {
 const VideoPressOnboardingIntentItem = ( props: Props ) => {
 	const { title, image, description, onClick } = props;
 
+	// Replace last space between words in description with nbsp
+	const descriptionWithNbsp = description.replace( /\s(?=[^\s]*$)/, '\u00a0' );
+
 	return (
 		<div className="videopress-intent-item">
 			<button className="videopress-intent-item__preview" onClick={ onClick }>
@@ -15,7 +18,7 @@ const VideoPressOnboardingIntentItem = ( props: Props ) => {
 			</button>
 			<div className="videopress-intent-item__description">
 				<span className="videopress-intent-item__title">{ title }</span>
-				<span className="videopress-intent-item__description">{ description }</span>
+				<span className="videopress-intent-item__description">{ descriptionWithNbsp }</span>
 			</div>
 		</div>
 	);
