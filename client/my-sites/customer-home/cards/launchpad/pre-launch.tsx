@@ -9,7 +9,7 @@ const LaunchpadPreLaunch = (): JSX.Element => {
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
 	const checklistSlug = site?.options?.site_intent ?? '';
 
-	return <CustomerHomeLaunchpad checklistSlug={ checklistSlug }></CustomerHomeLaunchpad>;
+	return <CustomerHomeLaunchpad checklistSlug={ checklistSlug } />;
 };
 
 export default LaunchpadPreLaunch;
