@@ -73,23 +73,21 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 						<ConfettiAnimation />
 						<div className="celebration-step__top-content">
 							<div className="celebration-step__top-content-main">
-								<div className="celebration-step__top-content-title">{ site?.name }</div>
-								<div className="celebration-step__top-content-description">
+								<div className="celebration-step__top-content-title" title={ site?.name }>
+									{ site?.name }
+								</div>
+								<div
+									className="celebration-step__top-content-description"
+									title={ selectedDomain?.domain_name || siteSlug }
+								>
 									{ selectedDomain?.domain_name || siteSlug }
 								</div>
 							</div>
 							<div className="celebration-step__top-content-cta">
-								<Button
-									className="celebration-step__top-content-cta-primary"
-									primary
-									onClick={ () => handleSubmit( primaryCtaName, primaryCtaLink ) }
-								>
+								<Button primary onClick={ () => handleSubmit( primaryCtaName, primaryCtaLink ) }>
 									{ primaryCtaText }
 								</Button>
-								<Button
-									className="celebration-step__top-content-cta-secondary"
-									onClick={ () => handleSubmit( secondaryCtaName, secondaryCtaLink ) }
-								>
+								<Button onClick={ () => handleSubmit( secondaryCtaName, secondaryCtaLink ) }>
 									{ secondaryCtaText }
 								</Button>
 							</div>
