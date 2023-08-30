@@ -28,8 +28,11 @@
 			}
 		}
 
-		.notice-banner.is-info {
+		.notice-banner {
+
+			&.is-info {
 			border-left-color: var(--color-accent);
+			}
 
 			&.is-dark {
 				border-left-color: var(--studio-black);
