@@ -53,10 +53,15 @@ export const useIsJetpackConnectionProblem = ( siteId ) => {
 		 * Among others it's used as a login in `wpcom-proxy-request` package,
 		 * and the idea is borrowed from there to detect the site inaccessibility.
 		 */
-		window.addEventListener( 'message', onMessage );
+
+		if ( typeof window !== 'undefined' ) {
+			window.addEventListener( 'message', onMessage );
+		}
 
 		return () => {
-			window.removeEventListener( 'message', onMessage );
+			if ( typeof window !== 'undefined' ) {
+				window.removeEventListener( 'message', onMessage );
+			}
 		};
 	}, [ isPossibleConnectionProblem, siteId, dispatch ] );
 
