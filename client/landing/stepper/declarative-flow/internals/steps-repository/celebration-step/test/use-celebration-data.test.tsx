@@ -1,24 +1,41 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
 	WITH_THEME_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
+import { renderHook } from '@testing-library/react';
+import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import useCelebrationData from '../use-celebration-data';
 
 const siteSlug = 'testcelebrationscreen.wordpress.com';
 
 describe( 'The useCelebrationData hook', () => {
+	let wrapper;
+
+	beforeEach( () => {
+		wrapper = ( { children } ) => (
+			<I18NContext.Provider value={ defaultCalypsoI18n }>{ children }</I18NContext.Provider>
+		);
+	} );
+
 	describe( `The ${ DESIGN_FIRST_FLOW } flow`, () => {
 		const flow = DESIGN_FIRST_FLOW;
 
 		it( 'renders correct texts and links when first post is NOT published', () => {
-			const data = useCelebrationData( {
-				flow,
-				siteSlug,
-				isFirstPostPublished: false,
-			} );
+			const { result } = renderHook(
+				() =>
+					useCelebrationData( {
+						flow,
+						siteSlug,
+						isFirstPostPublished: false,
+					} ),
+				{ wrapper }
+			);
 
-			expect( data ).toEqual( {
+			expect( result.current ).toEqual( {
 				title: 'Your blog’s ready!',
 				subTitle: 'Now it’s time to start posting.',
 				primaryCtaName: 'Write your first post',
@@ -34,13 +51,17 @@ describe( 'The useCelebrationData hook', () => {
 		} );
 
 		it( 'renders correct texts and links when first post is published', () => {
-			const data = useCelebrationData( {
-				flow,
-				siteSlug,
-				isFirstPostPublished: true,
-			} );
+			const { result } = renderHook(
+				() =>
+					useCelebrationData( {
+						flow,
+						siteSlug,
+						isFirstPostPublished: true,
+					} ),
+				{ wrapper }
+			);
 
-			expect( data ).toEqual( {
+			expect( result.current ).toEqual( {
 				title: 'Your blog’s ready!',
 				subTitle: 'Now it’s time to connect your social accounts.',
 				primaryCtaName: 'Connect to social',
@@ -57,15 +78,19 @@ describe( 'The useCelebrationData hook', () => {
 	} );
 
 	describe( `The ${ START_WRITING_FLOW } flow`, () => {
-		const flow = WITH_THEME_ASSEMBLER_FLOW;
+		const flow = START_WRITING_FLOW;
 
 		it( 'renders correct texts and links', () => {
-			const data = useCelebrationData( {
-				flow,
-				siteSlug,
-			} );
+			const { result } = renderHook(
+				() =>
+					useCelebrationData( {
+						flow,
+						siteSlug,
+					} ),
+				{ wrapper }
+			);
 
-			expect( data ).toEqual( {
+			expect( result.current ).toEqual( {
 				title: 'Your blog’s ready!',
 				subTitle: 'Now it’s time to connect your social accounts.',
 				primaryCtaName: 'Connect to social',
@@ -85,12 +110,16 @@ describe( 'The useCelebrationData hook', () => {
 		const flow = WITH_THEME_ASSEMBLER_FLOW;
 
 		it( 'renders correct texts and links', () => {
-			const data = useCelebrationData( {
-				flow,
-				siteSlug,
-			} );
+			const { result } = renderHook(
+				() =>
+					useCelebrationData( {
+						flow,
+						siteSlug,
+					} ),
+				{ wrapper }
+			);
 
-			expect( data ).toEqual( {
+			expect( result.current ).toEqual( {
 				title: 'Your site’s ready!',
 				subTitle: 'Now it’s time to edit your content',
 				primaryCtaName: 'Edit your content',
