@@ -603,13 +603,13 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getNewsletterSignupFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 		FEATURE_PREMIUM_CONTENT_JP,
 		FEATURE_NEWSLETTERS_RSS,
 		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_STATS_JP,
 		FEATURE_BANDWIDTH,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
-		FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	],
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_BEAUTIFUL_THEMES,
@@ -841,9 +841,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	getNewsletterHighlightedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -1345,13 +1345,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
 	getNewsletterSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_VIDEOPRESS_JP,
-		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	getNewsletterHighlightedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
