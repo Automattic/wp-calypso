@@ -16,6 +16,9 @@ const useDefaultSiteColumns = (): SiteColumns => {
 	const translate = useTranslate();
 	const isBoostEnabled = isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
 	const isPaidMonitorEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
+	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
+		'jetpack/pro-dashboard-wpcom-atomic-hosting'
+	);
 
 	return useMemo( () => {
 		const boostColumn: SiteColumn[] = isBoostEnabled
@@ -33,7 +36,13 @@ const useDefaultSiteColumns = (): SiteColumns => {
 		return [
 			{
 				key: 'site',
-				title: translate( 'Site' ),
+				title: isWPCOMAtomicSiteCreationEnabled
+					? translate( '{{div}}Host{{/div}} Site', {
+							components: {
+								div: <div className="fixed-host-column" />,
+							},
+					  } )
+					: translate( 'Site' ),
 				isSortable: true,
 			},
 			{
@@ -69,7 +78,7 @@ const useDefaultSiteColumns = (): SiteColumns => {
 				className: 'width-fit-content',
 			},
 		];
-	}, [ isBoostEnabled, isPaidMonitorEnabled, translate ] );
+	}, [ isBoostEnabled, isPaidMonitorEnabled, isWPCOMAtomicSiteCreationEnabled, translate ] );
 };
 
 export default useDefaultSiteColumns;
