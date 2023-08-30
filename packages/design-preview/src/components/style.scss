@@ -318,8 +318,6 @@ $design-preview-sidebar-width: 311px;
 		padding: 0;
 		margin: 8px 0 0;
 		animation: none;
-		// Increase width to ensure the scrollbar doesn't "push" the content to the left.
-		width: calc(100% + 16px);
 		overflow-x: hidden;
 		overflow-y: scroll;
 
