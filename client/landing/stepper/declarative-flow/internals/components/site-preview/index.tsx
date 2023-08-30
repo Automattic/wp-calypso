@@ -5,7 +5,7 @@ import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import PreviewToolbar from '../../steps-repository/design-setup/preview-toolbar';
+import PreviewToolbar from './preview-toolbar';
 import type { Device } from '@automattic/components';
 import './style.scss';
 
