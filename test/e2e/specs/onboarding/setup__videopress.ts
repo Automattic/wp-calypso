@@ -71,6 +71,7 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 		it( 'Navigate choose a domain', async function () {
 			await page.waitForSelector( '#choose-a-domain-header' );
 		} );
+
 		it( 'Search for a domain', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( testUser.username );

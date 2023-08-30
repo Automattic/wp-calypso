@@ -29,20 +29,25 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign, getAssemblerSource } from '../../analytics/record-design';
-import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_PATH, CATEGORY_ALL_SLUG } from './constants';
+import { SITE_TAGLINE, NAVIGATOR_PATHS, INITIAL_SCREEN } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import useCategoryAll from './hooks/use-category-all';
-import useDotcomPatterns from './hooks/use-dotcom-patterns';
-import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
-import usePatternCategories from './hooks/use-pattern-categories';
-import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
-import { usePrefetchImages } from './hooks/use-prefetch-images';
-import useRecipe from './hooks/use-recipe';
+import {
+	useCurrentScreen,
+	useDotcomPatterns,
+	useGlobalStylesUpgradeModal,
+	useInitialPath,
+	usePatternCategories,
+	usePatternsMapByCategory,
+	usePrefetchImages,
+	useRecipe,
+	useSyncNavigatorScreen,
+} from './hooks';
 import withNotices, { NoticesProps } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import ScreenActivation from './screen-activation';
 import ScreenColorPalettes from './screen-color-palettes';
+import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
@@ -89,19 +94,19 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const locale = useLocale();
+
 	// New sites are created from 'site-setup' and 'with-site-assembler' flows
 	const isNewSite = !! useQuery().get( 'isNewSite' ) || isSiteSetupFlow( flow );
 
 	// The categories api triggers the ETK plugin before the PTK api request
 	const categories = usePatternCategories( site?.ID );
-	// Fetching all patterns and categories from PTK api
+	// Fetching curated patterns and categories from PTK api
 	const dotcomPatterns = useDotcomPatterns( locale );
-	const allPatterns = useCategoryAll( dotcomPatterns );
 	const patternIds = useMemo(
-		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
-		[ allPatterns ]
+		() => dotcomPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
+		[ dotcomPatterns ]
 	);
-	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
+	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns, categories );
 	const {
 		header,
 		footer,
@@ -113,7 +118,7 @@ const PatternAssembler = ( {
 		setSections,
 		setColorVariation,
 		setFontVariation,
-	} = useRecipe( site?.ID, allPatterns, categories );
+	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
@@ -140,6 +145,9 @@ const PatternAssembler = ( {
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
+	const currentScreen = useCurrentScreen();
+
+	useSyncNavigatorScreen();
 	usePrefetchImages();
 
 	const siteInfo = {
@@ -324,12 +332,31 @@ const PatternAssembler = ( {
 		}
 	};
 
+	const getBackLabel = () => {
+		if ( ! currentScreen.previousScreen ) {
+			return undefined;
+		}
+
+		// Commit the following string for the translation
+		// translate( 'Back to %(pageTitle)s' );
+		return translate( 'Back to %(clientTitle)s', {
+			args: {
+				clientTitle: currentScreen.previousScreen.title,
+			},
+		} );
+	};
+
 	const onBack = () => {
-		if ( navigator.location.path === NAVIGATOR_PATHS.ACTIVATION ) {
-			navigator.goBack();
+		if ( currentScreen.previousScreen ) {
+			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
+				navigator.goTo( currentScreen.previousScreen.initialPath, { replace: true } );
+			} else {
+				navigator.goBack();
+			}
+
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
-				screen_from: 'activation',
-				screen_to: 'styles',
+				screen_from: currentScreen.name,
+				screen_to: currentScreen.previousScreen.name,
 			} );
 			return;
 		}
@@ -385,9 +412,10 @@ const PatternAssembler = ( {
 
 		recordSelectedDesign( { flow, intent, design } );
 		submit?.();
+		trackEventContinue();
 	};
 
-	const handleContinue = () => {
+	const onUpgradeLater = () => {
 		if ( isNewSite ) {
 			onSubmit();
 		} else {
@@ -404,23 +432,30 @@ const PatternAssembler = ( {
 		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
-		onUpgradeLater: handleContinue,
+		onUpgradeLater,
 		recordTracksEvent,
 	} );
 
 	const onContinueClick = () => {
-		trackEventContinue();
-
 		if ( shouldUnlockGlobalStyles ) {
 			openGlobalStylesUpgradeModal();
 			return;
 		}
 
-		handleContinue();
+		if ( isNewSite ) {
+			navigator.goTo( NAVIGATOR_PATHS.CONFIRMATION );
+		} else {
+			navigator.goTo( NAVIGATOR_PATHS.ACTIVATION );
+		}
 	};
 
 	const onActivate = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_ACTIVATION_ACTIVATE_CLICK );
+		onSubmit();
+	};
+
+	const onConfirm = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONFIRMATION_CONFIRM_CLICK );
 		onSubmit();
 	};
 
@@ -454,8 +489,7 @@ const PatternAssembler = ( {
 	const onShuffle = ( type: string, pattern: Pattern, position?: number ) => {
 		const [ firstCategory ] = Object.keys( pattern.categories );
 		const selectedCategory = pattern.category?.name || firstCategory;
-		const patterns =
-			patternsMapByCategory[ selectedCategory ] || patternsMapByCategory[ CATEGORY_ALL_SLUG ];
+		const patterns = patternsMapByCategory[ selectedCategory ];
 		const shuffledPattern = getShuffledPattern( patterns, pattern );
 		injectCategoryToPattern( shuffledPattern, categories, selectedCategory );
 
@@ -520,6 +554,10 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.ACTIVATION } className="screen-activation">
 					<ScreenActivation onActivate={ onActivate } />
 				</NavigatorScreen>
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.CONFIRMATION } className="screen-confirmation">
+					<ScreenConfirmation onConfirm={ onConfirm } />
+				</NavigatorScreen>
 			</div>
 			<div className="pattern-assembler__sidebar-panel">
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN_PATTERNS }>
@@ -570,14 +608,11 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={
-				navigator.location.path !== NAVIGATOR_PATHS.ACTIVATION &&
-				! navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
-			}
+			stepSectionName={ currentScreen.name }
 			backLabelText={
 				isSiteAssemblerFlow( flow ) && navigator.location.path?.startsWith( NAVIGATOR_PATHS.MAIN )
 					? translate( 'Back to themes' )
-					: undefined
+					: getBackLabel()
 			}
 			goBack={ onBack }
 			goNext={ goNext }
@@ -600,11 +635,15 @@ const PatternAssembler = ( {
 	);
 };
 
-const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => (
-	<NavigatorProvider initialPath={ INITIAL_PATH } tabIndex={ -1 }>
-		<PatternAssembler { ...props } />
-	</NavigatorProvider>
-);
+const PatternAssemblerStep = ( props: StepProps & NoticesProps ) => {
+	const initialPath = useInitialPath();
+
+	return (
+		<NavigatorProvider initialPath={ initialPath } tabIndex={ -1 }>
+			<PatternAssembler { ...props } />
+		</NavigatorProvider>
+	);
+};
 
 export default compose(
 	withGlobalStylesProvider,

@@ -17,6 +17,8 @@ import {
 	DNS_ERROR,
 	UNKNOWN_ERROR,
 	GENERIC_ERROR,
+	XMLRPC_ERROR,
+	REST_API_ERROR,
 } from '../constants';
 
 const mockError = jest.fn().mockReturnValue( UNKNOWN_ERROR );
@@ -181,6 +183,40 @@ describe( 'JetpackConnectionHealthBanner', () => {
 				screen.queryByText(
 					/Jetpack can’t communicate with your site because it hasn't seen your site for 7 days./i
 				)
+			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+		} );
+
+		test( 'shows an XML-RPC error message', () => {
+			mockError.mockReturnValue( XMLRPC_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.queryByText( /Jetpack encounters XML-RPC connection issues./i )
+			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+		} );
+
+		test( 'shows a REST API error message', () => {
+			mockError.mockReturnValue( REST_API_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.queryByText( /Jetpack encounters REST API connection issues./i )
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );

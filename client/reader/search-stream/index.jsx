@@ -168,6 +168,8 @@ class SearchStream extends React.Component {
 			', ',
 		] ).slice( 0, -1 );
 
+		const fixedAreaHeight = this.fixedAreaRef && this.fixedAreaRef.clientHeight;
+
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div>
@@ -230,7 +232,7 @@ class SearchStream extends React.Component {
 				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
-							<PostResults { ...this.props } />
+							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
 						</div>
 						<div className="search-stream__site-results">
 							{ query && (
@@ -251,7 +253,9 @@ class SearchStream extends React.Component {
 				) }
 				{ ! hidePostsAndSites && ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
-						{ ( searchType === SEARCH_TYPES.POSTS && <PostResults { ...this.props } /> ) ||
+						{ ( searchType === SEARCH_TYPES.POSTS && (
+							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
+						) ) ||
 							( query && (
 								<SiteResults
 									query={ query }

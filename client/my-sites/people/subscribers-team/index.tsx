@@ -11,7 +11,7 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
@@ -30,9 +30,7 @@ function SubscribersTeam( props: Props ) {
 	const { filter, search } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
-	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
-		isJetpackConnectionProblem( state, site?.ID as number )
-	);
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID as number );
 	const pendingInvites = useSelector( ( state ) =>
 		getPendingInvitesForSite( state, site?.ID as number )
 	);

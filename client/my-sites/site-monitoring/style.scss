@@ -1,12 +1,36 @@
+@use "sass:math";
 @import "uplot/dist/uPlot.min.css";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+$section-max-width: 1224px;
+
 .is-section-site-monitoring.theme-default {
 	background-color: var(--studio-white);
 	.focus-content:not(.has-no-sidebar) .layout__content {
-		@media screen and (max-width: 782px) {
+		@media screen and ( max-width: 782px ) {
 			padding-top: 71px;
+		}
+	}
+}
+
+.is-section-site-monitoring {
+	// this overrides the default .layout__content that adds unwanted padding
+	& .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding: 0;
+		padding-block-start: 79px;
+
+		@media ( min-width: 782px ) {
+			padding-inline-start: calc(var(--sidebar-width-max) + 1px);
+		}
+	}
+	& .site-logs-container {
+		padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
+		@media screen and ( max-width: 782px ) {
+			padding: 0;
+			margin-left: 16px;
+			margin-right: 16px;
 		}
 	}
 }
@@ -32,25 +56,25 @@
 	}
 }
 
-.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align,
 .site-monitoring .components-tab-panel__tab-content,
 .site-monitoring .components-tab-panel__tabs {
+	margin-left: 16px;
+	margin-right: 16px;
 	max-width: 1224px;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 .site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
 	padding-bottom: 24px;
-	margin-left: 16px;
-	margin-right: 16px;
-	@include break-medium {
-		margin-left: 0;
-		margin-right: 0;
+	margin-left: 32px;
+	margin-right: 32px;
+	@media screen and ( max-width: 782px ) {
+		margin-left: 16px;
+		margin-right: 16px;
 	}
 }
 
 .site-monitoring-metrics-tab {
+	padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -126,7 +150,6 @@
 	.pie-chart__chart-section-cache-miss,
 	.pie-chart__legend-sample-cache-miss {
 		fill: #bae0f9;
-
 	}
 	.pie-chart__chart-section-cache-hit,
 	.pie-chart__legend-sample-cache-hit {
@@ -147,7 +170,7 @@
 
 .site-monitoring__pagination-text {
 	text-align: center;
-	margin: 0 0 1.5rem;
+	margin: 0 0 1rem;
 }
 
 .site-monitoring-line-chart {
@@ -155,7 +178,7 @@
 		color: var(--studio-gray-100);
 
 		// Disable rendering first u-marker, which is for "Date" and is empty.
-		> .u-series:first-child {
+		> tbody > .u-series:first-child {
 			display: none;
 		}
 
@@ -164,7 +187,7 @@
 		}
 
 		// Use increased specificity to override original uPlot styles.
-		> tr.u-series > th {
+		> tbody > tr.u-series > th {
 			cursor: initial;
 			pointer-events: none;
 
