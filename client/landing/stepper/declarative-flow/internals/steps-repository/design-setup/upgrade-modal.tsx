@@ -1,4 +1,5 @@
 import {
+	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_BANDWIDTH,
 	FEATURE_BURST,
@@ -8,8 +9,12 @@ import {
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_MANAGED_HOSTING,
+	FEATURE_NO_ADS,
+	FEATURE_PREMIUM_THEMES,
 	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_STYLE_CUSTOMIZATION,
+	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 } from '@automattic/calypso-products';
@@ -241,9 +246,13 @@ const UpgradeModal = ( {
 
 	const getExternallyManagedFeatureList = () => {
 		return getPlanFeaturesObject( [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			FEATURE_PREMIUM_THEMES,
+			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_NO_ADS,
+			FEATURE_ACCEPT_PAYMENTS,
+			FEATURE_MANAGED_HOSTING,
+			FEATURE_VIDEOPRESS_JP,
 		] );
 	};
 
@@ -275,7 +284,7 @@ const UpgradeModal = ( {
 	}
 
 	const features =
-		isExternallyManaged && ! isMarketplacePlanSubscriptionNeeeded ? null : (
+		isExternallyManaged && featureList.length === 0 ? null : (
 			<div className="upgrade-modal__included">
 				<h2>{ featureListHeader }</h2>
 				<ul>
