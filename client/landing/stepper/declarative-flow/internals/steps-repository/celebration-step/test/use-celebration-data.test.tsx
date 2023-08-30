@@ -21,12 +21,15 @@ describe( 'The useCelebrationData hook', () => {
 			expect( data ).toEqual( {
 				title: 'Your blog’s ready!',
 				subTitle: 'Now it’s time to start posting.',
+				primaryCtaName: 'Write your first post',
 				primaryCtaText: 'Write your first post',
 				primaryCtaLink: `/post/${ siteSlug }`,
+				secondaryCtaName: 'Visit your blog',
 				secondaryCtaText: 'Visit your blog',
 				secondaryCtaLink: `https://${ siteSlug }`,
-				dashboardText: 'Go to dashboard',
-				dashboardLink: `/home/${ siteSlug }`,
+				dashboardCtaName: 'Go to dashboard',
+				dashboardCtaText: 'Go to dashboard',
+				dashboardCtaLink: `/home/${ siteSlug }`,
 			} );
 		} );
 
@@ -40,12 +43,15 @@ describe( 'The useCelebrationData hook', () => {
 			expect( data ).toEqual( {
 				title: 'Your blog’s ready!',
 				subTitle: 'Now it’s time to connect your social accounts.',
+				primaryCtaName: 'Connect to social',
 				primaryCtaText: 'Connect to social',
 				primaryCtaLink: `/marketing/connections/${ siteSlug }`,
+				secondaryCtaName: 'Visit your blog',
 				secondaryCtaText: 'Visit your blog',
 				secondaryCtaLink: `https://${ siteSlug }`,
-				dashboardText: 'Go to dashboard',
-				dashboardLink: `/home/${ siteSlug }`,
+				dashboardCtaName: 'Go to dashboard',
+				dashboardCtaText: 'Go to dashboard',
+				dashboardCtaLink: `/home/${ siteSlug }`,
 			} );
 		} );
 	} );
@@ -62,12 +68,15 @@ describe( 'The useCelebrationData hook', () => {
 			expect( data ).toEqual( {
 				title: 'Your blog’s ready!',
 				subTitle: 'Now it’s time to connect your social accounts.',
+				primaryCtaName: 'Connect to social',
 				primaryCtaText: 'Connect to social',
 				primaryCtaLink: `/marketing/connections/${ siteSlug }`,
+				secondaryCtaName: 'Visit your blog',
 				secondaryCtaText: 'Visit your blog',
 				secondaryCtaLink: `https://${ siteSlug }`,
-				dashboardText: 'Go to dashboard',
-				dashboardLink: `/home/${ siteSlug }`,
+				dashboardCtaName: 'Go to dashboard',
+				dashboardCtaText: 'Go to dashboard',
+				dashboardCtaLink: `/home/${ siteSlug }`,
 			} );
 		} );
 	} );
@@ -84,12 +93,15 @@ describe( 'The useCelebrationData hook', () => {
 			expect( data ).toEqual( {
 				title: 'Your site’s ready!',
 				subTitle: 'Now it’s time to edit your content',
+				primaryCtaName: 'Edit your content',
 				primaryCtaText: 'Edit your content',
 				primaryCtaLink: `/site-editor/${ siteSlug }?canvas=edit&assembler=1`,
+				secondaryCtaName: 'Visit your site',
 				secondaryCtaText: 'Visit your site',
 				secondaryCtaLink: `https://${ siteSlug }`,
-				dashboardText: 'Go to dashboard',
-				dashboardLink: `/home/${ siteSlug }`,
+				dashboardCtaName: 'Go to dashboard',
+				dashboardCtaText: 'Go to dashboard',
+				dashboardCtaLink: `/home/${ siteSlug }`,
 			} );
 		} );
 	} );
