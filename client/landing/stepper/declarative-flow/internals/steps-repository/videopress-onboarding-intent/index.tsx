@@ -91,12 +91,14 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 						'The easiest way to upload videos and create a community around them.'
 					) }
 					image={ ChannelIntentImage }
+					isComingSoon={ true }
 					onClick={ onVideoChannelIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
 					title={ __( 'Upload a video' ) }
 					description={ __( 'Just put a video on the internet.' ) }
 					image={ SingleVideoIntentImage }
+					isComingSoon={ true }
 					onClick={ onUploadVideoIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
