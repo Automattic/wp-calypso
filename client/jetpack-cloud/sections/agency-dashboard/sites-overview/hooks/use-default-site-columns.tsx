@@ -37,11 +37,11 @@ const useDefaultSiteColumns = (): SiteColumns => {
 			{
 				key: 'site',
 				title: isWPCOMAtomicSiteCreationEnabled
-					? translate( '{{div}}Host{{/div}} Site', {
+					? ( translate( '{{div}}Host{{/div}} Site', {
 							components: {
 								div: <div className="fixed-host-column" />,
 							},
-					  } )
+					  } ) as string )
 					: translate( 'Site' ),
 				isSortable: true,
 			},
