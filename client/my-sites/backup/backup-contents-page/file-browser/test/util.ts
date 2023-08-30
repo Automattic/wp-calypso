@@ -2,8 +2,13 @@
  * @jest-environment jsdom
  */
 
-import { BackupPathInfoResponse, FileBrowserItemInfo } from '../types';
-import { convertBytes, encodeToBase64, parseBackupPathInfo } from '../util';
+import { BackupLsResponse, BackupPathInfoResponse, FileBrowserItem, FileBrowserItemInfo } from '../types';
+import {
+	convertBytes,
+	encodeToBase64,
+	parseBackupContentsData,
+	parseBackupPathInfo,
+} from '../util';
 
 describe( 'convertBytes', () => {
 	it( 'should correctly convert bytes to KB', () => {
@@ -117,5 +122,69 @@ describe( 'encodeToBase64', () => {
 		const text = 'مرحبا، العالم!';
 		const encoded = encodeToBase64( text );
 		expect( encoded ).toBe( '2YXYsdit2KjYp9iMINin2YTYudin2YTZhSE=' );
+	} );
+} );
+
+describe( 'parseBackupContentsData', () => {
+	it( 'should return an empty array if `ok` is false', () => {
+		expect(
+			parseBackupContentsData( { ok: false, error: 'Some error message', contents: {} } )
+		).toEqual( [] );
+	} );
+
+	it( 'should map properties correctly for directories', () => {
+		const payload: BackupLsResponse = {
+			ok: true,
+			error: '',
+			contents: {
+				plugins: {
+					has_children: true,
+					id: 'cjI6,ZjI6Lw==',
+					total_items: 89,
+					type: 'dir',
+				},
+			},
+		};
+
+		const expected: FileBrowserItem[] = [
+			{
+				name: 'plugins',
+				type: 'dir',
+				hasChildren: true,
+				totalItems: 89,
+				id: 'cjI6,ZjI6Lw==',
+			},
+		];
+
+		const result = parseBackupContentsData( payload );
+		expect( result ).toEqual( expected );
+	} );
+
+	it( 'should map properties correctly for files', () => {
+		const payload: BackupLsResponse = {
+			ok: true,
+			error: '',
+			contents: {
+				'index.php': {
+					has_children: false,
+					id: 'ZjY6L2luZGV4LnBocA==',
+					period: '1690411648',
+					type: 'file',
+				},
+			},
+		};
+
+		const expected: FileBrowserItem[] = [
+			{
+				name: 'index.php',
+				type: 'code',
+				hasChildren: false,
+				period: '1690411648',
+				id: 'ZjY6L2luZGV4LnBocA==',
+			},
+		];
+
+		const result = parseBackupContentsData( payload );
+		expect( result ).toEqual( expected );
 	} );
 } );
