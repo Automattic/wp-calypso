@@ -121,6 +121,9 @@ export function DomainsTable( {
 		data: sortedDomains ?? [],
 		keys: [ 'domain' ],
 		query: filter.query,
+		options: {
+			threshold: 0.3,
+		},
 	} );
 
 	const handleSelectDomain = useCallback(
