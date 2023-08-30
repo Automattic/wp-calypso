@@ -151,11 +151,8 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
-			if (
-				config.isEnabled( 'reader/individual-subscription-page' ) &&
-				Reader.isValidId( blog_id )
-			) {
-				return `/read/subscriptions/site/${ blog_id }`;
+			if ( config.isEnabled( 'reader/individual-subscription-page' ) ) {
+				return `/read/subscriptions/${ subscriptionId }`;
 			}
 
 			return `/read/feeds/${ feed_id }`;
@@ -168,7 +165,7 @@ const SiteRow = ( {
 			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
-	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal ] );
+	}, [ blog_id, feed_id, isReaderPortal, isSubscriptionsPortal, subscriptionId ] );
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
