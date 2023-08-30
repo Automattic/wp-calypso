@@ -115,7 +115,9 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 					<div className="videopress-intro-modal__survey-info">
 						<div className="videopress-intro-modal__survey-title">{ surveyTitle }</div>
 						<div className="videopress-intro-modal__survey-description">
-							{ translate( 'Answer a short survey and you’ll have the chance to win $50.' ) }
+							{ translate(
+								'Send your feedback and help us shape the future of VideoPress by answering this short survey.'
+							) }
 						</div>
 					</div>
 					<div className="videopress-intro-modal__survey-button-wrapper">
