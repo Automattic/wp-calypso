@@ -7,7 +7,7 @@ const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] )
 	return useMemo( () => {
 		const categoriesMap: Record< string, Pattern[] > = {};
 
-		patterns.forEach( ( pattern ) => {
+		patterns.reverse().forEach( ( pattern ) => {
 			Object.keys( pattern.categories ).forEach( ( category ) => {
 				if ( ! PATTERN_CATEGORIES.includes( category ) ) {
 					// Only show allowed categories
