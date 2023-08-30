@@ -72,6 +72,10 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 			.then( ( response ) => {
 				if ( response.ok ) {
 					setWaitlistSubmitted( true );
+
+					if ( window.sessionStorage ) {
+						sessionStorage.setItem( `videopress-user-intent-waitlist-${ source }`, '1' );
+					}
 				}
 			} )
 			// eslint-disable-next-line no-console
@@ -82,6 +86,14 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 		// set focus somewhere in the modal to assist with keyboard-based navigation
 		document.getElementById( 'close-modal' )?.focus();
 	}, [] );
+
+	useEffect( () => {
+		const waitlistSent = window.sessionStorage
+			? !! sessionStorage.getItem( `videopress-user-intent-waitlist-${ source }` ) || false
+			: false;
+
+		setWaitlistSubmitted( waitlistSent );
+	}, [ source ] );
 
 	return (
 		<div className="videopress-intro-modal">
