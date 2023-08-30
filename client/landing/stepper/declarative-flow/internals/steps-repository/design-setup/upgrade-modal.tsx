@@ -13,14 +13,13 @@ import {
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 } from '@automattic/calypso-products';
-import { Button, Gridicon, Dialog, ScreenReaderText, Badge } from '@automattic/components';
+import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ExternalLink, Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
-import storeOnboardingImage from 'calypso/assets/images/onboarding/store-onboarding.svg';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
@@ -154,12 +153,7 @@ const UpgradeModal = ( {
 		const productPrice = marketplaceProduct?.cost_display;
 
 		return {
-			header: (
-				<>
-					<img src={ storeOnboardingImage } alt="WooCommerce" className="upgrade-modal__woo-logo" />
-					<h1 className="upgrade-modal__heading bundle">{ translate( 'Upgrade to buy' ) }</h1>
-				</>
-			),
+			header: <h1 className="upgrade-modal__heading bundle">{ translate( 'Upgrade to buy' ) }</h1>,
 			text: (
 				<>
 					<p>
@@ -271,26 +265,6 @@ const UpgradeModal = ( {
 				: translate( 'Included with your purchase' );
 	}
 
-	const themeFeatures =
-		theme.data?.taxonomies?.[ 'theme_feature' ]?.map(
-			( feature: { name: string; slug: string } ) => feature?.name
-		) || [];
-	const marketplaceThemeFeatures =
-		isExternallyManaged && isMarketplaceThemeSubscriptionNeeded && themeFeatures?.length ? (
-			<div className="upgrade-modal__theme-features">
-				<h2>{ translate( 'Theme Features' ) }</h2>
-				<ul className="upgrade-modal__theme-features-list">
-					{ themeFeatures?.map( ( themeFeature, i ) => (
-						<li className="upgrade-modal__theme-feature" key={ 'feature' + i }>
-							<Badge type="info" className="upgrade-modal__theme-feature-badge">
-								{ themeFeature }
-							</Badge>
-						</li>
-					) ) }
-				</ul>
-			</div>
-		) : null;
-
 	const features =
 		isExternallyManaged && ! isMarketplacePlanSubscriptionNeeeded ? null : (
 			<div className="upgrade-modal__included">
@@ -325,13 +299,9 @@ const UpgradeModal = ( {
 						{ modalData.text }
 						{ modalData.price }
 						{ features }
-						{ marketplaceThemeFeatures }
 						{ modalData.action }
 					</div>
-					<div className="upgrade-modal__col">
-						{ features }
-						{ marketplaceThemeFeatures }
-					</div>
+					<div className="upgrade-modal__col">{ features }</div>
 					<Button className="upgrade-modal__close" borderless onClick={ () => closeModal() }>
 						<Gridicon icon="cross" size={ 12 } />
 						<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>

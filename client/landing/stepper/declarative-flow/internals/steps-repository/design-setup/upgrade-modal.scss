@@ -49,8 +49,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 
 		&:nth-of-type(1) {
-			.upgrade-modal__included,
-			.upgrade-modal__theme-features {
+			.upgrade-modal__included {
 				display: block;
 				margin-bottom: 36px;
 
@@ -183,24 +182,6 @@ $design-button-primary-hover-color: var(--color-primary-60);
 
 		@include break-medium {
 			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-
-	.upgrade-modal__theme-features {
-		margin-top: 36px;
-
-		.upgrade-modal__theme-features-list {
-			margin: 0;
-
-			.upgrade-modal__theme-feature {
-				display: inline-block;
-				padding-top: 4px;
-				padding-right: 4px;
-			}
-
-			.upgrade-modal__theme-feature-badge {
-				border-radius: 4px;
-			}
 		}
 	}
 
