@@ -30,6 +30,13 @@ const SubscriptionManagementPage = () => {
 		}
 	);
 
+	const loginUrl = addQueryArgs(
+		localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ),
+		{
+			...( emailAddress ? { email_address: emailAddress } : {} ),
+		}
+	);
+
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>
 			<UniversalNavbarHeader
@@ -39,6 +46,7 @@ const SubscriptionManagementPage = () => {
 				variant="minimal"
 				isLoggedIn={ isLoggedIn }
 				startUrl={ startUrl }
+				loginUrl={ loginUrl }
 			/>
 			<Main className="subscription-manager__container">
 				<FormattedHeader
