@@ -149,7 +149,9 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 								</>
 							) }
 							{ waitlistSubmitted && (
-								<p className="videopress-intro-modal__waitlist-response">Thank You!</p>
+								<p className="videopress-intro-modal__waitlist-response">
+									{ translate( "Thanks for joining the waitlist! We'll keep you updated." ) }
+								</p>
 							) }
 						</div>
 						<div className="videopress-intro-modal__waitlist-description">
