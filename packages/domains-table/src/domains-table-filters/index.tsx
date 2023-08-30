@@ -1,6 +1,6 @@
 import SearchControl, { SearchIcon } from '@automattic/search';
-import './style.scss';
 import { useI18n } from '@wordpress/react-i18n';
+import './style.scss';
 
 export interface DomainsTableFilter {
 	query: string;
