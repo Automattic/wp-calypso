@@ -11,6 +11,7 @@ import { countDomainsRequiringAttention } from '../utils';
 import { createSiteDomainObject } from '../utils/assembler';
 import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
 import type {
@@ -184,6 +185,14 @@ export function DomainsTableRow( {
 			</td>
 			<td>
 				<DomainsTableRegisteredUntilCell domain={ domain } />
+			</td>
+			<td></td>
+			<td className="domains-table-row__actions">
+				<DomainsTableRowActions
+					canConnectDomainToASite={ userCanAddSiteToDomain }
+					siteSlug={ siteSlug }
+					domainName={ domain.domain }
+				/>
 			</td>
 		</tr>
 	);

@@ -11,7 +11,7 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 export type DomainsTableColumn =
 	| {
 			name: string;
-			label: string;
+			label: string | null;
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';
 			supportsOrderSwitching?: boolean;
@@ -28,7 +28,7 @@ export type DomainsTableColumn =
 	  }
 	| {
 			name: string;
-			label: string;
+			label: string | null;
 			isSortable?: false;
 			initialSortDirection?: never;
 			supportsOrderSwitching?: never;
