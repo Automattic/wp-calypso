@@ -83,8 +83,10 @@ export function DomainsTableRow( {
 		return new URL( site.URL ).host.replace( /\//g, '::' );
 	}, [ site, domain.blog_id ] );
 
+	const isLoadingRowDetails = isLoadingSiteDetails || isLoadingSiteDomainsDetails;
+
 	const domainsRequiringAttention = useMemo( () => {
-		if ( ! currentDomainData ) {
+		if ( ! currentDomainData || isLoadingRowDetails ) {
 			return null;
 		}
 		return countDomainsRequiringAttention(
@@ -99,7 +101,14 @@ export function DomainsTableRow( {
 				} )
 			)
 		);
-	}, [ allSiteDomains, currentDomainData, domainStatusPurchaseActions, siteSlug, translate ] );
+	}, [
+		allSiteDomains,
+		currentDomainData,
+		domainStatusPurchaseActions,
+		siteSlug,
+		translate,
+		isLoadingRowDetails,
+	] );
 
 	if ( domainsRequiringAttention && domainsRequiringAttention > 0 ) {
 		onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
@@ -142,7 +151,7 @@ export function DomainsTableRow( {
 				) }
 			</td>
 			<td>
-				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+				{ isLoadingRowDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 				) : (
 					<DomainsTableSiteCell
@@ -153,7 +162,7 @@ export function DomainsTableRow( {
 				) }
 			</td>
 			<td>
-				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+				{ isLoadingRowDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 				) : (
 					<DomainsTableStatusCell
