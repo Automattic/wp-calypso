@@ -40,9 +40,9 @@ class UpworkBanner extends PureComponent {
 				tracksDismissName="calypso_upwork_banner_dismiss_icon_click"
 				tracksDismissProperties={ { location, plan } }
 				href="#"
-				title={ translate( 'Let us launch your dream site' ) }
+				title={ translate( 'Let us build your dream website!' ) }
 				description={ translate(
-					'Our professional website-building service can create the site of your dreams, no matter the scope of your project.'
+					'We can help you reach your launch day faster, no matter the scope of your project.'
 				) }
 			/>
 		);
