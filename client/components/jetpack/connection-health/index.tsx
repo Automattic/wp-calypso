@@ -86,9 +86,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate( 'Jetpack encounters REST API connection issues.' ) }
-				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
-				) }
+				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -100,9 +98,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate( 'Jetpack encounters XML-RPC connection issues.' ) }
-				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
-				) }
+				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
