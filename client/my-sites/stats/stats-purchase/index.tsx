@@ -22,7 +22,8 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import StatsPurchaseNotice from './stats-purchase-notice';
+import { StatsPurchaseNoticePage, StatsPurchaseNotice } from './stats-purchase-notice';
+import { StatsSingleItemPagePurchase } from './stats-purchase-single-item';
 import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
@@ -126,6 +127,9 @@ const StatsPurchasePage = ( {
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
+	const showPurchasPage = ! isCommercialOwned && ! isFreeOwned && ! isPWYWOwned;
+	const showSinglePurchasPage = options.isCommercial !== null && showPurchasPage; // blog has been already categorised as either personal or commercial and doesn't have a plan purchased
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -143,7 +147,7 @@ const StatsPurchasePage = ( {
 						<LoadingEllipsis />
 					</div>
 				) }
-				{ ! isLoading && (
+				{ ! isLoading && ! isTypeDetectionEnabled && (
 					<>
 						{ isCommercialOwned && (
 							<div className="stats-purchase-page__notice">
@@ -170,6 +174,54 @@ const StatsPurchasePage = ( {
 								initialStep={ initialStep }
 								initialSiteType={ initialSiteType }
 							/>
+						) }
+					</>
+				) }
+				{ ! isLoading && isTypeDetectionEnabled && (
+					<>
+						{
+							// a plan is owned - show a notice page
+						 }
+						{ ! showPurchasPage && (
+							<StatsPurchaseNoticePage
+								siteSlug={ siteSlug }
+								isCommercialOwned={ isCommercialOwned }
+								isFreeOwned={ isFreeOwned }
+								isPWYWOwned={ isPWYWOwned }
+							/>
+						) }
+						{
+							// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
+						 }
+						{ showPurchasPage && ! showPurchasPage && (
+							<StatsPurchaseWizard
+								siteSlug={ siteSlug }
+								commercialProduct={ commercialProduct }
+								maxSliderPrice={ maxSliderPrice ?? 10 }
+								pwywProduct={ pwywProduct }
+								siteId={ siteId }
+								redirectUri={ query.redirect_uri ?? '' }
+								from={ query.from ?? '' }
+								disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+								initialStep={ initialStep }
+								initialSiteType={ initialSiteType }
+							/>
+						) }
+						{ showPurchasPage && showSinglePurchasPage && (
+							<>
+								{ ! isCommercialOwned && options.isCommercial && (
+									<div className="stats-purchase-page__notice">
+										<StatsSingleItemPagePurchase
+											siteSlug={ siteSlug ?? '' }
+											planValue={ commercialProduct?.cost }
+											currencyCode={ commercialProduct?.currency_code }
+											siteId={ siteId }
+											redirectUri={ query.redirect_uri ?? '' }
+											from={ query.from ?? '' }
+										/>
+									</div>
+								) }
+							</>
 						) }
 					</>
 				) }

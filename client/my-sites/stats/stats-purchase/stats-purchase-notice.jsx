@@ -1,10 +1,7 @@
-import { Card, Button } from '@wordpress/components';
-import classNames from 'classnames';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
-import StatsPurchaseSVG from './stats-purchase-svg';
-import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+import { StatsBenefits, StatsSingleItemPagePurchaseFrame } from './stats-purchase-shared';
 import './styles.scss';
 
 const StatsCommercialOwned = ( { siteSlug } ) => {
@@ -27,17 +24,7 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 					'It appears that you have already purchased a license for this product, and it has been successfully activated. You now have access to:'
 				) }
 			</p>
-			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-					<li>{ translate( 'Real-time data on visitors' ) }</li>
-					<li>{ translate( 'Traffic stats and trends for post and pages' ) }</li>
-					<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
-					<li>{ translate( 'GDPR compliant' ) }</li>
-					<li>{ translate( 'Access to upcoming advanced features' ) }</li>
-					<li>{ translate( 'Priority support' ) }</li>
-					<li>{ translate( 'Commercial use' ) }</li>
-				</ul>
-			</div>
+			<StatsBenefits />
 			<Button variant="primary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
@@ -46,25 +33,30 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 };
 
 const StatsPurchaseNotice = ( { siteSlug } ) => {
-	// TODO: use props to swap multiple versions of the left side content
-
 	return (
-		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
-			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
-				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>
-						<StatsCommercialOwned siteSlug={ siteSlug } />
-					</div>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
-						<StatsPurchaseSVG />
-						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
-							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
-						</div>
-					</div>
-				</div>
-			</Card>
-		</div>
+		<StatsSingleItemPagePurchaseFrame>
+			<StatsCommercialOwned siteSlug={ siteSlug } />
+		</StatsSingleItemPagePurchaseFrame>
 	);
 };
 
-export default StatsPurchaseNotice;
+const StatsPurchaseNoticePage = ( { siteSlug, isCommercialOwned, isFreeOwned, isPWYWOwned } ) => {
+	return (
+		<>
+			{ isCommercialOwned && (
+				<div className="stats-purchase-page__notice">
+					<StatsPurchaseNotice siteSlug={ siteSlug } />
+				</div>
+			) }
+			{ ( isFreeOwned || isPWYWOwned ) && (
+				<>
+					{
+						// TODO: add a banner handling information about existing purchase
+					 }
+				</>
+			) }
+		</>
+	);
+};
+
+export { StatsPurchaseNoticePage, StatsPurchaseNotice };
