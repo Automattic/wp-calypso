@@ -6,15 +6,23 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useCurrentRoute } from 'calypso/components/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { useDispatch } from 'calypso/state';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
 
 const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
 	const [ isDialogVisible, setDialogVisible ] = useState( false );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { currentRoute } = useCurrentRoute();
 
-	if ( ! domain.currentUserIsOwner ) {
+	if (
+		! domain ||
+		! domain.currentUserIsOwner ||
+		! selectedSite ||
+		selectedSite.options?.is_domain_only
+	) {
 		return null;
 	}
 
@@ -23,11 +31,16 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 	};
 
 	const clickDisconnectDomain = async () => {
-		await wpcom.req.get(
+		const data = await wpcom.req.get(
 			`/domains/${ domain.name }/disconnect-domain-from-site/${ selectedSite.ID }`
 		);
 
-		page.redirect( domainManagementEdit( '', domain.name, currentRoute ) );
+		await Promise.all( [
+			dispatch( fetchSiteDomains( selectedSite.ID ) ),
+			dispatch( fetchSiteDomains( data.blog_id ) ),
+		] );
+
+		page.redirect( domainManagementEdit( data.blog_id, domain.name, currentRoute ) );
 
 		setDialogVisible( false );
 	};
