@@ -559,9 +559,14 @@ $mobile-card-max-width: 440px;
 	}
 
 	.components-custom-select-control {
-		.storage-add-on-dropdown__cost {
-			color: var(--studio-green-40);
+		.storage-add-on-dropdown-option__title {
 			font-size: 0.75rem;
+		}
+
+		.storage-add-on-dropdown-option__cost {
+			color: var(--studio-green-40);
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: 0.7rem;
 		}
 	}
 }

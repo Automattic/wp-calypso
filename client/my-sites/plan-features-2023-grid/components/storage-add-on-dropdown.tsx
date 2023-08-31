@@ -1,7 +1,7 @@
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { TranslateResult } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
@@ -13,24 +13,33 @@ type StorageAddOnDropdownProps = {
 	displayCost?: boolean;
 };
 
+type StorageAddOnOptionProps = {
+	title: string;
+	cost: string | undefined;
+	displayCost: boolean;
+};
+
 const getStorageOptionCost = ( storageAddOnsForPlan, storageOptionSlug: string ) => {
 	return storageAddOnsForPlan?.find( ( addOn ) => {
 		return addOn?.featureSlugs?.includes( storageOptionSlug );
 	} )?.costData?.formattedMonthlyCost;
 };
 
-const StorageAddOnOption = ( { title, cost, displayCost } ) => {
+const StorageAddOnOption = ( { title, cost, displayCost }: StorageAddOnOptionProps ) => {
+	const translate = useTranslate();
 	return (
-		<div>
+		<>
 			{ cost && displayCost ? (
-				<>
-					<span>{ title }</span>
-					<span className="storage-add-on-dropdown__cost"> + { cost }/month</span>
-				</>
+				<div>
+					<span className="storage-add-on-dropdown-option__title">{ title }</span>
+					<span className="storage-add-on-dropdown-option__cost">
+						{ ` + ${ cost }/${ translate( 'month' ) }` }
+					</span>
+				</div>
 			) : (
-				<span>{ title }</span>
+				<span className="storage-add-on-dropdown-option__title">{ title }</span>
 			) }
-		</div>
+		</>
 	);
 };
 
