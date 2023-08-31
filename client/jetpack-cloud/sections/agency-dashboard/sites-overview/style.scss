@@ -241,6 +241,29 @@
 		font-size: 1rem !important;
 	}
 }
+
+.fixed-host-column {
+	display: none;
+	margin-inline-end: 10px;
+	width: 40px;
+	text-align: center;
+
+	.wordpress-logo {
+		display: inline-block;
+		fill: var(--studio-blue-50);
+		visibility: hidden;
+		margin: auto 0;
+
+		&.is-visible {
+			visibility: visible;
+		}
+	}
+
+	@include break-wide {
+		display: inline-block;
+	}
+}
+
 .sites-overview__overlay {
 	display: block;
 	position: absolute;

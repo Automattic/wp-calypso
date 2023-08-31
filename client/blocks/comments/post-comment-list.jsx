@@ -439,15 +439,25 @@ class PostCommentList extends Component {
 					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
 				</ol>
 				{ ( shouldShowViewMoreToggle || this.state.showExpandWhenOnlyComments ) && (
-					<button className="comments__toggle-expand" onClick={ this.toggleExpanded }>
+					<Button
+						compact
+						borderless
+						className="comments__toggle-expand"
+						onClick={ this.toggleExpanded }
+					>
 						{ this.state.isExpanded ? viewFewerText : viewMoreText }
-					</button>
+					</Button>
 				) }
 				{ shouldShowLinkToFullPost && (
-					<button className="comments__open-post" onClick={ this.onOpenPostPageAtComments }>
+					<Button
+						compact
+						borderless
+						className="comments__open-post"
+						onClick={ this.onOpenPostPageAtComments }
+					>
 						{ shouldShowViewMoreToggle && '• ' }
 						{ translate( 'View more comments on the full post' ) }
-					</button>
+					</Button>
 				) }
 			</>
 		);
@@ -455,6 +465,9 @@ class PostCommentList extends Component {
 
 	scrollToComment = () => {
 		const comment = window.document.getElementById( window.location.hash.substring( 1 ) );
+		if ( ! comment ) {
+			return;
+		}
 		comment.scrollIntoView();
 		window.scrollBy( 0, -50 );
 		this.hasScrolledToComment = true;

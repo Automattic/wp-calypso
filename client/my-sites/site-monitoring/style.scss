@@ -25,6 +25,12 @@ $section-max-width: 1224px;
 			padding-inline-start: calc(var(--sidebar-width-max) + 1px);
 		}
 	}
+	.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
+		padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
+		padding-bottom: 24px;
+		margin-left: 0;
+		margin-right: 0;
+	}
 	& .site-logs-container {
 		padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
 		@media screen and ( max-width: 782px ) {
@@ -61,16 +67,6 @@ $section-max-width: 1224px;
 	margin-left: 16px;
 	margin-right: 16px;
 	max-width: 1224px;
-}
-
-.site-monitoring__formatted-header.formatted-header.modernized-header.is-left-align {
-	padding-bottom: 24px;
-	margin-left: 32px;
-	margin-right: 32px;
-	@media screen and ( max-width: 782px ) {
-		margin-left: 16px;
-		margin-right: 16px;
-	}
 }
 
 .site-monitoring-metrics-tab {
@@ -170,7 +166,7 @@ $section-max-width: 1224px;
 
 .site-monitoring__pagination-text {
 	text-align: center;
-	margin: 0 0 1.5rem;
+	margin: 0 0 1rem;
 }
 
 .site-monitoring-line-chart {

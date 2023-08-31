@@ -21,7 +21,7 @@ import searchUrl from 'calypso/lib/search-url';
 import MediaLibrary from 'calypso/my-sites/media-library';
 import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
@@ -472,12 +472,11 @@ const mapStateToProps = ( state, { mediaId } ) => {
 		previousRoute: getPreviousRoute( state ),
 		currentRoute: getCurrentRoute( state ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		media: getMediaItem( state, siteId, mediaId ),
 		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 	};
 };
 
 export default connect( mapStateToProps, { selectMediaItems, changeMediaSource, clearSite } )(
-	localize( withDeleteMedia( withEditMedia( Media ) ) )
+	localize( withJetpackConnectionProblem( withDeleteMedia( withEditMedia( Media ) ) ) )
 );

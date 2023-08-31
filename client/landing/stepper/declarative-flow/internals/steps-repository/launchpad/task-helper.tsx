@@ -105,10 +105,6 @@ export function getEnhancedTasks(
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
-	const isStripeConnected = Boolean(
-		tasks?.find( ( task ) => task.id === 'set_up_payments' )?.completed
-	);
-
 	const completeMigrateContentTask = async () => {
 		if ( siteSlug ) {
 			await updateLaunchpadSettings( siteSlug, {
@@ -532,7 +528,6 @@ export function getEnhancedTasks(
 					break;
 				case 'newsletter_plan_created':
 					taskData = {
-						disabled: ! isStripeConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							completePaidNewsletterTask();
