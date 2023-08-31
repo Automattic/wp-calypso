@@ -52,6 +52,7 @@ type DomainsTableHeaderProps = {
 	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
 	onBulkSelectionChange(): void;
 	headerClasses?: string;
+	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
 };
 
@@ -63,6 +64,7 @@ export const DomainsTableHeader = ( {
 	onBulkSelectionChange,
 	onChangeSortOrder,
 	headerClasses,
+	hideOwnerColumn = false,
 	domainsRequiringAttention,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
@@ -95,24 +97,30 @@ export const DomainsTableHeader = ( {
 						aria-label={ __( 'Select all tick boxes for domains in table', __i18n_text_domain__ ) }
 					/>
 				</th>
-				{ columns.map( ( column ) => (
-					<th key={ column.name } style={ { width: column.width } }>
-						<Button
-							plain
-							onClick={ () => onChangeSortOrder( column ) }
-							className={ classNames( 'list__header-column', {
-								'is-sortable': column?.isSortable,
-							} ) }
-							tabIndex={ column?.isSortable ? 0 : -1 }
-						>
-							{ column?.headerComponent || column?.label }
-							{ column?.name === 'status' && domainsRequiringAttention && (
-								<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
-							) }
-							{ renderSortIcon( column, activeSortKey, activeSortDirection ) }
-						</Button>
-					</th>
-				) ) }
+
+				{ columns.map( ( column ) => {
+					if ( column.name === 'owner' && hideOwnerColumn ) {
+						return null;
+					}
+					return (
+						<th key={ column.name } style={ { width: column.width } }>
+							<Button
+								plain
+								onClick={ () => onChangeSortOrder( column ) }
+								className={ classNames( 'list__header-column', {
+									'is-sortable': column?.isSortable,
+								} ) }
+								tabIndex={ column?.isSortable ? 0 : -1 }
+							>
+								{ column?.headerComponent || column?.label }
+								{ column?.name === 'status' && domainsRequiringAttention && (
+									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
+								) }
+								{ renderSortIcon( column, activeSortKey, activeSortDirection ) }
+							</Button>
+						</th>
+					);
+				} ) }
 			</tr>
 		</thead>
 	);

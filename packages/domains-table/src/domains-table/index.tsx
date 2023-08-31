@@ -14,6 +14,7 @@ import { DomainsTableFilters, DomainsTableFilter } from '../domains-table-filter
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
+import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRow } from './domains-table-row';
 import './style.scss';
@@ -210,6 +211,10 @@ export function DomainsTable( {
 		setAutoRenew( domainsToBulkUpdate, enable );
 	};
 
+	const hideOwnerColumn = shouldHideOwnerColumn(
+		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
+	);
+
 	return (
 		<div className="domains-table">
 			{ hasSelectedDomains ? (
@@ -232,6 +237,7 @@ export function DomainsTable( {
 					bulkSelectionStatus={ getBulkSelectionStatus() }
 					onBulkSelectionChange={ changeBulkSelection }
 					onChangeSortOrder={ onSortChange }
+					hideOwnerColumn={ hideOwnerColumn }
 					domainsRequiringAttention={ domainsRequiringAttention }
 				/>
 				<tbody>
@@ -245,6 +251,7 @@ export function DomainsTable( {
 							fetchSite={ fetchSite }
 							isAllSitesView={ isAllSitesView }
 							domainStatusPurchaseActions={ domainStatusPurchaseActions }
+							hideOwnerColumn={ hideOwnerColumn }
 							onDomainsRequiringAttentionChange={ onDomainsRequiringAttentionChange }
 						/>
 					) ) }
