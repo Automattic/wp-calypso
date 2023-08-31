@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -59,7 +60,6 @@ export default function WPCheckoutOrderReview( {
 	removeProductFromCart,
 	couponFieldStateProps,
 	onChangeSelection,
-	selectedSiteData,
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
@@ -68,7 +68,6 @@ export default function WPCheckoutOrderReview( {
 	removeProductFromCart?: RemoveProductFromCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
-	selectedSiteData?: SiteDetails | null;
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -103,6 +102,8 @@ export default function WPCheckoutOrderReview( {
 		},
 		[ reduxDispatch ]
 	);
+
+	const selectedSiteData = useSelector( getSelectedSite );
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
@@ -142,7 +143,6 @@ export default function WPCheckoutOrderReview( {
 					removeCoupon={ removeCouponAndClearField }
 					onChangeSelection={ onChangeSelection }
 					isSummary={ isSummary }
-					selectedSiteData={ selectedSiteData }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					responseCart={ responseCart }
 					isPwpoUser={ isPwpoUser ?? false }

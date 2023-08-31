@@ -16,7 +16,6 @@ import {
 	isTitanMail,
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
-	is100YearPlan,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -36,7 +35,6 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
-import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -900,30 +898,11 @@ function PartnerLogo( { className }: { className?: string } ) {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-function DomainDiscountCallout( {
-	product,
-	responseCart,
-	selectedSiteData,
-}: {
-	product: ResponseCartProduct;
-	responseCart: ResponseCart;
-	selectedSiteData: SiteDetails | undefined | null;
-} ) {
+function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
-	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
-	const currentSitePlan = selectedSiteData?.plan?.product_slug;
-
-	if ( planInCart ) {
-		if ( product.is_bundled && is100YearPlan( planInCart.product_slug ) ) {
-			return <DiscountCallout>{ translate( 'Included with your plan' ) }</DiscountCallout>;
-		}
-	}
-
-	if ( currentSitePlan ) {
-		if ( product.is_bundled && is100YearPlan( currentSitePlan ) ) {
-			return <DiscountCallout>{ translate( 'Included with your plan' ) }</DiscountCallout>;
-		}
+	if ( product.is_included_for_100yearplan ) {
+		return <DiscountCallout>{ translate( 'Included with your plan' ) }</DiscountCallout>;
 	}
 
 	if ( product.is_bundled ) {
@@ -991,7 +970,6 @@ function CheckoutLineItem( {
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
-	selectedSiteData,
 	isPwpoUser,
 	onRemoveProduct,
 	onRemoveProductClick,
@@ -1004,7 +982,6 @@ function CheckoutLineItem( {
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
-	selectedSiteData: SiteDetails | undefined | null;
 	isPwpoUser?: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
@@ -1101,11 +1078,7 @@ function CheckoutLineItem( {
 					</LineItemMeta>
 					<LineItemMeta>
 						<LineItemSublabelAndPrice product={ product } />
-						<DomainDiscountCallout
-							product={ product }
-							responseCart={ responseCart }
-							selectedSiteData={ selectedSiteData }
-						/>
+						<DomainDiscountCallout product={ product } />
 						<CouponDiscountCallout product={ product } />
 						<IntroductoryOfferCallout product={ product } />
 					</LineItemMeta>

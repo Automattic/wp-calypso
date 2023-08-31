@@ -20,7 +20,6 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
-import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
@@ -59,7 +58,6 @@ export function WPOrderReviewLineItems( {
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
-	selectedSiteData = null,
 	isPwpoUser,
 	onRemoveProduct,
 	onRemoveProductClick,
@@ -72,7 +70,6 @@ export function WPOrderReviewLineItems( {
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
-	selectedSiteData: SiteDetails | undefined | null;
 	isPwpoUser: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
@@ -99,7 +96,6 @@ export function WPOrderReviewLineItems( {
 					onChangeSelection={ onChangeSelection }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					responseCart={ responseCart }
-					selectedSiteData={ selectedSiteData }
 					isPwpoUser={ isPwpoUser }
 					onRemoveProduct={ onRemoveProduct }
 					onRemoveProductClick={ onRemoveProductClick }
@@ -147,7 +143,6 @@ function LineItemWrapper( {
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
-	selectedSiteData,
 	isPwpoUser,
 	onRemoveProduct,
 	onRemoveProductClick,
@@ -162,7 +157,6 @@ function LineItemWrapper( {
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
-	selectedSiteData: SiteDetails | undefined | null;
 	isPwpoUser: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
@@ -215,7 +209,6 @@ function LineItemWrapper( {
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				responseCart={ responseCart }
-				selectedSiteData={ selectedSiteData }
 				isPwpoUser={ isPwpoUser }
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }
