@@ -33,6 +33,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
+import StorageAddOnDropdown from './storage-add-on-dropdown';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
@@ -571,7 +572,9 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				( feature ) => feature.getSlug() === featureSlug
 		  )
 		: false;
-	const storageOption = gridPlan.features.storageOptions.find( ( option ) => ! option.isAddOn );
+	const storageOptions = gridPlan.features.storageOptions;
+	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
+	const hasAddOnsForPlan = storageOptions.some( ( option ) => option.isAddOn );
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
@@ -595,9 +598,16 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
-						{ getStorageStringFromFeature( storageOption?.slug || '' ) }
-					</StorageButton>
+					{ hasAddOnsForPlan ? (
+						<StorageAddOnDropdown
+							planSlug={ planSlug }
+							storageOptions={ gridPlan.features.storageOptions }
+						/>
+					) : (
+						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
+							{ getStorageStringFromFeature( defaultStorageOption?.slug || '' ) }
+						</StorageButton>
+					) }
 				</>
 			) : (
 				<>

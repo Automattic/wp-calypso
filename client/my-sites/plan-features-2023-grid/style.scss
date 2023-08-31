@@ -936,6 +936,12 @@ body.is-section-signup.is-white-signup,
 		}
 	}
 
+	.plan-comparison-grid__feature-group-row-cell {
+		.components-custom-select-control label {
+			display: none;
+		}
+	}
+
 	.plan-comparison-grid__plan {
 		.gridicon {
 			display: none;

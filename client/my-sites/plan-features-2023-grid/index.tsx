@@ -651,7 +651,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
 
 			const storageJSX = canUpgradeStorageForPlan ? (
-				<StorageAddOnDropdown planSlug={ planSlug } storageOptions={ storageOptions } />
+				<StorageAddOnDropdown
+					label={ translate( 'Storage' ) }
+					planSlug={ planSlug }
+					storageOptions={ storageOptions }
+				/>
 			) : (
 				storageOptions.map( ( storageOption ) => {
 					if ( ! storageOption?.isAddOn ) {

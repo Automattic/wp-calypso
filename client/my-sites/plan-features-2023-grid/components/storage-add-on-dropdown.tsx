@@ -1,12 +1,13 @@
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { TranslateResult } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 
 type StorageAddOnDropdownProps = {
+	label?: string;
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
 };
@@ -20,8 +21,11 @@ const getStorageOptionName = ( storageAddOnsForPlan, storageOptionSlug: string )
 	return `${ title } ${ cost ? '+ ' + cost : '' }`;
 };
 
-export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOnDropdownProps ) => {
-	const translate = useTranslate();
+export const StorageAddOnDropdown = ( {
+	label = '',
+	planSlug,
+	storageOptions,
+}: StorageAddOnDropdownProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
@@ -51,7 +55,7 @@ export const StorageAddOnDropdown = ( { planSlug, storageOptions }: StorageAddOn
 	};
 	return (
 		<CustomSelectControl
-			label={ translate( 'Storage' ) }
+			label={ label }
 			options={ selectControlOptions }
 			value={ selectedOption }
 			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) =>
