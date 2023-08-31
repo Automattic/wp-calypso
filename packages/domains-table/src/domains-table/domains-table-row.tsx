@@ -129,15 +129,17 @@ export function DomainsTableRow( {
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					checked={ isSelected }
-					onChange={ () => onSelect( domain ) }
-					/* translators: Label for a checkbox control that selects a domain name.*/
-					aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-						domain: domain.domain,
-					} ) }
-				/>
+				{ ! domain.wpcom_domain && (
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						checked={ isSelected }
+						onChange={ () => onSelect( domain ) }
+						/* translators: Label for a checkbox control that selects a domain name.*/
+						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+							domain: domain.domain,
+						} ) }
+					/>
+				) }
 			</td>
 			<td>
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
