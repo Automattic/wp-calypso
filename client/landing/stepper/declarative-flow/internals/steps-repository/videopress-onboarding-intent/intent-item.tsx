@@ -12,6 +12,9 @@ const VideoPressOnboardingIntentItem = ( props: Props ) => {
 	const { title, image, description, onClick, isComingSoon } = props;
 	const { __ } = useI18n();
 
+	// Replace last space between words in description with nbsp
+	const descriptionWithNbsp = description.replace( /\s(?=[^\s]*$)/, '\u00a0' );
+
 	return (
 		<div className="videopress-intent-item">
 			{ isComingSoon && (
@@ -22,7 +25,7 @@ const VideoPressOnboardingIntentItem = ( props: Props ) => {
 			</button>
 			<div className="videopress-intent-item__description">
 				<span className="videopress-intent-item__title">{ title }</span>
-				<span className="videopress-intent-item__description">{ description }</span>
+				<span className="videopress-intent-item__description">{ descriptionWithNbsp }</span>
 			</div>
 		</div>
 	);
