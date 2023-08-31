@@ -132,13 +132,11 @@ const PrePurchaseNotices = () => {
 
 	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
 		return (
-			<>
-				<SitePlanIncludesCartProductNotice
-					plan={ currentSitePlan }
-					product={ cartProductThatOverlapsSitePlan }
-					selectedSite={ selectedSite }
-				/>
-			</>
+			<SitePlanIncludesCartProductNotice
+				plan={ currentSitePlan }
+				product={ cartProductThatOverlapsSitePlan }
+				selectedSite={ selectedSite }
+			/>
 		);
 	}
 
