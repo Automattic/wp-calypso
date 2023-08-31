@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -38,6 +39,7 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 	const siteUrlWithScheme = site?.value?.url_with_scheme;
 	const siteId = site?.value?.blog_id;
 	const siteHasBackup = site?.value?.has_backup;
+	const isAtomicSite = site?.value?.is_atomic;
 
 	const handleClickMenuItem = ( actionType: AllowedActionTypes ) => {
 		const eventName = getActionEventName( actionType, isLargeScreen );
@@ -46,7 +48,31 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 
 	const siteSlug = urlToSlug( siteUrl );
 
+	const isWPCOMAtomicSiteCreationEnabled =
+		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && isAtomicSite;
+
 	const siteActions = [
+		{
+			name: translate( 'Setup site' ),
+			href: `https://wordpress.com/home/${ siteSlug }`,
+			onClick: () => handleClickMenuItem( 'setup_site' ),
+			isExternalLink: true,
+			isEnabled: isWPCOMAtomicSiteCreationEnabled,
+		},
+		{
+			name: translate( 'Change domain' ),
+			href: `https://wordpress.com/domains/manage/${ siteSlug }`,
+			onClick: () => handleClickMenuItem( 'change_domain' ),
+			isExternalLink: true,
+			isEnabled: isWPCOMAtomicSiteCreationEnabled,
+		},
+		{
+			name: translate( 'Hosting configuration' ),
+			href: `https://wordpress.com/hosting-config/${ siteSlug }`,
+			onClick: () => handleClickMenuItem( 'hosting_configuration' ),
+			isExternalLink: true,
+			isEnabled: isWPCOMAtomicSiteCreationEnabled,
+		},
 		{
 			name: translate( 'Issue new license' ),
 			href: `/partner-portal/issue-license/?site_id=${ siteId }&source=dashboard`,
