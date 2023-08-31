@@ -248,7 +248,7 @@ export class Banner extends Component {
 							) ) }
 						</ul>
 					) }
-					{ extraContent && <>{ extraContent }</> }
+					{ extraContent }
 				</div>
 				{ ( callToAction || price ) && (
 					<div className="banner__action">

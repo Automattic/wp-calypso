@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import checkIcon from 'calypso/assets/images/jetpack/jetpack-green-checkmark.svg';
 import Banner from 'calypso/components/banner';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -29,10 +30,12 @@ export default function WPCOMAtomicHostingNotification( {
 		dispatch( setPurchasedLicense() );
 	};
 
+	const siteSlug = urlToSlug( selectedSite );
+
 	const extraContent = (
 		<div className="site-add-license-notification__license-banner-wp-buttons">
 			<Button
-				href={ `https://wordpress.com/home/${ selectedSite }` }
+				href={ `https://wordpress.com/home/${ siteSlug }` }
 				primary
 				target="_blank"
 				onClick={ () =>
@@ -48,7 +51,7 @@ export default function WPCOMAtomicHostingNotification( {
 			<Button
 				borderless
 				target="_blank"
-				href={ `https://wordpress.com/domains/manage/${ selectedSite }` }
+				href={ `https://wordpress.com/domains/manage/${ siteSlug }` }
 				onClick={ () => handleOnClick( 'calypso_jetpack_agency_dashboard_change_domain_click' ) }
 			>
 				{ translate( 'Change domain' ) }
