@@ -13,6 +13,8 @@ import {
 	DNS_ERROR,
 	UNKNOWN_ERROR,
 	GENERIC_ERROR,
+	REST_API_ERROR,
+	XMLRPC_ERROR,
 } from './constants';
 import { ErrorNotice } from './error-notice';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
@@ -73,6 +75,30 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/resolve-jetpack-errors/#critical-error-on-the-site'
 				) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
+			/>
+		);
+	}
+
+	if ( errorType === REST_API_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ errorType }
+				errorText={ translate( 'Jetpack encounters REST API connection issues.' ) }
+				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
+			/>
+		);
+	}
+
+	if ( errorType === XMLRPC_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ errorType }
+				errorText={ translate( 'Jetpack encounters XML-RPC connection issues.' ) }
+				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
