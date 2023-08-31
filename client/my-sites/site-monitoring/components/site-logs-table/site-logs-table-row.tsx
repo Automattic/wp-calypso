@@ -93,6 +93,10 @@ function renderCell(
 		return <span>{ formattedDate }</span>;
 	}
 
+	if ( column === 'request_url' ) {
+		return <span>{ `${ value }` }</span>;
+	}
+
 	switch ( typeof value ) {
 		case 'boolean':
 			return value.toString();

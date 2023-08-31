@@ -69,9 +69,11 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 			<thead>
 				<tr>
 					{ columns.map( ( column ) => (
-						<th key={ column }>{ formatColumnName( column ) }</th>
+						<th key={ column } className={ column }>
+							{ formatColumnName( column ) }
+						</th>
 					) ) }
-					<th />
+					<th className="chevron-cell" />
 				</tr>
 			</thead>
 			<tbody>
