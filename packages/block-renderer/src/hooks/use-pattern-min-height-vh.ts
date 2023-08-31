@@ -1,21 +1,18 @@
 import { useMemo } from 'react';
 
-const usePatternMinHeightVh = ( html = '' ) => {
+const usePatternMinHeightVh = ( html = '', viewportHeight: number | undefined = 0 ) => {
 	return useMemo( () => {
-		const minHeightVhResults = html.match( /min-height:(\d+)vh;?/ );
-		const minHeightVhDeclaration = minHeightVhResults?.[ 0 ];
-		const minHeightVhValue = minHeightVhResults?.[ 1 ];
-
-		const isMinHeight100vh = minHeightVhValue === '100';
-
-		// Remove min-height declaration except for 100vh
-		const patternHtml =
-			minHeightVhDeclaration && ! isMinHeight100vh
-				? html.replace( minHeightVhDeclaration, '' )
-				: html;
-
-		return { isMinHeight100vh, patternHtml, minHeightVhValue };
-	}, [ html ] );
+		return html.replace( /min-height:\s?(?<value>\d+)vh;?/g, ( match, value ) => {
+			if ( viewportHeight ) {
+				// In the large preview, replace with the percentage of viewport height in pixels.
+				return `min-height:${ ( Number( value ) * viewportHeight ) / 100 }px;`;
+			} else if ( value !== '100' ) {
+				// In the small pattern previews, remove the min-height declaration except for 100vh
+				return '';
+			}
+			return match;
+		} );
+	}, [ html, viewportHeight ] );
 };
 
 export default usePatternMinHeightVh;
