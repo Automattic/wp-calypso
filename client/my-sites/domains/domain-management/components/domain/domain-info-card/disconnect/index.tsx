@@ -1,7 +1,8 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
-import FormattedHeader from 'calypso/components/formatted-header';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import DomainInfoCard from '..';
@@ -37,7 +38,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 		},
 		{
 			action: 'disconnect',
-			label: translate( 'Disconnect domain' ),
+			label: translate( 'Disconnect' ),
 			onClick: clickDisconnectDomain,
 			isPrimary: true,
 		},
@@ -48,13 +49,17 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 			<Dialog buttons={ buttons } isVisible={ isDialogVisible } onClose={ clickCloseDialog }>
 				<div className="dialog__grid">
 					<div className="dialog__grid-column">
-						<FormattedHeader
-							brandFont
-							headerText={ translate( 'Are you sure you want to disconnect %(domain)s?', {
+						<FormSectionHeading>
+							{ translate( '{{strong}}Disconnect %(domain)s{{/strong}}', {
 								args: { domain: domain.name },
+								components: { strong: <strong /> },
 							} ) }
-							align="left"
-						/>
+						</FormSectionHeading>
+						<p>
+							{ translate(
+								'Are you sure? This will disconnect the domain from its current site and move it to a new domain-only site.'
+							) }
+						</p>
 					</div>
 				</div>
 			</Dialog>
