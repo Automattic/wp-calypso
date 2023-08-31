@@ -76,7 +76,7 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 			}
 
 			if (
-				[ 'cart_item', 'domain_item', 'email_item' ].includes( propName ) &&
+				[ 'cart_item', 'domain_item', 'email_item', 'add_on_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
 				propValue = Object.entries( propValue || {} )
