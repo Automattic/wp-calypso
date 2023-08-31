@@ -171,7 +171,8 @@ export function DomainsTable( {
 	};
 
 	const hasSelectedDomains = selectedDomains.size > 0;
-	const areAllDomainsSelected = domains.length === selectedDomains.size;
+	const areAllDomainsSelected =
+		domains.filter( ( domain ) => ! domain.wpcom_domain ).length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
 		if ( hasSelectedDomains && areAllDomainsSelected ) {
@@ -188,7 +189,9 @@ export function DomainsTable( {
 	const changeBulkSelection = () => {
 		if ( filter.query ) {
 			if ( ! hasSelectedDomains ) {
-				setSelectedDomains( new Set( filteredData.map( getDomainId ) ) );
+				setSelectedDomains(
+					new Set( filteredData.filter( ( domain ) => ! domain.wpcom_domain ).map( getDomainId ) )
+				);
 			} else {
 				setSelectedDomains( new Set() );
 			}
@@ -197,7 +200,10 @@ export function DomainsTable( {
 		}
 
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
-			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
+			// filter out wpcom domains from bulk selection
+			setSelectedDomains(
+				new Set( domains.filter( ( domain ) => ! domain.wpcom_domain ).map( getDomainId ) )
+			);
 		} else {
 			setSelectedDomains( new Set() );
 		}
