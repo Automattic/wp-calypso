@@ -15,7 +15,7 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 }
 
 .site-logs-table thead tr,
-.site-logs-table tbody tr:not(:last-child) {
+.site-logs-table tbody tr:not(:last-child):not(.site-logs-table__summary-expanded) {
 	border-bottom: 1px solid $border-color;
 }
 
