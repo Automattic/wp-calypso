@@ -9,15 +9,15 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import TimeSince from 'calypso/components/time-since';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { CancelPaidSubscriptionModal } from '../cancel-paid-subscription-modal';
+import CancelPaidSubscriptionModal from './cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
 	SiteSubscriptionDetailsProps,
 	formatRenewalDate,
 	formatRenewalPrice,
 	getPaymentInterval,
-} from './site-subscription-helpers';
-import SiteSubscriptionSettings from './site-subscription-settings';
+} from './helpers';
+import SiteSubscriptionSettings from './settings';
 import './styles.scss';
 
 const SiteSubscriptionDetails = ( {

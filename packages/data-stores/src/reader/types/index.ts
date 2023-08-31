@@ -136,13 +136,13 @@ export type PendingPostSubscriptionsResult = {
 	totalCount: number;
 };
 
-export type SiteSubscriptionDetails = {
+export type SiteSubscriptionDetails< DateT = Date > = {
 	ID: number;
 	blog_ID: number;
 	name: string;
 	URL: string;
 	site_icon: string | null;
-	date_subscribed: Date;
+	date_subscribed: DateT;
 	subscriber_count: number;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
 	payment_details: SiteSubscriptionPaymentDetails[];
