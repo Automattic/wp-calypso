@@ -386,7 +386,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 							{ this.getPatternCategories()?.map( ( { slug, name } ) => (
 								<MenuItem
 									key={ slug }
-									isTertiary
+									variant="tertiary"
 									aria-selected={ slug === selectedCategory }
 									data-slug={ slug }
 									onClick={ () => this.handleCategorySelection( slug ) }

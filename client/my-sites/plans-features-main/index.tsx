@@ -39,7 +39,6 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
@@ -237,7 +236,6 @@ const PlansFeaturesMain = ( {
 		flowName,
 		!! paidDomainName
 	);
-	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
@@ -331,14 +329,12 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
 		showLegacyStorageFeature,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
 		allFeaturesList: FEATURES_LIST,
 		intent,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		selectedFeature,
 		showLegacyStorageFeature,
 	} );
@@ -347,7 +343,6 @@ const PlansFeaturesMain = ( {
 		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
 		allFeaturesList: FEATURES_LIST,
 		intent,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		selectedFeature,
 		showLegacyStorageFeature,
 	} );
@@ -667,7 +662,6 @@ const PlansFeaturesMain = ( {
 							currentSitePlanSlug={ sitePlanSlug }
 							planActionOverrides={ planActionOverrides }
 							intent={ intent }
-							isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
 							showLegacyStorageFeature={ showLegacyStorageFeature }
 							showUpgradeableStorage={ showUpgradeableStorage }
 							stickyRowOffset={ masterbarHeight }

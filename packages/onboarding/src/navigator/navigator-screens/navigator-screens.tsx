@@ -2,7 +2,7 @@ import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from '@wordpress/components';
-import { useNavigatorListener } from '../hooks';
+import NavigatorListener from '../navigator-listener';
 import { useNavigatorScreens } from './hooks';
 import type { NavigatorScreenObject } from './types';
 import './navigator-screens.scss';
@@ -22,8 +22,6 @@ const NavigatorScreens = ( {
 }: Props ) => {
 	const navigatorScreens = useNavigatorScreens( screens );
 
-	useNavigatorListener( onNavigatorPathChange );
-
 	// We don't need navigator if there is only one screen
 	if ( screens.length === 1 ) {
 		return children;
@@ -33,6 +31,9 @@ const NavigatorScreens = ( {
 		<NavigatorProvider initialPath={ initialPath }>
 			<NavigatorScreen path={ initialPath }>{ children }</NavigatorScreen>
 			{ navigatorScreens }
+			{ onNavigatorPathChange && (
+				<NavigatorListener onNavigatorPathChange={ onNavigatorPathChange } />
+			) }
 		</NavigatorProvider>
 	);
 };

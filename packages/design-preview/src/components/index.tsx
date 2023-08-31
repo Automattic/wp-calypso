@@ -36,7 +36,6 @@ interface DesignPreviewProps {
 	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles?: GlobalStylesObject | null ) => void;
 	limitGlobalStyles: boolean;
-	globalStylesInPersonalPlan: boolean;
 	onNavigatorPathChange?: ( path?: string ) => void;
 	onScreenSelect?: ( screenSlug: string ) => void;
 	onScreenBack?: ( screenSlug: string ) => void;
@@ -71,7 +70,6 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	onGlobalStylesChange,
 	selectedDesignTitle,
 	limitGlobalStyles,
-	globalStylesInPersonalPlan,
 	onScreenSelect,
 	onScreenBack,
 	onScreenSubmit,
@@ -93,7 +91,6 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		isVirtual,
 		isExternallyManaged,
 		limitGlobalStyles,
-		globalStylesInPersonalPlan,
 		variations,
 		splitDefaultVariation,
 		selectedVariation,

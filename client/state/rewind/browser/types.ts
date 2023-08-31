@@ -5,3 +5,9 @@ export type BackupBrowserItem = {
 	childrenLoaded: boolean;
 	children: BackupBrowserItem[];
 };
+
+export type BackupBrowserItemCheckList = {
+	totalItems: number;
+	includeList: string[];
+	excludeList: string[];
+};
