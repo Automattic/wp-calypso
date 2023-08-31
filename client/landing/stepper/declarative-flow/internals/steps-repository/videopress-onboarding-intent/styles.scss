@@ -1,3 +1,7 @@
+html.modal-showing {
+	overflow: hidden;
+}
+
 .videopress.intro .signup-header {
 	z-index: 0;
 }
@@ -170,6 +174,16 @@
 		padding: 24px 32px;
 		font-size: 18px; /* stylelint-disable-line */
 		font-weight: 400;
+
+
+		.intro__scrollpane {
+			display: flex;
+			flex-direction: column;
+			min-height: 300px;
+			width: 100%;
+			align-items: center;
+			overflow-y: scroll;
+		}
 
 		.intro__title {
 			margin-top: 16px;

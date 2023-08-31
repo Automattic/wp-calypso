@@ -76,6 +76,20 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		show: modal ? true : false,
 	} );
 
+	useEffect( () => {
+		const html = document.getElementsByTagName( 'html' )[ 0 ];
+
+		if ( modal ) {
+			html.classList.add( 'modal-showing' );
+		} else {
+			html.classList.remove( 'modal-showing' );
+		}
+
+		return () => {
+			html.classList.remove( 'modal-showing' );
+		};
+	}, [ modal ] );
+
 	const stepContent = (
 		<>
 			<div className="videopress-onboarding-intent__step-content">

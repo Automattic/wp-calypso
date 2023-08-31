@@ -100,103 +100,105 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 			{ isComingSoon && (
 				<div className="videopress-intro-modal__coming-soon">{ translate( 'Coming soon!' ) }</div>
 			) }
-			<h1 className="intro__title">{ title }</h1>
-			<div className="intro__description">{ description }</div>
-			{ featuresList && (
-				<ul className="videopress-intro-modal__list">
-					{ featuresList?.map( ( feature, index ) => (
-						<li key={ index }>
-							<CheckmarkIcon />
-							<span>{ feature }</span>
-						</li>
-					) ) }
-				</ul>
-			) }
-			<div className="videopress-intro-modal__button-column">
-				{ actionButton && (
-					<>
-						<Button
-							type={ actionButton.type }
-							href={ actionButton.href ?? '' }
-							className="intro__button"
-							primary
-							onClick={ actionButton.onClick }
-						>
-							{ actionButton.text }
-						</Button>
-						<div className="learn-more">
-							{ translate( '{{a}}Or learn more about VideoPress.{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://videopress.com/"
-											target="_blank"
-											rel="external noreferrer noopener"
-										/>
-									),
-								},
-							} ) }
-						</div>
-					</>
+			<div className="intro__scrollpane">
+				<h1 className="intro__title">{ title }</h1>
+				<div className="intro__description">{ description }</div>
+				{ featuresList && (
+					<ul className="videopress-intro-modal__list">
+						{ featuresList?.map( ( feature, index ) => (
+							<li key={ index }>
+								<CheckmarkIcon />
+								<span>{ feature }</span>
+							</li>
+						) ) }
+					</ul>
 				) }
-				{ isComingSoon && (
-					<div className="videopress-intro-modal__waitlist-presentation">
-						<div className="videopress-intro-modal__waitlist">
-							{ ! waitlistSubmitted && (
-								<>
-									<FormTextInput
-										placeholder={ translate( 'Enter your email' ) }
-										value={ waitlistEmail }
-										onChange={ handleWaitlistEmailChange }
-										onBlur={ handleWaitlistEmailBlur }
-										isError={ ! isWaitlistEmailValid && '' !== waitlistEmail }
-									/>
-									<Button
-										className="intro__button"
-										primary
-										onClick={ onWaitlistSubmit }
-										disabled={ ! isWaitlistEmailValid }
-									>
-										{ translate( 'Join the waitlist' ) }
-									</Button>
-								</>
-							) }
-							{ waitlistSubmitted && (
-								<p className="videopress-intro-modal__waitlist-response">
-									{ translate( "Thanks for joining the waitlist! We'll keep you updated." ) }
-								</p>
-							) }
-						</div>
-						<div className="videopress-intro-modal__waitlist-description">
-							{ translate(
-								'In the meantime, you can {{a}}create a video portfolio{{/a}}, {{b}}a blog with video{{/b}}, or {{c}}add videos to your existing site{{/c}}.',
-								{
+				<div className="videopress-intro-modal__button-column">
+					{ actionButton && (
+						<>
+							<Button
+								type={ actionButton.type }
+								href={ actionButton.href ?? '' }
+								className="intro__button"
+								primary
+								onClick={ actionButton.onClick }
+							>
+								{ actionButton.text }
+							</Button>
+							<div className="learn-more">
+								{ translate( '{{a}}Or learn more about VideoPress.{{/a}}', {
 									components: {
-										a: <Button onClick={ () => onSubmit?.() && false } />,
-										b: (
+										a: (
 											<a
-												href="https://wordpress.com/start/premium/?ref=videopress"
-												rel="external noreferrer noopener"
-											/>
-										),
-										c: (
-											<a
-												href="https://jetpack.com/videopress/"
+												href="https://videopress.com/"
+												target="_blank"
 												rel="external noreferrer noopener"
 											/>
 										),
 									},
-								}
-							) }
+								} ) }
+							</div>
+						</>
+					) }
+					{ isComingSoon && (
+						<div className="videopress-intro-modal__waitlist-presentation">
+							<div className="videopress-intro-modal__waitlist">
+								{ ! waitlistSubmitted && (
+									<>
+										<FormTextInput
+											placeholder={ translate( 'Enter your email' ) }
+											value={ waitlistEmail }
+											onChange={ handleWaitlistEmailChange }
+											onBlur={ handleWaitlistEmailBlur }
+											isError={ ! isWaitlistEmailValid && '' !== waitlistEmail }
+										/>
+										<Button
+											className="intro__button"
+											primary
+											onClick={ onWaitlistSubmit }
+											disabled={ ! isWaitlistEmailValid }
+										>
+											{ translate( 'Join the waitlist' ) }
+										</Button>
+									</>
+								) }
+								{ waitlistSubmitted && (
+									<p className="videopress-intro-modal__waitlist-response">
+										{ translate( "Thanks for joining the waitlist! We'll keep you updated." ) }
+									</p>
+								) }
+							</div>
+							<div className="videopress-intro-modal__waitlist-description">
+								{ translate(
+									'In the meantime, you can {{a}}create a video portfolio{{/a}}, {{b}}a blog with video{{/b}}, or {{c}}add videos to your existing site{{/c}}.',
+									{
+										components: {
+											a: <Button onClick={ () => onSubmit?.() && false } />,
+											b: (
+												<a
+													href="https://wordpress.com/start/premium/?ref=videopress"
+													rel="external noreferrer noopener"
+												/>
+											),
+											c: (
+												<a
+													href="https://jetpack.com/videopress/"
+													rel="external noreferrer noopener"
+												/>
+											),
+										},
+									}
+								) }
+							</div>
 						</div>
-					</div>
-				) }
-			</div>
-			<div className="videopress-intro-modal__screenshots">
-				<img
-					src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
-					alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
-				/>
+					) }
+				</div>
+				<div className="videopress-intro-modal__screenshots">
+					<img
+						src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
+						alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
+					/>
+				</div>
 			</div>
 			{ surveyTitle && (
 				<div className="videopress-intro-modal__survey">
