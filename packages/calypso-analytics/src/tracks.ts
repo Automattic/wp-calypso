@@ -176,8 +176,6 @@ export function identifyUser( userData: any ): any {
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
-	// We are using the same functions from client/lib/analytics
-	// Remember to check if we can avoid the code duplication
 	const trackingPrefs = getTrackingPrefs();
 	if ( ! trackingPrefs?.buckets.analytics ) {
 		debug(
