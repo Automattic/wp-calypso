@@ -16,6 +16,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { useExperiment } from 'calypso/lib/explat';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -186,6 +187,15 @@ export const HelpCenterContactForm = () => {
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
+	const [ , experimentAssignment ] = useExperiment(
+		'calypso_helpcenter_quick_response_deflection_rate'
+	);
+
+	if ( experimentAssignment?.variationName === 'no_quick_response' ) {
+		params.set( 'disable-gpt', 'true' ); // this is the one
+		params.set( 'show-gpt', 'false' );
+	}
+
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
 
@@ -262,12 +272,14 @@ export const HelpCenterContactForm = () => {
 
 	function handleCTA() {
 		if ( ! enableGPTResponse && ! showingSearchResults ) {
-			params.set( 'show-results', 'true' );
-			navigate( {
-				pathname: '/contact-form',
-				search: params.toString(),
-			} );
-			return;
+			if ( experimentAssignment?.variationName === 'control' ) {
+				params.set( 'show-results', 'true' );
+				navigate( {
+					pathname: '/contact-form',
+					search: params.toString(),
+				} );
+				return;
+			}
 		}
 
 		if ( ! showingGPTResponse && enableGPTResponse ) {
@@ -330,7 +342,6 @@ export const HelpCenterContactForm = () => {
 							}`
 						);
 					}
-
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {
