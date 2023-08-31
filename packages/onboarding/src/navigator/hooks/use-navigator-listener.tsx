@@ -1,10 +1,17 @@
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-const useNavigatorListener = ( onNavigatorPathChange?: ( path?: string ) => void ) => {
+export type OnNavigatorPathChange = ( path?: string ) => void;
+
+const useNavigatorListener = ( onNavigatorPathChange?: OnNavigatorPathChange ) => {
 	const { location } = useNavigator();
+	const previousPathRef = useRef( '' );
+
 	useEffect( () => {
-		onNavigatorPathChange?.( location.path );
+		if ( location.path && location.path !== previousPathRef.current ) {
+			onNavigatorPathChange?.( location.path );
+			previousPathRef.current = location.path;
+		}
 	}, [ location.path, onNavigatorPathChange ] );
 };
 

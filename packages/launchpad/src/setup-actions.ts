@@ -29,16 +29,12 @@ export const setUpActionsForTasks = ( {
 			task_id: task.id,
 			is_completed: task.completed,
 			context: launchpadContext,
+			order: task.order,
 		} );
 	};
 
-	// Sort task by completion status.
-	const completedTasks = tasks.filter( ( task: Task ) => task.completed );
-	const incompleteTasks = tasks.filter( ( task: Task ) => ! task.completed );
-	const sortedTasks = [ ...completedTasks, ...incompleteTasks ];
-
-	// Add actions to sorted tasks.
-	return sortedTasks.map( ( task: Task ) => {
+	// Add actions to the tasks.
+	return tasks.map( ( task: Task ) => {
 		let action: () => void;
 		let logMissingCalypsoPath = false;
 

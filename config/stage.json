@@ -170,6 +170,7 @@
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
+		"videopress-onboarding-user-intent": false,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,

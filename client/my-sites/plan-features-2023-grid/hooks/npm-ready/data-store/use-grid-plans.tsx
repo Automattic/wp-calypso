@@ -126,8 +126,6 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
-	// for AB Test experiment:
-	isGlobalStylesOnPersonal?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -224,7 +222,6 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
-	isGlobalStylesOnPersonal,
 }: Props ): Omit< GridPlan, 'features' >[] => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -268,13 +265,13 @@ const useGridPlans = ( {
 
 		let tagline = '';
 		if ( 'plans-newsletter' === intent ) {
-			tagline = planConstantObj.getNewsletterTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 		} else if ( 'plans-link-in-bio' === intent ) {
-			tagline = planConstantObj.getLinkInBioTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
 		} else if ( 'plans-blog-onboarding' === intent ) {
-			tagline = planConstantObj.getBlogOnboardingTagLine?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
 		} else {
-			tagline = planConstantObj.getPlanTagline?.( isGlobalStylesOnPersonal ) ?? '';
+			tagline = planConstantObj.getPlanTagline?.() ?? '';
 		}
 
 		const productNameShort =

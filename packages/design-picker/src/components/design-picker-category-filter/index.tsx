@@ -55,7 +55,7 @@ export function DesignPickerCategoryFilter( {
 				{ categories.map( ( { slug, name } ) => (
 					<MenuItem
 						key={ slug }
-						isTertiary
+						variant="tertiary"
 						isPressed={ slug === selectedCategory }
 						data-slug={ slug }
 						onClick={ () => onSelect( slug ) }
