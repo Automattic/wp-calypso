@@ -13,7 +13,6 @@ export function trialExpired( context, next ) {
 
 	context.store.dispatch(
 		recordTracksEvent( 'calypso_plan_trial_expired_page', {
-			site_id: selectedSite.ID,
 			was_ecommerce_trial_site: wasEcommerceTrialSite( state, selectedSite.ID ),
 			was_business_trial_site: wasBusinessTrialSite( state, selectedSite.ID ),
 		} )

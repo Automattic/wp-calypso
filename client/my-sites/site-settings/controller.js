@@ -67,7 +67,6 @@ export function deleteSite( context, next ) {
 
 	context.store.dispatch(
 		recordTracksEvent( 'calypso_settings_delete_site_page', {
-			site_id: siteId,
 			was_ecommerce_trial_site: wasEcommerceTrialSite( state, siteId ),
 			was_business_trial_site: wasBusinessTrialSite( state, siteId ),
 		} )
