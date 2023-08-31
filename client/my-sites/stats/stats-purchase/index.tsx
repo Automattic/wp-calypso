@@ -24,7 +24,10 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
 import { StatsPurchaseNoticePage, StatsPurchaseNotice } from './stats-purchase-notice';
-import { StatsSingleItemPagePurchase } from './stats-purchase-single-item';
+import {
+	StatsSingleItemPagePurchase,
+	StatsSingleItemPersonalPurchasePage,
+} from './stats-purchase-single-item';
 import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
@@ -223,23 +226,19 @@ const StatsPurchasePage = ( {
 										/>
 									</div>
 								) }
-								{
-									// TODO: Add single page prache for a personal plan
-									options.isCommercial === false && (
-										<StatsPurchaseWizard
-											siteSlug={ siteSlug }
-											commercialProduct={ commercialProduct }
-											maxSliderPrice={ maxSliderPrice ?? 10 }
-											pwywProduct={ pwywProduct }
-											siteId={ siteId }
-											redirectUri={ query.redirect_uri ?? '' }
-											from={ query.from ?? '' }
-											disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
-											initialStep={ initialStep }
-											initialSiteType={ initialSiteType }
-										/>
-									)
-								}
+								{ options.isCommercial === false && (
+									<StatsSingleItemPersonalPurchasePage
+										siteSlug={ siteSlug || '' }
+										maxSliderPrice={ maxSliderPrice ?? 10 }
+										pwywProduct={ pwywProduct }
+										siteId={ siteId }
+										redirectUri={ query.redirect_uri ?? '' }
+										from={ query.from ?? '' }
+										disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+										// initialStep={ initialStep }
+										// initialSiteType={ initialSiteType }
+									/>
+								) }
 							</>
 						) }
 					</>
