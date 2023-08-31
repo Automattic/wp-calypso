@@ -73,7 +73,8 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 }
 
 @media (max-width: 600px) {
-	td.request_url span {
+	td.request_url span,
+	td.message span {
 		width: calc(100vw - 104px);
 	}
 }
