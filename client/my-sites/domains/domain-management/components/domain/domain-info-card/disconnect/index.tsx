@@ -3,9 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import { useCurrentRoute } from 'calypso/components/route';
 import wpcom from 'calypso/lib/wp';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { domainManagementAllRoot, domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
@@ -17,7 +16,6 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 	const [ isDisconnecting, setDisconnecting ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { currentRoute } = useCurrentRoute();
 
 	if (
 		! domain ||
@@ -50,7 +48,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 
 		setDisconnecting( false );
 
-		page.redirect( domainManagementEdit( data.blog_id, domain.name, currentRoute ) );
+		page.redirect( domainManagementEdit( data.blog_id, domain.name, domainManagementAllRoot() ) );
 
 		setDialogVisible( false );
 	};
