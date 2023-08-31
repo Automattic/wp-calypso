@@ -8,8 +8,9 @@
 
 	.comments__toggle-expand,
 	.comments__open-post {
-		cursor: pointer;
-		margin-top: 16px;
+		margin-top: 9px;
+		margin-bottom: -7px;
+
 		&:hover {
 			color: var(--color-link);
 		}
