@@ -49,11 +49,6 @@
 		}
 	}
 
-	.comments__list.is-root {
-		display: flex;
-		flex-direction: column-reverse;
-	}
-
 	.comments__form .form-fieldset {
 		margin: 0;
 	}
@@ -64,6 +59,10 @@
 			overflow: hidden;
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 1;
+
+			p {
+				display: inline;
+			}
 		}
 	}
 }

@@ -18,6 +18,7 @@ import VideoPressOnboardingIntentItem from './intent-item';
 import VideoPressOnboardingIntentModalBlog from './videopress-onboarding-intent-modal-blog';
 import VideoPressOnboardingIntentModalChannel from './videopress-onboarding-intent-modal-channel';
 import VideoPressOnboardingIntentModalJetpack from './videopress-onboarding-intent-modal-jetpack';
+import VideoPressOnboardingIntentModalOther from './videopress-onboarding-intent-modal-other';
 import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
 import VideoPressOnboardingIntentModalVideoUpload from './videopress-onboarding-intent-modal-video-upload';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -70,6 +71,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 
 	const onOtherIntentClicked = () => {
 		sendTracksIntent( 'other' );
+		setModal( <VideoPressOnboardingIntentModalOther /> );
 	};
 
 	const modalClasses = classNames( 'intro__more-modal videopress-intro-modal', {
