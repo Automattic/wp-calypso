@@ -45,7 +45,7 @@ export class PaywallFlow implements BlockFlow {
 			ParagraphBlock.blockName,
 			ParagraphBlock.blockEditorSelector
 		);
-		await postPaywallParagraphHandle.fill( this.configurationData.prePaywallText );
+		await postPaywallParagraphHandle.fill( this.configurationData.postPaywallText );
 
 		// Click on the Paywall block, and hit enter.
 		await editorCanvas.getByRole( 'document', { name: 'Block: Paywall' } ).click();
@@ -62,8 +62,14 @@ export class PaywallFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Publisher/owner of the post can see everything.
-		await context.page.getByText( this.configurationData.prePaywallText ).waitFor();
-		await context.page.getByText( this.configurationData.postPaywallText ).waitFor();
+		await context.page
+			.getByRole( 'main' )
+			.getByText( this.configurationData.prePaywallText )
+			.waitFor();
+		await context.page
+			.getByRole( 'main' )
+			.getByText( this.configurationData.postPaywallText )
+			.waitFor();
 
 		// Unrelated user sees a paywall.
 		const browser = context.page.context().browser();
@@ -72,11 +78,11 @@ export class PaywallFlow implements BlockFlow {
 			throw new Error( `Failed to retrieve browser instance.` );
 		}
 		const newPage = await ( await browser.newContext() ).newPage();
-		await newPage.goto( context.page.url() );
+		await newPage.goto( context.page.url(), { waitUntil: 'domcontentloaded' } );
 
-		await newPage.getByText( this.configurationData.prePaywallText ).waitFor();
-		await newPage.getByText( this.configurationData.postPaywallText ).waitFor();
+		await newPage.getByRole( 'main' ).getByText( this.configurationData.prePaywallText ).waitFor();
 		await newPage
+			.getByRole( 'main' )
 			.getByText( this.configurationData.postPaywallText )
 			.waitFor( { state: 'detached' } );
 	}

@@ -80,7 +80,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Publishing the post', function () {
 			it( 'Publish and visit post', async function () {
-				await editorPage.publish( { visit: true } );
+				await editorPage.publish( { visit: true, timeout: 15 * 1000 } );
 				publishedPostContext = {
 					page: page,
 				};

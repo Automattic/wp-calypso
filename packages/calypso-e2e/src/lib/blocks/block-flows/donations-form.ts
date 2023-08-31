@@ -105,5 +105,8 @@ export class DonationsFormFlow implements BlockFlow {
 				.frameLocator( 'iframe[id=TB_iframeContent]' )
 				.getByRole( 'heading', { name: 'Sales disabled' } ),
 		] );
+
+		// Close the modal and return to the post.
+		await context.page.keyboard.press( 'Escape' );
 	}
 }

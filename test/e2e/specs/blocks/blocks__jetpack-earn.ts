@@ -24,6 +24,10 @@ const blockFlows: BlockFlow[] = [
 	new OpenTableFlow( {
 		restaurant: 'Miku Restaurant - Vancouver',
 	} ),
+	new PaywallFlow( {
+		prePaywallText: 'Pre-paywall text',
+		postPaywallText: 'Post-paywall text',
+	} ),
 	new DonationsFormFlow(
 		{
 			frequency: 'Yearly',
