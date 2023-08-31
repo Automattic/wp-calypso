@@ -7,12 +7,14 @@ import { useCurrentRoute } from 'calypso/components/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
+import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
 
 const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
 	const [ isDialogVisible, setDialogVisible ] = useState( false );
+	const [ isDisconnecting, setDisconnecting ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { currentRoute } = useCurrentRoute();
@@ -31,14 +33,22 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 	};
 
 	const clickDisconnectDomain = async () => {
+		setDisconnecting( true );
 		const data = await wpcom.req.get(
 			`/domains/${ domain.name }/disconnect-domain-from-site/${ selectedSite.ID }`
 		);
 
 		await Promise.all( [
+			dispatch( requestSite( data.blog_id ) ),
+			dispatch( requestSite( selectedSite.ID ) ),
+		] );
+
+		await Promise.all( [
 			dispatch( fetchSiteDomains( selectedSite.ID ) ),
 			dispatch( fetchSiteDomains( data.blog_id ) ),
 		] );
+
+		setDisconnecting( false );
 
 		page.redirect( domainManagementEdit( data.blog_id, domain.name, currentRoute ) );
 
@@ -50,11 +60,13 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 			action: 'close',
 			label: translate( 'Cancel' ),
 			onClick: clickCloseDialog,
+			disabled: isDisconnecting,
 		},
 		{
 			action: 'disconnect',
 			label: translate( 'Disconnect' ),
 			onClick: clickDisconnectDomain,
+			additionalClassNames: isDisconnecting ? 'is-busy' : '',
 			isPrimary: true,
 		},
 	];
@@ -72,7 +84,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 						</FormSectionHeading>
 						<p>
 							{ translate(
-								'Are you sure? This will disconnect the domain from its current site and move it to a new domain-only site.'
+								'Are you sure? This will disconnect the domain from its current site.'
 							) }
 						</p>
 					</div>
