@@ -10,6 +10,8 @@ import {
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { useQueries } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
+import page from 'page';
 import {
 	useCallback,
 	useLayoutEffect,
@@ -27,7 +29,7 @@ import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 
-export interface DomainsTableProps {
+export interface BaseDomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
@@ -40,6 +42,10 @@ export interface DomainsTableProps {
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	children: ReactNode | ReactNode[];
 }
+
+type DomainsTableProps =
+	| ( BaseDomainsTableProps & { isAllSitesView: true } )
+	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string } );
 
 type Value = {
 	filter: DomainsTableFilter;
@@ -76,14 +82,16 @@ const Context = createContext< Value | undefined >( undefined );
 
 export const useDomainsTable = () => useContext( Context ) as Value;
 
-export const DomainsTable = ( {
-	domains,
-	fetchSiteDomains,
-	fetchSite,
-	isAllSitesView,
-	domainStatusPurchaseActions,
-	children,
-}: DomainsTableProps ) => {
+export const DomainsTable = ( props: DomainsTableProps ) => {
+	const {
+		domains,
+		fetchSiteDomains,
+		fetchSite,
+		isAllSitesView,
+		domainStatusPurchaseActions,
+		children,
+	} = props;
+
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
 		sortDirection: 'asc' | 'desc';
@@ -117,7 +125,7 @@ export const DomainsTable = ( {
 		return fetchedSiteDomains;
 	}, [ allSiteDomains ] );
 
-	const { setAutoRenew, updateContactInfo } = useDomainsBulkActionsMutation();
+	const { setAutoRenew } = useDomainsBulkActionsMutation();
 
 	const { completedJobs, domainResults, handleRestartDomainStatusPolling } =
 		useDomainBulkUpdateStatus();
@@ -268,23 +276,19 @@ export const DomainsTable = ( {
 	};
 
 	const handleUpdateContactInfo = () => {
-		const domainsToBulkUpdate = domains
-			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
-			.map( ( domain ) => domain.domain );
-		updateContactInfo( domainsToBulkUpdate, true, {
-			firstName: '',
-			lastName: '',
-			organization: '',
-			email: '',
-			phone: '',
-			address1: '',
-			address2: '',
-			city: '',
-			state: '',
-			postalCode: '',
-			countryCode: '',
-			fax: '',
+		const domainsToBulkUpdate = domains.filter( ( domain ) =>
+			selectedDomains.has( getDomainId( domain ) )
+		);
+
+		const baseUrl = isAllSitesView
+			? '/domains/manage/all/edit-selected-contact-info'
+			: `/domains/manage/edit-selected-contact-info/${ props.siteSlug }`;
+
+		const formLink = addQueryArgs( baseUrl, {
+			selected: domainsToBulkUpdate.map( ( { domain } ) => domain ),
 		} );
+
+		page( formLink );
 	};
 
 	const hideOwnerColumn = shouldHideOwnerColumn(

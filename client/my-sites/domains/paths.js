@@ -139,6 +139,10 @@ export function domainManagementAllEditContactInfo() {
 	return domainManagementAllRoot() + '/edit-contact-info';
 }
 
+export function domainManagementAllEditSelectedContactInfo() {
+	return domainManagementAllRoot() + '/edit-selected-contact-info';
+}
+
 /**
  * @param {string} siteName
  * @param {string} domainName
