@@ -71,6 +71,10 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
+	.upgrade-modal__price-value {
+		font-family: Inter, $sans;
+	}
+
 	.upgrade-modal__price-item {
 		display: flex;
 		justify-content: space-between;
@@ -175,6 +179,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 
 			@include break-medium {
 				display: grid;
+				gap: 16px;
 			}
 		}
 

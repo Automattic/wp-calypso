@@ -184,7 +184,7 @@ const UpgradeModal = ( {
 							{ isMarketplaceThemeSubscriptionNeeded && (
 								<div className="upgrade-modal__price-item">
 									<label>{ theme.data?.name }</label>
-									<label>
+									<label className="upgrade-modal__price-value">
 										<strong>{ productPrice }</strong>
 									</label>
 								</div>
@@ -192,7 +192,7 @@ const UpgradeModal = ( {
 							{ isMarketplacePlanSubscriptionNeeeded && (
 								<div className="upgrade-modal__price-item">
 									<label>{ translate( 'Business plan' ) }</label>
-									<label>
+									<label className="upgrade-modal__price-value">
 										<strong>{ businessPlanPrice }</strong>
 									</label>
 								</div>
