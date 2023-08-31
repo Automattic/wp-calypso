@@ -557,6 +557,13 @@ $mobile-card-max-width: 440px;
 			}
 		}
 	}
+
+	.components-custom-select-control {
+		.storage-add-on-dropdown__cost {
+			color: var(--studio-green-40);
+			font-size: 0.75rem;
+		}
+	}
 }
 
 .plan-features-2023-grid__content {
