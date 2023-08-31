@@ -41,6 +41,12 @@ $section-max-width: 1224px;
 	}
 }
 
+@media (min-width: 1401px) {
+	.layout__primary .main.site-monitoring {
+		padding-bottom: 88px;
+	}
+}
+
 .site-monitoring {
 	position: relative;
 
