@@ -177,7 +177,7 @@ const JetpackCheckoutSidebarPlanUpsell: FC = () => {
 					boldValue
 				/>
 
-				<UpsellLine label={ __( '2-year plan' ) } boldLabel isTitle />
+				<UpsellLine label={ __( 'Two-year plan' ) } boldLabel isTitle />
 
 				<UpsellLine
 					label={ __( 'Years 1 and 2' ) }
