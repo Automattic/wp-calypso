@@ -180,7 +180,7 @@ const JetpackCheckoutSidebarPlanUpsell: FC = () => {
 				<UpsellLine label={ __( 'Two-year plan' ) } boldLabel isTitle />
 
 				<UpsellLine
-					label={ __( 'Years 1 and 2' ) }
+					label={ __( 'Two-year total' ) }
 					value={ formatCurrency(
 						biennialVariant.priceInteger,
 						biennialVariant.currency,
