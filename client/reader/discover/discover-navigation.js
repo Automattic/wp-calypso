@@ -2,8 +2,10 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { throttle } from 'lodash';
+import page from 'page';
 import { useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { DEFAULT_TAB, LATEST_TAB } from './helper';
@@ -15,7 +17,7 @@ const DEFAULT_CLASS = 'discover-stream-navigation';
 const showElement = ( element ) => element && element.classList.remove( 'display-none' );
 const hideElement = ( element ) => element && element.classList.add( 'display-none' );
 
-const DiscoverNavigation = ( { recommendedTags, selectedTab, setSelectedTab, width } ) => {
+const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 	const scrollRef = useRef();
 
 	const recordTabClick = () => {
@@ -24,7 +26,9 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, setSelectedTab, wid
 	};
 
 	const menuTabClick = ( tab ) => {
-		setSelectedTab( tab );
+		page.replace(
+			addQueryArgs( { selectedTab: tab }, window.location.pathname + window.location.search )
+		);
 		recordTabClick();
 	};
 

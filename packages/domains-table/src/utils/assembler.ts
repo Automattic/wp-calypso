@@ -130,7 +130,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		nominetPendingContactVerificationRequest: Boolean(
 			domain.nominet_pending_contact_verification_request
 		),
-		owner: String( domain.owner ),
+		owner: domain.owner,
 		partnerDomain: Boolean( domain.partner_domain ),
 		pendingRegistration: Boolean( domain.pending_registration ),
 		pendingRegistrationTime: String( domain.pending_registration_time ),

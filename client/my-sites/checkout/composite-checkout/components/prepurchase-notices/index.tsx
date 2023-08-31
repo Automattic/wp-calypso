@@ -1,21 +1,35 @@
 import {
 	getProductFromSlug,
+	isJetpackPlanSlug,
 	isJetpackAntiSpamSlug,
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
+	isJetpackSearchSlug,
+	isJetpackBoostSlug,
+	isJetpackVideoPressSlug,
+	isJetpackSocialSlug,
 	getAllFeaturesForPlan,
+	planFeaturesIncludesProducts,
 	planHasSuperiorFeature,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_BOOST_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_ANTI_SPAM_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_SOCIAL_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import { getSitePlan, isJetpackMinimumVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import type { AppState } from 'calypso/types';
 import './style.scss';
 
 /**
@@ -23,23 +37,11 @@ import './style.scss';
  * from a range of possible options.
  */
 const PrePurchaseNotices = () => {
-	const dispatch = useDispatch();
-
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
-
-	/**
-	 * Ensure site rewind capabilities are loaded, for use by isPlanIncludingSiteBackup().
-	 */
-	useEffect( () => {
-		if ( ! siteId ) {
-			return;
-		}
-		dispatch( requestRewindCapabilities( siteId ) );
-	}, [ dispatch, siteId ] );
 
 	const currentSitePlan = useSelector( ( state ) => {
 		if ( ! siteId ) {
@@ -49,45 +51,73 @@ const PrePurchaseNotices = () => {
 		return getSitePlan( state, siteId );
 	} );
 
-	const getMatchingProducts = ( items, planSlug, isCartItem ) => {
-		const planFeatures = getAllFeaturesForPlan( planSlug );
+	const getMatchingProducts = useCallback( ( items: ResponseCartProduct[], planSlug: string ) => {
+		const planFeatures = getAllFeaturesForPlan( planSlug ) as ReadonlyArray< string >;
 
 		return items.filter( ( item ) => {
-			const productSlug = isCartItem ? item.product_slug : item.productSlug;
-			//some products have had many variations over the years so we need to check an abstraction for backup, scan and Akismet.
-			return (
-				planFeatures.includes( productSlug ) ||
-				planHasSuperiorFeature( planSlug, productSlug ) ||
-				isJetpackBackupSlug( productSlug ) ||
-				isJetpackScanSlug( productSlug ) ||
-				isJetpackAntiSpamSlug( productSlug )
-			);
+			const productSlug = item.product_slug;
+
+			const productFoundInPlanFeatures =
+				planFeatures.includes( productSlug ) || planHasSuperiorFeature( planSlug, productSlug );
+
+			if ( productFoundInPlanFeatures ) {
+				return true;
+			}
+
+			if ( isJetpackPlanSlug( planSlug ) ) {
+				if ( isJetpackBackupSlug( productSlug ) ) {
+					return planFeaturesIncludesProducts( planFeatures, JETPACK_BACKUP_PRODUCTS );
+				}
+				if ( isJetpackScanSlug( productSlug ) ) {
+					return planFeaturesIncludesProducts( planFeatures, JETPACK_SCAN_PRODUCTS );
+				}
+				if ( isJetpackAntiSpamSlug( productSlug ) ) {
+					return planFeaturesIncludesProducts( planFeatures, JETPACK_ANTI_SPAM_PRODUCTS );
+				}
+				if ( isJetpackVideoPressSlug( productSlug ) ) {
+					return planFeaturesIncludesProducts( planFeatures, JETPACK_VIDEOPRESS_PRODUCTS );
+				}
+				if ( isJetpackBoostSlug( productSlug ) ) {
+					return planFeaturesIncludesProducts( planFeatures, JETPACK_BOOST_PRODUCTS );
+				}
+				if ( isJetpackSocialSlug( productSlug ) ) {
+					return planFeaturesIncludesProducts( planFeatures, JETPACK_SOCIAL_PRODUCTS );
+				}
+				if ( isJetpackSearchSlug( productSlug ) ) {
+					return planFeaturesIncludesProducts( planFeatures, JETPACK_SEARCH_PRODUCTS );
+				}
+			}
+
+			return false;
 		} );
-	};
+	}, [] );
 
 	const cartProductThatOverlapsSitePlan = useMemo( () => {
 		const planSlugOnSite = currentSitePlan?.product_slug;
 
+		// Bypass the notice if the site doesn't have a plan or the plan is Jetpack Free
 		if ( ! planSlugOnSite || planSlugOnSite === 'jetpack_free' ) {
 			return null;
 		}
 
-		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite, true );
+		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite );
+
 		return matchingProducts?.[ 0 ];
-	}, [ currentSitePlan, responseCart.products ] );
+	}, [ currentSitePlan?.product_slug, getMatchingProducts, responseCart.products ] );
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
-	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) => {
+	const siteHasBackupMinimumPluginVersion = useSelector( ( state: AppState ) => {
 		const activeConnectedPlugins = getSiteOption(
 			state,
 			siteId,
 			'jetpack_connection_active_plugins'
-		);
+		) as string[];
 		const backupPluginActive =
 			Array.isArray( activeConnectedPlugins ) &&
 			activeConnectedPlugins.includes( 'jetpack-backup' );
 		return (
-			backupPluginActive || isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
+			backupPluginActive ||
+			( siteId && isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION ) )
 		);
 	} );
 
@@ -100,9 +130,6 @@ const PrePurchaseNotices = () => {
 		return null;
 	}
 
-	// We're attempting to buy Jetpack Backup individually,
-	// but this site already has a plan that includes it.
-	// ignore the error on free plans as they do not include any paid features
 	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
@@ -116,7 +143,7 @@ const PrePurchaseNotices = () => {
 	// We're attempting to buy a Jetpack Backup product,
 	// but this site does not have the minimum plugin version.
 	const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
-	const backupProductInCart = getProductFromSlug( backupSlugInCart );
+	const backupProductInCart = backupSlugInCart && getProductFromSlug( backupSlugInCart );
 	if ( ! siteHasBackupMinimumPluginVersion && backupProductInCart ) {
 		return (
 			<JetpackPluginRequiredVersionNotice
@@ -129,8 +156,8 @@ const PrePurchaseNotices = () => {
 	return null;
 };
 
-const Wrapper = ( props ) => {
-	const notice = PrePurchaseNotices( props );
+const Wrapper = () => {
+	const notice = PrePurchaseNotices();
 
 	return (
 		notice && (

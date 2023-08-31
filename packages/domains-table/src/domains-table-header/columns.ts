@@ -10,7 +10,16 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-		width: '30%',
+		width: '25%',
+	},
+	{
+		name: 'owner',
+		label: __( 'Owner', __i18n_text_domain__ ),
+		isSortable: true,
+		initialSortDirection: 'asc',
+		supportsOrderSwitching: true,
+		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		width: '20%',
 	},
 	{
 		name: 'site',

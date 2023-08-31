@@ -1,7 +1,6 @@
-import React from 'react';
+import usePatternMinHeightVh from '../hooks/use-pattern-min-height-vh';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
-
 interface Props {
 	patternId: string;
 	viewportWidth?: number;
@@ -22,6 +21,7 @@ const PatternRenderer = ( {
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
+	const patternHtml = usePatternMinHeightVh( pattern?.html, viewportHeight );
 
 	return (
 		<BlockRendererContainer
@@ -36,7 +36,7 @@ const PatternRenderer = ( {
 		>
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: pattern?.html ?? '' } }
+				dangerouslySetInnerHTML={ { __html: patternHtml ?? '' } }
 			/>
 		</BlockRendererContainer>
 	);

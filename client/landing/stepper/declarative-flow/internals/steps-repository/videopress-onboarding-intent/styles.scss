@@ -1,3 +1,7 @@
+html.modal-showing {
+	overflow: hidden;
+}
+
 .videopress.intro .signup-header {
 	z-index: 0;
 }
@@ -171,6 +175,15 @@
 		font-size: 18px; /* stylelint-disable-line */
 		font-weight: 400;
 
+
+		.intro__scrollpane {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			align-items: center;
+			overflow-y: scroll;
+		}
+
 		.intro__title {
 			margin-top: 16px;
 			text-align: center;
@@ -255,9 +268,16 @@
 		.videopress-intro-modal__waitlist {
 			display: flex;
 			gap: 8px;
+			min-height: 46px; /* so it doesn't shrink when the thank you message is presented */
 
 			input {
 				min-width: 300px;
+				border: 1px solid transparent;
+				border-radius: 4px;
+
+				&.is-error {
+					border: 1px solid #f00;
+				}
 			}
 
 			.button {
@@ -266,6 +286,13 @@
 				box-sizing: border-box;
 				max-width: none;
 				min-width: fit-content;
+			}
+
+			.videopress-intro-modal__waitlist-response {
+				width: 100%;
+				text-align: center;
+				font-size: 22px; /* stylelint-disable-line */
+				font-weight: 600;
 			}
 		}
 
@@ -277,6 +304,7 @@
 
 			.videopress-intro-modal__waitlist-description {
 				max-width: 460px;
+				margin: 0 auto;
 			}
 
 			.videopress-intro-modal__waitlist-description,
@@ -299,6 +327,46 @@
 				padding: 0;
 				margin: 0;
 			}
+		}
+
+		.videopress-intro-modal-other__question-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			background-color: rgb(36, 36, 36);
+			padding: 32px;
+			width: 100%;
+			max-width: 660px;
+			border-radius: 4px;
+
+			.title {
+				font-size: 18px; /* stylelint-disable-line */
+				font-weight: 600;
+			}
+
+			.subtitle {
+				font-size: 17px; /* stylelint-disable-line */
+				opacity: 0.7;
+			}
+
+			.answer-text {
+				margin-top: 24px;
+				height: 174px;
+			}
+
+			.response-text {
+				width: 100%;
+				text-align: center;
+				font-size: 22px; /* stylelint-disable-line */
+				font-weight: 600;
+			}
+		}
+
+		.videopress-intro-modal__dots-separator {
+			display: flex;
+			height: 4px;
+			margin-top: 48px;
+			margin-bottom: 48px;
 		}
 
 		.videopress-intro-modal__survey {
@@ -329,6 +397,18 @@
 
 			.videopress-intro-modal__survey-title {
 				font-weight: 600;
+			}
+		}
+
+		@media (max-width: 700px) {
+			.videopress-intro-modal__survey {
+				flex-direction: column;
+
+				.button-survey {
+					justify-content: center;
+					margin-top: 24px;
+					height: 44px;
+				}
 			}
 		}
 	}
