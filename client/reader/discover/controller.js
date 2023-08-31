@@ -29,7 +29,7 @@ const exported = {
 			context.renderHeaderSection = renderHeaderSection;
 		}
 		const selectedTab = context.query.selectedTab;
-		const tabTitle = titlecase( getSelectedTabTitle( selectedTab ) );
+		const tabTitle = titlecase( getSelectedTabTitle( selectedTab ) || '' );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<>
