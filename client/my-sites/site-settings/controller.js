@@ -64,12 +64,16 @@ export function general( context, next ) {
 export function deleteSite( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
+	let trialType = undefined;
+
+	if ( wasEcommerceTrialSite( state, siteId ) ) {
+		trialType = 'ecommerce';
+	} else if ( wasBusinessTrialSite( state, siteId ) ) {
+		trialType = 'business';
+	}
 
 	context.store.dispatch(
-		recordTracksEvent( 'calypso_settings_delete_site_page', {
-			was_ecommerce_trial_site: wasEcommerceTrialSite( state, siteId ),
-			was_business_trial_site: wasBusinessTrialSite( state, siteId ),
-		} )
+		recordTracksEvent( 'calypso_settings_delete_site_page', { trial_type: trialType } )
 	);
 
 	context.primary = <DeleteSite path={ context.path } />;

@@ -10,12 +10,16 @@ import TrialUpgradeConfirmation from './upgrade-confirmation';
 export function trialExpired( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	let trialType = undefined;
+
+	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
+		trialType = 'ecommerce';
+	} else if ( wasBusinessTrialSite( state, selectedSite.ID ) ) {
+		trialType = 'business';
+	}
 
 	context.store.dispatch(
-		recordTracksEvent( 'calypso_plan_trial_expired_page', {
-			was_ecommerce_trial_site: wasEcommerceTrialSite( state, selectedSite.ID ),
-			was_business_trial_site: wasBusinessTrialSite( state, selectedSite.ID ),
-		} )
+		recordTracksEvent( 'calypso_plan_trial_expired_page', { trial_type: trialType } )
 	);
 
 	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
