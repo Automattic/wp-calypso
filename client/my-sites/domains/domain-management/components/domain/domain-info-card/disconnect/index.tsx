@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { useCurrentRoute } from 'calypso/components/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import DomainInfoCard from '..';
@@ -11,6 +12,7 @@ import type { DomainInfoCardProps } from '../types';
 const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
 	const [ isDialogVisible, setDialogVisible ] = useState( false );
 	const translate = useTranslate();
+	const { currentRoute } = useCurrentRoute();
 
 	if ( ! domain.currentUserIsOwner ) {
 		return null;
@@ -21,11 +23,11 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 	};
 
 	const clickDisconnectDomain = async () => {
-		const data = await wpcom.req.get(
+		await wpcom.req.get(
 			`/domains/${ domain.name }/disconnect-domain-from-site/${ selectedSite.ID }`
 		);
 
-		page.redirect( domainManagementEdit( data.siteId, domain.name ) );
+		page.redirect( domainManagementEdit( '', domain.name, currentRoute ) );
 
 		setDialogVisible( false );
 	};
