@@ -1,17 +1,30 @@
 import { ParagraphBlock } from '../paragraph-block';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
-const prePaywallBlockText = 'Content everyone can see';
-const postPaywallBlockText = 'Content only subscribers can see';
+interface ConfigurationData {
+	prePaywallText: string;
+	postPaywallText: string;
+}
 
-const blockParentSelector = 'div[aria-label="Block: Paywall (beta)"]';
+const blockParentSelector = 'div[aria-label="Block: Paywall"]';
 
 /**
  * Flow for the Paywall block.
  */
 export class PaywallFlow implements BlockFlow {
-	blockSidebarName = 'Paywall (beta)';
+	private configurationData: ConfigurationData;
+
+	blockSidebarName = 'Paywall';
 	blockEditorSelector = blockParentSelector;
+
+	/**
+	 * Constructs an instance of this block flow with data to be used when configuring and validating the block.
+	 *
+	 * @param {ConfigurationData} configurationData data with which to configure and validate the block
+	 */
+	constructor( configurationData: ConfigurationData ) {
+		this.configurationData = configurationData;
+	}
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
@@ -20,31 +33,26 @@ export class PaywallFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		const editorCanvas = await context.editorPage.getEditorCanvas();
+		// Insert two text blocks, and populate with
+		// pre and post-paywall text.
+		const prePaywallParagraphHandle = await context.editorPage.addBlockFromSidebar(
+			ParagraphBlock.blockName,
+			ParagraphBlock.blockEditorSelector
+		);
+		await prePaywallParagraphHandle.fill( this.configurationData.prePaywallText );
 
-		// Click on the post title, and hit enter.
-		// This in effect inserts a new Paragraph block immediate below
-		// the title.
-		await editorCanvas
-			.getByRole( 'textbox', {
-				name: 'Add title',
-				exact: true,
-			} )
-			.click();
-
-		// Insert a block that is not behind a paywall.
-		await context.page.keyboard.press( 'Enter' );
-
-		await context.editorPage.enterText( prePaywallBlockText );
-
-		// Click on the Paywall block, and hit enter.
-		await editorCanvas.getByRole( 'document', { name: 'Block: Paywall' } ).click();
-
-		// Insert a block that is behind a paywall and configure text.
 		const postPaywallParagraphHandle = await context.editorPage.addBlockFromSidebar(
 			ParagraphBlock.blockName,
 			ParagraphBlock.blockEditorSelector
 		);
-		await postPaywallParagraphHandle.fill( postPaywallBlockText );
+		await postPaywallParagraphHandle.fill( this.configurationData.prePaywallText );
+
+		// Click on the Paywall block, and hit enter.
+		await editorCanvas.getByRole( 'document', { name: 'Block: Paywall' } ).click();
+
+		// Move the Paywall block down, slotting it between
+		// the two Paragraph blocks.
+		await context.editorPage.moveBlockDown();
 	}
 
 	/**
@@ -54,7 +62,22 @@ export class PaywallFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Publisher/owner of the post can see everything.
-		await context.page.getByText( prePaywallBlockText ).waitFor();
-		await context.page.getByText( postPaywallBlockText ).waitFor();
+		await context.page.getByText( this.configurationData.prePaywallText ).waitFor();
+		await context.page.getByText( this.configurationData.postPaywallText ).waitFor();
+
+		// Unrelated user sees a paywall.
+		const browser = context.page.context().browser();
+
+		if ( ! browser ) {
+			throw new Error( `Failed to retrieve browser instance.` );
+		}
+		const newPage = await ( await browser.newContext() ).newPage();
+		await newPage.goto( context.page.url() );
+
+		await newPage.getByText( this.configurationData.prePaywallText ).waitFor();
+		await newPage.getByText( this.configurationData.postPaywallText ).waitFor();
+		await newPage
+			.getByText( this.configurationData.postPaywallText )
+			.waitFor( { state: 'detached' } );
 	}
 }
