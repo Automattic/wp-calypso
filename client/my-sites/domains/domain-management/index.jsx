@@ -7,6 +7,7 @@ import AddDnsRecord from './dns/add-dns-record';
 import DnsRecords from './dns/dns-records';
 import DomainConnectMapping from './domain-connect-mapping';
 import EditContactInfoPage from './edit-contact-info-page';
+import BulkEditContactInfoPage from './edit-contact-info-page/bulk-edit-contact-info-modal';
 import ManageConsent from './manage-consent';
 import Security from './security';
 import Settings from './settings';
@@ -18,6 +19,7 @@ import TransferDomainToOtherUser from './transfer/transfer-to-other-user/transfe
 
 export default {
 	AddDnsRecord,
+	BulkEditContactInfoPage,
 	ContactsPrivacy,
 	DnsRecords,
 	DomainConnectMapping,

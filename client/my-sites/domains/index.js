@@ -157,6 +157,15 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		paths.domainManagementAllEditSelectedContactInfo(),
+		noSite,
+		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
+		domainManagementController.domainManagementAllEditSelectedContactInfo,
+		makeLayout,
+		clientRender
+	);
+
 	registerStandardDomainManagementPages(
 		paths.domainManagementEdit,
 		domainManagementController.domainManagementEdit

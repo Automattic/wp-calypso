@@ -4,6 +4,7 @@ import DomainManagementData from 'calypso/components/data/domain-management';
 import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
+	domainManagementAllEditSelectedContactInfo,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
@@ -174,6 +175,19 @@ export default {
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementAllEditSelectedContactInfo( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementAllEditSelectedContactInfo() }
+				analyticsTitle="Domain Management > Edit Selected Contact Info"
+				component={ DomainManagement.BulkEditContactInfoPage }
+				context={ pageContext }
+				needsDomains
 			/>
 		);
 		next();

@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
@@ -17,12 +17,16 @@ interface SetAutoRenewVariables {
 
 type BulkUpdateVariables = UpdateContactInfoVariables | SetAutoRenewVariables;
 
-export function useDomainsBulkActionsMutation() {
+export function useDomainsBulkActionsMutation<
+	TData = unknown,
+	TError = unknown,
+	TContext = unknown
+>( options: UseMutationOptions< TData, TError, BulkUpdateVariables, TContext > = {} ) {
 	const { mutate, ...rest } = useMutation( {
-		mutationFn: async ( variables: BulkUpdateVariables ) => {
+		mutationFn: ( variables ) => {
 			switch ( variables.type ) {
 				case 'set-auto-renew':
-					return await wpcomRequest( {
+					return wpcomRequest( {
 						path: `/domains/bulk-actions/${ variables.type }`,
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
@@ -33,7 +37,7 @@ export function useDomainsBulkActionsMutation() {
 					} );
 
 				case 'update-contact-info':
-					return await wpcomRequest( {
+					return wpcomRequest( {
 						path: `/domains/bulk-actions/${ variables.type }`,
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
@@ -45,6 +49,7 @@ export function useDomainsBulkActionsMutation() {
 					} );
 			}
 		},
+		...options,
 	} );
 
 	const setAutoRenew = useCallback(
