@@ -58,7 +58,7 @@ export default function SiteStatusContent( {
 		'jetpack/pro-dashboard-wpcom-atomic-hosting'
 	);
 
-	const isWPCOMAtomicSite = rows.site.value.is_wpcom_atomic;
+	const isWPCOMAtomicSite = rows.site.value.is_atomic;
 
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
