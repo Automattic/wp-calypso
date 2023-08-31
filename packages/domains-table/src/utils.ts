@@ -61,6 +61,9 @@ export const getSiteSortFunctions = () => {
 	];
 };
 
+export const shouldHideOwnerColumn = ( domains: DomainData[] ) => {
+	return ! domains.some( ( domain ) => domain.owner );
+};
 export const countDomainsRequiringAttention = (
 	domainStatutes: ResolveDomainStatusReturn[] | undefined
 ) =>

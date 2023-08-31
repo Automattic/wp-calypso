@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
@@ -63,6 +64,12 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			);
 		},
 		disabled: false,
+	},
+	{
+		component: CommercialSiteUpgradeNotice,
+		noticeId: 'commercial_site_upgrade',
+		isVisibleFunc: () => false, // prevent accidental display of notice for now
+		disabled: true, // prevent accidental display of notice for now
 	},
 ];
 

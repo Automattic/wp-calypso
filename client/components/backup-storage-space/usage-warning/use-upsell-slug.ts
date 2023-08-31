@@ -40,7 +40,7 @@ export const isJetpackProductSlugMatch =
 	( { subscriptionStatus, productSlug }: Purchase ) =>
 		subscriptionStatus === 'active' && slugList.includes( productSlug );
 
-export default ( siteId: number ) => {
+export default ( siteId: number, retentionSelected?: number ) => {
 	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
 	const HUNDRED_GIGABYTES = useJetpack100GbStorageAmountText();
 	const ONE_TERABYTES = useJetpack1TbStorageAmountText();
@@ -63,7 +63,8 @@ export default ( siteId: number ) => {
 		getBackupRetentionDays( state, siteId )
 	);
 	// The retention days that currently applies for this customer.
-	const currentRetentionPeriod = customerRetentionPeriod || planRetentionPeriod || 0;
+	const currentRetentionPeriod =
+		retentionSelected || customerRetentionPeriod || planRetentionPeriod || 0;
 
 	const upsellSlug = useMemo( () => {
 		const ADD_ON_STORAGE_MAP: Record< string, TranslateResult > = {

@@ -52,7 +52,9 @@ type DomainsTableHeaderProps = {
 	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
 	onBulkSelectionChange(): void;
 	headerClasses?: string;
+	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
+	canSelectAnyDomains?: boolean;
 };
 
 export const DomainsTableHeader = ( {
@@ -63,7 +65,9 @@ export const DomainsTableHeader = ( {
 	onBulkSelectionChange,
 	onChangeSortOrder,
 	headerClasses,
+	hideOwnerColumn = false,
 	domainsRequiringAttention,
+	canSelectAnyDomains = true,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
@@ -87,32 +91,44 @@ export const DomainsTableHeader = ( {
 		<thead className={ listHeaderClasses }>
 			<tr>
 				<th className="domains-table__bulk-action-container">
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						onChange={ onBulkSelectionChange }
-						indeterminate={ bulkSelectionStatus === 'some-domains' }
-						checked={ bulkSelectionStatus === 'all-domains' }
-						aria-label={ __( 'Select all tick boxes for domains in table', __i18n_text_domain__ ) }
-					/>
-				</th>
-				{ columns.map( ( column ) => (
-					<th key={ column.name } style={ { width: column.width } }>
-						<Button
-							plain
-							onClick={ () => onChangeSortOrder( column ) }
-							className={ classNames( 'list__header-column', {
-								'is-sortable': column?.isSortable,
-							} ) }
-							tabIndex={ column?.isSortable ? 0 : -1 }
-						>
-							{ column?.headerComponent || column?.label }
-							{ column?.name === 'status' && domainsRequiringAttention && (
-								<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
+					{ canSelectAnyDomains && (
+						<CheckboxControl
+							data-testid="domains-select-all-checkbox"
+							__nextHasNoMarginBottom
+							onChange={ onBulkSelectionChange }
+							indeterminate={ bulkSelectionStatus === 'some-domains' }
+							checked={ bulkSelectionStatus === 'all-domains' }
+							aria-label={ __(
+								'Select all tick boxes for domains in table',
+								__i18n_text_domain__
 							) }
-							{ renderSortIcon( column, activeSortKey, activeSortDirection ) }
-						</Button>
-					</th>
-				) ) }
+						/>
+					) }
+				</th>
+
+				{ columns.map( ( column ) => {
+					if ( column.name === 'owner' && hideOwnerColumn ) {
+						return null;
+					}
+					return (
+						<th key={ column.name } style={ { width: column.width } }>
+							<Button
+								plain
+								onClick={ () => onChangeSortOrder( column ) }
+								className={ classNames( 'list__header-column', {
+									'is-sortable': column?.isSortable,
+								} ) }
+								tabIndex={ column?.isSortable ? 0 : -1 }
+							>
+								{ column?.headerComponent || column?.label }
+								{ column?.name === 'status' && domainsRequiringAttention && (
+									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
+								) }
+								{ renderSortIcon( column, activeSortKey, activeSortDirection ) }
+							</Button>
+						</th>
+					);
+				} ) }
 			</tr>
 		</thead>
 	);

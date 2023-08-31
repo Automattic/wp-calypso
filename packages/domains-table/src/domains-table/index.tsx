@@ -14,6 +14,7 @@ import { DomainsTableFilters, DomainsTableFilter } from '../domains-table-filter
 import { DomainsTableColumn, DomainsTableHeader } from '../domains-table-header';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { getDomainId } from '../get-domain-id';
+import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRow } from './domains-table-row';
 import './style.scss';
@@ -171,7 +172,9 @@ export function DomainsTable( {
 	};
 
 	const hasSelectedDomains = selectedDomains.size > 0;
-	const areAllDomainsSelected = domains.length === selectedDomains.size;
+	const selectableDomains = domains.filter( ( domain ) => ! domain.wpcom_domain );
+	const canSelectAnyDomains = selectableDomains.length > 0;
+	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
 		if ( hasSelectedDomains && areAllDomainsSelected ) {
@@ -188,7 +191,9 @@ export function DomainsTable( {
 	const changeBulkSelection = () => {
 		if ( filter.query ) {
 			if ( ! hasSelectedDomains ) {
-				setSelectedDomains( new Set( filteredData.map( getDomainId ) ) );
+				setSelectedDomains(
+					new Set( filteredData.filter( ( domain ) => ! domain.wpcom_domain ).map( getDomainId ) )
+				);
 			} else {
 				setSelectedDomains( new Set() );
 			}
@@ -197,7 +202,10 @@ export function DomainsTable( {
 		}
 
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
-			setSelectedDomains( new Set( domains.map( getDomainId ) ) );
+			// filter out wpcom domains from bulk selection
+			setSelectedDomains(
+				new Set( domains.filter( ( domain ) => ! domain.wpcom_domain ).map( getDomainId ) )
+			);
 		} else {
 			setSelectedDomains( new Set() );
 		}
@@ -209,6 +217,10 @@ export function DomainsTable( {
 			.map( ( domain ) => domain.domain );
 		setAutoRenew( domainsToBulkUpdate, enable );
 	};
+
+	const hideOwnerColumn = shouldHideOwnerColumn(
+		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
+	);
 
 	return (
 		<div className="domains-table">
@@ -232,7 +244,9 @@ export function DomainsTable( {
 					bulkSelectionStatus={ getBulkSelectionStatus() }
 					onBulkSelectionChange={ changeBulkSelection }
 					onChangeSortOrder={ onSortChange }
+					hideOwnerColumn={ hideOwnerColumn }
 					domainsRequiringAttention={ domainsRequiringAttention }
+					canSelectAnyDomains={ canSelectAnyDomains }
 				/>
 				<tbody>
 					{ filteredData.map( ( domain ) => (
@@ -245,6 +259,7 @@ export function DomainsTable( {
 							fetchSite={ fetchSite }
 							isAllSitesView={ isAllSitesView }
 							domainStatusPurchaseActions={ domainStatusPurchaseActions }
+							hideOwnerColumn={ hideOwnerColumn }
 							onDomainsRequiringAttentionChange={ onDomainsRequiringAttentionChange }
 						/>
 					) ) }
