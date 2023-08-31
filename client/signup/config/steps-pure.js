@@ -265,8 +265,8 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo', 'addOnItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'addOnItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 

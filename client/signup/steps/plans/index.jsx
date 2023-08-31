@@ -59,8 +59,8 @@ export class PlansStep extends Component {
 		this.unsubscribe();
 	}
 
-	onSelectPlan( cartItem ) {
-		buildUpgradeFunction( this.props, cartItem );
+	onSelectPlan( cartItem, addOnItem ) {
+		buildUpgradeFunction( this.props, cartItem, addOnItem );
 	}
 
 	getCustomerType() {
@@ -166,7 +166,7 @@ export class PlansStep extends Component {
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ intervalType }
-					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
+					onUpgradeClick={ ( cartItem, addOnItem ) => this.onSelectPlan( cartItem, addOnItem ) }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					plansWithScroll={ this.state.isDesktop }

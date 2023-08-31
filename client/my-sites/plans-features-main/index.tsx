@@ -28,7 +28,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import useGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
@@ -100,7 +99,10 @@ export interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
-	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: (
+		cartItemForPlan?: MinimalRequestCartProduct | null,
+		storageAddOnProduct?: MinimalRequestCartProduct
+	) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -315,14 +317,10 @@ const PlansFeaturesMain = ( {
 				meta: '',
 				product_id: undefined,
 			};
-			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug || '' );
-			await cartManagerClient
-				.forCartKey( cartKey )
-				.actions.addProductsToCart( [ storageAddOnProduct ] );
 		}
 
 		if ( onUpgradeClick ) {
-			onUpgradeClick( cartItemForPlan );
+			onUpgradeClick( cartItemForPlan, storageAddOnProduct );
 			return;
 		}
 

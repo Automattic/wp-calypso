@@ -606,7 +606,7 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
+	const { addOnItem, emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
 	const { cartItem, lastKnownFlow } = stepProvidedItems;
 	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
@@ -621,8 +621,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem, emailItem, pluginItem ].filter( ( item ) => item );
-
+	const newCartItems = [ cartItem, addOnItem, emailItem, pluginItem ].filter( ( item ) => item );
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 		lastKnownFlow,
 	} );
@@ -1270,7 +1269,7 @@ export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nex
 	}
 }
 
-export const buildUpgradeFunction = ( planProps, cartItem ) => {
+export const buildUpgradeFunction = ( planProps, cartItem, addOnItem ) => {
 	const {
 		additionalStepData,
 		flowName,
@@ -1317,6 +1316,7 @@ export const buildUpgradeFunction = ( planProps, cartItem ) => {
 	if ( selectedSite && flowName === 'site-selected' && ! cartItem ) {
 		submitSignupStep( step, {
 			cartItem,
+			...( addOnItem && { addOnItem } ),
 		} );
 		goToNextStep();
 		return;
@@ -1326,12 +1326,12 @@ export const buildUpgradeFunction = ( planProps, cartItem ) => {
 		cartItem,
 		...( themeSlugWithRepo && { themeSlugWithRepo } ),
 		...( launchSite && { comingSoon: 0 } ),
+		...( addOnItem && { addOnItem } ),
 	};
 
 	if ( cartItem && isEcommerce( cartItem ) ) {
 		signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
 	}
-
 	submitSignupStep( step, signupVals );
 	goToNextStep();
 };
