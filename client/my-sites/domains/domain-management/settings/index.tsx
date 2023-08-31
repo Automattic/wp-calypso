@@ -16,6 +16,7 @@ import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'ca
 import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
+import DomainDisconnectCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/disconnect';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
@@ -585,6 +586,7 @@ const Settings = ( {
 				<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
 			</>
 		);
 	};
