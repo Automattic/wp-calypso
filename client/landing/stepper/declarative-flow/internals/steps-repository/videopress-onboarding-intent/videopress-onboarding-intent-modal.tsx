@@ -32,6 +32,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	surveyTitle,
 	onSubmit,
 	source,
+	children,
 } ) => {
 	const translate = useTranslate();
 	const [ waitlistEmail, setWaitlistEmail ] = useState( '' );
@@ -192,6 +193,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 					</div>
 				) }
 			</div>
+			{ children }
 			<div className="videopress-intro-modal__screenshots">
 				<img
 					src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
