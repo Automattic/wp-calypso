@@ -72,13 +72,6 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 	}
 }
 
-@media (max-width: 600px) {
-	td.request_url span,
-	td.message span {
-		width: calc(100vw - 104px);
-	}
-}
-
 .site-logs-table__empty-cell::before {
 	content: "\2012";
 	opacity: 0.5;
@@ -215,9 +208,23 @@ td.message {
 		grid-template-columns: 5fr 1fr;
 	}
 
-	td.chevron-cell {
+	.site-logs-table td.chevron-cell {
 		grid-column: 2;
-		grid-row: 1 / span 3;
+		grid-row: 1 / span 2;
+		padding: 0;
+		button {
+			float: right;
+		}
+	}
+
+	td.message,
+	td.request_url {
+		grid-column: 1 / span 2;
+	}
+
+	td.request_url span,
+	td.message span {
+		width: calc(100vw - 32px);
 	}
 
 	.site-logs-table td {
