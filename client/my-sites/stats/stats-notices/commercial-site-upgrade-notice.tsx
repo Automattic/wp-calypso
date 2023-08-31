@@ -63,7 +63,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
-				! isOdysseyStats && 'inner-notice-container--calypso' && 'is-dark'
+				! isOdysseyStats && 'inner-notice-container--calypso'
 			}` }
 		>
 			<NoticeBanner

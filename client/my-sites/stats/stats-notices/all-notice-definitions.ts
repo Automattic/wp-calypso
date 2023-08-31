@@ -68,38 +68,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
-		isVisibleFunc: ( {
-			isOdysseyStats,
-			isWpcom,
-			isVip,
-			isP2,
-			isOwnedByTeam51,
-			hasPaidStats,
-			isSiteJetpackNotAtomic,
-		}: StatsNoticeProps ) => {
-			// Gate notices for WPCOM sites behind a flag.
-			const showUpgradeNoticeForWpcomSites =
-				config.isEnabled( 'stats/paid-wpcom-stats' ) &&
-				isWpcom &&
-				! isVip &&
-				! isP2 &&
-				! isOwnedByTeam51;
-
-			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showUpgradeNoticeOnOdyssey = config.isEnabled( 'stats/paid-stats' ) && isOdysseyStats;
-
-			const showUpgradeNoticeForJetpackNotAtomic =
-				config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
-
-			return !! (
-				( showUpgradeNoticeOnOdyssey ||
-					showUpgradeNoticeForJetpackNotAtomic ||
-					showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats
-			);
-		},
-		disabled: false,
+		isVisibleFunc: () => false, // prevent accidental display of notice for now
+		disabled: true, // prevent accidental display of notice for now
 	},
 ];
 
