@@ -100,8 +100,8 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 			{ isComingSoon && (
 				<div className="videopress-intro-modal__coming-soon">{ translate( 'Coming soon!' ) }</div>
 			) }
+			<h1 className="intro__title">{ title }</h1>
 			<div className="intro__scrollpane">
-				<h1 className="intro__title">{ title }</h1>
 				<div className="intro__description">{ description }</div>
 				{ featuresList && (
 					<ul className="videopress-intro-modal__list">
