@@ -45,6 +45,7 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 		padding-left: 0;
 	}
 
+	// Webserver Logs
 	&.request_type {
 		width: 90px;
 	}
@@ -59,6 +60,15 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 
 	&.chevron-cell {
 		width: 28px;
+	}
+
+	// PHP Logs
+	&.severity {
+		width: 80px;
+	}
+
+	&.timestamp {
+		width: 190px;
 	}
 }
 
@@ -176,7 +186,9 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 	color: rgba(44, 51, 56, 1);
 }
 
-td.request_url span {
+// Flexible columns
+td.request_url span,
+td.message span {
 	white-space: nowrap;
 	display: block;
 	text-overflow: ellipsis;

@@ -93,7 +93,7 @@ function renderCell(
 		return <span>{ formattedDate }</span>;
 	}
 
-	if ( column === 'request_url' ) {
+	if ( column === 'request_url' || column === 'message' ) {
 		return <span>{ `${ value }` }</span>;
 	}
 
