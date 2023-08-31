@@ -13,7 +13,7 @@ import {
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import styled from '@emotion/styled';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -28,6 +28,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import useGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 import usePlanFeaturesForGridPlans from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-plan-features-for-grid-plans';
@@ -221,6 +222,9 @@ const PlansFeaturesMain = ( {
 	const storageAddOns = useAddOns( siteId as number ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
+	const selectedStorageOptions = useSelect( ( select ) => {
+		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+	}, [] );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -274,7 +278,7 @@ const PlansFeaturesMain = ( {
 		setIsFreePlanPaidDomainDialogOpen( ! isFreePlanPaidDomainDialogOpen );
 	};
 
-	const handleUpgradeClick = ( cartItemForPlan?: { product_slug: string } | null ) => {
+	const handleUpgradeClick = async ( cartItemForPlan?: { product_slug: string } | null ) => {
 		// `cartItemForPlan` is empty if Free plan is selected. Show `FreePlanPaidDomainDialog`
 		// in that case and exit. `FreePlanPaidDomainDialog` takes over from there.
 		// It only applies to main onboarding flow and the paid media flow at the moment.
@@ -293,6 +297,28 @@ const PlansFeaturesMain = ( {
 				setIsFreePlanFreeDomainDialogOpen( true );
 				return;
 			}
+		}
+
+		const selectedStorageOption =
+			selectedStorageOptions && selectedStorageOptions[ cartItemForPlan?.product_slug || '' ];
+		const storageAddOn = storageAddOns?.find( ( addOn ) => {
+			return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
+		} );
+
+		let storageAddOnProduct;
+
+		if ( storageAddOn ) {
+			storageAddOnProduct = {
+				product_slug: storageAddOn.productSlug,
+				quantity: storageAddOn.quantity,
+				volume: 1,
+				meta: '',
+				product_id: undefined,
+			};
+			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug || '' );
+			await cartManagerClient
+				.forCartKey( cartKey )
+				.actions.addProductsToCart( [ storageAddOnProduct ] );
 		}
 
 		if ( onUpgradeClick ) {
