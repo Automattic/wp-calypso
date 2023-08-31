@@ -137,11 +137,11 @@ export type PendingPostSubscriptionsResult = {
 };
 
 export type SiteSubscriptionDetails = {
-	ID: string;
-	blog_ID: string;
+	ID: number;
+	blog_ID: number;
 	name: string;
 	URL: string;
-	site_icon: string;
+	site_icon: string | null;
 	date_subscribed: Date;
 	subscriber_count: number;
 	delivery_methods: SiteSubscriptionDeliveryMethods;
