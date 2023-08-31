@@ -11,7 +11,7 @@ import {
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import renderHeaderSection from '../lib/header-section';
-import { getSelectedTabTitle } from './helper';
+import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -28,7 +28,7 @@ const exported = {
 		if ( ! isUserLoggedIn( context.store.getState() ) ) {
 			context.renderHeaderSection = renderHeaderSection;
 		}
-		const selectedTab = context.query.selectedTab;
+		const selectedTab = context.query.selectedTab || DEFAULT_TAB;
 		const tabTitle = titlecase( getSelectedTabTitle( selectedTab ) || '' );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
