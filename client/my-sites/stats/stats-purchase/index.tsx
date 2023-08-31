@@ -6,6 +6,7 @@ import {
 	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
@@ -138,7 +139,7 @@ const StatsPurchasePage = ( {
 				title="Stats > Purchase"
 				from={ query.from ?? '' }
 			/>
-			<div className="stats">
+			<div className={ classNames( 'stats', 'stats-purchase-page' ) }>
 				{ /* Only query site purchases on Calypso via existing data component */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
@@ -180,33 +181,34 @@ const StatsPurchasePage = ( {
 				{ ! isLoading && isTypeDetectionEnabled && (
 					<>
 						{
-							// a plan is owned - show a notice page
-						 }
-						{ ! showPurchasPage && (
-							<StatsPurchaseNoticePage
-								siteSlug={ siteSlug }
-								isCommercialOwned={ isCommercialOwned }
-								isFreeOwned={ isFreeOwned }
-								isPWYWOwned={ isPWYWOwned }
-							/>
-						) }
+							// a plan is owned - show a notice page for a commercial plan
+							// or a banner for a free and PWYW plans with a wizard below the notice
+							! showPurchasPage && (
+								<StatsPurchaseNoticePage
+									siteSlug={ siteSlug }
+									isCommercialOwned={ isCommercialOwned }
+									isFreeOwned={ isFreeOwned }
+									isPWYWOwned={ isPWYWOwned }
+								/>
+							)
+						}
 						{
 							// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-						 }
-						{ showPurchasPage && ! showPurchasPage && (
-							<StatsPurchaseWizard
-								siteSlug={ siteSlug }
-								commercialProduct={ commercialProduct }
-								maxSliderPrice={ maxSliderPrice ?? 10 }
-								pwywProduct={ pwywProduct }
-								siteId={ siteId }
-								redirectUri={ query.redirect_uri ?? '' }
-								from={ query.from ?? '' }
-								disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
-								initialStep={ initialStep }
-								initialSiteType={ initialSiteType }
-							/>
-						) }
+							( isFreeOwned || isPWYWOwned || ( showPurchasPage && ! showSinglePurchasPage ) ) && (
+								<StatsPurchaseWizard
+									siteSlug={ siteSlug }
+									commercialProduct={ commercialProduct }
+									maxSliderPrice={ maxSliderPrice ?? 10 }
+									pwywProduct={ pwywProduct }
+									siteId={ siteId }
+									redirectUri={ query.redirect_uri ?? '' }
+									from={ query.from ?? '' }
+									disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+									initialStep={ initialStep }
+									initialSiteType={ initialSiteType }
+								/>
+							)
+						}
 						{ showPurchasPage && showSinglePurchasPage && (
 							<>
 								{ ! isCommercialOwned && options.isCommercial && (
@@ -221,6 +223,23 @@ const StatsPurchasePage = ( {
 										/>
 									</div>
 								) }
+								{
+									// TODO: Add single page prache for a personal plan
+									options.isCommercial === false && (
+										<StatsPurchaseWizard
+											siteSlug={ siteSlug }
+											commercialProduct={ commercialProduct }
+											maxSliderPrice={ maxSliderPrice ?? 10 }
+											pwywProduct={ pwywProduct }
+											siteId={ siteId }
+											redirectUri={ query.redirect_uri ?? '' }
+											from={ query.from ?? '' }
+											disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+											initialStep={ initialStep }
+											initialSiteType={ initialSiteType }
+										/>
+									)
+								}
 							</>
 						) }
 					</>

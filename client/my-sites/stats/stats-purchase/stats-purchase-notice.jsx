@@ -1,3 +1,4 @@
+import NoticeBanner from '@automattic/components/src/notice-banner';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -32,6 +33,44 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 	);
 };
 
+const StatsPWYWOwned = () => {
+	const translate = useTranslate();
+
+	return (
+		<>
+			<div className="stats-purchase-page__notice--with-banner">
+				<NoticeBanner
+					level="success"
+					title={ translate( 'Thank you for using Jetpack Stats!' ) }
+					hideCloseButton
+				>
+					{ translate(
+						'You have already purchased a personal plan. If you want to upgrade to a commercial plan you can do it below.'
+					) }
+				</NoticeBanner>
+			</div>
+		</>
+	);
+};
+
+const StatsFreeOwned = () => {
+	const translate = useTranslate();
+
+	return (
+		<div className="stats-purchase-page__notice--with-banner">
+			<NoticeBanner
+				level="success"
+				title={ translate( 'Thank you for using Jetpack Stats!' ) }
+				hideCloseButton
+			>
+				{ translate(
+					'We appreciate your continued support. If you want to access upcoming features, please consider upgrading.'
+				) }
+			</NoticeBanner>
+		</div>
+	);
+};
+
 const StatsPurchaseNotice = ( { siteSlug } ) => {
 	return (
 		<StatsSingleItemPagePurchaseFrame>
@@ -42,20 +81,11 @@ const StatsPurchaseNotice = ( { siteSlug } ) => {
 
 const StatsPurchaseNoticePage = ( { siteSlug, isCommercialOwned, isFreeOwned, isPWYWOwned } ) => {
 	return (
-		<>
-			{ isCommercialOwned && (
-				<div className="stats-purchase-page__notice">
-					<StatsPurchaseNotice siteSlug={ siteSlug } />
-				</div>
-			) }
-			{ ( isFreeOwned || isPWYWOwned ) && (
-				<>
-					{
-						// TODO: add a banner handling information about existing purchase
-					 }
-				</>
-			) }
-		</>
+		<div className="stats-purchase-page__notice">
+			{ isCommercialOwned && <StatsPurchaseNotice siteSlug={ siteSlug } /> }
+			{ isPWYWOwned && <StatsPWYWOwned /> }
+			{ isFreeOwned && <StatsFreeOwned /> }
+		</div>
 	);
 };
 
