@@ -145,7 +145,7 @@ const JetpackCheckoutSidebarPlanUpsell: FC = () => {
 				<UpsellLine label={ __( 'Yearly plan' ) } boldLabel isTitle />
 
 				<UpsellLine
-					label={ __( 'Year 1' ) }
+					label={ __( 'Year One' ) }
 					value={ formatCurrency(
 						isComparisonWithIntroOffer
 							? currentVariant.priceInteger
@@ -156,7 +156,7 @@ const JetpackCheckoutSidebarPlanUpsell: FC = () => {
 				/>
 
 				<UpsellLine
-					label={ __( 'Year 2' ) }
+					label={ __( 'Year Two' ) }
 					value={ formatCurrency(
 						currentVariant.priceBeforeDiscounts,
 						currentVariant.currency,
