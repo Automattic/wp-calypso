@@ -1,4 +1,4 @@
-import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
+import { isJetpackProduct, isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -29,7 +29,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const plan = responseCart.products.find(
-		( product ) => isPlan( product ) && ! isJetpackPlan( product )
+		( product ) => isPlan( product ) || isJetpackProduct( product )
 	);
 	const variants = useGetProductVariants( plan );
 
