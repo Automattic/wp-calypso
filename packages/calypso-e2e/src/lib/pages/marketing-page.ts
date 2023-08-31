@@ -31,6 +31,8 @@ export class MarketingPage {
 		this.page = page;
 	}
 
+	/* Generic methods */
+
 	/**
 	 * Navigates directly to the Marketing page for the site.
 	 *
@@ -49,7 +51,25 @@ export class MarketingPage {
 		await clickNavTab( this.page, name );
 	}
 
+	/**
+	 * Given an accessible name of the button, click on the button.
+	 *
+	 * @param {string} name Accessible name of the button.
+	 */
+	async clickButton( name: string ) {
+		await this.page.getByRole( 'button', { name: name } ).click();
+	}
+
 	/* SEO Preview Methods */
+
+	/**
+	 *
+	 */
+	async saveSettings() {
+		await this.page.getByRole( 'button', { name: 'Save settings' } ).first().click();
+
+		await this.page.waitForResponse( /settings/ );
+	}
 
 	/**
 	 * Enters text into the Website Meta Information field.
@@ -73,15 +93,6 @@ export class MarketingPage {
 	}
 
 	/**
-	 * Given an accessible name of the button, click on the button.
-	 *
-	 * @param {string} name Accessible name of the button.
-	 */
-	async clickButton( name: string ) {
-		await this.page.getByRole( 'button', { name: name } ).click();
-	}
-
-	/**
 	 * Enters the specified text into the input of the specified category, changing the
 	 * page title structure.
 	 *
@@ -102,17 +113,13 @@ export class MarketingPage {
 	/**
 	 * Returns the preview text for the page title structure category.
 	 *
-	 * @param {SEOPageTitleStructureCategories} category Category to return preview text for.
-	 * @returns {Promise<string>} Preview text.
+	 * @param {string} text Text to validate.
 	 */
-	async getPreviewTextForPageStructureCategory(
-		category: SEOPageTitleStructureCategories
-	): Promise< string > {
-		return await this.page
-			.locator( selectors.pageTitleStructureInput )
-			.filter( { has: this.page.getByText( category ) } )
+	async validatePreviewTextForPageStructureCategory( text: string ) {
+		await this.page
 			.locator( '.title-format-editor__preview' )
-			.innerText();
+			.filter( { hasText: text } )
+			.waitFor();
 	}
 
 	/* Social Connectisons */

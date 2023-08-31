@@ -11,6 +11,7 @@ import {
 	SidebarComponent,
 	MarketingPage,
 	TestAccount,
+	NoticeComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -24,7 +25,7 @@ declare const browser: Browser;
  * Keywords: Jetpack, SEO, Traffic, Marketing.
  */
 describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
-	const externalPreviewText = 'Test front page meta description';
+	const externalPreviewText = DataHelper.getRandomPhrase();
 
 	let page: Page;
 	let testAccount: TestAccount;
@@ -66,11 +67,10 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 	} );
 
 	it( 'Enter and verify SEO page title front page structure', async function () {
-		const frontPageText = 'test front page title text';
+		const frontPageText = DataHelper.getRandomPhrase();
 		await marketingPage.enterPageTitleStructure( 'Front Page', frontPageText );
 
-		const previewText = await marketingPage.getPreviewTextForPageStructureCategory( 'Front Page' );
-		expect( previewText ).toContain( frontPageText );
+		await marketingPage.validatePreviewTextForPageStructureCategory( frontPageText );
 	} );
 
 	it( 'Enter SEO external preview description', async function () {
@@ -87,5 +87,12 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 
 	it( 'Close SEO preview', async function () {
 		await marketingPage.clickButton( 'Close preview' );
+	} );
+
+	it( 'Save changes', async function () {
+		await marketingPage.saveSettings();
+
+		const noticeComponent = new NoticeComponent( page );
+		await noticeComponent.noticeShown( 'Settings saved successfully!' );
 	} );
 } );
