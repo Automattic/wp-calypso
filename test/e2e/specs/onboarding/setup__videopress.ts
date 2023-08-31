@@ -51,7 +51,6 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			if ( 'get-started-button' === foundButtonKey ) {
 				await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
 			} else {
-				await page.waitForSelector( 'img[alt="Get a video portfolio"]' );
 				await page.click( 'img[alt="Get a video portfolio"]' );
 				await page.click( 'button.intro__button' );
 			}
