@@ -64,16 +64,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
 	const [ showUpdatePluginInfo, setShowUpdatePluginInfo ] = useState( false );
-	const fetchMigrationEnabledOnMount = isTargetSitePlanCompatible ? true : false;
 	const [ continueImport, setContinueImport ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) ?? '';
 	const sourceSiteUrl = formatSlugToURL( sourceSiteSlug );
-
-	const toggleCredentialsForm = () => {
-		setShowCredentials( ! showCredentials );
-		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_form_toggle' ) );
-	};
 
 	const onfetchCallback = ( siteCanMigrate: boolean ) => {
 		if ( ! siteCanMigrate ) {
@@ -91,7 +85,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	} = useSiteMigrateInfo(
 		targetSite.ID,
 		sourceSiteSlug,
-		fetchMigrationEnabledOnMount,
+		isTargetSitePlanCompatible,
 		onfetchCallback
 	);
 
@@ -102,6 +96,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		target_site_slug: targetSite.slug,
 		is_migrate_from_wp: isMigrateFromWp,
 		is_trial: isTrial,
+	};
+
+	const toggleCredentialsForm = () => {
+		setShowCredentials( ! showCredentials );
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_credentials_form_toggle', migrationTrackingProps )
+		);
 	};
 
 	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
@@ -227,6 +228,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return <LoadingEllipsis />;
 		}
 
+		dispatch( recordTracksEvent( 'calypso_site_migration_ready_screen', migrationTrackingProps ) );
+
 		return (
 			<>
 				{ showConfirmModal && (
@@ -270,6 +273,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	}
 
 	function renderUpdatePluginInfo() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_install_jetpack_screen', migrationTrackingProps )
+		);
+
 		return (
 			<>
 				<UpdatePluginInfo isMigrateFromWp={ isMigrateFromWp } sourceSiteUrl={ sourceSiteUrl } />
@@ -278,18 +285,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		);
 	}
 
-	function render() {
-		// If the source site is not capable of being migrated, we show the update info screen
-		if ( showUpdatePluginInfo ) {
-			return renderUpdatePluginInfo();
-		}
+	function renderUpgradePlan() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', migrationTrackingProps )
+		);
 
-		// If the target site is plan compatible, we show the pre-migration screen
-		if ( isTargetSitePlanCompatible ) {
-			return renderPreMigration();
-		}
-
-		// If the target site is not plan compatible, we show the upgrade plan screen
 		return (
 			<>
 				{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
@@ -306,6 +306,21 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				/>
 			</>
 		);
+	}
+
+	function render() {
+		// If the source site is not capable of being migrated, we show the update info screen
+		if ( showUpdatePluginInfo ) {
+			return renderUpdatePluginInfo();
+		}
+
+		// If the target site is plan compatible, we show the pre-migration screen
+		if ( isTargetSitePlanCompatible ) {
+			return renderPreMigration();
+		}
+
+		// If the target site is not plan compatible, we show the upgrade plan screen
+		return renderUpgradePlan();
 	}
 
 	return render();
