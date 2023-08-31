@@ -172,8 +172,9 @@ export function DomainsTable( {
 	};
 
 	const hasSelectedDomains = selectedDomains.size > 0;
-	const areAllDomainsSelected =
-		domains.filter( ( domain ) => ! domain.wpcom_domain ).length === selectedDomains.size;
+	const selectableDomains = domains.filter( ( domain ) => ! domain.wpcom_domain );
+	const canSelectAnyDomains = selectableDomains.length > 0;
+	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
 		if ( hasSelectedDomains && areAllDomainsSelected ) {
@@ -245,6 +246,7 @@ export function DomainsTable( {
 					onChangeSortOrder={ onSortChange }
 					hideOwnerColumn={ hideOwnerColumn }
 					domainsRequiringAttention={ domainsRequiringAttention }
+					canSelectAnyDomains={ canSelectAnyDomains }
 				/>
 				<tbody>
 					{ filteredData.map( ( domain ) => (

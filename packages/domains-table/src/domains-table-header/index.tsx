@@ -66,6 +66,7 @@ export const DomainsTableHeader = ( {
 	headerClasses,
 	hideOwnerColumn = false,
 	domainsRequiringAttention,
+	canSelectAnyDomains,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
@@ -89,13 +90,18 @@ export const DomainsTableHeader = ( {
 		<thead className={ listHeaderClasses }>
 			<tr>
 				<th className="domains-table__bulk-action-container">
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						onChange={ onBulkSelectionChange }
-						indeterminate={ bulkSelectionStatus === 'some-domains' }
-						checked={ bulkSelectionStatus === 'all-domains' }
-						aria-label={ __( 'Select all tick boxes for domains in table', __i18n_text_domain__ ) }
-					/>
+					{ canSelectAnyDomains && (
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							onChange={ onBulkSelectionChange }
+							indeterminate={ bulkSelectionStatus === 'some-domains' }
+							checked={ bulkSelectionStatus === 'all-domains' }
+							aria-label={ __(
+								'Select all tick boxes for domains in table',
+								__i18n_text_domain__
+							) }
+						/>
+					) }
 				</th>
 
 				{ columns.map( ( column ) => {
