@@ -31,7 +31,10 @@ import {
 	REDIRECT_CALYPSO_PERSONAL,
 	REDIRECT_JETPACK_PERSONAL,
 } from './stats-purchase-notice';
-import { StatsSingleItemPagePurchase } from './stats-purchase-single-item';
+import {
+	StatsSingleItemPagePurchase,
+	StatsSingleItemPersonalPurchasePage,
+} from './stats-purchase-single-item';
 import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
 	SCREEN_TYPE_SELECTION,
@@ -238,26 +241,20 @@ const StatsPurchasePage = ( {
 											/>
 										</div>
 									) }
-									{
-										// TODO: Add single page prache for a personal plan
-										( redirectToPersonal ||
-											( ! redirectToCommercial &&
-												! isCommercialOwned &&
-												options.isCommercial === false ) ) && (
-											<StatsPurchaseWizard
-												siteSlug={ siteSlug }
-												commercialProduct={ commercialProduct }
-												maxSliderPrice={ maxSliderPrice ?? 10 }
-												pwywProduct={ pwywProduct }
-												siteId={ siteId }
-												redirectUri={ query.redirect_uri ?? '' }
-												from={ query.from ?? '' }
-												disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
-												initialStep={ initialStep }
-												initialSiteType={ initialSiteType }
-											/>
-										)
-									}
+									{ ( redirectToPersonal ||
+										( ! redirectToCommercial &&
+											! isCommercialOwned &&
+											options.isCommercial === false ) ) && (
+										<StatsSingleItemPersonalPurchasePage
+											siteSlug={ siteSlug || '' }
+											maxSliderPrice={ maxSliderPrice ?? 10 }
+											pwywProduct={ pwywProduct }
+											siteId={ siteId }
+											redirectUri={ query.redirect_uri ?? '' }
+											from={ query.from ?? '' }
+											disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+										/>
+									) }
 								</>
 							)
 						}
