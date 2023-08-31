@@ -3110,6 +3110,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE,
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
+		getMonthlySlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 			PRODUCT_JETPACK_SCAN,
@@ -3144,6 +3145,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+		getAnnualSlug: () => PLAN_JETPACK_COMPLETE,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 			PRODUCT_JETPACK_SCAN_MONTHLY,
