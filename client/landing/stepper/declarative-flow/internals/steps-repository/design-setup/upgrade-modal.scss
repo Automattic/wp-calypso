@@ -79,6 +79,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		display: flex;
 		justify-content: space-between;
 		padding: 20px 0;
+		font-size: $font-body-small;
 
 		&:not(:first-child) {
 			border-top: 1px solid var(--studio-gray-5);

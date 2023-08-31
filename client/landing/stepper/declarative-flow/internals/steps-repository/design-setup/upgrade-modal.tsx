@@ -10,8 +10,9 @@ import {
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_MANAGED_HOSTING,
+	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
-	FEATURE_PREMIUM_THEMES,
+	FEATURE_PLUGINS_THEMES,
 	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_VIDEOPRESS_JP,
@@ -160,6 +161,16 @@ const UpgradeModal = ( {
 		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
 		const productPrice = marketplaceProduct?.cost_display;
 
+		const businessPlanPriceText =
+			businessPlanProduct?.product_term === 'year'
+				? translate( '%(cost)s per year', { args: { cost: businessPlanPrice || '' } } )
+				: translate( '%(cost)s per month', { args: { cost: businessPlanPrice || '' } } );
+
+		const productPriceText =
+			marketplaceProduct?.product_term === 'year'
+				? translate( '%(cost)s per year', { args: { cost: productPrice || '' } } )
+				: translate( '%(cost)s per month', { args: { cost: productPrice || '' } } );
+
 		return {
 			header: (
 				<h1 className="upgrade-modal__heading bundle externally-managed">
@@ -185,7 +196,7 @@ const UpgradeModal = ( {
 								<div className="upgrade-modal__price-item">
 									<label>{ theme.data?.name }</label>
 									<label className="upgrade-modal__price-value">
-										<strong>{ productPrice }</strong>
+										<strong>{ productPriceText }</strong>
 									</label>
 								</div>
 							) }
@@ -193,7 +204,7 @@ const UpgradeModal = ( {
 								<div className="upgrade-modal__price-item">
 									<label>{ translate( 'Business plan' ) }</label>
 									<label className="upgrade-modal__price-value">
-										<strong>{ businessPlanPrice }</strong>
+										<strong>{ businessPlanPriceText }</strong>
 									</label>
 								</div>
 							) }
@@ -246,12 +257,16 @@ const UpgradeModal = ( {
 
 	const getExternallyManagedFeatureList = () => {
 		return getPlanFeaturesObject( [
-			FEATURE_PREMIUM_THEMES,
+			FEATURE_PLUGINS_THEMES,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_NO_ADS,
 			FEATURE_ACCEPT_PAYMENTS,
 			FEATURE_MANAGED_HOSTING,
+			FEATURE_BANDWIDTH,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_CDN,
+			FEATURE_MULTI_SITE,
 			FEATURE_VIDEOPRESS_JP,
 		] );
 	};
