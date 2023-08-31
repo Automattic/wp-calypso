@@ -24,9 +24,10 @@ export const SiteMonitoringTabPanel = ( {
 	className,
 }: SiteMonitoringTabPanelProps ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
+	const selectedText = tabs.find( ( t ) => t.name === selectedTab )?.title || selectedTab;
 	return (
 		<SectionNav
-			selectedText={ selectedTab }
+			selectedText={ selectedText }
 			className={ classnames( 'site-monitoring-tab-panel', className ) }
 		>
 			<NavTabs>
