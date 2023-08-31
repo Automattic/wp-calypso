@@ -44,6 +44,53 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 		dispatch( recordTracksEvent( eventName ) );
 	};
 
+	const siteSlug = urlToSlug( siteUrl );
+
+	const siteActions = [
+		{
+			name: translate( 'Issue new license' ),
+			href: `/partner-portal/issue-license/?site_id=${ siteId }&source=dashboard`,
+			onClick: () => handleClickMenuItem( 'issue_license' ),
+			isExternalLink: false,
+			isEnabled: ! siteError,
+		},
+		{
+			name: translate( 'View activity' ),
+			href: `/activity-log/${ siteSlug }`,
+			onClick: () => handleClickMenuItem( 'view_activity' ),
+			isExternalLink: false,
+			isEnabled: ! siteError,
+		},
+		{
+			name: translate( 'Copy this site' ),
+			href: `/backup/${ siteSlug }/clone`,
+			onClick: () => handleClickMenuItem( 'clone_site' ),
+			isExternalLink: false,
+			isEnabled: siteHasBackup,
+		},
+		{
+			name: translate( 'Site settings' ),
+			href: `/settings/${ siteSlug }`,
+			onClick: () => handleClickMenuItem( 'site_settings' ),
+			isExternalLink: false,
+			isEnabled: siteHasBackup,
+		},
+		{
+			name: translate( 'View site' ),
+			href: siteUrlWithScheme,
+			onClick: () => handleClickMenuItem( 'view_site' ),
+			isExternalLink: true,
+			isEnabled: true,
+		},
+		{
+			name: translate( 'Visit WP Admin' ),
+			href: `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/dashboard`,
+			onClick: () => handleClickMenuItem( 'visit_wp_admin' ),
+			isExternalLink: true,
+			isEnabled: true,
+		},
+	];
+
 	return (
 		<>
 			<Button
@@ -65,58 +112,20 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 				onClose={ closeDropdown }
 				position="bottom left"
 			>
-				{ ! siteError && (
-					<>
-						<PopoverMenuItem
-							onClick={ () => handleClickMenuItem( 'issue_license' ) }
-							href={ `/partner-portal/issue-license/?site_id=${ siteId }&source=dashboard` }
-							className="site-actions__menu-item"
-						>
-							{ translate( 'Issue new license' ) }
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							onClick={ () => handleClickMenuItem( 'view_activity' ) }
-							href={ `/activity-log/${ urlToSlug( siteUrl ) }` }
-							className="site-actions__menu-item"
-						>
-							{ translate( 'View activity' ) }
-						</PopoverMenuItem>
-					</>
+				{ siteActions.map(
+					( action ) =>
+						action.isEnabled && (
+							<PopoverMenuItem
+								key={ action.name }
+								isExternalLink={ action.isExternalLink }
+								onClick={ action.onClick }
+								href={ action.href }
+								className="site-actions__menu-item"
+							>
+								{ action.name }
+							</PopoverMenuItem>
+						)
 				) }
-				{ siteHasBackup && (
-					<>
-						<PopoverMenuItem
-							onClick={ () => handleClickMenuItem( 'clone_site' ) }
-							href={ `/backup/${ urlToSlug( siteUrl ) }/clone` }
-							className="site-actions__menu-item"
-						>
-							{ translate( 'Copy this site' ) }
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							onClick={ () => handleClickMenuItem( 'site_settings' ) }
-							href={ `/settings/${ urlToSlug( siteUrl ) }` }
-							className="site-actions__menu-item"
-						>
-							{ translate( 'Site settings' ) }
-						</PopoverMenuItem>
-					</>
-				) }
-				<PopoverMenuItem
-					isExternalLink
-					onClick={ () => handleClickMenuItem( 'view_site' ) }
-					href={ siteUrlWithScheme }
-					className="site-actions__menu-item"
-				>
-					{ translate( 'View site' ) }
-				</PopoverMenuItem>
-				<PopoverMenuItem
-					isExternalLink
-					onClick={ () => handleClickMenuItem( 'visit_wp_admin' ) }
-					href={ `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/dashboard` }
-					className="site-actions__menu-item"
-				>
-					{ translate( 'Visit WP Admin' ) }
-				</PopoverMenuItem>
 			</PopoverMenu>
 		</>
 	);
