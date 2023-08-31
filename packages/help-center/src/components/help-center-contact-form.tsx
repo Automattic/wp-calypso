@@ -192,7 +192,7 @@ export const HelpCenterContactForm = () => {
 	);
 
 	if ( experimentAssignment?.variationName === 'no_quick_response' ) {
-		params.set( 'disable-gpt', 'true' ); // this is the one
+		params.set( 'disable-gpt', 'true' );
 		params.set( 'show-gpt', 'false' );
 	}
 
