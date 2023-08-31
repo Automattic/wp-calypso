@@ -109,11 +109,11 @@ export class ImportEverything extends SectionMigrate {
 
 	recordMigrationStatusChange = ( prevState: State ) => {
 		const trackEventProps = {
-			sourceSiteId: this.props.sourceSiteId,
-			sourceSiteUrl: this.props.sourceUrlAnalyzedData?.url,
-			targetSiteId: this.props.targetSiteId,
-			targetSiteSlug: this.props.targetSiteSlug,
-			isTrial: isMigrationTrialSite( this.props.targetSite ),
+			source_site_id: this.props.sourceSiteId,
+			source_site_url: this.props.sourceUrlAnalyzedData?.url,
+			target_site_id: this.props.targetSiteId,
+			target_site_slug: this.props.targetSiteSlug,
+			is_trial: isMigrationTrialSite( this.props.targetSite ),
 		};
 
 		if (

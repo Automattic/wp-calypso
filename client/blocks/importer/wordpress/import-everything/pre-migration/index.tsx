@@ -96,12 +96,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	);
 
 	const migrationTrackingProps = {
-		sourceSiteId: sourceSiteId,
-		sourceSiteUrl: sourceSiteUrl,
-		targetSiteId: targetSite.ID,
-		targetSiteSlug: targetSite.slug,
-		isMigrateFromWp,
-		isTrial,
+		source_site_id: sourceSiteId,
+		source_site_url: sourceSiteUrl,
+		target_site_id: targetSite.ID,
+		target_site_slug: targetSite.slug,
+		is_migrate_from_wp: isMigrateFromWp,
+		is_trial: isTrial,
 	};
 
 	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
