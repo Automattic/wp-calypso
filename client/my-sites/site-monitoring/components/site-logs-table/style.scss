@@ -146,13 +146,15 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 	}
 }
 
-.badge.badge--warning {
+.site-logs-container .badge {
 	text-transform: uppercase;
 	border-radius: 4px;
 	font-size: 0.75rem;
 	font-weight: 500;
-	line-height: 20px;
-	height: 20px;
+	padding: 1px 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .badge.badge--POST,
