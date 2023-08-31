@@ -72,10 +72,20 @@ const withThemeAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
+
+		const exitFlow = ( to: string ) => {
+			setPendingAction( () => {
+				return new Promise( () => {
+					window.location.assign( to );
+				} );
+			} );
+
+			return navigate( 'processing' );
+		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
@@ -86,7 +96,13 @@ const withThemeAssemblerFlow: Flow = {
 						return navigate( 'error' );
 					}
 
-					return navigate( 'celebration-step' );
+					const params = new URLSearchParams( {
+						canvas: 'edit',
+						assembler: '1',
+					} );
+
+					// We will navigate to the celebration step in the follow-up PR
+					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
 				case 'patternAssembler': {
