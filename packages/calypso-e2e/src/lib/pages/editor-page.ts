@@ -461,6 +461,23 @@ export class EditorPage {
 		await this.editorBlockToolbarComponent.clickPrimaryButton( name );
 	}
 
+	/**
+	 * Select the parent block of the current block using the block toolbar.
+	 * This will fail and throw if the currently focused block doesn't have a parent.
+	 */
+	async selectParentBlock( expectedParentBlockName: string ): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
+		} else {
+			await this.editorBlockToolbarComponent.clickOptionsButton();
+			await this.editorPopoverMenuComponent.clickMenuButton(
+				`Select parent block (${ expectedParentBlockName })`
+			);
+			// It stays open on modal! We have to close it again.
+			await this.editorBlockToolbarComponent.clickOptionsButton();
+		}
+	}
+
 	//#endregion
 
 	//#region Settings Sidebar

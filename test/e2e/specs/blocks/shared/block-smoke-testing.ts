@@ -51,14 +51,18 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		describe( 'Add and configure blocks in the editor', function () {
 			for ( const blockFlow of blockFlows ) {
 				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
-					await editorPage.addBlockFromSidebar(
+					const blockHandle = await editorPage.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector,
 						{ noSearch: true }
 					);
+					const id = await blockHandle.getAttribute( 'id' );
+					const editorCanvas = await editorPage.getEditorCanvas();
+					const addedBlockLocator = editorCanvas.locator( `#${ id }` );
 					editorContext = {
 						page,
 						editorPage,
+						addedBlockLocator,
 					};
 				} );
 
