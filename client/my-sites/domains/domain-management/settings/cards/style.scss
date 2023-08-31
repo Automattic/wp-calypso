@@ -145,6 +145,11 @@
 
 	.forwards-from {
 
+		input.form-text-input[type="text"] {
+			background-color: #fff;
+			border-left: 0;
+		}
+
 		.form-text-input-with-affixes__prefix {
 			padding: 0;
 			border: 0 !important;
@@ -191,52 +196,39 @@
 		}
 	}
 
-	> .foldable-card__content {
-		padding: 0 !important;
-	}
-
 	.form-label {
-		padding: 0 16px;
-		margin-top: 10px;
-
-		@include break-mobile {
-			padding: 0 24px;
-		}
-	}
-
-	.form-text-input-with-affixes {
-		padding: 0 16px;
-
-		@include break-mobile {
-			padding: 0 24px;
-		}
-
-		box-sizing: border-box;
-	}
-
-	.form-button.is-primary {
-		margin: 10px 16px 16px;
-
-		@include break-mobile {
-			margin: 10px 24px 24px;
-		}
+		padding: 0;
+		margin-top: 15px;
+		font-weight: normal;
+		color: var(--studio-gray-60);
 	}
 
 	.form-fieldset {
+		background-color: var(--studio-gray-0);
 		margin-bottom: 0;
+		padding: 0 20px 0 20px;
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
 	}
 
 	.accordion .foldable-card {
 		box-shadow: none;
-
-		padding-left: 16px;
-
-		@include break-mobile {
-			padding-left: 24px;
-		}
+		background: none;
 
 		.foldable-card__header {
 			padding-left: 0;
+			padding-top: 5px;
+
+			.foldable-card__action {
+				position: relative;
+				width: 20px;
+				height: 20px;
+				margin-left: 10px;
+				margin-bottom: 2px;
+
+				svg {
+					fill: var(--studio-gray-40);
+				}
+			}
 		}
 
 		&.is-expanded .foldable-card__content {
@@ -244,11 +236,6 @@
 		}
 
 		.foldable-card__content {
-			padding-right: 16px;
-
-			@include break-mobile {
-				padding-right: 24px;
-			}
 
 			.form-label {
 				margin-top: 16px;
@@ -271,6 +258,10 @@
 	.foldable-card .foldable-card__header .accordion__title {
 		color: var(--studio-gray-40);
 		font-weight: 400;
+	}
+
+	.form-button {
+		margin-top: 30px;
 	}
 }
 
