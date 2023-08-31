@@ -39,16 +39,16 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 		} );
 
 		it( 'Click Get Started', async function () {
-			let isButtonPresent = false;
-
-			try {
-				await page.waitForSelector( 'text=Get started' );
-				isButtonPresent = true;
-			} catch ( ex ) {}
+			// Return a button "key" for the button that is found on page.
+			// Only 1 should be present.
+			const foundButtonKey = await Promise.any( [
+				page.waitForSelector( 'text=Get started' ).then( () => 'get-started-button' ),
+				page.waitForSelector( 'img[alt="Get a video portfolio"]' ).then( () => 'portfolio-button' ),
+			] );
 
 			// if Get Started is present, its the normal flow, otherwise its the User Intent flow
 			// -- if user intent, lets choose the item that sends us to the normal flow
-			if ( isButtonPresent ) {
+			if ( 'get-started-button' === foundButtonKey ) {
 				await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
 			} else {
 				await page.waitForSelector( 'img[alt="Get a video portfolio"]' );
