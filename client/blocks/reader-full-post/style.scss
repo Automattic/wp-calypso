@@ -20,6 +20,10 @@
 .reader-full-post__content {
 	margin: 0 auto;
 
+	.comment-button__icon path {
+		fill: unset;
+	}
+
 	@include breakpoint-deprecated( ">1280px" ) {
 		width: 720px;
 		padding-left: 260px;
