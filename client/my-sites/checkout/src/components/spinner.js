@@ -1,10 +1,6 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export default function Spinner( { className = undefined } ) {
-	return <SpinnerWrapper className={ className } />;
-}
-
 const rotate = keyframes`
 	100% {
 		transform: rotate( 360deg );
@@ -47,3 +43,7 @@ const SpinnerWrapper = styled.div`
 		}
 	}
 `;
+
+export default function Spinner( { className = undefined } ) {
+	return <SpinnerWrapper className={ className } />;
+}
