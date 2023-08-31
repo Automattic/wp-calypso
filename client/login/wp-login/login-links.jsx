@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -196,7 +197,7 @@ export class LoginLinks extends Component {
 				icon={ true }
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
-				href="https://wordpress.com/support/security/two-step-authentication/"
+				href={ localizeUrl( 'https://wordpress.com/support/security/two-step-authentication/' ) }
 			>
 				{ this.props.translate( 'Get help' ) }
 			</ExternalLink>
