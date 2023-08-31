@@ -2,7 +2,7 @@ import { BackupBrowserItem, BackupBrowserItemCheckList } from 'calypso/state/rew
 import type { AppState } from 'calypso/types';
 
 const getNodeFullPath = ( node: BackupBrowserItem ): string => {
-	let fullPath = node.ancestors.join( '/' ) + node.path;
+	let fullPath = node.ancestors.join( '/' ) + '/' + node.path;
 	if ( node.ancestors[ 0 ] === '/' ) {
 		fullPath = fullPath.slice( 1 );
 	}
