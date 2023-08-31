@@ -57,6 +57,13 @@ export interface PlanIntroductoryOffer {
 	intervalCount?: number;
 }
 
+export interface PricedAPIPlanIntroductoryOffer {
+	introductory_offer_formatted_price?: string;
+	introductory_offer_raw_price?: number;
+	introductory_offer_interval_unit?: string;
+	introductory_offer_interval_count?: number;
+}
+
 /**
  * Item returned from https://public-api.wordpress.com/rest/v1.5/plans response
  * Only the properties that are actually used in the store are typed
@@ -85,14 +92,15 @@ export interface PricedAPIPlan {
 	currency_code: string;
 }
 
-export interface PricedAPIPlanIntroductoryOffer {
-	introductory_offer_formatted_price?: string;
-	introductory_offer_raw_price?: number;
-	introductory_offer_interval_unit?: string;
-	introductory_offer_interval_count?: number;
+/**
+ * Item returned from https://public-api.wordpress.com/rest/v1.3/sites/[siteId]/plans response
+ * Only the properties that are actually used in the store are typed
+ * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
+ */
+export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
+	product_id: number; // not included in the plan's payload
+	product_slug: StorePlanSlug;
 }
-
-export interface PricedAPISitePlan extends PricedAPIPlan, PricedAPIPlanIntroductoryOffer {}
 
 export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_id: 1;

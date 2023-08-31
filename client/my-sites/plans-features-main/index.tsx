@@ -528,7 +528,7 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
-	const isLoadingPlansMeta = Boolean( intentFromSiteMeta.processing || ! gridPlans );
+	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
 
 	return (
 		<div
@@ -629,8 +629,8 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ isLoadingPlansMeta && <Spinner size={ 30 } /> }
-			{ ! isLoadingPlansMeta && (
+			{ isLoadingGridPlans && <Spinner size={ 30 } /> }
+			{ ! isLoadingGridPlans && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div

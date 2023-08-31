@@ -55,7 +55,7 @@ export interface PricingMetaForGridPlan {
 		monthly: number | null;
 		full: number | null;
 	};
-	// intro offers override billing and pricing info shown in the UI
+	// intro offers override billing and pricing shown in the UI
 	// they are currently defined off the site plans (so not defined when siteId is not available)
 	introOffer?: PlanIntroductoryOffer | null;
 }

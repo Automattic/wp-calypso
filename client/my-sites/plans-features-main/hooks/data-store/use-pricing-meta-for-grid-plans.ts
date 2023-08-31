@@ -34,8 +34,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		getSitePlanSlug( state, selectedSiteId )
 	);
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
-	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId, planSlugs } );
-
+	const pricedAPISitePlans = Plans.usePricedAPISitePlans( { siteId: selectedSiteId } );
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
 			const availableForPurchase =
@@ -111,25 +110,39 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		}, {} as { [ planSlug: string ]: Pick< PricingMetaForGridPlan, 'originalPrice' | 'discountedPrice' > } );
 	} );
 
-	// return null until all data is ready
-	// planPrices will join the list once ported out of local selectors
-	if ( ! introOffers || ! pricedAPIPlans ) {
+	/*
+	 * Return null until all data is ready, at least in initial state.
+	 * - For now a simple loader is shown until these are resolved
+	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
+	 */
+	if ( pricedAPISitePlans.isFetching || ! pricedAPIPlans ) {
 		return null;
 	}
 
-	return planSlugs.reduce(
-		( acc, planSlug ) => ( {
+	return planSlugs.reduce( ( acc, planSlug ) => {
+		// pricedAPIPlans - should have a definition for all plans, being the main source of API data
+		const pricedAPIPlan = pricedAPIPlans[ planSlug ];
+		// pricedAPISitePlans - unclear if all plans are included
+		const pricedAPISitePlan = pricedAPISitePlans.data?.[ planSlug ];
+
+		return {
 			...acc,
 			[ planSlug ]: {
 				originalPrice: planPrices[ planSlug ]?.originalPrice,
 				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-				billingPeriod: pricedAPIPlans[ planSlug ]?.bill_period,
-				currencyCode: pricedAPIPlans[ planSlug ]?.currency_code,
-				introOffer: introOffers[ planSlug ],
+				billingPeriod: pricedAPIPlan?.bill_period,
+				currencyCode: pricedAPIPlan?.currency_code,
+				...( pricedAPISitePlan && {
+					introOffer: {
+						formattedPrice: pricedAPISitePlan.introductory_offer_formatted_price,
+						rawPrice: pricedAPISitePlan.introductory_offer_raw_price,
+						intervalUnit: pricedAPISitePlan.introductory_offer_interval_unit,
+						intervalCount: pricedAPISitePlan.introductory_offer_interval_count,
+					},
+				} ),
 			},
-		} ),
-		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
-	);
+		};
+	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );
 };
 
 export default usePricingMetaForGridPlans;
