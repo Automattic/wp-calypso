@@ -14,7 +14,10 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
+import { getSignupUrl } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login, lostPassword } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	recordPageViewWithClientId as recordPageView,
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -25,6 +28,7 @@ import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
@@ -219,6 +223,65 @@ export class Login extends Component {
 		);
 	}
 
+	renderGravatarLoginBlockFooter() {
+		const { oauth2Client, translate, locale, currentQuery, currentRoute } = this.props;
+
+		const magicLoginUrl = login( {
+			locale,
+			twoFactorAuthType: 'link',
+			oauth2ClientId: currentQuery?.client_id,
+			redirectTo: currentQuery?.redirect_to,
+		} );
+		const currentUrl = new URL( window.location.href );
+		currentUrl.searchParams.append( 'lostpassword_flow', true );
+		const lostPasswordUrl = addQueryArgs(
+			{
+				redirect_to: currentUrl.toString(),
+				client_id: currentQuery?.client_id,
+			},
+			lostPassword( { locale } )
+		);
+		const signupUrl = getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
+
+		return (
+			<>
+				<hr className="gravatar-login__divider" />
+				<div className="gravatar-login__footer">
+					<a
+						href={ magicLoginUrl }
+						onClick={ () =>
+							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
+						}
+					>
+						{ translate( 'Email me a login link.' ) }
+					</a>
+					<a
+						href={ lostPasswordUrl }
+						onClick={ () =>
+							this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
+						}
+					>
+						{ translate( 'Lost your password?' ) }
+					</a>
+					<div>
+						{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
+							components: {
+								signupLink: <a href={ signupUrl } />,
+							},
+						} ) }
+					</div>
+					<div>
+						{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
+							components: {
+								a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
+							},
+						} ) }
+					</div>
+				</div>
+			</>
+		);
+	}
+
 	renderContent() {
 		const {
 			clientId,
@@ -242,6 +305,7 @@ export class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			isPartnerSignup,
+			currentRoute,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -277,6 +341,15 @@ export class Login extends Component {
 			</>
 		);
 
+		// It's used to toggle UIs for Gravatar login and magic login pages only (not for F2A pages)
+		const isGravatarLoginPage =
+			isGravatar &&
+			! currentRoute.startsWith( '/log-in/push' ) &&
+			! currentRoute.startsWith( '/log-in/authenticator' ) &&
+			! currentRoute.startsWith( '/log-in/sms' ) &&
+			! currentRoute.startsWith( '/log-in/webauthn' ) &&
+			! currentRoute.startsWith( '/log-in/backup' );
+
 		return (
 			<LoginBlock
 				action={ action }
@@ -288,12 +361,13 @@ export class Login extends Component {
 				isWhiteLogin={ isWhiteLogin }
 				isP2Login={ isP2Login }
 				isGravatar={ isGravatar }
+				isGravatarLoginPage={ isGravatarLoginPage }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
-				footer={ footer }
+				footer={ isGravatarLoginPage ? this.renderGravatarLoginBlockFooter() : footer }
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
@@ -331,21 +405,23 @@ export class Login extends Component {
 }
 
 export default connect(
-	( state, props ) => ( {
-		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		locale: getCurrentLocaleSlug( state ),
-		oauth2Client: getCurrentOAuth2Client( state ),
-		isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
-		emailQueryParam:
-			getCurrentQueryArguments( state ).email_address ||
-			getInitialQueryArguments( state ).email_address,
-		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
-		isFromMigrationPlugin: startsWith(
-			get( getCurrentQueryArguments( state ), 'from' ),
-			'wpcom-migration'
-		),
-		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
-	} ),
+	( state, props ) => {
+		const currentQuery = getCurrentQueryArguments( state );
+
+		return {
+			isLoggedIn: Boolean( getCurrentUserId( state ) ),
+			locale: getCurrentLocaleSlug( state ),
+			oauth2Client: getCurrentOAuth2Client( state ),
+			isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
+			emailQueryParam:
+				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
+			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
+			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
+			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
+			currentRoute: getCurrentRoute( state ),
+			currentQuery,
+		};
+	},
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 		recordTracksEvent,
