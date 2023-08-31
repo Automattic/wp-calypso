@@ -296,6 +296,17 @@ img.wp-smiley {
 	width: 1em;
 }
 
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+	display: initial;
+}
+
 /* =Media
 ----------------------------------------------- */
 

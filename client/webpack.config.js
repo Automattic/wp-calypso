@@ -20,6 +20,7 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
+const tailwindCssPlugin = require( 'tailwindcss' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
@@ -245,7 +246,7 @@ const webpackConfig = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [ autoprefixerPlugin() ],
+					plugins: [ tailwindCssPlugin(), autoprefixerPlugin() ],
 				},
 				// Since `prelude` string will be appended to each Sass file
 				// We need to ensure that the import path (inside a sass file) is a posix path, regardless of the OS/platform
