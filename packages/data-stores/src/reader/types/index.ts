@@ -181,6 +181,6 @@ export type SiteSubscriptionDetailsErrorResponse = ErrorResponse<
 	}
 >;
 
-export type SiteSubscriptionDetailsResponse =
-	| SiteSubscriptionDetails
+export type SiteSubscriptionDetailsResponse< DateT = Date > =
+	| SiteSubscriptionDetails< DateT >
 	| SiteSubscriptionDetailsErrorResponse;

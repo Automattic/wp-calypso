@@ -227,14 +227,7 @@ const SiteSubscriptionDetails = ( {
 						<dl className="site-subscription-info__list">
 							<dt>{ translate( 'Date' ) }</dt>
 							<dd>
-								<TimeSince
-									date={
-										( dateSubscribed?.valueOf()
-											? dateSubscribed
-											: new Date( 0 )
-										).toISOString?.() ?? dateSubscribed
-									}
-								/>
+								<TimeSince date={ dateSubscribed || new Date( 0 ).toISOString() } />
 							</dd>
 						</dl>
 						{ paymentPlans &&

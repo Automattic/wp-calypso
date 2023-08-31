@@ -12,7 +12,7 @@ export const SiteSubscriptionProvider: React.FC< { children: React.ReactNode } >
 	const { blogId = '' } = useParams();
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
 
-	let subscriptionData: Reader.SiteSubscriptionDetails | undefined;
+	let subscriptionData: Reader.SiteSubscriptionDetails< string > | undefined;
 	let subscriptionError: Reader.ErrorResponse | undefined;
 
 	if ( Reader.isSiteSubscriptionDetails( data ) ) {
