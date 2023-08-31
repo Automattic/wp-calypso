@@ -48,7 +48,9 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 
 		setDisconnecting( false );
 
-		page.redirect( domainManagementEdit( data.blog_id, domain.name, domainManagementAllRoot() ) );
+		page.redirect(
+			domainManagementEdit( data.blog_id, domain.name, domainManagementAllRoot() + '/' )
+		);
 
 		setDialogVisible( false );
 	};
