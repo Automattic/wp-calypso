@@ -30,8 +30,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		disabled: false,
 	},
 	{
-		component: DoYouLoveJetpackStatsNotice,
-		noticeId: 'do_you_love_jetpack_stats',
+		component: CommercialSiteUpgradeNotice,
+		noticeId: 'commercial_site_upgrade',
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,
@@ -40,6 +40,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isOwnedByTeam51,
 			hasPaidStats,
 			isSiteJetpackNotAtomic,
+			isCommercial,
 		}: StatsNoticeProps ) => {
 			// Gate notices for WPCOM sites behind a flag.
 			const showUpgradeNoticeForWpcomSites =
@@ -60,16 +61,51 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 					showUpgradeNoticeForJetpackNotAtomic ||
 					showUpgradeNoticeForWpcomSites ) &&
 				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats
+				! hasPaidStats &&
+				// Show the notice only if the site is commercial.
+				isCommercial
 			);
 		},
 		disabled: false,
 	},
 	{
-		component: CommercialSiteUpgradeNotice,
-		noticeId: 'commercial_site_upgrade',
-		isVisibleFunc: () => false, // prevent accidental display of notice for now
-		disabled: true, // prevent accidental display of notice for now
+		component: DoYouLoveJetpackStatsNotice,
+		noticeId: 'do_you_love_jetpack_stats',
+		isVisibleFunc: ( {
+			isOdysseyStats,
+			isWpcom,
+			isVip,
+			isP2,
+			isOwnedByTeam51,
+			hasPaidStats,
+			isSiteJetpackNotAtomic,
+			isCommercial,
+		}: StatsNoticeProps ) => {
+			// Gate notices for WPCOM sites behind a flag.
+			const showUpgradeNoticeForWpcomSites =
+				config.isEnabled( 'stats/paid-wpcom-stats' ) &&
+				isWpcom &&
+				! isVip &&
+				! isP2 &&
+				! isOwnedByTeam51;
+
+			// Show the notice if the site is Jetpack or it is Odyssey Stats.
+			const showUpgradeNoticeOnOdyssey = config.isEnabled( 'stats/paid-stats' ) && isOdysseyStats;
+
+			const showUpgradeNoticeForJetpackNotAtomic =
+				config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
+
+			return !! (
+				( showUpgradeNoticeOnOdyssey ||
+					showUpgradeNoticeForJetpackNotAtomic ||
+					showUpgradeNoticeForWpcomSites ) &&
+				// Show the notice if the site has not purchased the paid stats product.
+				! hasPaidStats &&
+				// Show the notice if the site is not commercial.
+				! isCommercial
+			);
+		},
+		disabled: false,
 	},
 ];
 
