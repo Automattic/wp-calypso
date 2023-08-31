@@ -5,8 +5,8 @@ import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
-import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,

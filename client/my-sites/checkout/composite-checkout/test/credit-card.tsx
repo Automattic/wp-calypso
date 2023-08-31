@@ -18,11 +18,11 @@ import { Provider as ReduxProvider } from 'react-redux';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
-} from 'calypso/my-sites/checkout/composite-checkout/payment-methods/credit-card';
-import { actions } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/credit-card/store';
+} from 'calypso/my-sites/checkout/src/payment-methods/credit-card';
+import { actions } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/store';
 import { createReduxStore } from 'calypso/state';
 import { fetchStripeConfiguration, stripeConfiguration } from './util';
-import type { CardStoreType } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/credit-card/types';
+import type { CardStoreType } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/types';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();

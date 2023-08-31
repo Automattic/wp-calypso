@@ -6,12 +6,12 @@ import {
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
-} from 'calypso/my-sites/checkout/composite-checkout/components/payment-logos';
-import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+} from 'calypso/my-sites/checkout/src/components/payment-logos';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+} from 'calypso/my-sites/checkout/src/components/summary-details';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import type { WpcomCreditCardSelectors } from './store';

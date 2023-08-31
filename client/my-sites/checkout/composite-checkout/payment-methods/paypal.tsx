@@ -11,8 +11,8 @@ import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { Fragment, useMemo } from 'react';
-import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
-import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import TaxFields from 'calypso/my-sites/checkout/src/components/tax-fields';
+import useCountryList from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type {

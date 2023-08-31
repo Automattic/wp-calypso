@@ -9,12 +9,12 @@ import debugFactory from 'debug';
 import { Fragment } from 'react';
 import { maskField } from 'calypso/lib/checkout';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
-import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
-import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+} from 'calypso/my-sites/checkout/src/components/summary-details';
+import useCountryList from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';

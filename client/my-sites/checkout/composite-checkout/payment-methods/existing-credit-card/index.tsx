@@ -16,11 +16,11 @@ import {
 	TaxInfoArea,
 	usePaymentMethodTaxInfo,
 	getMissingTaxLocationInformationMessage,
-} from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
+} from 'calypso/my-sites/checkout/src/components/payment-method-tax-info';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+} from 'calypso/my-sites/checkout/src/components/summary-details';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';

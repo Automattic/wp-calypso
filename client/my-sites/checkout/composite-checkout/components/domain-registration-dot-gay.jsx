@@ -3,7 +3,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getDomainRegistrations, getDomainTransfers } from 'calypso/lib/cart-values/cart-items';
 import { getTld, isDotGayNoticeRequired } from 'calypso/lib/domains';
-import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

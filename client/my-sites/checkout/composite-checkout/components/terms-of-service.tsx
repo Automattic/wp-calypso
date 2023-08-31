@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
-import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 
 export const TermsOfService = ( {
 	hasRenewableSubscription,

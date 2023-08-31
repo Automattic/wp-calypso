@@ -6,7 +6,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
-import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCountryList, { isVatSupported } from '../../hooks/use-country-list';

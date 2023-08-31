@@ -1,6 +1,6 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
-import FormFieldAnnotation from 'calypso/my-sites/checkout/composite-checkout/components/form-field-annotation';
+import FormFieldAnnotation from 'calypso/my-sites/checkout/src/components/form-field-annotation';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { HTMLProps } from 'react';
 

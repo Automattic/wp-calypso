@@ -13,7 +13,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
-import { createExistingCardMethod } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/existing-credit-card';
+import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import { createReduxStore } from 'calypso/state';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {

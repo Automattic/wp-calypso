@@ -1,5 +1,5 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { GiftingCheckoutBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner/gifting-checkout-banner';
+import { GiftingCheckoutBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner/gifting-checkout-banner';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
 export function CheckoutOrderBanner() {

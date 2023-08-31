@@ -3,7 +3,7 @@ import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automatt
 import { PropsOf } from '@emotion/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
-import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
+import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import {
 	mockGetCartEndpointWith,
 	fetchStripeConfiguration,

@@ -14,11 +14,11 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { Fragment, useEffect, useState } from 'react';
-import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+} from 'calypso/my-sites/checkout/src/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
 import type {

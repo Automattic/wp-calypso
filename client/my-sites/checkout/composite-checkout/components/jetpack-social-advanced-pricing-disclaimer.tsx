@@ -1,7 +1,7 @@
 import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
 export default function JetpackSocialAdvancedPricingDisclaimer() {

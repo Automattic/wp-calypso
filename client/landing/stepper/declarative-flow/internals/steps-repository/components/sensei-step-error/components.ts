@@ -1,4 +1,4 @@
-import { ErrorIcon as UnstyledErrorIcon } from '@automattic/composite-checkout/src/components/shared-icons';
+import { ErrorIcon as UnstyledErrorIcon } from '@automattic/src/src/components/shared-icons';
 import styled from '@emotion/styled';
 
 export const Container = styled.div`

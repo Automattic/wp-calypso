@@ -1,4 +1,4 @@
-import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 

@@ -1,6 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
+import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';

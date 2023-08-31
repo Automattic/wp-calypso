@@ -17,7 +17,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import {
 	createNetBankingMethod,
 	createNetBankingPaymentMethodStore,
-} from 'calypso/my-sites/checkout/composite-checkout/payment-methods/netbanking';
+} from 'calypso/my-sites/checkout/src/payment-methods/netbanking';
 import { createReduxStore } from 'calypso/state';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {

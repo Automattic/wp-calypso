@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useMemoCompare } from 'calypso/lib/use-memo-compare';
-import { createExistingCardMethod } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/existing-credit-card';
+import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import type { StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type {

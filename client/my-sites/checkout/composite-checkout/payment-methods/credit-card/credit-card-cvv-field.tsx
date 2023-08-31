@@ -2,10 +2,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardCvcElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import {
-	LeftColumn,
-	RightColumn,
-} from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
+import { LeftColumn, RightColumn } from 'calypso/my-sites/checkout/src/components/ie-fallback';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import CVVImage from './cvv-image';
 import {

@@ -15,7 +15,7 @@ import {
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';

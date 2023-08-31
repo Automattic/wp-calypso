@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { hasTitanMail } from 'calypso/lib/cart-values/cart-items';
 import { getTitanProductName } from 'calypso/lib/titan';
-import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

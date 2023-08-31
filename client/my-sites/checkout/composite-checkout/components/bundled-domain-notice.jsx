@@ -9,7 +9,7 @@ import {
 	hasP2PlusPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
-import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

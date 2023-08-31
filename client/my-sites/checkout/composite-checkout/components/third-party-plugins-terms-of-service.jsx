@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

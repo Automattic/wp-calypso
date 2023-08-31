@@ -1,10 +1,7 @@
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import {
-	LeftColumn,
-	RightColumn,
-} from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
+import { LeftColumn, RightColumn } from 'calypso/my-sites/checkout/src/components/ie-fallback';
 import CVVImage from './cvv-image';
 import {
 	GridRow,

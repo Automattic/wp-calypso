@@ -4,7 +4,7 @@ import debugFactory from 'debug';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
-import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
