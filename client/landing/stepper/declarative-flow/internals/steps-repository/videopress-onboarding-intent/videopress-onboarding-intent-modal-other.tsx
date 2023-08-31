@@ -9,6 +9,7 @@ import VideoPressOnboardingIntentModal from './videopress-onboarding-intent-moda
 const VideoPressOnboardingIntentModalOther: React.FC< IntroModalContentProps > = () => {
 	const translate = useTranslate();
 	const [ userText, setUserText ] = useState( '' );
+	const [ isUserTextSubmitted, setIsUserTextSubmitted ] = useState( false );
 
 	const handleUserTextChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const userText = event?.target?.value;
@@ -17,8 +18,25 @@ const VideoPressOnboardingIntentModalOther: React.FC< IntroModalContentProps > =
 	};
 
 	const onUserTextSubmit = () => {
-		// eslint-disable-next-line no-console
-		console.log( 'submit', userText );
+		const projectId = 'B1C607EFF3E18160';
+
+		const formData = new window.FormData();
+		formData.append( 'p', '0' );
+		formData.append( 'r', '' );
+		formData.append( 'startTime', `${ Math.floor( new Date().getTime() / 1000 ) }` );
+		formData.append( 'q_0c917498-2d77-49f8-b1d2-4bf17aa8d0f5[text]', userText );
+
+		fetch( `https://api.crowdsignal.com/v4/projects/${ projectId }/form`, {
+			method: 'POST',
+			body: formData,
+		} )
+			.then( ( response ) => {
+				if ( response.ok ) {
+					setIsUserTextSubmitted( true );
+				}
+			} )
+			// eslint-disable-next-line no-console
+			.catch( ( err ) => console.error( err ) );
 	};
 
 	return (
@@ -33,23 +51,32 @@ const VideoPressOnboardingIntentModalOther: React.FC< IntroModalContentProps > =
 			</div>
 
 			<div className="videopress-intro-modal-other__question-wrapper">
-				<div>
-					<p className="title">{ translate( 'Tell us more about your video project' ) }</p>
-					<p className="subtitle">
-						{ translate(
-							'What are you trying to achieve? Are there specific features you’re looking for?'
-						) }
-					</p>
-				</div>
-				<FormTextarea
-					className="answer-text"
-					placeholder={ translate( 'Please feel free to share feedback, ideas, questions, etc' ) }
-					value={ userText }
-					onChange={ handleUserTextChange }
-				/>
-				<Button primary onClick={ onUserTextSubmit }>
-					{ translate( 'Submit' ) }
-				</Button>
+				{ ! isUserTextSubmitted && (
+					<>
+						<div>
+							<p className="title">{ translate( 'Tell us more about your video project' ) }</p>
+							<p className="subtitle">
+								{ translate(
+									'What are you trying to achieve? Are there specific features you’re looking for?'
+								) }
+							</p>
+						</div>
+						<FormTextarea
+							className="answer-text"
+							placeholder={ translate(
+								'Please feel free to share feedback, ideas, questions, etc'
+							) }
+							value={ userText }
+							onChange={ handleUserTextChange }
+						/>
+						<Button primary onClick={ onUserTextSubmit }>
+							{ translate( 'Submit' ) }
+						</Button>
+					</>
+				) }
+				{ isUserTextSubmitted && (
+					<p className="response-text">{ translate( 'Thank you for your feedback.' ) }</p>
+				) }
 			</div>
 		</VideoPressOnboardingIntentModal>
 	);
