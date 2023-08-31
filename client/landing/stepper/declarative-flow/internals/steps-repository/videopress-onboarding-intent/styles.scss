@@ -259,6 +259,8 @@
 
 			input {
 				min-width: 300px;
+				border: 1px solid transparent;
+				border-radius: 4px;
 
 				&.is-error {
 					border: 1px solid #f00;
@@ -342,6 +344,18 @@
 
 			.videopress-intro-modal__survey-title {
 				font-weight: 600;
+			}
+		}
+
+		@media (max-width: 700px) {
+			.videopress-intro-modal__survey {
+				flex-direction: column;
+
+				.button-survey {
+					justify-content: center;
+					margin-top: 24px;
+					height: 44px;
+				}
 			}
 		}
 	}
