@@ -121,12 +121,13 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 	}, [ isLoading, forwarding, setTargetUrl ] );
 
-	const handleDomainOriginChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		setSubdomain( withoutHttp( event.target.value ) );
+	const handleSubdomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const subdomain = event.target.value;
+		setSubdomain( withoutHttp( subdomain ) );
 
-		const CAPTURE_SUBDOMAIN_RGX = /^[a-zA-Z0-9-]{0,}$/i;
+		const CAPTURE_SUBDOMAIN_RGX = /^[a-zA-Z0-9-]{0,63}$/i;
 
-		if ( event.target.value.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( event.target.value ) ) {
+		if ( subdomain.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( subdomain ) ) {
 			setIsValidUrl( false );
 			setErrorMessage( translate( 'Please enter a valid subdomain name.' ) );
 			return;
@@ -135,20 +136,18 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		setIsValidUrl( true );
 	};
 
-	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		setTargetUrl( withoutHttp( event.target.value ) );
+	const handleForwardToChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const inputUrl = event.target.value;
+		setTargetUrl( withoutHttp( inputUrl ) );
 
-		if (
-			event.target.value.length > 0 &&
-			! CAPTURE_URL_RGX_SOFT.test( protocol + '://' + event.target.value )
-		) {
+		if ( inputUrl.length > 0 && ! CAPTURE_URL_RGX_SOFT.test( protocol + '://' + inputUrl ) ) {
 			setIsValidUrl( false );
 			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			return;
 		}
 
 		try {
-			const url = new URL( protocol + '://' + event.target.value );
+			const url = new URL( protocol + '://' + inputUrl );
 
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
@@ -345,7 +344,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							}
 							disabled={ isLoading || sourceType === 'domain' }
 							name="origin"
-							onChange={ handleDomainOriginChange }
+							onChange={ handleSubdomainChange }
 							value={ sourceType === 'domain' ? domain.domain : subdomain }
 							className={ classNames( { 'is-error': ! isValidUrl } ) }
 							maxLength={ 1000 }
@@ -369,7 +368,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							disabled={ isLoading }
 							name="destination"
 							noWrap
-							onChange={ handleChange }
+							onChange={ handleForwardToChange }
 							value={ targetUrl }
 							className={ classNames( { 'is-error': ! isValidUrl } ) }
 							maxLength={ 1000 }
