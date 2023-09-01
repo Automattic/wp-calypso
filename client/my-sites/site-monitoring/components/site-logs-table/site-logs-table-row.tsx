@@ -1,6 +1,7 @@
 import { Button, Badge } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import moment from 'moment';
 import { Fragment, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,7 +32,11 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 
 	return (
 		<Fragment>
-			<tr className={ firstColumnValue }>
+			<tr
+				className={ classNames( firstColumnValue, {
+					'site-logs-table__summary-expanded': isExpanded,
+				} ) }
+			>
 				{ columns.map( ( column, index ) => (
 					<td key={ column } className={ column }>
 						{ index === 0 ? (
@@ -86,6 +91,10 @@ function renderCell(
 			.utcOffset( siteGmtOffset * 60 )
 			.format( 'h:mm A [on] ll' );
 		return <span>{ formattedDate }</span>;
+	}
+
+	if ( column === 'request_url' || column === 'message' ) {
+		return <span>{ `${ value }` }</span>;
 	}
 
 	switch ( typeof value ) {

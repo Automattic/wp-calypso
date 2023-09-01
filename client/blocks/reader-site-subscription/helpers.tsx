@@ -4,8 +4,8 @@ import moment from 'moment';
 
 export type SiteSubscriptionDetailsProps = {
 	subscriberCount: number;
-	dateSubscribed: Date;
-	siteIcon: string;
+	dateSubscribed: string;
+	siteIcon: string | null;
 	name: string;
 	blogId: string;
 	deliveryMethods: Reader.SiteSubscriptionDeliveryMethods;

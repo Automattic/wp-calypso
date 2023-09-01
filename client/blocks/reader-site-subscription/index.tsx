@@ -1,19 +1,17 @@
 import { Gridicon } from '@automattic/components';
-import { SubscriptionManager, Reader } from '@automattic/data-stores';
+import { Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useNavigate, useParams } from 'react-router-dom';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
+import { useSiteSubscription } from './context';
+import SiteSubscriptionDetails from './details';
 import './styles.scss';
-import SiteSubscriptionDetails from './site-subscription-details';
 
-const SiteSubscriptionPage = () => {
+const ReaderSiteSubscription = () => {
 	const translate = useTranslate();
-	const navigate = useNavigate();
-	const { blogId = '' } = useParams();
-	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
+	const { blogId, data, isLoading, error, navigate } = useSiteSubscription();
 
 	if ( isLoading ) {
 		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
@@ -58,4 +56,7 @@ const SiteSubscriptionPage = () => {
 	);
 };
 
-export default SiteSubscriptionPage;
+export default ReaderSiteSubscription;
+
+export type { SiteSubscriptionContextProps } from './context';
+export { SiteSubscriptionContext } from './context';
