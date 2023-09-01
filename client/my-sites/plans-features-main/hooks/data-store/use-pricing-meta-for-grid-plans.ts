@@ -1,7 +1,6 @@
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { AddOnMeta, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
-import { AddOnMeta } from 'calypso/my-sites/add-ons/hooks/use-add-ons';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import {
@@ -49,7 +48,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
 			const storageAddOnCost = storageAddOns.find( ( addOn ) => {
 				return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
-			} )?.costData;
+			} )?.prices;
 			const storageAddOnPriceMonthly = storageAddOnCost?.monthlyCost || 0;
 			const storageAddOnPriceYearly = storageAddOnCost?.yearlyCost || 0;
 
@@ -63,6 +62,13 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				siteId: selectedSiteId || null,
 				returnMonthly: false,
 			} );
+
+			if ( storageAddOnCost ) {
+				for ( const key in planPricesMonthly ) {
+					planPricesMonthly[ key ] = planPricesMonthly[ key ] + storageAddOnPriceMonthly;
+				}
+				planPricesMonthly;
+			}
 
 			// raw prices for current site's plan
 			if ( selectedSiteId && currentSitePlanSlug === planSlug ) {

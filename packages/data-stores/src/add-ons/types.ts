@@ -12,9 +12,9 @@ export interface AddOnMeta {
 	purchased?: boolean;
 	isLoading?: boolean;
 	prices?: {
-		monthlyCost: number;
-		yearlyCost: number;
-		formattedMonthlyCost: string;
-		formattedYearlyCost: string;
+		monthlyPrice: number;
+		yearlyPrice: number;
+		formattedMonthlyPrice: string;
+		formattedYearlyPrice: string;
 	};
 }
