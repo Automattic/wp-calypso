@@ -56,6 +56,7 @@ export interface LaunchpadResponse {
 
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
+	siteLaunched?: () => void;
 }
 
 export interface LaunchpadTaskActionsProps {

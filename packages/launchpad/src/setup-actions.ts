@@ -20,7 +20,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen } = extraActions || {};
+	const { setShareSiteModalIsOpen, siteLaunched } = extraActions || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -131,7 +131,7 @@ export const setUpActionsForTasks = ( {
 							apiVersion: '1.1',
 							method: 'post',
 						} );
-						window.location.assign( `/home/${ siteSlug }?celebrateLaunch=true` );
+						siteLaunched?.();
 					};
 					break;
 				default:
