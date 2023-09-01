@@ -5,13 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
-import { useSubscription } from './site-subscription-context';
-import SiteSubscriptionDetails from './site-subscription-details';
+import { useSiteSubscription } from './context';
+import SiteSubscriptionDetails from './details';
 import './styles.scss';
 
-const SiteSubscriptionPage = () => {
+const ReaderSiteSubscription = () => {
 	const translate = useTranslate();
-	const { blogId, data, isLoading, error, navigate } = useSubscription();
+	const { blogId, data, isLoading, error, navigate } = useSiteSubscription();
 
 	if ( isLoading ) {
 		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
@@ -56,4 +56,7 @@ const SiteSubscriptionPage = () => {
 	);
 };
 
-export default SiteSubscriptionPage;
+export default ReaderSiteSubscription;
+
+export type { SiteSubscriptionContextProps } from './context';
+export { SiteSubscriptionContext } from './context';
