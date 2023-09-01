@@ -7,7 +7,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
 import {
 	getSitePurchases,

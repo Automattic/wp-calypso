@@ -8,6 +8,7 @@ import {
 	backupRestore,
 	backupClone,
 	backupContents,
+	backupGranularRestore,
 	backups,
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
@@ -30,6 +31,7 @@ import {
 	backupDownloadPath,
 	backupClonePath,
 	backupContentsPath,
+	backupGranularRestorePath,
 } from './paths';
 
 const notFoundIfNotEnabled = ( context, next ) => {
@@ -125,6 +127,24 @@ export default function () {
 		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupContents,
+		wrapInSiteOffsetProvider,
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+
+	/* handles /backup/:site/granular-restore/:rewindId, see `backupGranularRestorePath` */
+	page(
+		backupGranularRestorePath( ':site', ':rewindId' ),
+		siteSelection,
+		stagingSiteNotSupportedRedirect,
+		navigation,
+		backupGranularRestore,
 		wrapInSiteOffsetProvider,
 		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,

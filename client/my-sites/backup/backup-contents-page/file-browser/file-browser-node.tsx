@@ -270,6 +270,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					rewindId={ rewindId }
 					item={ item }
 					parentItem={ parentItem }
+					path={ path }
 				/>
 			) }
 			{ isOpen && (
