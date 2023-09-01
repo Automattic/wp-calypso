@@ -21,11 +21,11 @@ const LaunchpadPreLaunch = (): JSX.Element => {
 	const dispatch = useDispatch();
 	const layout = useHomeLayoutQuery( siteId || null );
 
-	const setCelebrateLaunchModalIsOpenWrapper = ( value: boolean ) => {
+	const setCelebrateLaunchModalIsOpenWrapper = ( isOpen: boolean ) => {
 		// Triggered when the site is launched (true) and when the modal is closed (false)
-		setCelebrateLaunchModalIsOpen( value );
+		setCelebrateLaunchModalIsOpen( isOpen );
 
-		if ( value ) {
+		if ( isOpen ) {
 			// Site launched, update site data
 			dispatch( requestSite( siteId ) );
 		} else {
@@ -34,12 +34,13 @@ const LaunchpadPreLaunch = (): JSX.Element => {
 		}
 	};
 
+	const siteLaunched = () => {
+		setCelebrateLaunchModalIsOpenWrapper( true );
+	};
+
 	return (
 		<>
-			<CustomerHomeLaunchpad
-				checklistSlug={ checklistSlug }
-				extraActions={ { setCelebrateLaunchModalIsOpen: setCelebrateLaunchModalIsOpenWrapper } }
-			/>
+			<CustomerHomeLaunchpad checklistSlug={ checklistSlug } extraActions={ { siteLaunched } } />
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpenWrapper }
