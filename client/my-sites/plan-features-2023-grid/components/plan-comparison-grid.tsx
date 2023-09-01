@@ -319,6 +319,7 @@ type PlanComparisonGridProps = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	showLegacyStorageFeature?: boolean;
+	showUpgradeableStorage?: boolean;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -534,6 +535,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	flowName?: string | null;
 	intervalType?: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 } > = ( {
 	feature,
@@ -542,6 +544,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature,
 	intervalType,
 	activeTooltipId,
+	showUpgradeableStorage,
 	setActiveTooltipId,
 } ) => {
 	const { gridPlansIndex } = usePlansGridContext();
@@ -574,7 +577,9 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		: false;
 	const storageOptions = gridPlan.features.storageOptions;
 	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
-	const hasAddOnsForPlan = storageOptions.some( ( option ) => option.isAddOn );
+	const canUpgradeStorageForPlan =
+		storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
@@ -598,7 +603,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					{ hasAddOnsForPlan ? (
+					{ canUpgradeStorageForPlan ? (
 						<StorageAddOnDropdown
 							planSlug={ planSlug }
 							storageOptions={ gridPlan.features.storageOptions }
@@ -679,6 +684,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isHighlighted: boolean;
 	intervalType?: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 } > = ( {
 	feature,
@@ -692,6 +698,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	intervalType,
 	activeTooltipId,
 	setActiveTooltipId,
+	showUpgradeableStorage,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -756,6 +763,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
 					setActiveTooltipId={ setActiveTooltipId }
+					showUpgradeableStorage={ showUpgradeableStorage }
 				/>
 			) ) }
 		</Row>
@@ -777,6 +785,7 @@ export const PlanComparisonGrid = ( {
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
+	showUpgradeableStorage,
 }: PlanComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
@@ -995,6 +1004,7 @@ export const PlanComparisonGrid = ( {
 									intervalType={ intervalType }
 									activeTooltipId={ activeTooltipId }
 									setActiveTooltipId={ setActiveTooltipId }
+									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -1010,6 +1020,7 @@ export const PlanComparisonGrid = ( {
 									intervalType={ intervalType }
 									activeTooltipId={ activeTooltipId }
 									setActiveTooltipId={ setActiveTooltipId }
+									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
 							) : null }
 						</div>
