@@ -27,8 +27,9 @@ interface PatternListRendererProps {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
+const DEFAULT_VIEWPORT_WIDTH = 1060;
+const DEFAULT_VIEWPORT_HEIGHT = 500;
 const PLACEHOLDER_HEIGHT = 100;
-const MIN_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( {
 	pattern,
@@ -77,8 +78,8 @@ const PatternListItem = ( {
 					<PatternRenderer
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }
-						viewportWidth={ 1060 }
-						viewportHeight={ MIN_HEIGHT_FOR_100VH }
+						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
+						viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 						minHeight={ PLACEHOLDER_HEIGHT }
 					/>
 				) : (
