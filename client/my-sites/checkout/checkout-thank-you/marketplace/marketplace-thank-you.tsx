@@ -1,6 +1,7 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useEffect } from 'react';
+import QuerySites from 'calypso/components/data/query-sites';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -11,6 +12,7 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
@@ -58,6 +60,8 @@ const MarketplaceThankYou = ( {
 		isAtomicNeededForThemes,
 	] = useThemesThankYouData( themeSlugs );
 
+	console.log( { isAtomicNeededForThemes } );
+
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
@@ -74,6 +78,13 @@ const MarketplaceThankYou = ( {
 	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes;
 	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
 		useAtomicTransfer( isAtomicNeeded );
+
+	console.log( {
+		isAtomicTransferCheckComplete,
+		currentStep,
+		showProgressBar,
+		setShowProgressBar,
+	} );
 
 	const isPageReady = allPluginsFetched && allThemesFetched && isAtomicTransferCheckComplete;
 
@@ -119,6 +130,8 @@ const MarketplaceThankYou = ( {
 		defaultThankYouFooter,
 	];
 
+	console.log( { isSiteAtomic: isSiteAtomic( getState(), siteId ) } );
+
 	return (
 		<ThemeProvider theme={ theme }>
 			<PageViewTracker path="/marketplace/thank-you/:site" title="Marketplace > Thank you" />
@@ -150,6 +163,7 @@ const MarketplaceThankYou = ( {
 			{ ! showProgressBar && (
 				<div className="marketplace-thank-you__container">
 					<ConfettiAnimation delay={ 1000 } />
+					<QuerySites siteId={ siteId } />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
 						sections={ sections }
