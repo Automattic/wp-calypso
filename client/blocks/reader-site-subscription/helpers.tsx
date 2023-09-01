@@ -4,7 +4,7 @@ import moment from 'moment';
 
 export type SiteSubscriptionDetailsProps = {
 	subscriberCount: number;
-	dateSubscribed: Date;
+	dateSubscribed: string;
 	siteIcon: string | null;
 	name: string;
 	blogId: string;
