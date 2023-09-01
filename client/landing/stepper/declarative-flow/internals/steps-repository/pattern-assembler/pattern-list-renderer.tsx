@@ -78,8 +78,8 @@ const PatternListItem = ( {
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }
 						viewportWidth={ 1060 }
+						viewportHeight={ MIN_HEIGHT_FOR_100VH }
 						minHeight={ PLACEHOLDER_HEIGHT }
-						minHeightFor100vh={ MIN_HEIGHT_FOR_100VH }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
