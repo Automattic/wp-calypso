@@ -176,8 +176,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		// Mark this file as selected
 		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
 
-		// @TODO: record a Tracks event for this action
-	}, [ dispatch, path, siteId ] );
+		// Tracks restore intention
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_browser_restore', {
+				file_type: item.type,
+			} )
+		);
+	}, [ dispatch, item.type, path, siteId ] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
