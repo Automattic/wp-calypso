@@ -5,47 +5,24 @@ import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import PreviewToolbar from './preview-toolbar';
+import PreviewToolbar from '../design-setup/preview-toolbar';
 import type { Device } from '@automattic/components';
-import './style.scss';
 
-interface Props {
-	siteSlug: string | null;
-	isUnsupportedPlan?: boolean;
-	defaultDevice?: Device;
-	showDeviceSwitcher?: boolean;
-	enableInteractions?: boolean;
-}
-
-const SitePreview = ( {
-	siteSlug = '',
-	isUnsupportedPlan,
-	defaultDevice = DEVICE_TYPES.COMPUTER,
-	showDeviceSwitcher = false,
-	enableInteractions = false,
-}: Props ) => {
+const CelebrationStepSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
 	const site = useSite();
 	const { globalStylesInUse } = useSiteGlobalStylesStatus( site?.ID );
-	const devicesToShow: Device[] = [
-		DEVICE_TYPES.COMPUTER,
-		DEVICE_TYPES.TABLET,
-		DEVICE_TYPES.PHONE,
-	];
 
-	const previewUrl = ! isUnsupportedPlan ? `https://${ siteSlug }` : null;
-	const loadingMessage = ! isUnsupportedPlan
-		? translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-				components: { strong: <strong /> },
-		  } )
-		: translate( '{{strong}}Site preview not available.{{/strong}} Plan upgrade is required.', {
-				components: { strong: <strong /> },
-		  } );
+	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
+	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
+	const loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+		components: { strong: <strong /> },
+	} );
 
 	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
 		useSitePreviewShareCode();
 
-	const formatPreviewUrl = () => {
+	function formatPreviewUrl() {
 		if ( ! previewUrl || isPreviewLinksLoading || isCreatingSitePreviewLinks ) {
 			return null;
 		}
@@ -58,17 +35,17 @@ const SitePreview = ( {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: enableInteractions,
+			do_preview_no_interactions: false,
 			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
-	};
+	}
 
 	return (
-		<div className="site-preview__wrapper">
+		<div className="launchpad__site-preview-wrapper">
 			<WebPreview
-				className="site-preview__web-preview"
+				className="launchpad__-web-preview"
 				disableTabbing
-				showDeviceSwitcher={ showDeviceSwitcher }
+				showDeviceSwitcher={ false }
 				showPreview
 				showSEO={ true }
 				isContentOnly
@@ -80,7 +57,7 @@ const SitePreview = ( {
 				showExternal={ false }
 				loadingMessage={ loadingMessage }
 				translate={ translate }
-				defaultViewportDevice={ defaultDevice }
+				defaultViewportDevice={ DEVICE_TYPES.COMPUTER }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
 			/>
@@ -88,4 +65,4 @@ const SitePreview = ( {
 	);
 };
 
-export default SitePreview;
+export default CelebrationStepSitePreview;

@@ -1,11 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import {
-	DESIGN_FIRST_FLOW,
-	START_WRITING_FLOW,
-	WITH_THEME_ASSEMBLER_FLOW,
-} from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -29,7 +24,6 @@ const siteSlug = 'testcelebrationscreen.wordpress.com';
 
 const stepContentProps = {
 	siteSlug,
-	stepName: 'celebration-step',
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
 	goNext: () => {},
@@ -79,7 +73,7 @@ const navigation = {
 	submit: jest.fn(),
 };
 
-function renderCelebrationScreen( flow ) {
+function renderCelebrationScreen() {
 	const initialState = getInitialState( initialReducer, user.ID );
 	const reduxStore = createReduxStore(
 		{
@@ -98,30 +92,38 @@ function renderCelebrationScreen( flow ) {
 	render(
 		<Provider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
-				<CelebrationStep { ...stepContentProps } flow={ flow } navigation={ navigation } />
+				<CelebrationStep { ...stepContentProps } flow="site-setup" navigation={ navigation } />
 			</QueryClientProvider>
 		</Provider>
 	);
 }
 
-describe( 'The celebration step', () => {
-	describe( `The ${ DESIGN_FIRST_FLOW } flow`, () => {
-		const flow = DESIGN_FIRST_FLOW;
-
+describe( 'StepContent', () => {
+	describe( 'when the celebration screen is ready', () => {
 		it( 'renders correct content and CTAs when first post is NOT published', () => {
 			mockIsFirstPostPublished = false;
-			renderCelebrationScreen( flow );
+			renderCelebrationScreen();
 
 			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Now it’s time to start posting.' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Write your first post' } ) ).toBeInTheDocument();
+
+			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toHaveAttribute(
+				'href',
+				'https://' + siteSlug
+			);
+
+			expect( screen.getByRole( 'link', { name: 'Write your first post' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Write your first post' } ) ).toHaveAttribute(
+				'href',
+				'/post/' + siteSlug
+			);
 		} );
 
 		it( 'renders correct content and CTAs when first post is published', () => {
 			mockIsFirstPostPublished = true;
-			renderCelebrationScreen( flow );
+			renderCelebrationScreen();
 
 			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
@@ -129,39 +131,17 @@ describe( 'The celebration step', () => {
 				screen.getByText( 'Now it’s time to connect your social accounts.' )
 			).toBeInTheDocument();
 
-			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Connect to social' } ) ).toBeInTheDocument();
-		} );
-	} );
+			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Visit your blog' } ) ).toHaveAttribute(
+				'href',
+				'https://' + siteSlug
+			);
 
-	describe( `The ${ START_WRITING_FLOW } flow`, () => {
-		const flow = START_WRITING_FLOW;
-
-		it( 'renders correct content and CTAs', () => {
-			renderCelebrationScreen( flow );
-
-			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
-			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( 'Now it’s time to connect your social accounts.' )
-			).toBeInTheDocument();
-
-			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Connect to social' } ) ).toBeInTheDocument();
-		} );
-	} );
-
-	describe( `The ${ WITH_THEME_ASSEMBLER_FLOW } flow`, () => {
-		const flow = WITH_THEME_ASSEMBLER_FLOW;
-
-		it( 'renders correct content and CTAs', () => {
-			renderCelebrationScreen( flow );
-
-			expect( screen.getByText( 'Your site’s ready!' ) ).toBeInTheDocument();
-			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Now it’s time to edit your content' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Visit your site' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Edit your content' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Connect to social' } ) ).toHaveAttribute(
+				'href',
+				'/marketing/connections/' + siteSlug
+			);
 		} );
 	} );
 } );

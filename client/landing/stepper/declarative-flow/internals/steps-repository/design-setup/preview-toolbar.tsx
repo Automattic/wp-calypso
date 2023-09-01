@@ -32,7 +32,7 @@ type PreviewToolbarProps = {
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-const PreviewToolbar = ( {
+const DesignPickerPreviewToolbar = ( {
 	device: currentDevice,
 	externalUrl,
 	showDeviceSwitcher,
@@ -142,4 +142,4 @@ const PreviewToolbar = ( {
 	);
 };
 
-export default localize( PreviewToolbar );
+export default localize( DesignPickerPreviewToolbar );
