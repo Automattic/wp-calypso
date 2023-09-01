@@ -353,6 +353,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
 			: null;
 
+	const selectedMarketplaceProduct =
+		marketplaceThemeProducts.find(
+			( product ) => product.product_slug === marketplaceProductSlug
+		) || marketplaceThemeProducts[ 0 ];
+
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
@@ -364,6 +369,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			selectedDesignThemeId &&
 			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
 	);
+	const isMarketplaceThemeSubscriptionNeeded = !! (
+		marketplaceProductSlug && ! isMarketplaceThemeSubscribed
+	);
+
 	const isExternallyManagedThemeAvailable = useSelector(
 		( state ) => site?.ID && isSiteEligibleForManagedExternalThemes( state, site.ID )
 	);
@@ -447,9 +456,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				destination: window.location.href.replace( window.location.origin, '' ),
 				plan,
 				extraProducts:
-					selectedDesign?.is_externally_managed &&
-					marketplaceProductSlug &&
-					! isMarketplaceThemeSubscribed
+					selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
 						? [ marketplaceProductSlug ]
 						: [],
 			} );
@@ -735,6 +742,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				<UpgradeModal
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
+					isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
+					isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
+					marketplaceProduct={ selectedMarketplaceProduct }
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
