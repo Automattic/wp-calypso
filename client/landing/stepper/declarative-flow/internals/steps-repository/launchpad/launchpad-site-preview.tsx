@@ -7,23 +7,79 @@ import {
 	WRITE_FLOW,
 	START_WRITING_FLOW,
 	DESIGN_FIRST_FLOW,
-	VIDEOPRESS_FLOW,
-	VIDEOPRESS_ACCOUNT,
-	isVideoPressFlow,
 } from '@automattic/onboarding';
+import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
+import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import SitePreview from '../../components/site-preview';
+import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
+import { isVideoPressFlow } from 'calypso/signup/utils';
+import PreviewToolbar from '../design-setup/preview-toolbar';
+import type { Device } from '@automattic/components';
 
-interface Props {
+const LaunchpadSitePreview = ( {
+	siteSlug,
+	flow,
+}: {
 	siteSlug: string | null;
 	flow: string | null;
-}
-
-const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
+} ) => {
+	const translate = useTranslate();
 	const site = useSite();
 	const isInVideoPressFlow = isVideoPressFlow( flow );
 
-	const getSitePreviewDefaultDevice = ( flow: string | null ) => {
+	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
+	const devicesToShow: Device[] = [
+		DEVICE_TYPES.COMPUTER,
+		DEVICE_TYPES.TABLET,
+		DEVICE_TYPES.PHONE,
+	];
+	let defaultDevice = getSitePreviewDefaultDevice( flow );
+	let loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+		components: { strong: <strong /> },
+	} );
+
+	if ( isInVideoPressFlow ) {
+		const windowWidth = window.innerWidth;
+		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
+		const productSlug = site?.plan?.product_slug;
+		const isVideoPressFlowWithUnsupportedPlan = ! planHasFeature(
+			productSlug as string,
+			FEATURE_VIDEO_UPLOADS
+		);
+
+		if ( isVideoPressFlowWithUnsupportedPlan ) {
+			previewUrl = null;
+			loadingMessage = translate(
+				'{{strong}}Site preview not available.{{/strong}} Plan upgrade is required.',
+				{
+					components: { strong: <strong /> },
+				}
+			);
+		}
+	}
+
+	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
+		useSitePreviewShareCode();
+
+	function formatPreviewUrl() {
+		if ( ! previewUrl || isPreviewLinksLoading || isCreatingSitePreviewLinks ) {
+			return null;
+		}
+
+		return addQueryArgs( previewUrl, {
+			...( shareCode && { share: shareCode } ),
+			iframe: true,
+			theme_preview: true,
+			// hide the "Create your website with WordPress.com" banner
+			hide_banners: true,
+			// hide cookies popup
+			preview: true,
+			do_preview_no_interactions: ! isInVideoPressFlow,
+		} );
+	}
+
+	function getSitePreviewDefaultDevice( flow: string | null ) {
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
 			case FREE_FLOW:
@@ -32,25 +88,33 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 			case START_WRITING_FLOW:
 			case DESIGN_FIRST_FLOW:
 				return DEVICE_TYPES.COMPUTER;
-			case VIDEOPRESS_FLOW:
-			case VIDEOPRESS_ACCOUNT:
-				return window.innerWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
 			default:
 				return DEVICE_TYPES.PHONE;
 		}
-	};
+	}
 
 	return (
-		<SitePreview
-			siteSlug={ siteSlug }
-			isUnsupportedPlan={
-				isInVideoPressFlow &&
-				! planHasFeature( site?.plan?.product_slug as string, FEATURE_VIDEO_UPLOADS )
-			}
-			defaultDevice={ getSitePreviewDefaultDevice( flow ) }
-			showDeviceSwitcher
-			enableInteractions={ isInVideoPressFlow }
-		/>
+		<div className="launchpad__site-preview-wrapper">
+			<WebPreview
+				className="launchpad__-web-preview"
+				disableTabbing
+				showDeviceSwitcher={ true }
+				showPreview
+				showSEO={ true }
+				isContentOnly
+				externalUrl={ siteSlug }
+				previewUrl={ formatPreviewUrl() }
+				toolbarComponent={ PreviewToolbar }
+				showClose={ false }
+				showEdit={ false }
+				showExternal={ false }
+				loadingMessage={ loadingMessage }
+				translate={ translate }
+				defaultViewportDevice={ defaultDevice }
+				devicesToShow={ devicesToShow }
+				showSiteAddressBar={ false }
+			/>
+		</div>
 	);
 };
 
