@@ -36,22 +36,7 @@ export default function SiteTopHeaderButtons() {
 				{ translate( 'Issue License', { context: 'button label' } ) }
 			</Button>
 
-			{ ! isWPCOMAtomicSiteCreationEnabled && (
-				<Button
-					className="sites-overview__issue-license-button"
-					primary
-					href="https://wordpress.com/jetpack/connect"
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click' )
-						)
-					}
-				>
-					{ translate( 'Add New Site', { context: 'button label' } ) }
-				</Button>
-			) }
-
-			{ isWPCOMAtomicSiteCreationEnabled && (
+			{ isWPCOMAtomicSiteCreationEnabled ? (
 				<SplitButton
 					primary
 					whiteSeparator
@@ -93,6 +78,19 @@ export default function SiteTopHeaderButtons() {
 						<span>{ translate( 'Connect a site to Jetpack' ) }</span>
 					</PopoverMenuItem>
 				</SplitButton>
+			) : (
+				<Button
+					className="sites-overview__issue-license-button"
+					primary
+					href="https://wordpress.com/jetpack/connect"
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click' )
+						)
+					}
+				>
+					{ translate( 'Add New Site', { context: 'button label' } ) }
+				</Button>
 			) }
 		</div>
 	);
