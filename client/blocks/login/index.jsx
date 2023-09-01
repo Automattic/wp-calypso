@@ -801,27 +801,19 @@ export default connect(
 		rebootAfterLogin,
 		sendEmailLogin,
 	},
-	( stateProps, dispatchProps, ownProps ) => {
-		let flow = null;
-
-		if ( ownProps.isJetpack ) {
-			flow = 'jetpack';
-		}
-		if ( ownProps.isGravatar ) {
-			flow = ownProps.oauth2Client.name;
-		}
-
-		return {
-			...ownProps,
-			...stateProps,
-			...dispatchProps,
-			sendEmailLogin: () =>
-				dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
-					redirectTo: stateProps.redirectTo,
-					loginFormFlow: true,
-					showGlobalNotices: true,
-					flow,
-				} ),
-		};
-	}
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		sendEmailLogin: () =>
+			dispatchProps.sendEmailLogin( stateProps.usernameOrEmail, {
+				redirectTo: stateProps.redirectTo,
+				loginFormFlow: true,
+				showGlobalNotices: true,
+				flow:
+					( ownProps.isJetpack && 'jetpack' ) ||
+					( ownProps.isGravatar && ownProps.oauth2Client.name ) ||
+					null,
+			} ),
+	} )
 )( localize( Login ) );
