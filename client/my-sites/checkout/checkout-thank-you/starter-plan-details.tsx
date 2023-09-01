@@ -6,7 +6,7 @@ import PurchaseDetail from 'calypso/components/purchase-detail';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import type { WithSnakeCaseSlug, WithCamelCaseSlug } from '@automattic/calypso-products';
-import type { SitesPlansResult } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import type { SitesPlansResult } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 
 const StarterPlanDetails = ( {
 	selectedSite,
