@@ -1,7 +1,7 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
-import { Icon, trash, info } from '@wordpress/icons';
+import { Icon, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -181,6 +181,11 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		setSourceType( event.currentTarget.value );
 	};
 
+	const cleanForwardingInput = () => {
+		setTargetUrl( '' );
+		setIsValidUrl( true );
+	};
+
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		let targetHost = '';
@@ -344,7 +349,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							onChange={ handleDomainOriginChange }
 							value={ sourceType === 'domain' ? domain.domain : subdomain }
 							className={ classNames( { 'is-error': ! isValidUrl } ) }
-							id="domain-forwarding__origin-input"
 							maxLength={ 1000 }
 							prefix={
 								<FormSelect
@@ -369,21 +373,28 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							onChange={ handleChange }
 							value={ targetUrl }
 							className={ classNames( { 'is-error': ! isValidUrl } ) }
-							id="domain-forwarding__destination-input"
 							maxLength={ 1000 }
 							suffix={
-								<Button
-									disabled={ isLoading || targetUrl === '' }
-									className={ classNames( 'domain-forwarding-card__delete', {
-										'is-disabled': isLoading || targetUrl === '',
-									} ) }
-									onClick={ handleDelete }
-								>
-									<Icon icon={ trash } size={ 18 } fill="currentColor" />
-								</Button>
+								targetUrl !== '' && (
+									<Button className="forwarding__clear" onClick={ cleanForwardingInput }>
+										<Gridicon icon="cross" />
+									</Button>
+								)
 							}
 						/>
+						<Button
+							className={ classNames( 'forwarding__checkmark', {
+								visible: isValidUrl && targetUrl !== '',
+							} ) }
+						>
+							<Gridicon icon="checkmark" />
+						</Button>
 					</div>
+					{ ! isValidUrl && (
+						<div className="domain-forwarding-card__error-field">
+							<FormInputValidation isError={ true } text={ errorMessage } />
+						</div>
+					) }
 					<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
 						<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
 						<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
@@ -459,12 +470,10 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
 						</FormSettingExplanation>
 					</Accordion>
+					<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
+						{ translate( 'Remove redirect' ) }
+					</Button>
 				</FormFieldset>
-				{ ! isValidUrl && (
-					<div className="domain-forwarding-card__error-field">
-						<FormInputValidation isError={ true } text={ errorMessage } />
-					</div>
-				) }
 				<FormButton
 					disabled={
 						! isValidUrl ||

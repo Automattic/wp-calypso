@@ -144,6 +144,7 @@
 	}
 
 	.forwards-from {
+		padding-right: 30px;
 
 		input.form-text-input[type="text"] {
 			background-color: #fff;
@@ -161,39 +162,45 @@
 	}
 
 	.forwards-to {
+		display: flex;
+
 		.form-text-input-with-affixes__prefix,
 		.form-text-input-with-affixes__suffix {
 			padding: 0;
-			border: 0 !important;
+			border: 0;
+		}
 
-			.form-label {
-				padding: 0;
-			}
-			.form-select {
-				border-right: 0;
-				height: 100%;
-				border-radius: 2px 0 0 2px;
-			}
-			.form-select:disabled {
-				cursor: default;
-				border-color: var(--color-neutral-5);
-			}
-			.form-select:hover:enabled {
-				border-color: var(--color-neutral-20);
-			}
-			.domain-forwarding-card__delete {
+		.form-text-input-with-affixes {
+			position: relative;
+		}
+
+		.form-text-input-with-affixes__suffix {
+			position: absolute;
+			right: 1px;
+			top: 1px;
+			z-index: 1;
+
+			.forwarding__clear {
 				border-left: 0;
-				border-radius: 0 2px 2px 0;
-
-				svg {
-					margin-top: 5px;
-				}
-			}
-			.domain-forwarding-card__delete:disabled {
-				background: var(--color-neutral-0);
-				border-color: var(--color-neutral-5);
+				border: 0;
 			}
 		}
+
+		.forwarding__checkmark {
+			padding-right: 0;
+			border: 0;
+			background: none;
+			width: 30px;
+
+			svg {
+				fill: transparent;
+			}
+
+			&.visible svg {
+				fill: var(--studio-green-40);
+			}
+		}
+
 	}
 
 	.form-label {
@@ -216,6 +223,7 @@
 
 		.foldable-card__header {
 			padding-left: 0;
+			padding-bottom: 0 !important;
 			padding-top: 5px;
 
 			.foldable-card__action {
@@ -263,11 +271,25 @@
 	.form-button {
 		margin-top: 30px;
 	}
-}
 
-.domain-forwarding-card__error-field {
-	height: 35px;
-	margin: 0 0 17px 24px;
+	.remove-redirect-button {
+		text-underline-offset: 0.2em;
+		padding-top: 0;
+		padding-bottom: 30px;
+		border-color: #0675c4;
+		color: #0675c4;
+		text-decoration: underline;
+
+		&:hover {
+			border-color: #044b7a;
+			color: #044b7a;
+		}
+	}
+
+	.domain-forwarding-card__error-field {
+		height: 35px;
+		margin-top: 10px;
+	}
 }
 
 .ownership-verification-card {
