@@ -11,7 +11,7 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 export type DomainsTableColumn =
 	| {
 			name: string;
-			label: string;
+			label: string | null;
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';
 			supportsOrderSwitching?: boolean;
@@ -28,7 +28,7 @@ export type DomainsTableColumn =
 	  }
 	| {
 			name: string;
-			label: string;
+			label: string | null;
 			isSortable?: false;
 			initialSortDirection?: never;
 			supportsOrderSwitching?: never;
@@ -54,6 +54,7 @@ type DomainsTableHeaderProps = {
 	headerClasses?: string;
 	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
+	canSelectAnyDomains?: boolean;
 };
 
 export const DomainsTableHeader = ( {
@@ -66,6 +67,7 @@ export const DomainsTableHeader = ( {
 	headerClasses,
 	hideOwnerColumn = false,
 	domainsRequiringAttention,
+	canSelectAnyDomains = true,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
@@ -89,13 +91,19 @@ export const DomainsTableHeader = ( {
 		<thead className={ listHeaderClasses }>
 			<tr>
 				<th className="domains-table__bulk-action-container">
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						onChange={ onBulkSelectionChange }
-						indeterminate={ bulkSelectionStatus === 'some-domains' }
-						checked={ bulkSelectionStatus === 'all-domains' }
-						aria-label={ __( 'Select all tick boxes for domains in table', __i18n_text_domain__ ) }
-					/>
+					{ canSelectAnyDomains && (
+						<CheckboxControl
+							data-testid="domains-select-all-checkbox"
+							__nextHasNoMarginBottom
+							onChange={ onBulkSelectionChange }
+							indeterminate={ bulkSelectionStatus === 'some-domains' }
+							checked={ bulkSelectionStatus === 'all-domains' }
+							aria-label={ __(
+								'Select all tick boxes for domains in table',
+								__i18n_text_domain__
+							) }
+						/>
+					) }
 				</th>
 
 				{ columns.map( ( column ) => {

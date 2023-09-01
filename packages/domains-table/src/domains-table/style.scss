@@ -41,20 +41,19 @@
 		font-size: $font-body-small;
 		line-height: 20px;
 		font-style: normal;
-
-		a,
-		a:hover {
-			text-decoration: underline;
-			color: var(--color-link);
-		}
 	}
 
 	.domains-table__domain-name {
-		text-decoration: none;
 		color: var(--studio-gray-100);
 		font-size: $font-body;
 		line-height: 24px;
 		font-weight: 500;
+	}
+
+	a.domains-table__domain-name:hover,
+	.domains-table__add-site-link {
+		text-decoration: underline;
+		color: var(--color-link);
 	}
 
 	.domains-table__primary-domain-label {
@@ -89,5 +88,9 @@
 				color: var(--studio-red-50);
 			}
 		}
+	}
+
+	.domains-table-row__actions {
+		text-align: right;
 	}
 }

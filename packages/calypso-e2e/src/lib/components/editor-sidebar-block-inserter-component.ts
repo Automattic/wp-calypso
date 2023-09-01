@@ -6,8 +6,6 @@ const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
 	closeBlockInserterButton: 'button[aria-label="Close block inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
-	blockResultItem: ( name: string ) =>
-		`${ sidebarParentSelector } .block-editor-block-types-list__list-item span:text("${ name }")`,
 	patternResultItem: ( name: string ) => `${ sidebarParentSelector } div[aria-label="${ name }"]`,
 };
 
@@ -45,6 +43,8 @@ export class EditorSidebarBlockInserterComponent {
 		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
 			await blockInserterPanelLocator.click();
 		}
+
+		await this.page.locator( sidebarParentSelector ).waitFor( { state: 'detached' } );
 	}
 
 	/**
@@ -78,7 +78,10 @@ export class EditorSidebarBlockInserterComponent {
 		if ( type === 'pattern' ) {
 			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
 		} else {
-			locator = editorParent.locator( selectors.blockResultItem( name ) ).first();
+			locator = editorParent
+				.getByRole( 'tabpanel', { name: 'Blocks' } )
+				.getByRole( 'option', { name, exact: true } )
+				.first();
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );

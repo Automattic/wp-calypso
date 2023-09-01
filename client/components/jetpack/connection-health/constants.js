@@ -1,4 +1,5 @@
 export const FATAL_ERROR = 'fatal_error';
+export const DATABASE_ERROR = 'database_error';
 export const USER_TOKEN_ERROR = 'user_token_error';
 export const BLOG_TOKEN_ERROR = 'blog_token_error';
 export const HTTP_ERROR = 'http_error';
