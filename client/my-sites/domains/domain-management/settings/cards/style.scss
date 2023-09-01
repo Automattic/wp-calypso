@@ -202,16 +202,13 @@
 
 		.form-text-input-with-affixes__suffix {
 			position: absolute;
-			right: 1px;
-			top: 1px;
+			right: 2px;
+			top: 2px;
 			z-index: 1;
 
 			.forwarding__clear {
 				border: 0;
-
-				@include break-wide {
-					border-left: 0;
-				}
+				padding: 7px 14px 7px 0;
 			}
 		}
 
