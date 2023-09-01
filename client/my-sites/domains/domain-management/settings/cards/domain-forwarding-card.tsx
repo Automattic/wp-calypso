@@ -471,7 +471,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
 						</FormSettingExplanation>
 					</Accordion>
-					{ ! isDomainForwardDisabled && (
+					{ ! isDomainForwardDisabled && forwarding && (
 						<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
 							{ translate( 'Remove redirect' ) }
 						</Button>
