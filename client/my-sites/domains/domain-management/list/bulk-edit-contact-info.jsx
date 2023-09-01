@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import wp from 'calypso/lib/wp';
-import DomainContactDetails from 'calypso/my-sites/checkout/src/components/domain-contact-details';
+import DomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/components/domain-contact-details';
 import TransferLockOptOut from 'calypso/my-sites/domains/domain-management/list/transfer-lock-opt-out';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache, saveWhois } from 'calypso/state/domains/management/actions';

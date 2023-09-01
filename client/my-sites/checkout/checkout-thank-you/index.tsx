@@ -106,7 +106,7 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import './redesign-v2/style.scss';
 import { isBulkDomainTransfer } from './utils';
-import type { SitesPlansResult } from '../src/hooks/product-variants';
+import type { SitesPlansResult } from '../composite-checkout/hooks/product-variants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';

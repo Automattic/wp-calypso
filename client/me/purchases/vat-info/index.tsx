@@ -16,7 +16,7 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useCountryList, {
 	isVatSupported,
 	useTaxName,
-} from 'calypso/my-sites/checkout/src/hooks/use-country-list';
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';

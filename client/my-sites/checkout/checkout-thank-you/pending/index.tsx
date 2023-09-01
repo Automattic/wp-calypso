@@ -12,7 +12,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
+import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -21,8 +21,8 @@ import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
-import { convertErrorToString } from '../../src/lib/analytics';
-import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
+import { convertErrorToString } from '../../composite-checkout/lib/analytics';
+import type { RedirectInstructions } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
 	OrderTransaction,

@@ -1,5 +1,5 @@
 import { isWpComMonthlyPlan } from '@automattic/calypso-products';
-import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
+import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 /**

@@ -6,9 +6,9 @@ import {
 	useCreateCreditCard,
 	useCreateExistingCards,
 	useCreatePayPal,
-} from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 

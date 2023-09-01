@@ -16,7 +16,7 @@ import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
 import { paymentMethods } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
-import { useCreateCreditCard } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
+import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';

@@ -14,11 +14,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
-import CountrySelectMenu from 'calypso/my-sites/checkout/src/components/country-select-menu';
+import CountrySelectMenu from 'calypso/my-sites/checkout/composite-checkout/components/country-select-menu';
 import {
 	prepareDomainContactDetails,
 	convertDomainContactDetailsToManagedContactDetails,
-} from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
+} from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import getCountries from 'calypso/state/selectors/get-countries';

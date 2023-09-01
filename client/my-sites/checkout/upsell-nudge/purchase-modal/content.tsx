@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback } from 'react';
-import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
 import type { LineItem } from '@automattic/composite-checkout';

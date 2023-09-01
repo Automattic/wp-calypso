@@ -13,7 +13,7 @@ import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
-import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
+import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 
 import './style.scss';
 
