@@ -280,6 +280,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						{ this.renderPlanPrice( [ gridPlan ] ) }
 						{ this.renderBillingTimeframe( [ gridPlan ] ) }
 						{ this.renderMobileFreeDomain( gridPlan.planSlug, gridPlan.isMonthlyPlan ) }
+						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }
 						{ this.maybeRenderRefundNotice( [ gridPlan ] ) }
 						<CardContainer
@@ -295,7 +296,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						>
 							{ this.renderPreviousFeaturesIncludedTitle( [ gridPlan ] ) }
 							{ this.renderPlanFeaturesList( [ gridPlan ] ) }
-							{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						</CardContainer>
 					</div>
 				);
@@ -655,7 +655,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					label={ translate( 'Storage' ) }
 					planSlug={ planSlug }
 					storageOptions={ storageOptions }
-					displayCost
+					showCost
 				/>
 			) : (
 				storageOptions.map( ( storageOption ) => {
@@ -709,6 +709,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			plansComparisonGridRef,
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
+			showUpgradeableStorage,
 		} = this.props;
 
 		return (
@@ -779,6 +780,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
 								showLegacyStorageFeature={ showLegacyStorageFeature }
+								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ toggleShowPlansComparisonGrid }>
