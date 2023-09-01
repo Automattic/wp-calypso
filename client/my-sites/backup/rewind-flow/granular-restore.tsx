@@ -10,6 +10,7 @@ import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-resto
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
+import { rewindGranularRestore } from 'calypso/state/activity-log/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -72,14 +73,12 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 
 	const onConfirm = useCallback( () => {
-		// Let's see what the browser check list looks like
-		// eslint-disable-next-line no-console
-		console.log( browserCheckList );
-		return;
-
+		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
-	}, [ browserCheckList, dispatch, setUserHasRequestedRestore ] );
+		dispatch( rewindGranularRestore( siteId, rewindId, includePaths, excludePaths ) );
+	}, [ browserCheckList.excludeList, browserCheckList.includeList, dispatch, rewindId, siteId ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
