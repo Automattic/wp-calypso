@@ -1,6 +1,14 @@
 import { BackupBrowserItem, BackupBrowserItemCheckList } from 'calypso/state/rewind/browser/types';
 import type { AppState } from 'calypso/types';
 
+const getNodeFullPath = ( node: BackupBrowserItem ): string => {
+	let fullPath = node.ancestors.join( '/' ) + '/' + node.path;
+	if ( node.ancestors[ 0 ] === '/' ) {
+		fullPath = fullPath.slice( 1 );
+	}
+	return fullPath;
+};
+
 // Recursive function to iterate through tree and add items to the list
 const addChildrenToList = (
 	currentNode: BackupBrowserItem,
@@ -13,7 +21,10 @@ const addChildrenToList = (
 
 	// If we're in a directory and we're checked, we just add the directory path and return to include all children
 	if ( currentNode.checkState === 'checked' ) {
-		currentList.includeList.push( currentNode.path );
+		currentList.includeList.push( {
+			id: currentNode.id,
+			path: getNodeFullPath( currentNode ),
+		} );
 		currentList.totalItems++;
 		return currentList;
 	}
@@ -28,7 +39,10 @@ const addChildrenToList = (
 	// If all children are selected we add the directory itself to the list and return
 	// This shouldn't hit, because the currentNode should be checked
 	if ( totalChildren === selectedChildren ) {
-		currentList.includeList.push( currentNode.path );
+		currentList.includeList.push( {
+			id: currentNode.id,
+			path: getNodeFullPath( currentNode ),
+		} );
 		currentList.totalItems++;
 		return currentList;
 	}
@@ -43,14 +57,20 @@ const addChildrenToList = (
 		} );
 
 	if ( useExclusion ) {
-		currentList.includeList.push( currentNode.path );
+		currentList.includeList.push( {
+			id: currentNode.id,
+			path: getNodeFullPath( currentNode ),
+		} );
 
 		// Lets sum only the selected children
 		currentList.totalItems = currentList.totalItems + selectedChildren;
 
 		currentNode.children.forEach( ( node: BackupBrowserItem ) => {
 			if ( node.checkState === 'unchecked' ) {
-				currentList.excludeList.push( node.path );
+				currentList.excludeList.push( {
+					id: node.id,
+					path: getNodeFullPath( node ),
+				} );
 			}
 		} );
 		return currentList;
@@ -60,7 +80,7 @@ const addChildrenToList = (
 	// For each mixed child, call addChildrenToList
 	currentNode.children.forEach( ( node: BackupBrowserItem ) => {
 		if ( 'checked' === node.checkState ) {
-			currentList.includeList.push( node.path );
+			currentList.includeList.push( { id: node.id, path: getNodeFullPath( node ) } );
 			currentList.totalItems++;
 		}
 		if ( 'mixed' === node.checkState ) {
