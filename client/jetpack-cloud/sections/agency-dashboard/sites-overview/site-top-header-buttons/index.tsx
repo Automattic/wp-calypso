@@ -96,7 +96,6 @@ export default function SiteTopHeaderButtons() {
 						context={ buttonRef.current }
 						// Show the popover only when the split button is closed
 						isVisible={ ! toggleIsOpen && showPopover }
-						position="bottom"
 					/>
 				</span>
 			) : (

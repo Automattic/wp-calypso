@@ -15,10 +15,9 @@ import './style.scss';
 type Props = {
 	context: HTMLElement | null;
 	isVisible: boolean;
-	position?: string;
 };
 
-export default function WPCOMHostingPopover( { context, isVisible, position }: Props ) {
+export default function WPCOMHostingPopover( { context, isVisible }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -56,12 +55,9 @@ export default function WPCOMHostingPopover( { context, isVisible, position }: P
 			className="wpcom-hosting-popover"
 			context={ context }
 			isVisible={ isVisible }
-			position={ position }
+			position="bottom"
 			showDelay={ 300 }
 			onShow={ handleOnShow }
-			relativePosition={ {
-				left: 10,
-			} }
 		>
 			<h2 className="wpcom-hosting-popover__heading">{ translate( 'New Feature!' ) }</h2>
 
@@ -69,6 +65,7 @@ export default function WPCOMHostingPopover( { context, isVisible, position }: P
 				{ translate(
 					'You can now create a WordPress.com site directly from Jetpack Manage. Give it a try!'
 				) }
+				<span className="wpcom-hosting-popover__icon">&#128640;</span>
 			</p>
 
 			<Button className="wpcom-hosting-popover__button" onClick={ handleClick }>
