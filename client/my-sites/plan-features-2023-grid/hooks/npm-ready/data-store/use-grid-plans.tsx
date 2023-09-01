@@ -23,8 +23,7 @@ import {
 	isBusinessPlan,
 	isEcommercePlan,
 } from '@automattic/calypso-products';
-// TODO: Remove this dependency to the Calypso environment before testing or QA
-import { AddOnMeta } from 'calypso/my-sites/add-ons/hooks/use-add-ons';
+import { AddOnMeta } from '@automattic/data-stores';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 import type { PricedAPIPlan } from '@automattic/data-stores';
@@ -97,7 +96,7 @@ export type GridPlan = {
 	} | null;
 	highlightLabel?: React.ReactNode | null;
 	pricing: PricingMetaForGridPlan;
-	storageAddOnsForPlan: AddOnMeta[];
+	storageAddOnsForPlan: AddOnMeta[] | null;
 };
 
 // TODO clk: move to plans data store

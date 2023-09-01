@@ -535,7 +535,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	flowName?: string | null;
 	intervalType?: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
-	showUpgradeableStorage: boolean;
+	showUpgradeableStorage: boolean | undefined;
 	activeTooltipId: string;
 } > = ( {
 	feature,
@@ -684,7 +684,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isHighlighted: boolean;
 	intervalType?: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
-	showUpgradeableStorage: boolean;
+	showUpgradeableStorage: boolean | undefined;
 	activeTooltipId: string;
 } > = ( {
 	feature,
