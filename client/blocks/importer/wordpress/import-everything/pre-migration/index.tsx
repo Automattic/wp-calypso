@@ -286,10 +286,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	}
 
 	function renderUpgradePlan() {
-		dispatch(
-			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', migrationTrackingProps )
-		);
-
 		return (
 			<>
 				{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
@@ -303,6 +299,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					isBusy={
 						isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 					}
+					migrationTrackingProps={ migrationTrackingProps }
 				/>
 			</>
 		);
