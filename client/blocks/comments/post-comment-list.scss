@@ -8,7 +8,9 @@
 
 	.comments__toggle-expand,
 	.comments__open-post {
-		cursor: pointer;
+		margin-top: 9px;
+		margin-bottom: -7px;
+
 		&:hover {
 			color: var(--color-link);
 		}
@@ -43,6 +45,23 @@
 		@include breakpoint-deprecated( "<660px" ) {
 			span {
 				display: none;
+			}
+		}
+	}
+
+	.comments__form .form-fieldset {
+		margin: 0;
+	}
+
+	&.is-inline.is-collapsed {
+		.comments__comment-content {
+			display: -webkit-box;
+			overflow: hidden;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 1;
+
+			p {
+				display: inline;
 			}
 		}
 	}
@@ -84,6 +103,10 @@
 	font-size: $font-body-small;
 	line-height: 1;
 	margin-bottom: 15px !important; // to overwrite 10px value
+
+	&.comments__view-more-last {
+		margin-top: 16px;
+	}
 
 	&:hover {
 		color: var(--color-primary-light);

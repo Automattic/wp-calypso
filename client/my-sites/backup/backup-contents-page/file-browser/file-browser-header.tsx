@@ -1,26 +1,31 @@
 import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/components';
+import { useCallback } from '@wordpress/element';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import BulkSelect from 'calypso/components/bulk-select';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { useDispatch, useSelector } from 'calypso/state';
+import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
+import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
+import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { FileBrowserCheckState } from './types';
 
 interface FileBrowserHeaderProps {
 	setShowCheckboxes: ( enabled: boolean ) => void;
 	showCheckboxes: boolean;
-	currentlySelected: number;
-	totalElements: number;
-	onToggleAll: ( checkedState?: boolean ) => void;
 }
 
 const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 	setShowCheckboxes,
 	showCheckboxes,
-	currentlySelected,
-	totalElements,
-	onToggleAll,
 } ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
+	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 	const onSelectClick = () => {
 		setShowCheckboxes( true );
 	};
@@ -28,10 +33,28 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 		setShowCheckboxes( false );
 	};
 	const onDownloadClick = () => {
-		alert( 'Not yet implemented' );
+		// eslint-disable-next-line no-console
+		console.log( browserCheckList );
 	};
 	const onRestoreClick = () => {
 		alert( 'Not yet implemented' );
+	};
+
+	// When the checkbox is clicked, we'll update the check state in the state
+	const updateNodeCheckState = useCallback(
+		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {
+			dispatch( setNodeCheckState( siteId, path, checkState ) );
+		},
+		[ dispatch ]
+	);
+
+	// A simple toggle.  Mixed will go to unchecked.
+	const onCheckboxChange = () => {
+		updateNodeCheckState(
+			siteId,
+			'/',
+			rootNode && rootNode.checkState === 'unchecked' ? 'checked' : 'unchecked'
+		);
 	};
 
 	return (
@@ -48,20 +71,23 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 			) }
 			{ showCheckboxes && (
 				<div className="file-browser-header__selecting">
-					<BulkSelect
-						className="file-browser-header__bulk-select"
-						totalElements={ totalElements }
-						selectedElements={ currentlySelected }
-						onToggle={ onToggleAll }
+					<FormCheckbox
+						checked={
+							rootNode
+								? rootNode.checkState === 'checked' || rootNode.checkState === 'mixed'
+								: false
+						}
+						onChange={ onCheckboxChange }
+						className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
 					/>
 					<div className="file-browser-header__selecting-info">
-						{ translate( 'files selected' ) }
+						{ browserCheckList.totalItems } { translate( 'files selected' ) }
 					</div>
 					<Button
 						className="file-browser-header__download-button"
 						onClick={ onDownloadClick }
 						compact
-						disabled={ currentlySelected === 0 }
+						disabled={ browserCheckList.totalItems === 0 }
 					>
 						{ translate( 'Download files' ) }
 					</Button>
@@ -70,7 +96,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 						onClick={ onRestoreClick }
 						primary
 						compact
-						disabled={ currentlySelected === 0 }
+						disabled={ browserCheckList.totalItems === 0 }
 					>
 						{ translate( 'Restore files' ) }
 					</Button>

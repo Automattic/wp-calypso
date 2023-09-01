@@ -16,7 +16,7 @@ import { Experiment } from 'calypso/lib/explat';
 import { mapPostStatus } from 'calypso/lib/route';
 import urlSearch from 'calypso/lib/url-search';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -175,8 +175,9 @@ const mapState = ( state ) => {
 		queryType,
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 	};
 };
 
-export default connect( mapState )( localize( urlSearch( PagesMain ) ) );
+export default connect( mapState )(
+	localize( withJetpackConnectionProblem( urlSearch( PagesMain ) ) )
+);

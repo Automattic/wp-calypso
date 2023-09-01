@@ -1,4 +1,5 @@
-import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, Gridicon, ShortenedNumber, WordPressLogo } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -52,6 +53,12 @@ export default function SiteStatusContent( {
 	let { tooltip } = metadataRest;
 
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+
+	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
+		'jetpack/pro-dashboard-wpcom-atomic-hosting'
+	);
+
+	const isWPCOMAtomicSite = rows.site.value.is_atomic;
 
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
@@ -147,6 +154,15 @@ export default function SiteStatusContent( {
 			);
 		}
 
+		const WPCOMHostedSiteBadgeColumn = isWPCOMAtomicSiteCreationEnabled && (
+			<div className="fixed-host-column">
+				<WordPressLogo
+					className={ classNames( 'wordpress-logo', { 'is-visible': isWPCOMAtomicSite } ) }
+					size={ 18 }
+				/>
+			</div>
+		);
+
 		return (
 			<>
 				{ isBulkManagementActive ? (
@@ -169,13 +185,17 @@ export default function SiteStatusContent( {
 						compact
 						href={ `/activity-log/${ urlToSlug( siteUrl ) }` }
 					>
+						{ WPCOMHostedSiteBadgeColumn }
 						{ siteUrl }
 						<SiteBackupStaging siteId={ siteId } />
 					</Button>
 				) : (
-					<span className="sites-overview__row-text">
-						{ siteUrl } <SiteBackupStaging siteId={ siteId } />
-					</span>
+					<>
+						<span className="sites-overview__row-text">
+							{ WPCOMHostedSiteBadgeColumn }
+							{ siteUrl } <SiteBackupStaging siteId={ siteId } />
+						</span>
+					</>
 				) }
 				<span className="sites-overview__overlay"></span>
 				{ errorContent }

@@ -48,6 +48,7 @@ class ReaderPostCard extends Component {
 		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
+		fixedHeaderHeight: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -282,7 +283,11 @@ class ReaderPostCard extends Component {
 				{ readerPostCard }
 				{ this.props.children }
 				{ shouldShowPostCardComments && (
-					<PostCardComments post={ post } handleClick={ this.props.handleClick } />
+					<PostCardComments
+						post={ post }
+						handleClick={ this.props.handleClick }
+						fixedHeaderHeight={ this.props.fixedHeaderHeight }
+					/>
 				) }
 			</Card>
 		);

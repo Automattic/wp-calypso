@@ -165,6 +165,7 @@ import {
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_COMPLETE_BI_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_FREE,
@@ -421,6 +422,15 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 	TERM_CENTENNIALLY,
+	FEATURE_STATS_PAID,
+	PRODUCT_JETPACK_SCAN_BI_YEARLY,
+	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
+	PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
+	PRODUCT_JETPACK_BOOST_BI_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
+	PRODUCT_JETPACK_STATS_BI_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 } from './constants';
 import type {
 	BillingTerm,
@@ -758,30 +768,17 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Add a custom domain name, go ad-free, and unlock powerful design tools.' )
-			: i18n.translate( 'Create your home on the web with a custom domain name.' ),
-	getNewsletterTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Add a custom domain name, go ad-free, and unlock powerful design tools.' )
-			: i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
-	getLinkInBioTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Make a great first impression with a custom domain name and powerful design tools.'
-			  )
-			: i18n.translate(
-					'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
-			  ),
-	getBlogOnboardingTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Take the next step with a custom domain name, ad-free site, and powerful design tools.'
-			  )
-			: i18n.translate(
-					'Take the next step with gated content, paid subscribers, and an ad-free site.'
-			  ),
+	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate(
+			'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
+		),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate(
+			'Take the next step with gated content, paid subscribers, and an ad-free site.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -830,12 +827,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
-	get2023PricingGridSignupWpcomFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	get2023PricingGridSignupStorageOptions: () => {
@@ -851,10 +847,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
 		),
-	getNewsletterSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
@@ -868,18 +863,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
 		),
-	getLinkInBioSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_SUPPORT_EMAIL,
 		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 		FEATURE_PAID_SUBSCRIBERS_JP,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
-	getBlogOnboardingSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getBlogOnboardingSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		...( isGlobalStylesOnPersonal ? [ FEATURE_STYLE_CUSTOMIZATION ] : [] ),
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_SUPPORT_EMAIL,
@@ -1302,32 +1295,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Make it even more unique with premium themes and layouts.' )
-			: i18n.translate( 'Build a unique website with powerful design tools.' ),
-	getNewsletterTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate( 'Set your Newsletter apart with premium themes and layouts.' )
-			: i18n.translate(
-					'Make it even more memorable with premium designs and style customization.'
-			  ),
-	getLinkInBioTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Take personalization to the next level with a range of premium themes and layouts.'
-			  )
-			: i18n.translate(
-					'Make a great first impression with premium designs and style customization.'
-			  ),
-	getBlogOnboardingTagLine: ( isGlobalStylesOnPersonal = false ) =>
-		isGlobalStylesOnPersonal
-			? i18n.translate(
-					'Get more out of your blog with 4K video, extra storage, and premium designs.'
-			  )
-			: i18n.translate(
-					'Make it even more memorable with premium designs, 4K video, and style customization.'
-			  ),
+	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate( 'Make a great first impression with premium designs and style customization.' ),
+	getBlogOnboardingTagLine: () =>
+		i18n.translate(
+			'Make it even more memorable with premium designs, 4K video, and style customization.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1377,10 +1353,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
-	getNewsletterSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_VIDEOPRESS_JP,
@@ -1398,20 +1374,20 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Take your site further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
-	getLinkInBioSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_WORDADS,
 	],
 	getLinkInBioHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
-	getBlogOnboardingSignupFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	getBlogOnboardingSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PREMIUM_THEMES_V2,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_WORDADS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
@@ -1446,12 +1422,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: ( isGlobalStylesOnPersonal = false ) => [
+	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
-		...( isGlobalStylesOnPersonal ? [] : [ FEATURE_STYLE_CUSTOMIZATION ] ),
+		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
@@ -2322,6 +2298,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			WPCOM_FEATURES_SCAN,
 			WPCOM_FEATURES_ANTISPAM,
 			WPCOM_FEATURES_BACKUPS,
+			FEATURE_STATS_PAID,
 		] ),
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -3093,12 +3070,47 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2013,
 	},
 
+	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
+		...getPlanJetpackCompleteDetails(),
+		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_COMPLETE_BI_YEARLY,
+		getPathSlug: () => 'complete-bi-yearly',
+		getProductId: () => 2035,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+			PRODUCT_JETPACK_SCAN_BI_YEARLY,
+			PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
+			PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
+			PRODUCT_JETPACK_BOOST_BI_YEARLY,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+			PRODUCT_JETPACK_SEARCH_BI_YEARLY,
+			PRODUCT_JETPACK_STATS_BI_YEARLY,
+			PRODUCT_JETPACK_CRM,
+		],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '1TB (1,000GB) of cloud storage' ),
+			translate( '1-year activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
+		],
+	},
+
 	[ PLAN_JETPACK_COMPLETE ]: {
 		...getPlanJetpackCompleteDetails(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE,
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
+		getMonthlySlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 			PRODUCT_JETPACK_SCAN,
@@ -3133,6 +3145,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+		getAnnualSlug: () => PLAN_JETPACK_COMPLETE,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 			PRODUCT_JETPACK_SCAN_MONTHLY,
@@ -3168,9 +3181,9 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-20gb-bi-yearly',
 		getProductId: () => 2034,
 		getProductsIncluded: () => [
-			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-			PRODUCT_JETPACK_SCAN,
-			PRODUCT_JETPACK_ANTI_SPAM,
+			PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
+			PRODUCT_JETPACK_SCAN_BI_YEARLY,
+			PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),

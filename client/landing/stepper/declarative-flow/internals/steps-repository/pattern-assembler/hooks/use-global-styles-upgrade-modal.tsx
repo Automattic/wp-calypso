@@ -28,9 +28,7 @@ const useGlobalStylesUpgradeModal = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
-		site?.ID
-	);
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { goToCheckout } = useCheckout();
 	const numOfSelectedGlobalStyles = [ hasSelectedColorVariation, hasSelectedFontVariation ].filter(
 		Boolean
@@ -57,7 +55,7 @@ const useGlobalStylesUpgradeModal = ( {
 			stepName,
 			siteSlug: siteUrl,
 			destination: redirectUrl,
-			plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
+			plan: 'premium',
 		} );
 
 		setIsOpen( false );

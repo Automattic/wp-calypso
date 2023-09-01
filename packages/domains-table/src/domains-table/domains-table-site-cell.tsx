@@ -1,45 +1,27 @@
-import { DomainData, SiteDetails } from '@automattic/data-stores';
-import { createInterpolateElement } from '@wordpress/element';
+import { SiteDetails } from '@automattic/data-stores';
 import { useI18n } from '@wordpress/react-i18n';
 
 interface DomainsTableSiteCellProps {
-	site?: Pick< SiteDetails, 'ID' | 'name' >;
-	currentDomainData?: DomainData;
+	site: Pick< SiteDetails, 'ID' | 'name' >;
+	userCanAddSiteToDomain: boolean;
 	siteSlug: string;
 }
 
 export const DomainsTableSiteCell = ( {
 	site,
-	currentDomainData,
+	userCanAddSiteToDomain,
 	siteSlug,
 }: DomainsTableSiteCellProps ) => {
 	const { __ } = useI18n();
 
-	if ( ! site || ! currentDomainData ) {
-		return null;
-	}
-
-	if ( currentDomainData.current_user_can_create_site_from_domain_only ) {
-		return createInterpolateElement(
-			/* translators: ariaHidden means that the component will be skipped by screen readers. */
-			__(
-				'<create>Create</create> <ariaHidden>or</ariaHidden> <connect>connect</connect> <ariaHidden>a site</ariaHidden>'
-			),
-			{
-				create: (
-					<a
-						href={ domainOnlySiteCreationLink( siteSlug, site.ID ) }
-						aria-label={ __( 'Create a site for this domain' ) }
-					/>
-				),
-				connect: (
-					<a
-						href={ domainManagementTransferToOtherSiteLink( siteSlug, currentDomainData.domain ) }
-						aria-label={ __( 'Connect this domain to an existing site' ) }
-					/>
-				),
-				ariaHidden: <span aria-hidden={ true } />,
-			}
+	if ( userCanAddSiteToDomain ) {
+		return (
+			<a
+				className="domains-table__add-site-link"
+				href={ domainOnlySiteCreationLink( siteSlug, site.ID ) }
+			>
+				{ __( 'Add site' ) }
+			</a>
 		);
 	}
 
@@ -50,8 +32,4 @@ export function domainOnlySiteCreationLink( siteSlug: string, siteId: number ) {
 	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
 		siteSlug
 	) }&siteId=${ encodeURIComponent( siteId ) }`;
-}
-
-export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `/domains/manage/all/${ domainName }/transfer/other-site/${ siteSlug }`;
 }

@@ -81,7 +81,6 @@ export function WPOrderReviewLineItems( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const hasPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
-		products: responseCart.products,
 	} );
 
 	const [ initialProducts ] = useState( () => responseCart.products );

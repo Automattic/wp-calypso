@@ -108,6 +108,7 @@ export type SupportedSlugs =
 	| 'jetpack_search'
 	| 'jetpack_search_monthly'
 	| 'jetpack_stats_monthly'
+	| 'jetpack_stats_yearly'
 	| 'jetpack_stats_pwyw_yearly'
 	| 'jetpack_stats_free_yearly'
 	| 'jetpack_social'
@@ -223,6 +224,7 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	],
 	'jetpack-stats': [
 		'jetpack_stats_monthly',
+		'jetpack_stats_yearly',
 		'jetpack_stats_pwyw_yearly',
 		'jetpack_stats_free_yearly',
 	],

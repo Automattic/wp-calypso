@@ -510,6 +510,7 @@ export class UserStep extends Component {
 			<>
 				<SignupForm
 					{ ...omit( this.props, [ 'translate' ] ) }
+					email={ this.props.queryObject?.email_address || '' }
 					redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
 					disabled={ this.userCreationStarted() }
 					submitting={ this.userCreationStarted() }
@@ -579,13 +580,19 @@ export class UserStep extends Component {
 	}
 
 	renderGravatarSignupStep() {
+		const { flowName, stepName, positionInFlow, translate, oauth2Client } = this.props;
+
 		return (
 			<GravatarStepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( 'Welcome to Gravatar' ) }
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				headerText={ translate( 'Welcome to Gravatar' ) }
+				subHeaderText={ translate(
+					'Provide your email address and we will send you a magic link to log in.'
+				) }
 				loginUrl={ this.getLoginUrl() }
+				logo={ { url: oauth2Client.icon, alt: oauth2Client.title } }
 			>
 				{ this.renderSignupForm() }
 			</GravatarStepWrapper>

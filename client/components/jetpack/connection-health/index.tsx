@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
+	DATABASE_ERROR,
 	FATAL_ERROR,
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
@@ -13,6 +14,8 @@ import {
 	DNS_ERROR,
 	UNKNOWN_ERROR,
 	GENERIC_ERROR,
+	REST_API_ERROR,
+	XMLRPC_ERROR,
 } from './constants';
 import { ErrorNotice } from './error-notice';
 import { useCheckJetpackConnectionHealth } from './use-check-jetpack-connection-health';
@@ -55,7 +58,21 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'Jetpack is unable to connect to your domain because your domain’s DNS records aren’t pointing to your site.'
 				) }
 				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-domain-name'
+					'https://wordpress.com/support/resolve-jetpack-errors/#domain-s-dns-records'
+				) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
+			/>
+		);
+	}
+
+	if ( errorType === DATABASE_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ errorType }
+				errorText={ translate( 'Jetpack can’t establish a connection to your site’s database.' ) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
 				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
@@ -71,8 +88,32 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'Jetpack can’t communicate with your site due to a critical error on the site.'
 				) }
 				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-a-critical-error-on-your-site'
+					'https://wordpress.com/support/resolve-jetpack-errors/#critical-error-on-the-site'
 				) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
+			/>
+		);
+	}
+
+	if ( errorType === REST_API_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ errorType }
+				errorText={ translate( 'Jetpack encounters REST API connection issues.' ) }
+				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
+				noticeActionText={ translate( 'Learn how to fix' ) }
+				isAtomic={ siteIsAutomatedTransfer }
+			/>
+		);
+	}
+
+	if ( errorType === XMLRPC_ERROR ) {
+		return (
+			<ErrorNotice
+				errorType={ errorType }
+				errorText={ translate( 'Jetpack encounters XML-RPC connection issues.' ) }
+				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -87,7 +128,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'Jetpack can’t communicate with your site because your site isn’t connected.'
 				) }
 				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
+					'https://wordpress.com/support/resolve-jetpack-errors/#not-connected-to-jetpack'
 				) }
 				noticeActionText={ translate( 'Learn how to reconnect Jetpack' ) }
 				isAtomic={ siteIsAutomatedTransfer }
@@ -102,7 +143,9 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				errorText={ translate(
 					'Jetpack can’t communicate with your site because your site isn’t responding to requests.'
 				) }
-				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/resolve-jetpack-errors/#jetpack-can-t-communicate'
+				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -116,7 +159,9 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				errorText={ translate(
 					"Jetpack can’t communicate with your site because it hasn't seen your site for 7 days."
 				) }
-				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/resolve-jetpack-errors/#jetpack-plugin-is-deactivated'
+				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -131,7 +176,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 					'We can’t communicate with your site because the Jetpack plugin is deactivated.'
 				) }
 				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
+					'https://wordpress.com/support/resolve-jetpack-errors/#jetpack-plugin-is-deactivated'
 				) }
 				noticeActionText={ translate( 'Learn how to reactivate Jetpack' ) }
 				isAtomic={ siteIsAutomatedTransfer }
@@ -155,9 +200,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		<ErrorNotice
 			errorType={ UNKNOWN_ERROR }
 			errorText={ translate( 'Jetpack can’t communicate with your site.' ) }
-			noticeActionHref={ localizeUrl(
-				'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
-			) }
+			noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
 			noticeActionText={ translate( 'Learn how to fix' ) }
 			isAtomic={ siteIsAutomatedTransfer }
 		/>

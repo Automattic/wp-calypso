@@ -1,9 +1,8 @@
-import Search from '@automattic/search';
+import Search, { SearchIcon } from '@automattic/search';
 import { translate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import './style.scss';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import { SitesSearchIcon } from 'calypso/sites-dashboard/components/sites-search-icon';
 import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
 
 export type SearchOptions = {
@@ -178,7 +177,7 @@ export default function SearchBar( props: Props ) {
 	return (
 		<div className="promote-post-i2__search-bar-wrapper">
 			<Search
-				searchIcon={ <SitesSearchIcon /> }
+				searchIcon={ <SearchIcon /> }
 				className="promote-post-i2__search-bar-search"
 				defaultValue={ searchInput }
 				disableAutocorrect={ true }
