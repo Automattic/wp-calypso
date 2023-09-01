@@ -62,7 +62,6 @@ const ECommerceTrialExpired = (): JSX.Element => {
 			e.preventDefault();
 
 			recordTracksEvent( 'calypso_plan_trial_expired_page_delete_site', {
-				site_id: siteId,
 				site_slug: siteSlug,
 				trial_type: 'ecommerce',
 			} );
