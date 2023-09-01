@@ -163,6 +163,11 @@ export default function SiteStatusContent( {
 			</div>
 		);
 
+		const siteRedirectURL =
+			isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite
+				? `https://wordpress.com/home/${ urlToSlug( siteUrl ) }`
+				: `/activity-log/${ urlToSlug( siteUrl ) }`;
+
 		return (
 			<>
 				{ isBulkManagementActive ? (
@@ -179,12 +184,7 @@ export default function SiteStatusContent( {
 					/>
 				) }
 				{ isLargeScreen ? (
-					<Button
-						className="sites-overview__row-text"
-						borderless
-						compact
-						href={ `/activity-log/${ urlToSlug( siteUrl ) }` }
-					>
+					<Button className="sites-overview__row-text" borderless compact href={ siteRedirectURL }>
 						{ WPCOMHostedSiteBadgeColumn }
 						{ siteUrl }
 						<SiteBackupStaging siteId={ siteId } />
