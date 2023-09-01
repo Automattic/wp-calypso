@@ -135,7 +135,7 @@ const StatsPurchasePage = ( {
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
-	const showPurchasPage = ! isCommercialOwned && ! isFreeOwned && ! isPWYWOwned;
+	const showPurchasePage = ! isCommercialOwned && ! isFreeOwned && ! isPWYWOwned;
 	const redirectToPersonal =
 		query?.from === REDIRECT_CALYPSO_FREE || query?.from === REDIRECT_JETPACK_FREE;
 	const redirectToCommercial =
@@ -193,7 +193,7 @@ const StatsPurchasePage = ( {
 					<>
 						{
 							// a plan is owned - show a notice page
-							! isNoticeScreenRedirect && ! showPurchasPage && (
+							! isNoticeScreenRedirect && ! showPurchasePage && (
 								<StatsPurchaseNoticePage
 									siteId={ siteId }
 									siteSlug={ siteSlug }
@@ -205,7 +205,7 @@ const StatsPurchasePage = ( {
 						}
 						{
 							// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-							( redirectToPersonal || redirectToCommercial || showPurchasPage ) &&
+							( redirectToPersonal || redirectToCommercial || showPurchasePage ) &&
 								options.isCommercial === null && (
 									<StatsPurchaseWizard
 										siteSlug={ siteSlug }
@@ -223,7 +223,7 @@ const StatsPurchasePage = ( {
 						}
 						{
 							// blog has been already categorised as either personal or commercial and doesn't have a plan purchased
-							( redirectToPersonal || redirectToCommercial || showPurchasPage ) && (
+							( redirectToPersonal || redirectToCommercial || showPurchasePage ) && (
 								<>
 									{ ( redirectToCommercial ||
 										( ! redirectToPersonal && ! isCommercialOwned && options.isCommercial ) ) && (
