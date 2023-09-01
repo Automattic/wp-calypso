@@ -17,6 +17,8 @@ import { useClearEdgeCacheMutation } from './use-clear-edge-cache';
 import { useEdgeCacheQuery } from './use-edge-cache';
 import { useToggleEdgeCacheMutation } from './use-toggle-edge-cache';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 export const CacheCard = ( {
 	disabled,
 	shouldRateLimitCacheClear,
@@ -113,7 +115,6 @@ export const CacheCard = ( {
 
 	//autorenew
 	return (
-		/* eslint-disable  wpcalypso/jsx-classname-namespace */
 		<Card className="cache-card">
 			<MaterialIcon icon="autorenew" size={ 32 } />
 			<CardHeading id="cache" size={ 20 }>
