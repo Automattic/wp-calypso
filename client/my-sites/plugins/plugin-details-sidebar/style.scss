@@ -36,11 +36,6 @@
 		background: transparent;
 	}
 
-	.plugin-details-sidebar__deprecated-notice {
-		font-size: $font-body-extra-small;
-		color: var(--color-warning);
-	}
-
 	@media screen and ( max-width: 1040px ) {
 		display: flex;
 		justify-content: space-between;
