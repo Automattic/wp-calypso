@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -273,8 +272,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return downloadFileButton;
 	};
 
-	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
-
 	return (
 		<div className="file-card">
 			<div className="file-card__details">
@@ -327,7 +324,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				<>
 					<div className="file-card__actions">
 						{ renderDownloadButton() }
-						{ isGranularEnabled && item.type !== 'wordpress' && (
+						{ item.type !== 'wordpress' && (
 							<Button
 								className="file-card__action"
 								href={ backupGranularRestorePath( siteSlug, rewindId as unknown as string ) }
