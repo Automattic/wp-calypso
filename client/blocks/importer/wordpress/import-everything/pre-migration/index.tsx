@@ -150,6 +150,16 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledStatus();
 	};
 
+	// We want to record the tracks event, so we use the same condition as the one in the render function
+	// This should be better handled by using a state after the refactor
+	useEffect( () => {
+		if ( ! showUpdatePluginInfo && isTargetSitePlanCompatible ) {
+			dispatch(
+				recordTracksEvent( 'calypso_site_migration_ready_screen', migrationTrackingProps )
+			);
+		}
+	}, [ showUpdatePluginInfo, isTargetSitePlanCompatible ] );
+
 	// Initiate the migration if initImportRun is set
 	useEffect( () => {
 		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
@@ -228,8 +238,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return <LoadingEllipsis />;
 		}
 
-		dispatch( recordTracksEvent( 'calypso_site_migration_ready_screen', migrationTrackingProps ) );
-
 		return (
 			<>
 				{ showConfirmModal && (
@@ -273,13 +281,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	}
 
 	function renderUpdatePluginInfo() {
-		dispatch(
-			recordTracksEvent( 'calypso_site_migration_install_jetpack_screen', migrationTrackingProps )
-		);
-
 		return (
 			<>
-				<UpdatePluginInfo isMigrateFromWp={ isMigrateFromWp } sourceSiteUrl={ sourceSiteUrl } />
+				<UpdatePluginInfo
+					isMigrateFromWp={ isMigrateFromWp }
+					sourceSiteUrl={ sourceSiteUrl }
+					migrationTrackingProps={ migrationTrackingProps }
+				/>
 				<Interval onTick={ fetchMigrationEnabledStatus } period={ EVERY_FIVE_SECONDS } />
 			</>
 		);
