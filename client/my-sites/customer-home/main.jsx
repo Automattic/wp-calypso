@@ -71,7 +71,7 @@ const Home = ( {
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
 
-	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
+	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
@@ -178,9 +178,8 @@ const Home = ( {
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			{ header }
-			{ isLoading ? (
-				<div className="customer-home__loading-placeholder"></div>
-			) : (
+			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
+			{ ! isLoading && ! homeLayoutError ? (
 				<>
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
@@ -192,7 +191,7 @@ const Home = ( {
 						</div>
 					</div>
 				</>
-			) }
+			) : null }
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
