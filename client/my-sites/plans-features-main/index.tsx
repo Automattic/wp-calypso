@@ -307,10 +307,10 @@ const PlansFeaturesMain = ( {
 			return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
 		} );
 
-		let storageAddOnProduct;
+		let storageAddOnItemForPlan;
 
 		if ( storageAddOn ) {
-			storageAddOnProduct = {
+			storageAddOnItemForPlan = {
 				product_slug: storageAddOn.productSlug,
 				quantity: storageAddOn.quantity,
 				volume: 1,
@@ -320,7 +320,7 @@ const PlansFeaturesMain = ( {
 		}
 
 		if ( onUpgradeClick ) {
-			onUpgradeClick( cartItemForPlan, storageAddOnProduct );
+			onUpgradeClick( cartItemForPlan, storageAddOnItemForPlan );
 			return;
 		}
 
