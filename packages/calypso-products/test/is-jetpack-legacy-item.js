@@ -1,6 +1,8 @@
 import {
+	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	PLAN_JETPACK_COMPLETE_BI_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_PERSONAL,
@@ -15,8 +17,10 @@ describe( 'isJetpackLegacyItem', () => {
 	} );
 
 	it( 'should return false otherwise', () => {
+		expect( isJetpackLegacyItem( PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ) ).toEqual( false );
 		expect( isJetpackLegacyItem( PRODUCT_JETPACK_ANTI_SPAM ) ).toEqual( false );
 		expect( isJetpackLegacyItem( PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ) ).toEqual( false );
+		expect( isJetpackLegacyItem( PLAN_JETPACK_COMPLETE_BI_YEARLY ) ).toEqual( false );
 		expect( isJetpackLegacyItem( PLAN_JETPACK_COMPLETE ) ).toEqual( false );
 		expect( isJetpackLegacyItem( PLAN_JETPACK_COMPLETE_MONTHLY ) ).toEqual( false );
 	} );
