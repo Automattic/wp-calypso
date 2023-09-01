@@ -113,7 +113,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			<h4 className="rewind-flow__cta">{ translate( 'The following files will be restored:' ) }</h4>
 			<ul className="rewind-flow__files">
 				{ browserCheckList.includeList.map( ( item ) => (
-					<li key={ item }>{ item }</li>
+					<li key={ item.id }>{ item.path }</li>
 				) ) }
 			</ul>
 			<RewindFlowNotice
