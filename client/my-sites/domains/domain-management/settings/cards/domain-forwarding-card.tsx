@@ -345,7 +345,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							}
 							disabled={ isLoading || sourceType === 'domain' }
 							name="origin"
-							noWrap
 							onChange={ handleDomainOriginChange }
 							value={ sourceType === 'domain' ? domain.domain : subdomain }
 							className={ classNames( { 'is-error': ! isValidUrl } ) }
