@@ -10,7 +10,7 @@ import { MAX_AGE } from 'calypso/state/initial-state';
  * @returns {Object} A query result object containing the latest WordPress versions
  *                   in the form of array of versions, e.g. [6.3", "6.2.2", "6.1.3", "6.0.5", "5.9.7"]
  */
-export const useWPVersion = ( staleTime = MAX_AGE ) => {
+export const useLatestWPVersions = ( staleTime = MAX_AGE ) => {
 	return useQuery( {
 		queryKey: [ 'wordpress-version' ],
 		queryFn: fetchWordPressVersions,

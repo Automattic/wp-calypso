@@ -1,4 +1,4 @@
-import { useWPVersion } from 'calypso/data/wp-version/use-wp-version-query';
+import { useLatestWPVersions } from 'calypso/data/wp-version/use-wp-version-query';
 import version_compare from 'calypso/lib/version-compare';
 
 const WP_VERSIONS_TO_CHECK = 3;
@@ -12,7 +12,7 @@ const WP_VERSIONS_TO_CHECK = 3;
  *                    false otherwise.
  */
 export function usePluginIsMaintained( testedVersion ) {
-	const { data: wpVersions } = useWPVersion();
+	const { data: wpVersions } = useLatestWPVersions();
 	const wpVersionToCheck = wpVersions?.[ WP_VERSIONS_TO_CHECK ];
 	let isMaintained = true;
 	if ( wpVersionToCheck && testedVersion ) {
