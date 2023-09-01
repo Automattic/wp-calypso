@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Card } from '@automattic/components';
-import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -17,43 +16,6 @@ import { EdgeCacheLoadingPlaceholder } from './edge-cache-loading-placeholder';
 import { useClearEdgeCacheMutation } from './use-clear-edge-cache';
 import { useEdgeCacheQuery } from './use-edge-cache';
 import { useToggleEdgeCacheMutation } from './use-toggle-edge-cache';
-
-const Hr = styled.hr( {
-	marginBottom: '16px',
-	marginTop: '16px',
-	width: '100%',
-	color: '#e0e0e0',
-} );
-
-const EdgeCacheDescription = styled.p( {
-	fontSize: '16px',
-	marginBottom: '16px',
-} );
-
-const EdgeCacheNotice = styled.p( {
-	fontSize: '14px',
-	fontStyle: 'italic',
-	color: '#646970',
-	marginTop: '18px',
-} );
-
-const CardBody = styled.div( {
-	display: 'flex',
-	flexDirection: 'column',
-} );
-
-const ToggleContainer = styled.div( {
-	fontSize: '14px',
-	label: {
-		fontSize: '14px',
-	},
-} );
-
-const ToggleLabel = styled.p( {
-	marginBottom: '9px',
-	fontWeight: 600,
-	fontSize: '14px',
-} );
 
 export const CacheCard = ( {
 	disabled,
@@ -124,11 +86,11 @@ export const CacheCard = ( {
 				>
 					<span>{ translate( 'Clear cache' ) }</span>
 				</Button>
-				<EdgeCacheNotice>
+				<p className="mt-4.5 italic text-sm/normal text-[#646970]">
 					{ translate(
 						'Clearing the cache may temporarily make your site less responsive while the cache refreshes.'
 					) }
-				</EdgeCacheNotice>
+				</p>
 				{ shouldRateLimitCacheClear && (
 					<p className="form-setting-explanation">
 						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
@@ -151,37 +113,41 @@ export const CacheCard = ( {
 
 	//autorenew
 	return (
+		/* eslint-disable  wpcalypso/jsx-classname-namespace */
 		<Card className="cache-card">
 			<MaterialIcon icon="autorenew" size={ 32 } />
 			<CardHeading id="cache" size={ 20 }>
 				{ translate( 'Cache' ) }
 			</CardHeading>
-			<CardBody>
-				<EdgeCacheDescription>
+			<div className="flex flex-col">
+				<p className="text-base/normal mb-4">
 					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}.', {
 						components: {
 							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 						},
 					} ) }
-				</EdgeCacheDescription>
-				<ToggleContainer>
+				</p>
+				<div className="text-sm/normal">
 					{ getEdgeCacheInitialLoading ? (
 						<EdgeCacheLoadingPlaceholder />
 					) : (
 						<>
-							<ToggleLabel>{ translate( 'Global edge cache' ) }</ToggleLabel>
+							<p className="font-semibold text-sm/normal mb-[9px]">
+								{ translate( 'Global edge cache' ) }
+							</p>
 							<ToggleControl
+								className="[&_label]:text-sm/normal"
 								disabled={ clearEdgeCacheLoading || getEdgeCacheLoading || ! isEdgeCacheEligible }
 								checked={ isEdgeCacheActive }
 								onChange={ toggleEdgeCache }
 								label={ edgeCacheToggleDescription }
 							/>
-							<Hr />
+							<hr className="my-4 w-full text-[#e0e0e0]" />
 						</>
 					) }
-				</ToggleContainer>
+				</div>
 				{ getClearCacheContent() }
-			</CardBody>
+			</div>
 		</Card>
 	);
 };
