@@ -115,11 +115,7 @@
 }
 
 .domain-forwarding-card-notice {
-	margin: 0 16px 16px;
-
-	@include break-mobile {
-		margin: 0 24px 16px 24px;
-	}
+	margin: 0 0 16px 0;
 }
 
 .site-redirect-card__explanation,
@@ -147,7 +143,6 @@
 		padding-right: 30px;
 
 		input.form-text-input[type="text"] {
-			background-color: #fff;
 
 			@include break-wide {
 				border-left: 0;

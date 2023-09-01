@@ -327,13 +327,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		return false;
 	};
 
+	const isDomainForwardDisabled = ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom;
+
 	return (
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset
-					disabled={ ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom }
+					disabled={ isDomainForwardDisabled }
 					className="domain-forwarding-card__fields"
 				>
 					<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
@@ -373,7 +375,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							className={ classNames( { 'is-error': ! isValidUrl } ) }
 							maxLength={ 1000 }
 							suffix={
-								targetUrl !== '' && (
+								targetUrl !== '' &&
+								! isDomainForwardDisabled && (
 									<Button className="forwarding__clear" onClick={ cleanForwardingInput }>
 										<Gridicon icon="cross" />
 									</Button>
@@ -382,7 +385,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						/>
 						<Button
 							className={ classNames( 'forwarding__checkmark', {
-								visible: isValidUrl && targetUrl !== '',
+								visible: ! isDomainForwardDisabled && isValidUrl && targetUrl !== '',
 							} ) }
 						>
 							<Gridicon icon="checkmark" />
@@ -468,12 +471,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
 						</FormSettingExplanation>
 					</Accordion>
-					<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
-						{ translate( 'Remove redirect' ) }
-					</Button>
+					{ ! isDomainForwardDisabled && (
+						<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
+							{ translate( 'Remove redirect' ) }
+						</Button>
+					) }
 				</FormFieldset>
 				<FormButton
 					disabled={
+						isDomainForwardDisabled ||
 						! isValidUrl ||
 						isLoading ||
 						( forwarding && ! redirectHasChanged() ) ||
