@@ -334,9 +334,8 @@
 		line-height: 40px;
 		margin-bottom: 24px;
 	}
-}
 
-.stats-purchase-page__notice--with-banner {
-	margin: 0 auto 24px;
-	max-width: calc(var(--stats-purchase-left-max-width) + var(--stats-purchase-right-width));
+	.components-button + .components-button {
+		margin-left: 12px;
+	}
 }

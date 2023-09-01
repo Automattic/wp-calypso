@@ -5,7 +5,7 @@ import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import {
 	StatsCommercialPriceDisplay,
-	StatsBenefits,
+	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
 import './styles.scss';
@@ -42,7 +42,7 @@ const StatsCommercialPurchase = ( {
 		<>
 			<h1>{ translate( 'Jetpack Stats Commercial' ) }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
-			<StatsBenefits />
+			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 			<Button
 				variant="primary"

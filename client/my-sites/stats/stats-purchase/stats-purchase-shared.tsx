@@ -45,7 +45,7 @@ const StatsCommercialPriceDisplay = ( {
 	);
 };
 
-const StatsBenefits = () => {
+const StatsBenefitsCommercial = () => {
 	const translate = useTranslate();
 
 	return (
@@ -63,12 +63,54 @@ const StatsBenefits = () => {
 	);
 };
 
+const StatsBenefitsPersonal = () => {
+	const translate = useTranslate();
+
+	return (
+		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+				<li>{ translate( 'Real-time data on visitors' ) }</li>
+				<li>{ translate( 'Traffic stats and trends for post and pages' ) }</li>
+				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
+				<li>{ translate( 'GDPR compliant' ) }</li>
+				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
+				<li>{ translate( 'Priority support' ) }</li>
+			</ul>
+			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+				<li>{ translate( 'No commercial use' ) }</li>
+			</ul>
+		</div>
+	);
+};
+
+const StatsBenefitsFree = () => {
+	const translate = useTranslate();
+
+	return (
+		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+				<li>{ translate( 'Real-time data on visitors' ) }</li>
+				<li>{ translate( 'Traffic stats and trends for post and pages' ) }</li>
+				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
+				<li>{ translate( 'GDPR compliant' ) }</li>
+			</ul>
+			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+				<li>{ translate( 'No access to upcoming features' ) }</li>
+				<li>{ translate( 'No priority support' ) }</li>
+				<li>{ translate( 'No commercial use' ) }</li>
+			</ul>
+		</div>
+	);
+};
+
 interface StatsSingleItemPagePurchaseFrameProps {
 	children: React.ReactNode;
+	isFree?: boolean;
 }
 
 const StatsSingleItemPagePurchaseFrame = ( {
 	children,
+	isFree = false,
 }: StatsSingleItemPagePurchaseFrameProps ) => {
 	return (
 		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
@@ -76,7 +118,7 @@ const StatsSingleItemPagePurchaseFrame = ( {
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
-						<StatsPurchaseSVG isFree={ false } hasHighlight={ false } extraMessage={ false } />
+						<StatsPurchaseSVG isFree={ isFree } hasHighlight={ false } extraMessage={ false } />
 						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
 							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
 						</div>
@@ -87,4 +129,10 @@ const StatsSingleItemPagePurchaseFrame = ( {
 	);
 };
 
-export { StatsCommercialPriceDisplay, StatsBenefits, StatsSingleItemPagePurchaseFrame };
+export {
+	StatsCommercialPriceDisplay,
+	StatsBenefitsCommercial,
+	StatsBenefitsPersonal,
+	StatsBenefitsFree,
+	StatsSingleItemPagePurchaseFrame,
+};

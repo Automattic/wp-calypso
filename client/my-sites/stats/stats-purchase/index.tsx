@@ -23,7 +23,14 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import { StatsPurchaseNoticePage, StatsPurchaseNotice } from './stats-purchase-notice';
+import {
+	StatsPurchaseNoticePage,
+	StatsPurchaseNotice,
+	REDIRECT_CALYPSO_FREE,
+	REDIRECT_JETPACK_FREE,
+	REDIRECT_CALYPSO_PERSONAL,
+	REDIRECT_JETPACK_PERSONAL,
+} from './stats-purchase-notice';
 import { StatsSingleItemPagePurchase } from './stats-purchase-single-item';
 import StatsPurchaseWizard, {
 	SCREEN_PURCHASE,
@@ -129,7 +136,11 @@ const StatsPurchasePage = ( {
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
 	const showPurchasPage = ! isCommercialOwned && ! isFreeOwned && ! isPWYWOwned;
-	const showSinglePurchasPage = options.isCommercial !== null && showPurchasPage; // blog has been already categorised as either personal or commercial and doesn't have a plan purchased
+	const redirectToPersonal =
+		query?.from === REDIRECT_CALYPSO_FREE || query?.from === REDIRECT_JETPACK_FREE;
+	const redirectToCommercial =
+		query?.from === REDIRECT_CALYPSO_PERSONAL || query?.from === REDIRECT_JETPACK_PERSONAL;
+	const isNoticeScreenRedirect = redirectToPersonal || redirectToCommercial;
 
 	return (
 		<Main fullWidthLayout>
@@ -181,10 +192,10 @@ const StatsPurchasePage = ( {
 				{ ! isLoading && isTypeDetectionEnabled && (
 					<>
 						{
-							// a plan is owned - show a notice page for a commercial plan
-							// or a banner for a free and PWYW plans with a wizard below the notice
-							! showPurchasPage && (
+							// a plan is owned - show a notice page
+							! isNoticeScreenRedirect && ! showPurchasPage && (
 								<StatsPurchaseNoticePage
+									siteId={ siteId }
 									siteSlug={ siteSlug }
 									isCommercialOwned={ isCommercialOwned }
 									isFreeOwned={ isFreeOwned }
@@ -194,54 +205,65 @@ const StatsPurchasePage = ( {
 						}
 						{
 							// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-							( isFreeOwned || isPWYWOwned || ( showPurchasPage && ! showSinglePurchasPage ) ) && (
-								<StatsPurchaseWizard
-									siteSlug={ siteSlug }
-									commercialProduct={ commercialProduct }
-									maxSliderPrice={ maxSliderPrice ?? 10 }
-									pwywProduct={ pwywProduct }
-									siteId={ siteId }
-									redirectUri={ query.redirect_uri ?? '' }
-									from={ query.from ?? '' }
-									disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
-									initialStep={ initialStep }
-									initialSiteType={ initialSiteType }
-								/>
+							( redirectToPersonal || redirectToCommercial || showPurchasPage ) &&
+								options.isCommercial === null && (
+									<StatsPurchaseWizard
+										siteSlug={ siteSlug }
+										commercialProduct={ commercialProduct }
+										maxSliderPrice={ maxSliderPrice ?? 10 }
+										pwywProduct={ pwywProduct }
+										siteId={ siteId }
+										redirectUri={ query.redirect_uri ?? '' }
+										from={ query.from ?? '' }
+										disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+										initialStep={ initialStep }
+										initialSiteType={ initialSiteType }
+									/>
+								)
+						}
+						{
+							// blog has been already categorised as either personal or commercial and doesn't have a plan purchased
+							( redirectToPersonal || redirectToCommercial || showPurchasPage ) && (
+								<>
+									{ ( redirectToCommercial ||
+										( ! redirectToPersonal && ! isCommercialOwned && options.isCommercial ) ) && (
+										<div className="stats-purchase-page__notice">
+											<StatsSingleItemPagePurchase
+												siteSlug={ siteSlug ?? '' }
+												planValue={ commercialProduct?.cost }
+												currencyCode={ commercialProduct?.currency_code }
+												siteId={ siteId }
+												redirectUri={ query.redirect_uri ?? '' }
+												from={ query.from ?? '' }
+											/>
+										</div>
+									) }
+									{
+										// TODO: Add single page prache for a personal plan
+										( redirectToPersonal ||
+											( ! redirectToCommercial &&
+												! isCommercialOwned &&
+												options.isCommercial === false ) ) && (
+											<>
+												<div>This page is being developed</div>
+												<StatsPurchaseWizard
+													siteSlug={ siteSlug }
+													commercialProduct={ commercialProduct }
+													maxSliderPrice={ maxSliderPrice ?? 10 }
+													pwywProduct={ pwywProduct }
+													siteId={ siteId }
+													redirectUri={ query.redirect_uri ?? '' }
+													from={ query.from ?? '' }
+													disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+													initialStep={ initialStep }
+													initialSiteType={ initialSiteType }
+												/>
+											</>
+										)
+									}
+								</>
 							)
 						}
-						{ showPurchasPage && showSinglePurchasPage && (
-							<>
-								{ ! isCommercialOwned && options.isCommercial && (
-									<div className="stats-purchase-page__notice">
-										<StatsSingleItemPagePurchase
-											siteSlug={ siteSlug ?? '' }
-											planValue={ commercialProduct?.cost }
-											currencyCode={ commercialProduct?.currency_code }
-											siteId={ siteId }
-											redirectUri={ query.redirect_uri ?? '' }
-											from={ query.from ?? '' }
-										/>
-									</div>
-								) }
-								{
-									// TODO: Add single page prache for a personal plan
-									options.isCommercial === false && (
-										<StatsPurchaseWizard
-											siteSlug={ siteSlug }
-											commercialProduct={ commercialProduct }
-											maxSliderPrice={ maxSliderPrice ?? 10 }
-											pwywProduct={ pwywProduct }
-											siteId={ siteId }
-											redirectUri={ query.redirect_uri ?? '' }
-											from={ query.from ?? '' }
-											disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
-											initialStep={ initialStep }
-											initialSiteType={ initialSiteType }
-										/>
-									)
-								}
-							</>
-						) }
 					</>
 				) }
 				<JetpackColophon />
