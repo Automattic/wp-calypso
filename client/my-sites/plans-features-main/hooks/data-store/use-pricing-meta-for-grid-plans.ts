@@ -23,6 +23,8 @@ interface Props {
 	storageAddOns?: AddOnMeta[];
 }
 
+// TODO: Refactor duplicative storage add on prices
+
 /*
  * Returns the pricing metadata needed for the plans-ui components.
  * - see PricingMetaForGridPlan type for details
@@ -71,11 +73,17 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 							monthly:
 								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 									returnMonthly: true,
-								} ) + storageAddOnCost?.monthlyPrice,
+								} ) &&
+								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+									returnMonthly: true,
+								} ) + storageAddOnPriceMonthly,
 							full:
 								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 									returnMonthly: false,
-								} ) + storageAddOnCost?.yearlyPrice,
+								} ) &&
+								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+									returnMonthly: false,
+								} ) + storageAddOnPriceYearly,
 						},
 						discountedPrice: {
 							monthly: null,
@@ -91,8 +99,9 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					...acc,
 					[ planSlug ]: {
 						originalPrice: {
-							monthly: planPricesMonthly.rawPrice,
-							full: planPricesFull.rawPrice,
+							monthly:
+								planPricesMonthly.rawPrice && planPricesMonthly.rawPrice + storageAddOnPriceMonthly,
+							full: planPricesFull.rawPrice && planPricesFull.rawPrice + storageAddOnPriceYearly,
 						},
 						discountedPrice: {
 							monthly: null,
@@ -107,18 +116,24 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				...acc,
 				[ planSlug ]: {
 					originalPrice: {
-						monthly: planPricesMonthly.rawPrice + storageAddOnPriceMonthly,
-						full: planPricesFull.rawPrice + storageAddOnPriceYearly,
+						monthly:
+							planPricesMonthly.rawPrice && planPricesMonthly.rawPrice + storageAddOnPriceMonthly,
+						full: planPricesFull.rawPrice && planPricesFull.rawPrice + storageAddOnPriceYearly,
 					},
 					discountedPrice: {
 						monthly: withoutProRatedCredits
-							? planPricesMonthly.discountedRawPrice + storageAddOnPriceMonthly
+							? planPricesMonthly.discountedRawPrice &&
+							  planPricesMonthly.discountedRawPrice + storageAddOnPriceMonthly
 							: ( planPricesMonthly.planDiscountedRawPrice ||
+									planPricesMonthly.discountedRawPrice ) &&
+							  ( planPricesMonthly.planDiscountedRawPrice ||
 									planPricesMonthly.discountedRawPrice ) + storageAddOnPriceMonthly,
 						full: withoutProRatedCredits
-							? planPricesFull.discountedRawPrice + storageAddOnPriceYearly
-							: ( planPricesFull.planDiscountedRawPrice || planPricesFull.discountedRawPrice ) +
-							  storageAddOnPriceYearly,
+							? planPricesFull.discountedRawPrice &&
+							  planPricesFull.discountedRawPrice + storageAddOnPriceYearly
+							: ( planPricesFull.planDiscountedRawPrice || planPricesFull.discountedRawPrice ) &&
+							  ( planPricesFull.planDiscountedRawPrice || planPricesFull.discountedRawPrice ) +
+									storageAddOnPriceYearly,
 					},
 				},
 			};
