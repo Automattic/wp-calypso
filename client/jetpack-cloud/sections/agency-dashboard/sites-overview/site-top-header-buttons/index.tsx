@@ -3,11 +3,13 @@ import { Button, WordPressLogo } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useRef, useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import WPCOMHostingPopover from './wpcom-hosting-popover';
 
 export default function SiteTopHeaderButtons() {
 	const dispatch = useDispatch();
@@ -17,6 +19,10 @@ export default function SiteTopHeaderButtons() {
 	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
 		'jetpack/pro-dashboard-wpcom-atomic-hosting'
 	);
+
+	const buttonRef = useRef< any | null >( null );
+	const [ showPopover, setShowPopover ] = useState( false );
+	const [ toggleIsOpen, setToggleIsOpen ] = useState( false );
 
 	return (
 		<div
@@ -37,51 +43,65 @@ export default function SiteTopHeaderButtons() {
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
-				<SplitButton
-					primary
-					whiteSeparator
-					label={ isMobile ? undefined : translate( 'Add new site' ) }
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent(
-								'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
-							)
-						)
-					}
-					href="/partner-portal/create-site"
-					toggleIcon={ isMobile ? 'plus' : undefined }
+				<span
+					ref={ buttonRef }
+					onMouseEnter={ () => setShowPopover( true ) }
+					onMouseLeave={ () => setShowPopover( false ) }
+					role="button"
+					tabIndex={ 0 }
 				>
-					<PopoverMenuItem
-						onClick={ () => {
-							recordTracksEvent(
-								'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
-							);
-						} }
-						href="/partner-portal/create-site"
-					>
-						<WordPressLogo className="gridicon" size={ 18 } />
-						<span>{ translate( 'Create a new WordPress.com site' ) }</span>
-					</PopoverMenuItem>
-
-					<PopoverMenuItem
+					<SplitButton
+						primary
+						whiteSeparator
+						label={ isMobile ? undefined : translate( 'Add new site' ) }
 						onClick={ () =>
 							dispatch(
 								recordTracksEvent(
-									'calypso_jetpack_agency_dashboard_connect_jetpack_site_button_click'
+									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
 								)
 							)
 						}
-						href="https://wordpress.com/jetpack/connect"
-						isExternalLink
+						href="/partner-portal/create-site"
+						toggleIcon={ isMobile ? 'plus' : undefined }
+						onToggle={ ( isOpen: boolean ) => setToggleIsOpen( isOpen ) }
 					>
-						<JetpackLogo className="gridicon" size={ 18 } />
-						<span>{ translate( 'Connect a site to Jetpack' ) }</span>
-					</PopoverMenuItem>
-				</SplitButton>
+						<PopoverMenuItem
+							onClick={ () => {
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
+								);
+							} }
+							href="/partner-portal/create-site"
+						>
+							<WordPressLogo className="gridicon" size={ 18 } />
+							<span>{ translate( 'Create a new WordPress.com site' ) }</span>
+						</PopoverMenuItem>
+
+						<PopoverMenuItem
+							onClick={ () =>
+								dispatch(
+									recordTracksEvent(
+										'calypso_jetpack_agency_dashboard_connect_jetpack_site_button_click'
+									)
+								)
+							}
+							href="https://wordpress.com/jetpack/connect"
+							isExternalLink
+						>
+							<JetpackLogo className="gridicon" size={ 18 } />
+							<span>{ translate( 'Connect a site to Jetpack' ) }</span>
+						</PopoverMenuItem>
+					</SplitButton>
+					<WPCOMHostingPopover
+						context={ buttonRef.current }
+						// Show the popover only when the split button is closed
+						isVisible={ ! toggleIsOpen && showPopover }
+						position="bottom"
+					/>
+				</span>
 			) : (
 				<Button
 					className="sites-overview__issue-license-button"
-					primary
 					href="https://wordpress.com/jetpack/connect"
 					onClick={ () =>
 						dispatch(
