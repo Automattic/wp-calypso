@@ -10,13 +10,13 @@ type StorageAddOnDropdownProps = {
 	label?: string;
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
-	displayCost?: boolean;
+	showCost?: boolean;
 };
 
 type StorageAddOnOptionProps = {
 	title: string;
 	cost: string | undefined;
-	displayCost: boolean;
+	showCost: boolean;
 };
 
 const getStorageOptionCost = ( storageAddOnsForPlan, storageOptionSlug: string ) => {
@@ -25,11 +25,11 @@ const getStorageOptionCost = ( storageAddOnsForPlan, storageOptionSlug: string )
 	} )?.costData?.formattedMonthlyCost;
 };
 
-const StorageAddOnOption = ( { title, cost, displayCost }: StorageAddOnOptionProps ) => {
+const StorageAddOnOption = ( { title, cost, showCost }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
 	return (
 		<>
-			{ cost && displayCost ? (
+			{ cost && showCost ? (
 				<div>
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
 					<span className="storage-add-on-dropdown-option__cost">
@@ -47,7 +47,7 @@ export const StorageAddOnDropdown = ( {
 	label = '',
 	planSlug,
 	storageOptions,
-	displayCost = false,
+	showCost = false,
 }: StorageAddOnDropdownProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
@@ -61,11 +61,11 @@ export const StorageAddOnDropdown = ( {
 
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.reduce( ( acc, storageOption ) => {
-		const title = getStorageStringFromFeature( storageOption.slug );
+		const title = getStorageStringFromFeature( storageOption.slug ) || '';
 		const cost = getStorageOptionCost( storageAddOnsForPlan, storageOption.slug );
 		acc.push( {
 			key: storageOption?.slug,
-			name: <StorageAddOnOption title={ title } cost={ cost } displayCost={ displayCost } />,
+			name: <StorageAddOnOption title={ title } cost={ cost } showCost={ showCost } />,
 		} );
 
 		return acc;
@@ -74,14 +74,14 @@ export const StorageAddOnDropdown = ( {
 	const defaultStorageOption = storageOptions.find( ( storageOption ) => ! storageOption?.isAddOn );
 	const selectedOptionKey = selectedStorageOptionForPlan || defaultStorageOption?.slug || '';
 	const selectedOptionCost = getStorageOptionCost( storageAddOnsForPlan, selectedOptionKey );
-	const selectedOptionTitle = getStorageStringFromFeature( selectedOptionKey );
+	const selectedOptionTitle = getStorageStringFromFeature( selectedOptionKey ) || '';
 	const selectedOption = {
 		key: selectedOptionKey,
 		name: (
 			<StorageAddOnOption
 				title={ selectedOptionTitle }
 				cost={ selectedOptionCost }
-				displayCost={ displayCost }
+				showCost={ showCost }
 			/>
 		),
 	};
