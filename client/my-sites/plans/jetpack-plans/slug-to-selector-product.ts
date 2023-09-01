@@ -164,7 +164,7 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
-		// We do not support TERM_BIENNIALLY or TERM_TRIENIALLY for Jetpack plans
+		// We do not support TERM_TRIENIALLY for Jetpack plans
 		if ( [ TERM_TRIENNIALLY ].includes( item.term ) ) {
 			return null;
 		}
