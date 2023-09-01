@@ -369,10 +369,11 @@ function PluginDetails( props ) {
 								{ ! isMaintained && (
 									<Notice showDismiss={ false } status="is-warning">
 										{ translate(
-											'This plugin seems outdated and not maintained anymore. We advise that you {{a}}search{{/a}} for another similar plugin.',
+											'This plugin {{strong}}hasn’t been tested with the latest 3 major releases of WordPress{{/strong}}. It may no longer be maintained or supported and may have compatibility issues when used with more recent versions of WordPress. Try {{a}}searching{{/a}} for a similar plugin.',
 											{
 												components: {
 													a: <a href={ `/plugins/${ selectedSite?.slug ?? '' }` } />,
+													strong: <strong />,
 												},
 											}
 										) }
