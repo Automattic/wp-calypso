@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -40,17 +41,21 @@ const EmptyListView = () => {
 			<EmptyListCTALink
 				icon={ chartBar }
 				text={ translate( 'Turn your visitors into subscribers' ) }
-				url="https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/"
+				url={ localizeUrl(
+					'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/'
+				) }
 			/>
 			<EmptyListCTALink
 				icon={ people }
 				text={ translate( 'Import existing subscribers' ) }
-				url="https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/"
+				url={ localizeUrl(
+					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+				) }
 			/>
 			<EmptyListCTALink
 				icon={ trendingUp }
 				text={ translate( 'Grow your audience' ) }
-				url="https://wordpress.com/support/category/grow-your-audience/"
+				url={ localizeUrl( 'https://wordpress.com/support/category/grow-your-audience/' ) }
 			/>
 		</div>
 	);

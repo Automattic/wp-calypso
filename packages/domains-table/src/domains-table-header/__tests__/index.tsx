@@ -37,11 +37,13 @@ test( 'domain columns are rendered in the header', () => {
 			onChangeSortOrder={ jest.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
+			canSelectAnyDomains
 		/>
 	);
 
 	expect( screen.queryByText( 'Domain' ) ).toBeInTheDocument();
 	expect( screen.queryByText( 'Status' ) ).toBeInTheDocument();
+	expect( screen.queryByTestId( 'domains-select-all-checkbox' ) ).toBeInTheDocument();
 } );
 
 test( 'renders custom header component', () => {
@@ -105,4 +107,20 @@ test( 'columns that are not sortable do not renders a chevron', () => {
 
 	const chevronIcon = statusHeader.parentElement?.querySelector( 'svg' );
 	expect( chevronIcon ).not.toBeInTheDocument();
+} );
+
+test( 'no checkbox is rendered if no domains are selectable', () => {
+	render(
+		<DomainsTableHeader
+			columns={ domainsTableColumns }
+			activeSortKey="domain"
+			activeSortDirection="asc"
+			onChangeSortOrder={ jest.fn() }
+			bulkSelectionStatus="no-domains"
+			onBulkSelectionChange={ noop }
+			canSelectAnyDomains={ false }
+		/>
+	);
+
+	expect( screen.queryByTestId( 'domain-select-all-checkbox' ) ).not.toBeInTheDocument();
 } );

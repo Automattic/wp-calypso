@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -27,6 +28,7 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
+import { RelatedPlugins } from 'calypso/my-sites/plugins/related-plugins';
 import {
 	siteObjectsToSiteIds,
 	useLocalizedPlugins,
@@ -70,6 +72,7 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
+import { usePluginIsMaintained } from './use-plugin-is-maintained';
 
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
@@ -267,6 +270,8 @@ function PluginDetails( props ) {
 		setBreadcrumbs( breadcrumbs );
 	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
+	const isMaintained = usePluginIsMaintained( fullPlugin?.tested );
+
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
 			args: { pluginName: fullPlugin.name },
@@ -353,9 +358,25 @@ function PluginDetails( props ) {
 										status="is-warning"
 										showDismiss={ false }
 									>
-										<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+										<NoticeAction
+											href={ localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' ) }
+										>
 											{ translate( 'More info' ) }
 										</NoticeAction>
+									</Notice>
+								) }
+
+								{ ! isMaintained && (
+									<Notice showDismiss={ false } status="is-warning">
+										{ translate(
+											'This plugin {{strong}}hasn’t been tested with the latest 3 major releases of WordPress{{/strong}}. It may no longer be maintained or supported and may have compatibility issues when used with more recent versions of WordPress. Try {{a}}searching{{/a}} for a similar plugin.',
+											{
+												components: {
+													a: <a href={ `/plugins/${ selectedSite?.slug ?? '' }` } />,
+													strong: <strong />,
+												},
+											}
+										) }
 									</Notice>
 								) }
 
@@ -364,6 +385,7 @@ function PluginDetails( props ) {
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />
 								) }
+								<RelatedPlugins slug={ props.pluginSlug } />
 							</div>
 						) }
 					</div>

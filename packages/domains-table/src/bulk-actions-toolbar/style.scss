@@ -1,5 +1,3 @@
-$domains-table-bulk-actions-toolbar-height: 40px;
-
 .domains-table-bulk-actions-toolbar {
 	display: flex;
 	flex-direction: row;
@@ -11,11 +9,11 @@ $domains-table-bulk-actions-toolbar-height: 40px;
 }
 
 .domains-table-bulk-actions-toolbar__select.select-dropdown {
-	height: $domains-table-bulk-actions-toolbar-height;
+	height: var(--domains-table-toolbar-height);
 	z-index: 1; // Needed for the dropdown to appear overtop of the checkboxes
 
 	.select-dropdown__header {
-		height: $domains-table-bulk-actions-toolbar-height;
+		height: var(--domains-table-toolbar-height);
 		font-weight: 400;
 		color: var(--studio-gray-70);
 	}

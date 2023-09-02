@@ -157,7 +157,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		if ( isLoading || ! forwarding ) {
 			return;
 		}
-		deleteDomainForwarding();
+		deleteDomainForwarding( forwarding?.domain_redirect_id );
 	};
 
 	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
@@ -188,6 +188,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 
 		updateDomainForwarding( {
+			domain_redirect_id: forwarding?.domain_redirect_id || 0,
+			subdomain: '', // we'll soon support subdomains
 			targetHost,
 			targetPath,
 			isSecure,

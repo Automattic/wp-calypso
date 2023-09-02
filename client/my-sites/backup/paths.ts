@@ -22,3 +22,6 @@ export const backupClonePath = ( siteName: string ) => backupSubSectionPath( sit
 
 export const backupContentsPath = ( siteName: string, rewindId: string ) =>
 	backupSubSectionPath( siteName, 'contents', rewindId );
+
+export const backupGranularRestorePath = ( siteName: string, rewindId: string ) =>
+	backupSubSectionPath( siteName, 'granular-restore', rewindId );

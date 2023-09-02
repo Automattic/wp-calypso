@@ -3,13 +3,16 @@ import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { countDomainsRequiringAttention } from '../utils';
 import { createSiteDomainObject } from '../utils/assembler';
 import { domainManagementLink } from '../utils/paths';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
 import type {
@@ -22,8 +25,10 @@ interface DomainsTableRowProps {
 	domain: PartialDomainData;
 	isAllSitesView: boolean;
 	isSelected: boolean;
+	hideOwnerColumn?: boolean;
 	onSelect( domain: PartialDomainData ): void;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
+	onDomainsRequiringAttentionChange?( domainsRequiringAttention: number ): void;
 
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
@@ -35,12 +40,15 @@ export function DomainsTableRow( {
 	domain,
 	isAllSitesView,
 	isSelected,
+	hideOwnerColumn = false,
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
 	domainStatusPurchaseActions,
+	onDomainsRequiringAttentionChange,
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const { data: allSiteDomains, isLoading: isLoadingSiteDomainsDetails } = useSiteDomainsQuery(
@@ -79,6 +87,37 @@ export function DomainsTableRow( {
 		return new URL( site.URL ).host.replace( /\//g, '::' );
 	}, [ site, domain.blog_id ] );
 
+	const isLoadingRowDetails = isLoadingSiteDetails || isLoadingSiteDomainsDetails;
+
+	const domainsRequiringAttention = useMemo( () => {
+		if ( ! currentDomainData || isLoadingRowDetails ) {
+			return null;
+		}
+		return countDomainsRequiringAttention(
+			allSiteDomains?.map( ( domain ) =>
+				resolveDomainStatus( domain, {
+					siteSlug: siteSlug,
+					getMappingErrors: true,
+					translate,
+					isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
+					isCreditCardExpiring:
+						domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+				} )
+			)
+		);
+	}, [
+		allSiteDomains,
+		currentDomainData,
+		domainStatusPurchaseActions,
+		siteSlug,
+		translate,
+		isLoadingRowDetails,
+	] );
+
+	if ( domainsRequiringAttention && domainsRequiringAttention > 0 ) {
+		onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
+	}
+
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
 
@@ -89,18 +128,40 @@ export function DomainsTableRow( {
 		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
 	} );
 
+	const userCanAddSiteToDomain = currentDomainData?.currentUserCanCreateSiteFromDomainOnly ?? false;
+
+	const renderSiteCell = () => {
+		if ( site && currentDomainData ) {
+			return (
+				<DomainsTableSiteCell
+					site={ site }
+					siteSlug={ siteSlug }
+					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+				/>
+			);
+		}
+
+		if ( isLoadingRowDetails ) {
+			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+		}
+
+		return null;
+	};
+
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					checked={ isSelected }
-					onChange={ () => onSelect( domain ) }
-					/* translators: Label for a checkbox control that selects a domain name.*/
-					aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-						domain: domain.domain,
-					} ) }
-				/>
+				{ ! domain.wpcom_domain && (
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						checked={ isSelected }
+						onChange={ () => onSelect( domain ) }
+						/* translators: Label for a checkbox control that selects a domain name.*/
+						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+							domain: domain.domain,
+						} ) }
+					/>
+				) }
 			</td>
 			<td>
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
@@ -115,19 +176,18 @@ export function DomainsTableRow( {
 					<span className="domains-table__domain-name">{ domain.domain }</span>
 				) }
 			</td>
+			{ ! hideOwnerColumn && (
+				<td>
+					{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+						<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+					) : (
+						currentDomainData?.owner ?? '-'
+					) }
+				</td>
+			) }
+			<td>{ renderSiteCell() }</td>
 			<td>
-				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
-					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-				) : (
-					<DomainsTableSiteCell
-						site={ site }
-						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData }
-					/>
-				) }
-			</td>
-			<td>
-				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+				{ isLoadingRowDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 				) : (
 					<DomainsTableStatusCell
@@ -139,6 +199,14 @@ export function DomainsTableRow( {
 			</td>
 			<td>
 				<DomainsTableRegisteredUntilCell domain={ domain } />
+			</td>
+			<td></td>
+			<td className="domains-table-row__actions">
+				<DomainsTableRowActions
+					canConnectDomainToASite={ userCanAddSiteToDomain }
+					siteSlug={ siteSlug }
+					domainName={ domain.domain }
+				/>
 			</td>
 		</tr>
 	);

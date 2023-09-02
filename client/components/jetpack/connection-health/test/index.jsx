@@ -7,6 +7,7 @@ import { jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackConnectionHealthBanner } from '..';
 import {
+	DATABASE_ERROR,
 	FATAL_ERROR,
 	USER_TOKEN_ERROR,
 	BLOG_TOKEN_ERROR,
@@ -16,6 +17,8 @@ import {
 	DNS_ERROR,
 	UNKNOWN_ERROR,
 	GENERIC_ERROR,
+	XMLRPC_ERROR,
+	REST_API_ERROR,
 } from '../constants';
 
 const mockError = jest.fn().mockReturnValue( UNKNOWN_ERROR );
@@ -54,6 +57,23 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect( screen.queryByText( /Jetpack can’t communicate with your site./i ) ).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+		} );
+
+		test( 'shows a database connection error message', () => {
+			mockError.mockReturnValue( DATABASE_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.queryByText( /Jetpack can’t establish a connection to your site’s database./i )
+			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
 
@@ -163,6 +183,40 @@ describe( 'JetpackConnectionHealthBanner', () => {
 				screen.queryByText(
 					/Jetpack can’t communicate with your site because it hasn't seen your site for 7 days./i
 				)
+			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+		} );
+
+		test( 'shows an XML-RPC error message', () => {
+			mockError.mockReturnValue( XMLRPC_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.queryByText( /Jetpack encounters XML-RPC connection issues./i )
+			).toBeVisible();
+			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
+		} );
+
+		test( 'shows a REST API error message', () => {
+			mockError.mockReturnValue( REST_API_ERROR );
+
+			const initialState = {
+				jetpackConnectionHealth: {
+					1: { jetpack_connection_problem: true },
+				},
+			};
+
+			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
+
+			expect(
+				screen.queryByText( /Jetpack encounters REST API connection issues./i )
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );

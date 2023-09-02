@@ -80,8 +80,9 @@ project {
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
 		password("E2E_SECRETS_ENCRYPTION_KEY_JUN_27_23", "credentialsJSON:7f7a0165-754f-4a52-93ef-c97852cd83e0", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_AUG_29_23", "credentialsJSON:f29ecb29-687d-4411-8769-cc7b44edc0c5", display = ParameterDisplay.HIDDEN)
 		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JUN_27_23%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_AUG_29_23%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
