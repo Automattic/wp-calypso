@@ -41,6 +41,7 @@ export interface DomainsTableProps {
 type Value = {
 	filter: DomainsTableFilter;
 	setFilter: ( filter: DomainsTableFilter ) => void;
+	filteredData: unknown[];
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
@@ -58,6 +59,8 @@ type Value = {
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
+	selectedDomains: Set< string >;
+	hasSelectedDomains: boolean;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -273,6 +276,9 @@ export const DomainsTable = ( {
 		handleSelectDomain,
 		onDomainsRequiringAttentionChange,
 		fetchSiteDomains,
+		filteredData,
+		selectedDomains,
+		hasSelectedDomains,
 	};
 
 	return (

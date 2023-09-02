@@ -1,6 +1,6 @@
-import { DomainsTableHeader } from '../../domains-table-header/index';
 import { DomainsTable, DomainsTableProps } from './domains-table';
 import { DomainsTableBody } from './domains-table-body';
+import { DomainsTableHeader } from './domains-table-header';
 import { DomainsTableToolbar } from './domains-table-toolbar';
 
 import '../style.scss';

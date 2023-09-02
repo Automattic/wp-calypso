@@ -1,5 +1,5 @@
 import { domainsTableColumns as defaultDomainsTableColumns } from '../../domains-table-header/columns';
-import { DomainsTableColumn } from '../../domains-table-header/index';
+import { DomainsTableColumn, DomainsTableHeader as Header } from '../../domains-table-header/index';
 import { useDomainsTable } from './domains-table';
 
 type Props = {
@@ -21,7 +21,7 @@ export const DomainsTableHeader = ( {
 	} = useDomainsTable();
 
 	return (
-		<DomainsTableHeader
+		<Header
 			columns={ domainsTableColumns }
 			activeSortKey={ sortKey }
 			activeSortDirection={ sortDirection }
