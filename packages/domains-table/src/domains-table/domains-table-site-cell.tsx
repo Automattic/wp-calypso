@@ -28,9 +28,3 @@ export const DomainsTableSiteCell = ( {
 
 	return site.name ?? '-';
 };
-
-export function domainOnlySiteCreationLink( siteSlug: string, siteId: number ) {
-	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
-		siteSlug
-	) }&siteId=${ encodeURIComponent( siteId ) }`;
-}

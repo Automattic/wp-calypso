@@ -16,7 +16,7 @@ import { PrimaryDomainLabel } from '../primary-domain-label';
 import { countDomainsRequiringAttention } from '../utils';
 import { createSiteDomainObject } from '../utils/assembler';
 import { domainManagementLink } from '../utils/paths';
-import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
+import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
