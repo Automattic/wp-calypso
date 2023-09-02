@@ -1,11 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { useI18n } from '@wordpress/react-i18n';
-import {
-	domainManagementTransferToOtherSiteLink,
-	domainOnlySiteCreationLink,
-} from '../utils/paths';
-import { ResponseDomain } from '../utils/types';
-
+import { domainOnlySiteCreationLink } from '../utils/paths';
 
 interface DomainsTableSiteCellProps {
 	site: Pick< SiteDetails, 'ID' | 'name' >;

@@ -1,5 +1,11 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
+import {
+	useSiteDomainsQuery,
+	useSiteQuery,
+	PartialDomainData,
+	SiteDomainsQueryFnData,
+	SiteDetails,
+} from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,11 +21,6 @@ import { DomainsTableRegisteredUntilCell } from './domains-table-registered-unti
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
-import type {
-	PartialDomainData,
-	SiteDomainsQueryFnData,
-	SiteDetails,
-} from '@automattic/data-stores';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
