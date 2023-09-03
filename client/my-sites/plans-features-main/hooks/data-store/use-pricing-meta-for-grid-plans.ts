@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
+import { PlanPrices } from 'calypso/state/plans/types';
 import {
 	getSitePlanRawPrice,
 	isPlanAvailableForPurchase,
@@ -22,7 +23,18 @@ interface Props {
 	storageAddOns?: AddOnMeta[];
 }
 
-// TODO: Refactor duplicative storage add on prices
+function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
+	const totalPrices = { ...planPrices };
+	let key: keyof PlanPrices;
+
+	for ( key in totalPrices ) {
+		if ( ! ( totalPrices[ key ] === null ) ) {
+			totalPrices[ key ] += addOnPrice;
+		}
+	}
+
+	return totalPrices;
+}
 
 /*
  * Returns the pricing metadata needed for the plans-ui components.
@@ -46,11 +58,11 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				! currentSitePlanSlug ||
 				( selectedSiteId ? isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) : false );
 			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-			const storageAddOnCost = storageAddOns.find( ( addOn ) => {
+			const storageAddOnPrices = storageAddOns.find( ( addOn ) => {
 				return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
 			} )?.prices;
-			const storageAddOnPriceMonthly = storageAddOnCost?.monthlyCost || 0;
-			const storageAddOnPriceYearly = storageAddOnCost?.yearlyCost || 0;
+			const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
+			const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
 
 			const planPricesMonthly = getPlanPrices( state, {
 				planSlug,
@@ -62,34 +74,24 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				siteId: selectedSiteId || null,
 				returnMonthly: false,
 			} );
-
-			if ( storageAddOnCost ) {
-				for ( const key in planPricesMonthly ) {
-					planPricesMonthly[ key ] = planPricesMonthly[ key ] + storageAddOnPriceMonthly;
-				}
-				planPricesMonthly;
-			}
+			const totalPricesMonthly = getTotalPrices( planPricesMonthly, storageAddOnPriceMonthly );
+			const totalPricesFull = getTotalPrices( planPricesFull, storageAddOnPriceYearly );
 
 			// raw prices for current site's plan
 			if ( selectedSiteId && currentSitePlanSlug === planSlug ) {
+				const monthlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					returnMonthly: true,
+				} );
+				const yearlyPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+					returnMonthly: false,
+				} );
+
 				return {
 					...acc,
 					[ planSlug ]: {
 						originalPrice: {
-							monthly:
-								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-									returnMonthly: true,
-								} ) &&
-								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-									returnMonthly: true,
-								} ) + storageAddOnPriceMonthly,
-							full:
-								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-									returnMonthly: false,
-								} ) &&
-								getSitePlanRawPrice( state, selectedSiteId, planSlug, {
-									returnMonthly: false,
-								} ) + storageAddOnPriceYearly,
+							monthly: monthlyPrice ? monthlyPrice + storageAddOnPriceMonthly : null,
+							full: yearlyPrice ? yearlyPrice + storageAddOnPriceYearly : null,
 						},
 						discountedPrice: {
 							monthly: null,
@@ -105,9 +107,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 					...acc,
 					[ planSlug ]: {
 						originalPrice: {
-							monthly:
-								planPricesMonthly.rawPrice && planPricesMonthly.rawPrice + storageAddOnPriceMonthly,
-							full: planPricesFull.rawPrice && planPricesFull.rawPrice + storageAddOnPriceYearly,
+							monthly: totalPricesMonthly.rawPrice,
+							full: totalPricesFull.rawPrice,
 						},
 						discountedPrice: {
 							monthly: null,
@@ -122,24 +123,16 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				...acc,
 				[ planSlug ]: {
 					originalPrice: {
-						monthly:
-							planPricesMonthly.rawPrice && planPricesMonthly.rawPrice + storageAddOnPriceMonthly,
-						full: planPricesFull.rawPrice && planPricesFull.rawPrice + storageAddOnPriceYearly,
+						monthly: totalPricesMonthly.rawPrice,
+						full: totalPricesFull.rawPrice,
 					},
 					discountedPrice: {
 						monthly: withoutProRatedCredits
-							? planPricesMonthly.discountedRawPrice &&
-							  planPricesMonthly.discountedRawPrice + storageAddOnPriceMonthly
-							: ( planPricesMonthly.planDiscountedRawPrice ||
-									planPricesMonthly.discountedRawPrice ) &&
-							  ( planPricesMonthly.planDiscountedRawPrice ||
-									planPricesMonthly.discountedRawPrice ) + storageAddOnPriceMonthly,
+							? totalPricesMonthly.discountedRawPrice
+							: totalPricesMonthly.planDiscountedRawPrice || totalPricesMonthly.discountedRawPrice,
 						full: withoutProRatedCredits
-							? planPricesFull.discountedRawPrice &&
-							  planPricesFull.discountedRawPrice + storageAddOnPriceYearly
-							: ( planPricesFull.planDiscountedRawPrice || planPricesFull.discountedRawPrice ) &&
-							  ( planPricesFull.planDiscountedRawPrice || planPricesFull.discountedRawPrice ) +
-									storageAddOnPriceYearly,
+							? totalPricesFull.discountedRawPrice
+							: totalPricesFull.planDiscountedRawPrice || totalPricesFull.discountedRawPrice,
 					},
 				},
 			};
