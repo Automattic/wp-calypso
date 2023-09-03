@@ -16,5 +16,5 @@ export interface AddOnMeta {
 		yearlyPrice: number;
 		formattedMonthlyPrice: string;
 		formattedYearlyPrice: string;
-	};
+	} | null;
 }

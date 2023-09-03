@@ -71,7 +71,7 @@ export type UsePricingMetaForGridPlans = ( {
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
-	storageAddOns: AddOnMeta[];
+	storageAddOns: ( AddOnMeta | null )[] | null;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan };
 
 // TODO clk: move to types. will consume plan properties
@@ -96,7 +96,7 @@ export type GridPlan = {
 	} | null;
 	highlightLabel?: React.ReactNode | null;
 	pricing: PricingMetaForGridPlan;
-	storageAddOnsForPlan: AddOnMeta[] | null;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 };
 
 // TODO clk: move to plans data store
@@ -132,7 +132,7 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
-	storageAddOns: AddOnMeta[];
+	storageAddOns: ( AddOnMeta | null )[];
 }
 
 const usePlanTypesWithIntent = ( {

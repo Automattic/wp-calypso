@@ -1,4 +1,4 @@
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { AddOnMeta, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
@@ -19,7 +19,10 @@ type StorageAddOnOptionProps = {
 	showCost: boolean;
 };
 
-const getStorageOptionPrice = ( storageAddOnsForPlan, storageOptionSlug: string ) => {
+const getStorageOptionPrice = (
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null,
+	storageOptionSlug: string
+) => {
 	return storageAddOnsForPlan?.find( ( addOn ) => {
 		return addOn?.featureSlugs?.includes( storageOptionSlug );
 	} )?.prices?.formattedMonthlyPrice;

@@ -20,7 +20,7 @@ import type { IAppState } from 'calypso/state/types';
 interface Props {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
-	storageAddOns?: AddOnMeta[];
+	storageAddOns?: ( AddOnMeta | null )[] | null;
 }
 
 function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
@@ -28,8 +28,10 @@ function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
 	let key: keyof PlanPrices;
 
 	for ( key in totalPrices ) {
-		if ( ! ( totalPrices[ key ] === null ) ) {
-			totalPrices[ key ] += addOnPrice;
+		const price = totalPrices[ key ];
+
+		if ( ! ( price === null ) ) {
+			totalPrices[ key ] = price + addOnPrice;
 		}
 	}
 
@@ -41,10 +43,11 @@ function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
  * - see PricingMetaForGridPlan type for details
  * - will migrate to data-store once dependencies are resolved (when site & plans data-stores more complete)
  */
+
 const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
-	storageAddOns = [],
+	storageAddOns,
 }: Props ) => {
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
 	const selectedStorageOptions = useSelect( ( select ) => {
@@ -58,7 +61,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				! currentSitePlanSlug ||
 				( selectedSiteId ? isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) : false );
 			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-			const storageAddOnPrices = storageAddOns.find( ( addOn ) => {
+			const storageAddOnPrices = storageAddOns?.find( ( addOn ) => {
 				return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
 			} )?.prices;
 			const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;

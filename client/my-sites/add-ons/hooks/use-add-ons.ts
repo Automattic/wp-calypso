@@ -47,7 +47,7 @@ export interface AddOnMeta {
 		yearlyPrice: number;
 		formattedMonthlyPrice: string;
 		formattedYearlyPrice: string;
-	};
+	} | null;
 }
 
 // some memoization. executes far too many times
