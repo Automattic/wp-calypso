@@ -12,7 +12,9 @@ export const isErrorResponse = ( response: unknown ): response is ErrorResponse 
 	);
 };
 
-export const isSiteSubscriptionDetails = ( obj: unknown ): obj is SiteSubscriptionDetails => {
+export const isSiteSubscriptionDetails = (
+	obj: unknown
+): obj is SiteSubscriptionDetails< string > => {
 	if ( ! obj || typeof obj !== 'object' ) {
 		return false;
 	}

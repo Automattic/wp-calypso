@@ -20,6 +20,11 @@
 .reader-full-post__content {
 	margin: 0 auto;
 
+	.comment-button__icon path,
+	.conversation-follow-button path {
+		fill: var(--color-neutral-0);
+	}
+
 	@include breakpoint-deprecated( ">1280px" ) {
 		width: 720px;
 		padding-left: 260px;

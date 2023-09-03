@@ -511,6 +511,11 @@ export interface ResponseCartProduct {
 	 */
 	is_gift_purchase?: boolean;
 
+	/**
+	 * True if cart item is a domain that is included in a 100 Year Plan
+	 */
+	is_included_for_100yearplan: boolean;
+
 	product_variants: ResponseCartProductVariant[];
 
 	// Temporary optional properties for the monthly pricing test

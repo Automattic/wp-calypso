@@ -1,10 +1,8 @@
-import { SubscriptionProvider } from './site-subscription-context';
-import SiteSubscription from './site-subscription-page';
+import SiteSubscription from 'calypso/blocks/reader-site-subscription';
+import { SiteSubscriptionProvider } from './site-subscription-provider';
 
-export const SiteSubscriptionPage = () => {
-	return (
-		<SubscriptionProvider>
-			<SiteSubscription />
-		</SubscriptionProvider>
-	);
-};
+export const SiteSubscriptionPage = () => (
+	<SiteSubscriptionProvider>
+		<SiteSubscription />
+	</SiteSubscriptionProvider>
+);

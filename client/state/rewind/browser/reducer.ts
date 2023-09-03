@@ -192,7 +192,8 @@ export default ( state = initialState, { type, payload }: AnyAction ) => {
 			// They'll inherit the parent's state with default childrenLoading/Loaded/children values
 			for ( const childPath of childrenPaths ) {
 				parentNode.children.push( {
-					path: childPath,
+					id: childPath.id,
+					path: childPath.path,
 					ancestors: [ ...parentNode.ancestors, parentNode.path ],
 					checkState: parentNode.checkState === 'checked' ? 'checked' : 'unchecked',
 					childrenLoaded: false,
