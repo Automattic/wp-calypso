@@ -105,8 +105,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				// Show the notice if the site has not purchased the paid stats product.
 				! hasPaidStats &&
 				// Show the notice if the site is not commercial.
-				config.isEnabled( 'stats/type-detection' ) &&
-				( ! isCommercial || ! config.isEnabled( 'stats/type-detection' ) )
+				( ! config.isEnabled( 'stats/type-detection' ) || ! isCommercial )
 			);
 		},
 		disabled: false,
