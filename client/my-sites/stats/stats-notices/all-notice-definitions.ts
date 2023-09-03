@@ -56,20 +56,17 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			const showUpgradeNoticeForJetpackNotAtomic =
 				config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
 
-			return (
-				config.isEnabled( 'stats/type-detection' ) &&
-				!! (
-					( showUpgradeNoticeOnOdyssey ||
-						showUpgradeNoticeForJetpackNotAtomic ||
-						showUpgradeNoticeForWpcomSites ) &&
-					// Show the notice if the site has not purchased the paid stats product.
-					! hasPaidStats &&
-					// Show the notice only if the site is commercial.
-					isCommercial
-				)
+			return !! (
+				( showUpgradeNoticeOnOdyssey ||
+					showUpgradeNoticeForJetpackNotAtomic ||
+					showUpgradeNoticeForWpcomSites ) &&
+				// Show the notice if the site has not purchased the paid stats product.
+				! hasPaidStats &&
+				// Show the notice only if the site is commercial.
+				isCommercial
 			);
 		},
-		disabled: false,
+		disabled: ! config.isEnabled( 'stats/type-detection' ),
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,
