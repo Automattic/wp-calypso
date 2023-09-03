@@ -113,7 +113,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 			{ ALL_STATS_NOTICES.map(
 				( notice ) =>
 					calculatedNoticesVisibility[ notice.noticeId ] && (
-						<notice.component { ...noticeOptions } />
+						<notice.component key={ notice.noticeId } { ...noticeOptions } />
 					)
 			) }
 		</>
