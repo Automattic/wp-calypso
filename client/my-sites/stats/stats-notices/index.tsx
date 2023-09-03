@@ -20,7 +20,6 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
-import useSitePurchasesOnOdysseyStats from './use-site-purchases-on-odyssey-stats';
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
@@ -94,8 +93,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
-	// TODO: Display error messages on the notice.
-	useSitePurchasesOnOdysseyStats( isOdysseyStats, siteId );
 	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
 
 	if ( ! hasLoadedPurchases || isLoading || isError ) {
@@ -142,8 +139,8 @@ export default function StatsNotices( {
 
 	return (
 		<>
-			{ /* Only query site purchases on Calypso via existing data component */ }
-			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
+			{ /* The component is replace on build for Odyssey to query from Jetpack */ }
+			<QuerySitePurchases siteId={ siteId } />
 			<NewStatsNotices
 				siteId={ siteId }
 				isOdysseyStats={ isOdysseyStats }

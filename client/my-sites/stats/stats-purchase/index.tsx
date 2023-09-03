@@ -3,7 +3,6 @@ import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
-	PRODUCT_JETPACK_STATS_FREE,
 } from '@automattic/calypso-products';
 import { ProductsList } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -17,7 +16,6 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { isFetchingSitePurchases, getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -29,18 +27,7 @@ import StatsPurchaseWizard, {
 	TYPE_COMMERCIAL,
 	TYPE_PERSONAL,
 } from './stats-purchase-wizard';
-import type { Purchase } from 'calypso/lib/purchases/types';
-
-const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
-	if ( ! ownedPurchases.length ) {
-		return false;
-	}
-
-	return ownedPurchases
-		.filter( ( purchase ) => purchase.expiryStatus !== 'expired' )
-		.map( ( purchase ) => purchase.productSlug )
-		.includes( searchedProduct );
-};
+import useStatsPurchases from './use-stats-purchases';
 
 const StatsPurchasePage = ( {
 	query,
@@ -57,27 +44,8 @@ const StatsPurchasePage = ( {
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
-
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
-
-	// Determine whether a product is owned.
-	// TODO we need to do plan check as well, because Stats products would be built into other plans.
-	const isFreeOwned = useMemo( () => {
-		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
-	}, [ sitePurchases ] );
-
-	const isCommercialOwned = useMemo( () => {
-		return (
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_MONTHLY ) ||
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_YEARLY )
-		);
-	}, [ sitePurchases ] );
-
-	const isPWYWOwned = useMemo( () => {
-		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
-	}, [ sitePurchases ] );
-
+	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, isCommercialOwned } =
+		useStatsPurchases( siteId );
 	useEffect( () => {
 		if ( ! siteSlug ) {
 			return;
