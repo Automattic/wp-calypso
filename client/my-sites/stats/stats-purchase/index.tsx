@@ -244,21 +244,18 @@ const StatsPurchasePage = ( {
 											( ! redirectToCommercial &&
 												! isCommercialOwned &&
 												options.isCommercial === false ) ) && (
-											<>
-												<div>This page is being developed</div>
-												<StatsPurchaseWizard
-													siteSlug={ siteSlug }
-													commercialProduct={ commercialProduct }
-													maxSliderPrice={ maxSliderPrice ?? 10 }
-													pwywProduct={ pwywProduct }
-													siteId={ siteId }
-													redirectUri={ query.redirect_uri ?? '' }
-													from={ query.from ?? '' }
-													disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
-													initialStep={ initialStep }
-													initialSiteType={ initialSiteType }
-												/>
-											</>
+											<StatsPurchaseWizard
+												siteSlug={ siteSlug }
+												commercialProduct={ commercialProduct }
+												maxSliderPrice={ maxSliderPrice ?? 10 }
+												pwywProduct={ pwywProduct }
+												siteId={ siteId }
+												redirectUri={ query.redirect_uri ?? '' }
+												from={ query.from ?? '' }
+												disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+												initialStep={ initialStep }
+												initialSiteType={ initialSiteType }
+											/>
 										)
 									}
 								</>

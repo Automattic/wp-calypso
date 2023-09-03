@@ -1,5 +1,5 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+// import { recordTracksEvent } from '@automattic/calypso-analytics';
+// import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -16,32 +16,32 @@ const REDIRECT_CALYPSO_FREE = 'calypso-free-stats-purchase-summary-screen-notice
 const REDIRECT_JETPACK_PERSONAL = 'jetpack-paid-stats-purchase-summary-screen-notice';
 const REDIRECT_CALYPSO_PERSONAL = 'calypso-paid-stats-purchase-summary-screen-notice';
 
-const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
-	event.preventDefault();
+// const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
+// 	event.preventDefault();
 
-	isOdysseyStats
-		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
-		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
+// 	isOdysseyStats
+// 		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
+// 		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
 
-	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
-};
+// 	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+// };
 
-const getStatsPurchaseURL = ( siteId, isOdysseyStats, redirectFromFreePage ) => {
-	let from;
+// const getStatsPurchaseURL = ( siteId, isOdysseyStats, redirectFromFreePage ) => {
+// 	let from;
 
-	if ( redirectFromFreePage ) {
-		from = isOdysseyStats ? REDIRECT_JETPACK_FREE : REDIRECT_CALYPSO_FREE;
-	} else {
-		from = isOdysseyStats ? REDIRECT_JETPACK_PERSONAL : REDIRECT_CALYPSO_PERSONAL;
-	}
+// 	if ( redirectFromFreePage ) {
+// 		from = isOdysseyStats ? REDIRECT_JETPACK_FREE : REDIRECT_CALYPSO_FREE;
+// 	} else {
+// 		from = isOdysseyStats ? REDIRECT_JETPACK_PERSONAL : REDIRECT_CALYPSO_PERSONAL;
+// 	}
 
-	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }`;
+// 	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }`;
 
-	if ( ! isOdysseyStats ) {
-		return purchasePath;
-	}
-	return `https://wordpress.com${ purchasePath }`;
-};
+// 	if ( ! isOdysseyStats ) {
+// 		return purchasePath;
+// 	}
+// 	return `https://wordpress.com${ purchasePath }`;
+// };
 
 const StatsCommercialOwned = ( { siteSlug } ) => {
 	const translate = useTranslate();
@@ -71,9 +71,9 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 	);
 };
 
-const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
+const StatsPWYWOwnedNotice = ( { siteSlug } ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	// const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const handleClick = () => {
 		if ( ! siteSlug ) {
@@ -96,7 +96,7 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button variant="primary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
-			<Button
+			{ /* <Button
 				variant="primary"
 				onClick={ ( e ) =>
 					handleUpgradeClick(
@@ -106,15 +106,15 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 					)
 				}
 			>
-				{ translate( 'Consider upgrading' ) }
-			</Button>
+				{ translate( 'Upgrade my Stats' ) }
+			</Button> */ }
 		</StatsSingleItemPagePurchaseFrame>
 	);
 };
 
-const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
+const StatsFreeOwnedNotice = ( { siteSlug } ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	// const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const handleClick = () => {
 		if ( ! siteSlug ) {
@@ -137,8 +137,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 			<Button variant="primary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
-
-			<Button
+			{ /* <Button
 				variant="primary"
 				onClick={ ( e ) =>
 					handleUpgradeClick(
@@ -148,8 +147,8 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 					)
 				}
 			>
-				{ translate( 'Consider upgrading' ) }
-			</Button>
+				{ translate( 'Upgrade my Stats' ) }
+			</Button> */ }
 		</StatsSingleItemPagePurchaseFrame>
 	);
 };
@@ -172,8 +171,12 @@ const StatsPurchaseNoticePage = ( {
 	return (
 		<div className="stats-purchase-page__notice">
 			{ isCommercialOwned && <StatsPurchaseNotice siteSlug={ siteSlug } /> }
-			{ isPWYWOwned && <StatsPWYWOwnedNotice siteId={ siteId } siteSlug={ siteSlug } /> }
-			{ isFreeOwned && <StatsFreeOwnedNotice siteId={ siteId } siteSlug={ siteSlug } /> }
+			{ isPWYWOwned && ! isCommercialOwned && (
+				<StatsPWYWOwnedNotice siteId={ siteId } siteSlug={ siteSlug } />
+			) }
+			{ isFreeOwned && ! isPWYWOwned && ! isCommercialOwned && (
+				<StatsFreeOwnedNotice siteId={ siteId } siteSlug={ siteSlug } />
+			) }
 		</div>
 	);
 };
