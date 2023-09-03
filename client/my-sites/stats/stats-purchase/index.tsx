@@ -103,7 +103,7 @@ const StatsPurchasePage = ( {
 				from={ query.from ?? '' }
 			/>
 			<div className="stats">
-				{ /* Only query site purchases on Calypso via existing data component */ }
+				{ /* The component is replace on build for Odyssey to query from Jetpack */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
 				{ isLoading && (
