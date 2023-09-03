@@ -48,8 +48,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const dispatch = useDispatch();
 
 	// find out if a site is commerical or not. handle potential null value as a false
-	const isCommercial = !! useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'is_commercial' )
+	const isCommercial = useSelector(
+		( state ) => !! getSiteOption( state, siteId, 'is_commercial' )
 	);
 
 	// Clear loaded flag when switching sites on Calypso.
