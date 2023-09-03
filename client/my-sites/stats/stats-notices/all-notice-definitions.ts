@@ -56,14 +56,17 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			const showUpgradeNoticeForJetpackNotAtomic =
 				config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
 
-			return !! (
-				( showUpgradeNoticeOnOdyssey ||
-					showUpgradeNoticeForJetpackNotAtomic ||
-					showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats &&
-				// Show the notice only if the site is commercial.
-				isCommercial
+			return (
+				config.isEnabled( 'stats/type-detection' ) &&
+				!! (
+					( showUpgradeNoticeOnOdyssey ||
+						showUpgradeNoticeForJetpackNotAtomic ||
+						showUpgradeNoticeForWpcomSites ) &&
+					// Show the notice if the site has not purchased the paid stats product.
+					! hasPaidStats &&
+					// Show the notice only if the site is commercial.
+					isCommercial
+				)
 			);
 		},
 		disabled: false,
@@ -102,7 +105,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				// Show the notice if the site has not purchased the paid stats product.
 				! hasPaidStats &&
 				// Show the notice if the site is not commercial.
-				! isCommercial
+				config.isEnabled( 'stats/type-detection' ) &&
+				( ! isCommercial || ! config.isEnabled( 'stats/type-detection' ) )
 			);
 		},
 		disabled: false,
