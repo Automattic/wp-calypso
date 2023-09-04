@@ -5,7 +5,7 @@ import { DomainsTableToolbar } from './domains-table-toolbar';
 
 import './style.scss';
 
-export function DomainsTable( props: DomainsTableProps ) {
+export function DomainsTable( props: Omit< DomainsTableProps, 'children' > ) {
 	return (
 		<InternalDomainsTable { ...props }>
 			<DomainsTableToolbar />
