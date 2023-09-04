@@ -7,7 +7,7 @@ import wpcom from 'calypso/lib/wp';
 import {
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
-	PURCHASES_USER_FETCH_FAILED,
+	PURCHASES_SITE_FETCH_FAILED,
 } from 'calypso/state/action-types';
 import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import type { RawPurchase } from 'calypso/lib/purchases/types';
@@ -44,7 +44,7 @@ const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
 			.catch( ( error: Error ) => {
 				// Dispatch to the Purchases reducer for error status
 				reduxDispatch( {
-					type: PURCHASES_USER_FETCH_FAILED,
+					type: PURCHASES_SITE_FETCH_FAILED,
 					error: error.message,
 				} );
 			} );
@@ -53,5 +53,6 @@ const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
 
 export default function OdysseyQuerySitePurchases( siteId: number | null ) {
 	useOdysseyQuerySitePurchases( siteId );
+
 	return null;
 }
