@@ -187,6 +187,8 @@ const designFirst: Flow = {
 					return navigate( 'processing' );
 				case 'site-launch':
 					return navigate( 'processing' );
+				case 'celebration-step':
+					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		}
 		return { submit };

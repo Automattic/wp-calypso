@@ -19,7 +19,7 @@ import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import {

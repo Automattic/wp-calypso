@@ -317,33 +317,6 @@ test( 'bulk actions controls appear when a domain is selected', async () => {
 	expect( screen.queryByRole( 'button', { name: 'Auto-renew settings' } ) ).not.toBeInTheDocument();
 } );
 
-test( 'Owner column is rendered when domains has owner', async () => {
-	const [ primaryPartial, primaryFull ] = testDomain( {
-		domain: 'primary-domain.blog',
-		blog_id: 123,
-		primary_domain: true,
-		owner: 'owner',
-	} );
-
-	const fetchSiteDomains = jest.fn().mockImplementation( () =>
-		Promise.resolve( {
-			domains: [ primaryFull ],
-		} )
-	);
-
-	render(
-		<DomainsTable
-			domains={ [ primaryPartial ] }
-			isAllSitesView
-			fetchSiteDomains={ fetchSiteDomains }
-		/>
-	);
-
-	await waitFor( () => {
-		expect( screen.queryByText( 'Owner' ) ).toBeInTheDocument();
-	} );
-} );
-
 test( 'Owner column is rendered when domains has owner that is not the currently logged in user', async () => {
 	const [ primaryPartial, primaryFull ] = testDomain( {
 		domain: 'primary-domain.blog',
@@ -388,6 +361,40 @@ test( 'Owner column is not rendered when domains do not have an owner', async ()
 	render(
 		<DomainsTable
 			domains={ [ primaryPartial ] }
+			isAllSitesView
+			fetchSiteDomains={ fetchSiteDomains }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( screen.queryByText( 'Owner' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+test( 'Owner column is not rendered when all domains have the same owner', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const [ notPrimaryPartial, notPrimaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 124,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull, notPrimaryFull ],
+		} )
+	);
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial, notPrimaryPartial ] }
 			isAllSitesView
 			fetchSiteDomains={ fetchSiteDomains }
 		/>

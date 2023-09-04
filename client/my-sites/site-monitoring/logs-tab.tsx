@@ -139,7 +139,6 @@ export const LogsTab = ( {
 				logs={ data?.logs }
 				isLoading={ isFetching }
 				headerTitles={ headerTitles }
-				currentPageIndex={ currentPageIndex }
 				logType={ logType }
 			/>
 			{ paginationText && (

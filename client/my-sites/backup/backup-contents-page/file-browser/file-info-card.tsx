@@ -1,11 +1,15 @@
+import config from '@automattic/calypso-config';
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { backupGranularRestorePath } from '../../paths';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
 import { onPreparingDownloadError, onProcessingDownloadError } from './notices';
@@ -19,6 +23,7 @@ interface FileInfoCardProps {
 	item: FileBrowserItem;
 	rewindId: number;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
+	path: string;
 }
 
 const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
@@ -26,6 +31,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	item,
 	rewindId,
 	parentItem,
+	path,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -41,6 +47,8 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		item.manifestPath ?? '',
 		item.extensionType ?? ''
 	);
+
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload( siteId );
 
@@ -161,6 +169,16 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
 	}, [ dispatch, fileInfo, item.period, prepareDownload, siteId ] );
 
+	const restoreFile = useCallback( () => {
+		// Reset checklist
+		dispatch( setNodeCheckState( siteId, '/', 'unchecked' ) );
+
+		// Mark this file as selected
+		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
+
+		// @TODO: record a Tracks event for this action
+	}, [ dispatch, path, siteId ] );
+
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
 			setIsProcessingDownload( true );
@@ -250,6 +268,8 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return downloadFileButton;
 	};
 
+	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
+
 	return (
 		<div className="file-card">
 			<div className="file-card__details">
@@ -298,7 +318,22 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				) }
 			</div>
 
-			{ showActions && <div className="file-card__actions">{ renderDownloadButton() }</div> }
+			{ showActions && (
+				<>
+					<div className="file-card__actions">
+						{ renderDownloadButton() }
+						{ isGranularEnabled && item.type !== 'wordpress' && (
+							<Button
+								className="file-card__action"
+								href={ backupGranularRestorePath( siteSlug, rewindId as unknown as string ) }
+								onClick={ restoreFile }
+							>
+								{ translate( 'Restore' ) }
+							</Button>
+						) }
+					</div>
+				</>
+			) }
 
 			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
 				<FilePreview item={ item } siteId={ siteId } />

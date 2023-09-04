@@ -3,7 +3,7 @@ import { Tooltip, __unstableCompositeItem as CompositeItem } from '@wordpress/co
 import classnames from 'classnames';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { encodePatternId } from './utils';
+import { encodePatternId, isPriorityPattern } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
 
@@ -25,10 +25,12 @@ interface PatternListRendererProps {
 	activeClassName: string;
 	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
+	isShowMorePatterns?: boolean;
 }
 
+const DEFAULT_VIEWPORT_WIDTH = 1060;
+const DEFAULT_VIEWPORT_HEIGHT = 500;
 const PLACEHOLDER_HEIGHT = 100;
-const MIN_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( {
 	pattern,
@@ -77,9 +79,9 @@ const PatternListItem = ( {
 					<PatternRenderer
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }
-						viewportWidth={ 1060 }
+						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
+						viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 						minHeight={ PLACEHOLDER_HEIGHT }
-						minHeightFor100vh={ MIN_HEIGHT_FOR_100VH }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
@@ -97,10 +99,14 @@ const PatternListRenderer = ( {
 	activeClassName,
 	composite,
 	onSelect,
+	isShowMorePatterns,
 }: PatternListRendererProps ) => {
+	const filterPriorityPatterns = ( pattern: Pattern ) =>
+		isShowMorePatterns || isPriorityPattern( pattern );
+
 	return (
 		<>
-			{ patterns?.map( ( pattern, index ) => (
+			{ patterns?.filter( filterPriorityPatterns ).map( ( pattern, index ) => (
 				<PatternListItem
 					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
