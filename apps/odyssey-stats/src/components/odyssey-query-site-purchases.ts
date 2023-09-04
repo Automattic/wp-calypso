@@ -1,5 +1,5 @@
 /**
- * This is a Odyssey implementationi of 'calypso/components/data/query-site-purchases'.
+ * This is a Odyssey implementation of 'calypso/components/data/query-site-purchases'.
  */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
