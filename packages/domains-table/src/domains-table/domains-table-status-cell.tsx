@@ -1,4 +1,6 @@
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { StatusPopover } from '../status-popover';
 import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
 
@@ -18,7 +20,7 @@ export const DomainsTableStatusCell = ( {
 		return null;
 	}
 	const currentRoute = window.location.pathname;
-	const { status, statusClass } = resolveDomainStatus( currentDomainData, {
+	const { status, noticeText, statusClass } = resolveDomainStatus( currentDomainData, {
 		siteSlug: siteSlug,
 		translate,
 		getMappingErrors: true,
@@ -30,8 +32,18 @@ export const DomainsTableStatusCell = ( {
 	} );
 
 	return (
-		<div className="domain-row__status-cell">
-			<span className={ `domain-row__${ statusClass }-dot` }></span> { status }
+		<div
+			className={ classNames(
+				'domains-table-row__status-cell',
+				`domains-table-row__status-cell__${ statusClass }`
+			) }
+		>
+			{ status }
+			{ noticeText && (
+				<StatusPopover className={ `domains-table-row__status-cell__${ statusClass }` }>
+					{ noticeText }
+				</StatusPopover>
+			) }
 		</div>
 	);
 };

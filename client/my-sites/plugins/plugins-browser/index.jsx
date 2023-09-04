@@ -17,7 +17,7 @@ import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -86,9 +86,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const isPossibleJetpackConnectionProblem = useSelector( ( state ) =>
-		isJetpackConnectionProblem( state, siteId )
-	);
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( siteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 

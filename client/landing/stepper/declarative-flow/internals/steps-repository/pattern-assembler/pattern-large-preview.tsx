@@ -81,13 +81,15 @@ const PatternLargePreview = ( {
 					`pattern-large-preview__pattern-${ type }`
 				) }
 			>
-				<PatternRenderer
-					key={ device }
-					patternId={ encodePatternId( pattern.ID ) }
-					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
-					// Disable default max-height
-					maxHeight="none"
-				/>
+				{ viewportHeight && (
+					<PatternRenderer
+						key={ device }
+						patternId={ encodePatternId( pattern.ID ) }
+						viewportHeight={ viewportHeight }
+						// Disable default max-height
+						maxHeight="none"
+					/>
+				) }
 				<PatternActionBar
 					patternType={ type }
 					category={ pattern.category }

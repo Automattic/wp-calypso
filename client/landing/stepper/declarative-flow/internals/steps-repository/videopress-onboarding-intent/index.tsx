@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import BlogIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-blog.png';
 import ChannelIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-channel.png';
 import JetpackIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-jetpack.png';
@@ -18,6 +18,7 @@ import VideoPressOnboardingIntentItem from './intent-item';
 import VideoPressOnboardingIntentModalBlog from './videopress-onboarding-intent-modal-blog';
 import VideoPressOnboardingIntentModalChannel from './videopress-onboarding-intent-modal-channel';
 import VideoPressOnboardingIntentModalJetpack from './videopress-onboarding-intent-modal-jetpack';
+import VideoPressOnboardingIntentModalOther from './videopress-onboarding-intent-modal-other';
 import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
 import VideoPressOnboardingIntentModalVideoUpload from './videopress-onboarding-intent-modal-video-upload';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -70,11 +71,26 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 
 	const onOtherIntentClicked = () => {
 		sendTracksIntent( 'other' );
+		setModal( <VideoPressOnboardingIntentModalOther /> );
 	};
 
 	const modalClasses = classNames( 'intro__more-modal videopress-intro-modal', {
 		show: modal ? true : false,
 	} );
+
+	useEffect( () => {
+		const html = document.getElementsByTagName( 'html' )[ 0 ];
+
+		if ( modal ) {
+			html.classList.add( 'modal-showing' );
+		} else {
+			html.classList.remove( 'modal-showing' );
+		}
+
+		return () => {
+			html.classList.remove( 'modal-showing' );
+		};
+	}, [ modal ] );
 
 	const stepContent = (
 		<>
@@ -123,10 +139,15 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 				/>
 			</div>
 
-			<div className={ modalClasses }>
+			<div className={ modalClasses } aria-modal="true">
 				<div className="intro__more-modal-container">
 					<div className="intro__more-modal-header">
-						<Button plain onClick={ () => setModal( null ) }>
+						<Button
+							id="close-modal"
+							plain
+							onClick={ () => setModal( null ) }
+							aria-label={ __( 'Close' ) }
+						>
 							<CloseIcon />
 						</Button>
 					</div>
@@ -135,6 +156,16 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			</div>
 		</>
 	);
+
+	useEffect( () => {
+		const onCloseKeyPressed = ( event: KeyboardEvent ) => {
+			if ( 'Escape' === event.key ) {
+				setModal( null );
+			}
+		};
+		window.addEventListener( 'keydown', onCloseKeyPressed, false );
+		return () => window.removeEventListener( 'keydown', onCloseKeyPressed );
+	}, [] );
 
 	return (
 		<StepContainer

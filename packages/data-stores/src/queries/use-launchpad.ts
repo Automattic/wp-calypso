@@ -31,9 +31,11 @@ interface ChecklistStatuses {
 	domain_upsell_deferred?: boolean;
 }
 
+type LaunchpadScreen = 'full' | 'off' | 'skipped' | 'minimized';
+
 interface LaunchpadResponse {
 	site_intent?: string | null;
-	launchpad_screen?: string | boolean | null | undefined;
+	launchpad_screen?: LaunchpadScreen | boolean | null | undefined;
 	checklist?: Task[] | null;
 	checklist_statuses?: ChecklistStatuses;
 	is_enabled: boolean;

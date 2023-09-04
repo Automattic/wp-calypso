@@ -18,7 +18,6 @@ import { Pattern, Category } from './types';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
-	onContinueClick: ( callback?: () => void ) => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
@@ -27,6 +26,7 @@ interface Props {
 	hasFooter: boolean;
 	categories: Category[];
 	patternsMapByCategory: { [ key: string ]: Pattern[] };
+	onContinueClick: () => void;
 }
 
 const ScreenMain = ( {
@@ -39,6 +39,7 @@ const ScreenMain = ( {
 	hasFooter,
 	categories,
 	patternsMapByCategory,
+	onContinueClick,
 }: Props ) => {
 	const translate = useTranslate();
 	const { title } = useScreen( 'main' );
@@ -54,14 +55,6 @@ const ScreenMain = ( {
 		isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
 			? translate( 'Pick your style' )
 			: translate( 'Save and continue' );
-
-	const handleClick = () => {
-		goTo( NAVIGATOR_PATHS.STYLES_COLORS );
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CONTINUE_CLICK, {
-			screen_from: 'main',
-			screen_to: 'styles',
-		} );
-	};
 
 	const handleNavigatorItemSelect = ( type: string, category: string ) => {
 		const nextPath =
@@ -139,7 +132,7 @@ const ScreenMain = ( {
 					className="pattern-assembler__button"
 					disabled={ isButtonDisabled }
 					showTooltip={ isButtonDisabled }
-					onClick={ handleClick }
+					onClick={ onContinueClick }
 					label={
 						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : buttonText
 					}

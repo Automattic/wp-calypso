@@ -27,7 +27,7 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
@@ -182,13 +182,13 @@ const Home = ( {
 				<div className="customer-home__loading-placeholder"></div>
 			) : (
 				<>
-					<Primary cards={ layout?.primary } />
+					<Primary cards={ layout.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout?.secondary } siteId={ siteId } />
+							<Secondary cards={ layout.secondary } siteId={ siteId } />
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
-							<Tertiary cards={ layout?.tertiary } />
+							<Tertiary cards={ layout.tertiary } />
 						</div>
 					</div>
 				</>
@@ -229,7 +229,6 @@ const mapStateToProps = ( state ) => {
 		sitePlan: getSitePlan( state, siteId ),
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:
@@ -266,4 +265,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default connectHome( withTrackingTool( 'HotJar' )( Home ) );
+export default connectHome( withJetpackConnectionProblem( withTrackingTool( 'HotJar' )( Home ) ) );

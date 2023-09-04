@@ -4,6 +4,7 @@
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import siteSettings from 'calypso/state/site-settings/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -18,7 +19,9 @@ test( `each row is expandable independently`, async () => {
 		{ message: 'two', date: '2023-03-24T04:36:04.123Z' },
 	];
 
-	const { container } = render( <SiteLogsTable logs={ logs } isLoading={ false } /> );
+	const { container } = render(
+		<SiteLogsTable logs={ logs } isLoading={ false } headerTitles={ [] } />
+	);
 
 	const expandButtons = await waitFor( () =>
 		screen.getAllByRole( 'button', { expanded: false, name: 'Expand row' } )
@@ -73,13 +76,15 @@ test( `rows keep their expanded state after logs are updated`, async () => {
 		{ message: 'two', date: '2023-03-24T04:36:04.238Z' },
 	];
 
-	const { rerender } = render( <SiteLogsTable logs={ logs } isLoading={ false } /> );
+	const { rerender } = render(
+		<SiteLogsTable logs={ logs } isLoading={ false } headerTitles={ [] } />
+	);
 
 	await userEvent.click( screen.getAllByRole( 'button', { name: 'Expand row' } )[ 0 ] );
 
 	const updatedLogs = [ { message: 'latest', date: '2023-03-24T04:37:00.000Z' }, ...logs ];
 
-	rerender( <SiteLogsTable logs={ updatedLogs } isLoading={ false } /> );
+	rerender( <SiteLogsTable logs={ updatedLogs } isLoading={ false } headerTitles={ [] } /> );
 
 	const expandButtons = await waitFor( () =>
 		screen.getAllByRole( 'button', { name: 'Expand row' } )
