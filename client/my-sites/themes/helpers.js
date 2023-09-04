@@ -70,14 +70,14 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 	return path;
 }
 
-export function addStyleVariation( options, styleVariation, isLoggedIn ) {
+export function addOptionsToGetUrl( options, { isLoggedIn, tabFilter, styleVariation } ) {
 	return mapValues( options, ( option ) =>
 		Object.assign( {}, option, {
 			...( option.getUrl && {
 				getUrl: ( t ) =>
 					isLoggedIn
-						? option.getUrl( t, styleVariation )
-						: option.getUrl( t, null, styleVariation ),
+						? option.getUrl( t, { tabFilter, styleVariation } )
+						: option.getUrl( t, null, { tabFilter, styleVariation } ),
 			} ),
 		} )
 	);

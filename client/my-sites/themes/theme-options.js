@@ -52,11 +52,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme',
 		} ),
-		getUrl: ( state, themeId, siteId, styleVariation ) => {
+		getUrl: ( state, themeId, siteId, options ) => {
 			const slug = getSiteSlug( state, siteId );
 			const redirectTo = encodeURIComponent(
 				addQueryArgs( `/theme/${ themeId }/${ slug }`, {
-					style_variation: styleVariation?.slug,
+					style_variation: options?.styleVariation?.slug,
 				} )
 			);
 
@@ -106,10 +106,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
+		getUrl: ( state, themeId, siteId, options ) =>
 			appendStyleVariationToThemesPath(
 				getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
-				styleVariation
+				options?.styleVariation
 			),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isJetpackSite( state, siteId ) ||
@@ -133,7 +133,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: ( state, themeId, siteId, styleVariation ) => {
+		getUrl: ( state, themeId, siteId, options ) => {
 			const { origin = 'https://wordpress.com' } =
 				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
@@ -142,7 +142,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				addQueryArgs( `${ origin }/setup/site-setup/designSetup`, {
 					siteSlug: slug,
 					theme: themeId,
-					style_variation: styleVariation?.slug,
+					style_variation: options?.styleVariation?.slug,
 				} )
 			);
 
@@ -211,9 +211,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 
 	const customize = {
 		icon: 'customize',
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
+		getUrl: ( state, themeId, siteId, options ) =>
 			addQueryArgs( getCustomizeUrl( state, themeId, siteId, isFSEActive ), {
-				style_variation: styleVariation?.slug,
+				style_variation: options?.styleVariation?.slug,
 			} ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
@@ -290,9 +290,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	const signup = {
 		label: signupLabel,
 		extendedLabel: signupLabel,
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
-			addQueryArgs( getThemeSignupUrl( state, themeId ), {
-				style_variation: styleVariation?.slug,
+		getUrl: ( state, themeId, siteId, options ) =>
+			getThemeSignupUrl( state, themeId, {
+				category: options?.tabFilter,
+				styleVariationSlug: options?.styleVariation?.slug,
 			} ),
 		hideForTheme: ( state ) => isUserLoggedIn( state ),
 	};
@@ -306,10 +307,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for displaying the theme info sheet',
 		} ),
 		icon: 'info',
-		getUrl: ( state, themeId, siteId, styleVariation ) =>
+		getUrl: ( state, themeId, siteId, options ) =>
 			appendStyleVariationToThemesPath(
 				getThemeDetailsUrl( state, themeId, siteId ),
-				styleVariation
+				options?.styleVariation
 			),
 	};
 
@@ -340,12 +341,12 @@ const connectOptionsHoc = connect(
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {
-			mapGetUrl = ( getUrl ) => ( t, styleVariation ) =>
-				localizeThemesPath( getUrl( state, t, siteId, styleVariation ), locale, isLoggedOut );
+			mapGetUrl = ( getUrl ) => ( t, options ) =>
+				localizeThemesPath( getUrl( state, t, siteId, options ), locale, isLoggedOut );
 			mapHideForTheme = ( hideForTheme ) => ( t ) => hideForTheme( state, t, siteId, origin );
 		} else {
-			mapGetUrl = ( getUrl ) => ( t, s, styleVariation ) =>
-				localizeThemesPath( getUrl( state, t, s, styleVariation ), locale, isLoggedOut );
+			mapGetUrl = ( getUrl ) => ( t, s, options ) =>
+				localizeThemesPath( getUrl( state, t, s, options ), locale, isLoggedOut );
 			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 

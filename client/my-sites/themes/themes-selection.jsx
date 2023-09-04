@@ -29,7 +29,7 @@ import {
 	getThemeType,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
-import { addStyleVariation, trackClick, interlaceThemes } from './helpers';
+import { addOptionsToGetUrl, trackClick, interlaceThemes } from './helpers';
 import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
 
@@ -233,7 +233,11 @@ class ThemesSelection extends Component {
 		};
 
 		if ( options ) {
-			options = addStyleVariation( options, styleVariation, this.props.isLoggedIn );
+			options = addOptionsToGetUrl( options, {
+				isLoggedIn: this.props.isLoggedIn,
+				tabFilter: this.props.tabFilter,
+				styleVariation,
+			} );
 			if ( options.activate ) {
 				options.activate.action = wrappedActivateAction( options.activate.action );
 			}
