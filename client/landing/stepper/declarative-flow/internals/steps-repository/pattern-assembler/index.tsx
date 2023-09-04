@@ -568,6 +568,7 @@ const PatternAssembler = ( {
 						selectedFooter={ footer }
 						patternsMapByCategory={ patternsMapByCategory }
 						onSelect={ onSelect }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
 				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_COLORS }>
