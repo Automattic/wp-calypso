@@ -25,6 +25,10 @@ declare const browser: Browser;
 /**
  * Walks through the Advertising/Blaze flow until immediately prior to the checkout.
  *
+ * The actual checkout is outside the scope of this spec.
+ *
+ * @see pdWQjU-rL-p2#comment-575.
+ *
  * Keywords: Jetpack, Blaze, Advertising
  */
 skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
