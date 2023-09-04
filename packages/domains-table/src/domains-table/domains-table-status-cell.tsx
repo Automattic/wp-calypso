@@ -1,6 +1,5 @@
 import { Spinner } from '@automattic/components';
 import { DomainUpdateStatus } from '@automattic/data-stores';
-import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { StatusPopover } from '../status-popover';
@@ -36,12 +35,12 @@ export const DomainsTableStatusCell = ( {
 			domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
 	} );
 
-	const getActionName = ( action: string ) => {
-		switch ( action ) {
+	const getActionName = ( status: DomainUpdateStatus ) => {
+		switch ( status.action ) {
 			case 'set_auto_renew':
-				return __( 'Change auto-renew mode' );
+				return translate( 'Change auto-renew mode' );
 			case 'update_contact_details':
-				return __( 'Update contact details' );
+				return translate( 'Update contact details' );
 			default:
 				throw new Error( 'Unknown action: ' + action );
 		}
@@ -58,11 +57,11 @@ export const DomainsTableStatusCell = ( {
 			{ pendingUpdates.length > 0 && (
 				<StatusPopover target={ <Spinner size={ 16 } /> }>
 					<div className="domains-bulk-update-status-popover">
-						<span> { __( 'Pending updates' ) }</span>
+						<span> { translate( 'Pending updates' ) }</span>
 						{ pendingUpdates.map( ( update ) => (
 							<div key={ update.created_at } className="domains-bulk-update-status-popover-item">
 								<span className="domains-bulk-update-status-popover-item-indicator__pending" />
-								<span>{ getActionName( update.action ) }</span>
+								<span>{ getActionName( update ) }</span>
 							</div>
 						) ) }
 					</div>

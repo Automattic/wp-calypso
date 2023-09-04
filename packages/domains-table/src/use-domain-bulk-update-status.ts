@@ -11,7 +11,7 @@ const defaultResult = {
 	domainResults: new Map< string, DomainUpdateStatus[] >(),
 };
 
-export const useDomainUpdateStatus = () => {
+export const useDomainBulkUpdateStatus = () => {
 	const queryClient = useQueryClient();
 
 	const [ statusUpdateInterval, setStatusUpdateInterval ] = useState(

@@ -60,7 +60,6 @@ export function DomainsTableRow( {
 			enabled: inView,
 			...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
 			select: ( state ) => state.domains.map( createSiteDomainObject ),
-			pwd,
 		}
 	);
 

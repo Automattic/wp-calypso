@@ -21,6 +21,16 @@ export enum BulkDomainUpdateStatusRetryInterval {
 	Disabled = -1,
 }
 
+export interface JobStatus {
+	id: string;
+	action: 'set_auto_renew' | 'update_contact_info';
+	created_at: number;
+	success: string[];
+	failed: string[];
+	pending: string[];
+	complete: boolean;
+}
+
 export interface DomainUpdateStatus {
 	status: '' | 'success' | 'failed';
 	action: 'set_auto_renew' | 'update_contact_info';
@@ -40,7 +50,7 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 			} ),
 		select: ( data ) => {
 			// get top-level info about recent jobs
-			const jobs = Object.keys( data ).map( ( jobId ) => {
+			const jobs: JobStatus[] = Object.keys( data ).map( ( jobId ) => {
 				const job = data[ jobId ];
 				const success: string[] = [];
 				const failed: string[] = [];
@@ -71,7 +81,7 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 			const domainResults = new Map< string, DomainUpdateStatus[] >();
 
 			Object.keys( data ).forEach( ( jobId ) => {
-				// only compute domain-level results for jobs that
+				// only create domain-level results for jobs that
 				// are still running
 				if ( ! jobs.find( ( job ) => job.id === jobId )?.complete ) {
 					const entry = data[ jobId ] as BulkDomainUpdateStatus;

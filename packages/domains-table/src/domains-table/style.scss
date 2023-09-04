@@ -95,42 +95,6 @@
 	}
 }
 
-.domains-bulk-update-status-popover {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	color: var(--studio-gray-50);
-}
-
-.domains-bulk-update-status-popover-item {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-	color: var(--studio-gray-100);
-}
-
-.domains-bulk-update-status-popover-item-indicator {
-	border-radius: 50%;
-	height: 8px;
-	width: 8px;
-	min-height: 8px;
-	min-width: 8px;
-	flex-shrink: 0;
-
-	&__pending {
-		@extend .domains-bulk-update-status-popover-item-indicator;
-		background-color: var(--studio-orange-40);
-	}
-	&__failed {
-		@extend .domains-bulk-update-status-popover-item-indicator;
-		background-color: var(--studio-red-50);
-	}
-	&__complete {
-		@extend .domains-bulk-update-status-popover-item-indicator;
-		background-color: var(--studio-green-40);
-	}
-}
-
 .domains-table-bulk-update-jobs-notifications {
 	position: relative;
 	svg {
@@ -138,7 +102,7 @@
 		cursor: pointer;
 	}
 
-	&__bubble {
+	&-bubble {
 		position: absolute;
 		top: -12px;
 		right: -14px;
@@ -154,5 +118,80 @@
 		margin: 0 4px;
 		line-height: 20px;
 		border: 2px solid #fff;
+	}
+
+	&-tooltip {
+		outline: none;
+
+		.popover__inner {
+			color: var(--color-neutral-50);
+			font-size: $font-body-small;
+			max-width: 300px;
+			padding: 16px;
+			text-align: left;
+		}
+	}
+}
+
+.domains-bulk-update-status-popover {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	color: var(--studio-gray-50);
+
+	&-item {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		color: var(--studio-gray-100);
+	}
+
+	&-item-indicator {
+		border-radius: 50%;
+		height: 8px;
+		width: 8px;
+		min-height: 8px;
+		min-width: 8px;
+		flex-shrink: 0;
+
+		&__pending {
+			@extend .domains-bulk-update-status-popover-item-indicator;
+			background-color: var(--studio-orange-40);
+		}
+		&__failed {
+			@extend .domains-bulk-update-status-popover-item-indicator;
+			background-color: var(--studio-red-50);
+		}
+		&__complete {
+			@extend .domains-bulk-update-status-popover-item-indicator;
+			background-color: var(--studio-green-40);
+		}
+	}
+
+	&-divider {
+		height: 1px;
+		min-height: 1px;
+		border-top: 1px solid var(--studio-gray-10-rgb);
+		margin-top: 8px;
+	}
+
+	&-domain-results {
+		display: flex;
+		flex-direction: column;
+		max-height: 300px;
+		overflow-y: auto;
+		padding-left: 16px;
+		gap: 4px;
+		margin: 8px 0;
+
+		&-group {
+			display: flex;
+			gap: 8px;
+			align-items: center;
+
+			span {
+				font-size: smaller;
+			}
+		}
 	}
 }

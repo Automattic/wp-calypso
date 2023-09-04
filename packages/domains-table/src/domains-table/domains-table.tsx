@@ -22,7 +22,7 @@ import { DomainsTableFilter } from '../domains-table-filters/index';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
-import { useDomainUpdateStatus } from '../use-domain-update-status';
+import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 
@@ -117,7 +117,7 @@ export const DomainsTable = ( {
 
 	const { setAutoRenew } = useDomainsBulkActionsMutation();
 
-	const { jobs, domainResults, handleRestartDomainStatusPolling } = useDomainUpdateStatus();
+	const { jobs, domainResults, handleRestartDomainStatusPolling } = useDomainBulkUpdateStatus();
 
 	useLayoutEffect( () => {
 		if ( ! domains ) {
