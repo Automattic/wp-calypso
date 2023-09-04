@@ -20,6 +20,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const {
 		isMonthlyPlan,
 		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod },
+		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 
 	// We want the yearly-variant plan's price to be the raw price the user
@@ -30,6 +31,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const yearlyVariantPricing = helpers?.usePricingMetaForGridPlans( {
 		planSlugs: [ yearlyVariantPlanSlug ],
 		withoutProRatedCredits: true,
+		storageAddOns: storageAddOnsForPlan,
 	} )[ yearlyVariantPlanSlug ];
 
 	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {

@@ -20,7 +20,10 @@ import {
 	type PlanSlug,
 	type FeatureObject,
 	type StorageOption,
+	isBusinessPlan,
+	isEcommercePlan,
 } from '@automattic/calypso-products';
+import { AddOnMeta } from '@automattic/data-stores';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
 import type { PricedAPIPlan } from '@automattic/data-stores';
@@ -64,9 +67,11 @@ export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => 
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
+	storageAddOns,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan };
 
 // TODO clk: move to types. will consume plan properties
@@ -91,6 +96,7 @@ export type GridPlan = {
 	} | null;
 	highlightLabel?: React.ReactNode | null;
 	pricing: PricingMetaForGridPlan;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 };
 
 // TODO clk: move to plans data store
@@ -126,6 +132,7 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
+	storageAddOns: ( AddOnMeta | null )[];
 }
 
 const usePlanTypesWithIntent = ( {
@@ -222,6 +229,7 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
+	storageAddOns,
 }: Props ): Omit< GridPlan, 'features' >[] => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -254,8 +262,10 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
-
-	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
+	const pricingMeta = usePricingMetaForGridPlans( {
+		planSlugs: availablePlanSlugs,
+		storageAddOns,
+	} );
 
 	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
@@ -287,6 +297,9 @@ const useGridPlans = ( {
 						product_slug: planSlug,
 				  };
 
+		const storageAddOnsForPlan =
+			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
+
 		return {
 			planSlug,
 			isVisible: planSlugsForIntent.includes( planSlug ),
@@ -300,6 +313,7 @@ const useGridPlans = ( {
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
+			storageAddOnsForPlan,
 		};
 	} );
 };

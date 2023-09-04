@@ -9,6 +9,7 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: ( selector ) => selector(),
 } ) );
+jest.mock( '@wordpress/data' );
 jest.mock( 'calypso/state/plans/selectors', () => ( {
 	getPlanPrices: jest.fn(),
 } ) );
