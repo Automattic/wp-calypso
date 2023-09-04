@@ -38,24 +38,42 @@ export class AdvertisingPage {
 	}
 
 	/**
-	 * Clicks on a button with the accessible name matching the supplied parameter `name`.
+	 * Clicks on a button with the accessible name matching supplied parameter `name`,
+	 * narrowed down by either one of the following parameters.
 	 *
-	 * If the optional parameter `row` is specified, this method will look for a button
+	 * If the parameter `row` is specified, this method will look for a button
 	 * in a specific row. Rows are 0-indexed.
+	 *
+	 * Alternatively, if the parameter `postTitle` is defined, this method will
+	 * click on the button matching the accessible name found in a row with the matching
+	 * post title.
+	 *
+	 * If neither is defined, an error is thrown.
 	 *
 	 * @param {string} name Accessible name of the button.
 	 * @param param1 Keyed object parameter.
 	 * @param {number} [param1.row] Row number to look for the button. 0-indexed.
+	 * @param {string} [param1.postTitle] Post title to locate the button by.
+	 * @throws {Error} If neither `postTitle` or `row` is defined.
 	 */
-	async clickButton( name: string, { row }: { row?: number } = {} ) {
-		if ( row !== undefined ) {
+	async clickButtonByNameOnRow(
+		name: string,
+		{ row, postTitle }: { row?: number; postTitle?: string } = {}
+	) {
+		if ( row !== undefined && row >= 0 ) {
 			await this.page
 				.getByRole( 'row' )
 				.nth( row + 1 ) // The header row is counted as one row.
 				.getByRole( 'button', { name: name } )
 				.click();
+		} else if ( postTitle ) {
+			await this.page
+				.getByRole( 'row' )
+				.filter( { hasText: postTitle } )
+				.getByRole( 'button', { name: name } )
+				.click();
 		} else {
-			await this.page.getByRole( 'button', { name: name } ).click();
+			throw new Error( `Must pass in either row or postTitle.` );
 		}
 	}
 }

@@ -13,6 +13,8 @@ import {
 	TestAccount,
 	MediaHelper,
 	BlazeCampaignPage,
+	RestAPIClient,
+	PostResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
@@ -31,7 +33,9 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		const pageTitle = DataHelper.getRandomPhrase();
 		const snippet = Array( 5 ).fill( DataHelper.getRandomPhrase() ).toString();
 
+		let newPostDetails: PostResponse;
 		let page: Page;
+		let restAPIClient: RestAPIClient;
 		let testAccount: TestAccount;
 		let advertisingPage: AdvertisingPage;
 		let blazeCampaignPage: BlazeCampaignPage;
@@ -41,6 +45,17 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 
 			const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 			testAccount = new TestAccount( accountName );
+
+			// Createa a new test post before starting the test, to ensure at least one
+			// available post.
+			restAPIClient = new RestAPIClient( testAccount.credentials );
+			newPostDetails = await restAPIClient.createPost(
+				testAccount.credentials.testSites?.primary.id as number,
+				{
+					title: pageTitle,
+				}
+			);
+
 			await testAccount.authenticate( page );
 
 			advertisingPage = new AdvertisingPage( page );
@@ -56,7 +71,7 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		} );
 
 		it( 'Click on Promote for the first post', async function () {
-			await advertisingPage.clickButton( 'Promote', { row: 0 } );
+			await advertisingPage.clickButtonByNameOnRow( 'Promote', { postTitle: pageTitle } );
 		} );
 
 		it( 'Land in Blaze campaign landing page', async function () {
@@ -80,6 +95,13 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 
 		it( 'Validate preview', async function () {
 			await blazeCampaignPage.validatePreview( { title: pageTitle, snippet: snippet } );
+		} );
+
+		afterAll( async function () {
+			await restAPIClient.deletePost(
+				testAccount.credentials.testSites?.primary.id as number,
+				newPostDetails.ID
+			);
 		} );
 	}
 );
