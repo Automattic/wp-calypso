@@ -48,6 +48,7 @@ const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
 					error: error.message,
 				} );
 			} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId, reduxDispatch ] );
 };
 
