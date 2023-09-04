@@ -491,6 +491,20 @@ export const HelpCenterContactForm = () => {
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
 
+		 if ( experimentAssignment?.variationName === 'no_quick_response' ) {
+            if ( ! showingGPTResponse && ! showingSearchResults ) {
+                if ( mode === 'EMAIL' ) {
+                    return **__**( 'Email us', __i18n_text_domain__ );
+                }
+                if ( mode === 'CHAT' ) {
+                    return **__**( 'Chat with us', __i18n_text_domain__ );
+                }
+                if ( mode === 'FORUM' ) {
+                    return **__**( 'Submit', __i18n_text_domain__ );
+                }
+            }
+        }
+
 		if ( ! showingGPTResponse && ! showingSearchResults ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
