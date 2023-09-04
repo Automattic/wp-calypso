@@ -61,7 +61,7 @@ export const DomainsTableStatusCell = ( {
 						<span> { __( 'Pending updates' ) }</span>
 						{ pendingUpdates.map( ( update ) => (
 							<div key={ update.created_at } className="domains-bulk-update-status-popover-item">
-								<span className="domains-bulk-update-status-popover-item-indicator domains-bulk-update-status-popover-item-indicator__pending" />
+								<span className="domains-bulk-update-status-popover-item-indicator__pending" />
 								<span>{ getActionName( update.action ) }</span>
 							</div>
 						) ) }

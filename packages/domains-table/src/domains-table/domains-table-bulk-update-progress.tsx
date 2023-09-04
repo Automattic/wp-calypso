@@ -1,7 +1,8 @@
 import { Gridicon, Popover } from '@automattic/components';
-import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 
 interface DomainsTableBulkUpdateIndicatorProps {
 	jobs: any[];
@@ -10,7 +11,8 @@ interface DomainsTableBulkUpdateIndicatorProps {
 export const DomainsTableBulkUpdateIndicator = ( {
 	jobs,
 }: DomainsTableBulkUpdateIndicatorProps ) => {
-	const buttonRef = useRef< HTMLButtonElement | undefined >();
+	const translate = useTranslate();
+	const buttonRef = useRef< HTMLButtonElement >();
 	const [ showPopover, setShowPopover ] = useState( false );
 
 	if ( jobs.length === 0 ) {
@@ -18,16 +20,32 @@ export const DomainsTableBulkUpdateIndicator = ( {
 	}
 
 	const handleShowPopover = () => setShowPopover( true );
-	const handleHidePopover = () => setShowPopover( false );
+	const handleHidePopover = () => {
+		wpcomRequest< void >( {
+			path: '/domains/bulk-actions',
+			apiNamespace: 'wpcom/v2',
+			apiVersion: '2',
+			method: 'DELETE',
+		} );
+		setShowPopover( false );
+	};
 
-	const getActionName = ( action: string ) => {
-		switch ( action ) {
+	const getDescription = ( job: any ) => {
+		const { success, pending, failed } = job;
+		const totalComplete = success.length + failed.length;
+		const total = totalComplete + pending.length;
+		const progress = `${ totalComplete }/${ total }`;
+		const args = {
+			progress,
+		};
+
+		switch ( job.action ) {
 			case 'set_auto_renew':
-				return __( 'Change auto-renew mode' );
+				return translate( 'Change auto-renew mode %(progress)s', { args } );
 			case 'update_contact_details':
-				return __( 'UpdØate contact details' );
+				return translate( 'Update contact details %(progress)s', { args } );
 			default:
-				throw new Error( 'Unknown action: ' + action );
+				throw new Error( 'Unknown action: ' + job.action );
 		}
 	};
 
@@ -60,15 +78,15 @@ export const DomainsTableBulkUpdateIndicator = ( {
 					onClose={ handleHidePopover }
 				>
 					<div className="domains-bulk-update-status-popover">
-						<span> { __( 'Background tasks' ) }</span>
+						<span> { translate( 'Background tasks' ) }</span>
 						{ jobs.map( ( job ) => (
 							<div key={ job.created_at } className="domains-bulk-update-status-popover-item">
 								<span
-									className={ `domains-bulk-update-status-popover-item-indicator  domains-bulk-update-status-popover-item-indicator__${ getStatus(
+									className={ `domains-bulk-update-status-popover-item-indicator__${ getStatus(
 										job
 									) }` }
 								/>
-								<span>{ getActionName( job.action ) }</span>
+								<span>{ getDescription( job ) }</span>
 							</div>
 						) ) }
 					</div>

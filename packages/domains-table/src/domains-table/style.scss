@@ -118,12 +118,15 @@
 	flex-shrink: 0;
 
 	&__pending {
+		@extend .domains-bulk-update-status-popover-item-indicator;
 		background-color: var(--studio-orange-40);
 	}
 	&__failed {
+		@extend .domains-bulk-update-status-popover-item-indicator;
 		background-color: var(--studio-red-50);
 	}
 	&__complete {
+		@extend .domains-bulk-update-status-popover-item-indicator;
 		background-color: var(--studio-green-40);
 	}
 }
