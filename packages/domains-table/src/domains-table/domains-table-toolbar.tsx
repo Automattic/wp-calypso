@@ -1,8 +1,8 @@
-import { BulkActionsToolbar } from '../../bulk-actions-toolbar/index';
-import { DomainsTableFilters } from '../../domains-table-filters/index';
-import { useDomainsTable } from './domains-table';
+import {BulkActionsToolbar} from '../bulk-actions-toolbar/index';
+import {DomainsTableFilters} from '../domains-table-filters/index';
+import {useDomainsTable} from './domains-table';
 
-import '../style.scss';
+import './style.scss';
 
 export function DomainsTableToolbar() {
 	const { hasSelectedDomains, handleAutoRenew, selectedDomains, filter, setFilter } =

@@ -30,7 +30,6 @@ interface DomainsTableRowProps {
 	onSelect( domain: PartialDomainData ): void;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainsRequiringAttentionChange?( domainsRequiringAttention: number ): void;
-
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;

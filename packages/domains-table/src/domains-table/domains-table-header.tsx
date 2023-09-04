@@ -1,6 +1,6 @@
-import { domainsTableColumns as defaultDomainsTableColumns } from '../../domains-table-header/columns';
-import { DomainsTableColumn, DomainsTableHeader as Header } from '../../domains-table-header/index';
 import { useDomainsTable } from './domains-table';
+import { domainsTableColumns as defaultDomainsTableColumns } from '../domains-table-header/columns';
+import { DomainsTableColumn, DomainsTableHeader as InternalDomainsTableHeader } from '../domains-table-header/index';
 
 type Props = {
 	domainsTableColumns?: DomainsTableColumn[];
@@ -21,8 +21,8 @@ export const DomainsTableHeader = ( {
 	} = useDomainsTable();
 
 	return (
-		<Header
-			columns={ domainsTableColumns }
+		<InternalDomainsTableHeader
+			columns={ domainsTableColumns || [] }
 			activeSortKey={ sortKey }
 			activeSortDirection={ sortDirection }
 			bulkSelectionStatus={ getBulkSelectionStatus() }

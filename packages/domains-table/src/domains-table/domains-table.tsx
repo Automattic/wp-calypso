@@ -17,12 +17,12 @@ import {
 	useContext,
 	ReactNode,
 } from 'react';
-import { DomainsTableFilter } from '../../domains-table-filters/index';
-import { domainsTableColumns } from '../../domains-table-header/columns';
-import { DomainsTableColumn } from '../../domains-table-header/index';
-import { getDomainId } from '../../get-domain-id';
-import { shouldHideOwnerColumn } from '../../utils';
-import { DomainStatusPurchaseActions } from '../../utils/resolve-domain-status';
+import { DomainsTableFilter } from '../domains-table-filters/index';
+import { domainsTableColumns } from '../domains-table-header/columns';
+import { DomainsTableColumn } from '../domains-table-header/index';
+import { getDomainId } from '../get-domain-id';
+import { shouldHideOwnerColumn } from '../utils';
+import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 
 export interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
@@ -40,8 +40,8 @@ export interface DomainsTableProps {
 
 type Value = {
 	filter: DomainsTableFilter;
-	setFilter: ( filter: DomainsTableFilter ) => void;
-	filteredData: unknown[];
+	setFilter:  (value: (((prevState: DomainsTableFilter) => DomainsTableFilter) | DomainsTableFilter)) => void
+	filteredData: PartialDomainData[];
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;

@@ -4,6 +4,8 @@ import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
+import { CSSProperties, ReactNode } from 'react';
+
 import './style.scss';
 
 export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'all-domains';
@@ -23,8 +25,8 @@ export type DomainsTableColumn =
 					sites?: SiteDetails[]
 				) => number
 			>;
-			headerComponent?: React.ReactNode;
-			width?: string;
+			headerComponent?: ReactNode;
+			width?: ( typeof CSSProperties )[ 'width' ];
 	  }
 	| {
 			name: string;
@@ -40,8 +42,8 @@ export type DomainsTableColumn =
 					sites?: SiteDetails[]
 				) => number
 			];
-			headerComponent?: React.ReactNode;
-			width?: string;
+			headerComponent?: ReactNode;
+			width?: ( typeof CSSProperties )[ 'width' ];
 	  };
 
 type DomainsTableHeaderProps = {
@@ -70,7 +72,7 @@ export const DomainsTableHeader = ( {
 	canSelectAnyDomains = true,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
-	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
+	const listHeaderClasses = classNames( 'domains-table-header', headerClasses || '' );
 
 	const renderSortIcon = (
 		column: DomainsTableColumn,
