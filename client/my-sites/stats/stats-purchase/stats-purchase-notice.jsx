@@ -9,8 +9,16 @@ import {
 	StatsBenefitsFree,
 	StatsSingleItemPagePurchaseFrame,
 } from './stats-purchase-shared';
-import { getStatsPurchaseURL } from './stats-purchase-utils';
 import './styles.scss';
+
+export const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
+	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
+
+	if ( ! isOdysseyStats ) {
+		return purchasePath;
+	}
+	return `https://wordpress.com${ purchasePath }`;
+};
 
 const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 	event.preventDefault();
