@@ -20,6 +20,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 import PageViewTracker from '../stats-page-view-tracker';
 import {
 	StatsPurchaseNoticePage,
@@ -36,7 +37,6 @@ import StatsPurchaseWizard, {
 	TYPE_COMMERCIAL,
 	TYPE_PERSONAL,
 } from './stats-purchase-wizard';
-import useStatsPurchases from './use-stats-purchases';
 
 const StatsPurchasePage = ( {
 	query,
@@ -119,7 +119,7 @@ const StatsPurchasePage = ( {
 				from={ query.from ?? '' }
 			/>
 			<div className={ classNames( 'stats', 'stats-purchase-page' ) }>
-				{ /* The component is replace on build for Odyssey to query from Jetpack */ }
+				{ /* The component is replaced on build for Odyssey to query from Jetpack */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
 				{ isLoading && (

@@ -139,7 +139,7 @@ export default function StatsNotices( {
 
 	return (
 		<>
-			{ /* The component is replace on build for Odyssey to query from Jetpack */ }
+			{ /* The component is replaced on build for Odyssey to query from Jetpack */ }
 			<QuerySitePurchases siteId={ siteId } />
 			<NewStatsNotices
 				siteId={ siteId }
