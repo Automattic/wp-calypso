@@ -8,9 +8,14 @@ import './style.scss';
 type StatusPopoverProps = {
 	children: React.ReactNode;
 	className?: string;
+	target?: React.ReactNode;
 };
 
-export const StatusPopover = ( { children, className }: StatusPopoverProps ) => {
+export const StatusPopover = ( {
+	children,
+	className,
+	target = <Gridicon icon="info-outline" size={ 18 } />,
+}: StatusPopoverProps ) => {
 	const iconRef = useRef( null );
 	const [ inPopover, setInPopover ] = useState( false );
 	const [ inButton, setInButton ] = useState( false );
@@ -45,7 +50,7 @@ export const StatusPopover = ( { children, className }: StatusPopoverProps ) => 
 				ref={ iconRef }
 				className={ classNames( 'status-popover', className ) }
 			>
-				<Gridicon icon="info-outline" size={ 18 } />
+				{ target }
 			</button>
 			{ showPopover && (
 				<Popover

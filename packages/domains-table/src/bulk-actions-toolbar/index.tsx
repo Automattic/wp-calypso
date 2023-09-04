@@ -9,11 +9,13 @@ import './style.scss';
 interface BulkActionsToolbarProps {
 	onAutoRenew: ( enable: boolean ) => void;
 	selectedDomainCount: number;
+	children?: React.ReactNode;
 }
 
 export function BulkActionsToolbar( {
 	onAutoRenew,
 	selectedDomainCount,
+	children,
 }: BulkActionsToolbarProps ) {
 	const { __, _n } = useI18n();
 	const [ controlKey, setControlKey ] = useState( 1 );
@@ -85,6 +87,7 @@ export function BulkActionsToolbar( {
 					{ value: 'disable', label: disableLabel },
 				] }
 			/>
+			{ children }
 		</div>
 	);
 }

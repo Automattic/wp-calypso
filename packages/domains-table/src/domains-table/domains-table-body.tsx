@@ -15,6 +15,7 @@ export function DomainsTableBody() {
 		domainStatusPurchaseActions,
 		onDomainsRequiringAttentionChange,
 		fetchSite,
+		domainResults,
 	} = useDomainsTable();
 
 	return (
@@ -31,6 +32,7 @@ export function DomainsTableBody() {
 					domainStatusPurchaseActions={ domainStatusPurchaseActions }
 					hideOwnerColumn={ hideOwnerColumn }
 					onDomainsRequiringAttentionChange={ onDomainsRequiringAttentionChange }
+					pendingUpdates={ domainResults.get( domain.domain ) || [] }
 				/>
 			) ) }
 		</tbody>

@@ -1,0 +1,94 @@
+import { useQuery } from '@tanstack/react-query';
+import wpcomRequest from 'wpcom-proxy-request';
+
+export interface BulkDomainUpdateStatus {
+	results: {
+		[ key: string ]: '' | 'success' | 'failed';
+	};
+	action: 'set_auto_renew' | 'update_contact_info';
+	created_at: number;
+	auto_renew?: boolean;
+	whois?: unknown;
+	transfer_lock?: boolean;
+}
+
+export interface BulkDomainUpdateStatusQueryFnData {
+	[ key: string ]: BulkDomainUpdateStatus;
+}
+
+export enum BulkDomainUpdateStatusRetryInterval {
+	Active = 6000,
+	Disabled = -1,
+}
+
+export interface DomainUpdateStatus {
+	status: '' | 'success' | 'failed';
+	action: 'set_auto_renew' | 'update_contact_info';
+	created_at: number;
+	auto_renew?: boolean;
+	whois?: unknown;
+	transfer_lock?: boolean;
+}
+
+export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
+	return useQuery( {
+		queryFn: () =>
+			wpcomRequest< BulkDomainUpdateStatusQueryFnData >( {
+				path: '/domains/bulk-actions',
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+			} ),
+		select: ( data ) => {
+			// get top-level info about recent jobs
+			const jobs = Object.keys( data ).map( ( jobId ) => {
+				const job = data[ jobId ];
+				const success: string[] = [];
+				const failed: string[] = [];
+				const pending: string[] = [];
+
+				Object.entries( job.results ).forEach( ( entry ) => {
+					if ( entry[ 1 ] === 'success' ) {
+						success.push( entry[ 0 ] );
+					} else if ( entry[ 1 ] === 'failed' ) {
+						failed.push( entry[ 0 ] );
+					} else {
+						pending.push( entry[ 0 ] );
+					}
+				} );
+
+				return {
+					id: jobId,
+					action: job.action,
+					created_at: job.created_at,
+					success,
+					failed,
+					pending,
+					complete: pending.length === 0,
+				};
+			} );
+
+			// get domain-level updates that can be shown inline in the table rows
+			const domainResults = new Map< string, DomainUpdateStatus[] >();
+
+			Object.keys( data ).forEach( ( jobId ) => {
+				// only compute domain-level results for jobs that
+				// are still running
+				if ( ! jobs.find( ( job ) => job.id === jobId )?.complete ) {
+					const entry = data[ jobId ] as BulkDomainUpdateStatus;
+					const { results, ...rest } = entry;
+					Object.keys( results ).forEach( ( domain ) => {
+						if ( ! domainResults.has( domain ) ) {
+							domainResults.set( domain, [] );
+						}
+						const status = results[ domain ];
+						domainResults.get( domain )?.push( { ...rest, status } );
+					} );
+				}
+			} );
+
+			return { domainResults, jobs };
+		},
+		refetchInterval: pollingInterval,
+		queryKey: [ 'domains', 'bulk-actions' ],
+	} );
+}

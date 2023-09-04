@@ -94,3 +94,62 @@
 		text-align: right;
 	}
 }
+
+.domains-bulk-update-status-popover {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	color: var(--studio-gray-50);
+}
+
+.domains-bulk-update-status-popover-item {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	color: var(--studio-gray-100);
+}
+
+.domains-bulk-update-status-popover-item-indicator {
+	border-radius: 50%;
+	height: 8px;
+	width: 8px;
+	min-height: 8px;
+	min-width: 8px;
+	flex-shrink: 0;
+
+	&__pending {
+		background-color: var(--studio-orange-40);
+	}
+	&__failed {
+		background-color: var(--studio-red-50);
+	}
+	&__complete {
+		background-color: var(--studio-green-40);
+	}
+}
+
+.domains-table-bulk-update-jobs-notifications {
+	position: relative;
+	svg {
+		transform: rotate(315deg);
+		cursor: pointer;
+	}
+
+	&__bubble {
+		position: absolute;
+		top: -12px;
+		right: -14px;
+		display: flex;
+		width: 22px;
+		background: var(--studio-red-40);
+		border-radius: 16px; /* stylelint-disable-line scales/radii */
+		justify-content: center;
+		align-items: center;
+		color: #fff;
+		font-size: $font-body-extra-small;
+		height: 18px;
+		margin: 0 4px;
+		line-height: 20px;
+		border: 2px solid #fff;
+	}
+}

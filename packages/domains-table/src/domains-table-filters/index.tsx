@@ -9,9 +9,10 @@ export interface DomainsTableFilter {
 interface DomainsTableFiltersProps {
 	onSearch( query: string ): void;
 	filter: DomainsTableFilter;
+	children?: React.ReactNode;
 }
 
-export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersProps ) => {
+export const DomainsTableFilters = ( { onSearch, filter, children }: DomainsTableFiltersProps ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -25,6 +26,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 				placeholder={ __( 'Search by domain…' ) }
 				disableAutocorrect={ true }
 			/>
+			{ children }
 		</div>
 	);
 };
