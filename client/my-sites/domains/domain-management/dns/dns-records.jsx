@@ -41,6 +41,16 @@ class DnsRecords extends Component {
 		nameservers: PropTypes.array || null,
 	};
 
+	hasDefaultCnameRecord = () => {
+		const { dns, selectedDomainName } = this.props;
+		return dns?.records?.some(
+			( record ) =>
+				record?.type === 'CNAME' &&
+				record?.name === '*' &&
+				record?.data === `${ selectedDomainName }.`
+		);
+	};
+
 	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
@@ -77,6 +87,7 @@ class DnsRecords extends Component {
 				domain={ selectedDomain }
 				dns={ dns }
 				pointsToWpcom={ pointsToWpcom }
+				hasDefaultCnameRecord={ this.hasDefaultCnameRecord() }
 			/>
 		);
 
