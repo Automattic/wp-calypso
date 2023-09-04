@@ -16,10 +16,11 @@ import './style.scss';
 
 interface TrialBannerProps {
 	callToAction?: JSX.Element | null;
+	isEcommerceTrial?: boolean;
 }
 
 const TrialBanner = ( props: TrialBannerProps ) => {
-	const { callToAction } = props;
+	const { callToAction, isEcommerceTrial } = props;
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 
 	const { currentPlan, trialDaysLeft, trialExpired, trialExpiration } = useSelector(
@@ -48,14 +49,27 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 		currentPlan?.productSlug,
 		trialExpired,
 		trialDaysLeftToDisplay,
-		trialExpiration
+		trialExpiration,
+		isEcommerceTrial
 	);
+
+	const disclaimer = isEcommerceTrial
+		? translate(
+				'{{span}}*{{/span}} Free domain not included on annual plans until renewal at full price.',
+				{
+					components: {
+						span: <span className="trial-banner__highlight-star"></span>,
+					},
+				}
+		  )
+		: null;
 
 	return (
 		<Card className="trial-banner">
 			<div className="trial-banner__content">
 				<p className="trial-banner__title">{ translate( 'You’re in a free trial' ) }</p>
 				<p className="trial-banner__subtitle">{ bannerSubtitle }</p>
+				{ disclaimer && <p className="trial-banner__disclaimer">{ disclaimer }</p> }
 				{ callToAction }
 			</div>
 			<div className="trial-banner__chart-wrapper">

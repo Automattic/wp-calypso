@@ -32,16 +32,32 @@
 			}
 		}
 
-		.trial-banner__subtitle {
+		.trial-banner__subtitle,
+		.trial-banner__disclaimer {
+			margin-top: 15px;
+			margin-bottom: 0;
 			font-size: $font-body;
 			font-weight: 400;
-			margin: 15px 0;
 			color: var(--color-neutral-40);
+
+			@media (max-width: $break-mobile) {
+				font-size: $font-body-small;
+				color: var(--color-neutral-80);
+			}
+		}
+
+		.trial-banner__disclaimer {
+			margin-top: 30px;
+			font-size: $font-body-small;
 
 			@media (max-width: $break-mobile) {
 				font-size: $font-body-extra-small;
 				color: var(--color-neutral-80);
 			}
+		}
+
+		.trial-banner__highlight-star {
+			color: var(--color-accent);
 		}
 	}
 

@@ -8,7 +8,8 @@ export default function useBannerSubtitle(
 	currentPlanSlug: string | null,
 	trialExpired: boolean | null,
 	trialDaysLeftToDisplay: number,
-	trialExpiration: Moment | null
+	trialExpiration: Moment | null,
+	isEcommerceTrial?: boolean | null
 ): string {
 	const locale = useLocale();
 	const translate = useTranslate();
@@ -43,21 +44,38 @@ export default function useBannerSubtitle(
 					  );
 				break;
 			default:
-				subtitle = trialExpired
-					? translate(
-							'Your free trial has expired. Upgrade to a plan to unlock new features and start selling.'
-					  )
-					: translate(
-							'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
-							'Your free trial will end in %(daysLeft)d days. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
-							{
-								count: trialDaysLeftToDisplay,
-								args: {
-									daysLeft: trialDaysLeftToDisplay,
-									expirationdate: readableExpirationDate as string,
-								},
-							}
-					  );
+				if ( trialExpired ) {
+					subtitle = translate(
+						'Your free trial has expired. Upgrade to a plan to unlock new features and start selling.'
+					);
+				} else if ( isEcommerceTrial ) {
+					subtitle = translate(
+						'Your free trial will end in %(daysLeft)d day. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer — any Woo Express plan for just $1 a month for your first 3 months. {{span}}*{{/span}}',
+						'Your free trial will end in %(daysLeft)d days. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer — any Woo Express plan for just $1 a month for your first 3 months. {{span}}*{{/span}}',
+						{
+							count: trialDaysLeftToDisplay,
+							args: {
+								daysLeft: trialDaysLeftToDisplay,
+								expirationdate: readableExpirationDate as string,
+							},
+							components: {
+								span: <span className="trial-banner__highlight-star"></span>,
+							},
+						}
+					);
+				} else {
+					subtitle = translate(
+						'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
+						'Your free trial will end in %(daysLeft)d days. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
+						{
+							count: trialDaysLeftToDisplay,
+							args: {
+								daysLeft: trialDaysLeftToDisplay,
+								expirationdate: readableExpirationDate as string,
+							},
+						}
+					);
+				}
 				break;
 		}
 

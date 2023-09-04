@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
@@ -62,28 +61,16 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	const planIntervals = useMemo( () => {
 		return [
 			{
-				interval: 'monthly',
-				...monthlyControlProps,
-				content: <span>{ translate( 'Pay Monthly' ) }</span>,
-				selected: interval === 'monthly',
-			},
-			{
 				interval: 'yearly',
 				...yearlyControlProps,
-				content: (
-					<span>
-						{ isEnglishLocale ||
-						hasTranslation( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}' )
-							? translate( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}', {
-									args: { percentageSavings },
-									components: { span: <span className="wooexpress-plans__interval-savings" /> },
-							  } )
-							: translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
-									args: { percentageSavings },
-							  } ) }
-					</span>
-				),
+				content: <span>{ translate( 'Pay annualy' ) }</span>,
 				selected: interval === 'yearly',
+			},
+			{
+				interval: 'monthly',
+				...monthlyControlProps,
+				content: <span>{ translate( 'Pay monthly' ) }</span>,
+				selected: interval === 'monthly',
 			},
 		];
 	}, [
