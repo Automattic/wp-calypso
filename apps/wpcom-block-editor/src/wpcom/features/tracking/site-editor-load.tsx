@@ -4,15 +4,29 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useEffect } from 'react';
 import tracksRecordEvent from './track-record-event';
 
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
-	'@wordpress/block-editor'
-);
+/**
+ * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
+ * FIXME: The new version allow it by default, but we might need to ensure that all the site has the new version.
+ * @see https://github.com/Automattic/wp-calypso/pull/79663
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let unlock: ( object: any ) => any | undefined;
+try {
+	unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+		'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+		'@wordpress/edit-site'
+	).unlock;
+} catch ( error ) {
+	// eslint-disable-next-line no-console
+	console.error( 'Error: Unable to get the unlock api. Reason: %s', error );
+}
 
 const SiteEditorLoad = () => {
 	const canvasMode = useSelect(
 		( _select ) =>
-			_select( 'core/edit-site' ) && unlock( _select( 'core/edit-site' ) ).getCanvasMode(),
+			unlock &&
+			_select( 'core/edit-site' ) &&
+			unlock( _select( 'core/edit-site' ) ).getCanvasMode(),
 		[]
 	);
 
