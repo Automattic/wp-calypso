@@ -20,6 +20,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	JETPACK_STATS_PRODUCTS,
 	getPlan,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -65,7 +66,8 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T0_MONTHLY );
 	const ownsBackupT1 =
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_MONTHLY );
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_MONTHLY ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY );
 	const ownsBackupT2 =
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
@@ -74,6 +76,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Otherwise the one owned will be displayed via purchasedProducts.
 	if ( ! ownsBackupT0 && ! ownsBackupT1 && ! ownsBackupT2 ) {
 		backupProductsToShow.push(
+			PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 			PRODUCT_JETPACK_BACKUP_T1_MONTHLY
 		);

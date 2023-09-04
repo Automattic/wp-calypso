@@ -1,8 +1,8 @@
 import { Button, Icon } from '@wordpress/components';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useState, useEffect } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
@@ -84,9 +84,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					addChildNodes(
 						siteId,
 						path,
-						backupFiles
-							.filter( shouldAddChildNode )
-							.map( ( childItem: FileBrowserItem ) => childItem.name )
+						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
+							return { id: childItem.id ?? '', path: childItem.name };
+						} )
 					)
 				);
 			}
@@ -270,6 +270,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					rewindId={ rewindId }
 					item={ item }
 					parentItem={ parentItem }
+					path={ path }
 				/>
 			) }
 			{ isOpen && (

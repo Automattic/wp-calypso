@@ -9,6 +9,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'manage_paid_newsletter_plan',
 	'earn_money',
 	'manage_subscribers',
+	'connect_social_media',
 ];
 
 export const setUpActionsForTasks = ( {

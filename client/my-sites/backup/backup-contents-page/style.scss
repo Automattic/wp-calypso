@@ -120,6 +120,8 @@
 			}
 
 			&__actions {
+				display: flex;
+				gap: 1rem;
 				margin-top: 16px;
 			}
 
@@ -232,6 +234,12 @@
 			}
 			.file-browser-header__cancel-button {
 				padding: 0;
+			}
+			.form-checkbox {
+				margin: 8px;
+				&.mixed {
+					background-color: var(--studio-gray-10);
+				}
 			}
 			.button {
 				margin-left: 8px;

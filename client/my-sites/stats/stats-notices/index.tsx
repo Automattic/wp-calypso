@@ -47,6 +47,11 @@ const ensureOnlyOneNoticeVisible = (
 const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: StatsNoticesProps ) => {
 	const dispatch = useDispatch();
 
+	// find out if a site is commerical or not. handle potential null value as a false
+	const isCommercial = useSelector(
+		( state ) => !! getSiteOption( state, siteId, 'is_commercial' )
+	);
+
 	// Clear loaded flag when switching sites on Calypso.
 	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
 	useEffect( () => {
@@ -84,6 +89,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasFreeStats,
 		isSiteJetpackNotAtomic,
 		statsPurchaseSuccess,
+		isCommercial,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
@@ -107,7 +113,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 			{ ALL_STATS_NOTICES.map(
 				( notice ) =>
 					calculatedNoticesVisibility[ notice.noticeId ] && (
-						<notice.component { ...noticeOptions } />
+						<notice.component key={ notice.noticeId } { ...noticeOptions } />
 					)
 			) }
 		</>
