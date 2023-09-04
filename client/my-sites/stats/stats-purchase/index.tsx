@@ -53,8 +53,10 @@ const StatsPurchasePage = ( {
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
+
 	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, isCommercialOwned } =
 		useStatsPurchases( siteId );
+
 	useEffect( () => {
 		if ( ! siteSlug ) {
 			return;
