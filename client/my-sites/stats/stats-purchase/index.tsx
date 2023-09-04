@@ -38,7 +38,6 @@ const StatsPurchasePage = ( {
 	query,
 }: {
 	query: { redirect_uri: string; from: string; productType: 'commercial' | 'personal' };
-	options: { isCommercial: boolean | null };
 } ) => {
 	const translate = useTranslate();
 	const isTypeDetectionEnabled = config.isEnabled( 'stats/type-detection' );
