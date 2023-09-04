@@ -616,59 +616,65 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
 		const { translate, intervalType, isInSignup, flowName, showUpgradeableStorage } = this.props;
 
-		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
-			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
-				return null;
-			}
+		return renderedGridPlans.map(
+			( { planSlug, features: { storageOptions }, storageAddOnsForPlan } ) => {
+				if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
+					return null;
+				}
+				const purchasedAddOn = storageAddOnsForPlan?.find( ( addOn ) => addOn?.purchased );
 
-			const shouldRenderStorageTitle =
-				storageOptions.length > 0 &&
-				( storageOptions.length === 1 ||
-					intervalType !== 'yearly' ||
-					! showUpgradeableStorage ||
-					! isInSignup ||
-					! ( flowName === 'onboarding' ) );
+				const shouldRenderStorageTitle =
+					storageOptions.length > 0 &&
+					( storageOptions.length === 1 ||
+						intervalType !== 'yearly' ||
+						! showUpgradeableStorage ||
+						! isInSignup ||
+						! ( flowName === 'onboarding' ) );
 
-			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
-				flowName: flowName ?? '',
-				intervalType,
-				isInSignup,
-				showUpgradeableStorage,
-				storageOptions,
-			} );
+				const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
+					flowName: flowName ?? '',
+					intervalType,
+					isInSignup,
+					showUpgradeableStorage,
+					storageOptions,
+				} );
+				const storageJSX = canUpgradeStorageForPlan ? (
+					<StorageAddOnDropdown
+						label={ translate( 'Storage' ) }
+						planSlug={ planSlug }
+						storageOptions={ storageOptions }
+						showPrice
+					/>
+				) : (
+					storageOptions.map( ( storageOption ) => {
+						if ( ! storageOption?.isAddOn ) {
+							return (
+								<div className="plan-features-2023-grid__storage-buttons" key={ planSlug }>
+									{ getStorageStringFromFeature(
+										purchasedAddOn?.featureSlugs?.[ 0 ] || storageOption?.slug
+									) }
+								</div>
+							);
+						}
+					} )
+				);
 
-			const storageJSX = canUpgradeStorageForPlan ? (
-				<StorageAddOnDropdown
-					label={ translate( 'Storage' ) }
-					planSlug={ planSlug }
-					storageOptions={ storageOptions }
-					showPrice
-				/>
-			) : (
-				storageOptions.map( ( storageOption ) => {
-					if ( ! storageOption?.isAddOn ) {
-						return (
-							<div className="plan-features-2023-grid__storage-buttons" key={ planSlug }>
-								{ getStorageStringFromFeature( storageOption?.slug ) }
+				return (
+					<PlanDivOrTdContainer
+						key={ planSlug }
+						className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
+						isTableCell={ options?.isTableCell }
+					>
+						{ shouldRenderStorageTitle ? (
+							<div className="plan-features-2023-grid__storage-title">
+								{ translate( 'Storage' ) }
 							</div>
-						);
-					}
-				} )
-			);
-
-			return (
-				<PlanDivOrTdContainer
-					key={ planSlug }
-					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
-					isTableCell={ options?.isTableCell }
-				>
-					{ shouldRenderStorageTitle ? (
-						<div className="plan-features-2023-grid__storage-title">{ translate( 'Storage' ) }</div>
-					) : null }
-					{ storageJSX }
-				</PlanDivOrTdContainer>
-			);
-		} );
+						) : null }
+						{ storageJSX }
+					</PlanDivOrTdContainer>
+				);
+			}
+		);
 	}
 
 	render() {

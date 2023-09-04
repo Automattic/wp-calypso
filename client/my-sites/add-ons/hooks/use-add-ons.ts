@@ -135,7 +135,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 
 		const spaceUpgradesPurchased: number[] = [];
 
-		if ( filteredTransactions?.length ) {
+		if ( filteredTransactions?.length && siteId ) {
 			for ( const transaction of filteredTransactions ) {
 				transaction.items?.length &&
 					spaceUpgradesPurchased.push(

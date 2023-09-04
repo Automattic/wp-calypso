@@ -13,7 +13,7 @@ import {
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import styled from '@emotion/styled';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -98,7 +98,10 @@ export interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
-	onUpgradeClick?: ( cartItemForPlan?: MinimalRequestCartProduct | null ) => void;
+	onUpgradeClick?: (
+		cartItemForPlan?: MinimalRequestCartProduct | null,
+		storageAddOnProduct?: MinimalRequestCartProduct | null
+	) => void;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -220,6 +223,9 @@ const PlansFeaturesMain = ( {
 	const storageAddOns = useAddOns( siteId ?? undefined ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
+	const selectedStorageOptions = useSelect( ( select ) => {
+		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+	}, [] );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -301,8 +307,20 @@ const PlansFeaturesMain = ( {
 			}
 		}
 
+		const selectedStorageOption =
+			selectedStorageOptions && selectedStorageOptions[ cartItemForPlan?.product_slug || '' ];
+		const storageAddOn = storageAddOns?.find( ( addOn ) => {
+			return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
+		} );
+
+		const storageAddOnItemForPlan = storageAddOn && {
+			product_slug: storageAddOn.productSlug,
+			quantity: storageAddOn.quantity,
+			volume: 1,
+		};
+
 		if ( onUpgradeClick ) {
-			onUpgradeClick( cartItemForPlan );
+			onUpgradeClick( cartItemForPlan, storageAddOnItemForPlan );
 			return;
 		}
 
