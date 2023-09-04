@@ -278,7 +278,7 @@ class ThanksModal extends Component {
 		</span>
 	);
 
-	getButtons = () => {
+	getButtons = ( shouldDisplayContent ) => {
 		const {
 			shouldEditHomepageWithGutenberg,
 			hasActivated,
@@ -301,20 +301,30 @@ class ThanksModal extends Component {
 					href: this.props.detailsUrl,
 			  };
 
+		const primaryButton = {
+			action: 'customizeSite',
+			label: this.getEditSiteLabel(),
+			isPrimary: true,
+			disabled: ! hasActivated || doesThemeBundleUsableSoftware,
+			onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
+			href: this.props.customizeUrl,
+			target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
+		};
+
+		/**
+		 * It does not make sense to show "Learn about this theme" or "View site" buttons
+		 * in such a short loading moment.
+		 */
+		if ( ! shouldDisplayContent ) {
+			return [ primaryButton ];
+		}
+
 		return [
 			{
 				...firstButton,
 				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
 			},
-			{
-				action: 'customizeSite',
-				label: this.getEditSiteLabel(),
-				isPrimary: true,
-				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
-				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
-				href: this.props.customizeUrl,
-				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
-			},
+			primaryButton,
 		];
 	};
 
@@ -327,7 +337,7 @@ class ThanksModal extends Component {
 			<Dialog
 				className="themes__thanks-modal"
 				isVisible={ this.state.isVisible }
-				buttons={ this.getButtons() }
+				buttons={ this.getButtons( shouldDisplayContent ) }
 				onClose={ this.onCloseModal }
 			>
 				{ shouldDisplayContent ? this.renderContent() : this.renderLoading() }
