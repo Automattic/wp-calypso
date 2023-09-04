@@ -19,10 +19,12 @@ import {
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import { getLastCheckedUsernameOrEmail } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import getMagicLoginIsFetchingEmail from 'calypso/state/selectors/get-magic-login-is-fetching-email';
 import { withEnhancers } from 'calypso/state/utils';
@@ -49,7 +51,7 @@ class MagicLogin extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = { usernameOrEmail: '' };
+	state = { usernameOrEmail: this.props.userEmail || '' };
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
@@ -286,6 +288,10 @@ const mapState = ( state ) => ( {
 	isSendingEmail: getMagicLoginIsFetchingEmail( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 	oauth2Client: getCurrentOAuth2Client( state ),
+	userEmail:
+		getLastCheckedUsernameOrEmail( state ) ||
+		getCurrentQueryArguments( state ).email_address ||
+		getInitialQueryArguments( state ).email_address,
 } );
 
 const mapDispatch = {
