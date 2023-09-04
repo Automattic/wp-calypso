@@ -21,7 +21,6 @@ export default function SiteTopHeaderButtons() {
 	);
 
 	const buttonRef = useRef< any | null >( null );
-	const [ showPopover, setShowPopover ] = useState( false );
 	const [ toggleIsOpen, setToggleIsOpen ] = useState( false );
 
 	return (
@@ -43,13 +42,7 @@ export default function SiteTopHeaderButtons() {
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
-				<span
-					ref={ buttonRef }
-					onMouseEnter={ () => setShowPopover( true ) }
-					onMouseLeave={ () => setShowPopover( false ) }
-					role="button"
-					tabIndex={ 0 }
-				>
+				<span>
 					<SplitButton
 						primary
 						whiteSeparator
@@ -64,6 +57,7 @@ export default function SiteTopHeaderButtons() {
 						href="/partner-portal/create-site"
 						toggleIcon={ isMobile ? 'plus' : undefined }
 						onToggle={ ( isOpen: boolean ) => setToggleIsOpen( isOpen ) }
+						popoverContext={ buttonRef }
 					>
 						<PopoverMenuItem
 							onClick={ () => {
@@ -95,7 +89,7 @@ export default function SiteTopHeaderButtons() {
 					<WPCOMHostingPopover
 						context={ buttonRef.current }
 						// Show the popover only when the split button is closed
-						isVisible={ ! toggleIsOpen && showPopover }
+						isVisible={ ! toggleIsOpen }
 					/>
 				</span>
 			) : (
