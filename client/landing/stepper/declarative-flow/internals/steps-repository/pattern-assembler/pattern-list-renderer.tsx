@@ -28,8 +28,9 @@ interface PatternListRendererProps {
 	isShowMorePatterns?: boolean;
 }
 
+const DEFAULT_VIEWPORT_WIDTH = 1060;
+const DEFAULT_VIEWPORT_HEIGHT = 500;
 const PLACEHOLDER_HEIGHT = 100;
-const MIN_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( {
 	pattern,
@@ -78,9 +79,9 @@ const PatternListItem = ( {
 					<PatternRenderer
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }
-						viewportWidth={ 1060 }
+						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
+						viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 						minHeight={ PLACEHOLDER_HEIGHT }
-						minHeightFor100vh={ MIN_HEIGHT_FOR_100VH }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />

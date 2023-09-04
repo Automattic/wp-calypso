@@ -23,14 +23,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import {
-	StatsPurchaseNoticePage,
-	StatsPurchaseNotice,
-	REDIRECT_CALYPSO_FREE,
-	REDIRECT_JETPACK_FREE,
-	REDIRECT_CALYPSO_PERSONAL,
-	REDIRECT_JETPACK_PERSONAL,
-} from './stats-purchase-notice';
+import { StatsPurchaseNoticePage, StatsPurchaseNotice } from './stats-purchase-notice';
 import {
 	StatsSingleItemPagePurchase,
 	StatsSingleItemPersonalPurchasePage,
@@ -58,7 +51,7 @@ const StatsPurchasePage = ( {
 	query,
 	options,
 }: {
-	query: { redirect_uri: string; from: string };
+	query: { redirect_uri: string; from: string; productType: 'commercial' | 'personal' };
 	options: { isCommercial: boolean | null };
 } ) => {
 	const translate = useTranslate();
@@ -139,10 +132,8 @@ const StatsPurchasePage = ( {
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
 	const showPurchasePage = ! isCommercialOwned && ! isFreeOwned && ! isPWYWOwned;
-	const redirectToPersonal =
-		query?.from === REDIRECT_CALYPSO_FREE || query?.from === REDIRECT_JETPACK_FREE;
-	const redirectToCommercial =
-		query?.from === REDIRECT_CALYPSO_PERSONAL || query?.from === REDIRECT_JETPACK_PERSONAL;
+	const redirectToPersonal = query?.productType === 'personal';
+	const redirectToCommercial = query?.productType === 'commercial';
 	const isNoticeScreenRedirect = redirectToPersonal || redirectToCommercial;
 
 	return (

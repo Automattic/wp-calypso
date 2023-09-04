@@ -1,3 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -9,10 +11,24 @@ import {
 } from './stats-purchase-shared';
 import './styles.scss';
 
-const REDIRECT_JETPACK_FREE = 'jetpack-free-stats-purchase-summary-screen-notice';
-const REDIRECT_CALYPSO_FREE = 'calypso-free-stats-purchase-summary-screen-notice';
-const REDIRECT_JETPACK_PERSONAL = 'jetpack-paid-stats-purchase-summary-screen-notice';
-const REDIRECT_CALYPSO_PERSONAL = 'calypso-paid-stats-purchase-summary-screen-notice';
+export const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
+	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
+
+	if ( ! isOdysseyStats ) {
+		return purchasePath;
+	}
+	return `https://wordpress.com${ purchasePath }`;
+};
+
+const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
+	event.preventDefault();
+
+	isOdysseyStats
+		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
+		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
+
+	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+};
 
 const StatsCommercialOwned = ( { siteSlug } ) => {
 	const translate = useTranslate();
@@ -35,15 +51,16 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsCommercial />
-			<Button variant="primary" onClick={ handleClick }>
+			<Button variant="secondary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
 		</>
 	);
 };
 
-const StatsPWYWOwnedNotice = ( { siteSlug } ) => {
+const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const handleClick = () => {
 		if ( ! siteSlug ) {
@@ -63,15 +80,28 @@ const StatsPWYWOwnedNotice = ( { siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsPersonal />
-			<Button variant="primary" onClick={ handleClick }>
+			<Button variant="secondary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
+			</Button>
+			<Button
+				variant="primary"
+				onClick={ ( e ) =>
+					handleUpgradeClick(
+						e,
+						getStatsPurchaseURL( siteId, isOdysseyStats, 'commercial' ),
+						isOdysseyStats
+					)
+				}
+			>
+				{ translate( 'Upgrade my Stats' ) }
 			</Button>
 		</StatsSingleItemPagePurchaseFrame>
 	);
 };
 
-const StatsFreeOwnedNotice = ( { siteSlug } ) => {
+const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const handleClick = () => {
 		if ( ! siteSlug ) {
@@ -91,8 +121,21 @@ const StatsFreeOwnedNotice = ( { siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsFree />
-			<Button variant="primary" onClick={ handleClick }>
+			<Button variant="secondary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
+			</Button>
+
+			<Button
+				variant="primary"
+				onClick={ ( e ) =>
+					handleUpgradeClick(
+						e,
+						getStatsPurchaseURL( siteId, isOdysseyStats, 'personal' ),
+						isOdysseyStats
+					)
+				}
+			>
+				{ translate( 'Upgrade my Stats' ) }
 			</Button>
 		</StatsSingleItemPagePurchaseFrame>
 	);
@@ -126,11 +169,4 @@ const StatsPurchaseNoticePage = ( {
 	);
 };
 
-export {
-	StatsPurchaseNoticePage,
-	StatsPurchaseNotice,
-	REDIRECT_CALYPSO_FREE,
-	REDIRECT_JETPACK_FREE,
-	REDIRECT_CALYPSO_PERSONAL,
-	REDIRECT_JETPACK_PERSONAL,
-};
+export { StatsPurchaseNoticePage, StatsPurchaseNotice };
