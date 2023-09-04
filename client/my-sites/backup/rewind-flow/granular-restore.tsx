@@ -1,6 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
-import { Button as WordPressButton } from '@wordpress/components';
-import { Icon, arrowLeft, backup } from '@wordpress/icons';
+import { Icon, Button as WordPressButton } from '@wordpress/components';
+import { arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -15,6 +15,7 @@ import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
+import getBackupBrowserSelectedList from 'calypso/state/rewind/selectors/get-backup-browser-selected-list';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -53,6 +54,11 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		getInProgressBackupForSite( state, siteId )
 	);
 
+	const [ showAllFiles, setShowAllFiles ] = useState< boolean >( false );
+	const expandClick = () => {
+		setShowAllFiles( ! showAllFiles );
+	};
+
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
 	const areCredentialsInvalid = useSelector( ( state ) =>
@@ -70,16 +76,21 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	);
 
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
+	const browserSelectedList = useSelector( ( state ) =>
+		getBackupBrowserSelectedList( state, siteId )
+	);
 
 	const onConfirm = useCallback( () => {
 		// Let's see what the browser check list looks like
 		// eslint-disable-next-line no-console
 		console.log( browserCheckList );
+		// eslint-disable-next-line no-console
+		console.log( browserSelectedList );
 		return;
 
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
-	}, [ browserCheckList, dispatch, setUserHasRequestedRestore ] );
+	}, [ browserCheckList, browserSelectedList, dispatch, setUserHasRequestedRestore ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -89,6 +100,86 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const disableRestore = ! isAtomic && areCredentialsInvalid;
 
 	const goBackUrl = backupContentsPath( siteSlug as string, rewindId );
+
+	const renderThemes = () => {
+		const themes = browserSelectedList.filter( ( item ) => item.type === 'theme' );
+		if ( themes.length === 0 ) {
+			return null;
+		}
+		return (
+			<>
+				<h4 className="rewind-flow__cta">{ translate( 'WordPress themes' ) }</h4>
+				<ul className="rewind-flow__files">
+					{ themes.map( ( item ) => (
+						<li key={ item.path }>{ item.path }</li>
+					) ) }
+				</ul>
+			</>
+		);
+	};
+
+	const renderPlugins = () => {
+		const plugins = browserSelectedList.filter( ( item ) => item.type === 'plugin' );
+		if ( plugins.length === 0 ) {
+			return null;
+		}
+		return (
+			<>
+				<h4 className="rewind-flow__cta">{ translate( 'WordPress plugins' ) }</h4>
+				<ul className="rewind-flow__files">
+					{ plugins.map( ( item ) => (
+						<li key={ item.path }>{ item.path }</li>
+					) ) }
+				</ul>
+			</>
+		);
+	};
+
+	const renderTables = () => {
+		const tables = browserSelectedList.filter( ( item ) => item.type === 'table' );
+		if ( tables.length === 0 ) {
+			return null;
+		}
+		return (
+			<>
+				<h4 className="rewind-flow__cta">{ translate( 'Site database' ) }</h4>
+				<ul className="rewind-flow__files">
+					{ tables.map( ( item ) => (
+						<li key={ item.path }>{ item.path }</li>
+					) ) }
+				</ul>
+			</>
+		);
+	};
+
+	const renderExpandIcon = () => {
+		return <Icon icon={ showAllFiles ? chevronDown : chevronRight } />;
+	};
+
+	const renderFiles = () => {
+		const files = browserSelectedList.filter( ( item ) => item.type === 'file' );
+		if ( files.length === 0 ) {
+			return null;
+		}
+
+		return (
+			<>
+				<div className="rewind-flow__cta rewind-flow__expandable">
+					<Button className="rewind-flow__cta" onClick={ expandClick }>
+						{ files.length + translate( ' more files selected' ) }
+						{ renderExpandIcon() }
+					</Button>
+				</div>
+				{ showAllFiles && (
+					<ul className="rewind-flow__files">
+						{ files.map( ( item ) => (
+							<li key={ item.path }>{ item.path }</li>
+						) ) }
+					</ul>
+				) }
+			</>
+		);
+	};
 
 	const renderConfirm = () => (
 		<>
@@ -110,12 +201,10 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h4 className="rewind-flow__cta">{ translate( 'The following files will be restored:' ) }</h4>
-			<ul className="rewind-flow__files">
-				{ browserCheckList.includeList.map( ( item ) => (
-					<li key={ item.id }>{ item.path }</li>
-				) ) }
-			</ul>
+			{ renderThemes() }
+			{ renderPlugins() }
+			{ renderTables() }
+			{ renderFiles() }
 			<RewindFlowNotice
 				gridicon="notice"
 				title={ translate( 'Restoring will override and remove all content after this point.' ) }
