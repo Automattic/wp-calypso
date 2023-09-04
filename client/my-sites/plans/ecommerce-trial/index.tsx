@@ -5,7 +5,6 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import TrialBanner from '../trials/trial-banner';
 import { WooExpressPlans } from './wooexpress-plans';
 import type { Site } from 'calypso/my-sites/scan/types';
-
 import './style.scss';
 
 interface ECommerceTrialPlansPageProps {
@@ -30,7 +29,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
 			<div className="e-commerce-trial-plans__banner-wrapper">
-				<TrialBanner />
+				<TrialBanner isEcommerceTrial={ true } />
 			</div>
 
 			<WooExpressPlans
