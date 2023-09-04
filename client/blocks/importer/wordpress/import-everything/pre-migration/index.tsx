@@ -90,7 +90,6 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	);
 
 	const migrationTrackingProps = {
-		source_site_id: sourceSiteId,
 		source_site_url: sourceSiteUrl,
 		target_site_id: targetSite.ID,
 		target_site_slug: targetSite.slug,
