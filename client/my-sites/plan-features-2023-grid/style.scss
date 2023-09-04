@@ -285,6 +285,20 @@ $mobile-card-max-width: 440px;
 					fill: #55347d;
 				}
 			}
+
+			&.plan-features-2023-grid__mobile-plan-card {
+				.plan-features-2023-grid__table-item {
+					&.plan-features-2023-grid__storage {
+						padding-top: 0;
+					}
+				}
+			}
+
+			.components-custom-select-control {
+				.components-custom-select-control__button {
+					height: 40px;
+				}
+			}
 		}
 
 		.foldable-card {
@@ -557,6 +571,20 @@ $mobile-card-max-width: 440px;
 			}
 		}
 	}
+
+	.components-custom-select-control {
+		.storage-add-on-dropdown-option__title {
+			font-size: 0.75rem;
+		}
+
+		.storage-add-on-dropdown-option__cost {
+			color: var(--studio-green-40);
+
+			// Non standard rem allows us to match font size of other storage labels
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: 0.7rem;
+		}
+	}
 }
 
 .plan-features-2023-grid__content {
@@ -576,8 +604,7 @@ $mobile-card-max-width: 440px;
 body.is-section-stepper,
 body.is-section-signup.is-white-signup,
 .is-2023-pricing-grid {
-
-	.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
+	.plan-features-2023-grid__table-item {
 		border-right: none;
 		background-color: transparent;
 
@@ -932,6 +959,20 @@ body.is-section-signup.is-white-signup,
 			}
 			@include plans-2023-break-medium {
 				top: 55px;
+			}
+		}
+	}
+
+	.plan-comparison-grid__feature-group-row-cell {
+		.components-custom-select-control label {
+			display: none;
+		}
+
+		.components-custom-select-control__menu {
+			margin-left: 0;
+
+			li {
+				text-align: left;
 			}
 		}
 	}
