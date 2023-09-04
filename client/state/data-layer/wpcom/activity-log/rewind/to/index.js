@@ -45,7 +45,7 @@ const requestGranularRestore = ( action ) =>
 	requestRewind( action, {
 		types: 'paths',
 		include_path_list: action.includePaths,
-		exclude_path_list: action.excludePaths,
+		...( action.excludePaths ? { exclude_path_list: action.excludePaths } : {} ),
 	} );
 
 const requestClone = ( action ) => requestRewind( action, action.payload );

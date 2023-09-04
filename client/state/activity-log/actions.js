@@ -175,7 +175,7 @@ export function rewindGranularRestore( siteId, timestamp, includePaths, excludeP
 		siteId,
 		timestamp,
 		includePaths,
-		...( excludePaths ? { excludePaths } : {} ),
+		excludePaths,
 	};
 }
 
