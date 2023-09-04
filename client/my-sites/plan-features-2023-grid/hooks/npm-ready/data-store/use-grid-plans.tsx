@@ -141,6 +141,7 @@ interface Props {
 	 * If the subdomain generation is unsuccessful we do not show the free plan
 	 */
 	isSubdomainNotGenerated?: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -249,6 +250,7 @@ const useGridPlans = ( {
 	isInSignup,
 	usePlanUpgradeabilityCheck,
 	isSubdomainNotGenerated,
+	storageAddOns,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
