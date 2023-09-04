@@ -1,6 +1,9 @@
-import { useDomainsTable } from './domains-table';
 import { domainsTableColumns as defaultDomainsTableColumns } from '../domains-table-header/columns';
-import { DomainsTableColumn, DomainsTableHeader as InternalDomainsTableHeader } from '../domains-table-header/index';
+import {
+	DomainsTableColumn,
+	DomainsTableHeader as InternalDomainsTableHeader,
+} from '../domains-table-header/index';
+import { useDomainsTable } from './domains-table';
 
 type Props = {
 	domainsTableColumns?: DomainsTableColumn[];

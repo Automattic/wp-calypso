@@ -40,7 +40,9 @@ export interface DomainsTableProps {
 
 type Value = {
 	filter: DomainsTableFilter;
-	setFilter:  (value: (((prevState: DomainsTableFilter) => DomainsTableFilter) | DomainsTableFilter)) => void
+	setFilter: (
+		value: ( ( prevState: DomainsTableFilter ) => DomainsTableFilter ) | DomainsTableFilter
+	) => void;
 	filteredData: PartialDomainData[];
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	isAllSitesView: boolean;
