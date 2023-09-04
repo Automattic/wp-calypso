@@ -494,13 +494,13 @@ export const HelpCenterContactForm = () => {
 		 if ( experimentAssignment?.variationName === 'no_quick_response' ) {
             if ( ! showingGPTResponse && ! showingSearchResults ) {
                 if ( mode === 'EMAIL' ) {
-                    return **__**( 'Email us', __i18n_text_domain__ );
+                    return __( 'Email us', __i18n_text_domain__ );
                 }
                 if ( mode === 'CHAT' ) {
-                    return **__**( 'Chat with us', __i18n_text_domain__ );
+                    return __( 'Chat with us', __i18n_text_domain__ );
                 }
                 if ( mode === 'FORUM' ) {
-                    return **__**( 'Submit', __i18n_text_domain__ );
+                    return __( 'Submit', __i18n_text_domain__ );
                 }
             }
         }
