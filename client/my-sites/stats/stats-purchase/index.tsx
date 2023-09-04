@@ -169,13 +169,6 @@ const StatsPurchasePage = ( {
 								<StatsPurchaseNotice siteSlug={ siteSlug } />
 							</div>
 						) }
-						{ ( isFreeOwned || isPWYWOwned ) && (
-							<>
-								{
-									// TODO: add a banner handling information about existing purchase
-								 }
-							</>
-						) }
 						{ ! isCommercialOwned && (
 							<StatsPurchaseWizard
 								siteSlug={ siteSlug }
