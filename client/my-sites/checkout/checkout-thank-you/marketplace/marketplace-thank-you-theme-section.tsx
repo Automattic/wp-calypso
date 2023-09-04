@@ -7,7 +7,6 @@ import { useCallback } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
-import EligibilityWarningModal from 'calypso/my-sites/themes/atomic-transfer-dialog';
 import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
@@ -148,7 +147,6 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		<ThemeSectionContainer>
 			<QueryActiveTheme siteId={ siteId } />
 			<ActivationModal source="details" />
-			<EligibilityWarningModal />
 			<ThemeSectionContent>
 				<ThemeNameSectionWrapper>
 					<ThemeSectionName>

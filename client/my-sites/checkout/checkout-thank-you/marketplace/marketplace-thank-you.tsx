@@ -12,7 +12,6 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
@@ -60,8 +59,6 @@ const MarketplaceThankYou = ( {
 		isAtomicNeededForThemes,
 	] = useThemesThankYouData( themeSlugs );
 
-	console.log( { isAtomicNeededForThemes } );
-
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
@@ -78,13 +75,6 @@ const MarketplaceThankYou = ( {
 	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes;
 	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
 		useAtomicTransfer( isAtomicNeeded );
-
-	console.log( {
-		isAtomicTransferCheckComplete,
-		currentStep,
-		showProgressBar,
-		setShowProgressBar,
-	} );
 
 	const isPageReady = allPluginsFetched && allThemesFetched && isAtomicTransferCheckComplete;
 
@@ -129,8 +119,6 @@ const MarketplaceThankYou = ( {
 		...( hasPlugins ? [ pluginsSection ] : [] ),
 		defaultThankYouFooter,
 	];
-
-	console.log( { isSiteAtomic: isSiteAtomic( getState(), siteId ) } );
 
 	return (
 		<ThemeProvider theme={ theme }>
