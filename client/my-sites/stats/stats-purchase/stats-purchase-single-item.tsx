@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { Button as CalypsoButton } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -72,21 +74,30 @@ const StatsCommercialPurchase = ( {
 	redirectUri,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const commercialTitle = isOdysseyStats
+		? translate( 'Jetpack Stats Commercial' )
+		: translate( 'Jetpack Stats' );
+
+	// The button of @automattic/components has built-in color scheme support for Calypso.
+	const ButtonComponent = isOdysseyStats ? Button : CalypsoButton;
 
 	return (
 		<>
-			<h1>{ translate( 'Jetpack Stats Commercial' ) }</h1>
+			<h1>{ commercialTitle }</h1>
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-			<Button
+			<ButtonComponent
 				variant="primary"
+				primary
 				onClick={ () =>
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
 			>
 				{ translate( 'Get Stats Commercial' ) }
-			</Button>
+			</ButtonComponent>
 
 			{
 				// TODO: add - This is not commercial site box

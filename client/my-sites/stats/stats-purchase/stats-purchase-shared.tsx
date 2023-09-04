@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { Card } from '@wordpress/components';
 import classNames from 'classnames';
@@ -112,8 +113,16 @@ const StatsSingleItemPagePurchaseFrame = ( {
 	children,
 	isFree = false,
 }: StatsSingleItemPagePurchaseFrameProps ) => {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	return (
-		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
+		<div
+			className={ classNames(
+				COMPONENT_CLASS_NAME,
+				`${ COMPONENT_CLASS_NAME }--single`,
+				! isOdysseyStats ? `${ COMPONENT_CLASS_NAME }--is-wpcom` : ''
+			) }
+		>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
 				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>{ children }</div>
