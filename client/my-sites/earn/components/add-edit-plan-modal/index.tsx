@@ -94,7 +94,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const currencyList = Object.keys( connectedAccountMinimumCurrency );
 
 	const defaultCurrency = useMemo( () => {
-		const flatCurrencyList = currencyList.map( ( e ) => e.toUpperCase() );
+		const flatCurrencyList = currencyList;
 		if ( product?.currency ) {
 			return product?.currency;
 		}
