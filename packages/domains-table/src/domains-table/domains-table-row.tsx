@@ -1,5 +1,11 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
+import {
+	useSiteDomainsQuery,
+	useSiteQuery,
+	PartialDomainData,
+	SiteDomainsQueryFnData,
+	SiteDetails,
+} from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -9,16 +15,12 @@ import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { countDomainsRequiringAttention } from '../utils';
 import { createSiteDomainObject } from '../utils/assembler';
+import { domainManagementLink } from '../utils/paths';
 import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
-import type {
-	PartialDomainData,
-	SiteDomainsQueryFnData,
-	SiteDetails,
-} from '@automattic/data-stores';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
@@ -28,7 +30,6 @@ interface DomainsTableRowProps {
 	onSelect( domain: PartialDomainData ): void;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainsRequiringAttentionChange?( domainsRequiringAttention: number ): void;
-
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
@@ -209,36 +210,4 @@ export function DomainsTableRow( {
 			</td>
 		</tr>
 	);
-}
-
-function domainManagementLink(
-	{ domain, type }: PartialDomainData,
-	siteSlug: string,
-	isAllSitesView: boolean
-) {
-	const viewSlug = domainManagementViewSlug( type );
-
-	// Encodes only real domain names and not parameter placeholders
-	if ( ! domain.startsWith( ':' ) ) {
-		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
-		// Note they are encoded twice since page.js decodes the path by default.
-		domain = encodeURIComponent( encodeURIComponent( domain ) );
-	}
-
-	if ( isAllSitesView ) {
-		return `/domains/manage/all/${ domain }/${ viewSlug }/${ siteSlug }`;
-	}
-
-	return `/domains/manage/${ domain }/${ viewSlug }/${ siteSlug }`;
-}
-
-function domainManagementViewSlug( type: PartialDomainData[ 'type' ] ) {
-	switch ( type ) {
-		case 'transfer':
-			return 'transfer/in';
-		case 'redirect':
-			return 'redirect';
-		default:
-			return 'edit';
-	}
 }

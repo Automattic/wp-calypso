@@ -1794,6 +1794,7 @@ __metadata:
     "@wordpress/icons": ^9.32.0
     "@wordpress/is-shallow-equal": ^4.41.0
     "@wordpress/plugins": ^6.9.0
+    "@wordpress/private-apis": ^0.22.0
     "@wordpress/rich-text": ^6.18.0
     "@wordpress/url": ^3.42.0
     debug: ^4.3.3
