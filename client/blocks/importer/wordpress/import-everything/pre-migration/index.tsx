@@ -90,6 +90,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	);
 
 	const migrationTrackingProps = {
+		source_site_id: sourceSiteId,
 		source_site_url: sourceSiteUrl,
 		target_site_id: targetSite.ID,
 		target_site_slug: targetSite.slug,
@@ -153,8 +154,12 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	// This should be better handled by using a state after the refactor
 	useEffect( () => {
 		if ( ! showUpdatePluginInfo && isTargetSitePlanCompatible ) {
+			const _migrationTrackingProps: { [ key: string ]: unknown } = { ...migrationTrackingProps };
+			// There is a case where source_site_id is 0|undefined, so we need to delete it
+			delete _migrationTrackingProps?.source_site_id;
+
 			dispatch(
-				recordTracksEvent( 'calypso_site_migration_ready_screen', migrationTrackingProps )
+				recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps )
 			);
 		}
 	}, [ showUpdatePluginInfo, isTargetSitePlanCompatible ] );
