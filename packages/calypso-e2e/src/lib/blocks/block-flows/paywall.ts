@@ -40,7 +40,6 @@ export class PaywallFlow implements BlockFlow {
 			ParagraphBlock.blockEditorSelector
 		);
 		await prePaywallParagraphHandle.fill( this.configurationData.prePaywallText );
-
 		const postPaywallParagraphHandle = await context.editorPage.addBlockFromSidebar(
 			ParagraphBlock.blockName,
 			ParagraphBlock.blockEditorSelector
