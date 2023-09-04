@@ -34,3 +34,13 @@ export interface AssignLicenceProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
 }
+
+export interface LicenceAction {
+	name: string;
+	isEnabled: boolean;
+	href?: string;
+	onClick: () => void;
+	openModal?: string;
+	isExternalLink?: boolean;
+	className?: string;
+}
