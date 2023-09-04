@@ -122,7 +122,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		// pricedAPIPlans - should have a definition for all plans, being the main source of API data
 		const pricedAPIPlan = pricedAPIPlans[ planSlug ];
-		// pricedAPISitePlans - unclear if all plans are included
+		// sitePlans - unclear if all plans are included
 		const sitePlan = sitePlans.data?.[ planSlug ];
 
 		return {
