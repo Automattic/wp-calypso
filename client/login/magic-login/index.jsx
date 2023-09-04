@@ -38,6 +38,7 @@ class MagicLogin extends Component {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		sendEmailLogin: PropTypes.func.isRequired,
 
 		// mapped to state
 		locale: PropTypes.string.isRequired,
