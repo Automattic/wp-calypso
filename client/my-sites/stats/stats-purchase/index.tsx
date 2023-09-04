@@ -17,7 +17,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
@@ -36,7 +36,6 @@ import StatsPurchaseWizard, {
 
 const StatsPurchasePage = ( {
 	query,
-	options,
 }: {
 	query: { redirect_uri: string; from: string; productType: 'commercial' | 'personal' };
 	options: { isCommercial: boolean | null };
@@ -49,6 +48,8 @@ const StatsPurchasePage = ( {
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
+
+	const isCommercial = useSelector( ( state ) => getSiteOption( state, siteId, 'is_commercial' ) );
 
 	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, isCommercialOwned } =
 		useStatsPurchases( siteId );
@@ -83,11 +84,11 @@ const StatsPurchasePage = ( {
 	const [ initialStep, initialSiteType ] = useMemo( () => {
 		// if the site is detected as commercial
 		if ( isTypeDetectionEnabled ) {
-			if ( options.isCommercial && ! isCommercialOwned ) {
+			if ( isCommercial && ! isCommercialOwned ) {
 				return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
 			}
 			// If the site is detected as personal
-			else if ( options.isCommercial === false && ! isCommercialOwned ) {
+			else if ( isCommercial === false && ! isCommercialOwned ) {
 				return [ SCREEN_PURCHASE, TYPE_PERSONAL ];
 			}
 		}
@@ -97,7 +98,7 @@ const StatsPurchasePage = ( {
 		}
 		// if nothing is owned don't specify the type
 		return [ SCREEN_TYPE_SELECTION, null ];
-	}, [ isPWYWOwned, isCommercialOwned, options.isCommercial, isTypeDetectionEnabled ] );
+	}, [ isPWYWOwned, isCommercialOwned, isCommercial, isTypeDetectionEnabled ] );
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
@@ -163,7 +164,7 @@ const StatsPurchasePage = ( {
 						{
 							// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
 							( redirectToPersonal || redirectToCommercial || showPurchasePage ) &&
-								options.isCommercial === null && (
+								isCommercial === null && (
 									<StatsPurchaseWizard
 										siteSlug={ siteSlug }
 										commercialProduct={ commercialProduct }
@@ -183,7 +184,7 @@ const StatsPurchasePage = ( {
 							( redirectToPersonal || redirectToCommercial || showPurchasePage ) && (
 								<>
 									{ ( redirectToCommercial ||
-										( ! redirectToPersonal && ! isCommercialOwned && options.isCommercial ) ) && (
+										( ! redirectToPersonal && ! isCommercialOwned && isCommercial ) ) && (
 										<div className="stats-purchase-page__notice">
 											<StatsSingleItemPagePurchase
 												siteSlug={ siteSlug ?? '' }
@@ -198,7 +199,7 @@ const StatsPurchasePage = ( {
 									{ ( redirectToPersonal ||
 										( ! redirectToCommercial &&
 											! isCommercialOwned &&
-											options.isCommercial === false ) ) && (
+											isCommercial === false ) ) && (
 										<StatsSingleItemPersonalPurchasePage
 											siteSlug={ siteSlug || '' }
 											maxSliderPrice={ maxSliderPrice ?? 10 }
