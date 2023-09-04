@@ -2,6 +2,7 @@ import { PERIOD_LIST } from './constants';
 import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
 import type { SelectFromMap } from '../mapped-types';
+import type { PlanSlug as PlanSlugFromProducts } from '@automattic/calypso-products';
 
 export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
 export type PlanSlug = ( typeof plansSlugs )[ number ];
@@ -51,10 +52,16 @@ export interface PlanProduct {
 }
 
 export interface PlanIntroductoryOffer {
-	formattedPrice?: string;
-	rawPrice?: number;
-	intervalUnit?: string;
-	intervalCount?: number;
+	formattedPrice: string;
+	rawPrice: number;
+	intervalUnit: string;
+	intervalCount: number;
+}
+
+export interface SitePlan {
+	planSlug: PlanSlugFromProducts;
+	productId: number;
+	introOffer?: PlanIntroductoryOffer | null;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
@@ -98,7 +105,7 @@ export interface PricedAPIPlan {
  * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
  */
 export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
-	product_id: number; // not included in the plan's payload
+	/* product_id: number; not included in the plan's payload */
 	product_slug: StorePlanSlug;
 }
 

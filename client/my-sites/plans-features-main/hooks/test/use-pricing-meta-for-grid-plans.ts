@@ -23,7 +23,7 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api
 );
 jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
-		usePricedAPISitePlans: jest.fn(),
+		useSitePlans: jest.fn(),
 	},
 } ) );
 
@@ -42,7 +42,7 @@ import usePricingMetaForGridPlans from '../data-store/use-pricing-meta-for-grid-
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		Plans.usePricedAPISitePlans.mockImplementation( () => ( {
+		Plans.useSitePlans.mockImplementation( () => ( {
 			isFetching: false,
 			data: null,
 		} ) );

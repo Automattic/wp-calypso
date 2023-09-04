@@ -9,6 +9,7 @@ import * as selectors from './selectors';
 export type { State };
 export type {
 	Plan,
+	SitePlan,
 	PlanSlug,
 	StorePlanSlug,
 	PlanProduct,
@@ -18,7 +19,7 @@ export type {
 	PlanSimplifiedFeature,
 } from './types';
 
-export { default as usePricedAPISitePlans } from './queries/use-priced-api-site-plans';
+export { default as useSitePlans } from './queries/use-site-plans';
 
 // plansSlugs is a list with the identifiers for each plan and they are agnostic of billing period; eg: 'free', 'personal'
 // plansSlugs is also used to construct the route that accepts plan slugs like '/free', '/personal', '/business'
