@@ -473,7 +473,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					</Accordion>
 					{ ! isDomainForwardDisabled && forwarding && (
 						<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
-							{ translate( 'Remove redirect' ) }
+							{ translate( 'Remove forward' ) }
 						</Button>
 					) }
 				</FormFieldset>
