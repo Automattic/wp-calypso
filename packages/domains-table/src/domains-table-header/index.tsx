@@ -26,7 +26,7 @@ export type DomainsTableColumn =
 				) => number
 			>;
 			headerComponent?: ReactNode;
-			width?: ( typeof CSSProperties )[ 'width' ];
+			width?: CSSProperties[ 'width' ];
 	  }
 	| {
 			name: string;
@@ -43,7 +43,7 @@ export type DomainsTableColumn =
 				) => number
 			];
 			headerComponent?: ReactNode;
-			width?: ( typeof CSSProperties )[ 'width' ];
+			width?: CSSProperties[ 'width' ];
 	  };
 
 type DomainsTableHeaderProps = {
