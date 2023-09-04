@@ -51,7 +51,7 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsCommercial />
-			<Button variant="primary" onClick={ handleClick }>
+			<Button variant="secondary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
 		</>
@@ -80,7 +80,7 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsPersonal />
-			<Button variant="primary" onClick={ handleClick }>
+			<Button variant="secondary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
 			<Button
@@ -121,7 +121,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsFree />
-			<Button variant="primary" onClick={ handleClick }>
+			<Button variant="secondary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
 
