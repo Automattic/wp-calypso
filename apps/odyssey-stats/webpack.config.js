@@ -198,6 +198,10 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-site-purchases$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
