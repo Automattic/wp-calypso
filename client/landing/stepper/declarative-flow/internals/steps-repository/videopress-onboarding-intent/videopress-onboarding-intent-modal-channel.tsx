@@ -22,6 +22,7 @@ const VideoPressOnboardingIntentModalChannel: React.FC< IntroModalContentProps >
 			onSubmit={ onSubmit }
 			isComingSoon={ true }
 			surveyTitle={ translate( 'Which additional features are you looking for?' ) }
+			surveyUrl="https://automattic.crowdsignal.net/video-channel-survey"
 			source="channel"
 		/>
 	);

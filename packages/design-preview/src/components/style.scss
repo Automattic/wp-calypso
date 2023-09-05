@@ -270,7 +270,7 @@ $design-preview-sidebar-width: 311px;
 	display: flex;
 	width: 100%;
 	padding: 16px 20px 8px;
-	box-sizing: border-box;
+	box-sizing: content-box;
 	overflow-x: auto;
 	overflow-y: hidden;
 
@@ -315,11 +315,9 @@ $design-preview-sidebar-width: 311px;
 	}
 
 	@include break-large {
-		padding: 0;
-		margin: 8px 0 0;
+		padding: 0 12px;
+		margin: 8px -12px 0;
 		animation: none;
-		// Increase width to ensure the scrollbar doesn't "push" the content to the left.
-		width: calc(100% + 16px);
 		overflow-x: hidden;
 		overflow-y: scroll;
 
