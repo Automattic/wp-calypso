@@ -184,7 +184,13 @@ export default function SiteStatusContent( {
 					/>
 				) }
 				{ isLargeScreen ? (
-					<Button className="sites-overview__row-text" borderless compact href={ siteRedirectURL }>
+					<Button
+						className="sites-overview__row-text"
+						borderless
+						compact
+						href={ siteRedirectURL }
+						target={ isWPCOMAtomicSiteCreationEnabled && isWPCOMAtomicSite ? '_blank' : '_self' }
+					>
 						{ WPCOMHostedSiteBadgeColumn }
 						{ siteUrl }
 						<SiteBackupStaging siteId={ siteId } />
