@@ -964,8 +964,12 @@ body.is-section-signup.is-white-signup,
 	}
 
 	.plan-comparison-grid__feature-group-row-cell {
-		.components-custom-select-control label {
-			display: none;
+		.components-custom-select-control {
+			width: 100%;
+
+			label {
+				display: none;
+			}
 		}
 
 		.components-custom-select-control__menu {
