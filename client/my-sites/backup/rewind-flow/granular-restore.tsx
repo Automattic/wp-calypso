@@ -1,8 +1,9 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { Button as WordPressButton } from '@wordpress/components';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Icon, arrowLeft, backup } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent } from 'react';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -10,6 +11,7 @@ import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-resto
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
+import { rewindGranularRestore } from 'calypso/state/activity-log/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -59,7 +61,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		areJetpackCredentialsInvalid( state, siteId, 'main' )
 	);
 
-	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
+	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -71,19 +73,31 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 
-	const onConfirm = useCallback( () => {
-		// Let's see what the browser check list looks like
-		// eslint-disable-next-line no-console
-		console.log( browserCheckList );
-		return;
+	const [ loading, setLoading ] = useState( true );
 
+	useEffect( () => {
+		if ( rewindState.state === 'uninitialized' ) {
+			setLoading( true );
+		}
+
+		setLoading( false );
+	}, [ rewindState ] );
+
+	const onConfirm = useCallback( () => {
+		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
-	}, [ browserCheckList, dispatch, setUserHasRequestedRestore ] );
+
+		// Given that it may take some time for the restore to queue/start, let's add a loading state
+		// It will be removed once the restore is officially queued
+		setLoading( true );
+
+		dispatch( rewindGranularRestore( siteId, rewindId, includePaths, excludePaths ) );
+	}, [ browserCheckList.excludeList, browserCheckList.includeList, dispatch, rewindId, siteId ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
-	const loading = rewindState.state === 'uninitialized';
 	const { restoreId } = rewindState.rewind || {};
 
 	const disableRestore = ! isAtomic && areCredentialsInvalid;
@@ -239,10 +253,18 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 
+	const shouldRenderConfirmation = ( ! isInProgress || ! isFinished ) && ! userHasRequestedRestore;
+
+	useEffect( () => {
+		if ( isInProgress && ! userHasRequestedRestore ) {
+			setUserHasRequestedRestore( true );
+		}
+	}, [ inProgressRewindStatus, isInProgress, userHasRequestedRestore ] );
+
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
-		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
+		} else if ( shouldRenderConfirmation ) {
 			return renderConfirm();
 		} else if ( isInProgress ) {
 			return renderInProgress();

@@ -151,11 +151,18 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
+			const feedUrl = `/read/feeds/${ feed_id }`;
+
+			if ( ! blog_id ) {
+				// The site subscription page does not support non-wpcom feeds yet
+				return feedUrl;
+			}
+
 			if ( config.isEnabled( 'reader/individual-subscription-page' ) ) {
 				return `/read/subscriptions/${ subscriptionId }`;
 			}
 
-			return `/read/feeds/${ feed_id }`;
+			return feedUrl;
 		}
 
 		if ( isSubscriptionsPortal ) {
@@ -169,7 +176,7 @@ const SiteRow = ( {
 
 	const handleNotifyMeOfNewPostsChange = ( send_posts: boolean ) => {
 		// Update post notification settings
-		updateNotifyMeOfNewPosts( { blog_id, send_posts } );
+		updateNotifyMeOfNewPosts( { blog_id, send_posts, subscriptionId: Number( subscriptionId ) } );
 
 		// Record tracks event
 		recordNotificationsToggle( send_posts, { blog_id } );
@@ -177,7 +184,7 @@ const SiteRow = ( {
 
 	const handleEmailMeNewPostsChange = ( send_posts: boolean ) => {
 		// Update post emails settings
-		updateEmailMeNewPosts( { blog_id, send_posts } );
+		updateEmailMeNewPosts( { blog_id, send_posts, subscriptionId: Number( subscriptionId ) } );
 
 		// Record tracks event
 		recordPostEmailsToggle( send_posts, { blog_id } );
@@ -185,7 +192,11 @@ const SiteRow = ( {
 
 	const handleEmailMeNewCommentsChange = ( send_comments: boolean ) => {
 		// Update comment emails settings
-		updateEmailMeNewComments( { blog_id, send_comments } );
+		updateEmailMeNewComments( {
+			blog_id,
+			send_comments,
+			subscriptionId: Number( subscriptionId ),
+		} );
 
 		// Record tracks event
 		recordCommentEmailsToggle( send_comments, { blog_id } );
@@ -193,7 +204,11 @@ const SiteRow = ( {
 
 	const handleDeliveryFrequencyChange = ( delivery_frequency: Reader.EmailDeliveryFrequency ) => {
 		// Update post emails delivery frequency
-		updateDeliveryFrequency( { blog_id, delivery_frequency } );
+		updateDeliveryFrequency( {
+			blog_id,
+			delivery_frequency,
+			subscriptionId: Number( subscriptionId ),
+		} );
 
 		// Record tracks event
 		recordPostEmailsSetFrequency( { blog_id, delivery_frequency } );
