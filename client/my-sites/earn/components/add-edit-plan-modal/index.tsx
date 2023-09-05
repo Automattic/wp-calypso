@@ -94,12 +94,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const currencyList = Object.keys( connectedAccountMinimumCurrency );
 
 	const defaultCurrency = useMemo( () => {
-		const flatCurrencyList = currencyList;
 		if ( product?.currency ) {
 			return product?.currency;
 		}
 		// Return the Stripe currency if supported. Otherwise default to USD
-		if ( flatCurrencyList.includes( connectedAccountDefaultCurrency ) ) {
+		if ( currencyList.includes( connectedAccountDefaultCurrency ) ) {
 			return connectedAccountDefaultCurrency;
 		}
 		return 'USD';
