@@ -25,13 +25,13 @@ const SubscriberDetails = ( {
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
-	const newsletterCategories = useSubscriberNewsletterCategories( {
+	const { data: newsletterCategoriesResult } = useSubscriberNewsletterCategories( {
 		siteId,
 		subscriptionId: subscriptionId || subscriber.subscription_id,
 	} );
 	const newsletterCategoryNames = useMemo(
-		() => newsletterCategories.data?.newsletterCategories.map( ( category ) => category.name ),
-		[ newsletterCategories.data?.newsletterCategories ]
+		() => newsletterCategoriesResult?.newsletterCategories.map( ( category ) => category.name ),
+		[ newsletterCategoriesResult?.newsletterCategories ]
 	);
 	const { avatar, date_subscribed, display_name, email_address, country, url } = subscriber;
 
@@ -67,16 +67,18 @@ const SubscriberDetails = ( {
 							dateFormat="LL"
 						/>
 					</div>
-					<div className="subscriber-details__content-column">
-						<div className="subscriber-details__content-label">
-							{ translate( 'Receives emails for' ) }
+					{ newsletterCategoriesResult?.enabled && (
+						<div className="subscriber-details__content-column">
+							<div className="subscriber-details__content-label">
+								{ translate( 'Receives emails for' ) }
+							</div>
+							<div className="subscriber-details__content-value">
+								{ newsletterCategoryNames
+									? newsletterCategoryNames.join( ', ' )
+									: translate( 'Not subscribed to any newsletter categories' ) }
+							</div>
 						</div>
-						<div className="subscriber-details__content-value">
-							{ newsletterCategoryNames
-								? newsletterCategoryNames.join( ', ' )
-								: translate( 'Not subscribed to any newsletter categories' ) }
-						</div>
-					</div>
+					) }
 					<div className="subscriber-details__content-column">
 						<div className="subscriber-details__content-label">{ translate( 'Plan' ) }</div>
 						{ subscriptionPlans &&

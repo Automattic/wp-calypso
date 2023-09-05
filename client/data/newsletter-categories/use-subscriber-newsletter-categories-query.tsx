@@ -8,6 +8,7 @@ type NewsletterCategoryQueryProps = {
 };
 
 type NewsletterCategoryResponse = {
+	enabled: boolean;
 	newsletter_categories: NewsletterCategory[];
 };
 
@@ -18,9 +19,10 @@ export const getSubscriberNewsletterCategoriesKey = (
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
-): NewsletterCategories => {
-	return { newsletterCategories: response.newsletter_categories };
-};
+): NewsletterCategories => ( {
+	enabled: response.enabled,
+	newsletterCategories: response.newsletter_categories,
+} );
 
 const useSubscriberNewsletterCategories = ( {
 	siteId,
