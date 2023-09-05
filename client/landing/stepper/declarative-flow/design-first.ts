@@ -105,6 +105,8 @@ const designFirst: Flow = {
 							addQueryArgs( `/setup/update-design/designSetup`, {
 								siteSlug: siteSlug,
 								flowToReturnTo: flowName,
+								theme: getQueryArg( window.location.href, 'theme' ),
+								style_variation: getQueryArg( window.location.href, 'style_variation' ),
 							} )
 						);
 					}
