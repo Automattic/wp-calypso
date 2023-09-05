@@ -235,7 +235,7 @@ class ThemesSelection extends Component {
 		if ( options ) {
 			options = addOptionsToGetUrl( options, {
 				tabFilter: this.props.tabFilter,
-				styleVariationSlug: styleVariation?.Slug,
+				styleVariationSlug: styleVariation?.slug,
 			} );
 			if ( options.activate ) {
 				options.activate.action = wrappedActivateAction( options.activate.action );
