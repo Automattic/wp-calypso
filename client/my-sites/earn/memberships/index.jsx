@@ -24,6 +24,7 @@ import { userCan } from 'calypso/lib/site/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
 	getConnectedAccountIdForSiteId,
@@ -78,6 +79,8 @@ function MembershipsSection( { query } ) {
 		last_month: lastMonth,
 		total,
 	} = useSelector( ( state ) => getEarningsWithDefaultsForSiteId( state, site?.ID ) );
+
+	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 
 	const navigateToLaunchpad = useCallback( () => {
 		const shouldGoToLaunchpad = query?.stripe_connect_success === 'launchpad';
@@ -502,17 +505,24 @@ function MembershipsSection( { query } ) {
 		const stripe_connect_success = query?.stripe_connect_success;
 
 		if ( stripe_connect_success === 'earn' ) {
+			const siteHasPlans = products.length !== 0;
+
+			let congratsText = '';
+			if ( ! siteHasPlans ) {
+				congratsText = translate(
+					'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+				);
+			} else {
+				congratsText = translate( 'Congrats! Your site is now connected to Stripe.' );
+			}
+
 			return (
-				<Notice
-					status="is-success"
-					showDismiss={ false }
-					text={ translate(
-						'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+				<Notice status="is-success" showDismiss={ false } text={ congratsText }>
+					{ ! siteHasPlans && (
+						<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
+							{ translate( 'Add a payment plan' ) }
+						</NoticeAction>
 					) }
-				>
-					<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
-						{ translate( 'Add a payment plan' ) }
-					</NoticeAction>
 				</Notice>
 			);
 		}
