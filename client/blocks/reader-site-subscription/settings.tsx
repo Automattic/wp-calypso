@@ -3,14 +3,16 @@ import { useTranslate } from 'i18n-calypso';
 import { SiteSettings } from 'calypso/landing/subscriptions/components/settings';
 
 type SiteSubscriptionSettingsProps = {
+	subscriptionId: number;
 	notifyMeOfNewPosts: boolean;
 	emailMeNewPosts: boolean;
 	deliveryFrequency: Reader.EmailDeliveryFrequency;
 	emailMeNewComments: boolean;
-	blogId: string;
+	blogId: number;
 };
 
 const SiteSubscriptionSettings = ( {
+	subscriptionId,
 	blogId,
 	notifyMeOfNewPosts,
 	emailMeNewPosts,
@@ -20,13 +22,13 @@ const SiteSubscriptionSettings = ( {
 	const translate = useTranslate();
 
 	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
-		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation( blogId );
+		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
 	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
-		SubscriptionManager.useSiteEmailMeNewPostsMutation( blogId );
+		SubscriptionManager.useSiteEmailMeNewPostsMutation();
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
-		SubscriptionManager.useSiteDeliveryFrequencyMutation( blogId );
+		SubscriptionManager.useSiteDeliveryFrequencyMutation();
 	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
-		SubscriptionManager.useSiteEmailMeNewCommentsMutation( blogId );
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 
 	return (
 		<div className="site-subscription-settings">
@@ -35,25 +37,25 @@ const SiteSubscriptionSettings = ( {
 				// NotifyMeOfNewPosts
 				notifyMeOfNewPosts={ notifyMeOfNewPosts }
 				onNotifyMeOfNewPostsChange={ ( send_posts ) =>
-					updateNotifyMeOfNewPosts( { blog_id: blogId, send_posts } )
+					updateNotifyMeOfNewPosts( { blog_id: blogId, send_posts, subscriptionId } )
 				}
 				updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 				// EmailMeNewPosts
 				emailMeNewPosts={ emailMeNewPosts }
 				onEmailMeNewPostsChange={ ( send_posts ) =>
-					updateEmailMeNewPosts( { blog_id: blogId, send_posts } )
+					updateEmailMeNewPosts( { blog_id: blogId, send_posts, subscriptionId } )
 				}
 				updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
 				// DeliveryFrequency
 				deliveryFrequency={ deliveryFrequency }
 				onDeliveryFrequencyChange={ ( delivery_frequency ) =>
-					updateDeliveryFrequency( { blog_id: blogId, delivery_frequency } )
+					updateDeliveryFrequency( { blog_id: blogId, delivery_frequency, subscriptionId } )
 				}
 				updatingFrequency={ updatingFrequency }
 				// EmailMeNewComments
 				emailMeNewComments={ emailMeNewComments }
 				onEmailMeNewCommentsChange={ ( send_comments ) =>
-					updateEmailMeNewComments( { blog_id: blogId, send_comments } )
+					updateEmailMeNewComments( { blog_id: blogId, send_comments, subscriptionId } )
 				}
 				updatingEmailMeNewComments={ updatingEmailMeNewComments }
 			/>
