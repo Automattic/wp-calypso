@@ -352,6 +352,7 @@ class CancelPurchaseButton extends Component {
 						onClose={ this.closeDialog }
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						isAkismet={ isAkismet }
 					/>
 				) }
 

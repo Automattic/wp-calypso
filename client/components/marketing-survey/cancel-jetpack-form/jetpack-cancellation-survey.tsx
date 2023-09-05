@@ -14,11 +14,13 @@ interface Choice {
 interface JetpackCancellationSurveyProps {
 	selectedAnswerId: string | null;
 	onAnswerChange: ( answerId: string | null, answerText: TranslateResult | string ) => void;
+	isAkismet?: boolean;
 }
 
 export default function JetpackCancellationSurvey( {
 	selectedAnswerId,
 	onAnswerChange,
+	isAkismet = false,
 }: JetpackCancellationSurveyProps ) {
 	const translate = useTranslate();
 	const [ customAnswerText, setCustomAnswerText ] = useState( '' );
@@ -117,10 +119,14 @@ export default function JetpackCancellationSurvey( {
 		);
 	};
 
+	const headerText = isAkismet
+		? translate( 'Before you go, help us improve Akismet' )
+		: translate( 'Before you go, help us improve Jetpack' );
+
 	return (
 		<>
 			<FormattedHeader
-				headerText={ translate( 'Before you go, help us improve Jetpack' ) }
+				headerText={ headerText }
 				subHeaderText={ translate( 'Please let us know why you are cancelling.' ) }
 				align="center"
 				isSecondary={ true }
