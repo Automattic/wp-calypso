@@ -130,7 +130,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
 				billingPeriod: pricedAPIPlan?.bill_period,
 				currencyCode: pricedAPIPlan?.currency_code,
-				introOffer: introOffers.data?.[ planSlug ],
+				introOffer: introOffers?.[ planSlug ],
 			},
 		};
 	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );
