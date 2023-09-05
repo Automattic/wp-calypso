@@ -92,7 +92,8 @@ const StatsPurchasePage = ( {
 		const trafficPageUrl = `/stats/day/${ siteSlug }`;
 		// Redirect to Calypso Stats if:
 		// - the site is not Jetpack.
-		if ( ! isSiteJetpackNotAtomic ) {
+		// TODO: remove this check once we have Stats in Calypso for all sites.
+		if ( ! isSiteJetpackNotAtomic && ! config.isEnabled( 'stats/paid-wpcom-stats' ) ) {
 			page.redirect( trafficPageUrl );
 		}
 	}, [ siteSlug, isSiteJetpackNotAtomic ] );
