@@ -32,6 +32,9 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 
 	const isPluginsPage = path.includes( '/plugins' );
 	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
+	const isWPCOMAtomicSiteCreationEnabled = config.isEnabled(
+		'jetpack/pro-dashboard-wpcom-atomic-hosting'
+	);
 
 	return (
 		<div>
@@ -40,7 +43,9 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 				showAllSites
 				allSitesPath={ path }
 				siteBasePath="/backup"
-				wpcomSiteBasePath="https://wordpress.com/home"
+				wpcomSiteBasePath={
+					isWPCOMAtomicSiteCreationEnabled ? 'https://wordpress.com/home' : false
+				}
 			/>
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
