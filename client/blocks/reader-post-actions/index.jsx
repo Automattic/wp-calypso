@@ -34,7 +34,6 @@ const ReaderPostActions = ( props ) => {
 		className,
 		visitUrl,
 		fullPost,
-		translate,
 		showFollow,
 	} = props;
 
@@ -74,9 +73,7 @@ const ReaderPostActions = ( props ) => {
 						href={ visitUrl || post.URL }
 						iconSize={ iconSize }
 						onClick={ onPermalinkVisit }
-					>
-						{ translate( 'Visit' ) }
-					</ReaderVisitLink>
+					></ReaderVisitLink>
 				</li>
 			) }
 			{ showViews && (
