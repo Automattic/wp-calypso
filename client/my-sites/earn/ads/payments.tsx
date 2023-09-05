@@ -41,7 +41,6 @@ type WordAdSettings = {
 };
 
 const WordAdsPayments = () => {
-	console.log( 'erick is here' );
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const payments: Payments = useSelector( ( state ) => getWordAdsPayments( state, siteId ?? 0 ) );
