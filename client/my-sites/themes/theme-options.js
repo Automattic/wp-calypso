@@ -40,8 +40,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
-const identity = ( theme ) => theme;
-
 function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
 		label: translate( 'Purchase', {
@@ -109,7 +107,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		getUrl: ( state, themeId, siteId, options ) =>
 			appendStyleVariationToThemesPath(
 				getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
-				options?.styleVariation
+				options?.styleVariationSlug
 			),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isJetpackSite( state, siteId ) ||
@@ -293,7 +291,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		getUrl: ( state, themeId, siteId, options ) =>
 			getThemeSignupUrl( state, themeId, {
 				category: options?.tabFilter,
-				styleVariationSlug: options?.styleVariation?.slug,
+				styleVariationSlug: options?.styleVariationSlug,
 			} ),
 		hideForTheme: ( state ) => isUserLoggedIn( state ),
 	};
@@ -310,7 +308,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		getUrl: ( state, themeId, siteId, options ) =>
 			appendStyleVariationToThemesPath(
 				getThemeDetailsUrl( state, themeId, siteId ),
-				options?.styleVariation
+				options?.styleVariationSlug
 			),
 	};
 
@@ -336,19 +334,12 @@ const connectOptionsHoc = connect(
 	( state, props ) => {
 		const { siteId, origin = siteId, locale } = props;
 		const isLoggedOut = ! isUserLoggedIn( state );
-		let mapGetUrl = identity;
-		let mapHideForTheme = identity;
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
-		if ( siteId ) {
-			mapGetUrl = ( getUrl ) => ( t, options ) =>
-				localizeThemesPath( getUrl( state, t, siteId, options ), locale, isLoggedOut );
-			mapHideForTheme = ( hideForTheme ) => ( t ) => hideForTheme( state, t, siteId, origin );
-		} else {
-			mapGetUrl = ( getUrl ) => ( t, s, options ) =>
-				localizeThemesPath( getUrl( state, t, s, options ), locale, isLoggedOut );
-			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
-		}
+		const mapGetUrl = ( getUrl ) => ( t, options ) =>
+			localizeThemesPath( getUrl( state, t, siteId, options ), locale, isLoggedOut );
+		const mapHideForTheme = ( hideForTheme ) => ( t, s ) =>
+			hideForTheme( state, t, s ?? siteId, origin );
 
 		return mapValues( getAllThemeOptions( props ), ( option, key ) =>
 			Object.assign(

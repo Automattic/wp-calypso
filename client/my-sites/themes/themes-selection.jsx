@@ -234,9 +234,8 @@ class ThemesSelection extends Component {
 
 		if ( options ) {
 			options = addOptionsToGetUrl( options, {
-				isLoggedIn: this.props.isLoggedIn,
 				tabFilter: this.props.tabFilter,
-				styleVariation,
+				styleVariationSlug: styleVariation?.Slug,
 			} );
 			if ( options.activate ) {
 				options.activate.action = wrappedActivateAction( options.activate.action );

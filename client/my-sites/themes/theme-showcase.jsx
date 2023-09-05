@@ -25,7 +25,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { setBackPath } from 'calypso/state/themes/actions';
+import { setBackPath, setTabFilter } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
@@ -137,6 +137,7 @@ class ThemeShowcase extends Component {
 
 	componentWillUnmount() {
 		this.props.setBackPath( this.constructUrl() );
+		this.props.setTabFilter( this.getSelectedTabFilter().key );
 	}
 
 	isStaticFilter = ( tabFilter ) => {
@@ -448,7 +449,7 @@ class ThemeShowcase extends Component {
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
 			bookmarkRef: this.bookmarkRef,
-			getScreenshotUrl: ( theme, styleVariation ) => {
+			getScreenshotUrl: ( theme, styleVariationSlug ) => {
 				if ( ! getScreenshotOption( theme ).getUrl ) {
 					return null;
 				}
@@ -456,7 +457,7 @@ class ThemeShowcase extends Component {
 				return localizeThemesPath(
 					appendStyleVariationToThemesPath(
 						getScreenshotOption( theme ).getUrl( theme ),
-						styleVariation
+						styleVariationSlug
 					),
 					locale,
 					! isLoggedIn
@@ -569,4 +570,6 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { setBackPath } )( localize( ThemeShowcase ) );
+export default connect( mapStateToProps, { setBackPath, setTabFilter } )(
+	localize( ThemeShowcase )
+);

@@ -208,7 +208,7 @@ function ThemeBlock( props ) {
 		<Theme
 			key={ 'theme-' + theme.id }
 			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
-			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, selectedStyleVariation ) }
+			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, selectedStyleVariation?.slug ) }
 			onScreenshotClick={ props.onScreenshotClick }
 			onStyleVariationClick={ ( themeId, themeIndex, variation ) => {
 				setSelectedStyleVariation( variation );

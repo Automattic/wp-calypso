@@ -1,3 +1,4 @@
+import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { getThemeType, isThemePremium } from 'calypso/state/themes/selectors';
 
@@ -26,7 +27,7 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 
 	// If the selected theme belongs to the blog category, redirect users to the blog tailored flow
 	if ( category === 'blog' ) {
-		return addQueryArgs( '/setup/start-writing', searchParams );
+		return addQueryArgs( `/setup/${ DESIGN_FIRST_FLOW }`, searchParams );
 	}
 
 	if ( isThemePremium( state, themeId ) ) {

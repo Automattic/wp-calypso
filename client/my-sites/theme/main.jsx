@@ -90,7 +90,7 @@ import {
 	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
-import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
+import { getBackPath, getTabFilter } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
@@ -943,14 +943,20 @@ class ThemeSheet extends Component {
 		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
+		const {
+			isActive,
+			isExternallyManagedTheme,
+			isLoggedIn,
+			tabFilter,
+			selectedStyleVariationSlug: styleVariationSlug,
+		} = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
 				href={
 					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
-						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
+						? getUrl( this.props.themeId, { tabFilter, styleVariationSlug } )
 						: null
 				}
 				onClick={ () => {
@@ -981,19 +987,6 @@ class ThemeSheet extends Component {
 				{ this.getDefaultOptionLabel() }
 			</Button>
 		);
-	};
-
-	appendSelectedStyleVariationToUrl = ( url ) => {
-		const { selectedStyleVariationSlug } = this.props;
-		if ( ! selectedStyleVariationSlug ) {
-			return url;
-		}
-
-		const [ base, query ] = url.split( '?' );
-		const params = new URLSearchParams( query );
-
-		params.set( 'style_variation', selectedStyleVariationSlug );
-		return `${ base }${ params.toString().length ? `?${ params.toString() }` : '' }`;
 	};
 
 	getSelectedStyleVariation = () => {
@@ -1469,6 +1462,7 @@ export default connect(
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
 		const backPath = getBackPath( state );
+		const tabFilter = getTabFilter( state );
 		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, themeId );
 		const error = theme
@@ -1502,6 +1496,7 @@ export default connect(
 			siteId,
 			siteSlug,
 			backPath,
+			tabFilter,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
