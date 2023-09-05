@@ -85,7 +85,12 @@ export async function loadDSPWidgetJS(): Promise< void > {
 		return;
 	}
 
-	const src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
+	let src = `${ getWidgetDSPJSURL() }?ver=${ Math.round( Date.now() / ( 1000 * 60 * 60 ) ) }`;
+
+	if ( shouldUseTestWidgetURL() ) {
+		src = `${ getWidgetDSPJSURL() }`;
+	}
+
 	await loadScript( src );
 	// Load the strings so that translations get associated with the module and loaded properly.
 	// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,

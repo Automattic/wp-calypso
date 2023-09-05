@@ -53,13 +53,14 @@ export const SubscriptionManager = {
 	useUserSettingsQuery,
 };
 
+export { useIsLoggedIn };
 export {
 	EmailDeliveryFrequency,
 	PostSubscriptionsSortBy,
 	SiteSubscriptionsFilterBy,
 	SiteSubscriptionsSortBy,
 } from './constants';
-export { isErrorResponse, isSiteSubscriptionDetails, isValidId } from './helpers';
+export { callApi, isErrorResponse, isSiteSubscriptionDetails, isValidId } from './helpers';
 export { UnsubscribedFeedsSearchProvider, useUnsubscribedFeedsSearch } from './contexts';
 export { useReadFeedSearchQuery, useReadFeedSiteQuery, useReadFeedQuery } from './queries';
 
