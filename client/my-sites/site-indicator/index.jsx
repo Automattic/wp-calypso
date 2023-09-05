@@ -1,5 +1,4 @@
 import { Button, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -215,7 +214,7 @@ export class SiteIndicator extends Component {
 					{ translate( 'Jetpack can’t communicate with your site.' ) }
 					<Button
 						plain
-						href={ localizeUrl( 'https://wordpress.com/support/why-is-my-site-down/' ) }
+						href="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
 						target="_blank"
 						onClick={ this.handleJetpackConnectionHealthSidebarLinkClick }
 					>

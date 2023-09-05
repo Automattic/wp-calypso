@@ -14,7 +14,7 @@
 	padding: 16px 0;
 	width: 100%;
 	margin: 0;
-	color: var(--color-text);
+	color: var(--color-neutral-100);
 
 	&.is-placeholder {
 		padding: 16px 0 16px 0;
@@ -95,7 +95,7 @@
 	a,
 	a:visited {
 		text-decoration: underline;
-		color: var(--color-text);
+		color: var(--color-neutral-100);
 
 		&:hover {
 			color: var(--studio-blue-50);
@@ -104,7 +104,7 @@
 }
 
 .checklist-item__task-content:hover .checklist-item__subtext {
-	color: var(--color-text);
+	color: var(--color-neutral-100);
 }
 
 .checklist__has-primary-action .checklist-item__task:nth-last-child(2) {
@@ -129,17 +129,16 @@
 .checklist-item__task.completed.disabled,
 .checklist-item__task.completed.enabled {
 	.checklist-item__text {
-		color: var(--studio-gray-50);
+		color: var(--color-neutral-40);
 		font-weight: 400;
-		text-decoration: line-through;
 	}
 
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
-		fill: var(--studio-gray-50);
+		fill: var(--color-neutral-40);
 	}
 	.checklist-item__counter {
-		color: var(--studio-gray-50);
+		color: var(--color-neutral-40);
 		font-weight: 400;
 		margin-right: 0;
 	}

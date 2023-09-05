@@ -3,7 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS } from '../constants';
 import type { ScreenName } from '../types';
 
-const useScreen = ( screenName: ScreenName ) => {
+export type UseScreenOptions = {
+	isNewSite?: boolean;
+	shouldUnlockGlobalStyles?: boolean;
+};
+
+const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const screens = {
@@ -22,6 +27,7 @@ const useScreen = ( screenName: ScreenName ) => {
 		upsell: {
 			name: 'upsell',
 			title: translate( 'Custom styles' ),
+			initialPath: NAVIGATOR_PATHS.UPSELL,
 		},
 		activation: {
 			name: 'activation',
@@ -35,18 +41,32 @@ const useScreen = ( screenName: ScreenName ) => {
 		},
 	};
 
-	/** @todo Handle the upsell screen in the following PR */
 	const previousScreens = {
 		main: null,
 		styles: screens.main,
 		upsell: screens.styles,
-		activation: screens.styles,
-		confirmation: screens.styles,
+		activation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+		confirmation: options.shouldUnlockGlobalStyles ? screens.upsell : screens.styles,
+	};
+
+	const nextScreens = {
+		main: screens.styles,
+		styles: ( () => {
+			if ( options.shouldUnlockGlobalStyles ) {
+				return screens.upsell;
+			}
+
+			return options.isNewSite ? screens.confirmation : screens.activation;
+		} )(),
+		upsell: options.isNewSite ? screens.confirmation : screens.activation,
+		activation: null,
+		confirmation: null,
 	};
 
 	return {
 		...screens[ screenName ],
 		previousScreen: previousScreens[ screenName ],
+		nextScreen: nextScreens[ screenName ],
 	};
 };
 

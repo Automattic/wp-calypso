@@ -38,7 +38,8 @@ const ReaderSiteSubscription = () => {
 						</Notice>
 					) : (
 						<SiteSubscriptionDetails
-							blogId={ blogId }
+							subscriptionId={ data.ID }
+							blogId={ Number( blogId ) }
 							name={ data.name }
 							subscriberCount={ data.subscriber_count }
 							dateSubscribed={ data.date_subscribed }
