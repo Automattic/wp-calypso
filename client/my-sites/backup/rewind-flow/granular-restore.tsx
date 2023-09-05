@@ -12,6 +12,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindGranularRestore } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -94,7 +95,17 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		setLoading( true );
 
 		dispatch( rewindGranularRestore( siteId, rewindId, includePaths, excludePaths ) );
+
+		dispatch( recordTracksEvent( 'calypso_jetpack_granular_restore_confirm' ) );
 	}, [ browserCheckList.excludeList, browserCheckList.includeList, dispatch, rewindId, siteId ] );
+
+	const onCancel = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_granular_restore_cancel' ) );
+	}, [ dispatch ] );
+
+	const onGoBack = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_granular_restore_goback' ) );
+	}, [ dispatch ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -147,7 +158,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				) }
 			</>
 			<div className="rewind-flow__btn-group">
-				<Button className="rewind-flow__back-button" href={ goBackUrl }>
+				<Button className="rewind-flow__back-button" href={ goBackUrl } onClick={ onCancel }>
 					{ translate( 'Cancel' ) }
 				</Button>
 				<Button
@@ -285,6 +296,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				variant="link"
 				className="backup-contents-page__back-button is-borderless"
 				href={ goBackUrl }
+				onClick={ onGoBack }
 			>
 				<Icon icon={ arrowLeft } size={ 16 } /> { translate( 'Go Back' ) }
 			</WordPressButton>

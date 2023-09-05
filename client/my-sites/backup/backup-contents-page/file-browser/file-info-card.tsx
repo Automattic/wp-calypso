@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -180,10 +179,16 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		// Mark this file as selected
 		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
 
+		// Redirect to granular restore page
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 
-		// @TODO: record a Tracks event for this action
-	}, [ dispatch, path, rewindId, siteId, siteSlug ] );
+		// Tracks restore interest
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+				file_type: item.type,
+			} )
+		);
+	}, [ dispatch, item.type, path, rewindId, siteId, siteSlug ] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
@@ -274,8 +279,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return downloadFileButton;
 	};
 
-	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
-
 	return (
 		<div className="file-card">
 			<div className="file-card__details">
@@ -328,7 +331,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				<>
 					<div className="file-card__actions">
 						{ renderDownloadButton() }
-						{ isGranularEnabled && item.type !== 'wordpress' && (
+						{ item.type !== 'wordpress' && (
 							<Button
 								className="file-card__action"
 								onClick={ restoreFile }
