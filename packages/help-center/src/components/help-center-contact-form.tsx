@@ -16,7 +16,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
-import { useExperiment } from 'calypso/lib/explat';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -123,6 +122,7 @@ export const HelpCenterContactForm = () => {
 		hasActiveChats,
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
+		noQuickResponseExperimentVariation,
 	} = useChatStatus();
 	useZendeskMessaging(
 		'zendesk_support_chat_key',
@@ -187,11 +187,7 @@ export const HelpCenterContactForm = () => {
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
-	const [ , experimentAssignment ] = useExperiment(
-		'calypso_helpcenter_quick_response_deflection_rate'
-	);
-
-	if ( experimentAssignment?.variationName === 'no_quick_response' ) {
+	if ( noQuickResponseExperimentVariation === 'no_quick_response' ) {
 		params.set( 'disable-gpt', 'true' );
 		params.set( 'show-gpt', 'false' );
 	}
@@ -272,7 +268,7 @@ export const HelpCenterContactForm = () => {
 
 	function handleCTA() {
 		if ( ! enableGPTResponse && ! showingSearchResults ) {
-			if ( experimentAssignment?.variationName === 'control' ) {
+			if ( noQuickResponseExperimentVariation === 'control' ) {
 				params.set( 'show-results', 'true' );
 				navigate( {
 					pathname: '/contact-form',
