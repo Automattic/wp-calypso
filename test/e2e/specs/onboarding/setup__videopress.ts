@@ -43,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			// Only 1 should be present.
 			const foundButtonKey = await Promise.any( [
 				page.waitForSelector( 'text=Get started' ).then( () => 'get-started-button' ),
-				page.waitForSelector( 'img[alt="Get a video portfolio"]' ).then( () => 'portfolio-button' ),
+				page.waitForSelector( 'img[alt="Showcase your work"]' ).then( () => 'portfolio-button' ),
 			] );
 
 			// if Get Started is present, its the normal flow, otherwise its the User Intent flow
