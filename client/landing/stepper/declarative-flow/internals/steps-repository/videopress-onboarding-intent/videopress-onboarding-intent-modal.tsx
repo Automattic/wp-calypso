@@ -20,6 +20,7 @@ export interface VideoPressOnboardingIntentModalContentProps extends IntroModalC
 	};
 	isComingSoon?: boolean;
 	surveyTitle?: string;
+	surveyUrl?: string;
 	source?: string;
 }
 
@@ -30,6 +31,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	actionButton,
 	isComingSoon,
 	surveyTitle,
+	surveyUrl,
 	onSubmit,
 	source,
 	children,
@@ -202,7 +204,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 					/>
 				</div>
 			</div>
-			{ surveyTitle && (
+			{ surveyTitle && surveyUrl && (
 				<div className="videopress-intro-modal__survey">
 					<div className="videopress-intro-modal__survey-info">
 						<div className="videopress-intro-modal__survey-title">{ surveyTitle }</div>
@@ -212,12 +214,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 							) }
 						</div>
 					</div>
-					<Button
-						className="intro__button button-survey"
-						href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
-						target="_blank"
-						plain
-					>
+					<Button className="intro__button button-survey" href={ surveyUrl } target="_blank" plain>
 						{ translate( 'Answer the survey' ) }
 						<Icon icon={ arrowRight } />
 					</Button>

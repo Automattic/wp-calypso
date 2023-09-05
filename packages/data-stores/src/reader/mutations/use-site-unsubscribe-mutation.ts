@@ -8,7 +8,7 @@ import {
 } from '../types';
 
 type UnsubscribeParams = {
-	subscriptionId?: number;
+	subscriptionId: number;
 	url?: string;
 	blog_id?: number | string;
 	doNotInvalidateSiteSubscriptions?: boolean;
@@ -21,7 +21,7 @@ type UnsubscribeResponse = {
 	subscription?: null;
 };
 
-const buildSiteSubscriptionDetailsQueryKey = (
+const buildSiteSubscriptionDetailsByBlogIdQueryKey = (
 	blogId: number | string,
 	isLoggedIn: boolean,
 	userId?: number
@@ -33,11 +33,19 @@ const buildSiteSubscriptionDetailsQueryKey = (
 	);
 };
 
+const buildSiteSubscriptionDetailsQueryKey = (
+	subscriptionId: number,
+	isLoggedIn: boolean,
+	userId?: number
+) => {
+	return [ 'read', 'subscriptions', subscriptionId, isLoggedIn, userId ];
+};
+
 const useSiteUnsubscribeMutation = () => {
 	const { isLoggedIn, id: userId } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
-	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
+	const siteSubscriptionsQueryKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const subscriptionsCountQueryKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
 	return useMutation( {
 		mutationFn: async ( params: UnsubscribeParams ) => {
@@ -71,14 +79,21 @@ const useSiteUnsubscribeMutation = () => {
 			return response;
 		},
 		onMutate: async ( params ) => {
-			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
-			await queryClient.cancelQueries( subscriptionsCountCacheKey );
+			const siteSubscriptionDetailsQueryKey = buildSiteSubscriptionDetailsQueryKey(
+				params.subscriptionId,
+				isLoggedIn,
+				userId
+			);
+
+			await queryClient.cancelQueries( siteSubscriptionsQueryKey );
+			await queryClient.cancelQueries( subscriptionsCountQueryKey );
+			await queryClient.cancelQueries( siteSubscriptionDetailsQueryKey );
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
+				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
 			// remove blog from site subscriptions
 			if ( previousSiteSubscriptions ) {
-				queryClient.setQueryData( siteSubscriptionsCacheKey, {
+				queryClient.setQueryData( siteSubscriptionsQueryKey, {
 					...previousSiteSubscriptions,
 					pages: previousSiteSubscriptions.pages.map( ( page ) => {
 						return {
@@ -99,13 +114,13 @@ const useSiteUnsubscribeMutation = () => {
 
 			const previousSubscriptionsCount =
 				queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >(
-					subscriptionsCountCacheKey
+					subscriptionsCountQueryKey
 				);
 
 			// decrement the blog count
 			if ( previousSubscriptionsCount ) {
 				queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-					subscriptionsCountCacheKey,
+					subscriptionsCountQueryKey,
 					{
 						...previousSubscriptionsCount,
 						blogs: previousSubscriptionsCount?.blogs ? previousSubscriptionsCount?.blogs - 1 : null,
@@ -113,9 +128,19 @@ const useSiteUnsubscribeMutation = () => {
 				);
 			}
 
-			let previousSiteSubscriptionDetails: SiteSubscriptionDetails | undefined;
+			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
+				siteSubscriptionDetailsQueryKey
+			);
+			if ( previousSiteSubscriptionDetails ) {
+				queryClient.setQueryData( siteSubscriptionDetailsQueryKey, {
+					...previousSiteSubscriptionDetails,
+					subscriber_count: previousSiteSubscriptionDetails.subscriber_count - 1,
+				} );
+			}
+
+			let previousSiteSubscriptionDetailsByBlogId: SiteSubscriptionDetails | undefined;
 			if ( isValidId( params.blog_id ) ) {
-				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsQueryKey(
+				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsByBlogIdQueryKey(
 					params.blog_id,
 					isLoggedIn,
 					userId
@@ -123,14 +148,14 @@ const useSiteUnsubscribeMutation = () => {
 
 				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
-				previousSiteSubscriptionDetails = queryClient.getQueryData(
+				previousSiteSubscriptionDetailsByBlogId = queryClient.getQueryData(
 					siteSubscriptionDetailsCacheKey
 				);
 
-				if ( previousSiteSubscriptionDetails ) {
+				if ( previousSiteSubscriptionDetailsByBlogId ) {
 					queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
-						...previousSiteSubscriptionDetails,
-						subscriber_count: previousSiteSubscriptionDetails.subscriber_count - 1,
+						...previousSiteSubscriptionDetailsByBlogId,
+						subscriber_count: previousSiteSubscriptionDetailsByBlogId.subscriber_count - 1,
 					} );
 				}
 			}
@@ -139,47 +164,59 @@ const useSiteUnsubscribeMutation = () => {
 				previousSiteSubscriptions,
 				previousSubscriptionsCount,
 				previousSiteSubscriptionDetails,
+				previousSiteSubscriptionDetailsByBlogId,
 			};
 		},
-		onError: ( error, params, context ) => {
+		onError: ( _error, params, context ) => {
 			if ( context?.previousSiteSubscriptions ) {
-				queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
+				queryClient.setQueryData( siteSubscriptionsQueryKey, context.previousSiteSubscriptions );
 			}
 			if ( context?.previousSubscriptionsCount ) {
 				queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-					subscriptionsCountCacheKey,
+					subscriptionsCountQueryKey,
 					context.previousSubscriptionsCount
 				);
 			}
-			if ( context?.previousSiteSubscriptionDetails && isValidId( params.blog_id ) ) {
-				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsQueryKey(
+			if ( context?.previousSiteSubscriptionDetails ) {
+				queryClient.setQueryData(
+					buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId ),
+					{
+						...context.previousSiteSubscriptionDetails,
+						subscriber_count: context.previousSiteSubscriptionDetails.subscriber_count + 1,
+					}
+				);
+			}
+			if ( context?.previousSiteSubscriptionDetailsByBlogId && isValidId( params.blog_id ) ) {
+				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsByBlogIdQueryKey(
 					params.blog_id,
 					isLoggedIn,
 					userId
 				);
 				queryClient.setQueryData(
 					siteSubscriptionDetailsCacheKey,
-					context.previousSiteSubscriptionDetails
+					context.previousSiteSubscriptionDetailsByBlogId
 				);
 			}
 		},
 		onSettled: ( _data, _error, params ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
-				queryClient.invalidateQueries( siteSubscriptionsCacheKey );
+				queryClient.invalidateQueries( siteSubscriptionsQueryKey );
 			}
 
 			if ( isValidId( params.blog_id ) ) {
-				const siteSubscriptionDetailsCacheKey = buildSiteSubscriptionDetailsQueryKey(
-					params.blog_id,
-					isLoggedIn,
-					userId
-				);
-				queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey, { refetchType: 'none' } );
+				const siteSubscriptionDetailsByBlogIdQueryKey =
+					buildSiteSubscriptionDetailsByBlogIdQueryKey( params.blog_id, isLoggedIn, userId );
+				queryClient.invalidateQueries( siteSubscriptionDetailsByBlogIdQueryKey, {
+					refetchType: 'none',
+				} );
 				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
 			}
 
-			queryClient.invalidateQueries( subscriptionsCountCacheKey );
+			queryClient.invalidateQueries( subscriptionsCountQueryKey );
 			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
+			queryClient.invalidateQueries(
+				buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId )
+			);
 		},
 	} );
 };

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
+import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 const TASKS_TO_COMPLETE_ON_CLICK = [
@@ -20,7 +21,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen } = extraActions || {};
+	const { setShareSiteModalIsOpen, siteLaunched } = extraActions || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -118,6 +119,16 @@ export const setUpActionsForTasks = ( {
 					logMissingCalypsoPath = true;
 					action = () => {
 						window.location.assign( `/subscribers/${ siteSlug }` );
+					};
+					break;
+				case 'site_launched':
+					action = async () => {
+						await wpcomRequest( {
+							path: `/sites/${ siteSlug }/launch`,
+							apiVersion: '1.1',
+							method: 'post',
+						} );
+						siteLaunched?.();
 					};
 					break;
 				default:
