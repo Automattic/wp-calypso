@@ -29,7 +29,7 @@ import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 
-export interface BaseDomainsTableProps {
+interface BaseDomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
@@ -40,12 +40,13 @@ export interface BaseDomainsTableProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
-	children: ReactNode | ReactNode[];
 }
 
-type DomainsTableProps =
+export type DomainsTablePropsNoChildren =
 	| ( BaseDomainsTableProps & { isAllSitesView: true } )
-	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string } );
+	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string | null } );
+
+export type DomainsTableProps = DomainsTablePropsNoChildren & { children: ReactNode | ReactNode[] };
 
 type Value = {
 	filter: DomainsTableFilter;
