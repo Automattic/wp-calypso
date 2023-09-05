@@ -5,6 +5,7 @@ import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import Tooltip from 'calypso/components/tooltip';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
@@ -26,6 +27,7 @@ class ReaderShare extends Component {
 
 	state = {
 		showingMenu: false,
+		tooltip: false,
 	};
 
 	constructor( props ) {
@@ -110,16 +112,28 @@ class ReaderShare extends Component {
 		return (
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
 			<div className="reader-share" onClick={ ( event ) => event.preventDefault() }>
+				<Tooltip
+					isVisible={ this.state.tooltip }
+					position="bottom"
+					context={ this.shareButton.current }
+				>
+					{ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
+				</Tooltip>
 				<Button
 					borderless
 					className={ buttonClasses }
 					compact={ this.props.iconSize === 18 }
 					key="button"
 					onClick={ this.toggle }
-					onMouseEnter={ preloadEditor }
+					onMouseEnter={ () => {
+						this.setState( { tooltip: true } );
+						preloadEditor();
+					} }
+					onMouseLeave={ () => {
+						this.setState( { tooltip: false } );
+					} }
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
-					title={ this.props.isReblogSelection ? translate( 'Reblog' ) : translate( 'Share' ) }
 				>
 					{ ! this.props.isReblogSelection ? (
 						ReaderShareIcon( {

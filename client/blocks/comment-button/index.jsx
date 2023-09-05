@@ -2,8 +2,9 @@ import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createElement } from 'react';
+import { createElement, useRef, useState } from 'react';
 import { connect } from 'react-redux';
+import Tooltip from 'calypso/components/tooltip';
 import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
 import './style.scss';
@@ -12,6 +13,8 @@ const noop = () => {};
 
 function CommentButton( props ) {
 	const { commentCount, href, onClick, tagName, target, icon } = props;
+	const commentRef = useRef();
+	const [ tooltip, setTooltip ] = useState( false );
 
 	return createElement(
 		tagName,
@@ -21,13 +24,18 @@ function CommentButton( props ) {
 				href: 'a' === tagName ? href : null,
 				onClick,
 				target: 'a' === tagName ? target : null,
-				title: translate( 'Comment' ),
+				onMouseEnter: () => setTooltip( true ),
+				onMouseLeave: () => setTooltip( false ),
+				ref: commentRef,
 			},
 			( prop ) => prop === null
 		),
 		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
 		<span className="comment-button__label">
 			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
+			<Tooltip isVisible={ tooltip } position="bottom" context={ commentRef.current }>
+				{ translate( 'Comment' ) }
+			</Tooltip>
 		</span>
 	);
 }

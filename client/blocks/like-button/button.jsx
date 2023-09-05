@@ -3,8 +3,9 @@ import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createElement, PureComponent } from 'react';
+import { createElement, PureComponent, createRef } from 'react';
 import { connect } from 'react-redux';
+import Tooltip from 'calypso/components/tooltip';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -12,6 +13,9 @@ import LikeIcons from './icons';
 import './style.scss';
 
 class LikeButton extends PureComponent {
+	likeRef = createRef();
+	state = { tooltip: false };
+
 	static propTypes = {
 		liked: PropTypes.bool,
 		showZeroCount: PropTypes.bool,
@@ -95,6 +99,22 @@ class LikeButton extends PureComponent {
 			</span>
 		);
 
+		const tooltipElement = (
+			<Tooltip isVisible={ this.state.tooltip } position="bottom" context={ this.likeRef.current }>
+				{ this.props.liked ? translate( 'Liked' ) : translate( 'Like' ) }
+			</Tooltip>
+		);
+
+		const mouseEnter = ( e ) => {
+			this.setState( { tooltip: true } );
+			return onMouseEnter( e );
+		};
+
+		const mouseLeave = ( e ) => {
+			this.setState( { tooltip: false } );
+			return onMouseLeave( e );
+		};
+
 		const likeIcons = icon || <LikeIcons size={ this.props.iconSize } />;
 		const href = isLink ? `/stats/post/${ postId }/${ slug }` : null;
 		return createElement(
@@ -104,14 +124,15 @@ class LikeButton extends PureComponent {
 					href,
 					className: classNames( containerClasses ),
 					onClick: ! isLink ? this.toggleLiked : null,
-					onMouseEnter,
-					onMouseLeave,
-					title: this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
+					onMouseEnter: mouseEnter,
+					onMouseLeave: mouseLeave,
+					ref: this.likeRef,
 				},
 				( prop ) => prop === null
 			),
 			likeIcons,
-			labelElement
+			labelElement,
+			tooltipElement
 		);
 	}
 }
