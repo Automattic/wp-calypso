@@ -243,7 +243,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						siteId ?? selectedSiteId,
 						productDetails,
 						annualProductDetails,
-						translate( 'Added "%s" payment plan.', { args: editedProductName } )
+						translate( 'Added "%s" tier payment plan.', { args: editedProductName } )
 					)
 				);
 				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
@@ -294,7 +294,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						siteId ?? selectedSiteId,
 						productDetails,
 						annualProductDetails,
-						translate( 'Updated "%s" payment plan.', { args: editedProductName } )
+						translate( 'Updated "%s" tier payment plan.', { args: editedProductName } )
 					)
 				);
 			}
