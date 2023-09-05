@@ -1,7 +1,7 @@
 import { AddOnMeta, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
@@ -63,16 +63,14 @@ export const StorageAddOnDropdown = ( {
 	);
 
 	// TODO: Consider transforming storageOptions outside of this component
-	const selectControlOptions = storageOptions.reduce( ( acc, storageOption ) => {
+	const selectControlOptions = storageOptions.map( ( storageOption ) => {
 		const title = getStorageStringFromFeature( storageOption.slug ) || '';
 		const cost = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
-		acc.push( {
+		return {
 			key: storageOption?.slug,
 			name: <StorageAddOnOption title={ title } cost={ cost } showCost={ showCost } />,
-		} );
-
-		return acc;
-	}, [] as { key: string; name: TranslateResult }[] );
+		};
+	} );
 
 	const defaultStorageOption = storageOptions.find( ( storageOption ) => ! storageOption?.isAddOn );
 	const selectedOptionKey = selectedStorageOptionForPlan || defaultStorageOption?.slug || '';
