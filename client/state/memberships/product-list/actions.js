@@ -58,11 +58,13 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				}
 				const membershipProduct = membershipProductFromApi( newProduct );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch(
-					successNotice( noticeText, {
-						duration: 5000,
-					} )
-				);
+				if ( noticeText ) {
+					dispatch(
+						successNotice( noticeText, {
+							duration: 5000,
+						} )
+					);
+				}
 				return membershipProduct;
 			} )
 			.catch( ( error ) => {
@@ -100,11 +102,13 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch(
-					successNotice( noticeText, {
-						duration: 5000,
-					} )
-				);
+				if ( noticeText ) {
+					dispatch(
+						successNotice( noticeText, {
+							duration: 5000,
+						} )
+					);
+				}
 				return membershipProduct;
 			} )
 			.catch( ( error ) => {
@@ -203,7 +207,7 @@ export const requestAddTier = ( siteId, product, annualProduct, noticeText ) => 
 		requestAddProduct(
 			siteId,
 			product,
-			noticeText
+			null // We don't want to show a message when adding the first product
 		)( dispatch ).then( ( membershipProduct ) => {
 			addOrUpdateAnnualProduct( siteId, annualProduct, noticeText )( membershipProduct )(
 				dispatch
@@ -216,7 +220,7 @@ export const requestUpdateTier = ( siteId, product, annualProduct, noticeText ) 
 		return requestUpdateProduct(
 			siteId,
 			product,
-			noticeText
+			null // We don't want to show a message on the first product update
 		)( dispatch ).then( ( membershipProduct ) => {
 			// The annual product does not exist yet
 			return addOrUpdateAnnualProduct( siteId, annualProduct, noticeText )( membershipProduct )(
