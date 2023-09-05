@@ -54,7 +54,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 					const blockHandle = await editorPage.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector,
-						{ noSearch: true }
+						{ noSearch: false }
 					);
 					const id = await blockHandle.getAttribute( 'id' );
 					const editorCanvas = await editorPage.getEditorCanvas();
