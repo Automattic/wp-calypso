@@ -14,12 +14,14 @@ export type UsePlanFeaturesForGridPlans = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
+	highlightedFeatures,
 }: {
 	planSlugs: PlanSlug[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
+	highlightedFeatures: string[];
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /*
@@ -33,12 +35,13 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	intent,
 	selectedFeature,
 	showLegacyStorageFeature,
+	highlightedFeatures,
 } ) => {
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const isMonthlyPlan = isMonthly( planSlug );
 
-		let wpcomFeatures = [];
+		let wpcomFeatures: FeatureObject[] = [];
 		let jetpackFeatures: FeatureObject[] = [];
 
 		if ( 'plans-newsletter' === intent ) {
@@ -84,6 +87,21 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 			};
 		} );
+
+		if ( highlightedFeatures && highlightedFeatures.length > 0 ) {
+			highlightedFeatures.reverse().forEach( ( slug ) => {
+				const feature = wpcomFeatures.find( ( feature ) => feature.getSlug() === slug );
+				if ( feature ) {
+					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
+					wpcomFeaturesTransformed.unshift( {
+						...feature,
+						availableOnlyForAnnualPlans,
+						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+						isHighlighted: true,
+					} );
+				}
+			} );
+		}
 
 		const topFeature = selectedFeature
 			? wpcomFeatures.find( ( feature ) => feature.getSlug() === selectedFeature )

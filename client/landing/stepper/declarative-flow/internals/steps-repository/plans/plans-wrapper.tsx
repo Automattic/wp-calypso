@@ -1,4 +1,13 @@
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_FREE,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_UNLIMITED_SUBSCRIBERS,
+	FEATURE_PAYMENT_TRANSACTION_FEES_10,
+	FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	DOMAIN_UPSELL_FLOW,
@@ -134,6 +143,23 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		setDomain( freeDomainSuggestion );
 	};
 
+	/*
+	 * Could abstract this more by utilizing methods like
+	 * getPlanPersonalDetails().getNewsletterHighlightedFeatures() and
+	 * getPremiumPersonalDetails().getNewsletterHighlightedFeatures()
+	 * in @automattic/calypso-products, but would need more refactoring.
+	 */
+	const getHighlightedFeatures = () =>
+		isNewsletterFlow( flowName )
+			? [
+					FEATURE_CUSTOM_DOMAIN,
+					FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+					FEATURE_UNLIMITED_SUBSCRIBERS,
+					FEATURE_PAYMENT_TRANSACTION_FEES_10,
+					FEATURE_PAYMENT_TRANSACTION_FEES_8,
+					FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			  ]
+			: [];
 	const plansFeaturesList = () => {
 		if ( ! props.plansLoaded ) {
 			return renderLoading();
@@ -159,6 +185,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
+					highlightedFeatures={ getHighlightedFeatures() }
 				/>
 				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
