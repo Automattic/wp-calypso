@@ -487,7 +487,7 @@ export const HelpCenterContactForm = () => {
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
 
-		if ( experimentAssignment?.variationName === 'no_quick_response' ) {
+		if ( noQuickResponseExperimentVariation === 'no_quick_response' ) {
 			if ( ! showingGPTResponse && ! showingSearchResults ) {
 				if ( mode === 'EMAIL' ) {
 					return __( 'Email us', __i18n_text_domain__ );
