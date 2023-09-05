@@ -28,7 +28,6 @@ import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
 	createSiteFromDomainOnly,
@@ -186,50 +185,6 @@ class DomainRow extends PureComponent {
 
 		return <div className="domain-row__mobile-extra-info">{ extraInfo }</div>;
 	}
-
-	renderAutoRenew() {
-		const { site, hasLoadedPurchases, purchase, isManagingAllSites, showCheckbox } = this.props;
-
-		if ( ! this.shouldShowAutoRenewStatus() || ( hasLoadedPurchases && ! purchase ) ) {
-			return <span className="domain-row__auto-renew-cell">-</span>;
-		}
-
-		if ( ! hasLoadedPurchases ) {
-			return (
-				<span className="domain-row__auto-renew-cell">
-					<p className="domain-row__placeholder" />
-				</span>
-			);
-		}
-
-		return (
-			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-			<div className="domain-row__auto-renew-cell" onClick={ this.stopPropagation }>
-				<AutoRenewToggle
-					planName={ site.plan.product_name_short }
-					siteDomain={ site.domain }
-					siteSlug={ site.slug }
-					purchase={ purchase }
-					shouldDisable={ isManagingAllSites && showCheckbox }
-					withTextStatus={ false }
-					toggleSource="registered-domain-status"
-				/>
-			</div>
-			/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-		);
-	}
-
-	shouldShowAutoRenewStatus = () => {
-		const { domain } = this.props;
-		if (
-			domain?.type === domainTypes.WPCOM ||
-			domain?.type === domainTypes.TRANSFER ||
-			domain?.aftermarketAuction
-		) {
-			return false;
-		}
-		return ! domain?.bundledPlanSubscriptionId && domain.currentUserIsOwner;
-	};
 
 	renderEmail() {
 		return <span className="domain-row__email-cell">{ this.renderEmailLabel() }</span>;
@@ -528,7 +483,6 @@ class DomainRow extends PureComponent {
 					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }
 					{ this.renderExpiryDate( expiryDate ) }
-					{ this.renderAutoRenew() }
 					{ ! isManagingAllSites && this.renderEmail() }
 					{ this.renderEllipsisMenu() }
 				</div>

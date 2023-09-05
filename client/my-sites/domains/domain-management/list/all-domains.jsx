@@ -391,7 +391,6 @@ class AllDomains extends Component {
 							getSimpleSortFunctionBy( 'domain' ),
 						],
 					},
-					{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 					{ name: 'action', label: translate( 'Actions' ) },
 			  ]
 			: [
@@ -446,7 +445,6 @@ class AllDomains extends Component {
 							getSimpleSortFunctionBy( 'domain' ),
 						],
 					},
-					{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			  ];
 
 		if ( isContactEmailEditContext ) {
