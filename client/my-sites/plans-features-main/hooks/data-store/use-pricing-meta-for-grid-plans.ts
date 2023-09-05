@@ -31,7 +31,9 @@ function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
 		const price = totalPrices[ key ];
 
 		if ( ! ( price === null ) ) {
-			totalPrices[ key ] = price + addOnPrice;
+			// Display prices are rounded to the nearest dollar,
+			// so we do the same for the add-on price
+			totalPrices[ key ] = price + Math.round( addOnPrice );
 		}
 	}
 
