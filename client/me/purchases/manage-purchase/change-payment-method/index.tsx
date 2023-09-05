@@ -11,7 +11,7 @@ import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';

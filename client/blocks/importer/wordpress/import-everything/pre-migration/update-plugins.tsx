@@ -12,15 +12,17 @@ import { URL } from 'calypso/types';
 interface Props {
 	isMigrateFromWp: boolean;
 	sourceSiteUrl: URL;
+	migrationTrackingProps?: Record< string, unknown >;
 }
 
 export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props ) => {
 	const translate = useTranslate();
-	const { isMigrateFromWp, sourceSiteUrl } = props;
+	const { isMigrateFromWp, sourceSiteUrl, migrationTrackingProps } = props;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_show_update_info', {
 			plugins_info: isMigrateFromWp ? 'wpcom_migration_plugin' : 'jetpack',
+			...migrationTrackingProps,
 		} );
 	}, [] );
 

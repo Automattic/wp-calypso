@@ -30,7 +30,6 @@ interface GlobalStylesVariationsProps {
 	splitDefaultVariation?: boolean;
 	displayFreeLabel?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
-	globalStylesInPersonalPlan: boolean;
 }
 
 const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesObject ) =>
@@ -107,16 +106,11 @@ const GlobalStylesVariations = ( {
 	onSelect,
 	splitDefaultVariation = true,
 	displayFreeLabel = true,
-	globalStylesInPersonalPlan,
 }: GlobalStylesVariationsProps ) => {
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const premiumStylesDescription = globalStylesInPersonalPlan
-		? translate(
-				'Unlock custom styles and tons of other features with the Personal plan, or try them out now for free.'
-		  )
-		: translate(
-				'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
-		  );
+	const premiumStylesDescription = translate(
+		'Unlock custom styles and tons of other features with the Premium plan, or try them out now for free.'
+	);
 
 	const baseGlobalStyles = useMemo(
 		() =>

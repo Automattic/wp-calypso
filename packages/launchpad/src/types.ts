@@ -14,6 +14,7 @@ export interface Task {
 	calypso_path?: string;
 	target_repetitions?: number;
 	repetition_count?: number;
+	order?: number;
 }
 
 export type LaunchpadChecklist = Task[];

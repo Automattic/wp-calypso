@@ -3,8 +3,10 @@ import { PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY } from './wpcom';
 export const GROUP_JETPACK = 'GROUP_JETPACK';
 
 // Products
+export const PRODUCT_JETPACK_AI_BI_YEARLY = 'jetpack_ai_bi_yearly';
 export const PRODUCT_JETPACK_AI_MONTHLY = 'jetpack_ai_monthly';
 export const PRODUCT_JETPACK_AI_YEARLY = 'jetpack_ai_yearly';
+export const PRODUCT_JETPACK_BOOST_BI_YEARLY = 'jetpack_boost_bi_yearly';
 export const PRODUCT_JETPACK_BOOST = 'jetpack_boost_yearly';
 export const PRODUCT_JETPACK_BOOST_MONTHLY = 'jetpack_boost_monthly';
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -15,12 +17,15 @@ export const PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY = 'jetpack_backup_t1_bi_yearly'
 export const PRODUCT_JETPACK_BACKUP_T1_MONTHLY = 'jetpack_backup_t1_monthly';
 export const PRODUCT_JETPACK_BACKUP_T2_YEARLY = 'jetpack_backup_t2_yearly';
 export const PRODUCT_JETPACK_BACKUP_T2_MONTHLY = 'jetpack_backup_t2_monthly';
+export const PRODUCT_JETPACK_SCAN_BI_YEARLY = 'jetpack_scan_bi_yearly';
 export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
 export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
 export const PRODUCT_JETPACK_SCAN_REALTIME = 'jetpack_scan_realtime';
 export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_monthly';
+export const PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY = 'jetpack_anti_spam_bi_yearly';
 export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
+export const PRODUCT_JETPACK_SEARCH_BI_YEARLY = 'jetpack_search_bi_yearly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
 export const PRODUCT_JETPACK_SEARCH_FREE = 'jetpack_search_free';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
@@ -28,14 +33,18 @@ export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
 export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
+export const PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY = 'jetpack_videopress_bi_yearly';
 export const PRODUCT_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
+export const PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY = 'jetpack_social_basic_bi_yearly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC = 'jetpack_social_basic_yearly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY = 'jetpack_social_basic_monthly';
+export const PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY = 'jetpack_social_advanced_bi_yearly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED = 'jetpack_social_advanced_yearly';
 export const PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY = 'jetpack_social_advanced_monthly';
 export const PRODUCT_JETPACK_STATS_MONTHLY = 'jetpack_stats_monthly';
 export const PRODUCT_JETPACK_STATS_YEARLY = 'jetpack_stats_yearly';
+export const PRODUCT_JETPACK_STATS_BI_YEARLY = 'jetpack_stats_bi_yearly';
 export const PRODUCT_JETPACK_STATS_PWYW_YEARLY = 'jetpack_stats_pwyw_yearly';
 export const PRODUCT_JETPACK_STATS_FREE = 'jetpack_stats_free_yearly';
 export const PRODUCT_JETPACK_MONITOR_YEARLY = 'jetpack_monitor_yearly';
@@ -132,12 +141,14 @@ export const JETPACK_BACKUP_T2_PRODUCTS = <const>[
 ];
 // Boost
 export const JETPACK_BOOST_PRODUCTS = <const>[
+	PRODUCT_JETPACK_BOOST_BI_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 ];
 
 // Scan
 export const JETPACK_SCAN_PRODUCTS = <const>[
+	PRODUCT_JETPACK_SCAN_BI_YEARLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SCAN_REALTIME,
@@ -146,12 +157,14 @@ export const JETPACK_SCAN_PRODUCTS = <const>[
 
 // Social Basic
 export const JETPACK_SOCIAL_BASIC_PRODUCTS = <const>[
+	PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 ];
 
 // Social Advanced
 export const JETPACK_SOCIAL_ADVANCED_PRODUCTS = <const>[
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 ];
@@ -164,6 +177,7 @@ export const JETPACK_SOCIAL_PRODUCTS = <const>[
 
 // Stats
 export const JETPACK_STATS_PRODUCTS = <const>[
+	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
@@ -172,12 +186,14 @@ export const JETPACK_STATS_PRODUCTS = <const>[
 
 // Anti-spam
 export const JETPACK_ANTI_SPAM_PRODUCTS = <const>[
+	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 ];
 
 // Search
 export const JETPACK_SEARCH_PRODUCTS = <const>[
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
@@ -193,6 +209,7 @@ export const JETPACK_CRM_FREE_PRODUCTS = <const>[
 
 // VideoPress
 export const JETPACK_VIDEOPRESS_PRODUCTS = <const>[
+	PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 ];
@@ -203,7 +220,11 @@ export const JETPACK_MONITOR_PRODUCTS = <const>[
 	PRODUCT_JETPACK_MONITOR_MONTHLY,
 ];
 
-export const JETPACK_AI_PRODUCTS = <const>[ PRODUCT_JETPACK_AI_MONTHLY, PRODUCT_JETPACK_AI_YEARLY ];
+export const JETPACK_AI_PRODUCTS = <const>[
+	PRODUCT_JETPACK_AI_BI_YEARLY,
+	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_AI_YEARLY,
+];
 
 // WooCommerce Products
 export const WOOCOMMERCE_PRODUCTS = <const>[
@@ -239,6 +260,7 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		monthly: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_SEARCH_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_SEARCH,
 		monthly: PRODUCT_JETPACK_SEARCH_MONTHLY,
 	},
@@ -247,10 +269,12 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		monthly: PRODUCT_WPCOM_SEARCH_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_SCAN_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_SCAN,
 		monthly: PRODUCT_JETPACK_SCAN_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_ANTI_SPAM,
 		monthly: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	},
@@ -263,6 +287,7 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		monthly: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		monthly: PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	},
@@ -271,26 +296,32 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		monthly: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_VIDEOPRESS,
 		monthly: PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_BOOST_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_BOOST,
 		monthly: PRODUCT_JETPACK_BOOST_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_SOCIAL_BASIC,
 		monthly: PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		monthly: PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_STATS_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_STATS_YEARLY,
 		monthly: PRODUCT_JETPACK_STATS_MONTHLY,
 	},
 	{
+		biYearly: PRODUCT_JETPACK_AI_BI_YEARLY,
 		yearly: PRODUCT_JETPACK_AI_YEARLY,
 		monthly: PRODUCT_JETPACK_AI_MONTHLY,
 	},
@@ -372,6 +403,7 @@ export const PLAN_JETPACK_SECURITY_T1_MONTHLY = 'jetpack_security_t1_monthly';
 export const PLAN_JETPACK_SECURITY_T1_BI_YEARLY = 'jetpack_security_t1_bi_yearly';
 export const PLAN_JETPACK_SECURITY_T2_YEARLY = 'jetpack_security_t2_yearly';
 export const PLAN_JETPACK_SECURITY_T2_MONTHLY = 'jetpack_security_t2_monthly';
+export const PLAN_JETPACK_COMPLETE_BI_YEARLY = 'jetpack_complete_bi_yearly';
 export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
 export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 export const PLAN_JETPACK_STARTER_YEARLY = 'jetpack_starter_yearly';
@@ -420,6 +452,7 @@ export const JETPACK_SECURITY_T2_PLANS = <const>[
 
 // Complete
 export const JETPACK_COMPLETE_PLANS = <const>[
+	PLAN_JETPACK_COMPLETE_BI_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
@@ -448,6 +481,7 @@ export const JETPACK_RESET_PLANS = <const>[
 ];
 export const JETPACK_RESET_PLANS_BY_TERM = <const>[
 	{
+		biYearly: PLAN_JETPACK_COMPLETE_BI_YEARLY,
 		yearly: PLAN_JETPACK_COMPLETE,
 		monthly: PLAN_JETPACK_COMPLETE_MONTHLY,
 	},
@@ -460,6 +494,7 @@ export const JETPACK_RESET_PLANS_BY_TERM = <const>[
 		monthly: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 	},
 	{
+		biYearly: PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 		yearly: PLAN_JETPACK_SECURITY_T1_YEARLY,
 		monthly: PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	},
@@ -537,7 +572,7 @@ export const JETPACK_VIDEOPRESS_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/
 export const JETPACK_CRM_PRODUCT_LANDING_PAGE_URL = 'https://jetpackcrm.com/';
 // If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
 // otherwise it will redirect to the JETPACK_REDIRECT_URL. Checkout references these constants in:
-// client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
+// client/my-sites/checkout/src/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
 export const JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN = true;
 export const JETPACK_REDIRECT_URL =
 	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';

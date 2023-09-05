@@ -113,6 +113,7 @@ export function getDesignEventProps( {
 		theme_style: design.recipe?.stylesheet + variationSlugSuffix,
 		design_type: design.design_type,
 		is_premium: design.is_premium,
+		is_externally_managed: design?.is_externally_managed,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
 		is_style_variation: is_style_variation,
 		...( colorVariation && {

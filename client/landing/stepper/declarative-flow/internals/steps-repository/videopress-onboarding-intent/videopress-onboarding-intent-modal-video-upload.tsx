@@ -25,6 +25,8 @@ const VideoPressOnboardingIntentModalVideoUpload: React.FC< IntroModalContentPro
 			onSubmit={ onSubmit }
 			isComingSoon={ true }
 			surveyTitle={ translate( 'Are you interested in specific features?' ) }
+			surveyUrl="https://automattic.crowdsignal.net/video-upload-survey"
+			source="video"
 		/>
 	);
 };

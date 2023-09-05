@@ -2,7 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
@@ -15,7 +14,12 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderRecommendedSites } from 'calypso/state/reader/recommended-sites/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import DiscoverNavigation from './discover-navigation';
-import { getDiscoverStreamTags, DEFAULT_TAB, buildDiscoverStreamKey } from './helper';
+import {
+	getDiscoverStreamTags,
+	DEFAULT_TAB,
+	getSelectedTabTitle,
+	buildDiscoverStreamKey,
+} from './helper';
 
 const DiscoverStream = ( props ) => {
 	const locale = useLocale();
@@ -24,7 +28,7 @@ const DiscoverStream = ( props ) => {
 	const recommendedSites = useSelector(
 		( state ) => getReaderRecommendedSites( state, 'discover-recommendations' ) || []
 	);
-	const [ selectedTab, setSelectedTab ] = useState( DEFAULT_TAB );
+	const selectedTab = props.selectedTab;
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -54,12 +58,16 @@ const DiscoverStream = ( props ) => {
 		isLoggedIn
 	);
 	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
+	const tabTitle = getSelectedTabTitle( selectedTab );
 
 	const DiscoverHeader = () => (
 		<FormattedHeader
 			brandFont
 			headerText={ translate( 'Discover' ) }
-			subHeaderText={ translate( 'Explore new blogs that inspire, educate, and entertain.' ) }
+			subHeaderText={ translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+				args: [ tabTitle ],
+				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+			} ) }
 			align="left"
 			hasScreenOptions
 			className={ classNames( 'discover-stream-header', {
@@ -98,7 +106,6 @@ const DiscoverStream = ( props ) => {
 			<DiscoverNavigation
 				width={ props.width }
 				selectedTab={ selectedTab }
-				setSelectedTab={ setSelectedTab }
 				recommendedTags={ recommendedTags }
 			/>
 			<Stream { ...streamProps } />

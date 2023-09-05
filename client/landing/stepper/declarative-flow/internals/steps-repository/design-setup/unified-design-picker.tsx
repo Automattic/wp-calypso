@@ -103,9 +103,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
-	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
-		site?.ID
-	);
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 
@@ -355,6 +353,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
 			: null;
 
+	const selectedMarketplaceProduct =
+		marketplaceThemeProducts.find(
+			( product ) => product.product_slug === marketplaceProductSlug
+		) || marketplaceThemeProducts[ 0 ];
+
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
@@ -366,6 +369,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			selectedDesignThemeId &&
 			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
 	);
+	const isMarketplaceThemeSubscriptionNeeded = !! (
+		marketplaceProductSlug && ! isMarketplaceThemeSubscribed
+	);
+
 	const isExternallyManagedThemeAvailable = useSelector(
 		( state ) => site?.ID && isSiteEligibleForManagedExternalThemes( state, site.ID )
 	);
@@ -424,6 +431,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function handleCheckout() {
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 			theme: selectedDesign?.slug,
+			is_externally_managed: selectedDesign?.is_externally_managed,
 		} );
 
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
@@ -448,9 +456,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				destination: window.location.href.replace( window.location.origin, '' ),
 				plan,
 				extraProducts:
-					selectedDesign?.is_externally_managed &&
-					marketplaceProductSlug &&
-					! isMarketplaceThemeSubscribed
+					selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
 						? [ marketplaceProductSlug ]
 						: [],
 			} );
@@ -510,7 +516,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
+				plan: 'premium',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -736,6 +742,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				<UpgradeModal
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
+					isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
+					isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
+					marketplaceProduct={ selectedMarketplaceProduct }
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
@@ -769,7 +778,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
 					limitGlobalStyles={ shouldLimitGlobalStyles }
-					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
 					screenshot={ fullLengthScreenshot }

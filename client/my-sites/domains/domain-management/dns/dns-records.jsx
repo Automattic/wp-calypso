@@ -41,6 +41,16 @@ class DnsRecords extends Component {
 		nameservers: PropTypes.array || null,
 	};
 
+	hasDefaultCnameRecord = () => {
+		const { dns, selectedDomainName } = this.props;
+		return dns?.records?.some(
+			( record ) =>
+				record?.type === 'CNAME' &&
+				record?.name === '*' &&
+				record?.data === `${ selectedDomainName }.`
+		);
+	};
+
 	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
@@ -77,6 +87,7 @@ class DnsRecords extends Component {
 				domain={ selectedDomain }
 				dns={ dns }
 				pointsToWpcom={ pointsToWpcom }
+				hasDefaultCnameRecord={ this.hasDefaultCnameRecord() }
 			/>
 		);
 
@@ -127,7 +138,7 @@ class DnsRecords extends Component {
 		if (
 			( ! englishLocales.includes( getLocaleSlug() ) &&
 				! i18n.hasTranslation(
-					'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.'
+					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
 				) ) ||
 			this.hasWpcomNameservers() ||
 			! nameservers ||
@@ -146,7 +157,7 @@ class DnsRecords extends Component {
 				/>
 				<div className="dns-records-notice__message">
 					{ translate(
-						'DNS records requires using WordPress.com nameservers. {{a}}Update your nameservers now{{/a}}.',
+						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
 						{
 							components: {
 								a: (

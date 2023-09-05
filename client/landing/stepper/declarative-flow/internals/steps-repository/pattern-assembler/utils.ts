@@ -27,3 +27,6 @@ export const injectCategoryToPattern = (
 
 	return pattern;
 };
+
+export const isPriorityPattern = ( { tags: { assembler_priority } }: Pattern ) =>
+	!! assembler_priority;
