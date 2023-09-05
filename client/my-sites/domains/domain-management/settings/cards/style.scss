@@ -144,10 +144,11 @@
 	.forwards-from {
 		padding-right: 30px;
 
-		input.form-text-input[type="text"] {
-
-			@include break-wide {
-				border-left: 0;
+		&.has-subdomain-selector {
+			input.form-text-input[type="text"] {
+				@include break-wide {
+					border-left: 0;
+				}
 			}
 		}
 

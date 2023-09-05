@@ -118,21 +118,21 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 	};
 
-	// Load saved forwarding into local state
+	const checkIfIsThereMainDomainForwarding = () => {
+		return data?.find( ( item ) => item.subdomain === '' );
+	};
+
 	useEffect( () => {
-		if ( isLoading || ! forwarding ) {
-			setTargetUrl( '' );
+		if ( isLoading || ! data ) {
 			return;
 		}
 
-		try {
-			if ( data?.length === 1 ) {
-				handleEdit( data[ 0 ] );
-			}
-		} catch ( e ) {
-			// ignore
+		// By default, the interface already opens with domain forwarding addition
+		if ( data?.length === 0 ) {
+			setEditingId( -1 );
+			setSourceType( 'domain' );
 		}
-	}, [ isLoading, data, setTargetUrl ] );
+	}, [ isLoading, data ] );
 
 	const handleAddForward = () => {
 		setEditingId( -1 );
@@ -404,7 +404,12 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				className="domain-forwarding-card__fields"
 			>
 				<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
-				<div className="forwards-from">
+				<div
+					className={ classNames( 'forwards-from', {
+						'has-subdomain-selector':
+							sourceType === 'domain' || ! checkIfIsThereMainDomainForwarding(),
+					} ) }
+				>
 					<FormTextInputWithAffixes
 						placeholder={ sourceType === 'domain' ? domain.domain : translate( 'Enter subdomain' ) }
 						disabled={ isLoading || sourceType === 'domain' }
@@ -414,15 +419,18 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						className={ classNames( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
 						prefix={
-							<FormSelect
-								name="redirect_type"
-								value={ sourceType }
-								onChange={ handleDomainSubdomainChange }
-								disabled={ isLoading }
-							>
-								<option value="domain">{ translate( 'Domain' ) }</option>
-								<option value="subdomain">{ translate( 'Subdomain' ) }</option>
-							</FormSelect>
+							( ( child.subdomain === '' && child.domain_redirect_id !== 0 ) ||
+								! checkIfIsThereMainDomainForwarding() ) && (
+								<FormSelect
+									name="redirect_type"
+									value={ sourceType }
+									onChange={ handleDomainSubdomainChange }
+									disabled={ isLoading }
+								>
+									<option value="domain">{ translate( 'Domain' ) }</option>
+									<option value="subdomain">{ translate( 'Subdomain' ) }</option>
+								</FormSelect>
+							)
 						}
 						suffix={ sourceType === 'subdomain' && <FormLabel>.{ domain.domain }</FormLabel> }
 					/>
