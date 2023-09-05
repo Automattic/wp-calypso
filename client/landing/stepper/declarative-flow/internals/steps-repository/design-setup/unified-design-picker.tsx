@@ -39,6 +39,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
@@ -46,6 +47,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
+import EligibilityWarningModal from '../../../../../..//my-sites/themes/atomic-transfer-dialog';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
@@ -448,21 +450,26 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		if ( siteSlugOrId ) {
-			goToCheckout( {
-				flowName: flow,
-				stepName,
-				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-				// When the user is done with checkout, send them back to the current url
-				destination: window.location.href.replace( window.location.origin, '' ),
-				plan,
-				extraProducts:
-					selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
-						? [ marketplaceProductSlug ]
-						: [],
-			} );
+			// TODO: Remove this temporary condition and
+			//      add condition here to check if checkout or atomic transfer dialog should be shown
+			if ( plan === 'business-bundle' ) {
+				goToCheckout( {
+					flowName: flow,
+					stepName,
+					siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
+					// When the user is done with checkout, send them back to the current url
+					destination: window.location.href.replace( window.location.origin, '' ),
+					plan,
+					extraProducts:
+						selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
+							? [ marketplaceProductSlug ]
+							: [],
+				} );
+			}
 
-			setShowUpgradeModal( false );
+			reduxDispatch( showAtomicTransferDialog( selectedDesign?.slug ) );
 		}
+		setShowUpgradeModal( false );
 	}
 
 	// ********** Logic for Premium Global Styles
@@ -748,6 +755,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
+				<EligibilityWarningModal siteId={ site?.ID } />
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ handleCheckoutForPremiumGlobalStyles }
 					closeModal={ closePremiumGlobalStylesModal }
