@@ -47,9 +47,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 	const supportCommercialUse = useMemo(
 		() =>
 			isCommercialOwned ||
-			JETPACK_COMPLETE_PLANS.some( ( plan ) => {
-				isProductOwned( sitePurchases, plan );
-			} ),
+			JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) ),
 		[ sitePurchases, isCommercialOwned ]
 	);
 
