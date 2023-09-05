@@ -1,8 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
+import { useRef, useState } from 'react';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowReblog } from 'calypso/blocks/reader-share/helper';
+import Tooltip from 'calypso/components/tooltip';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import CommentLikeButtonContainer from './comment-likes';
@@ -27,6 +29,8 @@ const CommentActions = ( {
 	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showReblogButton = shouldShowReblog( post, hasSites );
+	const replyRef = useRef();
+	const [ tooltip, setTooltip ] = useState( false );
 
 	// Only render actions for non placeholders
 	if ( isPlaceholder ) {
@@ -46,9 +50,18 @@ const CommentActions = ( {
 				</Button>
 			) }
 			{ showReplyButton && (
-				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
+				<Button
+					className="comments__comment-actions-reply"
+					onClick={ handleReply }
+					onMouseEnter={ () => setTooltip( true ) }
+					onMouseLeave={ () => setTooltip( false ) }
+					ref={ replyRef }
+				>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
+					<Tooltip isVisible={ tooltip } position="bottom" context={ replyRef.current }>
+						{ translate( 'Reply' ) }
+					</Tooltip>
 				</Button>
 			) }
 			{ showReblogButton && (

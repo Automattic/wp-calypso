@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { createElement, Component } from 'react';
+import { createElement, createRef, Component } from 'react';
+import Tooltip from 'calypso/components/tooltip';
 
 import './style.scss';
 
@@ -28,6 +29,9 @@ class FollowButton extends Component {
 		tagName: 'button',
 		disabled: false,
 	};
+
+	buttonRef = createRef();
+	state = { tooltip: false };
 
 	toggleFollow = ( event ) => {
 		if ( event ) {
@@ -75,14 +79,30 @@ class FollowButton extends Component {
 			</span>
 		);
 
+		const tooltipElement = (
+			<Tooltip
+				isVisible={ this.state.tooltip }
+				position="bottom"
+				context={ this.buttonRef.current }
+			>
+				{ label }
+			</Tooltip>
+		);
+
 		return createElement(
 			this.props.tagName,
 			{
 				onClick: this.toggleFollow,
+				onMouseEnter: () => {
+					this.setState( { tooltip: true } );
+				},
+				onMouseLeave: () => {
+					this.setState( { tooltip: false } );
+				},
+				ref: this.buttonRef,
 				className: menuClasses.join( ' ' ),
-				title: label,
 			},
-			[ followingIcon, followIcon, followLabelElement ]
+			[ followingIcon, followIcon, followLabelElement, tooltipElement ]
 		);
 	}
 }

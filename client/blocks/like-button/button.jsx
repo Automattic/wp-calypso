@@ -107,12 +107,12 @@ class LikeButton extends PureComponent {
 
 		const mouseEnter = ( e ) => {
 			this.setState( { tooltip: true } );
-			return onMouseEnter( e );
+			return onMouseEnter && onMouseEnter( e );
 		};
 
 		const mouseLeave = ( e ) => {
 			this.setState( { tooltip: false } );
-			return onMouseLeave( e );
+			return onMouseLeave && onMouseLeave( e );
 		};
 
 		const likeIcons = icon || <LikeIcons size={ this.props.iconSize } />;
