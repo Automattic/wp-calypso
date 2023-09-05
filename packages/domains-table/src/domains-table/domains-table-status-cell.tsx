@@ -39,10 +39,10 @@ export const DomainsTableStatusCell = ( {
 		switch ( status.action ) {
 			case 'set_auto_renew':
 				return translate( 'Change auto-renew mode' );
-			case 'update_contact_details':
+			case 'update_contact_info':
 				return translate( 'Update contact details' );
 			default:
-				throw new Error( 'Unknown action: ' + action );
+				throw new Error( 'Unknown action: ' + status.action );
 		}
 	};
 

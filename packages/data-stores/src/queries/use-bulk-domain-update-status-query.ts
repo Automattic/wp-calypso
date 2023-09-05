@@ -50,7 +50,7 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 			} ),
 		select: ( data ) => {
 			// get top-level info about recent jobs
-			const jobs: JobStatus[] = Object.keys( data ).map( ( jobId ) => {
+			const allJobs: JobStatus[] = Object.keys( data ).map( ( jobId ) => {
 				const job = data[ jobId ];
 				const success: string[] = [];
 				const failed: string[] = [];
@@ -83,7 +83,7 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 			Object.keys( data ).forEach( ( jobId ) => {
 				// only create domain-level results for jobs that
 				// are still running
-				if ( ! jobs.find( ( job ) => job.id === jobId )?.complete ) {
+				if ( ! allJobs.find( ( job ) => job.id === jobId )?.complete ) {
 					const entry = data[ jobId ] as BulkDomainUpdateStatus;
 					const { results, ...rest } = entry;
 					Object.keys( results ).forEach( ( domain ) => {
@@ -96,7 +96,9 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 				}
 			} );
 
-			return { domainResults, jobs };
+			const completedJobs = allJobs.filter( ( job ) => job.complete );
+
+			return { domainResults, completedJobs };
 		},
 		refetchInterval: pollingInterval,
 		queryKey: [ 'domains', 'bulk-actions' ],

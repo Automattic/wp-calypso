@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 const defaultResult = {
-	jobs: [],
+	completedJobs: [],
 	domainResults: new Map< string, DomainUpdateStatus[] >(),
 };
 
@@ -18,12 +18,12 @@ export const useDomainBulkUpdateStatus = () => {
 		BulkDomainUpdateStatusRetryInterval.Disabled
 	);
 
-	const { data: bulkStatusUpdates = defaultResult, isFetched: isStatusUpdateSuccess } =
+	const { data: bulkStatusUpdates = defaultResult, isFetched } =
 		useBulkDomainUpdateStatusQuery( statusUpdateInterval );
-	const { jobs, domainResults } = bulkStatusUpdates;
+	const { completedJobs, domainResults } = bulkStatusUpdates;
 
-	if ( isStatusUpdateSuccess ) {
-		const hasJobsInProgress = jobs.some( ( job ) => ! job.complete );
+	if ( isFetched ) {
+		const hasJobsInProgress = domainResults.size > 0;
 		if (
 			! hasJobsInProgress &&
 			statusUpdateInterval !== BulkDomainUpdateStatusRetryInterval.Disabled
@@ -43,8 +43,8 @@ export const useDomainBulkUpdateStatus = () => {
 		setTimeout( () => {
 			setStatusUpdateInterval( BulkDomainUpdateStatusRetryInterval.Active );
 			queryClient.invalidateQueries( { queryKey: [ 'domains', 'bulk-actions' ] } );
-		}, 1000 );
+		}, 1 );
 	}
 
-	return { jobs, domainResults, handleRestartDomainStatusPolling };
+	return { completedJobs, domainResults, handleRestartDomainStatusPolling };
 };

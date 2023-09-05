@@ -9,12 +9,14 @@ type StatusPopoverProps = {
 	children: React.ReactNode;
 	className?: string;
 	target?: React.ReactNode;
+	position?: React.ComponentProps< typeof Popover >[ 'position' ];
 };
 
 export const StatusPopover = ( {
 	children,
 	className,
 	target = <Gridicon icon="info-outline" size={ 18 } />,
+	position = 'top',
 }: StatusPopoverProps ) => {
 	const iconRef = useRef( null );
 	const [ inPopover, setInPopover ] = useState( false );
@@ -58,7 +60,7 @@ export const StatusPopover = ( {
 					id="status-popover"
 					isVisible
 					context={ iconRef.current }
-					position="top"
+					position={ position }
 					className={ classNames( 'status-popover__tooltip', className ) }
 					onMouseEnter={ handleOnMouseEnterPopover }
 					onMouseLeave={ handleOnMouseLeavePopover }

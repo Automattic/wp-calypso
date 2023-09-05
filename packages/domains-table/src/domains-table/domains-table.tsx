@@ -6,6 +6,7 @@ import {
 	SiteDomainsQueryFnData,
 	useDomainsBulkActionsMutation,
 	DomainUpdateStatus,
+	JobStatus,
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { useQueries } from '@tanstack/react-query';
@@ -65,7 +66,7 @@ type Value = {
 	) => Promise< SiteDomainsQueryFnData >;
 	selectedDomains: Set< string >;
 	hasSelectedDomains: boolean;
-	jobs: any[];
+	completedJobs: JobStatus[];
 	domainResults: Map< string, DomainUpdateStatus[] >;
 	handleRestartDomainStatusPolling: () => void;
 };
@@ -117,7 +118,8 @@ export const DomainsTable = ( {
 
 	const { setAutoRenew } = useDomainsBulkActionsMutation();
 
-	const { jobs, domainResults, handleRestartDomainStatusPolling } = useDomainBulkUpdateStatus();
+	const { completedJobs, domainResults, handleRestartDomainStatusPolling } =
+		useDomainBulkUpdateStatus();
 
 	useLayoutEffect( () => {
 		if ( ! domains ) {
@@ -289,7 +291,7 @@ export const DomainsTable = ( {
 		filteredData,
 		selectedDomains,
 		hasSelectedDomains,
-		jobs,
+		completedJobs,
 		domainResults,
 		handleRestartDomainStatusPolling,
 	};

@@ -95,44 +95,6 @@
 	}
 }
 
-.domains-table-bulk-update-jobs-notifications {
-	position: relative;
-	svg {
-		transform: rotate(315deg);
-		cursor: pointer;
-	}
-
-	&-bubble {
-		position: absolute;
-		top: -12px;
-		right: -14px;
-		display: flex;
-		width: 22px;
-		background: var(--studio-red-40);
-		border-radius: 16px; /* stylelint-disable-line scales/radii */
-		justify-content: center;
-		align-items: center;
-		color: #fff;
-		font-size: $font-body-extra-small;
-		height: 18px;
-		margin: 0 4px;
-		line-height: 20px;
-		border: 2px solid #fff;
-	}
-
-	&-tooltip {
-		outline: none;
-
-		.popover__inner {
-			color: var(--color-neutral-50);
-			font-size: $font-body-small;
-			max-width: 300px;
-			padding: 16px;
-			text-align: left;
-		}
-	}
-}
-
 .domains-bulk-update-status-popover {
 	display: flex;
 	flex-direction: column;
@@ -158,40 +120,14 @@
 			@extend .domains-bulk-update-status-popover-item-indicator;
 			background-color: var(--studio-orange-40);
 		}
-		&__failed {
-			@extend .domains-bulk-update-status-popover-item-indicator;
-			background-color: var(--studio-red-50);
-		}
-		&__complete {
-			@extend .domains-bulk-update-status-popover-item-indicator;
-			background-color: var(--studio-green-40);
-		}
 	}
+}
 
-	&-divider {
-		height: 1px;
-		min-height: 1px;
-		border-top: 1px solid var(--studio-gray-10-rgb);
-		margin-top: 8px;
-	}
-
-	&-domain-results {
-		display: flex;
-		flex-direction: column;
-		max-height: 300px;
-		overflow-y: auto;
-		padding-left: 16px;
-		gap: 4px;
-		margin: 8px 0;
-
-		&-group {
-			display: flex;
-			gap: 8px;
-			align-items: center;
-
-			span {
-				font-size: smaller;
-			}
-		}
+.domains-table-bulk-actions-notice-popover {
+	max-height: 300px;
+	overflow-y: auto;
+	p {
+		line-height: 1.2;
+		font-size: smaller;
 	}
 }
