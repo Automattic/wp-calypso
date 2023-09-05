@@ -42,7 +42,7 @@ class DomainsTable extends PureComponent {
 
 		this.state = {
 			sortKey: queryParamSort || 'domain', // initial column to sort by - should match the header columns
-			sortOrder: -1, // initial sort order where 1 = ascending and -1 = descending
+			sortOrder: 1, // initial sort order where 1 = ascending and -1 = descending
 		};
 	}
 
