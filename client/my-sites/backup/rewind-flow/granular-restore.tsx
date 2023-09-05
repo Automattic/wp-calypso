@@ -164,19 +164,18 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 		return (
 			<>
-				<div className="rewind-flow__cta rewind-flow__expandable">
-					<Button className="rewind-flow__cta" onClick={ expandClick }>
-						{ files.length + translate( ' more files selected' ) }
-						{ renderExpandIcon() }
-					</Button>
+				<div className="rewind-flow__expandable-files">
+					<WordPressButton variant="link" className="rewind-flow__cta" onClick={ expandClick }>
+						{ files.length + translate( ' more files selected' ) } { renderExpandIcon() }
+					</WordPressButton>
+					{ showAllFiles && (
+						<ul className="rewind-flow__files">
+							{ files.map( ( item ) => (
+								<li key={ item.path }>{ item.path }</li>
+							) ) }
+						</ul>
+					) }
 				</div>
-				{ showAllFiles && (
-					<ul className="rewind-flow__files">
-						{ files.map( ( item ) => (
-							<li key={ item.path }>{ item.path }</li>
-						) ) }
-					</ul>
-				) }
 			</>
 		);
 	};
