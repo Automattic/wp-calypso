@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useFlowProgress, BUILD_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -65,10 +66,13 @@ const build: Flow = {
 			return providedDependencies;
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
 				default:
 					return navigate( 'freeSetup' );
 			}
