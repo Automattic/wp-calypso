@@ -10,8 +10,10 @@ const canRestoreSite = ( state: AppState, siteId: number ): boolean => {
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const areCredentialsInvalid = areJetpackCredentialsInvalid( state, siteId, 'main' );
 
-	return (
-		doesRewindNeedCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid )
+	return ! (
+		doesRewindNeedCredentials ||
+		isRestoreInProgress ||
+		( ! isAtomic && areCredentialsInvalid )
 	);
 };
 

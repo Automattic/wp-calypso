@@ -21,39 +21,39 @@ describe( 'canRestoreSite', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should return true if site has no credentials', () => {
+	it( 'should return false if site has no credentials', () => {
 		getDoesRewindNeedCredentials.mockReturnValue( true );
-		expect( canRestoreSite( {}, siteId ) ).toBe( true );
+		expect( canRestoreSite( {}, siteId ) ).toBe( false );
 	} );
 
-	it( 'should return true if there is a restore in progress', () => {
+	it( 'should return false if there is a restore in progress', () => {
 		getIsRestoreInProgress.mockReturnValue( true );
-		expect( canRestoreSite( {}, siteId ) ).toBe( true );
+		expect( canRestoreSite( {}, siteId ) ).toBe( false );
 	} );
 
-	it( 'should return true if site is not atomic and credentials are invalid', () => {
+	it( 'should return false if site is not atomic and credentials are invalid', () => {
 		isSiteAutomatedTransfer.mockReturnValue( false );
 		areJetpackCredentialsInvalid.mockReturnValue( true );
+		expect( canRestoreSite( {}, siteId ) ).toBe( false );
+	} );
+
+	it( 'should return true if site is atomic and credentials are invalid', () => {
+		isSiteAutomatedTransfer.mockReturnValue( true );
+		areJetpackCredentialsInvalid.mockReturnValue( true );
 		expect( canRestoreSite( {}, siteId ) ).toBe( true );
 	} );
 
-	it( 'should return false if site is atomic and credentials are invalid', () => {
-		isSiteAutomatedTransfer.mockReturnValue( true );
-		areJetpackCredentialsInvalid.mockReturnValue( true );
-		expect( canRestoreSite( {}, siteId ) ).toBe( false );
-	} );
-
-	it( 'should return false if site is atomic and credentials are valid', () => {
+	it( 'should return true if site is atomic and credentials are valid', () => {
 		isSiteAutomatedTransfer.mockReturnValue( true );
 		areJetpackCredentialsInvalid.mockReturnValue( false );
-		expect( canRestoreSite( {}, siteId ) ).toBe( false );
+		expect( canRestoreSite( {}, siteId ) ).toBe( true );
 	} );
 
-	it( 'should return false if all conditions are false', () => {
+	it( 'should return true if all conditions are false', () => {
 		getDoesRewindNeedCredentials.mockReturnValue( false );
 		getIsRestoreInProgress.mockReturnValue( false );
 		isSiteAutomatedTransfer.mockReturnValue( false );
 		areJetpackCredentialsInvalid.mockReturnValue( false );
-		expect( canRestoreSite( {}, siteId ) ).toBe( false );
+		expect( canRestoreSite( {}, siteId ) ).toBe( true );
 	} );
 } );
