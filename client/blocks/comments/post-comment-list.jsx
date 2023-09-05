@@ -68,6 +68,7 @@ class PostCommentList extends Component {
 		commentsFilter: PropTypes.string,
 		followSource: PropTypes.string,
 		fixedHeaderHeight: PropTypes.number,
+		streamKey: PropTypes.string,
 
 		// To show only the most recent comment by default, and allow expanding to see the longer
 		// list.
@@ -192,21 +193,6 @@ class PostCommentList extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		// We need to determine if CSS is line-clamping comments so we can show a button to expand
-		// when necessary. We evaluate this after update when the isExpanded state has been set to
-		// false or new comments have been posted. We avoid the setState loops by not running this
-		// check when the state it would set is already present.
-		if (
-			// The view is not expanded and has just been collapsed or the amount of comments have changed.
-			// Note more safety conditions are contained generally in checkForClampedComments.
-			! this.props.isExpanded &&
-			( prevProps.isExpanded ||
-				Object.keys( prevProps.commentsTree ).length !==
-					Object.keys( this.props.commentsTree ).length )
-		) {
-			this.checkForClampedComments();
-		}
-
 		// If only the state is changing, do nothing. (Avoids setState loops.)
 		if ( prevState !== this.state && prevProps === this.props ) {
 			return;
@@ -219,6 +205,17 @@ class PostCommentList extends Component {
 		) {
 			this.hasScrolledToComment = false;
 			this.scrollWhenDOMReady();
+		}
+
+		if (
+			// The view is not expanded and has just been collapsed or the amount of comments have changed.
+			// Note more safety conditions are contained generally in checkForClampedComments.
+			! this.props.isExpanded &&
+			( prevProps.isExpanded ||
+				Object.keys( prevProps.commentsTree ).length !==
+					Object.keys( this.props.commentsTree ).length )
+		) {
+			this.checkForClampedComments();
 		}
 	}
 
@@ -338,9 +335,7 @@ class PostCommentList extends Component {
 		if ( ! this.props.openPostPageAtComments ) {
 			return;
 		}
-		this.maybeScrollToListTop();
-		// Use setTimeout at 0ms to ensure this is called after scroll states are updated.
-		return setTimeout( this.props.openPostPageAtComments, 0 );
+		return this.props.openPostPageAtComments();
 	};
 
 	onUpdateCommentText = ( commentText ) => {
