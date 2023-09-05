@@ -105,7 +105,7 @@ export interface PricedAPIPlan {
  * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
  */
 export interface PricedAPISitePlan extends PricedAPIPlanIntroductoryOffer {
-	/* product_id: number; not included in the plan's payload */
+	product_id: number; // not included in the plan's payload
 	product_slug: StorePlanSlug;
 }
 
