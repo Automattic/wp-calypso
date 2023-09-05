@@ -59,7 +59,6 @@ const WordAdsPayments = () => {
 
 	function paymentsTable( currentPayments: Payments, type: string ) {
 		const rows: React.ReactNode[] = [];
-		// const rows: NodeListOf< Element > = [];
 		const classes = classNames( 'payments_history' );
 
 		currentPayments.forEach( ( payment ) => {
