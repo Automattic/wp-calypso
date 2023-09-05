@@ -107,7 +107,7 @@ class DomainRow extends PureComponent {
 		return (
 			<div className="domain-row__site-cell">
 				<Button href={ '/home/' + domain.blogId } plain>
-					{ ( domain.siteTitle || domain.siteSlug ) ?? '' }
+					{ domain.siteTitle ?? domain.siteSlug ?? '' }
 				</Button>
 			</div>
 		);
