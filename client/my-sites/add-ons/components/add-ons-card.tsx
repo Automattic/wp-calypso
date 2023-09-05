@@ -9,8 +9,9 @@ import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { getStatsPurchaseURL } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-notice';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 type ActionPrimary = {
@@ -116,7 +117,7 @@ const useModifiedActionPrimary = (
 	addOnMeta: AddOnMeta
 ) => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	// Add special handling for Jetpack Stats, which uses its own special purchase page.
 	if (
@@ -128,7 +129,12 @@ const useModifiedActionPrimary = (
 			text: translate( 'Upgrade Stats' ),
 			handler: () => {
 				// Navigate to the stats purchase page, scrolled to the top.
-				page.show( `/stats/purchase/${ siteSlug }` );
+				const purchaseUrl = getStatsPurchaseURL(
+					siteId,
+					false,
+					addOnMeta.productSlug === PRODUCT_JETPACK_STATS_YEARLY ? 'commercial' : 'personal'
+				);
+				page.show( purchaseUrl );
 				window.scrollTo( 0, 0 );
 			},
 		};
