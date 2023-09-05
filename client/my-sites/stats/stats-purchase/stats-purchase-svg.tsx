@@ -1,8 +1,10 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import calypsoStatsPurchaseGraphSVG from 'calypso/assets/images/stats/calypso-purchase-stats-graph.svg';
 import statsPurchaseCelebrationSVG from 'calypso/assets/images/stats/purchase-stats-celebration.svg';
 import statsPurchaseGraphSVG from 'calypso/assets/images/stats/purchase-stats-graph.svg';
+import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 interface StatsPurchaseSVG {
@@ -19,8 +21,9 @@ const StatsPurchaseSVG = ( {
 	const translate = useTranslate();
 	const message = translate( 'Thanks for being one of our biggest supporters!' );
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const purchaseGraphSVG = isOdysseyStats ? statsPurchaseGraphSVG : calypsoStatsPurchaseGraphSVG;
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	const purchaseGraphSVG = isWPCOMSite ? calypsoStatsPurchaseGraphSVG : statsPurchaseGraphSVG;
 
 	return (
 		<>

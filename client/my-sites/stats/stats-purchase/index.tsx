@@ -19,6 +19,7 @@ import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { isFetchingSitePurchases, getSitePurchases } from 'calypso/state/purchases/selectors';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -62,6 +63,7 @@ const StatsPurchasePage = ( {
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
@@ -144,7 +146,11 @@ const StatsPurchasePage = ( {
 				title="Stats > Purchase"
 				from={ query.from ?? '' }
 			/>
-			<div className={ classNames( 'stats', 'stats-purchase-page' ) }>
+			<div
+				className={ classNames( 'stats', 'stats-purchase-page', {
+					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
+				} ) }
+			>
 				{ /* Only query site purchases on Calypso via existing data component */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />

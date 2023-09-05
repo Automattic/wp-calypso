@@ -10,25 +10,9 @@
 	--stats-purchase-right-width: 456px;
 }
 
-.stats-purchase-page__loader {
-	display: flex;
-	justify-content: center;
-}
-
-.stats-purchase-wizard {
-	display: flex;
-	justify-content: center;
-
-	@media (max-width: $break-wide) {
-		justify-content: left;
-
-		> div {
-			flex: 1 0 auto;
-		}
-	}
-
-	// Adjust purchase page styling for WPCOM.
-	&.stats-purchase-wizard--is-wpcom {
+// Adjust purchase page styling for WPCOM.
+.stats-purchase-page--is-wpcom {
+	.stats-purchase-wizard {
 		font-family: $font-sf-pro-text;
 
 		.stats-purchase-wizard__benefits--included li {
@@ -61,6 +45,24 @@
 				font-size: $font-body;
 				padding: 8px 32px;
 			}
+		}
+	}
+}
+
+.stats-purchase-page__loader {
+	display: flex;
+	justify-content: center;
+}
+
+.stats-purchase-wizard {
+	display: flex;
+	justify-content: center;
+
+	@media (max-width: $break-wide) {
+		justify-content: left;
+
+		> div {
+			flex: 1 0 auto;
 		}
 	}
 
