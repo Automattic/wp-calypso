@@ -1,4 +1,5 @@
 import {
+	JETPACK_COMPLETE_PLANS,
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PRODUCT_JETPACK_STATS_MONTHLY,
@@ -43,10 +44,18 @@ export default function useStatsPurchases( siteId: number | null ) {
 		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	}, [ sitePurchases ] );
 
+	const supportCommercialUse = useMemo(
+		() =>
+			isCommercialOwned ||
+			JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) ),
+		[ sitePurchases, isCommercialOwned ]
+	);
+
 	return {
 		isRequestingSitePurchases,
 		isFreeOwned,
 		isPWYWOwned,
 		isCommercialOwned,
+		supportCommercialUse,
 	};
 }
