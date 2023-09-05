@@ -901,6 +901,10 @@ function PartnerLogo( { className }: { className?: string } ) {
 function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
+	if ( product.is_included_for_100yearplan ) {
+		return <DiscountCallout>{ translate( 'Included with your plan' ) }</DiscountCallout>;
+	}
+
 	if ( product.is_bundled ) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}

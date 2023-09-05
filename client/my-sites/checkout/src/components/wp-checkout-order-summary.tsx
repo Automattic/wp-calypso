@@ -492,7 +492,8 @@ function CheckoutSummaryFlowFeaturesList( {
 
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const bundledDomain = translate(
+
+	let bundledDomainText = translate(
 		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
 		{
 			components: {
@@ -505,12 +506,24 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 		}
 	);
 
+	if ( domain.is_included_for_100yearplan ) {
+		bundledDomainText = translate( '{{strong}}%(domain)s{{/strong}} included with your plan', {
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domain: domain.meta,
+			},
+			comment: 'domain name and bundling message for hundred year plan',
+		} );
+	}
+
 	// If domain is using existing credit or bundled with cart, show bundled text.
 	if ( domain.is_bundled ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
-				{ bundledDomain }
+				{ bundledDomainText }
 			</CheckoutSummaryFeaturesListItem>
 		);
 	}
