@@ -106,7 +106,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { hasActiveChats, isEligibleForChat } = useChatStatus( 'wpcom_messaging', false );
 	const { isMessagingScriptLoaded } = useZendeskMessaging(
 		'zendesk_support_chat_key',
-		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
+		isHelpCenterShown || isEligibleForChat || hasActiveChats,
 		isEligibleForChat && hasActiveChats
 	);
 
