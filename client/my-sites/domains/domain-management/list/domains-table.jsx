@@ -186,6 +186,7 @@ class DomainsTable extends PureComponent {
 						hasLoadedPurchases={ hasLoadedPurchases }
 						purchase={ purchase }
 						columns={ domainsTableColumns }
+						renderNotice={ ! isLightVersion }
 					/>
 				</Fragment>
 			);
