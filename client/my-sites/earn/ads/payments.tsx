@@ -9,24 +9,58 @@ import { useSelector } from 'calypso/state';
 import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsPayments } from 'calypso/state/wordads/payments/selectors';
+import type { BadgeType } from '@automattic/components';
+
+type Payment = {
+	id: number;
+	paymentDate: string;
+	amount: number;
+	status: string;
+	paypalEmail: string;
+	description: string;
+};
+
+type Payments = Payment[];
+
+type WordAdSettings = {
+	optimized_ads: boolean;
+	paypal: string;
+	show_to_logged_in: string;
+	tos: string;
+	display_options: {
+		display_front_page: boolean;
+		display_post: boolean;
+		display_page: boolean;
+		enable_header_ad: boolean;
+		second_belowpost: boolean;
+		sidebar: boolean;
+		display_archive: boolean;
+	};
+	ccpa_enabled: boolean;
+	ccpa_privacy_policy_url: string;
+};
 
 const WordAdsPayments = () => {
+	console.log( 'erick is here' );
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const payments = useSelector( ( state ) => getWordAdsPayments( state, siteId ) );
-	const wordAdsSettings = useSelector( ( state ) => getWordadsSettings( state, siteId ) );
+	const payments: Payments = useSelector( ( state ) => getWordAdsPayments( state, siteId ?? 0 ) );
+	const wordAdsSettings: WordAdSettings = useSelector( ( state ) =>
+		getWordadsSettings( state, siteId )
+	);
 
-	function statusToType( status ) {
+	function statusToType( status: string ) {
 		const map = {
 			paid: 'success',
 			pending: 'info',
 			failed: 'error',
 		};
-		return map[ status ] || 'warning';
+		return map[ status as keyof typeof map ] || 'warning';
 	}
 
-	function paymentsTable( currentPayments, type ) {
-		const rows = [];
+	function paymentsTable( currentPayments: Payments, type: string ) {
+		const rows: React.ReactNode[] = [];
+		// const rows: NodeListOf< Element > = [];
 		const classes = classNames( 'payments_history' );
 
 		currentPayments.forEach( ( payment ) => {
@@ -43,7 +77,10 @@ const WordAdsPayments = () => {
 					</td>
 					<td className="ads__payments-history-value">${ numberFormat( payment.amount, 2 ) }</td>
 					<td className="ads__payments-history-value">
-						<Badge className="ads__payments-history-badge" type={ statusToType( payment.status ) }>
+						<Badge
+							className="ads__payments-history-badge"
+							type={ statusToType( payment.status ) as BadgeType }
+						>
 							{ payment.status }
 						</Badge>
 					</td>
@@ -78,7 +115,7 @@ const WordAdsPayments = () => {
 		);
 	}
 
-	function notices( currentPayments, currentWordAdsSettings ) {
+	function notices( currentPayments: Payments, currentWordAdsSettings: WordAdSettings ) {
 		if ( ! currentPayments || ! currentWordAdsSettings ) {
 			return null;
 		}
