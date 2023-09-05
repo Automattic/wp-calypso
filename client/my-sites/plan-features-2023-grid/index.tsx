@@ -47,6 +47,7 @@ import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { type PlansIntent } from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
+import { isStorageUpgradeableForPlan } from './lib/is-storage-upgradeable-for-plan';
 import { DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
 import type {
@@ -636,7 +637,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, intervalType, showUpgradeableStorage } = this.props;
+		const { translate, intervalType, isInSignup, showUpgradeableStorage } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -646,9 +647,14 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			const shouldRenderStorageTitle =
 				storageOptions.length === 1 ||
 				( intervalType !== 'yearly' && storageOptions.length > 0 ) ||
-				( ! showUpgradeableStorage && storageOptions.length > 0 );
-			const canUpgradeStorageForPlan =
-				storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+				( ! showUpgradeableStorage && storageOptions.length > 0 ) ||
+				( ! isInSignup && storageOptions.length > 0 );
+			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan(
+				storageOptions,
+				intervalType,
+				showUpgradeableStorage,
+				isInSignup
+			);
 
 			const storageJSX = canUpgradeStorageForPlan ? (
 				<StorageAddOnDropdown

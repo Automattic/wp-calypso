@@ -25,6 +25,7 @@ import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/pl
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
+import { isStorageUpgradeableForPlan } from '../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { getStorageStringFromFeature, usePricingBreakpoint } from '../util';
@@ -531,6 +532,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planSlug: PlanSlug;
+	isInSignup?: boolean;
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	intervalType?: string;
@@ -541,6 +543,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature,
 	visibleGridPlans,
 	planSlug,
+	isInSignup,
 	isStorageFeature,
 	intervalType,
 	activeTooltipId,
@@ -577,8 +580,12 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		: false;
 	const storageOptions = gridPlan.features.storageOptions;
 	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
-	const canUpgradeStorageForPlan =
-		storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan(
+		storageOptions,
+		intervalType,
+		showUpgradeableStorage,
+		isInSignup
+	);
 
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
@@ -679,6 +686,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planFeatureFootnotes: PlanFeatureFootnotes;
+	isInSignup?: boolean;
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	isHighlighted: boolean;
@@ -692,6 +700,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures,
 	visibleGridPlans,
 	planFeatureFootnotes,
+	isInSignup,
 	isStorageFeature,
 	flowName,
 	isHighlighted,
@@ -758,6 +767,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planSlug={ planSlug }
+					isInSignup={ isInSignup }
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
 					intervalType={ intervalType }
@@ -998,6 +1008,7 @@ export const PlanComparisonGrid = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visibleGridPlans={ visibleGridPlans }
 									planFeatureFootnotes={ planFeatureFootnotes }
+									isInSignup={ isInSignup }
 									isStorageFeature={ false }
 									flowName={ flowName }
 									isHighlighted={ feature.getSlug() === selectedFeature }
@@ -1014,6 +1025,7 @@ export const PlanComparisonGrid = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visibleGridPlans={ visibleGridPlans }
 									planFeatureFootnotes={ planFeatureFootnotes }
+									isInSignup={ isInSignup }
 									isStorageFeature={ true }
 									flowName={ flowName }
 									isHighlighted={ false }
