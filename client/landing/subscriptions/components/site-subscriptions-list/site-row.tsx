@@ -151,11 +151,18 @@ const SiteRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
+			const feedUrl = `/read/feeds/${ feed_id }`;
+
+			if ( ! blog_id ) {
+				// The site subscription page does not support non-wpcom feeds yet
+				return feedUrl;
+			}
+
 			if ( config.isEnabled( 'reader/individual-subscription-page' ) ) {
 				return `/read/subscriptions/${ subscriptionId }`;
 			}
 
-			return `/read/feeds/${ feed_id }`;
+			return feedUrl;
 		}
 
 		if ( isSubscriptionsPortal ) {

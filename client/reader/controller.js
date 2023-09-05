@@ -327,7 +327,15 @@ export async function blogDiscoveryByFeedId( context, next ) {
 		} );
 }
 
-export async function sitesSubscriptionManager( context, next ) {
+export async function siteSubscriptionsManager( context, next ) {
 	context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
+	return next();
+}
+
+export async function siteSubscription( context, next ) {
+	const subscription_id = Number( context.params.subscription_id );
+	context.primary = (
+		<AsyncLoad require="calypso/reader/site-subscription" subscriptionId={ subscription_id } />
+	);
 	return next();
 }

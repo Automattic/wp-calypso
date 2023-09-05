@@ -1,14 +1,16 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import {
 	SiteSubscriptionContext,
 	SiteSubscriptionContextProps,
 } from 'calypso/blocks/reader-site-subscription';
+import { Path } from 'calypso/blocks/reader-site-subscription/context';
 
 export const SiteSubscriptionProvider: React.FC< { children: React.ReactNode } > = ( {
 	children,
 } ) => {
-	const navigate = useNavigate();
+	const reactRouterNavigate = useNavigate();
 	const { blogId = '' } = useParams();
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
 
@@ -21,13 +23,26 @@ export const SiteSubscriptionProvider: React.FC< { children: React.ReactNode } >
 		subscriptionError = data;
 	}
 
-	const contextValue: SiteSubscriptionContextProps = {
-		blogId,
-		navigate,
-		data: subscriptionData,
-		isLoading,
-		error: error || subscriptionError,
-	};
+	const navigate = useCallback(
+		( path: Path ) => {
+			switch ( path ) {
+				case Path.ManageAllSubscriptions:
+					reactRouterNavigate( `/subscriptions/sites` );
+					return;
+			}
+		},
+		[ reactRouterNavigate ]
+	);
+
+	const contextValue: SiteSubscriptionContextProps = useMemo(
+		() => ( {
+			navigate,
+			data: subscriptionData,
+			isLoading,
+			error: error || subscriptionError,
+		} ),
+		[ error, isLoading, navigate, subscriptionData, subscriptionError ]
+	);
 
 	return (
 		<SiteSubscriptionContext.Provider value={ contextValue }>
