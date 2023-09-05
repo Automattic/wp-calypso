@@ -35,7 +35,13 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 
 	return (
 		<div>
-			<SiteSelector showAddNewSite showAllSites allSitesPath={ path } siteBasePath="/backup" />
+			<SiteSelector
+				showAddNewSite
+				showAllSites
+				allSitesPath={ path }
+				siteBasePath="/backup"
+				wpcomSiteBasePath="https://wordpress.com/home"
+			/>
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
 					<CurrentSite
