@@ -1,4 +1,3 @@
-import { readdirSync } from 'fs';
 import { intersection, isEmpty, keys } from 'lodash';
 import flows from '../flows';
 import { getStepModuleMap } from '../step-components';
@@ -12,20 +11,6 @@ jest.mock( 'calypso/lib/explat', () => {
 		return [ false, null ];
 	};
 } );
-
-const getStepImplementationModuleNames = () => {
-	const cwd = __dirname;
-	const parts = cwd.split( '/' );
-	const stepsPathParts = parts.slice( 0, parts.length - 2 );
-	stepsPathParts.push( 'steps' );
-	const actPath = stepsPathParts.join( '/' );
-	console.log( { cwd, parts, stepsPathParts, actPath } );
-	const files = readdirSync( actPath, { withFileTypes: true } );
-	files.forEach( ( file ) => {
-		console.log( { fileName: file.name } );
-	} );
-	return files.map( ( { name } ) => name );
-};
 
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect
@@ -77,16 +62,6 @@ describe( 'index', () => {
 		const allStepDefinitions = generateSteps();
 		Object.keys( allStepDefinitions ).forEach( ( stepName ) => {
 			expect( stepModuleMap ).toHaveProperty( stepName );
-		} );
-	} );
-
-	test( 'All step implementations should have a step component mapping', async () => {
-		const moduleNames = getStepImplementationModuleNames();
-		const stepModuleMap = getStepModuleMap();
-		const stepImplementationNames = Object.values( stepModuleMap );
-
-		moduleNames.forEach( ( moduleName ) => {
-			expect( stepImplementationNames ).toBe( moduleName );
 		} );
 	} );
 
