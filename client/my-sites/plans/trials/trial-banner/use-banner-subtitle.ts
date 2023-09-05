@@ -26,8 +26,8 @@ export default function useBannerSubtitle(
 		month: 'long',
 		day: 'numeric',
 	} );
-	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
-	const anyWooExpressIntroOffer = sitePlans?.data?.[ PLAN_WOOEXPRESS_MEDIUM ].introOffer;
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
+	const anyWooExpressIntroOffer = introOffers?.data?.[ PLAN_WOOEXPRESS_MEDIUM ];
 
 	useEffect( () => {
 		// this may need updating for intro offers with singly counted units e.g. 1 month|year

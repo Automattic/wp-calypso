@@ -34,7 +34,8 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		getSitePlanSlug( state, selectedSiteId )
 	);
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
-	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	const pricedAPISitePlans = Plans.usePricedAPISitePlans( { siteId: selectedSiteId } );
+	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
 			const availableForPurchase =
@@ -115,15 +116,12 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	 * - For now a simple loader is shown until these are resolved
 	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
 	 */
-	if ( sitePlans.isFetching || ! pricedAPIPlans ) {
+	if ( pricedAPISitePlans.isFetching || ! pricedAPIPlans ) {
 		return null;
 	}
 
 	return planSlugs.reduce( ( acc, planSlug ) => {
-		// pricedAPIPlans - should have a definition for all plans, being the main source of API data
 		const pricedAPIPlan = pricedAPIPlans[ planSlug ];
-		// sitePlans - unclear if all plans are included
-		const sitePlan = sitePlans.data?.[ planSlug ];
 
 		return {
 			...acc,
@@ -132,7 +130,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
 				billingPeriod: pricedAPIPlan?.bill_period,
 				currencyCode: pricedAPIPlan?.currency_code,
-				introOffer: sitePlan?.introOffer,
+				introOffer: introOffers.data?.[ planSlug ],
 			},
 		};
 	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );
