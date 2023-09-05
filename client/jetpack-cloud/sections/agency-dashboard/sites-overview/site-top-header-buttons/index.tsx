@@ -94,6 +94,7 @@ export default function SiteTopHeaderButtons() {
 				</span>
 			) : (
 				<Button
+					primary
 					className="sites-overview__issue-license-button"
 					href="https://wordpress.com/jetpack/connect"
 					onClick={ () =>
