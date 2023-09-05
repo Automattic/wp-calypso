@@ -63,6 +63,7 @@ class DomainRow extends PureComponent {
 		shouldUpgradeToMakePrimary: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
 		site: PropTypes.object,
+		isLightVersion: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -72,7 +73,7 @@ class DomainRow extends PureComponent {
 		isLoadingDomainDetails: false,
 		isBusy: false,
 		showDomainDetails: true,
-		renderNotice: true,
+		isLightVersion: false,
 	};
 
 	stopPropagation = ( event ) => {
@@ -130,10 +131,17 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { columns, currentRoute, domain, site, isLoadingDomainDetails, translate, dispatch } =
-			this.props;
+		const {
+			currentRoute,
+			domain,
+			site,
+			isLoadingDomainDetails,
+			translate,
+			dispatch,
+			isLightVersion,
+		} = this.props;
 
-		if ( ! columns.find( ( column ) => column.name === 'status' ) ) {
+		if ( isLightVersion ) {
 			return null;
 		}
 
@@ -327,10 +335,10 @@ class DomainRow extends PureComponent {
 			showDomainDetails,
 			site,
 			translate,
-			columns,
+			isLightVersion,
 		} = this.props;
 
-		if ( ! columns.find( ( column ) => column.name === 'action' ) ) {
+		if ( isLightVersion ) {
 			return null;
 		}
 
@@ -463,7 +471,7 @@ class DomainRow extends PureComponent {
 			purchase,
 			translate,
 			dispatch,
-			renderNotice,
+			isLightVersion,
 		} = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
@@ -497,7 +505,7 @@ class DomainRow extends PureComponent {
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
-				{ renderNotice && noticeText && (
+				{ ! isLightVersion && noticeText && (
 					<div className="domain-row__domain-notice">
 						<Icon
 							icon={ info }
