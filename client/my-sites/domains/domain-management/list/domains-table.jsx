@@ -41,7 +41,7 @@ class DomainsTable extends PureComponent {
 		)?.name;
 
 		this.state = {
-			sortKey: queryParamSort || 'status', // initial column to sort by - should match the header columns
+			sortKey: queryParamSort || 'domain', // initial column to sort by - should match the header columns
 			sortOrder: -1, // initial sort order where 1 = ascending and -1 = descending
 		};
 	}
@@ -114,6 +114,7 @@ class DomainsTable extends PureComponent {
 			isSavingContactInfo,
 			handleDomainItemToggle,
 			translate,
+			isLightVersion,
 		} = this.props;
 
 		const { sortKey, sortOrder } = this.state;
@@ -155,9 +156,11 @@ class DomainsTable extends PureComponent {
 				<Fragment key={ `${ domain.name }-${ index }` }>
 					{ ! isManagingAllSites &&
 						domain.blogId &&
+						! isLightVersion &&
 						this.renderQuerySitePurchasesOnce( domain.blogId ) }
 					{ isManagingAllSites &&
 						domain.blogId &&
+						! isLightVersion &&
 						this.renderQuerySiteDomainsOnce( domain.blogId ) }
 					<DomainRow
 						currentRoute={ currentRoute }
@@ -182,6 +185,7 @@ class DomainsTable extends PureComponent {
 						}
 						hasLoadedPurchases={ hasLoadedPurchases }
 						purchase={ purchase }
+						columns={ domainsTableColumns }
 					/>
 				</Fragment>
 			);

@@ -98,22 +98,22 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { site } = this.props;
+		const { domain } = this.props;
 		return (
 			<div className="domain-row__site-cell">
-				<Button href={ '/home/' + site?.slug } plain>
-					{ ! site.options?.is_domain_only ? site?.title || site?.slug : '' }
+				<Button href={ '/home/' + domain.blogId } plain>
+					{ ! domain.isDomainOnlySite ? domain.siteTitle || domain.siteSlug : '' }
 				</Button>
 			</div>
 		);
 	}
 
 	renderMobileSite() {
-		const { site } = this.props;
-		if ( site?.options?.is_domain_only ) {
+		const { domain } = this.props;
+		if ( domain.isDomainOnlySite ) {
 			return null;
 		}
-		return site?.title || site?.slug;
+		return domain.siteTitle || domain.siteSlug;
 	}
 
 	renderPrimaryBadge() {
@@ -126,7 +126,13 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { currentRoute, domain, site, isLoadingDomainDetails, translate, dispatch } = this.props;
+		const { columns, currentRoute, domain, site, isLoadingDomainDetails, translate, dispatch } =
+			this.props;
+
+		if ( ! columns.find( ( column ) => column.name === 'status' ) ) {
+			return null;
+		}
+
 		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
@@ -361,7 +367,12 @@ class DomainRow extends PureComponent {
 			showDomainDetails,
 			site,
 			translate,
+			columns,
 		} = this.props;
+
+		if ( ! columns.find( ( column ) => column.name === 'action' ) ) {
+			return null;
+		}
 
 		if ( ! showDomainDetails ) {
 			return <div className="domain-row__action-cell"></div>;
