@@ -681,8 +681,8 @@ class AllDomains extends Component {
 				key="breadcrumb_button_2"
 				selectedFilter={ selectedFilter }
 				filterOptions={ filterOptions }
-				isLoading={ this.isLoadingDomainDetails() }
-				disabled={ this.isLoadingDomainDetails() }
+				isLoading={ this.isLoading() }
+				disabled={ this.isLoading() }
 			/>
 		);
 	}

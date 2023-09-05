@@ -99,10 +99,14 @@ class DomainRow extends PureComponent {
 
 	renderSite() {
 		const { domain } = this.props;
+		if ( domain.isDomainOnlySite ) {
+			return null;
+		}
+
 		return (
 			<div className="domain-row__site-cell">
 				<Button href={ '/home/' + domain.blogId } plain>
-					{ ! domain.isDomainOnlySite ? domain.siteTitle || domain.siteSlug : '' }
+					{ ( domain.siteTitle || domain.siteSlug ) ?? '' }
 				</Button>
 			</div>
 		);
