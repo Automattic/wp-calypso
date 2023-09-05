@@ -21,22 +21,28 @@ export const ImportWrapper: Step = function ( props ) {
 	const currentRoute = useCurrentRoute();
 	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
 	const shouldHideBackBtn = currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
-	const getSkipLabelText = () => {
-		if ( flow === IMPORT_HOSTED_SITE_FLOW ) {
-			return __( 'Create a site' );
-		}
 
-		return flow === IMPORT_FOCUSED_FLOW
-			? __( 'Skip to dashboard' )
-			: __( "I don't have a site address" );
+	const getSkipLabelText = () => {
+		switch ( flow ) {
+			case IMPORT_HOSTED_SITE_FLOW:
+				return __( 'Create a site' );
+
+			case IMPORT_FOCUSED_FLOW:
+				return __( 'Skip to dashboard' );
+
+			default:
+				return __( "I don't have a site address" );
+		}
 	};
 
 	const getGoNext = () => {
-		if ( flow === IMPORT_HOSTED_SITE_FLOW ) {
-			return () => window.location.assign( '/setup/new-hosted-site' );
-		}
+		switch ( flow ) {
+			case IMPORT_HOSTED_SITE_FLOW:
+				return () => window.location.assign( '/setup/new-hosted-site' );
 
-		return navigation.goNext;
+			default:
+				return navigation.goNext;
+		}
 	};
 
 	const shouldHideSkipBtn = () => {
