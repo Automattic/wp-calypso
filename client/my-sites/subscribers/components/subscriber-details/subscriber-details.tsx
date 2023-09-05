@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
+import useSubscriberNewsletterCategories from 'calypso/data/newsletter-categories/use-subscriber-newsletter-categories-query';
 import { useSubscriptionPlans } from '../../hooks';
 import { Subscriber } from '../../types';
 import { SubscriberProfile } from '../subscriber-profile';
@@ -23,6 +25,14 @@ const SubscriberDetails = ( {
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
+	const newsletterCategories = useSubscriberNewsletterCategories( {
+		siteId,
+		subscriptionId: subscriptionId || subscriber.subscription_id,
+	} );
+	const newsletterCategoryNames = useMemo(
+		() => newsletterCategories.data?.newsletterCategories.map( ( category ) => category.name ),
+		[ newsletterCategories.data?.newsletterCategories ]
+	);
 	const { avatar, date_subscribed, display_name, email_address, country, url } = subscriber;
 
 	const notApplicableLabel = translate( 'N/A', {
@@ -56,6 +66,16 @@ const SubscriberDetails = ( {
 							date={ date_subscribed }
 							dateFormat="LL"
 						/>
+					</div>
+					<div className="subscriber-details__content-column">
+						<div className="subscriber-details__content-label">
+							{ translate( 'Receives emails for' ) }
+						</div>
+						<div className="subscriber-details__content-value">
+							{ newsletterCategoryNames
+								? newsletterCategoryNames.join( ', ' )
+								: translate( 'Not subscribed to any newsletter categories' ) }
+						</div>
 					</div>
 					<div className="subscriber-details__content-column">
 						<div className="subscriber-details__content-label">{ translate( 'Plan' ) }</div>

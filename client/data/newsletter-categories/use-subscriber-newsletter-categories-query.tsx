@@ -4,16 +4,17 @@ import { NewsletterCategories, NewsletterCategory } from './types';
 
 type NewsletterCategoryQueryProps = {
 	siteId: number;
+	subscriptionId?: number;
 };
 
 type NewsletterCategoryResponse = {
 	newsletter_categories: NewsletterCategory[];
 };
 
-export const getSubscriberNewsletterCategoriesKey = ( siteId?: string | number ) => [
-	`newsletter-categories`,
-	siteId,
-];
+export const getSubscriberNewsletterCategoriesKey = (
+	siteId?: string | number,
+	subscriptionId?: number
+) => [ `newsletter-categories`, siteId, subscriptionId ];
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
@@ -23,12 +24,15 @@ const convertNewsletterCategoryResponse = (
 
 const useSubscriberNewsletterCategories = ( {
 	siteId,
+	subscriptionId,
 }: NewsletterCategoryQueryProps ): UseQueryResult< NewsletterCategories > => {
 	return useQuery( {
-		queryKey: getSubscriberNewsletterCategoriesKey( siteId ),
+		queryKey: getSubscriberNewsletterCategoriesKey( siteId, subscriptionId ),
 		queryFn: () =>
 			request< NewsletterCategoryResponse >( {
-				path: `/sites/${ siteId }/newsletter-categories/subscriptions`,
+				path: `/sites/${ siteId }/newsletter-categories/subscriptions${
+					subscriptionId ? `/${ subscriptionId }` : ''
+				}`,
 				apiVersion: '2',
 				apiNamespace: 'wpcom/v2',
 			} ).then( convertNewsletterCategoryResponse ),
