@@ -655,7 +655,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					label={ translate( 'Storage' ) }
 					planSlug={ planSlug }
 					storageOptions={ storageOptions }
-					showCost
+					showPrice
 				/>
 			) : (
 				storageOptions.map( ( storageOption ) => {
