@@ -62,7 +62,7 @@ export default function SiteTopHeaderButtons() {
 						<PopoverMenuItem
 							onClick={ () => {
 								recordTracksEvent(
-									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_button_click'
+									'calypso_jetpack_agency_dashboard_create_wpcom_atomic_site_menu_item_click'
 								);
 							} }
 							href="/partner-portal/create-site"
@@ -75,7 +75,7 @@ export default function SiteTopHeaderButtons() {
 							onClick={ () =>
 								dispatch(
 									recordTracksEvent(
-										'calypso_jetpack_agency_dashboard_connect_jetpack_site_button_click'
+										'calypso_jetpack_agency_dashboard_connect_jetpack_site_menu_item_click'
 									)
 								)
 							}
