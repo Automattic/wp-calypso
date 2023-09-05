@@ -1,4 +1,4 @@
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Badge, Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
@@ -357,16 +357,42 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 
 	const FormViewRow = ( { child: child }: { child: DomainForwardingObject } ) => (
 		<FormFieldset disabled={ isDomainForwardDisabled } className="domain-forwarding-card__fields">
-			<FormLabel>
-				<strong>{ translate( 'Source URL' ) }</strong>:{ ' ' }
-				{ child.subdomain ? child.subdomain + '.' + child.domain : child.domain }
-			</FormLabel>
-			<FormLabel>
-				<strong>{ translate( 'Destination' ) }</strong>: { child.target_host + child.target_path }
-			</FormLabel>
-			<Button borderless className="remove-redirect-button" onClick={ () => handleEdit( child ) }>
-				{ translate( 'Edit' ) }
-			</Button>
+			<div className="domain-forwarding-card__fields-row">
+				<div className="domain-forwarding-card__fields-column">
+					<Badge type={ child.subdomain === '' ? 'warning' : 'info' }>
+						{ child.subdomain !== ''
+							? translate( 'Subdomain forwarding' )
+							: translate( 'Domain forwarding' ) }
+					</Badge>
+				</div>
+				<div className="domain-forwarding-card__fields-column">
+					<Button
+						borderless
+						className="edit-redirect-button link-button"
+						onClick={ () => handleEdit( child ) }
+					>
+						{ translate( 'Edit' ) }
+					</Button>
+				</div>
+			</div>
+
+			<div className="domain-forwarding-card__fields-row addresses">
+				<div className="domain-forwarding-card__fields-column source">
+					{ translate( 'Source URL' ) }:
+				</div>
+				<div className="domain-forwarding-card__fields-column destination">
+					<strong>{ child.subdomain ? child.subdomain + '.' + child.domain : child.domain }</strong>
+				</div>
+			</div>
+
+			<div className="domain-forwarding-card__fields-row addresses">
+				<div className="domain-forwarding-card__fields-column source">
+					{ translate( 'Destination URL' ) }:
+				</div>
+				<div className="domain-forwarding-card__fields-column destination">
+					<strong>{ child.target_host + child.target_path }</strong>
+				</div>
+			</div>
 		</FormFieldset>
 	);
 
@@ -512,21 +538,30 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					</FormSettingExplanation>
 				</Accordion>
 				{ child.domain_redirect_id !== 0 && (
-					<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
+					<Button
+						borderless
+						className="remove-redirect-button  link-button"
+						onClick={ () => handleDelete() }
+					>
 						{ translate( 'Remove forward' ) }
 					</Button>
 				) }
-				<FormButton
-					disabled={
-						isDomainForwardDisabled ||
-						! isValidUrl ||
-						isLoading ||
-						( forwarding && ! redirectHasChanged( child ) ) ||
-						targetUrl === ''
-					}
-				>
-					{ child.domain_redirect_id === 0 ? translate( 'Create' ) : translate( 'Save' ) }
-				</FormButton>
+				<div>
+					<FormButton
+						disabled={
+							isDomainForwardDisabled ||
+							! isValidUrl ||
+							isLoading ||
+							( forwarding && ! redirectHasChanged( child ) ) ||
+							targetUrl === ''
+						}
+					>
+						{ child.domain_redirect_id === 0 ? translate( 'Create' ) : translate( 'Save' ) }
+					</FormButton>
+					<FormButton onClick={ () => setEditingId( 0 ) } type="button" isPrimary={ false }>
+						{ translate( 'Cancel' ) }
+					</FormButton>
+				</div>
 			</FormFieldset>
 		</>
 	);
@@ -565,7 +600,11 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					} ) }
 			</form>
 
-			<Button borderless className="add-forward-button" onClick={ () => handleAddForward() }>
+			<Button
+				borderless
+				className="add-forward-button  link-button"
+				onClick={ () => handleAddForward() }
+			>
 				{ translate( '+ Add forward' ) }
 			</Button>
 		</>
