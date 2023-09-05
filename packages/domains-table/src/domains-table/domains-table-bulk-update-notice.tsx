@@ -37,7 +37,7 @@ export const DomainsTableBulkUpdateNotice = () => {
 					>
 						<StatusPopover
 							position="bottom"
-							target={ <NoticeAction href="#">See failures</NoticeAction> }
+							target={ <NoticeAction href="#">{ translate( 'See failures' ) } </NoticeAction> }
 						>
 							<div className="domains-table-bulk-actions-notice-popover">
 								{ job.failed.map( ( domain ) => (
