@@ -8,7 +8,7 @@ const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
 		let cost = product?.cost;
 		const currencyCode = getProductCurrencyCode( state, productSlug );
 
-		if ( ! ( cost && currencyCode ) ) {
+		if ( ! cost || ! currencyCode ) {
 			return null;
 		}
 
