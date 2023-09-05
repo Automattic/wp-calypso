@@ -1,4 +1,8 @@
-import { PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
+	PRODUCT_1GB_SPACE,
+} from '@automattic/calypso-products';
 import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
@@ -115,7 +119,11 @@ const useModifiedActionPrimary = (
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
 	// Add special handling for Jetpack Stats, which uses its own special purchase page.
-	if ( addOnMeta.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY ) {
+	if (
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
+			addOnMeta.productSlug
+		)
+	) {
 		return {
 			text: translate( 'Upgrade Stats' ),
 			handler: () => {
