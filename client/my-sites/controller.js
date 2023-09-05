@@ -243,6 +243,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		// Any page under `/domains/manage/all` should be accessible in domain-only sites now that we allow multiple domains in them
 		'/domains/manage/all/',
 		'/email/all/',
+		'/people/',
 		'/settings/start-site-transfer/',
 		// Add A Domain > Search for a domain
 		domainAddNew( slug ),
