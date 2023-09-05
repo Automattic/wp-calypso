@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	StepContainer,
 	IMPORT_FOCUSED_FLOW,
@@ -7,7 +6,6 @@ import {
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ReactElement, useEffect } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
-import CaptureStepRetired from 'calypso/blocks/import/capture-retired';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
@@ -16,8 +14,6 @@ import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';
 import './style.scss';
-
-const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
@@ -43,20 +39,11 @@ export const ImportWrapper: Step = function ( props ) {
 		return navigation.goNext;
 	};
 
-	useEffect( () => setMigrationConfirmed( false ), [] );
-
 	const shouldHideSkipBtn = () => {
-		switch ( flow ) {
-			case IMPORT_FOCUSED_FLOW:
-				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
-
-			case IMPORT_HOSTED_SITE_FLOW:
-				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
-
-			default:
-				return currentRoute !== `${ flow }/${ BASE_ROUTE }` || isEnabledImportLight;
-		}
+		return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
 	};
+
+	useEffect( () => setMigrationConfirmed( false ), [] );
 
 	return (
 		<>
@@ -85,20 +72,10 @@ const ImportStep: Step = function ImportStep( props ) {
 
 	return (
 		<ImportWrapper { ...props }>
-			{ isEnabledImportLight ? (
-				<CaptureStep
-					disableImportListStep={ IMPORT_HOSTED_SITE_FLOW === flow }
-					goToStep={ ( step, section ) =>
-						navigation.goToStep?.( generateStepPath( step, section ) )
-					}
-				/>
-			) : (
-				<CaptureStepRetired
-					goToStep={ ( step, section ) =>
-						navigation.goToStep?.( generateStepPath( step, section ) )
-					}
-				/>
-			) }
+			<CaptureStep
+				disableImportListStep={ IMPORT_HOSTED_SITE_FLOW === flow }
+				goToStep={ ( step, section ) => navigation.goToStep?.( generateStepPath( step, section ) ) }
+			/>
 		</ImportWrapper>
 	);
 };
