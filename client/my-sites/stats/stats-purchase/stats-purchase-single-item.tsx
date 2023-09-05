@@ -89,7 +89,7 @@ const StatsCommercialPurchase = ( {
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 			<ButtonComponent
 				variant="primary"
-				primary
+				primary={ isWPCOMSite ? true : undefined }
 				onClick={ () =>
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
