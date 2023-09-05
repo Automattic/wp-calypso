@@ -38,3 +38,12 @@
 	letter-spacing: -0.15px;
 	text-wrap: pretty;
 }
+
+.pattern-list-panel__show-more {
+	text-align: center;
+	padding-top: 10px;
+
+	svg {
+		margin-inline-start: 10px;
+	}
+}

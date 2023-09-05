@@ -59,6 +59,10 @@ const withThemeAssemblerFlow: Flow = {
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: ErrorStep },
+			{
+				slug: 'celebration-step',
+				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
+			},
 		];
 	},
 
@@ -97,11 +101,16 @@ const withThemeAssemblerFlow: Flow = {
 						assembler: '1',
 					} );
 
+					// We will navigate to the celebration step in the follow-up PR
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
 				case 'patternAssembler': {
 					return navigate( 'processing' );
+				}
+
+				case 'celebration-step': {
+					return window.location.assign( providedDependencies.destinationUrl as string );
 				}
 			}
 		};

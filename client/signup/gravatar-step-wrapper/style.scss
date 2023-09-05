@@ -8,15 +8,14 @@ $font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto
 $color-white: #fff;
 $color-black: #00101c;
 $color-gray: #9ea4a8;
-$color-light-gray: #9ea4a8;
-$color-lighter-gray: #e7e9ea;
+$color-light-gray: #e7e9ea;
 $color-blue: #1d4fc4;
 $color-light-blue: #399ce3;
 $color-dark-blue: #163d98;
 
 .gravatar-step-wrapper {
-	background-color: $color-lighter-gray;
-	padding: 0 18px 36px;
+	background-color: $color-light-gray;
+	padding: 0 20px 36px;
 
 	.gravatar-step-wrapper__innder {
 		font-family: $font-body;
@@ -35,13 +34,17 @@ $color-dark-blue: #163d98;
 		}
 	}
 
-	.gravatar-step-wrapper__title {
+	.gravatar-step-wrapper__header {
 		font-family: $font-title;
 		font-size: 24px;
 		/* stylelint-disable-next-line scales/font-weights */
 		font-weight: 900;
 		line-height: 1.2;
 		margin: 32px 0 24px;
+	}
+
+	.gravatar-step-wrapper__sub-header {
+		margin-bottom: 24px;
 	}
 
 	.logged-out-form {
@@ -51,10 +54,10 @@ $color-dark-blue: #163d98;
 		box-shadow: none;
 	}
 
+	// Hide the label, but keep it for accessibility
 	.form-label {
-		font-weight: normal;
-		font-size: 1rem;
-		margin-bottom: 24px;
+		position: absolute;
+		clip: rect(0 0 0 0);
 	}
 
 	input[type="email"].signup-form__passwordless-email {
@@ -64,7 +67,7 @@ $color-dark-blue: #163d98;
 		line-height: 1.5;
 
 		&::placeholder {
-			color: $color-light-gray;
+			color: $color-gray;
 		}
 	}
 
@@ -74,7 +77,7 @@ $color-dark-blue: #163d98;
 	}
 
 	.signup-form__terms-of-service-link {
-		margin: 32px 0 16px;
+		margin: 32px 0 20px;
 		font-size: 13px;
 		color: rgba($color-black, 0.6);
 	}
@@ -107,14 +110,15 @@ $color-dark-blue: #163d98;
 	}
 
 	.gravatar-step-wrapper__divider {
-		background-color: $color-lighter-gray;
+		background-color: $color-light-gray;
 		width: 80px;
-		margin: 32px 0 0;
+		margin: 32px 0 20px;
 	}
 
-	.gravatar-step-wrapper__login,
-	.gravatar-step-wrapper__support {
-		margin-top: 16px;
+	.gravatar-step-wrapper__footer {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
 		font-size: 15px;
 		line-height: 1;
 
@@ -128,13 +132,13 @@ $color-dark-blue: #163d98;
 			padding: 40px 56px;
 		}
 
-		.gravatar-step-wrapper__title {
+		.gravatar-step-wrapper__header {
 			font-size: 40px;
 			margin-top: 48px;
 		}
 
 		.signup-form__terms-of-service-link {
-			margin-top: 40px;
+			margin-top: 44px;
 		}
 
 		.gravatar-step-wrapper__divider {

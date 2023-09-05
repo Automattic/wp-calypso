@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { EditorPage } from '../../pages';
 
 /**
@@ -21,6 +21,7 @@ export interface EditorContext {
 	// We could also then get the editorLocator off of the EditorPage.
 	// However, they are provided in this context for convenience to simplify the writing of block flows!
 	editorPage: EditorPage;
+	addedBlockLocator: Locator;
 }
 
 /**

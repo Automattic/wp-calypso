@@ -7,16 +7,14 @@ import {
 } from '@wordpress/components';
 import { Icon, image, verse, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import NavigatorTitle from './navigator-title';
 import './screen-confirmation.scss';
 
 interface Props {
 	onConfirm: () => void;
-	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
-const ScreenConfirmation = ( { onConfirm, recordTracksEvent }: Props ) => {
+const ScreenConfirmation = ( { onConfirm }: Props ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -55,12 +53,7 @@ const ScreenConfirmation = ( { onConfirm, recordTracksEvent }: Props ) => {
 						? translate( 'Time to add some content and bring your site to life!' )
 						: translate( 'Bring your site to life with some content.' )
 				}
-				onBack={ () => {
-					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_BACK_CLICK, {
-						screen_from: 'confirmation',
-						screen_to: 'styles',
-					} );
-				} }
+				hideBack
 			/>
 			<div className="screen-container__body">
 				<VStack spacing="4" className="screen-confirmation__list">

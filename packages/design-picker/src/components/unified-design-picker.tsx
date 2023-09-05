@@ -125,6 +125,7 @@ const useTrackDesignView = ( {
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
 					is_virtual: design.is_virtual,
+					is_externally_managed: design.is_externally_managed,
 				} );
 
 				if ( category ) {

@@ -7,6 +7,8 @@ import {
 	PayWithPaypalBlockFlow,
 	OpenTableFlow,
 	DonationsFormFlow,
+	AdFlow,
+	envVariables,
 	// PaymentsBlockFlow,
 	// envVariables,
 } from '@automattic/calypso-e2e';
@@ -41,5 +43,16 @@ const blockFlows: BlockFlow[] = [
 // if ( ! envVariables.TEST_ON_ATOMIC ) {
 // 	blockFlows.push( new PaymentsBlockFlow( { buttonText: 'Donate to Me' } ) );
 // }
+
+// The Ad block is only available on more premium plans that imply AT.
+// Furthermore, private sites are not eligible to monetize due to the site
+// being, well, private.
+if (
+	envVariables.JETPACK_TARGET === 'wpcom-deployment' &&
+	envVariables.TEST_ON_ATOMIC === true &&
+	envVariables.ATOMIC_VARIATION !== 'private'
+) {
+	blockFlows.push( new AdFlow( {} ) );
+}
 
 createBlockTests( 'Blocks: Jetpack Earn', blockFlows );

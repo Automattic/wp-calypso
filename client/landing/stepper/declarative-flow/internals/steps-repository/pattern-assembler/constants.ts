@@ -12,6 +12,7 @@ export const NAVIGATOR_PATHS = {
 	STYLES_FONTS: '/styles/fonts',
 	ACTIVATION: '/activation',
 	CONFIRMATION: '/confirmation',
+	UPSELL: '/upsell',
 };
 
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;

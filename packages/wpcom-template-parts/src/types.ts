@@ -7,6 +7,8 @@ export interface HeaderProps {
 	sectionName?: string;
 	logoColor?: string;
 	variant?: 'default' | 'minimal';
+	startUrl?: string;
+	loginUrl?: string;
 }
 
 export interface FooterProps {

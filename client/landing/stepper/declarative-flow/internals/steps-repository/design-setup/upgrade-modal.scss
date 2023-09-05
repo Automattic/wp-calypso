@@ -71,6 +71,29 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
+	.upgrade-modal__price-value {
+		font-family: Inter, $sans;
+	}
+
+	.upgrade-modal__price-item {
+		display: flex;
+		justify-content: space-between;
+		padding: 20px 0;
+		font-size: $font-body-small;
+
+		&:not(:first-child) {
+			border-top: 1px solid var(--studio-gray-5);
+		}
+	}
+
+	.upgrade-modal__price-summary {
+		padding-bottom: 10px;
+
+		@include break-medium {
+			padding-bottom: 15px;
+		}
+	}
+
 	.upgrade-modal__theme-price {
 		display: flex;
 		margin-bottom: 5px;
@@ -120,6 +143,10 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		&.bundle {
 			margin-top: 15px;
 		}
+
+		&.externally-managed {
+			font-size: $font-title-large;
+		}
 	}
 
 	.upgrade-modal__woo-logo {
@@ -145,6 +172,17 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		display: grid;
 		grid-template-columns: repeat(1, 1fr);
 		gap: 20px;
+
+		&.externally-managed {
+			gap: 8px;
+			display: flex;
+			flex-direction: column-reverse;
+
+			@include break-medium {
+				display: grid;
+				gap: 16px;
+			}
+		}
 
 		.button {
 			padding: 9px 25px;

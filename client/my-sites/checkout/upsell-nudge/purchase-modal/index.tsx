@@ -3,9 +3,9 @@ import { Dialog } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useState, useMemo } from 'react';
-import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
-import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';
-import getContactDetailsType from 'calypso/my-sites/checkout/composite-checkout/lib/get-contact-details-type';
+import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
+import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
+import getContactDetailsType from 'calypso/my-sites/checkout/src/lib/get-contact-details-type';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -16,7 +16,7 @@ import { useSubmitTransaction } from './util';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedValue } from '@automattic/wpcom-checkout';
 import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
-import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/composite-checkout/types/payment-processors';
+import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/src/types/payment-processors';
 
 import './style.scss';
 
