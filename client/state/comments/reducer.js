@@ -23,6 +23,7 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_UPDATES_RECEIVE,
+	COMMENTS_TOGGLE_INLINE_EXPANDED,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE_ERROR,
 	COMMENTS_SET_ACTIVE_REPLY,
@@ -554,6 +555,25 @@ export const counts = ( state = {}, action ) => {
 	return state;
 };
 
+const inlineExpansion = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case COMMENTS_TOGGLE_INLINE_EXPANDED: {
+			const { siteId, postId, streamKey } = action.payload;
+			const currentValue = state[ streamKey ]?.[ siteId ]?.[ postId ];
+			const siteLevelData = {
+				...( state[ streamKey ]?.[ siteId ] || {} ),
+				...{ [ postId ]: ! currentValue },
+			};
+			const streamLevelData = {
+				...( state[ streamKey ] || {} ),
+				...{ [ siteId ]: siteLevelData },
+			};
+			return { ...state, ...{ [ streamKey ]: streamLevelData } };
+		}
+	}
+	return state;
+};
+
 const combinedReducer = combineReducers( {
 	counts,
 	items,
@@ -564,6 +584,7 @@ const combinedReducer = combineReducers( {
 	totalCommentsCount,
 	activeReplies,
 	ui,
+	inlineExpansion,
 } );
 const commentsReducer = withStorageKey( 'comments', combinedReducer );
 export default commentsReducer;
