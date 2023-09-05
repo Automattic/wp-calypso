@@ -16,6 +16,7 @@ export interface StatsNoticeProps {
 	hasFreeStats?: boolean;
 	isSiteJetpackNotAtomic?: boolean;
 	statsPurchaseSuccess?: string;
+	isCommercial?: boolean;
 }
 
 export interface NoticeBodyProps {
@@ -31,4 +32,5 @@ export interface StatsNoticesProps {
 	siteId: number | null;
 	isOdysseyStats: boolean;
 	statsPurchaseSuccess?: string;
+	isCommercial?: boolean;
 }

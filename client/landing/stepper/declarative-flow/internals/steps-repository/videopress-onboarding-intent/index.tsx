@@ -96,13 +96,13 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		<>
 			<div className="videopress-onboarding-intent__step-content">
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Get a video portfolio' ) }
+					title={ __( 'Showcase your work' ) }
 					description={ __( 'Share your work with the world.' ) }
 					image={ PortfolioIntentImage }
 					onClick={ onVideoPortfolioIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Create a channel for your videos' ) }
+					title={ __( 'Create a community' ) }
 					description={ __(
 						'The easiest way to upload videos and create a community around them.'
 					) }
@@ -111,7 +111,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 					onClick={ onVideoChannelIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Upload a video' ) }
+					title={ __( 'Share a video' ) }
 					description={ __( 'Just put a video on the internet.' ) }
 					image={ SingleVideoIntentImage }
 					isComingSoon={ true }
@@ -176,7 +176,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="videopress-onboarding-intent-header"
-					headerText={ __( 'What would you like to do?' ) }
+					headerText={ __( 'What would you like to use video for?' ) }
 					subHeaderText={ __(
 						'Choose an option to continue, or let us know what you’re looking for.'
 					) }

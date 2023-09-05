@@ -1,9 +1,9 @@
-import { getCurrencyObject } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
+import { StatsCommercialPriceDisplay } from './stats-purchase-shared';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 
 interface CommercialPurchaseProps {
@@ -24,8 +24,6 @@ const CommercialPurchase = ( {
 	from,
 }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
-	const planValuePerMonth = planValue / 12;
-	const planPriceObject = getCurrencyObject( planValuePerMonth, currencyCode );
 
 	return (
 		<div>
@@ -48,28 +46,7 @@ const CommercialPurchase = ( {
 				</Button>
 			</div>
 
-			<div className={ `${ COMPONENT_CLASS_NAME }__pricing` }>
-				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-value` }>
-					{ planPriceObject.symbolPosition === 'before' && (
-						<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
-							{ planPriceObject.symbol }
-						</div>
-					) }
-					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>
-						{ planPriceObject.hasNonZeroFraction
-							? `${ planPriceObject.integer }${ planPriceObject.fraction }`
-							: `${ planPriceObject.integer }` }
-					</div>
-					{ planPriceObject.symbolPosition === 'after' && (
-						<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>
-							{ planPriceObject.symbol }
-						</div>
-					) }
-				</div>
-				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-cadency` }>
-					/{ translate( 'month, billed yearly' ) }
-				</div>
-			</div>
+			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 				<p>{ translate( 'Benefits:' ) }</p>

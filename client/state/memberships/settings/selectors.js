@@ -17,6 +17,13 @@ export function getconnectedAccountDefaultCurrencyForSiteId( state, siteId ) {
 		null
 	);
 }
+export function getconnectedAccountMinimumCurrencyForSiteId( state, siteId ) {
+	return get(
+		state,
+		[ 'memberships', 'settings', siteId, 'connectedAccountMinimumCurrency' ],
+		null
+	);
+}
 export function getConnectUrlForSiteId( state, siteId ) {
 	return get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' );
 }

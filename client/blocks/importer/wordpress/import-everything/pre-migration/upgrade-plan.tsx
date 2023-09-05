@@ -5,9 +5,11 @@ import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ConfirmUpgradePlan from './../confirm-upgrade-plan';
 import type { URL } from 'calypso/types';
 
@@ -19,9 +21,11 @@ interface Props {
 	onFreeTrialClick: () => void;
 	onContentOnlyClick: () => void;
 	isBusy: boolean;
+	migrationTrackingProps?: Record< string, unknown >;
 }
 
 export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
@@ -32,6 +36,7 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 		onFreeTrialClick,
 		onContentOnlyClick,
 		isBusy,
+		migrationTrackingProps,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan(
 		targetSite.ID
@@ -39,6 +44,12 @@ export const PreMigrationUpgradePlan: React.FunctionComponent< Props > = ( props
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
 	const [ popoverVisible, setPopoverVisible ] = useState( false );
 	const trialBtnRef: React.RefObject< HTMLButtonElement > = useRef( null );
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', migrationTrackingProps )
+		);
+	}, [] );
 
 	return (
 		<div
