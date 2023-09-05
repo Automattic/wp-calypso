@@ -10,7 +10,6 @@ import {
 	AdFlow,
 	envVariables,
 	PaywallFlow,
-	envVariables,
 	// PaymentsBlockFlow,
 	// envVariables,
 } from '@automattic/calypso-e2e';
