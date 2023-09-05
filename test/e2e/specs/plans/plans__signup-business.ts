@@ -94,7 +94,7 @@ describe(
 				await page.waitForURL( /launchpad/, { waitUntil: 'networkidle' } );
 				await page.getByRole( 'button', { name: 'Skip for now' } ).click( { timeout: 20 * 1000 } );
 
-				// Launchpad redirects to `/view` when skipped.
+				// Launchpad redirects to `/home` when skipped.
 				await page.waitForURL( /home/ );
 			} );
 		} );
