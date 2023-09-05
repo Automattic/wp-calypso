@@ -29,6 +29,8 @@ const unpackIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer 
 
 /**
  * Get introductory offers for plans that have these defined
+ *  - Currently retrieved off site-plans: https://public-api.wordpress.com/rest/v1.3/sites/[siteId]/plans
+ *  - Can be extended to include /plans endpoint
  *
  * @returns {IntroOffersIndex | null} - an object of planSlug->PlanIntroductoryOffer, or null if we haven't observed any metadata yet
  */
