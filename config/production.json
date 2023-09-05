@@ -177,7 +177,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"videopress-tv": false,
-		"videopress-onboarding-user-intent": true,
+		"videopress-onboarding-user-intent": false,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
