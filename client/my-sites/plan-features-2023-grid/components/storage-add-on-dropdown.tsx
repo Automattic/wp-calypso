@@ -10,13 +10,13 @@ type StorageAddOnDropdownProps = {
 	label?: string;
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
-	showCost?: boolean;
+	showPrice?: boolean;
 };
 
 type StorageAddOnOptionProps = {
 	title: string;
-	cost: string | undefined;
-	showCost: boolean;
+	price: string | undefined;
+	showPrice: boolean;
 };
 
 const getStorageOptionPrice = (
@@ -28,15 +28,15 @@ const getStorageOptionPrice = (
 	} )?.prices?.formattedMonthlyPrice;
 };
 
-const StorageAddOnOption = ( { title, cost, showCost }: StorageAddOnOptionProps ) => {
+const StorageAddOnOption = ( { title, price, showPrice }: StorageAddOnOptionProps ) => {
 	const translate = useTranslate();
 	return (
 		<>
-			{ cost && showCost ? (
+			{ price && showPrice ? (
 				<div>
 					<span className="storage-add-on-dropdown-option__title">{ title }</span>
-					<span className="storage-add-on-dropdown-option__cost">
-						{ ` + ${ cost }/${ translate( 'month' ) }` }
+					<span className="storage-add-on-dropdown-option__price">
+						{ ` + ${ price }/${ translate( 'month' ) }` }
 					</span>
 				</div>
 			) : (
@@ -50,7 +50,7 @@ export const StorageAddOnDropdown = ( {
 	label = '',
 	planSlug,
 	storageOptions,
-	showCost = false,
+	showPrice = false,
 }: StorageAddOnDropdownProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
@@ -65,10 +65,10 @@ export const StorageAddOnDropdown = ( {
 	// TODO: Consider transforming storageOptions outside of this component
 	const selectControlOptions = storageOptions.map( ( storageOption ) => {
 		const title = getStorageStringFromFeature( storageOption.slug ) || '';
-		const cost = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
+		const price = getStorageOptionPrice( storageAddOnsForPlan, storageOption.slug );
 		return {
 			key: storageOption?.slug,
-			name: <StorageAddOnOption title={ title } cost={ cost } showCost={ showCost } />,
+			name: <StorageAddOnOption title={ title } price={ price } showPrice={ showPrice } />,
 		};
 	} );
 
@@ -81,8 +81,8 @@ export const StorageAddOnDropdown = ( {
 		name: (
 			<StorageAddOnOption
 				title={ selectedOptionTitle }
-				cost={ selectedOptionPrice }
-				showCost={ showCost }
+				price={ selectedOptionPrice }
+				showPrice={ showPrice }
 			/>
 		),
 	};
