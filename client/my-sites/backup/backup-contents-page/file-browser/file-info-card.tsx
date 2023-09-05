@@ -2,12 +2,17 @@ import config from '@automattic/calypso-config';
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
+import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupGranularRestorePath } from '../../paths';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
@@ -49,6 +54,18 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	);
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+
+	const doesRewindNeedCredentials = useSelector( ( state ) =>
+		getDoesRewindNeedCredentials( state, siteId )
+	);
+	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+	const areCredentialsInvalid = useSelector( ( state ) =>
+		areJetpackCredentialsInvalid( state, siteId, 'main' )
+	);
+
+	const isRestoreDisabled =
+		doesRewindNeedCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload( siteId );
 
@@ -176,8 +193,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		// Mark this file as selected
 		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
 
+		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
+
 		// @TODO: record a Tracks event for this action
-	}, [ dispatch, path, siteId ] );
+	}, [ dispatch, path, rewindId, siteId, siteSlug ] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
@@ -325,8 +344,8 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 						{ isGranularEnabled && item.type !== 'wordpress' && (
 							<Button
 								className="file-card__action"
-								href={ backupGranularRestorePath( siteSlug, rewindId as unknown as string ) }
 								onClick={ restoreFile }
+								disabled={ isRestoreDisabled }
 							>
 								{ translate( 'Restore' ) }
 							</Button>
