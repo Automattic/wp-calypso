@@ -555,7 +555,7 @@ export const counts = ( state = {}, action ) => {
 	return state;
 };
 
-const inlineExpansion = ( state = {}, action ) => {
+export const inlineExpansion = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_TOGGLE_INLINE_EXPANDED: {
 			const { siteId, postId, streamKey } = action.payload;
