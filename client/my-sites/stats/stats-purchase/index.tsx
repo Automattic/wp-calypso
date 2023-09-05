@@ -50,7 +50,7 @@ const StatsPurchasePage = ( {
 
 	const isCommercial = useSelector( ( state ) => getSiteOption( state, siteId, 'is_commercial' ) );
 
-	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, isCommercialOwned } =
+	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, supportCommercialUse } =
 		useStatsPurchases( siteId );
 
 	useEffect( () => {
@@ -83,25 +83,25 @@ const StatsPurchasePage = ( {
 	const [ initialStep, initialSiteType ] = useMemo( () => {
 		// if the site is detected as commercial
 		if ( isTypeDetectionEnabled ) {
-			if ( isCommercial && ! isCommercialOwned ) {
+			if ( isCommercial && ! supportCommercialUse ) {
 				return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
 			}
 			// If the site is detected as personal
-			else if ( isCommercial === false && ! isCommercialOwned ) {
+			else if ( isCommercial === false && ! supportCommercialUse ) {
 				return [ SCREEN_PURCHASE, TYPE_PERSONAL ];
 			}
 		}
 
-		if ( isPWYWOwned && ! isCommercialOwned ) {
+		if ( isPWYWOwned && ! supportCommercialUse ) {
 			return [ SCREEN_PURCHASE, TYPE_COMMERCIAL ];
 		}
 		// if nothing is owned don't specify the type
 		return [ SCREEN_TYPE_SELECTION, null ];
-	}, [ isPWYWOwned, isCommercialOwned, isCommercial, isTypeDetectionEnabled ] );
+	}, [ isPWYWOwned, supportCommercialUse, isCommercial, isTypeDetectionEnabled ] );
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
-	const showPurchasePage = ! isCommercialOwned && ! isFreeOwned && ! isPWYWOwned;
+	const showPurchasePage = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
 	const redirectToPersonal = query?.productType === 'personal';
 	const redirectToCommercial = query?.productType === 'commercial';
 	const isNoticeScreenRedirect = redirectToPersonal || redirectToCommercial;
@@ -125,12 +125,12 @@ const StatsPurchasePage = ( {
 				) }
 				{ ! isLoading && ! isTypeDetectionEnabled && (
 					<>
-						{ isCommercialOwned && (
+						{ supportCommercialUse && (
 							<div className="stats-purchase-page__notice">
 								<StatsPurchaseNotice siteSlug={ siteSlug } />
 							</div>
 						) }
-						{ ! isCommercialOwned && (
+						{ ! supportCommercialUse && (
 							<StatsPurchaseWizard
 								siteSlug={ siteSlug }
 								commercialProduct={ commercialProduct }
@@ -139,7 +139,7 @@ const StatsPurchasePage = ( {
 								siteId={ siteId }
 								redirectUri={ query.redirect_uri ?? '' }
 								from={ query.from ?? '' }
-								disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+								disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
 								initialStep={ initialStep }
 								initialSiteType={ initialSiteType }
 							/>
@@ -154,7 +154,7 @@ const StatsPurchasePage = ( {
 								<StatsPurchaseNoticePage
 									siteId={ siteId }
 									siteSlug={ siteSlug }
-									isCommercialOwned={ isCommercialOwned }
+									isCommercialOwned={ supportCommercialUse }
 									isFreeOwned={ isFreeOwned }
 									isPWYWOwned={ isPWYWOwned }
 								/>
@@ -172,7 +172,7 @@ const StatsPurchasePage = ( {
 										siteId={ siteId }
 										redirectUri={ query.redirect_uri ?? '' }
 										from={ query.from ?? '' }
-										disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+										disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
 										initialStep={ initialStep }
 										initialSiteType={ initialSiteType }
 									/>
@@ -183,7 +183,7 @@ const StatsPurchasePage = ( {
 							( redirectToPersonal || redirectToCommercial || showPurchasePage ) && (
 								<>
 									{ ( redirectToCommercial ||
-										( ! redirectToPersonal && ! isCommercialOwned && isCommercial ) ) && (
+										( ! redirectToPersonal && ! supportCommercialUse && isCommercial ) ) && (
 										<div className="stats-purchase-page__notice">
 											<StatsSingleItemPagePurchase
 												siteSlug={ siteSlug ?? '' }
@@ -197,7 +197,7 @@ const StatsPurchasePage = ( {
 									) }
 									{ ( redirectToPersonal ||
 										( ! redirectToCommercial &&
-											! isCommercialOwned &&
+											! supportCommercialUse &&
 											isCommercial === false ) ) && (
 										<StatsSingleItemPersonalPurchasePage
 											siteSlug={ siteSlug || '' }
@@ -206,7 +206,7 @@ const StatsPurchasePage = ( {
 											siteId={ siteId }
 											redirectUri={ query.redirect_uri ?? '' }
 											from={ query.from ?? '' }
-											disableFreeProduct={ isFreeOwned || isCommercialOwned || isPWYWOwned }
+											disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
 										/>
 									) }
 								</>
