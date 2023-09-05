@@ -7,6 +7,8 @@ const selectors = {
 	closeBlockInserterButton: 'button[aria-label="Close block inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
 	patternResultItem: ( name: string ) => `${ sidebarParentSelector } div[aria-label="${ name }"]`,
+	blockResultItem: ( name: string ) =>
+		`${ sidebarParentSelector } .block-editor-block-types-list__list-item span:text("${ name }")`,
 };
 
 /**
@@ -78,10 +80,7 @@ export class EditorSidebarBlockInserterComponent {
 		if ( type === 'pattern' ) {
 			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
 		} else {
-			locator = editorParent
-				.getByRole( 'tabpanel', { name: 'Blocks' } )
-				.getByRole( 'option', { name, exact: true } )
-				.first();
+			locator = editorParent.locator( selectors.blockResultItem( name ) ).first();
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );
