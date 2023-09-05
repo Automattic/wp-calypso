@@ -47,7 +47,6 @@ export function getFinalImporterUrl(
 
 /**
  * Stepper's redirection handlers
- * generateStepPath share the same interface/params between 'signup' & 'stepper' frameworks
  */
 export function generateStepPath( stepName: string, stepSectionName?: string ) {
 	if ( stepName === 'intent' ) {
