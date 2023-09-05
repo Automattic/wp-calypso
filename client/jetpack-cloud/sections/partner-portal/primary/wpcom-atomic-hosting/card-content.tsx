@@ -2,6 +2,7 @@ import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components'
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import FeatureItem from './feature-item';
 
 import './style.scss';
 
@@ -14,8 +15,8 @@ interface PlanInfo {
 	description: string;
 	price: string;
 	interval: string;
-	wpcomFeatures: string[];
-	jetpackFeatures: string[];
+	wpcomFeatures: Array< { text: string; tooltipText: string } >;
+	jetpackFeatures: Array< { text: string; tooltipText: string } >;
 	storage: string;
 	logo: JSX.Element | null;
 }
@@ -43,10 +44,21 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 			description: 'Plan description goes here',
 			price: '$25',
 			interval: 'month',
-			wpcomFeatures: [ 'Feature 1', 'Feature 2', 'Feature 3', 'Feature 4', 'Feature 5' ],
+			wpcomFeatures: [
+				{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
+				{ text: 'Feature 2', tooltipText: 'Tooltip for Feature 2' },
+				{ text: 'Feature 3', tooltipText: 'Tooltip for Feature 3' },
+				{ text: 'Feature 4', tooltipText: 'Tooltip for Feature 4' },
+				{ text: 'Feature 5', tooltipText: 'Tooltip for Feature 5' },
+			],
 			jetpackFeatures:
 				planSlug === JETPACK_HOSTING_WPCOM_BUSINESS
-					? [ 'Feature 1', 'Feature 2', 'Feature 3', 'Feature 4' ]
+					? [
+							{ text: 'Feature 1', tooltipText: 'Tooltip for Feature 1' },
+							{ text: 'Feature 2', tooltipText: 'Tooltip for Feature 2' },
+							{ text: 'Feature 3', tooltipText: 'Tooltip for Feature 3' },
+							{ text: 'Feature 4', tooltipText: 'Tooltip for Feature 4' },
+					  ]
 					: [],
 			storage: '50GB',
 			logo: getLogo( planSlug ),
@@ -85,13 +97,12 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 						} ) }
 					</div>
 					{ plan.wpcomFeatures.length > 0 &&
-						plan.wpcomFeatures.map( ( feature ) => (
-							<div
-								key={ feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase() }
-								className="wpcom-atomic-hosting__card-feature"
-							>
-								{ feature }
-							</div>
+						plan.wpcomFeatures.map( ( { text, tooltipText } ) => (
+							<FeatureItem
+								key={ text.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase() }
+								feature={ text }
+								tooltipText={ tooltipText }
+							/>
 						) ) }
 				</div>
 				{ plan.jetpackFeatures.length > 0 && (
@@ -112,13 +123,12 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 								'Security, performance and growth tools made by the WordPress experts.'
 							) }
 						</Tooltip>
-						{ plan.jetpackFeatures.map( ( feature ) => (
-							<div
-								key={ feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase() }
-								className="wpcom-atomic-hosting__card-feature"
-							>
-								{ feature }
-							</div>
+						{ plan.jetpackFeatures.map( ( { text, tooltipText } ) => (
+							<FeatureItem
+								key={ text.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase() }
+								feature={ text }
+								tooltipText={ tooltipText }
+							/>
 						) ) }
 					</div>
 				) }
