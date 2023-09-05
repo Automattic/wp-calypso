@@ -253,16 +253,18 @@ export default function BulkEditContactInfoPage( {
 						</p>
 					</div>
 				</div>
-				<div className="edit-contact-info-page__sidebar-title">
-					<p>
-						<strong>{ translate( 'Editing contact info for:' ) }</strong>
-					</p>
+				<div className="edit-contact-info-page__sidebar" style={ { background: 'transparent' } }>
+					<div className="edit-contact-info-page__sidebar-title">
+						<p>
+							<strong>{ translate( 'Editing contact info for:' ) }</strong>
+						</p>
+					</div>
+					<ul>
+						{ selectedDomains?.map( ( domain ) => (
+							<li key={ domain.domain }>{ domain.domain }</li>
+						) ) }
+					</ul>
 				</div>
-				<ul>
-					{ selectedDomains?.map( ( domain ) => (
-						<li key={ domain.domain }>{ domain.domain }</li>
-					) ) }
-				</ul>
 			</>
 		);
 	};
