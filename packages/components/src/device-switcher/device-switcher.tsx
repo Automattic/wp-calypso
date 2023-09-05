@@ -42,7 +42,6 @@ const DeviceSwitcher = ( {
 	const timerRef = useRef< null | ReturnType< typeof setTimeout > >( null );
 	const viewportElement = frameRef?.current?.parentElement;
 	const viewportWidth = viewportElement?.clientWidth as number;
-	const viewportHeight = viewportElement?.clientHeight as number;
 	const viewportScale = useViewportScale( device, viewportWidth );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
@@ -50,34 +49,22 @@ const DeviceSwitcher = ( {
 		onDeviceChange?.( nextDevice );
 	};
 
-	const clearAnimationEndTimer = () => {
-		if ( timerRef.current ) {
-			clearTimeout( timerRef.current );
-		}
-	};
-
 	// Animate on viewport size update
 	useEffect( () => {
-		clearAnimationEndTimer();
+		const clearAnimationEndTimer = () => {
+			if ( timerRef.current ) {
+				clearTimeout( timerRef.current );
+			}
+		};
 
 		// Trigger animation end after the duration
 		timerRef.current = setTimeout( () => {
 			timerRef.current = null;
-
-			let height = frameRef?.current?.clientHeight;
-
-			// Scale height including the border from --device-switcher-border-width
-			if ( isFixedViewport ) {
-				const deviceSwitcherBorder = 20;
-				const borderScaled = deviceSwitcherBorder * viewportScale;
-				height = ( viewportHeight - borderScaled ) / viewportScale;
-			}
-
-			onViewportChange?.( height );
+			onViewportChange?.( frameRef?.current?.clientHeight );
 		}, ANIMATION_DURATION );
 
 		return clearAnimationEndTimer;
-	}, [ width, height, viewportScale ] );
+	}, [ width, height, viewportScale, isFixedViewport ] );
 
 	const frame = (
 		<div className="device-switcher__frame" ref={ frameRef }>

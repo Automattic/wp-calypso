@@ -97,6 +97,7 @@ export interface Site {
 	php_version_num: number;
 	is_connected: boolean;
 	has_paid_agency_monitor: boolean;
+	is_atomic?: boolean;
 }
 export interface SiteNode {
 	value: Site;

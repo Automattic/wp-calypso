@@ -24,7 +24,7 @@ import {
 } from './url-support';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
-type ResolveDomainStatusReturn =
+export type ResolveDomainStatusReturn =
 	| {
 			statusText: TranslateResult | TranslateResult[];
 			statusClass:

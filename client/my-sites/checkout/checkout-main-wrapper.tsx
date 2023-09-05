@@ -13,9 +13,9 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutMain from './composite-checkout/components/checkout-main';
-import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
-import { convertErrorToString } from './composite-checkout/lib/analytics';
+import CheckoutMain from './src/components/checkout-main';
+import PrePurchaseNotices from './src/components/prepurchase-notices';
+import { convertErrorToString } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {

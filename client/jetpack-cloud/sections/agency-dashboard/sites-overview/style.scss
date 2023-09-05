@@ -35,43 +35,37 @@
 		border-bottom: 1px solid var(--color-primary-5);
 	}
 }
+
 .sites-overview__add-site-issue-license-buttons {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
-	margin: 0 -32px 8px;
+	margin: 0 -48px 8px;
 	padding: 8px 48px;
 
-	button,
-	a {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	> a,
+	> button {
 		font-size: 1rem;
-		display: block;
-		width: 100%;
 		box-sizing: border-box;
+		max-height: 40px;
 	}
 
-	.sites-overview__issue-license-button {
-		margin-right: 0;
-		margin-bottom: 8px;
-	}
-	@include break-large {
-		margin: unset;
-		padding: unset;
-		flex: none;
-		margin-left: auto;
-		display: inline-block;
-		max-height: 40px;
-		button,
-		a {
-			display: inline-block;
-			width: auto;
-		}
+	&.is-with-split-button {
+		flex-direction: row;
 
 		.sites-overview__issue-license-button {
-			margin-right: 8px;
-			margin-bottom: 8px;
+			flex-grow: 1;
 		}
 	}
+
+	@include break-large {
+		flex-direction: row;
+	}
 }
+
 .sites-overview__content {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
@@ -89,7 +83,7 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
-		align-items: center;
+		justify-content: space-between;
 	}
 
 	&.is-sticky {
@@ -241,6 +235,29 @@
 		font-size: 1rem !important;
 	}
 }
+
+.fixed-host-column {
+	display: none;
+	margin-inline-end: 10px;
+	width: 40px;
+	text-align: center;
+
+	.wordpress-logo {
+		display: inline-block;
+		fill: var(--studio-blue-50);
+		visibility: hidden;
+		margin: auto 0;
+
+		&.is-visible {
+			visibility: visible;
+		}
+	}
+
+	@include break-wide {
+		display: inline-block;
+	}
+}
+
 .sites-overview__overlay {
 	display: block;
 	position: absolute;

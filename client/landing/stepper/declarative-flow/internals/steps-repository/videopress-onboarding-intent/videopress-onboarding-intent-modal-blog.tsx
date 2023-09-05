@@ -2,9 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { IntroModalContentProps } from '../intro/intro';
 import VideoPressOnboardingIntentModal from './videopress-onboarding-intent-modal';
 
-const VideoPressOnboardingIntentModalBlog: React.FC< IntroModalContentProps > = ( {
-	onSubmit,
-} ) => {
+const VideoPressOnboardingIntentModalBlog: React.FC< IntroModalContentProps > = () => {
 	const translate = useTranslate();
 
 	return (
@@ -26,9 +24,9 @@ const VideoPressOnboardingIntentModalBlog: React.FC< IntroModalContentProps > = 
 				translate( 'The best premium themes at your disposal.' ),
 			] }
 			actionButton={ {
-				type: 'button',
+				type: 'link',
 				text: translate( 'Get started with premium' ),
-				onClick: onSubmit,
+				href: 'https://wordpress.com/start/premium/?ref=videopress',
 			} }
 		/>
 	);

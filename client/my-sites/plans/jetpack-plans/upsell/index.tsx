@@ -15,7 +15,7 @@ import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
-import badge14Src from 'calypso/my-sites/checkout/composite-checkout/components/assets/icons/badge-14.svg';
+import badge14Src from 'calypso/my-sites/checkout/src/components/assets/icons/badge-14.svg';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';

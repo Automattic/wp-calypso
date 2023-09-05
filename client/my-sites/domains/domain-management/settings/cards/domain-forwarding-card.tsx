@@ -1,7 +1,7 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
-import { Icon, trash, info } from '@wordpress/icons';
+import { Icon, info } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -39,14 +39,16 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domain.name );
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
+	const [ subdomain, setSubdomain ] = useState( '' );
 	const [ targetUrl, setTargetUrl ] = useState( '' );
-	const [ protocol, setProtocol ] = useState( 'https' );
+	const [ sourceType, setSourceType ] = useState( 'domain' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
 	const [ forwardPaths, setForwardPaths ] = useState( false );
 	const [ isPermanent, setIsPermanent ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const pointsToWpcom = domain.pointsToWpcom;
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, domain.blogId ) );
+	const protocol = 'https';
 
 	// Display success notices when the forwarding is updated
 	const { updateDomainForwarding } = useUpdateDomainForwardingMutation( domain.name, {
@@ -99,7 +101,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	useEffect( () => {
 		if ( isLoading || ! forwarding ) {
 			setTargetUrl( '' );
-			setProtocol( 'https' );
 			return;
 		}
 
@@ -110,29 +111,43 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			const url = new URL( forwarding.targetPath, origin );
 			if ( url.hostname !== '_invalid_.domain' ) {
 				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
-				setProtocol( forwarding.isSecure ? 'https' : 'http' );
 				setIsPermanent( forwarding.isPermanent );
 				setForwardPaths( forwarding.forwardPaths );
+				setSubdomain( forwarding.subdomain );
+				setSourceType( forwarding.subdomain !== '' ? 'subdomain' : 'domain' );
 			}
 		} catch ( e ) {
 			// ignore
 		}
-	}, [ isLoading, forwarding, setTargetUrl, setProtocol ] );
+	}, [ isLoading, forwarding, setTargetUrl ] );
 
-	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		setTargetUrl( withoutHttp( event.target.value ) );
+	const handleSubdomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const subdomain = event.target.value;
+		setSubdomain( withoutHttp( subdomain ) );
 
-		if (
-			event.target.value.length > 0 &&
-			! CAPTURE_URL_RGX_SOFT.test( protocol + '://' + event.target.value )
-		) {
+		const CAPTURE_SUBDOMAIN_RGX = /^(?!-)[a-zA-Z0-9-]{0,63}(?<!-)$/i;
+
+		if ( subdomain.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( subdomain ) ) {
+			setIsValidUrl( false );
+			setErrorMessage( translate( 'Please enter a valid subdomain name.' ) );
+			return;
+		}
+
+		setIsValidUrl( true );
+	};
+
+	const handleForwardToChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const inputUrl = event.target.value;
+		setTargetUrl( withoutHttp( inputUrl ) );
+
+		if ( inputUrl.length > 0 && ! CAPTURE_URL_RGX_SOFT.test( protocol + '://' + inputUrl ) ) {
 			setIsValidUrl( false );
 			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			return;
 		}
 
 		try {
-			const url = new URL( protocol + '://' + event.target.value );
+			const url = new URL( protocol + '://' + inputUrl );
 
 			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
 			// Disallow same domain forwardings (for now, this may change in the future)
@@ -152,16 +167,22 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 
 	const handleDelete = () => {
 		setTargetUrl( '' );
+		setSubdomain( '' );
 		setIsValidUrl( true );
 
 		if ( isLoading || ! forwarding ) {
 			return;
 		}
-		deleteDomainForwarding();
+		deleteDomainForwarding( forwarding?.domain_redirect_id );
 	};
 
-	const handleChangeProtocol = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
-		setProtocol( event.currentTarget.value );
+	const handleDomainSubdomainChange = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
+		setSourceType( event.currentTarget.value );
+	};
+
+	const cleanForwardingInput = () => {
+		setTargetUrl( '' );
+		setIsValidUrl( true );
 	};
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
@@ -188,6 +209,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 
 		updateDomainForwarding( {
+			domain_redirect_id: forwarding?.domain_redirect_id || 0,
+			subdomain: sourceType === 'subdomain' ? subdomain : '',
 			targetHost,
 			targetPath,
 			isSecure,
@@ -297,8 +320,14 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			return true;
 		}
 
+		if ( forwarding.domain !== subdomain ) {
+			return true;
+		}
+
 		return false;
 	};
+
+	const isDomainForwardDisabled = ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom;
 
 	return (
 		<>
@@ -306,42 +335,67 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			{ renderNoticeForPrimaryDomain() }
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset
-					disabled={ ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom }
+					disabled={ isDomainForwardDisabled }
 					className="domain-forwarding-card__fields"
 				>
-					<FormTextInputWithAffixes
-						disabled={ isLoading }
-						name="destination"
-						noWrap
-						onChange={ handleChange }
-						value={ targetUrl }
-						className={ classNames( { 'is-error': ! isValidUrl } ) }
-						id="domain-forwarding__input"
-						maxLength={ 1000 }
-						prefix={
-							<FormSelect
-								name="protocol"
-								id="protocol-type"
-								value={ protocol }
-								onChange={ handleChangeProtocol }
-								disabled={ isLoading }
-							>
-								<option value="https">https://</option>
-								<option value="http">http://</option>
-							</FormSelect>
-						}
-						suffix={
-							<Button
-								disabled={ isLoading || targetUrl === '' }
-								className={ classNames( 'domain-forwarding-card__delete', {
-									'is-disabled': isLoading || targetUrl === '',
-								} ) }
-								onClick={ handleDelete }
-							>
-								<Icon icon={ trash } size={ 18 } fill="currentColor" />
-							</Button>
-						}
-					/>
+					<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
+					<div className="forwards-from">
+						<FormTextInputWithAffixes
+							placeholder={
+								sourceType === 'domain' ? domain.domain : translate( 'Enter subdomain' )
+							}
+							disabled={ isLoading || sourceType === 'domain' }
+							name="origin"
+							onChange={ handleSubdomainChange }
+							value={ sourceType === 'domain' ? domain.domain : subdomain }
+							className={ classNames( { 'is-error': ! isValidUrl } ) }
+							maxLength={ 1000 }
+							prefix={
+								<FormSelect
+									name="redirect_type"
+									value={ sourceType }
+									onChange={ handleDomainSubdomainChange }
+									disabled={ isLoading }
+								>
+									<option value="domain">{ translate( 'Domain' ) }</option>
+									<option value="subdomain">{ translate( 'Subdomain' ) }</option>
+								</FormSelect>
+							}
+							suffix={ sourceType === 'subdomain' && <FormLabel>.{ domain.domain }</FormLabel> }
+						/>
+					</div>
+					<FormLabel>{ translate( 'Destination URL' ) }</FormLabel>
+					<div className="forwards-to">
+						<FormTextInputWithAffixes
+							disabled={ isLoading }
+							name="destination"
+							noWrap
+							onChange={ handleForwardToChange }
+							value={ targetUrl }
+							className={ classNames( { 'is-error': ! isValidUrl } ) }
+							maxLength={ 1000 }
+							suffix={
+								targetUrl !== '' &&
+								! isDomainForwardDisabled && (
+									<Button className="forwarding__clear" onClick={ cleanForwardingInput }>
+										<Gridicon icon="cross" />
+									</Button>
+								)
+							}
+						/>
+						<Button
+							className={ classNames( 'forwarding__checkmark', {
+								visible: ! isDomainForwardDisabled && isValidUrl && targetUrl !== '',
+							} ) }
+						>
+							<Gridicon icon="checkmark" />
+						</Button>
+					</div>
+					{ ! isValidUrl && (
+						<div className="domain-forwarding-card__error-field">
+							<FormInputValidation isError={ true } text={ errorMessage } />
+						</div>
+					) }
 					<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
 						<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
 						<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
@@ -417,14 +471,15 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
 						</FormSettingExplanation>
 					</Accordion>
+					{ ! isDomainForwardDisabled && forwarding && (
+						<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
+							{ translate( 'Remove forward' ) }
+						</Button>
+					) }
 				</FormFieldset>
-				{ ! isValidUrl && (
-					<div className="domain-forwarding-card__error-field">
-						<FormInputValidation isError={ true } text={ errorMessage } />
-					</div>
-				) }
 				<FormButton
 					disabled={
+						isDomainForwardDisabled ||
 						! isValidUrl ||
 						isLoading ||
 						( forwarding && ! redirectHasChanged() ) ||
