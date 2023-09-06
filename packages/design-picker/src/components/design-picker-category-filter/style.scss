@@ -5,20 +5,6 @@
 $design-picker-category-filter-text-color: #3c434a;
 $design-picker-category-filter-text-color-active: var(--studio-gray-100);
 
-.design-picker {
-	&.design-picker__unified {
-		.responsive-toolbar-group__dropdown {
-			&.design-picker__category-filter {
-				width: 100%;
-
-				.responsive-toolbar-group__grouped-list {
-					justify-content: flex-start;
-				}
-			}
-		}
-	}
-}
-
 .design-picker-category-filter {
 	@include break-small {
 		flex: 0 245px;

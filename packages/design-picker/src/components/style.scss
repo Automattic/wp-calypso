@@ -38,6 +38,14 @@
 			margin-left: auto;
 			margin-top: -60px;
 		}
+
+		.design-picker__category-filter.responsive-toolbar-group__dropdown {
+			width: 100%;
+
+			.responsive-toolbar-group__grouped-list {
+				justify-content: flex-start;
+			}
+		}
 	}
 
 	.design-picker__grid,
