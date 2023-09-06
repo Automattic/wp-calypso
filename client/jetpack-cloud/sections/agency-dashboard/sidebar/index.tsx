@@ -11,8 +11,9 @@ import SidebarRegion from 'calypso/layout/sidebar/region';
 import CurrentSite from 'calypso/my-sites/current-site';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import 'calypso/components/jetpack/sidebar/style.scss';
 import type { FunctionComponent } from 'react';
+
+import 'calypso/components/jetpack/sidebar/style.scss';
 import './style.scss';
 
 interface Props {
