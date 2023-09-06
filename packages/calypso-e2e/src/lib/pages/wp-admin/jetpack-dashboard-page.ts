@@ -38,7 +38,9 @@ export class JetpackDashboardPage {
 	 * @param {string} siteSlug Site slug.
 	 */
 	async visit( siteSlug: string ) {
-		await this.page.goto( `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/dashboard` );
+		await this.page.goto( `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/dashboard`, {
+			timeout: 15 * 1000,
+		} );
 	}
 
 	/**
