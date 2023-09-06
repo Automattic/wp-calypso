@@ -1,9 +1,11 @@
 import config from '@automattic/calypso-config';
+import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import PersonalPurchase from './stats-purchase-personal';
@@ -21,6 +23,7 @@ import {
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
+	siteId: number | null;
 	siteSlug: string;
 	planValue: number;
 	currencyCode: string;
@@ -69,6 +72,7 @@ interface StatsPersonalPurchaseProps {
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
 
 const StatsCommercialPurchase = ( {
+	siteId,
 	siteSlug,
 	planValue,
 	currencyCode,
@@ -78,6 +82,10 @@ const StatsCommercialPurchase = ( {
 	showClassificationDispute = true,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+
+	// The button of @automattic/components has built-in color scheme support for Calypso.
+	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
@@ -103,14 +111,15 @@ const StatsCommercialPurchase = ( {
 			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
 			<StatsBenefitsCommercial />
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-			<Button
+			<ButtonComponent
 				variant="primary"
+				primary={ isWPCOMSite ? true : undefined }
 				onClick={ () =>
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
 			>
 				{ translate( 'Get Stats Commercial' ) }
-			</Button>
+			</ButtonComponent>
 
 			{ showClassificationDispute && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
@@ -264,6 +273,7 @@ const StatsSingleItemPagePurchase = ( {
 	return (
 		<StatsSingleItemPagePurchaseFrame>
 			<StatsCommercialPurchase
+				siteId={ siteId }
 				siteSlug={ siteSlug }
 				planValue={ planValue }
 				currencyCode={ currencyCode }

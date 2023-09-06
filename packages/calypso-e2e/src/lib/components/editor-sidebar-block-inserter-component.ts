@@ -79,7 +79,10 @@ export class EditorSidebarBlockInserterComponent {
 			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
 		} else {
 			locator = editorParent
-				.getByRole( 'tabpanel', { name: 'Blocks' } )
+				// The DOM structure that hold the block options changes a LOT dependent on whether there's a search.
+				// This combined selector is not the slickest, but capture both cases.
+				// There's not an easy way to use "getByRole" to capture two cases without a lot of promise racing.
+				.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
 				.getByRole( 'option', { name, exact: true } )
 				.first();
 		}

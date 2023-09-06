@@ -4,6 +4,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
+import { EmailDeliveryFrequency } from '../../constants';
 import { callApi } from '../../helpers';
 import useSiteDeliveryFrequencyMutation from '../../mutations/use-site-delivery-frequency-mutation';
 
@@ -17,6 +18,7 @@ jest.mock( '../../hooks', () => ( {
 jest.mock( '../../helpers', () => ( {
 	callApi: jest.fn(),
 	applyCallbackToPages: jest.fn(),
+	buildQueryKey: jest.fn(),
 } ) );
 
 const client = new QueryClient();
@@ -30,8 +32,9 @@ describe( 'useSiteDeliveryFrequencyMutation()', () => {
 			const { mutate } = useSiteDeliveryFrequencyMutation();
 			useEffect( () => {
 				mutate( {
-					delivery_frequency: 'daily',
+					delivery_frequency: EmailDeliveryFrequency.Daily,
 					blog_id: '123',
+					subscriptionId: 456,
 				} );
 			}, [ mutate ] );
 
