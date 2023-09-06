@@ -2,7 +2,7 @@ import { makeSelectorFromBlockName, validatePublishedFormFields } from './shared
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
-	aiPrompt: string;
+	prompt: string;
 }
 
 interface ValidationData {
@@ -46,10 +46,10 @@ export class FormAiFlow implements BlockFlow {
 			name: 'Send request',
 		} );
 
-		await aiInputReadyLocator.fill( this.configurationData.aiPrompt );
+		await aiInputReadyLocator.fill( this.configurationData.prompt );
 		await sendButtonLocator.click();
 		await aiInputBusyLocator.waitFor();
-		await aiInputReadyLocator.waitFor();
+		await aiInputReadyLocator.waitFor( { timeout: 30 * 1000 } );
 
 		// Grab a first sample input label and submit button text to use for validation.
 		this.validationData = {
