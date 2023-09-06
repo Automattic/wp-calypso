@@ -37,7 +37,7 @@ const useUnmarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			queryClient.setQueryData( cacheKey, ( oldData?: NewsletterCategories ) => {
 				const updatedData = {
-					...oldData,
+					enabled: oldData?.enabled || false,
 					newsletterCategories:
 						oldData?.newsletterCategories.filter(
 							( category: NewsletterCategory ) => category.id !== categoryId
