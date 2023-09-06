@@ -84,6 +84,28 @@ export class PublishedPostPage {
 	}
 
 	/**
+	 * Fills out a subscription form on the published post with the email address.
+	 *
+	 * @param {string} email Email address to subscribe.
+	 */
+	async subscribe( email: string ) {
+		await this.anchor.getByPlaceholder( /type your email/i ).fill( email );
+		await this.anchor.getByRole( 'button', { name: 'Subscribe' } ).click();
+
+		// The popup dialog is in its own iframe.
+		// This is because on user-controlled browsers with third-party cookies
+		// enabled, the user is shown an option to pay for the subscription or
+		// to sign up for a Free trial of the subscription.
+		// Howver, on Playwright-controlled browser, third-party cookies are
+		// disabled, so the only dialog the user sees is a confirmation that
+		// subscription email has been sent.
+		const iframe = this.page.frameLocator( 'iframe[id="TB_iframeContent"]' );
+		const continueButton = iframe.getByRole( 'button', { name: /continue/i } );
+
+		await continueButton.click();
+	}
+
+	/**
 	 * Validates that the title is as expected.
 	 *
 	 * @param {string} title Title text to check.
