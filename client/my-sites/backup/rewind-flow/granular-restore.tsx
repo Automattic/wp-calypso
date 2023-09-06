@@ -1,7 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { Button as WordPressButton } from '@wordpress/components';
 import { useCallback, useEffect, useState } from '@wordpress/element';
-import { Icon, arrowLeft, backup } from '@wordpress/icons';
+import { Icon, arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -79,7 +79,9 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	);
 
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
-
+	const browserSelectedList = useSelector( ( state ) =>
+		getBackupBrowserSelectedList( state, siteId )
+	);
 	const [ loading, setLoading ] = useState( true );
 
 	useEffect( () => {
@@ -124,6 +126,15 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const renderThemes = () => {
 		const themes = browserSelectedList.filter( ( item ) => item.type === 'theme' );
 		if ( themes.length === 0 ) {
+			if ( browserSelectedList.some( ( item ) => item.path === '/wp-content/themes' ) ) {
+				return (
+					<>
+						<h4 className="rewind-flow__cta">
+							{ translate( 'All site themes will be restored' ) }
+						</h4>
+					</>
+				);
+			}
 			return null;
 		}
 		return (
@@ -141,6 +152,15 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const renderPlugins = () => {
 		const plugins = browserSelectedList.filter( ( item ) => item.type === 'plugin' );
 		if ( plugins.length === 0 ) {
+			if ( browserSelectedList.some( ( item ) => item.path === '/wp-content/plugins' ) ) {
+				return (
+					<>
+						<h4 className="rewind-flow__cta">
+							{ translate( 'All site plugins will be restored' ) }
+						</h4>
+					</>
+				);
+			}
 			return null;
 		}
 		return (
@@ -158,6 +178,15 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const renderTables = () => {
 		const tables = browserSelectedList.filter( ( item ) => item.type === 'table' );
 		if ( tables.length === 0 ) {
+			if ( browserSelectedList.some( ( item ) => item.path === '/sql' ) ) {
+				return (
+					<>
+						<h4 className="rewind-flow__cta">
+							{ translate( 'All site database tables will be restored' ) }
+						</h4>
+					</>
+				);
+			}
 			return null;
 		}
 		return (
@@ -177,7 +206,11 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	};
 
 	const renderFiles = () => {
-		const files = browserSelectedList.filter( ( item ) => item.type === 'file' );
+		const files = browserSelectedList.filter(
+			( item ) =>
+				item.type === 'file' &&
+				! [ '/sql', '/wp-content/plugins', '/wp-content/themes' ].includes( item.path )
+		);
 		if ( files.length === 0 ) {
 			return null;
 		}
@@ -187,8 +220,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				<div className="rewind-flow__expandable-files">
 					<WordPressButton variant="link" className="rewind-flow__cta" onClick={ expandClick }>
 						{ translate(
-							'%(numberOfFiles)d more file selected',
-							'%(numberOfFiles)d more files selected',
+							'%(numberOfFiles)d more file or directory selected',
+							'%(numberOfFiles)d more files or directories selected',
 							{
 								count: files.length,
 								args: { numberOfFiles: files.length },
