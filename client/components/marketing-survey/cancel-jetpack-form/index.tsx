@@ -277,7 +277,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 			dispatch(
 				submitSurvey(
-					'calypso-cancel-jetpack',
+					props.isAkismet ? 'calypso-cancel-akismet' : 'calypso-cancel-jetpack',
 					purchase.siteId,
 					enrichedSurveyData( surveyData, purchase )
 				)
