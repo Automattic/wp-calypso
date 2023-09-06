@@ -2,7 +2,7 @@ import { isDomainTransfer } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
+import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -16,7 +16,9 @@ import DomainRegistrationHsts from './domain-registration-hsts';
 import { EbanxTermsOfService } from './ebanx-terms-of-service';
 import { InternationalFeeNotice } from './international-fee-notice';
 import JetpackSocialAdvancedPricingDisclaimer from './jetpack-social-advanced-pricing-disclaimer';
+import { PlanTerms100Year } from './plan-terms-100-year';
 import RefundPolicies from './refund-policies';
+import { RefundTerms100Year } from './refund-terms-100-year';
 import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
@@ -53,6 +55,7 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			<TermsOfService
 				hasRenewableSubscription={ hasRenewableSubscription( cart ) || hasDomainTransfer }
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
+				is100YearPlanPurchase={ has100YearPlan( cart ) }
 			/>
 			{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 			{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
@@ -61,6 +64,8 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 			{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
 			{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 			{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
+			{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
+			{ ! isGiftPurchase && <RefundTerms100Year cart={ cart } /> }
 			<EbanxTermsOfService />
 			{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 			{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
