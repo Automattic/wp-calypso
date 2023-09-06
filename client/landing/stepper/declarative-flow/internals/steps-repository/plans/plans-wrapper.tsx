@@ -93,7 +93,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const highlightedFeatures = useHighlightedFeatures( plansIntent );
+	const highlightedFeatures = useHighlightedFeatures( plansIntent, isInSignup );
 
 	const onSelectPlan = ( selectedPlan: any ) => {
 		if ( selectedPlan ) {

@@ -25,7 +25,12 @@ import type { PlansIntent } from './use-grid-plans';
  *
  * TODO clk: move to plans data store
  */
-const useHighlightedFeatures = ( intent: PlansIntent | null ): string[] => {
+const useHighlightedFeatures = ( intent: PlansIntent | null, isInSignup: boolean ): string[] => {
+	// For now, this hook and higlighting features only applies during signup.
+	if ( ! isInSignup ) {
+		return [];
+	}
+
 	if ( 'plans-newsletter' === intent ) {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
@@ -36,6 +41,7 @@ const useHighlightedFeatures = ( intent: PlansIntent | null ): string[] => {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 		];
 	}
+
 	return [];
 };
 
