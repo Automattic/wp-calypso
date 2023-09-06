@@ -232,15 +232,16 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 
 		updateDomainForwarding( {
+			domain: domain.name,
 			domain_redirect_id: editingId,
 			subdomain,
-			targetHost,
-			targetPath,
-			isSecure,
-			forwardPaths,
-			isPermanent,
-			isActive: true, // always active
-			sourcePath: null, // we're not using this feature for now
+			target_host: targetHost,
+			target_path: targetPath,
+			is_secure: isSecure,
+			forward_paths: forwardPaths,
+			is_permanent: isPermanent,
+			is_active: true, // always active
+			source_path: '', // we're not using this feature for now
 		} );
 
 		// TODO: open the edition of the new forwarding we just created
