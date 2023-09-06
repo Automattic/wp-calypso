@@ -31,7 +31,12 @@ const ScreenSections = ( {
 	const selectedCategory = params.categorySlug as string;
 
 	const onSelectSectionCategory = ( category: string ) => {
-		goTo( `${ NAVIGATOR_PATHS.SECTIONS }/${ category }`, { replace: true } );
+		const nextPath =
+			category !== selectedCategory
+				? `${ NAVIGATOR_PATHS.SECTIONS }/${ category }`
+				: NAVIGATOR_PATHS.SECTIONS;
+
+		goTo( nextPath, { replace: true } );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
 			pattern_category: category,
 		} );
