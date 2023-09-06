@@ -3,7 +3,7 @@ import request from 'wpcom-proxy-request';
 import { NewsletterCategories, NewsletterCategory } from './types';
 
 type NewsletterCategoryQueryProps = {
-	siteId: number;
+	siteId?: number;
 	subscriptionId?: number;
 };
 
