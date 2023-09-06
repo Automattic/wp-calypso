@@ -1,10 +1,11 @@
-import { AddOnMeta, WpcomPlansUI } from '@automattic/data-stores';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import { getStorageStringFromFeature } from '../util';
 import type { PlanSlug, StorageOption, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import type { AddOnMeta } from '@automattic/data-stores';
 
 type StorageAddOnDropdownProps = {
 	label?: string;

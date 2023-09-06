@@ -23,10 +23,9 @@ import {
 	isBusinessPlan,
 	isEcommercePlan,
 } from '@automattic/calypso-products';
-import { AddOnMeta } from '@automattic/data-stores';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
+import type { AddOnMeta, PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store

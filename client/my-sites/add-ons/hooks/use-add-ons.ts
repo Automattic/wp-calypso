@@ -9,7 +9,7 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
@@ -32,25 +32,7 @@ import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 import useAddOnPrices from './use-add-on-prices';
-
-export interface AddOnMeta {
-	productSlug: string;
-	featureSlugs?: string[] | null;
-	icon: JSX.Element;
-	featured?: boolean; // irrelevant to "featureSlugs"
-	name: string | null;
-	quantity?: number; // used for determining checkout costs for quantity based products
-	description: string | null;
-	displayCost: TranslateResult | null;
-	purchased?: boolean;
-	isLoading?: boolean;
-	prices?: {
-		monthlyPrice: number;
-		yearlyPrice: number;
-		formattedMonthlyPrice: string;
-		formattedYearlyPrice: string;
-	} | null;
-}
+import type { AddOnMeta } from '@automattic/data-stores';
 
 // some memoization. executes far too many times
 const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {

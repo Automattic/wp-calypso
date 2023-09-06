@@ -1,4 +1,4 @@
-import { AddOnMeta, Plans, WpcomPlansUI } from '@automattic/data-stores';
+import { Plans, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
@@ -11,6 +11,7 @@ import {
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { PlanSlug } from '@automattic/calypso-products';
+import type { AddOnMeta } from '@automattic/data-stores';
 import type {
 	UsePricingMetaForGridPlans,
 	PricingMetaForGridPlan,
