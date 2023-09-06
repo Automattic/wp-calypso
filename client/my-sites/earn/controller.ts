@@ -1,25 +1,29 @@
 import page from 'page';
-import { createElement } from 'react';
+import { createElement, FC } from 'react';
 import Main from './main';
+import type { Context as PageJSContext } from 'page';
 
 export default {
-	redirectToAdsEarnings: function ( context ) {
+	redirectToAdsEarnings: function ( context: PageJSContext ) {
 		page.redirect( '/earn/ads-earnings/' + context.params.site_id );
 	},
-	redirectToAdsSettings: function ( context ) {
+	redirectToAdsSettings: function ( context: PageJSContext ) {
 		page.redirect( '/earn/ads-settings/' + context.params.site_id );
 	},
-	layout: function ( context, next ) {
+	layout: function ( context: PageJSContext, next: () => void ) {
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
 		}
 
-		context.primary = createElement( Main, {
-			section: context.params.section,
-			path: context.path,
-			query: context.query,
-		} );
+		context.primary = createElement(
+			Main as FC< { section: string; path: string; query: string } >,
+			{
+				section: context.params.section,
+				path: context.path,
+				query: context.query,
+			}
+		);
 		next();
 	},
 };
