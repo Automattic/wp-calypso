@@ -14,13 +14,13 @@ export const DomainsTableBulkUpdateNotice = () => {
 	const [ dismissedJobs, setDismissedJobs ] = useState< string[] >( [] );
 
 	const handleDismissNotice = async ( jobId: string ) => {
+		setDismissedJobs( dismissedJobs.concat( [ jobId ] ) );
 		await wpcomRequest< void >( {
 			path: '/domains/bulk-actions',
 			apiNamespace: 'wpcom/v2',
 			apiVersion: '2',
 			method: 'DELETE',
 		} );
-		setDismissedJobs( dismissedJobs.concat( [ jobId ] ) );
 		handleRestartDomainStatusPolling();
 	};
 
