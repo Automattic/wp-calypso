@@ -79,7 +79,6 @@ const ScreenMain = ( {
 							onClick={ () =>
 								handleNavigatorItemSelect( 'section', NAVIGATOR_PATHS.SECTIONS, INITIAL_CATEGORY )
 							}
-							hasNestedItems
 						>
 							{ translate( 'Sections' ) }
 						</NavigatorItem>
