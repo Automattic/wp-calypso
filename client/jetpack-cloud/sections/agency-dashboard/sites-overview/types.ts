@@ -246,6 +246,7 @@ export type ProductInfo = { name: string; key: string; status: 'rejected' | 'ful
 export type PurchasedProductsInfo = {
 	selectedSite: string;
 	selectedProducts: Array< ProductInfo >;
+	type?: string;
 };
 
 export interface APIError {
