@@ -25,6 +25,7 @@ import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import { validateDomainForwarding } from './utils/domain-forwarding';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import './style.scss';
 
@@ -144,21 +145,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		setSourceType( 'subdomain' );
 	};
 
-	const handleSubdomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		const subdomain = event.target.value;
-		setSubdomain( withoutHttp( subdomain ) );
-
-		const CAPTURE_SUBDOMAIN_RGX = /^(?!-)[a-zA-Z0-9-]{0,63}(?<!-)$/i;
-
-		if ( subdomain.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( subdomain ) ) {
-			setIsValidUrl( false );
-			setErrorMessage( translate( 'Please enter a valid subdomain name.' ) );
-			return;
-		}
-
-		setIsValidUrl( true );
-	};
-
 	const handleForwardToChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const inputUrl = event.target.value;
 		setTargetUrl( withoutHttp( inputUrl ) );
@@ -172,16 +158,34 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		try {
 			const url = new URL( protocol + '://' + inputUrl );
 
-			// Disallow subdomain forwardings to the main domain, e.g. www.example.com => example.com
-			// Disallow same domain forwardings (for now, this may change in the future)
-			if ( url.hostname === domain.name || url.hostname.endsWith( `.${ domain.name }` ) ) {
-				setErrorMessage( translate( 'Forwarding to the same domain is not allowed.' ) );
+			const validateDomain = validateDomainForwarding(
+				domain.name,
+				url.hostname,
+				url.pathname + url.search + url.hash
+			);
+			if ( ! validateDomain.isValid ) {
+				setErrorMessage( validateDomain.errorMsg );
 				setIsValidUrl( false );
 				return;
 			}
 		} catch ( e ) {
 			setErrorMessage( translate( 'Please enter a valid URL.' ) );
 			setIsValidUrl( false );
+			return;
+		}
+
+		setIsValidUrl( true );
+	};
+
+	const handleSubdomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		const subdomain = event.target.value;
+		setSubdomain( withoutHttp( subdomain ) );
+
+		const CAPTURE_SUBDOMAIN_RGX = /^(?!-)[a-zA-Z0-9-]{0,63}(?<!-)$/i;
+
+		if ( subdomain.length > 0 && ! CAPTURE_SUBDOMAIN_RGX.test( subdomain ) ) {
+			setIsValidUrl( false );
+			setErrorMessage( translate( 'Please enter a valid subdomain name.' ) );
 			return;
 		}
 
