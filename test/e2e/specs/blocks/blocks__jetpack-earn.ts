@@ -9,6 +9,7 @@ import {
 	DonationsFormFlow,
 	AdFlow,
 	envVariables,
+	PaywallFlow,
 	// PaymentsBlockFlow,
 	// envVariables,
 } from '@automattic/calypso-e2e';
@@ -53,6 +54,20 @@ if (
 	envVariables.ATOMIC_VARIATION !== 'private'
 ) {
 	blockFlows.push( new AdFlow( {} ) );
+}
+
+// Paywall also does not apply to Private sites.
+if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
+	// Splice instead of push because the Donations block should be the last item
+	// because clicking "Pay now" behavior is slightly unpredictable.
+	blockFlows.splice(
+		-1,
+		0,
+		new PaywallFlow( {
+			prePaywallText: 'Pre-paywall text',
+			postPaywallText: 'Post-paywall text',
+		} )
+	);
 }
 
 createBlockTests( 'Blocks: Jetpack Earn', blockFlows );
