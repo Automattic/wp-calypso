@@ -25,6 +25,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
@@ -249,6 +250,17 @@ const PlansFeaturesMain = ( {
 	}, [ setShowDomainUpsellDialog ] );
 
 	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
+	const currentUserName = useSelector( getCurrentUserName );
+	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
+		useGetFreeSubdomainSuggestion(
+			paidDomainName || siteTitle || signupFlowUserName || currentUserName
+		);
+	const resolvedSubdomainName: DataResponse< string > = {
+		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
+		result: signupFlowSubdomain
+			? signupFlowSubdomain
+			: wpcomFreeDomainSuggestion.result?.domain_name,
+	};
 
 	const isDisplayingPlansNeededForFeature = () => {
 		if (
@@ -280,14 +292,25 @@ const PlansFeaturesMain = ( {
 			/**
 			 * After the experiments are loaded now open the relevant modal based on previous step parameters
 			 */
-			if ( paidDomainName ) {
-				toggleIsFreePlanPaidDomainDialogOpen();
-				return;
+			if ( wpcomFreeDomainSuggestion.result ) {
+				if ( paidDomainName ) {
+					toggleIsFreePlanPaidDomainDialogOpen();
+					return;
+				}
+				if ( isPlanUpsellEnabledOnFreeDomain.result ) {
+					setIsFreePlanFreeDomainDialogOpen( true );
+					return;
+				}
 			}
-			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
-				setIsFreePlanFreeDomainDialogOpen( true );
-				return;
-			}
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Sub domain suggestion wasn't available for query: ${ paidDomainName }`,
+				severity: 'warn',
+				blog_id: siteId,
+				properties: {
+					env: config( 'env_id' ),
+				},
+			} );
 		}
 
 		if ( onUpgradeClick ) {
@@ -396,17 +419,6 @@ const PlansFeaturesMain = ( {
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
 		hidePlanSelector = true;
 	}
-	const currentUserName = useSelector( getCurrentUserName );
-	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
-		useGetFreeSubdomainSuggestion(
-			paidDomainName || siteTitle || signupFlowUserName || currentUserName
-		);
-	const resolvedSubdomainName: DataResponse< string > = {
-		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
-		result: signupFlowSubdomain
-			? signupFlowSubdomain
-			: wpcomFreeDomainSuggestion.result?.domain_name,
-	};
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -437,11 +449,24 @@ const PlansFeaturesMain = ( {
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
-	let planActionOverrides: PlanActionOverrides | undefined = undefined;
+	let planActionOverrides: PlanActionOverrides | undefined;
+	if ( isInSignup ) {
+		planActionOverrides = {
+			loggedInFreePlan: {
+				status:
+					isPlanUpsellEnabledOnFreeDomain.isLoading || wpcomFreeDomainSuggestion.isLoading
+						? 'blocked'
+						: 'enabled',
+			},
+		};
+	}
 	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
 		planActionOverrides = {
 			loggedInFreePlan: {
-				status: isPlanUpsellEnabledOnFreeDomain.isLoading ? 'blocked' : 'enabled',
+				status:
+					isPlanUpsellEnabledOnFreeDomain.isLoading || wpcomFreeDomainSuggestion.isLoading
+						? 'blocked'
+						: 'enabled',
 				callback: () => {
 					page.redirect( `/add-ons/${ siteSlug }` );
 				},

@@ -113,7 +113,7 @@
 		pointer-events: none;
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
-		background-image: linear-gradient(-45deg, var(--color-neutral-0) 28%, var(--color-surface) 28%, var(--color-surface) 72%, var(--color-neutral-0) 72%);
+		background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
 	}
 
 	&.dashicons {
