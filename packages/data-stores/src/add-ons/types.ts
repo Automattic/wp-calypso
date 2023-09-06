@@ -4,7 +4,7 @@ export interface AddOnMeta {
 	productSlug: string;
 	featureSlugs?: string[] | null;
 	icon: JSX.Element;
-	featured?: boolean; // irrelevant to "featureSlugs"
+	featured?: boolean; // used to display the popular badge in the add-ons grid
 	name: string | null;
 	quantity?: number; // used for determining checkout costs for quantity based products
 	description: string | null;
