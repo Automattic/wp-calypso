@@ -40,7 +40,7 @@ interface StatsSingleItemPagePurchaseProps {
 	redirectUri: string;
 	from: string;
 	siteId: number | null;
-	isCommercial: boolean;
+	isCommercial: boolean | null;
 }
 
 interface StatsSingleItemPersonalPurchasePageProps {
@@ -280,7 +280,7 @@ const StatsSingleItemPagePurchase = ( {
 				adminUrl={ adminUrl || '' }
 				redirectUri={ redirectUri }
 				from={ from }
-				showClassificationDispute={ isCommercial }
+				showClassificationDispute={ !! isCommercial }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);
