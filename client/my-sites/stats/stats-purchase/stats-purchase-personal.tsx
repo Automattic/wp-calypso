@@ -106,6 +106,7 @@ const PersonalPurchase = ( {
 					}
 				) }
 			</div>
+
 			<PricingSlider
 				className={ `${ COMPONENT_CLASS_NAME }__slider` }
 				value={ subscriptionValue }
@@ -116,7 +117,7 @@ const PersonalPurchase = ( {
 			/>
 
 			<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
-				{ translate( 'Our users pay %(value)s per month on average', {
+				{ translate( 'The average person pays %(value)s per month', {
 					args: {
 						value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
 					},
