@@ -46,6 +46,34 @@
 				padding: 8px 32px;
 			}
 		}
+
+		.stats-purchase-wizard__notice {
+			color: var(--studio-yellow-80);
+
+			.is-link {
+				color: var(--studio-yellow-80);
+			}
+		}
+
+		.stats-purchase-wizard__personal-tos {
+			display: none;
+		}
+
+		.jp-components-pricing-slider__track.jp-components-pricing-slider__track-0 {
+			background-color: var(--color-primary);
+		}
+
+		.jp-components-pricing-slider__thumb {
+			border-radius: 2px;
+			border-color: var(--color-primary);
+		}
+
+		// On holding thumb styling
+		.jp-components-pricing-slider--is-holding {
+			.jp-components-pricing-slider__thumb {
+				box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 3px rgba(var(--color-primary-rgb), 0.25);
+			}
+		}
 	}
 }
 
