@@ -8,11 +8,11 @@ export type DomainForwardingObject = {
 	subdomain: string;
 	target_host: string;
 	target_path: string;
-	forward_paths: '0' | '1' | true | false;
-	is_secure: '0' | '1' | true | false;
-	is_permanent: '0' | '1' | true | false;
-	is_active: '0' | '1' | true | false;
-	source_path: string;
+	forward_paths: true | false;
+	is_secure: true | false;
+	is_permanent: true | false;
+	is_active?: true | false;
+	source_path?: string;
 };
 
 const selectForwards = (
@@ -23,13 +23,7 @@ const selectForwards = (
 	}
 
 	return response?.map( ( forwarding: DomainForwardingObject ) => {
-		return {
-			...forwarding,
-			forward_paths: forwarding.forward_paths === '1',
-			is_secure: forwarding.is_secure === '1',
-			is_permanent: forwarding.is_permanent === '1',
-			is_active: forwarding.is_active === '1',
-		};
+		return forwarding;
 	} );
 };
 
@@ -38,7 +32,7 @@ export default function useDomainForwardingQuery(
 ): UseQueryResult< DomainForwardingObject[] | null > {
 	return useQuery( {
 		queryKey: domainForwardingQueryKey( domainName ),
-		queryFn: () => wp.req.get( `/sites/all/domain/${ domainName }/redirects` ),
+		queryFn: () => wp.req.get( `/sites/all/domain/${ domainName }/redirects?new-endpoint=true` ),
 		refetchOnWindowFocus: false,
 		select: selectForwards,
 	} );

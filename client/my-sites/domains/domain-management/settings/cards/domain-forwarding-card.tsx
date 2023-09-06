@@ -240,8 +240,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			is_secure: isSecure,
 			forward_paths: forwardPaths,
 			is_permanent: isPermanent,
-			is_active: true, // always active
-			source_path: '', // we're not using this feature for now
 		} );
 
 		// TODO: open the edition of the new forwarding we just created
