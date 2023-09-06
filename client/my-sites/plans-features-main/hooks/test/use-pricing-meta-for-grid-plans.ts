@@ -21,8 +21,14 @@ jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans', () =>
 	jest.fn()
 );
+jest.mock( '@automattic/data-stores', () => ( {
+	Plans: {
+		useSitePlans: jest.fn(),
+	},
+} ) );
 
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
 import {
@@ -36,6 +42,10 @@ import usePricingMetaForGridPlans from '../data-store/use-pricing-meta-for-grid-
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		Plans.useSitePlans.mockImplementation( () => ( {
+			isFetching: false,
+			data: null,
+		} ) );
 		usePricedAPIPlans.mockImplementation( () => ( {
 			[ PLAN_PREMIUM ]: {
 				bill_period: 365,

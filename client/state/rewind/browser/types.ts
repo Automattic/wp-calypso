@@ -1,4 +1,5 @@
 export type BackupBrowserItem = {
+	id: string;
 	path: string;
 	ancestors: string[];
 	checkState: 'checked' | 'unchecked' | 'mixed';
@@ -6,8 +7,13 @@ export type BackupBrowserItem = {
 	children: BackupBrowserItem[];
 };
 
+export type BackupBrowserCheckListInfo = {
+	id: string;
+	path: string;
+};
+
 export type BackupBrowserItemCheckList = {
 	totalItems: number;
-	includeList: string[];
-	excludeList: string[];
+	includeList: BackupBrowserCheckListInfo[];
+	excludeList: BackupBrowserCheckListInfo[];
 };

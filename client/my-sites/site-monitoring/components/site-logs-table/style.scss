@@ -1,13 +1,14 @@
 $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 
 .site-logs-table {
-	display: block;
 	overflow-x: auto;
 	white-space: normal;
 	border-collapse: collapse;
 	background-color: var(--studio-white);
+	color: var(--studio-gray-100);
 	margin: 0 0 1.5rem;
 	font-family: "SF Pro Text", $sans;
+	table-layout: fixed;
 
 	&.is-loading {
 		opacity: 0.5;
@@ -15,8 +16,12 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 }
 
 .site-logs-table thead tr,
-.site-logs-table tbody tr:not(:last-child) {
+.site-logs-table tbody tr:not(:last-child):not(.site-logs-table__summary-expanded) {
 	border-bottom: 1px solid $border-color;
+}
+
+.site-logs-table tbody tr.site-logs-table__table-row:hover {
+	cursor: pointer;
 }
 
 .site-logs-table th,
@@ -40,10 +45,35 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 	font-family: "SF Pro Text", $sans;
 	color: var(--color-neutral-60);
 	font-weight: 400;
-	white-space: nowrap;
 
 	&:first-child {
 		padding-left: 0;
+	}
+
+	// Webserver Logs
+	&.request_type {
+		width: 90px;
+	}
+
+	&.date {
+		width: 160px;
+	}
+
+	&.status {
+		width: 56px;
+	}
+
+	&.chevron-cell {
+		width: 28px;
+	}
+
+	// PHP Logs
+	&.severity {
+		width: 80px;
+	}
+
+	&.timestamp {
+		width: 190px;
 	}
 }
 
@@ -114,13 +144,12 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 	}
 }
 
-.badge.badge--warning {
+.site-logs-container .badge {
 	text-transform: uppercase;
 	border-radius: 4px;
 	font-size: 0.75rem;
 	font-weight: 500;
-	line-height: 20px;
-	height: 20px;
+	padding: 1px 10px;
 }
 
 .badge.badge--POST,
@@ -155,8 +184,13 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 	color: rgba(44, 51, 56, 1);
 }
 
-td.request_url {
-	word-break: break-word;
+// Flexible columns
+td.request_url span,
+td.message span {
+	white-space: nowrap;
+	display: block;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 td.date,
@@ -179,16 +213,30 @@ td.message {
 		grid-template-columns: 5fr 1fr;
 	}
 
-	td.chevron-cell {
+	.site-logs-table td.chevron-cell {
 		grid-column: 2;
-		grid-row: 1 / span 3;
+		grid-row: 1 / span 2;
+		padding: 0;
+		button {
+			float: right;
+		}
+	}
+
+	td.message,
+	td.request_url {
+		grid-column: 1 / span 2;
+	}
+
+	td.request_url span,
+	td.message span {
+		width: calc(100vw - 32px);
 	}
 
 	.site-logs-table td {
 		display: block;
 		width: 100%;
 		box-sizing: border-box;
-		padding: 0.6em 1em;
+		padding: 0.6em 0;
 		font-size: 0.875rem;
 	}
 }

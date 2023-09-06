@@ -1,5 +1,6 @@
 export interface StartImportTrackingProps {
-	type: string;
+	type?: string;
+	[ key: string ]: unknown;
 }
 
 export type CredentialsStatus = 'unsubmitted' | 'pending' | 'success' | 'failed';

@@ -78,23 +78,14 @@ export function getWpComMigrateUrl( siteSlug: string, fromSite?: string ): strin
 export function getWpComOnboardingUrl(
 	siteSlug: string,
 	platform: ImporterPlatform,
-	fromSite?: string,
-	framework: 'signup' | 'stepper' = 'signup'
+	fromSite?: string
 ): string {
 	let route;
-	switch ( framework ) {
-		case 'signup':
-			route = '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}';
-			break;
 
-		case 'stepper':
-		default:
-			if ( platform === 'wordpress' && isEnabled( 'onboarding/import-redesign' ) ) {
-				route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&option=everything';
-				break;
-			}
-			route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}';
-			break;
+	if ( platform === 'wordpress' && isEnabled( 'onboarding/import-redesign' ) ) {
+		route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&option=everything';
+	} else {
+		route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}';
 	}
 
 	return route

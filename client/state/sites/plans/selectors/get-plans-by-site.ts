@@ -1,5 +1,5 @@
 import { initialSiteState } from 'calypso/state/sites/plans/reducer';
-import type { SitesPlansResult } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import type { SitesPlansResult } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import type { AppState } from 'calypso/types';
 
 export function getPlansBySite(

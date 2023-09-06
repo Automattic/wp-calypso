@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { memo, useEffect } from 'react';
 import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import './style.scss';
-import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/composite-checkout/lib/wpcom-store';
+import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 
 function Recaptcha( { badgePosition } ) {
 	const { setRecaptchaClientId } = useDispatch( CHECKOUT_STORE ) ?? {};

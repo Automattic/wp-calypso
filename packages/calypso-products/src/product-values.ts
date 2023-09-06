@@ -88,6 +88,7 @@ export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 export { isJetpackSearch } from './is-jetpack-search';
 export { isJetpackSearchSlug } from './is-jetpack-search-slug';
 export { isJetpackSearchFree } from './is-jetpack-search-free';
+export { isJetpackSocialSlug } from './is-jetpack-social-slug';
 export { isJetpackSocialAdvancedSlug } from './is-jetpack-social-advanced-slug';
 export { isJetpackSocialBasicSlug } from './is-jetpack-social-basic-slug';
 export { isJetpackStatsSlug } from './is-jetpack-stats-slug';

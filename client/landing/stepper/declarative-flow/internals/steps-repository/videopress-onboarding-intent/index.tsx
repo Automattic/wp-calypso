@@ -18,6 +18,7 @@ import VideoPressOnboardingIntentItem from './intent-item';
 import VideoPressOnboardingIntentModalBlog from './videopress-onboarding-intent-modal-blog';
 import VideoPressOnboardingIntentModalChannel from './videopress-onboarding-intent-modal-channel';
 import VideoPressOnboardingIntentModalJetpack from './videopress-onboarding-intent-modal-jetpack';
+import VideoPressOnboardingIntentModalOther from './videopress-onboarding-intent-modal-other';
 import VideoPressOnboardingIntentModalPortfolio from './videopress-onboarding-intent-modal-portfolio';
 import VideoPressOnboardingIntentModalVideoUpload from './videopress-onboarding-intent-modal-video-upload';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -70,23 +71,38 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 
 	const onOtherIntentClicked = () => {
 		sendTracksIntent( 'other' );
+		setModal( <VideoPressOnboardingIntentModalOther /> );
 	};
 
 	const modalClasses = classNames( 'intro__more-modal videopress-intro-modal', {
 		show: modal ? true : false,
 	} );
 
+	useEffect( () => {
+		const html = document.getElementsByTagName( 'html' )[ 0 ];
+
+		if ( modal ) {
+			html.classList.add( 'modal-showing' );
+		} else {
+			html.classList.remove( 'modal-showing' );
+		}
+
+		return () => {
+			html.classList.remove( 'modal-showing' );
+		};
+	}, [ modal ] );
+
 	const stepContent = (
 		<>
 			<div className="videopress-onboarding-intent__step-content">
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Get a video portfolio' ) }
+					title={ __( 'Showcase your work' ) }
 					description={ __( 'Share your work with the world.' ) }
 					image={ PortfolioIntentImage }
 					onClick={ onVideoPortfolioIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Create a channel for your videos' ) }
+					title={ __( 'Create a community' ) }
 					description={ __(
 						'The easiest way to upload videos and create a community around them.'
 					) }
@@ -95,7 +111,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 					onClick={ onVideoChannelIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Upload a video' ) }
+					title={ __( 'Share a video' ) }
 					description={ __( 'Just put a video on the internet.' ) }
 					image={ SingleVideoIntentImage }
 					isComingSoon={ true }
@@ -160,7 +176,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="videopress-onboarding-intent-header"
-					headerText={ __( 'What would you like to do?' ) }
+					headerText={ __( 'What would you like to use video for?' ) }
 					subHeaderText={ __(
 						'Choose an option to continue, or let us know what you’re looking for.'
 					) }

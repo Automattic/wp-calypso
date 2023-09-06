@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import classNames from 'classnames';
+import { PropsWithChildren } from 'react';
 import CloseIcon from './icons/close-icon';
 import type { WPElement } from '@wordpress/element';
 
@@ -18,7 +19,7 @@ export interface IntroContent {
 	modal?: IntroModal;
 }
 
-export interface IntroModalContentProps {
+export interface IntroModalContentProps extends PropsWithChildren {
 	onSubmit?: () => void;
 }
 

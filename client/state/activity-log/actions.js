@@ -14,6 +14,7 @@ import {
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
+	REWIND_GRANULAR_RESTORE,
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
@@ -156,6 +157,25 @@ export function rewindRestore( siteId, timestamp, args ) {
 		siteId,
 		timestamp,
 		args,
+	};
+}
+
+/**
+ * Restore specific files and/or database tables to the given timestamp.
+ *
+ * @param {string|number} siteId the site ID
+ * @param {string|number} timestamp Unix timestamp to restore site to
+ * @param {string} includePaths List of included files, separated by comma
+ * @param {string} excludePaths List of excluded files, separated by comma
+ * @returns {Object} action object
+ */
+export function rewindGranularRestore( siteId, timestamp, includePaths, excludePaths = '' ) {
+	return {
+		type: REWIND_GRANULAR_RESTORE,
+		siteId,
+		timestamp,
+		includePaths,
+		excludePaths,
 	};
 }
 

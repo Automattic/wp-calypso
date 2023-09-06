@@ -34,6 +34,7 @@ import SiteContent from './site-content';
 import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
+import SiteTopHeaderButtons from './site-top-header-buttons';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
@@ -195,38 +196,6 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
-	const AddSiteIssueLicenseButtons = () => {
-		const dispatch = useDispatch();
-		const translate = useTranslate();
-
-		return (
-			<div className="sites-overview__add-site-issue-license-buttons">
-				<Button
-					className="sites-overview__issue-license-button"
-					href="/partner-portal/issue-license"
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' )
-						)
-					}
-				>
-					{ translate( 'Issue License', { context: 'button label' } ) }
-				</Button>
-				<Button
-					primary
-					href="https://wordpress.com/jetpack/connect"
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_site_button_click' )
-						)
-					}
-				>
-					{ translate( 'Add New Site', { context: 'button label' } ) }
-				</Button>
-			</div>
-		);
-	};
-
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -284,7 +253,7 @@ export default function SitesOverview() {
 								( selectedLicensesCount > 0 ? (
 									renderIssueLicenseButton()
 								) : (
-									<AddSiteIssueLicenseButtons />
+									<SiteTopHeaderButtons />
 								) )
 							}
 							pageTitle={ pageTitle }
@@ -294,7 +263,7 @@ export default function SitesOverview() {
 
 						{
 							// Render the add site and issue license buttons on mobile as a different component.
-							! isLargeScreen && <AddSiteIssueLicenseButtons />
+							! isLargeScreen && <SiteTopHeaderButtons />
 						}
 						<SectionNav
 							applyUpdatedStyles

@@ -165,6 +165,7 @@ import {
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_COMPLETE_BI_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_FREE,
@@ -422,6 +423,14 @@ import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	TERM_CENTENNIALLY,
 	FEATURE_STATS_PAID,
+	PRODUCT_JETPACK_SCAN_BI_YEARLY,
+	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
+	PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
+	PRODUCT_JETPACK_BOOST_BI_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
+	PRODUCT_JETPACK_STATS_BI_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 } from './constants';
 import type {
 	BillingTerm,
@@ -3061,12 +3070,47 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2013,
 	},
 
+	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
+		...getPlanJetpackCompleteDetails(),
+		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_COMPLETE_BI_YEARLY,
+		getPathSlug: () => 'complete-bi-yearly',
+		getProductId: () => 2035,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+			PRODUCT_JETPACK_SCAN_BI_YEARLY,
+			PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
+			PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
+			PRODUCT_JETPACK_BOOST_BI_YEARLY,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+			PRODUCT_JETPACK_SEARCH_BI_YEARLY,
+			PRODUCT_JETPACK_STATS_BI_YEARLY,
+			PRODUCT_JETPACK_CRM,
+		],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '1TB (1,000GB) of cloud storage' ),
+			translate( '1-year activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
+		],
+	},
+
 	[ PLAN_JETPACK_COMPLETE ]: {
 		...getPlanJetpackCompleteDetails(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE,
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
+		getMonthlySlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 			PRODUCT_JETPACK_SCAN,
@@ -3101,6 +3145,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+		getAnnualSlug: () => PLAN_JETPACK_COMPLETE,
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 			PRODUCT_JETPACK_SCAN_MONTHLY,
@@ -3136,9 +3181,9 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-20gb-bi-yearly',
 		getProductId: () => 2034,
 		getProductsIncluded: () => [
-			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-			PRODUCT_JETPACK_SCAN,
-			PRODUCT_JETPACK_ANTI_SPAM,
+			PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
+			PRODUCT_JETPACK_SCAN_BI_YEARLY,
+			PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),

@@ -84,9 +84,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					addChildNodes(
 						siteId,
 						path,
-						backupFiles
-							.filter( shouldAddChildNode )
-							.map( ( childItem: FileBrowserItem ) => childItem.name )
+						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
+							return { id: childItem.id ?? '', path: childItem.name };
+						} )
 					)
 				);
 			}
@@ -270,6 +270,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					rewindId={ rewindId }
 					item={ item }
 					parentItem={ parentItem }
+					path={ path }
 				/>
 			) }
 			{ isOpen && (

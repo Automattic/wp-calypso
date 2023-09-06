@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Browser, Locator, Page } from 'playwright';
 import { EditorPage } from '../../pages';
 
 /**
@@ -21,11 +21,13 @@ export interface EditorContext {
 	// We could also then get the editorLocator off of the EditorPage.
 	// However, they are provided in this context for convenience to simplify the writing of block flows!
 	editorPage: EditorPage;
+	addedBlockLocator: Locator;
 }
 
 /**
  * An interface representing all the Playwright & DOM context that might be needed when validataing a block in a published post.
  */
 export interface PublishedPostContext {
+	browser: Browser;
 	page: Page;
 }

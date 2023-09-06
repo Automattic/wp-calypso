@@ -20,7 +20,6 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
-import useSitePurchasesOnOdysseyStats from './use-site-purchases-on-odyssey-stats';
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
@@ -46,6 +45,11 @@ const ensureOnlyOneNoticeVisible = (
  */
 const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: StatsNoticesProps ) => {
 	const dispatch = useDispatch();
+
+	// find out if a site is commerical or not. handle potential null value as a false
+	const isCommercial = useSelector(
+		( state ) => !! getSiteOption( state, siteId, 'is_commercial' )
+	);
 
 	// Clear loaded flag when switching sites on Calypso.
 	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
@@ -84,12 +88,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasFreeStats,
 		isSiteJetpackNotAtomic,
 		statsPurchaseSuccess,
+		isCommercial,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
-	// TODO: Display error messages on the notice.
-	useSitePurchasesOnOdysseyStats( isOdysseyStats, siteId );
 	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
 
 	if ( ! hasLoadedPurchases || isLoading || isError ) {
@@ -107,7 +110,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 			{ ALL_STATS_NOTICES.map(
 				( notice ) =>
 					calculatedNoticesVisibility[ notice.noticeId ] && (
-						<notice.component { ...noticeOptions } />
+						<notice.component key={ notice.noticeId } { ...noticeOptions } />
 					)
 			) }
 		</>
@@ -136,8 +139,8 @@ export default function StatsNotices( {
 
 	return (
 		<>
-			{ /* Only query site purchases on Calypso via existing data component */ }
-			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
+			{ /* The component is replaced on build for Odyssey to query from Jetpack */ }
+			<QuerySitePurchases siteId={ siteId } />
 			<NewStatsNotices
 				siteId={ siteId }
 				isOdysseyStats={ isOdysseyStats }

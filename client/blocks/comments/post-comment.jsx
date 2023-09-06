@@ -401,7 +401,7 @@ class PostComment extends PureComponent {
 			<li className={ postCommentClassnames }>
 				<div className="comments__comment-author">
 					{ commentAuthorUrl ? (
-						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick }>
+						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick } tabIndex={ -1 }>
 							<Gravatar user={ comment.author } />
 						</a>
 					) : (

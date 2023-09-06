@@ -4,6 +4,8 @@ import { CheckboxControl, Icon } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
+import { CSSProperties, ReactNode } from 'react';
+
 import './style.scss';
 
 export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'all-domains';
@@ -11,7 +13,7 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 export type DomainsTableColumn =
 	| {
 			name: string;
-			label: string;
+			label: string | null;
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';
 			supportsOrderSwitching?: boolean;
@@ -23,12 +25,12 @@ export type DomainsTableColumn =
 					sites?: SiteDetails[]
 				) => number
 			>;
-			headerComponent?: React.ReactNode;
-			width?: string;
+			headerComponent?: ReactNode;
+			width?: CSSProperties[ 'width' ];
 	  }
 	| {
 			name: string;
-			label: string;
+			label: string | null;
 			isSortable?: false;
 			initialSortDirection?: never;
 			supportsOrderSwitching?: never;
@@ -40,8 +42,8 @@ export type DomainsTableColumn =
 					sites?: SiteDetails[]
 				) => number
 			];
-			headerComponent?: React.ReactNode;
-			width?: string;
+			headerComponent?: ReactNode;
+			width?: CSSProperties[ 'width' ];
 	  };
 
 type DomainsTableHeaderProps = {
@@ -70,7 +72,7 @@ export const DomainsTableHeader = ( {
 	canSelectAnyDomains = true,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
-	const listHeaderClasses = classNames( 'domains-table-header', headerClasses );
+	const listHeaderClasses = classNames( 'domains-table-header', headerClasses || '' );
 
 	const renderSortIcon = (
 		column: DomainsTableColumn,
