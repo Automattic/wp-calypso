@@ -94,7 +94,7 @@ const StatsCommercialPurchase = ( {
 
 	const handleClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
 		// TODO: replace with a support ticket
-		const emailHref = 'mailto:user@example.com?subject=Subject&body=message%20goes%20here';
+		const emailHref = 'https://jetpackme.wordpress.com/contact-support/?rel=support';
 
 		event.preventDefault();
 

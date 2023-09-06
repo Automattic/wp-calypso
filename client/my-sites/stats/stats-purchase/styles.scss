@@ -7,6 +7,7 @@
 	--jp-white: #fff;
 	--jp-green-50: #008710;
 	--gray-gray-50: #646970;
+	--stats-purchase-left-min-width: 500px;
 	--stats-purchase-left-max-width: 700px;
 	--stats-purchase-right-width: 456px;
 }
@@ -77,7 +78,7 @@
 
 	.stats-purchase-wizard__card-inner--left {
 		padding: 64px;
-		min-width: 500px;
+		min-width: var(--stats-purchase-left-min-width);
 		max-width: var(--stats-purchase-left-max-width);
 		box-sizing: border-box;
 	}
@@ -391,6 +392,7 @@
 
 .stats-purchase-single__additional-card-panel {
 	margin-top: 32px;
+	width: var(--stats-purchase-left-min-width); // avoid jumping when tab content is added to the document
 
 	.stats-purchase-single__card-panel {
 		border-radius: 4px;
