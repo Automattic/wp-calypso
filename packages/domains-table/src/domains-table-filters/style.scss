@@ -2,8 +2,12 @@
 @import "@automattic/typography/styles/variables";
 
 .domains-table-filter {
-	@include break-large {
-		width: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.search-component.domains-table-filter__search {
+		max-width: 50%;
 	}
 
 	&__search {
