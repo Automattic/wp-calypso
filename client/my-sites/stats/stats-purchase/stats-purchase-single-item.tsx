@@ -57,6 +57,7 @@ interface StatsSingleItemPersonalPurchasePageProps {
 }
 
 interface StatsPersonalPurchaseProps {
+	siteId: number | null;
 	siteSlug: string;
 	maxSliderPrice: number;
 	pwywProduct: {
@@ -182,6 +183,7 @@ const StatsCommercialPurchase = ( {
 };
 
 const StatsPersonalPurchase = ( {
+	siteId,
 	siteSlug,
 	maxSliderPrice,
 	pwywProduct,
@@ -217,6 +219,7 @@ const StatsPersonalPurchase = ( {
 				defaultStartingValue={ defaultStartingValue }
 				handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 				currencyCode={ pwywProduct?.currency_code }
+				siteId={ siteId }
 				siteSlug={ siteSlug }
 				sliderSettings={ {
 					minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
@@ -247,6 +250,7 @@ const StatsSingleItemPersonalPurchasePage = ( {
 	return (
 		<StatsSingleItemPagePurchaseFrame>
 			<StatsPersonalPurchase
+				siteId={ siteId }
 				siteSlug={ siteSlug }
 				adminUrl={ adminUrl || '' }
 				redirectUri={ redirectUri }
