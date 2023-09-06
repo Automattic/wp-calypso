@@ -32,7 +32,7 @@ const unpackIntroOffer = ( sitePlan: PricedAPISitePlan ): PlanIntroductoryOffer 
 };
 
 /**
- * - Plans from `/sites/[siteId]/plans`, unlike `/plans`, are returned indexed by product_id, and do not inlcude that in the plan's payload.
+ * - Plans from `/sites/[siteId]/plans`, unlike `/plans`, are returned indexed by product_id, and do not include that in the plan's payload.
  * - UI works with product/plan slugs everywhere, so returned index is transformed to be keyed by product_slug
  */
 function useSitePlans( { siteId }: Props ) {
