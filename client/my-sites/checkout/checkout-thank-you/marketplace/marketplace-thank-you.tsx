@@ -1,7 +1,6 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useEffect } from 'react';
-import QuerySites from 'calypso/components/data/query-sites';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -151,7 +150,6 @@ const MarketplaceThankYou = ( {
 			{ ! showProgressBar && (
 				<div className="marketplace-thank-you__container">
 					<ConfettiAnimation delay={ 1000 } />
-					<QuerySites siteId={ siteId } />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
 						sections={ sections }
