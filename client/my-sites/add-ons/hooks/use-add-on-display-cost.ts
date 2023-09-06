@@ -8,7 +8,7 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 
 	return useSelector( ( state ) => {
 		const product = getProductBySlug( state, productSlug );
-		let cost = product?.cost;
+		let cost = product?.cost_smallest_unit;
 		const currencyCode = getProductCurrencyCode( state, productSlug );
 
 		if ( ! ( cost && currencyCode ) ) {
@@ -25,12 +25,13 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 			} );
 
 		if ( priceTier ) {
-			cost = priceTier?.maximum_price / 100;
+			cost = priceTier?.maximum_price;
 		}
 
 		if ( product?.product_term === 'month' ) {
 			const formattedCost = formatCurrency( cost, currencyCode, {
 				stripZeros: true,
+				isSmallestUnit: true,
 			} );
 			return translate( '%(formattedCost)s/month, billed monthly', {
 				/* Translators: $formattedCost: monthly price formatted with currency */
@@ -42,6 +43,7 @@ const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
 
 		const monthlyCost = formatCurrency( cost / 12, currencyCode, {
 			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 
 		return translate( '%(monthlyCost)s/month, billed yearly', {
