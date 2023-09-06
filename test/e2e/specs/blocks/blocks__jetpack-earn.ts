@@ -56,7 +56,7 @@ if (
 	blockFlows.push( new AdFlow( {} ) );
 }
 
-// Private sites also do not apply to Private sites.
+// Paywall also does not apply to Private sites.
 if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 	// Splice instead of push because the Donations block should be the last item
 	// because clicking "Pay now" behavior is slightly unpredictable.
