@@ -15,18 +15,18 @@ const GranularRestoreLoading: FunctionComponent = () => {
 			</div>
 			<div className="rewind-flow__progress-bar">
 				<div className="rewind-flow__progress-bar-header">
-					<p className="rewind-flow__progress-bar-message">
+					<div className="rewind-flow__progress-bar-message">
 						<LoadingPlaceholder className={ css( { minWidth: '210px', height: '24px' } ) } />
-					</p>
-					<p className="rewind-flow__progress-bar-percent">
+					</div>
+					<div className="rewind-flow__progress-bar-percent">
 						<LoadingPlaceholder className={ css( { minWidth: '86px', height: '24px' } ) } />
-					</p>
+					</div>
 				</div>
 				<LoadingPlaceholder className={ css( { height: '9px' } ) } />
 			</div>
-			<p className="rewind-flow__info">
+			<div className="rewind-flow__info">
 				<LoadingPlaceholder className={ css( { height: '24px' } ) } />
-			</p>
+			</div>
 			<div className="rewind-flow-notice">
 				<LoadingPlaceholder className={ css( { minWidth: '100%', height: '88px' } ) } />
 			</div>
