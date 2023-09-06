@@ -55,7 +55,7 @@ export const DomainsTableStatusCell = ( {
 		>
 			{ status }
 			{ pendingUpdates.length > 0 && (
-				<StatusPopover target={ <Spinner size={ 16 } /> }>
+				<StatusPopover popoverTargetElement={ <Spinner size={ 16 } /> }>
 					<div className="domains-bulk-update-status-popover">
 						<span> { translate( 'Pending updates' ) }</span>
 						{ pendingUpdates.map( ( update ) => (
