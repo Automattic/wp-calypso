@@ -1,16 +1,17 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import {
-	useSiteDomainsQuery,
-	useSiteQuery,
+	DomainUpdateStatus,
 	PartialDomainData,
 	SiteDomainsQueryFnData,
+	useSiteDomainsQuery,
+	useSiteQuery,
 	SiteDetails,
 } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { countDomainsRequiringAttention } from '../utils';
@@ -34,6 +35,7 @@ interface DomainsTableRowProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	pendingUpdates: DomainUpdateStatus[];
 }
 
 export function DomainsTableRow( {
@@ -46,6 +48,7 @@ export function DomainsTableRow( {
 	fetchSite,
 	domainStatusPurchaseActions,
 	onDomainsRequiringAttentionChange,
+	pendingUpdates = [],
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const translate = useTranslate();
@@ -114,9 +117,11 @@ export function DomainsTableRow( {
 		isLoadingRowDetails,
 	] );
 
-	if ( domainsRequiringAttention && domainsRequiringAttention > 0 ) {
-		onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
-	}
+	useEffect( () => {
+		if ( typeof domainsRequiringAttention === 'number' && domainsRequiringAttention > 0 ) {
+			onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
+		}
+	}, [ domainsRequiringAttention, onDomainsRequiringAttentionChange ] );
 
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
@@ -194,6 +199,7 @@ export function DomainsTableRow( {
 						siteSlug={ siteSlug }
 						currentDomainData={ currentDomainData }
 						domainStatusPurchaseActions={ domainStatusPurchaseActions }
+						pendingUpdates={ pendingUpdates }
 					/>
 				) }
 			</td>

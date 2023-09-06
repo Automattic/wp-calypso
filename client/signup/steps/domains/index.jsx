@@ -286,7 +286,9 @@ class DomainsStep extends Component {
 		switch ( flowName ) {
 			case 'onboarding':
 				if ( isPurchasingItem ) {
-					loadExperimentAssignment( 'calypso_onboarding_plans_paid_domain_on_free_plan' );
+					loadExperimentAssignment(
+						'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
+					);
 				} else {
 					loadExperimentAssignment(
 						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'

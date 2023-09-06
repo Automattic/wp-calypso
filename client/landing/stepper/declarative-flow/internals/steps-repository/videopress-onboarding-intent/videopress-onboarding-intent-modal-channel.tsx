@@ -13,6 +13,7 @@ const VideoPressOnboardingIntentModalChannel: React.FC< IntroModalContentProps >
 			description={ translate(
 				'VideoPress TV is the easiest way to upload videos and create a community around them.'
 			) }
+			intent="channel"
 			featuresList={ [
 				translate( 'Ready to go! No setup needed.' ),
 				translate( 'The easiest way to upload your videos.' ),
@@ -22,6 +23,7 @@ const VideoPressOnboardingIntentModalChannel: React.FC< IntroModalContentProps >
 			onSubmit={ onSubmit }
 			isComingSoon={ true }
 			surveyTitle={ translate( 'Which additional features are you looking for?' ) }
+			surveyUrl="https://automattic.crowdsignal.net/video-channel-survey"
 			source="channel"
 		/>
 	);

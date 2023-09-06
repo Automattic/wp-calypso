@@ -19,17 +19,22 @@ export interface VideoPressOnboardingIntentModalContentProps extends IntroModalC
 		onClick?: () => void;
 	};
 	isComingSoon?: boolean;
+	intent?: string;
 	surveyTitle?: string;
+	surveyUrl?: string;
 	source?: string;
 }
+const showScreenshot = ( intent?: string ) => [ 'video-upload' ].indexOf( intent || '' ) < 0;
 
 const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModalContentProps > = ( {
 	title,
 	description,
+	intent,
 	featuresList,
 	actionButton,
 	isComingSoon,
 	surveyTitle,
+	surveyUrl,
 	onSubmit,
 	source,
 	children,
@@ -195,14 +200,16 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 					) }
 				</div>
 				{ children }
-				<div className="videopress-intro-modal__screenshots">
-					<img
-						src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
-						alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
-					/>
-				</div>
+				{ showScreenshot( intent ) && (
+					<div className="videopress-intro-modal__screenshots">
+						<img
+							src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
+							alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
+						/>
+					</div>
+				) }
 			</div>
-			{ surveyTitle && (
+			{ surveyTitle && surveyUrl && (
 				<div className="videopress-intro-modal__survey">
 					<div className="videopress-intro-modal__survey-info">
 						<div className="videopress-intro-modal__survey-title">{ surveyTitle }</div>
@@ -212,12 +219,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 							) }
 						</div>
 					</div>
-					<Button
-						className="intro__button button-survey"
-						href="https://automattic.survey.fm/videopress-onboarding-user-intent-survey"
-						target="_blank"
-						plain
-					>
+					<Button className="intro__button button-survey" href={ surveyUrl } target="_blank" plain>
 						{ translate( 'Answer the survey' ) }
 						<Icon icon={ arrowRight } />
 					</Button>

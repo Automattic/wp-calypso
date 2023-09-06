@@ -8,9 +8,11 @@ import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout
 export const TermsOfService = ( {
 	hasRenewableSubscription,
 	isGiftPurchase,
+	is100YearPlanPurchase,
 }: {
 	hasRenewableSubscription: boolean;
 	isGiftPurchase: boolean;
+	is100YearPlanPurchase: boolean;
 } ) => {
 	const translate = useTranslate();
 	const recordTermsAndConditionsClick = () => {
@@ -36,7 +38,12 @@ export const TermsOfService = ( {
 
 		// Don't show the extended ToS notice for one-time purchases or gifts
 		if ( ! isGiftPurchase && hasRenewableSubscription ) {
-			message = <TosText isAkismetPurchase={ isAkismetCheckout() } />;
+			message = (
+				<TosText
+					isAkismetPurchase={ isAkismetCheckout() }
+					is100YearPlanPurchase={ is100YearPlanPurchase }
+				/>
+			);
 		}
 
 		return message;

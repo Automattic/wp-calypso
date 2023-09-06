@@ -20,6 +20,10 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 	border-bottom: 1px solid $border-color;
 }
 
+.site-logs-table tbody tr.site-logs-table__table-row:hover {
+	cursor: pointer;
+}
+
 .site-logs-table th,
 .site-logs-table td {
 	padding: 0.6em 1em;

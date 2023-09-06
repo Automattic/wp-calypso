@@ -19,7 +19,10 @@ import {
 	requestAddProduct,
 	requestUpdateProduct,
 } from 'calypso/state/memberships/product-list/actions';
-import { getconnectedAccountDefaultCurrencyForSiteId } from 'calypso/state/memberships/settings/selectors';
+import {
+	getconnectedAccountDefaultCurrencyForSiteId,
+	getconnectedAccountMinimumCurrencyForSiteId,
+} from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Product } from '../../types';
 
@@ -40,46 +43,25 @@ type DefaultNames = {
 	[ key: string ]: string;
 };
 
-const STRIPE_MINIMUM_CURRENCY_AMOUNT: StripeMinimumCurrencyAmounts = {
-	USD: 0.5,
-	AUD: 0.5,
-	BRL: 0.5,
-	CAD: 0.5,
-	CHF: 0.5,
-	DKK: 2.5,
-	EUR: 0.5,
-	GBP: 0.3,
-	HKD: 4.0,
-	INR: 0.5,
-	JPY: 50,
-	MXN: 10,
-	NOK: 3.0,
-	NZD: 0.5,
-	PLN: 2.0,
-	SEK: 3.0,
-	SGD: 0.5,
-};
-
-const currencyList = Object.keys( STRIPE_MINIMUM_CURRENCY_AMOUNT ).map( ( code ) => ( { code } ) );
-
 /**
  * Return the minimum transaction amount for a currency.
  * If the defaultCurrency is not the same as the current currency, return the double, in order to prevent issues with Stripe minimum amounts
  * See https://wp.me/p81Rsd-1hN
  *
+ * @param {StripeMinimumCurrencyAmounts} currency_min - Minimum transaction amount for each currency.
  * @param {string} currency - Currency.
  * @param {string} connectedAccountDefaultCurrency - Default currency of the current account
  * @returns {number} Minimum transaction amount for given currency.
  */
 function minimumCurrencyTransactionAmount(
+	currency_min: StripeMinimumCurrencyAmounts,
 	currency: string,
 	connectedAccountDefaultCurrency: string
 ): number {
-	if ( connectedAccountDefaultCurrency === currency.toUpperCase() ) {
-		return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ];
+	if ( connectedAccountDefaultCurrency.toUpperCase() === currency ) {
+		return currency_min[ currency ];
 	}
-
-	return STRIPE_MINIMUM_CURRENCY_AMOUNT[ currency ] * 2;
+	return currency_min[ currency ] * 2;
 }
 
 const MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE = 2000;
@@ -95,6 +77,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
 		getconnectedAccountDefaultCurrencyForSiteId( state, siteId ?? selectedSiteId )
 	);
+	const connectedAccountMinimumCurrency = useSelector( ( state ) =>
+		getconnectedAccountMinimumCurrencyForSiteId( state, siteId ?? selectedSiteId )
+	);
 	const [ editedCustomConfirmationMessage, setEditedCustomConfirmationMessage ] = useState(
 		product?.welcome_email_content ?? ''
 	);
@@ -106,13 +91,14 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.buyer_can_change_amount ?? false
 	);
 
+	const currencyList = Object.keys( connectedAccountMinimumCurrency );
+
 	const defaultCurrency = useMemo( () => {
-		const flatCurrencyList = currencyList.map( ( e ) => e.code );
 		if ( product?.currency ) {
 			return product?.currency;
 		}
 		// Return the Stripe currency if supported. Otherwise default to USD
-		if ( flatCurrencyList.includes( connectedAccountDefaultCurrency ) ) {
+		if ( currencyList.includes( connectedAccountDefaultCurrency ) ) {
 			return connectedAccountDefaultCurrency;
 		}
 		return 'USD';
@@ -122,7 +108,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const [ currentPrice, setCurrentPrice ] = useState(
 		product?.price ??
-			minimumCurrencyTransactionAmount( currentCurrency, connectedAccountDefaultCurrency )
+			minimumCurrencyTransactionAmount(
+				connectedAccountMinimumCurrency,
+				currentCurrency,
+				connectedAccountDefaultCurrency
+			)
 	);
 
 	const [ editedProductName, setEditedProductName ] = useState( product?.title ?? '' );
@@ -135,7 +125,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedPrice, setEditedPrice ] = useState( false );
 
 	const isValidCurrencyAmount = ( currency: string, price: number ) =>
-		price >= minimumCurrencyTransactionAmount( currency, connectedAccountDefaultCurrency );
+		price >=
+		minimumCurrencyTransactionAmount(
+			connectedAccountMinimumCurrency,
+			currency,
+			connectedAccountDefaultCurrency
+		);
 
 	const isFormValid = ( field?: string ) => {
 		if (
@@ -303,6 +298,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							args: [
 								formatCurrency(
 									minimumCurrencyTransactionAmount(
+										connectedAccountMinimumCurrency,
 										currentCurrency,
 										connectedAccountDefaultCurrency
 									),
@@ -334,7 +330,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							onChange={ handlePriceChange }
 							currencySymbolPrefix={ currentCurrency }
 							onCurrencyChange={ handleCurrencyChange }
-							currencyList={ currencyList }
+							currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 							placeholder="0.00"
 							noWrap
 							className={ null }
