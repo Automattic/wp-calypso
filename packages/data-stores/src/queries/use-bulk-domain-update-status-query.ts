@@ -16,11 +16,6 @@ export interface BulkDomainUpdateStatusQueryFnData {
 	[ key: string ]: BulkDomainUpdateStatus;
 }
 
-export enum BulkDomainUpdateStatusRetryInterval {
-	Active = 6000,
-	Disabled = -1,
-}
-
 export interface JobStatus {
 	id: string;
 	action: 'set_auto_renew' | 'update_contact_info';

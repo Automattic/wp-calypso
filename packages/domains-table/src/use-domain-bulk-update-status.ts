@@ -1,5 +1,4 @@
 import {
-	BulkDomainUpdateStatusRetryInterval,
 	DomainUpdateStatus,
 	useBulkDomainUpdateStatusQuery,
 	getBulkDomainUpdateStatusQueryKey,
@@ -10,6 +9,11 @@ import { useState } from 'react';
 const defaultResult = {
 	completedJobs: [],
 	domainResults: new Map< string, DomainUpdateStatus[] >(),
+};
+
+const BulkDomainUpdateStatusRetryInterval = {
+	Active: 6000,
+	Disabled: -1,
 };
 
 export const useDomainBulkUpdateStatus = () => {
