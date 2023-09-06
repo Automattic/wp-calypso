@@ -50,6 +50,7 @@ const VideoPressOnboardingIntentModalPortfolio: React.FC< IntroModalContentProps
 			description={ translate(
 				'Create a WordPress.com site with everything you need to share your videos with the world.'
 			) }
+			intent="portfolio"
 			featuresList={ [
 				translate( '{{a}}Videomaker{{/a}}, a premium theme optimized to display videos.', {
 					components: {
