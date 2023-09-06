@@ -71,13 +71,12 @@ export class PaywallFlow implements BlockFlow {
 			.waitFor();
 
 		// Unrelated user sees a paywall.
-		const browser = context.page.context().browser();
+		// Verify in a new browser context.
 
-		if ( ! browser ) {
-			throw new Error( `Failed to retrieve browser instance.` );
-		}
+		const publishedPostURL = context.page.url();
+
 		const newPage = await ( await browser.newContext() ).newPage();
-		await newPage.goto( context.page.url(), { waitUntil: 'domcontentloaded' } );
+		await newPage.goto( publishedPostURL, { waitUntil: 'domcontentloaded' } );
 
 		await newPage.getByRole( 'main' ).getByText( this.configurationData.prePaywallText ).waitFor();
 		await newPage

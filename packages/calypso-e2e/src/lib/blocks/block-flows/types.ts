@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Browser, Locator, Page } from 'playwright';
 import { EditorPage } from '../../pages';
 
 /**
@@ -28,5 +28,6 @@ export interface EditorContext {
  * An interface representing all the Playwright & DOM context that might be needed when validataing a block in a published post.
  */
 export interface PublishedPostContext {
+	browser: Browser;
 	page: Page;
 }
