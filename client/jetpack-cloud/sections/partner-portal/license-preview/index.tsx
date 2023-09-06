@@ -60,7 +60,7 @@ export default function LicensePreview( {
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
-	const site = useSelector( ( state ) => ( blogId ? getSite( state, blogId ) : null ) );
+	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -107,8 +107,8 @@ export default function LicensePreview( {
 		}
 	}, [] );
 
-	const isAtomic = site?.is_wpcom_atomic;
-	const isSiteAtomic = isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && isAtomic;
+	const isSiteAtomic =
+		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
 	return (
 		<div

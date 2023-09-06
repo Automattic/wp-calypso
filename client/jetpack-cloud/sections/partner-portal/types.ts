@@ -35,12 +35,12 @@ export interface AssignLicenceProps {
 	suggestedProduct?: string;
 }
 
-export interface LicenceAction {
+export interface LicenseAction {
 	name: string;
 	isEnabled: boolean;
 	href?: string;
 	onClick: () => void;
-	openModal?: string;
+	type?: string;
 	isExternalLink?: boolean;
 	className?: string;
 }

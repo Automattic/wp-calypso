@@ -5,7 +5,7 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import RevokeLicenseDialog from '../revoke-license-dialog';
 import useLicenseActions from './use-license-actions';
-import type { LicenceAction, LicenseType } from '../types';
+import type { LicenseAction, LicenseType } from '../types';
 
 interface Props {
 	licenseKey: string;
@@ -27,13 +27,15 @@ export default function LicenseActions( {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ openModal, setOpenModal ] = useState< string | null >( null );
+	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
 
 	const licenseActions = useLicenseActions( siteUrl, attachedAt, revokedAt, licenseType );
 
-	const handleActionClick = ( action: LicenceAction ) => {
+	const handleActionClick = ( action: LicenseAction ) => {
 		action.onClick();
-		action.openModal && setOpenModal( action.openModal );
+		if ( action.type === 'revoke' ) {
+			setShowRevokeDialog( true );
+		}
 	};
 
 	return (
@@ -62,12 +64,12 @@ export default function LicenseActions( {
 					) ) }
 			</PopoverMenu>
 
-			{ openModal === 'revoke-license' && (
+			{ showRevokeDialog && (
 				<RevokeLicenseDialog
 					licenseKey={ licenseKey }
 					product={ product }
 					siteUrl={ siteUrl }
-					onClose={ () => setOpenModal( null ) }
+					onClose={ () => setShowRevokeDialog( false ) }
 				/>
 			) }
 		</>
