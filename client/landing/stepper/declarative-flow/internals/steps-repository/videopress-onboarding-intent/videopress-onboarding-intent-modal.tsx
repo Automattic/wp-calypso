@@ -197,12 +197,14 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 					) }
 				</div>
 				{ children }
-				<div className="videopress-intro-modal__screenshots">
-					<img
-						src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
-						alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
-					/>
-				</div>
+				{ isComingSoon || (
+					<div className="videopress-intro-modal__screenshots">
+						<img
+							src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
+							alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
+						/>
+					</div>
+				) }
 			</div>
 			{ surveyTitle && surveyUrl && (
 				<div className="videopress-intro-modal__survey">
