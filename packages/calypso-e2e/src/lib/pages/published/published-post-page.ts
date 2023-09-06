@@ -84,7 +84,10 @@ export class PublishedPostPage {
 	}
 
 	/**
-	 * Fills out a subscription form on the published post with the email address.
+	 * Fills out a subscription form on the published post with the supplied
+	 * email address, and confirms the subscription.
+	 *
+	 * Note that this method currently only handles Free subscriptions.
 	 *
 	 * @param {string} email Email address to subscribe.
 	 */
@@ -93,16 +96,24 @@ export class PublishedPostPage {
 		await this.anchor.getByRole( 'button', { name: 'Subscribe' } ).click();
 
 		// The popup dialog is in its own iframe.
-		// This is because on user-controlled browsers with third-party cookies
-		// enabled, the user is shown an option to pay for the subscription or
-		// to sign up for a Free trial of the subscription.
-		// Howver, on Playwright-controlled browser, third-party cookies are
-		// disabled, so the only dialog the user sees is a confirmation that
-		// subscription email has been sent.
 		const iframe = this.page.frameLocator( 'iframe[id="TB_iframeContent"]' );
-		const continueButton = iframe.getByRole( 'button', { name: /continue/i } );
 
-		await continueButton.click();
+		// This handler is required because if the site owner has set up any
+		// paid plans, the modal will first show a list of plans the user
+		// can choose from.
+		// However, if the site owner has not set up any plans the subscription
+		// is automatically processed and only the CTA to check the inbox is
+		// shown.
+		try {
+			// Site has paid plans.
+			await iframe
+				.getByRole( 'link', { name: 'Free - Get a glimpse of the newsletter' } )
+				.waitFor( { timeout: 6 * 1000 } );
+		} catch {
+			// Site does not have a paid plan.
+			// noop
+		}
+		await iframe.getByRole( 'button', { name: /continue/i } ).click();
 	}
 
 	/**
