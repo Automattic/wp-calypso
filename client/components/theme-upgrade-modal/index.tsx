@@ -29,10 +29,10 @@ import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useSelector } from 'calypso/state';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
+import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
 import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
 import './style.scss';
 
