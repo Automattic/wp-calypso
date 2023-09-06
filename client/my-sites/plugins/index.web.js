@@ -14,6 +14,7 @@ import {
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
+	relatedPlugins,
 	redirectTrialSites,
 	scrollTopIfNoHash,
 	navigationIfLoggedIn,
@@ -145,6 +146,19 @@ export default function ( router ) {
 		navigationIfLoggedIn,
 		redirectTrialSites,
 		browsePluginsOrPlugin,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		`/${ langParam }/plugins/:plugin/related/:site_id?`,
+		maybeRedirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigationIfLoggedIn,
+		redirectTrialSites,
+		relatedPlugins,
 		makeLayout,
 		clientRender
 	);
