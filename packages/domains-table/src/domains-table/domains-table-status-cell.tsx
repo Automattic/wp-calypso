@@ -46,6 +46,11 @@ export const DomainsTableStatusCell = ( {
 		}
 	};
 
+	const getTime = ( unixTimestamp: number ) => {
+		const date = new Date( unixTimestamp * 1000 );
+		return `${ date.toLocaleDateString() } ${ date.toLocaleTimeString() }`;
+	};
+
 	return (
 		<div
 			className={ classNames(
@@ -60,8 +65,14 @@ export const DomainsTableStatusCell = ( {
 						<span> { translate( 'Pending updates' ) }</span>
 						{ pendingUpdates.map( ( update ) => (
 							<div key={ update.created_at } className="domains-bulk-update-status-popover-item">
-								<span className="domains-bulk-update-status-popover-item-indicator__pending" />
-								<span>{ getActionName( update ) }</span>
+								<div>
+									<span className="domains-bulk-update-status-popover-item-indicator__pending" />
+									<span>{ getActionName( update ) }</span>
+								</div>
+								<span className="domains-bulk-update-status-popover-item-date">
+									{ ' ' }
+									{ getTime( update.created_at ) }
+								</span>
 							</div>
 						) ) }
 					</div>

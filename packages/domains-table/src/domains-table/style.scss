@@ -102,10 +102,19 @@
 	color: var(--studio-gray-50);
 
 	&-item {
-		display: flex;
-		gap: 8px;
-		align-items: center;
 		color: var(--studio-gray-100);
+
+		> div {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+
+	&-item-date {
+		margin-left: 16px;
+		font-size: smaller;
+		color: var(--studio-gray-50);
 	}
 
 	&-item-indicator {
