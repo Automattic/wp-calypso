@@ -90,7 +90,9 @@ export const ThemeUpgradeModal = ( {
 
 		return {
 			header: (
-				<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
+				<h1 className="theme-upgrade-modal__heading">
+					{ translate( 'Unlock this premium theme' ) }
+				</h1>
 			),
 			text: (
 				<p>
@@ -107,11 +109,15 @@ export const ThemeUpgradeModal = ( {
 			),
 			price: null,
 			action: (
-				<div className="upgrade-modal__actions bundle">
-					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+				<div className="theme-upgrade-modal__actions bundle">
+					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
 						{ translate( 'Upgrade to activate' ) }
 					</Button>
 				</div>
@@ -124,8 +130,12 @@ export const ThemeUpgradeModal = ( {
 		return {
 			header: (
 				<>
-					<img src={ wooCommerceImage } alt="WooCommerce" className="upgrade-modal__woo-logo" />
-					<h1 className="upgrade-modal__heading bundle">
+					<img
+						src={ wooCommerceImage }
+						alt="WooCommerce"
+						className="theme-upgrade-modal__woo-logo"
+					/>
+					<h1 className="theme-upgrade-modal__heading bundle">
 						{ translate( 'Unlock this WooCommerce theme' ) }
 					</h1>
 				</>
@@ -145,11 +155,15 @@ export const ThemeUpgradeModal = ( {
 			),
 			price: null,
 			action: (
-				<div className="upgrade-modal__actions bundle">
-					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+				<div className="theme-upgrade-modal__actions bundle">
+					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
 						{ translate( 'Upgrade Plan' ) }
 					</Button>
 				</div>
@@ -173,7 +187,7 @@ export const ThemeUpgradeModal = ( {
 
 		return {
 			header: (
-				<h1 className="upgrade-modal__heading bundle externally-managed">
+				<h1 className="theme-upgrade-modal__heading bundle externally-managed">
 					{ isDesktop
 						? translate( 'Unlock this partner theme' )
 						: translate( 'Unlock this theme' ) }
@@ -191,19 +205,19 @@ export const ThemeUpgradeModal = ( {
 							<strong>{ translate( 'To activate this theme you need:' ) }</strong>
 						</label>
 						<br />
-						<div className="upgrade-modal__price-summary">
+						<div className="theme-upgrade-modal__price-summary">
 							{ isMarketplaceThemeSubscriptionNeeded && (
-								<div className="upgrade-modal__price-item">
+								<div className="theme-upgrade-modal__price-item">
 									<label>{ theme.data?.name }</label>
-									<label className="upgrade-modal__price-value">
+									<label className="theme-upgrade-modal__price-value">
 										<strong>{ productPriceText }</strong>
 									</label>
 								</div>
 							) }
 							{ isMarketplacePlanSubscriptionNeeeded && (
-								<div className="upgrade-modal__price-item">
+								<div className="theme-upgrade-modal__price-item">
 									<label>{ translate( 'Business plan' ) }</label>
-									<label className="upgrade-modal__price-value">
+									<label className="theme-upgrade-modal__price-value">
 										<strong>{ businessPlanPriceText }</strong>
 									</label>
 								</div>
@@ -214,11 +228,15 @@ export const ThemeUpgradeModal = ( {
 			),
 			price: null,
 			action: (
-				<div className="upgrade-modal__actions bundle externally-managed">
-					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+				<div className="theme-upgrade-modal__actions bundle externally-managed">
+					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
 						{ translate( 'Continue' ) }
 					</Button>
 				</div>
@@ -300,11 +318,11 @@ export const ThemeUpgradeModal = ( {
 
 	const features =
 		isExternallyManaged && featureList.length === 0 ? null : (
-			<div className="upgrade-modal__included">
+			<div className="theme-upgrade-modal__included">
 				<h2>{ featureListHeader }</h2>
 				<ul>
 					{ featureList.map( ( feature, i ) => (
-						<li key={ i } className="upgrade-modal__included-item">
+						<li key={ i } className="theme-upgrade-modal__included-item">
 							<Tooltip text={ feature.getDescription?.() } position="top left">
 								<div>
 									<Gridicon icon="checkmark" size={ 16 } />
@@ -319,7 +337,7 @@ export const ThemeUpgradeModal = ( {
 
 	return (
 		<Dialog
-			className={ classNames( 'upgrade-modal', { loading: isLoading } ) }
+			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
 			onClose={ () => closeModal() }
 			isFullScreen
@@ -327,7 +345,7 @@ export const ThemeUpgradeModal = ( {
 			{ isLoading && <LoadingEllipsis /> }
 			{ ! isLoading && (
 				<>
-					<div className="upgrade-modal__col">
+					<div className="theme-upgrade-modal__col">
 						{ modalData.header }
 						{ modalData.text }
 						{ modalData.price }
@@ -335,8 +353,8 @@ export const ThemeUpgradeModal = ( {
 						{ ! isExternallyManaged && features }
 						{ modalData.action }
 					</div>
-					<div className="upgrade-modal__col">{ features }</div>
-					<Button className="upgrade-modal__close" borderless onClick={ () => closeModal() }>
+					<div className="theme-upgrade-modal__col">{ features }</div>
+					<Button className="theme-upgrade-modal__close" borderless onClick={ () => closeModal() }>
 						<Gridicon icon="cross" size={ 12 } />
 						<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 					</Button>
