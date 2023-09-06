@@ -48,7 +48,7 @@ export function DomainsTableRow( {
 	fetchSite,
 	domainStatusPurchaseActions,
 	onDomainsRequiringAttentionChange,
-	pendingUpdates,
+	pendingUpdates = [],
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const translate = useTranslate();
