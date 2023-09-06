@@ -118,7 +118,7 @@ export function DomainsTableRow( {
 	] );
 
 	useEffect( () => {
-		if ( domainsRequiringAttention > 0 ) {
+		if ( typeof domainsRequiringAttention === 'number' && domainsRequiringAttention > 0 ) {
 			onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
 		}
 	}, [ domainsRequiringAttention, onDomainsRequiringAttentionChange ] );
