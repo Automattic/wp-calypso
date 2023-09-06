@@ -28,6 +28,11 @@ export default function EmptySearchRecommendedPost( {
 	}
 
 	return (
-		<Post post={ post } handleClick={ handlePostClick } fixedHeaderHeight={ fixedHeaderHeight } />
+		<Post
+			post={ post }
+			handleClick={ handlePostClick }
+			fixedHeaderHeight={ fixedHeaderHeight }
+			streamKey={ streamKey }
+		/>
 	);
 }
