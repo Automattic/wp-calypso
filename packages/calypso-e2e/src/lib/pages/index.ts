@@ -37,3 +37,4 @@ export * from './blaze-campaign-page';
 export * from './external';
 export * from './me';
 export * from './signup';
+export * from './wp-admin';
