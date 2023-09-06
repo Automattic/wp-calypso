@@ -67,18 +67,19 @@ const SubscriberDetails = ( {
 							dateFormat="LL"
 						/>
 					</div>
-					{ newsletterCategoriesResult?.enabled && (
-						<div className="subscriber-details__content-column">
-							<div className="subscriber-details__content-label">
-								{ translate( 'Receives emails for' ) }
+					{ config.isEnabled( 'settings/newsletter-categories' ) &&
+						newsletterCategoriesResult?.enabled && (
+							<div className="subscriber-details__content-column">
+								<div className="subscriber-details__content-label">
+									{ translate( 'Receives emails for' ) }
+								</div>
+								<div className="subscriber-details__content-value">
+									{ newsletterCategoryNames
+										? newsletterCategoryNames.join( ', ' )
+										: translate( 'Not subscribed to any newsletter categories' ) }
+								</div>
 							</div>
-							<div className="subscriber-details__content-value">
-								{ newsletterCategoryNames
-									? newsletterCategoryNames.join( ', ' )
-									: translate( 'Not subscribed to any newsletter categories' ) }
-							</div>
-						</div>
-					) }
+						) }
 					<div className="subscriber-details__content-column">
 						<div className="subscriber-details__content-label">{ translate( 'Plan' ) }</div>
 						{ subscriptionPlans &&
