@@ -134,8 +134,11 @@
 
 .domain-forwarding-card__accordion {
 	color: var(--studio-gray-50);
-	font-size: 0.875rem;
 	margin-bottom: 0 !important;
+
+	.foldable-card__content {
+		font-size: 0.875rem;
+	}
 
 	.form-text-input:disabled {
 		border: 1px solid var(--color-neutral-5) !important;

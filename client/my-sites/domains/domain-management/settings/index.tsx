@@ -399,10 +399,18 @@ const Settings = ( {
 			return null;
 		}
 
+		let domainForwardingTitle = 'Domain Forwarding';
+		if (
+			englishLocales.includes( getLocaleSlug() || '' ) ||
+			i18n.hasTranslation( 'Domain forwarding' )
+		) {
+			domainForwardingTitle = 'Domain forwarding';
+		}
+
 		return (
 			<Accordion
 				className="domain-forwarding-card__accordion"
-				title={ translate( 'Domain forwarding', { textOnly: true } ) }
+				title={ translate( domainForwardingTitle, { textOnly: true } ) }
 				subtitle={ translate( 'Forward your domain to another' ) }
 			>
 				<DomainForwardingCard domain={ domain } />
