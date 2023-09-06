@@ -12,6 +12,7 @@ import OtherIntentImage from 'calypso/assets/images/onboarding/videopress-onboar
 import PortfolioIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-portfolio.png';
 import SingleVideoIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-single-video.png';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CloseIcon from '../intro/icons/close-icon';
 import VideoPressOnboardingIntentItem from './intent-item';
@@ -29,6 +30,8 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
 	const [ modal, setModal ] = useState< ReactElement | null >( null );
+	const urlQueryParams = useQuery();
+	const fromReferrer = urlQueryParams.get( 'from' ) ?? '';
 
 	const { submit } = navigation;
 
@@ -117,14 +120,16 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 					isComingSoon={ true }
 					onClick={ onUploadVideoIntentClicked }
 				/>
-				<VideoPressOnboardingIntentItem
-					title={ __( 'Add video to an existing site' ) }
-					description={ __(
-						'All the advantages and features from VideoPress, on your own WordPress site.'
-					) }
-					image={ JetpackIntentImage }
-					onClick={ onJetpackIntentClicked }
-				/>
+				{ 'vpcom' !== fromReferrer && (
+					<VideoPressOnboardingIntentItem
+						title={ __( 'Add video to an existing site' ) }
+						description={ __(
+							'All the advantages and features from VideoPress, on your own WordPress site.'
+						) }
+						image={ JetpackIntentImage }
+						onClick={ onJetpackIntentClicked }
+					/>
+				) }
 				<VideoPressOnboardingIntentItem
 					title={ __( 'Start a blog with video content' ) }
 					description={ __( 'Use advanced media formats to enhance your storytelling.' ) }
