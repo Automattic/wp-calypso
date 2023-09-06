@@ -510,7 +510,7 @@ const navigateToSite =
 				}
 
 				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-				if ( path.match( /^\/backup\/.*\/(download|restore|contents)/ ) ) {
+				if ( path.match( /^\/backup\/.*\/(download|restore|contents|granular-restore)/ ) ) {
 					return '/backup';
 				}
 
@@ -575,7 +575,7 @@ const navigateToSite =
 			}
 
 			// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-			if ( path.match( /^\/backup\/.*\/(download|restore|contents)/ ) ) {
+			if ( path.match( /^\/backup\/.*\/(download|restore|contents|granular-restore)/ ) ) {
 				path = '/backup';
 			}
 
