@@ -24,19 +24,19 @@ const Badge = styled.div< { isForIntroOffer?: boolean } >`
 	text-align: center;
 	white-space: nowrap;
 	font-size: 0.75rem;
-	font-weight: 500;
-	letter-spacing: 0.2px;
 	line-height: 1.25rem;
 	border-radius: 4px;
 	height: 21px;
 	display: inline-block;
 	width: fit-content;
+	letter-spacing: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'inherit' : '0.2px' ) };
+	font-weight: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 600 : 500 ) };
 	text-align: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'left' : 'center' ) };
 	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? '0 6px' : '0 12px' ) };
 	background-color: ${ ( { isForIntroOffer } ) =>
 		isForIntroOffer ? 'inherit' : 'var( --studio-green-0 )' };
 	color: ${ ( { isForIntroOffer } ) =>
-		isForIntroOffer ? 'var( --studio-blue-40 )' : 'var( --studio-green-40 )' };
+		isForIntroOffer ? 'var( --studio-blue-50 )' : 'var( --studio-green-40 )' };
 	text-transform: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'uppercase' : 'none' ) };
 `;
 
