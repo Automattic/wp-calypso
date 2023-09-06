@@ -7,70 +7,46 @@ import {
 } from '@wordpress/components';
 import { header, footer, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
 import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
-import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
-import PatternCategoryList from './pattern-category-list';
 import Survey from './survey';
-import { Pattern, Category } from './types';
+import { PatternType } from './types';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
-	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
 	hasSections: boolean;
 	hasHeader: boolean;
 	hasFooter: boolean;
-	categories: Category[];
-	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	onContinueClick: () => void;
 }
 
 const ScreenMain = ( {
 	onMainItemSelect,
-	recordTracksEvent,
 	surveyDismissed,
 	setSurveyDismissed,
 	hasSections,
 	hasHeader,
 	hasFooter,
-	categories,
-	patternsMapByCategory,
 	onContinueClick,
 }: Props ) => {
 	const translate = useTranslate();
 	const { title } = useScreen( 'main' );
 	const isEnglishLocale = useIsEnglishLocale();
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location, params, goTo } = useNavigator();
-	const navigatorOptions = { replace: true };
 	const selectedCategory = params.categorySlug as string;
-	const shouldOpenCategoryList =
-		!! selectedCategory && selectedCategory !== 'header' && selectedCategory !== 'footer';
 	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
 	const buttonText =
 		isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
 			? translate( 'Pick your style' )
 			: translate( 'Save and continue' );
 
-	const handleNavigatorItemSelect = ( type: string, category: string ) => {
-		const nextPath =
-			category === selectedCategory || ( shouldOpenCategoryList && category === INITIAL_CATEGORY )
-				? NAVIGATOR_PATHS.MAIN
-				: `/main/${ category }`;
-
-		goTo( nextPath, navigatorOptions );
+	const handleNavigatorItemSelect = ( type: PatternType, path: string, category: string ) => {
+		const nextPath = category !== selectedCategory ? `${ path }/${ category }` : path;
+		goTo( nextPath, { replace: true } );
 		onMainItemSelect( type );
-	};
-
-	const onSelectSectionCategory = ( category: string ) => {
-		goTo( `/main/${ category }`, navigatorOptions );
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CATEGORY_LIST_CATEGORY_CLICK, {
-			pattern_category: category,
-		} );
 	};
 
 	return (
@@ -82,14 +58,16 @@ const ScreenMain = ( {
 				) }
 				hideBack
 			/>
-			<div className="screen-container__body" ref={ wrapperRef }>
+			<div className="screen-container__body">
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
 						<NavigatorItem
 							checked={ hasHeader }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
-							onClick={ () => handleNavigatorItemSelect( 'header', 'header' ) }
+							onClick={ () =>
+								handleNavigatorItemSelect( 'header', NAVIGATOR_PATHS.MAIN, 'header' )
+							}
 							active={ location.path === NAVIGATOR_PATHS.MAIN_HEADER }
 						>
 							{ translate( 'Header' ) }
@@ -98,27 +76,21 @@ const ScreenMain = ( {
 							checked={ hasSections }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
-							onClick={ () => handleNavigatorItemSelect( 'section', INITIAL_CATEGORY ) }
-							active={ shouldOpenCategoryList }
+							onClick={ () =>
+								handleNavigatorItemSelect( 'section', NAVIGATOR_PATHS.SECTIONS, INITIAL_CATEGORY )
+							}
 							hasNestedItems
 						>
 							{ translate( 'Sections' ) }
 						</NavigatorItem>
 
-						{ shouldOpenCategoryList && (
-							<PatternCategoryList
-								categories={ categories }
-								patternsMapByCategory={ patternsMapByCategory }
-								selectedCategory={ selectedCategory }
-								onSelectCategory={ onSelectSectionCategory }
-							/>
-						) }
-
 						<NavigatorItem
 							checked={ hasFooter }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
-							onClick={ () => handleNavigatorItemSelect( 'footer', 'footer' ) }
+							onClick={ () =>
+								handleNavigatorItemSelect( 'footer', NAVIGATOR_PATHS.MAIN, 'footer' )
+							}
 							active={ location.path === NAVIGATOR_PATHS.MAIN_FOOTER }
 						>
 							{ translate( 'Footer' ) }
