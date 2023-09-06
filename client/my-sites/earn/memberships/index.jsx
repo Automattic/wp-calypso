@@ -551,14 +551,14 @@ function MembershipsSection( { query } ) {
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'Our payments blocks make it easy to add a buy button for digital goods or services, collect donations via a form, or limit access for specific content to subscribers-only.'
+									'You can monetize your website by adding buy buttons for digital goods or services, collect donations via a form, limit access for specific content or create a paid newsletter.'
 								)
 							) }
 						</p>
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'The Payment Button, Donations Form, and Premium Content blocks all require you to first connect your bank account details with our secure payment processor, Stripe.',
+									'To enable these features you need to first connect your bank details with our secure payment processor, Stripe.',
 									{
 										components: {
 											link: (
