@@ -2,6 +2,7 @@ import {
 	BulkDomainUpdateStatusRetryInterval,
 	DomainUpdateStatus,
 	useBulkDomainUpdateStatusQuery,
+	getBulkDomainUpdateStatusQueryKey,
 } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -42,7 +43,7 @@ export const useDomainBulkUpdateStatus = () => {
 		// be enough
 		setTimeout( () => {
 			setStatusUpdateInterval( BulkDomainUpdateStatusRetryInterval.Active );
-			queryClient.invalidateQueries( { queryKey: [ 'domains', 'bulk-actions' ] } );
+			queryClient.invalidateQueries( { queryKey: getBulkDomainUpdateStatusQueryKey() } );
 		}, 1 );
 	}
 

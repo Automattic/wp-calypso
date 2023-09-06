@@ -40,6 +40,10 @@ export interface DomainUpdateStatus {
 	transfer_lock?: boolean;
 }
 
+export const getBulkDomainUpdateStatusQueryKey = () => {
+	return [ 'domains', 'bulk-actions' ];
+};
+
 export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 	return useQuery( {
 		queryFn: () =>
@@ -101,6 +105,6 @@ export function useBulkDomainUpdateStatusQuery( pollingInterval: number ) {
 			return { domainResults, completedJobs };
 		},
 		refetchInterval: pollingInterval,
-		queryKey: [ 'domains', 'bulk-actions' ],
+		queryKey: getBulkDomainUpdateStatusQueryKey(),
 	} );
 }
