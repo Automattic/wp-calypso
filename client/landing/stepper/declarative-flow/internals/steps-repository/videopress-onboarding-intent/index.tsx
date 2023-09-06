@@ -43,6 +43,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_videopress_onboarding_intent_clicked', {
 			intent,
 			click_number: intentClickNumber,
+			referrer: fromReferrer,
 		} );
 		setIntentClicksNumber( intentClickNumber + 1 );
 	};
