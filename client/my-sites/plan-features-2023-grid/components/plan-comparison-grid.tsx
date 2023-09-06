@@ -545,6 +545,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	planSlug,
 	isInSignup,
 	isStorageFeature,
+	flowName,
 	intervalType,
 	activeTooltipId,
 	showUpgradeableStorage,
@@ -584,7 +585,8 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		storageOptions,
 		intervalType,
 		showUpgradeableStorage,
-		isInSignup
+		isInSignup,
+		flowName
 	);
 
 	const cellClasses = classNames(

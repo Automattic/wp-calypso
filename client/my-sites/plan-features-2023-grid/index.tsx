@@ -637,7 +637,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, intervalType, isInSignup, showUpgradeableStorage } = this.props;
+		const { translate, intervalType, isInSignup, flowName, showUpgradeableStorage } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -646,14 +646,16 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 			const shouldRenderStorageTitle =
 				storageOptions.length === 1 ||
-				( intervalType !== 'yearly' && storageOptions.length > 0 ) ||
-				( ! showUpgradeableStorage && storageOptions.length > 0 ) ||
-				( ! isInSignup && storageOptions.length > 0 );
+				intervalType !== 'yearly' ||
+				! showUpgradeableStorage ||
+				! isInSignup ||
+				( ! ( flowName === 'onboarding' ) && storageOptions.length > 0 );
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan(
 				storageOptions,
 				intervalType,
 				showUpgradeableStorage,
-				isInSignup
+				isInSignup,
+				flowName
 			);
 
 			const storageJSX = canUpgradeStorageForPlan ? (
