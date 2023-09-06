@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	Button,
@@ -29,6 +30,7 @@ const ScreenSections = ( {
 	const { title } = useScreen( 'sections' );
 	const { params, goTo } = useNavigator();
 	const selectedCategory = params.categorySlug as string;
+	const hasEnTranslation = useHasEnTranslation();
 
 	const onSelectSectionCategory = ( category: string ) => {
 		const nextPath =
@@ -46,9 +48,17 @@ const ScreenSections = ( {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ title } /> }
-				description={ translate(
-					'Find the right patterns for you be exploring the list of categories below'
-				) }
+				description={
+					hasEnTranslation(
+						'Find the right patterns for you by exploring the list of categories below.'
+					)
+						? translate(
+								'Find the right patterns for you by exploring the list of categories below.'
+						  )
+						: translate(
+								'Find the section patterns for your homepage by exploring the categories below.'
+						  )
+				}
 				hideBack
 			/>
 			<div className="screen-container__body">
