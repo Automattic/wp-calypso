@@ -6,7 +6,7 @@ import type { UseQueryOptions } from '@tanstack/react-query';
 const EMPTY_STATE = Object.freeze( {} );
 
 export function useDomainsTable( queryOptions: UseQueryOptions< AllDomainsQueryFnData > = {} ) {
-	const { capabilities, sites } = useSelector( ( state ) => ( {
+	const { capabilities, sites } = useSelector( ( state: any ) => ( {
 		capabilities: state?.currentUser?.capabilities || EMPTY_STATE,
 		sites: state?.sites?.items || EMPTY_STATE,
 	} ) );
