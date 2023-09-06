@@ -104,9 +104,7 @@ class ThemesSelection extends Component {
 
 	onScreenshotClick = ( themeId, resultsRank ) => {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! this.props.isThemeActive( themeId ) ) {
-			this.recordSearchResultsClick( themeId, resultsRank, 'screenshot_info' );
-		}
+		this.recordSearchResultsClick( themeId, resultsRank, 'screenshot_info' );
 		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 
