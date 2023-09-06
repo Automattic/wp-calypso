@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,6 +13,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -23,6 +25,7 @@ class PasswordlessSignupForm extends Component {
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
+		autoRedirectToMagicLogin: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -74,7 +77,7 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const { flowName, queryArgs = {} } = this.props;
+		const { flowName, queryArgs = {}, autoRedirectToMagicLogin } = this.props;
 		const { oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		try {
@@ -93,7 +96,11 @@ class PasswordlessSignupForm extends Component {
 			} );
 			this.createAccountCallback( null, response );
 		} catch ( err ) {
-			this.createAccountCallback( err );
+			if ( autoRedirectToMagicLogin && err.error === 'email_exists' ) {
+				this.goToMagicLogin();
+			} else {
+				this.createAccountCallback( err );
+			}
 		}
 	};
 
@@ -143,6 +150,21 @@ class PasswordlessSignupForm extends Component {
 				: { redirect: redirect_to } ),
 		} );
 	};
+
+	goToMagicLogin() {
+		const { queryArgs = {}, locale } = this.props;
+
+		page(
+			login( {
+				twoFactorAuthType: 'link',
+				locale,
+				oauth2ClientId: queryArgs.oauth2_client_id,
+				redirectTo: queryArgs.oauth2_redirect,
+				emailAddress: this.state.email,
+				from: 'magic-signup',
+			} )
+		);
+	}
 
 	getErrorMessage( errorObj = { error: null, message: null } ) {
 		const { translate } = this.props;

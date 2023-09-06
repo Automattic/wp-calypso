@@ -55,6 +55,19 @@ class MagicLogin extends Component {
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
+
+		const { oauth2Client, query = {} } = this.props;
+		const { from, email_address, redirect_to } = query;
+
+		// Automatically log in the existing user who signed up via Gravatar's Magic Signup Page.
+		if ( isGravatarOAuth2Client( oauth2Client ) && from === 'magic-signup' && email_address ) {
+			this.props.sendEmailLogin( email_address, {
+				redirectTo: redirect_to,
+				requestLoginEmailFormFlow: true,
+				flow: oauth2Client.name,
+				showGlobalNotices: true,
+			} );
+		}
 	}
 
 	onClickEnterPasswordInstead = ( event ) => {
