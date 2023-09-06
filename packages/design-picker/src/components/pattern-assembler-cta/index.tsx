@@ -27,9 +27,9 @@ export function usePatternAssemblerCtaData(): PatternAssemblerCtaData {
 		title: translate( 'Design your own' ),
 		subtitle: shouldGoToAssemblerStep ? (
 			<ul>
-				<li>{ translate( ' Select some patterns for your homepage.' ) }</li>
-				<li>{ translate( ' Style it up with custom colors and font pairings.' ) }</li>
-				<li>{ translate( ' Bring your site to life with some content.' ) }</li>
+				<li>{ translate( 'Select patterns to create your homepage layout.' ) }</li>
+				<li>{ translate( 'Style it up with custom colors and font pairings.' ) }</li>
+				<li>{ translate( 'Bring your site to life with your own content.' ) }</li>
 			</ul>
 		) : (
 			translate( 'Jump right into the editor to design your homepage from scratch.' )

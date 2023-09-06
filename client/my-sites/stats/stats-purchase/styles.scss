@@ -1,4 +1,53 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography.scss";
+
+.stats-purchase-page {
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-white: #fff;
+	--jp-green-50: #008710;
+	--stats-purchase-left-max-width: 700px;
+	--stats-purchase-right-width: 456px;
+}
+
+// Adjust purchase page styling for WPCOM.
+.stats-purchase-page--is-wpcom {
+	.stats-purchase-wizard {
+		font-family: $font-sf-pro-text;
+
+		.stats-purchase-wizard__benefits--included li {
+			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9IkFjdGlvbnMgLyBkb25lXzI0cHgiPgo8bWFzayBpZD0ibWFzazBfMzgwMl81NDI1IiBzdHlsZT0ibWFzay10eXBlOmx1bWluYW5jZSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMyIgeT0iNSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE0Ij4KPHBhdGggaWQ9Imljb24vYWN0aW9uL2RvbmVfMjRweCIgZD0iTTguNzU2ODIgMTUuOUw0LjU3NzQzIDExLjdMMy4xODQzIDEzLjFMOC43NTY4MiAxOC43TDIwLjY5OCA2LjY5OTk5TDE5LjMwNDggNS4yOTk5OUw4Ljc1NjgyIDE1LjlaIiBmaWxsPSJ3aGl0ZSIvPgo8L21hc2s+CjxnIG1hc2s9InVybCgjbWFzazBfMzgwMl81NDI1KSI+CjxyZWN0IGlkPSJSZWN0YW5nbGUiIHdpZHRoPSIyMy44ODIzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDY3NUM0Ii8+CjwvZz4KPC9nPgo8L3N2Zz4K);
+		}
+
+		.stats-purchase-wizard__card {
+			color: var(--studio-gray-80);
+
+			h1 {
+				font-family: $font-recoleta;
+				color: #101517;
+				font-size: $font-headline-small;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 40px; /* 111.111% */
+			}
+
+			.stats-purchase-wizard__pricing-value {
+				font-family: $font-sf-pro-display;
+				color: var(--studio-gray-100);
+			}
+
+			.stats-purchase-wizard__pricing-cadency {
+				font-size: $font-body-small;
+			}
+
+			.button {
+				font-family: $font-sf-pro-text;
+				font-size: $font-body;
+				padding: 8px 32px;
+			}
+		}
+	}
+}
 
 .stats-purchase-page__loader {
 	display: flex;
@@ -6,10 +55,6 @@
 }
 
 .stats-purchase-wizard {
-	--font-body: 16px;
-	--jp-black: #000;
-	--jp-white: #fff;
-	--jp-green-50: #008710;
 	display: flex;
 	justify-content: center;
 
@@ -32,14 +77,14 @@
 	.stats-purchase-wizard__card-inner--left {
 		padding: 64px;
 		min-width: 500px;
-		max-width: 700px;
+		max-width: var(--stats-purchase-left-max-width);
 		box-sizing: border-box;
 	}
 
 	.stats-purchase-wizard__card-inner--right {
 		display: flex;
 		align-items: center;
-		width: 456px;
+		width: var(--stats-purchase-right-width);
 		background: #f9f9f6;
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 4px;
@@ -258,6 +303,14 @@
 			}
 		}
 
+		&.is-secondary {
+			border-radius: 4px;
+			font-size: var(--font-body);
+			line-height: 24px;
+			padding: 8px 12px;
+			height: auto;
+		}
+
 		&.is-link {
 			color: var(--jp-green-50);
 			font-size: inherit;
@@ -328,5 +381,9 @@
 		font-weight: 700;
 		line-height: 40px;
 		margin-bottom: 24px;
+	}
+
+	.components-button + .components-button {
+		margin-left: 12px;
 	}
 }

@@ -436,7 +436,10 @@ class PostCommentList extends Component {
 		return (
 			<>
 				<ol className="comments__list is-root">
-					{ commentIds.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
+					{ commentIds
+						// Reverse comment list so that newest comments are rendered first.
+						?.reverse()
+						.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
 				</ol>
 				{ ( shouldShowViewMoreToggle || this.state.showExpandWhenOnlyComments ) && (
 					<Button

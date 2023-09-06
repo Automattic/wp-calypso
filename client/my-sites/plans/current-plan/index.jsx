@@ -2,8 +2,6 @@ import {
 	getPlan,
 	JETPACK_LEGACY_PLANS,
 	PLAN_100_YEARS,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
@@ -18,6 +16,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlan,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -148,7 +147,7 @@ class CurrentPlan extends Component {
 			return <JetpackSecurityRealtimeThankYou />;
 		}
 
-		if ( [ PLAN_JETPACK_COMPLETE, PLAN_JETPACK_COMPLETE_MONTHLY ].includes( product ) ) {
+		if ( JETPACK_COMPLETE_PLANS.includes( product ) ) {
 			return <JetpackCompleteThankYou />;
 		}
 

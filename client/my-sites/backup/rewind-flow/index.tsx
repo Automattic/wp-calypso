@@ -16,6 +16,7 @@ import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import BackupDownloadFlow from './download';
 import Error from './error';
+import BackupGranularRestoreFlow from './granular-restore';
 import Loading from './loading';
 import BackupRestoreFlow from './restore';
 import { RewindFlowPurpose } from './types';
@@ -95,14 +96,28 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 			timezone,
 		} ).format( 'LLL' );
 		if ( siteId && rewindId && backupDisplayDate ) {
-			return purpose === RewindFlowPurpose.RESTORE ? (
-				<BackupRestoreFlow
-					backupDisplayDate={ backupDisplayDate }
-					rewindId={ rewindId }
-					siteId={ siteId }
-					siteUrl={ siteUrl }
-				/>
-			) : (
+			if ( purpose === RewindFlowPurpose.RESTORE ) {
+				return (
+					<BackupRestoreFlow
+						backupDisplayDate={ backupDisplayDate }
+						rewindId={ rewindId }
+						siteId={ siteId }
+						siteUrl={ siteUrl }
+					/>
+				);
+			} else if ( purpose === RewindFlowPurpose.GRANULAR_RESTORE ) {
+				return (
+					<BackupGranularRestoreFlow
+						backupDisplayDate={ backupDisplayDate }
+						rewindId={ rewindId }
+						siteId={ siteId }
+						siteUrl={ siteUrl }
+					/>
+				);
+			}
+
+			// Default to RewindFlowPurpose.DOWNLOAD
+			return (
 				<BackupDownloadFlow
 					backupDisplayDate={ backupDisplayDate }
 					rewindId={ rewindId }

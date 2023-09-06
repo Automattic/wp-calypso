@@ -1,23 +1,27 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
+import {
+	DomainUpdateStatus,
+	PartialDomainData,
+	SiteDomainsQueryFnData,
+	useSiteDomainsQuery,
+	useSiteQuery,
+	SiteDetails,
+} from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { countDomainsRequiringAttention } from '../utils';
 import { createSiteDomainObject } from '../utils/assembler';
+import { domainManagementLink } from '../utils/paths';
 import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
-import type {
-	PartialDomainData,
-	SiteDomainsQueryFnData,
-	SiteDetails,
-} from '@automattic/data-stores';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
@@ -27,11 +31,11 @@ interface DomainsTableRowProps {
 	onSelect( domain: PartialDomainData ): void;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainsRequiringAttentionChange?( domainsRequiringAttention: number ): void;
-
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	pendingUpdates: DomainUpdateStatus[];
 }
 
 export function DomainsTableRow( {
@@ -44,6 +48,7 @@ export function DomainsTableRow( {
 	fetchSite,
 	domainStatusPurchaseActions,
 	onDomainsRequiringAttentionChange,
+	pendingUpdates = [],
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
 	const translate = useTranslate();
@@ -112,9 +117,11 @@ export function DomainsTableRow( {
 		isLoadingRowDetails,
 	] );
 
-	if ( domainsRequiringAttention && domainsRequiringAttention > 0 ) {
-		onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
-	}
+	useEffect( () => {
+		if ( typeof domainsRequiringAttention === 'number' && domainsRequiringAttention > 0 ) {
+			onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
+		}
+	}, [ domainsRequiringAttention, onDomainsRequiringAttentionChange ] );
 
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
@@ -125,6 +132,26 @@ export function DomainsTableRow( {
 
 		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
 	} );
+
+	const userCanAddSiteToDomain = currentDomainData?.currentUserCanCreateSiteFromDomainOnly ?? false;
+
+	const renderSiteCell = () => {
+		if ( site && currentDomainData ) {
+			return (
+				<DomainsTableSiteCell
+					site={ site }
+					siteSlug={ siteSlug }
+					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+				/>
+			);
+		}
+
+		if ( isLoadingRowDetails ) {
+			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+		}
+
+		return null;
+	};
 
 	return (
 		<tr key={ domain.domain } ref={ ref }>
@@ -163,17 +190,7 @@ export function DomainsTableRow( {
 					) }
 				</td>
 			) }
-			<td>
-				{ isLoadingRowDetails ? (
-					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-				) : (
-					<DomainsTableSiteCell
-						site={ site }
-						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData }
-					/>
-				) }
-			</td>
+			<td>{ renderSiteCell() }</td>
 			<td>
 				{ isLoadingRowDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
@@ -182,44 +199,21 @@ export function DomainsTableRow( {
 						siteSlug={ siteSlug }
 						currentDomainData={ currentDomainData }
 						domainStatusPurchaseActions={ domainStatusPurchaseActions }
+						pendingUpdates={ pendingUpdates }
 					/>
 				) }
 			</td>
 			<td>
 				<DomainsTableRegisteredUntilCell domain={ domain } />
 			</td>
+			<td></td>
+			<td className="domains-table-row__actions">
+				<DomainsTableRowActions
+					canConnectDomainToASite={ userCanAddSiteToDomain }
+					siteSlug={ siteSlug }
+					domainName={ domain.domain }
+				/>
+			</td>
 		</tr>
 	);
-}
-
-function domainManagementLink(
-	{ domain, type }: PartialDomainData,
-	siteSlug: string,
-	isAllSitesView: boolean
-) {
-	const viewSlug = domainManagementViewSlug( type );
-
-	// Encodes only real domain names and not parameter placeholders
-	if ( ! domain.startsWith( ':' ) ) {
-		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
-		// Note they are encoded twice since page.js decodes the path by default.
-		domain = encodeURIComponent( encodeURIComponent( domain ) );
-	}
-
-	if ( isAllSitesView ) {
-		return `/domains/manage/all/${ domain }/${ viewSlug }/${ siteSlug }`;
-	}
-
-	return `/domains/manage/${ domain }/${ viewSlug }/${ siteSlug }`;
-}
-
-function domainManagementViewSlug( type: PartialDomainData[ 'type' ] ) {
-	switch ( type ) {
-		case 'transfer':
-			return 'transfer/in';
-		case 'redirect':
-			return 'redirect';
-		default:
-			return 'edit';
-	}
 }

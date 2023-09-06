@@ -9,7 +9,7 @@ import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
-	setSubscriptionValue: ( value: number ) => number;
+	setSubscriptionValue: ( value: number ) => void;
 	defaultStartingValue: number;
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;

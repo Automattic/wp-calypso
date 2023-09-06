@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { LogType } from '../../logs-tab';
@@ -14,7 +14,6 @@ type SiteLogs = SiteLogsData[ 'logs' ];
 
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
-	currentPageIndex?: number;
 	logType?: LogType;
 	isLoading?: boolean;
 	headerTitles: string[];
@@ -42,7 +41,6 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	logs,
 	isLoading,
 	headerTitles,
-	currentPageIndex,
 	logType,
 }: SiteLogsTableProps ) {
 	const { __ } = useI18n();
@@ -53,7 +51,14 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		return generateRowKeys( logs );
 	}, [ logs ] );
 
-	if ( isLoading && currentPageIndex === 0 ) {
+	const [ latestLogType, setLatestLogType ] = useState( logType );
+	useEffect( () => {
+		if ( ! isLoading && logType !== latestLogType ) {
+			setLatestLogType( logType );
+		}
+	}, [ latestLogType, logType, isLoading ] );
+
+	if ( isLoading && logType !== latestLogType ) {
 		const skeletonClassName =
 			logType === 'web' ? 'site-logs-table-webserver__skeleton' : 'site-logs-table__skeleton';
 
@@ -69,9 +74,11 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 			<thead>
 				<tr>
 					{ columns.map( ( column ) => (
-						<th key={ column }>{ formatColumnName( column ) }</th>
+						<th key={ column } className={ column }>
+							{ formatColumnName( column ) }
+						</th>
 					) ) }
-					<th />
+					<th className="chevron-cell" />
 				</tr>
 			</thead>
 			<tbody>

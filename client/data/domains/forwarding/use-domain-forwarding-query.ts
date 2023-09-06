@@ -5,6 +5,7 @@ import { domainForwardingQueryKey } from './domain-forwarding-query-key';
 type DomainForwardingResponse = {
 	domain_redirect_id: number;
 	domain: string;
+	subdomain: string;
 	target_host: string;
 	target_path: string;
 	forward_paths: '0' | '1';
@@ -24,6 +25,7 @@ export default function useDomainForwardingQuery( domainName: string ) {
 				return {
 					domain_redirect_id: forwarding.domain_redirect_id,
 					domain: forwarding.domain,
+					subdomain: forwarding.subdomain,
 					targetHost: forwarding.target_host,
 					targetPath: forwarding.target_path,
 					forwardPaths: forwarding.forward_paths === '1',
