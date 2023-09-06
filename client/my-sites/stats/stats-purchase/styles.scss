@@ -24,11 +24,11 @@
 
 			h1 {
 				font-family: $font-recoleta;
-				color: #101517;
+				color: var(--studio-gray-100);
 				font-size: $font-headline-small;
 				font-style: normal;
 				font-weight: 400;
-				line-height: 40px; /* 111.111% */
+				line-height: 40px;
 			}
 
 			.stats-purchase-wizard__pricing-value {
@@ -111,7 +111,7 @@
 
 	.stats-purchase-wizard__average-price {
 		margin-bottom: 3em;
-		color: #2c3338;
+		color: var(--studio-gray-80);
 		text-align: center;
 	}
 
@@ -194,7 +194,7 @@
 		}
 
 		.stats-purchase-wizard__pricing-cadency {
-			color: #787c82;
+			color: var(--studio-gray-40);
 		}
 	}
 
@@ -292,8 +292,8 @@
 			&:hover,
 			&:active,
 			&:focus {
-				background: #2c3338;
-				border-color: #2c3338;
+				background: var(--studio-gray-80);
+				border-color: var(--studio-gray-80);
 			}
 
 			&[disabled],
@@ -353,7 +353,7 @@
 
 	.stats-purchase-wizard__notice {
 		padding: 8px 12px;
-		background: #f5e6b3;
+		background: var(--studio-yellow-5);
 		border-radius: 4px;
 
 		.is-link {
@@ -366,7 +366,7 @@
 	}
 
 	.stats-purchase-wizard__notice--green {
-		background-color: #d0e6b8;
+		background-color: var(--studio-jetpack-green-5);
 	}
 
 	.stats-purchase-wizard__control--checkbox {
