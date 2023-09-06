@@ -405,7 +405,12 @@ const PatternAssembler = ( {
 			screen_to: currentScreen.nextScreen.name,
 		} );
 
-		navigator.goTo( currentScreen.nextScreen.initialPath );
+		navigator.goTo( currentScreen.nextScreen.initialPath, {
+			// We have to replace the path if the screens of previous and next are the same.
+			// Otherwise, the behavior of the Back button might be weird when you navigate
+			// to the current screen again.
+			replace: currentScreen.previousScreen?.name === currentScreen.nextScreen?.name,
+		} );
 	};
 
 	const globalStylesUpgradeProps = useGlobalStylesUpgradeProps( {
