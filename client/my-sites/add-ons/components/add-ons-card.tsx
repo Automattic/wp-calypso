@@ -134,7 +134,8 @@ const useModifiedActionPrimary = (
 					false,
 					addOnMeta.productSlug === PRODUCT_JETPACK_STATS_YEARLY ? 'commercial' : 'personal'
 				);
-				page.show( purchaseUrl );
+				// TODO: Remove the feature flag once we enable Paid Stats for WPCOM sites.
+				page.show( purchaseUrl + ',stats/paid-wpcom-stats' );
 				window.scrollTo( 0, 0 );
 			},
 		};
