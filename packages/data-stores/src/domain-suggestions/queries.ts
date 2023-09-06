@@ -70,7 +70,7 @@ export function useGetWordPressSubdomain( paidDomainName: string ) {
 		quantity: 1,
 		include_wordpressdotcom: true,
 		include_dotblogsubdomain: false,
-		only_wordpressdotcom: false,
+		only_wordpressdotcom: true,
 		vendor: 'dot',
 	} );
 }
