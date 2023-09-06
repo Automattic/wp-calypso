@@ -33,6 +33,7 @@ export * from './writing-settings-page';
 export * from './wp-admin-media-settings-page';
 export * from './advertising-page';
 export * from './blaze-campaign-page';
+export * from './jetpack-forms-inbox-page';
 
 export * from './external';
 export * from './me';
