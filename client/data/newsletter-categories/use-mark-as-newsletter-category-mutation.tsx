@@ -37,14 +37,18 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			queryClient.setQueryData( cacheKey, ( oldData?: NewsletterCategories ) => {
 				const newNewsletterCategory = categories?.find(
-					( category ) => category.id === categoryId
-				) as NewsletterCategory;
+					( category ) => category?.id === categoryId
+				);
+
+				if ( ! newNewsletterCategory ) {
+					return oldData;
+				}
 
 				const updatedData = {
 					...oldData,
 					newsletterCategories: [
 						...( oldData?.newsletterCategories ? oldData.newsletterCategories : [] ),
-						newNewsletterCategory,
+						newNewsletterCategory as NewsletterCategory,
 					],
 				};
 

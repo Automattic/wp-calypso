@@ -76,6 +76,7 @@ export class Banner extends Component {
 		isSiteWPForTeams: PropTypes.bool,
 		displayAsLink: PropTypes.bool,
 		showLinkIcon: PropTypes.bool,
+		extraContent: PropTypes.node,
 	};
 
 	static defaultProps = {
@@ -207,6 +208,7 @@ export class Banner extends Component {
 			target,
 			tracksImpressionName,
 			tracksImpressionProperties,
+			extraContent,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -246,6 +248,7 @@ export class Banner extends Component {
 							) ) }
 						</ul>
 					) }
+					{ extraContent }
 				</div>
 				{ ( callToAction || price ) && (
 					<div className="banner__action">
