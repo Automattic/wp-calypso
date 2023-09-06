@@ -34,7 +34,7 @@ import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useSelector } from 'calypso/state';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
-import './upgrade-modal.scss';
+import './style.scss';
 
 interface UpgradeModalProps {
 	/* Theme slug */
@@ -54,7 +54,7 @@ interface UpgradeModalContent {
 	action: JSX.Element;
 }
 
-const UpgradeModal = ( {
+export const ThemeUpgradeModal = ( {
 	slug,
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
@@ -345,5 +345,3 @@ const UpgradeModal = ( {
 		</Dialog>
 	);
 };
-
-export default UpgradeModal;
