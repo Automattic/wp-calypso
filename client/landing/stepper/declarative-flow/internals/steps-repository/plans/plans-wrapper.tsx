@@ -1,13 +1,4 @@
-import {
-	getPlan,
-	PLAN_FREE,
-	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
-	FEATURE_UNLIMITED_SUBSCRIBERS,
-	FEATURE_PAYMENT_TRANSACTION_FEES_10,
-	FEATURE_PAYMENT_TRANSACTION_FEES_8,
-	FEATURE_PAYMENT_TRANSACTION_FEES_4,
-} from '@automattic/calypso-products';
+import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	DOMAIN_UPSELL_FLOW,
@@ -34,6 +25,7 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import useHighlightedFeatures from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-highlighted-features';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -101,6 +93,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
+	const highlightedFeatures = useHighlightedFeatures( plansIntent );
+
 	const onSelectPlan = ( selectedPlan: any ) => {
 		if ( selectedPlan ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
@@ -143,23 +137,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		setDomain( freeDomainSuggestion );
 	};
 
-	/*
-	 * Could abstract this more by utilizing methods like
-	 * getPlanPersonalDetails().getNewsletterHighlightedFeatures() and
-	 * getPremiumPersonalDetails().getNewsletterHighlightedFeatures()
-	 * in @automattic/calypso-products, but would need more refactoring.
-	 */
-	const getHighlightedFeatures = () =>
-		isNewsletterFlow( flowName )
-			? [
-					FEATURE_CUSTOM_DOMAIN,
-					FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
-					FEATURE_UNLIMITED_SUBSCRIBERS,
-					FEATURE_PAYMENT_TRANSACTION_FEES_10,
-					FEATURE_PAYMENT_TRANSACTION_FEES_8,
-					FEATURE_PAYMENT_TRANSACTION_FEES_4,
-			  ]
-			: [];
 	const plansFeaturesList = () => {
 		if ( ! props.plansLoaded ) {
 			return renderLoading();
@@ -185,7 +162,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
-					highlightedFeatures={ getHighlightedFeatures() }
+					highlightedFeatures={ highlightedFeatures }
 				/>
 				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>

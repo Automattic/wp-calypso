@@ -40,6 +40,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const isMonthlyPlan = isMonthly( planSlug );
+		const hasHightlightedFeatures = highlightedFeatures && highlightedFeatures.length > 0;
 
 		let wpcomFeatures: FeatureObject[] = [];
 		let jetpackFeatures: FeatureObject[] = [];
@@ -88,19 +89,25 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 			};
 		} );
 
-		if ( highlightedFeatures && highlightedFeatures.length > 0 ) {
-			highlightedFeatures.reverse().forEach( ( slug ) => {
-				const feature = wpcomFeatures.find( ( feature ) => feature.getSlug() === slug );
-				if ( feature ) {
-					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
-					wpcomFeaturesTransformed.unshift( {
-						...feature,
-						availableOnlyForAnnualPlans,
-						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-						isHighlighted: true,
-					} );
-				}
-			} );
+		if ( hasHightlightedFeatures ) {
+			// slice() and reverse() are neede to the preserve order of features
+			highlightedFeatures
+				.slice()
+				.reverse()
+				.forEach( ( slug ) => {
+					const feature = wpcomFeatures.find( ( feature ) => feature.getSlug() === slug );
+					if ( feature ) {
+						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+							feature.getSlug()
+						);
+						wpcomFeaturesTransformed.unshift( {
+							...feature,
+							availableOnlyForAnnualPlans,
+							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+							isHighlighted: true,
+						} );
+					}
+				} );
 		}
 
 		const topFeature = selectedFeature
@@ -118,7 +125,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 		if ( annualPlansOnlyFeatures.length > 0 ) {
 			wpcomFeatures.forEach( ( feature ) => {
-				if ( feature === topFeature ) {
+				// topFeature and highlightedFeatures are already added to the list above
+				const isHighlightedFeature =
+					hasHightlightedFeatures && highlightedFeatures.includes( feature.getSlug() );
+				if ( feature === topFeature || isHighlightedFeature ) {
 					return;
 				}
 
