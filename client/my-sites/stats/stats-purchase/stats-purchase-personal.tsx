@@ -82,6 +82,20 @@ const PersonalPurchase = ( {
 
 	return (
 		<div>
+			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+				{ subscriptionValue === 0 ? (
+					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+						<li>{ translate( 'No access to upcoming features' ) }</li>
+						<li>{ translate( 'No priority support' ) }</li>
+					</ul>
+				) : (
+					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+						<li>{ translate( 'Instant access to upcoming features' ) }</li>
+						<li>{ translate( 'Priority support' ) }</li>
+					</ul>
+				) }
+			</div>
+
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
 					'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
@@ -108,23 +122,6 @@ const PersonalPurchase = ( {
 					},
 				} ) }
 			</p>
-
-			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				{ subscriptionValue === 0 ? (
-					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
-						<li>{ translate( 'No access to upcoming features' ) }</li>
-						<li>{ translate( 'No priority support' ) }</li>
-					</ul>
-				) : (
-					<>
-						<p>{ translate( 'Benefits:' ) }</p>
-						<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-							<li>{ translate( 'Instant access to upcoming features' ) }</li>
-							<li>{ translate( 'Priority support' ) }</li>
-						</ul>
-					</>
-				) }
-			</div>
 
 			{ subscriptionValue === 0 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
