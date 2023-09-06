@@ -110,6 +110,7 @@
 	}
 
 	.stats-purchase-wizard__average-price {
+		font-size: $font-body-small;
 		margin-bottom: 3em;
 		color: var(--studio-gray-80);
 		text-align: center;
@@ -352,7 +353,7 @@
 	}
 
 	.stats-purchase-wizard__notice {
-		padding: 8px 12px;
+		padding: 12px 16px;
 		background: var(--studio-yellow-5);
 		border-radius: 4px;
 
