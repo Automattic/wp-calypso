@@ -55,6 +55,10 @@ msgid_plural \\"Second param should be extracted as plural instead of context\\"
 msgstr[0] \\"\\"
 msgstr[1] \\"\\"
 
+#: test/examples/typescript-decorators.ts:5
+msgid \\"Decorator Preset\\"
+msgstr \\"\\"
+
 #: test/examples/typescript-react.tsx:8
 msgid \\"Typescript react component string\\"
 msgstr \\"\\"
@@ -110,6 +114,7 @@ Array [
   "output/test-examples-react-2.jsx.pot",
   "output/test-examples-translate-1.js.pot",
   "output/test-examples-translate-2.js.pot",
+  "output/test-examples-typescript-decorators.ts.pot",
   "output/test-examples-typescript-react.tsx.pot",
   "output/test-examples-wordpress-i18n.js.pot",
 ]
@@ -214,12 +219,21 @@ exports[`makePot pot files should match their snapshots 6`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
+#: test/examples/typescript-decorators.ts:5
+msgid \\"Decorator Preset\\"
+msgstr \\"\\""
+`;
+
+exports[`makePot pot files should match their snapshots 7`] = `
+"msgid \\"\\"
+msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
+
 #: test/examples/typescript-react.tsx:8
 msgid \\"Typescript react component string\\"
 msgstr \\"\\""
 `;
 
-exports[`makePot pot files should match their snapshots 7`] = `
+exports[`makePot pot files should match their snapshots 8`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 

@@ -18,9 +18,9 @@ const mergeOptions = ( preset, options = {} ) => {
 	return preset;
 };
 
-module.exports = ( filepath, options = { preset: 'default' } ) => {
+module.exports = ( filepath, options = {} ) => {
 	try {
-		const { preset, ...restOptions } = options;
+		const { preset = 'default', ...restOptions } = options;
 		return babel.transformFileSync( filepath, mergeOptions( presets[ preset ], restOptions ) );
 	} catch ( error ) {
 		console.error( filepath, error );
