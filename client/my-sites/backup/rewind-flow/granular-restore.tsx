@@ -25,7 +25,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupContentsPath } from '../paths';
 import Error from './error';
-import Loading from './loading';
+import GranularRestoreLoading from './loading-placeholder/granular-restore';
 import ProgressBar from './progress-bar';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
@@ -274,7 +274,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const render = () => {
 		if ( loading ) {
-			return <Loading />;
+			return <GranularRestoreLoading />;
 		} else if ( shouldRenderConfirmation ) {
 			return renderConfirm();
 		} else if ( isInProgress ) {
