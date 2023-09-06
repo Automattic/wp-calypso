@@ -18,6 +18,14 @@ export class EmailClient {
 	}
 
 	/**
+	 *
+	 * @param inboxId
+	 */
+	getTestEmailAddress( inboxId: string ) {
+		return this.client.servers.generateEmailAddress( inboxId );
+	}
+
+	/**
 	 * Given an inbox ID and sentTo (phone/email), retrieves the latest message.
 	 *
 	 * @param param0 Keyed parameter object.

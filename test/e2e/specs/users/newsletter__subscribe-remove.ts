@@ -34,7 +34,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		// Subscribing "user" setup.
 		const inboxID = SecretsManager.secrets.mailosaur.manualTesting;
 		const postTitle = DataHelper.getDateString( 'ISO-8601' ) as string;
-		const testEmail = DataHelper.getTestEmailAddress( { inboxId: inboxID, prefix: 'subscribe' } );
+		const emailClient = new EmailClient();
+		const testEmail = emailClient.getTestEmailAddress( inboxID );
 
 		let page: Page;
 		let testAccount: TestAccount;
@@ -74,7 +75,6 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			} );
 
 			it( 'Confirm email subscription', async function () {
-				const emailClient = new EmailClient();
 				const message = await emailClient.getLastMatchingMessage( {
 					inboxId: inboxID,
 					subject: 'Confirm your subscription',
