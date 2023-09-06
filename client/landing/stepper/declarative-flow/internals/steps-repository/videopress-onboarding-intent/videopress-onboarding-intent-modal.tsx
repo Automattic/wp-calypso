@@ -24,7 +24,7 @@ export interface VideoPressOnboardingIntentModalContentProps extends IntroModalC
 	surveyUrl?: string;
 	source?: string;
 }
-const showScreenshot = ( intent?: string ) => [ 'video-upload' ].indexOf( intent ) < 0;
+const showScreenshot = ( intent?: string ) => [ 'video-upload' ].indexOf( intent || '' ) < 0;
 
 const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModalContentProps > = ( {
 	title,
