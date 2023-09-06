@@ -37,12 +37,14 @@ export class PaywallFlow implements BlockFlow {
 		// pre and post-paywall text.
 		const prePaywallParagraphHandle = await context.editorPage.addBlockFromSidebar(
 			ParagraphBlock.blockName,
-			ParagraphBlock.blockEditorSelector
+			ParagraphBlock.blockEditorSelector,
+			{ noSearch: true }
 		);
 		await prePaywallParagraphHandle.fill( this.configurationData.prePaywallText );
 		const postPaywallParagraphHandle = await context.editorPage.addBlockFromSidebar(
 			ParagraphBlock.blockName,
-			ParagraphBlock.blockEditorSelector
+			ParagraphBlock.blockEditorSelector,
+			{ noSearch: true }
 		);
 		await postPaywallParagraphHandle.fill( this.configurationData.postPaywallText );
 
