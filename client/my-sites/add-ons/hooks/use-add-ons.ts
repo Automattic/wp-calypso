@@ -193,7 +193,7 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 
 				// Hide Stats Commercial add-on if the site is not marked as commercial.
 				if (
-					isSiteMarkedCommercial !== true &&
+					isSiteMarkedCommercial === false &&
 					PRODUCT_JETPACK_STATS_YEARLY === addOn.productSlug
 				) {
 					return false;
