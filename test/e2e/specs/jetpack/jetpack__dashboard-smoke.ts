@@ -26,7 +26,7 @@ declare const browser: Browser;
  * Keywords: Jetpack, Smoke Test
  */
 skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
-	DataHelper.createSuiteTitle( 'Jetpack: Dashboard' ),
+	DataHelper.createSuiteTitle( 'Jetpack: Dashboard Smoke Test' ),
 	function () {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = new TestAccount( accountName );
