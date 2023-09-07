@@ -18,6 +18,7 @@ import {
 	getPaymentInterval,
 } from './helpers';
 import SiteSubscriptionSettings from './settings';
+import SubscribeToNewsletterCategories from './subscribe-to-newsletter-categories';
 import './styles.scss';
 
 const SiteSubscriptionDetails = ( {
@@ -221,11 +222,17 @@ const SiteSubscriptionDetails = ( {
 						emailMeNewComments={ !! deliveryMethods.email?.send_comments }
 					/>
 
+					{ !! deliveryMethods.email?.send_posts && (
+						<SubscribeToNewsletterCategories siteId={ blogId } />
+					) }
+
 					<hr className="subscriptions__separator" />
 
 					{ /* TODO: Move to SiteSubscriptionInfo component when payment details are in. */ }
 					<div className="site-subscription-info">
-						<h2 className="site-subscription-info__heading">{ translate( 'Subscription' ) }</h2>
+						<h2 className="site-subscription-info__heading">
+							{ translate( 'Subscription details' ) }
+						</h2>
 						<dl className="site-subscription-info__list">
 							<dt>{ translate( 'Date' ) }</dt>
 							<dd>

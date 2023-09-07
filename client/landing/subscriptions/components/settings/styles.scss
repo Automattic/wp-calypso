@@ -1,14 +1,14 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 
-$setting-item-margin-bottom: 16px;
+$setting-item-margin-bottom: 20px;
 
 .settings {
 	.setting-item {
 		margin-bottom: $setting-item-margin-bottom;
 
 		&__hint {
-			margin-top: 16px;
+			margin-top: 8px;
 			color: $studio-gray-50;
 			font-size: $font-body-extra-small;
 			text-align: left;
