@@ -26,12 +26,8 @@ import type { PlansIntent } from './use-grid-plans';
  * TODO clk: move to plans data store
  */
 const useHighlightedFeatures = ( intent: PlansIntent | null, isInSignup: boolean ): string[] => {
-	// For now, this hook and higlighting features only applies during signup.
-	if ( ! isInSignup ) {
-		return [];
-	}
-
-	if ( 'plans-newsletter' === intent ) {
+	// Hook only returns highlighted features during signup
+	if ( 'plans-newsletter' === intent && isInSignup ) {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
