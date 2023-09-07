@@ -101,19 +101,19 @@ export class PublishedPostPage {
 		// This handler is required because if the site owner has set up any
 		// paid plans, the modal will first show a list of plans the user
 		// can choose from.
-		// However, if the site owner has not set up any plans the subscription
-		// is automatically processed and only the CTA to check the inbox is
-		// shown.
-		try {
-			// Site has paid plans.
-			await iframe
-				.getByRole( 'link', { name: 'Free - Get a glimpse of the newsletter' } )
-				.waitFor( { timeout: 6 * 1000 } );
-		} catch {
-			// Site does not have a paid plan.
-			// noop
+		// However, we don't know for sure whether a site owner has set up any
+		// newsletter plans.
+		const continueButton = iframe.getByRole( 'button', { name: /continue/i } );
+		const freeTrialLink = iframe.getByRole( 'link', {
+			name: 'Free - Get a glimpse of the newsletter',
+		} );
+
+		await continueButton.or( freeTrialLink ).waitFor();
+		if ( await freeTrialLink.isVisible() ) {
+			freeTrialLink.click();
 		}
-		await iframe.getByRole( 'button', { name: /continue/i } ).click();
+
+		await continueButton.click();
 	}
 
 	/**
