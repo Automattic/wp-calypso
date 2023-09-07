@@ -150,8 +150,6 @@ export interface PlansFeaturesMainProps {
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
-	// Can pass array of features that will be bolded and pushed to top of feature list
-	highlightedFeatures: string[];
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -211,7 +209,6 @@ const PlansFeaturesMain = ( {
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
 	isSpotlightOnCurrentPlan,
-	highlightedFeatures = [],
 }: PlansFeaturesMainProps ) => {
 	const [ isFreePlanPaidDomainDialogOpen, setIsFreePlanPaidDomainDialogOpen ] = useState( false );
 	const [ isFreePlanFreeDomainDialogOpen, setIsFreePlanFreeDomainDialogOpen ] = useState( false );
@@ -340,7 +337,7 @@ const PlansFeaturesMain = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		highlightedFeatures,
+		isInSignup,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {

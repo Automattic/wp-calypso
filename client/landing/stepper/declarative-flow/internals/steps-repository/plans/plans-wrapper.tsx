@@ -25,7 +25,6 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import useHighlightedFeatures from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-highlighted-features';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -92,8 +91,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
-
-	const highlightedFeatures = useHighlightedFeatures( plansIntent, isInSignup );
 
 	const onSelectPlan = ( selectedPlan: any ) => {
 		if ( selectedPlan ) {
@@ -162,7 +159,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
-					highlightedFeatures={ highlightedFeatures }
 				/>
 				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>

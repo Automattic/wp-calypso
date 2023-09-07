@@ -1,5 +1,6 @@
 import { applyTestFiltersToPlansList, isMonthly } from '@automattic/calypso-products';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
+import useHighlightedFeatures from './use-highlighted-features';
 import type { FeatureObject, FeatureList, PlanSlug } from '@automattic/calypso-products';
 import type {
 	TransformedFeatureObject,
@@ -14,14 +15,14 @@ export type UsePlanFeaturesForGridPlans = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	highlightedFeatures,
+	isInSignup,
 }: {
 	planSlugs: PlanSlug[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	highlightedFeatures: string[];
+	isInSignup: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /*
@@ -35,8 +36,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	intent,
 	selectedFeature,
 	showLegacyStorageFeature,
-	highlightedFeatures,
+	isInSignup,
 } ) => {
+	const highlightedFeatures = useHighlightedFeatures( intent ?? null, isInSignup );
+
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const isMonthlyPlan = isMonthly( planSlug );
