@@ -48,9 +48,7 @@ import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
-import { useSite } from '../../../../hooks/use-site';
-import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
-import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import {
 	getDesignEventProps,
@@ -95,10 +93,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
-	const site = useSite();
-	const siteSlug = useSiteSlugParam();
-	const siteId = useSiteIdParam();
-	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const { site, siteSlug, siteSlugOrId } = useSiteData();
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
