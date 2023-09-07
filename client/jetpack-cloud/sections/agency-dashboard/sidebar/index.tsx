@@ -43,9 +43,7 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 				showAllSites
 				allSitesPath={ path }
 				siteBasePath="/backup"
-				wpcomSiteBasePath={
-					isWPCOMAtomicSiteCreationEnabled ? 'https://wordpress.com/home' : false
-				}
+				wpcomSiteBasePath={ isWPCOMAtomicSiteCreationEnabled && 'https://wordpress.com/home' }
 			/>
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
