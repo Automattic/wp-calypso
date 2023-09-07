@@ -9,18 +9,24 @@ import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
+import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import { getLastCheckedUsernameOrEmail } from 'calypso/state/login/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginIsFetchingEmail from 'calypso/state/selectors/get-magic-login-is-fetching-email';
 import { withEnhancers } from 'calypso/state/utils';
 import RequestLoginEmailForm from './request-login-email-form';
 
@@ -34,6 +40,7 @@ class MagicLogin extends Component {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		sendEmailLogin: PropTypes.func.isRequired,
 
 		// mapped to state
 		locale: PropTypes.string.isRequired,
@@ -43,6 +50,8 @@ class MagicLogin extends Component {
 		// From `localize`
 		translate: PropTypes.func.isRequired,
 	};
+
+	state = { usernameOrEmail: this.props.userEmail || '' };
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
@@ -118,7 +127,134 @@ class MagicLogin extends Component {
 		);
 	}
 
+	renderGravatarEmailVerification() {
+		const {
+			oauth2Client,
+			translate,
+			query,
+			isSendingEmail,
+			sendEmailLogin: resendEmail,
+			hideMagicLoginRequestForm: showMagicLogin,
+		} = this.props;
+		const { usernameOrEmail } = this.state;
+		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
+
+		return (
+			<Main className="gravatar-magic-login">
+				<div className="gravatar-magic-login__content">
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<h1 className="gravatar-magic-login__header">{ translate( 'Check your email!' ) }</h1>
+					<p className="gravatar-magic-login__sub-header">
+						{ emailAddress
+							? translate(
+									"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
+									{
+										components: { strong: <strong /> },
+										args: { emailAddress },
+									}
+							  )
+							: translate(
+									'We just emailed you a link. Please check your inbox and click the link to log in.'
+							  ) }
+					</p>
+					<hr className="gravatar-magic-login__divider" />
+					<div className="gravatar-magic-login__footer gravatar-magic-login__footer--email-verification">
+						<div>{ translate( 'Are you having issues receiving it?' ) }</div>
+						<div>
+							{ translate(
+								'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
+								{
+									components: {
+										sendEmailButton: (
+											<button
+												onClick={ () =>
+													resendEmail( usernameOrEmail, {
+														redirectTo: query?.redirect_to,
+														requestLoginEmailFormFlow: true,
+														flow: oauth2Client.name,
+														showGlobalNotices: true,
+													} )
+												}
+												disabled={ isSendingEmail }
+											/>
+										),
+										showMagicLoginButton: (
+											<button
+												className="gravatar-magic-login__show-magic-login"
+												onClick={ () => showMagicLogin() }
+											/>
+										),
+									},
+								}
+							) }
+						</div>
+					</div>
+				</div>
+			</Main>
+		);
+	}
+
+	renderGravatarMagicLogin() {
+		const { oauth2Client, translate, locale, query } = this.props;
+
+		const loginUrl = login( {
+			locale,
+			redirectTo: query?.redirect_to,
+			oauth2ClientId: query?.client_id,
+		} );
+
+		return (
+			<Main className="gravatar-magic-login">
+				{ this.renderLocaleSuggestions() }
+				<GlobalNotices id="notices" />
+				<div className="gravatar-magic-login__content">
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<RequestLoginEmailForm
+						flow={ oauth2Client.name }
+						headerText={ translate( 'Login to Gravatar' ) }
+						subHeaderText={ translate(
+							'Provide your email address and we will send you a magic link to log in to Gravatar.'
+						) }
+						inputPlaceholder={ translate( 'Enter your email address' ) }
+						submitButtonLabel={ translate( 'Continue' ) }
+						showTos
+						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
+						createAccountForNewUser
+					/>
+					<hr className="gravatar-magic-login__divider" />
+					<div className="gravatar-magic-login__footer">
+						<div>
+							{ translate(
+								'Do you prefer {{a}}logging in via password or Google/Apple instead{{/a}}?',
+								{
+									components: {
+										a: <a href={ loginUrl } />,
+									},
+								}
+							) }
+						</div>
+						<div>
+							{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
+								components: {
+									a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
+								},
+							} ) }
+						</div>
+					</div>
+				</div>
+			</Main>
+		);
+	}
+
 	render() {
+		const { oauth2Client, showCheckYourEmail } = this.props;
+
+		if ( isGravatarOAuth2Client( oauth2Client ) ) {
+			return showCheckYourEmail
+				? this.renderGravatarEmailVerification()
+				: this.renderGravatarMagicLogin();
+		}
+
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
 		const requestLoginEmailFormProps = {
@@ -149,11 +285,18 @@ const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
+	isSendingEmail: getMagicLoginIsFetchingEmail( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
+	oauth2Client: getCurrentOAuth2Client( state ),
+	userEmail:
+		getLastCheckedUsernameOrEmail( state ) ||
+		getCurrentQueryArguments( state ).email_address ||
+		getInitialQueryArguments( state ).email_address,
 } );
 
 const mapDispatch = {
 	hideMagicLoginRequestForm,
+	sendEmailLogin,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 };

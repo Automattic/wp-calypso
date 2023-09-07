@@ -26,6 +26,18 @@ const actionEventNames: ActionEventNames = {
 		large_screen: 'calypso_jetpack_agency_dashboard_site_settings_large_screen',
 		small_screen: 'calypso_jetpack_agency_dashboard_site_settings_small_screen',
 	},
+	set_up_site: {
+		large_screen: 'calypso_jetpack_agency_dashboard_set_up_site_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_set_up_site_small_screen',
+	},
+	change_domain: {
+		large_screen: 'calypso_jetpack_agency_dashboard_change_domain_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_change_domain_small_screen',
+	},
+	hosting_configuration: {
+		large_screen: 'calypso_jetpack_agency_dashboard_hosting_configuration_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_hosting_configuration_small_screen',
+	},
 };
 
 // Returns event name based on the action type

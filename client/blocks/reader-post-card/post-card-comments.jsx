@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { commentsFetchingStatus } from 'calypso/state/comments/selectors';
 
-const PostCardComments = ( { post, handleClick, fixedHeaderHeight } ) => {
+const PostCardComments = ( { post, handleClick, fixedHeaderHeight, streamKey } ) => {
 	const dispatch = useDispatch();
 	const fetchStatus = useSelector( ( state ) =>
 		commentsFetchingStatus( state, post.site_ID, post.ID )
@@ -57,6 +57,7 @@ const PostCardComments = ( { post, handleClick, fixedHeaderHeight } ) => {
 			maxDepth={ 1 }
 			openPostPageAtComments={ onOpenPostPageAtCommentsClick }
 			fixedHeaderHeight={ fixedHeaderHeight }
+			streamKey={ streamKey }
 		/>
 	);
 };

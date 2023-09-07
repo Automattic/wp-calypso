@@ -420,6 +420,17 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 						}
 					} );
 
+					// Add route abort for slow requests on AT sites.
+					await page.route( /store\/v1\/cart/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /rest\/v1\/batch/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /pubmine/, ( route ) => {
+						route.abort();
+					} );
+
 					const context = page.context();
 
 					await context.tracing.start( {

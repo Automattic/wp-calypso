@@ -1,5 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Button as CalypsoButton } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -29,6 +30,7 @@ interface StatsCommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
+	showClassificationDispute?: boolean;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -38,6 +40,7 @@ interface StatsSingleItemPagePurchaseProps {
 	redirectUri: string;
 	from: string;
 	siteId: number | null;
+	isCommercial: boolean | null;
 }
 
 interface StatsSingleItemPersonalPurchasePageProps {
@@ -54,6 +57,7 @@ interface StatsSingleItemPersonalPurchasePageProps {
 }
 
 interface StatsPersonalPurchaseProps {
+	siteId: number | null;
 	siteSlug: string;
 	maxSliderPrice: number;
 	pwywProduct: {
@@ -66,6 +70,8 @@ interface StatsPersonalPurchaseProps {
 	disableFreeProduct: boolean;
 }
 
+const COMPONENT_CLASS_NAME = 'stats-purchase-single';
+
 const StatsCommercialPurchase = ( {
 	siteId,
 	siteSlug,
@@ -74,12 +80,41 @@ const StatsCommercialPurchase = ( {
 	from,
 	adminUrl,
 	redirectUri,
+	showClassificationDispute = true,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+	const [ isAdsChecked, setAdsChecked ] = useState( false );
+	const [ isSellingChecked, setSellingChecked ] = useState( false );
+	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
+
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const handleClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+		const emailSubject = translate( 'Jetpack Stats Commercial Classification Dispute' );
+		const emailBody = `Hi Jetpack Team,\n
+I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
+I can confirm that,
+- I don't have ads on my site.
+- I don't sell products/services on my site.
+- I don't promote a business on my site.\n
+Could you please take a look at my site and update the classification if necessary?\n
+Thanks\n\n`;
+		const emailHref = `mailto:support@jetpack.com?subject=${ encodeURIComponent(
+			emailSubject
+		) }&body=${ encodeURIComponent( emailBody ) }`;
+
+		event.preventDefault();
+
+		const type = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
+		recordTracksEvent( `${ type }_stats_purchase_commercial_update_classification_clicked` );
+
+		setTimeout( () => ( window.location.href = emailHref ), 250 );
+	};
 
 	return (
 		<>
@@ -97,14 +132,68 @@ const StatsCommercialPurchase = ( {
 				{ translate( 'Get Stats Commercial' ) }
 			</ButtonComponent>
 
-			{
-				// TODO: add - This is not commercial site box
-			 }
+			{ showClassificationDispute && (
+				<div className={ `${ COMPONENT_CLASS_NAME }__additional-card-panel` }>
+					<Panel className={ `${ COMPONENT_CLASS_NAME }__card-panel` }>
+						<PanelBody title={ translate( 'This is not a commercial site' ) } initialOpen={ false }>
+							<p>
+								{ translate(
+									'If you think we misidentified your site as commercial, confirm the information below, and we’ll take a look.'
+								) }
+							</p>
+							<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
+								<ul>
+									<li>
+										<CheckboxControl
+											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+											checked={ isAdsChecked }
+											label={ translate( `I don't have ads on my site` ) }
+											onChange={ ( value: boolean ) => {
+												setAdsChecked( value );
+											} }
+										/>
+									</li>
+									<li>
+										<CheckboxControl
+											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+											checked={ isSellingChecked }
+											label={ translate( `I don't sell products/services on my site` ) }
+											onChange={ ( value: boolean ) => {
+												setSellingChecked( value );
+											} }
+										/>
+									</li>
+									<li>
+										<CheckboxControl
+											className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
+											checked={ isBusinessChecked }
+											label={ translate( `I don't promote a business on my site` ) }
+											onChange={ ( value: boolean ) => {
+												setBusinessChecked( value );
+											} }
+										/>
+									</li>
+								</ul>
+								{ isAdsChecked && isSellingChecked && isBusinessChecked && (
+									<Button
+										variant="secondary"
+										disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
+										onClick={ ( e: React.MouseEvent ) => handleClick( e, isOdysseyStats ) }
+									>
+										{ translate( 'Request update' ) }
+									</Button>
+								) }
+							</div>
+						</PanelBody>
+					</Panel>
+				</div>
+			) }
 		</>
 	);
 };
 
 const StatsPersonalPurchase = ( {
+	siteId,
 	siteSlug,
 	maxSliderPrice,
 	pwywProduct,
@@ -140,6 +229,7 @@ const StatsPersonalPurchase = ( {
 				defaultStartingValue={ defaultStartingValue }
 				handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 				currencyCode={ pwywProduct?.currency_code }
+				siteId={ siteId }
 				siteSlug={ siteSlug }
 				sliderSettings={ {
 					minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
@@ -170,6 +260,7 @@ const StatsSingleItemPersonalPurchasePage = ( {
 	return (
 		<StatsSingleItemPagePurchaseFrame>
 			<StatsPersonalPurchase
+				siteId={ siteId }
 				siteSlug={ siteSlug }
 				adminUrl={ adminUrl || '' }
 				redirectUri={ redirectUri }
@@ -189,6 +280,7 @@ const StatsSingleItemPagePurchase = ( {
 	redirectUri,
 	from,
 	siteId,
+	isCommercial,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -202,6 +294,7 @@ const StatsSingleItemPagePurchase = ( {
 				adminUrl={ adminUrl || '' }
 				redirectUri={ redirectUri }
 				from={ from }
+				showClassificationDispute={ !! isCommercial }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);
