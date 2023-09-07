@@ -41,7 +41,7 @@ import type {
 	TransformedFeatureObject,
 } from '../hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from '../types';
-import type { FeatureObject, Feature, FeatureGroup, PlanSlug } from '@automattic/calypso-products';
+import type { FeatureObject, FeatureGroup, PlanSlug } from '@automattic/calypso-products';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 
 function DropdownIcon() {
@@ -282,7 +282,7 @@ const StorageButton = styled.div`
 	` ) }
 `;
 
-const FeatureFootnotes = styled.div`
+export const FeatureFootnotes = styled.div`
 	ol {
 		margin: 2em 0 0 1em;
 	}
@@ -293,7 +293,7 @@ const FeatureFootnotes = styled.div`
 	}
 `;
 
-const FeatureFootnote = styled.span`
+export const FeatureFootnote = styled.span`
 	position: relative;
 	font-size: 50%;
 	font-weight: 600;
@@ -347,11 +347,6 @@ type PlanComparisonGridHeaderCellProps = PlanComparisonGridHeaderProps & {
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
 	planSlug: PlanSlug;
-};
-
-type PlanFeatureFootnotes = {
-	footnoteList: string[];
-	footnotesByFeature: Record< Feature, number >;
 };
 
 const PlanComparisonGridHeaderCell = ( {
@@ -840,7 +835,7 @@ export const PlanComparisonGrid = ( {
 	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
 
 	const planFeatureFootnotes = usePlanFeatureFootnotes( {
-		intent,
+		plansIntent: intent,
 		forComparisonGrid: true,
 		siteId,
 	} );

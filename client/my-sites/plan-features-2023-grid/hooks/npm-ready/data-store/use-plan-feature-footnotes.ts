@@ -40,9 +40,11 @@ const usePlanFeatureFootnotes = ( {
 
 	switch ( plansIntent ) {
 		case 'plans-woocommerce': {
-			const anyWooExpressIntroOffer = Object.keys( introOffers ?? {} ).some( ( planSlug ) =>
-				isWooExpressPlan( planSlug )
-			);
+			const anyWooExpressIntroOffer =
+				introOffers?.[
+					Object.keys( introOffers ?? {} ).find( ( planSlug ) => isWooExpressPlan( planSlug ) ) ??
+						''
+				];
 
 			if ( forComparisonGrid ) {
 				featureFootnotes = [
@@ -64,7 +66,21 @@ const usePlanFeatureFootnotes = ( {
 					],
 				];
 			} else if ( anyWooExpressIntroOffer ) {
-				featureFootnotes = [ [ translate( 'blablabla' ), [ FEATURE_CUSTOM_DOMAIN ] ] ];
+				featureFootnotes = [
+					[
+						translate(
+							'Your free domain will become available upon renewal at full price -- ' +
+								'it is not included during the %(introOfferIntervalCount)s %(introOfferIntervalPeriod)s promotion period',
+							{
+								args: {
+									introOfferIntervalCount: anyWooExpressIntroOffer.intervalCount,
+									introOfferIntervalPeriod: anyWooExpressIntroOffer.intervalUnit,
+								},
+							}
+						),
+						[ FEATURE_CUSTOM_DOMAIN ],
+					],
+				];
 			}
 		}
 	}

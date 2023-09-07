@@ -24,7 +24,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Component, ForwardedRef, forwardRef, createRef } from 'react';
+import { Component, ForwardedRef, forwardRef, createRef, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -39,13 +39,14 @@ import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './components/header-price';
 import { PlanFeaturesItem } from './components/item';
-import { PlanComparisonGrid } from './components/plan-comparison-grid';
+import { FeatureFootnotes, PlanComparisonGrid } from './components/plan-comparison-grid';
 import PlanDivOrTdContainer from './components/plan-div-td-container';
 import PlanFeaturesContainer from './components/plan-features-container';
 import PlanLogo from './components/plan-logo';
 import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
-import PlansGridContextProvider, { type PlansIntent } from './grid-context';
+import PlansGridContextProvider, { usePlansGridContext, type PlansIntent } from './grid-context';
+import usePlanFeatureFootnotes from './hooks/npm-ready/data-store/use-plan-feature-footnotes';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
 import { DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
@@ -110,6 +111,41 @@ interface PlanFeatures2023GridType extends PlanFeatures2023GridProps {
 	// temporary: element ref to scroll comparison grid into view once "Compare plans" button is clicked
 	plansComparisonGridRef: ForwardedRef< HTMLDivElement >;
 }
+
+const FeaturesGridFooter = () => {
+	const { siteId, intent, gridPlans } = usePlansGridContext();
+	const planFeatureFootnotes = usePlanFeatureFootnotes( { siteId, plansIntent: intent } );
+
+	// match footnotes to the plans that are visible in the grid
+	const visibleFootnotes = useMemo( () => {
+		// these checks can get complicated, so let's not add more for now. consider a redesign/refactor first
+		return planFeatureFootnotes?.footnoteList?.filter( () =>
+			gridPlans.some( ( plan ) =>
+				plan.features.wpcomFeatures.some( ( feature ) =>
+					plan.isMonthlyPlan && feature.availableOnlyForAnnualPlans
+						? false
+						: Object.keys( planFeatureFootnotes?.footnotesByFeature ?? {} ).some(
+								( featureSlug ) => featureSlug === feature.getSlug()
+						  )
+				)
+			)
+		);
+	}, [ planFeatureFootnotes, gridPlans ] );
+
+	return (
+		<div className="plan-comparison-grid__footer">
+			{ visibleFootnotes && (
+				<FeatureFootnotes>
+					<ol>
+						{ visibleFootnotes.map( ( footnote, index ) => {
+							return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
+						} ) }
+					</ol>
+				</FeatureFootnotes>
+			) }
+		</div>
+	);
+};
 
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
 	observer: IntersectionObserver | null = null;
@@ -710,6 +746,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			<div className="plans-wrapper">
 				<QueryActivePromotions />
 				<PlansGridContextProvider
+					siteId={ siteId }
 					intent={ intent }
 					gridPlans={ gridPlansForFeaturesGrid }
 					usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
@@ -719,6 +756,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				</PlansGridContextProvider>
 				<div className="plan-features">
 					<PlansGridContextProvider
+						siteId={ siteId }
 						intent={ intent }
 						gridPlans={ gridPlansForFeaturesGrid }
 						usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
@@ -737,6 +775,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								</div>
 							</div>
 						</div>
+						<FeaturesGridFooter />
 					</PlansGridContextProvider>
 				</div>
 				{ ! hidePlansFeatureComparison && (
@@ -754,6 +793,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						className="plan-features-2023-grid__plan-comparison-grid-container"
 					>
 						<PlansGridContextProvider
+							siteId={ siteId }
 							intent={ intent }
 							gridPlans={ gridPlansForComparisonGrid }
 							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
