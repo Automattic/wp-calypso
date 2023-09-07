@@ -7,7 +7,7 @@ export const isCrowdsignalOAuth2Client = ( oauth2Client ) => {
 };
 
 export const isGravatarOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client?.id === 1854;
+	return oauth2Client?.id === 1854 || oauth2Client?.id === 90057;
 };
 
 export const isWooOAuth2Client = ( oauth2Client ) => {

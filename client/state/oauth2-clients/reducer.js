@@ -22,6 +22,12 @@ export const initialClientsData = {
 		title: 'Crowdsignal',
 		icon: 'https://app.crowdsignal.com/images/logo-white.png',
 	},
+	90057: {
+		id: 90057,
+		name: 'wpjobmanager',
+		title: 'WP Job Manager',
+		icon: 'https://wpjobmanager.com/wp-content/uploads/2023/05/jm-site-logo.png',
+	},
 	1854: {
 		id: 1854,
 		name: 'gravatar',
