@@ -60,7 +60,7 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
 					await jetpackDashboardPage.clickTab( { view: 'Dashboard', tab: tab as DashboardTabs } );
 
 					await page
-						.getByRole( 'heading', { name: new RegExp( tab, 'i' ), level: 1 } )
+						.getByRole( 'heading', { name: tab, level: 1 } )
 						.waitFor( { state: 'attached' } );
 				}
 			);
@@ -78,9 +78,7 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
 			] )( 'Click on $tab tab in the Settings view', async function ( { tab } ) {
 				await jetpackDashboardPage.clickTab( { view: 'Settings', tab: tab as SettingsTabs } );
 
-				await page
-					.getByRole( 'heading', { name: new RegExp( tab, 'i' ), level: 1 } )
-					.waitFor( { state: 'attached' } );
+				await page.getByRole( 'heading', { name: tab, level: 1 } ).waitFor( { state: 'attached' } );
 			} );
 
 			skipItIf( envVariables.ATOMIC_VARIATION === 'private' )(
@@ -89,7 +87,7 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
 					await jetpackDashboardPage.clickTab( { view: 'Settings', tab: 'Earn' } );
 
 					await page
-						.getByRole( 'heading', { name: new RegExp( 'Earn', 'i' ), level: 1 } )
+						.getByRole( 'heading', { name: 'Earn', level: 1 } )
 						.waitFor( { state: 'attached' } );
 				}
 			);
