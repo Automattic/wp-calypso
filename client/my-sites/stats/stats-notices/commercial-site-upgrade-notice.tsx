@@ -8,7 +8,7 @@ import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }-stats-commercial-site-upgrade-notice`;
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/type-detection&from=${ from }-stats-commercial-site-upgrade-notice&productType=commercial`;
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
