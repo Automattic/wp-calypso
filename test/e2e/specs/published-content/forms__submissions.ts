@@ -32,7 +32,7 @@ declare const browser: Browser;
  *
  * Keywords: Jetpack, Forms, Feedback
  */
-describe( DataHelper.createSuiteTitle( 'Full Form Submission Flow' ), function () {
+describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features );
 
