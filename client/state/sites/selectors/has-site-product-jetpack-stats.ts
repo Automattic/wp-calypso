@@ -1,6 +1,7 @@
 import { camelOrSnakeSlug } from '@automattic/calypso-products';
 import { productHasStats } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import getSitePlan from './get-site-plan';
@@ -17,7 +18,12 @@ const hasSiteProductJetpackStats = (
 	);
 	const sitePlan = getSitePlan( state, siteId );
 	const siteHasStatsPlan = productHasStats( sitePlan?.product_slug as string, onlyPaid );
-	return siteHasStatsPlan || !! siteHasStatsProduct;
+
+	// Check whether sites have paid plans of Jetpack or WPCOM.
+	// TODO: Determine the proper way to check WPCOM plans for supporting Stats.
+	const siteHasPaidPlan = isSiteOnPaidPlan( state, siteId || 0 );
+
+	return siteHasStatsPlan || !! siteHasStatsProduct || siteHasPaidPlan;
 };
 
 export default hasSiteProductJetpackStats;
