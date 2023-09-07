@@ -132,6 +132,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
+		// The design-first flow doesn't support premium themes and custom styles.
 		if ( isDesignFirstFlow ) {
 			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
 
