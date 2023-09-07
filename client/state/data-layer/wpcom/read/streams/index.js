@@ -206,7 +206,7 @@ const streamApis = {
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
 				return '/read/tags/posts';
 			}
-			return `/read/tags/${ streamKeySuffix( streamKey ) }/posts`;
+			return `/read/tags/${ streamKeySuffix( streamKey ) }/cards`;
 		},
 		dateProperty: 'date',
 		query: ( extras, { streamKey } ) =>
