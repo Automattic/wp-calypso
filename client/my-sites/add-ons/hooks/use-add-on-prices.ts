@@ -36,11 +36,11 @@ const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
 		return {
 			monthlyPrice,
 			yearlyPrice,
-			formattedMonthlyPrice: formatCurrency( monthlyPrice, currencyCode, {
+			formattedMonthlyPrice: formatCurrency( Math.round( monthlyPrice ), currencyCode, {
 				stripZeros: true,
 				isSmallestUnit: true,
 			} ),
-			formattedYearlyPrice: formatCurrency( yearlyPrice, currencyCode, {
+			formattedYearlyPrice: formatCurrency( Math.round( yearlyPrice ), currencyCode, {
 				stripZeros: true,
 				isSmallestUnit: true,
 			} ),
