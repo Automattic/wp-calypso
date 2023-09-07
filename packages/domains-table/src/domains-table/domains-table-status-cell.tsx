@@ -1,8 +1,10 @@
 import { Spinner } from '@automattic/components';
 import { DomainUpdateStatus } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { StatusPopover } from '../status-popover';
+import { formatDate } from '../utils/dates';
 import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
 
@@ -20,6 +22,7 @@ export const DomainsTableStatusCell = ( {
 	pendingUpdates,
 }: DomainsTableStatusCellProps ) => {
 	const translate = useTranslate();
+	const locale = useLocale();
 	if ( ! currentDomainData ) {
 		return null;
 	}
@@ -47,8 +50,9 @@ export const DomainsTableStatusCell = ( {
 	};
 
 	const getTime = ( unixTimestamp: number ) => {
-		const date = new Date( unixTimestamp * 1000 );
-		return `${ date.toLocaleDateString() } ${ date.toLocaleTimeString() }`;
+		const date = formatDate( locale, unixTimestamp * 1000 );
+		const time = new Date( unixTimestamp * 1000 ).toLocaleTimeString();
+		return `${ date } ${ time }`;
 	};
 
 	return (

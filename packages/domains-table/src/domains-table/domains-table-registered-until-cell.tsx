@@ -1,5 +1,6 @@
 import { PartialDomainData } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
+import { formatDate } from '../utils/dates';
 
 interface DomainsTableRegisteredUntilCellProps {
 	domain: PartialDomainData;
@@ -10,9 +11,5 @@ export const DomainsTableRegisteredUntilCell = ( {
 }: DomainsTableRegisteredUntilCellProps ) => {
 	const localeSlug = useLocale();
 
-	return domain.has_registration
-		? new Intl.DateTimeFormat( localeSlug, { dateStyle: 'medium' } ).format(
-				new Date( domain.expiry )
-		  )
-		: '-';
+	return domain.has_registration ? formatDate( localeSlug, domain.expiry ) : '-';
 };
