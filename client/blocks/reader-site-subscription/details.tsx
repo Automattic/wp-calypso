@@ -21,6 +21,7 @@ import SiteSubscriptionSettings from './settings';
 import './styles.scss';
 
 const SiteSubscriptionDetails = ( {
+	subscriptionId,
 	subscriberCount,
 	dateSubscribed,
 	siteIcon,
@@ -89,7 +90,7 @@ const SiteSubscriptionDetails = ( {
 			setShowUnsubscribeModal( true );
 		} else {
 			const emailId = getQueryArgs()?.email_id as string;
-			unsubscribe( { blog_id: blogId, url, emailId } );
+			unsubscribe( { blog_id: blogId, url, emailId, subscriptionId } );
 		}
 	};
 
@@ -209,6 +210,7 @@ const SiteSubscriptionDetails = ( {
 			{ siteSubscribed && (
 				<>
 					<SiteSubscriptionSettings
+						subscriptionId={ subscriptionId }
 						blogId={ blogId }
 						notifyMeOfNewPosts={ !! deliveryMethods.notification?.send_posts }
 						emailMeNewPosts={ !! deliveryMethods.email?.send_posts }

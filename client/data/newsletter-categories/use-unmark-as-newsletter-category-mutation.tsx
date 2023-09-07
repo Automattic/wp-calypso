@@ -40,7 +40,7 @@ const useUnmarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 					...oldData,
 					newsletterCategories:
 						oldData?.newsletterCategories.filter(
-							( category: NewsletterCategory ) => category.id !== categoryId
+							( category: NewsletterCategory ) => category?.id !== categoryId
 						) || [],
 				};
 

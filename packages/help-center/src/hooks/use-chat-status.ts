@@ -37,5 +37,6 @@ export default function useChatStatus(
 		isPrecancellationChatOpen: Boolean( chatStatus?.is_precancellation_chat_open ),
 		supportActivity,
 		supportLevel: chatStatus?.supportLevel,
+		noQuickResponseExperimentVariation: chatStatus?.no_quick_response_variation,
 	};
 }

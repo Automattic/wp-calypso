@@ -11,6 +11,7 @@ const VideoPressOnboardingIntentModalJetpack: React.FC< IntroModalContentProps >
 			description={ translate(
 				'Already have a self-hosted WordPress site? Enable the finest video with Jetpack VideoPress.'
 			) }
+			intent="jetpack"
 			featuresList={ [
 				translate( 'High-quality, lightning-fast video hosting.' ),
 				translate( 'Drag and drop videos directly into WordPress.' ),

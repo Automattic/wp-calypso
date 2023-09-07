@@ -33,9 +33,10 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 	return (
 		<Fragment>
 			<tr
-				className={ classNames( firstColumnValue, {
+				className={ classNames( firstColumnValue, 'site-logs-table__table-row', {
 					'site-logs-table__summary-expanded': isExpanded,
 				} ) }
+				onClick={ () => setIsExpanded( ! isExpanded ) }
 			>
 				{ columns.map( ( column, index ) => (
 					<td key={ column } className={ column }>

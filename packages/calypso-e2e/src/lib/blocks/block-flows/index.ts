@@ -23,6 +23,8 @@ export * from './donations-form';
 export * from './all-form-fields';
 export * from './form-patterns';
 export * from './ad';
+export * from './paywall';
+export * from './form-ai';
 
 /* Types */
 export * from './types';

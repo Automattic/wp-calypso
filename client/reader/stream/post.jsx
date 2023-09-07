@@ -53,6 +53,7 @@ class ReaderPostCardAdapter extends Component {
 				compact={ this.props.compact }
 				showFollowButton={ this.props.showFollowButton }
 				fixedHeaderHeight={ this.props.fixedHeaderHeight }
+				streamKey={ this.props.streamKey }
 			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }

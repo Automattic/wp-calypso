@@ -133,7 +133,12 @@
 }
 
 .domain-forwarding-card__accordion {
+	color: var(--studio-gray-50);
 	margin-bottom: 0 !important;
+
+	.foldable-card__content {
+		font-size: 0.875rem;
+	}
 
 	.form-text-input:disabled {
 		border: 1px solid var(--color-neutral-5) !important;
@@ -142,10 +147,11 @@
 	.forwards-from {
 		padding-right: 30px;
 
-		input.form-text-input[type="text"] {
-
-			@include break-wide {
-				border-left: 0;
+		&.has-subdomain-selector {
+			input.form-text-input[type="text"] {
+				@include break-wide {
+					border-left: 0;
+				}
 			}
 		}
 
@@ -233,13 +239,16 @@
 		padding: 0;
 		margin-top: 15px;
 		font-weight: normal;
-		color: var(--studio-gray-60);
+
+		&:first-child {
+			margin-top: 0;
+		}
 	}
 
 	.form-fieldset {
 		background-color: var(--studio-gray-0);
-		margin-bottom: 0;
-		padding: 0 20px 0 20px;
+		margin-bottom: 24px;
+		padding: 20px;
 		border-radius: 10px; /* stylelint-disable-line scales/radii */
 	}
 
@@ -294,27 +303,49 @@
 		font-weight: 400;
 	}
 
-	.form-button {
-		margin-top: 30px;
-	}
-
-	.remove-redirect-button {
+	.link-button {
 		text-underline-offset: 0.2em;
 		padding-top: 0;
-		padding-bottom: 30px;
 		border-color: #0675c4;
 		color: #0675c4;
 		text-decoration: underline;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			border-color: #044b7a;
 			color: #044b7a;
 		}
 	}
 
+	.remove-redirect-button {
+		padding-bottom: 30px;
+	}
+
 	.domain-forwarding-card__error-field {
 		height: 35px;
 		margin-top: 10px;
+	}
+
+	.domain-forwarding-card__fields-row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+
+		&.addresses {
+			justify-content: flex-start;
+		}
+
+		&:first-child {
+			margin-bottom: 5px;
+		}
+
+		.source {
+			width: 35%;
+		}
+
+		.badge {
+			border-radius: 4px;
+		}
 	}
 }
 
