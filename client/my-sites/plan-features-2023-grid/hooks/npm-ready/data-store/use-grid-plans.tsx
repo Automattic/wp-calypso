@@ -129,6 +129,11 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
+
+	/**
+	 * If the subdomain generation is unsuccessful we do not show the free plan
+	 */
+	isSubdomainGenerated?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -136,7 +141,11 @@ const usePlanTypesWithIntent = ( {
 	selectedPlan,
 	sitePlanSlug,
 	hideEnterprisePlan,
-}: Pick< Props, 'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' > ): string[] => {
+	isSubdomainGenerated,
+}: Pick<
+	Props,
+	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainGenerated'
+> ): string[] => {
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 	const isBloggerAvailable =
 		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
@@ -209,6 +218,13 @@ const usePlanTypesWithIntent = ( {
 			break;
 		default:
 			planTypes = availablePlanTypes;
+	}
+
+	// Filters out the free plan unless a valid subdomain is generated.
+	// This is because, on a free plan,  a custom domain can only redirect to the hosted site.
+	// To effectively communicate this, a valid subdomain is necessary.
+	if ( isSubdomainGenerated === false ) {
+		planTypes = planTypes.filter( ( planType ) => planType !== TYPE_FREE );
 	}
 
 	return planTypes;

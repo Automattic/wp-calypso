@@ -25,7 +25,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
@@ -288,29 +287,14 @@ const PlansFeaturesMain = ( {
 		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
 		if ( ! cartItemForPlan ) {
 			recordTracksEvent( 'calypso_signup_free_plan_click' );
-
-			/**
-			 * After the experiments are loaded now open the relevant modal based on previous step parameters
-			 */
-			if ( wpcomFreeDomainSuggestion.result ) {
-				if ( paidDomainName ) {
-					toggleIsFreePlanPaidDomainDialogOpen();
-					return;
-				}
-				if ( isPlanUpsellEnabledOnFreeDomain.result ) {
-					setIsFreePlanFreeDomainDialogOpen( true );
-					return;
-				}
+			if ( paidDomainName ) {
+				toggleIsFreePlanPaidDomainDialogOpen();
+				return;
 			}
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: `Sub domain suggestion wasn't available for query: ${ paidDomainName }`,
-				severity: 'warn',
-				blog_id: siteId,
-				properties: {
-					env: config( 'env_id' ),
-				},
-			} );
+			if ( isPlanUpsellEnabledOnFreeDomain.result ) {
+				setIsFreePlanFreeDomainDialogOpen( true );
+				return;
+			}
 		}
 
 		if ( onUpgradeClick ) {
@@ -352,6 +336,7 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
 		showLegacyStorageFeature,
+		isSubdomainGenerated: !! resolvedSubdomainName.result,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -654,8 +639,8 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ isLoadingGridPlans && <Spinner size={ 30 } /> }
-			{ ! isLoadingGridPlans && (
+			{ ( isLoadingGridPlans || resolvedSubdomainName.isLoading ) && <Spinner size={ 30 } /> }
+			{ ( ! isLoadingGridPlans || ! resolvedSubdomainName.isLoading ) && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div
