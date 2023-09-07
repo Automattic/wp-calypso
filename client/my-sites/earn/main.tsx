@@ -22,7 +22,14 @@ import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
 
-const EarningsMain = ( { section, adsProgramName, query, path } ) => {
+type EarningsMainProps = {
+	section: string;
+	adsProgramName: string;
+	query: string;
+	path: string;
+};
+
+const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainProps ) => {
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
@@ -69,7 +76,7 @@ const EarningsMain = ( { section, adsProgramName, query, path } ) => {
 		return '';
 	};
 
-	const getComponent = ( currentSection ) => {
+	const getComponent = ( currentSection: string ) => {
 		switch ( currentSection ) {
 			case 'ads-earnings':
 				return (
@@ -81,7 +88,7 @@ const EarningsMain = ( { section, adsProgramName, query, path } ) => {
 			case 'ads-payments':
 				return (
 					<AdsWrapper section={ section }>
-						<WordAdsPayments site={ site } />
+						<WordAdsPayments />
 					</AdsWrapper>
 				);
 			case 'ads-settings':
@@ -91,9 +98,9 @@ const EarningsMain = ( { section, adsProgramName, query, path } ) => {
 					</AdsWrapper>
 				);
 			case 'payments':
-				return <MembershipsSection section={ section } query={ query } />;
+				return <MembershipsSection query={ query } />;
 			case 'payments-plans':
-				return <MembershipsProductsSection section={ section } />;
+				return <MembershipsProductsSection />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
@@ -149,7 +156,7 @@ const EarningsMain = ( { section, adsProgramName, query, path } ) => {
 		);
 	};
 
-	const getSectionNav = ( currentSection ) => {
+	const getSectionNav = ( currentSection: string ) => {
 		const currentPath = getCurrentPath();
 
 		return (
@@ -180,7 +187,7 @@ const EarningsMain = ( { section, adsProgramName, query, path } ) => {
 				path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
 			/>
-			<DocumentHead title={ layoutTitles[ section ] } />
+			<DocumentHead title={ layoutTitles[ section as keyof typeof layoutTitles ] } />
 			<FormattedHeader
 				brandFont
 				className="earn__page-header"
