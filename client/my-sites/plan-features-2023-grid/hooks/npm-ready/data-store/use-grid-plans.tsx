@@ -27,7 +27,6 @@ import type { PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
-// Note: This type is duplicated in ../../../types.ts. Should prob be defined just once.
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
