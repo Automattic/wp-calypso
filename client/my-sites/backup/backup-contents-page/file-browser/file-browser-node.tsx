@@ -21,7 +21,6 @@ interface FileBrowserNodeProps {
 	isAlternate: boolean; // This decides if the node will have a background color or not
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
-	showCheckboxes: boolean;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 }
 
@@ -32,7 +31,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	isAlternate,
 	setActiveNodePath,
 	activeNodePath,
-	showCheckboxes,
 	parentItem,
 } ) => {
 	const isRoot = path === '/';
@@ -189,7 +187,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						rewindId={ rewindId }
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
-						showCheckboxes={ showCheckboxes }
 						setActiveNodePath={ setActiveNodePath }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
@@ -202,10 +199,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderCheckbox = () => {
-		if ( ! showCheckboxes ) {
-			return;
-		}
-
 		// We don't restore WordPress and just download it individually
 		if ( item.type === 'wordpress' ) {
 			return;
