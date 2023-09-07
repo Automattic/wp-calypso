@@ -11,7 +11,7 @@ import {
 } from './stats-purchase-shared';
 import './styles.scss';
 
-export const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
+const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
 	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
 
 	if ( ! isOdysseyStats ) {
@@ -169,4 +169,4 @@ const StatsPurchaseNoticePage = ( {
 	);
 };
 
-export { StatsPurchaseNoticePage, StatsPurchaseNotice };
+export { StatsPurchaseNoticePage, StatsPurchaseNotice, getStatsPurchaseURL };

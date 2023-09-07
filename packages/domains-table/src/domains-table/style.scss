@@ -94,3 +94,49 @@
 		text-align: right;
 	}
 }
+
+.domains-bulk-update-status-popover {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	color: var(--studio-gray-50);
+
+	&-item {
+		color: var(--studio-gray-100);
+
+		> div {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+
+	&-item-date {
+		margin-left: 16px;
+		font-size: smaller;
+		color: var(--studio-gray-50);
+	}
+
+	&-item-indicator {
+		border-radius: 50%;
+		height: 8px;
+		width: 8px;
+		min-height: 8px;
+		min-width: 8px;
+		flex-shrink: 0;
+
+		&__pending {
+			@extend .domains-bulk-update-status-popover-item-indicator;
+			background-color: var(--studio-orange-40);
+		}
+	}
+}
+
+.domains-table-bulk-actions-notice-popover {
+	max-height: 300px;
+	overflow-y: auto;
+	p {
+		line-height: 1.2;
+		font-size: smaller;
+	}
+}

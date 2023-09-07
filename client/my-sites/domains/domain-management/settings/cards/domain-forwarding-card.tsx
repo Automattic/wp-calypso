@@ -1,4 +1,4 @@
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Badge, Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
@@ -16,7 +16,9 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import useDeleteDomainForwardingMutation from 'calypso/data/domains/forwarding/use-delete-domain-forwarding-mutation';
-import useDomainForwardingQuery from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
+import useDomainForwardingQuery, {
+	DomainForwardingObject,
+} from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
@@ -36,10 +38,14 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const { data: forwarding, isLoading, isError } = useDomainForwardingQuery( domain.name );
+	const { data, isLoading, isError } = useDomainForwardingQuery( domain.name );
+
+	// const forwarding = data ? data[ 0 ] : null;
+	const forwarding = null;
 
 	// Manage local state for target url and protocol as we split forwarding target into host, path and protocol when we store it
 	const [ subdomain, setSubdomain ] = useState( '' );
+	const [ editingId, setEditingId ] = useState( 0 );
 	const [ targetUrl, setTargetUrl ] = useState( '' );
 	const [ sourceType, setSourceType ] = useState( 'domain' );
 	const [ isValidUrl, setIsValidUrl ] = useState( true );
@@ -97,29 +103,46 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 	}, [ isError, dispatch, translate ] );
 
-	// Load saved forwarding into local state
+	const handleEdit = ( child: DomainForwardingObject ) => {
+		setEditingId( child.domain_redirect_id );
+
+		const origin =
+			( child.is_secure ? 'http://' : 'https://' ) + ( child.target_host ?? '_invalid_.domain' );
+		const url = new URL( child.target_path, origin );
+		if ( url.hostname !== '_invalid_.domain' ) {
+			setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
+			setIsPermanent( child.is_permanent );
+			setForwardPaths( child.forward_paths );
+			setSubdomain( child.subdomain );
+			setSourceType( child.subdomain !== '' ? 'subdomain' : 'domain' );
+		}
+	};
+
+	const checkIfIsThereMainDomainForwarding = () => {
+		return data?.find( ( item ) => item.subdomain === '' );
+	};
+
 	useEffect( () => {
-		if ( isLoading || ! forwarding ) {
-			setTargetUrl( '' );
+		if ( isLoading || ! data ) {
 			return;
 		}
 
-		try {
-			const origin =
-				( forwarding.isSecure ? 'http://' : 'https://' ) +
-				( forwarding.targetHost ?? '_invalid_.domain' );
-			const url = new URL( forwarding.targetPath, origin );
-			if ( url.hostname !== '_invalid_.domain' ) {
-				setTargetUrl( url.hostname + url.pathname + url.search + url.hash );
-				setIsPermanent( forwarding.isPermanent );
-				setForwardPaths( forwarding.forwardPaths );
-				setSubdomain( forwarding.subdomain );
-				setSourceType( forwarding.subdomain !== '' ? 'subdomain' : 'domain' );
-			}
-		} catch ( e ) {
-			// ignore
+		// By default, the interface already opens with domain forwarding addition
+		if ( data?.length === 0 ) {
+			setEditingId( -1 );
+			setSourceType( 'domain' );
 		}
-	}, [ isLoading, forwarding, setTargetUrl ] );
+	}, [ isLoading, data ] );
+
+	const handleAddForward = () => {
+		setEditingId( -1 );
+
+		setTargetUrl( '' );
+		setIsPermanent( false );
+		setForwardPaths( false );
+		setSubdomain( '' );
+		setSourceType( 'subdomain' );
+	};
 
 	const handleSubdomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const subdomain = event.target.value;
@@ -170,10 +193,10 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		setSubdomain( '' );
 		setIsValidUrl( true );
 
-		if ( isLoading || ! forwarding ) {
+		if ( isLoading || editingId === 0 ) {
 			return;
 		}
-		deleteDomainForwarding( forwarding?.domain_redirect_id );
+		deleteDomainForwarding( editingId );
 	};
 
 	const handleDomainSubdomainChange = ( event: React.ChangeEvent< HTMLSelectElement > ) => {
@@ -209,16 +232,18 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		}
 
 		updateDomainForwarding( {
-			domain_redirect_id: forwarding?.domain_redirect_id || 0,
-			subdomain: sourceType === 'subdomain' ? subdomain : '',
-			targetHost,
-			targetPath,
-			isSecure,
-			forwardPaths,
-			isPermanent,
-			isActive: true, // v1 always active
-			sourcePath: null, // v1 always using domain only
+			domain: domain.name,
+			domain_redirect_id: editingId,
+			subdomain,
+			target_host: targetHost,
+			target_path: targetPath,
+			is_secure: isSecure,
+			forward_paths: forwardPaths,
+			is_permanent: isPermanent,
 		} );
+
+		// TODO: open the edition of the new forwarding we just created
+		setEditingId( 0 );
 
 		return false;
 	};
@@ -299,24 +324,24 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		);
 	};
 
-	const redirectHasChanged = () => {
+	const redirectHasChanged = ( forwarding: DomainForwardingObject ) => {
 		if ( ! forwarding ) {
 			return false;
 		}
 
-		if ( forwarding.targetHost + forwarding.targetPath !== targetUrl ) {
+		if ( forwarding.target_host + forwarding.target_path !== targetUrl ) {
 			return true;
 		}
 
-		if ( ( forwarding.isSecure ? 'https' : 'http' ) !== protocol ) {
+		if ( ( forwarding.is_secure ? 'https' : 'http' ) !== protocol ) {
 			return true;
 		}
 
-		if ( forwarding.isPermanent !== isPermanent ) {
+		if ( forwarding.is_permanent !== isPermanent ) {
 			return true;
 		}
 
-		if ( forwarding.forwardPaths !== forwardPaths ) {
+		if ( forwarding.forward_paths !== forwardPaths ) {
 			return true;
 		}
 
@@ -329,28 +354,72 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 
 	const isDomainForwardDisabled = ( domain?.isPrimary && ! isDomainOnly ) || ! pointsToWpcom;
 
-	return (
+	const FormViewRow = ( { child: child }: { child: DomainForwardingObject } ) => (
+		<FormFieldset disabled={ isDomainForwardDisabled } className="domain-forwarding-card__fields">
+			<div className="domain-forwarding-card__fields-row">
+				<div className="domain-forwarding-card__fields-column">
+					<Badge type={ child.subdomain === '' ? 'warning' : 'info' }>
+						{ child.subdomain !== ''
+							? translate( 'Subdomain forwarding' )
+							: translate( 'Domain forwarding' ) }
+					</Badge>
+				</div>
+				<div className="domain-forwarding-card__fields-column">
+					<Button
+						borderless
+						className="edit-redirect-button link-button"
+						onClick={ () => handleEdit( child ) }
+					>
+						{ translate( 'Edit' ) }
+					</Button>
+				</div>
+			</div>
+
+			<div className="domain-forwarding-card__fields-row addresses">
+				<div className="domain-forwarding-card__fields-column source">
+					{ translate( 'Source URL' ) }:
+				</div>
+				<div className="domain-forwarding-card__fields-column destination">
+					<strong>{ child.subdomain ? child.subdomain + '.' + child.domain : child.domain }</strong>
+				</div>
+			</div>
+
+			<div className="domain-forwarding-card__fields-row addresses">
+				<div className="domain-forwarding-card__fields-column source">
+					{ translate( 'Destination URL' ) }:
+				</div>
+				<div className="domain-forwarding-card__fields-column destination">
+					<strong>{ child.target_host + child.target_path }</strong>
+				</div>
+			</div>
+		</FormFieldset>
+	);
+
+	const FormRowEdditable = ( { child }: { child: DomainForwardingObject } ) => (
 		<>
-			{ renderNotice() }
-			{ renderNoticeForPrimaryDomain() }
-			<form onSubmit={ handleSubmit }>
-				<FormFieldset
-					disabled={ isDomainForwardDisabled }
-					className="domain-forwarding-card__fields"
+			<FormFieldset
+				key={ child.domain_redirect_id }
+				disabled={ isDomainForwardDisabled }
+				className="domain-forwarding-card__fields"
+			>
+				<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
+				<div
+					className={ classNames( 'forwards-from', {
+						'has-subdomain-selector':
+							sourceType === 'domain' || ! checkIfIsThereMainDomainForwarding(),
+					} ) }
 				>
-					<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
-					<div className="forwards-from">
-						<FormTextInputWithAffixes
-							placeholder={
-								sourceType === 'domain' ? domain.domain : translate( 'Enter subdomain' )
-							}
-							disabled={ isLoading || sourceType === 'domain' }
-							name="origin"
-							onChange={ handleSubdomainChange }
-							value={ sourceType === 'domain' ? domain.domain : subdomain }
-							className={ classNames( { 'is-error': ! isValidUrl } ) }
-							maxLength={ 1000 }
-							prefix={
+					<FormTextInputWithAffixes
+						placeholder={ sourceType === 'domain' ? domain.domain : translate( 'Enter subdomain' ) }
+						disabled={ isLoading || sourceType === 'domain' }
+						name="origin"
+						onChange={ handleSubdomainChange }
+						value={ sourceType === 'domain' ? domain.domain : subdomain }
+						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						maxLength={ 1000 }
+						prefix={
+							( ( child.subdomain === '' && child.domain_redirect_id !== 0 ) ||
+								! checkIfIsThereMainDomainForwarding() ) && (
 								<FormSelect
 									name="redirect_type"
 									value={ sourceType }
@@ -360,135 +429,191 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 									<option value="domain">{ translate( 'Domain' ) }</option>
 									<option value="subdomain">{ translate( 'Subdomain' ) }</option>
 								</FormSelect>
-							}
-							suffix={ sourceType === 'subdomain' && <FormLabel>.{ domain.domain }</FormLabel> }
-						/>
+							)
+						}
+						suffix={ sourceType === 'subdomain' && <FormLabel>.{ domain.domain }</FormLabel> }
+					/>
+				</div>
+				<FormLabel>{ translate( 'Destination URL' ) }</FormLabel>
+				<div className="forwards-to">
+					<FormTextInputWithAffixes
+						disabled={ isLoading }
+						name="destination"
+						noWrap
+						onChange={ handleForwardToChange }
+						value={ targetUrl }
+						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						maxLength={ 1000 }
+						suffix={
+							child.target_host + child.target_path !== '' &&
+							! isDomainForwardDisabled && (
+								<Button className="forwarding__clear" onClick={ cleanForwardingInput }>
+									<Gridicon icon="cross" />
+								</Button>
+							)
+						}
+					/>
+					<Button
+						className={ classNames( 'forwarding__checkmark', {
+							visible:
+								! isDomainForwardDisabled &&
+								isValidUrl &&
+								child.target_host + child.target_path !== '',
+						} ) }
+					>
+						<Gridicon icon="checkmark" />
+					</Button>
+				</div>
+				{ ! isValidUrl && (
+					<div className="domain-forwarding-card__error-field">
+						<FormInputValidation isError={ true } text={ errorMessage } />
 					</div>
-					<FormLabel>{ translate( 'Destination URL' ) }</FormLabel>
-					<div className="forwards-to">
-						<FormTextInputWithAffixes
-							disabled={ isLoading }
-							name="destination"
-							noWrap
-							onChange={ handleForwardToChange }
-							value={ targetUrl }
-							className={ classNames( { 'is-error': ! isValidUrl } ) }
-							maxLength={ 1000 }
-							suffix={
-								targetUrl !== '' &&
-								! isDomainForwardDisabled && (
-									<Button className="forwarding__clear" onClick={ cleanForwardingInput }>
-										<Gridicon icon="cross" />
-									</Button>
-								)
-							}
+				) }
+				<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
+					<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
+					<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
+					<FormLabel>
+						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+						<FormRadio
+							name="redirect_type"
+							value="0"
+							checked={ ! isPermanent }
+							onChange={ () => {
+								setIsPermanent( false );
+							} }
+							label={ translate( 'Temporary redirect (307)' ) }
 						/>
-						<Button
-							className={ classNames( 'forwarding__checkmark', {
-								visible: ! isDomainForwardDisabled && isValidUrl && targetUrl !== '',
-							} ) }
-						>
-							<Gridicon icon="checkmark" />
-						</Button>
-					</div>
-					{ ! isValidUrl && (
-						<div className="domain-forwarding-card__error-field">
-							<FormInputValidation isError={ true } text={ errorMessage } />
-						</div>
-					) }
-					<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
-						<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
-						<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
-						<FormLabel>
-							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
-							<FormRadio
-								name="redirect_type"
-								value="0"
-								checked={ ! isPermanent }
-								onChange={ () => {
-									setIsPermanent( false );
-								} }
-								label={ translate( 'Temporary redirect (307)' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
-						</FormSettingExplanation>
-						<FormLabel>
-							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
-							<FormRadio
-								name="redirect_type"
-								value="0"
-								checked={ isPermanent }
-								onChange={ () => {
-									setIsPermanent( true );
-								} }
-								label={ translate( 'Permanent redirect (301)' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							{ translate(
-								'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
-							) }
-						</FormSettingExplanation>
+					</FormLabel>
+					<FormSettingExplanation>
+						{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
+					</FormSettingExplanation>
+					<FormLabel>
+						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+						<FormRadio
+							name="redirect_type"
+							value="0"
+							checked={ isPermanent }
+							onChange={ () => {
+								setIsPermanent( true );
+							} }
+							label={ translate( 'Permanent redirect (301)' ) }
+						/>
+					</FormLabel>
+					<FormSettingExplanation>
+						{ translate(
+							'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
+						) }
+					</FormSettingExplanation>
 
-						<p className="accordion__title path__forwarding">{ translate( 'Path forwarding' ) }</p>
-						<p className="accordion__subtitle">
-							{ translate(
-								'Redirects the path after the domain name to the corresponding path at the new address.'
-							) }
-						</p>
-						<FormLabel>
-							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
-							<FormRadio
-								name="path_forwarding"
-								value="0"
-								checked={ ! forwardPaths }
-								onChange={ () => {
-									setForwardPaths( false );
-								} }
-								label={ translate( 'Do not forward' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
-							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }
-						</FormSettingExplanation>
-						<FormLabel>
-							{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
-							<FormRadio
-								name="path_forwarding"
-								value="0"
-								checked={ forwardPaths }
-								onChange={ () => {
-									setForwardPaths( true );
-								} }
-								label={ translate( 'Forward path' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
-							{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
-						</FormSettingExplanation>
-					</Accordion>
-					{ ! isDomainForwardDisabled && forwarding && (
-						<Button borderless className="remove-redirect-button" onClick={ () => handleDelete() }>
-							{ translate( 'Remove forward' ) }
-						</Button>
-					) }
-				</FormFieldset>
-				<FormButton
-					disabled={
-						isDomainForwardDisabled ||
-						! isValidUrl ||
-						isLoading ||
-						( forwarding && ! redirectHasChanged() ) ||
-						targetUrl === ''
-					}
-				>
-					{ translate( 'Save' ) }
-				</FormButton>
+					<p className="accordion__title path__forwarding">{ translate( 'Path forwarding' ) }</p>
+					<p className="accordion__subtitle">
+						{ translate(
+							'Redirects the path after the domain name to the corresponding path at the new address.'
+						) }
+					</p>
+					<FormLabel>
+						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+						<FormRadio
+							name="path_forwarding"
+							value="0"
+							checked={ ! forwardPaths }
+							onChange={ () => {
+								setForwardPaths( false );
+							} }
+							label={ translate( 'Do not forward' ) }
+						/>
+					</FormLabel>
+					<FormSettingExplanation>
+						<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
+						{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }
+					</FormSettingExplanation>
+					<FormLabel>
+						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+						<FormRadio
+							name="path_forwarding"
+							value="0"
+							checked={ forwardPaths }
+							onChange={ () => {
+								setForwardPaths( true );
+							} }
+							label={ translate( 'Forward path' ) }
+						/>
+					</FormLabel>
+					<FormSettingExplanation>
+						<strong>{ domain.domain }</strong>/{ translate( 'somepage.html' ) }
+						{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }/{ translate( 'somepage.html' ) }
+					</FormSettingExplanation>
+				</Accordion>
+				{ child.domain_redirect_id !== 0 && (
+					<Button
+						borderless
+						className="remove-redirect-button  link-button"
+						onClick={ () => handleDelete() }
+					>
+						{ translate( 'Remove forward' ) }
+					</Button>
+				) }
+				<div>
+					<FormButton
+						disabled={
+							isDomainForwardDisabled ||
+							! isValidUrl ||
+							isLoading ||
+							( forwarding && ! redirectHasChanged( child ) ) ||
+							targetUrl === ''
+						}
+					>
+						{ child.domain_redirect_id === 0 ? translate( 'Create' ) : translate( 'Save' ) }
+					</FormButton>
+					<FormButton onClick={ () => setEditingId( 0 ) } type="button" isPrimary={ false }>
+						{ translate( 'Cancel' ) }
+					</FormButton>
+				</div>
+			</FormFieldset>
+		</>
+	);
+
+	const shouldEdit = ( item: DomainForwardingObject ) => {
+		if ( item.domain_redirect_id === editingId ) {
+			return true;
+		}
+
+		return false;
+	};
+
+	return (
+		<>
+			{ renderNotice() }
+			{ renderNoticeForPrimaryDomain() }
+			<form onSubmit={ handleSubmit }>
+				{ data?.map( ( item ) =>
+					shouldEdit( item ) ? FormRowEdditable( { child: item } ) : FormViewRow( { child: item } )
+				) }
+
+				{ editingId === -1 &&
+					FormRowEdditable( {
+						child: {
+							domain_redirect_id: 0,
+							domain: '',
+							subdomain: '',
+							target_host: '',
+							target_path: '',
+							is_secure: true,
+							forward_paths: false,
+							is_permanent: false,
+							is_active: true,
+							source_path: '',
+						},
+					} ) }
 			</form>
+
+			<Button
+				borderless
+				className="add-forward-button  link-button"
+				onClick={ () => handleAddForward() }
+			>
+				{ translate( '+ Add forward' ) }
+			</Button>
 		</>
 	);
 }

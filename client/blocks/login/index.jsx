@@ -559,7 +559,7 @@ class Login extends Component {
 		return (
 			<div className="login__form-header-wrapper">
 				{ isGravatarLoginPage && (
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.alt } />
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 				) }
 				{ preHeader }
 				<div className="login__form-header">{ headerText }</div>
