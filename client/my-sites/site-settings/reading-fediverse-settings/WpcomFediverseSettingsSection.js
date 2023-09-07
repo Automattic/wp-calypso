@@ -1,5 +1,6 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -10,14 +11,21 @@ import { useActivityPubStatus } from './hooks';
 
 const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const linkUrl = domainAddNew( domain );
+	const linkUrl = addQueryArgs( domainAddNew( domain ), {
+		domainAndPlanPackage: 'true',
+		upsell: 'activitypub',
+	} );
+	const translate = useTranslate();
 	return (
 		<Card className="site-settings__card">
-			<code>{ '<blink>' }</code>
-			<a href={ linkUrl }>
-				Link to Domain Upsell, with tracking and return path, needs moar design.
-			</a>
-			<code>{ '</blink>' }</code>
+			<p>
+				{ translate(
+					'Unlock the full power of the fediverse with a memorable custom domain. Your domain also means that you can take your followers with you, using self-hosted WordPress with the Activitypub plugin, or any other open source Activitypub software.'
+				) }
+			</p>
+			<Button primary href={ linkUrl }>
+				{ translate( 'Add a custom domain' ) }
+			</Button>
 		</Card>
 	);
 };
@@ -26,10 +34,15 @@ const DomainCongratsCard = ( { user } ) => {
 	const translate = useTranslate();
 	return (
 		<Card className="site-settings__card">
-			{ translate(
-				'Your site is using a custom domain! You can now set up a custom ActivityPub alias.'
-			) }
-			<ClipboardButtonInput value={ user } />
+			<p>{ translate( 'Your site is using a custom domain! 🎉' ) }</p>
+			<p>
+				{ translate(
+					'Owning your domain unlocks account portability and a separate profile for each blog author. Here’s yours:'
+				) }
+			</p>
+			<p>
+				<ClipboardButtonInput value={ user } />
+			</p>
 		</Card>
 	);
 };

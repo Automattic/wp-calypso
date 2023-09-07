@@ -23,6 +23,7 @@ const domainRegistrationThankYouProps = ( {
 	redirectTo,
 	isDomainOnly,
 	selectedSiteId,
+	isActivityPubEnabled,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -79,6 +80,23 @@ const domainRegistrationThankYouProps = ( {
 		),
 	};
 
+	const fediverseSettingsStep = {
+		stepKey: 'domain_registration_whats_next_fediverse_settings',
+		stepTitle: translate( 'Connect to the Fediverse' ),
+		stepDescription: translate(
+			'You’ve unlocked a durable, portable social networking presence with your domain!'
+		),
+		stepCta: (
+			<FullWidthButton
+				href={ `/settings/reading/${ selectedSiteSlug }` }
+				busy={ false }
+				disabled={ false }
+			>
+				{ translate( 'Fediverse settings' ) }
+			</FullWidthButton>
+		),
+	};
+
 	const returnProps: DomainThankYouProps = {
 		thankYouNotice: {
 			noticeTitle: translate(
@@ -95,6 +113,7 @@ const domainRegistrationThankYouProps = ( {
 					: [
 							...( professionalEmail ? [ professionalEmail ] : [] ),
 							...( isDomainOnly && selectedSiteId ? [ createSiteStep ] : [] ),
+							...( isActivityPubEnabled ? [ fediverseSettingsStep ] : [] ),
 							viewDomainsStep,
 					  ],
 			},
