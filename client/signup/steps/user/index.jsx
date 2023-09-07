@@ -13,6 +13,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -374,7 +375,6 @@ export class UserStep extends Component {
 
 	/**
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
-	 *
 	 * @param {string} service      The name of the social service
 	 * @param {string} access_token An OAuth2 acccess token
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
@@ -614,6 +614,9 @@ export class UserStep extends Component {
 
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			return null; // return nothing so that we don't see the error message and the sign up form.
+		}
+		if ( this.props.flowName === 'onboarding-pm' ) {
+			loadExperimentAssignment( 'onboarding_pm_skip_domain' );
 		}
 
 		// TODO: decouple hideBack flag from the flow name.

@@ -123,8 +123,28 @@ class DomainsStep extends Component {
 		}
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 		this.state = {
+			...this.state,
 			currentStep: null,
+			shouldSkipStep: 'loading',
 		};
+		if ( this.state.shouldSkipStep === true ) {
+			this.props.goToNextStep();
+		}
+		this.domainExperiment = loadExperimentAssignment( 'onboarding_pm_skip_domain' );
+	}
+
+	componentWillMount() {
+		this.domainExperiment.then( ( experiment ) => {
+			if ( this.props?.flowName === 'onboarding-pm' && experiment.variationName === 'treatment' ) {
+				recordTracksEvent( 'calypso_experiment_onboarding_pm_skip_domain_step', {} );
+				this.props.goToNextStep();
+			} else {
+				this.setState( {
+					...this.state,
+					shouldSkipStep: false,
+				} );
+			}
+		} );
 	}
 
 	componentDidMount() {
@@ -885,32 +905,34 @@ class DomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
-		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				backUrl={ backUrl }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ headerText }
-				subHeaderText={ fallbackSubHeaderText }
-				isExternalBackUrl={ isExternalBackUrl }
-				fallbackHeaderText={ headerText }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
-				shouldHideNavButtons={ this.shouldHideNavButtons() }
-				stepContent={
-					<div>
-						<QueryProductsList />
-						{ this.renderContent() }
-					</div>
-				}
-				allowBackFirstStep={ !! backUrl }
-				backLabelText={ backLabelText }
-				hideSkip={ true }
-				goToNextStep={ this.handleSkip }
-				align={ isReskinned ? 'left' : 'center' }
-				isWideLayout={ isReskinned }
-			/>
-		);
+		if ( this.state.shouldSkipStep === false ) {
+			return (
+				<StepWrapper
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName }
+					backUrl={ backUrl }
+					positionInFlow={ this.props.positionInFlow }
+					headerText={ headerText }
+					subHeaderText={ fallbackSubHeaderText }
+					isExternalBackUrl={ isExternalBackUrl }
+					fallbackHeaderText={ headerText }
+					fallbackSubHeaderText={ fallbackSubHeaderText }
+					shouldHideNavButtons={ this.shouldHideNavButtons() }
+					stepContent={
+						<div>
+							<QueryProductsList />
+							{ this.renderContent() }
+						</div>
+					}
+					allowBackFirstStep={ !! backUrl }
+					backLabelText={ backLabelText }
+					hideSkip={ true }
+					goToNextStep={ this.handleSkip }
+					align={ isReskinned ? 'left' : 'center' }
+					isWideLayout={ isReskinned }
+				/>
+			);
+		}
 	}
 }
 
