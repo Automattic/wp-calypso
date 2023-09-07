@@ -338,6 +338,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	available_promos?: string[];
 }
 
 export interface SiteSettings {

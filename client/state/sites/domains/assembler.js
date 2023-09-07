@@ -58,6 +58,7 @@ export const createSiteDomainObject = ( domain ) => {
 		aftermarketAuctionEnd: String( domain.aftermarket_auction_end ?? '' ),
 		aftermarketAuctionStart: String( domain.aftermarket_auction_start ?? '' ),
 		autoRenewing: Boolean( domain.auto_renewing ),
+		availablePromos: domain.available_promos,
 		beginTransferUntilDate: String( domain.begin_transfer_until_date ),
 		blogId: Number( domain.blog_id ),
 		bundledPlanSubscriptionId: domain.bundled_plan_subscription_id,
