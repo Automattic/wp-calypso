@@ -206,7 +206,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 		select: ( design: Design ) => {
-			if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
+			if ( isDesignFirstFlow && design?.style_variations ) {
 				design.style_variations = [];
 			}
 
