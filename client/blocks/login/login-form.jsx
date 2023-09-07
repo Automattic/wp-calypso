@@ -81,6 +81,7 @@ export class LoginForm extends Component {
 		locale: PropTypes.string,
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
+		hideSignupLink: PropTypes.bool,
 	};
 
 	state = {
@@ -562,6 +563,7 @@ export class LoginForm extends Component {
 			isWoo,
 			isPartnerSignup,
 			isWooCoreProfilerFlow,
+			hideSignupLink,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -744,7 +746,7 @@ export class LoginForm extends Component {
 						</FormsButton>
 					</div>
 
-					{ isOauthLogin && (
+					{ ! hideSignupLink && isOauthLogin && (
 						<div className={ classNames( 'login__form-signup-link' ) }>
 							{ this.props.translate(
 								'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
