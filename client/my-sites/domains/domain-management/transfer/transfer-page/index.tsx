@@ -339,7 +339,10 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const renderUpsellDiscount = () => {
 		return (
 			<div className="transfer-page__upsell-discount">
-				<p>TBD Upsell messagge</p>
+				<p>
+					Are you sure you want to transfer your domain? Renew now and you can enjoy an instant 10%
+					discount!
+				</p>
 				<RenewButton
 					purchase={ purchase }
 					selectedSite={ selectedSite }
