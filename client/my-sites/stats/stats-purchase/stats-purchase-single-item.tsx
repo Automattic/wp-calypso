@@ -54,7 +54,6 @@ interface StatsSingleItemPersonalPurchasePageProps {
 		currency_code: string;
 	};
 	disableFreeProduct: boolean;
-	productType: string;
 }
 
 interface StatsPersonalPurchaseProps {
@@ -68,7 +67,6 @@ interface StatsPersonalPurchaseProps {
 	from: string;
 	adminUrl: string;
 	disableFreeProduct: boolean;
-	productType: string;
 }
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
@@ -191,7 +189,6 @@ const StatsPersonalPurchase = ( {
 	from,
 	adminUrl,
 	disableFreeProduct = false,
-	productType,
 }: StatsPersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
@@ -209,11 +206,8 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
 
-		// Check for productType to determine navigation
-		if ( productType ) {
-			const purchasePath = `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection`;
-			window.location.href = purchasePath;
-		}
+		const purchasePath = `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection`;
+		window.location.href = purchasePath;
 	};
 
 	return (
@@ -250,7 +244,6 @@ const StatsSingleItemPersonalPurchasePage = ( {
 	maxSliderPrice,
 	pwywProduct,
 	disableFreeProduct,
-	productType,
 }: StatsSingleItemPersonalPurchasePageProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -264,7 +257,6 @@ const StatsSingleItemPersonalPurchasePage = ( {
 				maxSliderPrice={ maxSliderPrice }
 				pwywProduct={ pwywProduct }
 				disableFreeProduct={ disableFreeProduct }
-				productType={ productType }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);
