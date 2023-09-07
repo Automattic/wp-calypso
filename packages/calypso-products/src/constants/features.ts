@@ -40,6 +40,7 @@ import {
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_BLOG_DOMAIN = 'blog-domain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
+export const FEATURE_CUSTOM_DOMAIN_DEFERRED = 'custom-domain-deferred';
 export const FEATURE_SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_JETPACK_ADVANCED = 'jetpack-advanced';

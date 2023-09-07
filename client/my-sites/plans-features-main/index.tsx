@@ -1,14 +1,18 @@
 import config from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_CUSTOM_DOMAIN_DEFERRED,
 	getPlan,
 	getPlanClass,
 	getPlanPath,
 	isFreePlan,
+	isMonthly,
 	isPersonalPlan,
 	PlanSlug,
 	PLAN_PERSONAL,
 	PRODUCT_1GB_SPACE,
+	isWooExpressPlan,
 	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
@@ -33,6 +37,7 @@ import {
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
@@ -69,6 +74,7 @@ import type { DomainSuggestion } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	GridPlan,
+	PlanFeaturesForGridPlan,
 	PlansIntent,
 } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
 import type { DataResponse, PlanActionOverrides } from 'calypso/my-sites/plans-grid/types';
@@ -175,6 +181,60 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 			isSecondary
 		/>
 	);
+};
+
+const mapPlanFeaturesForWooExpressIntroductoryOffers = (
+	gridPlans: Omit< GridPlan, 'features' >[],
+	planSlug: string,
+	planFeatures: PlanFeaturesForGridPlan
+): PlanFeaturesForGridPlan => {
+	if ( ! isWooExpressPlan( planSlug ) || isMonthly( planSlug ) ) {
+		return planFeatures;
+	}
+
+	const gridPlan = gridPlans.find( ( gridPlan ) => gridPlan.planSlug === planSlug );
+
+	if ( ! gridPlan || ! gridPlan.pricing.introOffer ) {
+		return planFeatures;
+	}
+
+	planFeatures.wpcomFeatures = planFeatures.wpcomFeatures.map( ( feature ) => {
+		if ( FEATURE_CUSTOM_DOMAIN !== feature.getSlug() ) {
+			return feature;
+		}
+
+		const planFeature = getPlanFeaturesObject( [
+			FEATURE_CUSTOM_DOMAIN_DEFERRED,
+		] ).pop();
+		if ( ! planFeature ) {
+			return feature;
+		}
+
+		return {
+			...planFeature,
+			availableForCurrentPlan: feature.availableForCurrentPlan,
+			availableOnlyForAnnualPlans: feature.availableOnlyForAnnualPlans,
+		};
+	} );
+
+	return planFeatures;
+};
+
+const transformGridPlanFeaturesForWooExpressIntroductoryOffers = (
+	intent: PlansIntent | null | undefined,
+	gridPlans: Omit< GridPlan, 'features' >[] | null,
+	gridFeatures: { [ planSlug: string ]: PlanFeaturesForGridPlan }
+): { [ planSlug: string ]: PlanFeaturesForGridPlan } => {
+	if ( intent !== 'plans-woocommerce' || ! gridPlans ) {
+		return gridFeatures;
+	}
+
+	return Object.fromEntries(
+		Object.entries( gridFeatures ).map( ( [ planSlug, planFeatures ] ) => [
+			planSlug,
+			mapPlanFeaturesForWooExpressIntroductoryOffers( gridPlans, planSlug, planFeatures ),
+		] )
+	) as { [ planSlug: string ]: PlanFeaturesForGridPlan };
 };
 
 const PlansFeaturesMain = ( {
@@ -371,22 +431,29 @@ const PlansFeaturesMain = ( {
 		shouldDisplayFreeHostingTrial,
 	} );
 
-	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
-		allFeaturesList: FEATURES_LIST,
+	const planFeaturesForFeaturesGrid = transformGridPlanFeaturesForWooExpressIntroductoryOffers(
 		intent,
-		selectedFeature,
-		showLegacyStorageFeature,
-		isInSignup,
-	} );
+		gridPlans,
+		usePlanFeaturesForGridPlans( {
+			planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
+			allFeaturesList: FEATURES_LIST,
+			intent,
+			selectedFeature,
+			showLegacyStorageFeature,
+		} )
+	);
 
-	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
-		allFeaturesList: FEATURES_LIST,
+	const planFeaturesForComparisonGrid = transformGridPlanFeaturesForWooExpressIntroductoryOffers(
 		intent,
-		selectedFeature,
-		showLegacyStorageFeature,
-	} );
+		gridPlans,
+		useRestructuredPlanFeaturesForComparisonGrid( {
+			planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
+			allFeaturesList: FEATURES_LIST,
+			intent,
+			selectedFeature,
+			showLegacyStorageFeature,
+		} )
+	);
 
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
 	const filteredPlansForPlanFeatures = useFilterPlansForPlanFeatures( {
