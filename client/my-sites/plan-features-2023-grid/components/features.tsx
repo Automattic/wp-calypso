@@ -7,11 +7,22 @@ import { LoadingPlaceHolder } from '../../plans-features-main/components/loading
 import { usePlansGridContext } from '../grid-context';
 import usePlanFeatureFootnotes from '../hooks/npm-ready/data-store/use-plan-feature-footnotes';
 import { PlanFeaturesItem } from './item';
-import { FeatureFootnote } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
+
+const FeatureFootnote = styled.span`
+	position: relative;
+	font-size: 50%;
+	font-weight: 600;
+
+	sup {
+		position: absolute;
+		top: -10px;
+		left: 0;
+	}
+`;
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {

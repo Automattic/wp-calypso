@@ -282,7 +282,7 @@ const StorageButton = styled.div`
 	` ) }
 `;
 
-export const FeatureFootnotes = styled.div`
+const FeatureFootnotes = styled.div`
 	ol {
 		margin: 2em 0 0 1em;
 	}
@@ -293,7 +293,7 @@ export const FeatureFootnotes = styled.div`
 	}
 `;
 
-export const FeatureFootnote = styled.span`
+const FeatureFootnote = styled.span`
 	position: relative;
 	font-size: 50%;
 	font-weight: 600;
