@@ -18,8 +18,9 @@ export class EmailClient {
 	}
 
 	/**
+	 * Returns a test email address.
 	 *
-	 * @param inboxId
+	 * @param {string} inboxId Inbox ID to use for the test email address.
 	 */
 	getTestEmailAddress( inboxId: string ) {
 		return this.client.servers.generateEmailAddress( inboxId );
