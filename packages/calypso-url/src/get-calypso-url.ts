@@ -15,7 +15,7 @@ const ALLOWED_ORIGINS = [
  * @param origin string to check
  * @returns true if the origin is allowed
  */
-export function isAllowedOrigin( origin: string ) {
+function isAllowedOrigin( origin: string ) {
 	return ALLOWED_ORIGINS.includes( origin ) || isCalypsoLive( origin );
 }
 
