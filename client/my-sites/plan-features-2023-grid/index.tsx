@@ -646,9 +646,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 			const shouldRenderStorageTitle =
 				storageOptions.length === 1 ||
-				intervalType !== 'yearly' ||
-				! showUpgradeableStorage ||
-				! isInSignup ||
+				( intervalType !== 'yearly' && storageOptions.length > 0 ) ||
+				( ! showUpgradeableStorage && storageOptions.length > 0 ) ||
+				( ! isInSignup && storageOptions.length > 0 ) ||
 				( ! ( flowName === 'onboarding' ) && storageOptions.length > 0 );
 			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan(
 				storageOptions,
