@@ -18,6 +18,7 @@ import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -178,8 +179,17 @@ const Home = ( {
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			{ header }
+			{ ! isLoading && ! layout && homeLayoutError ? (
+				<TrackComponentView
+					eventName="calypso_customer_home_my_site_view_layout_error"
+					eventProperties={ {
+						siteId: siteId,
+						error: homeLayoutError?.message ?? 'Layout is not available.',
+					} }
+				/>
+			) : null }
 			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
-			{ ! isLoading && ! homeLayoutError ? (
+			{ ! isLoading && layout && ! homeLayoutError ? (
 				<>
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
