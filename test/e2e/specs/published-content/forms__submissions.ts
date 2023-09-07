@@ -133,7 +133,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			// So we loop over a search attempt on the email, looking for a folder tab with a result in it!
 			const searchAndClickFolderWithResult = async () => {
 				await feedbackInboxPage.clearSearch();
-				await feedbackInboxPage.searchReponses( formData.email );
+				await feedbackInboxPage.searchResponses( formData.email );
 				await page.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } ).click( { timeout: 4 * 1000 } );
 			};
 

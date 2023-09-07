@@ -63,7 +63,7 @@ export class FeedbackInboxPage {
 	 *
 	 * @param {string} search The text to search for.
 	 */
-	async searchReponses( search: string ): Promise< void > {
+	async searchResponses( search: string ): Promise< void > {
 		const responseRequestPromise = this.page.waitForResponse(
 			( response ) =>
 				response.url().includes( '/forms/responses' ) &&
