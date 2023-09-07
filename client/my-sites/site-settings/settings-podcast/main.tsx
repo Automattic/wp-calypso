@@ -146,6 +146,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 					<NewsletterSettingsSection
 						fields={ fields }
 						handleToggle={ handleToggle }
+						handleAutosavingToggle={ handleAutosavingToggle }
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
