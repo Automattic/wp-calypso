@@ -1,7 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { Button as WordPressButton } from '@wordpress/components';
 import { useCallback, useEffect, useState } from '@wordpress/element';
-import { Icon, arrowLeft, backup } from '@wordpress/icons';
+import { Icon, arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -16,8 +16,13 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import {
+	BackupBrowserSelectedItem,
+	BackupBrowserItemType,
+} from 'calypso/state/rewind/browser/types';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
+import getBackupBrowserSelectedList from 'calypso/state/rewind/selectors/get-backup-browser-selected-list';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -45,6 +50,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	siteId,
 	siteUrl,
 } ) => {
+	const fileDisplayLimit = 10;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -55,6 +61,76 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const backupCurrentlyInProgress = useSelector( ( state ) =>
 		getInProgressBackupForSite( state, siteId )
 	);
+
+	const [ showFiles, setShowFiles ] = useState( true );
+	const [ showAllFiles, setShowAllFiles ] = useState( false );
+	const [ showTables, setShowTables ] = useState( true );
+	const [ showAllTables, setShowAllTables ] = useState( false );
+	const [ showThemes, setShowThemes ] = useState( true );
+	const [ showAllThemes, setShowAllThemes ] = useState( false );
+	const [ showPlugins, setShowPlugins ] = useState( true );
+	const [ showAllPlugins, setShowAllPlugins ] = useState( false );
+	const expandClick = ( type: BackupBrowserItemType, toggleAll: boolean ) => {
+		if ( toggleAll ) {
+			switch ( type ) {
+				case 'file':
+					setShowAllFiles( ! showAllFiles );
+					break;
+				case 'theme':
+					setShowAllThemes( ! showAllThemes );
+					break;
+				case 'plugin':
+					setShowAllPlugins( ! showAllPlugins );
+					break;
+				case 'table':
+					setShowAllTables( ! showAllTables );
+					break;
+				default:
+					break;
+			}
+		} else {
+			switch ( type ) {
+				case 'file':
+					if ( showFiles ) {
+						setShowAllFiles( false );
+					}
+					setShowFiles( ! showFiles );
+					break;
+				case 'theme':
+					if ( showThemes ) {
+						setShowAllThemes( false );
+					}
+					setShowThemes( ! showThemes );
+					break;
+				case 'plugin':
+					if ( showPlugins ) {
+						setShowAllPlugins( false );
+					}
+					setShowPlugins( ! showPlugins );
+					break;
+				case 'table':
+					if ( showTables ) {
+						setShowAllTables( false );
+					}
+					setShowTables( ! showTables );
+					break;
+				default:
+					break;
+			}
+		}
+	};
+	const renderExpandIcon = ( type: BackupBrowserItemType ) => {
+		switch ( type ) {
+			case 'table':
+				return <Icon icon={ showTables ? chevronDown : chevronRight } />;
+			case 'plugin':
+				return <Icon icon={ showPlugins ? chevronDown : chevronRight } />;
+			case 'theme':
+				return <Icon icon={ showThemes ? chevronDown : chevronRight } />;
+			case 'file':
+				return <Icon icon={ showFiles ? chevronDown : chevronRight } />;
+		}
+	};
 
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
@@ -73,7 +149,9 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	);
 
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
-
+	const browserSelectedList = useSelector( ( state ) =>
+		getBackupBrowserSelectedList( state, siteId )
+	);
 	const [ loading, setLoading ] = useState( true );
 
 	useEffect( () => {
@@ -115,6 +193,149 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const goBackUrl = backupContentsPath( siteSlug as string, rewindId );
 
+	const showAllType = ( type: BackupBrowserItemType ): boolean => {
+		switch ( type ) {
+			case 'file':
+				return showAllFiles;
+			case 'theme':
+				return showAllThemes;
+			case 'plugin':
+				return showAllPlugins;
+			case 'table':
+				return showAllTables;
+		}
+	};
+
+	const showType = ( type: BackupBrowserItemType ): boolean => {
+		switch ( type ) {
+			case 'file':
+				return showFiles;
+			case 'theme':
+				return showThemes;
+			case 'plugin':
+				return showPlugins;
+			case 'table':
+				return showTables;
+		}
+	};
+
+	const getTypeLabel = ( type: BackupBrowserItemType, allSelected: boolean ) => {
+		switch ( type ) {
+			case 'file':
+				return translate( 'Files and directories' );
+			case 'theme':
+				return allSelected
+					? translate( 'All site themes will be restored' )
+					: translate( 'WordPress Themes' );
+			case 'plugin':
+				return allSelected
+					? translate( 'All site plugins will be restored' )
+					: translate( 'WordPress Plugins' );
+			case 'table':
+				return allSelected
+					? translate( 'All site database tables will be restored' )
+					: translate( 'Site Databases' );
+		}
+	};
+
+	const renderSection = ( type: BackupBrowserItemType ) => {
+		// Trim the list down to only the specified type
+		// For files, exclude the directories for the other types
+		const items = browserSelectedList.filter( ( item ) => {
+			return (
+				item.type === type &&
+				! [ '/sql', '/wp-content/plugins', '/wp-content/themes' ].includes( item.path )
+			);
+		} );
+		if ( items.length === 0 ) {
+			if ( type === 'file' ) {
+				return null;
+			}
+			let allItemsSelectedPath = '';
+			switch ( type ) {
+				case 'theme':
+					allItemsSelectedPath = '/wp-content/themes';
+					break;
+				case 'plugin':
+					allItemsSelectedPath = '/wp-content/plugins';
+					break;
+				case 'table':
+					allItemsSelectedPath = '/sql';
+					break;
+			}
+			if (
+				browserSelectedList.some( ( item ) => {
+					if ( item.path === allItemsSelectedPath || item.path === '/' ) {
+						return true;
+					}
+					// Plugins and themes will all be included if the wp-content directory is selected
+					if ( 'table' !== type ) {
+						return item.path === '/wp-content';
+					}
+				} )
+			) {
+				return (
+					<>
+						<h4 className="rewind-flow__cta">{ getTypeLabel( type, true ) }</h4>
+					</>
+				);
+			}
+			return null;
+		}
+		let displayItems: BackupBrowserSelectedItem[] = [];
+		let extendedItems: BackupBrowserSelectedItem[] = [];
+		if ( items.length > fileDisplayLimit ) {
+			displayItems = items.slice( 0, fileDisplayLimit );
+			extendedItems = items.slice( fileDisplayLimit );
+		} else {
+			displayItems = items;
+		}
+
+		return (
+			<>
+				<h4 className="rewind-flow__cta">
+					<WordPressButton variant="link" onClick={ () => expandClick( type, false ) }>
+						{ getTypeLabel( type, false ) } { renderExpandIcon( type ) }
+					</WordPressButton>
+				</h4>
+				{ showType( type ) && (
+					<ul className="rewind-flow__files">
+						{ displayItems.map( ( item ) => (
+							<li key={ item.path }>{ item.path }</li>
+						) ) }
+					</ul>
+				) }
+				{ extendedItems.length > 0 && showType( type ) && (
+					<div className="rewind-flow__expandable-files">
+						{ ! showAllType( type ) && (
+							<WordPressButton
+								variant="link"
+								className="rewind-flow__show-all"
+								onClick={ () => expandClick( type, true ) }
+							>
+								{ translate(
+									'%(numberOfFiles)d more file or directory selected',
+									'%(numberOfFiles)d more files or directories selected',
+									{
+										count: extendedItems.length,
+										args: { numberOfFiles: extendedItems.length },
+									}
+								) }
+							</WordPressButton>
+						) }
+						{ showAllType( type ) && (
+							<ul className="rewind-flow__files">
+								{ extendedItems.map( ( item ) => (
+									<li key={ item.path }>{ item.path }</li>
+								) ) }
+							</ul>
+						) }
+					</div>
+				) }
+			</>
+		);
+	};
+
 	const renderConfirm = () => (
 		<>
 			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
@@ -135,12 +356,10 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h4 className="rewind-flow__cta">{ translate( 'The following files will be restored:' ) }</h4>
-			<ul className="rewind-flow__files">
-				{ browserCheckList.includeList.map( ( item ) => (
-					<li key={ item.id }>{ item.path }</li>
-				) ) }
-			</ul>
+			{ renderSection( 'theme' ) }
+			{ renderSection( 'plugin' ) }
+			{ renderSection( 'table' ) }
+			{ renderSection( 'file' ) }
 			<RewindFlowNotice
 				gridicon="notice"
 				title={ translate( 'Restoring will override and remove all content after this point.' ) }

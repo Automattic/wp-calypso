@@ -32,6 +32,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 				<FileBrowserHeader
 					showCheckboxes={ showCheckboxes }
 					setShowCheckboxes={ setShowCheckboxes }
+					rewindId={ rewindId }
 				/>
 			) }
 			<FileBrowserNode
