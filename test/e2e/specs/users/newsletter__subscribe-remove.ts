@@ -89,9 +89,9 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 
 			it( 'Land in Subscription Management page', async function () {
 				const subscriptionManagementPage = new SubscriptionManagementPage( page );
-				await subscriptionManagementPage.validateSubscribedSiteBy( {
-					siteURL: testAccount.getSiteURL( { protocol: false } ),
-				} );
+				await subscriptionManagementPage.validateSiteSubscribed(
+					testAccount.getSiteURL( { protocol: false } )
+				);
 			} );
 		} );
 
