@@ -218,7 +218,7 @@ const PlansFeaturesMain = ( {
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
 	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
-	const storageAddOns = useAddOns( siteId as number ).filter(
+	const storageAddOns = useAddOns( siteId ?? undefined ).filter(
 		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
 	);
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
