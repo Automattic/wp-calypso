@@ -10,7 +10,7 @@ export { isCurrentPlanExpiring } from './is-current-plan-expiring';
 export { isCurrentUserCurrentPlanOwner } from './is-current-user-current-plan-owner';
 export { isIntroductoryOfferAppliedToPlanPrice } from './is-introductory-offer-applied-to-plan-price';
 export { default as isPlanAvailableForPurchase } from './is-plan-available-for-purchase';
-export { isRequestingSitePlans } from './is-requesting-site-plans';
+export { isRequestingSitePlans, hasLoadedSitePlansFromServer } from './is-requesting-site-plans';
 export { default as isSiteOnMigrationTrial } from './trials/is-site-on-migration-trial';
 export { default as isSiteOnWooExpress } from './is-site-on-woo-express';
 export { isSitePlanDiscounted } from './is-site-plan-discounted';
