@@ -97,7 +97,7 @@ export interface Site {
 	php_version_num: number;
 	is_connected: boolean;
 	has_paid_agency_monitor: boolean;
-	is_atomic?: boolean;
+	is_atomic: boolean;
 }
 export interface SiteNode {
 	value: Site;
@@ -191,7 +191,10 @@ export type AllowedActionTypes =
 	| 'view_site'
 	| 'visit_wp_admin'
 	| 'clone_site'
-	| 'site_settings';
+	| 'site_settings'
+	| 'setup_site'
+	| 'change_domain'
+	| 'hosting_configuration';
 
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
