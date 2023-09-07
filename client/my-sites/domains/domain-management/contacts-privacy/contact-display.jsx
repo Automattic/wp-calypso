@@ -11,9 +11,12 @@ class ContactDisplay extends PureComponent {
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
+	hasRequestedWhois = false;
+
 	fetchWhois = () => {
-		if ( isEmpty( this.props.whoisData ) && ! isEmpty( this.props.selectedDomainName ) ) {
+		if ( ! this.hasRequestedWhois && ! isEmpty( this.props.selectedDomainName ) ) {
 			this.props.requestWhois( this.props.selectedDomainName );
+			this.hasRequestedWhois = true;
 		}
 	};
 
