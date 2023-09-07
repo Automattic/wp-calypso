@@ -12,7 +12,7 @@ type NewsletterCategoryResponse = {
 	newsletter_categories: NewsletterCategory[];
 };
 
-export const getSubscriberNewsletterCategoriesKey = (
+export const getSubscribedNewsletterCategoriesKey = (
 	siteId?: string | number,
 	subscriptionId?: number
 ) => [ `newsletter-categories`, siteId, subscriptionId ];
@@ -24,12 +24,12 @@ const convertNewsletterCategoryResponse = (
 	newsletterCategories: response.newsletter_categories,
 } );
 
-const useSubscriberNewsletterCategories = ( {
+const useSubscribedNewsletterCategories = ( {
 	siteId,
 	subscriptionId,
 }: NewsletterCategoryQueryProps ): UseQueryResult< NewsletterCategories > => {
 	return useQuery( {
-		queryKey: getSubscriberNewsletterCategoriesKey( siteId, subscriptionId ),
+		queryKey: getSubscribedNewsletterCategoriesKey( siteId, subscriptionId ),
 		queryFn: () =>
 			request< NewsletterCategoryResponse >( {
 				path: `/sites/${ siteId }/newsletter-categories/subscriptions${
@@ -42,4 +42,4 @@ const useSubscriberNewsletterCategories = ( {
 	} );
 };
 
-export default useSubscriberNewsletterCategories;
+export default useSubscribedNewsletterCategories;
