@@ -62,15 +62,15 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		getInProgressBackupForSite( state, siteId )
 	);
 
-	const [ showFiles, setShowFiles ] = useState< boolean >( true );
-	const [ showAllFiles, setShowAllFiles ] = useState< boolean >( false );
-	const [ showTables, setShowTables ] = useState< boolean >( true );
-	const [ showAllTables, setShowAllTables ] = useState< boolean >( false );
-	const [ showThemes, setShowThemes ] = useState< boolean >( true );
-	const [ showAllThemes, setShowAllThemes ] = useState< boolean >( false );
-	const [ showPlugins, setShowPlugins ] = useState< boolean >( true );
-	const [ showAllPlugins, setShowAllPlugins ] = useState< boolean >( false );
-	const expandClick = ( type: BackupBrowserItemType, toggleAll: boolean ) => {
+	const [ showFiles, setShowFiles ] = useState( true );
+	const [ showAllFiles, setShowAllFiles ] = useState( false );
+	const [ showTables, setShowTables ] = useState( true );
+	const [ showAllTables, setShowAllTables ] = useState( false );
+	const [ showThemes, setShowThemes ] = useState( true );
+	const [ showAllThemes, setShowAllThemes ] = useState( false );
+	const [ showPlugins, setShowPlugins ] = useState( true );
+	const [ showAllPlugins, setShowAllPlugins ] = useState( false );
+	const expandClick = ( type: BackupGrandularRestoreType, toggleAll: boolean ) => {
 		if ( toggleAll ) {
 			switch ( type ) {
 				case 'file':
