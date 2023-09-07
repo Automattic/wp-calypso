@@ -89,24 +89,28 @@ export default function TransferDomainToAnyUser( {
 			return false;
 		}
 
-		wp.req.post( `/sites/all/domain/${ selectedDomainName }/transfer`, email ).then(
-			() => {
-				dispatch(
-					successNotice(
-						translate( 'A domain transfer request has been sent to the receiving user.' ),
-						{ duration: 10000, isPersistent: true }
-					)
-				);
-			},
-			() => {
-				dispatch(
-					errorNotice(
-						translate( 'An error occurred while initiating the domain transfer.' ),
-						noticeOptions
-					)
-				);
-			}
-		);
+		wp.req
+			.post( `/sites/${ selectedSite?.ID }/domains/${ selectedDomainName }/transfer-to-any-user`, {
+				email,
+			} )
+			.then(
+				() => {
+					dispatch(
+						successNotice(
+							translate( 'A domain transfer request has been sent to the receiving user.' ),
+							{ duration: 10000, isPersistent: true }
+						)
+					);
+				},
+				() => {
+					dispatch(
+						errorNotice(
+							translate( 'An error occurred while initiating the domain transfer.' ),
+							noticeOptions
+						)
+					);
+				}
+			);
 
 		return false;
 	};
