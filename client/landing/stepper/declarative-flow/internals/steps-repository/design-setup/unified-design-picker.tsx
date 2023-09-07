@@ -13,7 +13,6 @@ import {
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
-	isBlankCanvasDesign,
 	isAssemblerDesign,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
@@ -81,7 +80,6 @@ import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
-const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
@@ -134,18 +132,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		const blankCanvasDesignOffset = allDesigns.designs.findIndex( isBlankCanvasDesign );
-		if ( blankCanvasDesignOffset !== -1 ) {
-			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
-			const blankCanvasDesign = allDesigns.designs.splice( blankCanvasDesignOffset, 1 );
-			if (
-				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-				SITE_ASSEMBLER_AVAILABLE_INTENTS.includes( intent )
-			) {
-				allDesigns.designs.push( ...blankCanvasDesign );
-			}
-		}
-
 		if ( isDesignFirstFlow ) {
 			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
 
