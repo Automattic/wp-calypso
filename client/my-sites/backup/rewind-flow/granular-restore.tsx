@@ -237,7 +237,14 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	};
 
 	const renderSection = ( type: BackupGrandularRestoreType ) => {
-		const items = browserSelectedList.filter( ( item ) => item.type === type );
+		// Trim the list down to only the specified type
+		// For files, exclude the directories for the other types
+		const items = browserSelectedList.filter( ( item ) => {
+			return (
+				item.type === type &&
+				! [ '/sql', '/wp-content/plugins', '/wp-content/themes' ].includes( item.path )
+			);
+		} );
 		if ( items.length === 0 ) {
 			if ( type === 'file' ) {
 				return null;
@@ -254,7 +261,17 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					allItemsSelectedPath = '/sql';
 					break;
 			}
-			if ( browserSelectedList.some( ( item ) => item.path === allItemsSelectedPath ) ) {
+			if (
+				browserSelectedList.some( ( item ) => {
+					if ( item.path === allItemsSelectedPath || item.path === '/' ) {
+						return true;
+					}
+					// Plugins and themes will all be included if the wp-content directory is selected
+					if ( 'table' !== type ) {
+						return item.path === '/wp-content';
+					}
+				} )
+			) {
 				return (
 					<>
 						<h4 className="rewind-flow__cta">{ getTypeLabel( type, true ) }</h4>
