@@ -2,7 +2,7 @@ import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
-import { podcasting, taxonomies, writing } from './controller';
+import { taxonomies, writing } from './controller';
 
 export default function () {
 	page(
@@ -23,18 +23,6 @@ export default function () {
 		navigation,
 		setScroll,
 		taxonomies,
-		makeLayout,
-		clientRender
-	);
-
-	page( '/settings/podcasting', siteSelection, sites, makeLayout, clientRender );
-
-	page(
-		'/settings/podcasting/:site_id',
-		siteSelection,
-		navigation,
-		setScroll,
-		podcasting,
 		makeLayout,
 		clientRender
 	);
