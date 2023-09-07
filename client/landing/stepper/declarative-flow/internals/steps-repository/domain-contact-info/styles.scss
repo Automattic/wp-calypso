@@ -1,0 +1,9 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+
+$font-family: "SF Pro Text", $sans;
+$heading-font-family: "SF Pro Display", $sans;
+
+.domain-user-transfer {
+	margin: 0;
+}
