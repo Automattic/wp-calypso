@@ -109,7 +109,7 @@ function DnsMenuOptionsButton( {
 			( record ) =>
 				record.domain !== record.data?.replace( /\.$/, '' ) &&
 				'CNAME' === record.type &&
-				'*' === record.name
+				'www' === record.name
 		);
 	}, [ dns ] );
 
@@ -120,7 +120,7 @@ function DnsMenuOptionsButton( {
 			{
 				type: 'CNAME',
 				data: `${ domainName }.`,
-				name: '*',
+				name: 'www',
 			},
 		];
 	}, [ domainName ] );
