@@ -94,8 +94,18 @@ const StatsCommercialPurchase = ( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const handleClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
-		// TODO: replace with a support ticket
-		const emailHref = 'https://jetpackme.wordpress.com/contact-support/?rel=support';
+		const emailSubject = translate( 'Jetpack Stats Commercial Classification Dispute' );
+		const emailBody = `Hi Jetpack Team,\n
+I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
+I can confirm that,
+- I don't have ads on my site.
+- I don't sell products/services on my site.
+- I don't promote a business on my site.\n
+Could you please take a look at my site and update the classification if necessary?\n
+Thanks\n\n`;
+		const emailHref = `mailto:support@jetpack.com?subject=${ encodeURIComponent(
+			emailSubject
+		) }&body=${ encodeURIComponent( emailBody ) }`;
 
 		event.preventDefault();
 
