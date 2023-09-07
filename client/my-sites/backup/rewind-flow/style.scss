@@ -222,9 +222,11 @@ a.rewind-flow-notice__title-warning:visited {
 
 	.rewind-flow__header {
 		display: block;
-		text-align: left;
-		padding-bottom: 8px;
+		line-height: 0;
+		margin-bottom: 8px;
+		padding-bottom: 0;
 		padding-top: 0;
+		text-align: left;
 	}
 
 	.rewind-flow__title {
