@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import { BackupBrowserSelectedItem } from 'calypso/state/rewind/browser/types';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserSelectedList from 'calypso/state/rewind/selectors/get-backup-browser-selected-list';
@@ -280,8 +281,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			}
 			return null;
 		}
-		let displayItems = [];
-		let extendedItems = [];
+		let displayItems: BackupBrowserSelectedItem[] = [];
+		let extendedItems: BackupBrowserSelectedItem[] = [];
 		if ( items.length > fileDisplayLimit ) {
 			displayItems = items.slice( 0, fileDisplayLimit );
 			extendedItems = items.slice( fileDisplayLimit );
