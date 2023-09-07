@@ -5,6 +5,7 @@ import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
+import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -16,6 +17,7 @@ const FileBrowserHeader: FunctionComponent = () => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
+	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
 
 	const onDownloadClick = () => {
 		// eslint-disable-next-line no-console
@@ -52,6 +54,7 @@ const FileBrowserHeader: FunctionComponent = () => {
 					<Button
 						className="file-browser-header__restore-button"
 						onClick={ onRestoreClick }
+						disabled={ isRestoreDisabled }
 						primary
 					>
 						{ translate( 'Restore selected files' ) }
