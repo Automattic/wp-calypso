@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
@@ -19,6 +20,9 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import LicenseActions from './license-actions';
+
 import './style.scss';
 
 interface Props {
@@ -55,6 +59,8 @@ export default function LicensePreview( {
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
+
+	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -100,6 +106,9 @@ export default function LicensePreview( {
 			);
 		}
 	}, [] );
+
+	const isSiteAtomic =
+		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
 
 	return (
 		<div
@@ -183,9 +192,20 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					<Button onClick={ open } className="license-preview__toggle" borderless>
-						<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
-					</Button>
+					{ isSiteAtomic ? (
+						<LicenseActions
+							siteUrl={ siteUrl }
+							licenseKey={ licenseKey }
+							product={ product }
+							attachedAt={ attachedAt }
+							revokedAt={ revokedAt }
+							licenseType={ licenseType }
+						/>
+					) : (
+						<Button onClick={ open } className="license-preview__toggle" borderless>
+							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
+						</Button>
+					) }
 				</div>
 			</LicenseListItem>
 
