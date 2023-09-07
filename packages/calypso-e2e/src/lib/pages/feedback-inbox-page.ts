@@ -19,7 +19,7 @@ export class FeedbackInboxPage {
 	/**
 	 * Visit the Jetpack Forms Inbox page.
 	 *
-	 * @param siteUrlWithProtocol
+	 * @param {string} siteUrlWithProtocol Site URL with the protocol.
 	 */
 	async visit( siteUrlWithProtocol: string ): Promise< void > {
 		const url = new URL(
