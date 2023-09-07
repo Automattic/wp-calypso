@@ -220,7 +220,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const getTypeLabel = ( type: BackupGrandularRestoreType, allSelected: boolean ) => {
 		switch ( type ) {
 			case 'file':
-				return translate( 'Files' );
+				return translate( 'Files and directories' );
 			case 'theme':
 				return allSelected
 					? translate( 'All site themes will be restored' )
