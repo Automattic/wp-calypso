@@ -41,6 +41,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
+import { ThemeUpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -69,6 +70,7 @@ import {
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
 import {
+	canUseTheme,
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
@@ -82,6 +84,7 @@ import {
 	getThemeDetailsUrl,
 	getThemeForumUrl,
 	getThemeRequestErrors,
+	getThemeType,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -90,6 +93,7 @@ import {
 	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
+import { getMarketplaceThemeProduct } from 'calypso/state/themes/selectors/get-marketplace-theme-product';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
@@ -164,6 +168,7 @@ class ThemeSheet extends Component {
 		disabledButton: true,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
+		showUpgradeModal: false,
 	};
 
 	scrollToTop = () => {
@@ -215,7 +220,7 @@ class ThemeSheet extends Component {
 		!! this.props.taxonomies?.theme_status?.find( ( status ) => status.slug === 'removed' );
 
 	onButtonClick = () => {
-		const { defaultOption, secondaryOption, themeId } = this.props;
+		const { defaultOption, secondaryOption, themeId, themeRequiresPlanUpgrade } = this.props;
 		const selectedStyleVariation = this.getSelectedStyleVariation();
 		if ( selectedStyleVariation ) {
 			this.props.setThemePreviewOptions(
@@ -226,7 +231,11 @@ class ThemeSheet extends Component {
 			);
 		}
 
-		defaultOption.action && defaultOption.action( themeId );
+		if ( themeRequiresPlanUpgrade ) {
+			this.setState( { showUpgradeModal: true } );
+		} else {
+			defaultOption.action && defaultOption.action( themeId );
+		}
 	};
 
 	onUnlockStyleButtonClick = () => {
@@ -943,13 +952,12 @@ class ThemeSheet extends Component {
 		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
-
+		const { isActive, isLoggedIn, themeRequiresPlanUpgrade } = this.props;
 		return (
 			<Button
 				className="theme__sheet-primary-button"
 				href={
-					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
+					getUrl && ! themeRequiresPlanUpgrade && ( key === 'customize' || ! isLoggedIn )
 						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
 						: null
 				}
@@ -1093,6 +1101,14 @@ class ThemeSheet extends Component {
 		);
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
+	};
+
+	onThemeUpgradeModalClose = () => {
+		this.props.recordTracksEvent( 'calypso_theme_sheet_theme_upgrade_modal_close_button_click', {
+			theme_name: this.props.themeId,
+			theme_type: this.props.themeType,
+		} );
+		this.setState( { showUpgradeModal: false } );
 	};
 
 	onAtomicThemeActive = () => {
@@ -1368,6 +1384,25 @@ class ThemeSheet extends Component {
 					closeModal={ this.onPremiumGlobalStylesUpgradeModalClose }
 					isOpen={ this.state.showUnlockStyleUpgradeModal }
 				/>
+				<ThemeUpgradeModal
+					isOpen={ this.state.showUpgradeModal }
+					slug={ themeId }
+					closeModal={ this.onThemeUpgradeModalClose }
+					isMarketplacePlanSubscriptionNeeeded={
+						isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes
+					}
+					isMarketplaceThemeSubscriptionNeeded={
+						isExternallyManagedTheme && ! isMarketplaceThemeSubscribed
+					}
+					checkout={ () => {
+						if ( this.props.defaultOption.action ) {
+							this.props.defaultOption.action( this.props.themeId );
+						} else {
+							window.location.href = this.getUrl();
+						}
+					} }
+					marketplaceProduct={ this.props.selectedMarketplaceProduct }
+				/>
 				<PerformanceTrackerStop />
 				{ isThemeActivationSyncStarted && (
 					<SyncActiveTheme
@@ -1505,6 +1540,7 @@ export default connect(
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
+			themeType: getThemeType( state, themeId ),
 			isWpcomStaging,
 			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
@@ -1528,6 +1564,7 @@ export default connect(
 			softLaunched: theme?.soft_launched,
 			styleVariations: theme?.style_variations || [],
 			selectedStyleVariationSlug: getCurrentQueryArguments( state )?.style_variation,
+			selectedMarketplaceProduct: getMarketplaceThemeProduct( state, themeId ),
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
@@ -1537,6 +1574,7 @@ export default connect(
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
 			isLivePreviewSupported,
+			themeRequiresPlanUpgrade: ! canUseTheme( state, siteId, themeId ),
 		};
 	},
 	{
