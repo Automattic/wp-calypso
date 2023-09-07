@@ -16,18 +16,16 @@ import type { PlansIntent } from './use-grid-plans';
  * If the specified features don't exist for a particular
  * Plan, they will be ignored.
  *
- * The highlightedFeatures can be passed as a
- * prop to the PlansFeaturesMain. See example in
- * PlansWrapper component in stepper onboarding.
- *
  * The Logic for processing the highlightedFeatures
  * lives in the adjacent usePlanFeaturesForGridPlans hook.
  *
  * TODO clk: move to plans data store
  */
-const useHighlightedFeatures = ( intent: PlansIntent | null, isInSignup: boolean ): string[] => {
-	// Hook only returns highlighted features during signup
-	if ( 'plans-newsletter' === intent && isInSignup ) {
+const useHighlightedFeatures = (
+	intent: PlansIntent | undefined,
+	isInSignup = false
+): string[] => {
+	if ( isInSignup && intent && 'plans-newsletter' === intent ) {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
