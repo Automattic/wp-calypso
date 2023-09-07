@@ -100,6 +100,7 @@ describe( 'Site Assembler', () => {
 		it( 'Select "Sections"', async function () {
 			await siteAssemblerFlow.clickLayoutComponentType( 'Sections' );
 			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
+			await siteAssemblerFlow.clickButton( 'Save and continue' );
 
 			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
 		} );

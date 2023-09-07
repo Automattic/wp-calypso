@@ -13,6 +13,7 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_REQUEST,
 	COMMENTS_SET_ACTIVE_REPLY,
+	COMMENTS_TOGGLE_INLINE_EXPANDED,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 } from 'calypso/state/action-types';
@@ -380,5 +381,14 @@ export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
 		siteId,
 		postId,
 		commentId,
+	},
+} );
+
+export const toggleInlineCommentsExpanded = ( { siteId, postId, streamKey } ) => ( {
+	type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+	payload: {
+		siteId,
+		postId,
+		streamKey,
 	},
 } );

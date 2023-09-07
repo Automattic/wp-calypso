@@ -300,8 +300,6 @@ $font-family: "SF Pro Text", $sans;
 		margin: 0 -16px 32px;
 		margin-bottom: 32px;
 		overflow-y: auto;
-		// Reserve space for the scrollbar to prevent unwanted layout change
-		scrollbar-gutter: stable;
 
 		&.screen-category-list__body {
 			// Reduces .navigator-header margin

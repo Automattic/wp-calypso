@@ -3,11 +3,12 @@ import { getCurrencyObject } from '@automattic/format-currency';
 import moment from 'moment';
 
 export type SiteSubscriptionDetailsProps = {
+	subscriptionId: number;
 	subscriberCount: number;
 	dateSubscribed: string;
 	siteIcon: string | null;
 	name: string;
-	blogId: string;
+	blogId: number;
 	deliveryMethods: Reader.SiteSubscriptionDeliveryMethods;
 	url: string;
 	paymentDetails: Reader.SiteSubscriptionPaymentDetails[];

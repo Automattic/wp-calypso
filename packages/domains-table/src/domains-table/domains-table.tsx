@@ -5,6 +5,8 @@ import {
 	SiteDetails,
 	SiteDomainsQueryFnData,
 	useDomainsBulkActionsMutation,
+	DomainUpdateStatus,
+	JobStatus,
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { useQueries } from '@tanstack/react-query';
@@ -21,6 +23,7 @@ import { DomainsTableFilter } from '../domains-table-filters/index';
 import { domainsTableColumns } from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
+import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 
@@ -63,6 +66,9 @@ type Value = {
 	) => Promise< SiteDomainsQueryFnData >;
 	selectedDomains: Set< string >;
 	hasSelectedDomains: boolean;
+	completedJobs: JobStatus[];
+	domainResults: Map< string, DomainUpdateStatus[] >;
+	handleRestartDomainStatusPolling: () => void;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -111,6 +117,9 @@ export const DomainsTable = ( {
 	}, [ allSiteDomains ] );
 
 	const { setAutoRenew } = useDomainsBulkActionsMutation();
+
+	const { completedJobs, domainResults, handleRestartDomainStatusPolling } =
+		useDomainBulkUpdateStatus();
 
 	useLayoutEffect( () => {
 		if ( ! domains ) {
@@ -254,6 +263,7 @@ export const DomainsTable = ( {
 			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
 			.map( ( domain ) => domain.domain );
 		setAutoRenew( domainsToBulkUpdate, enable );
+		handleRestartDomainStatusPolling();
 	};
 
 	const hideOwnerColumn = shouldHideOwnerColumn(
@@ -281,6 +291,9 @@ export const DomainsTable = ( {
 		filteredData,
 		selectedDomains,
 		hasSelectedDomains,
+		completedJobs,
+		domainResults,
+		handleRestartDomainStatusPolling,
 	};
 
 	return (

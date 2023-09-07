@@ -19,14 +19,17 @@ export interface VideoPressOnboardingIntentModalContentProps extends IntroModalC
 		onClick?: () => void;
 	};
 	isComingSoon?: boolean;
+	intent?: string;
 	surveyTitle?: string;
 	surveyUrl?: string;
 	source?: string;
 }
+const showScreenshot = ( intent?: string ) => [ 'video-upload' ].indexOf( intent || '' ) < 0;
 
 const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModalContentProps > = ( {
 	title,
 	description,
+	intent,
 	featuresList,
 	actionButton,
 	isComingSoon,
@@ -40,6 +43,7 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	const [ waitlistEmail, setWaitlistEmail ] = useState( '' );
 	const [ waitlistSubmitted, setWaitlistSubmitted ] = useState( false );
 	const [ isWaitlistEmailValid, setIsWaitlistEmailValid ] = useState( false );
+	const [ isWaitlistFormEnabled, setIsWaitlistFormEnabled ] = useState( true );
 
 	const handleWaitlistEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const newEmail = event?.target?.value;
@@ -53,9 +57,10 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 	};
 
 	const onWaitlistSubmit = () => {
-		if ( ! isWaitlistEmailValid ) {
+		if ( ! isWaitlistEmailValid || ! isWaitlistFormEnabled ) {
 			return;
 		}
+		setIsWaitlistFormEnabled( false );
 
 		const projectId = '34A774AE45CB5DBB';
 
@@ -80,9 +85,19 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 						sessionStorage.setItem( `videopress-user-intent-waitlist-${ source }`, '1' );
 					}
 				}
+				setIsWaitlistFormEnabled( true );
 			} )
-			// eslint-disable-next-line no-console
-			.catch( ( err ) => console.error( err ) );
+			.catch( ( err ) => {
+				// eslint-disable-next-line no-console
+				console.error( err );
+				setIsWaitlistFormEnabled( true );
+			} );
+	};
+
+	const onWaitlistInputKeyUp = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( 'Enter' === event.key ) {
+			onWaitlistSubmit();
+		}
 	};
 
 	useEffect( () => {
@@ -152,14 +167,16 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 											placeholder={ translate( 'Enter your email' ) }
 											value={ waitlistEmail }
 											onChange={ handleWaitlistEmailChange }
+											onKeyUp={ onWaitlistInputKeyUp }
 											onBlur={ handleWaitlistEmailBlur }
 											isError={ ! isWaitlistEmailValid && '' !== waitlistEmail }
+											disabled={ ! isWaitlistFormEnabled }
 										/>
 										<Button
 											className="intro__button"
 											primary
 											onClick={ onWaitlistSubmit }
-											disabled={ ! isWaitlistEmailValid }
+											disabled={ ! isWaitlistEmailValid || ! isWaitlistFormEnabled }
 										>
 											{ translate( 'Join the waitlist' ) }
 										</Button>
@@ -197,12 +214,14 @@ const VideoPressOnboardingIntentModal: React.FC< VideoPressOnboardingIntentModal
 					) }
 				</div>
 				{ children }
-				<div className="videopress-intro-modal__screenshots">
-					<img
-						src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
-						alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
-					/>
-				</div>
+				{ showScreenshot( intent ) && (
+					<div className="videopress-intro-modal__screenshots">
+						<img
+							src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
+							alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
+						/>
+					</div>
+				) }
 			</div>
 			{ surveyTitle && surveyUrl && (
 				<div className="videopress-intro-modal__survey">

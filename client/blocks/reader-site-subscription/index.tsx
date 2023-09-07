@@ -5,13 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
-import { useSiteSubscription } from './context';
+import { Path, useSiteSubscription } from './context';
 import SiteSubscriptionDetails from './details';
 import './styles.scss';
 
 const ReaderSiteSubscription = () => {
 	const translate = useTranslate();
-	const { blogId, data, isLoading, error, navigate } = useSiteSubscription();
+	const { data, isLoading, error, navigate } = useSiteSubscription();
 
 	if ( isLoading ) {
 		return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
@@ -21,7 +21,7 @@ const ReaderSiteSubscription = () => {
 		<div className="site-subscription-page">
 			<Button
 				className="site-subscription-page__back-button"
-				onClick={ () => navigate( '/subscriptions/sites' ) }
+				onClick={ () => navigate( Path.ManageAllSubscriptions ) }
 				icon={ <Gridicon icon="chevron-left" size={ 12 } /> }
 			>
 				{ translate( 'Manage all subscriptions' ) }
@@ -29,7 +29,7 @@ const ReaderSiteSubscription = () => {
 
 			<div className="site-subscription-page__centered-content">
 				<div className="site-subscription-page__main-content">
-					{ error || ! blogId || ! data || Reader.isErrorResponse( data ) ? (
+					{ error || ! data || Reader.isErrorResponse( data ) ? (
 						<Notice
 							className="site-subscription-page__fetch-details-error"
 							type={ NoticeType.Error }
@@ -38,7 +38,8 @@ const ReaderSiteSubscription = () => {
 						</Notice>
 					) : (
 						<SiteSubscriptionDetails
-							blogId={ blogId }
+							subscriptionId={ data.ID }
+							blogId={ data.blog_ID }
 							name={ data.name }
 							subscriberCount={ data.subscriber_count }
 							dateSubscribed={ data.date_subscribed }

@@ -627,7 +627,10 @@ export class EditorPage {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {URL} Published article's URL.
 	 */
-	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
+	async publish( {
+		visit = false,
+		timeout,
+	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
 		const actionsArray = [];
 
@@ -649,12 +652,14 @@ export class EditorPage {
 				this.page.waitForResponse(
 					async ( response ) =>
 						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
-						response.request().method() === 'POST'
+						response.request().method() === 'POST',
+					{ timeout: timeout }
 				),
 				this.page.waitForResponse(
 					async ( response ) =>
 						/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
-						response.request().method() === 'PUT'
+						response.request().method() === 'PUT',
+					{ timeout: timeout }
 				),
 			] ),
 			...actionsArray,
@@ -668,7 +673,7 @@ export class EditorPage {
 		}
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL );
+			await this.visitPublishedPost( publishedURL, { timeout: timeout } );
 		}
 
 		return new URL( publishedURL );
@@ -732,7 +737,10 @@ export class EditorPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	private async visitPublishedPost( url: string ): Promise< void > {
+	private async visitPublishedPost(
+		url: string,
+		{ timeout }: { timeout?: number } = {}
+	): Promise< void > {
 		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
 		// panel to close immediately and leave the post in the unsaved state for
 		// some reason. Since the post state is unsaved, the warning dialog will be
@@ -744,7 +752,7 @@ export class EditorPage {
 		// this listener can be removed.
 		this.allowLeavingWithoutSaving();
 
-		await this.page.goto( url, { waitUntil: 'domcontentloaded' } );
+		await this.page.goto( url, { waitUntil: 'domcontentloaded', timeout: timeout } );
 
 		await reloadAndRetry( this.page, confirmPostShown );
 
@@ -761,7 +769,7 @@ export class EditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.waitForSelector( '.entry-content', { timeout: 15 * 1000 } );
+			await page.getByRole( 'main' ).waitFor( { timeout: timeout } );
 		}
 	}
 
