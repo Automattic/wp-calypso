@@ -1,4 +1,5 @@
 import { Plans, WpcomPlansUI } from '@automattic/data-stores';
+import { getCurrencyObject } from '@automattic/format-currency';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
@@ -22,6 +23,29 @@ interface Props {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
 	storageAddOns?: ( AddOnMeta | null )[] | null;
+	currencyCode?: string | null;
+}
+
+/***
+ * The 2023 Pricing Grid handles prices differently than add-ons, so for the time being we need to
+ * do some conversion to calculate totals correctly.
+ *
+ * The 2023 pricing grid currently handles prices in some currencies in their smallest unit, like
+ * the Japanese Yen. For others, however, like USD, prices are not handled in their smallest unit,
+ * like the US dollar.
+ *
+ * For example, 2000 yen would be represented by the integer 2000 since a yen is the smallest unit.
+ * $20.00, however, would be represented as the integer 20, and not 2000. Since storage add-on
+ * prices are always handled in the smallest unit, we need to convert them, when appropriate, to the
+ * correct integer.
+ *
+ * We should expose a more friendly function from the format-currency package
+ */
+function convertPriceForSmallestUnit( price: number, currencyCode: string | null ) {
+	const currencyObject = getCurrencyObject( price, currencyCode || '', {
+		isSmallestUnit: true,
+	} );
+	return parseInt( currencyObject.integer.replace( /,/g, '' ) );
 }
 
 function getTotalPrices( planPrices: PlanPrices, addOnPrice = 0 ): PlanPrices {
@@ -51,6 +75,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
 	storageAddOns,
+	currencyCode = '',
 }: Props ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 	const currentSitePlanSlug = useSelector( ( state: IAppState ) =>
@@ -70,8 +95,14 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 			const storageAddOnPrices = storageAddOns?.find( ( addOn ) => {
 				return addOn?.featureSlugs?.includes( selectedStorageOption || '' );
 			} )?.prices;
-			const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
-			const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
+			const storageAddOnPriceMonthly = convertPriceForSmallestUnit(
+				storageAddOnPrices?.monthlyPrice || 0,
+				currencyCode
+			);
+			const storageAddOnPriceYearly = convertPriceForSmallestUnit(
+				storageAddOnPrices?.yearlyPrice || 0,
+				currencyCode
+			);
 
 			const planPricesMonthly = getPlanPrices( state, {
 				planSlug,
