@@ -8,7 +8,7 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	JetpackFormsInboxPage,
+	FeedbackInboxPage,
 	RestAPIClient,
 	PostResponse,
 } from '@automattic/calypso-e2e';
@@ -109,10 +109,10 @@ describe( DataHelper.createSuiteTitle( 'Full Form Submission Flow' ), function (
 	} );
 
 	describe( 'Validate response', function () {
-		let jetpackFormsInboxPage: JetpackFormsInboxPage;
+		let feedbackInboxPage: FeedbackInboxPage;
 		it( 'Navigate to the Jetpack Forms Inbox', async function () {
-			jetpackFormsInboxPage = new JetpackFormsInboxPage( page );
-			await jetpackFormsInboxPage.visit( testAccount.getSiteURL( { protocol: true } ) );
+			feedbackInboxPage = new FeedbackInboxPage( page );
+			await feedbackInboxPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 		} );
 
 		it( 'Search for unique response email until result shows up', async function () {
@@ -123,8 +123,8 @@ describe( DataHelper.createSuiteTitle( 'Full Form Submission Flow' ), function (
 			// The email is unique to every run, so will only ever return one response result when the search is successful.
 			// So we loop over a search attempt on the email, looking for a folder tab with a result in it!
 			const searchAndClickFolderWithResult = async () => {
-				await jetpackFormsInboxPage.clearSearch();
-				await jetpackFormsInboxPage.searchReponses( formData.email );
+				await feedbackInboxPage.clearSearch();
+				await feedbackInboxPage.searchReponses( formData.email );
 				await page.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } ).click( { timeout: 4 * 1000 } );
 			};
 
@@ -142,15 +142,15 @@ describe( DataHelper.createSuiteTitle( 'Full Form Submission Flow' ), function (
 		} );
 
 		it( 'Click response row', async () => {
-			await jetpackFormsInboxPage.clickResponseRowByText( formData.name );
+			await feedbackInboxPage.clickResponseRowByText( formData.name );
 		} );
 
 		it( 'Validate response data', async () => {
-			await jetpackFormsInboxPage.validateTextInSubmission( formData.name );
-			await jetpackFormsInboxPage.validateTextInSubmission( formData.email );
-			await jetpackFormsInboxPage.validateTextInSubmission( formData.phone );
-			await jetpackFormsInboxPage.validateTextInSubmission( formData.hearAboutUsOption );
-			await jetpackFormsInboxPage.validateTextInSubmission( formData.otherDetails );
+			await feedbackInboxPage.validateTextInSubmission( formData.name );
+			await feedbackInboxPage.validateTextInSubmission( formData.email );
+			await feedbackInboxPage.validateTextInSubmission( formData.phone );
+			await feedbackInboxPage.validateTextInSubmission( formData.hearAboutUsOption );
+			await feedbackInboxPage.validateTextInSubmission( formData.otherDetails );
 		} );
 	} );
 } );

@@ -2,9 +2,9 @@ import { Page } from 'playwright';
 import { envVariables } from '../..';
 
 /**
- * Page representing the Jetpack Forms Inbox page. (The "Inbox", non-"Classic" view for forms responses.)
+ * Page repsresenting the Feedback page, Inbox view variant. Accessed under Sidebar > Feedback.
  */
-export class JetpackFormsInboxPage {
+export class FeedbackInboxPage {
 	private page: Page;
 
 	/**
