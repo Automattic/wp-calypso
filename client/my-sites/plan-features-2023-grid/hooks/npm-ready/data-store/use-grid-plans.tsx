@@ -133,7 +133,7 @@ interface Props {
 	/**
 	 * If the subdomain generation is unsuccessful we do not show the free plan
 	 */
-	isSubdomainGenerated?: boolean;
+	isSubdomainGenerated: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -223,7 +223,7 @@ const usePlanTypesWithIntent = ( {
 	// Filters out the free plan unless a valid subdomain is generated.
 	// This is because, on a free plan,  a custom domain can only redirect to the hosted site.
 	// To effectively communicate this, a valid subdomain is necessary.
-	if ( isSubdomainGenerated === false ) {
+	if ( ! isSubdomainGenerated ) {
 		planTypes = planTypes.filter( ( planType ) => planType !== TYPE_FREE );
 	}
 
@@ -241,6 +241,7 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
+	isSubdomainGenerated,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -248,6 +249,7 @@ const useGridPlans = ( {
 			selectedPlan,
 			sitePlanSlug,
 			hideEnterprisePlan,
+			isSubdomainGenerated,
 		} ),
 		term,
 	} );
@@ -257,6 +259,7 @@ const useGridPlans = ( {
 			selectedPlan,
 			sitePlanSlug,
 			hideEnterprisePlan,
+			isSubdomainGenerated,
 		} ),
 		term,
 	} );

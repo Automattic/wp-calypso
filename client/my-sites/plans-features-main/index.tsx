@@ -640,7 +640,7 @@ const PlansFeaturesMain = ( {
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 			{ ( isLoadingGridPlans || resolvedSubdomainName.isLoading ) && <Spinner size={ 30 } /> }
-			{ ( ! isLoadingGridPlans || ! resolvedSubdomainName.isLoading ) && (
+			{ ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div
