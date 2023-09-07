@@ -115,10 +115,9 @@ export class EmailClient {
 		}
 
 		const links = message.html.links as Link[];
-		const regexp = new RegExp( key, 'i' );
 
 		for ( const link of links ) {
-			if ( link.text && link.text.trim().search( regexp ) >= 0 ) {
+			if ( link.text && link.text.trim().includes( key.trim() ) ) {
 				return link.href as string;
 			}
 		}
