@@ -183,7 +183,7 @@ const Home = ( {
 				<TrackComponentView
 					eventName="calypso_customer_home_my_site_view_layout_error"
 					eventProperties={ {
-						siteId: siteId,
+						site_id: siteId,
 						error: homeLayoutError?.message ?? 'Layout is not available.',
 					} }
 				/>
