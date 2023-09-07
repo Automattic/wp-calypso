@@ -7,6 +7,7 @@ import page from 'page';
 import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
@@ -44,7 +45,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 		console.log( browserCheckList );
 	};
 	const onRestoreClick = () => {
-		// TODO: Add tracking
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_file' ) );
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
 	// When the checkbox is clicked, we'll update the check state in the state
