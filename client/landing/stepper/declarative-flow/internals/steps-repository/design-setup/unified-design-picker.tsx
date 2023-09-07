@@ -35,9 +35,7 @@ import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgr
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
-import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import {
@@ -45,8 +43,8 @@ import {
 	getTheme,
 	isSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
+import { getMarketplaceThemeProduct } from 'calypso/state/themes/selectors/get-marketplace-theme-product';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
-import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
@@ -344,19 +342,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
 	const fullLengthScreenshot = theme?.screenshots?.[ 0 ]?.replace( /\?.*/, '' );
 
-	const marketplaceThemeProducts =
-		useSelector( ( state ) =>
-			getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( selectedDesignThemeId ) )
-		) || [];
-	const marketplaceProductSlug =
-		marketplaceThemeProducts.length !== 0
-			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
-			: null;
+	const selectedMarketplaceProduct = useSelector( ( state ) =>
+		getMarketplaceThemeProduct( state, selectedDesignThemeId )
+	);
 
-	const selectedMarketplaceProduct =
-		marketplaceThemeProducts.find(
-			( product ) => product.product_slug === marketplaceProductSlug
-		) || marketplaceThemeProducts[ 0 ];
+	const marketplaceProductSlug = selectedMarketplaceProduct?.product_slug;
 
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
