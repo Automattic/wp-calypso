@@ -73,7 +73,13 @@ class ThemesSelection extends Component {
 		}
 	}
 
-	recordSearchResultsClick = ( themeId, resultsRank, action, variation = '@theme' ) => {
+	recordSearchResultsClick = (
+		themeId,
+		resultsRank,
+		action,
+		variation = '@theme',
+		isActiveTheme = false
+	) => {
 		const { query, filterString, themes } = this.props;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
@@ -82,6 +88,7 @@ class ThemesSelection extends Component {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: themeId,
+			is_active_theme: isActiveTheme,
 			style_variation: variation,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
@@ -104,9 +111,13 @@ class ThemesSelection extends Component {
 
 	onScreenshotClick = ( themeId, resultsRank ) => {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! this.props.isThemeActive( themeId ) ) {
-			this.recordSearchResultsClick( themeId, resultsRank, 'screenshot_info' );
-		}
+		this.recordSearchResultsClick(
+			themeId,
+			resultsRank,
+			'screenshot_info',
+			'@theme',
+			this.props.isThemeActive( themeId )
+		);
 		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 

@@ -50,7 +50,9 @@ const StatsPurchasePage = ( {
 	);
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
-	const isCommercial = useSelector( ( state ) => getSiteOption( state, siteId, 'is_commercial' ) );
+	const isCommercial = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'is_commercial' )
+	) as boolean;
 
 	const { isRequestingSitePurchases, isFreeOwned, isPWYWOwned, supportCommercialUse } =
 		useStatsPurchases( siteId );
@@ -199,6 +201,7 @@ const StatsPurchasePage = ( {
 												siteId={ siteId }
 												redirectUri={ query.redirect_uri ?? '' }
 												from={ query.from ?? '' }
+												isCommercial={ isCommercial }
 											/>
 										</div>
 									) }

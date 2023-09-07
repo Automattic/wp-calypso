@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 import { AppState } from 'calypso/types';
@@ -88,14 +87,6 @@ const isNotCompatibleThemes = ( themeId: string ) => {
  */
 export const getIsLivePreviewSupported = ( state: AppState, themeId: string, siteId: number ) => {
 	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
-		return false;
-	}
-
-	/**
-	 * This is temporary condition to disable Block Theme Previews on Atomic sites.
-	 * FIXME: Remove this condition once we addressed https://github.com/WordPress/gutenberg/issues/53284.
-	 */
-	if ( isSiteWpcomAtomic( state, siteId ) ) {
 		return false;
 	}
 

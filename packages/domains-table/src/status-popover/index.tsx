@@ -8,9 +8,16 @@ import './style.scss';
 type StatusPopoverProps = {
 	children: React.ReactNode;
 	className?: string;
+	popoverTargetElement?: React.ReactNode;
+	position?: React.ComponentProps< typeof Popover >[ 'position' ];
 };
 
-export const StatusPopover = ( { children, className }: StatusPopoverProps ) => {
+export const StatusPopover = ( {
+	children,
+	className,
+	popoverTargetElement = <Gridicon icon="info-outline" size={ 18 } />,
+	position = 'top',
+}: StatusPopoverProps ) => {
 	const iconRef = useRef( null );
 	const [ inPopover, setInPopover ] = useState( false );
 	const [ inButton, setInButton ] = useState( false );
@@ -45,7 +52,7 @@ export const StatusPopover = ( { children, className }: StatusPopoverProps ) => 
 				ref={ iconRef }
 				className={ classNames( 'status-popover', className ) }
 			>
-				<Gridicon icon="info-outline" size={ 18 } />
+				{ popoverTargetElement }
 			</button>
 			{ showPopover && (
 				<Popover
@@ -53,7 +60,7 @@ export const StatusPopover = ( { children, className }: StatusPopoverProps ) => 
 					id="status-popover"
 					isVisible
 					context={ iconRef.current }
-					position="top"
+					position={ position }
 					className={ classNames( 'status-popover__tooltip', className ) }
 					onMouseEnter={ handleOnMouseEnterPopover }
 					onMouseLeave={ handleOnMouseLeavePopover }
