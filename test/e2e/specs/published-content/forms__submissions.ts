@@ -4,12 +4,13 @@
 
 import {
 	DataHelper,
-	EditorPage,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
 	JetpackFormsInboxPage,
+	RestAPIClient,
+	PostResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Locator } from 'playwright';
 
@@ -26,45 +27,60 @@ const postTitle = DataHelper.getRandomPhrase();
 
 declare const browser: Browser;
 
+/**
+ * Tests the process of a user submitting a form and the site owner checking the received response.
+ *
+ * Keywords: Jetpack, Forms, Feedback
+ */
 describe( DataHelper.createSuiteTitle( 'Full Form Submission Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
-	let editorPage: EditorPage;
 	let publishedFormLocator: Locator;
 
 	let testAccount: TestAccount;
+	let restAPIClient: RestAPIClient;
+	let newPostDetails: PostResponse;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
-	} );
 
-	describe( 'Create a new post with a Registration Form', function () {
-		it( 'Go to the new post page', async function () {
-			await editorPage.visit( 'post' );
-		} );
+		const postContent = `<!-- wp:jetpack/contact-form {"subject":"A new registration from your website","to":"","style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
+						<div class="wp-block-jetpack-contact-form" style="padding-top:16px;padding-right:16px;padding-bottom:16px;padding-left:16px"><!-- wp:jetpack/field-name {"required":true,"requiredText":"(required)"} /-->
 
-		it( 'Enter post title', async function () {
-			await editorPage.enterTitle( postTitle );
-		} );
+						<!-- wp:jetpack/field-email {"required":true,"requiredText":"(required)"} /-->
 
-		it( 'Add a Registration Form block', async function () {
-			await editorPage.addBlockFromSidebar( 'Registration Form', '[aria-label="Block: Form"]', {
-				noSearch: true,
-			} );
-		} );
+						<!-- wp:jetpack/field-telephone {"requiredText":"(required)"} /-->
 
-		it( 'Publish and visit post', async function () {
-			await editorPage.publish( { visit: true } );
-		} );
+						<!-- wp:jetpack/field-select {"label":"How did you hear about us?","requiredText":"(required)","options":["Search Engine","Social Media","TV","Radio","Friend or Family"],"toggleLabel":"Select one option"} /-->
+
+						<!-- wp:jetpack/field-textarea {"label":"Other Details","requiredText":"(required)"} /-->
+
+						<!-- wp:jetpack/button {"element":"button","text":"Send","lock":{"remove":true}} /--></div>
+						<!-- /wp:jetpack/contact-form -->
+		`;
+
+		restAPIClient = new RestAPIClient( testAccount.credentials );
+
+		// Create a post with the Registration Forms added.
+		newPostDetails = await restAPIClient.createPost(
+			testAccount.credentials.testSites?.primary.id as number,
+			{
+				title: postTitle,
+				content: postContent,
+			}
+		);
 	} );
 
 	describe( 'Fill and submit form', function () {
+		it( 'View the published post', async function () {
+			await page.goto( newPostDetails.URL );
+		} );
+
 		it( 'Fill out form', async function () {
 			publishedFormLocator = page.locator( "[data-test='contact-form']" );
 
