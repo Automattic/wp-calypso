@@ -263,7 +263,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			);
 		}
 
-		const emailForwardsLimit = 100;
+		const emailForwardsLimit = 25;
 		const isAtEmailForwardsLimit = mailboxes.length >= emailForwardsLimit;
 
 		return (
