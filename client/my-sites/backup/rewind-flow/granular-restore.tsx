@@ -320,7 +320,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 										count: extendedItems.length,
 										args: { numberOfFiles: extendedItems.length },
 									}
-								) }{ ' ' }
+								) }
 							</WordPressButton>
 						) }
 						{ showAllType( type ) && (
