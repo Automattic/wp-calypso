@@ -192,7 +192,7 @@ const StatsPurchasePage = ( {
 							}
 							{
 								// blog is commercial or we are forcing a product - show the purchase page
-								( redirectToCommercial || isCommercial ) && (
+								( redirectToCommercial || ( ! isForceProductRedirect && isCommercial ) ) && (
 									<div className="stats-purchase-page__notice">
 										<StatsSingleItemPagePurchase
 											siteSlug={ siteSlug ?? '' }
@@ -208,7 +208,8 @@ const StatsPurchasePage = ( {
 							}
 							{
 								// blog is personal or we are forcing a product - show the purchase page
-								( redirectToPersonal || isCommercial === false ) && (
+								( redirectToPersonal ||
+									( ! isForceProductRedirect && isCommercial === false ) ) && (
 									<StatsSingleItemPersonalPurchasePage
 										siteSlug={ siteSlug || '' }
 										maxSliderPrice={ maxSliderPrice ?? 10 }
