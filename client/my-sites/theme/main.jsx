@@ -1395,6 +1395,10 @@ class ThemeSheet extends Component {
 						isExternallyManagedTheme && ! isMarketplaceThemeSubscribed
 					}
 					checkout={ () => {
+						recordTracksEvent( 'calypso_theme_sheet_theme_upgrade_modal_checkout_button_click', {
+							theme_name: this.props.themeId,
+							theme_type: this.props.themeType,
+						} );
 						if ( this.props.defaultOption.action ) {
 							this.props.defaultOption.action( this.props.themeId );
 						} else {
