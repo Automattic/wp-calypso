@@ -33,9 +33,9 @@ export default function useLicenseActions(
 		const licenseState = getLicenseState( attachedAt, revokedAt );
 		return [
 			{
-				name: translate( 'Setup site' ),
+				name: translate( 'Set up site' ),
 				href: `https://wordpress.com/home/${ siteSlug }`,
-				onClick: () => handleClickMenuItem( 'calypso_jetpack_licenses_site_setup_click' ),
+				onClick: () => handleClickMenuItem( 'calypso_jetpack_licenses_site_set_up_click' ),
 				isExternalLink: true,
 				isEnabled: true,
 			},

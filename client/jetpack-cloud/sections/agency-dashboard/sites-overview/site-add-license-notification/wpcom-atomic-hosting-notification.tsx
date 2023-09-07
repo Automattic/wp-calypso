@@ -42,7 +42,7 @@ export default function WPCOMAtomicHostingNotification( {
 					handleOnClick( 'calypso_jetpack_agency_dashboard_setup_site_in_wp_admin_click' )
 				}
 			>
-				{ translate( 'Setup site in wp-admin' ) }
+				{ translate( 'Set up site in wp-admin' ) }
 				<span>
 					<Gridicon icon="external" size={ 18 } />
 				</span>
