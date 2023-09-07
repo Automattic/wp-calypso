@@ -13,6 +13,7 @@ import Settings from './settings';
 import SiteRedirectSettings from './site-redirect';
 import TransferOut from './transfer/transfer-out';
 import TransferPage from './transfer/transfer-page';
+import TransferDomainToAnyUser from './transfer/transfer-to-any-user/transfer-domain-to-any-user';
 import TransferDomainToOtherSite from './transfer/transfer-to-other-site/transfer-domain-to-other-site';
 import TransferDomainToOtherUser from './transfer/transfer-to-other-user/transfer-domain-to-other-user';
 
@@ -32,6 +33,7 @@ export default {
 	TransferPage,
 	TransferDomainToOtherSite,
 	TransferDomainToOtherUser,
+	TransferDomainToAnyUser,
 	BulkAllDomains,
 	BulkSiteDomains,
 };

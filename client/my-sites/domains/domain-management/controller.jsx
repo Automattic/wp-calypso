@@ -18,6 +18,7 @@ import {
 	domainManagementTransferIn,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
+	domainManagementTransferToAnyUser,
 	domainManagementTransferToOtherSite,
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
@@ -304,6 +305,20 @@ export default {
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
 				component={ DomainManagement.TransferDomainToOtherUser }
+				context={ pageContext }
+				needsDomains
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementTransferToAnyUser( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementTransferToAnyUser( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Transfer To Another User"
+				component={ DomainManagement.TransferDomainToAnyUser }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
