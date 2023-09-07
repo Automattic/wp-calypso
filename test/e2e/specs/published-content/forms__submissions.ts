@@ -35,19 +35,16 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features );
+	const testAccount = new TestAccount( accountName );
 
 	let page: Page;
 	let publishedFormLocator: Locator;
 
-	let testAccount: TestAccount;
 	let restAPIClient: RestAPIClient;
 	let newPostDetails: PostResponse;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-
-		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
 
 		const postContent = `<!-- wp:jetpack/contact-form {"subject":"A new registration from your website","to":"","style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
 						<div class="wp-block-jetpack-contact-form" style="padding-top:16px;padding-right:16px;padding-bottom:16px;padding-left:16px"><!-- wp:jetpack/field-name {"required":true,"requiredText":"(required)"} /-->
@@ -110,6 +107,18 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 	describe( 'Validate response', function () {
 		let feedbackInboxPage: FeedbackInboxPage;
+
+		beforeAll( async function () {
+			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+				// eCommerce plan sites attempt to load Calypso, but with
+				// third-party cookies disabled the fallback route to WP-Admin
+				// kicks in after some time.
+				await testAccount.authenticate( page, { url: /wp-admin/ } );
+			} else {
+				await testAccount.authenticate( page );
+			}
+		} );
+
 		it( 'Navigate to the Jetpack Forms Inbox', async function () {
 			feedbackInboxPage = new FeedbackInboxPage( page );
 			await feedbackInboxPage.visit( testAccount.getSiteURL( { protocol: true } ) );
