@@ -106,10 +106,12 @@ const StatsPurchasePage = ( {
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
-	const showPurchasePage = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
-	const redirectToPersonal = query?.productType === 'personal';
-	const redirectToCommercial = query?.productType === 'commercial';
-	const isNoticeScreenRedirect = redirectToPersonal || redirectToCommercial;
+	const redirectToCommercial = query?.productType === 'commercial' && ! supportCommercialUse;
+	const redirectToPersonal =
+		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
+	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
+	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
+	const showPurchasePage = noPlanOwned || isForceProductRedirect;
 
 	return (
 		<Main fullWidthLayout>
@@ -155,24 +157,25 @@ const StatsPurchasePage = ( {
 						) }
 					</>
 				) }
-				{ ! isLoading && isTypeDetectionEnabled && (
-					<>
-						{
-							// a plan is owned - show a notice page
-							! isNoticeScreenRedirect && ! showPurchasePage && (
-								<StatsPurchaseNoticePage
-									siteId={ siteId }
-									siteSlug={ siteSlug }
-									isCommercialOwned={ supportCommercialUse }
-									isFreeOwned={ isFreeOwned }
-									isPWYWOwned={ isPWYWOwned }
-								/>
-							)
-						}
-						{
-							// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-							( ( ! redirectToPersonal && ! redirectToCommercial ) || showPurchasePage ) &&
-								isCommercial === null && (
+				{
+					// a plan is owned or not forced to purchase - show a notice page
+					! isLoading && isTypeDetectionEnabled && ! showPurchasePage && (
+						<StatsPurchaseNoticePage
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							isCommercialOwned={ supportCommercialUse }
+							isFreeOwned={ isFreeOwned }
+							isPWYWOwned={ isPWYWOwned }
+						/>
+					)
+				}
+				{
+					// there is still plans to purchase - show the purchase page
+					! isLoading && isTypeDetectionEnabled && showPurchasePage && (
+						<>
+							{
+								// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
+								! isForceProductRedirect && isCommercial === null && (
 									<StatsPurchaseWizard
 										siteSlug={ siteSlug }
 										commercialProduct={ commercialProduct }
@@ -186,44 +189,40 @@ const StatsPurchasePage = ( {
 										initialSiteType={ initialSiteType }
 									/>
 								)
-						}
-						{
-							// blog has been already categorised as either personal or commercial and doesn't have a plan purchased
-							( redirectToPersonal || redirectToCommercial || showPurchasePage ) && (
-								<>
-									{ ( redirectToCommercial ||
-										( ! redirectToPersonal && ! supportCommercialUse && isCommercial ) ) && (
-										<div className="stats-purchase-page__notice">
-											<StatsSingleItemPagePurchase
-												siteSlug={ siteSlug ?? '' }
-												planValue={ commercialProduct?.cost }
-												currencyCode={ commercialProduct?.currency_code }
-												siteId={ siteId }
-												redirectUri={ query.redirect_uri ?? '' }
-												from={ query.from ?? '' }
-												isCommercial={ isCommercial }
-											/>
-										</div>
-									) }
-									{ ( redirectToPersonal ||
-										( ! redirectToCommercial &&
-											! supportCommercialUse &&
-											isCommercial === false ) ) && (
-										<StatsSingleItemPersonalPurchasePage
-											siteSlug={ siteSlug || '' }
-											maxSliderPrice={ maxSliderPrice ?? 10 }
-											pwywProduct={ pwywProduct }
+							}
+							{
+								// blog is commercial or we are forcing a product - show the purchase page
+								( redirectToCommercial || isCommercial ) && (
+									<div className="stats-purchase-page__notice">
+										<StatsSingleItemPagePurchase
+											siteSlug={ siteSlug ?? '' }
+											planValue={ commercialProduct?.cost }
+											currencyCode={ commercialProduct?.currency_code }
 											siteId={ siteId }
 											redirectUri={ query.redirect_uri ?? '' }
 											from={ query.from ?? '' }
-											disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
+											isCommercial={ isCommercial }
 										/>
-									) }
-								</>
-							)
-						}
-					</>
-				) }
+									</div>
+								)
+							}
+							{
+								// blog is personal or we are forcing a product - show the purchase page
+								( redirectToPersonal || isCommercial === false ) && (
+									<StatsSingleItemPersonalPurchasePage
+										siteSlug={ siteSlug || '' }
+										maxSliderPrice={ maxSliderPrice ?? 10 }
+										pwywProduct={ pwywProduct }
+										siteId={ siteId }
+										redirectUri={ query.redirect_uri ?? '' }
+										from={ query.from ?? '' }
+										disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
+									/>
+								)
+							}
+						</>
+					)
+				}
 				<JetpackColophon />
 			</div>
 		</Main>
