@@ -40,12 +40,15 @@ interface Props {
 	siteUrl: string;
 }
 
+type BackupGrandularRestoreType = 'file' | 'theme' | 'plugin' | 'table';
+
 const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	backupDisplayDate,
 	rewindId,
 	siteId,
 	siteUrl,
 } ) => {
+	const fileDisplayLimit = 10;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -57,9 +60,74 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		getInProgressBackupForSite( state, siteId )
 	);
 
+	const [ showFiles, setShowFiles ] = useState< boolean >( true );
 	const [ showAllFiles, setShowAllFiles ] = useState< boolean >( false );
-	const expandClick = () => {
-		setShowAllFiles( ! showAllFiles );
+	const [ showTables, setShowTables ] = useState< boolean >( true );
+	const [ showAllTables, setShowAllTables ] = useState< boolean >( false );
+	const [ showThemes, setShowThemes ] = useState< boolean >( true );
+	const [ showAllThemes, setShowAllThemes ] = useState< boolean >( false );
+	const [ showPlugins, setShowPlugins ] = useState< boolean >( true );
+	const [ showAllPlugins, setShowAllPlugins ] = useState< boolean >( false );
+	const expandClick = ( type: BackupGrandularRestoreType, toggleAll: boolean ) => {
+		if ( toggleAll ) {
+			switch ( type ) {
+				case 'file':
+					setShowAllFiles( ! showAllFiles );
+					break;
+				case 'theme':
+					setShowAllThemes( ! showAllThemes );
+					break;
+				case 'plugin':
+					setShowAllPlugins( ! showAllPlugins );
+					break;
+				case 'table':
+					setShowAllTables( ! showAllTables );
+					break;
+				default:
+					break;
+			}
+		} else {
+			switch ( type ) {
+				case 'file':
+					if ( showFiles ) {
+						setShowAllFiles( false );
+					}
+					setShowFiles( ! showFiles );
+					break;
+				case 'theme':
+					if ( showThemes ) {
+						setShowAllThemes( false );
+					}
+					setShowThemes( ! showThemes );
+					break;
+				case 'plugin':
+					if ( showPlugins ) {
+						setShowAllPlugins( false );
+					}
+					setShowPlugins( ! showPlugins );
+					break;
+				case 'table':
+					if ( showTables ) {
+						setShowAllTables( false );
+					}
+					setShowTables( ! showTables );
+					break;
+				default:
+					break;
+			}
+		}
+	};
+	const renderExpandIcon = ( type: BackupGrandularRestoreType ) => {
+		switch ( type ) {
+			case 'table':
+				return <Icon icon={ showTables ? chevronDown : chevronRight } />;
+			case 'plugin':
+				return <Icon icon={ showPlugins ? chevronDown : chevronRight } />;
+			case 'theme':
+				return <Icon icon={ showThemes ? chevronDown : chevronRight } />;
+			case 'file':
+				return <Icon icon={ showFiles ? chevronDown : chevronRight } />;
+		}
 	};
 
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
@@ -123,120 +191,128 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const goBackUrl = backupContentsPath( siteSlug as string, rewindId );
 
-	const renderThemes = () => {
-		const themes = browserSelectedList.filter( ( item ) => item.type === 'theme' );
-		if ( themes.length === 0 ) {
-			if ( browserSelectedList.some( ( item ) => item.path === '/wp-content/themes' ) ) {
+	const showAllType = ( type: BackupGrandularRestoreType ): boolean => {
+		switch ( type ) {
+			case 'file':
+				return showAllFiles;
+			case 'theme':
+				return showAllThemes;
+			case 'plugin':
+				return showAllPlugins;
+			case 'table':
+				return showAllTables;
+		}
+	};
+
+	const showType = ( type: BackupGrandularRestoreType ): boolean => {
+		switch ( type ) {
+			case 'file':
+				return showFiles;
+			case 'theme':
+				return showThemes;
+			case 'plugin':
+				return showPlugins;
+			case 'table':
+				return showTables;
+		}
+	};
+
+	const getTypeLabel = ( type: BackupGrandularRestoreType, allSelected: boolean ) => {
+		switch ( type ) {
+			case 'file':
+				return translate( 'Files' );
+			case 'theme':
+				return allSelected
+					? translate( 'All site themes will be restored' )
+					: translate( 'WordPress Themes' );
+			case 'plugin':
+				return allSelected
+					? translate( 'All site plugins will be restored' )
+					: translate( 'WordPress Plugins' );
+			case 'table':
+				return allSelected
+					? translate( 'All site database tables will be restored' )
+					: translate( 'Site Databases' );
+		}
+	};
+
+	const renderSection = ( type: BackupGrandularRestoreType ) => {
+		const items = browserSelectedList.filter( ( item ) => item.type === type );
+		if ( items.length === 0 ) {
+			if ( type === 'file' ) {
+				return null;
+			}
+			let allItemsSelectedPath = '';
+			switch ( type ) {
+				case 'theme':
+					allItemsSelectedPath = '/wp-content/themes';
+					break;
+				case 'plugin':
+					allItemsSelectedPath = '/wp-content/plugins';
+					break;
+				case 'table':
+					allItemsSelectedPath = '/sql';
+					break;
+			}
+			if ( browserSelectedList.some( ( item ) => item.path === allItemsSelectedPath ) ) {
 				return (
 					<>
-						<h4 className="rewind-flow__cta">
-							{ translate( 'All site themes will be restored' ) }
-						</h4>
+						<h4 className="rewind-flow__cta">{ getTypeLabel( type, true ) }</h4>
 					</>
 				);
 			}
 			return null;
 		}
-		return (
-			<>
-				<h4 className="rewind-flow__cta">{ translate( 'WordPress themes' ) }</h4>
-				<ul className="rewind-flow__files">
-					{ themes.map( ( item ) => (
-						<li key={ item.path }>{ item.path }</li>
-					) ) }
-				</ul>
-			</>
-		);
-	};
-
-	const renderPlugins = () => {
-		const plugins = browserSelectedList.filter( ( item ) => item.type === 'plugin' );
-		if ( plugins.length === 0 ) {
-			if ( browserSelectedList.some( ( item ) => item.path === '/wp-content/plugins' ) ) {
-				return (
-					<>
-						<h4 className="rewind-flow__cta">
-							{ translate( 'All site plugins will be restored' ) }
-						</h4>
-					</>
-				);
-			}
-			return null;
-		}
-		return (
-			<>
-				<h4 className="rewind-flow__cta">{ translate( 'WordPress plugins' ) }</h4>
-				<ul className="rewind-flow__files">
-					{ plugins.map( ( item ) => (
-						<li key={ item.path }>{ item.path }</li>
-					) ) }
-				</ul>
-			</>
-		);
-	};
-
-	const renderTables = () => {
-		const tables = browserSelectedList.filter( ( item ) => item.type === 'table' );
-		if ( tables.length === 0 ) {
-			if ( browserSelectedList.some( ( item ) => item.path === '/sql' ) ) {
-				return (
-					<>
-						<h4 className="rewind-flow__cta">
-							{ translate( 'All site database tables will be restored' ) }
-						</h4>
-					</>
-				);
-			}
-			return null;
-		}
-		return (
-			<>
-				<h4 className="rewind-flow__cta">{ translate( 'Site database' ) }</h4>
-				<ul className="rewind-flow__files">
-					{ tables.map( ( item ) => (
-						<li key={ item.path }>{ item.path }</li>
-					) ) }
-				</ul>
-			</>
-		);
-	};
-
-	const renderExpandIcon = () => {
-		return <Icon icon={ showAllFiles ? chevronDown : chevronRight } />;
-	};
-
-	const renderFiles = () => {
-		const files = browserSelectedList.filter(
-			( item ) =>
-				item.type === 'file' &&
-				! [ '/sql', '/wp-content/plugins', '/wp-content/themes' ].includes( item.path )
-		);
-		if ( files.length === 0 ) {
-			return null;
+		let displayItems = [];
+		let extendedItems = [];
+		if ( items.length > fileDisplayLimit ) {
+			displayItems = items.slice( 0, fileDisplayLimit );
+			extendedItems = items.slice( fileDisplayLimit );
+		} else {
+			displayItems = items;
 		}
 
 		return (
 			<>
-				<div className="rewind-flow__expandable-files">
-					<WordPressButton variant="link" className="rewind-flow__cta" onClick={ expandClick }>
-						{ translate(
-							'%(numberOfFiles)d more file or directory selected',
-							'%(numberOfFiles)d more files or directories selected',
-							{
-								count: files.length,
-								args: { numberOfFiles: files.length },
-							}
-						) }{ ' ' }
-						{ renderExpandIcon() }
+				<h4 className="rewind-flow__cta">
+					<WordPressButton variant="link" onClick={ () => expandClick( type, false ) }>
+						{ getTypeLabel( type, false ) } { renderExpandIcon( type ) }
 					</WordPressButton>
-					{ showAllFiles && (
-						<ul className="rewind-flow__files">
-							{ files.map( ( item ) => (
-								<li key={ item.path }>{ item.path }</li>
-							) ) }
-						</ul>
-					) }
-				</div>
+				</h4>
+				{ showType( type ) && (
+					<ul className="rewind-flow__files">
+						{ displayItems.map( ( item ) => (
+							<li key={ item.path }>{ item.path }</li>
+						) ) }
+					</ul>
+				) }
+				{ extendedItems.length > 0 && showType( type ) && (
+					<div className="rewind-flow__expandable-files">
+						{ ! showAllType( type ) && (
+							<WordPressButton
+								variant="link"
+								className="rewind-flow__show-all"
+								onClick={ () => expandClick( type, true ) }
+							>
+								{ translate(
+									'%(numberOfFiles)d more file or directory selected',
+									'%(numberOfFiles)d more files or directories selected',
+									{
+										count: extendedItems.length,
+										args: { numberOfFiles: extendedItems.length },
+									}
+								) }{ ' ' }
+							</WordPressButton>
+						) }
+						{ showAllType( type ) && (
+							<ul className="rewind-flow__files">
+								{ extendedItems.map( ( item ) => (
+									<li key={ item.path }>{ item.path }</li>
+								) ) }
+							</ul>
+						) }
+					</div>
+				) }
 			</>
 		);
 	};
@@ -261,10 +337,10 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			{ renderThemes() }
-			{ renderPlugins() }
-			{ renderTables() }
-			{ renderFiles() }
+			{ renderSection( 'theme' ) }
+			{ renderSection( 'plugin' ) }
+			{ renderSection( 'table' ) }
+			{ renderSection( 'file' ) }
 			<RewindFlowNotice
 				gridicon="notice"
 				title={ translate( 'Restoring will override and remove all content after this point.' ) }

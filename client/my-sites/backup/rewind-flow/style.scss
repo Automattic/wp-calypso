@@ -249,17 +249,37 @@ a.rewind-flow-notice__title-warning:visited {
 		font-size: 0.875rem;
 	}
 
+	.rewind-flow__cta {
+		padding: 8px 0;
+		button {
+			color: var(--studio-black);
+			text-decoration: none;
+			font-weight: 600;
+		}
+	}
+
 	.rewind-flow__expandable-files {
 		margin-bottom: 1.5em;
 
 		button {
 			color: var(--studio-black);
-			font-weight: 600;
-			text-decoration: none;
 		}
 
 		.rewind-flow__files {
 			margin-bottom: 0;
 		}
+	}
+
+	.rewind-flow__show-all {
+		margin-top: 16px;
+	}
+
+	li {
+		list-style: none;
+	}
+
+	ul {
+		margin-left: 0;
+		margin-bottom: 0;
 	}
 }
