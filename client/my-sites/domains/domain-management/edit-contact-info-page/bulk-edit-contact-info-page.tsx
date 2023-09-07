@@ -1,3 +1,4 @@
+import { Button, Gridicon } from '@automattic/components';
 import {
 	useAllDomainsQuery,
 	useDomainsBulkActionsMutation,
@@ -9,6 +10,7 @@ import { useQueries } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
@@ -66,6 +68,9 @@ export default function BulkEditContactInfoPage( {
 		? allSiteDomains.filter( ( { domain } ) => selectedDomainsArg.includes( domain ) )
 		: null;
 	const firstSelectedDomain = selectedDomains?.[ 0 ];
+
+	const [ showAllSelectedDomains, setShowAllSelectedDomains ] = useState( false );
+	const domainListElementId = useId();
 
 	const reduxDomains: ResponseDomain[] | undefined = useSelector(
 		( state: IAppState ) =>
@@ -224,6 +229,49 @@ export default function BulkEditContactInfoPage( {
 
 		return (
 			<>
+				{ selectedDomains?.length && (
+					<div className="edit-contact-info-page__sidebar" style={ { background: 'transparent' } }>
+						<div className="edit-contact-info-page__sidebar-title">
+							<p>
+								<strong>
+									{ translate(
+										'Editing contact info for %(count)d domain:',
+										'Editing contact info for %(count)d domains:',
+										{
+											count: selectedDomains.length,
+											args: { count: selectedDomains.length },
+										}
+									) }
+								</strong>
+							</p>
+						</div>
+						<ul id={ domainListElementId }>
+							{ selectedDomains
+								.slice( 0, showAllSelectedDomains ? undefined : 5 ) // Show a maximum of 5 domains if sidebar hasn't been expanded
+								.map( ( domain ) => (
+									<li key={ domain.domain }>{ domain.domain }</li>
+								) ) }
+						</ul>
+						{ selectedDomains.length < 6 ? null : (
+							<Button
+								onClick={ () => setShowAllSelectedDomains( ( shown ) => ! shown ) }
+								aria-expanded={ showAllSelectedDomains }
+								aria-controls={ domainListElementId }
+								className="is-link"
+							>
+								{ showAllSelectedDomains ? (
+									<>
+										{ translate( 'Hide' ) } <Gridicon icon="chevron-up" />
+									</>
+								) : (
+									<>
+										{ translate( 'See all' ) } <Gridicon icon="chevron-down" />
+									</>
+								) }
+							</Button>
+						) }
+					</div>
+				) }
 				<div className="edit-contact-info-page__sidebar">
 					<div className="edit-contact-info-page__sidebar-title">
 						<p>
@@ -252,18 +300,6 @@ export default function BulkEditContactInfoPage( {
 							) }
 						</p>
 					</div>
-				</div>
-				<div className="edit-contact-info-page__sidebar" style={ { background: 'transparent' } }>
-					<div className="edit-contact-info-page__sidebar-title">
-						<p>
-							<strong>{ translate( 'Editing contact info for:' ) }</strong>
-						</p>
-					</div>
-					<ul>
-						{ selectedDomains?.map( ( domain ) => (
-							<li key={ domain.domain }>{ domain.domain }</li>
-						) ) }
-					</ul>
 				</div>
 			</>
 		);
