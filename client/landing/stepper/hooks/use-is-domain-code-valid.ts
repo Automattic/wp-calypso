@@ -51,11 +51,16 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 
 				// A `transferrability` property was added in D115244-code to check whether a mapped domain can be transferred
 				const isUnlocked =
-					[ 'transferrable', 'mapped_to_same_site_transferrable' ].includes(
-						availability.status
-					) ||
+					[
+						'transferrable',
+						'transferrable_premium',
+						'mapped_to_same_site_transferrable',
+					].includes( availability.status ) ||
 					( [ 'mapped_domain', 'mapped_to_other_site_same_user' ].includes( availability.status ) &&
-						'transferrable' === availability?.transferrability );
+						availability?.transferrability &&
+						[ 'transferrable', 'transferrable_premium' ].includes(
+							availability?.transferrability
+						) );
 
 				if ( ! isUnlocked ) {
 					return {
@@ -72,6 +77,13 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					path: `/domains/${ encodeURIComponent( pair.domain ) }/inbound-transfer-check-auth-code`,
 					query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
 				} ).catch( () => ( { success: false } ) );
+
+				if (
+					availability.status === 'transferrable_premium' ||
+					availability?.transferrability === 'transferrable_premium'
+				) {
+					// TODO: add call to /price to get correct price for premiums
+				}
 
 				return {
 					domain: pair.domain,

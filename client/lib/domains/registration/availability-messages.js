@@ -486,6 +486,11 @@ function getAvailabilityNotice(
 			break;
 
 		case domainAvailability.TRANSFERRABLE_PREMIUM:
+			// TODO: check for TLD transferrability and skip message if we're in the setup transfer flow
+			if ( isForTransferOnly ) {
+				break;
+			}
+
 			if ( site ) {
 				message = translate(
 					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
