@@ -1,6 +1,18 @@
 import apiFetch from '@wordpress/api-fetch';
 import domReady from '@wordpress/dom-ready';
 
+const isManageAllPagesLink = ( element ) => {
+	if ( element.matches( '.edit-site-sidebar-navigation-screen-pages__see-all' ) ) {
+		return true;
+	}
+
+	if ( element.parentElement ) {
+		return isManageAllPagesLink( element.parentElement );
+	}
+
+	return false;
+};
+
 /**
  * Ensures that the Site Editor's "Manage all pages" link leads to the preferred view.
  */
@@ -25,13 +37,11 @@ const overrideManageAllPagesLink = async () => {
 
 	const preferredManageAllPagesUrl = `https://wordpress.com${ pagesMenuItem.url }`;
 	siteEditor.addEventListener( 'click', ( e ) => {
-		if ( ! e.target.matches( '.edit-site-sidebar-navigation-screen-pages__see-all' ) ) {
-			return;
+		if ( isManageAllPagesLink( e.target ) ) {
+			e.preventDefault();
+			e.stopPropagation();
+			document.location = preferredManageAllPagesUrl;
 		}
-
-		e.preventDefault();
-		e.stopPropagation();
-		document.location = preferredManageAllPagesUrl;
 	} );
 };
 
