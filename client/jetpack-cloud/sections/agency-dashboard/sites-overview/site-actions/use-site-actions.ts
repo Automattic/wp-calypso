@@ -36,9 +36,9 @@ export default function useSiteActions(
 
 		return [
 			{
-				name: translate( 'Setup site' ),
+				name: translate( 'Set up site' ),
 				href: `https://wordpress.com/home/${ siteSlug }`,
-				onClick: () => handleClickMenuItem( 'setup_site' ),
+				onClick: () => handleClickMenuItem( 'set_up_site' ),
 				isExternalLink: true,
 				isEnabled: isWPCOMAtomicSiteCreationEnabled,
 			},
