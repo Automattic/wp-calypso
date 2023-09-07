@@ -70,7 +70,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const [ showAllThemes, setShowAllThemes ] = useState( false );
 	const [ showPlugins, setShowPlugins ] = useState( true );
 	const [ showAllPlugins, setShowAllPlugins ] = useState( false );
-	const expandClick = ( type: BackupGrandularRestoreType, toggleAll: boolean ) => {
+	const expandClick = ( type: BackupBrowserItemType, toggleAll: boolean ) => {
 		if ( toggleAll ) {
 			switch ( type ) {
 				case 'file':
