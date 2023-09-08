@@ -63,8 +63,8 @@ const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) =>
 		onError: ( error, variables, context ) => {
 			queryClient.setQueryData( subscribedCategoriesCacheKey, context?.previousData );
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( subscribedCategoriesCacheKey );
+		onSettled: async () => {
+			await queryClient.invalidateQueries( subscribedCategoriesCacheKey );
 		},
 	} );
 };
