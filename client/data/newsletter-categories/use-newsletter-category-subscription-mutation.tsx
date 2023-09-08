@@ -1,15 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
-import { NewsletterCategories } from './types';
+import { NewsletterCategories, NewsletterCategoriesResponse } from './types';
 import { getSubscribedNewsletterCategoriesKey } from './use-subscribed-newsletter-categories-query';
 
 type NewsletterCategorySubscription = {
 	term_id: number;
 	subscribe: boolean;
-};
-
-type NewsletterCategorySubscriptionResponse = {
-	success: boolean;
 };
 
 const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) => {
@@ -18,7 +14,7 @@ const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) =>
 
 	return useMutation( {
 		mutationFn: async ( categorySubscriptions: NewsletterCategorySubscription[] ) => {
-			return await request< NewsletterCategorySubscriptionResponse >( {
+			return await request< NewsletterCategoriesResponse >( {
 				path: `/sites/${ siteId }/newsletter-categories/subscriptions`,
 				method: 'POST',
 				apiVersion: '2',
