@@ -15,7 +15,11 @@ export function getItemVariantCompareToPrice(
 	}
 
 	// Ignore a 1 month discount when calculating the discount percentage
-	if ( compareTo.introductoryInterval === 1 && compareTo.introductoryTerm === 'month' ) {
+	if (
+		variant.termIntervalInMonths === 24 &&
+		compareTo.introductoryInterval === 1 &&
+		compareTo.introductoryTerm === 'month'
+	) {
 		return compareTo.priceBeforeDiscounts * 2;
 	}
 
