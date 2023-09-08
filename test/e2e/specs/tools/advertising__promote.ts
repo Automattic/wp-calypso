@@ -35,7 +35,7 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 	DataHelper.createSuiteTitle( 'Advertising: Promote' ),
 	function () {
 		const pageTitle = DataHelper.getRandomPhrase();
-		const snippet = Array( 5 ).fill( DataHelper.getRandomPhrase() ).toString();
+		const snippet = Array( 2 ).fill( DataHelper.getRandomPhrase() ).toString();
 
 		let newPostDetails: PostResponse;
 		let page: Page;
