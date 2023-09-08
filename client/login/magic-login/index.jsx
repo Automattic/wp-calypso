@@ -32,6 +32,8 @@ import RequestLoginEmailForm from './request-login-email-form';
 
 import './style.scss';
 
+const RESEND_EMAIL_COUNTDOWN_TIME = 60; // In seconds
+
 class MagicLogin extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
@@ -51,7 +53,10 @@ class MagicLogin extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = { usernameOrEmail: this.props.userEmail || '' };
+	state = {
+		usernameOrEmail: this.props.userEmail || '',
+		resendEmailCountDown: RESEND_EMAIL_COUNTDOWN_TIME,
+	};
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
@@ -127,16 +132,56 @@ class MagicLogin extends Component {
 		);
 	}
 
+	resendEmailCountDownId = null;
+
+	resetResendEmailCountDown = () => {
+		if ( ! this.resendEmailCountDownId ) {
+			return;
+		}
+
+		clearInterval( this.resendEmailCountDownId );
+		this.resendEmailCountDownId = null;
+		this.setState( { resendEmailCountDown: RESEND_EMAIL_COUNTDOWN_TIME } );
+	};
+
+	startResendEmailCountDown = () => {
+		this.resetResendEmailCountDown();
+
+		this.resendEmailCountDownId = setInterval( () => {
+			if ( ! this.state.resendEmailCountDown ) {
+				clearInterval( this.resendEmailCountDownId );
+				return;
+			}
+
+			this.setState( ( prevState ) => ( {
+				resendEmailCountDown: prevState.resendEmailCountDown - 1,
+			} ) );
+		}, 1000 );
+	};
+
+	onClickResendEmail = () => {
+		const { oauth2Client, query, sendEmailLogin: resendEmail } = this.props;
+		const { usernameOrEmail } = this.state;
+
+		resendEmail( usernameOrEmail, {
+			redirectTo: query?.redirect_to,
+			requestLoginEmailFormFlow: true,
+			createAccount: true,
+			flow: oauth2Client.name,
+			showGlobalNotices: true,
+		} );
+
+		this.startResendEmailCountDown();
+	};
+
 	renderGravatarEmailVerification() {
 		const {
 			oauth2Client,
 			translate,
-			query,
 			isSendingEmail,
-			sendEmailLogin: resendEmail,
 			hideMagicLoginRequestForm: showMagicLogin,
 		} = this.props;
-		const { usernameOrEmail } = this.state;
+		const { usernameOrEmail, resendEmailCountDown } = this.state;
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
 		return (
@@ -167,27 +212,31 @@ class MagicLogin extends Component {
 									components: {
 										sendEmailButton: (
 											<button
-												onClick={ () =>
-													resendEmail( usernameOrEmail, {
-														redirectTo: query?.redirect_to,
-														requestLoginEmailFormFlow: true,
-														flow: oauth2Client.name,
-														showGlobalNotices: true,
-													} )
-												}
-												disabled={ isSendingEmail }
+												onClick={ this.onClickResendEmail }
+												disabled={ isSendingEmail || !! resendEmailCountDown }
 											/>
 										),
 										showMagicLoginButton: (
 											<button
 												className="gravatar-magic-login__show-magic-login"
-												onClick={ () => showMagicLogin() }
+												onClick={ () => {
+													this.resetResendEmailCountDown();
+													showMagicLogin();
+												} }
 											/>
 										),
 									},
 								}
 							) }
 						</div>
+						{ resendEmailCountDown !== 0 && (
+							<div>
+								{ translate( '%(countDownSeconds)s seconds remaining', {
+									args: { countDownSeconds: resendEmailCountDown },
+								} ) }
+								...
+							</div>
+						) }
 					</div>
 				</div>
 			</Main>
@@ -218,7 +267,10 @@ class MagicLogin extends Component {
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ translate( 'Continue' ) }
 						showTos
-						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
+						onSendEmailLogin={ ( usernameOrEmail ) => {
+							this.setState( { usernameOrEmail } );
+							this.startResendEmailCountDown();
+						} }
 						createAccountForNewUser
 					/>
 					<hr className="gravatar-magic-login__divider" />
