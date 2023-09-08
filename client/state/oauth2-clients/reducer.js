@@ -26,7 +26,7 @@ export const initialClientsData = {
 		id: 90057,
 		name: 'wpjobmanager',
 		title: 'WP Job Manager',
-		icon: 'https://wpjobmanager.com/wp-content/uploads/2023/05/jm-site-logo.png',
+		icon: 'https://wpjobmanager.com/wp-content/uploads/2023/06/JM-Letters.png',
 	},
 	1854: {
 		id: 1854,
