@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
 import { NewsletterCategories } from './types';
-import { getNewsletterCategoriesKey } from './use-newsletter-categories-query';
 import { getSubscribedNewsletterCategoriesKey } from './use-subscribed-newsletter-categories-query';
 
 type NewsletterCategorySubscription = {
@@ -16,7 +15,6 @@ type NewsletterCategorySubscriptionResponse = {
 const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) => {
 	const queryClient = useQueryClient();
 	const subscribedCategoriesCacheKey = getSubscribedNewsletterCategoriesKey( siteId );
-	const categoriesCacheKey = getNewsletterCategoriesKey( siteId );
 
 	return useMutation( {
 		mutationFn: async ( categorySubscriptions: NewsletterCategorySubscription[] ) => {
@@ -34,20 +32,25 @@ const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) =>
 			const previousData = queryClient.getQueryData< NewsletterCategories >(
 				subscribedCategoriesCacheKey
 			);
-			const categories = queryClient.getQueryData< NewsletterCategories >( categoriesCacheKey );
 
 			queryClient.setQueryData(
 				subscribedCategoriesCacheKey,
 				( oldData?: NewsletterCategories ) => {
-					const subscribedCategoryIds = categorySubscriptions
-						.filter( ( categorySubscription ) => categorySubscription.subscribe )
-						.map( ( categorySubscription ) => categorySubscription.term_id );
-
 					const newSubscribedCategories =
-						categories?.newsletterCategories.map( ( category ) => ( {
-							...category,
-							subscribed: subscribedCategoryIds.includes( category.id ),
-						} ) ) || [];
+						previousData?.newsletterCategories.map( ( category ) => {
+							const categorySubscription = categorySubscriptions.find(
+								( subscription ) => subscription.term_id === category.id
+							);
+
+							if ( ! categorySubscription ) {
+								return category;
+							}
+
+							return {
+								...category,
+								subscribed: categorySubscription.subscribe,
+							};
+						} ) || [];
 
 					const updatedData = {
 						...oldData,
