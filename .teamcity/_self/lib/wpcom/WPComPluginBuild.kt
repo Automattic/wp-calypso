@@ -119,6 +119,9 @@ open class WPComPluginBuild(
 				name = "Build artifacts"
 				scriptContent = """
 					export NODE_ENV="$buildEnv"
+					export build_number="%build.number%"
+					export commit_sha="%build.vcs.number%"	
+
 					cd $workingDir
 					yarn build
 				"""
@@ -223,15 +226,16 @@ open class WPComPluginBuild(
 
 					# 4. Create metadata file with info for the download script.
 					cd $archiveDir
-					if [ -f build_meta.json ] ; then
-						# Add the build number to an existing meta JSON file.
-						jq '.build_number = "%build.number%"' build_meta.json > build_meta.json.tmp && mv build_meta.json.tmp build_meta.json
-					else
+
+					# Temporary measure until the combined calypso apps builds are in place.
+					# Currently, we need to keep using .txt for a few apps.
+					if [ "$pluginSlug" = "o2-blocks" ] || [ "$pluginSlug" = "happy-blocks" ] || [ "$pluginSlug" = "editing-toolkit" ] ; then
 						tee build_meta.txt <<-EOM
 							commit_hash=%build.vcs.number%
 							commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
 							build_number=%build.number%
-							EOM
+						EOM
+						rm build_meta.json
 					fi
 
 					# 5. Create artifact of cwd.
