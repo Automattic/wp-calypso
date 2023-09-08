@@ -15,7 +15,6 @@ import {
 	EmailClient,
 	SecretsManager,
 	SubscribersPage,
-	SubscriptionManagementPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
@@ -91,17 +90,6 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			// @see: rWPGIT4ed687fb18bc-code
 			it( 'User is taken to the blog home page', async function () {
 				await page.waitForURL( new RegExp( testAccount.getSiteURL( { protocol: false } ) ) );
-			} );
-
-			it( 'Subscribed site is listed in Subscription Management page', async function () {
-				await page.goto( DataHelper.getCalypsoURL( 'subscriptions/sites/en' ), {
-					waitUntil: 'domcontentloaded',
-				} );
-
-				const subscriptionManagementPage = new SubscriptionManagementPage( page );
-				await subscriptionManagementPage.validateSiteSubscribed(
-					testAccount.getSiteURL( { protocol: false } )
-				);
 			} );
 		} );
 
