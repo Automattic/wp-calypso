@@ -585,7 +585,6 @@ class ThemeSheet extends Component {
 	renderHeader = () => {
 		const {
 			author,
-			isLoggedIn,
 			isLivePreviewSupported,
 			isWPForTeamsSite,
 			name,
@@ -598,11 +597,7 @@ class ThemeSheet extends Component {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const shouldRenderButton =
-			! retired &&
-			! isWPForTeamsSite &&
-			! this.shouldRenderForStaging() &&
-			( ! this.hasWpOrgThemeUpsellBanner() || ! isLoggedIn );
+		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
 
 		return (
 			<div className="theme__sheet-header">
@@ -1387,6 +1382,7 @@ class ThemeSheet extends Component {
 				<ThemeUpgradeModal
 					isOpen={ this.state.showUpgradeModal }
 					slug={ themeId }
+					siteId={ siteId }
 					closeModal={ this.onThemeUpgradeModalClose }
 					isMarketplacePlanSubscriptionNeeeded={
 						isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes

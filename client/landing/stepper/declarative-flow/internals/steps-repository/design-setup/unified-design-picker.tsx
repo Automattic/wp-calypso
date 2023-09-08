@@ -737,6 +737,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					marketplaceProduct={ selectedMarketplaceProduct }
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
+					siteId={ site.ID }
 				/>
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ handleCheckoutForPremiumGlobalStyles }
