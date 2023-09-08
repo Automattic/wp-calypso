@@ -312,10 +312,9 @@ export const normalizers = {
 			return null;
 		}
 
-		return Object.entries( data.stats ).reduce( ( acc, [ key, value ] ) => {
-			acc[ camelCase( key ) ] = value;
-			return acc;
-		}, {} );
+		return Object.fromEntries(
+			Object.entries( data.stats ).map( ( [ key, value ] ) => [ camelCase( key ), value ] )
+		);
 	},
 
 	/**

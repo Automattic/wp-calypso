@@ -65,12 +65,13 @@ export function normalizeWpcomTheme( theme ) {
 		download_uri: 'download',
 	};
 
-	return theme
-		? Object.entries( theme ).reduce( ( acc, [ key, value ] ) => {
-				acc[ attributesMap[ key ] ?? key ] = value;
-				return acc;
-		  }, {} )
-		: {};
+	if ( ! theme ) {
+		return {};
+	}
+
+	return Object.fromEntries(
+		Object.entries( theme ).map( ( [ key, value ] ) => [ attributesMap[ key ] ?? key, value ] )
+	);
 }
 
 /**
@@ -87,15 +88,12 @@ export function normalizeWporgTheme( theme ) {
 		download_link: 'download',
 	};
 
-	const normalizedTheme = theme
-		? Object.entries( theme ).reduce( ( acc, [ key, value ] ) => {
-				if ( [ 'sections', 'author' ].includes( key ) ) {
-					return acc;
-				}
-				acc[ attributesMap[ key ] ?? key ] = value;
-				return acc;
-		  }, {} )
-		: {};
+	const normalizedTheme = Object.fromEntries(
+		Object.entries( omit( theme, [ 'sections', 'author' ] ) ).map( ( [ key, value ] ) => [
+			attributesMap[ key ] ?? key,
+			value,
+		] )
+	);
 
 	const description = get( theme, [ 'sections', 'description' ] );
 	if ( description ) {

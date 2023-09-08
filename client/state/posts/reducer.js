@@ -450,10 +450,12 @@ export function edits( state = {}, action ) {
 				const newPostId = action.savedPost.ID;
 				state = {
 					...state,
-					[ siteId ]: Object.entries( state[ siteId ] ).reduce( ( acc, [ key, value ] ) => {
-						acc[ key === '' ? newPostId : key ] = value;
-						return acc;
-					}, {} ),
+					[ siteId ]: Object.fromEntries(
+						Object.entries( state[ siteId ] ).map( ( [ key, value ] ) => [
+							key === '' ? newPostId : key,
+							value,
+						] )
+					),
 				};
 			}
 

@@ -11,10 +11,12 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 		return;
 	}
 
-	return Object.entries( googleAppsSubscription ).reduce( ( acc, [ key, value ] ) => {
-		acc[ camelCase( key ) ] = value;
-		return acc;
-	}, {} );
+	return Object.fromEntries(
+		Object.entries( googleAppsSubscription ).map( ( [ key, value ] ) => [
+			camelCase( key ),
+			value,
+		] )
+	);
 }
 
 function assembleCurrentUserCannotAddEmailReason( reason ) {

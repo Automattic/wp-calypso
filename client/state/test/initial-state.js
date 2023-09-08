@@ -3,7 +3,6 @@
  */
 
 import { withStorageKey } from '@automattic/state-utils';
-import { mapKeys } from 'lodash';
 import * as browserStorage from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { createReduxStore } from 'calypso/state';
@@ -797,12 +796,21 @@ describe( 'loading stored state with dynamic reducers', () => {
 		const keyPrefixRe = new RegExp( `^${ keyPrefix }:` );
 		return withPersistence( ( state = {} ) => state, {
 			serialize: ( state ) =>
-				Object.entries( state ).reduce( ( acc, [ key, value ] ) => {
-					acc[ `${ keyPrefix }:${ key }` ] = value;
-					return acc;
-				}, {} ),
+				Object.fromEntries(
+					Object.entries( state ).reduce( ( acc, [ key, value ] ) => [
+						`${ keyPrefix }:${ key }`,
+						value,
+					] )
+				),
 			deserialize: ( persisted ) =>
-				mapKeys( persisted, ( value, key ) => key.replace( keyPrefixRe, '' ) ),
+				persisted
+					? Object.fromEntries(
+							Object.entries( persisted ).map( ( [ key, value ] ) => [
+								key.replace( keyPrefixRe, '' ),
+								value,
+							] )
+					  )
+					: {},
 		} );
 	};
 
