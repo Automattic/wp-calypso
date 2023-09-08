@@ -157,8 +157,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					acceptButtonText={ translate( 'Get help building my site' ) }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
+						window.location.replace( builtByURL );
 					} }
-					acceptButtonUrl={ builtByURL }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBuiltBy }
 				>
