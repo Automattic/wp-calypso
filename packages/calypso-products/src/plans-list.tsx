@@ -3097,7 +3097,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
 		...getPlanJetpackCompleteDetails(),
-		...getAnnualTimeframe(),
+		...getBiAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_BI_YEARLY,
 		getPathSlug: () => 'complete-bi-yearly',
 		getProductId: () => 2035,
