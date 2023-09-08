@@ -42,6 +42,7 @@ import type {
 	JetpackSearchResponse,
 	JetpackSearchParams,
 	Subscriber,
+	SitePostState,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -634,6 +635,33 @@ export class RestAPIClient {
 	}
 
 	/* Posts */
+
+	/**
+	 * Given a siteID, checks whether any posts exists of a given state.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @param param1 Keyed object parameter.
+	 * @param {SitePostState} param1.state State of the published post.
+	 */
+	async siteHasPost(
+		siteID: number,
+		{ state = 'publish' }: { state: SitePostState }
+	): Promise< boolean > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/post-counts/post` ),
+			params
+		);
+
+		return response.counts.all[ state ] !== 0 ? true : false;
+	}
 
 	/**
 	 * Creates a post on the site.

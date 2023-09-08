@@ -1,5 +1,7 @@
 /* Parameter Interfaces */
 
+export type SitePostState = 'publish' | 'draft' | 'private';
+
 export interface AccountDetails {
 	userID: number;
 	username: string;
