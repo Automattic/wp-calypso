@@ -46,7 +46,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			stepCount: hasSites ? <Gridicon icon="checkmark" size={ 16 } /> : 1,
 			title: translate( 'Add your Jetpack sites' ),
 			description: translate(
-				'Manage features and monitor your clients’ sites by adding them to your Jetpack Pro Dashboard. To do so, connect the sites to Jetpack using your {{strong}}%(userEmail)s{{/strong}} user account.',
+				'Manage features and monitor your clients’ sites by adding them to Jetpack Manage. To do so, connect the sites to Jetpack using your {{strong}}%(userEmail)s{{/strong}} user account.',
 				{
 					args: { userEmail: user?.email ?? '' },
 					components: {
@@ -104,7 +104,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			} ) }
 		>
 			<h2 className="onboarding-widget__title">
-				{ translate( "Let's get started with the Jetpack Pro Dashboard" ) }
+				{ translate( "Let's get started with Jetpack Manage" ) }
 			</h2>
 
 			<div className="onboarding-widget__steps">

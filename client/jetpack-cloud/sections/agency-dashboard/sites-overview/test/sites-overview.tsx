@@ -102,9 +102,7 @@ describe( '<SitesOverview>', () => {
 		);
 		expect( dashboardSubHeading ).toBeInTheDocument();
 
-		const [ emptyStateMessage ] = getAllByText(
-			"Let's get started with the Jetpack Pro Dashboard"
-		);
+		const [ emptyStateMessage ] = getAllByText( "Let's get started with Jetpack Manage" );
 		expect( emptyStateMessage ).toBeInTheDocument();
 
 		const promise = Promise.resolve();
