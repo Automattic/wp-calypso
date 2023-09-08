@@ -60,6 +60,12 @@ export class AdvertisingPage {
 		name: string,
 		{ row, postTitle }: { row?: number; postTitle?: string } = {}
 	) {
+		// Wait for the posts and the banner to finish loading.
+		await Promise.all( [
+			this.page.getByRole( 'main' ).locator( 'span.count' ).waitFor(),
+			this.page.getByRole( 'main' ).locator( '.posts-list-banner__container' ).waitFor(),
+		] );
+
 		if ( row !== undefined && row >= 0 ) {
 			await this.page
 				.getByRole( 'row' )
