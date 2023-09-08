@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { Spinner } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -49,7 +51,10 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 		);
 	};
 
-	if ( ! newsletterCategoriesData?.enabled ) {
+	if (
+		! config.isEnabled( 'settings/newsletter-categories' ) ||
+		! newsletterCategoriesData?.enabled
+	) {
 		return null;
 	}
 
@@ -59,6 +64,11 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 			<div className="site-subscription-info">
 				<h2 className="site-subscription-info__heading">{ translate( 'Subscription' ) }</h2>
 
+				{ isLoadingCategories || isLoadingSubscribedCategories ? (
+					<div className="site-subscription-info__loading">
+						<Spinner />
+					</div>
+				) : (
 				<dl className="site-subscription-info__list">
 					<dt>{ translate( 'Subscribed to' ) }</dt>
 					<dd>
@@ -80,6 +90,7 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 						) ) }
 					</dd>
 				</dl>
+				) }
 			</div>
 		</>
 	);
