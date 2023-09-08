@@ -6,9 +6,15 @@ import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { StatsNoticeProps } from './types';
 
-const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
+const getStatsPurchaseURL = (
+	siteId: number | null,
+	isOdysseyStats: boolean,
+	hasFreeStats = false
+) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }-stats-upgrade-notice`;
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }-stats-upgrade-notice${
+		hasFreeStats ? '&productType=personal' : ''
+	}`;
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
@@ -49,7 +55,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 			  );
 		// Allow some time for the event to be recorded before redirecting.
 		setTimeout(
-			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats ) ),
+			() => ( window.location.href = getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ),
 			250
 		);
 	};
@@ -81,7 +87,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					'{{p}}Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+					'{{p}}Upgrade to get priority support and access to upcoming advanced features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,

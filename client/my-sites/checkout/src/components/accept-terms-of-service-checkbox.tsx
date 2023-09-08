@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -47,18 +47,23 @@ const ErrorMessage = styled.small`
 interface ExternalProps {
 	isAccepted: boolean;
 	isSubmitted: boolean;
+	message: TranslateResult;
+	errorMessage?: TranslateResult;
 	onChange: ( isAccepted: boolean ) => void;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }: Props ) {
+function AcceptTermsOfServiceCheckbox( {
+	isAccepted,
+	isSubmitted,
+	message,
+	errorMessage,
+	onChange,
+	translate,
+}: Props ) {
 	const [ touched, setTouched ] = useState( false );
 	const displayErrorMessage = ( isSubmitted || touched ) && ! isAccepted;
-
-	const message = translate(
-		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
-	);
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		onChange( event.target.checked );
@@ -74,11 +79,13 @@ function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }
 				/>
 				<MessageWrapper displayErrorMessage={ displayErrorMessage }>{ message }</MessageWrapper>
 				{ displayErrorMessage && (
-					<ErrorMessage>{ translate( 'The terms above need to be accepted' ) }</ErrorMessage>
+					<ErrorMessage>
+						{ errorMessage || translate( 'The terms above need to be accepted' ) }
+					</ErrorMessage>
 				) }
 			</CheckboxTermsWrapper>
 		</FormLabel>
 	);
 }
 
-export default localize( ThirdPartyDevsAccount );
+export default localize( AcceptTermsOfServiceCheckbox );

@@ -192,7 +192,7 @@ export type AllowedActionTypes =
 	| 'visit_wp_admin'
 	| 'clone_site'
 	| 'site_settings'
-	| 'setup_site'
+	| 'set_up_site'
 	| 'change_domain'
 	| 'hosting_configuration';
 

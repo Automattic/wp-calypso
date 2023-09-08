@@ -155,7 +155,7 @@
 		"stats/subscribers-chart-section": false,
 		"stats/paid-stats": true,
 		"stats/paid-wpcom-stats": false,
-		"stats/type-detection": false,
+		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,

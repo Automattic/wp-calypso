@@ -8,7 +8,7 @@ import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/paid-stats&from=${ from }-stats-commercial-site-upgrade-notice`;
+	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/type-detection&from=${ from }-stats-commercial-site-upgrade-notice&productType=commercial`;
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
@@ -68,11 +68,11 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 		>
 			<NoticeBanner
 				level="info"
-				title={ translate( 'Upgrade to a commercial license' ) }
+				title={ translate( 'Upgrade to Stats Commercial' ) }
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					"{{p}}After analyzing your website, it appears to fall under the category of a commercial site. Upgrade to keep using Jetpack Stats and get early access to new upcoming advanced features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}I don't have a commercial site{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}",
+					'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,
