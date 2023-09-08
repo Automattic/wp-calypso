@@ -156,7 +156,7 @@ const StatsPurchasePage = ( {
 									siteId={ siteId }
 									redirectUri={ query.redirect_uri ?? '' }
 									from={ query.from ?? '' }
-									disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
+									disableFreeProduct={ ! noPlanOwned }
 									initialStep={ initialStep }
 									initialSiteType={ initialSiteType }
 								/>
@@ -191,7 +191,7 @@ const StatsPurchasePage = ( {
 										siteId={ siteId }
 										redirectUri={ query.redirect_uri ?? '' }
 										from={ query.from ?? '' }
-										disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
+										disableFreeProduct={ ! noPlanOwned }
 										initialStep={ initialStep }
 										initialSiteType={ initialSiteType }
 									/>
@@ -224,7 +224,7 @@ const StatsPurchasePage = ( {
 										siteId={ siteId }
 										redirectUri={ query.redirect_uri ?? '' }
 										from={ query.from ?? '' }
-										disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
+										disableFreeProduct={ ! noPlanOwned }
 									/>
 								)
 							}
