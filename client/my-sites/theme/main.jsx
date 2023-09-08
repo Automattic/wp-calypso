@@ -1018,11 +1018,11 @@ class ThemeSheet extends Component {
 
 		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 			return translate( 'Access this WooCommerce theme with a Business plan!' );
-		} else if ( isExternallyManagedTheme ) {
-			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
+		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
-			return translate( 'Subscribe to this premium theme!' );
+			return translate( 'Subscribe to this theme!' );
 		}
 
 		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
@@ -1041,13 +1041,13 @@ class ThemeSheet extends Component {
 			return translate(
 				'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 			);
-		} else if ( isExternallyManagedTheme ) {
-			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
+		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate(
-					'Unlock this theme by upgrading to a Business plan and subscribing to this premium theme.'
+					'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
 				);
 			}
-			return translate( 'Subscribe to this premium theme and unlock all its features.' );
+			return translate( 'Subscribe to this theme and unlock all its features.' );
 		}
 
 		return translate(

@@ -71,9 +71,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate( 'Jetpack can’t establish a connection to your site’s database.' ) }
-				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/why-is-my-site-down/#theres-an-issue-with-your-sites-jetpack-connection'
-				) }
+				noticeActionHref="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -159,9 +157,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				errorText={ translate(
 					"Jetpack can’t communicate with your site because it hasn't seen your site for 7 days."
 				) }
-				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/resolve-jetpack-errors/#jetpack-plugin-is-deactivated'
-				) }
+				noticeActionHref="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -175,9 +171,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 				errorText={ translate(
 					'We can’t communicate with your site because the Jetpack plugin is deactivated.'
 				) }
-				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/resolve-jetpack-errors/#jetpack-plugin-is-deactivated'
-				) }
+				noticeActionHref="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
 				noticeActionText={ translate( 'Learn how to reactivate Jetpack' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>

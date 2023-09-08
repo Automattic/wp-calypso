@@ -12,6 +12,7 @@ import OtherIntentImage from 'calypso/assets/images/onboarding/videopress-onboar
 import PortfolioIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-portfolio.png';
 import SingleVideoIntentImage from 'calypso/assets/images/onboarding/videopress-onboarding-intent/intent-single-video.png';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CloseIcon from '../intro/icons/close-icon';
 import VideoPressOnboardingIntentItem from './intent-item';
@@ -29,6 +30,8 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
 	const [ modal, setModal ] = useState< ReactElement | null >( null );
+	const urlQueryParams = useQuery();
+	const fromReferrer = urlQueryParams.get( 'from' ) ?? '';
 
 	const { submit } = navigation;
 
@@ -40,6 +43,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_videopress_onboarding_intent_clicked', {
 			intent,
 			click_number: intentClickNumber,
+			referrer: fromReferrer,
 		} );
 		setIntentClicksNumber( intentClickNumber + 1 );
 	};
@@ -96,13 +100,13 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 		<>
 			<div className="videopress-onboarding-intent__step-content">
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Get a video portfolio' ) }
+					title={ __( 'Showcase your work' ) }
 					description={ __( 'Share your work with the world.' ) }
 					image={ PortfolioIntentImage }
 					onClick={ onVideoPortfolioIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Create a channel for your videos' ) }
+					title={ __( 'Create a community' ) }
 					description={ __(
 						'The easiest way to upload videos and create a community around them.'
 					) }
@@ -111,20 +115,22 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 					onClick={ onVideoChannelIntentClicked }
 				/>
 				<VideoPressOnboardingIntentItem
-					title={ __( 'Upload a video' ) }
+					title={ __( 'Share a video' ) }
 					description={ __( 'Just put a video on the internet.' ) }
 					image={ SingleVideoIntentImage }
 					isComingSoon={ true }
 					onClick={ onUploadVideoIntentClicked }
 				/>
-				<VideoPressOnboardingIntentItem
-					title={ __( 'Add video to an existing site' ) }
-					description={ __(
-						'All the advantages and features from VideoPress, on your own WordPress site.'
-					) }
-					image={ JetpackIntentImage }
-					onClick={ onJetpackIntentClicked }
-				/>
+				{ 'vpcom' !== fromReferrer && (
+					<VideoPressOnboardingIntentItem
+						title={ __( 'Add video to an existing site' ) }
+						description={ __(
+							'All the advantages and features from VideoPress, on your own WordPress site.'
+						) }
+						image={ JetpackIntentImage }
+						onClick={ onJetpackIntentClicked }
+					/>
+				) }
 				<VideoPressOnboardingIntentItem
 					title={ __( 'Start a blog with video content' ) }
 					description={ __( 'Use advanced media formats to enhance your storytelling.' ) }
@@ -176,7 +182,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="videopress-onboarding-intent-header"
-					headerText={ __( 'What would you like to do?' ) }
+					headerText={ __( 'What would you like to use video for?' ) }
 					subHeaderText={ __(
 						'Choose an option to continue, or let us know what you’re looking for.'
 					) }

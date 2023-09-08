@@ -59,26 +59,24 @@ export class JetpackInstantSearchModalComponent {
 	 *  <some action that triggers a search>(),
 	 * ] );
 	 */
-	async expectAndWaitForSearch(): Promise< void > {
+	async expectAndWaitForSearch( search: string ): Promise< void > {
 		// This is currently the safest and most reliable way to wait for a search action to complete.
-		// Keying off of web requests is a bit squirrely because it's always the same route with a ton of different args.
-		// The loading header is reliable, but it takes a quick moment to show up, allowing for a race condition.
-		// Therefore, we take a wrapped approach. We wait for the loading header to show up, then wait for it to go away.
-		// Then we wrap the search-triggering action in this promise.
-		// Also, the header text changes depending on whether there's a search term or not.
-		const withTermLocator = this.modalLocator.getByRole( 'heading', {
-			name: 'Searching…',
-			includeHidden: true, // these are aria-hidden while search is underway
+		// First, we wait for the web response unique to the search query to come back.
+		// That way, we can THEN safely wait for the headers that indicate that the UI has re-rendered.
+		await this.page.waitForResponse( ( response ) => {
+			// Yes, the component is double-encoding the search term!
+			const expectedQuery = `query=${ encodeURIComponent( encodeURIComponent( search ) ) }`;
+			return response.url().includes( '/search' ) && response.url().includes( expectedQuery );
 		} );
-		const withoutTermLocator = this.modalLocator.getByRole( 'heading', {
-			name: 'Loading popular results…',
-			includeHidden: true, // these are aria-hidden while search is underway
+
+		// There are two different headers based on whether results were found or not.
+		const withResultsLocator = this.modalLocator.getByRole( 'heading', {
+			name: 'Showing popular results',
 		} );
-		await Promise.race( [ withTermLocator.waitFor(), withoutTermLocator.waitFor() ] );
-		await Promise.all( [
-			withTermLocator.waitFor( { state: 'detached', timeout: 20 * 1000 } ),
-			withoutTermLocator.waitFor( { state: 'detached', timeout: 20 * 1000 } ),
-		] );
+		const withoutResultsLocator = this.modalLocator.getByRole( 'heading', {
+			name: 'No results found',
+		} );
+		await Promise.race( [ withResultsLocator.waitFor(), withoutResultsLocator.waitFor() ] );
 	}
 
 	/**

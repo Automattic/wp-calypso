@@ -11,6 +11,12 @@
 	line-height: 1.4;
 	color: #000;
 	flex-direction: column;
+
+	ol,
+	ul {
+		margin: 0 0 1.5em 1.5em;
+		width: calc(100% - 1.5em);
+	}
 }
 
 .odie-chatbox-message.odyssus-chatbox-message-user {

@@ -1,11 +1,34 @@
-import { Card, Button } from '@wordpress/components';
-import classNames from 'classnames';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
-import StatsPurchaseSVG from './stats-purchase-svg';
-import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
+import {
+	StatsBenefitsCommercial,
+	StatsBenefitsPersonal,
+	StatsBenefitsFree,
+	StatsSingleItemPagePurchaseFrame,
+} from './stats-purchase-shared';
 import './styles.scss';
+
+const getStatsPurchaseURL = ( siteId, isOdysseyStats, productType = 'commercial' ) => {
+	const purchasePath = `/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
+
+	if ( ! isOdysseyStats ) {
+		return purchasePath;
+	}
+	return `https://wordpress.com${ purchasePath }`;
+};
+
+const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
+	event.preventDefault();
+
+	isOdysseyStats
+		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
+		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
+
+	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+};
 
 const StatsCommercialOwned = ( { siteSlug } ) => {
 	const translate = useTranslate();
@@ -24,47 +47,126 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 			<h1>{ translate( 'You have already purchased Jetpack Stats Commercial!' ) }</h1>
 			<p>
 				{ translate(
-					'It appears that you have already purchased a license for this product, and it has been successfully activated. You now have access to:'
+					'It appears that you have already purchased a license or a plan that supports this product, and it has been successfully activated. You now have access to:'
 				) }
 			</p>
-			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-					<li>{ translate( 'Real-time data on visitors' ) }</li>
-					<li>{ translate( 'Traffic stats and trends for post and pages' ) }</li>
-					<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
-					<li>{ translate( 'GDPR compliant' ) }</li>
-					<li>{ translate( 'Access to upcoming advanced features' ) }</li>
-					<li>{ translate( 'Priority support' ) }</li>
-					<li>{ translate( 'Commercial use' ) }</li>
-				</ul>
-			</div>
-			<Button variant="primary" onClick={ handleClick }>
+			<StatsBenefitsCommercial />
+			<Button variant="secondary" onClick={ handleClick }>
 				{ translate( 'See your stats' ) }
 			</Button>
 		</>
 	);
 };
 
-const StatsPurchaseNotice = ( { siteSlug } ) => {
-	// TODO: use props to swap multiple versions of the left side content
+const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
+	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const handleClick = () => {
+		if ( ! siteSlug ) {
+			return;
+		}
+		const trafficPageUrl = `/stats/day/${ siteSlug }`;
+
+		page.redirect( trafficPageUrl );
+	};
 
 	return (
-		<div className={ classNames( COMPONENT_CLASS_NAME, `${ COMPONENT_CLASS_NAME }--single` ) }>
-			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
-				<div className={ `${ COMPONENT_CLASS_NAME }__card` }>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--left` }>
-						<StatsCommercialOwned siteSlug={ siteSlug } />
-					</div>
-					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
-						<StatsPurchaseSVG />
-						<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right-background` }>
-							<img src={ statsPurchaseBackgroundSVG } alt="Blurred background" />
-						</div>
-					</div>
-				</div>
-			</Card>
+		<StatsSingleItemPagePurchaseFrame>
+			<h1>{ translate( 'You have already purchased Jetpack Stats Personal Plan!' ) }</h1>
+			<p>
+				{ translate(
+					'It appears that you have already purchased a license for this product, and it has been successfully activated. You now have access to:'
+				) }
+			</p>
+			<StatsBenefitsPersonal />
+			<Button variant="secondary" onClick={ handleClick }>
+				{ translate( 'See your stats' ) }
+			</Button>
+			<Button
+				variant="primary"
+				onClick={ ( e ) =>
+					handleUpgradeClick(
+						e,
+						getStatsPurchaseURL( siteId, isOdysseyStats, 'commercial' ),
+						isOdysseyStats
+					)
+				}
+			>
+				{ translate( 'Upgrade my Stats' ) }
+			</Button>
+		</StatsSingleItemPagePurchaseFrame>
+	);
+};
+
+const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
+	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const handleClick = () => {
+		if ( ! siteSlug ) {
+			return;
+		}
+		const trafficPageUrl = `/stats/day/${ siteSlug }`;
+
+		page.redirect( trafficPageUrl );
+	};
+
+	return (
+		<StatsSingleItemPagePurchaseFrame isFree>
+			<h1>{ translate( 'You have already purchased Jetpack Stats Free Plan!' ) }</h1>
+			<p>
+				{ translate(
+					'It appears that you have already purchased a license for this product, and it has been successfully activated. You now have access to:'
+				) }
+			</p>
+			<StatsBenefitsFree />
+			<Button variant="secondary" onClick={ handleClick }>
+				{ translate( 'See your stats' ) }
+			</Button>
+
+			<Button
+				variant="primary"
+				onClick={ ( e ) =>
+					handleUpgradeClick(
+						e,
+						getStatsPurchaseURL( siteId, isOdysseyStats, 'personal' ),
+						isOdysseyStats
+					)
+				}
+			>
+				{ translate( 'Upgrade my Stats' ) }
+			</Button>
+		</StatsSingleItemPagePurchaseFrame>
+	);
+};
+
+const StatsPurchaseNotice = ( { siteSlug } ) => {
+	return (
+		<StatsSingleItemPagePurchaseFrame>
+			<StatsCommercialOwned siteSlug={ siteSlug } />
+		</StatsSingleItemPagePurchaseFrame>
+	);
+};
+
+const StatsPurchaseNoticePage = ( {
+	siteId,
+	siteSlug,
+	isCommercialOwned,
+	isFreeOwned,
+	isPWYWOwned,
+} ) => {
+	return (
+		<div className="stats-purchase-page__notice">
+			{ isCommercialOwned && <StatsPurchaseNotice siteSlug={ siteSlug } /> }
+			{ isPWYWOwned && ! isCommercialOwned && (
+				<StatsPWYWOwnedNotice siteId={ siteId } siteSlug={ siteSlug } />
+			) }
+			{ isFreeOwned && ! isPWYWOwned && ! isCommercialOwned && (
+				<StatsFreeOwnedNotice siteId={ siteId } siteSlug={ siteSlug } />
+			) }
 		</div>
 	);
 };
 
-export default StatsPurchaseNotice;
+export { StatsPurchaseNoticePage, StatsPurchaseNotice, getStatsPurchaseURL };

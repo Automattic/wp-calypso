@@ -4,7 +4,7 @@ import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
-import { TaxInfoArea } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
+import { TaxInfoArea } from 'calypso/my-sites/checkout/src/components/payment-method-tax-info';
 import PaymentMethodDetails from './payment-method-details';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 

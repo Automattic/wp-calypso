@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
+import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -22,6 +24,7 @@ import DomainHeader from 'calypso/my-sites/domains/domain-management/components/
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
+	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
 	domainUseMyDomain,
@@ -310,6 +313,48 @@ const Settings = ( {
 		);
 	};
 
+	const renderDnsRecordsNotice = () => {
+		if (
+			( ! englishLocales.includes( getLocaleSlug() || '' ) &&
+				! i18n.hasTranslation(
+					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
+				) ) ||
+			areAllWpcomNameServers()
+		) {
+			return null;
+		}
+
+		return (
+			<div className="dns-records-card-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="dns-records-card-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="dns-records-card-notice__message">
+					{ translate(
+						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit(
+											selectedSite.slug,
+											selectedDomainName,
+											currentRoute,
+											{ nameservers: true }
+										) }
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
 	const renderDnsRecords = () => {
 		if (
 			! domain ||
@@ -321,21 +366,26 @@ const Settings = ( {
 		}
 
 		return (
-			<Accordion
-				title={ translate( 'DNS records', { textOnly: true } ) }
-				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
-			>
-				{ domain.canManageDnsRecords ? (
-					<DnsRecords
-						dns={ dns }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite }
-						currentRoute={ currentRoute }
-					/>
-				) : (
-					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
-				) }
-			</Accordion>
+			<div className="dns-records-card">
+				<Accordion
+					title={ translate( 'DNS records', { textOnly: true } ) }
+					subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
+				>
+					{ domain.canManageDnsRecords ? (
+						<>
+							{ renderDnsRecordsNotice() }
+							<DnsRecords
+								dns={ dns }
+								selectedDomainName={ selectedDomainName }
+								selectedSite={ selectedSite }
+								currentRoute={ currentRoute }
+							/>
+						</>
+					) : (
+						<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
+					) }
+				</Accordion>
+			</div>
 		);
 	};
 
@@ -349,10 +399,20 @@ const Settings = ( {
 			return null;
 		}
 
+		let translatedTitle;
+		if (
+			englishLocales.includes( getLocaleSlug() || '' ) ||
+			i18n.hasTranslation( 'Domain forwarding' )
+		) {
+			translatedTitle = translate( 'Domain forwarding', { textOnly: true } );
+		} else {
+			translatedTitle = translate( 'Domain Forwarding', { textOnly: true } );
+		}
+
 		return (
 			<Accordion
 				className="domain-forwarding-card__accordion"
-				title={ translate( 'Domain Forwarding', { textOnly: true } ) }
+				title={ translatedTitle }
 				subtitle={ translate( 'Forward your domain to another' ) }
 			>
 				<DomainForwardingCard domain={ domain } />

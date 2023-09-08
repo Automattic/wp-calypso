@@ -19,8 +19,12 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const { helpers, gridPlansIndex } = usePlansGridContext();
 	const {
 		isMonthlyPlan,
-		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod },
+		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer },
 	} = gridPlansIndex[ planSlug ];
+
+	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
+		return null;
+	}
 
 	// We want the yearly-variant plan's price to be the raw price the user
 	// would pay if they choose an annual plan instead of the monthly one. So pro-rated
@@ -30,13 +34,9 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const yearlyVariantPricing = helpers?.usePricingMetaForGridPlans( {
 		planSlugs: [ yearlyVariantPlanSlug ],
 		withoutProRatedCredits: true,
-	} )[ yearlyVariantPlanSlug ];
+	} )?.[ yearlyVariantPlanSlug ];
 
-	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
-		return null;
-	}
-
-	if ( isMonthlyPlan && originalPrice?.monthly && yearlyVariantPricing ) {
+	if ( isMonthlyPlan && originalPrice?.monthly && yearlyVariantPricing && ! introOffer ) {
 		const yearlyVariantMaybeDiscountedPrice =
 			yearlyVariantPricing.discountedPrice?.monthly || yearlyVariantPricing.originalPrice?.monthly;
 
@@ -65,6 +65,96 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		currencyCode && originalPrice?.full
 			? formatCurrency( originalPrice.full, currencyCode, { stripZeros: true } )
 			: null;
+
+	/*
+	 * The introOffer billing should fall below into the next block once experiment with Woo plans is finalized.
+	 * We only expose introOffers to monthly & yearly plans for now (so no need to introduce more translations just yet).
+	 */
+	if ( introOffer?.intervalCount && introOffer.intervalUnit ) {
+		if ( discountedPriceFullTermText ) {
+			if ( isMonthlyPlan ) {
+				return translate(
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)s,{{br/}}' +
+						'then, %(rawPrice)s for the first month, Excl. Taxes',
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)ss,{{br/}}' +
+						'then, %(rawPrice)s for the first month, Excl. Taxes',
+					{
+						count: introOffer.intervalCount,
+						args: {
+							rawPrice: discountedPriceFullTermText,
+							introOfferIntervalCount: introOffer.intervalCount,
+							introOfferIntervalPeriod: introOffer.intervalUnit,
+						},
+						components: { br: <br /> },
+						comment: 'Excl. Taxes is short for excluding taxes',
+					}
+				);
+			}
+
+			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+				return translate(
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)s,{{br/}}' +
+						'then, %(rawPrice)s for the first year, Excl. Taxes',
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)ss,{{br/}}' +
+						'then, %(rawPrice)s for the first year, Excl. Taxes',
+					{
+						count: introOffer.intervalCount,
+						args: {
+							rawPrice: discountedPriceFullTermText,
+							introOfferIntervalCount: introOffer.intervalCount,
+							introOfferIntervalPeriod: introOffer.intervalUnit,
+						},
+						components: { br: <br /> },
+						comment: 'Excl. Taxes is short for excluding taxes',
+					}
+				);
+			}
+		} else if ( originalPriceFullTermText ) {
+			if ( isMonthlyPlan ) {
+				return translate(
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)s,{{br/}}' +
+						'then, %(rawPrice)s billed monthly, Excl. Taxes',
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)ss,{{br/}}' +
+						'then, %(rawPrice)s billed monthly, Excl. Taxes',
+					{
+						count: introOffer.intervalCount,
+						args: {
+							rawPrice: originalPriceFullTermText,
+							introOfferIntervalCount: introOffer.intervalCount,
+							introOfferIntervalPeriod: introOffer.intervalUnit,
+						},
+						components: { br: <br /> },
+						comment: 'Excl. Taxes is short for excluding taxes',
+					}
+				);
+			}
+
+			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+				return translate(
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)s,{{br/}}' +
+						'then, %(rawPrice)s billed annually, Excl. Taxes',
+					'per month, for your first %(introOfferIntervalCount)s %(introOfferIntervalPeriod)ss,{{br/}}' +
+						'then, %(rawPrice)s billed annually, Excl. Taxes',
+					{
+						count: introOffer.intervalCount,
+						args: {
+							rawPrice: originalPriceFullTermText,
+							introOfferIntervalCount: introOffer.intervalCount,
+							introOfferIntervalPeriod: introOffer.intervalUnit,
+						},
+						components: { br: <br /> },
+						comment: 'Excl. Taxes is short for excluding taxes',
+					}
+				);
+			}
+		}
+
+		/*
+		 * Early return here is for sanity. We don't want to show regular billing descriptions
+		 * if there is an introOffer (despite that will not be the case, unless some API-level bug happens)
+		 */
+		return null;
+	}
 
 	if ( discountedPriceFullTermText ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
@@ -137,11 +227,15 @@ interface Props {
 const PlanFeatures2023GridBillingTimeframe = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
-	const { isMonthlyPlan, billingTimeframe } = gridPlansIndex[ planSlug ];
+	const {
+		isMonthlyPlan,
+		billingTimeframe,
+		pricing: { introOffer },
+	} = gridPlansIndex[ planSlug ];
 	const perMonthDescription = usePerMonthDescription( { planSlug } );
 	const description = perMonthDescription || billingTimeframe;
 
-	if ( isWooExpressPlan( planSlug ) && isMonthlyPlan ) {
+	if ( isWooExpressPlan( planSlug ) && isMonthlyPlan && ! introOffer ) {
 		return (
 			<div>
 				<div>{ billingTimeframe }</div>

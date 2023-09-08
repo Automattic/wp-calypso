@@ -21,6 +21,10 @@ $section-max-width: 1224px;
 		padding: 0;
 		padding-block-start: 79px;
 
+		@media (min-width: 1401px) {
+			padding-bottom: 88px;
+		}
+
 		@media ( min-width: 782px ) {
 			padding-inline-start: calc(var(--sidebar-width-max) + 1px);
 		}

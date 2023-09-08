@@ -48,6 +48,5 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 		width: '15%',
 	},
-	{ name: 'auto-renew', label: __( 'Auto-renew', __i18n_text_domain__ ) },
 	{ name: 'action', label: null },
 ];

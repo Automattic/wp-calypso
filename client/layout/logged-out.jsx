@@ -14,7 +14,6 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
-import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -82,6 +81,15 @@ const LayoutLoggedOut = ( {
 	const isReaderSearchPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
 
+	// It's used to add a class name for Gravatar login and magic login pages only (not for F2A pages)
+	const isGravatarLoginPage =
+		isGravatar &&
+		! currentRoute.startsWith( '/log-in/push' ) &&
+		! currentRoute.startsWith( '/log-in/authenticator' ) &&
+		! currentRoute.startsWith( '/log-in/sms' ) &&
+		! currentRoute.startsWith( '/log-in/webauthn' ) &&
+		! currentRoute.startsWith( '/log-in/backup' );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -98,6 +106,7 @@ const LayoutLoggedOut = ( {
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
+		'is-gravatar-login-page': isGravatarLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 	};
 
@@ -110,17 +119,11 @@ const LayoutLoggedOut = ( {
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if (
-			( isWooOAuth2Client( oauth2Client ) && wccomFrom ) ||
-			( isGravatar && sectionName === 'signup' )
-		) {
+		} else if ( ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) || isGravatar ) {
 			masterbar = null;
 		} else {
-			if ( ! isGravatar ) {
-				classes.dops = true;
-				// Using .is-gravatar instead of .gravatar to avoid style conflicts with the Gravatar component
-				classes[ oauth2Client.name ] = true;
-			}
+			classes.dops = true;
+			classes[ oauth2Client.name ] = true;
 
 			// Force masterbar for all Crowdsignal OAuth pages
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
@@ -214,10 +217,6 @@ const LayoutLoggedOut = ( {
 					isLoggedIn={ isLoggedIn }
 				/>
 			) }
-
-			{ isGravatar && sectionName === 'login' && (
-				<PoweredByWPFooter clientTitle={ oauth2Client.title } />
-			) }
 		</div>
 	);
 };
@@ -254,10 +253,7 @@ export default withCurrentRoute(
 		const isWhiteLogin =
 			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
 		const noMasterbarForRoute =
-			isJetpackLogin ||
-			( isWhiteLogin && ! isPartnerSignup && ! isGravatar ) ||
-			isJetpackWooDnaFlow ||
-			isP2Login;
+			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&

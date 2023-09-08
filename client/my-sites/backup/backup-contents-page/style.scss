@@ -28,15 +28,14 @@
 	&__header {
 		padding-left: 2px;
 		padding-right: 2px;
-		padding-bottom: 30px;
 
 		&.daily-backup-status {
 			box-shadow: none;
+			margin-bottom: 0;
 		}
 	}
 
 	&__body {
-		border-top: 1px solid var(--studio-gray-5);
 		overflow-x: auto;
 		padding-bottom: 14px;
 	}
@@ -120,6 +119,8 @@
 			}
 
 			&__actions {
+				display: flex;
+				gap: 1rem;
 				margin-top: 16px;
 			}
 
@@ -200,22 +201,15 @@
 	}
 
 	.file-browser-header {
-		padding: 13px 0;
-		.file-browser-header__select {
-			display: flex;
-			justify-content: space-between;
-
-			.file-browser-header__select-button {
-				color: #000;
-			}
-
-			.file-browser-header__select-info {
-				margin: auto 0;
-				font-size: $font-body-extra-small;
-			}
+		padding: 0 2px;
+		border-bottom: 1px solid var(--studio-gray-5);
+		.file-browser-header__action-buttons .button {
+			padding: 8px 32px;
+			margin-right: 16px;
 		}
 		.file-browser-header__selecting {
 			display: flex;
+			margin-top: 30px;
 
 			.bulk-select {
 				padding: 6px 0;
@@ -229,9 +223,6 @@
 				flex-grow: 1;
 				font-size: $font-body-extra-small;
 				padding: 6px 0;
-			}
-			.file-browser-header__cancel-button {
-				padding: 0;
 			}
 			.form-checkbox {
 				margin: 8px;

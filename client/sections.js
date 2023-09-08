@@ -158,6 +158,11 @@ const sections = [
 		name: 'settings-newsletter',
 		paths: [ '/settings/newsletter' ],
 		module: 'calypso/my-sites/site-settings/settings-newsletter',
+	},
+	{
+		name: 'settings-podcast',
+		paths: [ '/settings/podcasting' ],
+		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
 	},
 	{
@@ -400,7 +405,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/subscriptions' ],
+		paths: [ '/read/subscriptions', '^/read/subscriptions/(\\d+)(/)?$' ],
 		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},

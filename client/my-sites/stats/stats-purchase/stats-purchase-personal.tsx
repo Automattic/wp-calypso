@@ -1,18 +1,25 @@
-import { PricingSlider, RenderThumbFunction } from '@automattic/components';
+import {
+	PricingSlider,
+	RenderThumbFunction,
+	Button as CalypsoButton,
+} from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { COMPONENT_CLASS_NAME, MIN_STEP_SPLITS } from './stats-purchase-wizard';
 
 interface PersonalPurchaseProps {
 	subscriptionValue: number;
-	setSubscriptionValue: ( value: number ) => number;
+	setSubscriptionValue: ( value: number ) => void;
 	defaultStartingValue: number;
 	handlePlanSwap: ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	currencyCode: string;
+	siteId: number | null;
 	siteSlug: string;
 	sliderSettings: {
 		sliderStepPrice: number;
@@ -32,6 +39,7 @@ const PersonalPurchase = ( {
 	defaultStartingValue,
 	handlePlanSwap,
 	currencyCode,
+	siteId,
 	siteSlug,
 	sliderSettings,
 	adminUrl,
@@ -80,8 +88,26 @@ const PersonalPurchase = ( {
 	const handleClick = ( e: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) =>
 		handlePlanSwap( e );
 
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	// The button of @automattic/components has built-in color scheme support for Calypso.
+	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+
 	return (
 		<div>
+			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+				{ subscriptionValue === 0 ? (
+					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+						<li>{ translate( 'No access to upcoming features' ) }</li>
+						<li>{ translate( 'No priority support' ) }</li>
+					</ul>
+				) : (
+					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+						<li>{ translate( 'Instant access to upcoming features' ) }</li>
+						<li>{ translate( 'Priority support' ) }</li>
+					</ul>
+				) }
+			</div>
+
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
 					'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
@@ -92,6 +118,7 @@ const PersonalPurchase = ( {
 					}
 				) }
 			</div>
+
 			<PricingSlider
 				className={ `${ COMPONENT_CLASS_NAME }__slider` }
 				value={ subscriptionValue }
@@ -108,23 +135,6 @@ const PersonalPurchase = ( {
 					},
 				} ) }
 			</p>
-
-			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				{ subscriptionValue === 0 ? (
-					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
-						<li>{ translate( 'No access to upcoming features' ) }</li>
-						<li>{ translate( 'No priority support' ) }</li>
-					</ul>
-				) : (
-					<>
-						<p>{ translate( 'Benefits:' ) }</p>
-						<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-							<li>{ translate( 'Instant access to upcoming features' ) }</li>
-							<li>{ translate( 'Priority support' ) }</li>
-						</ul>
-					</>
-				) }
-			</div>
 
 			{ subscriptionValue === 0 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
@@ -168,7 +178,7 @@ const PersonalPurchase = ( {
 				</div>
 			) }
 
-			<p>
+			<p className={ `${ COMPONENT_CLASS_NAME }__personal-tos` }>
 				{ translate(
 					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
 					{
@@ -187,18 +197,20 @@ const PersonalPurchase = ( {
 			</p>
 
 			{ subscriptionValue === 0 ? (
-				<Button
+				<ButtonComponent
 					variant="primary"
+					primary={ isWPCOMSite ? true : undefined }
 					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
 					onClick={ () =>
 						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
 					}
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
-				</Button>
+				</ButtonComponent>
 			) : (
-				<Button
+				<ButtonComponent
 					variant="primary"
+					primary={ isWPCOMSite ? true : undefined }
 					onClick={ () =>
 						gotoCheckoutPage( {
 							from,
@@ -210,12 +222,8 @@ const PersonalPurchase = ( {
 						} )
 					}
 				>
-					{ translate( 'Get Jetpack Stats for %(value)s per month', {
-						args: {
-							value: formatCurrency( subscriptionValue * sliderStepPrice, currencyCode ),
-						},
-					} ) }
-				</Button>
+					{ translate( 'Get Stats Personal' ) }
+				</ButtonComponent>
 			) }
 		</div>
 	);

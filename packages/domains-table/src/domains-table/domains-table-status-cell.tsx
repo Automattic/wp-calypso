@@ -1,3 +1,6 @@
+import { Spinner } from '@automattic/components';
+import { DomainUpdateStatus } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { StatusPopover } from '../status-popover';
@@ -8,14 +11,17 @@ interface DomainsTableStatusCellProps {
 	currentDomainData?: ResponseDomain;
 	siteSlug?: string;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
+	pendingUpdates: DomainUpdateStatus[];
 }
 
 export const DomainsTableStatusCell = ( {
 	currentDomainData,
 	siteSlug,
 	domainStatusPurchaseActions,
+	pendingUpdates,
 }: DomainsTableStatusCellProps ) => {
 	const translate = useTranslate();
+	const locale = useLocale();
 	if ( ! currentDomainData ) {
 		return null;
 	}
@@ -31,6 +37,23 @@ export const DomainsTableStatusCell = ( {
 			domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
 	} );
 
+	const getActionName = ( status: DomainUpdateStatus ) => {
+		switch ( status.action ) {
+			case 'set_auto_renew':
+				return translate( 'Change auto-renew mode' );
+			case 'update_contact_info':
+				return translate( 'Update contact details' );
+			default:
+				throw new Error( 'Unknown action: ' + status.action );
+		}
+	};
+
+	const getTime = ( unixTimestamp: number ) => {
+		return Intl.DateTimeFormat( locale, { dateStyle: 'medium', timeStyle: 'medium' } ).format(
+			new Date( unixTimestamp * 1000 )
+		);
+	};
+
 	return (
 		<div
 			className={ classNames(
@@ -39,6 +62,25 @@ export const DomainsTableStatusCell = ( {
 			) }
 		>
 			{ status }
+			{ pendingUpdates.length > 0 && (
+				<StatusPopover popoverTargetElement={ <Spinner size={ 16 } /> }>
+					<div className="domains-bulk-update-status-popover">
+						<span> { translate( 'Pending updates' ) }</span>
+						{ pendingUpdates.map( ( update ) => (
+							<div key={ update.created_at } className="domains-bulk-update-status-popover-item">
+								<div>
+									<span className="domains-bulk-update-status-popover-item-indicator__pending" />
+									<span>{ getActionName( update ) }</span>
+								</div>
+								<span className="domains-bulk-update-status-popover-item-date">
+									{ ' ' }
+									{ getTime( update.created_at ) }
+								</span>
+							</div>
+						) ) }
+					</div>
+				</StatusPopover>
+			) }
 			{ noticeText && (
 				<StatusPopover className={ `domains-table-row__status-cell__${ statusClass }` }>
 					{ noticeText }

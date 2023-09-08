@@ -7,7 +7,7 @@ import {
 import formatCurrency from '@automattic/format-currency';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
-import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {
 	BillingTransaction,
 	BillingTransactionItem,
