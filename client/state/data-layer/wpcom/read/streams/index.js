@@ -1,8 +1,7 @@
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
-import moment from 'moment';
-import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
+import { getTagsFromStreamKey, getAfterDateForFeed } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -210,21 +209,15 @@ const streamApis = {
 			return `/read/tags/${ streamKeySuffix( streamKey ) }/cards`;
 		},
 		dateProperty: 'date',
-		query: ( extras, { streamKey } ) => {
-			const recencyInDays = 1;
-			// current dateTime subtracting recencyInDays
-			const earliestDate = moment()
-				.subtract( recencyInDays, 'days' )
-				.format( 'YYYY-MM-DDTHH:mm:ssZ' );
-			return getQueryString( {
+		query: ( extras, { streamKey } ) =>
+			getQueryString( {
 				...extras,
 				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
 				tags: getTagsFromStreamKey( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
-				after: earliestDate,
-			} );
-		},
+				after: getAfterDateForFeed(),
+			} ),
 		apiNamespace: 'wpcom/v2',
 	},
 	site: {
