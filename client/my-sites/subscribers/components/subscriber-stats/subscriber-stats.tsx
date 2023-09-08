@@ -28,19 +28,19 @@ const SubscriberStats = ( { siteId, subscriptionId, userId }: SubscriberStatsPro
 		<div className="subscriber-stats">
 			<div className="subscriber-stats__list highlight-cards-list">
 				<SubscriberStatsCard
-					heading="Emails sent"
+					heading={ translate( 'Emails sent' ) }
 					isLoading={ isLoading }
 					icon={ <Icon icon={ MailIcon } /> }
 					value={ subscriberStats?.emails_sent }
 				/>
 				<SubscriberStatsCard
-					heading="Open rate"
+					heading={ translate( 'Open rate' ) }
 					isLoading={ isLoading }
 					icon={ <Icon icon={ chartBar } /> }
 					value={ `${ openRate }%` }
 				/>
 				<SubscriberStatsCard
-					heading="Click rate"
+					heading={ translate( 'Click rate' ) }
 					icon={ <Icon icon={ SelectIcon } /> }
 					isLoading={ isLoading }
 					value={ `${ clickRate }%` }

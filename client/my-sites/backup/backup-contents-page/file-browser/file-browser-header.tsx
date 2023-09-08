@@ -3,29 +3,36 @@ import { Icon } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { backupGranularRestorePath } from '../../paths';
 import { FileBrowserCheckState } from './types';
 
 interface FileBrowserHeaderProps {
 	setShowCheckboxes: ( enabled: boolean ) => void;
 	showCheckboxes: boolean;
+	rewindId: number;
 }
 
 const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 	setShowCheckboxes,
 	showCheckboxes,
+	rewindId,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+
 	const onSelectClick = () => {
 		setShowCheckboxes( true );
 	};
@@ -37,9 +44,9 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 		console.log( browserCheckList );
 	};
 	const onRestoreClick = () => {
-		alert( 'Not yet implemented' );
+		// TODO: Add tracking
+		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
-
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
 		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {

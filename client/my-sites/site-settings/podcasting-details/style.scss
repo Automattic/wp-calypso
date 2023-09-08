@@ -64,10 +64,6 @@
 		color: var(--color-neutral-70);
 		text-decoration: underline;
 	}
-
-	.podcasting-details__support-link {
-		margin-left: 4px;
-	}
 }
 
 .podcasting-details__publish-button {
@@ -175,9 +171,4 @@
 	.button {
 		margin: 12px 0 6px;
 	}
-}
-
-.podcasting-details__support-link {
-	text-decoration: underline;
-	white-space: nowrap;
 }

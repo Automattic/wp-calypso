@@ -7,6 +7,8 @@ export const NAVIGATOR_PATHS = {
 	MAIN_HEADER: '/main/header',
 	MAIN_FOOTER: '/main/footer',
 	MAIN_PATTERNS: '/main/:categorySlug',
+	SECTIONS: '/sections',
+	SECTIONS_PATTERNS: '/sections/:categorySlug',
 	STYLES: '/styles',
 	STYLES_COLORS: '/styles/colors',
 	STYLES_FONTS: '/styles/fonts',

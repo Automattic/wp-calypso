@@ -1,10 +1,11 @@
-import { Spinner } from '@wordpress/components';
+import { Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useDispatch } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
+import useSubscriberNewsletterCategories from 'calypso/data/newsletter-categories/use-subscriber-newsletter-categories-query';
 import { useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -39,11 +40,19 @@ const SubscriberDetailsPage = ( {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
-	const { data: subscriber, isLoading } = useSubscriberDetailsQuery(
+	const { data: subscriber, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		selectedSiteId,
 		subscriptionId,
 		userId
 	);
+
+	const { data: newsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
+		useSubscriberNewsletterCategories( {
+			siteId: selectedSiteId as number,
+			subscriptionId: subscriptionId || subscriber?.subscription_id,
+		} );
+
+	const isLoading = isLoadingDetails || isLoadingNewsletterCategories;
 
 	const pageArgs = {
 		currentPage: pageNumber,
@@ -105,6 +114,8 @@ const SubscriberDetailsPage = ( {
 					siteId={ selectedSiteId }
 					subscriptionId={ subscriptionId }
 					userId={ userId }
+					newsletterCategoriesEnabled={ newsletterCategoriesData?.enabled }
+					newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
 				/>
 			) }
 			<UnsubscribeModal

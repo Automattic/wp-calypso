@@ -564,6 +564,13 @@ export default function buildFallbackResponse( {
 					  ]
 					: [] ),
 				{
+					parent: 'options-podcasting.php',
+					slug: 'options-podcasting-php',
+					title: translate( 'Podcasting' ),
+					type: 'submenu-item',
+					url: `/settings/podcasting/${ siteDomain }`,
+				},
+				{
 					parent: 'options-general.php',
 					slug: 'options-domains-php',
 					title: translate( 'Domains' ),
