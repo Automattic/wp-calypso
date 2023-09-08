@@ -1402,7 +1402,7 @@ class ThemeSheet extends Component {
 						if ( this.props.defaultOption.action ) {
 							this.props.defaultOption.action( this.props.themeId );
 						} else {
-							window.location.href = this.getUrl();
+							window.location.href = this.props.defaultOption.getUrl();
 						}
 					} }
 					marketplaceProduct={ this.props.selectedMarketplaceProduct }
