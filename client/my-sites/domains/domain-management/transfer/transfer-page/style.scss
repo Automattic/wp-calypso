@@ -130,6 +130,10 @@
 
 	.transfer-page__upsell-discount {
 		text-align: center;
+
+		p {
+			font-size: $font-body-large;
+		}
 	}
 
 	@include breakpoint-deprecated( ">1280px" ) {
