@@ -20,6 +20,8 @@ interface ValidationData {
 	keywords: string[];
 }
 
+const TIMEOUT = 30 * 1000;
+
 /**
  * Represents the flow of using the AI Assistant block.
  */
@@ -100,11 +102,16 @@ export class AIAssistantFlow implements BlockFlow {
 	 * @param {Locator} block Locator to the block.
 	 */
 	private async waitForQuery( block: Locator ) {
-		// Some users on AT are very slow to process queries, hence the very long
-		// timeout.
-		await block
-			.getByRole( 'button', { name: 'Stop request' } )
-			.waitFor( { state: 'detached', timeout: 30 * 1000 } );
+		const handle = await block.elementHandle();
+
+		// This is an attempt to wait for the AI block to fully finish rendering
+		// before interacting with the toolbar.
+		await Promise.all( [
+			block
+				.getByRole( 'button', { name: 'Stop request' } )
+				.waitFor( { state: 'detached', timeout: TIMEOUT } ),
+			handle?.waitForElementState( 'stable', { timeout: TIMEOUT } ),
+		] );
 	}
 
 	/**
