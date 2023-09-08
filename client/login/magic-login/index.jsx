@@ -32,7 +32,7 @@ import RequestLoginEmailForm from './request-login-email-form';
 
 import './style.scss';
 
-const RESEND_EMAIL_COUNTDOWN_TIME = 60; // In seconds
+const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
 
 class MagicLogin extends Component {
 	static propTypes = {
