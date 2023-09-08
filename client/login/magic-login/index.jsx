@@ -55,7 +55,7 @@ class MagicLogin extends Component {
 
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
-		resendEmailCountDown: RESEND_EMAIL_COUNTDOWN_TIME,
+		resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME,
 	};
 
 	componentDidMount() {
@@ -145,29 +145,29 @@ class MagicLogin extends Component {
 		);
 	}
 
-	resendEmailCountDownId = null;
+	resendEmailCountdownId = null;
 
-	resetResendEmailCountDown = () => {
-		if ( ! this.resendEmailCountDownId ) {
+	resetResendEmailCountdown = () => {
+		if ( ! this.resendEmailCountdownId ) {
 			return;
 		}
 
-		clearInterval( this.resendEmailCountDownId );
-		this.resendEmailCountDownId = null;
-		this.setState( { resendEmailCountDown: RESEND_EMAIL_COUNTDOWN_TIME } );
+		clearInterval( this.resendEmailCountdownId );
+		this.resendEmailCountdownId = null;
+		this.setState( { resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME } );
 	};
 
-	startResendEmailCountDown = () => {
-		this.resetResendEmailCountDown();
+	startResendEmailCountdown = () => {
+		this.resetResendEmailCountdown();
 
-		this.resendEmailCountDownId = setInterval( () => {
-			if ( ! this.state.resendEmailCountDown ) {
-				clearInterval( this.resendEmailCountDownId );
+		this.resendEmailCountdownId = setInterval( () => {
+			if ( ! this.state.resendEmailCountdown ) {
+				clearInterval( this.resendEmailCountdownId );
 				return;
 			}
 
 			this.setState( ( prevState ) => ( {
-				resendEmailCountDown: prevState.resendEmailCountDown - 1,
+				resendEmailCountdown: prevState.resendEmailCountdown - 1,
 			} ) );
 		}, 1000 );
 	};
@@ -184,7 +184,7 @@ class MagicLogin extends Component {
 			showGlobalNotices: true,
 		} );
 
-		this.startResendEmailCountDown();
+		this.startResendEmailCountdown();
 	};
 
 	renderGravatarEmailVerification() {
@@ -194,7 +194,7 @@ class MagicLogin extends Component {
 			isSendingEmail,
 			hideMagicLoginRequestForm: showMagicLogin,
 		} = this.props;
-		const { usernameOrEmail, resendEmailCountDown } = this.state;
+		const { usernameOrEmail, resendEmailCountdown } = this.state;
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
 		return (
@@ -226,14 +226,14 @@ class MagicLogin extends Component {
 										sendEmailButton: (
 											<button
 												onClick={ this.onClickResendEmail }
-												disabled={ isSendingEmail || !! resendEmailCountDown }
+												disabled={ isSendingEmail || !! resendEmailCountdown }
 											/>
 										),
 										showMagicLoginButton: (
 											<button
 												className="gravatar-magic-login__show-magic-login"
 												onClick={ () => {
-													this.resetResendEmailCountDown();
+													this.resetResendEmailCountdown();
 													showMagicLogin();
 												} }
 											/>
@@ -242,10 +242,10 @@ class MagicLogin extends Component {
 								}
 							) }
 						</div>
-						{ resendEmailCountDown !== 0 && (
+						{ resendEmailCountdown !== 0 && (
 							<div>
-								{ translate( '%(countDownSeconds)s seconds remaining', {
-									args: { countDownSeconds: resendEmailCountDown },
+								{ translate( '%(resendEmailCountdown)s seconds remaining', {
+									args: { resendEmailCountdown },
 								} ) }
 								...
 							</div>
@@ -282,7 +282,7 @@ class MagicLogin extends Component {
 						showTos
 						onSendEmailLogin={ ( usernameOrEmail ) => {
 							this.setState( { usernameOrEmail } );
-							this.startResendEmailCountDown();
+							this.startResendEmailCountdown();
 						} }
 						createAccountForNewUser
 					/>
