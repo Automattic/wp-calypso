@@ -11,7 +11,7 @@ type SubscribersHeaderProps = {
 };
 
 const SubscribersHeader = ( { navigationItems, selectedSiteId }: SubscribersHeaderProps ) => {
-	const { grandTotal, setShowAddSubscribersModal } = useSubscribersPage();
+	const { setShowAddSubscribersModal } = useSubscribersPage();
 
 	return (
 		<FixedNavigationHeader navigationItems={ navigationItems }>
@@ -23,7 +23,7 @@ const SubscribersHeader = ( { navigationItems, selectedSiteId }: SubscribersHead
 				<Gridicon icon="plus" size={ 24 } />
 				{ translate( 'Add subscribers' ) }
 			</Button>
-			{ grandTotal ? <SubscribersHeaderPopover siteId={ selectedSiteId } /> : null }
+			<SubscribersHeaderPopover siteId={ selectedSiteId } />
 		</FixedNavigationHeader>
 	);
 };
