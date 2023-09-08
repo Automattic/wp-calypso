@@ -54,9 +54,9 @@ const usePlugins = ( {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
-	const { localeSlug = '' } = useTranslate();
+	const translate = useTranslate();
 	const wporgPluginsOptions = {
-		locale: locale || localeSlug,
+		locale: locale || ( translate.localeSlug as string ),
 		category,
 		tag,
 		searchTerm: search,
@@ -80,7 +80,7 @@ const usePlugins = ( {
 		search,
 		tag,
 		{
-			enabled: ! WPCOM_CATEGORIES_BLOCKLIST.includes( category || '' ) && wpcomEnabled,
+			enabled: ! WPCOM_CATEGORIES_BLOCKLIST.includes( category || '' ) && wpcomEnabled && ! search,
 		}
 	) as WPCOMResponse;
 
@@ -106,15 +106,9 @@ const usePlugins = ( {
 			results = featuredPlugins?.length ?? 0;
 			break;
 		default:
-			plugins = config.isEnabled( 'marketplace-jetpack-plugin-search' )
-				? ESPlugins
-				: [ ...dotComPlugins, ...ESPlugins ];
-			isFetching = config.isEnabled( 'marketplace-jetpack-plugin-search' )
-				? isFetchingES
-				: isFetchingDotCom || isFetchingES;
-			results = config.isEnabled( 'marketplace-jetpack-plugin-search' )
-				? ESPagination?.results ?? 0
-				: ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+			plugins = ESPlugins;
+			isFetching = isFetchingES;
+			results = ESPagination?.results ?? 0;
 
 			break;
 	}
