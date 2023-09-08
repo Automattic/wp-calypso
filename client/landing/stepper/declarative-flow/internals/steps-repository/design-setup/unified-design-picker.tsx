@@ -13,7 +13,6 @@ import {
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
-	isBlankCanvasDesign,
 	isAssemblerDesign,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
@@ -50,9 +49,7 @@ import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
-import { useSite } from '../../../../hooks/use-site';
-import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
-import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import {
 	getDesignEventProps,
@@ -81,7 +78,6 @@ import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
-const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
@@ -97,10 +93,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
-	const site = useSite();
-	const siteSlug = useSiteSlugParam();
-	const siteId = useSiteIdParam();
-	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const { site, siteSlug, siteSlugOrId } = useSiteData();
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
@@ -134,18 +127,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		const blankCanvasDesignOffset = allDesigns.designs.findIndex( isBlankCanvasDesign );
-		if ( blankCanvasDesignOffset !== -1 ) {
-			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
-			const blankCanvasDesign = allDesigns.designs.splice( blankCanvasDesignOffset, 1 );
-			if (
-				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-				SITE_ASSEMBLER_AVAILABLE_INTENTS.includes( intent )
-			) {
-				allDesigns.designs.push( ...blankCanvasDesign );
-			}
-		}
-
+		// The design-first flow doesn't support premium themes and custom styles.
 		if ( isDesignFirstFlow ) {
 			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
 
@@ -219,7 +201,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 		select: ( design: Design ) => {
-			if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
+			if ( isDesignFirstFlow && design?.style_variations ) {
 				design.style_variations = [];
 			}
 
