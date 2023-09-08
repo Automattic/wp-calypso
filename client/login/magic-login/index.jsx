@@ -262,6 +262,7 @@ class MagicLogin extends Component {
 			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
 				? { isJetpackMagicLinkSignUpEnabled: true }
 				: {} ),
+			createAccountForNewUser: true,
 		};
 
 		return (
