@@ -15,7 +15,7 @@ type NewsletterCategoryResponse = {
 export const getSubscribedNewsletterCategoriesKey = (
 	siteId?: string | number,
 	subscriptionId?: number
-) => [ `newsletter-categories`, siteId, subscriptionId ];
+) => [ 'subscribed-newsletter-categories', siteId, subscriptionId ];
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
