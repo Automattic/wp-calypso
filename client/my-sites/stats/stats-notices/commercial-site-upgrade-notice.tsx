@@ -72,7 +72,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license base on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+					'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,
