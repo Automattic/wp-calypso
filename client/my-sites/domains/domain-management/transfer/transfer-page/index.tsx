@@ -345,10 +345,11 @@ const TransferPage = ( props: TransferPageProps ) => {
 						{ __( 'Are you sure you want to transfer your domain?' ) }
 						<br />
 						<b>
-							{
-								// translators: promotional offer for domain renewal
-								__( 'Renew now and get a 10% discount!' )
-							}
+							{ sprintf(
+								/* translators: %s is the percentage of the discount */
+								__( 'Renew now and get a %s discount!' ),
+								'10%'
+							) }
 						</b>
 					</p>
 					<RenewButton
