@@ -38,3 +38,4 @@ export * from './feedback-inbox-page';
 export * from './external';
 export * from './me';
 export * from './signup';
+export * from './wp-admin';
