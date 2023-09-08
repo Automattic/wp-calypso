@@ -81,7 +81,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					'{{p}}Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
+					'{{p}}Upgrade get priority support and access to upcoming advanced features.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{learnMoreLink}}{{learnMoreLinkText}}Learn more{{/learnMoreLinkText}}{{externalIcon /}}{{/learnMoreLink}}{{/p}}',
 					{
 						components: {
 							p: <p />,
