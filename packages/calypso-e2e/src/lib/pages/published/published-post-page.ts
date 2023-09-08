@@ -110,7 +110,7 @@ export class PublishedPostPage {
 
 		await continueButton.or( freeTrialLink ).waitFor();
 		if ( await freeTrialLink.isVisible() ) {
-			freeTrialLink.click();
+			await freeTrialLink.click();
 		}
 
 		await continueButton.click();
