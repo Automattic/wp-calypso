@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { chevronDown, chevronRight } from '@wordpress/icons';
@@ -41,6 +42,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
+	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
 
 	const {
 		isSuccess,
@@ -199,9 +201,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderCheckbox = () => {
+		if ( ! isGranularEnabled ) {
+			return null;
+		}
 		// We don't restore WordPress and just download it individually
 		if ( item.type === 'wordpress' ) {
-			return;
+			return null;
 		}
 
 		// Mixed state will show checked but with a mixed class
