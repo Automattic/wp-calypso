@@ -198,7 +198,7 @@ const StatsPurchasePage = ( {
 								)
 							}
 							{
-								// blog is commercial or we are forcing a product - show the purchase page
+								// blog is commercial or we are forcing a product - show the commercial purchase page
 								( ( ! isForceProductRedirect && isCommercial ) || redirectToCommercial ) && (
 									<div className="stats-purchase-page__notice">
 										<StatsSingleItemPagePurchase
@@ -214,7 +214,7 @@ const StatsPurchasePage = ( {
 								)
 							}
 							{
-								// blog is personal or we are forcing a product - show the purchase page
+								// blog is personal or we are forcing a product - show the personal purchase page
 								( ( ! isForceProductRedirect && isCommercial === false ) ||
 									redirectToPersonal ) && (
 									<StatsSingleItemPersonalPurchasePage
