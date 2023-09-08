@@ -796,7 +796,11 @@ describe( 'loading stored state with dynamic reducers', () => {
 	const withKeyPrefix = ( keyPrefix ) => {
 		const keyPrefixRe = new RegExp( `^${ keyPrefix }:` );
 		return withPersistence( ( state = {} ) => state, {
-			serialize: ( state ) => mapKeys( state, ( value, key ) => `${ keyPrefix }:${ key }` ),
+			serialize: ( state ) =>
+				Object.entries( state ).reduce( ( acc, [ key, value ] ) => {
+					acc[ `${ keyPrefix }:${ key }` ] = value;
+					return acc;
+				}, {} ),
 			deserialize: ( persisted ) =>
 				mapKeys( persisted, ( value, key ) => key.replace( keyPrefixRe, '' ) ),
 		} );

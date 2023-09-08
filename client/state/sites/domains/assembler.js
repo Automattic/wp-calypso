@@ -1,4 +1,4 @@
-import { camelCase, mapKeys } from 'lodash';
+import { camelCase } from 'lodash';
 import {
 	getDomainRegistrationAgreementUrl,
 	getDomainType,
@@ -11,7 +11,10 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 		return;
 	}
 
-	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
+	return Object.entries( googleAppsSubscription ).reduce( ( acc, [ key, value ] ) => {
+		acc[ camelCase( key ) ] = value;
+		return acc;
+	}, {} );
 }
 
 function assembleCurrentUserCannotAddEmailReason( reason ) {

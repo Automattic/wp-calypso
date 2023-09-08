@@ -11,7 +11,6 @@ import {
 	merge,
 	findKey,
 	mapValues,
-	mapKeys,
 } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
@@ -451,9 +450,10 @@ export function edits( state = {}, action ) {
 				const newPostId = action.savedPost.ID;
 				state = {
 					...state,
-					[ siteId ]: mapKeys( state[ siteId ], ( value, key ) =>
-						key === '' ? newPostId : key
-					),
+					[ siteId ]: Object.entries( state[ siteId ] ).reduce( ( acc, [ key, value ] ) => {
+						acc[ key === '' ? newPostId : key ] = value;
+						return acc;
+					}, {} ),
 				};
 			}
 

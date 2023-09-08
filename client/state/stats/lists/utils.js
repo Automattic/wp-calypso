@@ -1,5 +1,5 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, mapKeys, get, filter, map, flatten } from 'lodash';
+import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
@@ -312,7 +312,10 @@ export const normalizers = {
 			return null;
 		}
 
-		return mapKeys( data.stats, ( value, key ) => camelCase( key ) );
+		return Object.entries( data.stats ).reduce( ( acc, [ key, value ] ) => {
+			acc[ camelCase( key ) ] = value;
+			return acc;
+		}, {} );
 	},
 
 	/**
