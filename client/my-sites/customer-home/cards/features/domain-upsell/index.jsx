@@ -1,5 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
+import {
+	getPlan,
+	isFreePlanProduct,
+	getIntervalTypeForTerm,
+	is100YearPlan,
+} from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
@@ -59,6 +64,8 @@ export default function DomainUpsell() {
 
 	const searchTerm = selectedSiteSlug?.split( '.' )[ 0 ];
 
+	const is100YearPlanSite = is100YearPlan( currentPlan?.productSlug );
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainUpsell
@@ -67,6 +74,7 @@ export default function DomainUpsell() {
 				searchTerm={ searchTerm }
 				siteSlug={ selectedSiteSlug }
 				dismissPreference={ dismissPreference }
+				is100YearPlanSite={ is100YearPlanSite }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
@@ -83,6 +91,7 @@ export function RenderDomainUpsell( {
 	searchTerm,
 	siteSlug,
 	dismissPreference,
+	is100YearPlanSite,
 } ) {
 	const translate = useTranslate();
 
@@ -158,35 +167,40 @@ export function RenderDomainUpsell( {
 		page( purchaseLink );
 	};
 
+	const getCardSubtitle = () => {
+		const translateProps = {
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domainSuggestion: domainSuggestionName,
+			},
+		};
+		if ( is100YearPlanSite ) {
+			return translate(
+				"{{strong}}%(domainSuggestion)s{{/strong}} is included free with your plan. Claim it and start building a site that's easy to find, share and follow.",
+				translateProps
+			);
+		}
+		if ( ! isFreePlan && ! isMonthlyPlan ) {
+			return translate(
+				"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
+				translateProps
+			);
+		}
+
+		return translate(
+			"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
+			translateProps
+		);
+	};
+
 	const cardTitle =
 		! isFreePlan && ! isMonthlyPlan
 			? translate( 'That perfect domain is waiting' )
 			: translate( 'Own a domain. Build a site.' );
 
-	const cardSubtitle =
-		! isFreePlan && ! isMonthlyPlan
-			? translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							domainSuggestion: domainSuggestionName,
-						},
-					}
-			  )
-			: translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							domainSuggestion: domainSuggestionName,
-						},
-					}
-			  );
+	const cardSubtitle = getCardSubtitle();
 
 	const domainNameSVG = (
 		<svg viewBox="0 0 40 18" id="map">
