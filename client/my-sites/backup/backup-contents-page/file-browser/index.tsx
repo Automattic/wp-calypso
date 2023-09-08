@@ -27,7 +27,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 
 	return (
 		<div>
-			{ isGranularEnabled && <FileBrowserHeader /> }
+			{ isGranularEnabled && <FileBrowserHeader rewindId={ rewindId } /> }
 			<FileBrowserNode
 				rewindId={ rewindId }
 				item={ rootItem }

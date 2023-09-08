@@ -89,7 +89,7 @@ describe( 'streams', () => {
 					stream: 'discover:dailyprompt',
 					expected: {
 						method: 'GET',
-						path: `/read/tags/dailyprompt/posts`,
+						path: `/read/tags/dailyprompt/cards`,
 						apiNamespace: 'wpcom/v2',
 						query: {
 							...query,

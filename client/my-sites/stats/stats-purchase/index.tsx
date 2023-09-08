@@ -171,7 +171,7 @@ const StatsPurchasePage = ( {
 						}
 						{
 							// blog doesn't have any plan but is not categorised as either personal or commectial - show old purchase wizard
-							( redirectToPersonal || redirectToCommercial || showPurchasePage ) &&
+							( ( ! redirectToPersonal && ! redirectToCommercial ) || showPurchasePage ) &&
 								isCommercial === null && (
 									<StatsPurchaseWizard
 										siteSlug={ siteSlug }
