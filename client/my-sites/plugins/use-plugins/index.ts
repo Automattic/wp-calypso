@@ -8,7 +8,7 @@ import {
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { useCategories } from '../categories/use-categories';
 
-interface WPORGResponse {
+interface ESResponse {
 	data?: {
 		plugins: Plugin[];
 		pagination: {
@@ -28,23 +28,16 @@ interface WPCOMResponse {
 	fetchNextPage?: () => void;
 }
 
-const WPCOM_CATEGORIES_BLOCKLIST = [ 'popular' ];
-const WPORG_CATEGORIES_BLOCKLIST = [ 'paid', 'featured' ];
-
 const usePlugins = ( {
 	category,
 	search,
 	infinite = false,
 	locale = '',
-	wpcomEnabled,
-	wporgEnabled,
 }: {
 	category: string;
 	search?: string;
 	infinite?: boolean;
 	locale?: string;
-	wporgEnabled?: boolean;
-	wpcomEnabled?: boolean;
 } ) => {
 	let plugins = [];
 	let isFetching = false;
@@ -62,31 +55,30 @@ const usePlugins = ( {
 		searchTerm: search,
 	};
 
-	// For this to be enabled it should:
-	// 1. The request should be marked as infinite and wporg fetching should be enabled (wporgEnabled)
-	// 2. Either we have a search term or we have a valid category (when searching from the top-paid or top-free page)
+	// This is triggered for searches OR any other category than paid, featured
 	const {
 		data: { plugins: ESPlugins = [], pagination: ESPagination } = {},
 		isLoading: isFetchingES,
 		fetchNextPage,
 		hasNextPage,
 	} = useESPluginsInfinite( wporgPluginsOptions, {
-		enabled:
-			!! ( search || ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) ) && wporgEnabled,
-	} ) as WPORGResponse;
+		enabled: !! search || ! [ 'paid', 'featured ' ].includes( category ),
+	} ) as ESResponse;
 
+	// This is triggered only for paid plugins lists.
 	const { data: dotComPlugins = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
 		config.isEnabled( 'marketplace-fetch-all-dynamic-products' ) ? 'all' : 'launched',
 		search,
 		tag,
 		{
-			enabled: ! WPCOM_CATEGORIES_BLOCKLIST.includes( category || '' ) && wpcomEnabled && ! search,
+			enabled: category === 'paid',
 		}
 	) as WPCOMResponse;
 
+	// This is triggered only for featured plugins list in discover page.
 	const { data: featuredPlugins = [], isLoading: isFetchingDotComFeatured } =
 		useWPCOMFeaturedPlugins( {
-			enabled: category === 'featured' && wpcomEnabled,
+			enabled: category === 'featured',
 		} ) as WPCOMResponse;
 
 	switch ( category ) {
