@@ -110,7 +110,6 @@
 		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
-		"signup/design-picker-pattern-assembler": true,
 		"signup/design-picker-preview-colors": true,
 		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
