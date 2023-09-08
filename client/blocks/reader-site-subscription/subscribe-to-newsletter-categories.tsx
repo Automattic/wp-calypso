@@ -4,7 +4,6 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import {
-	useNewsletterCategoriesQuery,
 	useNewsletterCategorySubscriptionMutation,
 	useSubscribedNewsletterCategories,
 } from 'calypso/data/newsletter-categories';
@@ -15,10 +14,9 @@ type SubscribeToNewsletterCategoriesProps = {
 
 const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCategoriesProps ) => {
 	const translate = useTranslate();
-	const { data: newsletterCategoriesData, isLoading: isLoadingCategories } =
-		useNewsletterCategoriesQuery( { siteId } );
-	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingSubscribedCategories } =
-		useSubscribedNewsletterCategories( { siteId } );
+	const { data: subscribedNewsletterCategoriesData, isLoading } = useSubscribedNewsletterCategories(
+		{ siteId }
+	);
 	const { mutate, isLoading: isSaving } = useNewsletterCategorySubscriptionMutation( siteId );
 
 	const subscribedCategoryIds = useMemo(
@@ -40,7 +38,7 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 
 	if (
 		! config.isEnabled( 'settings/newsletter-categories' ) ||
-		! newsletterCategoriesData?.enabled
+		! subscribedNewsletterCategoriesData?.enabled
 	) {
 		return null;
 	}
@@ -51,7 +49,7 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 			<div className="site-subscription-info">
 				<h2 className="site-subscription-info__heading">{ translate( 'Subscription' ) }</h2>
 
-				{ isLoadingCategories || isLoadingSubscribedCategories ? (
+				{ isLoading ? (
 					<div className="site-subscription-info__loading">
 						<Spinner />
 					</div>
@@ -59,22 +57,24 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 					<dl className="site-subscription-info__list">
 						<dt>{ translate( 'Subscribed to' ) }</dt>
 						<dd>
-							{ newsletterCategoriesData?.newsletterCategories.map( ( newletterCategory ) => (
-								<div className="setting-item" key={ newletterCategory.id }>
-									<ToggleControl
-										checked={ subscribedCategoryIds?.includes( newletterCategory.id ) }
-										onChange={ () => handleToggle( newletterCategory.id ) }
-										disabled={ isSaving }
-										label={ newletterCategory.name }
-									/>
-									<p className="setting-item__hint">
-										{ translate( 'Receive emails for new posts in %s', {
-											args: [ newletterCategory.name ],
-											comment: 'Name of the site that the user tried to resubscribe to.',
-										} ) }
-									</p>
-								</div>
-							) ) }
+							{ subscribedNewsletterCategoriesData?.newsletterCategories.map(
+								( newletterCategory ) => (
+									<div className="setting-item" key={ newletterCategory.id }>
+										<ToggleControl
+											checked={ newletterCategory.subscribed }
+											onChange={ () => handleToggle( newletterCategory.id ) }
+											disabled={ isSaving }
+											label={ newletterCategory.name }
+										/>
+										<p className="setting-item__hint">
+											{ translate( 'Receive emails for new posts in %s', {
+												args: [ newletterCategory.name ],
+												comment: 'Name of the site that the user tried to resubscribe to.',
+											} ) }
+										</p>
+									</div>
+								)
+							) }
 						</dd>
 					</dl>
 				) }
