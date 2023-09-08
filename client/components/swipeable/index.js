@@ -1,3 +1,4 @@
+import { useResizeObserver } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useRtl } from 'i18n-calypso';
 import { Children, useState, useLayoutEffect, useRef, useCallback } from 'react';
@@ -9,27 +10,27 @@ const VELOCITY_THRESHOLD = 0.2; // Speed of drag above, before we trigger the sl
 const VERTICAL_THRESHOLD_ANGLE = 55;
 const TRANSITION_DURATION = '300ms';
 
-function useResizeObserver() {
-	const [ observerEntry, setObserverEntry ] = useState( {} );
-	const [ node, setNode ] = useState( null );
-	const observer = useRef( null );
+// function useResizeObserver2() {
+// 	const [ observerEntry, setObserverEntry ] = useState( {} );
+// 	const [ node, setNode ] = useState( null );
+// 	const observer = useRef( null );
 
-	const disconnect = useCallback( () => observer.current?.disconnect(), [] );
+// 	const disconnect = useCallback( () => observer.current?.disconnect(), [] );
 
-	const observe = useCallback( () => {
-		observer.current = new ResizeObserver( ( [ entry ] ) => setObserverEntry( entry ) );
-		if ( node ) {
-			observer.current.observe( node );
-		}
-	}, [ node ] );
+// 	const observe = useCallback( () => {
+// 		observer.current = new ResizeObserver( ( [ entry ] ) => setObserverEntry( entry ) );
+// 		if ( node ) {
+// 			observer.current.observe( node );
+// 		}
+// 	}, [ node ] );
 
-	useLayoutEffect( () => {
-		observe();
-		return () => disconnect();
-	}, [ disconnect, observe ] );
+// 	useLayoutEffect( () => {
+// 		observe();
+// 		return () => disconnect();
+// 	}, [ disconnect, observe ] );
 
-	return [ setNode, observerEntry ];
-}
+// 	return [ setNode, observerEntry ];
+// }
 
 function getDragPositionAndTime( event ) {
 	const { timeStamp } = event;
@@ -69,7 +70,8 @@ export const Swipeable = ( {
 	const [ swipeableArea, setSwipeableArea ] = useState();
 	const isRtl = useRtl();
 
-	const [ resizeObserverRef, entry ] = useResizeObserver();
+	// const [ resizeObserverRef, entry ] = useResizeObserver2();
+	const [ resizeObserver, sizes ] = useResizeObserver( { box: 'contentBoxSize' } );
 
 	const [ pagesStyle, setPagesStyle ] = useState( {
 		transitionDuration: TRANSITION_DURATION,
@@ -79,7 +81,7 @@ export const Swipeable = ( {
 
 	const pagesRef = useRef();
 	const numPages = Children.count( children );
-	const containerWidth = entry?.contentRect?.width;
+	const containerWidth = sizes?.width;
 
 	const getOffset = useCallback(
 		( index ) => {
@@ -298,7 +300,7 @@ export const Swipeable = ( {
 	const offset = getOffset( currentPage );
 
 	return (
-		<>
+		<div style={ { position: 'relative' } }>
 			<div
 				{ ...getTouchEvents() }
 				className="swipeable__container"
@@ -328,8 +330,8 @@ export const Swipeable = ( {
 					) ) }
 				</div>
 			</div>
-			<div ref={ resizeObserverRef } className="swipeable__resize-observer"></div>
-		</>
+			{ resizeObserver }
+		</div>
 	);
 };
 
