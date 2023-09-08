@@ -11,6 +11,7 @@ export function getSitePlanRawPrice(
 	productSlug: string,
 	{
 		returnMonthly,
+		returnSmallestUnit,
 	}: {
 		/**
 		 * If true, attempt to calculate and return the monthly price. Note that this
@@ -18,6 +19,7 @@ export function getSitePlanRawPrice(
 		 * errors.
 		 */
 		returnMonthly?: boolean;
+		returnSmallestUnit?: boolean;
 	} = {}
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
@@ -29,7 +31,13 @@ export function getSitePlanRawPrice(
 		return null;
 	}
 
-	const price = plan.rawPrice + parseFloat( plan.rawDiscount );
+	let price = 0;
+
+	if ( returnSmallestUnit ) {
+		price = plan.rawPriceInteger + plan.rawDiscountInteger;
+	} else {
+		price = plan.rawPrice + parseFloat( plan.rawDiscount );
+	}
 
 	return returnMonthly ? calculateMonthlyPriceForPlan( productSlug, price ) : price;
 }

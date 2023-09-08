@@ -369,7 +369,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const {
 		planTitle,
 		current,
-		pricing: { currencyCode, originalPrice, discountedPrice },
+		pricing: { currencyCode, originalPrice, discountedPrice, shouldUseSmallestUnitCurrency },
 	} = gridPlansIndex[ planSlug ];
 
 	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
@@ -437,6 +437,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		currencyCode || 'USD',
 		{
 			stripZeros: true,
+			isSmallestUnit: shouldUseSmallestUnitCurrency,
 		}
 	);
 

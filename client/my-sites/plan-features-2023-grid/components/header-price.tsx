@@ -133,7 +133,13 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
-		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
+		pricing: {
+			currencyCode,
+			originalPrice,
+			discountedPrice,
+			introOffer,
+			shouldUseSmallestUnitCurrency,
+		},
 	} = gridPlansIndex[ planSlug ];
 	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
 	const isPricedPlan = null !== originalPrice.monthly;
@@ -156,6 +162,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 								rawPrice={ introOffer.rawPrice }
 								displayPerMonthNotation={ false }
 								isLargeCurrency={ isLargeCurrency }
+								isSmallestUnit={ shouldUseSmallestUnitCurrency }
 								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							/>
 						</>
@@ -173,6 +180,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 									rawPrice={ originalPrice.monthly }
 									displayPerMonthNotation={ false }
 									isLargeCurrency={ isLargeCurrency }
+									isSmallestUnit={ shouldUseSmallestUnitCurrency }
 									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 									original
 								/>
@@ -181,6 +189,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 									rawPrice={ discountedPrice.monthly }
 									displayPerMonthNotation={ false }
 									isLargeCurrency={ isLargeCurrency }
+									isSmallestUnit={ shouldUseSmallestUnitCurrency }
 									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 									discounted
 								/>
@@ -193,6 +202,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
+							isSmallestUnit={ shouldUseSmallestUnitCurrency }
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 						/>
 					) }

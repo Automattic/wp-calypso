@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/format-currency';
 import type { GridPlan } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 const LARGE_CURRENCY_CHAR_THRESHOLD = 5;
@@ -15,12 +16,18 @@ interface Props {
 export default function useIsLargeCurrency( { gridPlans, returnMonthly = true }: Props ) {
 	return gridPlans.some( ( gridPlan ) => {
 		const {
-			pricing: { originalPrice, discountedPrice },
+			pricing: { originalPrice, discountedPrice, currencyCode },
 		} = gridPlan;
 
 		return [
 			originalPrice[ returnMonthly ? 'monthly' : 'full' ],
 			discountedPrice[ returnMonthly ? 'monthly' : 'full' ],
-		].some( ( price ) => price && price.toString().length > LARGE_CURRENCY_CHAR_THRESHOLD );
+		].some( ( price ) => {
+			const formattedPrice = formatCurrency( price || 0, currencyCode || '', {
+				stripZeros: true,
+				isSmallestUnit: true,
+			} );
+			return formattedPrice.length > LARGE_CURRENCY_CHAR_THRESHOLD;
+		} );
 	} );
 }

@@ -58,6 +58,7 @@ export interface PricingMetaForGridPlan {
 	// intro offers override billing and pricing shown in the UI
 	// they are currently defined off the site plans (so not defined when siteId is not available)
 	introOffer?: PlanIntroductoryOffer | null;
+	shouldUseSmallestUnitCurrency?: boolean;
 }
 
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
@@ -67,9 +68,11 @@ export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => 
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
+	shouldUseSmallestUnitCurrency,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
+	shouldUseSmallestUnitCurrency?: boolean;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 // TODO clk: move to types. will consume plan properties
@@ -129,6 +132,7 @@ interface Props {
 		[ key: string ]: boolean;
 	};
 	showLegacyStorageFeature?: boolean;
+	shouldUseSmallestUnitCurrency?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -225,6 +229,7 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
+	shouldUseSmallestUnitCurrency,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -257,7 +262,10 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
-	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
+	const pricingMeta = usePricingMetaForGridPlans( {
+		planSlugs: availablePlanSlugs,
+		shouldUseSmallestUnitCurrency,
+	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
 	if ( ! pricingMeta || ! pricedAPIPlans ) {

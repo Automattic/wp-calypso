@@ -18,6 +18,8 @@ import type { IAppState } from 'calypso/state/types';
 interface Props {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
+	currencyCode?: string | null;
+	shouldUseSmallestUnitCurrency?: boolean;
 }
 
 /*
@@ -28,6 +30,7 @@ interface Props {
 const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
+	shouldUseSmallestUnitCurrency,
 }: Props ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 	const currentSitePlanSlug = useSelector( ( state: IAppState ) =>
@@ -35,20 +38,25 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	);
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
 	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
+	const returnSmallestUnit = shouldUseSmallestUnitCurrency;
+
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
 			const availableForPurchase =
 				! currentSitePlanSlug ||
 				( selectedSiteId ? isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) : false );
+
 			const planPricesMonthly = getPlanPrices( state, {
 				planSlug,
 				siteId: selectedSiteId || null,
 				returnMonthly: true,
+				returnSmallestUnit,
 			} );
 			const planPricesFull = getPlanPrices( state, {
 				planSlug,
 				siteId: selectedSiteId || null,
 				returnMonthly: false,
+				returnSmallestUnit,
 			} );
 
 			// raw prices for current site's plan
@@ -59,9 +67,11 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 						originalPrice: {
 							monthly: getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 								returnMonthly: true,
+								returnSmallestUnit,
 							} ),
 							full: getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 								returnMonthly: false,
+								returnSmallestUnit,
 							} ),
 						},
 						discountedPrice: {
@@ -133,6 +143,7 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				billingPeriod: pricedAPIPlan?.bill_period,
 				currencyCode: pricedAPIPlan?.currency_code,
 				introOffer: sitePlan?.introOffer,
+				shouldUseSmallestUnitCurrency,
 			},
 		};
 	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );

@@ -239,6 +239,7 @@ const PlansFeaturesMain = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
+	const shouldUseSmallestUnitCurrency = flowName === 'onboarding';
 
 	const toggleShowPlansComparisonGrid = () => {
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
@@ -316,7 +317,6 @@ const PlansFeaturesMain = ( {
 	const intent = planFromUpsells
 		? 'plans-default-wpcom'
 		: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom';
-
 	const gridPlans = useGridPlans( {
 		allFeaturesList: FEATURES_LIST,
 		usePricedAPIPlans,
@@ -329,6 +329,7 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
 		showLegacyStorageFeature,
+		shouldUseSmallestUnitCurrency,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {

@@ -19,7 +19,14 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const { helpers, gridPlansIndex } = usePlansGridContext();
 	const {
 		isMonthlyPlan,
-		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer },
+		pricing: {
+			currencyCode,
+			originalPrice,
+			discountedPrice,
+			billingPeriod,
+			introOffer,
+			shouldUseSmallestUnitCurrency,
+		},
 	} = gridPlansIndex[ planSlug ];
 
 	if ( isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -34,6 +41,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const yearlyVariantPricing = helpers?.usePricingMetaForGridPlans( {
 		planSlugs: [ yearlyVariantPlanSlug ],
 		withoutProRatedCredits: true,
+		shouldUseSmallestUnitCurrency,
 	} )?.[ yearlyVariantPlanSlug ];
 
 	if ( isMonthlyPlan && originalPrice?.monthly && yearlyVariantPricing && ! introOffer ) {
@@ -59,11 +67,17 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 
 	const discountedPriceFullTermText =
 		currencyCode && discountedPrice?.full
-			? formatCurrency( discountedPrice.full, currencyCode, { stripZeros: true } )
+			? formatCurrency( discountedPrice.full, currencyCode, {
+					stripZeros: true,
+					isSmallestUnit: shouldUseSmallestUnitCurrency,
+			  } )
 			: null;
 	const originalPriceFullTermText =
 		currencyCode && originalPrice?.full
-			? formatCurrency( originalPrice.full, currencyCode, { stripZeros: true } )
+			? formatCurrency( originalPrice.full, currencyCode, {
+					stripZeros: true,
+					isSmallestUnit: shouldUseSmallestUnitCurrency,
+			  } )
 			: null;
 
 	/*
