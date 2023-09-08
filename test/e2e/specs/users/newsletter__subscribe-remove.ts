@@ -88,8 +88,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 
 			// Updated expecataion.
 			// @see: rWPGIT4ed687fb18bc-code
-			it( 'User is taken to the blog home page', async function () {
-				await page.waitForURL( new RegExp( testAccount.getSiteURL( { protocol: false } ) ) );
+			it( 'User is taken to the blog home page with token', async function () {
+				await page.waitForURL( new RegExp( newPostDetails.URL + '?token=.*' ) );
 			} );
 		} );
 
