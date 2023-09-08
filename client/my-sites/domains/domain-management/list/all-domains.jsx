@@ -30,6 +30,7 @@ import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
@@ -138,13 +139,14 @@ class AllDomains extends Component {
 	};
 
 	handleDomainItemClick = ( domain ) => {
-		const { currentRoute } = this.props;
+		const { sites, currentRoute } = this.props;
+		const site = sites[ domain.blogId ];
 
 		if ( this.props.isContactEmailEditContext ) {
 			return;
 		}
 
-		page( getDomainManagementPath( domain.name, domain.type, domain.blogId, currentRoute ) );
+		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
 	};
 
 	handleDomainItemToggle = ( domain, selected ) => {
@@ -164,12 +166,8 @@ class AllDomains extends Component {
 	};
 
 	isLoading() {
-		const { domainsList, requestingFlatDomains, hasAllSitesLoaded, isLightVersion } = this.props;
-		return (
-			( isLightVersion ? ! hasAllSitesLoaded : true ) &&
-			requestingFlatDomains &&
-			domainsList.length === 0
-		);
+		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
+		return ! hasAllSitesLoaded || ( requestingFlatDomains && domainsList.length === 0 );
 	}
 
 	isRequestingSiteDomains() {
@@ -276,7 +274,6 @@ class AllDomains extends Component {
 			isContactEmailEditContext,
 			translate,
 			dispatch,
-			isLightVersion,
 		} = this.props;
 
 		const { isSavingContactInfo } = this.state;
@@ -298,154 +295,103 @@ class AllDomains extends Component {
 			);
 		}
 
-		const domainsTableColumns = ! isLightVersion
-			? [
-					{
-						name: 'domain',
-						label: translate( 'Domain' ),
-						isSortable: true,
-						initialSortOrder: 1,
-						supportsOrderSwitching: true,
-						sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		const domainsTableColumns = [
+			{
+				name: 'domain',
+				label: translate( 'Domain' ),
+				isSortable: true,
+				initialSortOrder: 1,
+				supportsOrderSwitching: true,
+				sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+			},
+			{
+				name: 'site',
+				label: translate( 'Site' ),
+				isSortable: true,
+				initialSortOrder: 1,
+				supportsOrderSwitching: true,
+				sortFunctions: [
+					( first, second, sortOrder ) => {
+						// sort all domain olny sites after/before the other sites
+						const firstSite = sites[ first?.blogId ];
+						const secondSite = sites[ second?.blogId ];
+
+						if ( firstSite?.options?.is_domain_only && secondSite?.options?.is_domain_only ) {
+							return 0;
+						}
+
+						if ( firstSite?.options?.is_domain_only ) {
+							return 1 * sortOrder;
+						}
+
+						if ( secondSite?.options?.is_domain_only ) {
+							return -1 * sortOrder;
+						}
+
+						return 0;
 					},
-					{
-						name: 'site',
-						label: translate( 'Site' ),
-						isSortable: true,
-						initialSortOrder: 1,
-						supportsOrderSwitching: true,
-						sortFunctions: [
-							( first, second, sortOrder ) => {
-								// sort all domain olny sites after/before the other sites
+					( first, second, sortOrder ) => {
+						const firstSite = sites[ first?.blogId ];
+						const secondSite = sites[ second?.blogId ];
 
-								if ( first.isDomainOnlySite && second.isDomainOnlySite ) {
-									return 0;
-								}
+						const firstTitle = firstSite?.title || firstSite?.slug;
+						const secondTitle = secondSite?.title || secondSite?.slug;
 
-								if ( first.isDomainOnlySite ) {
-									return 1 * sortOrder;
-								}
-
-								if ( second.isDomainOnlySite ) {
-									return -1 * sortOrder;
-								}
-
-								return 0;
-							},
-							( first, second, sortOrder ) => {
-								const firstTitle = first.siteTitle || first.siteSlug;
-								const secondTitle = second.siteTitle || second.siteSlug;
-
-								return firstTitle.localeCompare( secondTitle ) * sortOrder;
-							},
-							getSimpleSortFunctionBy( 'domain' ),
-						],
+						return firstTitle.localeCompare( secondTitle ) * sortOrder;
 					},
-					{
-						name: 'status',
-						label: translate( 'Status' ),
-						isSortable: true,
-						initialSortOrder: -1,
-						supportsOrderSwitching: true,
-						sortFunctions: [
-							( first, second, sortOrder ) => {
-								const { listStatusWeight: firstStatusWeight } = resolveDomainStatus(
-									first,
-									null,
-									translate,
-									dispatch,
-									{
-										getMappingErrors: true,
-									}
-								);
-								const { listStatusWeight: secondStatusWeight } = resolveDomainStatus(
-									second,
-									null,
-									translate,
-									dispatch,
-									{
-										getMappingErrors: true,
-									}
-								);
-								return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
-							},
-							getReverseSimpleSortFunctionBy( 'domain' ),
-						],
-						bubble: countDomainsInOrangeStatus(
-							domains.map( ( domain ) =>
-								resolveDomainStatus( domain, null, translate, dispatch, {
-									getMappingErrors: true,
-									siteSlug: domain.siteSlug,
-								} )
-							)
-						),
+					getSimpleSortFunctionBy( 'domain' ),
+				],
+			},
+			{
+				name: 'status',
+				label: translate( 'Status' ),
+				isSortable: true,
+				initialSortOrder: -1,
+				supportsOrderSwitching: true,
+				sortFunctions: [
+					( first, second, sortOrder ) => {
+						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus(
+							first,
+							null,
+							translate,
+							dispatch,
+							{
+								getMappingErrors: true,
+							}
+						);
+						const { listStatusWeight: secondStatusWeight } = resolveDomainStatus(
+							second,
+							null,
+							translate,
+							dispatch,
+							{
+								getMappingErrors: true,
+							}
+						);
+						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
-					{
-						name: 'registered-until',
-						label: translate( 'Registered until' ),
-						isSortable: true,
-						initialSortOrder: 1,
-						supportsOrderSwitching: true,
-						sortFunctions: [
-							getSimpleSortFunctionBy( 'expiry' ),
-							getSimpleSortFunctionBy( 'domain' ),
-						],
-					},
-					{ name: 'action', label: translate( 'Actions' ) },
-			  ]
-			: [
-					{
-						name: 'domain',
-						label: translate( 'Domain' ),
-						isSortable: true,
-						initialSortOrder: 1,
-						supportsOrderSwitching: true,
-						sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-					},
-					{
-						name: 'site',
-						label: translate( 'Site' ),
-						isSortable: true,
-						initialSortOrder: 1,
-						supportsOrderSwitching: true,
-						sortFunctions: [
-							( first, second, sortOrder ) => {
-								// sort all domain olny sites after/before the other sites
-								if ( first.isDomainOnlySite && second.isDomainOnlySite ) {
-									return 0;
-								}
-
-								if ( first.isDomainOnlySite ) {
-									return 1 * sortOrder;
-								}
-
-								if ( second.isDomainOnlySite ) {
-									return -1 * sortOrder;
-								}
-
-								return 0;
-							},
-							( first, second, sortOrder ) => {
-								const firstTitle = first.siteTitle || first.siteSlug;
-								const secondTitle = second.siteTitle || second.siteSlug;
-
-								return firstTitle.localeCompare( secondTitle ) * sortOrder;
-							},
-							getSimpleSortFunctionBy( 'domain' ),
-						],
-					},
-					{
-						name: 'registered-until',
-						label: translate( 'Registered until' ),
-						isSortable: true,
-						initialSortOrder: 1,
-						supportsOrderSwitching: true,
-						sortFunctions: [
-							getSimpleSortFunctionBy( 'expiry' ),
-							getSimpleSortFunctionBy( 'domain' ),
-						],
-					},
-			  ];
+					getReverseSimpleSortFunctionBy( 'domain' ),
+				],
+				bubble: countDomainsInOrangeStatus(
+					domains.map( ( domain ) =>
+						resolveDomainStatus( domain, null, translate, dispatch, {
+							getMappingErrors: true,
+							siteSlug: sites[ domain.blogId ].slug,
+						} )
+					)
+				),
+			},
+			{
+				name: 'registered-until',
+				label: translate( 'Registered until' ),
+				isSortable: true,
+				initialSortOrder: 1,
+				supportsOrderSwitching: true,
+				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
+			},
+			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
+			{ name: 'action', label: translate( 'Actions' ) },
+		];
 
 		if ( isContactEmailEditContext ) {
 			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
@@ -483,7 +429,6 @@ class AllDomains extends Component {
 					requestingSiteDomains={ requestingSiteDomains }
 					hasLoadedPurchases={ hasLoadedUserPurchases }
 					isSavingContactInfo={ isSavingContactInfo }
-					isLightVersion={ isLightVersion }
 				/>
 			</>
 		);
@@ -630,7 +575,8 @@ class AllDomains extends Component {
 	}
 
 	filteredDomains() {
-		const { filteredDomainsList, domainsList, isContactEmailEditContext } = this.props;
+		const { filteredDomainsList, domainsList, canManageSitesMap, isContactEmailEditContext } =
+			this.props;
 		if ( ! domainsList ) {
 			return [];
 		}
@@ -640,7 +586,9 @@ class AllDomains extends Component {
 		}
 
 		// filter on sites we can manage, that aren't `wpcom` type
-		return domainsList.filter( ( domain ) => domain.type !== domainTypes.WPCOM );
+		return domainsList.filter(
+			( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
+		);
 	}
 
 	renderDomainTableFilterButton() {
@@ -681,8 +629,8 @@ class AllDomains extends Component {
 				key="breadcrumb_button_2"
 				selectedFilter={ selectedFilter }
 				filterOptions={ filterOptions }
-				isLoading={ this.isLoading() }
-				disabled={ this.isLoading() }
+				isLoading={ this.isLoadingDomainDetails() }
+				disabled={ this.isLoadingDomainDetails() }
 			/>
 		);
 	}
@@ -780,6 +728,8 @@ const getSitesById = ( state ) => {
 
 const getFilteredDomainsList = ( state, context ) => {
 	const action = parse( context.querystring )?.action;
+	const sites = getSitesById( state );
+	const canManageSitesMap = canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' );
 	const domainsList = getFlatDomainsList( state );
 	const domainsDetails = getAllDomains( state );
 
@@ -806,29 +756,29 @@ const getFilteredDomainsList = ( state, context ) => {
 			} );
 
 		default:
-			return domainsList.filter( ( domain ) => domain.type !== domainTypes.WPCOM );
+			return domainsList.filter(
+				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
+			);
 	}
 };
 
 export default connect( ( state, { context } ) => {
 	const sites = getSitesById( state );
 	const action = parse( context.querystring )?.action;
-	const filteredDomainsList = getFilteredDomainsList( state, context );
-	const requestingFlatDomains = isRequestingAllDomains( state );
 
 	return {
 		action,
+		canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
 		currentRoute: getCurrentRoute( state ),
 		domainsList: getFlatDomainsList( state ),
 		domainsDetails: getAllDomains( state ),
-		filteredDomainsList,
+		filteredDomainsList: getFilteredDomainsList( state, context ),
 		hasAllSitesLoaded: hasAllSitesList( state ),
 		isContactEmailEditContext: ListAllActions.editContactEmail === action,
 		purchases: getUserPurchases( state ) || [],
 		hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
-		requestingFlatDomains,
+		requestingFlatDomains: isRequestingAllDomains( state ),
 		requestingSiteDomains: getAllRequestingSiteDomains( state ),
-		sites: requestingFlatDomains || filteredDomainsList.length > 100 ? {} : sites,
-		isLightVersion: filteredDomainsList.length > 100,
+		sites,
 	};
 } )( localize( AllDomains ) );

@@ -169,6 +169,7 @@ export class SiteDomains extends Component {
 				supportsOrderSwitching: true,
 				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 			},
+			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			{ name: 'email', label: translate( 'Email' ) },
 			{ name: 'action', label: translate( 'Actions' ) },
 		];
