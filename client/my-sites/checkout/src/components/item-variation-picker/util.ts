@@ -14,6 +14,11 @@ export function getItemVariantCompareToPrice(
 		return undefined;
 	}
 
+	// Ignore a 1 month discount when calculating the discount percentage
+	if ( compareTo.introductoryInterval === 1 && compareTo.introductoryTerm === 'month' ) {
+		return compareTo.priceBeforeDiscounts * 2;
+	}
+
 	// CompareTo price with introductory offers (For Jetpack)
 	if (
 		compareTo.introductoryInterval === 1 &&
@@ -33,10 +38,18 @@ export function getItemVariantDiscountPercentage(
 	compareTo?: WPCOMProductVariant
 ): number {
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
+
+	// Ignore intro discount if it is a 1 month only discount
+	const variantPrice =
+		variant.introductoryInterval === 1 && variant.introductoryTerm === 'month'
+			? variant.priceBeforeDiscounts
+			: variant.priceInteger;
+
 	// Extremely low "discounts" are possible if the price of the longer term has been rounded
 	// if they cannot be rounded to at least a percentage point we should not show them.
 	const discountPercentage = compareToPriceForVariantTerm
-		? Math.round( 100 - ( variant.priceInteger / compareToPriceForVariantTerm ) * 100 )
+		? Math.round( 100 - ( variantPrice / compareToPriceForVariantTerm ) * 100 )
 		: 0;
+
 	return discountPercentage;
 }
