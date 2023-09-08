@@ -198,6 +198,7 @@ function isCreditCardFormValid(
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
+
 				return false;
 			}
 			return true;
