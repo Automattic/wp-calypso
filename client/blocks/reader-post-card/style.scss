@@ -174,6 +174,7 @@
 
 		.reader-post-card__title-link {
 			display: -webkit-box;
+			line-break: anywhere;
 			-webkit-line-clamp: 2;
 			-webkit-box-orient: vertical;
 			overflow: hidden;
