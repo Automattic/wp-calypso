@@ -195,7 +195,7 @@ export class SectionMigrate extends Component {
 		this.setState( { siteInfo }, () => {
 			const selectedSiteSlug = urlToSlug( siteInfo.site_url.replace( /\/$/, '' ) );
 			this.setState( { selectedSiteSlug } );
-			this.updateSiteInfo( selectedSiteSlug, callback );
+			this.updateSiteInfo( siteInfo.site_meta.blog_id, callback );
 		} );
 	};
 
