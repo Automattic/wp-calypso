@@ -68,7 +68,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 		>
 			<NoticeBanner
 				level="info"
-				title={ translate( 'Upgrade my Stats' ) }
+				title={ translate( 'Upgrade to Stats Commercial' ) }
 				onClose={ dismissNotice }
 			>
 				{ translate(
