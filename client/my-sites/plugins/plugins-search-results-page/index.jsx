@@ -36,8 +36,6 @@ const PluginsSearchResultPage = ( {
 	} = usePlugins( {
 		infinite: true,
 		search: searchTerm,
-		wpcomEnabled: !! searchTerm,
-		wporgEnabled: !! searchTerm,
 	} );
 
 	const dispatch = useDispatch();
