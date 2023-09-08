@@ -106,11 +106,15 @@ const StatsPurchasePage = ( {
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
+	// Redirect to commercial is there is the query param is set and the site doesn't have commercial license yet
 	const redirectToCommercial = query?.productType === 'commercial' && ! supportCommercialUse;
+	// Redirect to personal is there is the query param is set, the site doesn't have personal license yet, and it's not redirecting to commercial
 	const redirectToPersonal =
 		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
+	// Whether it's forced to redirect to a product
 	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
+	// We show purchase page if there is no plan owned or if we are forcing a product redirect
 	const showPurchasePage = noPlanOwned || isForceProductRedirect;
 
 	return (
@@ -134,29 +138,32 @@ const StatsPurchasePage = ( {
 						<LoadingEllipsis />
 					</div>
 				) }
-				{ ! isLoading && ! isTypeDetectionEnabled && (
-					<>
-						{ supportCommercialUse && (
-							<div className="stats-purchase-page__notice">
-								<StatsPurchaseNotice siteSlug={ siteSlug } />
-							</div>
-						) }
-						{ ! supportCommercialUse && (
-							<StatsPurchaseWizard
-								siteSlug={ siteSlug }
-								commercialProduct={ commercialProduct }
-								maxSliderPrice={ maxSliderPrice ?? 10 }
-								pwywProduct={ pwywProduct }
-								siteId={ siteId }
-								redirectUri={ query.redirect_uri ?? '' }
-								from={ query.from ?? '' }
-								disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
-								initialStep={ initialStep }
-								initialSiteType={ initialSiteType }
-							/>
-						) }
-					</>
-				) }
+				{
+					// old flow - show the purchase wizard
+					! isLoading && ! isTypeDetectionEnabled && (
+						<>
+							{ supportCommercialUse && (
+								<div className="stats-purchase-page__notice">
+									<StatsPurchaseNotice siteSlug={ siteSlug } />
+								</div>
+							) }
+							{ ! supportCommercialUse && (
+								<StatsPurchaseWizard
+									siteSlug={ siteSlug }
+									commercialProduct={ commercialProduct }
+									maxSliderPrice={ maxSliderPrice ?? 10 }
+									pwywProduct={ pwywProduct }
+									siteId={ siteId }
+									redirectUri={ query.redirect_uri ?? '' }
+									from={ query.from ?? '' }
+									disableFreeProduct={ isFreeOwned || supportCommercialUse || isPWYWOwned }
+									initialStep={ initialStep }
+									initialSiteType={ initialSiteType }
+								/>
+							) }
+						</>
+					)
+				}
 				{
 					// a plan is owned or not forced to purchase - show a notice page
 					! isLoading && isTypeDetectionEnabled && ! showPurchasePage && (
