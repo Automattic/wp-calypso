@@ -338,20 +338,29 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 	const renderUpsellDiscount = () => {
 		return (
-			<div className="transfer-page__upsell-discount">
-				<p>
-					Are you sure you want to transfer your domain? Renew now and you can enjoy an instant 10%
-					discount!
-				</p>
-				<RenewButton
-					purchase={ purchase }
-					selectedSite={ selectedSite }
-					subscriptionId={ parseInt( domain?.subscriptionId ?? '', 10 ) }
-					tracksProps={ { source: 'test-registered-domain-transfer-out' } }
-					customLabel={ __( 'Renew' ) }
-					disabled={ isLoadingPurchase }
-				/>
-			</div>
+			<>
+				<div key="separator" className="transfer-page__item-separator" />
+				<div className="transfer-page__upsell-discount">
+					<p>
+						{ __( 'Are you sure you want to transfer your domain?' ) }
+						<br />
+						<b>
+							{
+								// translators: promotional offer for domain renewal
+								__( 'Renew now and get a 10% discount!' )
+							}
+						</b>
+					</p>
+					<RenewButton
+						purchase={ purchase }
+						selectedSite={ selectedSite }
+						subscriptionId={ parseInt( domain?.subscriptionId ?? '', 10 ) }
+						tracksProps={ { source: 'test-registered-domain-transfer-out' } }
+						customLabel={ __( 'Renew now' ) }
+						disabled={ isLoadingPurchase }
+					/>
+				</div>
+			</>
 		);
 	};
 
