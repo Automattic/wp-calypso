@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
@@ -60,8 +61,10 @@ export class AdvertisingPage {
 		name: string,
 		{ row, postTitle }: { row?: number; postTitle?: string } = {}
 	) {
-		// Wait for promote the banner to finish loading.
-		await this.page.getByRole( 'main' ).locator( '.posts-list-banner__container' ).waitFor();
+		// Wait for promote the banner to finish loading on desktop.
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.page.getByRole( 'main' ).locator( '.posts-list-banner__container' ).waitFor();
+		}
 
 		if ( row !== undefined && row >= 0 ) {
 			await this.page
