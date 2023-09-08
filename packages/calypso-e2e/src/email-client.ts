@@ -87,6 +87,36 @@ export class EmailClient {
 	}
 
 	/**
+	 * Given an email message and a key, returns a URL if the link text
+	 * matches the key.
+	 *
+	 * If no matching links are found, this method returns `null`.
+	 *
+	 * If the email message is not valid HTML, this method throws.
+	 *
+	 * @param {Message} message Representing the message.
+	 * @param {string} key Link text.
+	 * @returns {string|null} If a link text matching the supplied key is found
+	 * 	the link URL is returned. Otherwise, returns null.
+	 * @throws {Error} If the message is not valid HTML.
+	 */
+	getLinkFromMessageByKey( message: Message, key: string ): string | null {
+		if ( ! message.html ) {
+			throw new Error( 'Message did not contain a body.' );
+		}
+
+		const links = message.html.links as Link[];
+		const regexp = new RegExp( key, 'i' );
+
+		for ( const link of links ) {
+			if ( link.text && link.text.trim().search( regexp ) >= 0 ) {
+				return link.href as string;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Extracts and returns a 2FA code from the message.
 	 *
 	 * @param {Message} message Instance of a Mailosaur message.
