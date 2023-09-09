@@ -26,7 +26,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import getMagicLoginIsFetchingEmail from 'calypso/state/selectors/get-magic-login-is-fetching-email';
+import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import { withEnhancers } from 'calypso/state/utils';
 import RequestLoginEmailForm from './request-login-email-form';
 
@@ -72,6 +73,12 @@ class MagicLogin extends Component {
 				flow: oauth2Client.name,
 				showGlobalNotices: true,
 			} );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isSendingEmail && this.props.emailRequested ) {
+			this.startResendEmailCountdown();
 		}
 	}
 
@@ -172,26 +179,13 @@ class MagicLogin extends Component {
 		}, 1000 );
 	};
 
-	onClickResendEmail = () => {
-		const { oauth2Client, query, sendEmailLogin: resendEmail } = this.props;
-		const { usernameOrEmail } = this.state;
-
-		resendEmail( usernameOrEmail, {
-			redirectTo: query?.redirect_to,
-			requestLoginEmailFormFlow: true,
-			createAccount: true,
-			flow: oauth2Client.name,
-			showGlobalNotices: true,
-		} );
-
-		this.startResendEmailCountdown();
-	};
-
 	renderGravatarEmailVerification() {
 		const {
 			oauth2Client,
 			translate,
+			query,
 			isSendingEmail,
+			sendEmailLogin: resendEmail,
 			hideMagicLoginRequestForm: showMagicLogin,
 		} = this.props;
 		const { usernameOrEmail, resendEmailCountdown } = this.state;
@@ -225,7 +219,15 @@ class MagicLogin extends Component {
 									components: {
 										sendEmailButton: (
 											<button
-												onClick={ this.onClickResendEmail }
+												onClick={ () =>
+													resendEmail( usernameOrEmail, {
+														redirectTo: query?.redirect_to,
+														requestLoginEmailFormFlow: true,
+														createAccount: true,
+														flow: oauth2Client.name,
+														showGlobalNotices: true,
+													} )
+												}
 												disabled={ isSendingEmail || !! resendEmailCountdown }
 											/>
 										),
@@ -280,10 +282,7 @@ class MagicLogin extends Component {
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ translate( 'Continue' ) }
 						showTos
-						onSendEmailLogin={ ( usernameOrEmail ) => {
-							this.setState( { usernameOrEmail } );
-							this.startResendEmailCountdown();
-						} }
+						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
 					/>
 					<hr className="gravatar-magic-login__divider" />
@@ -327,6 +326,7 @@ class MagicLogin extends Component {
 			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
 				? { isJetpackMagicLinkSignUpEnabled: true }
 				: {} ),
+			createAccountForNewUser: true,
 		};
 
 		return (
@@ -350,7 +350,8 @@ const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
-	isSendingEmail: getMagicLoginIsFetchingEmail( state ),
+	isSendingEmail: isFetchingMagicLoginEmail( state ),
+	emailRequested: isMagicLoginEmailRequested( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 	oauth2Client: getCurrentOAuth2Client( state ),
 	userEmail:

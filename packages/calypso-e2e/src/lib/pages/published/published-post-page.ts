@@ -84,6 +84,39 @@ export class PublishedPostPage {
 	}
 
 	/**
+	 * Fills out a subscription form on the published post with the supplied
+	 * email address, and confirms the subscription.
+	 *
+	 * Note that this method currently only handles Free subscriptions.
+	 *
+	 * @param {string} email Email address to subscribe.
+	 */
+	async subscribe( email: string ) {
+		await this.anchor.getByPlaceholder( /type your email/i ).fill( email );
+		await this.anchor.getByRole( 'button', { name: 'Subscribe' } ).click();
+
+		// The popup dialog is in its own iframe.
+		const iframe = this.page.frameLocator( 'iframe[id="TB_iframeContent"]' );
+
+		// This handler is required because if the site owner has set up any
+		// paid plans, the modal will first show a list of plans the user
+		// can choose from.
+		// However, we don't know for sure whether a site owner has set up any
+		// newsletter plans.
+		const continueButton = iframe.getByRole( 'button', { name: /continue/i } );
+		const freeTrialLink = iframe.getByRole( 'link', {
+			name: 'Free - Get a glimpse of the newsletter',
+		} );
+
+		await continueButton.or( freeTrialLink ).waitFor();
+		if ( await freeTrialLink.isVisible() ) {
+			freeTrialLink.click();
+		}
+
+		await continueButton.click();
+	}
+
+	/**
 	 * Validates that the title is as expected.
 	 *
 	 * @param {string} title Title text to check.

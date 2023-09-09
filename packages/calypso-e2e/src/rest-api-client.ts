@@ -11,6 +11,7 @@ import {
 	DomainData,
 	PublicizeConnectionDeletedResponse,
 	PublicizeConnection,
+	SubscriberDeletedResponse,
 } from './types';
 import type { Roles } from './lib';
 import type {
@@ -40,6 +41,7 @@ import type {
 	CommentLikeResponse,
 	JetpackSearchResponse,
 	JetpackSearchParams,
+	Subscriber,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -1192,5 +1194,65 @@ export class RestAPIClient {
 			),
 			params
 		);
+	}
+
+	/* Subscribers/Email Followers/Newsletters */
+
+	/**
+	 * Given a site ID, returns the list of newsletter subscribers.
+	 *
+	 * @param {number} siteID Site ID to return list of users for.
+	 */
+	async getAllSubscribers( siteID: number ): Promise< Subscriber[] > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		// This is a V2 API call.
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/subscribers`, 'wpcom' ),
+			params
+		);
+
+		return response[ 'subscribers' ];
+	}
+
+	/**
+	 * Given a siteID and email address of the subscribed user to delete,
+	 * removes the subscribed user.
+	 *
+	 * @param {number} siteID Site ID where the user is subscribed.
+	 * @param {string} email Email address of the subscriber to delete.
+	 */
+	async deleteSubscriber(
+		siteID: number,
+		email: string
+	): Promise< SubscriberDeletedResponse | null > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const subscribers = await this.getAllSubscribers( siteID );
+
+		for ( const subscriber of subscribers ) {
+			if ( subscriber.email_address.trim() === email.trim() ) {
+				return await this.sendRequest(
+					this.getRequestURL(
+						'1.1',
+						`/sites/${ siteID }/email-followers/${ subscriber.subscription_id }/delete`
+					),
+					params
+				);
+			}
+		}
+		return null;
 	}
 }
