@@ -1,7 +1,7 @@
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
-import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
+import { getTagsFromStreamKey, getAfterDateForFeed } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -216,6 +216,7 @@ const streamApis = {
 				tags: getTagsFromStreamKey( streamKey ),
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
+				after: getAfterDateForFeed(),
 			} ),
 		apiNamespace: 'wpcom/v2',
 	},

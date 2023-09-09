@@ -28,7 +28,6 @@ import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
 	createSiteFromDomainOnly,
@@ -64,6 +63,7 @@ class DomainRow extends PureComponent {
 		shouldUpgradeToMakePrimary: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
 		site: PropTypes.object,
+		isLightVersion: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,6 +73,7 @@ class DomainRow extends PureComponent {
 		isLoadingDomainDetails: false,
 		isBusy: false,
 		showDomainDetails: true,
+		isLightVersion: false,
 	};
 
 	stopPropagation = ( event ) => {
@@ -98,22 +99,26 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { site } = this.props;
+		const { domain } = this.props;
+		if ( domain.isDomainOnlySite ) {
+			return null;
+		}
+
 		return (
 			<div className="domain-row__site-cell">
-				<Button href={ '/home/' + site?.slug } plain>
-					{ ! site.options?.is_domain_only ? site?.title || site?.slug : '' }
+				<Button href={ '/home/' + domain.blogId } plain>
+					{ domain.siteTitle ?? domain.siteSlug ?? '' }
 				</Button>
 			</div>
 		);
 	}
 
 	renderMobileSite() {
-		const { site } = this.props;
-		if ( site?.options?.is_domain_only ) {
+		const { domain } = this.props;
+		if ( domain.isDomainOnlySite ) {
 			return null;
 		}
-		return site?.title || site?.slug;
+		return domain.siteTitle || domain.siteSlug;
 	}
 
 	renderPrimaryBadge() {
@@ -126,7 +131,20 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { currentRoute, domain, site, isLoadingDomainDetails, translate, dispatch } = this.props;
+		const {
+			currentRoute,
+			domain,
+			site,
+			isLoadingDomainDetails,
+			translate,
+			dispatch,
+			isLightVersion,
+		} = this.props;
+
+		if ( isLightVersion ) {
+			return null;
+		}
+
 		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
@@ -179,50 +197,6 @@ class DomainRow extends PureComponent {
 
 		return <div className="domain-row__mobile-extra-info">{ extraInfo }</div>;
 	}
-
-	renderAutoRenew() {
-		const { site, hasLoadedPurchases, purchase, isManagingAllSites, showCheckbox } = this.props;
-
-		if ( ! this.shouldShowAutoRenewStatus() || ( hasLoadedPurchases && ! purchase ) ) {
-			return <span className="domain-row__auto-renew-cell">-</span>;
-		}
-
-		if ( ! hasLoadedPurchases ) {
-			return (
-				<span className="domain-row__auto-renew-cell">
-					<p className="domain-row__placeholder" />
-				</span>
-			);
-		}
-
-		return (
-			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-			<div className="domain-row__auto-renew-cell" onClick={ this.stopPropagation }>
-				<AutoRenewToggle
-					planName={ site.plan.product_name_short }
-					siteDomain={ site.domain }
-					siteSlug={ site.slug }
-					purchase={ purchase }
-					shouldDisable={ isManagingAllSites && showCheckbox }
-					withTextStatus={ false }
-					toggleSource="registered-domain-status"
-				/>
-			</div>
-			/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-		);
-	}
-
-	shouldShowAutoRenewStatus = () => {
-		const { domain } = this.props;
-		if (
-			domain?.type === domainTypes.WPCOM ||
-			domain?.type === domainTypes.TRANSFER ||
-			domain?.aftermarketAuction
-		) {
-			return false;
-		}
-		return ! domain?.bundledPlanSubscriptionId && domain.currentUserIsOwner;
-	};
 
 	renderEmail() {
 		return <span className="domain-row__email-cell">{ this.renderEmailLabel() }</span>;
@@ -361,7 +335,12 @@ class DomainRow extends PureComponent {
 			showDomainDetails,
 			site,
 			translate,
+			isLightVersion,
 		} = this.props;
+
+		if ( isLightVersion ) {
+			return null;
+		}
 
 		if ( ! showDomainDetails ) {
 			return <div className="domain-row__action-cell"></div>;
@@ -492,6 +471,7 @@ class DomainRow extends PureComponent {
 			purchase,
 			translate,
 			dispatch,
+			isLightVersion,
 		} = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
@@ -515,7 +495,6 @@ class DomainRow extends PureComponent {
 					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }
 					{ this.renderExpiryDate( expiryDate ) }
-					{ this.renderAutoRenew() }
 					{ ! isManagingAllSites && this.renderEmail() }
 					{ this.renderEllipsisMenu() }
 				</div>
@@ -526,7 +505,7 @@ class DomainRow extends PureComponent {
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
-				{ noticeText && (
+				{ ! isLightVersion && noticeText && (
 					<div className="domain-row__domain-notice">
 						<Icon
 							icon={ info }

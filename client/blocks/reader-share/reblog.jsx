@@ -33,8 +33,7 @@ const ReaderReblogSelection = ( props ) => {
 		);
 		window.open(
 			`/post/${ slug }?${ buildQuerystringForPost( props.post, props.comment ) }`,
-			'reblog post',
-			'width=550,height=420,resizeable,scrollbars'
+			'_blank'
 		);
 		props.closeMenu();
 		return true;
