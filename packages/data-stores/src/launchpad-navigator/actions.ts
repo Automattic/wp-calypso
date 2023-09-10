@@ -24,7 +24,7 @@ export function* setCurrentChecklist( siteSlug: string, checklist_slug: string )
 
 	if ( currentChecklistSlug === checklist_slug ) {
 		// If it's the same, you can return early or perform any other actions
-		return;
+		return receiveCurrentChecklist( checklist_slug );
 	}
 
 	const response: UpdateLaunchpadNavigatorResponse = canAccessWpcomApis()
