@@ -3,7 +3,7 @@ import { Launchpad } from '@automattic/launchpad';
 
 import './style.scss';
 
-type FloatingNavigatorProps = {
+export type FloatingNavigatorProps = {
 	siteSlug: string | null;
 };
 
