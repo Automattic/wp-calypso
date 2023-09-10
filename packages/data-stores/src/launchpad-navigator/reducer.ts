@@ -7,7 +7,7 @@ const currentChecklist: Reducer< string | undefined, LaunchpadNavigatorAction > 
 	action
 ) => {
 	switch ( action.type ) {
-		case 'LAUNCHPAD_NAVIGATOR_SET_CURRENT_CHECKLIST':
+		case 'LAUNCHPAD_NAVIGATOR_RECEIVE_CURRENT_CHECKLIST':
 			return action.current_checklist;
 	}
 	return state;
