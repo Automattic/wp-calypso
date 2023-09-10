@@ -1,5 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { FloatingNavigator } from '@automattic/launchpad-navigator';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -13,6 +15,7 @@ const MasterbarLaunchpadNavigator = () => {
 	};
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
 
 	return (
 		<>
@@ -21,8 +24,8 @@ const MasterbarLaunchpadNavigator = () => {
 				className={ classnames( 'masterbar__item-launchpad-navigator', {
 					'is-active': launchpadIsVisible,
 				} ) }
-				tooltip="Open tasks"
-				icon={ <span>X</span> }
+				tooltip={ translate( 'My tasks' ) }
+				icon={ <Gridicon icon="checkmark-circle" /> }
 			/>
 			{ launchpadIsVisible && (
 				<div className="masterbar__launchpad-navigator">
