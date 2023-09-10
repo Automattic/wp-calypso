@@ -9,24 +9,23 @@ export interface APIFetchOptions {
 
 interface LaunchpadNavigatorResponse {
 	available_checklists: string[];
-	current_checklist: string;
+	current_checklist: string | null;
 }
 
 export const fetchLaunchpadNavigator = (
 	siteSlug: string | null
 ): Promise< LaunchpadNavigatorResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
-	const requestUrl = `/sites/${ slug }/launchpad/navigator`;
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
-				path: requestUrl,
+				path: `/sites/${ slug }/launchpad/navigator`,
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',
 		  } )
 		: apiFetch( {
 				global: true,
-				path: `/wpcom/v2${ requestUrl }`,
+				path: `/wpcom/v2/launchpad/navigator`,
 		  } as APIFetchOptions );
 };
 
@@ -39,7 +38,7 @@ export const useLaunchpadNavigator = ( siteSlug: string | null, current_checklis
 		retry: 3,
 		initialData: {
 			available_checklists: [],
-			current_checklist: '',
+			current_checklist: null,
 		},
 	} );
 };

@@ -2,7 +2,7 @@ import { combineReducers } from '@wordpress/data';
 import type { LaunchpadNavigatorAction } from './actions';
 import type { Reducer } from 'redux';
 
-const currentChecklist: Reducer< string | undefined, LaunchpadNavigatorAction > = (
+const currentChecklist: Reducer< string | null | undefined, LaunchpadNavigatorAction > = (
 	state,
 	action
 ) => {
@@ -17,6 +17,6 @@ const reducer = combineReducers( {
 	currentChecklist,
 } );
 
-export type State = ReturnType< typeof reducer >;
+export type LaunchpadNavigatorState = ReturnType< typeof reducer >;
 
 export default reducer;

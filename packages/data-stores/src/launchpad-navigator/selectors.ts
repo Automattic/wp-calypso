@@ -1,3 +1,3 @@
-import type { State } from './reducer';
+import type { LaunchpadNavigatorState } from './reducer';
 
-export const getCurrentChecklist = ( state: State ) => state.currentChecklist;
+export const getCurrentChecklist = ( state: LaunchpadNavigatorState ) => state.currentChecklist;
