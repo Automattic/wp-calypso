@@ -501,6 +501,10 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderLaunchpadNavigator() {
+		return <AsyncLoad require="./masterbar-launchpad-navigator" />;
+	}
+
 	render() {
 		const { isInEditor, isCheckout, isCheckoutPending, loadHelpCenterIcon } = this.props;
 		const { isMobile } = this.state;
@@ -559,6 +563,7 @@ class MasterbarLoggedIn extends Component {
 						{ this.renderCart() }
 						{ this.renderMe() }
 						{ loadHelpCenterIcon && this.renderHelpCenter() }
+						{ this.renderLaunchpadNavigator() }
 						{ this.renderNotifications() }
 					</div>
 				</Masterbar>

@@ -1,0 +1,10 @@
+.launchpad-navigator__floating-navigator {
+	position: fixed;
+	top: calc(var(--masterbar-height) + 2px);
+	right: 0.5em;
+	background-color: #fff;
+	color: #000;
+	z-index: 9999;
+	cursor: default;
+	transition: max-height 0.5s;
+}
