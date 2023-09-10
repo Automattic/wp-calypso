@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { Launchpad } from '@automattic/launchpad';
 
-import './floating-navigator.scss';
+import './style.scss';
 
 type FloatingNavigatorProps = {
 	siteSlug: string | null;
