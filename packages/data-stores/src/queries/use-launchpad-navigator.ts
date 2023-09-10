@@ -38,9 +38,10 @@ export const fetchLaunchpadNavigator = (
 
 export const useLaunchpadNavigator = (
 	siteSlug: string | null,
+	current_checklist: string,
 	options?: UseLaunchpadNavigatorOptions
 ) => {
-	const key = [ 'launchpad-navigator', siteSlug ];
+	const key = [ 'launchpad-navigator', siteSlug, current_checklist ];
 	const onSuccessCallback = options?.onSuccess || defaultSuccessCallback;
 
 	return useQuery( {
@@ -48,12 +49,8 @@ export const useLaunchpadNavigator = (
 		queryFn: () => fetchLaunchpadNavigator( siteSlug ).then( onSuccessCallback ),
 		retry: 3,
 		initialData: {
-			site_intent: '',
-			launchpad_screen: undefined,
-			checklist_statuses: {},
-			checklist: null,
-			is_enabled: false,
-			is_dismissed: false,
+			available_checklists: [],
+			current_checklist: '',
 		},
 	} );
 };
