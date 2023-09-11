@@ -25,7 +25,7 @@ const hasSiteProductJetpackStats = (
 
 	// Check whether sites have paid plans of WPCOM.
 	const siteHasPaidPlan = isSiteOnPaidPlan( state, siteId || 0 );
-	// TODO: Determine the proper way to check WPCOM plans for supporting Stats.
+	// TODO: Consolidate the proper way of checking WPCOM plans for supporting Stats to `productHasStats`.
 	const wpcomSiteHasPaidPlan = isWpcomSite && siteHasPaidPlan;
 
 	return siteHasStatsPlan || !! siteHasStatsProduct || wpcomSiteHasPaidPlan;
