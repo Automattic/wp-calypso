@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
-import useSubscriberNewsletterCategories from 'calypso/data/newsletter-categories/use-subscriber-newsletter-categories-query';
+import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -46,8 +46,8 @@ const SubscriberDetailsPage = ( {
 		userId
 	);
 
-	const { data: newsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
-		useSubscriberNewsletterCategories( {
+	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
+		useSubscribedNewsletterCategories( {
 			siteId: selectedSiteId as number,
 			subscriptionId: subscriptionId || subscriber?.subscription_id,
 		} );
@@ -114,8 +114,8 @@ const SubscriberDetailsPage = ( {
 					siteId={ selectedSiteId }
 					subscriptionId={ subscriptionId }
 					userId={ userId }
-					newsletterCategoriesEnabled={ newsletterCategoriesData?.enabled }
-					newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
+					newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
+					newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 				/>
 			) }
 			<UnsubscribeModal
