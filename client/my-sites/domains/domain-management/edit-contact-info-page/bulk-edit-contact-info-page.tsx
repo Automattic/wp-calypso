@@ -7,23 +7,28 @@ import {
 } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueries } from '@tanstack/react-query';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useId, useState } from 'react';
+import { createElement, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QueryWhois from 'calypso/components/data/query-whois';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { domainManagementList, isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhoisSelector from 'calypso/state/selectors/is-requesting-whois';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -31,7 +36,6 @@ import { IAppState } from 'calypso/state/types';
 import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
-
 import './style.scss';
 
 interface BulkEditContactInfoPageProps {
@@ -78,8 +82,14 @@ export default function BulkEditContactInfoPage( {
 	);
 
 	const currentRoute = useSelector( getCurrentRoute );
+	const allDomainsWhoisData = useSelector( ( state: IAppState ) => {
+		return selectedDomains?.map( ( domain ) => {
+			const whoisData = findRegistrantWhois( getWhoisData( state, domain.domain ) );
+			return { [ domain.domain ]: whoisData };
+		} );
+	} );
 	const isRequestingWhois = useSelector( ( state: IAppState ) =>
-		firstSelectedDomain ? isRequestingWhoisSelector( state, firstSelectedDomain.domain ) : false
+		selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
 	);
 
 	const isDataLoading = () =>
@@ -192,6 +202,33 @@ export default function BulkEditContactInfoPage( {
 					selectedSiteSlug={ selectedSite.slug }
 				/>
 			);
+		}
+
+		const firstDomainWithIncompatibleWhois = allDomainsWhoisData?.find( ( domainWhoisData ) => {
+			const whoisData = Object.values( domainWhoisData )[ 0 ];
+			if ( typeof whoisData === 'object' && 'extra' in whoisData ) {
+				return true;
+			}
+		} );
+
+		if (
+			firstDomainWithIncompatibleWhois &&
+			allDomainsWhoisData &&
+			allDomainsWhoisData.length > 1
+		) {
+			const text = createInterpolateElement(
+				sprintf(
+					/* translators: the domain is the name of incompatible domain*/
+					translate(
+						'The domain <strong>%(domain)s</strong> has additional contact fields that makes it incompatible for bulk editing.'
+					),
+					{ domain: Object.keys( firstDomainWithIncompatibleWhois )[ 0 ] }
+				),
+				{
+					strong: createElement( 'strong' ),
+				}
+			);
+			return <InfoNotice redesigned={ false } text={ text } />;
 		}
 
 		return (
@@ -309,6 +346,9 @@ export default function BulkEditContactInfoPage( {
 		return (
 			<>
 				{ firstSelectedDomain && <QuerySiteDomains siteId={ firstSelectedDomain.blog_id } /> }
+				{ selectedDomains?.map( ( domain ) => (
+					<QueryWhois domain={ domain.domain } />
+				) ) }
 				<DomainMainPlaceholder goBack={ goToDomainsList } />
 			</>
 		);
