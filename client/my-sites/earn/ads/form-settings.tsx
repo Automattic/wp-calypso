@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -14,6 +14,7 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import SectionHeader from 'calypso/components/section-header';
 import SupportInfo from 'calypso/components/support-info';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
@@ -25,17 +26,42 @@ import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 
+type DisplayOptions = {
+	display_front_page?: boolean;
+	display_post?: boolean;
+	display_page?: boolean;
+	display_archive?: boolean;
+	enable_header_ad?: boolean;
+	second_belowpost?: boolean;
+	sidebar?: boolean;
+};
+
+type Settings = {
+	optimized_ads?: boolean;
+	paypal?: string;
+	show_to_logged_in?: string;
+	tos?: string;
+	display_options?: DisplayOptions;
+	ccpa_enabled?: boolean;
+	ccpa_privacy_policy_url?: string;
+	custom_adstxt_enabled?: boolean;
+	custom_adstxt?: string;
+	jetpack_module_enabled?: boolean;
+};
+
 const AdsFormSettings = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ settings, setSettings ] = useState( {} );
+	const [ settings, setSettings ] = useState< Settings >( {} );
 	const [ isChanged, setIsChanged ] = useState( false );
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
-	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isSavingSettings = useSelector( ( state ) => isSavingWordadsSettings( state, siteId ) );
+	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ?? 0 ) );
+	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ?? 0 ) );
+	const isSavingSettings = useSelector( ( state ) =>
+		isSavingWordadsSettings( state, siteId ?? 0 )
+	);
 	const wordadsSettings = useSelector( ( state ) => getWordadsSettings( state, siteId ) );
 	const widgetsUrl = useSelector( ( state ) => getCustomizerUrl( state, siteId, 'widgets' ) );
 
@@ -68,7 +94,7 @@ const AdsFormSettings = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId ] );
 
-	function handleChange( event ) {
+	function handleChange( event: ChangeEvent< HTMLInputElement > ) {
 		const name = event.currentTarget.name;
 		const value = event.currentTarget.value;
 
@@ -78,38 +104,39 @@ const AdsFormSettings = () => {
 		} ) );
 	}
 
-	function handleToggle( event ) {
+	function handleToggle( event: ChangeEvent< HTMLInputElement > ) {
 		const name = event.currentTarget.name;
 
 		setSettings( ( prevState ) => ( {
 			...prevState,
-			[ name ]: ! settings[ name ],
+			[ name ]: ! settings[ name as keyof Settings ],
 		} ) );
 	}
 
-	function handleDisplayToggle( name ) {
+	function handleDisplayToggle( name: string ) {
 		setSettings( ( prevState ) => ( {
 			...prevState,
 			display_options: {
 				...prevState.display_options,
-				[ name ]: ! settings.display_options[ name ],
+				[ name ]: ! settings?.display_options?.[ name as keyof DisplayOptions ],
 			},
 		} ) );
 	}
 
-	function handleCompactToggle( name ) {
+	function handleCompactToggle( name: string ) {
 		setSettings( ( prevState ) => ( {
 			...prevState,
-			[ name ]: ! settings[ name ],
+			[ name ]: ! settings[ name as keyof Settings ],
 		} ) );
 	}
 
-	function handleSubmit( event ) {
+	function handleSubmit( event: FormEvent< EventTarget > ) {
 		event.preventDefault();
 
-		dispatch( saveWordadsSettings( site.ID, packageState() ) );
-
-		setIsChanged( false );
+		if ( site ) {
+			dispatch( saveWordadsSettings( site?.ID, packageState() ) );
+			setIsChanged( false );
+		}
 	}
 
 	function defaultSettings() {
@@ -156,7 +183,7 @@ const AdsFormSettings = () => {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
+				<FormLegend className={ undefined }>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
 					<FormRadio
 						name="show_to_logged_in"
@@ -165,6 +192,7 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Run ads for all users' ) }
+						className={ undefined }
 					/>
 				</FormLabel>
 
@@ -176,6 +204,7 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Run ads only for logged-out users (less revenue)' ) }
+						className={ undefined }
 					/>
 				</FormLabel>
 
@@ -187,6 +216,7 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Pause ads (no revenue)' ) }
+						className={ undefined }
 					/>
 				</FormLabel>
 			</FormFieldset>
@@ -194,12 +224,14 @@ const AdsFormSettings = () => {
 	}
 
 	function displayOptions() {
-		const isDisabled = isLoading || ( siteIsJetpack && ! settings.jetpack_module_enabled );
+		const isDisabled = isLoading || Boolean( siteIsJetpack && ! settings.jetpack_module_enabled );
 
 		return (
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
-					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
+					<FormLegend className={ undefined }>
+						{ translate( 'Display ads below posts on' ) }
+					</FormLegend>
 					<ToggleControl
 						checked={ !! settings.display_options?.display_front_page }
 						disabled={ isDisabled }
@@ -226,7 +258,9 @@ const AdsFormSettings = () => {
 					/>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
-					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
+					<FormLegend className={ undefined }>
+						{ translate( 'Additional ad placements' ) }
+					</FormLegend>
 					<ToggleControl
 						checked={ !! settings.display_options?.enable_header_ad }
 						disabled={ isDisabled }
@@ -324,7 +358,7 @@ const AdsFormSettings = () => {
 	}
 
 	function privacy() {
-		const isDisabled = isLoading || ( siteIsJetpack && ! settings.jetpack_module_enabled );
+		const isDisabled = isLoading || Boolean( siteIsJetpack && ! settings.jetpack_module_enabled );
 
 		return (
 			<div>
@@ -363,7 +397,7 @@ const AdsFormSettings = () => {
 									'If you enable targeted advertising in all US states you are required to place a "Do Not Sell or Share My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
 									{
 										components: {
-											a: <a href={ widgetsUrl } target="_blank" rel="noopener noreferrer" />,
+											a: <a href={ widgetsUrl ?? '#' } target="_blank" rel="noopener noreferrer" />,
 											code: <code />,
 										},
 									}
@@ -401,7 +435,7 @@ const AdsFormSettings = () => {
 	}
 
 	function adstxt() {
-		const isDisabled = isLoading || ( siteIsJetpack && ! settings.jetpack_module_enabled );
+		const isDisabled = isLoading || Boolean( siteIsJetpack && ! settings.jetpack_module_enabled );
 
 		return (
 			<div>
@@ -459,6 +493,10 @@ const AdsFormSettings = () => {
 				</FormFieldset>
 			</div>
 		);
+	}
+
+	if ( ! site ) {
+		return <LoadingEllipsis />;
 	}
 
 	return (
