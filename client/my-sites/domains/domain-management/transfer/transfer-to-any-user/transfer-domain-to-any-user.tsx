@@ -149,7 +149,6 @@ export default function TransferDomainToAnyUser( {
 						<FormTextInput
 							disabled={ isLoading }
 							name="email"
-							noWrap
 							onChange={ handleEmailChange }
 							value={ email }
 							className={ classNames( 'transfer-domain-to-any-user__input', {
