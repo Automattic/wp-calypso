@@ -192,16 +192,16 @@
 }
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
-.gravatar-magic-login {
+.grav-powered-magic-login {
 	max-width: 560px;
 
-	.gravatar-magic-login__content,
+	.grav-powered-magic-login__content,
 	input[type="text"].form-text-input,
 	button {
 		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	}
 
-	.gravatar-magic-login__content {
+	.grav-powered-magic-login__content {
 		background-color: #fff;
 		line-height: 1.5;
 		color: #00101c;
@@ -218,7 +218,7 @@
 		}
 	}
 
-	.gravatar-magic-login__header,
+	.grav-powered-magic-login__header,
 	.magic-login__form-header {
 		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 		font-size: 24px;
@@ -238,7 +238,7 @@
 		margin-bottom: 0;
 	}
 
-	.gravatar-magic-login__sub-header {
+	.grav-powered-magic-login__sub-header {
 		margin-bottom: 52px;
 	}
 
@@ -277,13 +277,13 @@
 		color: #fff;
 	}
 
-	.gravatar-magic-login__divider {
+	.grav-powered-magic-login__divider {
 		background-color: #e7e9ea;
 		width: 80px;
 		margin: 32px 0 20px;
 	}
 
-	.gravatar-magic-login__footer {
+	.grav-powered-magic-login__footer {
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
@@ -301,27 +301,27 @@
 			text-decoration: underline;
 		}
 
-		&.gravatar-magic-login__footer--email-verification {
+		&.grav-powered-magic-login__footer--email-verification {
 			color: #949494;
 		}
 	}
 
-	.gravatar-magic-login__show-magic-login {
+	.grav-powered-magic-login__show-magic-login {
 		margin-top: 16px;
 	}
 
 	@include break-small {
-		.gravatar-magic-login__content {
+		.grav-powered-magic-login__content {
 			padding: 40px 56px;
 		}
 
-		.gravatar-magic-login__header,
+		.grav-powered-magic-login__header,
 		.magic-login__form-header {
 			font-size: 40px;
 			margin-top: 48px;
 		}
 
-		.gravatar-magic-login__sub-header {
+		.grav-powered-magic-login__sub-header {
 			margin-bottom: 80px;
 
 			strong {
@@ -334,11 +334,11 @@
 			margin-top: 44px;
 		}
 
-		.gravatar-magic-login__divider {
+		.grav-powered-magic-login__divider {
 			margin-top: 48px;
 		}
 
-		.gravatar-magic-login__show-magic-login {
+		.grav-powered-magic-login__show-magic-login {
 			margin-top: 0;
 		}
 	}

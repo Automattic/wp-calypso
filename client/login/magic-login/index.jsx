@@ -9,7 +9,7 @@ import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isWPJobManagerOAuth2Client, isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -65,7 +65,7 @@ class MagicLogin extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if (
-			isGravatarOAuth2Client( this.props.oauth2Client ) &&
+			isGravPoweredOAuth2Client( this.props.oauth2Client ) &&
 			prevProps.isSendingEmail &&
 			this.props.emailRequested
 		) {
@@ -170,7 +170,7 @@ class MagicLogin extends Component {
 		}, 1000 );
 	};
 
-	renderGravatarEmailVerification() {
+	renderGravPoweredEmailVerification() {
 		const {
 			oauth2Client,
 			translate,
@@ -183,11 +183,11 @@ class MagicLogin extends Component {
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
 		return (
-			<Main className="gravatar-magic-login">
-				<div className="gravatar-magic-login__content">
+			<Main className="grav-powered-magic-login">
+				<div className="grav-powered-magic-login__content">
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
-					<h1 className="gravatar-magic-login__header">{ translate( 'Check your email!' ) }</h1>
-					<p className="gravatar-magic-login__sub-header">
+					<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
+					<p className="grav-powered-magic-login__sub-header">
 						{ emailAddress
 							? translate(
 									"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
@@ -200,8 +200,8 @@ class MagicLogin extends Component {
 									'We just emailed you a link. Please check your inbox and click the link to log in.'
 							  ) }
 					</p>
-					<hr className="gravatar-magic-login__divider" />
-					<div className="gravatar-magic-login__footer gravatar-magic-login__footer--email-verification">
+					<hr className="grav-powered-magic-login__divider" />
+					<div className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-verification">
 						<div>{ translate( 'Are you having issues receiving it?' ) }</div>
 						<div>
 							{ translate(
@@ -224,7 +224,7 @@ class MagicLogin extends Component {
 										),
 										showMagicLoginButton: (
 											<button
-												className="gravatar-magic-login__show-magic-login"
+												className="grav-powered-magic-login__show-magic-login"
 												onClick={ () => {
 													this.resetResendEmailCountdown();
 													showMagicLogin();
@@ -249,9 +249,13 @@ class MagicLogin extends Component {
 		);
 	}
 
-	renderGravatarMagicLogin() {
+	renderGravPoweredMagicLogin() {
 		const { oauth2Client, translate, locale, query } = this.props;
 
+		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
+		const headerText = isWPJobManager
+			? translate( 'Welcome to WP Job Manager' )
+			: translate( 'Login to Gravatar' );
 		const loginUrl = login( {
 			locale,
 			redirectTo: query?.redirect_to,
@@ -259,14 +263,14 @@ class MagicLogin extends Component {
 		} );
 
 		return (
-			<Main className="gravatar-magic-login">
+			<Main className="grav-powered-magic-login">
 				{ this.renderLocaleSuggestions() }
 				<GlobalNotices id="notices" />
-				<div className="gravatar-magic-login__content">
+				<div className="grav-powered-magic-login__content">
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<RequestLoginEmailForm
 						flow={ oauth2Client.name }
-						headerText={ translate( 'Login to Gravatar' ) }
+						headerText={ headerText }
 						subHeaderText={ translate(
 							'Provide your email address and we will send you a magic link to log in to Gravatar.'
 						) }
@@ -276,26 +280,30 @@ class MagicLogin extends Component {
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
 					/>
-					<hr className="gravatar-magic-login__divider" />
-					<div className="gravatar-magic-login__footer">
-						<div>
-							{ translate(
-								'Do you prefer {{a}}logging in via password or Google/Apple instead{{/a}}?',
-								{
-									components: {
-										a: <a href={ loginUrl } />,
-									},
-								}
-							) }
-						</div>
-						<div>
-							{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
-								components: {
-									a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
-								},
-							} ) }
-						</div>
-					</div>
+					{ ! isWPJobManager && (
+						<>
+							<hr className="grav-powered-magic-login__divider" />
+							<div className="grav-powered-magic-login__footer">
+								<div>
+									{ translate(
+										'Do you prefer {{a}}logging in via password or Google/Apple instead{{/a}}?',
+										{
+											components: {
+												a: <a href={ loginUrl } />,
+											},
+										}
+									) }
+								</div>
+								<div>
+									{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
+										components: {
+											a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
+										},
+									} ) }
+								</div>
+							</div>
+						</>
+					) }
 				</div>
 			</Main>
 		);
@@ -304,10 +312,10 @@ class MagicLogin extends Component {
 	render() {
 		const { oauth2Client, showCheckYourEmail } = this.props;
 
-		if ( isGravatarOAuth2Client( oauth2Client ) ) {
+		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return showCheckYourEmail
-				? this.renderGravatarEmailVerification()
-				: this.renderGravatarMagicLogin();
+				? this.renderGravPoweredEmailVerification()
+				: this.renderGravPoweredMagicLogin();
 		}
 
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature

@@ -97,8 +97,8 @@ class Login extends Component {
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
-		isGravatar: PropTypes.bool,
-		isGravatarLoginPage: PropTypes.bool,
+		isGravPoweredClient: PropTypes.bool,
+		isGravPoweredLoginPage: PropTypes.bool,
 	};
 
 	state = {
@@ -170,7 +170,7 @@ class Login extends Component {
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
-		} else if ( this.props.isWoo || this.props.isGravatar ) {
+		} else if ( this.props.isWoo || this.props.isGravPoweredClient ) {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
@@ -292,8 +292,8 @@ class Login extends Component {
 			isWoo,
 			action,
 			currentQuery,
-			isGravatar,
-			isGravatarLoginPage,
+			isGravPoweredClient,
+			isGravPoweredLoginPage,
 			isWooCoreProfilerFlow,
 		} = this.props;
 
@@ -438,10 +438,10 @@ class Login extends Component {
 				} );
 			}
 
-			if ( isGravatar ) {
+			if ( isGravPoweredClient ) {
 				headerText = translate( 'Login to Gravatar' );
 
-				if ( isGravatarLoginPage ) {
+				if ( isGravPoweredLoginPage ) {
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ translate(
@@ -558,7 +558,7 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
-				{ isGravatarLoginPage && (
+				{ isGravPoweredLoginPage && (
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 				) }
 				{ preHeader }
@@ -605,7 +605,7 @@ class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			currentQuery,
-			isGravatarLoginPage,
+			isGravPoweredLoginPage,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -732,7 +732,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravatarLoginPage }
+				hideSignupLink={ isGravPoweredLoginPage }
 			/>
 		);
 	}
@@ -812,7 +812,7 @@ export default connect(
 				showGlobalNotices: true,
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
-					( ownProps.isGravatar && ownProps.oauth2Client.name ) ||
+					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||
 					null,
 			} ),
 	} )

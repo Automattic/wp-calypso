@@ -21,6 +21,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
+	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -43,6 +44,7 @@ const LayoutLoggedOut = ( {
 	isJetpackWooDnaFlow,
 	isP2Login,
 	isGravatar,
+	isGravPoweredClient,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -81,9 +83,9 @@ const LayoutLoggedOut = ( {
 	const isReaderSearchPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
 
-	// It's used to add a class name for Gravatar login and magic login pages only (not for F2A pages)
-	const isGravatarLoginPage =
-		isGravatar &&
+	// It's used to add a class name for the login and magic login of Gravatar powered clients only (not for F2A pages)
+	const isGravPoweredLoginPage =
+		isGravPoweredClient &&
 		! currentRoute.startsWith( '/log-in/push' ) &&
 		! currentRoute.startsWith( '/log-in/authenticator' ) &&
 		! currentRoute.startsWith( '/log-in/sms' ) &&
@@ -106,7 +108,8 @@ const LayoutLoggedOut = ( {
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
-		'is-gravatar-login-page': isGravatarLoginPage,
+		'is-grav-powered-client': isGravPoweredClient,
+		'is-grav-powered-login-page': isGravPoweredLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 	};
 
@@ -119,7 +122,11 @@ const LayoutLoggedOut = ( {
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if ( ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) || isGravatar ) {
+		} else if (
+			( isWooOAuth2Client( oauth2Client ) && wccomFrom ) ||
+			isGravatar ||
+			isGravPoweredClient
+		) {
 			masterbar = null;
 		} else {
 			classes.dops = true;
@@ -245,13 +252,17 @@ export default withCurrentRoute(
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
 			currentRoute.startsWith( '/log-in' ) &&
 			! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( currentQuery?.client_id ) === false;
 		const isWhiteLogin =
-			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
+			isReskinLoginRoute ||
+			( isPartnerSignup && ! isPartnerSignupStart ) ||
+			isGravatar ||
+			isGravPoweredClient;
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
@@ -272,6 +283,7 @@ export default withCurrentRoute(
 			isJetpackWooDnaFlow,
 			isP2Login,
 			isGravatar,
+			isGravPoweredClient,
 			wccomFrom,
 			masterbarIsHidden,
 			sectionGroup,
