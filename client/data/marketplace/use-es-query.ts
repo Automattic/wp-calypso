@@ -13,6 +13,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	extractSearchInformation,
 	getPreinstalledPremiumPluginsVariations,
+	mapStarRatingToPercent,
 } from 'calypso/lib/plugins/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -33,8 +34,6 @@ const getIconUrl = ( pluginSlug: string, icon: string ): string => {
 function buildDefaultIconUrl( pluginSlug: string ) {
 	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
 }
-
-const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) / 5 ) * 100;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) {
