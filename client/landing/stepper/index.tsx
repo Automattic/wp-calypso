@@ -24,7 +24,6 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { requestSites } from 'calypso/state/sites/actions';
 import { FlowRenderer } from './declarative-flow/internals';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
@@ -40,7 +39,6 @@ declare const window: AppWindow;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( setCurrentUser( user ) );
-	reduxStore.dispatch( requestSites() );
 }
 
 function determineFlow() {
