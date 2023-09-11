@@ -27,25 +27,26 @@ export default function useBannerSubtitle(
 
 	useEffect( () => {
 		// this may need updating for intro offers with singly counted units e.g. 1 month|year
-		const introOfferSubtitle =
-			isEcommerceTrial && anyWooExpressIntroOffer
-				? translate(
-						'Your free trial will end in %(daysLeft)d day. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
-							'— any Woo Express plan for just %(introOfferFormattedPrice)s a %(introOfferIntervalUnit)s for your first %(introOfferIntervalCount)d %(introOfferIntervalUnit)ss.',
-						'Your free trial will end in %(daysLeft)d days. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
-							'— any Woo Express plan for just %(introOfferFormattedPrice)s a %(introOfferIntervalUnit)s for your first %(introOfferIntervalCount)d %(introOfferIntervalUnit)ss.',
-						{
-							count: trialDaysLeftToDisplay,
-							args: {
-								daysLeft: trialDaysLeftToDisplay,
-								expirationdate: readableExpirationDate as string,
-								introOfferFormattedPrice: anyWooExpressIntroOffer.formattedPrice,
-								introOfferIntervalUnit: anyWooExpressIntroOffer.intervalUnit,
-								introOfferIntervalCount: anyWooExpressIntroOffer.intervalCount,
-							},
-						}
-				  )
-				: null;
+		let introOfferSubtitle;
+		if ( isEcommerceTrial && anyWooExpressIntroOffer ) {
+			if ( 'month' === anyWooExpressIntroOffer.intervalUnit ) {
+				introOfferSubtitle = translate(
+					'Your free trial will end in %(daysLeft)d day. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
+						'— any Woo Express plan for just %(introOfferFormattedPrice)s a month for your first %(introOfferIntervalCount)d months.',
+					'Your free trial will end in %(daysLeft)d days. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
+						'— any Woo Express plan for just %(introOfferFormattedPrice)s a month for your first %(introOfferIntervalCount)d months.',
+					{
+						count: trialDaysLeftToDisplay,
+						args: {
+							daysLeft: trialDaysLeftToDisplay,
+							expirationdate: readableExpirationDate as string,
+							introOfferFormattedPrice: anyWooExpressIntroOffer.formattedPrice,
+							introOfferIntervalCount: anyWooExpressIntroOffer.intervalCount,
+						},
+					}
+				);
+			}
+		}
 
 		let subtitle;
 		switch ( currentPlanSlug ) {
