@@ -96,22 +96,20 @@ const PersonalPurchase = ( {
 		<div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
 				<ul>
-					{ subscriptionValue > 0 && (
+					{ subscriptionValue > 0 ? (
 						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 							{ translate( 'Instant access to upcoming features' ) }
 						</li>
-					) }
-					{ subscriptionValue >= defaultStartingValue && (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-							{ translate( 'Priority support' ) }
-						</li>
-					) }
-					{ subscriptionValue === 0 && (
+					) : (
 						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 							{ translate( 'No access to upcoming features' ) }
 						</li>
 					) }
-					{ subscriptionValue < defaultStartingValue && (
+					{ subscriptionValue >= defaultStartingValue ? (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+							{ translate( 'Priority support' ) }
+						</li>
+					) : (
 						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 							{ translate( 'No priority support' ) }
 						</li>
