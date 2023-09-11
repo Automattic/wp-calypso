@@ -34,6 +34,11 @@
 		.stats-purchase-wizard__card {
 			color: var(--studio-gray-80);
 
+			.components-panel__header { //todo: re-assess if this element should be h1 not h2
+
+				font-family: $font-recoleta;
+			}
+
 			h1 {
 				font-family: $font-recoleta;
 				color: var(--studio-gray-100);
