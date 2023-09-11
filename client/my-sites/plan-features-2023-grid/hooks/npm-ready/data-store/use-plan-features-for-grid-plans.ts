@@ -38,7 +38,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 } ) => {
-	const highlightedFeatures = useHighlightedFeatures( intent ?? null, isInSignup );
+	const highlightedFeatures = useHighlightedFeatures( { intent, isInSignup } );
 
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
