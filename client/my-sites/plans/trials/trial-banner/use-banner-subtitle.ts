@@ -1,8 +1,4 @@
-import {
-	PLAN_MIGRATION_TRIAL_MONTHLY,
-	PLAN_WOOEXPRESS_MEDIUM,
-	PlanSlug,
-} from '@automattic/calypso-products';
+import { PLAN_MIGRATION_TRIAL_MONTHLY, PlanSlug } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -26,8 +22,8 @@ export default function useBannerSubtitle(
 		month: 'long',
 		day: 'numeric',
 	} );
-	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId } );
-	const anyWooExpressIntroOffer = introOffers?.[ PLAN_WOOEXPRESS_MEDIUM ];
+	const wooExpressIntroOffers = Plans.useIntroOffersForWooExpress( { siteId: selectedSiteId } );
+	const anyWooExpressIntroOffer = Object.values( wooExpressIntroOffers ?? {} )[ 0 ];
 
 	useEffect( () => {
 		// this may need updating for intro offers with singly counted units e.g. 1 month|year
