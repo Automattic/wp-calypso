@@ -21,6 +21,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 	if (
 		! domain ||
 		! domain.currentUserIsOwner ||
+		domain.isMoveToNewSitePending ||
 		! selectedSite ||
 		selectedSite.options?.is_domain_only
 	) {
