@@ -4,7 +4,7 @@
 $design-button-primary-color: var(--color-primary);
 $design-button-primary-hover-color: var(--color-primary-60);
 
-.upgrade-modal {
+.theme-upgrade-modal {
 	display: flex;
 	flex-direction: column;
 
@@ -32,7 +32,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__col {
+	.theme-upgrade-modal__col {
 		position: relative;
 		padding: 45px 25px;
 
@@ -49,7 +49,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 
 		&:nth-of-type(1) {
-			.upgrade-modal__included {
+			.theme-upgrade-modal__included {
 				display: block;
 				margin-bottom: 36px;
 
@@ -71,11 +71,11 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__price-value {
+	.theme-upgrade-modal__price-value {
 		font-family: Inter, $sans;
 	}
 
-	.upgrade-modal__price-item {
+	.theme-upgrade-modal__price-item {
 		display: flex;
 		justify-content: space-between;
 		padding: 20px 0;
@@ -86,7 +86,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__price-summary {
+	.theme-upgrade-modal__price-summary {
 		padding-bottom: 10px;
 
 		@include break-medium {
@@ -94,7 +94,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__theme-price {
+	.theme-upgrade-modal__theme-price {
 		display: flex;
 		margin-bottom: 5px;
 		align-items: baseline;
@@ -107,7 +107,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__subscription-interval {
+	.theme-upgrade-modal__subscription-interval {
 		display: flex;
 		margin-bottom: 15px;
 
@@ -120,7 +120,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__plan-nudge {
+	.theme-upgrade-modal__plan-nudge {
 		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 
@@ -130,12 +130,12 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__subscription-savings {
+	.theme-upgrade-modal__subscription-savings {
 		color: var(--studio-green-50);
 		margin-left: 4px;
 	}
 
-	h1.upgrade-modal__heading {
+	h1.theme-upgrade-modal__heading {
 		@extend .wp-brand-font;
 		font-size: $font-headline-small;
 		line-height: 1.1;
@@ -149,7 +149,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__woo-logo {
+	.theme-upgrade-modal__woo-logo {
 		width: 70px;
 	}
 
@@ -157,7 +157,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		margin-bottom: 20px;
 	}
 
-	.upgrade-modal__close {
+	.theme-upgrade-modal__close {
 		color: var(--color-text-subtle);
 		position: absolute;
 		top: 0;
@@ -168,7 +168,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__actions.bundle {
+	.theme-upgrade-modal__actions.bundle {
 		display: grid;
 		grid-template-columns: repeat(1, 1fr);
 		gap: 20px;
@@ -209,7 +209,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		}
 	}
 
-	.upgrade-modal__included {
+	.theme-upgrade-modal__included {
 		ul,
 		li {
 			font-size: $font-body-small;
@@ -260,7 +260,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		margin-bottom: 5px;
 	}
 
-	.upgrade-modal__product-list {
+	.theme-upgrade-modal__product-list {
 		width: 100%;
 		font-size: 0.875rem;
 

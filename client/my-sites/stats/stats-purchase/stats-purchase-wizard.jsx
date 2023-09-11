@@ -71,7 +71,7 @@ const ProductCard = ( {
 	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
 	// Default titles for no site type selected.
-	let typeSelectionScreenLabel = translate( 'What site type is %(site)s?', {
+	let typeSelectionScreenLabel = translate( 'What type of site is %(site)s?', {
 		args: {
 			site: siteSlug,
 		},

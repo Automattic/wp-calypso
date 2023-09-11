@@ -50,6 +50,7 @@ export interface Secrets {
 		domainsInboxId: string;
 		defaultUserInboxId: string;
 		totpUserInboxId: string;
+		manualTesting: string;
 	};
 	testAccounts: {
 		[ key in TestAccountName ]: TestAccountCredentials;

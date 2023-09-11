@@ -12,6 +12,7 @@ export type Category = {
 };
 
 export type NewsletterCategories = {
+	enabled: boolean;
 	newsletterCategories: NewsletterCategory[];
 };
 

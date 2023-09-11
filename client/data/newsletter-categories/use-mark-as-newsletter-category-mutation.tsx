@@ -45,7 +45,7 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 				}
 
 				const updatedData = {
-					...oldData,
+					enabled: oldData?.enabled || false,
 					newsletterCategories: [
 						...( oldData?.newsletterCategories ? oldData.newsletterCategories : [] ),
 						newNewsletterCategory as NewsletterCategory,

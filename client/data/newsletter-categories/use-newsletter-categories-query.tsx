@@ -7,13 +7,17 @@ type NewsletterCategoryQueryProps = {
 };
 
 type NewsletterCategoryResponse = {
+	enabled: boolean;
 	newsletter_categories: NewsletterCategory[];
 };
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
 ): NewsletterCategories => {
-	return { newsletterCategories: response.newsletter_categories };
+	return {
+		enabled: response.enabled,
+		newsletterCategories: response.newsletter_categories,
+	};
 };
 
 export const getNewsletterCategoriesKey = ( siteId?: string | number ) => [

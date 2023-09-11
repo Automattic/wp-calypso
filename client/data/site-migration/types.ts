@@ -4,4 +4,5 @@ export interface MigrationEnabledResponse {
 	jetpack_compatible: boolean;
 	migration_activated: boolean;
 	migration_compatible: boolean;
+	can_migrate: boolean;
 }
