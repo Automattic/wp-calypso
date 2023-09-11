@@ -26,7 +26,7 @@ interface Props {
  *
  * TODO clk: move to plans data store
  */
-const useHighlightedFeatures = ( { intent, isInSignup }: Props ): string[] => {
+const useHighlightedFeatures = ( { intent, isInSignup }: Props ): string[] | null => {
 	if ( isInSignup && intent && 'plans-newsletter' === intent ) {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
@@ -38,7 +38,7 @@ const useHighlightedFeatures = ( { intent, isInSignup }: Props ): string[] => {
 		];
 	}
 
-	return [];
+	return null;
 };
 
 export default useHighlightedFeatures;
