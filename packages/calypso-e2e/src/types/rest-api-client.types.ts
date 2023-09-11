@@ -210,6 +210,19 @@ export interface PublicizeConnectionDeletedResponse {
 	deleted: boolean;
 }
 
+export interface Subscriber {
+	user_id: number;
+	subscription_id: number;
+	email_address: string;
+	display_name: string;
+	date_subscribed: string;
+}
+
+export interface SubscriberDeletedResponse {
+	follower_id: string;
+	deleted: true;
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {

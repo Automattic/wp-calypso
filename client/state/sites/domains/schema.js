@@ -46,6 +46,8 @@ export const itemsSchema = {
 					pointsToWpcom: { type: 'boolean' },
 					registrar: { type: 'string' },
 					registrationDate: { type: 'string' },
+					siteSlug: { type: [ 'null', 'string' ] },
+					siteTitle: { type: [ 'null', 'string' ] },
 					subscriptionId: { type: [ 'null', 'string' ] },
 					supportsDomainConnect: { type: 'boolean', optional: true },
 					supportsGdprConsentManagement: { type: 'boolean', optional: true },
