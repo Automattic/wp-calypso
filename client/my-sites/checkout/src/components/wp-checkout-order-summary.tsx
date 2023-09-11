@@ -92,9 +92,12 @@ export default function WPCheckoutOrderSummary( {
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
-	const [ isLoadingExperimentAssignment ] = useExperiment( 'calypso_checkout_feature_list_copy', {
-		isEligible: plan && isPlanEligibleForCheckoutFeatureListExperiment( plan ),
-	} );
+	const [ isLoadingExperimentAssignment ] = useExperiment(
+		'calypso_checkout_feature_list_copy_v2',
+		{
+			isEligible: plan && isPlanEligibleForCheckoutFeatureListExperiment( plan ),
+		}
+	);
 
 	return (
 		<CheckoutSummaryCard
@@ -621,7 +624,7 @@ function CheckoutSummaryPlanFeatures( props: {
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
 
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_feature_list_copy', {
+	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_feature_list_copy_v2', {
 		isEligible: planInCart && isPlanEligibleForCheckoutFeatureListExperiment( planInCart ),
 	} );
 	const showPricingGridFeatures = 'treatment' === experimentAssignment?.variationName;
