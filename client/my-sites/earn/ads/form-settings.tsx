@@ -183,6 +183,7 @@ const AdsFormSettings = () => {
 
 		return (
 			<FormFieldset>
+				{ /* className undefined to resolve TS warning */ }
 				<FormLegend className={ undefined }>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
 					<FormRadio
@@ -192,6 +193,7 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Run ads for all users' ) }
+						// className undefined to resolve TS warning
 						className={ undefined }
 					/>
 				</FormLabel>
@@ -204,6 +206,7 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Run ads only for logged-out users (less revenue)' ) }
+						// className undefined to resolve TS warning
 						className={ undefined }
 					/>
 				</FormLabel>
@@ -216,6 +219,7 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Pause ads (no revenue)' ) }
+						// className undefined to resolve TS warning
 						className={ undefined }
 					/>
 				</FormLabel>
@@ -229,6 +233,7 @@ const AdsFormSettings = () => {
 		return (
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
+					{ /* className undefined to resolve TS warning */ }
 					<FormLegend className={ undefined }>
 						{ translate( 'Display ads below posts on' ) }
 					</FormLegend>
@@ -258,6 +263,7 @@ const AdsFormSettings = () => {
 					/>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
+					{ /* className undefined to resolve TS warning */ }
 					<FormLegend className={ undefined }>
 						{ translate( 'Additional ad placements' ) }
 					</FormLegend>
