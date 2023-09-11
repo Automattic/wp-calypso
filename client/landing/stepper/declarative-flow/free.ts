@@ -26,7 +26,6 @@ import DesignSetup from './internals/steps-repository/design-setup';
 import ErrorStep from './internals/steps-repository/error-step';
 import FreeSetup from './internals/steps-repository/free-setup';
 import LaunchPad from './internals/steps-repository/launchpad';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
@@ -55,7 +54,10 @@ const free: Flow = {
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
 			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
+			{
+				slug: 'patternAssembler',
+				asyncComponent: () => import( './internals/steps-repository/pattern-assembler' ),
+			},
 			{ slug: 'error', component: ErrorStep },
 		];
 	},

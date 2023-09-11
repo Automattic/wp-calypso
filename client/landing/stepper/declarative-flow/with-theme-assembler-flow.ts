@@ -10,7 +10,6 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import ErrorStep from './internals/steps-repository/error-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -56,7 +55,10 @@ const withThemeAssemblerFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'patternAssembler', component: PatternAssembler },
+			{
+				slug: 'patternAssembler',
+				asyncComponent: () => import( './internals/steps-repository/pattern-assembler' ),
+			},
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: ErrorStep },
 			{

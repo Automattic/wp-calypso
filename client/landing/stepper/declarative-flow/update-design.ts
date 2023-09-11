@@ -13,7 +13,6 @@ import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
 import ErrorStep from './internals/steps-repository/error-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
@@ -28,7 +27,10 @@ const updateDesign: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
+			{
+				slug: 'patternAssembler',
+				asyncComponent: () => import( './internals/steps-repository/pattern-assembler' ),
+			},
 			{ slug: 'processing', component: Processing },
 			{ slug: 'error', component: ErrorStep },
 		];
