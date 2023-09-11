@@ -6,8 +6,7 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { requestSite } from 'calypso/state/sites/actions';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { markAsPendingMove } from 'calypso/state/sites/domains/actions';
 import DomainInfoCard from '..';
 import type { DisconnectDomainResult } from './types';
 import type { DomainInfoCardProps } from '../types';
@@ -60,10 +59,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 				return;
 			}
 
-			await Promise.all( [
-				dispatch( requestSite( selectedSite.ID ) ),
-				dispatch( fetchSiteDomains( selectedSite.ID ) ),
-			] );
+			dispatch( markAsPendingMove( selectedSite.ID, domain.name ) );
 
 			dispatch(
 				successNotice(
