@@ -1,6 +1,7 @@
 import { Dialog, FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -26,6 +27,7 @@ import {
 	getconnectedAccountMinimumCurrencyForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+// eslint-disable-next-line import/order
 import { Product } from '../../types';
 
 import './style.scss';
@@ -35,6 +37,20 @@ type RecurringPaymentsPlanAddEditModalProps = {
 	product: Product;
 	annualProduct: Product | null;
 	siteId?: number;
+};
+
+type ProductDetails = {
+	ID?: number;
+	currency: string;
+	price: number;
+	title: string;
+	interval: string;
+	buyer_can_change_amount: boolean;
+	multiple_per_user: boolean;
+	welcome_email_content: string;
+	subscribe_as_site_subscriber: boolean;
+	type?: string;
+	is_editable: boolean;
 };
 
 type StripeMinimumCurrencyAmounts = {
@@ -218,19 +234,31 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		setEditedProductName( name );
 	}, [ editedSchedule, editedPostPaidNewsletter ] );
 
+	const getAnnualProductDetailsFromProduct = (
+		productDetails: ProductDetails
+	): ProductDetails => ( {
+		...productDetails,
+		price: currentAnnualPrice,
+		interval: annualFrequency,
+		ID: annualProduct?.ID,
+		title: productDetails.title + __( '(yearly)', 'jetpack' ),
+	} );
+
+	const getCurrentProductDetails = (): ProductDetails => ( {
+		currency: currentCurrency,
+		price: currentPrice,
+		title: editedProductName,
+		interval: editedSchedule,
+		buyer_can_change_amount: editedPayWhatYouWant,
+		multiple_per_user: editedMultiplePerUser,
+		welcome_email_content: editedCustomConfirmationMessage,
+		subscribe_as_site_subscriber: editedPostPaidNewsletter,
+		is_editable: true,
+	} );
+
 	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
-			const productDetails = {
-				currency: currentCurrency,
-				price: currentPrice,
-				title: editedProductName,
-				interval: editedSchedule,
-				buyer_can_change_amount: editedPayWhatYouWant,
-				multiple_per_user: editedMultiplePerUser,
-				welcome_email_content: editedCustomConfirmationMessage,
-				subscribe_as_site_subscriber: editedPostPaidNewsletter,
-				is_editable: true,
-			};
+			const productDetails: ProductDetails = getCurrentProductDetails();
 
 			if ( editedPostPaidNewsletter ) {
 				const annualProductDetails = {
@@ -259,19 +287,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				recordTracksEvent( 'calypso_earn_page_payment_added', productDetails );
 			}
 		} else if ( reason === 'submit' && product && product.ID ) {
-			const productDetails = {
-				ID: product.ID,
-				currency: currentCurrency,
-				price: currentPrice,
-				title: editedProductName,
-				interval: editedSchedule,
-				buyer_can_change_amount: editedPayWhatYouWant,
-				multiple_per_user: editedMultiplePerUser,
-				welcome_email_content: editedCustomConfirmationMessage,
-				subscribe_as_site_subscriber: editedPostPaidNewsletter,
-				type: null,
-				is_editable: true,
-			};
+			const productDetails = getCurrentProductDetails();
+			productDetails.ID = product.ID;
 
 			if ( ! editedPostPaidNewsletter ) {
 				dispatch(
@@ -282,12 +299,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					)
 				);
 			} else {
-				const annualProductDetails = {
-					...productDetails,
-					price: currentAnnualPrice,
-					interval: annualFrequency,
-					ID: annualProduct?.ID,
-				};
+				const annualProductDetails = getAnnualProductDetailsFromProduct( productDetails );
 
 				dispatch(
 					requestUpdateTier(
