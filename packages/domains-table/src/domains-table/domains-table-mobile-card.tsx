@@ -59,14 +59,14 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			</div>
 
 			<div>
-				<span className="domains-table-mobile-card-label"> Expires / renews on </span>
+				<span className="domains-table-mobile-card-label"> { __( 'Expires / renews on' ) } </span>
 				<span className="domains-table-mobile-card-registered-date">
 					<DomainsTableRegisteredUntilCell domain={ domain } />
 				</span>
 			</div>
 
 			<div>
-				<span className="domains-table-mobile-card-label"> Status </span>
+				<span className="domains-table-mobile-card-label"> { __( 'Status' ) } </span>
 				<DomainsTableStatusCell
 					siteSlug={ siteSlug }
 					currentDomainData={ currentDomainData }
