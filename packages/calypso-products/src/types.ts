@@ -193,26 +193,12 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_MARKETING_EMAIL
 	| typeof FEATURE_GROUP_SHIPPING;
 
-export interface FeatureFootnotes {
-	[ key: string ]: Feature[];
-}
-
 export type FeatureGroup = {
 	slug: FeatureGroupSlug;
 	getTitle: () => string;
 	get2023PricingGridSignupWpcomFeatures: () => Feature[];
-	/**
-	 * This optionally returns an object containing footnotes and the features that should display the footnote.
-	 *
-	 * For example:
-	 * getFootnotes: () => ( {
-	 * 	'This is the text displayed at the bottom of the comparison grid': [ 'feature-1', 'feature-2' ],
-	 * }).
-	 *
-	 * Footnotes will be automatically numbered in the order the feature groups are listed. For example, in the wooExpressFeatureGroups, FEATURE_GROUP_PAYMENTS and FEATURE_GROUP_SHIPPING each have a single footnote which will be numbered 1 and 2 respectively.
-	 */
-	getFootnotes?: () => FeatureFootnotes;
 };
+
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
 export type StorageOption = {

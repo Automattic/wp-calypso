@@ -4,11 +4,25 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import { LoadingPlaceHolder } from '../../plans-features-main/components/loading-placeholder';
+import { usePlansGridContext } from '../grid-context';
+import usePlanFeatureFootnotes from '../hooks/npm-ready/data-store/use-plan-feature-footnotes';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
+
+const FeatureFootnote = styled.span`
+	position: relative;
+	font-size: 50%;
+	font-weight: 600;
+
+	sup {
+		position: absolute;
+		top: -10px;
+		left: 0;
+	}
+`;
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
@@ -75,6 +89,11 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
+	const { intent, siteId } = usePlansGridContext();
+	const planFeatureFootnotes = usePlanFeatureFootnotes( {
+		plansIntent: intent,
+		siteId,
+	} );
 
 	return (
 		<>
@@ -108,6 +127,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const itemTitleClasses = classNames( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
 				} );
+				const footnote = planFeatureFootnotes?.footnotesByFeature?.[ currentFeature.getSlug() ];
 
 				return (
 					<div key={ key } className={ divClasses }>
@@ -132,14 +152,21 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											/>
 										</Plans2023Tooltip>
 									) : (
-										<Plans2023Tooltip
-											text={ currentFeature.getDescription?.() }
-											activeTooltipId={ activeTooltipId }
-											setActiveTooltipId={ setActiveTooltipId }
-											id={ key }
-										>
-											{ currentFeature.getTitle( paidDomainName ) }
-										</Plans2023Tooltip>
+										<>
+											<Plans2023Tooltip
+												text={ currentFeature.getDescription?.() }
+												activeTooltipId={ activeTooltipId }
+												setActiveTooltipId={ setActiveTooltipId }
+												id={ key }
+											>
+												{ currentFeature.getTitle( paidDomainName ) }
+											</Plans2023Tooltip>
+											{ footnote && (
+												<FeatureFootnote>
+													<sup>{ footnote }</sup>
+												</FeatureFootnote>
+											) }
+										</>
 									) }
 								</span>
 							</span>

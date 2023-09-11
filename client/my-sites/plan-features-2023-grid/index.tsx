@@ -37,6 +37,7 @@ import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provi
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
+import FeaturesGridFooter from './components/features-grid-footer';
 import PlanFeatures2023GridHeaderPrice from './components/header-price';
 import { PlanFeaturesItem } from './components/item';
 import { PlanComparisonGrid } from './components/plan-comparison-grid';
@@ -710,6 +711,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			<div className="plans-wrapper">
 				<QueryActivePromotions />
 				<PlansGridContextProvider
+					siteId={ siteId }
 					intent={ intent }
 					gridPlans={ gridPlansForFeaturesGrid }
 					usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
@@ -719,6 +721,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				</PlansGridContextProvider>
 				<div className="plan-features">
 					<PlansGridContextProvider
+						siteId={ siteId }
 						intent={ intent }
 						gridPlans={ gridPlansForFeaturesGrid }
 						usePricingMetaForGridPlans={ usePricingMetaForGridPlans }
@@ -737,6 +740,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								</div>
 							</div>
 						</div>
+						<FeaturesGridFooter />
 					</PlansGridContextProvider>
 				</div>
 				{ ! hidePlansFeatureComparison && (
@@ -754,6 +758,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						className="plan-features-2023-grid__plan-comparison-grid-container"
 					>
 						<PlansGridContextProvider
+							siteId={ siteId }
 							intent={ intent }
 							gridPlans={ gridPlansForComparisonGrid }
 							usePricingMetaForGridPlans={ usePricingMetaForGridPlans }

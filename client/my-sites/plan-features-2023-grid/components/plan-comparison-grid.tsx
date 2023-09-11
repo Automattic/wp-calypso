@@ -23,6 +23,9 @@ import { useManageTooltipToggle } from 'calypso/my-sites/plan-features-2023-grid
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
 import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { usePlansGridContext } from '../grid-context';
+import usePlanFeatureFootnotes, {
+	PlanFeatureFootnotesIndex,
+} from '../hooks/npm-ready/data-store/use-plan-feature-footnotes';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
 import { sortPlans } from '../lib/sort-plan-properties';
@@ -38,7 +41,7 @@ import type {
 	TransformedFeatureObject,
 } from '../hooks/npm-ready/data-store/use-grid-plans';
 import type { PlanActionOverrides } from '../types';
-import type { FeatureObject, Feature, FeatureGroup, PlanSlug } from '@automattic/calypso-products';
+import type { FeatureObject, FeatureGroup, PlanSlug } from '@automattic/calypso-products';
 import type { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 
 function DropdownIcon() {
@@ -344,11 +347,6 @@ type PlanComparisonGridHeaderCellProps = PlanComparisonGridHeaderProps & {
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
 	planSlug: PlanSlug;
-};
-
-type PlanFeatureFootnotes = {
-	footnoteList: string[];
-	footnotesByFeature: Record< Feature, number >;
 };
 
 const PlanComparisonGridHeaderCell = ( {
@@ -663,7 +661,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isHiddenInMobile: boolean;
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
-	planFeatureFootnotes: PlanFeatureFootnotes;
+	planFeatureFootnotes?: PlanFeatureFootnotesIndex | null;
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	isHighlighted: boolean;
@@ -769,7 +767,7 @@ export const PlanComparisonGrid = ( {
 	selectedFeature,
 }: PlanComparisonGridProps ) => {
 	const translate = useTranslate();
-	const { gridPlans, allFeaturesList } = usePlansGridContext();
+	const { gridPlans, allFeaturesList, intent } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -836,38 +834,11 @@ export const PlanComparisonGrid = ( {
 		setVisiblePlans( newVisiblePlans );
 	}, [ isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, displayedGridPlans, isInSignup ] );
 
-	const planFeatureFootnotes = useMemo( () => {
-		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
-		const footnoteList: string[] = [];
-		// This is a map of features to the index of the footnote in the main list of footnotes.
-		const footnotesByFeature: Record< Feature, number > = {};
-
-		Object.values( featureGroupMap ).map( ( featureGroup ) => {
-			const footnotes = featureGroup?.getFootnotes?.();
-
-			if ( ! footnotes ) {
-				return;
-			}
-
-			Object.keys( footnotes ).map( ( footnote ) => {
-				const footnoteFeatures = footnotes[ footnote ];
-
-				// First we add the footnote to the main list of footnotes.
-				footnoteList.push( footnote );
-
-				// Then we add each feature that has this footnote to the map of footnotes by feature.
-				const currentFootnoteIndex = footnoteList.length;
-				footnoteFeatures.map( ( feature ) => {
-					footnotesByFeature[ feature ] = currentFootnoteIndex;
-				} );
-			} );
-		} );
-
-		return {
-			footnoteList,
-			footnotesByFeature,
-		};
-	}, [ featureGroupMap ] );
+	const planFeatureFootnotes = usePlanFeatureFootnotes( {
+		plansIntent: intent,
+		forComparisonGrid: true,
+		siteId,
+	} );
 
 	const allJetpackFeatures = useMemo( () => {
 		const allPlans = getPlans();
