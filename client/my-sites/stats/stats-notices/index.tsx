@@ -9,6 +9,7 @@ import {
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -61,9 +62,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		}
 	}, [ siteId, currentSiteId, setCurrentSiteId, dispatch ] );
 
-	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
-	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
-
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
 	const isVip = useSelector(
 		( state ) =>
@@ -78,6 +76,16 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
+
+	// Check whether sites have paid plans of WPCOM.
+	const siteHasPaidPlan = useSelector( ( state ) => isSiteOnPaidPlan( state, siteId || 0 ) );
+	// TODO: Consolidate the proper way of checking WPCOM plans for supporting Stats to `hasSiteProductJetpackStatsPaid`.
+	const wpcomSiteHasPaidPlan = isWpcom && siteHasPaidPlan;
+
+	const hasPaidStats =
+		useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) ) ||
+		wpcomSiteHasPaidPlan;
+	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
 	const noticeOptions = {
 		siteId,
