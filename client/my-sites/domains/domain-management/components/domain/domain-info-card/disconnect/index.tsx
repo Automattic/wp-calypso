@@ -1,14 +1,15 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
-import { domainManagementAllRoot, domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import DomainInfoCard from '..';
+import type { DisconnectDomainResult } from './types';
 import type { DomainInfoCardProps } from '../types';
 
 const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
@@ -30,29 +31,49 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 		setDialogVisible( false );
 	};
 
-	const clickDisconnectDomain = async () => {
-		setDisconnecting( true );
-		const data = await wpcom.req.get(
-			`/domains/${ domain.name }/disconnect-domain-from-site/${ selectedSite.ID }`
+	const showErrorNotice = ( message?: string ) => {
+		const genericErrorMessage = translate(
+			'An error occurred when disconnecting the domain from the site. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+			{
+				components: {
+					contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+				},
+			}
 		);
 
-		await Promise.all( [
-			dispatch( requestSite( data.blog_id ) ),
-			dispatch( requestSite( selectedSite.ID ) ),
-		] );
-
-		await Promise.all( [
-			dispatch( fetchSiteDomains( selectedSite.ID ) ),
-			dispatch( fetchSiteDomains( data.blog_id ) ),
-		] );
-
+		dispatch( errorNotice( message ?? genericErrorMessage ) );
 		setDisconnecting( false );
-
-		page.redirect(
-			domainManagementEdit( data.blog_id, domain.name, domainManagementAllRoot() + '/' )
-		);
-
 		setDialogVisible( false );
+	};
+
+	const clickDisconnectDomain = async () => {
+		try {
+			setDisconnecting( true );
+
+			const result: DisconnectDomainResult = await wpcom.req.get(
+				`/domains/${ domain.name }/disconnect-domain-from-site`
+			);
+
+			if ( ! result.success ) {
+				showErrorNotice( result.error_description );
+				return;
+			}
+
+			await Promise.all( [
+				dispatch( requestSite( selectedSite.ID ) ),
+				dispatch( fetchSiteDomains( selectedSite.ID ) ),
+			] );
+
+			dispatch(
+				successNotice(
+					translate( 'The domain will be disconnected from this site a few minutes.' )
+				)
+			);
+			setDisconnecting( false );
+			setDialogVisible( false );
+		} catch ( e: any ) {
+			showErrorNotice( e?.message );
+		}
 	};
 
 	const buttons = [
