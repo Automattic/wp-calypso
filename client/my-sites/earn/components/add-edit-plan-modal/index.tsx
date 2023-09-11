@@ -27,7 +27,6 @@ import {
 	getconnectedAccountMinimumCurrencyForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-// eslint-disable-next-line import/order
 import { Product } from '../../types';
 
 import './style.scss';
@@ -37,20 +36,6 @@ type RecurringPaymentsPlanAddEditModalProps = {
 	product: Product;
 	annualProduct: Product | null;
 	siteId?: number;
-};
-
-type ProductDetails = {
-	ID?: number;
-	currency: string;
-	price: number;
-	title: string;
-	interval: string;
-	buyer_can_change_amount: boolean;
-	multiple_per_user: boolean;
-	welcome_email_content: string;
-	subscribe_as_site_subscriber: boolean;
-	type?: string;
-	is_editable: boolean;
 };
 
 type StripeMinimumCurrencyAmounts = {
@@ -234,9 +219,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		setEditedProductName( name );
 	}, [ editedSchedule, editedPostPaidNewsletter ] );
 
-	const getAnnualProductDetailsFromProduct = (
-		productDetails: ProductDetails
-	): ProductDetails => ( {
+	const getAnnualProductDetailsFromProduct = ( productDetails: Product ): Product => ( {
 		...productDetails,
 		price: currentAnnualPrice,
 		interval: annualFrequency,
@@ -244,7 +227,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		title: productDetails.title + __( '(yearly)', 'jetpack' ),
 	} );
 
-	const getCurrentProductDetails = (): ProductDetails => ( {
+	const getCurrentProductDetails = (): Product => ( {
 		currency: currentCurrency,
 		price: currentPrice,
 		title: editedProductName,
@@ -258,7 +241,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 
 	const onClose = ( reason: string | undefined ) => {
 		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
-			const productDetails: ProductDetails = getCurrentProductDetails();
+			const productDetails: Product = getCurrentProductDetails();
 
 			if ( editedPostPaidNewsletter ) {
 				const annualProductDetails = {
