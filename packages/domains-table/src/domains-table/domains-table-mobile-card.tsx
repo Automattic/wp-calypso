@@ -2,6 +2,7 @@ import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
@@ -23,6 +24,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		handleSelectDomain,
 		domainStatusPurchaseActions,
 		pendingUpdates,
+		shouldDisplayPrimaryDomainLabel,
 	} = useDomainRow( domain );
 
 	return (
@@ -41,7 +43,10 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 							size={ 20 }
 						/>
 					) }
-					<span className="domains-table__domain-name">{ domain.domain }</span>
+					<div>
+						{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
+						<span className="domains-table__domain-name">{ domain.domain }</span>
+					</div>
 				</div>
 
 				<div>

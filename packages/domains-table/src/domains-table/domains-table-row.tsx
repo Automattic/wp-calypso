@@ -106,7 +106,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				) }
 			</td>
 			<td>
-				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
+				{ ! shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 				{ isManageableDomain ? (
 					<a
 						className="domains-table__domain-name"
