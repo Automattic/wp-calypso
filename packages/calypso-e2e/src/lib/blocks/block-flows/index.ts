@@ -26,6 +26,7 @@ export * from './ad';
 export * from './paywall';
 export * from './form-ai';
 export * from './image-compare';
+export * from './map';
 
 /* Types */
 export * from './types';
