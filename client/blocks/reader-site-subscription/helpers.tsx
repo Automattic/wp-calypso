@@ -1,6 +1,10 @@
 import { Reader } from '@automattic/data-stores';
 import { getCurrencyObject } from '@automattic/format-currency';
 import moment from 'moment';
+import {
+	PLAN_YEARLY_FREQUENCY,
+	PLAN_MONTHLY_FREQUENCY,
+} from 'calypso/my-sites/earn/memberships/constants';
 
 export type SiteSubscriptionDetailsProps = {
 	subscriptionId: number;
@@ -23,9 +27,9 @@ export type PaymentPlan = {
 export const getPaymentInterval = ( renew_interval: string ) => {
 	if ( renew_interval === null ) {
 		return 'one time';
-	} else if ( renew_interval === '1 month' ) {
+	} else if ( renew_interval === PLAN_MONTHLY_FREQUENCY ) {
 		return 'per month';
-	} else if ( renew_interval === '1 year' ) {
+	} else if ( renew_interval === PLAN_YEARLY_FREQUENCY ) {
 		return 'per year';
 	}
 };

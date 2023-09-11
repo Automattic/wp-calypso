@@ -41,7 +41,13 @@ import {
 } from 'calypso/state/memberships/subscribers/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
-import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
+import {
+	ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
+	LAUNCHPAD_HASH,
+	PLAN_YEARLY_FREQUENCY,
+	PLAN_MONTHLY_FREQUENCY,
+	PLAN_ONE_TIME_FREQUENCY,
+} from './constants';
 
 import './style.scss';
 
@@ -289,7 +295,7 @@ function MembershipsSection( { query } ) {
 		const subscriber_email = subscriber?.user.user_email ?? '';
 		const plan_name = subscriber?.plan.title ?? '';
 
-		if ( subscriber?.plan?.renew_interval === 'one-time' ) {
+		if ( subscriber?.plan?.renew_interval === PLAN_ONE_TIME_FREQUENCY ) {
 			return {
 				button: translate( 'Remove payment' ),
 				confirmation_subheading: translate( 'Do you want to remove this payment?' ),
@@ -399,7 +405,7 @@ function MembershipsSection( { query } ) {
 
 	function renderSubscriberSubscriptionSummary( subscriber ) {
 		const title = subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : ' ';
-		if ( subscriber.plan.renew_interval === 'one-time' ) {
+		if ( subscriber.plan.renew_interval === PLAN_ONE_TIME_FREQUENCY ) {
 			/* translators: Information about a one-time payment made by a subscriber to a site owner.
 				%(amount)s - the amount paid,
 				%(formattedDate) - the date it was paid
@@ -411,7 +417,7 @@ function MembershipsSection( { query } ) {
 					title,
 				},
 			} );
-		} else if ( subscriber.plan.renew_interval === '1 year' ) {
+		} else if ( subscriber.plan.renew_interval === PLAN_YEARLY_FREQUENCY ) {
 			/* translators: Information about a recurring yearly payment made by a subscriber to a site owner.
 				%(amount)s - the amount paid,
 				%(formattedDate)s - the date it was first paid
@@ -428,7 +434,7 @@ function MembershipsSection( { query } ) {
 					},
 				}
 			);
-		} else if ( subscriber.plan.renew_interval === '1 month' ) {
+		} else if ( subscriber.plan.renew_interval === PLAN_MONTHLY_FREQUENCY ) {
 			/* translators: Information about a recurring monthly payment made by a subscriber to a site owner.
 				%(amount)s - the amount paid,
 				%(formattedDate)s - the date it was first paid

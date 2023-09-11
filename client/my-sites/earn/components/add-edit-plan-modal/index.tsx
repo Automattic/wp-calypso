@@ -14,6 +14,11 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
+import {
+	PLAN_YEARLY_FREQUENCY,
+	PLAN_MONTHLY_FREQUENCY,
+	PLAN_ONE_TIME_FREQUENCY,
+} from 'calypso/my-sites/earn/memberships/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -28,7 +33,6 @@ import {
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Product } from '../../types';
-
 import './style.scss';
 
 type RecurringPaymentsPlanAddEditModalProps = {
@@ -76,8 +80,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	annualProduct /* annual product for tiers */,
 	siteId,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
-	const monthlyFrequency = '1 month';
-	const annualFrequency = '1 year';
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -135,7 +137,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedPostPaidNewsletter, setEditedPostPaidNewsletter ] = useState(
 		product?.subscribe_as_site_subscriber ?? false
 	);
-	const [ editedSchedule, setEditedSchedule ] = useState( product?.renewal_schedule ?? '1 month' );
+	const [ editedSchedule, setEditedSchedule ] = useState(
+		product?.renewal_schedule ?? PLAN_MONTHLY_FREQUENCY
+	);
 	const [ focusedName, setFocusedName ] = useState( false );
 
 	const [ editedPrice, setEditedPrice ] = useState( false );
@@ -202,11 +206,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	// though there's no strong technical reason to do so - nothing is going to
 	// break if they fall out of sync.
 	// https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/extensions/shared/components/product-management-controls/utils.js#L95
-	const defaultNames: DefaultNames = {
-		'1 month': translate( 'Monthly Subscription' ),
-		'1 year': translate( 'Yearly Subscription' ),
-		'one-time': translate( 'Subscription' ),
-	};
+	const defaultNames: DefaultNames = {};
+	defaultNames[ PLAN_MONTHLY_FREQUENCY ] = translate( 'Monthly Subscription' );
+	defaultNames[ PLAN_YEARLY_FREQUENCY ] = translate( 'Yearly Subscription' );
+	defaultNames[ PLAN_ONE_TIME_FREQUENCY ] = translate( 'Subscription' );
 
 	const defaultNameTier = translate( 'Newsletter Tier' );
 
@@ -222,7 +225,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const getAnnualProductDetailsFromProduct = ( productDetails: Product ): Product => ( {
 		...productDetails,
 		price: currentAnnualPrice,
-		interval: annualFrequency,
+		interval: PLAN_YEARLY_FREQUENCY,
 		ID: annualProduct?.ID,
 		title: productDetails.title + __( '(yearly)', 'jetpack' ),
 	} );
@@ -246,7 +249,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 			if ( editedPostPaidNewsletter ) {
 				const annualProductDetails = {
 					...productDetails,
-					interval: annualFrequency,
+					interval: PLAN_YEARLY_FREQUENCY,
 					price: currentAnnualPrice,
 				};
 				dispatch(
@@ -413,9 +416,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 								value={ editedSchedule }
 								onChange={ onSelectSchedule }
 							>
-								<option value={ monthlyFrequency }>{ translate( 'Monthly' ) }</option>
-								<option value={ annualFrequency }>{ translate( 'Yearly' ) }</option>
-								<option value="one-time">{ translate( 'One time sale' ) }</option>
+								<option value={ PLAN_MONTHLY_FREQUENCY }>{ translate( 'Monthly' ) }</option>
+								<option value={ PLAN_YEARLY_FREQUENCY }>{ translate( 'Yearly' ) }</option>
+								<option value={ PLAN_ONE_TIME_FREQUENCY }>{ translate( 'One time sale' ) }</option>
 							</FormSelect>
 						</div>
 						<div className="memberships__dialog-sections-price-field-container">
