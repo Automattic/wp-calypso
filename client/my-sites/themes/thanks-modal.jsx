@@ -235,17 +235,18 @@ class ThanksModal extends Component {
 		);
 	};
 
-	getEditSiteLabel = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive, isLivePreviewStarted } =
-			this.props;
+	getLoadingLabel = () => {
+		const { isLivePreviewStarted } = this.props;
 
 		if ( isLivePreviewStarted ) {
 			return this.props.translate( 'Preparing the live preview…' );
 		}
 
-		if ( ! hasActivated ) {
-			return this.props.translate( 'Activating theme…' );
-		}
+		return this.props.translate( 'Activating theme…' );
+	};
+
+	getEditSiteLabel = () => {
+		const { shouldEditHomepageWithGutenberg, isFSEActive } = this.props;
 
 		if ( isFSEActive ) {
 			return (
@@ -279,12 +280,7 @@ class ThanksModal extends Component {
 	);
 
 	getButtons = ( shouldDisplayContent ) => {
-		const {
-			shouldEditHomepageWithGutenberg,
-			hasActivated,
-			isFSEActive,
-			doesThemeBundleUsableSoftware,
-		} = this.props;
+		const { shouldEditHomepageWithGutenberg, isFSEActive } = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
 			? {
@@ -293,19 +289,21 @@ class ThanksModal extends Component {
 					onClick: this.trackVisitSite,
 					href: this.props.siteUrl,
 					target: '_blank',
+					disabled: false,
 			  }
 			: {
 					action: 'learn',
 					label: this.props.translate( 'Learn about this theme' ),
 					onClick: this.learnThisTheme,
 					href: this.props.detailsUrl,
+					disabled: false,
 			  };
 
 		const primaryButton = {
 			action: 'customizeSite',
 			label: this.getEditSiteLabel(),
 			isPrimary: true,
-			disabled: ! hasActivated || doesThemeBundleUsableSoftware,
+			disabled: false,
 			onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
 			href: this.props.customizeUrl,
 			target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
@@ -316,16 +314,16 @@ class ThanksModal extends Component {
 		 * in such a short loading moment.
 		 */
 		if ( ! shouldDisplayContent ) {
-			return [ primaryButton ];
+			return [
+				{
+					...primaryButton,
+					label: this.getLoadingLabel(),
+					disabled: true,
+				},
+			];
 		}
 
-		return [
-			{
-				...firstButton,
-				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
-			},
-			primaryButton,
-		];
+		return [ firstButton, primaryButton ];
 	};
 
 	render() {
