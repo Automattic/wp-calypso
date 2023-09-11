@@ -666,3 +666,12 @@
 .wp-block-latest-posts__post-date::before {
 	content: " - ";
 }
+
+// Workaround for styling the AI summaries in swarm so that they don't overflow
+.reader-full-post__content .swarm-ai-summary {
+	font-size: 0.8em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	padding-left: 3em;
+	line-height: 1.5em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	max-height: 210px;
+	overflow: hidden;
+}
