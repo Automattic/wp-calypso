@@ -4,6 +4,7 @@ import {
 	rewindBackupUpdateError,
 	updateRewindBackupProgress,
 	getRewindBackupProgress,
+	setRewindBackupDownloadId,
 } from 'calypso/state/activity-log/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -34,6 +35,7 @@ const fromApi = ( data ) => {
 export const receiveBackupSuccess = ( { siteId }, data ) => {
 	return [
 		getRewindBackupProgress( siteId ),
+		setRewindBackupDownloadId( siteId, data.downloadId ),
 		updateRewindBackupProgress( siteId, data.downloadId, data ),
 	];
 };

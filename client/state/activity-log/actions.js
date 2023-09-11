@@ -15,6 +15,7 @@ import {
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_GRANULAR_RESTORE,
+	REWIND_GRANULAR_BACKUP_REQUEST,
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
@@ -23,6 +24,7 @@ import {
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
 	REWIND_BACKUP_PROGRESS_REQUEST,
+	REWIND_BACKUP_SET_DOWNLOAD_ID,
 	REWIND_BACKUP_SITE,
 	REWIND_BACKUP_UPDATE_ERROR,
 	REWIND_BACKUP_UPDATE_PROGRESS,
@@ -224,6 +226,14 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
 	};
 }
 
+export function setRewindBackupDownloadId( siteId, downloadId ) {
+	return {
+		type: REWIND_BACKUP_SET_DOWNLOAD_ID,
+		siteId,
+		downloadId,
+	};
+}
+
 /**
  * Request a backup up to a specific Activity.
  *
@@ -236,6 +246,16 @@ export function rewindRequestBackup( siteId, rewindId ) {
 		type: REWIND_BACKUP_REQUEST,
 		siteId,
 		rewindId,
+	};
+}
+
+export function rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths = '' ) {
+	return {
+		type: REWIND_GRANULAR_BACKUP_REQUEST,
+		siteId,
+		rewindId,
+		includePaths,
+		excludePaths,
 	};
 }
 
