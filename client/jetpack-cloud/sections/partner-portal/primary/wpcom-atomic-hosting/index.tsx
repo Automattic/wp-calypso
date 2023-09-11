@@ -22,7 +22,9 @@ export default function WPCOMAtomicHosting() {
 
 	useEffect( () => {
 		// Track page view
-		dispatch( recordTracksEvent( 'calypso_partner_portal_wpcom_atomic_hosting_page_view' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_wpcom_atomic_hosting_page_view' )
+		);
 	}, [ dispatch ] );
 
 	return (
