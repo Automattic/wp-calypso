@@ -21,7 +21,8 @@ export type UseHighlightedFeatures = ( {
  * particular Plan on a pricing table, will be highlighted
  * (ie, moved to the top of the list, and bolded).
  *
- * If the specified features don't exist for a particular
+ * Will only affect wpcomeFeatures, not jetpackFeatures. And
+ * if the specified features don't exist for a particular
  * Plan, they will be ignored.
  *
  * The Logic for processing the highlightedFeatures
