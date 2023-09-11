@@ -9,9 +9,7 @@ import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import ErrorStep from './internals/steps-repository/error-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import ProcessingStep from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps-repository';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -55,15 +53,7 @@ const withThemeAssemblerFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: ErrorStep },
-			{
-				slug: 'celebration-step',
-				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
-			},
-		];
+		return [ STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR, STEPS.CELEBRATION ];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -72,20 +62,10 @@ const withThemeAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
-
-		const exitFlow = ( to: string ) => {
-			setPendingAction( () => {
-				return new Promise( () => {
-					window.location.assign( to );
-				} );
-			} );
-
-			return navigate( 'processing' );
-		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
@@ -96,13 +76,7 @@ const withThemeAssemblerFlow: Flow = {
 						return navigate( 'error' );
 					}
 
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					// We will navigate to the celebration step in the follow-up PR
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					return navigate( 'celebration-step' );
 				}
 
 				case 'patternAssembler': {
