@@ -23,8 +23,10 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
 import { Query } from '../types';
-import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
-
+import {
+	ADD_NEWSLETTER_PAYMENT_PLAN_HASH,
+	LAUNCHPAD_HASH,
+} from './constants';
 import './style.scss';
 
 type MembershipsSectionProps = {
@@ -42,6 +44,9 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const connectedAccountId = useSelector( ( state ) =>
 		getConnectedAccountIdForSiteId( state, site?.ID )
 	);
+
+	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
+
 	const connectedAccountDescription = useSelector( ( state ) =>
 		getConnectedAccountDescriptionForSiteId( state, site?.ID )
 	);
@@ -173,17 +178,24 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		const stripe_connect_success = query?.stripe_connect_success;
 
 		if ( stripe_connect_success === 'earn' ) {
+			const siteHasPlans = products.length !== 0;
+
+			let congratsText = '';
+			if ( ! siteHasPlans ) {
+				congratsText = translate(
+					'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+				);
+			} else {
+				congratsText = translate( 'Congrats! Your site is now connected to Stripe.' );
+			}
+
 			return (
-				<Notice
-					status="is-success"
-					showDismiss={ false }
-					text={ translate(
-						'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+				<Notice status="is-success" showDismiss={ false } text={ congratsText }>
+					{ ! siteHasPlans && (
+						<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
+							{ translate( 'Add a payment plan' ) }
+						</NoticeAction>
 					) }
-				>
-					<NoticeAction href={ `/earn/payments-plans/${ site?.slug }` } icon="create">
-						{ translate( 'Add a payment plan' ) }
-					</NoticeAction>
 				</Notice>
 			);
 		}
