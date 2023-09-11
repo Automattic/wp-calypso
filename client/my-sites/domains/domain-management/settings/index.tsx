@@ -561,6 +561,9 @@ const Settings = ( {
 
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
+		if ( ! domain || domain.isMoveToNewSitePending ) {
+			return undefined;
+		}
 		return (
 			<>
 				{ renderStatusSection() }
@@ -578,7 +581,7 @@ const Settings = ( {
 	};
 
 	const renderSettingsCards = () => {
-		if ( ! domain ) {
+		if ( ! domain || domain.isMoveToNewSitePending ) {
 			return undefined;
 		}
 		return (
