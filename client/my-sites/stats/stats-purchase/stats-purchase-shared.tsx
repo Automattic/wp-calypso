@@ -74,6 +74,7 @@ const StatsBenefitsPersonal = () => {
 				<li>{ translate( 'Detailed statistics about links leading to your site' ) }</li>
 				<li>{ translate( 'GDPR compliant' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
+				{ /** TODO: check sub price for validation -  will need support added to use-stats-purchases hook */ }
 				<li>{ translate( 'Priority support' ) }</li>
 			</ul>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>

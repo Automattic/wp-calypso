@@ -61,7 +61,7 @@ const PersonalPurchase = ( {
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
 
-		if ( subscriptionValue <= uiEmojiHeartTier ) {
+		if ( subscriptionValue < uiEmojiHeartTier ) {
 			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
 		} else if ( subscriptionValue < uiImageCelebrationTier ) {
 			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
@@ -95,17 +95,28 @@ const PersonalPurchase = ( {
 	return (
 		<div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				{ subscriptionValue === 0 ? (
-					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
-						<li>{ translate( 'No access to upcoming features' ) }</li>
-						<li>{ translate( 'No priority support' ) }</li>
-					</ul>
-				) : (
-					<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
-						<li>{ translate( 'Instant access to upcoming features' ) }</li>
-						<li>{ translate( 'Priority support' ) }</li>
-					</ul>
-				) }
+				<ul>
+					{ subscriptionValue > 0 && (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+							{ translate( 'Instant access to upcoming features' ) }
+						</li>
+					) }
+					{ subscriptionValue >= defaultStartingValue && (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
+							{ translate( 'Priority support' ) }
+						</li>
+					) }
+					{ subscriptionValue === 0 && (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+							{ translate( 'No access to upcoming features' ) }
+						</li>
+					) }
+					{ subscriptionValue < defaultStartingValue && (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+							{ translate( 'No priority support' ) }
+						</li>
+					) }
+				</ul>
 			</div>
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
