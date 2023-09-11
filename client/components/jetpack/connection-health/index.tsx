@@ -98,7 +98,9 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return (
 			<ErrorNotice
 				errorType={ errorType }
-				errorText={ translate( 'REST API is disabled.' ) }
+				errorText={ translate(
+					'Jetpack can’t communicate with your site because the REST API is not responding correctly.'
+				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/resolve-jetpack-errors/#rest-api-or-xml-rpc-is-blocked'
 				) }
@@ -112,7 +114,9 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return (
 			<ErrorNotice
 				errorType={ errorType }
-				errorText={ translate( 'XML-RPC is not responding correctly.' ) }
+				errorText={ translate(
+					'Jetpack can’t communicate with your site because XML-RPC is not responding correctly.'
+				) }
 				noticeActionHref={ localizeUrl(
 					'https://wordpress.com/support/resolve-jetpack-errors/#rest-api-or-xml-rpc-is-blocked'
 				) }
