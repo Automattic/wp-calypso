@@ -4,7 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
+import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
@@ -28,8 +30,11 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	const onDownloadClick = () => {
-		// eslint-disable-next-line no-console
-		console.log( browserCheckList );
+		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
+		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
+
+		dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		page.redirect( backupDownloadPath( siteSlug, rewindId ) );
 	};
 	const onRestoreClick = () => {
 		// TODO: Add tracking

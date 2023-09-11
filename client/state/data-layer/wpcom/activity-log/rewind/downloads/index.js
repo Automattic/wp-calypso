@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import { REWIND_BACKUP } from 'calypso/state/action-types';
+import { REWIND_BACKUP, REWIND_GRANULAR_BACKUP_REQUEST } from 'calypso/state/action-types';
 import {
 	rewindBackupUpdateError,
 	updateRewindBackupProgress,
@@ -24,6 +24,25 @@ const createBackup = ( action ) =>
 		action
 	);
 
+const createGranularBackup = ( action ) => {
+	// eslint-disable-next-line no-console
+	console.log( 'createGranularBackup', action );
+	return http(
+		{
+			method: 'POST',
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ action.siteId }/rewind/downloads`,
+			body: {
+				rewindId: action.rewindId,
+				types: 'paths',
+				include_path_list: action.includePaths,
+				exclude_path_list: action.excludePaths,
+			},
+		},
+		action
+	);
+};
+
 const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'downloadId' ) ) {
 		throw new Error( 'Missing downloadId field in response' );
@@ -47,6 +66,14 @@ registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/downloads/index.js
 	[ REWIND_BACKUP ]: [
 		dispatchRequest( {
 			fetch: createBackup,
+			onSuccess: receiveBackupSuccess,
+			onError: receiveBackupError,
+			fromApi,
+		} ),
+	],
+	[ REWIND_GRANULAR_BACKUP_REQUEST ]: [
+		dispatchRequest( {
+			fetch: createGranularBackup,
 			onSuccess: receiveBackupSuccess,
 			onError: receiveBackupError,
 			fromApi,
