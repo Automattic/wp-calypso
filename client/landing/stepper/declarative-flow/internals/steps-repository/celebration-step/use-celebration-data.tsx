@@ -1,5 +1,9 @@
-import { isStartWritingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import { isAssemblerDesign } from '@automattic/design-picker';
+import { isStartWritingFlow } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { ONBOARD_STORE } from '../../../../stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 interface Props {
 	flow: string;
@@ -9,6 +13,10 @@ interface Props {
 
 const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false }: Props ) => {
 	const translate = useTranslate();
+	const selectedDesign = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
 	const isStartWritingFlowOrFirstPostPublished = isStartWritingFlow( flow ) || isFirstPostPublished;
 	const defaultCelebrationData = {
 		dashboardCtaName: 'Go to dashboard',
@@ -16,7 +24,7 @@ const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false
 		dashboardCtaLink: `/home/${ siteSlug }`,
 	};
 
-	if ( isSiteAssemblerFlow( flow ) ) {
+	if ( isAssemblerDesign( selectedDesign ) ) {
 		const siteEditorParams = new URLSearchParams( {
 			canvas: 'edit',
 			assembler: '1',

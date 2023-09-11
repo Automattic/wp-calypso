@@ -81,7 +81,7 @@ const PatternAssembler = ( {
 	const { goBack, goNext, submit } = navigation;
 	const { assembleSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setSelectedDesign } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 		[]
@@ -387,6 +387,7 @@ const PatternAssembler = ( {
 				)
 		);
 
+		setSelectedDesign( design );
 		recordSelectedDesign( { flow, intent, design } );
 		trackSubmit();
 		submit?.();

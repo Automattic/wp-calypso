@@ -20,6 +20,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { STEPS } from './internals/steps-repository';
 import StartingPointStep from './internals/steps-repository/blogger-starting-point';
 import BusinessInfo from './internals/steps-repository/business-info';
 import CoursesStep from './internals/steps-repository/courses';
@@ -124,6 +125,7 @@ const siteSetupFlow: Flow = {
 				? [ { slug: 'editEmail', component: EditEmail } ]
 				: [] ),
 			{ slug: 'difmStartingPoint', component: DIFMStartingPoint },
+			STEPS.CELEBRATION,
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
@@ -292,12 +294,7 @@ const siteSetupFlow: Flow = {
 
 					// End of Pattern Assembler flow
 					if ( isAssemblerDesign( selectedDesign ) ) {
-						const params = new URLSearchParams( {
-							canvas: 'edit',
-							assembler: '1',
-						} );
-
-						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+						return navigate( 'celebration-step' );
 					}
 
 					// If the user skips starting point, redirect them to the post editor
@@ -494,6 +491,10 @@ const siteSetupFlow: Flow = {
 
 				case 'difmStartingPoint': {
 					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+				}
+
+				case 'celebration-step': {
+					return window.location.assign( providedDependencies.destinationUrl as string );
 				}
 			}
 		}
