@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const DEFAULT_TAB = 'recommended';
 export const LATEST_TAB = 'latest';
@@ -69,4 +71,15 @@ export function getTagsFromStreamKey( streamKey = '' ) {
 		return tags;
 	}
 	return [];
+}
+
+/**
+ * Returns the current dateTime subtracting the number of days in the input, formatted for a
+ * request.
+ *
+ * @param {number|null} daysToInclude Number of days to subtract from current datetime.
+ * @returns Formatted date to add to the query.
+ */
+export function getAfterDateForFeed( daysToInclude = 1 ) {
+	return moment().subtract( daysToInclude, 'days' ).format( 'YYYY-MM-DDTHH:mm:ssZ' );
 }
