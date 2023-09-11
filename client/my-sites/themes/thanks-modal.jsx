@@ -66,6 +66,12 @@ class ThanksModal extends Component {
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.isLivePreviewStarted ) {
+			return {
+				isVisible: true,
+				wasInstalling: false,
+			};
+		}
 		if ( nextProps.shouldRedirectToThankYouPage ) {
 			return {
 				isVisible: false,
@@ -327,9 +333,11 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware } = this.props;
+		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware, isLivePreviewStarted } =
+			this.props;
 
-		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
+		const shouldDisplayContent =
+			hasActivated && currentTheme && ! doesThemeBundleUsableSoftware && ! isLivePreviewStarted;
 
 		return (
 			<Dialog
