@@ -35,7 +35,7 @@ export default function useBannerSubtitle(
 			isEcommerceTrial && anyWooExpressIntroOffer
 				? translate(
 						'Your free trial will end in %(daysLeft)d day. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
-							'-- any Woo Express plan for just %(introOfferFormattedPrice)s a %(introOfferIntervalUnit)s for your first %(introOfferIntervalCount)d %(introOfferIntervalUnit)ss.',
+							'— any Woo Express plan for just %(introOfferFormattedPrice)s a %(introOfferIntervalUnit)s for your first %(introOfferIntervalCount)d %(introOfferIntervalUnit)ss.',
 						'Your free trial will end in %(daysLeft)d days. Upgrade by %(expirationdate)s to start selling and take advantage of our limited time offer ' +
 							'-- any Woo Express plan for just %(introOfferFormattedPrice)s a %(introOfferIntervalUnit)s for your first %(introOfferIntervalCount)d %(introOfferIntervalUnit)ss.',
 						{
