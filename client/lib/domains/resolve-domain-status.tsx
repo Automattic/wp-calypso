@@ -177,6 +177,19 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.REGISTERED:
+			if ( domain.isMoveToNewSitePending ) {
+				return {
+					statusText: translate( 'Pending' ),
+					statusClass: 'status-warning',
+					status: translate( 'Pending' ),
+					icon: 'info',
+					noticeText: translate(
+						'This domain is being disconnected. It should be updated within a few minutes.'
+					),
+					listStatusWeight: 400,
+				};
+			}
+
 			if ( domain.aftermarketAuction ) {
 				const statusMessage = translate( 'Expired', { context: 'domain status' } );
 				return {
@@ -528,18 +541,6 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( domain.isMoveToNewSitePending ) {
-				return {
-					statusText: translate( 'Pending' ),
-					statusClass: 'status-warning',
-					status: translate( 'Pending' ),
-					icon: 'info',
-					noticeText: translate(
-						'This domain is being disconnected. It should be updated within a few minutes.'
-					),
-					listStatusWeight: 400,
-				};
-			}
 			return {
 				statusText: translate( 'Active' ),
 				statusClass: 'status-success',
