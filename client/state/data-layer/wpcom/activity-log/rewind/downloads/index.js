@@ -25,8 +25,6 @@ const createBackup = ( action ) =>
 	);
 
 const createGranularBackup = ( action ) => {
-	// eslint-disable-next-line no-console
-	console.log( 'createGranularBackup', action );
 	return http(
 		{
 			method: 'POST',
