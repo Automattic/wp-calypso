@@ -22,7 +22,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	isInSignup: boolean;
+	isInSignup?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /*
