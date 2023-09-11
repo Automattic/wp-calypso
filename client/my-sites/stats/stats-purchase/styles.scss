@@ -17,6 +17,13 @@
 	.stats-purchase-wizard {
 		font-family: $font-sf-pro-text;
 
+		.components-button {
+			&.is-primary {
+				background-color: var(--color-accent);
+				border-color: var(--color-accent);
+			}
+		}
+
 		.stats-purchase-wizard__benefits--included li {
 			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9IkFjdGlvbnMgLyBkb25lXzI0cHgiPgo8bWFzayBpZD0ibWFzazBfMzgwMl81NDI1IiBzdHlsZT0ibWFzay10eXBlOmx1bWluYW5jZSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMyIgeT0iNSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE0Ij4KPHBhdGggaWQ9Imljb24vYWN0aW9uL2RvbmVfMjRweCIgZD0iTTguNzU2ODIgMTUuOUw0LjU3NzQzIDExLjdMMy4xODQzIDEzLjFMOC43NTY4MiAxOC43TDIwLjY5OCA2LjY5OTk5TDE5LjMwNDggNS4yOTk5OUw4Ljc1NjgyIDE1LjlaIiBmaWxsPSJ3aGl0ZSIvPgo8L21hc2s+CjxnIG1hc2s9InVybCgjbWFzazBfMzgwMl81NDI1KSI+CjxyZWN0IGlkPSJSZWN0YW5nbGUiIHdpZHRoPSIyMy44ODIzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDY3NUM0Ii8+CjwvZz4KPC9nPgo8L3N2Zz4K);
 		}
@@ -52,8 +59,8 @@
 		.stats-purchase-wizard__card-title-indicator {
 
 			&.active {
-				background: var(--color-accent);
-				border-color: var(--color-accent);
+				background: var(--color-sidebar-menu-selected-background);
+				border-color: var(--color-sidebar-menu-selected-background);
 			}
 		}
 
