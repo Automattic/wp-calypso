@@ -8,10 +8,13 @@ import {
 } from '@automattic/calypso-products';
 import type { PlansIntent } from './use-grid-plans';
 
-interface Props {
+export type UseHighlightedFeatures = ( {
+	intent,
+	isInSignup,
+}: {
 	intent: PlansIntent | undefined;
 	isInSignup?: boolean;
-}
+} ) => string[] | null;
 
 /**
  * Returns an array of features that, if they exist for a
@@ -26,7 +29,7 @@ interface Props {
  *
  * TODO clk: move to plans data store
  */
-const useHighlightedFeatures = ( { intent, isInSignup }: Props ): string[] | null => {
+const useHighlightedFeatures: UseHighlightedFeatures = ( { intent, isInSignup } ) => {
 	if ( isInSignup && intent && 'plans-newsletter' === intent ) {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
