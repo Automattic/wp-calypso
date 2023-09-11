@@ -7,7 +7,7 @@ interface ConfigurationData {
 const blockParentSelector = '[aria-label="Block: Map"]';
 
 /**
- * Class representing the flow of using a Tiled Gallery block in the editor.
+ * Class representing the flow of using a Map block in the editor.
  */
 export class MapFlow implements BlockFlow {
 	private configurationData: ConfigurationData;

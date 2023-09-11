@@ -7,7 +7,7 @@ interface ConfigurationData {
 const blockParentSelector = '[aria-label="Block: GIF"]';
 
 /**
- * Class representing the flow of using a Tiled Gallery block in the editor.
+ * Class representing the flow of using a GIF block in the editor.
  */
 export class GifFlow implements BlockFlow {
 	private configurationData: ConfigurationData;

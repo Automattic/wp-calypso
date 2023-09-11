@@ -10,7 +10,7 @@ interface ConfigurationData {
 const blockParentSelector = '[aria-label="Block: Image Compare"]';
 
 /**
- * Class representing the flow of using a Tiled Gallery block in the editor.
+ * Class representing the flow of using a Image Compare block in the editor.
  */
 export class ImageCompareFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
