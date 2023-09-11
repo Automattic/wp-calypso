@@ -1,4 +1,4 @@
-import { Card, Button, Dialog, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { englishLocales, localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
@@ -122,7 +122,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	function renderEarnings() {
 		if ( ! site ) {
-			return <LoadingPlaceholder />;
+			return <LoadingEllipsis />;
 		}
 
 		return (
@@ -351,7 +351,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	function renderManagePlans() {
 		if ( ! site ) {
-			return <LoadingPlaceholder />;
+			return <LoadingEllipsis />;
 		}
 
 		return (
@@ -728,7 +728,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	}
 
 	if ( ! site ) {
-		return <LoadingPlaceholder />;
+		return <LoadingEllipsis />;
 	}
 
 	return (
