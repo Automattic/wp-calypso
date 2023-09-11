@@ -18,6 +18,7 @@ import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -71,7 +72,7 @@ const Home = ( {
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
 
-	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
+	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
@@ -178,21 +179,29 @@ const Home = ( {
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			{ header }
-			{ isLoading ? (
-				<div className="customer-home__loading-placeholder"></div>
-			) : (
+			{ ! isLoading && ! layout && homeLayoutError ? (
+				<TrackComponentView
+					eventName="calypso_customer_home_my_site_view_layout_error"
+					eventProperties={ {
+						site_id: siteId,
+						error: homeLayoutError?.message ?? 'Layout is not available.',
+					} }
+				/>
+			) : null }
+			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
+			{ ! isLoading && layout && ! homeLayoutError ? (
 				<>
-					<Primary cards={ layout.primary } />
+					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout.secondary } siteId={ siteId } />
+							<Secondary cards={ layout?.secondary } siteId={ siteId } />
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
-							<Tertiary cards={ layout.tertiary } />
+							<Tertiary cards={ layout?.tertiary } />
 						</div>
 					</div>
 				</>
-			) }
+			) : null }
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
