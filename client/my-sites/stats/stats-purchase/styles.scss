@@ -22,6 +22,9 @@
 				background-color: var(--color-accent);
 				border-color: var(--color-accent);
 			}
+			&.is-link {
+				color: var(--color-sidebar-menu-selected-background);
+			}
 		}
 
 		.stats-purchase-wizard__benefits--included li {
@@ -69,6 +72,11 @@
 
 			.is-link {
 				color: var(--studio-yellow-80);
+			}
+
+			// TODO: improve this as naming it notice--green is not correct for WPCOM
+			&.stats-purchase-wizard__notice--green {
+				background-color: var(--studio-yellow-5);
 			}
 		}
 
