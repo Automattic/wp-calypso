@@ -64,7 +64,11 @@ class MagicLogin extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.isSendingEmail && this.props.emailRequested ) {
+		if (
+			isGravatarOAuth2Client( this.props.oauth2Client ) &&
+			prevProps.isSendingEmail &&
+			this.props.emailRequested
+		) {
 			this.startResendEmailCountdown();
 		}
 	}
