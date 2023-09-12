@@ -4,6 +4,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
+import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
@@ -56,6 +57,11 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 						domainName={ domain.domain }
 					/>
 				</div>
+			</div>
+
+			<div className="domains-table-mobile-card-email">
+				<span className="domains-table-mobile-card-label"> { __( 'Email' ) } </span>
+				<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
 			</div>
 
 			<div>
