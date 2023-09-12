@@ -24,7 +24,7 @@ export class StoryBlock {
 	}
 
 	/**
-	 * Configure the block in the editor with the configuration data from the constructor
+	 * Given an array of TestFiles, uploads the files to the Story block.
 	 *
 	 * @param {TestFile[]} files List of files to be uploaded.
 	 */
