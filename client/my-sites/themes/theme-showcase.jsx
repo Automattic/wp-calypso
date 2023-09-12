@@ -25,7 +25,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { setBackPath, setTabFilter } from 'calypso/state/themes/actions';
+import { setBackPath } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
@@ -35,13 +35,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
-import {
-	addTracking,
-	appendStyleVariationToThemesPath,
-	getSubjectsFromTermTable,
-	trackClick,
-	localizeThemesPath,
-} from './helpers';
+import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
@@ -137,7 +131,6 @@ class ThemeShowcase extends Component {
 
 	componentWillUnmount() {
 		this.props.setBackPath( this.constructUrl() );
-		this.props.setTabFilter( this.getSelectedTabFilter().key );
 	}
 
 	isStaticFilter = ( tabFilter ) => {
@@ -449,16 +442,13 @@ class ThemeShowcase extends Component {
 			secondaryOption: this.props.secondaryOption,
 			placeholderCount: this.props.placeholderCount,
 			bookmarkRef: this.bookmarkRef,
-			getScreenshotUrl: ( theme, styleVariationSlug ) => {
+			getScreenshotUrl: ( theme, themeOptions ) => {
 				if ( ! getScreenshotOption( theme ).getUrl ) {
 					return null;
 				}
 
 				return localizeThemesPath(
-					appendStyleVariationToThemesPath(
-						getScreenshotOption( theme ).getUrl( theme ),
-						styleVariationSlug
-					),
+					getScreenshotOption( theme ).getUrl( theme, themeOptions ),
 					locale,
 					! isLoggedIn
 				);
@@ -570,6 +560,4 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { setBackPath, setTabFilter } )(
-	localize( ThemeShowcase )
-);
+export default connect( mapStateToProps, { setBackPath } )( localize( ThemeShowcase ) );

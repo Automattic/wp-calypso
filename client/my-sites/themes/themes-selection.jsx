@@ -186,9 +186,10 @@ class ThemesSelection extends Component {
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
 
+		const { tabFilter } = this.props;
 		const wrappedActivateAction = ( action ) => {
 			return ( t ) => {
-				this.props.setThemePreviewOptions( themeId, null, null, styleVariation );
+				this.props.setThemePreviewOptions( themeId, null, null, { styleVariation, tabFilter } );
 				return action( t, context );
 			};
 		};
@@ -222,19 +223,16 @@ class ThemesSelection extends Component {
 					defaultOption = options.activate;
 				}
 
-				this.props.setThemePreviewOptions(
-					themeId,
-					defaultOption,
-					secondaryOption,
-					styleVariation
-				);
+				this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, {
+					styleVariation,
+				} );
 				return action( t, context );
 			};
 		};
 
 		if ( options ) {
 			options = addOptionsToGetUrl( options, {
-				tabFilter: this.props.tabFilter,
+				tabFilter,
 				styleVariationSlug: styleVariation?.slug,
 			} );
 			if ( options.activate ) {

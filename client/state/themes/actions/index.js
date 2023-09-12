@@ -37,7 +37,6 @@ export { requestThenActivate } from 'calypso/state/themes/actions/request-then-a
 export { requestThemeFilters } from 'calypso/state/themes/actions/request-theme-filters';
 export { requestThemes } from 'calypso/state/themes/actions/request-themes';
 export { setBackPath } from 'calypso/state/themes/actions/set-back-path';
-export { setTabFilter } from 'calypso/state/themes/actions/set-tab-filter';
 export { setThemePreviewOptions } from 'calypso/state/themes/actions/set-theme-preview-options';
 export { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
 export { showThemePreview } from 'calypso/state/themes/actions/show-theme-preview';

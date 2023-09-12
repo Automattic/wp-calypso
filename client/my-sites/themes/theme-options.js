@@ -4,10 +4,7 @@ import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
-import {
-	appendStyleVariationToThemesPath,
-	localizeThemesPath,
-} from 'calypso/my-sites/themes/helpers';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
@@ -54,7 +51,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			const slug = getSiteSlug( state, siteId );
 			const redirectTo = encodeURIComponent(
 				addQueryArgs( `/theme/${ themeId }/${ slug }`, {
-					style_variation: options?.styleVariation?.slug,
+					style_variation: options?.styleVariationSlug,
 				} )
 			);
 
@@ -105,10 +102,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
 		getUrl: ( state, themeId, siteId, options ) =>
-			appendStyleVariationToThemesPath(
-				getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
-				options?.styleVariationSlug
-			),
+			getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId, options ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
@@ -140,7 +134,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				addQueryArgs( `${ origin }/setup/site-setup/designSetup`, {
 					siteSlug: slug,
 					theme: themeId,
-					style_variation: options?.styleVariation?.slug,
+					style_variation: options?.styleVariationSlug,
 				} )
 			);
 
@@ -211,7 +205,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		icon: 'customize',
 		getUrl: ( state, themeId, siteId, options ) =>
 			addQueryArgs( getCustomizeUrl( state, themeId, siteId, isFSEActive ), {
-				style_variation: options?.styleVariation?.slug,
+				style_variation: options?.styleVariationSlug,
 			} ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
@@ -306,10 +300,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		} ),
 		icon: 'info',
 		getUrl: ( state, themeId, siteId, options ) =>
-			appendStyleVariationToThemesPath(
-				getThemeDetailsUrl( state, themeId, siteId ),
-				options?.styleVariationSlug
-			),
+			getThemeDetailsUrl( state, themeId, siteId, options ),
 	};
 
 	return {

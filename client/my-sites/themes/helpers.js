@@ -80,18 +80,6 @@ export function addOptionsToGetUrl( options, { tabFilter, styleVariationSlug } )
 	);
 }
 
-export function appendStyleVariationToThemesPath( path, styleVariationSlug ) {
-	if ( ! styleVariationSlug ) {
-		return path;
-	}
-
-	const [ base, query ] = path.split( '?' );
-	const params = new URLSearchParams( query );
-	params.set( 'style_variation', styleVariationSlug );
-
-	return `${ base }?${ params.toString() }`;
-}
-
 /**
  * Creates the billing product slug for a given theme ID.
  *

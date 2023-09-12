@@ -90,7 +90,7 @@ import {
 	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
-import { getBackPath, getTabFilter } from 'calypso/state/themes/themes-ui/selectors';
+import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import { LivePreviewButton } from './live-preview-button';
@@ -218,12 +218,9 @@ class ThemeSheet extends Component {
 		const { defaultOption, secondaryOption, themeId } = this.props;
 		const selectedStyleVariation = this.getSelectedStyleVariation();
 		if ( selectedStyleVariation ) {
-			this.props.setThemePreviewOptions(
-				themeId,
-				defaultOption,
-				secondaryOption,
-				selectedStyleVariation
-			);
+			this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, {
+				styleVariation: selectedStyleVariation,
+			} );
 		}
 
 		defaultOption.action && defaultOption.action( themeId );
@@ -366,7 +363,7 @@ class ThemeSheet extends Component {
 				this.props.themeId,
 				this.props.defaultOption,
 				this.props.secondaryOption,
-				this.getSelectedStyleVariation()
+				{ styleVariation: this.getSelectedStyleVariation() }
 			);
 			return preview.action( this.props.themeId );
 		}
@@ -1462,7 +1459,6 @@ export default connect(
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, themeId );
 		const backPath = getBackPath( state );
-		const tabFilter = getTabFilter( state );
 		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, themeId );
 		const error = theme
@@ -1488,6 +1484,8 @@ export default connect(
 
 		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
 
+		const queryArgs = getCurrentQueryArguments( state );
+
 		return {
 			...theme,
 			themeId,
@@ -1496,7 +1494,7 @@ export default connect(
 			siteId,
 			siteSlug,
 			backPath,
-			tabFilter,
+			tabFilter: queryArgs?.tab_filter,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
@@ -1522,7 +1520,7 @@ export default connect(
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
 			styleVariations: theme?.style_variations || [],
-			selectedStyleVariationSlug: getCurrentQueryArguments( state )?.style_variation,
+			selectedStyleVariationSlug: queryArgs?.style_variation,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,

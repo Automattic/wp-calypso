@@ -14,11 +14,6 @@ export function getBackPath( state ) {
 	return `/themes/${ siteSlug }`;
 }
 
-// Returns the tab filter
-export function getTabFilter( state ) {
-	return state.themes.themesUI.tabFilter;
-}
-
 // Returns the theme bookmark.
 export function getThemesBookmark( state ) {
 	return state.themes.themesUI.themesBookmark;
