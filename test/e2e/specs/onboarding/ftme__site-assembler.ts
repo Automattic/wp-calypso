@@ -118,14 +118,18 @@ describe( 'Site Assembler', () => {
 			await siteAssemblerFlow.clickButton( 'Save and continue' );
 		} );
 
-		it( 'Click "Save and continue" and land on the Site Editor', async function () {
-			const urlPromise = page.waitForURL( /processing/ );
+		it( 'Click "Start adding content" to the next step', async function () {
 			await siteAssemblerFlow.clickButton( 'Start adding content' );
-			await urlPromise;
+		} );
 
-			await page.waitForURL( /site-editor/, {
-				timeout: 30 * 1000,
-			} );
+		it( 'Land on the Celebration step', async function () {
+			await page.waitForURL( /processing/ );
+			await page.waitForURL( /celebration-step/, { timeout: 30 * 1000 } );
+		} );
+
+		it( 'Click "Edit your content" and land on the Site Editor', async function () {
+			await siteAssemblerFlow.clickButton( 'Edit your content' );
+			await page.waitForURL( /site-editor/, { timeout: 30 * 1000 } );
 		} );
 	} );
 
