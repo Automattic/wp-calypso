@@ -24,13 +24,20 @@
 		.stats-purchase-wizard__card {
 			color: var(--studio-gray-80);
 
-			h1 {
+			h1,
+			.components-panel__header h2 {
 				font-family: $font-recoleta;
 				color: var(--studio-gray-100);
 				font-size: $font-headline-small;
 				font-style: normal;
 				font-weight: 400;
 				line-height: 40px;
+			}
+
+			.components-panel__body-title button {
+				font-family: $font-sf-pro-display;
+				line-height: 30px;
+				color: var(--studio-gray-80);
 			}
 
 			.stats-purchase-wizard__pricing-value {
@@ -60,6 +67,15 @@
 
 		.stats-purchase-wizard__personal-tos {
 			display: none;
+		}
+
+		.stats-purchase-wizard__card-title-indicator.active {
+			background-color: var(--color-primary);
+			border-color: var(--color-primary);
+		}
+
+		.stats-purchase-wizard__card-grid {
+			color: var(--studio-black);
 		}
 
 		.jp-components-pricing-slider__track.jp-components-pricing-slider__track-0 {

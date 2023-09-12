@@ -1,3 +1,4 @@
+import { Button as CalypsoButton } from '@automattic/components';
 import { Button, Card, Panel, PanelRow, PanelBody } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -5,6 +6,7 @@ import React, { useState } from 'react';
 import statsPurchaseBackgroundSVG from 'calypso/assets/images/stats/purchase-background.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import CommercialPurchase from './stats-purchase-commercial';
 import PersonalPurchase from './stats-purchase-personal';
@@ -146,6 +148,10 @@ const ProductCard = ( {
 		/>
 	);
 
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	// The button of @automattic/components has built-in color scheme support for Calypso.
+	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
+
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<Card className={ `${ COMPONENT_CLASS_NAME }__card-parent` }>
@@ -184,14 +190,22 @@ const ProductCard = ( {
 											</p>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--left` }>
-											<Button variant="primary" onClick={ setPersonalSite }>
+											<ButtonComponent
+												variant="primary"
+												primary={ isWPCOMSite ? true : undefined }
+												onClick={ setPersonalSite }
+											>
 												{ personalLabel }
-											</Button>
+											</ButtonComponent>
 										</div>
 										<div className={ `${ COMPONENT_CLASS_NAME }__card-grid-action--right` }>
-											<Button variant="primary" onClick={ setCommercialSite }>
+											<ButtonComponent
+												variant="primary"
+												primary={ isWPCOMSite ? true : undefined }
+												onClick={ setCommercialSite }
+											>
 												{ commercialLabel }
-											</Button>
+											</ButtonComponent>
 										</div>
 									</div>
 								</PanelRow>
