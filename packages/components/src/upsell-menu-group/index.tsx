@@ -17,7 +17,6 @@ const Content = styled.div( {
 	width: 210,
 	whiteSpace: 'break-spaces',
 	maxWidth: '80vw',
-	fontSize: '0.8125rem',
 } );
 
 const BackgroundIcon = styled.div( {
