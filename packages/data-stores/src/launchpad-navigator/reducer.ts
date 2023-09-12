@@ -13,8 +13,19 @@ const activeChecklistSlug: Reducer< string | null | undefined, LaunchpadNavigato
 	return state;
 };
 
+const checklistsSlug: Reducer< string[], LaunchpadNavigatorAction > = ( state = [], action ) => {
+	switch ( action.type ) {
+		case 'LAUNCHPAD_NAVIGATOR_REMOVE_CHECKLIST':
+			return state.filter( ( slug ) => slug !== action.checklist_slug );
+		case 'LAUNCHPAD_NAVIGATOR_SET_CHECKLISTS':
+			return action.checklists;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	activeChecklistSlug,
+	checklistsSlug,
 } );
 
 export type LaunchpadNavigatorState = ReturnType< typeof reducer >;
