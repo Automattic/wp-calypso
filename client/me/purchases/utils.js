@@ -1,4 +1,5 @@
-import { isDomainTransfer } from '@automattic/calypso-products';
+// eslint-disable-next-line import/named
+import { isDomainTransfer, is100Year } from '@automattic/calypso-products';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -16,7 +17,8 @@ function canEditPaymentDetails( purchase ) {
 		! isExpired( purchase ) &&
 		! isOneTimePurchase( purchase ) &&
 		! isIncludedWithPlan( purchase ) &&
-		! isDomainTransfer( purchase )
+		! isDomainTransfer( purchase ) &&
+		! is100Year( purchase )
 	);
 }
 
