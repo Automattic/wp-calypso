@@ -1,11 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import apiFetch from '@wordpress/api-fetch';
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-
-export interface APIFetchOptions {
-	global: boolean;
-	path: string;
-}
 
 interface LaunchpadNavigatorResponse {
 	available_checklists: string[];
