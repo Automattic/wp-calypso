@@ -44,7 +44,7 @@ import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
 
 import './style.scss';
 
-type Query = {
+export type Query = {
 	stripe_connect_success?: string;
 	stripe_connect_cancelled?: string;
 };
