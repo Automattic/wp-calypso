@@ -18,14 +18,14 @@ const allowedEventProps = [
 ];
 
 export async function trackAffiliateReferral( {
-	vendor,
+	vendorId,
 	affiliateId,
 	campaignId,
 	subId,
 	referrer,
 } ) {
 	referDebug( 'Recording affiliate referral.', {
-		vendor,
+		vendorId,
 		affiliateId,
 		campaignId,
 		subId,
@@ -47,7 +47,7 @@ export async function trackAffiliateReferral( {
 	referDebug( 'Fetching Refer platform response.' );
 
 	try {
-		const response = await window.fetch( `https://refer.wordpress.com/clicks/${ vendor }`, {
+		const response = await window.fetch( `https://refer.wordpress.com/clicks/${ vendorId }`, {
 			credentials: 'include', // Needed to check and set the 'wp-affiliate-tracker' cookie.
 			method: 'POST',
 			headers,

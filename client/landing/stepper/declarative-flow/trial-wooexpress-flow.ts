@@ -55,7 +55,7 @@ const wooexpress: Flow = {
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
 		const aff = queryParams.get( 'aff' );
-		const vendor = queryParams.get( 'vid' );
+		const vendorId = queryParams.get( 'vid' );
 
 		if ( profilerData ) {
 			try {
@@ -82,7 +82,7 @@ const wooexpress: Flow = {
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 			// Early return approach
 			if ( locale || locale === 'en' ) {
-				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }&aff=${ aff }&vid=${ vendor }`;
+				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }&aff=${ aff }&vid=${ vendorId }`;
 			}
 
 			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }&aff=${ aff }&vid=${ vendor }`;
