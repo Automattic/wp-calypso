@@ -13,9 +13,9 @@ interface LaunchpadNavigatorResponse {
 }
 
 export const fetchLaunchpadNavigator = (
-	siteSlug: string | null
+	siteSlug: string
 ): Promise< LaunchpadNavigatorResponse > => {
-	const slug = encodeURIComponent( siteSlug as string );
+	const slug = encodeURIComponent( siteSlug );
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
@@ -29,7 +29,7 @@ export const fetchLaunchpadNavigator = (
 		  } as APIFetchOptions );
 };
 
-export const useLaunchpadNavigator = ( siteSlug: string | null, current_checklist: string ) => {
+export const useLaunchpadNavigator = ( siteSlug: string, current_checklist: string ) => {
 	const key = [ 'launchpad-navigator', siteSlug, current_checklist ];
 
 	return useQuery( {
