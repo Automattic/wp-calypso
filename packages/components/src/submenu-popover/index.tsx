@@ -25,7 +25,8 @@ interface SubmenuPopoverProps extends ComponentProps< typeof Popover > {
 		| 'left-start'
 		| 'left-end';
 	anchorRef?: React.MutableRefObject< HTMLElement | undefined >;
-	__unstableForcePosition?: boolean;
+	flip?: boolean;
+	resize?: boolean;
 }
 
 /**
@@ -93,9 +94,10 @@ export function useSubmenuPopoverProps< T extends HTMLElement >(
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
-		anchorRect: anchor?.current?.getBoundingClientRect(),
+		anchor: anchor?.current,
 		offset,
-		__unstableForcePosition: true,
+		flip: true,
+		resize: false,
 	};
 
 	const parent = {
