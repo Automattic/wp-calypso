@@ -759,35 +759,19 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 
 		return (
-			<>
-				<div className="site-settings__enhanced-ownership-container">
-					<SettingsSectionHeader
-						title={ translate( 'Control your legacy' ) }
-						id="site-settings__enhanced-ownership-header"
-						disabled={ isRequestingSettings || isSavingSettings }
-						isSaving={ isSavingSettings }
-						onButtonClick={ handleSubmitForm }
-						showButton
-					/>
-					<Card>
-						{ hasLockedMode && (
-							<CompactCard className="site-settings__enhanced-ownership-content">
-								<ToggleControl
-									disabled={ isRequestingSettings || isSavingSettings }
-									className="site-settings__locked-mode-toggle"
-									label={ translate( 'Lock your site to prevent changes after you’re gone.' ) }
-									checked={ fields.wpcom_locked_mode }
-									onChange={ this.props.handleToggle( 'wpcom_locked_mode' ) }
-								/>
-								<FormSettingExplanation>
-									{ translate(
-										'Prevents new posts and pages from being created as well as existing posts and pages from being edited, and closes comments site wide.'
-									) }
-								</FormSettingExplanation>
-							</CompactCard>
-						) }
+			<div className="site-settings__enhanced-ownership-container">
+				<SettingsSectionHeader
+					title={ translate( 'Control your legacy' ) }
+					id="site-settings__enhanced-ownership-header"
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+				/>
+				<Card>
+					<form>
 						{ hasLegacyContact && (
-							<CompactCard className="site-settings__enhanced-ownership-content">
+							<FormFieldset className="site-settings__enhanced-ownership-content">
 								<FormFieldset>
 									<FormLabel htmlFor="legacycontact">{ translate( 'Legacy contact' ) }</FormLabel>
 									<FormInput
@@ -795,7 +779,7 @@ export class SiteSettingsFormGeneral extends Component {
 										id="legacycontact"
 										data-tip-target="legacy-contact-input"
 										value={ fields.wpcom_legacy_contact || '' }
-										onChange={ onChangeField( 'legacycontact' ) }
+										onChange={ onChangeField( 'wpcom_legacy_contact' ) }
 										disabled={ isRequestingSettings }
 										onClick={ eventTracker( 'Clicked Legacy Contact Field' ) }
 										onKeyPress={ uniqueEventTracker( 'Typed in Legacy Contact Field' ) }
@@ -817,11 +801,28 @@ export class SiteSettingsFormGeneral extends Component {
 										}
 									) }
 								</FormSettingExplanation>
-							</CompactCard>
+							</FormFieldset>
 						) }
-					</Card>
-				</div>
-			</>
+						{ hasLockedMode && (
+							<FormFieldset className="site-settings__enhanced-ownership-content">
+								<FormLabel>{ translate( 'Locked Mode' ) }</FormLabel>
+								<ToggleControl
+									disabled={ isRequestingSettings || isSavingSettings }
+									className="site-settings__locked-mode-toggle"
+									label={ translate( 'Enable Locked Mode' ) }
+									checked={ fields.wpcom_locked_mode }
+									onChange={ this.props.handleToggle( 'wpcom_locked_mode' ) }
+								/>
+								<FormSettingExplanation>
+									{ translate(
+										'Prevents new posts and pages from being created as well as existing posts and pages from being edited, and closes comments site wide.'
+									) }
+								</FormSettingExplanation>
+							</FormFieldset>
+						) }
+					</form>
+				</Card>
+			</div>
 		);
 	}
 
