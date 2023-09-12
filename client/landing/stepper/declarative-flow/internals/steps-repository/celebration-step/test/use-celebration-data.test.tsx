@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { isAssemblerDesign } from '@automattic/design-picker';
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
@@ -9,6 +10,8 @@ import {
 import { renderHook } from '@testing-library/react';
 import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import useCelebrationData from '../use-celebration-data';
+
+jest.mock( '@automattic/design-picker', () => ( { isAssemblerDesign: jest.fn( () => false ) } ) );
 
 const siteSlug = 'testcelebrationscreen.wordpress.com';
 
@@ -108,6 +111,14 @@ describe( 'The useCelebrationData hook', () => {
 
 	describe( `The ${ WITH_THEME_ASSEMBLER_FLOW } flow`, () => {
 		const flow = WITH_THEME_ASSEMBLER_FLOW;
+
+		beforeEach( () => {
+			( isAssemblerDesign as jest.Mock ).mockReturnValue( true );
+		} );
+
+		afterEach( () => {
+			jest.clearAllMocks();
+		} );
 
 		it( 'renders correct texts and links', () => {
 			const { result } = renderHook(

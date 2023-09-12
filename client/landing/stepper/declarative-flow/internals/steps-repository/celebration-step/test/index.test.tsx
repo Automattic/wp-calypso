@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { isAssemblerDesign } from '@automattic/design-picker';
 import {
 	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
@@ -55,6 +56,8 @@ jest.mock( '@automattic/data-stores', () => ( {
 		};
 	},
 } ) );
+
+jest.mock( '@automattic/design-picker', () => ( { isAssemblerDesign: jest.fn( () => false ) } ) );
 
 jest.mock( 'react-router-dom', () => ( {
 	...jest.requireActual( 'react-router-dom' ),
@@ -153,6 +156,14 @@ describe( 'The celebration step', () => {
 
 	describe( `The ${ WITH_THEME_ASSEMBLER_FLOW } flow`, () => {
 		const flow = WITH_THEME_ASSEMBLER_FLOW;
+
+		beforeEach( () => {
+			( isAssemblerDesign as jest.Mock ).mockReturnValue( true );
+		} );
+
+		afterEach( () => {
+			jest.clearAllMocks();
+		} );
 
 		it( 'renders correct content and CTAs', () => {
 			renderCelebrationScreen( flow );
