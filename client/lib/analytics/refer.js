@@ -10,58 +10,24 @@ export function referRecordPageView() {
 		return; // Not possible.
 	}
 
-	const parsedUrl = urlParseAmpCompatible( window.location.href );
-
-	// Obtain the referrer URL and parse it
+	const referrer = window.location.href;
+	const parsedUrl = urlParseAmpCompatible( referrer );
 	const affiliateId =
 		parsedUrl?.searchParams.get( 'aff' ) || parsedUrl?.searchParams.get( 'affiliate' );
-
-	if ( ! affiliateId || isNaN( affiliateId ) ) {
-		return;
-	}
-
-	const vendor = getVendor( parsedUrl );
-	let referrer = window.location.href;
-
-	if ( vendor === WOOEXPRESS_AFFILIATE_VENDOR_ID ) {
-		// Hard-coded referrer for specific wooexpress vendor
-		referrer = 'https://woocommerce.com/express/';
-	}
-
+	const vid = parsedUrl?.searchParams.get( 'vid' ) || parsedUrl?.searchParams.get( 'affiliate' );
 	const campaignId = parsedUrl?.searchParams.get( 'cid' );
 	const subId = parsedUrl?.searchParams.get( 'sid' );
 
-	recordTracksEvent( 'calypso_refer_visit', {
-		page: parsedUrl.host + parsedUrl.pathname,
-	} );
+	if ( affiliateId && ! isNaN( affiliateId ) ) {
+		recordTracksEvent( 'calypso_refer_visit', {
+			page: parsedUrl.host + parsedUrl.pathname,
+		} );
 
-	trackAffiliateReferral( { vendor, affiliateId, campaignId, subId, referrer } );
-}
+		const vendorId =
+			vid === WOOEXPRESS_AFFILIATE_VENDOR_ID
+				? WOOEXPRESS_AFFILIATE_VENDOR_ID
+				: WPCOM_AFFILIATE_VENDOR_ID;
 
-/**
- * Determines the url path is for setting up a new Wooexpress account on WPCOM
- *
- * @param {URL} parsedUrl - Parsed URL object from urlParseAmpCompatible function.
- * @returns {boolean} - Whether the path has the required parameters for Wooexpress.
- */
-function isNewWooexpressPath( parsedUrl ) {
-	const path = parsedUrl.pathname;
-	return (
-		parsedUrl.searchParams.get( 'variationName' ) === 'wooexpress' &&
-		path &&
-		path.includes( '/start/account/user' )
-	);
-}
-
-/**
- * Determines the appropriate affiliate vendor ID based on the URL.
- *
- * @param {URL} parsedUrl - Parsed URL object from urlParseAmpCompatible function.
- * @returns {number} - The appropriate affiliate vendor ID.
- */
-function getVendor( parsedUrl ) {
-	if ( isNewWooexpressPath( parsedUrl ) ) {
-		return WOOEXPRESS_AFFILIATE_VENDOR_ID;
+		trackAffiliateReferral( { vendorId, affiliateId, campaignId, subId, referrer } );
 	}
-	return WPCOM_AFFILIATE_VENDOR_ID;
 }
