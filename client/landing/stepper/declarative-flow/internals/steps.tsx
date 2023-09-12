@@ -1,4 +1,4 @@
-const STEPS = {
+export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
 		asyncComponent: () => import( './steps-repository/blogger-starting-point' ),
@@ -92,11 +92,6 @@ const STEPS = {
 		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
-	MIGRATION_TRAIL: {
-		slug: 'migrationTrial',
-		asyncComponent: () => import( './steps-repository/migration-trial' ),
-	},
-
 	OPTIONS: {
 		slug: 'options',
 		asyncComponent: () => import( './steps-repository/site-options' ),
@@ -115,6 +110,11 @@ const STEPS = {
 	STORE_ADDRESS: {
 		slug: 'storeAddress',
 		asyncComponent: () => import( './steps-repository/store-address' ),
+	},
+
+	TRIAL_ACKNOWLEDGE: {
+		slug: 'trialAcknowledge',
+		asyncComponent: () => import( './steps-repository/trial-acknowledge' ),
 	},
 
 	VERIFY_EMAIL: {
@@ -142,5 +142,3 @@ const STEPS = {
 		asyncComponent: () => import( './steps-repository/woo-verify-email' ),
 	},
 };
-
-export default STEPS;

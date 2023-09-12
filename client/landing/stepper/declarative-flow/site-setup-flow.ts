@@ -20,6 +20,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -59,134 +60,37 @@ const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'goals', asyncComponent: () => import( './internals/steps-repository/goals' ) },
-			{
-				slug: 'intent',
-				asyncComponent: () => import( './internals/steps-repository/intent-step' ),
-			},
-			{
-				slug: 'options',
-				asyncComponent: () => import( './internals/steps-repository/site-options' ),
-			},
-			{
-				slug: 'designSetup',
-				asyncComponent: () => import( './internals/steps-repository/design-setup' ),
-			},
-			{
-				slug: 'patternAssembler',
-				asyncComponent: () => import( './internals/steps-repository/pattern-assembler' ),
-			},
-			{
-				slug: 'bloggerStartingPoint',
-				asyncComponent: () => import( './internals/steps-repository/blogger-starting-point' ),
-			},
-			{ slug: 'courses', asyncComponent: () => import( './internals/steps-repository/courses' ) },
-			{ slug: 'import', asyncComponent: () => import( './internals/steps-repository/import' ) },
-			...( isEnabled( 'onboarding/import-light' )
-				? [
-						{
-							slug: 'importLight',
-							asyncComponent: () => import( './internals/steps-repository/import-light' ),
-						},
-				  ]
-				: [] ),
-			{
-				slug: 'importList',
-				asyncComponent: () => import( './internals/steps-repository/import-list' ),
-			},
-			{
-				slug: 'importReady',
-				asyncComponent: () => import( './internals/steps-repository/import-ready' ),
-			},
-			{
-				slug: 'importReadyNot',
-				asyncComponent: () => import( './internals/steps-repository/import-ready-not' ),
-			},
-			{
-				slug: 'importReadyWpcom',
-				asyncComponent: () => import( './internals/steps-repository/import-ready-wpcom' ),
-			},
-			{
-				slug: 'importReadyPreview',
-				asyncComponent: () => import( './internals/steps-repository/import-ready-preview' ),
-			},
-			{
-				slug: 'importerWix',
-				asyncComponent: () => import( './internals/steps-repository/importer-wix' ),
-			},
-			{
-				slug: 'importerBlogger',
-				asyncComponent: () => import( './internals/steps-repository/importer-blogger' ),
-			},
-			{
-				slug: 'importerMedium',
-				asyncComponent: () => import( './internals/steps-repository/importer-medium' ),
-			},
-			{
-				slug: 'importerSquarespace',
-				asyncComponent: () => import( './internals/steps-repository/importer-squarespace' ),
-			},
-			{
-				slug: 'importerWordpress',
-				asyncComponent: () => import( './internals/steps-repository/importer-wordpress' ),
-			},
-			{
-				slug: 'verifyEmail',
-				asyncComponent: () => import( './internals/steps-repository/import-verify-email' ),
-			},
-			{
-				slug: 'trialAcknowledge',
-				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
-			},
-			{
-				slug: 'businessInfo',
-				asyncComponent: () => import( './internals/steps-repository/business-info' ),
-			},
-			{
-				slug: 'storeAddress',
-				asyncComponent: () => import( './internals/steps-repository/store-address' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{ slug: 'error', asyncComponent: () => import( './internals/steps-repository/error-step' ) },
-			{
-				slug: 'wooTransfer',
-				asyncComponent: () => import( './internals/steps-repository/woo-transfer' ),
-			},
-			{
-				slug: 'wooInstallPlugins',
-				asyncComponent: () => import( './internals/steps-repository/woo-install-plugins' ),
-			},
-			...( isEnabled( 'signup/woo-verify-email' )
-				? [
-						{
-							slug: 'wooVerifyEmail',
-							asyncComponent: () => import( './internals/steps-repository/woo-verify-email' ),
-						},
-				  ]
-				: [] ),
-			{
-				slug: 'wooConfirm',
-				asyncComponent: () => import( './internals/steps-repository/woo-confirm' ),
-			},
-			{
-				slug: 'editEmail',
-				asyncComponent: () => import( './internals/steps-repository/edit-email' ),
-			},
-			...( isEnabled( 'signup/woo-verify-email' )
-				? [
-						{
-							slug: 'editEmail',
-							asyncComponent: () => import( './internals/steps-repository/edit-email' ),
-						},
-				  ]
-				: [] ),
-			{
-				slug: 'difmStartingPoint',
-				asyncComponent: () => import( './internals/steps-repository/difm-starting-point' ),
-			},
+			STEPS.GOALS,
+			STEPS.INTENT,
+			STEPS.OPTIONS,
+			STEPS.DESIGN_SETUP,
+			STEPS.PATTERN_ASSEMBLER,
+			STEPS.BLOGGER_STARTING_POINT,
+			STEPS.COURSES,
+			STEPS.IMPORT,
+			STEPS.IMPORT_LIGHT,
+			STEPS.IMPORT_LIST,
+			STEPS.IMPORT_READY,
+			STEPS.IMPORT_READY_NOT,
+			STEPS.IMPORT_READY_WPCOM,
+			STEPS.IMPORT_READY_PREVIEW,
+			STEPS.IMPORTER_WIX,
+			STEPS.IMPORTER_BLOGGER,
+			STEPS.IMPORTER_MEDIUM,
+			STEPS.IMPORTER_SQUARESPACE,
+			STEPS.IMPORTER_WORDPRESS,
+			STEPS.VERIFY_EMAIL,
+			STEPS.TRIAL_ACKNOWLEDGE,
+			STEPS.BUSINESS_INFO,
+			STEPS.STORE_ADDRESS,
+			STEPS.PROCESSING,
+			STEPS.ERROR,
+			STEPS.WOO_TRANSFER,
+			STEPS.WOO_INSTALL_PLUGINS,
+			STEPS.WOO_VERIFY_EMAIL,
+			STEPS.WOO_CONFIRM,
+			STEPS.EDIT_EMAIL,
+			STEPS.DIFM_STARTING_POINT,
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
