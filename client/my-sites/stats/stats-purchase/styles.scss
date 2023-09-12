@@ -43,6 +43,7 @@
 			}
 
 			.button {
+				width: 100%;
 				font-family: $font-sf-pro-text;
 				font-size: $font-body;
 				padding: 8px 32px;
@@ -291,6 +292,11 @@
 	}
 
 	.stats-purchase-wizard__card-panel-title {
+		// Hide the remaining panel title after the opened one.
+		& + .stats-purchase-wizard__card-panel-title:not(.is-opened) {
+			display: none;
+		}
+
 		h2 > button {
 			cursor: auto;
 
