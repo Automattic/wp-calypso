@@ -502,7 +502,11 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderLaunchpadNavigator() {
-		return <AsyncLoad require="./masterbar-launchpad-navigator" />;
+		if ( config.isEnabled( 'launchpad/navigator' ) ) {
+			return <AsyncLoad require="./masterbar-launchpad-navigator" />;
+		}
+
+		return null;
 	}
 
 	render() {
