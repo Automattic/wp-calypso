@@ -1,7 +1,7 @@
 import {
 	FEATURE_CUSTOM_DOMAIN,
 	isFreePlanProduct,
-	PLAN_100_YEARS,
+	is100YearPlan,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -60,7 +60,7 @@ class DomainTip extends Component {
 	}
 
 	getDomainUpsellNudgeText() {
-		const siteHas100YearPlan = this.props.site?.plan?.product_slug === PLAN_100_YEARS;
+		const siteHas100YearPlan = is100YearPlan( this.props.site?.plan?.product_slug );
 
 		if ( ! this.props.hasDomainCredit ) {
 			return this.props.translate( 'Purchase a custom domain for your site.' );
