@@ -316,27 +316,20 @@ export function redirectToPermalinkIfLoggedOut( context, next ) {
 		return next();
 	}
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
 
-	// The context.path in this case could be one of the following:
+	// Check the path is this format.
 	// - /page/{site}/{id}
 	// - /post/{site}/{id}
 	// - /edit/jetpack-portfolio/{site}/{id}
 	// - /edit/jetpack-testimonial/{site}/{id}
-	const explodedPath = context.path.split( '/' );
-	if (
-		context.path &&
-		explodedPath[ 1 ] === 'edit' &&
-		! CONFIGURABLE_TYPES.includes( explodedPath[ 2 ] )
-	) {
-		return next();
+	const postId = parseInt( context.params.post, 10 );
+	const linksToSingleView = postId > 0;
+	if ( linksToSingleView && context.path && siteFragment ) {
+		// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+		// else the endpoint will redirect the user to the login page.
+		window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
+		return;
 	}
-
-	if ( ! context.params.post ) {
-		return next();
-	}
-	// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
-	// else the endpoint will redirect the user to the login page.
-	window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
-	return;
+	// Else redirect the user to the login page.
+	return next();
 }
