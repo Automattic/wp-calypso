@@ -20,7 +20,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import { STEPS } from './internals/steps-repository';
+import STEPS from './internals/steps';
 import StartingPointStep from './internals/steps-repository/blogger-starting-point';
 import BusinessInfo from './internals/steps-repository/business-info';
 import CoursesStep from './internals/steps-repository/courses';
