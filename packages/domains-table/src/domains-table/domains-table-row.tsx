@@ -16,6 +16,8 @@ import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { countDomainsRequiringAttention } from '../utils';
 import { createSiteDomainObject } from '../utils/assembler';
+import { domainInfoContext } from '../utils/constants';
+import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
 import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
@@ -153,6 +155,9 @@ export function DomainsTableRow( {
 		return null;
 	};
 
+	const domainTypeText =
+		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
+
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
@@ -179,6 +184,9 @@ export function DomainsTableRow( {
 					</a>
 				) : (
 					<span className="domains-table__domain-name">{ domain.domain }</span>
+				) }
+				{ domainTypeText && (
+					<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
 				) }
 			</td>
 			{ ! hideOwnerColumn && (
