@@ -797,10 +797,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 		return withPersistence( ( state = {} ) => state, {
 			serialize: ( state ) =>
 				Object.fromEntries(
-					Object.entries( state ).reduce( ( acc, [ key, value ] ) => [
-						`${ keyPrefix }:${ key }`,
-						value,
-					] )
+					Object.entries( state ).map( ( [ key, value ] ) => [ `${ keyPrefix }:${ key }`, value ] )
 				),
 			deserialize: ( persisted ) =>
 				persisted
