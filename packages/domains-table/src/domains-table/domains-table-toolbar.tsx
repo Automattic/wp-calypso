@@ -5,13 +5,20 @@ import { useDomainsTable } from './domains-table';
 import './style.scss';
 
 export function DomainsTableToolbar() {
-	const { hasSelectedDomains, handleAutoRenew, selectedDomains, filter, setFilter } =
-		useDomainsTable();
+	const {
+		hasSelectedDomains,
+		handleAutoRenew,
+		handleUpdateContactInfo,
+		selectedDomains,
+		filter,
+		setFilter,
+	} = useDomainsTable();
 
 	if ( hasSelectedDomains ) {
 		return (
 			<BulkActionsToolbar
 				onAutoRenew={ handleAutoRenew }
+				onUpdateContactInfo={ handleUpdateContactInfo }
 				selectedDomainCount={ selectedDomains.size }
 			/>
 		);
