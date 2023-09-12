@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -9,7 +10,11 @@ import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { isGravatarOAuth2Client, isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isGravatarOAuth2Client,
+	isWPJobManagerOAuth2Client,
+	isGravPoweredOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -253,9 +258,6 @@ class MagicLogin extends Component {
 		const { oauth2Client, translate, locale, query } = this.props;
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
-		const headerText = isGravatar
-			? translate( 'Login to Gravatar' )
-			: translate( 'Welcome to %(serviceName)s', { args: { serviceName: oauth2Client.title } } );
 		const loginUrl = login( {
 			locale,
 			redirectTo: query?.redirect_to,
@@ -263,17 +265,21 @@ class MagicLogin extends Component {
 		} );
 
 		return (
-			<Main className="grav-powered-magic-login">
+			<Main
+				className={ classNames( 'grav-powered-magic-login', {
+					'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
+				} ) }
+			>
 				{ this.renderLocaleSuggestions() }
 				<GlobalNotices id="notices" />
 				<div className="grav-powered-magic-login__content">
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<RequestLoginEmailForm
 						flow={ oauth2Client.name }
-						headerText={ headerText }
-						subHeaderText={ translate(
-							'Provide your email address and we will send you a magic link to log in to Gravatar.'
-						) }
+						headerText={ translate( 'Welcome to %(serviceName)s', {
+							args: { serviceName: oauth2Client.title },
+						} ) }
+						hideSubHeaderText
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ translate( 'Continue' ) }
 						showTos
@@ -294,16 +300,42 @@ class MagicLogin extends Component {
 										}
 									) }
 								</div>
-								<div>
-									{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
-										components: {
-											a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
-										},
-									} ) }
-								</div>
 							</div>
 						</>
 					) }
+				</div>
+				<div className="grav-powered-magic-login__gravatar-info">
+					{ ! isGravatar && (
+						<div className="grav-powered-magic-login__gravatar-heading">
+							<img
+								src="https://gravatar.com/images/grav-logo-blue.svg"
+								width={ 18 }
+								height={ 18 }
+								alt="Gravatar logo"
+							/>
+							{ translate( 'You will be logging in via Gravatar' ) }
+						</div>
+					) }
+					<div className="grav-powered-magic-login__gravatar-info-items">
+						<div>
+							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+							{ translate(
+								'Gravatar accounts and profiles are free. You can log in to thousands of sites across the web with one Gravatar account.'
+							) }
+						</div>
+						<div>
+							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+							{ translate( 'Control what information is shared on your public profile.' ) }
+						</div>
+						<div>
+							<Gridicon icon="checkmark" size={ 18 } color="#646970" />
+							{ translate( "Have questions? Please see Gravatar's {{a}}documentation here{{/a}}.", {
+								components: {
+									a: <a href="https://gravatar.com/support" target="_blank" rel="noreferrer" />,
+								},
+							} ) }
+						</div>
+					</div>
 				</div>
 			</Main>
 		);

@@ -662,11 +662,7 @@ $image-height: 47px;
 
 		&:hover:not(&:disabled),
 		&:focus {
-			background-color: #163d98;
-		}
-
-		&:focus {
-			box-shadow: 0 0 0 2px #399ce3;
+			background-color: darken(#1d4fc4, 10%);
 		}
 	}
 
