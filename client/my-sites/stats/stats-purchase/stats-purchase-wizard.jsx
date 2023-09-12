@@ -196,44 +196,46 @@ const ProductCard = ( {
 									</div>
 								</PanelRow>
 							</PanelBody>
-							<PanelBody
-								title={ secondStepTitleNode }
-								opened={ wizardStep === SCREEN_PURCHASE }
-								className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
-							>
-								<PanelRow>
-									{ siteType === TYPE_PERSONAL ? (
-										<PersonalPurchase
-											subscriptionValue={ subscriptionValue }
-											setSubscriptionValue={ setSubscriptionValue }
-											defaultStartingValue={ defaultStartingValue }
-											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
-											currencyCode={ pwywProduct?.currency_code }
-											siteSlug={ siteSlug }
-											sliderSettings={ {
-												minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
-												sliderStepPrice,
-												maxSliderPrice,
-												uiEmojiHeartTier,
-												uiImageCelebrationTier,
-											} }
-											adminUrl={ adminUrl }
-											redirectUri={ redirectUri }
-											from={ from }
-										/>
-									) : (
-										<CommercialPurchase
-											planValue={ commercialProduct?.cost }
-											currencyCode={ commercialProduct?.currency_code }
-											siteSlug={ siteSlug }
-											commercialProduct={ commercialProduct }
-											adminUrl={ adminUrl }
-											redirectUri={ redirectUri }
-											from={ from }
-										/>
-									) }
-								</PanelRow>
-							</PanelBody>
+							{ siteType && wizardStep === SCREEN_PURCHASE && (
+								<PanelBody
+									title={ secondStepTitleNode }
+									opened={ wizardStep === SCREEN_PURCHASE }
+									className={ classNames( `${ COMPONENT_CLASS_NAME }__card-panel-title` ) }
+								>
+									<PanelRow>
+										{ siteType === TYPE_PERSONAL ? (
+											<PersonalPurchase
+												subscriptionValue={ subscriptionValue }
+												setSubscriptionValue={ setSubscriptionValue }
+												defaultStartingValue={ defaultStartingValue }
+												handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
+												currencyCode={ pwywProduct?.currency_code }
+												siteSlug={ siteSlug }
+												sliderSettings={ {
+													minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
+													sliderStepPrice,
+													maxSliderPrice,
+													uiEmojiHeartTier,
+													uiImageCelebrationTier,
+												} }
+												adminUrl={ adminUrl }
+												redirectUri={ redirectUri }
+												from={ from }
+											/>
+										) : (
+											<CommercialPurchase
+												planValue={ commercialProduct?.cost }
+												currencyCode={ commercialProduct?.currency_code }
+												siteSlug={ siteSlug }
+												commercialProduct={ commercialProduct }
+												adminUrl={ adminUrl }
+												redirectUri={ redirectUri }
+												from={ from }
+											/>
+										) }
+									</PanelRow>
+								</PanelBody>
+							) }
 						</Panel>
 					</div>
 					<div className={ `${ COMPONENT_CLASS_NAME }__card-inner--right` }>
