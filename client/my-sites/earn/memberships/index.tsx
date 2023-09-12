@@ -1,8 +1,8 @@
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { englishLocales, localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
 import { useState, useEffect, useCallback, MouseEvent, ReactNode } from 'react';
 import { shallowEqual } from 'react-redux';
@@ -78,7 +78,6 @@ type Subscriber = {
 
 function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const translate = useTranslate();
-	const locale = useLocale();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const source = getSource();
@@ -648,22 +647,11 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						) }
 					</div>
 					<div>
-						<h3>
-							{ englishLocales.includes( locale ) || i18n.hasTranslation( 'Simple fees structure' )
-								? translate( 'Simple fees structure' )
-								: translate( 'No membership fees' ) }
-						</h3>
+						<h3>{ translate( 'Simple fees structure' ) }</h3>
 						<p>
 							<CommissionFees commission={ commission } siteSlug={ site?.slug } />
 						</p>
-						<p>
-							{ preventWidows(
-								englishLocales.includes( locale ) ||
-									i18n.hasTranslation( 'No fixed monthly or annual fees charged.' )
-									? translate( 'No fixed monthly or annual fees charged.' )
-									: translate( 'No monthly or annual fees charged.' )
-							) }
-						</p>
+						<p>{ preventWidows( translate( 'No fixed monthly or annual fees charged.' ) ) }</p>
 					</div>
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
