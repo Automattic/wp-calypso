@@ -50,7 +50,6 @@
 			}
 
 			.button {
-				width: 100%;
 				font-family: $font-sf-pro-text;
 				font-size: $font-body;
 				padding: 8px 32px;
@@ -282,7 +281,7 @@
 
 	.stats-purchase-wizard__card-grid-action--left,
 	.stats-purchase-wizard__card-grid-action--right {
-		.components-button {
+		button {
 			width: 100%;
 			justify-content: center;
 		}
