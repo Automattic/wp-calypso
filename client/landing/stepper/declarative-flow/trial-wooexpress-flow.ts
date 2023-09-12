@@ -82,10 +82,10 @@ const wooexpress: Flow = {
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 			// Early return approach
 			if ( locale || locale === 'en' ) {
-				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }&aff=${ aff }&vid=${ vendorId }`;
+				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }&vid=${ vendorId }&aff=${ aff }`;
 			}
 
-			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }&aff=${ aff }&vid=${ vendor }`;
+			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }&vid=${ vendorId }&aff=${ aff }`;
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
