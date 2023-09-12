@@ -9,7 +9,7 @@ import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { isWPJobManagerOAuth2Client, isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravatarOAuth2Client, isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -252,10 +252,10 @@ class MagicLogin extends Component {
 	renderGravPoweredMagicLogin() {
 		const { oauth2Client, translate, locale, query } = this.props;
 
-		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-		const headerText = isWPJobManager
-			? translate( 'Welcome to WP Job Manager' )
-			: translate( 'Login to Gravatar' );
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const headerText = isGravatar
+			? translate( 'Login to Gravatar' )
+			: translate( 'Welcome to %(serviceName)s', { args: { serviceName: oauth2Client.title } } );
 		const loginUrl = login( {
 			locale,
 			redirectTo: query?.redirect_to,
@@ -280,7 +280,7 @@ class MagicLogin extends Component {
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
 					/>
-					{ ! isWPJobManager && (
+					{ isGravatar && (
 						<>
 							<hr className="grav-powered-magic-login__divider" />
 							<div className="grav-powered-magic-login__footer">
