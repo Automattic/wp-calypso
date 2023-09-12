@@ -319,7 +319,7 @@ export function redirectToPermalinkIfLoggedOut( context, next ) {
 	if ( ! siteFragment || ! context.path ) {
 		return next();
 	}
-	// Check the path is this format.
+	// Check if the path is in this format.
 	// - /page/{site}/{id}
 	// - /post/{site}/{id}
 	// - /edit/jetpack-portfolio/{site}/{id}
