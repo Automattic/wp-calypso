@@ -56,10 +56,13 @@ export class EditorBlockToolbarComponent {
 
 		if ( identifier.name ) {
 			// Accessible names don't need to have the selector built.
-			await editorParent.getByRole( 'button', { name: identifier.name } ).click();
+			const locator = editorParent.getByRole( 'button', { name: identifier.name } );
+			await locator.waitFor();
+			await locator.click();
 		} else {
 			// Other identifers need to have the selector built.
 			const locator = editorParent.locator( selectors.button( identifier ) );
+			await locator.waitFor();
 			await locator.click();
 		}
 	}
