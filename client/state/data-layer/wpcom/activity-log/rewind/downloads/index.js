@@ -32,7 +32,7 @@ const createGranularBackup = ( action ) => {
 			path: `/sites/${ action.siteId }/rewind/downloads`,
 			body: {
 				rewindId: action.rewindId,
-				types: 'paths',
+				types: { paths: true },
 				include_path_list: action.includePaths,
 				exclude_path_list: action.excludePaths,
 			},
