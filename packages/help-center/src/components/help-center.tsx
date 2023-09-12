@@ -2,9 +2,11 @@
 /**
  * External Dependencies
  */
+import config from '@automattic/calypso-config';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
+import { OdieAssistantProvider } from 'calypso/odie/context';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
@@ -71,6 +73,7 @@ function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded:
 }
 
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
+	const isWapuuEnabled = config.isEnabled( 'wapuu' );
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const isHelpCenterShown = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
@@ -128,7 +131,18 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />,
+		isWapuuEnabled ? (
+			<OdieAssistantProvider
+				sectionName="help-center"
+				botSetting="supportDocs"
+				botName="Help center"
+				aside={
+					<HelpCenterContainer handleClose={ handleClose } hidden={ false } isRelative={ true } />
+				}
+			/>
+		) : (
+			<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />
+		),
 		portalParent
 	);
 };

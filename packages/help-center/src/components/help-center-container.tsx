@@ -31,15 +31,19 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
-	const { show, isMinimized, initialRoute } = useSelect(
-		( select ) => ( {
-			show: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-			isMinimized: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsMinimized(),
-			initialRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getInitialRoute(),
-		} ),
-		[]
-	);
+const HelpCenterContainer: React.FC< Container > = ( {
+	handleClose,
+	hidden,
+	isRelative = false,
+} ) => {
+	const { show, isMinimized, initialRoute } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			show: isRelative || store.isHelpCenterShown(),
+			isMinimized: store.getIsMinimized(),
+			initialRoute: store.getInitialRoute(),
+		};
+	}, [] );
 
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
@@ -47,6 +51,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	const isMobile = useMobileBreakpoint();
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
+		'is-relative': isRelative,
 	} );
 
 	const onDismiss = () => {
@@ -79,19 +84,21 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : undefined }>
 			<FeatureFlagProvider>
 				<OptionalDraggable
-					draggable={ ! isMobile && ! isMinimized }
+					draggable={ ! isMobile && ! isMinimized && ! isRelative }
 					nodeRef={ nodeRef }
 					handle=".help-center__container-header"
 					bounds="body"
 				>
 					<Card className={ classNames } { ...animationProps } ref={ nodeRef }>
-						<HelpCenterHeader
-							isMinimized={ isMinimized }
-							onMinimize={ () => setIsMinimized( true ) }
-							onMaximize={ () => setIsMinimized( false ) }
-							onDismiss={ onDismiss }
-						/>
-						<HelpCenterContent />
+						{ ! isRelative && (
+							<HelpCenterHeader
+								isMinimized={ isMinimized }
+								onMinimize={ () => setIsMinimized( true ) }
+								onMaximize={ () => setIsMinimized( false ) }
+								onDismiss={ onDismiss }
+							/>
+						) }
+						<HelpCenterContent isRelative={ isRelative } />
 						{ ! isMinimized && <HelpCenterFooter /> }
 					</Card>
 				</OptionalDraggable>

@@ -5,6 +5,8 @@ const getWapuuInitialPrompts = ( sectionName: OdieAllowedSectionNames ): string 
 	switch ( sectionName ) {
 		case 'plans':
 			return 'Hello, I am Wapuu! I am here to help you choose the best plan for your site. You can ask me about our plans and their features.';
+		case 'help-center':
+			return 'Hello, I am Wapuu! I am here to help you find the answers you need. Below you can find some of the areas where users typically need help.';
 		default:
 			return 'Hello, I am Wapuu! Your personal assistant.';
 	}

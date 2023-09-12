@@ -26,6 +26,7 @@ import { useDebounce } from 'use-debounce';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
@@ -103,6 +104,7 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 }: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
+	const { setIsLoading } = useOdieAssistantContext();
 
 	const { hasPurchases, sectionName, adminResults } = useSelector( ( state ) => {
 		return {
@@ -133,6 +135,10 @@ function HelpSearchResults( {
 		{},
 		sectionName
 	);
+
+	useEffect( () => {
+		setIsLoading( isSearching );
+	}, [ isSearching, setIsLoading ] );
 
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;

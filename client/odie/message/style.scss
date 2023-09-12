@@ -19,16 +19,16 @@
 	}
 }
 
-.odie-chatbox-message.odyssus-chatbox-message-user {
+.odie-chatbox-message.odie-chatbox-message-user {
 	align-self: flex-end;
 	background-color: #dcf8c6;
 }
 
-.odie-chatbox-message.odyssus-chatbox-message-user > :last-child {
+.odie-chatbox-message.odie-chatbox-message-user > :last-child {
 	margin-bottom: 0;
 }
 
-.odie-chatbox-message.odyssus-chatbox-message-wapuu {
+.odie-chatbox-message.odie-chatbox-message-wapuu {
 	align-self: flex-start;
 	background-color: #f1f0f0;
 }
@@ -98,4 +98,25 @@
 .odie-chatbox-message-action-button {
 	display: inline;
 	padding: 0;
+}
+
+.odie-chatbox-help-link {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	cursor: pointer;
+}
+
+.odie-chatbox-help-link:hover {
+	color: var(--theme-highlight-color);
+}
+
+.odie-chatbox-help-link__content,
+.full-width-message {
+	width: 100%;
+}
+
+.odie-chatbox-message-help-icon {
+	fill: var(--studio-blue-50);
+	margin: 4px;
 }

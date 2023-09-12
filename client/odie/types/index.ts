@@ -14,10 +14,11 @@ export type Nudge = {
 
 export type MessageRole = 'user' | 'bot';
 
-export type MessageType = 'message' | 'action' | 'meta' | 'error' | 'placeholder';
+export type MessageType = 'message' | 'action' | 'meta' | 'error' | 'placeholder' | 'help-link';
 
 export type Message = {
 	content: string;
+	meta?: Record< string, string >;
 	role: MessageRole;
 	type: MessageType;
 };
@@ -34,6 +35,7 @@ export type OdieAllowedSectionNames =
 	| 'domains'
 	| 'email'
 	| 'site-purchases'
-	| 'checkout';
+	| 'checkout'
+	| 'help-center';
 
 export type OdieAllowedBots = 'wapuu';

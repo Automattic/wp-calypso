@@ -21,10 +21,12 @@ import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
-const HelpCenterContent: React.FC = () => {
+const HelpCenterContent: React.FC< { isRelative?: boolean } > = ( { isRelative = false } ) => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const className = classnames( 'help-center__container-content' );
+	const className = classnames( 'help-center__container-content', {
+		'is-relative': isRelative,
+	} );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const section = useSelector( getSectionName );
 

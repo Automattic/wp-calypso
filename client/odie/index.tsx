@@ -1,3 +1,4 @@
+import { HelpIcon } from '@automattic/help-center';
 import { TextControl, Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
@@ -15,13 +16,16 @@ export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
 
 type OdieAssistantProps = {
+	aside?: React.ReactNode;
 	botNameSlug: string;
 	simple?: boolean;
 };
 
 const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { simple, botNameSlug } = props;
+	const { aside = null, simple, botNameSlug } = props;
 	const {
+		botName,
+		botSetting,
 		lastNudge,
 		chat,
 		addMessage,
@@ -32,7 +36,10 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		setIsNudging,
 		isVisible,
 		setIsVisible,
+		showAside,
+		setShowAside,
 	} = useOdieAssistantContext();
+	const hasAside = aside !== null;
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
@@ -156,6 +163,10 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		handleSendMessage();
 	}
 
+	function handleAsideToggle() {
+		setShowAside( ! showAside );
+	}
+
 	return (
 		<div
 			className={ classnames( 'chatbox', {
@@ -164,6 +175,7 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 				'chatbox-show-vertical': isVisible && simple,
 				'chatbox-hide-vertical': ! isVisible && simple,
 				'using-environment-badge': environmentBadge,
+				'chatbox-big': botSetting === 'supportDocs',
 			} ) }
 		>
 			<TrackComponentView
@@ -177,55 +189,70 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 					isLoading={ isLoading }
 				/>
 			) }
-			<div className="chatbox-header">
+			<div
+				className={ classnames( 'chatbox-header', {
+					'chatbox-header-with-help': hasAside,
+				} ) }
+			>
 				{ ! simple ? (
-					'Wapuu Assistant'
+					<span>{ botName }</span>
 				) : (
-					<>
-						<button className="chatbox-header-button" onClick={ handleToggleVisibility }>
-							<span
-								className={ classnames( {
-									'chatbox-attention': ! userInteracted || isNudging,
-								} ) }
-							>
-								Wapuu Assistant
-							</span>
-						</button>
-					</>
+					<button className="chatbox-header-button" onClick={ handleToggleVisibility }>
+						<span
+							className={ classnames( {
+								'chatbox-attention': ! userInteracted || isNudging,
+							} ) }
+						>
+							{ botName }
+						</span>
+					</button>
 				) }
+				<Button
+					className="chatbox-aside-btn"
+					onClick={ handleAsideToggle }
+					type="button"
+					icon={ <HelpIcon /> }
+					iconSize={ 16 }
+				>
+					{ showAside ? 'Ask Wapuu' : "I'm looking for something else" }
+				</Button>
 			</div>
 
-			<div className="chat-box-message-container">
-				<div className="chatbox-messages">
-					{ chat.messages.map( ( message, index ) => (
-						<ChatMessage
-							message={ message }
-							isLast={ index === chat.messages.length - 1 }
-							messageEndRef={ messagesEndRef }
-							key={ index }
-						/>
-					) ) }
-				</div>
-				<form onSubmit={ handleFormSubmit }>
-					<div className="chatbox-input-area">
-						<TextControl
-							className="chatbox-input"
-							type="text"
-							value={ input }
-							onChange={ handleMessageChange }
-							onKeyDown={ handleKeyDown }
-						/>
-						<Button
-							disabled={ isLoading }
-							onClick={ handleSendMessage }
-							className="chatbox-send-btn"
-							type="button"
-						>
-							Send
-						</Button>
+			{ hasAside && showAside && <div className="chatbox-aside-container">{ aside }</div> }
+			{ ! hasAside ||
+				( hasAside && ! showAside && (
+					<div className="chat-box-message-container">
+						<div className="chatbox-messages">
+							{ chat.messages.map( ( message, index ) => (
+								<ChatMessage
+									message={ message }
+									isLast={ index === chat.messages.length - 1 }
+									messageEndRef={ messagesEndRef }
+									key={ index }
+								/>
+							) ) }
+						</div>
+						<form onSubmit={ handleFormSubmit }>
+							<div className="chatbox-input-area">
+								<TextControl
+									className="chatbox-input"
+									type="text"
+									value={ input }
+									onChange={ handleMessageChange }
+									onKeyDown={ handleKeyDown }
+								/>
+								<Button
+									disabled={ isLoading }
+									onClick={ handleSendMessage }
+									className="chatbox-send-btn"
+									type="button"
+								>
+									Send
+								</Button>
+							</div>
+						</form>
 					</div>
-				</form>
-			</div>
+				) ) }
 		</div>
 	);
 };
