@@ -133,13 +133,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
-		pricing: {
-			currencyCode,
-			originalPrice,
-			discountedPrice,
-			introOffer,
-			shouldUseSmallestUnitCurrency,
-		},
+		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
 	} = gridPlansIndex[ planSlug ];
 	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
 	const isPricedPlan = null !== originalPrice.monthly;
@@ -162,7 +156,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 								rawPrice={ introOffer.rawPrice }
 								displayPerMonthNotation={ false }
 								isLargeCurrency={ isLargeCurrency }
-								isSmallestUnit={ shouldUseSmallestUnitCurrency }
+								isSmallestUnit={ true }
 								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							/>
 						</>
@@ -180,7 +174,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 									rawPrice={ originalPrice.monthly }
 									displayPerMonthNotation={ false }
 									isLargeCurrency={ isLargeCurrency }
-									isSmallestUnit={ shouldUseSmallestUnitCurrency }
+									isSmallestUnit={ true }
 									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 									original
 								/>
@@ -189,7 +183,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 									rawPrice={ discountedPrice.monthly }
 									displayPerMonthNotation={ false }
 									isLargeCurrency={ isLargeCurrency }
-									isSmallestUnit={ shouldUseSmallestUnitCurrency }
+									isSmallestUnit={ true }
 									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 									discounted
 								/>
@@ -202,7 +196,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit={ shouldUseSmallestUnitCurrency }
+							isSmallestUnit={ true }
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 						/>
 					) }
