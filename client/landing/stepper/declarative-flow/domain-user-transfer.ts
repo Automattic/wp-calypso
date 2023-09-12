@@ -1,5 +1,3 @@
-// import { useSiteIdParam } from '../hooks/use-site-id-param';
-// import { useSiteSlug } from '../hooks/use-site-slug';
 import DomainContactInfo from './internals/steps-repository/domain-contact-info';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -10,9 +8,6 @@ const domainUserTransfer: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		// const siteId = useSiteIdParam();
-		// const siteSlug = useSiteSlug();
-
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			return providedDependencies;
 		}

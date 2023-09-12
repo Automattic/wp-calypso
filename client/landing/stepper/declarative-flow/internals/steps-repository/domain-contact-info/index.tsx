@@ -1,3 +1,4 @@
+import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -11,17 +12,13 @@ import {
 	domainManagementEdit,
 } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import type { StepProps } from '../../types';
+import type { StepProps, ProvidedDependencies } from '../../types';
 
 import './styles.scss';
 
 export default function DomainContactInfo( { navigation }: StepProps ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-
-	const handleSubmit = () => {
-		submit?.();
-	};
 
 	return (
 		<StepContainer
@@ -37,23 +34,48 @@ export default function DomainContactInfo( { navigation }: StepProps ) {
 					) }
 				/>
 			}
-			stepContent={ <ContactInfo onSubmit={ handleSubmit } /> }
+			stepContent={ <ContactInfo onSubmit={ submit } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
 }
 
-function ContactInfo( { onSubmit }: { onSubmit: () => void } ) {
+function ContactInfo( {
+	onSubmit,
+}: {
+	onSubmit:
+		| ( ( providedDependencies?: ProvidedDependencies | undefined, ...params: string[] ) => void )
+		| undefined;
+} ) {
 	const translate = useTranslate();
 	const { domain } = useDomainParams();
 
-	function getIsFieldDisabled( fieldName: string ) {
+	function getIsFieldDisabled() {
 		return false;
 	}
 
-	function validate() {}
-
-	function handleContactDetailsChange() {}
+	function validate(
+		fieldValues: Record< string, string | number >,
+		onComplete: ( nullOrError: null | Error, data?: Record< string, unknown > | undefined ) => void
+	) {
+		wp.req
+			.post(
+				'/me/domain-contact-information/validate',
+				mapRecordKeysRecursively(
+					{
+						contactInformation: fieldValues,
+						domainNames: [ domain ],
+					},
+					camelToSnakeCase
+				)
+			)
+			.then( ( data: { messages: Record< string, unknown > } ) => {
+				onComplete( null, mapRecordKeysRecursively( data?.messages || {}, snakeToCamelCase ) );
+			} )
+			.catch( ( error: Error ) => {
+				onComplete( error );
+			} );
+	}
 
 	return (
 		<form>
@@ -75,7 +97,6 @@ function ContactInfo( { onSubmit }: { onSubmit: () => void } ) {
 				} }
 				needsFax={ domain?.endsWith( '.nl' ) }
 				getIsFieldDisabled={ getIsFieldDisabled }
-				onContactDetailsChange={ handleContactDetailsChange }
 				onSubmit={ onSubmit }
 				onValidate={ validate }
 				labelTexts={ { submitButton: translate( 'Receive domain transfer' ) } }
