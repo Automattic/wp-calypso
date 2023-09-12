@@ -1067,7 +1067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/launchpad-navigator@workspace:packages/launchpad-navigator":
+"@automattic/launchpad-navigator@workspace:^, @automattic/launchpad-navigator@workspace:packages/launchpad-navigator":
   version: 0.0.0-use.local
   resolution: "@automattic/launchpad-navigator@workspace:packages/launchpad-navigator"
   dependencies:
@@ -11202,6 +11202,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/lasagna": ^0.6.1
     "@automattic/launchpad": "workspace:^"
+    "@automattic/launchpad-navigator": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
     "@automattic/mini-cart": "workspace:^"
