@@ -1,11 +1,10 @@
-import apiFetch from '@wordpress/api-fetch';
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import type { UpdateLaunchpadNavigatorResponse } from './types';
 import type { GeneratorReturnType } from '../mapped-types';
-import type { APIFetchOptions } from '../queries/use-launchpad-navigator';
 
 export const receiveCurrentChecklist = ( currentChecklist: string | null ) =>
 	( {
