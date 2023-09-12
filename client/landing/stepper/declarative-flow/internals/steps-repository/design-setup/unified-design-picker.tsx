@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import {
 	Onboard,
 	updateLaunchpadSettings,
@@ -22,6 +22,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
@@ -39,7 +40,6 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
-import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
@@ -47,7 +47,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
-import EligibilityWarningModal from '../../../../../..//my-sites/themes/atomic-transfer-dialog';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
@@ -108,6 +107,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
+	const [ showEligibility, setShowEligibility ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
 
@@ -429,13 +429,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 		setShowUpgradeModal( false );
 	}
-
-	function handleCheckout() {
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-			theme: selectedDesign?.slug,
-			is_externally_managed: selectedDesign?.is_externally_managed,
-		} );
-
+	function getPlan() {
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
 			( set ) => set.slug === 'woo-on-plans'
 		);
@@ -448,11 +442,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
+		return plan;
+	}
+	function handleCheckout() {
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+			is_externally_managed: selectedDesign?.is_externally_managed,
+		} );
+
+		const plan = getPlan();
 
 		if ( siteSlugOrId ) {
 			// TODO: Remove this temporary condition and
 			//      add condition here to check if checkout or atomic transfer dialog should be shown
-			if ( plan === 'business-bundle' ) {
+			if ( plan === 'business-bundle' && ! selectedDesign?.is_externally_managed ) {
 				goToCheckout( {
 					flowName: flow,
 					stepName,
@@ -465,9 +468,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 							? [ marketplaceProductSlug ]
 							: [],
 				} );
+			} else if ( selectedDesign?.is_externally_managed ) {
+				setShowEligibility( true );
 			}
-
-			reduxDispatch( showAtomicTransferDialog( selectedDesign?.slug ) );
 		}
 		setShowUpgradeModal( false );
 	}
@@ -755,7 +758,35 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
-				<EligibilityWarningModal siteId={ site?.ID } />
+				<Dialog
+					additionalClassNames="plugin-details-cta__dialog-content"
+					additionalOverlayClassNames="plugin-details-cta__modal-overlay"
+					isVisible={ showEligibility }
+					onClose={ () => setShowEligibility( false ) }
+					showCloseIcon={ true }
+				>
+					<EligibilityWarnings
+						currentContext="plugin-details"
+						standaloneProceed
+						isMarketplace={ selectedDesign?.is_externally_managed }
+						onProceed={ () => {
+							goToCheckout( {
+								flowName: flow,
+								stepName,
+								siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
+								// When the user is done with checkout, send them back to the current url
+								destination: window.location.href.replace( window.location.origin, '' ),
+								plan: getPlan(),
+								extraProducts:
+									selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
+										? [ marketplaceProductSlug ]
+										: [],
+							} );
+							setShowEligibility( false );
+						} }
+						backUrl="#"
+					/>
+				</Dialog>
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ handleCheckoutForPremiumGlobalStyles }
 					closeModal={ closePremiumGlobalStylesModal }
