@@ -27,13 +27,12 @@ export function getPlanDiscountedRawPrice(
 	} = {}
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
+	const rawPrice = plan?.rawPrice ?? -1;
 
-	if ( ( plan?.rawPrice ?? -1 ) < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
+	if ( rawPrice < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) || ! plan ) {
 		return null;
 	}
-	if ( ! plan ) {
-		return null;
-	}
-	const discountPrice = returnSmallestUnit ? plan.rawPriceInteger : plan.rawPrice;
+
+	const discountPrice = returnSmallestUnit ? plan.rawPriceInteger : rawPrice;
 	return returnMonthly ? calculateMonthlyPriceForPlan( productSlug, discountPrice ) : discountPrice;
 }
