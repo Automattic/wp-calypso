@@ -248,7 +248,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					<ConfirmModal
 						sourceSiteSlug={ sourceSiteSlug }
 						targetSiteSlug={ targetSite.slug }
-						onClose={ () => setShowConfirmModal( false ) }
+						onClose={ hideConfirmModal }
 						onConfirm={ () => {
 							// reset migration confirmation to initial state
 							setMigrationConfirmed( false );
@@ -272,7 +272,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 								onClick={ () => {
 									migrationConfirmed
 										? startImport( { type: 'without-credentials', ...migrationTrackingProps } )
-										: setShowConfirmModal( true );
+										: displayConfirmModal();
 								} }
 							>
 								{ translate( 'Start migration' ) }
@@ -282,6 +282,22 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 				</div>
 			</>
 		);
+	}
+
+	function displayConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( true );
+	}
+
+	function hideConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_hide', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( false );
 	}
 
 	function renderUpdatePluginInfo() {
