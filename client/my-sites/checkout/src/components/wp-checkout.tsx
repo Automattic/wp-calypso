@@ -38,6 +38,7 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
+	has100YearPlan as cartHas100YearPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -61,6 +62,7 @@ import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
@@ -74,7 +76,6 @@ import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackCheckoutSidebarPlanUpsell from './jetpack-checkout-sidebar-plan-upsell';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
-import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -309,12 +310,19 @@ export default function WPCheckout( {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
 	} );
 
+	const has100YearPlan = cartHas100YearPlan( responseCart );
+
 	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
+	const [ is100YearPlanTermsAccepted, setIs100YearPlanTermsAccepted ] = useState( false );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 
 	const validateForm = async () => {
 		setIsSubmitted( true );
 		if ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted ) {
+			return false;
+		}
+
+		if ( has100YearPlan && ! is100YearPlanTermsAccepted ) {
 			return false;
 		}
 		return true;
@@ -566,10 +574,21 @@ export default function WPCheckout( {
 							<>
 								<PaymentMethodStepContent />
 								{ hasMarketplaceProduct && (
-									<ThirdPartyDevsAccount
+									<AcceptTermsOfServiceCheckbox
 										isAccepted={ is3PDAccountConsentAccepted }
 										onChange={ setIs3PDAccountConsentAccepted }
 										isSubmitted={ isSubmitted }
+										message={ translate(
+											'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+										) }
+									/>
+								) }
+								{ has100YearPlan && (
+									<AcceptTermsOfServiceCheckbox
+										isAccepted={ is100YearPlanTermsAccepted }
+										onChange={ setIs100YearPlanTermsAccepted }
+										isSubmitted={ isSubmitted }
+										message={ translate( 'I have read and agree to all of the above.' ) }
 									/>
 								) }
 							</>

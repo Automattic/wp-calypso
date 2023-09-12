@@ -49,6 +49,7 @@ class ReaderPostCard extends Component {
 		hasOrganization: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
+		streamKey: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -287,6 +288,7 @@ class ReaderPostCard extends Component {
 						post={ post }
 						handleClick={ this.props.handleClick }
 						fixedHeaderHeight={ this.props.fixedHeaderHeight }
+						streamKey={ this.props.streamKey }
 					/>
 				) }
 			</Card>

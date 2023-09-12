@@ -15,6 +15,7 @@ import {
 	requestPostComments,
 	requestComment,
 	setActiveReply,
+	toggleInlineCommentsExpanded,
 } from 'calypso/state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
 import {
@@ -22,6 +23,7 @@ import {
 	getActiveReplyCommentId,
 	getCommentById,
 	getPostCommentsTree,
+	getInlineCommentsExpandedState,
 } from 'calypso/state/comments/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -66,6 +68,7 @@ class PostCommentList extends Component {
 		commentsFilter: PropTypes.string,
 		followSource: PropTypes.string,
 		fixedHeaderHeight: PropTypes.number,
+		streamKey: PropTypes.string,
 
 		// To show only the most recent comment by default, and allow expanding to see the longer
 		// list.
@@ -102,7 +105,6 @@ class PostCommentList extends Component {
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
 		commentText: '',
-		isExpanded: false,
 		showExpandWhenOnlyComments: false,
 	};
 
@@ -191,21 +193,6 @@ class PostCommentList extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		// We need to determine if CSS is line-clamping comments so we can show a button to expand
-		// when necessary. We evaluate this after update when the isExpanded state has been set to
-		// false or new comments have been posted. We avoid the setState loops by not running this
-		// check when the state it would set is already present.
-		if (
-			// The view is not expanded and has just been collapsed or the amount of comments have changed.
-			// Note more safety conditions are contained generally in checkForClampedComments.
-			! this.state.isExpanded &&
-			( prevState.isExpanded ||
-				Object.keys( prevProps.commentsTree ).length !==
-					Object.keys( this.props.commentsTree ).length )
-		) {
-			this.checkForClampedComments();
-		}
-
 		// If only the state is changing, do nothing. (Avoids setState loops.)
 		if ( prevState !== this.state && prevProps === this.props ) {
 			return;
@@ -219,13 +206,24 @@ class PostCommentList extends Component {
 			this.hasScrolledToComment = false;
 			this.scrollWhenDOMReady();
 		}
+
+		if (
+			// The view is not expanded and has just been collapsed or the amount of comments have changed.
+			// Note more safety conditions are contained generally in checkForClampedComments.
+			! this.props.isExpanded &&
+			( prevProps.isExpanded ||
+				Object.keys( prevProps.commentsTree ).length !==
+					Object.keys( this.props.commentsTree ).length )
+		) {
+			this.checkForClampedComments();
+		}
 	}
 
 	checkForClampedComments = () => {
 		if (
 			// This check isnt necessary if we arent in expandableView or are expanded.
 			! this.props.expandableView ||
-			this.state.isExpanded ||
+			this.props.isExpanded ||
 			// Bail early if there is no listRef to query.
 			! this.listRef.current ||
 			// Bail early if this state is already flagged, avoids setState loops in methods like
@@ -337,9 +335,7 @@ class PostCommentList extends Component {
 		if ( ! this.props.openPostPageAtComments ) {
 			return;
 		}
-		this.maybeScrollToListTop();
-		// Use setTimeout at 0ms to ensure this is called after scroll states are updated.
-		return setTimeout( this.props.openPostPageAtComments, 0 );
+		return this.props.openPostPageAtComments();
 	};
 
 	onUpdateCommentText = ( commentText ) => {
@@ -369,7 +365,7 @@ class PostCommentList extends Component {
 		if ( this.props.expandableView ) {
 			ev.stopPropagation();
 
-			if ( ! this.state.isExpanded ) {
+			if ( ! this.props.isExpanded ) {
 				recordAction( 'click_inline_comments_expand' );
 				recordGaEvent( 'Clicked Inline Comments Expand' );
 				recordTrackForPost( 'calypso_reader_inline_comments_expand_click', this.props.post );
@@ -377,7 +373,11 @@ class PostCommentList extends Component {
 				this.maybeScrollToListTop();
 			}
 
-			this.setState( { isExpanded: ! this.state.isExpanded } );
+			this.props.toggleInlineCommentsExpanded( {
+				streamKey: this.props.streamKey,
+				siteId: this.props.siteId,
+				postId: this.props.postId,
+			} );
 		}
 	};
 
@@ -410,10 +410,10 @@ class PostCommentList extends Component {
 		const shouldShowViewMoreToggle =
 			this.props.expandableView &&
 			( displayedCommentsCount < this.getCommentsCount( commentsTreeAvailable.children ) ||
-				this.state.isExpanded );
+				this.props.isExpanded );
 		const shouldShowLinkToFullPost =
 			this.props.expandableView &&
-			( this.state.isExpanded || ! shouldShowViewMoreToggle ) &&
+			( this.props.isExpanded || ! shouldShowViewMoreToggle ) &&
 			displayedCommentsCount < actualCommentsCount;
 
 		const viewMoreText =
@@ -422,7 +422,7 @@ class PostCommentList extends Component {
 				: translate( 'View more comments' );
 
 		let viewFewerText = translate( 'View fewer comments' );
-		if ( this.state.isExpanded ) {
+		if ( this.props.isExpanded ) {
 			const { displayedCommentsCount: collapsedDisplayedCommentsCount } =
 				this.getDisplayedCollapsedInlineComments( commentsTreeToShow );
 
@@ -448,7 +448,7 @@ class PostCommentList extends Component {
 						className="comments__toggle-expand"
 						onClick={ this.toggleExpanded }
 					>
-						{ this.state.isExpanded ? viewFewerText : viewMoreText }
+						{ this.props.isExpanded ? viewFewerText : viewMoreText }
 					</Button>
 				) }
 				{ shouldShowLinkToFullPost && (
@@ -616,7 +616,7 @@ class PostCommentList extends Component {
 			? Infinity
 			: this.state.amountOfCommentsToTake;
 
-		const isCollapsedInline = expandableView && ! this.state.isExpanded;
+		const isCollapsedInline = expandableView && ! this.props.isExpanded;
 
 		const {
 			displayedComments,
@@ -793,7 +793,14 @@ export default connect(
 				siteId,
 				postId,
 			} ),
+			isExpanded: getInlineCommentsExpandedState( state, ownProps.streamKey, siteId, postId ),
 		};
 	},
-	{ requestComment, requestPostComments, recordReaderTracksEvent, setActiveReply }
+	{
+		requestComment,
+		requestPostComments,
+		recordReaderTracksEvent,
+		setActiveReply,
+		toggleInlineCommentsExpanded,
+	}
 )( PostCommentList );

@@ -219,6 +219,7 @@ export function getTosUploadDestination(): string {
  * Examples:
  * 	e2eflowtestingpaid1600000@inboxID.mailosaur.net
  *
+ * @deprecated Use EmailClient.getTestEmailAddress instead.
  * @param param0 Keyed parameter object.
  * @param {string} param0.inboxId Existing inbox ID on mailosaur.
  * @param {string} param0.prefix Custom prefix to be prepended to the inboxId but after the global email prefix.

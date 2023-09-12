@@ -9,7 +9,7 @@ import {
 	PlanSlug,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -332,7 +332,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
+		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
@@ -340,7 +340,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
+		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
 		selectedFeature,
@@ -349,7 +349,7 @@ const PlansFeaturesMain = ( {
 
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
 	const filteredPlansForPlanFeatures = useFilterPlansForPlanFeatures( {
-		plans: gridPlans,
+		plans: gridPlans || [],
 		isDisplayingPlansNeededForFeature: isDisplayingPlansNeededForFeature(),
 		selectedPlan,
 		hideFreePlan,
@@ -528,6 +528,8 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
+	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
+
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -627,7 +629,8 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ ! intentFromSiteMeta.processing && (
+			{ isLoadingGridPlans && <Spinner size={ 30 } /> }
+			{ ! isLoadingGridPlans && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div

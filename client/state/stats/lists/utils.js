@@ -1,5 +1,5 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, mapKeys, get, filter, map, concat, flatten } from 'lodash';
+import { sortBy, camelCase, mapKeys, get, filter, map, flatten } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
@@ -112,7 +112,7 @@ export function buildExportArray( data, parent = null ) {
 			return buildExportArray( child, label );
 		} );
 
-		exportData = concat( exportData, flatten( childData ) );
+		exportData = exportData.concat( flatten( childData ) );
 	}
 
 	return exportData;

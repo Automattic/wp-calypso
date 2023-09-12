@@ -1,10 +1,4 @@
-import {
-	isJetpackPlanSlug,
-	PRODUCT_JETPACK_SOCIAL_ADVANCED,
-	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
-	PRODUCT_JETPACK_SOCIAL_BASIC,
-	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
-} from '@automattic/calypso-products';
+import { isJetpackPlanSlug, isJetpackSocialSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
@@ -102,12 +96,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						isSuperseded
 					);
 
-					const isSocialProduct = [
-						PRODUCT_JETPACK_SOCIAL_ADVANCED,
-						PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
-						PRODUCT_JETPACK_SOCIAL_BASIC,
-						PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
-					].includes( item.productSlug );
+					const isSocialProduct = isJetpackSocialSlug( item.productSlug );
 
 					// Go to the checkout page for all products when they click on the 'GET' CTA,
 					// except for Jetpack Social when it isn't owned or included in an active plan,

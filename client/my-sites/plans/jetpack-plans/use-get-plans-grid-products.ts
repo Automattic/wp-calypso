@@ -6,8 +6,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
@@ -138,9 +140,11 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	const socialProductsToShow: string[] = [];
 
 	const ownsSocialBasic =
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY );
 	const ownsSocialAdvanced =
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY );
 
@@ -148,6 +152,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Otherwise the one owned will be displayed via purchasedProducts.
 	if ( ! ownsSocialBasic && ! ownsSocialAdvanced ) {
 		socialProductsToShow.push(
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_ADVANCED,
 			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY
 		);

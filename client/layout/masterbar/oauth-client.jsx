@@ -6,10 +6,8 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import CrowdsignalOauthMasterbar from './crowdsignal';
-import GravatarOauthMasterbar from './gravatar';
 import WooOauthMasterbar from './woo';
 import './oauth-client.scss';
 
@@ -59,10 +57,6 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 const OauthClientMasterbar = ( { oauth2Client } ) => {
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		return <CrowdsignalOauthMasterbar oauth2Client={ oauth2Client } />;
-	}
-
-	if ( isGravatarOAuth2Client( oauth2Client ) ) {
-		return <GravatarOauthMasterbar iconUrl={ oauth2Client.icon } iconAlt={ oauth2Client.title } />;
 	}
 
 	if ( isWooOAuth2Client( oauth2Client ) ) {

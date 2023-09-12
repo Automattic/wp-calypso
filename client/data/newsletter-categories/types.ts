@@ -12,6 +12,7 @@ export type Category = {
 };
 
 export type NewsletterCategories = {
+	enabled: boolean;
 	newsletterCategories: NewsletterCategory[];
 };
 
@@ -22,4 +23,9 @@ export type NewsletterCategory = {
 	description: string;
 	parent: number;
 	subscribed?: boolean;
+};
+
+export type NewsletterCategoriesResponse = {
+	enabled: boolean;
+	newsletter_categories: NewsletterCategory[];
 };

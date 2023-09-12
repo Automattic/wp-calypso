@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -69,7 +70,16 @@ export class LoginLinks extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
 
-		page( login( { twoFactorAuthType: 'backup' } ) );
+		const { isGravatar, query } = this.props;
+
+		page(
+			login( {
+				twoFactorAuthType: 'backup',
+				// Forward the "client_id" and "redirect_to" query parameters to the backup page
+				// This ensures that the signup link on the page functions properly for Gravatar users.
+				...( isGravatar && { oauth2ClientId: query?.client_id, redirectTo: query?.redirect_to } ),
+			} )
+		);
 	};
 
 	handleMagicLoginLinkClick = ( event ) => {
@@ -187,7 +197,7 @@ export class LoginLinks extends Component {
 				icon={ true }
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
-				href="https://wordpress.com/support/security/two-step-authentication/"
+				href={ localizeUrl( 'https://wordpress.com/support/security/two-step-authentication/' ) }
 			>
 				{ this.props.translate( 'Get help' ) }
 			</ExternalLink>
@@ -283,9 +293,9 @@ export class LoginLinks extends Component {
 
 		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
 
-		// If we got here coming from Jetpack Cloud / Gravatar login page, we want to go back
+		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) || this.props.isGravatar ) {
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
 			const queryArgs = {
@@ -316,7 +326,6 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isP2Login,
-			isGravatar,
 			locale,
 			oauth2Client,
 			pathname,
@@ -324,10 +333,6 @@ export class LoginLinks extends Component {
 			translate,
 			usernameOrEmail,
 		} = this.props;
-
-		if ( isGravatar ) {
-			return null;
-		}
 
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
@@ -367,7 +372,6 @@ export class LoginLinks extends Component {
 			<div
 				className={ classnames( 'wp-login__links', {
 					'has-2fa-links': this.props.twoFactorAuthType,
-					'is-gravatar-links': this.props.isGravatar,
 				} ) }
 			>
 				{ this.renderSignUpLink() }

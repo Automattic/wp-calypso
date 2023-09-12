@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import checkIcon from 'calypso/assets/images/jetpack/jetpack-green-checkmark.svg';
 import Banner from 'calypso/components/banner';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -32,6 +33,16 @@ export default function WPCOMAtomicHostingNotification( {
 
 	const siteSlug = urlToSlug( selectedSite );
 
+	useEffect( () => {
+		// Track event when this notification is displayed.
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_wpcom_hosting_notification_view', {
+				site: selectedSite,
+				licenseItem,
+			} )
+		);
+	}, [ dispatch, licenseItem, selectedSite ] );
+
 	const extraContent = (
 		<div className="site-add-license-notification__license-banner-wp-buttons">
 			<Button
@@ -42,7 +53,7 @@ export default function WPCOMAtomicHostingNotification( {
 					handleOnClick( 'calypso_jetpack_agency_dashboard_setup_site_in_wp_admin_click' )
 				}
 			>
-				{ translate( 'Setup site in wp-admin' ) }
+				{ translate( 'Set up site in wp-admin' ) }
 				<span>
 					<Gridicon icon="external" size={ 18 } />
 				</span>
@@ -82,7 +93,7 @@ export default function WPCOMAtomicHostingNotification( {
 				horizontal
 				iconPath={ checkIcon }
 				onDismiss={ () =>
-					handleOnClick( 'calypso_jetpack_agency_dashboard_wpcom_hosting-notification_dismiss' )
+					handleOnClick( 'calypso_jetpack_agency_dashboard_wpcom_hosting_notification_dismiss' )
 				}
 				extraContent={ extraContent }
 			/>

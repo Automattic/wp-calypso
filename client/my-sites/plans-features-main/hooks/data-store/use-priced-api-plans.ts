@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { getPlan } from 'calypso/state/plans/selectors/plan';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { UsePricedAPIPlans } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 type Props = {
 	planSlugs: PlanSlug[];
@@ -23,7 +24,7 @@ const useProductIds = ( { planSlugs }: Props ) => {
 /*
  * API plans will be ported to data store and be queried from there
  */
-const usePricedAPIPlans = ( { planSlugs }: Props ) => {
+const usePricedAPIPlans: UsePricedAPIPlans = ( { planSlugs }: Props ) => {
 	const productIds = useProductIds( { planSlugs } );
 
 	return useSelector( ( state ) => {

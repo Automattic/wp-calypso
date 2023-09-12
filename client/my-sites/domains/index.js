@@ -136,6 +136,11 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
+		paths.domainManagementTransferToAnyUser,
+		domainManagementController.domainManagementTransferToAnyUser
+	);
+
+	registerStandardDomainManagementPages(
 		paths.domainManagementTransferToOtherSite,
 		domainManagementController.domainManagementTransferToOtherSite
 	);

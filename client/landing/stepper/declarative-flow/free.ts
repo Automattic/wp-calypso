@@ -1,3 +1,8 @@
+import {
+	updateLaunchpadSettings,
+	type OnboardSelect,
+	type UserSelect,
+} from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
@@ -30,7 +35,6 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const free: Flow = {
 	name: FREE_FLOW,
@@ -169,10 +173,13 @@ const free: Flow = {
 			}
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteId ?? siteSlug }` );
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
+					}
+					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
 
 				default:
 					return navigate( 'freeSetup' );

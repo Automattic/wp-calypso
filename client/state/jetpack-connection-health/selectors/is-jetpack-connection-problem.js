@@ -41,7 +41,7 @@ export const useIsJetpackConnectionProblem = ( siteId ) => {
 		const onMessage = ( event ) => {
 			const error = event.data?.[ 0 ];
 			const status = event.data?.[ 1 ];
-			if ( error?.message && status > 200 ) {
+			if ( status > 200 && typeof error?.message === 'string' ) {
 				if ( error.message.includes( 'site is inaccessible' ) && ! isPossibleConnectionProblem ) {
 					dispatch( setJetpackConnectionMaybeUnhealthy( siteId ) );
 				}

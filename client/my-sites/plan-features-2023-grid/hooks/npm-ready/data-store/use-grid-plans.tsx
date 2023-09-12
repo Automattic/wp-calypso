@@ -23,7 +23,7 @@ import {
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -55,11 +55,14 @@ export interface PricingMetaForGridPlan {
 		monthly: number | null;
 		full: number | null;
 	};
+	// intro offers override billing and pricing shown in the UI
+	// they are currently defined off the site plans (so not defined when siteId is not available)
+	introOffer?: PlanIntroductoryOffer | null;
 }
 
 export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
 	[ planSlug: string ]: PricedAPIPlan | null | undefined;
-};
+} | null;
 
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
@@ -67,7 +70,7 @@ export type UsePricingMetaForGridPlans = ( {
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
-} ) => { [ planSlug: string ]: PricingMetaForGridPlan };
+} ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 // TODO clk: move to types. will consume plan properties
 export type GridPlan = {
@@ -222,7 +225,7 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
-}: Props ): Omit< GridPlan, 'features' >[] => {
+}: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent: 'default',
@@ -254,8 +257,12 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
-
 	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
+
+	// Null return would indicate that we are still loading the data. No grid without grid plans.
+	if ( ! pricingMeta || ! pricedAPIPlans ) {
+		return null;
+	}
 
 	return availablePlanSlugs.map( ( planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );

@@ -58,7 +58,7 @@ export function useSiteLogsQuery(
 		queryFn: () => {
 			const logTypeFragment = params.logType === 'php' ? 'error-logs' : 'logs';
 			const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
-			return wpcom.req.post(
+			return wpcom.req.get(
 				{ path, apiNamespace: 'wpcom/v2' },
 				{
 					start: params.start,
