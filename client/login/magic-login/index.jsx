@@ -286,23 +286,26 @@ class MagicLogin extends Component {
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
 					/>
-					{ isGravatar && (
-						<>
-							<hr className="grav-powered-magic-login__divider" />
-							<div className="grav-powered-magic-login__footer">
-								<div>
-									{ translate(
-										'Do you prefer {{a}}logging in via password or Google/Apple instead{{/a}}?',
-										{
-											components: {
-												a: <a href={ loginUrl } />,
-											},
-										}
-									) }
+					{
+						// Show the login link for A12s only
+						window.configData?.env_id !== 'production' && (
+							<>
+								<hr className="grav-powered-magic-login__divider" />
+								<div className="grav-powered-magic-login__footer">
+									<div>
+										{ translate(
+											'Do you prefer {{a}}logging in via password or Google/Apple instead{{/a}}?',
+											{
+												components: {
+													a: <a href={ loginUrl } />,
+												},
+											}
+										) }
+									</div>
 								</div>
-							</div>
-						</>
-					) }
+							</>
+						)
+					}
 				</div>
 				<div className="grav-powered-magic-login__gravatar-info">
 					{ ! isGravatar && (
