@@ -183,9 +183,10 @@ const AdsFormSettings = () => {
 
 		return (
 			<FormFieldset>
-				{ /* className undefined to resolve TS warning */ }
-				<FormLegend className={ undefined }>{ translate( 'Ads Visibility' ) }</FormLegend>
+				{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="yes"
@@ -193,12 +194,11 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Run ads for all users' ) }
-						// className undefined to resolve TS warning
-						className={ undefined }
 					/>
 				</FormLabel>
 
 				<FormLabel>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="no"
@@ -206,12 +206,11 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Run ads only for logged-out users (less revenue)' ) }
-						// className undefined to resolve TS warning
-						className={ undefined }
 					/>
 				</FormLabel>
 
 				<FormLabel>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="pause"
@@ -219,8 +218,6 @@ const AdsFormSettings = () => {
 						onChange={ handleChange }
 						disabled={ isLoading }
 						label={ translate( 'Pause ads (no revenue)' ) }
-						// className undefined to resolve TS warning
-						className={ undefined }
 					/>
 				</FormLabel>
 			</FormFieldset>
@@ -233,10 +230,8 @@ const AdsFormSettings = () => {
 		return (
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
-					{ /* className undefined to resolve TS warning */ }
-					<FormLegend className={ undefined }>
-						{ translate( 'Display ads below posts on' ) }
-					</FormLegend>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! settings.display_options?.display_front_page }
 						disabled={ isDisabled }
@@ -263,10 +258,8 @@ const AdsFormSettings = () => {
 					/>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
-					{ /* className undefined to resolve TS warning */ }
-					<FormLegend className={ undefined }>
-						{ translate( 'Additional ad placements' ) }
-					</FormLegend>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
+					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! settings.display_options?.enable_header_ad }
 						disabled={ isDisabled }
