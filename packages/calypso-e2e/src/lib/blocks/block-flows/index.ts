@@ -28,6 +28,7 @@ export * from './form-ai';
 export * from './image-compare';
 export * from './map';
 export * from './gif';
+export * from './markdown';
 
 /* Types */
 export * from './types';
