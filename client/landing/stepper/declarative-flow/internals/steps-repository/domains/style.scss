@@ -428,10 +428,25 @@
 	}
 	.domains__content {
 		@include break-small {
-			min-width: 50%;
+			max-width: 700px;
+			width: 100%;
 		}
+
+		.domains__step-content {
+			padding: 0 48px 0 32px;
+		}
+		// Hide domain prices
 		.domain-product-price {
 			display: none;
+		}
+		// Hide the "Sale" tag
+		.badge.badge--warning {
+			display: none;
+		}
+		// Change button accent colour
+		.button.is-primary {
+			background: var(--studio-gray-100);
+			border-color: var(--studio-gray-100);
 		}
 	}
 }

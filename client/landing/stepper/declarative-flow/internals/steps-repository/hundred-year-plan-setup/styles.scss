@@ -1,9 +1,15 @@
 .hundred-year-plan-setup {
 	.step-container__content {
 		.components-button.setup-form__submit.is-primary {
-			background: var(--gray-gray-100, #101517);
+			background: var(--studio-gray-100);
 			&.disabled {
-				background-color: #37484f;
+				background-color: var(--studio-gray-60);
+			}
+			&:focus {
+				outline: 2px solid var(--studio-gray-100);
+				box-shadow: none;
+				outline-color: var(--studio-gray-100);
+				border-color: var(--studio-gray-100);
 			}
 		}
 		.formatted-header {

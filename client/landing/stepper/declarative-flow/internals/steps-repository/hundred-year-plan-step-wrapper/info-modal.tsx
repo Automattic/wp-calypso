@@ -9,7 +9,7 @@ import HundredYearPlanLogo from './hundred-year-plan-logo';
 const StyledModal = styled( Modal )`
 	background: #040b13;
 	.components-button.has-icon {
-		color: #fff;
+		color: var( --studio-gray-0 );
 	}
 	.components-modal__header {
 		border: none;
@@ -31,7 +31,7 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.div`
-	color: var( --gray-gray-5, #dcdcde );
+	color: var( --studio-gray-5 );
 	text-align: center;
 
 	/* Xl/Serif Big */
@@ -44,7 +44,7 @@ const Title = styled.div`
 `;
 
 const Description = styled.div`
-	color: var( --gray-gray-5, #dcdcde );
+	color: var( --studio-gray-5 );
 	text-align: center;
 
 	/* Base/Medium */
@@ -66,7 +66,7 @@ const Header = styled.div`
 
 const AnnouncementLink = styled( Button )`
 	&.is-link {
-		color: var( --gray-gray-0, #f6f7f7 );
+		color: var( --studio-gray-0 );
 		text-align: right;
 		font-family: 'SF Pro Text', sans-serif;
 		font-size: 14px;
@@ -111,7 +111,7 @@ const RowTitle = styled.div`
 `;
 
 const RowContent = styled.div`
-	color: var( --gray-gray-0, #f6f7f7 );
+	color: var( --studio-gray-0 );
 	font-feature-settings: 'clig' off, 'liga' off;
 
 	/* Lg/Regular */

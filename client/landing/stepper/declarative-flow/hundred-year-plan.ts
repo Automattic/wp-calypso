@@ -98,7 +98,7 @@ const HundredYearPlanFlow: Flow = {
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( providedDependencies?.siteSlug as string ) ?? ''
-							) }&signup=1`
+							) }?signup=1`
 						);
 					}
 			}

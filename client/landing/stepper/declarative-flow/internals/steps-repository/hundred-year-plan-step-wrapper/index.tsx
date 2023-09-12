@@ -1,5 +1,5 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, WordPressLogo } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -65,7 +65,7 @@ const Info = styled.div< { isMobile: boolean } >`
 `;
 
 const Title = styled.div`
-	color: var( --gray-gray-0, #f6f7f7 );
+	color: var( --studio-gray-0 );
 	font-feature-settings: 'clig' off, 'liga' off;
 	/* Xl/Serif */
 	font-family: Recoleta;
@@ -79,7 +79,7 @@ const Title = styled.div`
 	text-align: center;
 `;
 const Description = styled.div< { isMobile: boolean } >`
-	color: var( --gray-gray-5, #dcdcde );
+	color: var( --studio-gray-5 );
 	text-align: ${ ( props ) => ( props.isMobile ? 'start' : 'center' ) };
 
 	/* Base/Medium */
@@ -91,7 +91,7 @@ const Description = styled.div< { isMobile: boolean } >`
 	letter-spacing: -0.15px;
 `;
 const Price = styled.div`
-	color: var( --gray-gray-0, #f6f7f7 );
+	color: var( --studio-gray-0 );
 	font-feature-settings: 'clig' off, 'liga' off;
 
 	/* Lg/Medium */
@@ -108,7 +108,7 @@ const Price = styled.div`
 
 const LearnMore = styled( Button )`
 	&.components-button.is-link {
-		color: var( --gray-gray-0, #f6f7f7 );
+		color: var( --studio-gray-0 );
 		text-align: right;
 		font-size: 14px;
 		font-style: normal;
@@ -124,8 +124,8 @@ const LearnMore = styled( Button )`
 `;
 
 const StyledFoldableCard = styled( FoldableCard )`
-	background: #000;
-	color: #fff;
+	background: var( --studio-gray-100 );
+	color: var( --studio-gray-0 );
 	width: 100%;
 	&.foldable-card.card.is-expanded {
 		margin: 0;
@@ -142,10 +142,16 @@ const StyledFoldableCard = styled( FoldableCard )`
 				/* margin-inline-end: 4px; */
 			}
 			.gridicons-chevron-down {
-				fill: #fff;
+				fill: var( --studio-gray-0 );
 			}
 		}
 	}
+`;
+
+const WordPressLogoWrapper = styled.div`
+	position: absolute;
+	top: 24px;
+	left: 24px;
 `;
 
 function InfoColumnWrapper( { isMobile, children }: PropsWithChildren< { isMobile: boolean } > ) {
@@ -176,6 +182,10 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 				className="hundred-year-plan-step-wrapper__info-column-container"
 				isMobile={ isMobile }
 			>
+				<WordPressLogoWrapper>
+					<WordPressLogo size={ 24 } />
+				</WordPressLogoWrapper>
+
 				<HundredYearPlanLogo />
 				<Info isMobile={ isMobile }>
 					<Title>{ planTitle }</Title>
