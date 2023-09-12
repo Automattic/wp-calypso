@@ -66,6 +66,10 @@
 
 		.stats-purchase-wizard__personal-tos {
 			display: none;
+
+			.is-link {
+				color: var(--color-primary);
+			}
 		}
 
 		.stats-purchase-wizard__card-title-indicator.active {

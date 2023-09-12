@@ -1,7 +1,10 @@
+import { Button as CalypsoButton } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import { StatsCommercialPriceDisplay } from './stats-purchase-shared';
 import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
@@ -9,6 +12,7 @@ import { COMPONENT_CLASS_NAME } from './stats-purchase-wizard';
 interface CommercialPurchaseProps {
 	planValue: number;
 	currencyCode: string;
+	siteId: number | null;
 	siteSlug: string;
 	adminUrl: string;
 	redirectUri: string;
@@ -18,12 +22,17 @@ interface CommercialPurchaseProps {
 const CommercialPurchase = ( {
 	planValue,
 	currencyCode,
+	siteId,
 	siteSlug,
 	adminUrl,
 	redirectUri,
 	from,
 }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
+
+	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	// The button of @automattic/components has built-in color scheme support for Calypso.
+	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 
 	return (
 		<div>
@@ -56,7 +65,7 @@ const CommercialPurchase = ( {
 				</ul>
 			</div>
 
-			<p>
+			<p className={ `${ COMPONENT_CLASS_NAME }__personal-tos` }>
 				{ translate(
 					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
 					{
@@ -81,14 +90,15 @@ const CommercialPurchase = ( {
 				) }
 			</p>
 
-			<Button
+			<ButtonComponent
 				variant="primary"
+				primary={ isWPCOMSite ? true : undefined }
 				onClick={ () =>
 					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
 				}
 			>
 				{ translate( 'Get Jetpack Stats' ) }
-			</Button>
+			</ButtonComponent>
 		</div>
 	);
 };

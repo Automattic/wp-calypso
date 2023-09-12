@@ -223,6 +223,7 @@ const ProductCard = ( {
 											defaultStartingValue={ defaultStartingValue }
 											handlePlanSwap={ ( e ) => handlePlanSwap( e ) }
 											currencyCode={ pwywProduct?.currency_code }
+											siteId={ siteId }
 											siteSlug={ siteSlug }
 											sliderSettings={ {
 												minSliderPrice: disableFreeProduct ? sliderStepPrice : 0,
@@ -239,6 +240,7 @@ const ProductCard = ( {
 										<CommercialPurchase
 											planValue={ commercialProduct?.cost }
 											currencyCode={ commercialProduct?.currency_code }
+											siteId={ siteId }
 											siteSlug={ siteSlug }
 											commercialProduct={ commercialProduct }
 											adminUrl={ adminUrl }
