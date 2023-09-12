@@ -319,9 +319,7 @@ const Settings = ( {
 				! i18n.hasTranslation(
 					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
 				) ) ||
-			areAllWpcomNameServers() ||
-			! nameservers ||
-			! nameservers.length
+			areAllWpcomNameServers()
 		) {
 			return null;
 		}

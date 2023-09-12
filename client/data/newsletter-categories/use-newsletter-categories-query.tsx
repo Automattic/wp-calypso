@@ -1,13 +1,18 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import request from 'wpcom-proxy-request';
-import { NewsletterCategories, NewsletterCategoriesResponse } from './types';
+import { NewsletterCategories, NewsletterCategory } from './types';
 
 type NewsletterCategoryQueryProps = {
 	siteId?: string | number;
 };
 
-export const convertNewsletterCategoriesResponse = (
-	response: NewsletterCategoriesResponse
+type NewsletterCategoryResponse = {
+	enabled: boolean;
+	newsletter_categories: NewsletterCategory[];
+};
+
+const convertNewsletterCategoryResponse = (
+	response: NewsletterCategoryResponse
 ): NewsletterCategories => {
 	return {
 		enabled: response.enabled,
@@ -26,11 +31,11 @@ const useNewsletterCategories = ( {
 	return useQuery( {
 		queryKey: getNewsletterCategoriesKey( siteId ),
 		queryFn: () =>
-			request< NewsletterCategoriesResponse >( {
+			request< NewsletterCategoryResponse >( {
 				path: `/sites/${ siteId }/newsletter-categories`,
 				apiVersion: '2',
 				apiNamespace: 'wpcom/v2',
-			} ).then( convertNewsletterCategoriesResponse ),
+			} ).then( convertNewsletterCategoryResponse ),
 		enabled: !! siteId,
 	} );
 };

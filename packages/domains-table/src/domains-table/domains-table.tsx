@@ -10,8 +10,6 @@ import {
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { useQueries } from '@tanstack/react-query';
-import { addQueryArgs } from '@wordpress/url';
-import page from 'page';
 import {
 	useCallback,
 	useLayoutEffect,
@@ -29,7 +27,7 @@ import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 
-interface BaseDomainsTableProps {
+export interface DomainsTableProps {
 	domains: PartialDomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
@@ -40,13 +38,8 @@ interface BaseDomainsTableProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	children: ReactNode | ReactNode[];
 }
-
-export type DomainsTablePropsNoChildren =
-	| ( BaseDomainsTableProps & { isAllSitesView: true } )
-	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string | null } );
-
-export type DomainsTableProps = DomainsTablePropsNoChildren & { children: ReactNode | ReactNode[] };
 
 type Value = {
 	filter: DomainsTableFilter;
@@ -63,7 +56,6 @@ type Value = {
 	sortKey: string;
 	sortDirection: 'asc' | 'desc';
 	handleAutoRenew: ( enable: boolean ) => void;
-	handleUpdateContactInfo: () => void;
 	changeBulkSelection: () => void;
 	getBulkSelectionStatus: () => 'all-domains' | 'some-domains' | 'no-domains';
 	onSortChange: ( selectedColumn: DomainsTableColumn ) => void;
@@ -83,16 +75,14 @@ const Context = createContext< Value | undefined >( undefined );
 
 export const useDomainsTable = () => useContext( Context ) as Value;
 
-export const DomainsTable = ( props: DomainsTableProps ) => {
-	const {
-		domains,
-		fetchSiteDomains,
-		fetchSite,
-		isAllSitesView,
-		domainStatusPurchaseActions,
-		children,
-	} = props;
-
+export const DomainsTable = ( {
+	domains,
+	fetchSiteDomains,
+	fetchSite,
+	isAllSitesView,
+	domainStatusPurchaseActions,
+	children,
+}: DomainsTableProps ) => {
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
 		sortKey: string;
 		sortDirection: 'asc' | 'desc';
@@ -276,22 +266,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		handleRestartDomainStatusPolling();
 	};
 
-	const handleUpdateContactInfo = () => {
-		const domainsToBulkUpdate = domains.filter( ( domain ) =>
-			selectedDomains.has( getDomainId( domain ) )
-		);
-
-		const baseUrl = isAllSitesView
-			? '/domains/manage/all/edit-selected-contact-info'
-			: `/domains/manage/edit-selected-contact-info/${ props.siteSlug }`;
-
-		const formLink = addQueryArgs( baseUrl, {
-			selected: domainsToBulkUpdate.map( ( { domain } ) => domain ),
-		} );
-
-		page( formLink );
-	};
-
 	const hideOwnerColumn = shouldHideOwnerColumn(
 		Object.values< DomainData[] >( fetchedSiteDomains ).flat()
 	);
@@ -308,7 +282,6 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		sortKey,
 		sortDirection,
 		handleAutoRenew,
-		handleUpdateContactInfo,
 		changeBulkSelection,
 		getBulkSelectionStatus,
 		onSortChange,

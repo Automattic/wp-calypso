@@ -86,7 +86,7 @@ const TrialCurrentPlan = () => {
 			<BodySectionCssClass bodyClass={ bodyClass } />
 
 			<div className="trial-current-plan__banner-wrapper">
-				<TrialBanner callToAction={ bannerCallToAction } isEcommerceTrial={ isEcommerceTrial } />
+				<TrialBanner callToAction={ bannerCallToAction } />
 			</div>
 
 			<h2 className="trial-current-plan__section-title">

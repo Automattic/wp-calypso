@@ -71,9 +71,7 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate( 'Jetpack can’t establish a connection to your site’s database.' ) }
-				noticeActionHref={ localizeUrl(
-					'https://wordpress.com/support/resolve-jetpack-errors/#site-is-missing-database-tables'
-				) }
+				noticeActionHref="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>

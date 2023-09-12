@@ -10,25 +10,15 @@
 }
 
 .site-add-license-notification__license-banner-wp {
-	.banner.card {
+	.banner {
 		border-width: 1px 1px 1px 4px;
 		border-style: solid;
 		border-color: var(--studio-green-40);
 		border-radius: 4px 2px 2px 4px;
-		align-items: flex-start;
 
 		.banner__description {
 			max-width: 90%;
 		}
-	}
-
-	// Align the banner icon with the text
-	svg.banner__close-icon {
-		top: 22px;
-	}
-
-	.banner__icon-no-circle {
-		padding-block-start: 0;
 	}
 
 	.site-add-license-notification__license-banner-wp-buttons {
@@ -38,7 +28,6 @@
 		flex-wrap: wrap;
 
 		.button {
-			padding-block: 4px;
 
 			.gridicon {
 				margin-inline-start: 8px;
@@ -49,7 +38,6 @@
 
 			&.is-borderless {
 				text-decoration: underline;
-				padding-block: 0;
 
 				.gridicon {
 					color: var(--color-neutral-80);

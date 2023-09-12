@@ -1,3 +1,4 @@
+import { map, compact, concat } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
@@ -17,14 +18,15 @@ export function fromApi( apiResponse ) {
 		throw new Error( `invalid tags response: ${ JSON.stringify( apiResponse ) }` );
 	}
 
-	const tags = []
-		.concat(
+	const tags = compact(
+		concat(
+			[],
 			typeof apiResponse.tag === 'object' && apiResponse.tag,
 			Array.isArray( apiResponse.tags ) && apiResponse.tags
 		)
-		.filter( Boolean );
+	);
 
-	return tags.map( ( tag ) => ( {
+	return map( tags, ( tag ) => ( {
 		id: tag.ID,
 		description: decodeEntities( tag.description ),
 		displayName: decodeEntities( tag.display_name ),

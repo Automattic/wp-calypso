@@ -14,7 +14,6 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteWooCommerceWizardUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -86,7 +85,7 @@ class AtomicStoreThankYouCard extends Component {
 	};
 
 	renderAction = () => {
-		const { isEmailVerified, translate, siteWooCommerceWizardUrl, isSiteAtomic } = this.props;
+		const { isEmailVerified, translate, siteWooCommerceWizardUrl } = this.props;
 		const { resendStatus } = this.state;
 
 		if ( isWcMobileApp() ) {
@@ -110,13 +109,12 @@ class AtomicStoreThankYouCard extends Component {
 
 		return (
 			<div className="checkout-thank-you__atomic-store-action-buttons">
-				<Button
-					disabled={ ! isSiteAtomic }
+				<a
 					className={ classNames( 'button', 'thank-you-card__button' ) }
-					onClick={ () => ( window.location.href = siteWooCommerceWizardUrl ) }
+					href={ siteWooCommerceWizardUrl }
 				>
-					{ isSiteAtomic ? translate( 'Create your store!' ) : translate( 'Loading site' ) }
-				</Button>
+					{ translate( 'Create your store!' ) }
+				</a>
 			</div>
 		);
 	};
@@ -177,7 +175,6 @@ export default connect(
 		const emailAddress = getCurrentUserEmail( state );
 		const isEmailVerified = isCurrentUserEmailVerified( state );
 		const siteWooCommerceWizardUrl = getSiteWooCommerceWizardUrl( state, siteId );
-		const isSiteAtomic = isAtomicSite( state, siteId );
 
 		return {
 			siteId,
@@ -186,7 +183,6 @@ export default connect(
 			isEmailVerified,
 			planClass,
 			siteWooCommerceWizardUrl,
-			isSiteAtomic,
 		};
 	},
 	{ errorNotice, fetchCurrentUser, removeNotice }

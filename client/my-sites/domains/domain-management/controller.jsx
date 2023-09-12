@@ -4,7 +4,6 @@ import DomainManagementData from 'calypso/components/data/domain-management';
 import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
-	domainManagementAllEditSelectedContactInfo,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
@@ -19,7 +18,6 @@ import {
 	domainManagementTransferIn,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
-	domainManagementTransferToAnyUser,
 	domainManagementTransferToOtherSite,
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
@@ -181,19 +179,6 @@ export default {
 		next();
 	},
 
-	domainManagementAllEditSelectedContactInfo( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementAllEditSelectedContactInfo() }
-				analyticsTitle="Domain Management > Edit Selected Contact Info"
-				component={ DomainManagement.BulkEditContactInfoPage }
-				context={ pageContext }
-				needsDomains
-			/>
-		);
-		next();
-	},
-
 	domainManagementEmailRedirect( pageContext ) {
 		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
 	},
@@ -319,20 +304,6 @@ export default {
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
 				component={ DomainManagement.TransferDomainToOtherUser }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
-	domainManagementTransferToAnyUser( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementTransferToAnyUser( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Transfer To Another User"
-				component={ DomainManagement.TransferDomainToAnyUser }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

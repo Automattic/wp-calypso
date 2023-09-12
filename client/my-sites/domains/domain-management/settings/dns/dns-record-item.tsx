@@ -49,16 +49,12 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 	const getName = () => {
 		const { name, service, protocol, type } = dnsRecord;
 
-		if ( 'SRV' === type ) {
-			return `${ service }.${ protocol }.${
-				name.replace( /\.$/, '' ) === selectedDomainName
-					? name
-					: name + '.' + selectedDomainName + '.'
-			}`;
-		}
-
 		if ( name.replace( /\.$/, '' ) === selectedDomainName ) {
 			return '@';
+		}
+
+		if ( 'SRV' === type ) {
+			return `_${ service }._${ protocol }.${ name }`;
 		}
 
 		return name;

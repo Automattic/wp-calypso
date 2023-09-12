@@ -4,8 +4,3 @@ export function isRequestingSitePlans( state, siteId ) {
 	const plans = getPlansBySiteId( state, siteId );
 	return plans.isRequesting;
 }
-
-export function hasLoadedSitePlansFromServer( state, siteId ) {
-	const plans = getPlansBySiteId( state, siteId );
-	return plans.hasLoadedFromServer;
-}

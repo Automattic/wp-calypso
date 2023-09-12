@@ -15,10 +15,8 @@ const hasSiteProductJetpackStats = (
 		( product ) =>
 			productHasStats( camelOrSnakeSlug( product ), onlyPaid ) && product.expiryStatus !== 'expired'
 	);
-
 	const sitePlan = getSitePlan( state, siteId );
 	const siteHasStatsPlan = productHasStats( sitePlan?.product_slug as string, onlyPaid );
-
 	return siteHasStatsPlan || !! siteHasStatsProduct;
 };
 

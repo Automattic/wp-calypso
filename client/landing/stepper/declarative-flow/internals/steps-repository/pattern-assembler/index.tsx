@@ -38,6 +38,7 @@ import {
 	useInitialPath,
 	usePatternCategories,
 	usePatternsMapByCategory,
+	usePrefetchImages,
 	useRecipe,
 	useSyncNavigatorScreen,
 } from './hooks';
@@ -163,6 +164,7 @@ const PatternAssembler = ( {
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
 	useSyncNavigatorScreen();
+	usePrefetchImages();
 
 	const siteInfo = {
 		title: site?.name,

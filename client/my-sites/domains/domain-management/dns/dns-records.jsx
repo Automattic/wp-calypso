@@ -46,7 +46,7 @@ class DnsRecords extends Component {
 		return dns?.records?.some(
 			( record ) =>
 				record?.type === 'CNAME' &&
-				record?.name === 'www' &&
+				record?.name === '*' &&
 				record?.data === `${ selectedDomainName }.`
 		);
 	};

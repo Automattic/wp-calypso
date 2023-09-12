@@ -30,10 +30,7 @@ const SubscriberDetails = ( {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
 	const newsletterCategoryNames = useMemo(
-		() =>
-			newsletterCategories
-				?.filter( ( category ) => !! category.subscribed )
-				.map( ( category ) => category.name ),
+		() => newsletterCategories?.map( ( category ) => category.name ),
 		[ newsletterCategories ]
 	);
 	const { avatar, date_subscribed, display_name, email_address, country, url } = subscriber;

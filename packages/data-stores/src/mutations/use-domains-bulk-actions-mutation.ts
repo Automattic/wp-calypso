@@ -1,11 +1,11 @@
-import { UseMutationOptions, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
 interface UpdateContactInfoVariables {
 	type: 'update-contact-info';
 	domains: string[];
-	transferLock: boolean;
+	transferLock: false;
 	whois: Record< string, string >;
 }
 
@@ -17,16 +17,12 @@ interface SetAutoRenewVariables {
 
 type BulkUpdateVariables = UpdateContactInfoVariables | SetAutoRenewVariables;
 
-export function useDomainsBulkActionsMutation<
-	TData = unknown,
-	TError = unknown,
-	TContext = unknown
->( options: UseMutationOptions< TData, TError, BulkUpdateVariables, TContext > = {} ) {
+export function useDomainsBulkActionsMutation() {
 	const { mutate, ...rest } = useMutation( {
-		mutationFn: ( variables ) => {
+		mutationFn: async ( variables: BulkUpdateVariables ) => {
 			switch ( variables.type ) {
 				case 'set-auto-renew':
-					return wpcomRequest( {
+					return await wpcomRequest( {
 						path: `/domains/bulk-actions/${ variables.type }`,
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
@@ -37,32 +33,21 @@ export function useDomainsBulkActionsMutation<
 					} );
 
 				case 'update-contact-info':
-					return wpcomRequest( {
-						path: `/domains/bulk-actions/${ variables.type }`,
-						apiNamespace: 'wpcom/v2',
-						method: 'POST',
-						body: {
-							domains: variables.domains,
-							transfer_lock: variables.transferLock,
-							whois: variables.whois,
-						},
-					} );
+					// TODO: implement this in a later PR
+					return Promise.resolve();
 			}
 		},
-		...options,
 	} );
 
 	const setAutoRenew = useCallback(
-		( domains: string[], autoRenew: boolean ) =>
-			mutate( { type: 'set-auto-renew', domains, autoRenew } ),
+		( domains: string[], autoRenew: boolean ) => {
+			mutate( { type: 'set-auto-renew', domains, autoRenew } );
+		},
 		[ mutate ]
 	);
 
-	const updateContactInfo = useCallback(
-		( domains: string[], transferLock: boolean, whois: Record< string, string > ) =>
-			mutate( { type: 'update-contact-info', domains, transferLock, whois } ),
-		[ mutate ]
-	);
+	// TODO: implement this in a later PR
+	// const updateContactInfo = ...
 
-	return { setAutoRenew, updateContactInfo, ...rest };
+	return { setAutoRenew, /* updateContactInfo, */ ...rest };
 }

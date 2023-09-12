@@ -45,7 +45,6 @@ class EditContactInfoFormCard extends Component {
 		whoisSaveSuccess: PropTypes.bool,
 		showContactInfoNote: PropTypes.bool,
 		backUrl: PropTypes.string.isRequired,
-		onSubmitButtonClick: PropTypes.func, // Callback can return "cancel" to cancel the default form handling
 	};
 
 	constructor( props ) {
@@ -416,17 +415,6 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	handleSubmitButtonClick = ( newContactDetails ) => {
-		if ( this.props.onSubmitButtonClick ) {
-			const result = this.props.onSubmitButtonClick(
-				newContactDetails,
-				this.state.transferLock,
-				this.state.updateWpcomEmail
-			);
-			if ( result === 'cancel' ) {
-				return;
-			}
-		}
-
 		this.setState(
 			{
 				requiresConfirmation: this.requiresConfirmation( newContactDetails ),

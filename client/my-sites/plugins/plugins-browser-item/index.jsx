@@ -17,10 +17,7 @@ import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plug
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
-import {
-	isMarketplaceProduct as isMarketplaceProductSelector,
-	isSaasProduct as isSaasProductSelector,
-} from 'calypso/state/products-list/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -269,7 +266,6 @@ function InstalledInOrPricing( {
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, plugin.slug ) );
 
 	if ( isPreinstalledPremiumPlugin ) {
 		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
@@ -302,15 +298,14 @@ function InstalledInOrPricing( {
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 				{ ( { isFetching, price, period } ) => {
-					if ( isSaasProduct ) {
-						// SaaS products displays `Start for free`
+					if ( plugin.isSaasProduct ) {
+						// SaaS products do not display a price
 						return (
 							<>
-								{ translate( 'Start for free' ) }
 								{ ! canInstallPlugins && isLoggedIn && (
-									<div className="plugins-browser-item__period">
+									<span className="plugins-browser-item__requires-plan-upgrade">
 										{ translate( 'Requires a plan upgrade' ) }
-									</div>
+									</span>
 								) }
 							</>
 						);

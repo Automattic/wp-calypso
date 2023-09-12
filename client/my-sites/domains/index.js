@@ -136,11 +136,6 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
-		paths.domainManagementTransferToAnyUser,
-		domainManagementController.domainManagementTransferToAnyUser
-	);
-
-	registerStandardDomainManagementPages(
 		paths.domainManagementTransferToOtherSite,
 		domainManagementController.domainManagementTransferToOtherSite
 	);
@@ -158,15 +153,6 @@ export default function () {
 		paths.domainManagementList( ':site' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementList,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		paths.domainManagementAllEditSelectedContactInfo(),
-		noSite,
-		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
-		domainManagementController.domainManagementAllEditSelectedContactInfo,
 		makeLayout,
 		clientRender
 	);

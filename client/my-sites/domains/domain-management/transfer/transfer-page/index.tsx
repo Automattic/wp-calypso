@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -30,7 +29,6 @@ import {
 	domainManagementList,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
-	domainManagementTransferToAnyUser,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
@@ -137,22 +135,6 @@ const TransferPage = ( props: TransferPageProps ) => {
 					// translators: Transfer a domain to another user
 					headerText={ __( 'To another user' ) }
 					mainText={ mainText }
-				/>
-			);
-		} else if ( isEnabled( 'domains/transfer-to-any-user' ) ) {
-			options.push(
-				<ActionCard
-					key="transfer-to-any-user"
-					buttonHref={ domainManagementTransferToAnyUser(
-						selectedSite?.slug,
-						selectedDomainName,
-						currentRoute
-					) }
-					// translators: Continue is a verb
-					buttonText={ __( 'Continue' ) }
-					// translators: Transfer a domain to another user
-					headerText={ __( 'To another WordPress.com user' ) }
-					mainText={ __( 'Transfer this domain to another WordPress.com user' ) }
 				/>
 			);
 		}

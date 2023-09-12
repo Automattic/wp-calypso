@@ -66,12 +66,6 @@ class ThanksModal extends Component {
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.isLivePreviewStarted ) {
-			return {
-				isVisible: true,
-				wasInstalling: false,
-			};
-		}
 		if ( nextProps.shouldRedirectToThankYouPage ) {
 			return {
 				isVisible: false,
@@ -241,18 +235,17 @@ class ThanksModal extends Component {
 		);
 	};
 
-	getLoadingLabel = () => {
-		const { isLivePreviewStarted } = this.props;
+	getEditSiteLabel = () => {
+		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive, isLivePreviewStarted } =
+			this.props;
 
 		if ( isLivePreviewStarted ) {
 			return this.props.translate( 'Preparing the live preview…' );
 		}
 
-		return this.props.translate( 'Activating theme…' );
-	};
-
-	getEditSiteLabel = () => {
-		const { shouldEditHomepageWithGutenberg, isFSEActive } = this.props;
+		if ( ! hasActivated ) {
+			return this.props.translate( 'Activating theme…' );
+		}
 
 		if ( isFSEActive ) {
 			return (
@@ -285,8 +278,13 @@ class ThanksModal extends Component {
 		</span>
 	);
 
-	getButtons = ( shouldDisplayContent ) => {
-		const { shouldEditHomepageWithGutenberg, isFSEActive } = this.props;
+	getButtons = () => {
+		const {
+			shouldEditHomepageWithGutenberg,
+			hasActivated,
+			isFSEActive,
+			doesThemeBundleUsableSoftware,
+		} = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
 			? {
@@ -295,55 +293,41 @@ class ThanksModal extends Component {
 					onClick: this.trackVisitSite,
 					href: this.props.siteUrl,
 					target: '_blank',
-					disabled: false,
 			  }
 			: {
 					action: 'learn',
 					label: this.props.translate( 'Learn about this theme' ),
 					onClick: this.learnThisTheme,
 					href: this.props.detailsUrl,
-					disabled: false,
 			  };
 
-		const primaryButton = {
-			action: 'customizeSite',
-			label: this.getEditSiteLabel(),
-			isPrimary: true,
-			disabled: false,
-			onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
-			href: this.props.customizeUrl,
-			target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
-		};
-
-		/**
-		 * It does not make sense to show "Learn about this theme" or "View site" buttons
-		 * in such a short loading moment.
-		 */
-		if ( ! shouldDisplayContent ) {
-			return [
-				{
-					...primaryButton,
-					label: this.getLoadingLabel(),
-					disabled: true,
-				},
-			];
-		}
-
-		return [ firstButton, primaryButton ];
+		return [
+			{
+				...firstButton,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
+			},
+			{
+				action: 'customizeSite',
+				label: this.getEditSiteLabel(),
+				isPrimary: true,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
+				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
+				href: this.props.customizeUrl,
+				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
+			},
+		];
 	};
 
 	render() {
-		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware, isLivePreviewStarted } =
-			this.props;
+		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware } = this.props;
 
-		const shouldDisplayContent =
-			hasActivated && currentTheme && ! doesThemeBundleUsableSoftware && ! isLivePreviewStarted;
+		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
 				isVisible={ this.state.isVisible }
-				buttons={ this.getButtons( shouldDisplayContent ) }
+				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
 				{ shouldDisplayContent ? this.renderContent() : this.renderLoading() }

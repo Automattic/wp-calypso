@@ -103,14 +103,14 @@ export class PublishedPostPage {
 		// can choose from.
 		// However, we don't know for sure whether a site owner has set up any
 		// newsletter plans.
-		const continueButton = iframe.getByRole( 'button', { name: 'Continue', exact: true } );
+		const continueButton = iframe.getByRole( 'button', { name: /continue/i } );
 		const freeTrialLink = iframe.getByRole( 'link', {
 			name: 'Free - Get a glimpse of the newsletter',
 		} );
 
 		await continueButton.or( freeTrialLink ).waitFor();
 		if ( await freeTrialLink.isVisible() ) {
-			await freeTrialLink.click();
+			freeTrialLink.click();
 		}
 
 		await continueButton.click();

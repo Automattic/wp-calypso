@@ -7,9 +7,6 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	default: function config( key: string ) {
 		return key;
 	},
-	isEnabled: function isEnabled( key: string ) {
-		return key;
-	},
 } ) );
 
 describe( '<UseYourDomainItem />', () => {

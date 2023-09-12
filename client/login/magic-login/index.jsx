@@ -26,14 +26,11 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
-import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
+import getMagicLoginIsFetchingEmail from 'calypso/state/selectors/get-magic-login-is-fetching-email';
 import { withEnhancers } from 'calypso/state/utils';
 import RequestLoginEmailForm from './request-login-email-form';
 
 import './style.scss';
-
-const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
 
 class MagicLogin extends Component {
 	static propTypes = {
@@ -54,23 +51,10 @@ class MagicLogin extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		usernameOrEmail: this.props.userEmail || '',
-		resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME,
-	};
+	state = { usernameOrEmail: this.props.userEmail || '' };
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
-	}
-
-	componentDidUpdate( prevProps ) {
-		if (
-			isGravatarOAuth2Client( this.props.oauth2Client ) &&
-			prevProps.isSendingEmail &&
-			this.props.emailRequested
-		) {
-			this.startResendEmailCountdown();
-		}
 	}
 
 	onClickEnterPasswordInstead = ( event ) => {
@@ -143,33 +127,6 @@ class MagicLogin extends Component {
 		);
 	}
 
-	resendEmailCountdownId = null;
-
-	resetResendEmailCountdown = () => {
-		if ( ! this.resendEmailCountdownId ) {
-			return;
-		}
-
-		clearInterval( this.resendEmailCountdownId );
-		this.resendEmailCountdownId = null;
-		this.setState( { resendEmailCountdown: RESEND_EMAIL_COUNTDOWN_TIME } );
-	};
-
-	startResendEmailCountdown = () => {
-		this.resetResendEmailCountdown();
-
-		this.resendEmailCountdownId = setInterval( () => {
-			if ( ! this.state.resendEmailCountdown ) {
-				clearInterval( this.resendEmailCountdownId );
-				return;
-			}
-
-			this.setState( ( prevState ) => ( {
-				resendEmailCountdown: prevState.resendEmailCountdown - 1,
-			} ) );
-		}, 1000 );
-	};
-
 	renderGravatarEmailVerification() {
 		const {
 			oauth2Client,
@@ -179,7 +136,7 @@ class MagicLogin extends Component {
 			sendEmailLogin: resendEmail,
 			hideMagicLoginRequestForm: showMagicLogin,
 		} = this.props;
-		const { usernameOrEmail, resendEmailCountdown } = this.state;
+		const { usernameOrEmail } = this.state;
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
 		return (
@@ -214,35 +171,23 @@ class MagicLogin extends Component {
 													resendEmail( usernameOrEmail, {
 														redirectTo: query?.redirect_to,
 														requestLoginEmailFormFlow: true,
-														createAccount: true,
 														flow: oauth2Client.name,
 														showGlobalNotices: true,
 													} )
 												}
-												disabled={ isSendingEmail || !! resendEmailCountdown }
+												disabled={ isSendingEmail }
 											/>
 										),
 										showMagicLoginButton: (
 											<button
 												className="gravatar-magic-login__show-magic-login"
-												onClick={ () => {
-													this.resetResendEmailCountdown();
-													showMagicLogin();
-												} }
+												onClick={ () => showMagicLogin() }
 											/>
 										),
 									},
 								}
 							) }
 						</div>
-						{ resendEmailCountdown !== 0 && (
-							<div>
-								{ translate( '%(resendEmailCountdown)s seconds remaining', {
-									args: { resendEmailCountdown },
-								} ) }
-								...
-							</div>
-						) }
 					</div>
 				</div>
 			</Main>
@@ -341,8 +286,7 @@ const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
-	isSendingEmail: isFetchingMagicLoginEmail( state ),
-	emailRequested: isMagicLoginEmailRequested( state ),
+	isSendingEmail: getMagicLoginIsFetchingEmail( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 	oauth2Client: getCurrentOAuth2Client( state ),
 	userEmail:
