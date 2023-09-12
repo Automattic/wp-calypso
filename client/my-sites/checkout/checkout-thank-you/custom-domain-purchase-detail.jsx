@@ -1,4 +1,4 @@
-import { PLAN_100_YEARS } from '@automattic/calypso-products';
+import { is100YearPlan } from '@automattic/calypso-products';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,7 +19,7 @@ const useGetBundledDomainDescription = ( onlyBlogDomain ) => {
 		const siteId = getSelectedSiteId( state );
 		return getSitePlan( state, siteId );
 	} );
-	const is100YearPlanSite = currentSitePlan?.product_slug === PLAN_100_YEARS;
+	const is100YearPlanSite = is100YearPlan( currentSitePlan?.product_slug );
 
 	if ( onlyBlogDomain ) {
 		return translate(
