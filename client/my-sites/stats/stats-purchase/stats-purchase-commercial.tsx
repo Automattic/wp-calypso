@@ -65,7 +65,7 @@ const CommercialPurchase = ( {
 				</ul>
 			</div>
 
-			<p className={ `${ COMPONENT_CLASS_NAME }__personal-tos` }>
+			<p className={ `${ COMPONENT_CLASS_NAME }__commercial-tos` }>
 				{ translate(
 					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
 					{
