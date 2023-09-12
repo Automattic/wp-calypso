@@ -80,6 +80,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
 		requestRestore();
+
+		// Track the restore confirmation event.
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
 	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
 
