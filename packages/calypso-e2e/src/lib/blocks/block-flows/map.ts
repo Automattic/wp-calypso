@@ -34,12 +34,11 @@ export class MapFlow implements BlockFlow {
 		const block = editorCanvas.getByRole( 'document', { name: 'Block: Map' } );
 
 		// Enter the supplied address.
-		await editorCanvas
-			.getByRole( 'textbox', { name: 'Add a marker' } )
-			.fill( this.configurationData.address );
+		const editorParent = await context.editorPage.getEditorParent();
+		await editorParent.getByPlaceholder( 'Add a marker' ).fill( this.configurationData.address );
 
 		// Wait for the popover.
-		await editorCanvas.locator( '.components-popover' ).getByRole( 'listbox' ).waitFor();
+		await editorParent.locator( '.components-popover' ).getByRole( 'listbox' ).waitFor();
 		await context.page.keyboard.press( 'Enter' );
 
 		await block.locator( '.wp-block-jetpack-map-marker' ).waitFor();
