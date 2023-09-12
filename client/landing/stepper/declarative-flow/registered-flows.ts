@@ -115,6 +115,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
+	[ 'hundred-year-plan' ]: () =>
+		import( /* webpackChunkName: "100-year-plan" */ './hundred-year-plan' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(

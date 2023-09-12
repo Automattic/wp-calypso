@@ -11,7 +11,6 @@ import StarsSolo from 'calypso/assets/images/hundred-year-plan-onboarding/stars-
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableCard from 'calypso/components/foldable-card';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { preventWidows } from 'calypso/lib/formatting';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import HundredYearPlanLogo from './hundred-year-plan-logo';
 import InfoModal from './info-modal';
@@ -20,25 +19,44 @@ import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 type Props = {
+	stepName: string;
+	flowName: string;
 	stepContent: ReactElement;
+	formattedHeader?: ReactElement;
 };
+
+const FlexWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+`;
 
 const Container = styled.div< { isMobile: boolean } >`
 	display: flex;
 	flex-direction: ${ ( props ) => ( props.isMobile ? 'column' : 'row' ) };
 	width: 100%;
-	height: 100%;
+	min-height: 100vh;
 `;
 
 const InfoColumnContainer = styled.div< { isMobile: boolean } >`
 	background-image: url( ${ StarsSolo } );
-	max-width: 456px;
+	min-width: 456px;
 	display: flex;
 	flex-direction: ${ ( props ) => ( props.isMobile ? 'row' : 'column' ) };
 	align-items: ${ ( props ) => ( props.isMobile ? 'flex-start' : 'center' ) };
-	justify-content: center;
-	padding: 0 0 32px 16px;
+	justify-content: ${ ( props ) => ( props.isMobile ? 'flex-start' : 'center' ) };
+	padding: 0 0 32px 0;
+	padding-inline-start: ${ ( props ) => ( props.isMobile ? '16px' : '0' ) };
 	gap: 24px;
+	position: ${ ( props ) => ( props.isMobile ? 'initial' : 'fixed' ) };
+	height: ${ ( props ) => ( props.isMobile ? 'initial' : '100vh' ) };
+`;
+
+const InfoColumnPlaceholder = styled.div< { isMobile: boolean } >`
+	min-width: 456px;
+	height: 100%;
 `;
 
 const Info = styled.div< { isMobile: boolean } >`
@@ -91,7 +109,7 @@ const Price = styled.div`
 `;
 
 const LearnMore = styled( Button )`
-	&.is-link {
+	&.components-button.is-link {
 		color: var( --gray-gray-0, #f6f7f7 );
 		text-align: right;
 		font-size: 14px;
@@ -153,46 +171,52 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
 
 	return (
-		<InfoColumnContainer isMobile={ isMobile }>
-			<HundredYearPlanLogo />
-			<Info isMobile={ isMobile }>
-				<Title>{ planTitle }</Title>
-				<Description isMobile={ isMobile }>
-					{ preventWidows(
-						translate(
-							'Your stories, achievements, and memories preserved for generations to come.'
-						),
-						5
-					) }
-					<br />
-					{ translate( 'One payment. One hundred years of legacy.' ) }
-				</Description>
-				<LearnMore variant="link" onClick={ openModal }>
-					<>
-						{ translate( 'Learn More' ) }
-						<Gridicon icon="info-outline" size={ 16 } />
-					</>
-				</LearnMore>
-				<Price>{ displayCost }</Price>
-			</Info>
-		</InfoColumnContainer>
+		<>
+			<InfoColumnPlaceholder isMobile={ isMobile } />
+
+			<InfoColumnContainer isMobile={ isMobile }>
+				<HundredYearPlanLogo />
+				<Info isMobile={ isMobile }>
+					<Title>{ planTitle }</Title>
+					<Description isMobile={ isMobile }>
+						{ translate(
+							'Your stories, achievements, and memories{{br}}{{/br}}preserved for generations to come.',
+							{
+								components: {
+									br: <br />,
+								},
+							}
+						) }
+						<br />
+						{ translate( 'One payment. One hundred years of legacy.' ) }
+					</Description>
+					<LearnMore variant="link" onClick={ openModal }>
+						<>
+							{ translate( 'Learn More' ) }
+							<Gridicon icon="info-outline" size={ 16 } />
+						</>
+					</LearnMore>
+					<Price>{ displayCost }</Price>
+				</Info>
+			</InfoColumnContainer>
+		</>
 	);
 }
 
 function HundredYearPlanStepWrapper( props: Props ) {
-	const { stepContent } = props;
+	const { stepContent, stepName, flowName, formattedHeader } = props;
 
-	const isMobile = useBreakpoint( '<660px' );
+	const isMobile = useBreakpoint( '<960px' );
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
 
 	return (
 		<StepContainer
-			stepName="hundred-year-plan-setup"
+			stepName={ stepName }
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName="HundredYearPlan"
+			flowName={ flowName }
 			hideFormattedHeader={ true }
 			shouldStickyNavButtons={ false }
 			stepContent={
@@ -202,7 +226,10 @@ function HundredYearPlanStepWrapper( props: Props ) {
 					<InfoColumnWrapper isMobile={ isMobile }>
 						<InfoColumn isMobile={ isMobile } openModal={ openModal } />
 					</InfoColumnWrapper>
-					{ stepContent }
+					<FlexWrapper>
+						<div className="step-container__header">{ formattedHeader }</div>
+						{ stepContent }
+					</FlexWrapper>
 				</Container>
 			}
 			recordTracksEvent={ recordTracksEvent }
@@ -210,4 +237,4 @@ function HundredYearPlanStepWrapper( props: Props ) {
 	);
 }
 
-export { HundredYearPlanStepWrapper };
+export default HundredYearPlanStepWrapper;

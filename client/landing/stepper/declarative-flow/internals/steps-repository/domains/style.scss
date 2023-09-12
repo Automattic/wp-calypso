@@ -420,3 +420,18 @@
 	}
 
 }
+
+// Hundred year plan flow
+.hundred-year-plan.domains {
+	.step-container {
+		margin: 0;
+	}
+	.domains__content {
+		@include break-small {
+			min-width: 50%;
+		}
+		.domain-product-price {
+			display: none;
+		}
+	}
+}

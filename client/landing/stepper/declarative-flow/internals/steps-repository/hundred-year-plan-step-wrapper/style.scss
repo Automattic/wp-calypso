@@ -1,13 +1,18 @@
-.setup {
+.hundred-year-plan {
 	height: 100%;
+	padding: 0;
+	.signup-header {
+		display: none;
+	}
 }
 
 
-.step-container.hundred-year-plan-setup.HundredYearPlan {
+.step-container.hundred-year-plan.hundred-year-plan {
 	max-width: none;
 	height: 100%;
+	padding: 0;
 	.step-container__content {
-		height: 100%;
+		min-height: 100%;
 	}
 
 	.step-container__navigation.action-buttons.should-sticky-nav-buttons {

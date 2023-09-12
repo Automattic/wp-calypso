@@ -1,5 +1,6 @@
 import {
 	DOMAIN_UPSELL_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	ONBOARDING_PM_FLOW,
 } from '@automattic/onboarding';
@@ -94,6 +95,10 @@ export function DomainFormControl( {
 	}
 
 	if ( flow === DOMAIN_UPSELL_FLOW ) {
+		includeWordPressDotCom = false;
+	}
+
+	if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
 		includeWordPressDotCom = false;
 	}
 
