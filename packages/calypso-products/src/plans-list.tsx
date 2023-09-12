@@ -1361,7 +1361,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
 	getNewsletterSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PREMIUM_THEMES_V2,

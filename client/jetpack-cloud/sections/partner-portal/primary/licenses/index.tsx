@@ -12,6 +12,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -24,7 +25,6 @@ import LayoutHeader from '../../layout/header';
 import LicenseSearch from '../../license-search';
 import OnboardingWidget from '../onboarding-widget';
 import Banners from './banners';
-
 import './style.scss';
 
 interface Props {
@@ -65,6 +65,11 @@ export default function Licenses( {
 
 	return (
 		<Layout className="licenses" title={ translate( 'Licenses' ) } wide>
+			<PageViewTracker
+				title="Partner Portal > Licenses"
+				path="/partner-portal/licenses/:filter"
+				properties={ { filter } }
+			/>
 			<QueryJetpackPartnerPortalLicenseCounts />
 
 			{ isAgencyUser && <Banners /> }
