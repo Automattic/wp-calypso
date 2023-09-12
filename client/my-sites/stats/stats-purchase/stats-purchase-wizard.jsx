@@ -68,30 +68,14 @@ const ProductCard = ( {
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
 	const personalProductTitle = translate( 'What is Jetpack Stats worth to you?' );
-	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
 	// Default titles for no site type selected.
-	let typeSelectionScreenLabel = translate( 'What type of site is %(site)s?', {
+	const typeSelectionScreenLabel = translate( 'Select your site type', {
 		args: {
 			site: siteSlug,
 		},
 	} );
-	let purchaseScreenLabel = personalProductTitle;
-
-	if ( ! siteSlug ) {
-		// Default to a generic label if no site slug is provided.
-		typeSelectionScreenLabel = translate( 'Which type is your site?' );
-	}
-
-	if ( siteType === TYPE_PERSONAL ) {
-		typeSelectionScreenLabel = personalLabel;
-		purchaseScreenLabel = personalProductTitle;
-	}
-
-	if ( siteType === TYPE_COMMERCIAL ) {
-		typeSelectionScreenLabel = commercialLabel;
-		purchaseScreenLabel = commercialProductTitle;
-	}
+	const purchaseScreenLabel = personalProductTitle;
 
 	const showCelebration =
 		siteType &&
