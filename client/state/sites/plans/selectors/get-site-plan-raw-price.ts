@@ -14,11 +14,14 @@ export function getSitePlanRawPrice(
 		returnSmallestUnit,
 	}: {
 		/**
-		 * If true, attempt to calculate and return the monthly price. Note that this
-		 * is not precise as it relies on float division and could have rounding
-		 * errors.
+		 * If true, attempt to calculate and return the monthly price.
 		 */
 		returnMonthly?: boolean;
+		/**
+		 * If true, use a currency's smallest unit and represent the prices as integers
+		 * instead of floats. If precision matters, set to true, as otherwise the
+		 * price relies on float division and could have rounding errors.
+		 */
 		returnSmallestUnit?: boolean;
 	} = {}
 ) {
