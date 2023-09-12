@@ -119,6 +119,7 @@ const PatternAssembler = ( {
 		setSections,
 		setColorVariation,
 		setFontVariation,
+		resetRecipe,
 	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
 	const {
@@ -440,6 +441,7 @@ const PatternAssembler = ( {
 			setResetCustomStyles( false );
 		}
 
+		// Go back to the previous screen
 		if ( currentScreen.previousScreen ) {
 			if ( navigator.location.isInitial && currentScreen.name !== INITIAL_SCREEN ) {
 				navigator.goTo( currentScreen.previousScreen.initialPath, { replace: true } );
@@ -454,12 +456,14 @@ const PatternAssembler = ( {
 			return;
 		}
 
+		// Go back to the previous step
 		const patterns = getPatterns();
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );
 
+		resetRecipe();
 		goBack?.();
 	};
 
