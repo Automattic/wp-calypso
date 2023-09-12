@@ -1,7 +1,6 @@
 import apiFetch, { type APIFetchOptions } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
-import { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { wpcomRequest } from '../wpcom-request-controls';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { STORE_KEY } from './constants';
 import type { UpdateLaunchpadNavigatorResponse } from './types';
 import type { GeneratorReturnType } from '../mapped-types';
@@ -25,19 +24,23 @@ export function* setCurrentChecklist( siteSlug: string, checklist_slug: string )
 		return receiveCurrentChecklist( checklist_slug );
 	}
 
-	const response: UpdateLaunchpadNavigatorResponse = canAccessWpcomApis()
-		? yield wpcomRequest( {
-				path: `/sites/${ siteSlug }/launchpad/navigator`,
-				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
-				body,
-		  } )
-		: yield apiFetch( {
-				global: true,
-				path: `/wpcom/v2/launchpad/navigator`,
-				method: 'PUT',
-				data: body,
-		  } as APIFetchOptions );
+	let response: UpdateLaunchpadNavigatorResponse;
+
+	if ( canAccessWpcomApis() ) {
+		response = yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/launchpad/navigator`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body,
+		} );
+	} else {
+		response = yield apiFetch( {
+			global: true,
+			path: `/wpcom/v2/launchpad/navigator`,
+			method: 'PUT',
+			data: body,
+		} as APIFetchOptions );
+	}
 
 	return receiveCurrentChecklist( response.current_checklist );
 }

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings, LaunchpadNavigator } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
+import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
@@ -148,6 +149,9 @@ export const setUpActionsForTasks = ( {
 
 		const actionDispatch = () => {
 			recordTaskClickTracksEvent( task );
+			if ( siteSlug ) {
+				dispatch( LaunchpadNavigator.store ).setCurrentChecklist( siteSlug, checklistSlug );
+			}
 			action?.();
 		};
 
