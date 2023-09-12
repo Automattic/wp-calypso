@@ -74,11 +74,11 @@ export default function Licenses( {
 			/>
 			<QueryJetpackPartnerPortalLicenseCounts />
 
-			{ isAgencyUser && <Banners /> }
-			<SiteAddLicenseNotification />
-
 			<LicenseListContext.Provider value={ context }>
 				<LayoutTop>
+					{ isAgencyUser && <Banners /> }
+					<SiteAddLicenseNotification />
+
 					<LayoutHeader>
 						<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
