@@ -26,6 +26,10 @@ class ContactDisplay extends PureComponent {
 
 		const contactInformation = findRegistrantWhois( whoisData );
 
+		if ( isEmpty( contactInformation ) ) {
+			return null;
+		}
+
 		return (
 			<div className="contact-display">
 				<div className="contact-display__content">
