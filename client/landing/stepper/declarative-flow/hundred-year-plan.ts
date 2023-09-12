@@ -15,18 +15,13 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
-const newsletter: Flow = {
+const HundredYearPlanFlow: Flow = {
 	name: HUNDRED_YEAR_PLAN_FLOW,
 	get title() {
 		return translate( '100-year Plan' );
 	},
 	useSteps() {
-		// const query = useQuery();
-		// const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-
 		return [
-			// Load intro step component only when not coming from the marketing page
-			// { slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
 			{
 				slug: 'setup',
 				asyncComponent: () => import( './internals/steps-repository/hundred-year-plan-setup' ),
@@ -58,7 +53,6 @@ const newsletter: Flow = {
 			[]
 		);
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
-		// const siteId = useSiteIdParam();
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
@@ -110,28 +104,8 @@ const newsletter: Flow = {
 			}
 		}
 
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = async () => {
-			// switch ( _currentStep ) {
-			// 	case 'launchpad':
-			// 		if ( siteSlug ) {
-			// 			await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-			// 		}
-			// 		return window.location.assign( `/home/${ siteId ?? siteSlug }` );
-			// 	default:
-			// 		return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
-			// }
-		};
-
-		const goToStep = ( step: string ) => {
-			navigate( step );
-		};
-
-		return { goNext, goBack, goToStep, submit };
+		return { submit };
 	},
 };
 
-export default newsletter;
+export default HundredYearPlanFlow;

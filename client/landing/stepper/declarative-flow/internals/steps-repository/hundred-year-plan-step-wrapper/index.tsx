@@ -7,7 +7,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactElement, PropsWithChildren } from 'react';
 import { useSelector } from 'react-redux';
-import StarsSolo from 'calypso/assets/images/hundred-year-plan-onboarding/stars-solo.png';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableCard from 'calypso/components/foldable-card';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -41,7 +40,6 @@ const Container = styled.div< { isMobile: boolean } >`
 `;
 
 const InfoColumnContainer = styled.div< { isMobile: boolean } >`
-	background-image: url( ${ StarsSolo } );
 	min-width: 456px;
 	display: flex;
 	flex-direction: ${ ( props ) => ( props.isMobile ? 'row' : 'column' ) };
@@ -174,7 +172,10 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 		<>
 			<InfoColumnPlaceholder isMobile={ isMobile } />
 
-			<InfoColumnContainer isMobile={ isMobile }>
+			<InfoColumnContainer
+				className="hundred-year-plan-step-wrapper__info-column-container"
+				isMobile={ isMobile }
+			>
 				<HundredYearPlanLogo />
 				<Info isMobile={ isMobile }>
 					<Title>{ planTitle }</Title>
