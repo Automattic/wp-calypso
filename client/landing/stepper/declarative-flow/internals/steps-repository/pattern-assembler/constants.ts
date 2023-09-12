@@ -53,6 +53,6 @@ export const PATTERN_CATEGORIES = [
 	'services',
 	'store',
 	//'team', -- Not exist
-	'testimonials',
+	//'testimonials', -- Not exist
 	// 'text', -- Hidden
 ];
