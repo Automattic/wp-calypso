@@ -7,7 +7,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTerm } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import PodcastingSupportLink from './support-link';
 
 function PodcastFeedUrl( { feedUrl, translate } ) {
 	if ( ! feedUrl ) {
@@ -22,7 +21,6 @@ function PodcastFeedUrl( { feedUrl, translate } ) {
 				{ translate(
 					'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
 				) }{ ' ' }
-				<PodcastingSupportLink />
 			</FormSettingExplanation>
 		</FormFieldset>
 	);

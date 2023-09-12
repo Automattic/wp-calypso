@@ -1,0 +1,40 @@
+.rewind-flow__header .granular-restore__loading {
+	height: 48px;
+	margin-bottom: 4px;
+	max-width: 48px;
+}
+
+.rewind-flow__title .granular-restore__loading {
+	height: 36px;
+}
+
+.rewind-flow__progress-bar-header {
+	.granular-restore__loading {
+		height: 24px;
+	}
+
+	.rewind-flow__progress-bar-message .granular-restore__loading {
+		min-width: 210px;
+	}
+
+	.rewind-flow__progress-bar-percent .granular-restore__loading {
+		min-width: 86px;
+	}
+}
+
+.rewind-flow__progress-bar > .granular-restore__loading {
+	height: 9px;
+}
+
+.rewind-flow__info {
+	margin-bottom: 1.5em;
+
+	.granular-restore__loading {
+		height: 24px;
+	}
+}
+
+.rewind-flow-notice .granular-restore__loading {
+	height: 88px;
+	min-width: 100%;
+}

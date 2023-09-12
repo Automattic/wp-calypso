@@ -95,7 +95,7 @@ const addChildrenToList = (
  *
  * @param state The application state.
  * @param siteId The site ID we're retrieving for.
- * @returns A node in the backup browser state.
+ * @returns A list of items to include and exclude from a restore or download.
  */
 const getBackupBrowserCheckList = (
 	state: AppState,

@@ -38,7 +38,6 @@ import {
 	useInitialPath,
 	usePatternCategories,
 	usePatternsMapByCategory,
-	usePrefetchImages,
 	useRecipe,
 	useSyncNavigatorScreen,
 } from './hooks';
@@ -51,6 +50,7 @@ import ScreenConfirmation from './screen-confirmation';
 import ScreenFontPairings from './screen-font-pairings';
 import ScreenMain from './screen-main';
 import ScreenPatternListPanel from './screen-pattern-list-panel';
+import ScreenSections from './screen-sections';
 import ScreenStyles from './screen-styles';
 import ScreenUpsell from './screen-upsell';
 import { encodePatternId, getShuffledPattern, injectCategoryToPattern } from './utils';
@@ -163,7 +163,6 @@ const PatternAssembler = ( {
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig( selectedVariations );
 
 	useSyncNavigatorScreen();
-	usePrefetchImages();
 
 	const siteInfo = {
 		title: site?.name,
@@ -404,7 +403,12 @@ const PatternAssembler = ( {
 			screen_to: currentScreen.nextScreen.name,
 		} );
 
-		navigator.goTo( currentScreen.nextScreen.initialPath );
+		navigator.goTo( currentScreen.nextScreen.initialPath, {
+			// We have to replace the path if the screens of previous and next are the same.
+			// Otherwise, the behavior of the Back button might be weird when you navigate
+			// to the current screen again.
+			replace: currentScreen.previousScreen?.name === currentScreen.nextScreen?.name,
+		} );
 	};
 
 	const globalStylesUpgradeProps = useGlobalStylesUpgradeProps( {
@@ -539,15 +543,21 @@ const PatternAssembler = ( {
 				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN } partialMatch>
 					<ScreenMain
 						onMainItemSelect={ onMainItemSelect }
-						recordTracksEvent={ recordTracksEvent }
 						surveyDismissed={ surveyDismissed }
 						setSurveyDismissed={ setSurveyDismissed }
 						hasSections={ sections.length > 0 }
 						hasHeader={ !! header }
 						hasFooter={ !! footer }
+						onContinueClick={ onContinue }
+					/>
+				</NavigatorScreen>
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS } partialMatch>
+					<ScreenSections
 						categories={ categories }
 						patternsMapByCategory={ patternsMapByCategory }
 						onContinueClick={ onContinue }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
 
@@ -590,6 +600,19 @@ const PatternAssembler = ( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
+
+				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTIONS_PATTERNS }>
+					<ScreenPatternListPanel
+						categories={ categories }
+						selectedHeader={ header }
+						selectedSections={ sections }
+						selectedFooter={ footer }
+						patternsMapByCategory={ patternsMapByCategory }
+						onSelect={ onSelect }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				</NavigatorScreen>
+
 				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_COLORS }>
 					<ScreenColorPalettes
 						siteId={ site?.ID }

@@ -17,7 +17,7 @@ const SCREEN_PURCHASE = 1;
 const TYPE_PERSONAL = 'Personal';
 const TYPE_COMMERCIAL = 'Commercial';
 
-const DEFAULT_STARTING_FRACTION = 0.6;
+const DEFAULT_STARTING_FRACTION = 0.5;
 const UI_EMOJI_HEART_TIER_THRESHOLD = 0.5;
 const UI_IMAGE_CELEBRATION_TIER_THRESHOLD = 0.8;
 
@@ -56,7 +56,7 @@ const ProductCard = ( {
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
 	// We need the exact position, otherwise the caculated pricing would not be the same as the one in the slider.
 	const defaultStartingValue = Math.floor( steps * DEFAULT_STARTING_FRACTION );
-	const uiEmojiHeartTier = steps * UI_EMOJI_HEART_TIER_THRESHOLD;
+	const uiEmojiHeartTier = Math.floor( steps * UI_EMOJI_HEART_TIER_THRESHOLD );
 	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
 	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
@@ -71,7 +71,7 @@ const ProductCard = ( {
 	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
 	// Default titles for no site type selected.
-	let typeSelectionScreenLabel = translate( 'What site type is %(site)s?', {
+	let typeSelectionScreenLabel = translate( 'What type of site is %(site)s?', {
 		args: {
 			site: siteSlug,
 		},

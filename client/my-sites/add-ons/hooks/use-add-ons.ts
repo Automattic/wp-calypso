@@ -3,6 +3,7 @@ import {
 	FEATURE_STATS_PAID,
 	PRODUCT_JETPACK_AI_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
@@ -20,6 +21,7 @@ import {
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -113,6 +115,17 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
 			),
 		},
+		{
+			productSlug: PRODUCT_JETPACK_STATS_YEARLY,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_JETPACK_STATS_YEARLY ),
+			icon: jetpackStatsIcon,
+			overrides: null,
+			displayCost: useAddOnDisplayCost( PRODUCT_JETPACK_STATS_YEARLY ),
+			featured: true,
+			description: translate(
+				'Upgrade Jetpack Stats to unlock priority support and all upcoming premium features.'
+			),
+		},
 	];
 
 	// if upgrade is bought - show as manage
@@ -140,6 +153,9 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 			}
 		}
 
+		// Determine which Stats Add-On to show based on the site's commercial classification.
+		const isSiteMarkedCommercial = getSiteOption( state, siteId, 'is_commercial' );
+
 		return addOnsActive
 			.filter( ( addOn ) => {
 				// if a user already has purchased a storage upgrade
@@ -159,15 +175,37 @@ const useAddOns = ( siteId?: number ): ( AddOnMeta | null )[] => {
 				// TODO: Remove this check once paid WPCOM stats is live.
 				// gate the Jetpack Stats add-on on a feature flag
 				if (
-					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
+						addOn.productSlug
+					) &&
 					! config.isEnabled( 'stats/paid-wpcom-stats' )
 				) {
 					return false;
 				}
 
+				// Hide Stats Personal add-on if the site is marked as commercial.
+				if (
+					isSiteMarkedCommercial === true &&
+					PRODUCT_JETPACK_STATS_PWYW_YEARLY === addOn.productSlug
+				) {
+					return false;
+				}
+
+				// Hide Stats Commercial add-on if the site is not marked as commercial.
+				if (
+					isSiteMarkedCommercial === false &&
+					PRODUCT_JETPACK_STATS_YEARLY === addOn.productSlug
+				) {
+					return false;
+				}
+
+				// TODO: Show the Stats Commercial add-on for a commercial site that has purchased the Personal plan.
+
 				// remove Jetpack Stats add-on if the site already has a paid stats feature through a paid plan.
 				if (
-					addOn.productSlug === PRODUCT_JETPACK_STATS_PWYW_YEARLY &&
+					[ PRODUCT_JETPACK_STATS_PWYW_YEARLY, PRODUCT_JETPACK_STATS_YEARLY ].includes(
+						addOn.productSlug
+					) &&
 					siteFeatures?.active?.includes( FEATURE_STATS_PAID )
 				) {
 					return false;

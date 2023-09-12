@@ -150,3 +150,55 @@
 		opacity: 0;
 	}
 }
+
+a,
+button {
+	&.license-actions__menu-item {
+		margin: 0 -1px;
+		border-style: solid;
+		border-color: var(--studio-gray-5);
+		border-width: 0 0 1px;
+		font-size: 0.875rem;
+		height: 40px;
+		box-sizing: border-box;
+		color: var(--studio-black);
+		display: flex;
+		align-items: center;
+		padding: 0 16px;
+		min-width: 200px;
+
+		&:last-child {
+			margin-bottom: 5px;
+			border-bottom-width: 0;
+		}
+
+		&:first-child {
+			margin-top: 5px;
+		}
+
+		&:hover,
+		&:focus {
+			border-style: solid;
+			border-color: var(--studio-gray-5);
+			border-width: 0 0 1px;
+			background: var(--studio-black);
+			cursor: pointer;
+			color: var(--studio-white);
+
+			&:last-child {
+				border-bottom-width: 0;
+			}
+		}
+
+		svg.gridicon {
+			vertical-align: middle;
+			position: absolute;
+			right: 10px;
+			top: unset;
+		}
+
+		&.is-destructive {
+			color: var(--studio-red-50);
+		}
+	}
+}

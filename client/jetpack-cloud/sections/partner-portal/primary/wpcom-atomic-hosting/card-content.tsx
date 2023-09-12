@@ -1,7 +1,9 @@
 import { Button, JetpackLogo, WooLogo, CloudLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import FeatureItem from './feature-item';
 
 import './style.scss';
@@ -22,6 +24,7 @@ interface PlanInfo {
 }
 
 export default function CardContent( { planSlug }: { planSlug: string } ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
@@ -32,6 +35,17 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 				return <CloudLogo />;
 			case JETPACK_HOSTING_WPCOM_ECOMMERCE:
 				return <WooLogo />;
+			default:
+				return null;
+		}
+	};
+
+	const getCTAEventName = ( planSlug: string ) => {
+		switch ( planSlug ) {
+			case JETPACK_HOSTING_WPCOM_BUSINESS:
+				return 'calypso_jetpack_agency_dashboard_wpcom_atomic_hosting_business_cta_click';
+			case JETPACK_HOSTING_WPCOM_ECOMMERCE:
+				return 'calypso_jetpack_agency_dashboard_wpcom_atomic_hosting_ecommerce_cta_click';
 			default:
 				return null;
 		}
@@ -67,6 +81,10 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 
 	const plan = getPlanInfo( planSlug );
 
+	const onCTAClick = useCallback( () => {
+		dispatch( recordTracksEvent( getCTAEventName( planSlug ) ) );
+	}, [ dispatch, planSlug ] );
+
 	if ( ! plan ) {
 		return null;
 	}
@@ -82,7 +100,7 @@ export default function CardContent( { planSlug }: { planSlug: string } ) {
 					{ plan.interval === 'day' && translate( '/USD per license per day' ) }
 					{ plan.interval === 'month' && translate( '/USD per license per month' ) }
 				</div>
-				<Button className="wpcom-atomic-hosting__card-button" primary>
+				<Button className="wpcom-atomic-hosting__card-button" primary onClick={ onCTAClick }>
 					{ translate( 'Get %(title)s', {
 						args: {
 							title: plan.title,

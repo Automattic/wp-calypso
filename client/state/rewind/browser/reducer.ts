@@ -122,6 +122,17 @@ const getCheckedStatus = ( nodeToIterate: BackupBrowserItem ) => {
 	return 'unchecked';
 };
 
+const fileBrowserToRestoreType = ( type: string ) => {
+	switch ( type ) {
+		case 'table':
+		case 'plugin':
+		case 'theme':
+			return type;
+		default:
+			return 'file';
+	}
+};
+
 const updateParent = ( state: AppState, node: BackupBrowserItem ): AppState => {
 	if ( node.path === '/' ) {
 		return state;
@@ -194,6 +205,7 @@ export default ( state = initialState, { type, payload }: AnyAction ) => {
 				parentNode.children.push( {
 					id: childPath.id,
 					path: childPath.path,
+					type: fileBrowserToRestoreType( childPath.type ),
 					ancestors: [ ...parentNode.ancestors, parentNode.path ],
 					checkState: parentNode.checkState === 'checked' ? 'checked' : 'unchecked',
 					childrenLoaded: false,

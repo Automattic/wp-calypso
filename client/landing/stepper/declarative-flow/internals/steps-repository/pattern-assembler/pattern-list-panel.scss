@@ -12,6 +12,7 @@
 	overflow-y: auto;
 	box-sizing: border-box;
 	transform: translateX(0);
+	// Preserve spaces for the scrollbar to prevent unwanted layout change
 	scrollbar-gutter: stable;
 	font-family: "SF Pro Text", $sans;
 

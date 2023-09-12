@@ -63,31 +63,20 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
-	const [ showUpdatePluginInfo, setShowUpdatePluginInfo ] = useState( false );
 	const [ continueImport, setContinueImport ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) ?? '';
 	const sourceSiteUrl = formatSlugToURL( sourceSiteSlug );
-
-	const onfetchCallback = ( siteCanMigrate: boolean ) => {
-		if ( ! siteCanMigrate ) {
-			setShowUpdatePluginInfo( true );
-		} else {
-			setShowUpdatePluginInfo( false );
-		}
-	};
 
 	const {
 		sourceSiteId,
 		sourceSite,
 		fetchMigrationEnabledStatus,
 		isFetchingData: isFetchingMigrationData,
-	} = useSiteMigrateInfo(
-		targetSite.ID,
-		sourceSiteSlug,
-		isTargetSitePlanCompatible,
-		onfetchCallback
-	);
+		siteCanMigrate,
+	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
+
+	const showUpdatePluginInfo = typeof siteCanMigrate === 'boolean' ? ! siteCanMigrate : false;
 
 	const migrationTrackingProps = {
 		source_site_id: sourceSiteId,

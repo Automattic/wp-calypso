@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { isValidId } from '@automattic/data-stores/src/reader';
@@ -158,11 +157,7 @@ const SiteRow = ( {
 				return feedUrl;
 			}
 
-			if ( config.isEnabled( 'reader/individual-subscription-page' ) ) {
-				return `/read/subscriptions/${ subscriptionId }`;
-			}
-
-			return feedUrl;
+			return `/read/subscriptions/${ subscriptionId }`;
 		}
 
 		if ( isSubscriptionsPortal ) {
