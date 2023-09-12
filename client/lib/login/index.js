@@ -4,7 +4,6 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
-	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
@@ -86,11 +85,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl += '/' + signupFlow;
 	}
 
-	if (
-		isAkismetOAuth2Client( oauth2Client ) ||
-		isGravatarOAuth2Client( oauth2Client ) ||
-		isIntenseDebateOAuth2Client( oauth2Client )
-	) {
+	if ( isAkismetOAuth2Client( oauth2Client ) || isIntenseDebateOAuth2Client( oauth2Client ) ) {
 		const oauth2Flow = 'wpcc';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
@@ -100,7 +95,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	}
 
 	// Gravatar powered clients signup via the magic login page
-	if ( isGravPoweredOAuth2Client( oauth2Client ) && ! isGravatarOAuth2Client( oauth2Client ) ) {
+	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		signupUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
