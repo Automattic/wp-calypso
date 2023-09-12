@@ -14,19 +14,18 @@ export function referRecordPageView() {
 	const parsedUrl = urlParseAmpCompatible( referrer );
 	const affiliateId =
 		parsedUrl?.searchParams.get( 'aff' ) || parsedUrl?.searchParams.get( 'affiliate' );
-	const vid = parsedUrl?.searchParams.get( 'vid' ) || parsedUrl?.searchParams.get( 'affiliate' );
+	const vid = parsedUrl?.searchParams.get( 'vid' );
 	const campaignId = parsedUrl?.searchParams.get( 'cid' );
 	const subId = parsedUrl?.searchParams.get( 'sid' );
+	const vendorId =
+		vid === WOOEXPRESS_AFFILIATE_VENDOR_ID
+			? WOOEXPRESS_AFFILIATE_VENDOR_ID
+			: WPCOM_AFFILIATE_VENDOR_ID;
 
 	if ( affiliateId && ! isNaN( affiliateId ) ) {
 		recordTracksEvent( 'calypso_refer_visit', {
 			page: parsedUrl.host + parsedUrl.pathname,
 		} );
-
-		const vendorId =
-			vid === WOOEXPRESS_AFFILIATE_VENDOR_ID
-				? WOOEXPRESS_AFFILIATE_VENDOR_ID
-				: WPCOM_AFFILIATE_VENDOR_ID;
 
 		trackAffiliateReferral( { vendorId, affiliateId, campaignId, subId, referrer } );
 	}
