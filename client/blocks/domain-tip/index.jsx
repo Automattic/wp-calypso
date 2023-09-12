@@ -70,7 +70,9 @@ class DomainTip extends Component {
 			return this.props.translate( 'Your plan includes a free custom domain. Grab this one!' );
 		}
 
-		return 'Your plan includes a free custom domain for one year. Grab this one!';
+		return this.props.translate(
+			'Your plan includes a free custom domain for one year. Grab this one!'
+		);
 	}
 
 	render() {
