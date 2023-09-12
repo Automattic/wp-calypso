@@ -1,6 +1,7 @@
 import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import MainComponent from 'calypso/components/main';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
 import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
@@ -13,14 +14,13 @@ export function RelatedPluginsPage( { pluginSlug, siteUrl } ) {
 
 	const { data: relatedPlugins = [], isLoading } = useGetRelatedPlugins(
 		pluginSlug,
-		10
+		20
 	) as UseQueryResult< RelatedPlugin[] >;
 
 	return (
-		<>
+		<MainComponent wideLayout>
 			<PluginsBrowserList
 				title={ translate( 'Related Plugins' ) }
-				subtitle="TBD"
 				plugins={ relatedPlugins }
 				listName="related-plugins"
 				listType="browse"
@@ -30,6 +30,6 @@ export function RelatedPluginsPage( { pluginSlug, siteUrl } ) {
 				variant={ PluginsBrowserListVariant.Fixed }
 				extended
 			/>
-		</>
+		</MainComponent>
 	);
 }
