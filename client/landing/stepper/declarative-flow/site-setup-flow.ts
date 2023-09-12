@@ -20,7 +20,6 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import STEPS from './internals/steps';
 import StartingPointStep from './internals/steps-repository/blogger-starting-point';
 import BusinessInfo from './internals/steps-repository/business-info';
 import CoursesStep from './internals/steps-repository/courses';
@@ -125,7 +124,10 @@ const siteSetupFlow: Flow = {
 				? [ { slug: 'editEmail', component: EditEmail } ]
 				: [] ),
 			{ slug: 'difmStartingPoint', component: DIFMStartingPoint },
-			STEPS.CELEBRATION,
+			{
+				slug: 'celebration-step',
+				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
+			},
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {

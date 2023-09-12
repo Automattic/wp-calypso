@@ -9,7 +9,9 @@ import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import STEPS from './internals/steps';
+import ErrorStep from './internals/steps-repository/error-step';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
+import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -53,7 +55,15 @@ const withThemeAssemblerFlow: Flow = {
 	},
 
 	useSteps() {
-		return [ STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR, STEPS.CELEBRATION ];
+		return [
+			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
+			{
+				slug: 'celebration-step',
+				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
+			},
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
