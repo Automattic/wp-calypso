@@ -1,3 +1,4 @@
+import { FREE_THEME } from '@automattic/design-picker';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { getThemeType, isThemePremium } from 'calypso/state/themes/selectors';
@@ -18,15 +19,16 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 	}
 
 	const { category, styleVariationSlug } = options;
+	const themeType = getThemeType( state, themeId );
 	const searchParams = {
 		ref: 'calypshowcase',
 		theme: themeId,
-		theme_type: getThemeType( state, themeId ),
+		theme_type: themeType,
 		style_variation: styleVariationSlug,
 	};
 
-	// If the selected theme belongs to the blog category, redirect users to the blog tailored flow
-	if ( category === 'blog' ) {
+	// If the selected free theme belongs to the blog category, redirect users to the blog tailored flow
+	if ( themeType === FREE_THEME && category === 'blog' ) {
 		return addQueryArgs( `/setup/${ DESIGN_FIRST_FLOW }`, searchParams );
 	}
 
