@@ -12,7 +12,7 @@ export type UseHighlightedFeatures = ( {
 	intent,
 	isInSignup,
 }: {
-	intent: PlansIntent | undefined;
+	intent: PlansIntent | null;
 	isInSignup?: boolean;
 } ) => string[] | null;
 
