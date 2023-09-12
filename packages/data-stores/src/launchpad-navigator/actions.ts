@@ -1,4 +1,4 @@
-import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
+import apiFetch, { type APIFetchOptions } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
