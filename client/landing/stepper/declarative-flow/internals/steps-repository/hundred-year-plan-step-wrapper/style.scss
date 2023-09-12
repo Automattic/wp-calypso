@@ -1,0 +1,21 @@
+.setup {
+	height: 100%;
+}
+
+
+.step-container.hundred-year-plan-setup.HundredYearPlan {
+	max-width: none;
+	height: 100%;
+	.step-container__content {
+		height: 100%;
+	}
+
+	.step-container__navigation.action-buttons.should-sticky-nav-buttons {
+		background-color: transparent;
+	}
+
+	.step-container__navigation.action-buttons .step-container__navigation-logo {
+		fill: #fff;
+		stroke: #fff;
+	}
+}
