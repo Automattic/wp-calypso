@@ -794,7 +794,7 @@ export class SiteSettingsFormGeneral extends Component {
 										name="legacycontact"
 										id="legacycontact"
 										data-tip-target="legacy-contact-input"
-										value={ fields.legacycontact || '' }
+										value={ fields.wpcom_legacy_contact || '' }
 										onChange={ onChangeField( 'legacycontact' ) }
 										disabled={ isRequestingSettings }
 										onClick={ eventTracker( 'Clicked Legacy Contact Field' ) }
@@ -1086,6 +1086,8 @@ const getFormSettings = ( settings ) => {
 		timezone_string: '',
 		blog_public: '',
 		wpcom_coming_soon: '',
+		wpcom_legacy_contact: '',
+		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
 		admin_url: '',
@@ -1104,6 +1106,8 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
+		wpcom_legacy_contact: settings.wpcom_legacy_contact,
+		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
 	};
