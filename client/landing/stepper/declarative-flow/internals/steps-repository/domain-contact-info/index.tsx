@@ -1,6 +1,8 @@
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
+import { CheckboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -50,12 +52,14 @@ function ContactInfo( {
 	const translate = useTranslate();
 	const { domain } = useDomainParams();
 
+	const [ termsAccepted, setTermsAccepted ] = useState( false );
+
 	function getIsFieldDisabled() {
 		return false;
 	}
 
 	function validate(
-		fieldValues: Record< string, string | number >,
+		fieldValues: Record< string, unknown >,
 		onComplete: ( nullOrError: null | Error, data?: Record< string, unknown > | undefined ) => void
 	) {
 		wp.req
@@ -75,6 +79,10 @@ function ContactInfo( {
 			.catch( ( error: Error ) => {
 				onComplete( error );
 			} );
+	}
+
+	function submitForm( contactInfo ) {
+		onSubmit( { ...contactInfo, termsAccepted } );
 	}
 
 	return (
@@ -97,7 +105,7 @@ function ContactInfo( {
 				} }
 				needsFax={ domain?.endsWith( '.nl' ) }
 				getIsFieldDisabled={ getIsFieldDisabled }
-				onSubmit={ onSubmit }
+				onSubmit={ submitForm }
 				onValidate={ validate }
 				labelTexts={ { submitButton: translate( 'Receive domain transfer' ) } }
 				disableSubmitButton={ false }
@@ -105,6 +113,11 @@ function ContactInfo( {
 				updateWpcomEmailCheckboxHidden={ true }
 				cancelHidden={ true }
 			></ContactDetailsFormFields>
+			<CheckboxControl
+				label="I agree to the terms of service"
+				checked={ true }
+				onChange={ setTermsAccepted }
+			/>
 		</form>
 	);
 }
