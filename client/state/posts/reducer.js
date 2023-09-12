@@ -446,7 +446,7 @@ export function edits( state = {}, action ) {
 
 			// if new post (edited with a transient postId of '') has been just saved and assigned
 			// a real numeric ID, rewrite the state key with the new postId.
-			if ( postId === '' && action.savedPost ) {
+			if ( postId === '' && action.savedPost && state[ siteId ] ) {
 				const newPostId = action.savedPost.ID;
 				state = {
 					...state,
