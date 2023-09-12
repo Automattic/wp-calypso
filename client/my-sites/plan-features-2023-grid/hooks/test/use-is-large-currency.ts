@@ -19,6 +19,7 @@ describe( 'useIsLargeCurrency', () => {
 					monthly: 0,
 					full: 0,
 				},
+				currencyCode: 'USD',
 			},
 		},
 		{
@@ -32,19 +33,21 @@ describe( 'useIsLargeCurrency', () => {
 					monthly: 0,
 					full: 0,
 				},
+				currencyCode: 'USD',
 			},
 		},
 		{
 			planSlug: PLAN_PREMIUM,
 			pricing: {
 				originalPrice: {
-					monthly: 300,
-					full: 300000,
+					monthly: 2500000,
+					full: 30000000,
 				},
 				discountedPrice: {
 					monthly: 0,
 					full: 0,
 				},
+				currencyCode: 'USD',
 			},
 		},
 	];
