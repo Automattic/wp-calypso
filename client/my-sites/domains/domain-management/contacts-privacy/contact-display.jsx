@@ -15,6 +15,12 @@ class ContactDisplay extends PureComponent {
 		this.fetchWhois();
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.selectedDomainName !== this.props.selectedDomainName ) {
+			this.fetchWhois();
+		}
+	}
+
 	fetchWhois = () => {
 		if ( ! isEmpty( this.props.selectedDomainName ) ) {
 			this.props.requestWhois( this.props.selectedDomainName );
