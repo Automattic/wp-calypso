@@ -8,7 +8,13 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 
-export function RelatedPluginsPage( { pluginSlug, siteUrl } ) {
+export function RelatedPluginsPage( {
+	pluginSlug,
+	siteUrl,
+}: {
+	pluginSlug: string;
+	siteUrl: string;
+} ) {
 	const translate = useTranslate();
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 
@@ -21,6 +27,11 @@ export function RelatedPluginsPage( { pluginSlug, siteUrl } ) {
 		<MainComponent wideLayout>
 			<PluginsBrowserList
 				title={ translate( 'Related Plugins' ) }
+				subtitle=""
+				search=""
+				size={ false }
+				resultCount={ false }
+				browseAllLink=""
 				plugins={ relatedPlugins }
 				listName="related-plugins"
 				listType="browse"
