@@ -11,15 +11,15 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DoughnutChart from '../../doughnut-chart';
 import useBannerSubtitle from './use-banner-subtitle';
-
 import './style.scss';
 
 interface TrialBannerProps {
 	callToAction?: JSX.Element | null;
+	isEcommerceTrial?: boolean;
 }
 
 const TrialBanner = ( props: TrialBannerProps ) => {
-	const { callToAction } = props;
+	const { callToAction, isEcommerceTrial } = props;
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 
 	const { currentPlan, trialDaysLeft, trialExpired, trialExpiration } = useSelector(
@@ -48,7 +48,9 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 		currentPlan?.productSlug,
 		trialExpired,
 		trialDaysLeftToDisplay,
-		trialExpiration
+		trialExpiration,
+		selectedSiteId,
+		isEcommerceTrial
 	);
 
 	return (

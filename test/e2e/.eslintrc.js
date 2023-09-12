@@ -41,5 +41,7 @@ module.exports = {
 		// The rule hasn't had the intended results (encouraging owners to re-enable and fix their tests).
 		// See GitHub issue #64870 for context (https://github.com/Automattic/wp-calypso/issues/64870).
 		'jest/no-disabled-tests': 'off',
+
+		'jsdoc/tag-lines': [ 'off' ],
 	},
 };

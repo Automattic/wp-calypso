@@ -24,3 +24,8 @@ export type NewsletterCategory = {
 	parent: number;
 	subscribed?: boolean;
 };
+
+export type NewsletterCategoriesResponse = {
+	enabled: boolean;
+	newsletter_categories: NewsletterCategory[];
+};
