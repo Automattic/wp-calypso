@@ -1,38 +1,39 @@
 import { type as domainTypes, domainInfoContext } from './constants';
 import { ResponseDomain } from './types';
+import type { __ as __type } from '@wordpress/i18n';
 
 export function getDomainTypeText(
 	domain: ResponseDomain,
-	__ = ( text: string ) => text,
+	__: typeof __type = ( text: string ) => text,
 	context = domainInfoContext.DOMAIN_ITEM
 ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			if ( context === domainInfoContext.PAGE_TITLE ) {
-				return __( 'Connected Domain' );
+				return __( 'Connected Domain', __i18n_text_domain__ );
 			}
 
-			return 'Registered with an external provider';
+			return __( 'Registered with an external provider', __i18n_text_domain__ );
 
 		case domainTypes.REGISTERED:
 			if ( domain?.isPremium ) {
-				return __( 'Premium Domain' );
+				return __( 'Premium Domain', __i18n_text_domain__ );
 			}
 
 			// Registered domains don't show any type text in the domain row component
 			if ( context === domainInfoContext.DOMAIN_ROW ) {
 				return null;
 			}
-			return __( 'Registered Domain' );
+			return __( 'Registered Domain', __i18n_text_domain__ );
 
 		case domainTypes.SITE_REDIRECT:
-			return __( 'Site Redirect' );
+			return __( 'Site Redirect', __i18n_text_domain__ );
 
 		case domainTypes.WPCOM:
-			return __( 'Default Site Domain' );
+			return __( 'Default Site Domain', __i18n_text_domain__ );
 
 		case domainTypes.TRANSFER:
-			return __( 'Domain Transfer' );
+			return __( 'Domain Transfer', __i18n_text_domain__ );
 
 		default:
 			return '';

@@ -156,8 +156,7 @@ export function DomainsTableRow( {
 	};
 
 	const domainTypeText =
-		currentDomainData &&
-		getDomainTypeText( currentDomainData, translate, domainInfoContext.DOMAIN_ROW );
+		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
 	return (
 		<tr key={ domain.domain } ref={ ref }>
