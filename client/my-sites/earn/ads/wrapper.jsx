@@ -5,10 +5,7 @@ import {
 	FEATURE_WORDADS_INSTANT,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ActionCard from 'calypso/components/action-card';
@@ -21,6 +18,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
@@ -36,44 +34,62 @@ import {
 	getWordAdsErrorForSite,
 	getWordAdsSuccessForSite,
 } from 'calypso/state/wordads/approve/selectors';
-import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';
 import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 
 import './style.scss';
 import 'calypso/my-sites/stats/stats-module/style.scss';
 
-class AdsWrapper extends Component {
-	static propTypes = {
-		adsProgramName: PropTypes.string,
-		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
-		requestingWordAdsApproval: PropTypes.bool.isRequired,
-		requestWordAdsApproval: PropTypes.func.isRequired,
-		section: PropTypes.string.isRequired,
-		site: PropTypes.object,
-		wordAdsError: PropTypes.string,
-		wordAdsSuccess: PropTypes.bool,
+const AdsWrapper = ( { section, children } ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+
+	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, siteId ) );
+	const wordAdsStatus = useSelector( ( state ) => getSiteWordadsStatus( state, siteId ) );
+	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, siteId ) );
+	const wordAdsError = useSelector( ( state ) => getWordAdsErrorForSite( state, site ) );
+	const wordAdsSuccess = useSelector( ( state ) => getWordAdsSuccessForSite( state, site ) );
+	const isUnsafe = useSelector( ( state ) => isSiteWordadsUnsafe( state, siteId ) );
+	const canActivateWordAds = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'activate_wordads' )
+	);
+	const requestingWordAdsApproval = useSelector( ( state ) =>
+		isRequestingWordAdsApprovalForSite( state, site )
+	);
+	const adsProgramName = useSelector( ( state ) =>
+		isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds'
+	);
+
+	const canActivateWordadsInstant =
+		! site.options.wordads && canActivateWordAds && hasWordAdsFeature;
+	const canUpgradeToUseWordAds = ! site.options.wordads && ! hasWordAdsFeature;
+	const isWordadsInstantEligibleButNotOwner =
+		! site.options.wordads && hasWordAdsFeature && ! canActivateWordAds;
+	const isEnrolledWithIneligiblePlan =
+		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
+
+	const requestAdsApproval = () =>
+		requestingWordAdsApproval ? dispatch( requestWordAdsApproval( siteId ) ) : null;
+
+	const handleDismissWordAdsError = () => {
+		dispatch( dismissWordAdsError( siteId ) );
 	};
 
-	handleDismissWordAdsError = () => {
-		const { siteId } = this.props;
-		this.props.dismissWordAdsError( siteId );
-	};
-
-	renderInstantActivationToggle( component ) {
-		const { translate, adsProgramName } = this.props;
-
+	const renderInstantActivationToggle = ( component ) => {
 		return (
 			<div>
-				{ this.props.wordAdsError && (
+				{ wordAdsError && (
 					<Notice
 						classname="ads__activate-notice"
 						status="is-error"
-						onDismissClick={ this.handleDismissWordAdsError }
+						onDismissClick={ handleDismissWordAdsError }
 					>
-						{ this.props.wordAdsError }
+						{ wordAdsError }
 					</Notice>
 				) }
-				{ this.props.isUnsafe === 'mature' && (
+				{ isUnsafe === 'mature' && (
 					<Notice
 						classname="ads__activate-notice"
 						status="is-warning"
@@ -91,7 +107,7 @@ class AdsWrapper extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
-				{ this.props.isUnsafe === 'spam' && (
+				{ isUnsafe === 'spam' && (
 					<Notice
 						classname="ads__activate-notice"
 						status="is-warning"
@@ -102,7 +118,7 @@ class AdsWrapper extends Component {
 						) }
 					/>
 				) }
-				{ this.props.isUnsafe === 'private' && (
+				{ isUnsafe === 'private' && (
 					<Notice
 						classname="ads__activate-notice"
 						status="is-warning"
@@ -116,7 +132,7 @@ class AdsWrapper extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
-				{ this.props.isUnsafe === 'other' && (
+				{ isUnsafe === 'other' && (
 					<Notice
 						classname="ads__activate-notice"
 						status="is-warning"
@@ -133,9 +149,9 @@ class AdsWrapper extends Component {
 								disabled={
 									this.props.site.options.wordads ||
 									( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) ||
-									this.props.isUnsafe !== false
+									isUnsafe !== false
 								}
-								onClick={ this.props.requestWordAdsApproval }
+								onClick={ requestAdsApproval }
 							>
 								{ translate( 'Join WordAds' ) }
 							</FormButton>
@@ -169,18 +185,18 @@ class AdsWrapper extends Component {
 				<FeatureExample>{ component }</FeatureExample>
 			</div>
 		);
-	}
+	};
 
-	renderEmptyContent() {
+	const renderEmptyContent = () => {
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ this.props.translate( 'You are not authorized to view this page' ) }
 			/>
 		);
-	}
+	};
 
-	renderOwnerRequiredMessage() {
+	const renderOwnerRequiredMessage = () => {
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/wordAds.svg"
@@ -188,11 +204,10 @@ class AdsWrapper extends Component {
 				title={ this.props.translate( 'Only site owners are eligible to activate WordAds.' ) }
 			/>
 		);
-	}
+	};
 
-	renderUpsell( options = {} ) {
+	const renderUpsell = ( options = {} ) => {
 		const { forceDisplay = false, url } = options;
-		const { siteSlug, translate } = this.props;
 		const bannerURL = url || `/checkout/${ siteSlug }/premium`;
 		return (
 			<UpsellNudge
@@ -217,10 +232,9 @@ class AdsWrapper extends Component {
 				] }
 			/>
 		);
-	}
+	};
 
-	renderjetpackUpsell() {
-		const { siteSlug, translate } = this.props;
+	const renderjetpackUpsell = () => {
 		const bannerURL = `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`;
 		return (
 			<UpsellNudge
@@ -238,10 +252,9 @@ class AdsWrapper extends Component {
 				tracksClickName="calypso_upgrade_nudge_click"
 			/>
 		);
-	}
+	};
 
-	renderNoticeSiteIsPrivate() {
-		const { translate, siteSlug } = this.props;
+	const renderNoticeSiteIsPrivate = () => {
 		const privacySettingPageLink = `https://wordpress.com/settings/general/${ siteSlug }#site-privacy-settings`;
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
@@ -255,10 +268,9 @@ class AdsWrapper extends Component {
 				) }
 			</Notice>
 		);
-	}
+	};
 
-	renderContentWithUpsell( component ) {
-		const { translate, section, siteSlug } = this.props;
+	const renderContentWithUpsell = ( component ) => {
 		const allowedSections = [ 'ads-earnings', 'ads-payments' ];
 		const isAllowedSection = allowedSections.includes( section );
 		const url = `/plans/${ siteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`;
@@ -284,101 +296,47 @@ class AdsWrapper extends Component {
 				{ isAllowedSection ? component : <FeatureExample>{ component }</FeatureExample> }
 			</>
 		);
-	}
+	};
 
-	render() {
-		const {
-			canAccessAds,
-			canActivateWordadsInstant,
-			canUpgradeToUseWordAds,
-			isEnrolledWithIneligiblePlan,
-			isWordadsInstantEligibleButNotOwner,
-			site,
-			siteId,
-			translate,
-		} = this.props;
-
-		let component = this.props.children;
+	const getComponentAndNotice = () => {
+		let component = children;
 		let notice = null;
 
-		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
+		if ( requestingWordAdsApproval || wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
 		} else if ( canActivateWordadsInstant ) {
-			component = this.renderInstantActivationToggle( component );
+			component = renderInstantActivationToggle( component );
 		} else if ( isWordadsInstantEligibleButNotOwner ) {
-			component = this.renderOwnerRequiredMessage( component );
+			component = renderOwnerRequiredMessage( component );
 		} else if ( canUpgradeToUseWordAds && site.jetpack ) {
-			component = this.renderjetpackUpsell();
+			component = renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds ) {
-			component = this.renderUpsell();
+			component = renderUpsell();
 		} else if ( ! canAccessAds ) {
-			component = this.renderEmptyContent();
+			component = renderEmptyContent();
 		} else if ( ! site.options.wordads && ! ( site.jetpack && canUpgradeToUseWordAds ) ) {
 			component = null;
 		} else if ( site.options.wordads && site.is_private ) {
-			notice = this.renderNoticeSiteIsPrivate();
+			notice = renderNoticeSiteIsPrivate();
 		} else if ( isEnrolledWithIneligiblePlan ) {
-			component = this.renderContentWithUpsell( component );
+			component = renderContentWithUpsell( component );
 		}
-
-		return (
-			<div>
-				<QuerySites siteId={ siteId } />
-				<QuerySiteFeatures siteIds={ [ siteId ] } />
-				<QueryWordadsStatus siteId={ siteId } />
-				{ notice }
-				{ component }
-			</div>
-		);
-	}
-}
-
-const mapStateToProps = ( state ) => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	const hasWordAdsFeature = siteHasWordAds( state, siteId );
-	const canActivateWordAds = canCurrentUser( state, siteId, 'activate_wordads' );
-
-	return {
-		site,
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		canAccessAds: canAccessWordAds( state, siteId ),
-		canActivateWordadsInstant: ! site.options.wordads && canActivateWordAds && hasWordAdsFeature,
-		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
-		hasWordAdsFeature,
-		isEnrolledWithIneligiblePlan:
-			site?.options?.wordads &&
-			! hasWordAdsFeature &&
-			getSiteWordadsStatus( state, siteId ) === WordAdsStatus.ineligible,
-		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
-		wordAdsError: getWordAdsErrorForSite( state, site ),
-		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
-		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
-		isWordadsInstantEligibleButNotOwner:
-			! site.options.wordads && hasWordAdsFeature && ! canActivateWordAds,
-		adsProgramName: isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds',
+		return { component, notice };
 	};
+
+	return (
+		<div>
+			<QuerySites siteId={ siteId } />
+			<QuerySiteFeatures siteIds={ [ siteId ] } />
+			<QueryWordadsStatus siteId={ siteId } />
+			{ getComponentAndNotice().notice }
+			{ getComponentAndNotice().component }
+		</div>
+	);
 };
 
-const mapDispatchToProps = {
-	requestWordAdsApproval,
-	dismissWordAdsError,
-};
-
-const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
-	...dispatchProps,
-	requestWordAdsApproval: () =>
-		! stateProps.requestingWordAdsApproval
-			? dispatchProps.requestWordAdsApproval( stateProps.siteId )
-			: null,
-	...parentProps,
-	...stateProps,
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( AdsWrapper ) );
+export default AdsWrapper;
