@@ -127,7 +127,7 @@ const AdsWrapper = ( { section, children } ) => {
 							'Your site is marked as private. It needs to be public so that visitors can see the ads.'
 						) }
 					>
-						<NoticeAction href={ '/settings/general/' + this.props.siteSlug }>
+						<NoticeAction href={ '/settings/general/' + siteSlug }>
 							{ translate( 'Change privacy settings' ) }
 						</NoticeAction>
 					</Notice>
@@ -147,8 +147,8 @@ const AdsWrapper = ( { section, children } ) => {
 						<div className="ads__activate-header-toggle">
 							<FormButton
 								disabled={
-									this.props.site.options.wordads ||
-									( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) ||
+									site?.options?.wordads ||
+									( requestingWordAdsApproval && wordAdsError === null ) ||
 									isUnsafe !== false
 								}
 								onClick={ requestAdsApproval }
@@ -191,7 +191,7 @@ const AdsWrapper = ( { section, children } ) => {
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ this.props.translate( 'You are not authorized to view this page' ) }
+				title={ translate( 'You are not authorized to view this page' ) }
 			/>
 		);
 	};
@@ -201,7 +201,7 @@ const AdsWrapper = ( { section, children } ) => {
 			<EmptyContent
 				illustration="/calypso/images/illustrations/wordAds.svg"
 				illustrationWidth={ 400 }
-				title={ this.props.translate( 'Only site owners are eligible to activate WordAds.' ) }
+				title={ translate( 'Only site owners are eligible to activate WordAds.' ) }
 			/>
 		);
 	};
