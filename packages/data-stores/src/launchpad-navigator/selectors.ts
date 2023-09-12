@@ -1,3 +1,4 @@
 import type { LaunchpadNavigatorState } from './reducer';
 
-export const getCurrentChecklist = ( state: LaunchpadNavigatorState ) => state.currentChecklist;
+export const getActiveChecklistSlug = ( state: LaunchpadNavigatorState ) =>
+	state.activeChecklistSlug;

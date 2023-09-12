@@ -150,7 +150,7 @@ export const setUpActionsForTasks = ( {
 		const actionDispatch = () => {
 			recordTaskClickTracksEvent( task );
 			if ( siteSlug ) {
-				dispatch( LaunchpadNavigator.store ).setCurrentChecklist( siteSlug, checklistSlug );
+				dispatch( LaunchpadNavigator.store ).setActiveChecklist( siteSlug, checklistSlug );
 			}
 			action?.();
 		};

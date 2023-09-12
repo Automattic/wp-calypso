@@ -1,3 +1,3 @@
 export interface UpdateLaunchpadNavigatorResponse {
-	current_checklist: string | null;
+	active_checklist_slug: string | null;
 }

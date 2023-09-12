@@ -5,23 +5,23 @@ import { STORE_KEY } from './constants';
 import type { UpdateLaunchpadNavigatorResponse } from './types';
 import type { GeneratorReturnType } from '../mapped-types';
 
-export const receiveCurrentChecklist = ( currentChecklist: string | null ) =>
+export const receiveActiveChecklistSlug = ( activeChecklistSlug: string | null ) =>
 	( {
-		type: 'LAUNCHPAD_NAVIGATOR_RECEIVE_CURRENT_CHECKLIST',
-		current_checklist: currentChecklist,
+		type: 'LAUNCHPAD_NAVIGATOR_RECEIVE_ACTIVE_CHECKLIST_SLUG',
+		active_checklist_slug: activeChecklistSlug,
 	} as const );
 
-export function* setCurrentChecklist( siteSlug: string, checklist_slug: string ) {
+export function* setActiveChecklist( siteSlug: string, active_checklist_slug: string ) {
 	const body = {
-		current_checklist: checklist_slug,
+		active_checklist_slug,
 	};
 
-	// Get the current checklist_slug from the Redux state
-	const currentChecklistSlug = select( STORE_KEY ).getCurrentChecklist();
+	// Get the current active_checklist_slug from the Redux state
+	const activeChecklistSlug = select( STORE_KEY ).getActiveChecklistSlug();
 
-	if ( currentChecklistSlug === checklist_slug ) {
+	if ( activeChecklistSlug === active_checklist_slug ) {
 		// If it's the same, you can return early or perform any other actions
-		return receiveCurrentChecklist( checklist_slug );
+		return receiveActiveChecklistSlug( active_checklist_slug );
 	}
 
 	let response: UpdateLaunchpadNavigatorResponse;
@@ -42,9 +42,9 @@ export function* setCurrentChecklist( siteSlug: string, checklist_slug: string )
 		} as APIFetchOptions );
 	}
 
-	return receiveCurrentChecklist( response.current_checklist );
+	return receiveActiveChecklistSlug( response.active_checklist_slug );
 }
 
 export type LaunchpadNavigatorAction =
-	| ReturnType< typeof receiveCurrentChecklist >
-	| GeneratorReturnType< typeof setCurrentChecklist >;
+	| ReturnType< typeof receiveActiveChecklistSlug >
+	| GeneratorReturnType< typeof setActiveChecklist >;
