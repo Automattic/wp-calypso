@@ -1,5 +1,7 @@
 /* Parameter Interfaces */
 
+export type SitePostState = 'publish' | 'draft' | 'trash' | 'future';
+
 export interface AccountDetails {
 	userID: number;
 	username: string;
@@ -221,6 +223,22 @@ export interface Subscriber {
 export interface SubscriberDeletedResponse {
 	follower_id: string;
 	deleted: true;
+}
+
+export interface PostCountsResponse {
+	counts: {
+		all: {
+			publish: number;
+			future: number;
+			draft: number;
+			trash: number;
+		};
+		mine: {
+			draft: number;
+			publish: number;
+			trash: number;
+		};
+	};
 }
 
 /* Error Responses */
