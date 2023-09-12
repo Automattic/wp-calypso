@@ -28,7 +28,7 @@
 		.reader-visit-link {
 			align-items: center;
 			box-sizing: border-box;
-			display: flex;
+			display: inline-flex;
 			gap: 4px;
 		}
 		@include breakpoint-deprecated( "<660px" ) {

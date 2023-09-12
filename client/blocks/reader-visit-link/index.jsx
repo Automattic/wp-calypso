@@ -31,7 +31,10 @@ const ReaderVisitLink = ( props ) => {
 			<span className="reader-visit-link__label">{ props.children }</span>
 
 			<Tooltip isVisible={ tooltip } position="bottom left" context={ linkRef.current }>
-				{ translate( 'Views' ) }
+				{
+					// translators: The label of an external link to view the post
+					translate( 'Visit' )
+				}
 			</Tooltip>
 		</ExternalLink>
 	);
