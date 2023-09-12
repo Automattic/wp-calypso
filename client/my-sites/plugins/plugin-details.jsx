@@ -385,7 +385,12 @@ function PluginDetails( props ) {
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />
 								) }
-								<RelatedPlugins slug={ props.pluginSlug } />
+								<RelatedPlugins
+									slug={ props.pluginSlug }
+									seeAllLink={ `/plugins/${ props.pluginSlug }/related/${
+										selectedSite?.slug ?? ''
+									}` }
+								/>
 							</div>
 						) }
 					</div>
