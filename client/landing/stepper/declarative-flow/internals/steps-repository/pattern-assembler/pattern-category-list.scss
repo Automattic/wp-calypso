@@ -1,5 +1,25 @@
 .pattern-category-list {
-	.components-item.navigator-item {
-		margin: 0 -5px;
+	button {
+		margin: 0 -11px;
+		border-radius: 2px;
+
+		.navigator-item {
+			margin: 0;
+			padding: 0 5px 0 11px;
+			width: auto;
+
+			&.navigator-item--active {
+				border-radius: 2px;
+			}
+		}
+
+		&:focus-visible {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+
+			.navigator-item {
+				color: var(--studio-blue-50);
+			}
+		}
 	}
 }
