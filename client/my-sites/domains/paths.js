@@ -270,6 +270,15 @@ export function domainManagementTransferToAnotherUser( siteName, domainName, rel
  * @param {string} domainName
  * @param {string?} relativeTo
  */
+export function domainManagementTransferToAnyUser( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'any-user', relativeTo );
+}
+
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'other-site', relativeTo );
 }
