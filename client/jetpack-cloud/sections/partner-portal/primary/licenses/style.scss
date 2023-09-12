@@ -2,14 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .licenses {
-	header.current-section {
-		padding: 0 16px;
-
-		button {
-			padding: 20px 8px;
-		}
-	}
-
 	.search {
 		box-shadow: 0 0 0 1px var(--color-neutral-5);
 		margin-block-end: 8px;
