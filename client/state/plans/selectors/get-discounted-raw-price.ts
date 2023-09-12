@@ -23,14 +23,10 @@ export function getDiscountedRawPrice(
 	const rawPrice = plan?.raw_price ?? -1;
 	const origCost = plan?.orig_cost ?? -1;
 
-	if ( rawPrice < 0 || origCost < 0 ) {
-		return null;
-	}
-	if ( ! plan ) {
+	if ( rawPrice < 0 || origCost < 0 || ! plan ) {
 		return null;
 	}
 
-	const price = returnSmallestUnit ? plan?.raw_price_integer : plan?.raw_price;
-
+	const price = returnSmallestUnit ? plan.raw_price_integer : rawPrice;
 	return returnMonthly ? calculateMonthlyPriceForPlan( plan.product_slug, price ) : price;
 }
