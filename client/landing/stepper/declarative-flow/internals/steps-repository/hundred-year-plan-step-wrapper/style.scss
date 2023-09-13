@@ -25,6 +25,8 @@
 	}
 
 	.hundred-year-plan-step-wrapper__info-column-container {
-		background-image: url(calypso/assets/images/hundred-year-plan-onboarding/stars-solo.webp);
+		@media (min-width: 960px) {
+			background-image: url(calypso/assets/images/hundred-year-plan-onboarding/stars-solo.webp);
+		}
 	}
 }

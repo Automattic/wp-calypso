@@ -7,12 +7,15 @@ import { useTranslate } from 'i18n-calypso';
 import HundredYearPlanLogo from './hundred-year-plan-logo';
 
 const StyledModal = styled( Modal )`
-	background: #040b13;
-	.components-button.has-icon {
-		color: var( --studio-gray-0 );
-	}
-	.components-modal__header {
-		border: none;
+	&.is-full-screen {
+		background: #040b13;
+		max-width: 1192px;
+		.components-button.has-icon {
+			color: var( --studio-gray-0 );
+		}
+		.components-modal__header {
+			border: none;
+		}
 	}
 `;
 
@@ -23,8 +26,8 @@ const Wrapper = styled.div`
 	align-items: center;
 	justify-content: center;
 	gap: 32px;
-	padding: 0 16px;
-	@media ( min-width: 600px ) {
+	padding: 0;
+	@media ( min-width: 960px ) {
 		gap: 60px;
 		padding: 0 90px;
 	}
@@ -103,11 +106,15 @@ const RowTitle = styled.div`
 	color: #7f9af3;
 	font-feature-settings: 'clig' off, 'liga' off;
 	font-family: 'SF Pro Display', sans-serif;
-	font-size: 18px;
+	font-size: 16px;
 	font-style: normal;
 	font-weight: 500;
 	line-height: 26px; /* 144.444% */
 	text-transform: uppercase;
+
+	@media ( min-width: 960px ) {
+		font-size: 18px;
+	}
 `;
 
 const RowContent = styled.div`
@@ -116,10 +123,13 @@ const RowContent = styled.div`
 
 	/* Lg/Regular */
 	font-family: 'SF Pro Display', sans-serif;
-	font-size: 18px;
+	font-size: 12px;
 	font-style: normal;
 	font-weight: 400;
 	line-height: 26px; /* 144.444% */
+	@media ( min-width: 960px ) {
+		font-size: 18px;
+	}
 `;
 
 export default function InfoModal( { onClose }: { onClose: () => void } ) {

@@ -97,6 +97,7 @@ const HundredYearPlanSetup: Step = function HundredYearPlanSetup( { navigation, 
 					subHeaderText={ translate(
 						'Give your site a fitting name and description — you can always change it later.'
 					) }
+					subHeaderAlign="center"
 				/>
 			}
 			stepName="hundred-year-plan-setup"
