@@ -188,7 +188,7 @@ class MagicLogin extends Component {
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
 		return (
-			<Main className="grav-powered-magic-login">
+			<>
 				<div className="grav-powered-magic-login__content">
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
@@ -250,7 +250,7 @@ class MagicLogin extends Component {
 						) }
 					</div>
 				</div>
-			</Main>
+			</>
 		);
 	}
 
@@ -265,11 +265,7 @@ class MagicLogin extends Component {
 		} );
 
 		return (
-			<Main
-				className={ classNames( 'grav-powered-magic-login', {
-					'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
-				} ) }
-			>
+			<>
 				{ this.renderLocaleSuggestions() }
 				<GlobalNotices id="notices" />
 				<div className="grav-powered-magic-login__content">
@@ -340,7 +336,7 @@ class MagicLogin extends Component {
 						</div>
 					</div>
 				</div>
-			</Main>
+			</>
 		);
 	}
 
@@ -348,9 +344,17 @@ class MagicLogin extends Component {
 		const { oauth2Client, showCheckYourEmail } = this.props;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-			return showCheckYourEmail
-				? this.renderGravPoweredEmailVerification()
-				: this.renderGravPoweredMagicLogin();
+			return (
+				<Main
+					className={ classNames( 'grav-powered-magic-login', {
+						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
+					} ) }
+				>
+					{ showCheckYourEmail
+						? this.renderGravPoweredEmailVerification()
+						: this.renderGravPoweredMagicLogin() }
+				</Main>
+			);
 		}
 
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
