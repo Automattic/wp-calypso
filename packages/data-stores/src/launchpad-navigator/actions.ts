@@ -16,7 +16,7 @@ export const removeChecklistFromNavigatorList = ( checklist_slug: string ) =>
 		checklist_slug,
 	} as const );
 
-export function* setActiveChecklist( siteSlug: string, active_checklist_slug: string ) {
+export function* setActiveChecklist( siteSlug: string, active_checklist_slug: string | null ) {
 	const body = {
 		active_checklist_slug,
 	};
