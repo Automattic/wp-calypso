@@ -36,7 +36,6 @@ const FB_APP_ID = '249643311490';
 
 const SharingModalInner: React.FC = () => {
 	const isDismissedDefault = window?.sharingModalOptions?.isDismissed || false;
-	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
 	const { __ } = useI18n();
 	const isPrivateBlog = window?.wpcomGutenberg?.blogPublic === '-1';
@@ -75,7 +74,6 @@ const SharingModalInner: React.FC = () => {
 			! shouldShowFirstPostPublishedModal &&
 			! shouldShowSellerCelebrationModal &&
 			! shouldShowVideoCelebrationModal &&
-			launchpadScreenOption !== 'full' &&
 			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished &&
 			// Ensure post is published publicly and not private or password protected.
@@ -99,7 +97,6 @@ const SharingModalInner: React.FC = () => {
 		shouldShowSellerCelebrationModal,
 		shouldShowVideoCelebrationModal,
 		isCurrentPostPublished,
-		launchpadScreenOption,
 	] );
 
 	if ( ! isOpen || isDismissedDefault || isPrivateBlog ) {
