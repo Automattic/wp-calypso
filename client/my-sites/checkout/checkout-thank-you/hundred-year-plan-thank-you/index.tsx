@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { Button, ButtonProps } from '@automattic/components';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -15,15 +16,12 @@ interface Props {
 	site: number | string;
 	receiptId: number;
 }
+
+const PageContainer = styled.div``;
 const MasterBar = styled.div`
-	display: flex;
-	padding: 24px;
-	align-items: center;
-	text-align: left;
-	justify-content: left;
-	left: 0;
-	top: 0;
+	height: 48px;
 	width: 100%;
+	padding: 24px 0 0 24px;
 `;
 
 const Header = styled.h1`
@@ -32,12 +30,15 @@ const Header = styled.h1`
 	margin: 16px 0;
 `;
 
-const Content = styled.div`
+const Content = styled.div< { isMobile: boolean } >`
 	margin: 0 auto;
 	padding: 24px;
 	color: var( --studio-gray-5 );
-	max-width: 717px;
+	max-width: 877px;
 	text-align: center;
+	.hundred-year-plan-thank-you__thank-you-text-container {
+		margin: 24px ${ ( { isMobile } ) => ( isMobile ? '24px' : '80px' ) };
+	}
 `;
 
 const Highlight = styled.p`
@@ -46,11 +47,12 @@ const Highlight = styled.p`
 	font-size: 16px;
 `;
 
-const ButtonBar = styled.div`
-	margin-bottom: 32px;
+const ButtonBar = styled.div< { isMobile: boolean } >`
+	margin-bottom: ${ ( { isMobile } ) => ( isMobile ? '8px' : '32px' ) };
 	display: flex;
 	justify-content: center;
 	gap: 16px;
+	flex-direction: ${ ( { isMobile } ) => ( isMobile ? 'column' : 'row' ) };
 `;
 
 const StyledButton = styled< ButtonProps & { dark?: boolean } >( Button )`
@@ -88,9 +90,9 @@ export default function HundredYearPlanThankYou( { receiptId }: Props ) {
 	if ( ! isReceiptLoading && ! receipt.data?.purchases?.length ) {
 		page( '/' );
 	}
-
+	const isMobile = useMobileBreakpoint();
 	return (
-		<div>
+		<>
 			<Global
 				styles={ css`
 					body.is-section-checkout,
@@ -100,31 +102,40 @@ export default function HundredYearPlanThankYou( { receiptId }: Props ) {
 				` }
 			/>
 			<MasterBar>
-				<CustomizedWordPressLogo size={ 24 } />
+				<div>
+					{ ' ' }
+					<CustomizedWordPressLogo size={ 24 } />
+				</div>
 			</MasterBar>
-			{ ! isReceiptLoading && (
-				<Content>
-					<Header className="wp-brand-font">{ translate( 'Thank you for trusting us' ) }</Header>
-					<Highlight>
-						{ translate(
-							'Your 100-year legacy begins now. Experience the dedicated premium support team and exclusive benefits tailored just for you. We are thrilled to stand by your side for the next century.'
-						) }
-					</Highlight>
-					<ButtonBar>
-						<StyledButton dark>{ translate( 'View plan benefits' ) }</StyledButton>
-						<StyledButton>{ translate( 'Access premium support' ) }</StyledButton>
-					</ButtonBar>
-					<video
-						src="https://wpcom.files.wordpress.com/2023/08/century-100-banner.mp4"
-						preload="metadata"
-						width="715"
-						height="250"
-						muted
-						playsInline
-						autoPlay
-					/>
-				</Content>
-			) }
-		</div>
+			<PageContainer>
+				{ ! isReceiptLoading && (
+					<Content isMobile={ isMobile }>
+						<div className="hundred-year-plan-thank-you__thank-you-text-container">
+							<Header className="wp-brand-font">
+								{ translate( 'Thank you for trusting us' ) }
+							</Header>
+							<Highlight>
+								{ translate(
+									'Your 100-year legacy begins now. Experience the dedicated premium support team and exclusive benefits tailored just for you. We are thrilled to stand by your side for the next century.'
+								) }
+							</Highlight>
+							<ButtonBar isMobile={ isMobile }>
+								<StyledButton dark>{ translate( 'View plan benefits' ) }</StyledButton>
+								<StyledButton>{ translate( 'Access premium support' ) }</StyledButton>
+							</ButtonBar>
+						</div>
+						<video
+							src="https://wpcom.files.wordpress.com/2023/08/century-100-banner.mp4"
+							preload="metadata"
+							width="100%"
+							height="auto"
+							muted
+							playsInline
+							autoPlay
+						/>
+					</Content>
+				) }
+			</PageContainer>
+		</>
 	);
 }

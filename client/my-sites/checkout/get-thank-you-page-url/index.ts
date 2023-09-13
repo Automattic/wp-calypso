@@ -535,7 +535,7 @@ function getFallbackDestination( {
 	const is100YearPlanProduct = cart?.products?.some( is100Year );
 	if ( is100YearPlanProduct ) {
 		debug( 'site with 100 year plan' );
-		return `/checkout/thank-you/100-year/${ siteSlug }/${ receiptIdOrPlaceholder }`;
+		return `/checkout/100-year/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 	}
 
 	const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
