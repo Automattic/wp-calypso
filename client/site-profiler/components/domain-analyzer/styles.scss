@@ -1,0 +1,65 @@
+.domain-analyzer {
+	& > h1 {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		/* stylelint-disable-next-line */
+		font-size: 4.375rem;
+		color: var(--studio-gray-100);
+	}
+
+	& > p {
+		font-family: "Noto Sans", Helvetica, Arial, sans-serif;
+		/* stylelint-disable-next-line */
+		font-size: 1.125rem;
+		color: var(--studio-gray-80);
+	}
+}
+
+.domain-analyzer--form-container {
+	background: #fff;
+	border: solid 1px #ccc;
+	/* stylelint-disable-next-line */
+	border-radius: 8px;
+	padding: 0.625rem 1.5rem;
+	display: flex;
+	gap: 1rem;
+
+	.col-1 {
+		flex: 1;
+	}
+
+	.col-2 {
+		display: flex;
+		align-items: center;
+		width: fit-content;
+	}
+
+	input {
+		width: 100%;
+		border: none;
+		padding: 0;
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 2.75rem;
+		color: var(--studio-gray-100);
+
+		&::placeholder {
+			color: var(--studio-gray-40);
+		}
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	button {
+		color: #fff;
+		background: var(--wp-admin-theme-color);
+		border-radius: 4px;
+		font-size: 1rem;
+		font-weight: 500;
+		padding: 1.5rem;
+
+		&:hover {
+			color: #fff !important;
+		}
+	}
+}
