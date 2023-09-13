@@ -204,12 +204,25 @@ export default function BulkEditContactInfoPage( {
 			);
 		}
 
+		const firstSelectedDomainWhois = Object.values( allDomainsWhoisData?.[ 0 ] ?? {} )[ 0 ];
 		const firstDomainWithIncompatibleWhois = allDomainsWhoisData?.find( ( domainWhoisData ) => {
-			const whoisData = Object.values( domainWhoisData )[ 0 ];
-			if ( typeof whoisData === 'object' && 'extra' in whoisData ) {
-				return true;
+			const currentWhois = Object.values( domainWhoisData )[ 0 ];
+			if ( ! firstSelectedDomainWhois || ! currentWhois ) {
+				return false;
 			}
+
+			const test = Object.keys( firstSelectedDomainWhois ).some(
+				( key ) => currentWhois[ key ] !== firstSelectedDomainWhois[ key ]
+			);
+			return test;
 		} );
+
+		// const firstDomainWithIncompatibleWhois = allDomainsWhoisData?.find( ( domainWhoisData ) => {
+		// 	const whoisData = Object.values( domainWhoisData )[ 0 ];
+		// 	if ( typeof whoisData === 'object' && 'extra' in whoisData ) {
+		// 		return true;
+		// 	}
+		// } );
 
 		if (
 			firstDomainWithIncompatibleWhois &&
@@ -220,7 +233,7 @@ export default function BulkEditContactInfoPage( {
 				sprintf(
 					/* translators: the domain is the name of incompatible domain*/
 					translate(
-						'The domain <strong>%(domain)s</strong> has additional contact fields that makes it incompatible for bulk editing.'
+						'The domain <strong>%(domain)s</strong> has contact fields that makes it incompatible for bulk editing.'
 					),
 					{ domain: Object.keys( firstDomainWithIncompatibleWhois )[ 0 ] }
 				),
