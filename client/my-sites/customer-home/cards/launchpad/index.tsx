@@ -3,8 +3,10 @@ import {
 	updateLaunchpadSettings,
 	useLaunchpad,
 	sortLaunchpadTasksByCompletionStatus,
+	LaunchpadNavigator,
 } from '@automattic/data-stores';
 import { Launchpad, PermittedActions, Task, setUpActionsForTasks } from '@automattic/launchpad';
+import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -49,10 +51,12 @@ const CustomerHomeLaunchpad = ( {
 	const tasklistCompleted = completedSteps === numberOfSteps;
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 	const hasShareSiteTask = checklist?.some( ( task: Task ) => task.id === 'share_site' );
+	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.register() );
 
 	const defaultExtraActions = {
 		...( hasShareSiteTask ? { setShareSiteModalIsOpen } : {} ),
 		...extraActions,
+		setActiveChecklist,
 	};
 
 	const taskFilter = ( tasks: Task[] ) => {

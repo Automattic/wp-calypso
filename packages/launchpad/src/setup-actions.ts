@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
-import { updateLaunchpadSettings, LaunchpadNavigator } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
-import { dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
@@ -22,7 +21,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched } = extraActions || {};
+	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions || {};
 
 	//Record click events for tasks
 	const recordTaskClickTracksEvent = ( task: Task ) => {
@@ -149,8 +148,8 @@ export const setUpActionsForTasks = ( {
 
 		const actionDispatch = () => {
 			recordTaskClickTracksEvent( task );
-			if ( siteSlug ) {
-				dispatch( LaunchpadNavigator.store ).setActiveChecklist( siteSlug, checklistSlug );
+			if ( siteSlug && setActiveChecklist ) {
+				setActiveChecklist( siteSlug, checklistSlug );
 			}
 			action?.();
 		};
