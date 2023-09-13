@@ -272,8 +272,8 @@ class MagicLogin extends Component {
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<RequestLoginEmailForm
 						flow={ oauth2Client.name }
-						headerText={ translate( 'Welcome to %(serviceName)s', {
-							args: { serviceName: oauth2Client.title },
+						headerText={ translate( 'Welcome to %(clientTitle)s', {
+							args: { clientTitle: oauth2Client.title },
 						} ) }
 						hideSubHeaderText
 						inputPlaceholder={ translate( 'Enter your email address' ) }

@@ -439,8 +439,8 @@ class Login extends Component {
 			}
 
 			if ( isGravPoweredClient ) {
-				headerText = translate( 'Login to %(serviceName)s', {
-					args: { serviceName: oauth2Client.title },
+				headerText = translate( 'Login to %(clientTitle)s', {
+					args: { clientTitle: oauth2Client.title },
 				} );
 
 				if ( isGravPoweredLoginPage ) {
