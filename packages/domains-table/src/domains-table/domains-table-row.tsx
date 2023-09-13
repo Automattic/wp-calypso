@@ -1,40 +1,59 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
+import {
+	DomainUpdateStatus,
+	PartialDomainData,
+	SiteDomainsQueryFnData,
+	useSiteDomainsQuery,
+	useSiteQuery,
+	SiteDetails,
+} from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PrimaryDomainLabel } from '../primary-domain-label';
+import { countDomainsRequiringAttention } from '../utils';
+import { createSiteDomainObject } from '../utils/assembler';
+import { domainInfoContext } from '../utils/constants';
+import { getDomainTypeText } from '../utils/get-domain-type-text';
+import { domainManagementLink } from '../utils/paths';
+import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
-import type {
-	PartialDomainData,
-	SiteDomainsQueryFnData,
-	SiteDetails,
-} from '@automattic/data-stores';
+import { DomainsTableStatusCell } from './domains-table-status-cell';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
 	isAllSitesView: boolean;
 	isSelected: boolean;
+	hideOwnerColumn?: boolean;
 	onSelect( domain: PartialDomainData ): void;
-
+	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
+	onDomainsRequiringAttentionChange?( domainsRequiringAttention: number ): void;
 	fetchSiteDomains?: (
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	pendingUpdates?: DomainUpdateStatus[];
 }
 
 export function DomainsTableRow( {
 	domain,
 	isAllSitesView,
 	isSelected,
+	hideOwnerColumn = false,
 	onSelect,
 	fetchSiteDomains,
 	fetchSite,
+	domainStatusPurchaseActions,
+	onDomainsRequiringAttentionChange,
+	pendingUpdates = [],
 }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const { data: allSiteDomains, isLoading: isLoadingSiteDomainsDetails } = useSiteDomainsQuery(
@@ -42,15 +61,16 @@ export function DomainsTableRow( {
 		{
 			enabled: inView,
 			...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( domain.blog_id ) } ),
+			select: ( state ) => state.domains.map( createSiteDomainObject ),
 		}
 	);
 
 	const currentDomainData = useMemo( () => {
-		return allSiteDomains?.domains.find( ( d ) => d.domain === domain.domain );
+		return allSiteDomains?.find( ( d ) => d.name === domain.domain );
 	}, [ allSiteDomains, domain.domain ] );
 
 	const isPrimaryDomain = useMemo(
-		() => allSiteDomains?.domains?.find( ( d ) => d.primary_domain )?.domain === domain.domain,
+		() => allSiteDomains?.find( ( d ) => d.isPrimary )?.name === domain.domain,
 		[ allSiteDomains, domain.domain ]
 	);
 
@@ -72,6 +92,39 @@ export function DomainsTableRow( {
 		return new URL( site.URL ).host.replace( /\//g, '::' );
 	}, [ site, domain.blog_id ] );
 
+	const isLoadingRowDetails = isLoadingSiteDetails || isLoadingSiteDomainsDetails;
+
+	const domainsRequiringAttention = useMemo( () => {
+		if ( ! currentDomainData || isLoadingRowDetails ) {
+			return null;
+		}
+		return countDomainsRequiringAttention(
+			allSiteDomains?.map( ( domain ) =>
+				resolveDomainStatus( domain, {
+					siteSlug: siteSlug,
+					getMappingErrors: true,
+					translate,
+					isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
+					isCreditCardExpiring:
+						domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+				} )
+			)
+		);
+	}, [
+		allSiteDomains,
+		currentDomainData,
+		domainStatusPurchaseActions,
+		siteSlug,
+		translate,
+		isLoadingRowDetails,
+	] );
+
+	useEffect( () => {
+		if ( typeof domainsRequiringAttention === 'number' && domainsRequiringAttention > 0 ) {
+			onDomainsRequiringAttentionChange?.( domainsRequiringAttention );
+		}
+	}, [ domainsRequiringAttention, onDomainsRequiringAttentionChange ] );
+
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
 
@@ -82,18 +135,57 @@ export function DomainsTableRow( {
 		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
 	} );
 
+	const userCanAddSiteToDomain = currentDomainData?.currentUserCanCreateSiteFromDomainOnly ?? false;
+
+	const renderSiteCell = () => {
+		if ( site && currentDomainData ) {
+			return (
+				<DomainsTableSiteCell
+					site={ site }
+					siteSlug={ siteSlug }
+					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+				/>
+			);
+		}
+
+		if ( isLoadingRowDetails ) {
+			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+		}
+
+		return null;
+	};
+
+	const domainTypeText =
+		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
+
+	const renderOwnerCell = () => {
+		if ( isLoadingSiteDetails || isLoadingSiteDomainsDetails ) {
+			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+		}
+
+		if ( ! currentDomainData?.owner ) {
+			return '-';
+		}
+
+		// Removes the username that appears in parentheses after the owner's name.
+		// Uses $ and the negative lookahead assertion (?!.*\() to ensure we only match the very last parenthetical.
+		return currentDomainData.owner.replace( / \((?!.*\().+\)$/, '' );
+	};
+
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					checked={ isSelected }
-					onChange={ () => onSelect( domain ) }
-					/* translators: Label for a checkbox control that selects a domain name.*/
-					aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
-						domain: domain.domain,
-					} ) }
-				/>
+				{ ! domain.wpcom_domain && (
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						checked={ isSelected }
+						onChange={ () => onSelect( domain ) }
+						/* translators: Label for a checkbox control that selects a domain name.*/
+						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
+							domain: domain.domain,
+						} ) }
+					/>
+				) }
 			</td>
 			<td>
 				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
@@ -107,54 +199,35 @@ export function DomainsTableRow( {
 				) : (
 					<span className="domains-table__domain-name">{ domain.domain }</span>
 				) }
+				{ domainTypeText && (
+					<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
+				) }
 			</td>
+			{ ! hideOwnerColumn && <td>{ renderOwnerCell() }</td> }
+			<td>{ renderSiteCell() }</td>
 			<td>
-				{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
+				{ isLoadingRowDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 				) : (
-					<DomainsTableSiteCell
-						site={ site }
+					<DomainsTableStatusCell
 						siteSlug={ siteSlug }
 						currentDomainData={ currentDomainData }
+						domainStatusPurchaseActions={ domainStatusPurchaseActions }
+						pendingUpdates={ pendingUpdates }
 					/>
 				) }
 			</td>
-			<td></td>
 			<td>
 				<DomainsTableRegisteredUntilCell domain={ domain } />
 			</td>
+			<td></td>
+			<td className="domains-table-row__actions">
+				<DomainsTableRowActions
+					canConnectDomainToASite={ userCanAddSiteToDomain }
+					siteSlug={ siteSlug }
+					domainName={ domain.domain }
+				/>
+			</td>
 		</tr>
 	);
-}
-
-function domainManagementLink(
-	{ domain, type }: PartialDomainData,
-	siteSlug: string,
-	isAllSitesView: boolean
-) {
-	const viewSlug = domainManagementViewSlug( type );
-
-	// Encodes only real domain names and not parameter placeholders
-	if ( ! domain.startsWith( ':' ) ) {
-		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
-		// Note they are encoded twice since page.js decodes the path by default.
-		domain = encodeURIComponent( encodeURIComponent( domain ) );
-	}
-
-	if ( isAllSitesView ) {
-		return `/domains/manage/all/${ domain }/${ viewSlug }/${ siteSlug }`;
-	}
-
-	return `/domains/manage/${ domain }/${ viewSlug }/${ siteSlug }`;
-}
-
-function domainManagementViewSlug( type: PartialDomainData[ 'type' ] ) {
-	switch ( type ) {
-		case 'transfer':
-			return 'transfer/in';
-		case 'redirect':
-			return 'redirect';
-		default:
-			return 'edit';
-	}
 }

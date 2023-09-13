@@ -37,14 +37,18 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 
 			queryClient.setQueryData( cacheKey, ( oldData?: NewsletterCategories ) => {
 				const newNewsletterCategory = categories?.find(
-					( category ) => category.id === categoryId
-				) as NewsletterCategory;
+					( category ) => category?.id === categoryId
+				);
+
+				if ( ! newNewsletterCategory ) {
+					return oldData;
+				}
 
 				const updatedData = {
-					...oldData,
+					enabled: oldData?.enabled || false,
 					newsletterCategories: [
 						...( oldData?.newsletterCategories ? oldData.newsletterCategories : [] ),
-						newNewsletterCategory,
+						newNewsletterCategory as NewsletterCategory,
 					],
 				};
 
@@ -56,8 +60,8 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 		onError: ( error, variables, context ) => {
 			queryClient.setQueryData( cacheKey, context?.previousData );
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( cacheKey );
+		onSettled: async () => {
+			await queryClient.invalidateQueries( cacheKey );
 		},
 	} );
 };

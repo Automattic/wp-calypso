@@ -1,5 +1,10 @@
-import { useMemo } from 'react';
+import { Button } from '@wordpress/components';
+import { chevronDown } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo, useState } from 'react';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternSelector from './pattern-selector';
+import { isPriorityPattern } from './utils';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
 
@@ -12,6 +17,7 @@ type PatternListPanelProps = {
 	selectedPatterns?: Pattern[];
 	label?: string;
 	description?: string;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 };
 
 const PatternListPanel = ( {
@@ -23,12 +29,18 @@ const PatternListPanel = ( {
 	label,
 	description,
 	onSelect,
+	recordTracksEvent,
 }: PatternListPanelProps ) => {
+	const translate = useTranslate();
+	const [ isShowMorePatterns, setIsShowMorePatterns ] = useState( false );
 	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
-
 	const category = useMemo(
 		() => selectedCategory && categories.find( ( { name } ) => name === selectedCategory ),
 		[ categories, selectedCategory ]
+	);
+
+	const hasNonPriorityPatterns = categoryPatterns?.find(
+		( pattern ) => ! isPriorityPattern( pattern )
 	);
 
 	if ( ! category ) {
@@ -46,7 +58,22 @@ const PatternListPanel = ( {
 				onSelect={ onSelect }
 				selectedPattern={ selectedPattern }
 				selectedPatterns={ selectedPatterns }
+				isShowMorePatterns={ isShowMorePatterns }
 			/>
+			{ ! isShowMorePatterns && hasNonPriorityPatterns && (
+				<div className="pattern-list-panel__show-more">
+					<Button
+						onClick={ () => {
+							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SHOW_MORE_CLICK );
+							setIsShowMorePatterns( true );
+						} }
+						icon={ chevronDown }
+						iconSize={ 23 }
+						iconPosition="right"
+						text={ translate( 'Show more patterns' ) }
+					/>
+				</div>
+			) }
 		</div>
 	);
 };

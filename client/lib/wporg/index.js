@@ -13,6 +13,7 @@ const DEFAULT_FIRST_PAGE = 1;
 
 const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 const WPORG_CORE_TRANSLATIONS_ENDPOINT = 'https://api.wordpress.org/translations/core/1.0/';
+const WPORG_CORE_VERSIONS_ENDPOINT = 'https://api.wordpress.org/core/version-check/1.7/';
 
 function getWporgLocaleCode( currentUserLocale ) {
 	let wpOrgLocaleCode = find( languages, { langSlug: currentUserLocale } ).wpLocale;
@@ -147,4 +148,15 @@ export function fetchThemesList( options = {} ) {
 export function fetchTranslationsList( wpVersion ) {
 	const query = { version: wpVersion };
 	return getRequest( WPORG_CORE_TRANSLATIONS_ENDPOINT, query );
+}
+
+/**
+ * Get the WP.org versions.
+ * See: https://codex.wordpress.org/WordPress.org_API
+ *
+ * @returns {Promise<{ offers: [ { current: string } ] }>}  A promise that returns an object containing
+ * 								an `offers` array with the WP versions
+ */
+export function fetchWordPressVersions() {
+	return getRequest( WPORG_CORE_VERSIONS_ENDPOINT );
 }

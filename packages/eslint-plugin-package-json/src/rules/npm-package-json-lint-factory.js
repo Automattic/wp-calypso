@@ -26,7 +26,7 @@ const buildRules = () => {
 					// I think the second argument is just used for the report, so we can ignore it
 					// (reports will be filtered later by ESlint)
 					const result = rule.lint( json, 'error', options );
-					if ( result !== true ) {
+					if ( result !== null ) {
 						// result.node is the name of the property that failed. We can search for that
 						// property in the AST to get the node. This will help include the location of
 						// the error in ESlint report

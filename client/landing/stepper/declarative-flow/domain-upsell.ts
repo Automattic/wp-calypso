@@ -1,11 +1,7 @@
+import { OnboardSelect, updateLaunchpadSettings, useLaunchpad } from '@automattic/data-stores';
+import { addPlanToCart, addProductsToCart, DOMAIN_UPSELL_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { OnboardSelect, updateLaunchpadSettings } from 'calypso/../packages/data-stores/src';
-import {
-	addPlanToCart,
-	addProductsToCart,
-	DOMAIN_UPSELL_FLOW,
-} from 'calypso/../packages/onboarding/src';
 import { useQuery } from '../hooks/use-query';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -40,8 +36,12 @@ const domainUpsell: Flow = {
 			[]
 		);
 		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
+		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
 
-		const returnUrl = `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
+		const returnUrl =
+			launchpadScreenOption === 'skipped'
+				? `/home/${ siteSlug }`
+				: `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 		function goBack() {

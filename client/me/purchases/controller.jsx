@@ -21,8 +21,8 @@ import {
 	billingHistory,
 } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
-import { useTaxName } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
-import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
+import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
+import { convertErrorToString } from 'calypso/my-sites/checkout/src/lib/analytics';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';

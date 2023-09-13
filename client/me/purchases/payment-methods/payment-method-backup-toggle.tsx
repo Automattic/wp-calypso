@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
-import { storedPaymentMethodsQueryKey } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { storedPaymentMethodsQueryKey } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 async function fetchIsBackup( storedDetailsId: string ): Promise< { is_backup: boolean } > {

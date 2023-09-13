@@ -14,7 +14,7 @@ import NavigatorTitle from './navigator-title';
 
 interface Props {
 	onMainItemSelect: ( name: string ) => void;
-	onContinueClick: ( callback?: () => void ) => void;
+	onContinueClick: () => void;
 	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 	hasColor: boolean;
 	hasFont: boolean;

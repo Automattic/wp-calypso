@@ -150,6 +150,21 @@ export function backupRestore( context, next ) {
 	next();
 }
 
+/* handles /backup/:site/granular-restore/:rewindId, see `backupGranularRestorePath` */
+export function backupGranularRestore( context, next ) {
+	debug( 'controller: backupGranularRestore', context.params );
+
+	context.primary = (
+		<>
+			<BackupRewindFlow
+				rewindId={ context.params.rewindId }
+				purpose={ RewindFlowPurpose.GRANULAR_RESTORE }
+			/>
+		</>
+	);
+	next();
+}
+
 /* handles /backup/:site/clone, see `backupClonePath` */
 export function backupClone( context, next ) {
 	debug( 'controller: backupClone', context.params );

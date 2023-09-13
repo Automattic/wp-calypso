@@ -8,6 +8,10 @@
 	justify-content: flex-end;
 	list-style-type: none;
 	margin: 10px 0 0;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		justify-content: space-evenly;
+	}
 }
 
 .reader-post-actions:not(.has-views) .reader-post-actions__item {
@@ -27,10 +31,16 @@
 			display: flex;
 			gap: 4px;
 		}
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
+		}
 	}
 
 	&.reader-post-actions__views {
 		flex: 1;
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
+		}
 	}
 
 	&:last-child {

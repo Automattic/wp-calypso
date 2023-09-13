@@ -36,10 +36,21 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	SCREEN_CONFIRMATION_CONFIRM_CLICK:
 		'calypso_signup_pattern_assembler_screen_confirmation_confirm_click',
 
+	/*
+	 * Screen Upsell
+	 */
+	SCREEN_UPSELL_CHECKOUT_BUTTON_CLICK:
+		'calypso_signup_pattern_assembler_screen_upsell_checkout_button_click',
+	SCREEN_UPSELL_UPGRADE_LATER_BUTTON_CLICK:
+		'calypso_signup_pattern_assembler_screen_upsell_upgrade_later_button_click',
+	SCREEN_UPSELL_EDIT_YOUR_CONTENT_BUTTON_CLICK:
+		'calypso_signup_pattern_assembler_screen_upsell_edit_your_content_button_click',
+
 	/**
 	 * Pattern Panels
 	 */
 	PATTERN_SELECT_CLICK: 'calypso_signup_pattern_assembler_pattern_select_click',
+	PATTERN_SHOW_MORE_CLICK: 'calypso_signup_pattern_assembler_pattern_show_more_click',
 
 	/**
 	 * Pattern Actions
@@ -51,18 +62,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	PATTERN_SHUFFLE_CLICK: 'calypso_signup_pattern_assembler_pattern_shuffle_click',
 
 	PREVIEW_DEVICE_CLICK: 'calypso_signup_pattern_assembler_preview_device_click',
-
-	/**
-	 * Global Styles Gating Modal
-	 */
-	GLOBAL_STYLES_GATING_MODAL_SHOW:
-		'calypso_signup_pattern_assembler_global_styles_gating_modal_show',
-	GLOBAL_STYLES_GATING_MODAL_CLOSE_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_global_styles_gating_modal_close_button_click',
-	GLOBAL_STYLES_GATING_MODAL_CHECKOUT_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_global_styles_gating_modal_checkout_button_click',
-	GLOBAL_STYLES_GATING_MODAL_UPGRADE_LATER_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_global_styles_gating_modal_upgrade_later_button_click',
 
 	/**
 	 * Large Preview

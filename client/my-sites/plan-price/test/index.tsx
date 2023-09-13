@@ -1,14 +1,17 @@
 /**
  * @jest-environment jsdom
  */
-import { setDefaultLocale } from '@automattic/format-currency';
+import { geolocateCurrencySymbol, setDefaultLocale } from '@automattic/format-currency';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import PlanPrice from '../index';
 
 describe( 'PlanPrice', () => {
+	const originalFetch = globalThis.fetch;
+
 	beforeEach( () => {
 		setDefaultLocale( 'en-US' );
+		globalThis.fetch = originalFetch;
 	} );
 
 	it( 'renders a zero when rawPrice is passed a "0"', () => {
@@ -197,6 +200,37 @@ describe( 'PlanPrice', () => {
 		render( <PlanPrice productDisplayPrice="$96.00" currencyCode="IDR" displayPerMonthNotation /> );
 		expect( document.body ).toHaveTextContent( '$96.00' );
 		expect( screen.queryByText( /per/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a price with $ when using displayFlatPrice and US locale', async () => {
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: 'US' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		await geolocateCurrencySymbol();
+		render( <PlanPrice rawPrice={ 96.05 } currencyCode="USD" displayFlatPrice /> );
+		expect( document.body ).toHaveTextContent( '$96.05' );
+		expect( document.body ).not.toHaveTextContent( 'US$96.05' );
+	} );
+
+	it( 'renders a price with US$ when using displayFlatPrice and non-US locale', async () => {
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: 'CA' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		await geolocateCurrencySymbol();
+		render( <PlanPrice rawPrice={ 96.05 } currencyCode="USD" displayFlatPrice /> );
+		expect( document.body ).toHaveTextContent( 'US$96.05' );
 	} );
 
 	it( 'renders a price without monthly text when using displayFlatPrice and displayPerMonthNotation', () => {

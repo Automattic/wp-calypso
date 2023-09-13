@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -9,7 +8,7 @@ export const siteMetrics: PageJS.Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker path="/site-monitoring/:site" title="Site Monitoring" delay={ 500 } />
-			<SiteMetrics />
+			<SiteMetrics tab={ context.params.tab } />
 		</>
 	);
 	next();
@@ -18,11 +17,6 @@ export const siteMetrics: PageJS.Callback = ( context, next ) => {
 export const redirectHomeIfIneligible: PageJS.Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-
-	if ( ! isEnabled( 'yolo/hosting-metrics-i1' ) ) {
-		context.page.replace( `/home/${ context.params.siteId }` );
-		return;
-	}
 
 	if ( ! isAtomicSite( state, siteId ) ) {
 		context.page.replace( `/home/${ context.params.siteId }` );

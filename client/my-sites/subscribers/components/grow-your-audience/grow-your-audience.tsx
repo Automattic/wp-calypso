@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -48,7 +49,9 @@ const GrowYourAudience = () => {
 						'Using a subscriber block is the first step to growing your audience.'
 					) }
 					title={ translate( 'Every visitor is a potential subscriber' ) }
-					url="https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/"
+					url={ localizeUrl(
+						'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/'
+					) }
 				/>
 
 				<GrowYourAudienceCard
@@ -57,7 +60,7 @@ const GrowYourAudience = () => {
 						'Create fresh content, publish regularly, and understand your audience with site stats.'
 					) }
 					title={ translate( 'Keep your readers engaged' ) }
-					url="https://wordpress.com/go/content-blogging/how-to-start-a-successful-blog-that-earns-links-traffic-and-revenue/#creating-a-blog-content-strategy"
+					url="https://wordpress.com/go/content-blogging/how-to-start-a-successful-blog-that-earns-links-traffic-and-revenue/#creating-a-blog-content-strategy" // eslint-disable-line wpcalypso/i18n-unlocalized-url
 				/>
 
 				<GrowYourAudienceCard

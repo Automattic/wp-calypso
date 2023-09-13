@@ -37,7 +37,9 @@ function validateField( { name, value, type, domainName } ) {
 }
 
 function isValidDomain( name, type ) {
-	if ( name.length > 253 ) {
+	const maxLength = name.endsWith( '.' ) ? 254 : 253;
+
+	if ( name.length > maxLength ) {
 		return false;
 	}
 
@@ -45,7 +47,7 @@ function isValidDomain( name, type ) {
 		return true;
 	}
 
-	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
+	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}(\.)?$/i.test( name );
 }
 
 function isValidName( name, type, domainName ) {

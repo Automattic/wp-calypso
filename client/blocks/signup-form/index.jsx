@@ -1168,9 +1168,6 @@ class SignupForm extends Component {
 			const logInUrl = this.getLoginLink();
 			const gravatarProps = isGravatar
 				? {
-						inputLabel: this.props.translate(
-							'Provide your email address and we will send you a magic link to log in.'
-						),
 						inputPlaceholder: this.props.translate( 'Enter your email address' ),
 						submitButtonLabel: this.props.translate( 'Continue' ),
 						submitButtonLoadingLabel: this.props.translate( 'Continue' ),

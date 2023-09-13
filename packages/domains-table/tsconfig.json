@@ -12,6 +12,7 @@
 		{ "path": "../calypso-config" },
 		{ "path": "../components" },
 		{ "path": "../data-stores" },
-		{ "path": "../viewport" }
+		{ "path": "../viewport" },
+		{ "path": "../i18n-utils" }
 	]
 }

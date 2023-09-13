@@ -9,6 +9,7 @@ export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const VIDEOPRESS_FLOW = 'videopress';
+export const VIDEOPRESS_ACCOUNT = 'videopress-account';
 export const VIDEOPRESS_TV_FLOW = 'videopress-tv';
 export const VIDEOPRESS_TV_PURCHASE_FLOW = 'videopress-tv-purchase';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
@@ -162,6 +163,10 @@ export const ecommerceFlowRecurTypes = {
 	MONTHLY: 'monthly',
 	'2Y': '2Y',
 	'3Y': '3Y',
+};
+
+export const isVideoPressFlow = ( flowName: string | null ) => {
+	return !! flowName && [ VIDEOPRESS_FLOW, VIDEOPRESS_ACCOUNT ].includes( flowName );
 };
 
 export const isVideoPressTVFlow = ( flowName: string | null | undefined ) => {

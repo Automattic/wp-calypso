@@ -81,6 +81,10 @@ export const dnsTemplates = {
 		PROVIDER: 'g-suite',
 		SERVICE: 'G-Suite',
 	},
+	ICLOUD_MAIL: {
+		PROVIDER: 'apple-icloud-mail',
+		SERVICE: 'icloud-mail',
+	},
 	MICROSOFT_OFFICE365: {
 		PROVIDER: 'microsoft-office365',
 		SERVICE: 'O365',

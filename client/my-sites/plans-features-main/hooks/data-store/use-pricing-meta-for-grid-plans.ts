@@ -1,3 +1,4 @@
+import { Plans } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
 import usePricedAPIPlans from 'calypso/my-sites/plans-features-main/hooks/data-store/use-priced-api-plans';
 import { getPlanPrices } from 'calypso/state/plans/selectors';
@@ -28,11 +29,14 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits = false,
 }: Props ) => {
+	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const currentSitePlanSlug = useSelector( ( state: IAppState ) =>
+		getSitePlanSlug( state, selectedSiteId )
+	);
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: planSlugs } );
+	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
 	const planPrices = useSelector( ( state: IAppState ) => {
 		return planSlugs.reduce( ( acc, planSlug ) => {
-			const selectedSiteId = getSelectedSiteId( state );
-			const currentSitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 			const availableForPurchase =
 				! currentSitePlanSlug ||
 				( selectedSiteId ? isPlanAvailableForPurchase( state, selectedSiteId, planSlug ) : false );
@@ -106,18 +110,32 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 		}, {} as { [ planSlug: string ]: Pick< PricingMetaForGridPlan, 'originalPrice' | 'discountedPrice' > } );
 	} );
 
-	return planSlugs.reduce(
-		( acc, planSlug ) => ( {
+	/*
+	 * Return null until all data is ready, at least in initial state.
+	 * - For now a simple loader is shown until these are resolved
+	 * - We can optimise Error states in the UI / when everything gets ported into data-stores
+	 */
+	if ( sitePlans.isFetching || ! pricedAPIPlans ) {
+		return null;
+	}
+
+	return planSlugs.reduce( ( acc, planSlug ) => {
+		// pricedAPIPlans - should have a definition for all plans, being the main source of API data
+		const pricedAPIPlan = pricedAPIPlans[ planSlug ];
+		// pricedAPISitePlans - unclear if all plans are included
+		const sitePlan = sitePlans.data?.[ planSlug ];
+
+		return {
 			...acc,
 			[ planSlug ]: {
 				originalPrice: planPrices[ planSlug ]?.originalPrice,
 				discountedPrice: planPrices[ planSlug ]?.discountedPrice,
-				billingPeriod: pricedAPIPlans[ planSlug ]?.bill_period,
-				currencyCode: pricedAPIPlans[ planSlug ]?.currency_code,
+				billingPeriod: pricedAPIPlan?.bill_period,
+				currencyCode: pricedAPIPlan?.currency_code,
+				introOffer: sitePlan?.introOffer,
 			},
-		} ),
-		{} as { [ planSlug: string ]: PricingMetaForGridPlan }
-	);
+		};
+	}, {} as { [ planSlug: string ]: PricingMetaForGridPlan } );
 };
 
 export default usePricingMetaForGridPlans;

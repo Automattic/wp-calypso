@@ -48,12 +48,10 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 	skipItIf( envVariables.TEST_ON_ATOMIC )(
 		'Create a new post using the REST API',
 		async function () {
-			const postResponse = await restAPIClient.createPost( siteId, {
+			await restAPIClient.createPost( siteId, {
 				title: searchString,
 				content: searchString,
 			} );
-
-			console.log( postResponse );
 		}
 	);
 
@@ -73,14 +71,33 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 			await testAccount.authenticate( page );
 		}
 
-		await page.goto( testAccount.getSiteURL( { protocol: true } ), { timeout: 20 * 1000 } );
+		// We can't wait for the "load" event because WordAds mess with it.
+		// But, if Playwright outpaces the search JS load, you can get weird artifacts like the search term getting wiped out.
+		// So we need to wait for the search JS to load before we start interacting with the page.
+		const waitForSearchJsPromise = page.waitForResponse(
+			( response ) =>
+				response
+					.url()
+					.includes( 'jetpack-search/build/instant-search/jp-search.chunk-main-payload.js' ),
+			{ timeout: 30 * 1000 }
+		);
+
+		await page.goto( testAccount.getSiteURL( { protocol: true } ), {
+			timeout: 20 * 1000,
+			waitUntil: 'domcontentloaded',
+		} );
 
 		if ( isPrivateAtomicSite ) {
 			// On private Atomic sites, still have to click the blue Log In button to use your cookie.
 			await page.getByRole( 'link', { name: 'Log in' } ).click();
 			// Then let all the redirects settle.
-			await page.waitForURL( testAccount.getSiteURL( { protocol: true } ), { timeout: 20 * 1000 } );
+			await page.waitForURL( testAccount.getSiteURL( { protocol: true } ), {
+				timeout: 20 * 1000,
+				waitUntil: 'domcontentloaded',
+			} );
 		}
+
+		await waitForSearchJsPromise;
 
 		searchModalComponent = new JetpackInstantSearchModalComponent( page );
 	} );
@@ -95,12 +112,21 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 			.getByRole( 'button', { name: 'Search' } )
 			.first();
 
-		await inputLocator.fill( searchString );
-		await Promise.all( [ searchModalComponent.expectAndWaitForSearch(), buttonLocator.click() ] );
+		// Adding a slightly longer timeout here because we can't fully wait for the "load" event above due to
+		// a collision with WordAds. This helps share some of the initial load wait with the first interaction.
+		await inputLocator.fill( searchString, { timeout: 20 * 1000 } );
+		await Promise.all( [
+			searchModalComponent.expectAndWaitForSearch( searchString ),
+			buttonLocator.click(),
+		] );
 	} );
 
 	it( 'The search term pulls into the modal', async function () {
-		expect( await searchModalComponent.getSearchTerm() ).toEqual( searchString );
+		// See: https://github.com/Automattic/jetpack/issues/32753
+		// There's a rare race condition where the spaces get URL encoded as "+" and that pulls into the modal.
+		// We don't wait to fail on that, so accounting for it specifically here.
+		const termInModal = ( await searchModalComponent.getSearchTerm() ).replace( /\+/g, ' ' );
+		expect( termInModal ).toEqual( searchString );
 	} );
 
 	skipItIf( envVariables.TEST_ON_ATOMIC )( 'There are search results', async function () {
@@ -116,7 +142,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Instant Search' ), function () {
 
 	it( 'Clear the search term', async function () {
 		await Promise.all( [
-			searchModalComponent.expectAndWaitForSearch(),
+			searchModalComponent.expectAndWaitForSearch( '' ),
 			searchModalComponent.clearSearchTerm(),
 		] );
 

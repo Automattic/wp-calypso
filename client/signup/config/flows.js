@@ -121,6 +121,8 @@ function getChecklistThemeDestination( {
 	headerPatternId,
 	footerPatternId,
 	sectionPatternIds,
+	screen,
+	screenParameter,
 } ) {
 	if ( isSiteAssemblerFlow( flowName ) ) {
 		// Check whether to go to the assembler. If not, go to the site editor directly
@@ -133,6 +135,8 @@ function getChecklistThemeDestination( {
 					header_pattern_id: headerPatternId,
 					footer_pattern_id: footerPatternId,
 					pattern_ids: sectionPatternIds,
+					screen,
+					screen_parameter: screenParameter,
 				},
 				`/setup/with-theme-assembler`
 			);

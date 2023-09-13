@@ -91,7 +91,7 @@ export class DonationsFormFlow implements BlockFlow {
 			.click();
 
 		// Verify the donation popup.
-		// For sitse with plans Premium or lower, the block cannot be used and so the popup modal
+		// For sites with plans Premium or lower, the block cannot be used and so the popup modal
 		// states as such.
 		// For sites where sales are allowed, ther are two variants in how this flow can behave:
 		// 	1. on normal, user-controlled browsers, a Stripe-powered overlay appears.
@@ -105,5 +105,8 @@ export class DonationsFormFlow implements BlockFlow {
 				.frameLocator( 'iframe[id=TB_iframeContent]' )
 				.getByRole( 'heading', { name: 'Sales disabled' } ),
 		] );
+
+		// Close the modal and return to the post.
+		await context.page.keyboard.press( 'Escape' );
 	}
 }

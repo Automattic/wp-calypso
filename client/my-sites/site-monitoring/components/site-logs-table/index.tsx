@@ -1,9 +1,10 @@
-import { usePrevious } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
+import { LogType } from '../../logs-tab';
 import SiteLogsTableRow from './site-logs-table-row';
 import { Skeleton } from './skeleton';
 
@@ -13,26 +14,55 @@ type SiteLogs = SiteLogsData[ 'logs' ];
 
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
-	logType?: string;
+	logType?: LogType;
 	isLoading?: boolean;
+	headerTitles: string[];
+}
+
+export function formatColumnName( column: string ) {
+	if ( column === 'request_type' ) {
+		return __( 'Request type' );
+	} else if ( column === 'request_url' ) {
+		return __( 'Request URL' );
+	} else if ( column === 'date' ) {
+		return __( 'Date' );
+	} else if ( column === 'status' ) {
+		return __( 'Status' );
+	} else if ( column === 'severity' ) {
+		return 'Severity';
+	} else if ( column === 'timestamp' ) {
+		return __( 'Timestamp' );
+	} else if ( column === 'message' ) {
+		return __( 'Message' );
+	}
 }
 
 export const SiteLogsTable = memo( function SiteLogsTable( {
 	logs,
-	logType,
 	isLoading,
+	headerTitles,
+	logType,
 }: SiteLogsTableProps ) {
 	const { __ } = useI18n();
-	const columns = useSiteColumns( logs );
+	const columns = useSiteColumns( logs, headerTitles );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
-	const previousLogType = usePrevious( logType );
 
 	const logsWithKeys = useMemo( () => {
 		return generateRowKeys( logs );
 	}, [ logs ] );
 
-	if ( isLoading && logType !== previousLogType ) {
-		return <Skeleton />;
+	const [ latestLogType, setLatestLogType ] = useState( logType );
+	useEffect( () => {
+		if ( ! isLoading && logType !== latestLogType ) {
+			setLatestLogType( logType );
+		}
+	}, [ latestLogType, logType, isLoading ] );
+
+	if ( isLoading && logType !== latestLogType ) {
+		const skeletonClassName =
+			logType === 'web' ? 'site-logs-table-webserver__skeleton' : 'site-logs-table__skeleton';
+
+		return <Skeleton className={ skeletonClassName } />;
 	}
 
 	if ( ! isLoading && ! logsWithKeys.length ) {
@@ -43,10 +73,12 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		<table className={ classnames( 'site-logs-table', { 'is-loading': isLoading } ) }>
 			<thead>
 				<tr>
-					<th />
 					{ columns.map( ( column ) => (
-						<th key={ column }>{ column }</th>
+						<th key={ column } className={ column }>
+							{ formatColumnName( column ) }
+						</th>
 					) ) }
+					<th className="chevron-cell" />
 				</tr>
 			</thead>
 			<tbody>
@@ -55,6 +87,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 						key={ key }
 						columns={ columns }
 						log={ log }
+						logType={ logType }
 						siteGmtOffset={ siteGmtOffset }
 					/>
 				) ) }
@@ -98,31 +131,12 @@ function generateRowKey( log: SiteLogs[ 0 ], index: number ): React.Key {
 	return index;
 }
 
-function useSiteColumns( logs: SiteLogs | undefined ) {
+function useSiteColumns( logs: SiteLogs | undefined, headerTitles: string[] ) {
 	return useMemo( () => {
 		if ( ! logs ) {
 			return [];
 		}
 
-		const columns = new Set< string >();
-		for ( const log of logs ) {
-			for ( const key of Object.keys( log ) ) {
-				columns.add( key );
-			}
-		}
-
-		// The webserver logs have both `date` and `timestamp` columns and we want date to take
-		// precedence, so check for presence of `date` column first.
-		if ( columns.has( 'date' ) ) {
-			columns.delete( 'date' );
-			return [ 'date', ...columns ];
-		}
-
-		if ( columns.has( 'timestamp' ) ) {
-			columns.delete( 'timestamp' );
-			return [ 'timestamp', ...columns ];
-		}
-
-		return Array.from( columns );
-	}, [ logs ] );
+		return headerTitles;
+	}, [ logs, headerTitles ] );
 }

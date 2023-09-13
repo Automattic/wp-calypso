@@ -1,46 +1,69 @@
-.site-monitoring-tab-panel {
-	margin-left: 16px;
-	margin-right: 16px;
+@use "sass:math";
 
-	@include breakpoint-deprecated( ">660px" ) {
-		margin-left: 0;
-		margin-right: 0;
+$section-max-width: 1224px;
+
+.notouch .is-section-site-monitoring .section-nav-tab__link:hover {
+	color: var(--color-neutral-60);
+	background-color: var(--color-surface);
+	box-shadow: inset 0 -2px 0 0 var(--color-primary-0);
+	border: 0;
+}
+
+.is-section-site-monitoring {
+	& .section-nav {
+		box-shadow: rgba(0, 0, 0, 0.05) 0 -1px 0 inset;
+		margin-bottom: 32px;
+		padding: 0 max(calc(50% - #{math.div( $section-max-width, 2 )}), 32px);
 	}
 
-	.components-tab-panel__tabs {
-		margin-bottom: 32px;
-
-		position: relative;
-
-		&::before {
-			content: "";
-			position: absolute;
-			background-color: var(--studio-white);
-			top: -50px;
-			left: -1000px;
-			right: -1000px;
-			bottom: 0;
-			z-index: -1;
-			box-shadow: inset 0 -1px 0 #eee;
+	& .section-nav.is-open {
+		@media ( max-width: 481px ) {
+			box-shadow: rgba(0, 0, 0, 0.05) 0 -1px 0 inset;
 		}
 	}
 
-	.components-tab-panel__tabs-item {
+	& .section-nav-tab {
 		--wp-admin-theme-color: var(--studio-gray-100);
-		color: var(--color-neutral-60);
-		margin-right: 16px;
-		font-size: rem(14px);
-		line-height: 20px;
-		flex-shrink: 0;
+		font-size: 0.875rem;
 		font-weight: 400;
-		padding: 8px 12px;
+		border: 0;
+		&.is-selected .section-nav-tab__link {
+			box-shadow: inset 0 -2px 0 0 var(--wp-admin-theme-color);
+			color: var(--color-neutral-100);
+			@media ( max-width: 481px ) {
+				background-color: var(--color-primary);
+				color: var(--color-text-inverted);
+			}
+		}
 	}
 
-	.components-tab-panel__tabs-item:hover,
-	.components-tab-panel__tabs-item.is-active,
-	.components-tab-panel__tabs-item.is-active:focus,
-	.components-tab-panel__tabs-item:focus:not(:disabled) {
-		box-shadow: inset 0 -2px 0 0 var(--wp-admin-theme-color);
-		color: var(--studio-gray-100);
+	& .section-nav__mobile-header-text {
+		width: 100%;
+	}
+
+	& .section-nav-tab__link {
+		color: var(--color-neutral-60);
+		flex-shrink: 0;
+		padding: 8px 12px;
+		font-size: rem(14px);
+		line-height: 32px;
+		margin-right: 16px;
+	}
+
+	& .section-nav-tab__text {
+		height: 48px;
+		line-height: 20px;
+		position: relative;
+		@media ( max-width: 481px ) {
+			height: initial;
+			line-height: 20px;
+		}
+	}
+
+	.section-nav-tab__link:hover {
+		color: var(--color-neutral-60);
+		background-color: var(--color-surface);
+		box-shadow: inset 0 -2px 0 0 var(--color-primary-0);
+		border: 0;
 	}
 }

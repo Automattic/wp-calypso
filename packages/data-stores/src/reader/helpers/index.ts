@@ -1,6 +1,5 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
-import { ErrorResponse } from '../types';
 import isValidId from './validators';
 
 type callApiParams = {
@@ -120,14 +119,7 @@ const getSubscriptionMutationParams = (
 	};
 };
 
-const isErrorResponse = (
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	response: any
-): response is ErrorResponse => {
-	// This is good enough for us to know that the response is an error response
-	return response && ( response.errors || response.error_data );
-};
-
-export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams, isErrorResponse };
+export { callApi, applyCallbackToPages, getSubkey, getSubscriptionMutationParams };
 export { default as buildQueryKey } from './query-key';
+export { isErrorResponse, isSiteSubscriptionDetails } from './type-guards';
 export { default as isValidId } from './validators';

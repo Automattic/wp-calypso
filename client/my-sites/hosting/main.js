@@ -11,6 +11,7 @@ import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
@@ -43,6 +44,7 @@ import {
 	isSiteOnECommerceTrial,
 	isSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
@@ -219,6 +221,7 @@ class Hosting extends Component {
 			isLoadingSftpData,
 			hasAtomicFeature,
 			hasStagingSitesFeature,
+			isJetpack,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -306,6 +309,7 @@ class Hosting extends Component {
 
 			return (
 				<>
+					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 					{ isGithubIntegrationEnabled && (
 						<>
 							<QueryKeyringServices />
@@ -388,6 +392,7 @@ export default connect(
 
 		return {
 			teams: getReaderTeams( state ),
+			isJetpack: isJetpackSite( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),

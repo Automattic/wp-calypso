@@ -16,6 +16,7 @@ export type FileType =
 	| 'other';
 
 export interface FileBrowserItem {
+	id?: string;
 	name: string;
 	type: FileType;
 	hasChildren: boolean;
@@ -26,6 +27,7 @@ export interface FileBrowserItem {
 	extensionVersion?: string;
 	manifestPath?: string;
 	extensionType?: string;
+	totalItems?: number;
 }
 
 export interface BackupLsResponse {
@@ -36,6 +38,7 @@ export interface BackupLsResponse {
 
 export interface BackupLsResponseContents {
 	[ key: string ]: {
+		id?: string;
 		type: ApiFileType;
 		has_children: boolean;
 		period?: string;
@@ -44,6 +47,7 @@ export interface BackupLsResponseContents {
 		label?: string;
 		row_count?: number;
 		extension_version?: string;
+		total_items?: number;
 	};
 }
 

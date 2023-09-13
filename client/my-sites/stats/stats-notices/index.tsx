@@ -9,9 +9,11 @@ import {
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
@@ -20,7 +22,6 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
-import useSitePurchasesOnOdysseyStats from './use-site-purchases-on-odyssey-stats';
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
@@ -47,6 +48,11 @@ const ensureOnlyOneNoticeVisible = (
 const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: StatsNoticesProps ) => {
 	const dispatch = useDispatch();
 
+	// find out if a site is commerical or not. handle potential null value as a false
+	const isCommercial = useSelector(
+		( state ) => !! getSiteOption( state, siteId, 'is_commercial' )
+	);
+
 	// Clear loaded flag when switching sites on Calypso.
 	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
 	useEffect( () => {
@@ -56,8 +62,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		}
 	}, [ siteId, currentSiteId, setCurrentSiteId, dispatch ] );
 
-	const hasPaidStats = useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) );
-	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
 	const isVip = useSelector(
 		( state ) =>
@@ -73,6 +77,16 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
 
+	// Check whether sites have paid plans of WPCOM.
+	const siteHasPaidPlan = useSelector( ( state ) => isSiteOnPaidPlan( state, siteId || 0 ) );
+	// TODO: Consolidate the proper way of checking WPCOM plans for supporting Stats to `hasSiteProductJetpackStatsPaid`.
+	const wpcomSiteHasPaidPlan = isWpcom && siteHasPaidPlan;
+
+	const hasPaidStats =
+		useSelector( ( state ) => hasSiteProductJetpackStatsPaid( state, siteId ) ) ||
+		wpcomSiteHasPaidPlan;
+	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -84,15 +98,18 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasFreeStats,
 		isSiteJetpackNotAtomic,
 		statsPurchaseSuccess,
+		isCommercial,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
-	// TODO: Display error messages on the notice.
-	useSitePurchasesOnOdysseyStats( isOdysseyStats, siteId );
+	// TODO: Integrate checking purchases and plans loaded state into `hasSiteProductJetpackStatsPaid`.
 	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
+	// Only check plans loaded state for supporting Stats on WPCOM.
+	const hasLoadedPlans =
+		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;
 
-	if ( ! hasLoadedPurchases || isLoading || isError ) {
+	if ( ! hasLoadedPurchases || ! hasLoadedPlans || isLoading || isError ) {
 		return null;
 	}
 
@@ -107,7 +124,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 			{ ALL_STATS_NOTICES.map(
 				( notice ) =>
 					calculatedNoticesVisibility[ notice.noticeId ] && (
-						<notice.component { ...noticeOptions } />
+						<notice.component key={ notice.noticeId } { ...noticeOptions } />
 					)
 			) }
 		</>
@@ -136,8 +153,8 @@ export default function StatsNotices( {
 
 	return (
 		<>
-			{ /* Only query site purchases on Calypso via existing data component */ }
-			{ ! isOdysseyStats && <QuerySitePurchases siteId={ siteId } /> }
+			{ /* The component is replaced on build for Odyssey to query from Jetpack */ }
+			<QuerySitePurchases siteId={ siteId } />
 			<NewStatsNotices
 				siteId={ siteId }
 				isOdysseyStats={ isOdysseyStats }

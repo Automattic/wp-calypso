@@ -14,6 +14,7 @@ export interface Task {
 	calypso_path?: string;
 	target_repetitions?: number;
 	repetition_count?: number;
+	order?: number;
 }
 
 export type LaunchpadChecklist = Task[];
@@ -56,6 +57,7 @@ export interface LaunchpadResponse {
 
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
+	siteLaunched?: () => void;
 }
 
 export interface LaunchpadTaskActionsProps {

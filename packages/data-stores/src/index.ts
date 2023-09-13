@@ -26,6 +26,7 @@ export * from './queries/use-all-domains-query';
 export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';
 export * from './mutations/use-domains-bulk-actions-mutation';
+export * from './queries/use-bulk-domain-update-status-query';
 
 const { SubscriptionManager } = Reader;
 

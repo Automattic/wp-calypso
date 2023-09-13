@@ -25,11 +25,12 @@ interface Props {
 	targetSite: SiteDetails;
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	selectedHost: string;
+	migrationTrackingProps: StartImportTrackingProps;
 	onChangeProtocol: ( protocol: CredentialsProtocol ) => void;
 }
 
 export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( props ) => {
-	const { sourceSite, targetSite, startImport } = props;
+	const { sourceSite, targetSite, migrationTrackingProps, startImport } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { hostname } = new URL( sourceSite.URL );
@@ -146,7 +147,7 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 	useEffect( () => {
 		switch ( formSubmissionStatus ) {
 			case 'success':
-				startImportCallback( { type: 'with-credentials' } );
+				startImportCallback( { type: 'with-credentials', ...migrationTrackingProps } );
 				break;
 		}
 	}, [ formSubmissionStatus, startImportCallback ] );
@@ -217,10 +218,13 @@ export const MigrationCredentialsForm: React.FunctionComponent< Props > = ( prop
 							if ( ! migrationConfirmed ) {
 								setShowConfirmModal( true );
 								setConfirmCallback( () =>
-									startImportCallback.bind( null, { type: 'skip-credentials' } )
+									startImportCallback.bind( null, {
+										type: 'skip-credentials',
+										...migrationTrackingProps,
+									} )
 								);
 							} else {
-								startImportCallback( { type: 'skip-credentials' } );
+								startImportCallback( { type: 'skip-credentials', ...migrationTrackingProps } );
 							}
 						} }
 					>

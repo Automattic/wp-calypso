@@ -2,8 +2,11 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useNewsletterCategoriesFeatureEnabled } from 'calypso/data/newsletter-categories';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterCategoriesSettings } from '../newsletter-categories-settings';
 import { SubscriptionOptions } from '../settings-reading/main';
 import { EmailsTextSetting } from './EmailsTextSetting';
@@ -48,6 +51,7 @@ export const NewsletterSettingsSection = ( {
 		subscription_options,
 		sm_enabled,
 	} = fields;
+	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	// Update subscription_options form fields when savedSubscriptionOptions changes.
 	// This makes sure the form fields hold the current value after saving.
@@ -58,9 +62,11 @@ export const NewsletterSettingsSection = ( {
 		scrollToAnchor( { offset: 15 } );
 	}, [ savedSubscriptionOptions ] );
 
+	const newsletterCategoriesEnabled = useNewsletterCategoriesFeatureEnabled( { siteId } );
+
 	return (
 		<>
-			{ config.isEnabled( 'settings/newsletter-categories' ) && (
+			{ config.isEnabled( 'settings/newsletter-categories' ) && newsletterCategoriesEnabled && (
 				<Card className="site-settings__card">
 					<NewsletterCategoriesSettings
 						disabled={ disabled }

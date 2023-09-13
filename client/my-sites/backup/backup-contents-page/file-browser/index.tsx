@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
-import { FunctionComponent, useState } from 'react';
+import { useState } from '@wordpress/element';
+import { FunctionComponent } from 'react';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
@@ -11,18 +12,6 @@ interface FileBrowserProps {
 const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
-	const [ showCheckboxes, setShowCheckboxes ] = useState< boolean >( false );
-
-	// Temporary values and logic for laying out header
-	const [ currentlySelected, setCurrentlySelected ] = useState< number >( 0 );
-	const totalElements = 10;
-	const onToggleAll = ( checkedState?: boolean ) => {
-		if ( checkedState ) {
-			setCurrentlySelected( totalElements );
-		} else {
-			setCurrentlySelected( 0 );
-		}
-	};
 
 	const handleClick = ( path: string ) => {
 		setActiveNodePath( path );
@@ -38,22 +27,13 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 
 	return (
 		<div>
-			{ isGranularEnabled && (
-				<FileBrowserHeader
-					showCheckboxes={ showCheckboxes }
-					setShowCheckboxes={ setShowCheckboxes }
-					currentlySelected={ currentlySelected }
-					totalElements={ totalElements }
-					onToggleAll={ onToggleAll }
-				/>
-			) }
+			{ isGranularEnabled && <FileBrowserHeader rewindId={ rewindId } /> }
 			<FileBrowserNode
 				rewindId={ rewindId }
 				item={ rootItem }
 				path="/"
 				isAlternate={ true }
 				setActiveNodePath={ handleClick }
-				showCheckboxes={ showCheckboxes }
 				activeNodePath={ activeNodePath }
 			/>
 		</div>

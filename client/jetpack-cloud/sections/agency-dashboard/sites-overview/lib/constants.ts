@@ -8,3 +8,5 @@ export const DASHBOARD_PRODUCT_SLUGS_BY_TYPE: Record< string, string > = {
 	scan: 'jetpack-scan',
 	monitor: 'jetpack-monitor',
 };
+
+export const WPCOM_HOSTING = 'wpcom-hosting';

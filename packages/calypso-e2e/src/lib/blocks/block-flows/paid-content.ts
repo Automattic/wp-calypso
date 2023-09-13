@@ -32,21 +32,24 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorParent = await context.editorPage.getEditorParent();
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 		const block = editorCanvas.getByRole( 'document', { name: 'Block: Paid Content' } );
 
 		// The Guest View will load by default. Wait for this view to fully render.
 		await block.getByRole( 'document', { name: 'Block: Guest View' } ).waitFor();
 
+		// Using the Block Toolbar, change to the Subscriber view.
+		// The exact steps differ between the viewports.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile viewport hides the Subscriber/Guest view
-			// into a pseudo-dropdown.
-			await editorParent.getByRole( 'button', { name: 'Change view' } ).click();
+			// Mobile viewport hides the Subscriber/Guest buttons into a dropdown.
+			await context.editorPage.clickBlockToolbarButton( { name: 'Change view' } );
+			await context.editorPage.selectFromToolbarPopover( 'Subscriber View' );
+		} else {
+			// Block toolbar for the desktop viewport shows both as a top-level button.
+			await context.editorPage.clickBlockToolbarButton( { name: 'Subscriber View' } );
 		}
 
-		// Using the Block Toolbar, change to the Subscriber view.
-		await context.editorPage.clickBlockToolbarButton( { name: 'Subscriber View' } );
+		// Verify the Subscriber version of the block is now loaded.
 		await block.getByRole( 'document', { name: 'Block: Subscriber View' } ).waitFor();
 
 		// Fill the title and text for subscribers.

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { DomainsTable } from '..';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
@@ -72,7 +73,7 @@ test( 'when two domains share the same underlying site, there is only one fetch 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 1337 );
 } );
 
-test( 'when shouldDisplayPrimaryDomainLabel is true, the primary domain label is displayed if a domain is marked as primary', async () => {
+test( 'when isAllSitesView is true, the primary domain label is displayed if a domain is marked as primary', async () => {
 	const [ primaryPartial, primaryFull ] = testDomain( {
 		domain: 'example.com',
 		blog_id: 123,
@@ -314,4 +315,112 @@ test( 'bulk actions controls appear when a domain is selected', async () => {
 	fireEvent.click( getDomainCheckbox( 'example1.com' ) );
 
 	expect( screen.queryByRole( 'button', { name: 'Auto-renew settings' } ) ).not.toBeInTheDocument();
+} );
+
+test( 'Owner column is rendered when domains has owner that is not the currently logged in user', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+		current_user_is_owner: false,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull ],
+		} )
+	);
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial ] }
+			isAllSitesView
+			fetchSiteDomains={ fetchSiteDomains }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( screen.queryByText( 'Owner' ) ).toBeInTheDocument();
+	} );
+} );
+
+test( 'Owner column is not rendered when domains do not have an owner', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull ],
+		} )
+	);
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial ] }
+			isAllSitesView
+			fetchSiteDomains={ fetchSiteDomains }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( screen.queryByText( 'Owner' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+test( 'Owner column is not rendered when all domains have the same owner', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const [ notPrimaryPartial, notPrimaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 124,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull, notPrimaryFull ],
+		} )
+	);
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial, notPrimaryPartial ] }
+			isAllSitesView
+			fetchSiteDomains={ fetchSiteDomains }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( screen.queryByText( 'Owner' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+test( 'search for a domain hides other domains from table', async () => {
+	const user = userEvent.setup();
+
+	render(
+		<DomainsTable
+			domains={ [
+				testPartialDomain( { domain: 'dog.com' } ),
+				testPartialDomain( { domain: 'cat.org' } ),
+			] }
+			isAllSitesView
+		/>
+	);
+
+	const searchInput = screen.getByRole( 'searchbox', { name: 'Search' } );
+	await user.type( searchInput, 'dog.com' );
+
+	expect( screen.queryByText( 'dog.com' ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'cat.org' ) ).not.toBeInTheDocument();
 } );

@@ -9,13 +9,15 @@ import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryTerms from 'calypso/components/data/query-terms';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { decodeEntities } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -35,7 +37,6 @@ import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingPublishNotice from './publish-notice';
-import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
 
 /**
@@ -181,7 +182,6 @@ class PodcastingDetails extends Component {
 	render() {
 		const {
 			handleSubmitForm,
-			siteSlug,
 			siteId,
 			translate,
 			isPodcastingEnabled,
@@ -195,29 +195,29 @@ class PodcastingDetails extends Component {
 		}
 
 		const error = this.renderSettingsError();
-		const writingHref = `/settings/writing/${ siteSlug }`;
 
 		const classes = classNames( 'podcasting-details__wrapper', {
 			'is-disabled': ! error && ! isPodcastingEnabled,
 		} );
 
 		return (
-			<div
-				className="main main-column" // eslint-disable-line
-				role="main"
-			>
-				<DocumentHead title={ translate( 'Podcasting Settings' ) } />
+			<Main>
+				<DocumentHead title={ translate( 'Podcasting' ) } />
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Podcasting' ) }
+					subHeaderText={ translate(
+						'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="podcasting" showIcon={ false } />,
+							},
+						}
+					) }
+					align="left"
+				/>
+
 				<form id="site-settings" onSubmit={ handleSubmitForm }>
-					<HeaderCake
-						actionButton={ error ? null : this.renderSaveButton() }
-						backHref={ writingHref }
-						backText={ translate( 'Writing' ) }
-					>
-						<h1>
-							{ translate( 'Podcasting Settings' ) }
-							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
-						</h1>
-					</HeaderCake>
 					{ ! error && plansDataLoaded && (
 						<UpsellNudge
 							plan={ PLAN_PERSONAL }
@@ -256,7 +256,7 @@ class PodcastingDetails extends Component {
 						</div>
 					) }
 				</form>
-			</div>
+			</Main>
 		);
 	}
 
@@ -488,7 +488,6 @@ const connectComponent = connect( ( state, ownProps ) => {
 
 	return {
 		siteId,
-		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isPodcastingEnabled,

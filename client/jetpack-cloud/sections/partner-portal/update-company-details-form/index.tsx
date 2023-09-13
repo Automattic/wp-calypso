@@ -21,6 +21,7 @@ export default function UpdateCompanyDetailsForm() {
 	const name = partner?.name ?? '';
 	const contactPerson = partner?.contact_person ?? '';
 	const companyWebsite = partner?.company_website ?? '';
+	const companyType = partner?.company_type ?? '';
 	const country = partner?.address.country ?? '';
 	const city = partner?.address.city ?? '';
 	const line1 = partner?.address.line1 ?? '';
@@ -61,6 +62,7 @@ export default function UpdateCompanyDetailsForm() {
 					name: payload.name,
 					contact_person: payload.contactPerson,
 					company_website: payload.companyWebsite,
+					company_type: payload.companyType,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
@@ -70,7 +72,7 @@ export default function UpdateCompanyDetailsForm() {
 				} )
 			);
 		},
-		[ notificationId, partner?.id, updateCompanyDetails.mutate, dispatch ]
+		[ dispatch, updateCompanyDetails, partner?.id, companyType ]
 	);
 
 	return (
@@ -79,6 +81,7 @@ export default function UpdateCompanyDetailsForm() {
 				name,
 				contactPerson,
 				companyWebsite,
+				companyType,
 				country,
 				city,
 				line1,

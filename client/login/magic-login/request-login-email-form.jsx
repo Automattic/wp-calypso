@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -42,6 +43,14 @@ class RequestLoginEmailForm extends Component {
 		// mapped to dispatch
 		sendEmailLogin: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
+
+		showTos: PropTypes.bool,
+		headerText: PropTypes.string,
+		subHeaderText: PropTypes.string,
+		inputPlaceholder: PropTypes.string,
+		submitButtonLabel: PropTypes.string,
+		onSendEmailLogin: PropTypes.func,
+		createAccountForNewUser: PropTypes.bool,
 	};
 
 	state = {
@@ -79,9 +88,12 @@ class RequestLoginEmailForm extends Component {
 			return;
 		}
 
+		this.props.onSendEmailLogin?.( usernameOrEmail );
+
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
+			createAccount: this.props.createAccountForNewUser,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
 		} );
 	};
@@ -99,6 +111,11 @@ class RequestLoginEmailForm extends Component {
 			emailRequested,
 			showCheckYourEmail,
 			translate,
+			showTos,
+			headerText,
+			subHeaderText,
+			inputPlaceholder,
+			submitButtonLabel,
 		} = this.props;
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -121,9 +138,37 @@ class RequestLoginEmailForm extends Component {
 				? requestError
 				: translate( 'Unable to complete request' );
 
+		const tos = (
+			<div className="magic-login__tos">
+				{ this.props.translate(
+					'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+					{
+						components: {
+							tosLink: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							privacyLink: (
+								<a
+									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</div>
+		);
+
 		return (
 			<div className="magic-login__form">
-				<h1 className="magic-login__form-header">{ translate( 'Email me a login link' ) }</h1>
+				<h1 className="magic-login__form-header">
+					{ headerText || translate( 'Email me a login link' ) }
+				</h1>
 				{ requestError && (
 					<Notice
 						duration={ 10000 }
@@ -144,11 +189,11 @@ class RequestLoginEmailForm extends Component {
 					</p>
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<p>
-						{ translate(
-							'Get a link sent to the email address associated ' +
-								'with your account to log in instantly without your password.'
-						) }
+					<p className="magic-login__form-sub-header">
+						{ subHeaderText ||
+							translate(
+								'Get a link sent to the email address associated with your account to log in instantly without your password.'
+							) }
 					</p>
 					<FormLabel htmlFor="usernameOrEmail">
 						{ this.props.translate( 'Email Address or Username' ) }
@@ -162,11 +207,12 @@ class RequestLoginEmailForm extends Component {
 							name="usernameOrEmail"
 							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
+							placeholder={ inputPlaceholder }
 						/>
-
+						{ showTos && tos }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
-								{ translate( 'Get Link' ) }
+								{ submitButtonLabel || translate( 'Get Link' ) }
 							</FormButton>
 						</div>
 					</FormFieldset>

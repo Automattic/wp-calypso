@@ -1,5 +1,6 @@
 import { applyTestFiltersToPlansList, isMonthly } from '@automattic/calypso-products';
 import getPlanFeaturesObject from 'calypso/my-sites/plan-features-2023-grid/lib/get-plan-features-object';
+import useHighlightedFeatures from './use-highlighted-features';
 import type { FeatureObject, FeatureList, PlanSlug } from '@automattic/calypso-products';
 import type {
 	TransformedFeatureObject,
@@ -12,16 +13,16 @@ export type UsePlanFeaturesForGridPlans = ( {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList,
 	intent,
-	isGlobalStylesOnPersonal,
 	showLegacyStorageFeature,
 	selectedFeature,
+	isInSignup,
 }: {
 	planSlugs: PlanSlug[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
-	isGlobalStylesOnPersonal?: boolean;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
+	isInSignup?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /*
@@ -33,31 +34,33 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	planSlugs,
 	allFeaturesList,
 	intent,
-	isGlobalStylesOnPersonal,
 	selectedFeature,
 	showLegacyStorageFeature,
+	isInSignup,
 } ) => {
+	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
+
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 		const isMonthlyPlan = isMonthly( planSlug );
 
-		let wpcomFeatures = [];
+		let wpcomFeatures: FeatureObject[] = [];
 		let jetpackFeatures: FeatureObject[] = [];
 
 		if ( 'plans-newsletter' === intent ) {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.getNewsletterSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 			);
 		} else if ( 'plans-link-in-bio' === intent ) {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.getLinkInBioSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 			);
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.getBlogOnboardingSignupFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.getBlogOnboardingSignupFeatures?.() ?? []
 			);
 
 			jetpackFeatures = getPlanFeaturesObject(
@@ -67,7 +70,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		} else {
 			wpcomFeatures = getPlanFeaturesObject(
 				allFeaturesList,
-				planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( isGlobalStylesOnPersonal ) ?? []
+				planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
 			);
 
 			jetpackFeatures = getPlanFeaturesObject(
@@ -88,6 +91,27 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 			};
 		} );
 
+		if ( highlightedFeatures ) {
+			// slice() and reverse() are neede to the preserve order of features
+			highlightedFeatures
+				.slice()
+				.reverse()
+				.forEach( ( slug ) => {
+					const feature = wpcomFeatures.find( ( feature ) => feature.getSlug() === slug );
+					if ( feature ) {
+						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+							feature.getSlug()
+						);
+						wpcomFeaturesTransformed.unshift( {
+							...feature,
+							availableOnlyForAnnualPlans,
+							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+							isHighlighted: true,
+						} );
+					}
+				} );
+		}
+
 		const topFeature = selectedFeature
 			? wpcomFeatures.find( ( feature ) => feature.getSlug() === selectedFeature )
 			: undefined;
@@ -103,7 +127,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 		if ( annualPlansOnlyFeatures.length > 0 ) {
 			wpcomFeatures.forEach( ( feature ) => {
-				if ( feature === topFeature ) {
+				// topFeature and highlightedFeatures are already added to the list above
+				const isHighlightedFeature =
+					highlightedFeatures && highlightedFeatures.includes( feature.getSlug() );
+				if ( feature === topFeature || isHighlightedFeature ) {
 					return;
 				}
 

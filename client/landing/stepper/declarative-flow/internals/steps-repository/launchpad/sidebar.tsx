@@ -1,4 +1,4 @@
-import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Badge, Gridicon, CircularProgressBar } from '@automattic/components';
 import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
@@ -69,8 +69,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
 	const queryClient = useQueryClient();
 
-	const { globalStylesInUse, shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
-		useSiteGlobalStylesStatus( site?.ID );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
@@ -105,7 +104,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 			site,
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
-			globalStylesInPersonalPlan ? PLAN_PERSONAL : PLAN_PREMIUM,
+			PLAN_PREMIUM,
 			setShowPlansModal,
 			queryClient,
 			goToStep,

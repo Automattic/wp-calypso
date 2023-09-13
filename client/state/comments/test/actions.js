@@ -8,6 +8,7 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_SET_ACTIVE_REPLY,
 	COMMENTS_CHANGE_STATUS,
+	COMMENTS_TOGGLE_INLINE_EXPANDED,
 } from '../../action-types';
 import {
 	requestPostComments,
@@ -18,6 +19,7 @@ import {
 	unlikeComment,
 	setActiveReply,
 	changeCommentStatus,
+	toggleInlineCommentsExpanded,
 } from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 
@@ -216,6 +218,26 @@ describe( 'actions', () => {
 					siteId: SITE_ID,
 					postId: POST_ID,
 					commentId: 1,
+				},
+			} );
+		} );
+	} );
+
+	describe( '#toggleInlineCommentsExpanded()', () => {
+		test( 'should return a inline comments expansion action', () => {
+			const streamKey = 'abc';
+			const action = toggleInlineCommentsExpanded( {
+				siteId: SITE_ID,
+				postId: POST_ID,
+				streamKey,
+			} );
+
+			expect( action ).toMatchObject( {
+				type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+				payload: {
+					siteId: SITE_ID,
+					postId: POST_ID,
+					streamKey,
 				},
 			} );
 		} );

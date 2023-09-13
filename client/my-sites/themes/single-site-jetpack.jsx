@@ -13,7 +13,7 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
-import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
@@ -164,7 +164,6 @@ export default connect( ( state, { siteId, tier } ) => {
 		showWpcomThemesList,
 		isAtomic: isAtomicSite( state, siteId ),
 		isMultisite,
-		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),
 	};
-} )( ConnectedSingleSiteJetpack );
+} )( withJetpackConnectionProblem( ConnectedSingleSiteJetpack ) );

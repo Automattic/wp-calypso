@@ -3,7 +3,6 @@ import { CountComparisonCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import { useSelector } from 'calypso/state';
-import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
 import './style.scss';
 
@@ -72,9 +71,14 @@ function SubscriberHighlightsHeader() {
 function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const products = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
 	// Check if the site has any paid subscription products added.
-	const hasAddedPaidSubscriptionProduct = products.length > 0;
+	// Intentionally not using `getProductsForSiteId` here because we want to show the loading state.
+	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
+
+	// Odyssey Stats doesn't support the membership API endpoint yet.
+	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
+	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
+	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
 
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
@@ -87,8 +91,8 @@ function SubscriberHighlightsListing( { siteId }: { siteId: number | null } ) {
 						<CountComparisonCard
 							compact={ true }
 							key={ highlight.heading }
-							heading={ highlight.heading }
-							count={ highlight.count }
+							heading={ isPaidSubscriptionProductsLoading ? '-' : highlight.heading }
+							count={ isPaidSubscriptionProductsLoading ? null : highlight.count }
 							showValueTooltip
 							note={ highlight.note }
 						/>

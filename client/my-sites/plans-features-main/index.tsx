@@ -9,7 +9,7 @@ import {
 	PlanSlug,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -39,7 +39,6 @@ import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
@@ -237,7 +236,6 @@ const PlansFeaturesMain = ( {
 		flowName,
 		!! paidDomainName
 	);
-	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
@@ -331,30 +329,28 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
 		showLegacyStorageFeature,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
-		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
+		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		selectedFeature,
 		showLegacyStorageFeature,
+		isInSignup,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
-		planSlugs: gridPlans.map( ( gridPlan ) => gridPlan.planSlug ),
+		planSlugs: gridPlans?.map( ( gridPlan ) => gridPlan.planSlug ) || [],
 		allFeaturesList: FEATURES_LIST,
 		intent,
-		isGlobalStylesOnPersonal: globalStylesInPersonalPlan,
 		selectedFeature,
 		showLegacyStorageFeature,
 	} );
 
 	// TODO: `useFilterPlansForPlanFeatures` should gradually deprecate and whatever remains to fall into the `useGridPlans` hook
 	const filteredPlansForPlanFeatures = useFilterPlansForPlanFeatures( {
-		plans: gridPlans,
+		plans: gridPlans || [],
 		isDisplayingPlansNeededForFeature: isDisplayingPlansNeededForFeature(),
 		selectedPlan,
 		hideFreePlan,
@@ -533,6 +529,8 @@ const PlansFeaturesMain = ( {
 		retargetViewPlans();
 	}, [] );
 
+	const isLoadingGridPlans = Boolean( intentFromSiteMeta.processing || ! gridPlans );
+
 	return (
 		<div
 			className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }
@@ -632,7 +630,8 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ ! intentFromSiteMeta.processing && (
+			{ isLoadingGridPlans && <Spinner size={ 30 } /> }
+			{ ! isLoadingGridPlans && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div
@@ -667,7 +666,6 @@ const PlansFeaturesMain = ( {
 							currentSitePlanSlug={ sitePlanSlug }
 							planActionOverrides={ planActionOverrides }
 							intent={ intent }
-							isGlobalStylesOnPersonal={ globalStylesInPersonalPlan }
 							showLegacyStorageFeature={ showLegacyStorageFeature }
 							showUpgradeableStorage={ showUpgradeableStorage }
 							stickyRowOffset={ masterbarHeight }

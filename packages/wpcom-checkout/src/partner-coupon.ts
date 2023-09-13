@@ -1,6 +1,3 @@
-import { getSublabel } from './checkout-labels';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
-
 /**
  * Get Partner Coupon
  *
@@ -8,16 +5,6 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
  * the Connection controller, and future improvements should probably unify the two
  * code bases to "generic utility functions".
  */
-export function getPartnerCoupon( {
-	coupon,
-	products,
-}: {
-	coupon: string;
-	products?: ResponseCartProduct[];
-} ): boolean {
-	const productHasSublabel =
-		products && products.some( ( product: ResponseCartProduct ) => !! getSublabel( product ) );
-	const isPartnerCoupon = coupon.startsWith( 'IONOS_' );
-
-	return ( productHasSublabel && isPartnerCoupon ) || false;
+export function getPartnerCoupon( { coupon }: { coupon: string } ): boolean {
+	return coupon.startsWith( 'IONOS_' );
 }

@@ -122,14 +122,28 @@ const getCheckedStatus = ( nodeToIterate: BackupBrowserItem ) => {
 	return 'unchecked';
 };
 
+const fileBrowserToRestoreType = ( type: string ) => {
+	switch ( type ) {
+		case 'table':
+		case 'plugin':
+		case 'theme':
+			return type;
+		default:
+			return 'file';
+	}
+};
+
 const updateParent = ( state: AppState, node: BackupBrowserItem ): AppState => {
 	if ( node.path === '/' ) {
 		return state;
 	}
 	const nodePath = [ ...node.ancestors ];
 	const { parent: parentOfParent, index } = getParentAndIndex( state, nodePath );
-	// If we're at the root node we'll just return
+	// Root node is a special case
 	if ( parentOfParent === undefined || index === undefined ) {
+		const newRoot = { ...state.rootNode };
+		newRoot.checkState = getCheckedStatus( newRoot );
+		state.rootNode = newRoot;
 		return state;
 	}
 	const newNode = { ...parentOfParent.children[ index ] };
@@ -148,6 +162,15 @@ export default ( state = initialState, { type, payload }: AnyAction ) => {
 			// parent.children[0]
 			const { parent, index } = getParentAndIndex( newState, nodePath );
 			if ( ! parent || index === undefined ) {
+				// Root node special case
+				if ( '/' === nodePath ) {
+					const newState = { ...state };
+					const newRoot = { ...newState.rootNode };
+					newRoot.checkState = checkState;
+					updateChildrenStatus( newRoot, checkState );
+					newState.rootNode = newRoot;
+					return newState;
+				}
 				return state;
 			}
 			const newNode = { ...parent.children[ index ] };
@@ -180,7 +203,9 @@ export default ( state = initialState, { type, payload }: AnyAction ) => {
 			// They'll inherit the parent's state with default childrenLoading/Loaded/children values
 			for ( const childPath of childrenPaths ) {
 				parentNode.children.push( {
-					path: childPath,
+					id: childPath.id,
+					path: childPath.path,
+					type: fileBrowserToRestoreType( childPath.type ),
 					ancestors: [ ...parentNode.ancestors, parentNode.path ],
 					checkState: parentNode.checkState === 'checked' ? 'checked' : 'unchecked',
 					childrenLoaded: false,

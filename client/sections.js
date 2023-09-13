@@ -158,6 +158,11 @@ const sections = [
 		name: 'settings-newsletter',
 		paths: [ '/settings/newsletter' ],
 		module: 'calypso/my-sites/site-settings/settings-newsletter',
+	},
+	{
+		name: 'settings-podcast',
+		paths: [ '/settings/podcasting' ],
+		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
 	},
 	{
@@ -400,7 +405,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/subscriptions' ],
+		paths: [ '/read/subscriptions', '^/read/subscriptions/(\\d+)(/)?$' ],
 		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',
 	},
@@ -612,14 +617,8 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'site-logs',
-		paths: [ '/site-logs' ],
-		module: 'calypso/my-sites/site-logs',
-		group: 'sites',
-	},
-	{
 		name: 'site-monitoring',
-		paths: [ '/site-monitoring' ],
+		paths: [ '/site-monitoring', '/site-logs' ],
 		module: 'calypso/my-sites/site-monitoring',
 		group: 'sites',
 	},

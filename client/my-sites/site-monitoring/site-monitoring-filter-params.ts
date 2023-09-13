@@ -10,16 +10,6 @@ export function getPageQueryParam(): SiteMonitoringTab | null {
 		: null;
 }
 
-export function updatePageQueryParam( tabName: SiteMonitoringTab ) {
-	const url = new URL( window.location.href );
-	if ( tabName === 'metrics' ) {
-		url.searchParams.delete( 'page' );
-	} else {
-		url.searchParams.set( 'page', tabName );
-	}
-	page.replace( url.pathname + url.search );
-}
-
 export function getDateRangeQueryParam( moment: typeof import('moment') ): {
 	startTime: Moment | null;
 	endTime: Moment | null;

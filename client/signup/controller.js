@@ -304,6 +304,8 @@ export default {
 		const headerPatternId = query && query.header_pattern_id;
 		const footerPatternId = query && query.footer_pattern_id;
 		const sectionPatternIds = query && query.pattern_ids;
+		const screen = query && query.screen;
+		const screenParameter = query && query.screen_parameter;
 		// Set plugin parameter in signup dependency store so we can retrieve it in getWithPluginDestination().
 		const pluginParameter = query && query.plugin;
 		const pluginBillingPeriod = query && query.billing_period;
@@ -316,6 +318,8 @@ export default {
 			...( headerPatternId && { headerPatternId } ),
 			...( footerPatternId && { footerPatternId } ),
 			...( sectionPatternIds && { sectionPatternIds } ),
+			...( screen && { screen } ),
+			...( screenParameter && { screenParameter } ),
 			...( pluginParameter && { pluginParameter } ),
 			...( pluginBillingPeriod && { pluginBillingPeriod } ),
 		};

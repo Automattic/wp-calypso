@@ -161,8 +161,6 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		true
 	);
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
-	$is_global_styles_in_personal_plan = wpcom_site_has_global_styles_in_personal_plan();
-	$plan                              = $is_global_styles_in_personal_plan ? 'personal-bundle' : 'value_bundle';
 
 	$reset_global_styles_support_url = 'https://wordpress.com/support/using-styles/#reset-all-styles';
 	if ( class_exists( 'WPCom_Languages' ) ) {
@@ -173,9 +171,8 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		'wpcomGlobalStyles',
 		array(
 			'assetsUrl'                   => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl'                  => "$calypso_domain/plans/$site_slug?plan=$plan&feature=style-customization",
+			'upgradeUrl'                  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=style-customization",
 			'wpcomBlogId'                 => wpcom_global_styles_get_wpcom_current_blog_id(),
-			'globalStylesInPersonalPlan'  => $is_global_styles_in_personal_plan,
 			'resetGlobalStylesSupportUrl' => $reset_global_styles_support_url,
 		)
 	);
@@ -437,8 +434,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$plan        = wpcom_site_has_global_styles_in_personal_plan() ? 'personal-bundle' : 'value_bundle';
-	$upgrade_url = "https://wordpress.com/plans/$site_slug?plan=$plan&feature=style-customization";
+	$upgrade_url = "https://wordpress.com/plans/$site_slug?plan=value_bundle&feature=style-customization";
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$preview_location = add_query_arg( 'hide-global-styles', '' );
@@ -475,26 +471,14 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</div>
 				<div class="launch-bar-global-styles-message">
 					<?php
-					// @TODO Remove after global styles on personal plans A/B test is complete.
-					if ( wpcom_site_has_global_styles_in_personal_plan() ) {
-						$message = sprintf(
+					$message = sprintf(
 						/* translators: %s - documentation URL. */
-							__(
-								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Personal plan or higher.',
-								'full-site-editing'
-							),
-							'https://wordpress.com/support/using-styles/'
-						);
-					} else {
-						$message = sprintf(
-						/* translators: %s - documentation URL. */
-							__(
-								'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
-								'full-site-editing'
-							),
-							'https://wordpress.com/support/using-styles/'
-						);
-					}
+						__(
+							'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+							'full-site-editing'
+						),
+						'https://wordpress.com/support/using-styles/'
+					);
 					echo sprintf(
 						wp_kses(
 							$message,
@@ -582,45 +566,6 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 }
 
 /**
- * Checks whether the site has access to Global Styles with a Personal plan as part of an A/B test.
- *
- * @param  int $blog_id Blog ID.
- * @return bool Whether the site has access to Global Styles with a Personal plan.
- */
-function wpcom_site_has_global_styles_in_personal_plan( $blog_id = 0 ) {
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return false;
-	}
-
-	if ( ! $blog_id ) {
-		$blog_id = get_current_blog_id();
-	}
-
-	$cache_key                          = "global-styles-on-personal-$blog_id";
-	$found_in_cache                     = false;
-	$has_global_styles_in_personal_plan = wp_cache_get( $cache_key, 'a8c_experiments', false, $found_in_cache );
-	if ( $found_in_cache ) {
-		return $has_global_styles_in_personal_plan;
-	}
-
-	$owner_id = wpcom_get_blog_owner( $blog_id );
-	if ( ! $owner_id ) {
-		return false;
-	}
-
-	$owner = get_userdata( $owner_id );
-	if ( ! $owner ) {
-		return false;
-	}
-
-	$experiment_assignment              = \ExPlat\assign_given_user( 'calypso_global_styles_personal_v2', $owner );
-	$has_global_styles_in_personal_plan = 'treatment' === $experiment_assignment;
-	// Cache the experiment assignment to prevent duplicate DB queries in the frontend.
-	wp_cache_set( $cache_key, $has_global_styles_in_personal_plan, 'a8c_experiments', MONTH_IN_SECONDS );
-	return $has_global_styles_in_personal_plan;
-}
-
-/**
  * Checks whether the site has a Personal plan.
  *
  * @param  int $blog_id Blog ID.
@@ -656,23 +601,17 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 		return true;
 	}
 
-	if ( wpcom_site_has_global_styles_in_personal_plan( $blog_id ) ) {
-		/*
-		 * Flag site so users of the treatment group with a Personal plan can always have access
-		 * to Global Styles, even if the experiment has finished without including Global Styles
-		 * in the Personal plan.
-		 */
-		$has_personal_plan = wpcom_site_has_personal_plan( $blog_id );
-		$note              = 'Automated sticker. See https://wp.me/paYJgx-3yE';
-		$user              = 'a8c'; // A non-empty string avoids storing the current user as author of the sticker change.
-		if ( $has_personal_plan ) {
-			if ( ! wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
-				add_blog_sticker( 'wpcom-global-styles-personal-plan', $note, $user, $blog_id );
-			}
+	// Users who bought a Personal plan during the GS on Personal experiment should
+	// retain access to Global Styles.
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-global-styles-personal-plan', $blog_id ) ) {
+		if ( wpcom_site_has_personal_plan( $blog_id ) ) {
+			return true;
 		} else {
+			$note = 'Automated sticker. See https://wp.me/paYJgx-3yE';
+			$user = 'a8c'; // A non-empty string avoids storing the current user as author of the sticker change.
 			remove_blog_sticker( 'wpcom-global-styles-personal-plan', $note, $user, $blog_id );
+			return false;
 		}
-		return $has_personal_plan;
 	}
 
 	return false;

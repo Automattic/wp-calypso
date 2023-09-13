@@ -112,7 +112,7 @@ describe( 'Start Writing Tailored Onboarding', () => {
 
 		it( 'Navigate to connect to social', async function () {
 			await page.waitForURL( /.*start-writing\/celebration-step.*/ );
-			await page.getByRole( 'link', { name: 'Connect to social' } ).click();
+			await page.getByRole( 'button', { name: 'Connect to social' } ).click();
 			await page.waitForURL( /.*marketing\/connections.*/ );
 		} );
 	} );

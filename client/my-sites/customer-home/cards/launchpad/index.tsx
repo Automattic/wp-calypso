@@ -1,5 +1,9 @@
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
-import { updateLaunchpadSettings, useLaunchpad } from '@automattic/data-stores';
+import {
+	updateLaunchpadSettings,
+	useLaunchpad,
+	sortLaunchpadTasksByCompletionStatus,
+} from '@automattic/data-stores';
 import { Launchpad, PermittedActions, Task, setUpActionsForTasks } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -29,9 +33,10 @@ const CustomerHomeLaunchpad = ( {
 
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
+	const useLaunchpadOptions = { onSuccess: sortLaunchpadTasksByCompletionStatus };
 	const {
 		data: { checklist, is_dismissed: initialIsChecklistDismissed },
-	} = useLaunchpad( siteSlug, checklistSlug );
+	} = useLaunchpad( siteSlug, checklistSlug, useLaunchpadOptions );
 
 	useEffect( () => {
 		setIsDismissed( initialIsChecklistDismissed );
@@ -77,6 +82,7 @@ const CustomerHomeLaunchpad = ( {
 				task_id: task.id,
 				is_completed: task.completed,
 				context: 'customer-home',
+				order: task.order,
 			} );
 		} );
 	}, [ checklist, checklistSlug, completedSteps, numberOfSteps, tasklistCompleted ] );
@@ -134,7 +140,12 @@ const CustomerHomeLaunchpad = ( {
 			{ shareSiteModalIsOpen && site && (
 				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
 			) }
-			<Launchpad siteSlug={ siteSlug } checklistSlug={ checklistSlug } taskFilter={ taskFilter } />
+			<Launchpad
+				siteSlug={ siteSlug }
+				checklistSlug={ checklistSlug }
+				taskFilter={ taskFilter }
+				useLaunchpadOptions={ useLaunchpadOptions }
+			/>
 		</div>
 	);
 };

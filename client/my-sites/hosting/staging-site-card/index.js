@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from 'calypso/my-sites/hosting/staging-site-card/card-content/manage-staging-site-card-content';
@@ -18,16 +19,25 @@ import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-s
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
 const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
-export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
+export const StagingSiteCard = ( {
+	currentUserId,
+	disabled,
+	siteId,
+	siteOwnerId,
+	translate,
+	isJetpack,
+	isPossibleJetpackConnectionProblem,
+} ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
@@ -258,7 +268,11 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			<NewStagingSiteCardContent
 				onAddClick={ onAddClick }
 				isButtonDisabled={
-					disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota
+					disabled ||
+					addingStagingSite ||
+					isLoadingQuotaValidation ||
+					! hasValidQuota ||
+					isPossibleJetpackConnectionProblem
 				}
 				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }
 			/>
@@ -267,7 +281,14 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
 
-	return <CardContentWrapper>{ stagingSiteCardContent }</CardContentWrapper>;
+	return (
+		<CardContentWrapper>
+			{ isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
+			{ stagingSiteCardContent }
+		</CardContentWrapper>
+	);
 };
 
 export default connect( ( state ) => {
@@ -277,6 +298,8 @@ export default connect( ( state ) => {
 
 	return {
 		currentUserId,
+		isJetpack: isJetpackSite( state, siteId ),
+		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		siteId,
 		siteOwnerId,
 	};

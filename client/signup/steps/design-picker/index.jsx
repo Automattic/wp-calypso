@@ -108,6 +108,7 @@ export default function DesignPickerStep( props ) {
 		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
 		template: design?.template,
 		is_premium: design?.is_premium,
+		is_externally_managed: design?.is_externally_managed,
 		flow: flowName,
 		intent: dependencies.intent,
 	} );

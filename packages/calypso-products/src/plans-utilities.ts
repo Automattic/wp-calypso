@@ -69,3 +69,18 @@ export function getTermDuration( term: string ): number | undefined {
 }
 
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
+
+/**
+ * Given an array of plan Features and an array of Product slugs, it returns which products are
+ * included in the plan Features.
+ *
+ * @param {ReadonlyArray< string >} planFeatures Array of plan Feature slugs
+ * @param {ReadonlyArray< string >} products Array of Product slugs
+ * @returns {string[]} Array of Product slugs
+ */
+export const planFeaturesIncludesProducts = (
+	planFeatures: ReadonlyArray< string >,
+	products: ReadonlyArray< string >
+) => {
+	return products.some( ( product ) => planFeatures.includes( product ) );
+};

@@ -75,18 +75,21 @@ const PatternLargePreview = ( {
 		return (
 			<li
 				key={ key }
+				aria-label={ pattern.title }
 				className={ classnames(
 					'pattern-large-preview__pattern',
 					`pattern-large-preview__pattern-${ type }`
 				) }
 			>
-				<PatternRenderer
-					key={ device }
-					patternId={ encodePatternId( pattern.ID ) }
-					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
-					// Disable default max-height
-					maxHeight="none"
-				/>
+				{ viewportHeight && (
+					<PatternRenderer
+						key={ device }
+						patternId={ encodePatternId( pattern.ID ) }
+						viewportHeight={ viewportHeight }
+						// Disable default max-height
+						maxHeight="none"
+					/>
+				) }
 				<PatternActionBar
 					patternType={ type }
 					category={ pattern.category }

@@ -1,0 +1,22 @@
+@import "@automattic/typography/styles/variables";
+
+.status-popover {
+	display: flex;
+	align-items: center;
+	.gridicon {
+		cursor: pointer;
+		color: var(--color-text-subtle);
+	}
+}
+
+.popover.status-popover__tooltip {
+	outline: none;
+
+	.popover__inner {
+		color: var(--color-neutral-50);
+		font-size: $font-body-small;
+		max-width: 220px;
+		padding: 16px;
+		text-align: left;
+	}
+}

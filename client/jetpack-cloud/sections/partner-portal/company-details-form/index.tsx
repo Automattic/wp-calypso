@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
@@ -33,6 +34,7 @@ interface Props {
 		name?: string;
 		contactPerson?: string;
 		companyWebsite?: string;
+		companyType?: string;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -63,6 +65,7 @@ export default function CompanyDetailsForm( {
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
+	const [ companyType, setCompanyType ] = useState( initialValues.companyType ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
@@ -77,6 +80,7 @@ export default function CompanyDetailsForm( {
 			name,
 			contactPerson,
 			companyWebsite,
+			companyType,
 			city,
 			line1,
 			line2,
@@ -89,6 +93,7 @@ export default function CompanyDetailsForm( {
 			name,
 			contactPerson,
 			companyWebsite,
+			companyType,
 			city,
 			line1,
 			line2,
@@ -125,7 +130,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="contactPerson">
 						{ translate( 'Contact first and last name' ) }
@@ -140,7 +144,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="companyWebsite">{ translate( 'Company website' ) }</FormLabel>
 					<FormTextInput
@@ -153,7 +156,39 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
+				<FormFieldset>
+					<FormLabel>{ translate( 'Which answer below best describes your company:' ) }</FormLabel>
+					<FormRadio
+						label={ translate( 'Agency' ) }
+						value="agency"
+						checked={ companyType === 'agency' }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setCompanyType( event.target.value )
+						}
+						disabled={ isLoading }
+						className={ undefined }
+					/>
+					<FormRadio
+						label={ translate( 'Freelancer/Pro' ) }
+						value="freelancer"
+						checked={ companyType === 'freelancer' }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setCompanyType( event.target.value )
+						}
+						disabled={ isLoading }
+						className={ undefined }
+					/>
+					<FormRadio
+						label={ translate( 'A business with multiple sites' ) }
+						value="business"
+						checked={ companyType === 'business' }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setCompanyType( event.target.value )
+						}
+						disabled={ isLoading }
+						className={ undefined }
+					/>
+				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
@@ -169,7 +204,6 @@ export default function CompanyDetailsForm( {
 
 					{ ! showCountryFields && <TextPlaceholder /> }
 				</FormFieldset>
-
 				{ showCountryFields && stateOptions && (
 					<FormFieldset>
 						<FormLabel>{ translate( 'State' ) }</FormLabel>
@@ -182,7 +216,6 @@ export default function CompanyDetailsForm( {
 						/>
 					</FormFieldset>
 				) }
-
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
 					<FormTextInput
@@ -206,7 +239,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
 					<FormTextInput
@@ -217,7 +249,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
 					<FormTextInput
@@ -230,7 +261,6 @@ export default function CompanyDetailsForm( {
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
-
 				{ includeTermsOfService && (
 					<div className="company-details-form__tos">
 						<p>
@@ -254,7 +284,6 @@ export default function CompanyDetailsForm( {
 						</p>
 					</div>
 				) }
-
 				<div className="company-details-form__controls">
 					<Button
 						primary

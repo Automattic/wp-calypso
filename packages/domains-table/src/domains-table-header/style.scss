@@ -47,4 +47,18 @@
 			display: none;
 		}
 	}
+
+	.list-status-cell__bubble {
+		display: flex;
+		width: 28px;
+		background: var(--studio-red-40);
+		border-radius: 16px; /* stylelint-disable-line scales/radii */
+		justify-content: center;
+		align-items: center;
+		color: #fff;
+		font-size: $font-body-extra-small;
+		height: 18px;
+		margin: 0 4px;
+		line-height: 20px;
+	}
 }
