@@ -1,6 +1,7 @@
 import page from 'page';
 import { createElement, FC } from 'react';
 import Main from './main';
+import { Query } from './types';
 import type { Context as PageJSContext } from 'page';
 
 export default {
@@ -17,7 +18,7 @@ export default {
 		}
 
 		context.primary = createElement(
-			Main as FC< { section: string; path: string; query: string } >,
+			Main as FC< { section: string; path: string; query: Query } >,
 			{
 				section: context.params.section,
 				path: context.path,

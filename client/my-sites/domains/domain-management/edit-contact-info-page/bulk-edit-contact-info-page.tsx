@@ -25,6 +25,7 @@ import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { domainManagementList, isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isRequestingWhoisSelector from 'calypso/state/selectors/is-requesting-whois';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -47,7 +48,15 @@ export default function BulkEditContactInfoPage( {
 
 	const selectedDomainsArg = getQueryArg( '?' + context.querystring, 'selected' );
 
-	const { data: partialDomainsData } = useAllDomainsQuery();
+	// If there's no previous path it means we've refreshed since navigating from
+	// the domains table. Previously we relied on the domains data fetched by the table
+	// but since the user refreshed we should fetch the domains again.
+	const hasRefreshedPage = ! useSelector( getPreviousPath );
+
+	const { data: partialDomainsData } = useAllDomainsQuery(
+		{ no_wpcom: true },
+		{ refetchOnMount: hasRefreshedPage }
+	);
 
 	const allSiteIds =
 		Array.isArray( selectedDomainsArg ) && partialDomainsData
@@ -120,16 +129,12 @@ export default function BulkEditContactInfoPage( {
 	};
 
 	const renderHeader = () => {
-		if ( ! selectedSite ) {
-			return null;
-		}
-
 		const items = [
 			{
 				label: isUnderDomainManagementAll( currentRoute )
 					? translate( 'All Domains' )
 					: translate( 'Domains' ),
-				backLink: domainsListPath,
+				href: domainsListPath,
 			},
 			{
 				label: translate( 'Edit contact infomation' ),

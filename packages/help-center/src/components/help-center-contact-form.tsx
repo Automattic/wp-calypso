@@ -122,7 +122,6 @@ export const HelpCenterContactForm = () => {
 		hasActiveChats,
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
-		noQuickResponseExperimentVariation,
 	} = useChatStatus();
 	useZendeskMessaging(
 		'zendesk_support_chat_key',
@@ -186,11 +185,6 @@ export const HelpCenterContactForm = () => {
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
-
-	if ( noQuickResponseExperimentVariation === 'no_quick_response' ) {
-		params.set( 'disable-gpt', 'true' );
-		params.set( 'show-gpt', 'false' );
-	}
 
 	const enableGPTResponse =
 		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
@@ -268,14 +262,12 @@ export const HelpCenterContactForm = () => {
 
 	function handleCTA() {
 		if ( ! enableGPTResponse && ! showingSearchResults ) {
-			if ( noQuickResponseExperimentVariation === 'control' ) {
-				params.set( 'show-results', 'true' );
-				navigate( {
-					pathname: '/contact-form',
-					search: params.toString(),
-				} );
-				return;
-			}
+			params.set( 'show-results', 'true' );
+			navigate( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
+			return;
 		}
 
 		if ( ! showingGPTResponse && enableGPTResponse ) {
@@ -486,20 +478,6 @@ export const HelpCenterContactForm = () => {
 
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
-
-		if ( noQuickResponseExperimentVariation === 'no_quick_response' ) {
-			if ( ! showingGPTResponse && ! showingSearchResults ) {
-				if ( mode === 'EMAIL' ) {
-					return __( 'Email us', __i18n_text_domain__ );
-				}
-				if ( mode === 'CHAT' ) {
-					return __( 'Chat with us', __i18n_text_domain__ );
-				}
-				if ( mode === 'FORUM' ) {
-					return __( 'Submit', __i18n_text_domain__ );
-				}
-			}
-		}
 
 		if ( ! showingGPTResponse && ! showingSearchResults ) {
 			return __( 'Continue', __i18n_text_domain__ );
