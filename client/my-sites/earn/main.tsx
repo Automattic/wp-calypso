@@ -14,7 +14,7 @@ import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
 import { useSelector } from 'calypso/state';
-import { canAccessWordAds } from 'calypso/state/sites/selectors';
+import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import Home from './home';
@@ -25,18 +25,19 @@ import ReferAFriendSection from './refer-a-friend';
 
 type EarningsMainProps = {
 	section: string;
-	adsProgramName: string;
 	query: Query;
 	path: string;
 };
 
-const EarningsMain = ( { section, adsProgramName, query, path }: EarningsMainProps ) => {
+const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 
 	const layoutTitles = {
-		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
+		earnings: translate( '%(wordads)s hiEarnings', { args: { wordads: adsProgramName } } ),
 		settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Recurring Payments' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
