@@ -83,7 +83,6 @@ import {
 	isPaidWithCredits,
 	canAutoRenewBeTurnedOff,
 	isExpired,
-	isExpiring,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRefundable,
@@ -1243,7 +1242,7 @@ class ManagePurchase extends Component<
 		}
 
 		const isActive100YearPurchase =
-			is100Year( purchase ) && ! isExpiring( purchase ) && ! isExpired( purchase );
+			is100Year( purchase ) && ! isCloseToExpiration( purchase ) && ! isExpired( purchase );
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),

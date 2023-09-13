@@ -1,6 +1,6 @@
 import { isDomainTransfer, is100Year } from '@automattic/calypso-products';
 import {
-	isExpiring,
+	isCloseToExpiration,
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
@@ -18,7 +18,7 @@ function canEditPaymentDetails( purchase ) {
 		! isOneTimePurchase( purchase ) &&
 		! isIncludedWithPlan( purchase ) &&
 		! isDomainTransfer( purchase ) &&
-		( ! is100Year( purchase ) || isExpiring( purchase ) )
+		( ! is100Year( purchase ) || isCloseToExpiration( purchase ) )
 	);
 }
 
