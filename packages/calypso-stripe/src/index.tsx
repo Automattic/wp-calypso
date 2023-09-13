@@ -78,7 +78,7 @@ export interface UseStripeJs {
 	stripeLoadingError: StripeLoadingError;
 }
 
-export type GetStripeConfigurationArgs = { country?: string };
+export type GetStripeConfigurationArgs = { country?: string; payment_partner?: string };
 export type GetStripeSetupIntentId = () => Promise< {
 	setup_intent_id: StripeSetupIntentId | undefined;
 } >;
@@ -639,6 +639,57 @@ function getStripeLocaleForLocale( locale: string | null | undefined ): string {
 		return 'auto';
 	}
 	return stripeLocale;
+}
+
+/**
+ * Loads the Stripe JS library directly.
+ *
+ * Unlike `StripeHookProvider` and `useStripe`, this does not keep any state,
+ * so try not to call it too often.
+ *
+ * This can be useful when you need a different stripe object (eg: for a
+ * different country) than the one in the provider, or if you cannot easily use
+ * the provider.
+ *
+ * If `country` is provided, it will be used to determine which Stripe account
+ * to load. If `paymentPartner` is provided, it will be used instead. If
+ * neither is provided, the geolocation will be used.
+ */
+export async function loadStripeLibrary( {
+	country,
+	paymentPartner,
+	locale,
+	fetchStripeConfiguration,
+}: {
+	country?: string;
+	paymentPartner?: string;
+	locale?: string;
+	fetchStripeConfiguration: GetStripeConfiguration;
+} ): Promise< Stripe > {
+	const stripeConfiguration = await fetchStripeConfiguration( {
+		country,
+		payment_partner: paymentPartner,
+	} );
+	if (
+		! stripeConfiguration.js_url ||
+		! stripeConfiguration.public_key ||
+		! stripeConfiguration.processor_id
+	) {
+		throw new StripeConfigurationError(
+			'Error loading payment method configuration. Received invalid data from the server.'
+		);
+	}
+
+	const stripeLocale = getStripeLocaleForLocale( locale );
+	const stripe = await loadStripe( stripeConfiguration.public_key, {
+		locale: stripeLocale as StripeElementLocale,
+	} );
+
+	if ( ! stripe ) {
+		throw new StripeConfigurationError( 'Error loading payment method processing library.' );
+	}
+
+	return stripe;
 }
 
 // See https://usehooks.com/useMemoCompare/
