@@ -19,9 +19,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import Home from './home';
 import MembershipsSection from './memberships';
-import { Query } from './memberships/index';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
+import { Query } from './types';
 
 type EarningsMainProps = {
 	section: string;
