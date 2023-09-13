@@ -40,17 +40,13 @@ import {
 } from 'calypso/state/memberships/subscribers/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
+import { Query } from '../types';
 import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
 
 import './style.scss';
 
-export type Query = {
-	stripe_connect_success?: string;
-	stripe_connect_cancelled?: string;
-};
-
 type MembershipsSectionProps = {
-	query: Query;
+	query?: Query;
 };
 
 type Subscriber = {

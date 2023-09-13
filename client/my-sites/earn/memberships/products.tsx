@@ -23,16 +23,14 @@ import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
-import { Product } from '../types';
+import { Product, Query } from '../types';
 import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from './';
 import './style.scss';
 
 type MembersProductsSectionProps = {
-	query?: {
-		[ key: string ]: string;
-	};
+	query?: Query;
 };
 
 const showAddEditDialogInitially =
