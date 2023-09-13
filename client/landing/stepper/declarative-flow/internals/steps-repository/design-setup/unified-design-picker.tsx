@@ -24,6 +24,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import AsyncLoad from 'calypso/components/async-load';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -758,6 +759,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
+				<QueryEligibility siteId={ site?.ID } />
 				<Dialog
 					additionalClassNames="plugin-details-cta__dialog-content"
 					additionalOverlayClassNames="plugin-details-cta__modal-overlay"
