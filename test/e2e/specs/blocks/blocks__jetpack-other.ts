@@ -8,12 +8,14 @@ import {
 	MapFlow,
 	GifFlow,
 	envVariables,
+	RelatedPostsFlow,
 } from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
 	new StarRatingBlock( { rating: 3.5 } ),
 	new GifFlow( { query: 'https://giphy.com/embed/MDJ9IbxxvDUQM' } ),
+	new RelatedPostsFlow(),
 ];
 
 // Private sites change behaivor of the Map block.
