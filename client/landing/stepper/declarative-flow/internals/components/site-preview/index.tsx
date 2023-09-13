@@ -83,6 +83,7 @@ const SitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
+				disableTimeoutRedirect
 			/>
 		</div>
 	);

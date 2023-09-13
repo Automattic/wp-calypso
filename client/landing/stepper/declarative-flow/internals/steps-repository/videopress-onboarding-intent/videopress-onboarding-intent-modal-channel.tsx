@@ -13,6 +13,7 @@ const VideoPressOnboardingIntentModalChannel: React.FC< IntroModalContentProps >
 			description={ translate(
 				'VideoPress TV is the easiest way to upload videos and create a community around them.'
 			) }
+			intent="channel"
 			featuresList={ [
 				translate( 'Ready to go! No setup needed.' ),
 				translate( 'The easiest way to upload your videos.' ),

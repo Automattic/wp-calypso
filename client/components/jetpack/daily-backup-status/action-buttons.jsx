@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
+import { rewindRequestBackup } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -16,10 +17,13 @@ const DownloadButton = ( { disabled, rewindId, primary } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
 
 	const href = disabled ? undefined : backupDownloadPath( siteSlug, rewindId );
-	const onDownload = () =>
+	const onDownload = () => {
+		dispatch( rewindRequestBackup( siteId, rewindId ) );
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_download', { rewind_id: rewindId } ) );
+	};
 
 	return (
 		<Button

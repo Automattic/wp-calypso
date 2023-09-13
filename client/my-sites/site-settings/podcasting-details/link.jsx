@@ -10,7 +10,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingPublishNotice from './publish-notice';
-import PodcastingSupportLink from './support-link';
 
 class PodcastingLink extends Component {
 	render() {
@@ -46,8 +45,6 @@ class PodcastingLink extends Component {
 						{ translate(
 							'Publish a podcast feed to Apple Podcasts and other podcasting services.'
 						) }
-						<br />
-						<PodcastingSupportLink />
 					</div>
 					<Button className="podcasting-details__link-button" href={ detailsLink }>
 						{ translate( 'Set up' ) }

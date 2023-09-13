@@ -41,6 +41,7 @@ interface Props {
 	onClickFinalConfirm: () => void;
 	flowType: string;
 	translate?: () => void;
+	isAkismet?: boolean;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -276,7 +277,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 			dispatch(
 				submitSurvey(
-					'calypso-cancel-jetpack',
+					props.isAkismet ? 'calypso-cancel-akismet' : 'calypso-cancel-jetpack',
 					purchase.siteId,
 					enrichedSurveyData( surveyData, purchase )
 				)
@@ -440,6 +441,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				<JetpackCancellationSurvey
 					onAnswerChange={ onSurveyAnswerChange }
 					selectedAnswerId={ surveyAnswerId }
+					isAkismet={ !! props?.isAkismet }
 				/>
 			);
 		}

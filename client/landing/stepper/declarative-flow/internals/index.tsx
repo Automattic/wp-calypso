@@ -51,7 +51,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
 	const { __ } = useI18n();
 	const navigate = useNavigate();
-	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -105,7 +104,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 		const _path = path.includes( '?' ) // does path contain search params
 			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
-			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ search }` );
+			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ window.location.search }` );
 
 		navigate( _path, { state: stepPaths } );
 		setPreviousProgress( stepProgress?.progress ?? 0 );
@@ -228,7 +227,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					path="*"
 					element={
 						<Navigate
-							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` }
+							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${
+								window.location.search
+							}` }
 							replace
 						/>
 					}

@@ -71,7 +71,9 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 			<ErrorNotice
 				errorType={ errorType }
 				errorText={ translate( 'Jetpack can’t establish a connection to your site’s database.' ) }
-				noticeActionHref="https://jetpack.com/support/reconnecting-reinstalling-jetpack/"
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/resolve-jetpack-errors/#site-is-missing-database-tables'
+				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -98,8 +100,12 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return (
 			<ErrorNotice
 				errorType={ errorType }
-				errorText={ translate( 'Jetpack encounters REST API connection issues.' ) }
-				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
+				errorText={ translate(
+					'Jetpack can’t communicate with your site because the REST API is not responding correctly.'
+				) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/resolve-jetpack-errors/#rest-api-or-xml-rpc-is-blocked'
+				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>
@@ -110,8 +116,12 @@ export const JetpackConnectionHealthBanner = ( { siteId }: Props ) => {
 		return (
 			<ErrorNotice
 				errorType={ errorType }
-				errorText={ translate( 'Jetpack encounters XML-RPC connection issues.' ) }
-				noticeActionHref={ localizeUrl( 'https://wordpress.com/support/resolve-jetpack-errors/' ) }
+				errorText={ translate(
+					'Jetpack can’t communicate with your site because XML-RPC is not responding correctly.'
+				) }
+				noticeActionHref={ localizeUrl(
+					'https://wordpress.com/support/resolve-jetpack-errors/#rest-api-or-xml-rpc-is-blocked'
+				) }
 				noticeActionText={ translate( 'Learn how to fix' ) }
 				isAtomic={ siteIsAutomatedTransfer }
 			/>

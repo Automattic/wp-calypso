@@ -319,7 +319,9 @@ const Settings = ( {
 				! i18n.hasTranslation(
 					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
 				) ) ||
-			areAllWpcomNameServers()
+			areAllWpcomNameServers() ||
+			! nameservers ||
+			! nameservers.length
 		) {
 			return null;
 		}
@@ -399,10 +401,20 @@ const Settings = ( {
 			return null;
 		}
 
+		let translatedTitle;
+		if (
+			englishLocales.includes( getLocaleSlug() || '' ) ||
+			i18n.hasTranslation( 'Domain forwarding' )
+		) {
+			translatedTitle = translate( 'Domain forwarding', { textOnly: true } );
+		} else {
+			translatedTitle = translate( 'Domain Forwarding', { textOnly: true } );
+		}
+
 		return (
 			<Accordion
 				className="domain-forwarding-card__accordion"
-				title={ translate( 'Domain Forwarding', { textOnly: true } ) }
+				title={ translatedTitle }
 				subtitle={ translate( 'Forward your domain to another' ) }
 			>
 				<DomainForwardingCard domain={ domain } />

@@ -45,6 +45,7 @@ const VideoPressOnboardingIntentModalOther: React.FC< IntroModalContentProps > =
 			description={ translate(
 				'We’d love to hear about your needs and goals around video content to continue improving VideoPress.'
 			) }
+			intent="other"
 		>
 			<div className="videopress-intro-modal__dots-separator">
 				<IconSeparator />

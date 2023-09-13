@@ -1,6 +1,9 @@
+export type BackupBrowserItemType = 'file' | 'theme' | 'plugin' | 'table';
+
 export type BackupBrowserItem = {
 	id: string;
 	path: string;
+	type: BackupBrowserItemType;
 	ancestors: string[];
 	checkState: 'checked' | 'unchecked' | 'mixed';
 	childrenLoaded: boolean;
@@ -16,4 +19,9 @@ export type BackupBrowserItemCheckList = {
 	totalItems: number;
 	includeList: BackupBrowserCheckListInfo[];
 	excludeList: BackupBrowserCheckListInfo[];
+};
+
+export type BackupBrowserSelectedItem = {
+	type: BackupBrowserItemType;
+	path: string;
 };

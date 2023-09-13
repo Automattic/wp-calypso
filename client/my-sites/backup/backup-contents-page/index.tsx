@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
@@ -13,6 +14,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { backupMainPath } from '../paths';
@@ -30,9 +32,11 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
+	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
@@ -57,7 +61,9 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
-						<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
+						{ ( browserCheckList.totalItems === 0 || ! isGranularEnabled ) && (
+							<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
+						) }
 					</div>
 					<div className="backup-contents-page__body">
 						<FileBrowser rewindId={ rewindId } />

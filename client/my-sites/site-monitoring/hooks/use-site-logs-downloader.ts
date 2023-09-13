@@ -167,7 +167,7 @@ export const useSiteLogsDownloader = ( {
 
 		do {
 			await wpcom.req
-				.post(
+				.get(
 					{
 						path,
 						apiNamespace: 'wpcom/v2',

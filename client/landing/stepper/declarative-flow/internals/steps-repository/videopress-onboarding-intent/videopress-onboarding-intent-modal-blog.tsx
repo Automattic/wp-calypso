@@ -11,6 +11,7 @@ const VideoPressOnboardingIntentModalBlog: React.FC< IntroModalContentProps > = 
 			description={ translate(
 				'Create a new blog on WordPress.com with unmatched video capabilities out of the box.'
 			) }
+			intent="blog"
 			featuresList={ [
 				translate( 'Unbranded, ad-free, customizable {{a}}VideoPress{{/a}} player.', {
 					components: {
