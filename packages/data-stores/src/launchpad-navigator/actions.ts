@@ -51,7 +51,8 @@ export function* removeNavigatorChecklist( siteSlug: string, remove_checklist_sl
 	};
 
 	let response: {
-		current_checklist: string | null;
+		updated: boolean;
+		new_active_checklist: string | null;
 	};
 
 	if ( canAccessWpcomApis() ) {
@@ -70,7 +71,7 @@ export function* removeNavigatorChecklist( siteSlug: string, remove_checklist_sl
 		} as APIFetchOptions );
 	}
 
-	receiveActiveChecklistSlug( response.current_checklist );
+	receiveActiveChecklistSlug( response.new_active_checklist );
 
 	return removeChecklistFromNavigatorList( remove_checklist_slug );
 }
