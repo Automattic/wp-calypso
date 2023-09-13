@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useState } from '@wordpress/element';
 import { FunctionComponent } from 'react';
 import FileBrowserHeader from './file-browser-header';
@@ -23,11 +22,9 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 		type: 'dir',
 	};
 
-	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
-
 	return (
 		<div>
-			{ isGranularEnabled && <FileBrowserHeader rewindId={ rewindId } /> }
+			<FileBrowserHeader rewindId={ rewindId } />
 			<FileBrowserNode
 				rewindId={ rewindId }
 				item={ rootItem }
