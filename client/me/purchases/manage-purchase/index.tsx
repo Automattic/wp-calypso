@@ -1241,8 +1241,7 @@ class ManagePurchase extends Component<
 			return this.renderPlaceholder();
 		}
 
-		const isActive100YearPurchase =
-			is100Year( purchase ) && ! isCloseToExpiration( purchase ) && ! isExpired( purchase );
+		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
