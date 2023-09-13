@@ -6,11 +6,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import request from 'wpcom-proxy-request';
-import useSubscriberNewsletterCategories from '../use-subscriber-newsletter-categories-query';
+import useSubscribedNewsletterCategories from '../use-subscribed-newsletter-categories-query';
 
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
-describe( 'useSubscriberNewsletterCategories', () => {
+describe( 'useSubscribedNewsletterCategories', () => {
 	let queryClient: QueryClient;
 	let wrapper: any;
 
@@ -56,7 +56,7 @@ describe( 'useSubscriberNewsletterCategories', () => {
 			],
 		} );
 
-		const { result } = renderHook( () => useSubscriberNewsletterCategories( { siteId: 123 } ), {
+		const { result } = renderHook( () => useSubscribedNewsletterCategories( { siteId: 123 } ), {
 			wrapper,
 		} );
 
@@ -89,7 +89,7 @@ describe( 'useSubscriberNewsletterCategories', () => {
 			newsletter_categories: [],
 		} );
 
-		const { result } = renderHook( () => useSubscriberNewsletterCategories( { siteId: 123 } ), {
+		const { result } = renderHook( () => useSubscribedNewsletterCategories( { siteId: 123 } ), {
 			wrapper,
 		} );
 
@@ -103,7 +103,7 @@ describe( 'useSubscriberNewsletterCategories', () => {
 			success: true,
 		} );
 
-		renderHook( () => useSubscriberNewsletterCategories( { siteId: 123 } ), {
+		renderHook( () => useSubscribedNewsletterCategories( { siteId: 123 } ), {
 			wrapper,
 		} );
 

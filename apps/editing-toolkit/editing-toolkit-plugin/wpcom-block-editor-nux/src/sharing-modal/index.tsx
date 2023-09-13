@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { START_WRITING_FLOW, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { Modal, Button, ExternalLink } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
@@ -12,11 +13,13 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
+import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';
 import postPublishedImage from './images/illo-share.svg';
 import InlineSocialLogo from './inline-social-logo';
 import InlineSocialLogosSprite from './inline-social-logos-sprite';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
+
 import './style.scss';
 
 type CoreEditorPlaceholder = {
@@ -31,7 +34,7 @@ type CoreEditorPlaceholder = {
 };
 const FB_APP_ID = '249643311490';
 
-const SharingModal: React.FC = () => {
+const SharingModalInner: React.FC = () => {
 	const isDismissedDefault = window?.sharingModalOptions?.isDismissed || false;
 	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
@@ -290,4 +293,11 @@ const SharingModal: React.FC = () => {
 	);
 };
 
+const SharingModal = () => {
+	const { siteIntent: intent } = useSiteIntent();
+	if ( intent === START_WRITING_FLOW || intent === DESIGN_FIRST_FLOW ) {
+		return null;
+	}
+	return <SharingModalInner />;
+};
 export default SharingModal;

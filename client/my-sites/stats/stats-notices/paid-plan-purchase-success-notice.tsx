@@ -40,7 +40,7 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					"{{p}}You'll now get instant access to upcoming features and priority support.{{/p}}",
+					"{{p}}You'll now get instant access to upcoming features and priority support if applicable.{{/p}}",
 					{
 						components: {
 							p: <p />,

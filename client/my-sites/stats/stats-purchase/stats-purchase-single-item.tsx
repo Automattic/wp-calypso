@@ -208,7 +208,7 @@ const StatsPersonalPurchase = ( {
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
 	// We need the exact position, otherwise the caculated pricing would not be the same as the one in the slider.
 	const defaultStartingValue = Math.floor( steps * DEFAULT_STARTING_FRACTION );
-	const uiEmojiHeartTier = steps * UI_EMOJI_HEART_TIER_THRESHOLD;
+	const uiEmojiHeartTier = Math.floor( steps * UI_EMOJI_HEART_TIER_THRESHOLD );
 	const uiImageCelebrationTier = steps * UI_IMAGE_CELEBRATION_TIER_THRESHOLD;
 
 	const [ subscriptionValue, setSubscriptionValue ] = useState( defaultStartingValue );
@@ -217,6 +217,9 @@ const StatsPersonalPurchase = ( {
 	const handlePlanSwap = ( e: React.MouseEvent ) => {
 		e.preventDefault();
 		recordTracksEvent( `calypso_stats_plan_switched_from_personal_to_commercial` );
+
+		const purchasePath = `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection`;
+		window.location.href = purchasePath;
 	};
 
 	return (
