@@ -1,9 +1,11 @@
+import { loadStripeLibrary } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics, logStashEvent } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
@@ -88,9 +90,20 @@ export default async function existingCardProcessor(
 			if ( doesTransactionResponseRequire3DS( stripeResponse ) ) {
 				debug( 'transaction requires authentication' );
 				paymentIntentId = stripeResponse.message.payment_intent_id;
+
+				// Saved cards already have a payment partner ID and we must use that ID to
+				// generate the `stripe` object we use to confirm 3DS challenges. Otherwise
+				// we may contact the wrong Stripe account.
+				const cardSpecificStripe = transactionData.paymentPartnerProcessorId
+					? await loadStripeLibrary( {
+							fetchStripeConfiguration: getStripeConfiguration,
+							paymentPartner: transactionData.paymentPartnerProcessorId,
+					  } )
+					: undefined;
+
 				await handle3DSChallenge(
 					reduxDispatch,
-					stripe,
+					cardSpecificStripe ?? stripe,
 					stripeResponse.message.payment_intent_client_secret,
 					paymentIntentId
 				);
