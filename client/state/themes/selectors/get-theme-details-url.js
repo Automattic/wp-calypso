@@ -17,12 +17,16 @@ export function getThemeDetailsUrl( state, themeId, siteId, options = {} ) {
 		return null;
 	}
 
-	const { tabFilter, styleVariationSlug } = options;
-	const searchParams = {
-		tab_filter: tabFilter,
-		style_variation: styleVariationSlug,
-	};
-
 	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
+	const { tabFilter, styleVariationSlug } = options;
+	const searchParams = {};
+	if ( tabFilter ) {
+		searchParams.tab_filter = tabFilter;
+	}
+
+	if ( styleVariationSlug ) {
+		searchParams.style_variation = styleVariationSlug;
+	}
+
 	return addQueryArgs( `/theme/${ themeId }${ sitePart }`, searchParams );
 }
