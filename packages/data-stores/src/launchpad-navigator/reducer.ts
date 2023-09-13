@@ -17,8 +17,6 @@ const checklistsSlug: Reducer< string[], LaunchpadNavigatorAction > = ( state = 
 	switch ( action.type ) {
 		case 'LAUNCHPAD_NAVIGATOR_REMOVE_CHECKLIST':
 			return state.filter( ( slug ) => slug !== action.checklist_slug );
-		case 'LAUNCHPAD_NAVIGATOR_SET_CHECKLISTS':
-			return action.checklists;
 	}
 	return state;
 };

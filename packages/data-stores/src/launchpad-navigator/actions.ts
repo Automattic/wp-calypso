@@ -16,12 +16,6 @@ export const removeChecklistFromNavigatorList = ( checklist_slug: string ) =>
 		checklist_slug,
 	} as const );
 
-export const setChecklists = ( checklists: string[] ) =>
-	( {
-		type: 'LAUNCHPAD_NAVIGATOR_SET_CHECKLISTS',
-		checklists,
-	} as const );
-
 export function* setActiveChecklist( siteSlug: string, active_checklist_slug: string ) {
 	const body = {
 		active_checklist_slug,
@@ -51,34 +45,36 @@ export function* setActiveChecklist( siteSlug: string, active_checklist_slug: st
 	return receiveActiveChecklistSlug( active_checklist_slug );
 }
 
-export function* removeNavigatorChecklist( siteSlug: string, checklist_slug: string ) {
+export function* removeNavigatorChecklist( siteSlug: string, remove_checklist_slug: string ) {
 	const body = {
-		checklist_slug,
+		remove_checklist_slug,
+	};
+
+	let response: {
+		current_checklist: string | null;
 	};
 
 	if ( canAccessWpcomApis() ) {
-		yield wpcomRequest( {
+		response = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/launchpad/navigator`,
 			apiNamespace: 'wpcom/v2',
-			method: 'DELETE',
+			method: 'POST',
 			body,
 		} );
 	} else {
-		yield apiFetch( {
+		response = yield apiFetch( {
 			global: true,
 			path: `/wpcom/v2/launchpad/navigator`,
-			method: 'DELETE',
+			method: 'POST',
 			data: body,
 		} as APIFetchOptions );
 	}
 
-	return removeChecklistFromNavigatorList( checklist_slug );
+	receiveActiveChecklistSlug( response.current_checklist );
+
+	return removeChecklistFromNavigatorList( remove_checklist_slug );
 }
 
 export type LaunchpadNavigatorAction =
-	| ReturnType<
-			| typeof receiveActiveChecklistSlug
-			| typeof setChecklists
-			| typeof removeChecklistFromNavigatorList
-	  >
+	| ReturnType< typeof receiveActiveChecklistSlug | typeof removeChecklistFromNavigatorList >
 	| GeneratorReturnType< typeof setActiveChecklist | typeof removeNavigatorChecklist >;
