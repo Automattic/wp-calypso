@@ -29,34 +29,36 @@
 /**
  * Formatted Header
  */
-.formatted-header {
-	margin: 0 !important;
-	flex-grow: 1;
+.import__onboarding-page {
+	.formatted-header {
+		margin: 0 !important;
+		flex-grow: 1;
 
-	.formatted-header__title {
-		@include onboarding-font-recoleta;
-		color: var(--studio-gray-100);
-		letter-spacing: 0.2px;
-		font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
-		font-weight: 400;
-		padding: 0;
-		margin: 0;
+		.formatted-header__title {
+			@include onboarding-font-recoleta;
+			color: var(--studio-gray-100);
+			letter-spacing: 0.2px;
+			font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
+			font-weight: 400;
+			padding: 0;
+			margin: 0;
 
-		@include break-xlarge {
-			font-size: 2.75rem;
+			@include break-xlarge {
+				font-size: 2.75rem;
+			}
 		}
-	}
 
-	.formatted-header__subtitle {
-		padding: 0;
-		text-align: left;
-		color: var(--studio-gray-60);
-		font-size: 1rem;
-		margin-top: 16px;
-		line-height: 24px;
+		.formatted-header__subtitle {
+			padding: 0;
+			text-align: left;
+			color: var(--studio-gray-60);
+			font-size: 1rem;
+			margin-top: 16px;
+			line-height: 24px;
 
-		@include break-small {
-			margin-top: 8px;
+			@include break-small {
+				margin-top: 8px;
+			}
 		}
 	}
 }
