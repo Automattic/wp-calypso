@@ -239,7 +239,7 @@ describe( '<PlanNotice /> Tests', () => {
 			/>
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
-			'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress or WooCommerce apps.'
+			'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress or WooCommerce mobile apps.'
 		);
 	} );
 } );
