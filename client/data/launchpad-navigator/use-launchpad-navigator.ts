@@ -13,8 +13,11 @@ interface LaunchpadNavigatorResponse {
 }
 
 export const fetchLaunchpadNavigator = (
-	siteSlug: string
+	siteSlug: string | null
 ): Promise< LaunchpadNavigatorResponse > => {
+	if ( ! siteSlug ) {
+		return Promise.resolve( { available_checklists: [], current_checklist: null } );
+	}
 	const slug = encodeURIComponent( siteSlug );
 
 	return canAccessWpcomApis()
@@ -29,7 +32,10 @@ export const fetchLaunchpadNavigator = (
 		  } as APIFetchOptions );
 };
 
-export const useLaunchpadNavigator = ( siteSlug: string, current_checklist: string ) => {
+export const useLaunchpadNavigator = (
+	siteSlug: string | null,
+	current_checklist: string | null
+) => {
 	const key = [ 'launchpad-navigator', siteSlug, current_checklist ];
 
 	return useQuery( {

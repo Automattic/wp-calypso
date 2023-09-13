@@ -6,9 +6,10 @@ import {
 	LaunchpadNavigator,
 } from '@automattic/data-stores';
 import { Launchpad, PermittedActions, Task, setUpActionsForTasks } from '@automattic/launchpad';
-import { useDispatch } from '@wordpress/data';
+import { select, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { useLaunchpadNavigator } from 'calypso/data/launchpad-navigator/use-launchpad-navigator';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -51,13 +52,24 @@ const CustomerHomeLaunchpad = ( {
 	const tasklistCompleted = completedSteps === numberOfSteps;
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 	const hasShareSiteTask = checklist?.some( ( task: Task ) => task.id === 'share_site' );
-	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
+	const { setActiveChecklist, receiveActiveChecklistSlug } = useDispatch(
+		LaunchpadNavigator.store
+	);
 
 	const defaultExtraActions = {
 		...( hasShareSiteTask ? { setShareSiteModalIsOpen } : {} ),
 		...extraActions,
 		setActiveChecklist,
 	};
+
+	const currentNavigatorChecklistSlug =
+		select( LaunchpadNavigator.store ).getActiveChecklistSlug() || null;
+	const {
+		data: { current_checklist },
+	} = useLaunchpadNavigator( siteSlug, currentNavigatorChecklistSlug );
+	useEffect( () => {
+		receiveActiveChecklistSlug( current_checklist );
+	}, [ current_checklist ] );
 
 	const taskFilter = ( tasks: Task[] ) => {
 		return setUpActionsForTasks( {
