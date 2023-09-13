@@ -1,5 +1,3 @@
-import { map, xor } from 'lodash';
-
 /**
  * Returns truthy if local terms object is the same as the API response
  * @param  {Object}  localTermEdits local state of term edits
@@ -10,9 +8,17 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
 	return Object.entries( localTermEdits ).every( ( [ taxonomy, terms ] ) => {
 		const termsArray = Object.values( terms );
 		const isHierarchical = typeof termsArray[ 0 ] === 'object' && termsArray[ 0 ] !== null;
-		const normalizedEditedTerms = isHierarchical ? map( termsArray, 'ID' ) : termsArray;
+		const normalizedEditedTerms = isHierarchical
+			? termsArray.map( ( term ) => term.ID )
+			: termsArray;
 		const normalizedKey = isHierarchical ? 'ID' : 'name';
-		const normalizedSavedTerms = map( savedTerms[ taxonomy ], normalizedKey );
-		return ! xor( normalizedEditedTerms, normalizedSavedTerms ).length;
+		const normalizedSavedTerms = Object.values( savedTerms[ taxonomy ] ?? {} ).map(
+			( value ) => value[ normalizedKey ]
+		);
+
+		return ! [
+			...normalizedEditedTerms.filter( ( x ) => ! normalizedSavedTerms.includes( x ) ),
+			...normalizedSavedTerms.filter( ( x ) => ! normalizedEditedTerms.includes( x ) ),
+		].length;
 	} );
 }
