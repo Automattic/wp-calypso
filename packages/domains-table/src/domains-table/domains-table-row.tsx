@@ -37,7 +37,7 @@ interface DomainsTableRowProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
-	pendingUpdates: DomainUpdateStatus[];
+	pendingUpdates?: DomainUpdateStatus[];
 }
 
 export function DomainsTableRow( {
@@ -158,6 +158,20 @@ export function DomainsTableRow( {
 	const domainTypeText =
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
+	const renderOwnerCell = () => {
+		if ( isLoadingSiteDetails || isLoadingSiteDomainsDetails ) {
+			return <LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />;
+		}
+
+		if ( ! currentDomainData?.owner ) {
+			return '-';
+		}
+
+		// Removes the username that appears in parentheses after the owner's name.
+		// Uses $ and the negative lookahead assertion (?!.*\() to ensure we only match the very last parenthetical.
+		return currentDomainData.owner.replace( / \((?!.*\().+\)$/, '' );
+	};
+
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
@@ -189,15 +203,7 @@ export function DomainsTableRow( {
 					<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
 				) }
 			</td>
-			{ ! hideOwnerColumn && (
-				<td>
-					{ isLoadingSiteDetails || isLoadingSiteDomainsDetails ? (
-						<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-					) : (
-						currentDomainData?.owner ?? '-'
-					) }
-				</td>
-			) }
+			{ ! hideOwnerColumn && <td>{ renderOwnerCell() }</td> }
 			<td>{ renderSiteCell() }</td>
 			<td>
 				{ isLoadingRowDetails ? (
