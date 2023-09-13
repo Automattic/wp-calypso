@@ -11,7 +11,6 @@ import {
 	merge,
 	findKey,
 	mapValues,
-	mapKeys,
 } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
@@ -447,12 +446,15 @@ export function edits( state = {}, action ) {
 
 			// if new post (edited with a transient postId of '') has been just saved and assigned
 			// a real numeric ID, rewrite the state key with the new postId.
-			if ( postId === '' && action.savedPost ) {
+			if ( postId === '' && action.savedPost && state[ siteId ] ) {
 				const newPostId = action.savedPost.ID;
 				state = {
 					...state,
-					[ siteId ]: mapKeys( state[ siteId ], ( value, key ) =>
-						key === '' ? newPostId : key
+					[ siteId ]: Object.fromEntries(
+						Object.entries( state[ siteId ] ).map( ( [ key, value ] ) => [
+							key === '' ? newPostId : key,
+							value,
+						] )
 					),
 				};
 			}
