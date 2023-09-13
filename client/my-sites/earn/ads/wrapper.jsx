@@ -71,7 +71,7 @@ const AdsWrapper = ( { section, children } ) => {
 		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
 
 	const requestAdsApproval = () =>
-		requestingWordAdsApproval ? dispatch( requestWordAdsApproval( siteId ) ) : null;
+		! requestingWordAdsApproval ? dispatch( requestWordAdsApproval( siteId ) ) : null;
 
 	const handleDismissWordAdsError = () => {
 		dispatch( dismissWordAdsError( siteId ) );
