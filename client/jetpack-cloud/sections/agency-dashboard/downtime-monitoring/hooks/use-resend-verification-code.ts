@@ -6,6 +6,7 @@ export default function useResendVerificationCode(): {
 	isLoading: boolean;
 	isSuccess: boolean;
 	isError: boolean;
+	data: any;
 } {
 	return useResendVerificationCodeMutation( {
 		retry: () => {
