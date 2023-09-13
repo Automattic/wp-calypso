@@ -30,6 +30,23 @@ export const backupRequest = keyedReducer( 'siteId', ( state = undefined, action
 	}
 } );
 
+/**
+ * Whether a backup granular download has been requested
+ */
+export const granularBackupDownloadRequested = keyedReducer(
+	'siteId',
+	( state = false, action ) => {
+		switch ( action.type ) {
+			case REWIND_GRANULAR_BACKUP_REQUEST:
+				return true;
+			case REWIND_BACKUP:
+				return false;
+		}
+
+		return state;
+	}
+);
+
 export const backupProgress = keyedReducer( 'siteId', ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case REWIND_BACKUP:
