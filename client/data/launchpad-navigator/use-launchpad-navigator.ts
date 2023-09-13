@@ -2,8 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
+interface AvailableChecklist {
+	slug: string;
+	title: string;
+}
+
 interface LaunchpadNavigatorResponse {
-	available_checklists: string[];
+	available_checklists: AvailableChecklist[];
 	current_checklist: string | null;
 }
 
