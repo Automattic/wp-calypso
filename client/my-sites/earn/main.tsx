@@ -44,6 +44,17 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
+	const getEarnTabs = () => {
+		const pathSuffix = site?.slug ? '/' + site?.slug : '';
+		return [
+			{
+				title: translate( 'Tools' ),
+				path: '/earn' + pathSuffix,
+				id: 'earn',
+			},
+		];
+	};
+
 	const getAdTabs = () => {
 		const pathSuffix = site?.slug ? '/' + site?.slug : '';
 		const tabs = [];
@@ -67,6 +78,15 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		}
 
 		return tabs;
+	};
+
+	const getEarnSelectedText = () => {
+		const selected = find( getEarnTabs(), { path: path } );
+		if ( selected ) {
+			return selected.title;
+		}
+
+		return '';
 	};
 
 	const getAdSelectedText = () => {
@@ -161,6 +181,30 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		);
 	};
 
+	const getEarnSectionNav = () => {
+		const currentPath = getCurrentPath();
+
+		return (
+			<div id="earn-navigation">
+				<SectionNav selectedText={ getEarnSelectedText() }>
+					<NavTabs>
+						{ getEarnTabs().map( ( tabItem ) => {
+							return (
+								<NavItem
+									key={ tabItem.id }
+									path={ tabItem.path }
+									selected={ tabItem.path === currentPath }
+								>
+									{ tabItem.title }
+								</NavItem>
+							);
+						} ) }
+					</NavTabs>
+				</SectionNav>
+			</div>
+		);
+	};
+
 	const getAdSectionNav = () => {
 		const currentPath = getCurrentPath();
 
@@ -204,6 +248,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				) }
 				align="left"
 			/>
+			{ getEarnSectionNav() }
 			{ getHeaderCake() }
 			{ isAdSection( section ) && getAdSectionNav() }
 			{ getComponent( section ) }
