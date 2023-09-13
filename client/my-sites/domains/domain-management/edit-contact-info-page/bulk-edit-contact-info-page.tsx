@@ -120,16 +120,12 @@ export default function BulkEditContactInfoPage( {
 	};
 
 	const renderHeader = () => {
-		if ( ! selectedSite ) {
-			return null;
-		}
-
 		const items = [
 			{
 				label: isUnderDomainManagementAll( currentRoute )
 					? translate( 'All Domains' )
 					: translate( 'Domains' ),
-				backLink: domainsListPath,
+				href: domainsListPath,
 			},
 			{
 				label: translate( 'Edit contact infomation' ),
