@@ -44,11 +44,13 @@ const usePricingMetaForGridPlans: UsePricingMetaForGridPlans = ( {
 				planSlug,
 				siteId: selectedSiteId || null,
 				returnMonthly: true,
+				returnSmallestUnit: true,
 			} );
 			const planPricesFull = getPlanPrices( state, {
 				planSlug,
 				siteId: selectedSiteId || null,
 				returnMonthly: false,
+				returnSmallestUnit: true,
 			} );
 
 			// raw prices for current site's plan
