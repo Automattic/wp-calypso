@@ -18,7 +18,7 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 		return null;
 	}
 
-	const { category, styleVariationSlug } = options;
+	const { tabFilter, styleVariationSlug } = options;
 	const themeType = getThemeType( state, themeId );
 	const searchParams = {
 		ref: 'calypshowcase',
@@ -28,7 +28,7 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 	};
 
 	// If the selected free theme belongs to the blog category, redirect users to the blog tailored flow
-	if ( themeType === FREE_THEME && category === 'blog' ) {
+	if ( themeType === FREE_THEME && tabFilter === 'blog' ) {
 		return addQueryArgs( `/setup/${ DESIGN_FIRST_FLOW }`, searchParams );
 	}
 

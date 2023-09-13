@@ -282,11 +282,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 	const signup = {
 		label: signupLabel,
 		extendedLabel: signupLabel,
-		getUrl: ( state, themeId, siteId, options ) =>
-			getThemeSignupUrl( state, themeId, {
-				category: options?.tabFilter,
-				styleVariationSlug: options?.styleVariationSlug,
-			} ),
+		getUrl: ( state, themeId, siteId, options ) => getThemeSignupUrl( state, themeId, options ),
 		hideForTheme: ( state ) => isUserLoggedIn( state ),
 	};
 
