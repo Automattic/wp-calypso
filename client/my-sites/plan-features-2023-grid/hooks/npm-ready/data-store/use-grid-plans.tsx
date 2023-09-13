@@ -30,6 +30,7 @@ import type { TranslateResult } from 'i18n-calypso';
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
+	isHighlighted?: boolean;
 };
 
 // TODO clk: move to plans data store

@@ -6,7 +6,6 @@ export { default as useGlobalStylesUpgradeProps } from './use-global-styles-upgr
 export { default as useInitialPath } from './use-initial-path';
 export { default as usePatternCategories } from './use-pattern-categories';
 export { default as usePatternsMapByCategory } from './use-patterns-map-by-category';
-export * from './use-prefetch-images';
 export { default as useRecipe } from './use-recipe';
 export { default as useScreen } from './use-screen';
 export { default as useSyncNavigatorScreen } from './use-sync-navigator-screen';

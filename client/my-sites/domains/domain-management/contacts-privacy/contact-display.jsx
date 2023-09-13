@@ -11,8 +11,18 @@ class ContactDisplay extends PureComponent {
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
+	componentDidMount() {
+		this.fetchWhois();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.selectedDomainName !== this.props.selectedDomainName ) {
+			this.fetchWhois();
+		}
+	}
+
 	fetchWhois = () => {
-		if ( isEmpty( this.props.whoisData ) && ! isEmpty( this.props.selectedDomainName ) ) {
+		if ( ! isEmpty( this.props.selectedDomainName ) ) {
 			this.props.requestWhois( this.props.selectedDomainName );
 		}
 	};
@@ -23,7 +33,6 @@ class ContactDisplay extends PureComponent {
 		const contactInformation = findRegistrantWhois( whoisData );
 
 		if ( isEmpty( contactInformation ) ) {
-			this.fetchWhois();
 			return null;
 		}
 
