@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
@@ -36,7 +35,6 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isGranularEnabled = config.isEnabled( 'jetpack/backup-granular' );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
@@ -61,7 +59,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							<div className="status-card__title">{ translate( 'Backup contents from:' ) }</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
-						{ ( browserCheckList.totalItems === 0 || ! isGranularEnabled ) && (
+						{ browserCheckList.totalItems === 0 && (
 							<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
 						) }
 					</div>
