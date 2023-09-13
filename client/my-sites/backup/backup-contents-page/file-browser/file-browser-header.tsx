@@ -35,6 +35,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 
 		dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_download_multiple_files' ) );
 		page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 	};
 	const onRestoreClick = () => {
