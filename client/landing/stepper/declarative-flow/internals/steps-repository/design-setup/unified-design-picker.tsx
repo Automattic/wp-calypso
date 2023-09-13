@@ -100,6 +100,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
 
 	// The design-first flow put the checkout at the last step, so we cannot show any upsell modal.
+	// Therefore, we need to hide any feature that needs to check out right away, e.g.: Premium theme.
+	// But maybe we can enable the global styles since it's gated under the Premium plan.
 	const disableCheckoutImmediately = isDesignFirstFlow;
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 
@@ -131,14 +133,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
 		if ( disableCheckoutImmediately ) {
-			allDesigns.designs = allDesigns.designs.filter(
-				( design ) =>
-					! (
-						design.is_premium ||
-						design.is_externally_managed ||
-						design.is_bundled_with_woo_commerce
-					)
-			);
+			allDesigns.designs = allDesigns.designs
+				.filter(
+					( design ) =>
+						! (
+							design.is_premium ||
+							design.is_externally_managed ||
+							design.is_bundled_with_woo_commerce
+						)
+				)
+				.map( ( design ) => {
+					design.style_variations = [];
+					return design;
+				} );
 		}
 
 		return allDesigns;
@@ -195,12 +202,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const shouldUnlockGlobalStyles =
-		shouldLimitGlobalStyles &&
-		selectedDesign &&
-		numOfSelectedGlobalStyles &&
-		siteSlugOrId &&
-		// Skip the Global Styles Upgrade modal if
-		! disableCheckoutImmediately;
+		shouldLimitGlobalStyles && selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId;
 
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
@@ -210,6 +212,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
+		select: ( design: Design ) => {
+			if ( disableCheckoutImmediately && design?.style_variations ) {
+				design.style_variations = [];
+			}
+
+			return design;
+		},
 	} );
 
 	function getEventPropsByDesign(
@@ -768,6 +777,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					screenshot={ fullLengthScreenshot }
 					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
+					disableGlobalStyles={ disableCheckoutImmediately }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }
 					selectedFontVariation={ selectedFontVariation }
