@@ -26,6 +26,7 @@ export class EditorPopoverMenuComponent {
 		const editorParent = await this.editor.parent();
 
 		const locator = editorParent.getByRole( 'menuitem', { name: name } );
+		await locator.waitFor();
 		await locator.click();
 	}
 }
