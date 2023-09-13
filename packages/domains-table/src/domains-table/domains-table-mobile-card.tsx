@@ -26,13 +26,14 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		domainStatusPurchaseActions,
 		pendingUpdates,
 		shouldDisplayPrimaryDomainLabel,
+		showBulkActions,
 	} = useDomainRow( domain );
 
 	return (
 		<div className="domains-table-mobile-card" ref={ ref }>
 			<div>
 				<div className="domains-table-mobile-card-header">
-					{ ! domain.wpcom_domain && (
+					{ ! domain.wpcom_domain && showBulkActions && (
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ isSelected }

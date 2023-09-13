@@ -3,12 +3,14 @@ import {
 	DomainUpdateStatus,
 	PartialDomainData,
 	SiteDomainsQueryFnData,
+	SiteDetails,
 } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
+import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';

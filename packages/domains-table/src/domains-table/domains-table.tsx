@@ -9,6 +9,7 @@ import {
 	JobStatus,
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
+import { isMobile } from '@automattic/viewport';
 import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
@@ -66,7 +67,10 @@ type Value = {
 	handleUpdateContactInfo: () => void;
 	changeBulkSelection: () => void;
 	getBulkSelectionStatus: () => 'all-domains' | 'some-domains' | 'no-domains';
-	onSortChange: ( selectedColumn: DomainsTableColumn ) => void;
+	onSortChange: (
+		selectedColumn: DomainsTableColumn,
+		direction: 'asc' | 'desc' | undefined
+	) => void;
 	handleSelectDomain: ( domain: PartialDomainData ) => void;
 	onDomainsRequiringAttentionChange: ( domainsRequiringAttention: number ) => void;
 	fetchSiteDomains?: (
@@ -77,6 +81,8 @@ type Value = {
 	completedJobs: JobStatus[];
 	domainResults: Map< string, DomainUpdateStatus[] >;
 	handleRestartDomainStatusPolling: () => void;
+	showBulkActions;
+	setShowBulkActions: () => void;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -101,6 +107,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		sortDirection: 'asc',
 	} );
 
+	const [ showBulkActions, setShowBulkActions ] = useState( ! isMobile() );
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 	const [ filter, setFilter ] = useState< DomainsTableFilter >( () => ( { query: '' } ) );
 	const [ domainsRequiringAttention, setDomainsRequiringAttention ] = useState<
@@ -210,17 +217,21 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		return null;
 	}
 
-	const onSortChange = ( selectedColumn: DomainsTableColumn ) => {
+	const onSortChange = (
+		selectedColumn: DomainsTableColumn,
+		direction: 'asc' | 'desc' | undefined
+	) => {
 		if ( ! selectedColumn.isSortable ) {
 			return;
 		}
 
 		const newSortDirection =
-			selectedColumn.name === sortKey &&
+			direction ||
+			( selectedColumn.name === sortKey &&
 			selectedColumn.supportsOrderSwitching &&
 			sortDirection === 'asc'
 				? 'desc'
-				: selectedColumn.initialSortDirection;
+				: selectedColumn.initialSortDirection );
 
 		setSort( {
 			sortKey: selectedColumn.name,
@@ -321,6 +332,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		completedJobs,
 		domainResults,
 		handleRestartDomainStatusPolling,
+		showBulkActions,
+		setShowBulkActions,
 	};
 
 	return (

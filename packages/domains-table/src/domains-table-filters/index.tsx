@@ -1,8 +1,11 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon, SelectDropdown } from '@automattic/components';
 import SearchControl, { SearchIcon } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
+import { useDomainsTable } from '../domains-table/domains-table';
+import { domainsTableColumns } from '../domains-table-header/columns';
 
 import './style.scss';
 
@@ -17,8 +20,37 @@ interface DomainsTableFiltersProps {
 
 export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersProps ) => {
 	const { __ } = useI18n();
-	const [ search, setSearch ] = useState( filter.query );
 
+	const { sortKey, sortDirection, onSortChange, setShowBulkActions, showBulkActions } =
+		useDomainsTable();
+
+	const options: any[] = [];
+	const sortName = domainsTableColumns.find( ( column ) => column.name === sortKey )?.label;
+	const selectedSort = `${ sortName } ${ sortDirection }`;
+
+	domainsTableColumns
+		.filter( ( column ) => column.label !== null )
+		.forEach( ( column ) => {
+			options.push(
+				<SelectDropdown.Item
+					key={ `${ column.name }asc` }
+					onClick={ () => onSortChange( column, 'asc' ) }
+				>
+					{ column.label } Asc
+				</SelectDropdown.Item>
+			);
+
+			options.push(
+				<SelectDropdown.Item
+					key={ `${ column.name }desc` }
+					onClick={ () => onSortChange( column, 'desc' ) }
+				>
+					{ column.label } Desc
+				</SelectDropdown.Item>
+			);
+		} );
+
+	const [ search, setSearch ] = useState( filter.query );
 	const isMobileDevice = isMobile();
 
 	const handleSearchChange = ( query: string ) => {
@@ -48,9 +80,36 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 				disableAutocorrect={ true }
 			/>
 			{ isMobileDevice && (
-				<Button primary={ Boolean( search ) } onClick={ handleSearch }>
-					{ __( 'Filter' ) }
-				</Button>
+				<>
+					<Button primary={ Boolean( search ) } onClick={ handleSearch }>
+						{ __( 'Filter' ) }
+					</Button>
+
+					<div className="domains-table-mobile-cards-controls">
+						<SelectDropdown
+							selectedText={ selectedSort }
+							className="domains-table-mobile-cards-sort-dropdown"
+						>
+							{ options }
+						</SelectDropdown>
+
+						<DropdownMenu
+							className="domains-table-mobile-cards-overflow"
+							icon={ <Gridicon icon="ellipsis" /> }
+							label={ __( 'Domain actions' ) }
+						>
+							{ () => (
+								<MenuGroup>
+									<MenuItem onClick={ () => setShowBulkActions( ! showBulkActions ) }>
+										{ showBulkActions
+											? __( 'Disable Bulk Actions ' )
+											: __( 'Enable Bulk Actions ' ) }
+									</MenuItem>
+								</MenuGroup>
+							) }
+						</DropdownMenu>
+					</div>
+				</>
 			) }
 		</div>
 	);

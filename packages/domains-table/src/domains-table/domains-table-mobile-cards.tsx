@@ -6,14 +6,20 @@ import { DomainsTableMobileCard } from './domains-table-mobile-card';
 export const DomainsTableMobileCards = () => {
 	const { __ } = useI18n();
 
-	const { filteredData, canSelectAnyDomains, changeBulkSelection, getBulkSelectionStatus } =
-		useDomainsTable();
+	const {
+		showBulkActions,
+		filteredData,
+		canSelectAnyDomains,
+		changeBulkSelection,
+		getBulkSelectionStatus,
+	} = useDomainsTable();
+
 	const bulkSelectionStatus = getBulkSelectionStatus();
 
 	return (
 		<div className="domains-table-mobile-cards">
 			<div className="domains-table__bulk-action-container">
-				{ canSelectAnyDomains && (
+				{ showBulkActions && canSelectAnyDomains && (
 					<CheckboxControl
 						data-testid="domains-select-all-checkbox"
 						__nextHasNoMarginBottom

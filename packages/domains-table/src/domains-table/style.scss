@@ -183,9 +183,25 @@
 .domains-table-mobile-cards {
 	height: 100%;
 	overflow-y: auto;
-	padding: 0 4px;
 	.domains-table__bulk-action-container {
 		margin-top: 16px;
+	}
+
+	&-controls {
+		width: 100%;
+		display: flex;
+		gap: 16px;
+	}
+
+	&-sort-dropdown {
+		width: 100%;
+		flex-grow: 1;
+		.select-dropdown__container {
+			width: 100%;
+			.select-dropdown__header {
+				text-transform: capitalize;
+			}
+		}
 	}
 }
 

@@ -19,6 +19,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		selectedDomains,
 		handleSelectDomain,
 		domainResults,
+		showBulkActions,
 	} = useDomainsTable();
 
 	const translate = useTranslate();
@@ -124,5 +125,6 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		domainStatusPurchaseActions,
 		pendingUpdates: domainResults.get( domain.domain ) || [],
 		currentDomainData,
+		showBulkActions,
 	};
 };

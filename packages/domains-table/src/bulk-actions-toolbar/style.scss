@@ -3,6 +3,14 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 20px;
+
+	@media ( max-width: 480px) {
+		flex-direction: column;
+		align-items: flex-start;
+		button {
+			width: 100%;
+		}
+	}
 }
 
 .domains-table-bulk-actions-toolbar__icon {

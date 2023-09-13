@@ -3,10 +3,13 @@
 
 .domains-table-filter {
 	display: flex;
-	flex-direction: column;
-	align-items: center;
 	justify-content: space-between;
-	gap: 16px;
+
+	@media ( max-width: 480px ) {
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+	}
 
 	> button {
 		width: 100%;
