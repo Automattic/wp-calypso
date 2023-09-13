@@ -1,19 +1,17 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Gridicon, WordPressLogo } from '@automattic/components';
+import { ProductsList } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactElement, PropsWithChildren } from 'react';
-import { useSelector } from 'react-redux';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableCard from 'calypso/components/foldable-card';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import HundredYearPlanLogo from './hundred-year-plan-logo';
 import InfoModal from './info-modal';
-import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
@@ -171,8 +169,11 @@ function InfoColumnWrapper( { isMobile, children }: PropsWithChildren< { isMobil
 
 function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: () => void } ) {
 	const translate = useTranslate();
-	const displayCost = useSelector( ( state: IAppState ) =>
-		getProductDisplayCost( state, PLAN_100_YEARS )
+
+	const productPrice = useSelect(
+		( select ) =>
+			select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.combined_cost_display,
+		[]
 	);
 
 	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
@@ -210,7 +211,7 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 							<Gridicon icon="info-outline" size={ 16 } />
 						</>
 					</LearnMore>
-					<Price>{ displayCost }</Price>
+					<Price className={ ! productPrice ? 'is-price-loading' : '' }>{ productPrice }</Price>
 				</Info>
 			</InfoColumnContainer>
 		</>
@@ -236,7 +237,6 @@ function HundredYearPlanStepWrapper( props: Props ) {
 			stepContent={
 				<Container isMobile={ isMobile }>
 					{ isOpen && <InfoModal onClose={ closeModal } /> }
-					<QueryProductsList persist />
 					<InfoColumnWrapper isMobile={ isMobile }>
 						<InfoColumn isMobile={ isMobile } openModal={ openModal } />
 					</InfoColumnWrapper>

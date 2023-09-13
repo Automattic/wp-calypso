@@ -1,3 +1,5 @@
+@import "@automattic/onboarding/styles/mixins";
+
 .hundred-year-plan {
 	height: 100%;
 	padding: 0;
@@ -28,6 +30,11 @@
 		@media (min-width: 960px) {
 			background-image: url(calypso/assets/images/hundred-year-plan-onboarding/stars-solo.webp);
 			background-color: #000;
+		}
+
+		.is-price-loading {
+			@include onboarding-placeholder;
+			width: 100px;
 		}
 	}
 }
