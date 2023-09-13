@@ -77,6 +77,44 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 	} );
 
+	describe( 'Jetpack features', function () {
+		beforeAll( async function () {
+			await editorPage.openSettings();
+		} );
+
+		it( 'Open Jetpack post settings', async function () {
+			await editorPage.openSettings( 'Jetpack' );
+		} );
+
+		skipItIf( envVariables.TEST_ON_ATOMIC !== true )(
+			'Enter SEO title and preview',
+			async function () {
+				await editorPage.enterSEODetails( {
+					title: 'SEO example title',
+					description: 'SEO example description',
+				} );
+			}
+		);
+
+		it( 'Open social preview', async function () {
+			await editorPage.expandSection( 'Social Previews' );
+			await editorPage.clickSidebarButton( 'Open Social Previews' );
+		} );
+
+		it( 'Show social preview for Tumblr', async function () {
+			// Action implemented as "raw" calls for now (2023-09).
+			const editorParent = await editorPage.getEditorParent();
+			const dialog = editorParent.getByRole( 'dialog' );
+
+			await dialog.getByRole( 'tab', { name: 'Tumblr' } ).click();
+			await dialog.getByRole( 'tabpanel', { name: 'Tumblr' } ).waitFor();
+		} );
+
+		it( 'Dismiss social preview', async function () {
+			await page.keyboard.press( 'Escape' );
+		} );
+	} );
+
 	describe( 'Preview', function () {
 		let previewPage: Page;
 
