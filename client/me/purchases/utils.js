@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import { isDomainTransfer, is100Year } from '@automattic/calypso-products';
 import {
 	isExpired,
