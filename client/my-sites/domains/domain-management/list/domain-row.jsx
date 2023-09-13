@@ -101,7 +101,7 @@ class DomainRow extends PureComponent {
 	renderSite() {
 		const { domain } = this.props;
 		if ( domain.isDomainOnlySite ) {
-			return <div className="domain-row__site-cell"></div>;
+			return <div className="domain-row__site-cell" />;
 		}
 
 		return (
