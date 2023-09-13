@@ -31,9 +31,9 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
 	const [ modal, setModal ] = useState< ReactElement | null >( null );
-	const [ randomizedItems, setRandomizedItems ] = useState< VideoPressOnboardingIntentItem | null >(
-		null
-	);
+	const [ randomizedItems, setRandomizedItems ] = useState<
+		typeof VideoPressOnboardingIntentItem | null
+	>( null );
 	const urlQueryParams = useQuery();
 	const fromReferrer = urlQueryParams.get( 'from' ) ?? '';
 
