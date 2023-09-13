@@ -46,10 +46,6 @@
 			box-sizing: border-box;
 		}
 
-		.reader-post-card__post-details {
-			margin-top: 18px;
-		}
-
 		&.is-photo {
 			.reader-post-card__post {
 				flex-direction: column;
@@ -100,10 +96,6 @@
 
 	&.has-thumbnail,
 	&.is-gallery {
-		.reader-post-card__post {
-			margin-top: 10px;
-		}
-
 		.reader-post-card__post-details {
 			flex: 1;
 		}
@@ -470,6 +462,10 @@
 	line-height: 1.4;
 	margin-top: -4px;
 	overflow-wrap: break-word;
+
+	&:not(.is-compact) {
+		margin-top: 16px;
+	}
 }
 
 // Needs to overwrite .reader__content a
