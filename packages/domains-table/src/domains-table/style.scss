@@ -1,4 +1,6 @@
 @import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+
 
 .domains-table {
 	--domains-table-toolbar-height: 40px;
@@ -138,5 +140,17 @@
 	p {
 		line-height: 1.2;
 		font-size: smaller;
+	}
+}
+
+.domains-table-row__domain-type-text {
+	display: none;
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px;
+
+	@include break-large {
+		display: block;
 	}
 }

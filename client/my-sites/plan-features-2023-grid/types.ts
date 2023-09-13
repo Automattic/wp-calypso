@@ -4,6 +4,7 @@ import type { TranslateResult } from 'i18n-calypso';
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
+	isHighlighted?: boolean;
 };
 
 export interface PlanActionOverrides {

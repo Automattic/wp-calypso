@@ -1,18 +1,21 @@
-import { SelectDropdown } from '@automattic/components';
+import { Button, SelectDropdown } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
+import contactIcon from './contact.svg';
 import transformIcon from './transform.svg';
 import './style.scss';
 
 interface BulkActionsToolbarProps {
 	onAutoRenew: ( enable: boolean ) => void;
+	onUpdateContactInfo: () => void;
 	selectedDomainCount: number;
 }
 
 export function BulkActionsToolbar( {
 	onAutoRenew,
+	onUpdateContactInfo,
 	selectedDomainCount,
 }: BulkActionsToolbarProps ) {
 	const { __, _n } = useI18n();
@@ -61,6 +64,16 @@ export function BulkActionsToolbar( {
 
 	return (
 		<div className="domains-table-bulk-actions-toolbar">
+			<Button onClick={ onUpdateContactInfo }>
+				<img
+					className="domains-table-bulk-actions-toolbar__icon"
+					src={ contactIcon }
+					width={ 18 }
+					height={ 18 }
+					alt=""
+				/>{ ' ' }
+				{ __( 'Edit contact information', __i18n_text_domain__ ) }
+			</Button>
 			<SelectDropdown
 				key={ controlKey }
 				className="domains-table-bulk-actions-toolbar__select"
