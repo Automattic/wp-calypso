@@ -33,7 +33,7 @@ const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false
 		return {
 			...defaultCelebrationData,
 			title: translate( 'Your site’s ready!' ),
-			subTitle: translate( 'Now it’s time to edit your content' ),
+			subTitle: translate( 'Now it’s time to edit your content.' ),
 			primaryCtaName: 'Edit your content',
 			primaryCtaText: translate( 'Edit your content' ),
 			primaryCtaLink: `/site-editor/${ siteSlug }?${ siteEditorParams }`,
