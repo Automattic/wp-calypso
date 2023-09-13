@@ -777,7 +777,7 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ) {
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
-		! is100Year( purchase ) &&
+		( ! is100Year( purchase ) || isExpiring( purchase ) ) &&
 		moment( creditCard?.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' )
 	);
 }
@@ -789,7 +789,7 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ) {
 		creditCard &&
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
-		! is100Year( purchase ) &&
+		( ! is100Year( purchase ) || isExpiring( purchase ) ) &&
 		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
 	);
 }
