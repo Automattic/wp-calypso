@@ -40,7 +40,7 @@ const Container = styled.div< { isMobile: boolean } >`
 `;
 
 const InfoColumnContainer = styled.div< { isMobile: boolean } >`
-	min-width: 456px;
+	min-width: ${ ( props ) => ( props.isMobile ? 'none' : '456px' ) };
 	display: flex;
 	flex-direction: ${ ( props ) => ( props.isMobile ? 'row' : 'column' ) };
 	align-items: ${ ( props ) => ( props.isMobile ? 'flex-start' : 'center' ) };
@@ -53,7 +53,7 @@ const InfoColumnContainer = styled.div< { isMobile: boolean } >`
 `;
 
 const InfoColumnPlaceholder = styled.div< { isMobile: boolean } >`
-	min-width: 456px;
+	min-width: ${ ( props ) => ( props.isMobile ? 'none' : '456px' ) };
 	height: 100%;
 `;
 
@@ -137,12 +137,15 @@ const StyledFoldableCard = styled( FoldableCard )`
 	&.card.foldable-card {
 		.foldable-card__header {
 			.foldable-card__main {
-				/* max-width: none; */
 				justify-content: flex-end;
-				/* margin-inline-end: 4px; */
 			}
 			.gridicons-chevron-down {
 				fill: var( --studio-gray-0 );
+			}
+			.foldable-card__action.foldable-card__expand {
+				.screen-reader-text {
+					right: 0;
+				}
 			}
 		}
 	}
