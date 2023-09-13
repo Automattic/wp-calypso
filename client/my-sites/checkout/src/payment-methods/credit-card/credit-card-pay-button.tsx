@@ -8,6 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import MaterialIcon from 'calypso/components/material-icon';
+import Notice from 'calypso/components/notice';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
@@ -17,13 +18,15 @@ import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
 
-function showError( error: string ) {
+const showError = ( error: string ) => {
+	document.body.scrollTop = document.documentElement.scrollTop = 0;
+
 	return (
-		<div className="error">
-			<p>{ error }</p>
-		</div>
+		<Notice status="is-error" icon="mention">
+			{ error }
+		</Notice>
 	);
-}
+};
 
 export default function CreditCardPayButton( {
 	disabled,
@@ -201,6 +204,7 @@ function isCreditCardFormValid(
 				// Touch the field so it displays a validation error
 				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
 				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
+				setDisplayError( 'Please fill out all required fields' );
 			}
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
@@ -211,8 +215,7 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
-				document.body.scrollTop = document.documentElement.scrollTop = 0;
-				setDisplayError( __( 'Please fill out all required fields' ) );
+				setDisplayError( 'Please fill out all required fields' );
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );

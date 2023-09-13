@@ -53,10 +53,6 @@ export const selectors = {
 			( key ) => ! state.cardDataComplete[ key as CardElementType ]
 		) as CardElementType[];
 	},
-	getFirstIncompleteFieldKey( state: CardStoreState ): CardElementType | null {
-		const incompleteFieldKeys = selectors.getIncompleteFieldKeys( state );
-		return incompleteFieldKeys[ 0 ] || null;
-	},
 	getFields( state: CardStoreState ) {
 		return state.fields;
 	},
