@@ -45,3 +45,13 @@ A function that can be used to create a Stripe setup intent with a setup intent 
 ## withStripeProps
 
 A higher-order-component function for use when using `useStripe` is not possible. Provides the same data as returned by `useStripe` as props to a component.
+
+## loadStripeLibrary
+
+Loads the Stripe.js library directly.
+
+Unlike `StripeHookProvider` and `useStripe`, this does not keep any state, so try not to call it too often.
+
+This can be useful when you need a different stripe object (eg: for a different country) than the one in `StripeHookProvider`, or if you cannot easily use the provider.
+
+If `country` is provided, it will be used to determine which Stripe account to load. If `paymentPartner` is provided, it will be used instead. If neither is provided, the geolocation will be used.
