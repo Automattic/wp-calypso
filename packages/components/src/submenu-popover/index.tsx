@@ -24,7 +24,7 @@ interface SubmenuPopoverProps extends ComponentProps< typeof Popover > {
 		| 'left'
 		| 'left-start'
 		| 'left-end';
-	anchorRef?: React.MutableRefObject< HTMLElement | undefined >;
+	anchor?: Element | undefined;
 	flip?: boolean;
 	resize?: boolean;
 	inline?: boolean;
