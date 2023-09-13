@@ -38,6 +38,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -396,6 +397,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[ site ]
 	);
 
+	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
+
+	const hasEligibilityMessages =
+		! isAtomic &&
+		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
+
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTypeBadge
 			canGoToCheckout={ false }
@@ -451,26 +458,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			is_externally_managed: selectedDesign?.is_externally_managed,
 		} );
 
-		const plan = getPlan();
-
 		if ( siteSlugOrId ) {
-			// TODO: Remove this temporary condition and
-			//      add condition here to check if checkout or atomic transfer dialog should be shown
-			if ( plan === 'business-bundle' && ! selectedDesign?.is_externally_managed ) {
+			if ( selectedDesign?.is_externally_managed && hasEligibilityMessages ) {
+				setShowEligibility( true );
+			} else {
 				goToCheckout( {
 					flowName: flow,
 					stepName,
 					siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 					// When the user is done with checkout, send them back to the current url
 					destination: window.location.href.replace( window.location.origin, '' ),
-					plan,
+					plan: getPlan(),
 					extraProducts:
 						selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
 							? [ marketplaceProductSlug ]
 							: [],
 				} );
-			} else if ( selectedDesign?.is_externally_managed ) {
-				setShowEligibility( true );
 			}
 		}
 		setShowUpgradeModal( false );
@@ -772,6 +775,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						currentContext="plugin-details"
 						standaloneProceed
 						isMarketplace={ selectedDesign?.is_externally_managed }
+						isMarketplaceException={ selectedDesign?.is_externally_managed }
 						onProceed={ () => {
 							goToCheckout( {
 								flowName: flow,
