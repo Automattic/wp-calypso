@@ -232,6 +232,7 @@ test( 'Parenthetical username is removed from owner column', async () => {
 		blog_id: 123,
 		primary_domain: true,
 		owner: 'Joe Blogs (joeblogs)',
+		current_user_is_owner: false,
 	} );
 
 	const fetchSiteDomains = jest.fn().mockResolvedValue( {
@@ -240,16 +241,12 @@ test( 'Parenthetical username is removed from owner column', async () => {
 
 	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
-	render(
-		<DomainsTableRow
-			domain={ primaryPartial }
-			fetchSiteDomains={ fetchSiteDomains }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	render( <DomainsTableRow domain={ primaryPartial } />, {
+		domains: [ primaryPartial ],
+		isAllSitesView: true,
+		fetchSite,
+		fetchSiteDomains,
+	} );
 
 	await waitFor( () => expect( screen.queryByText( 'Joe Blogs' ) ).toBeInTheDocument() );
 } );
@@ -260,6 +257,7 @@ test( `Doesn't strip parentheses used in the name portion of the owner field`, a
 		blog_id: 123,
 		primary_domain: true,
 		owner: 'Joe (Danger) Blogs (joeblogs)',
+		current_user_is_owner: false,
 	} );
 
 	const fetchSiteDomains = jest.fn().mockResolvedValue( {
@@ -268,16 +266,12 @@ test( `Doesn't strip parentheses used in the name portion of the owner field`, a
 
 	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
-	render(
-		<DomainsTableRow
-			domain={ primaryPartial }
-			fetchSiteDomains={ fetchSiteDomains }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	render( <DomainsTableRow domain={ primaryPartial } />, {
+		domains: [ primaryPartial ],
+		fetchSite,
+		fetchSiteDomains,
+		isAllSitesView: true,
+	} );
 
 	await waitFor( () => expect( screen.queryByText( 'Joe (Danger) Blogs' ) ).toBeInTheDocument() );
 } );

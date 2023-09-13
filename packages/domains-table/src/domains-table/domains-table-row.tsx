@@ -1,10 +1,5 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import {
-	DomainUpdateStatus,
-	PartialDomainData,
-	SiteDomainsQueryFnData,
-	SiteDetails,
-} from '@automattic/data-stores';
+import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -13,7 +8,6 @@ import { useDomainRow } from '../use-domain-row';
 import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
-import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
@@ -21,17 +15,6 @@ import { DomainsTableStatusCell } from './domains-table-status-cell';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
-	isAllSitesView: boolean;
-	isSelected: boolean;
-	hideOwnerColumn?: boolean;
-	onSelect( domain: PartialDomainData ): void;
-	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
-	onDomainsRequiringAttentionChange?( domainsRequiringAttention: number ): void;
-	fetchSiteDomains?: (
-		siteIdOrSlug: number | string | null | undefined
-	) => Promise< SiteDomainsQueryFnData >;
-	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
-	pendingUpdates: DomainUpdateStatus[];
 }
 
 export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
