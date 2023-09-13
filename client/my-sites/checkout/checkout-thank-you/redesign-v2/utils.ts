@@ -1,4 +1,4 @@
-import { isWpComPlan } from '@automattic/calypso-products';
+import { is100Year, isWpComPlan } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 import { isBulkDomainTransfer } from '../utils';
 
@@ -22,8 +22,8 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 		return true;
 	}
 
-	// ThankYou page for only purchasing a plan.
-	if ( purchases.length === 1 ) {
+	// ThankYou page for only purchasing a plan ignored for the 100 years plan.
+	if ( purchases.length === 1 && ! purchases.some( is100Year ) ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
 	}
 	return false;

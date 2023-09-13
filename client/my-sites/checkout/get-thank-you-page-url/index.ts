@@ -18,6 +18,7 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	isDomainRegistration,
+	is100Year,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -531,6 +532,12 @@ function getFallbackDestination( {
 		return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 	}
 
+	const is100YearPlanProduct = cart?.products?.some( is100Year );
+	if ( is100YearPlanProduct ) {
+		debug( 'site with 100 year plan' );
+		return `/checkout/thank-you/100-year/${ siteSlug }/${ receiptIdOrPlaceholder }`;
+	}
+
 	const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
 	if ( titanProducts && titanProducts.length > 0 ) {
 		const emails = titanProducts[ 0 ].extra?.email_users;
@@ -542,26 +549,24 @@ function getFallbackDestination( {
 
 	const marketplaceProducts =
 		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
-
-	const marketplacePluginSlugs = marketplaceProducts
-		.filter(
-			( { extra } ) =>
-				extra.product_type === 'marketplace_plugin' || extra.product_type === 'saas_plugin'
-		)
-		.map( ( { extra } ) => extra.product_slug );
-
-	const marketplaceThemeSlugs = marketplaceProducts
-		.filter( ( { extra } ) => extra.product_type === 'marketplace_theme' )
-		.map( ( { extra } ) => extra.product_slug );
-
 	if ( marketplaceProducts.length > 0 ) {
 		debug( 'site with marketplace products' );
+		const marketplacePluginSlugs = marketplaceProducts
+			.filter(
+				( { extra } ) =>
+					extra.product_type === 'marketplace_plugin' || extra.product_type === 'saas_plugin'
+			)
+			.map( ( { extra } ) => extra.product_slug );
+
+		const marketplaceThemeSlugs = marketplaceProducts
+			.filter( ( { extra } ) => extra.product_type === 'marketplace_theme' )
+			.map( ( { extra } ) => extra.product_slug );
 		return addQueryArgs(
 			{
 				...( marketplacePluginSlugs.length ? { plugins: marketplacePluginSlugs.join( ',' ) } : {} ),
 				...( marketplaceThemeSlugs.length ? { themes: marketplaceThemeSlugs.join( ',' ) } : {} ),
 			},
-			`/marketplace/thank-you/${ siteSlug }`
+			`marketplace/thank-you/${ siteSlug }`
 		);
 	}
 

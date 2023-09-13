@@ -32,6 +32,7 @@ import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
+import HundredYearPlanThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -472,6 +473,13 @@ export function licensingThankYouAutoActivationCompleted( context, next ) {
 		/>
 	);
 
+	next();
+}
+
+export function hundredYearCheckoutThankYou( context, next ) {
+	context.primary = (
+		<HundredYearPlanThankYou site={ context.params.site } receiptId={ context.params.receiptId } />
+	);
 	next();
 }
 
