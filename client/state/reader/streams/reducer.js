@@ -40,12 +40,16 @@ export const items = ( state = [], action ) => {
 			gap = action.payload.gap;
 			streamItems = action.payload.streamItems;
 
+			if ( ! Array.isArray( streamItems ) ) {
+				return state;
+			}
+
 			if ( gap ) {
 				const beforeGap = takeWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
 				const afterGap = takeRightWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
 
 				// after query param is inclusive, so we need to drop duplicate post
-				if ( keysAreEqual( streamItems?.at( -1 ), afterGap[ 0 ] ) ) {
+				if ( keysAreEqual( streamItems[ streamItems.length - 1 ], afterGap[ 0 ] ) ) {
 					streamItems.pop();
 				}
 
@@ -57,7 +61,7 @@ export const items = ( state = [], action ) => {
 				// create a new gap if we still need one
 				let nextGap = [];
 				const from = gap.from;
-				const to = moment( streamItems?.at( -1 )?.date );
+				const to = moment( streamItems[ streamItems.length - 1 ]?.date );
 				if ( ! from.isSame( to ) ) {
 					nextGap = [ { isGap: true, from, to } ];
 				}
@@ -132,7 +136,7 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			}
 
 			maxDate = moment( streamItems[ 0 ].date );
-			minDate = moment( streamItems?.at( -1 )?.date );
+			minDate = moment( streamItems[ streamItems.length - 1 ].date );
 
 			// only retain posts that are newer than ones we already have
 			if ( state.lastUpdated ) {
