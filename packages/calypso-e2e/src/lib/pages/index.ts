@@ -34,7 +34,10 @@ export * from './wp-admin-media-settings-page';
 export * from './advertising-page';
 export * from './blaze-campaign-page';
 export * from './feedback-inbox-page';
+export * from './subscribers-page';
+export * from './subscription-management-page';
 
 export * from './external';
 export * from './me';
 export * from './signup';
+export * from './wp-admin';

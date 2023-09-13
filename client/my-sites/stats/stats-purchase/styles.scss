@@ -17,6 +17,17 @@
 	.stats-purchase-wizard {
 		font-family: $font-sf-pro-text;
 
+		.components-button {
+			&.is-primary {
+				background-color: var(--color-accent);
+				border-color: var(--color-accent);
+			}
+			&.is-link {
+				color: var(--color-sidebar-menu-selected-background);
+			}
+		}
+
+		li.stats-purchase-wizard__benefits-item--included,
 		.stats-purchase-wizard__benefits--included li {
 			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9IkFjdGlvbnMgLyBkb25lXzI0cHgiPgo8bWFzayBpZD0ibWFzazBfMzgwMl81NDI1IiBzdHlsZT0ibWFzay10eXBlOmx1bWluYW5jZSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMyIgeT0iNSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE0Ij4KPHBhdGggaWQ9Imljb24vYWN0aW9uL2RvbmVfMjRweCIgZD0iTTguNzU2ODIgMTUuOUw0LjU3NzQzIDExLjdMMy4xODQzIDEzLjFMOC43NTY4MiAxOC43TDIwLjY5OCA2LjY5OTk5TDE5LjMwNDggNS4yOTk5OUw4Ljc1NjgyIDE1LjlaIiBmaWxsPSJ3aGl0ZSIvPgo8L21hc2s+CjxnIG1hc2s9InVybCgjbWFzazBfMzgwMl81NDI1KSI+CjxyZWN0IGlkPSJSZWN0YW5nbGUiIHdpZHRoPSIyMy44ODIzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDY3NUM0Ii8+CjwvZz4KPC9nPgo8L3N2Zz4K);
 		}
@@ -24,13 +35,25 @@
 		.stats-purchase-wizard__card {
 			color: var(--studio-gray-80);
 
-			h1 {
+			.components-panel__header { //todo: re-assess if this element should be h1 not h2
+
+				font-family: $font-recoleta;
+			}
+
+			h1,
+			.components-panel__header h2 {
 				font-family: $font-recoleta;
 				color: var(--studio-gray-100);
 				font-size: $font-headline-small;
 				font-style: normal;
 				font-weight: 400;
 				line-height: 40px;
+			}
+
+			.components-panel__body-title button {
+				font-family: $font-sf-pro-display;
+				line-height: 30px;
+				color: var(--studio-gray-80);
 			}
 
 			.stats-purchase-wizard__pricing-value {
@@ -49,16 +72,43 @@
 			}
 		}
 
+		.stats-purchase-wizard__card-title-indicator {
+			&.active {
+				background-color: var(--color-primary);
+				border-color: var(--color-primary);
+			}
+		}
+
 		.stats-purchase-wizard__notice {
 			color: var(--studio-yellow-80);
 
 			.is-link {
 				color: var(--studio-yellow-80);
 			}
+
+			// TODO: improve this as naming it notice--green is not correct for WPCOM
+			&.stats-purchase-wizard__notice--green {
+				background-color: var(--studio-yellow-5);
+			}
+		}
+
+		.stats-purchase-wizard__card-panel {
+			.stats-purchase-wizard__personal-tos,
+			.stats-purchase-wizard__commercial-tos {
+				display: block;
+
+				.is-link {
+					color: var(--color-primary);
+				}
+			}
 		}
 
 		.stats-purchase-wizard__personal-tos {
 			display: none;
+		}
+
+		.stats-purchase-wizard__card-grid {
+			color: var(--studio-black);
 		}
 
 		.jp-components-pricing-slider__track.jp-components-pricing-slider__track-0 {
@@ -158,10 +208,12 @@
 		}
 	}
 
+	li.stats-purchase-wizard__benefits-item--included,
 	.stats-purchase-wizard__benefits--included li {
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNCIgeD0iMyIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Im04Ljc1NyAxNS45LTQuMTgtNC4yLTEuMzkzIDEuNCA1LjU3MyA1LjYgMTEuOTQxLTEyLTEuMzkzLTEuNEw4Ljc1NyAxNS45WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjMDY5RTA4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
 
+	li.stats-purchase-wizard__benefits-item--not-included,
 	.stats-purchase-wizard__benefits--not-included li {
 		background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSI+PG1hc2sgaWQ9ImEiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNCIgeD0iNCIgeT0iNSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgc3R5bGU9Im1hc2stdHlwZTpsdW1pbmFuY2UiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xOC45MDcgNi40MSAxNy41MDQgNWwtNS41NjMgNS41OUw2LjM4IDUgNC45NzUgNi40MSAxMC41MzggMTJsLTUuNTYzIDUuNTlMNi4zOCAxOWw1LjU2Mi01LjU5TDE3LjUwNCAxOWwxLjQwMy0xLjQxTDEzLjM0NCAxMmw1LjU2My01LjU5WiIvPjwvbWFzaz48ZyBtYXNrPSJ1cmwoI2EpIj48cGF0aCBmaWxsPSIjRDYzNjM4IiBkPSJNMCAwaDIzLjg4MnYyNEgweiIvPjwvZz48L3N2Zz4=);
 	}
@@ -265,7 +317,7 @@
 
 	.stats-purchase-wizard__card-grid-action--left,
 	.stats-purchase-wizard__card-grid-action--right {
-		.components-button {
+		button {
 			width: 100%;
 			justify-content: center;
 		}
@@ -291,6 +343,11 @@
 	}
 
 	.stats-purchase-wizard__card-panel-title {
+		// Hide the remaining panel title after the opened one.
+		& + .stats-purchase-wizard__card-panel-title:not(.is-opened) {
+			display: none;
+		}
+
 		h2 > button {
 			cursor: auto;
 
@@ -414,7 +471,7 @@
 		margin-bottom: 24px;
 	}
 
-	.components-button + .components-button {
+	.components-button + button.components-button {
 		margin-left: 12px;
 	}
 }

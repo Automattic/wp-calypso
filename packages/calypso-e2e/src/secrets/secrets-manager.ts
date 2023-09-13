@@ -176,6 +176,7 @@ export class SecretsManager {
 				domainsInboxId: 'FAKE_VALUE',
 				defaultUserInboxId: 'FAKE_VALUE',
 				totpUserInboxId: 'FAKE_VALUE',
+				manualTesting: 'FAKE_VALUE',
 			},
 			testAccounts: {
 				defaultUser: {

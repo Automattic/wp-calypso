@@ -12,7 +12,6 @@ interface FileBrowserProps {
 const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
-	const [ showCheckboxes, setShowCheckboxes ] = useState< boolean >( false );
 
 	const handleClick = ( path: string ) => {
 		setActiveNodePath( path );
@@ -28,20 +27,13 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( { rewindId } ) => {
 
 	return (
 		<div>
-			{ isGranularEnabled && (
-				<FileBrowserHeader
-					showCheckboxes={ showCheckboxes }
-					setShowCheckboxes={ setShowCheckboxes }
-					rewindId={ rewindId }
-				/>
-			) }
+			{ isGranularEnabled && <FileBrowserHeader rewindId={ rewindId } /> }
 			<FileBrowserNode
 				rewindId={ rewindId }
 				item={ rootItem }
 				path="/"
 				isAlternate={ true }
 				setActiveNodePath={ handleClick }
-				showCheckboxes={ showCheckboxes }
 				activeNodePath={ activeNodePath }
 			/>
 		</div>

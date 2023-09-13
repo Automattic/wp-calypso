@@ -60,8 +60,8 @@ const useMarkAsNewsletterCategoryMutation = ( siteId: string | number ) => {
 		onError: ( error, variables, context ) => {
 			queryClient.setQueryData( cacheKey, context?.previousData );
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries( cacheKey );
+		onSettled: async () => {
+			await queryClient.invalidateQueries( cacheKey );
 		},
 	} );
 };

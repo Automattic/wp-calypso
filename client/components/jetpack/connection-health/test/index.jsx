@@ -199,7 +199,9 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.queryByText( /Jetpack encounters XML-RPC connection issues./i )
+				screen.queryByText(
+					/Jetpack can’t communicate with your site because XML-RPC is not responding correctly./i
+				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );
@@ -216,7 +218,9 @@ describe( 'JetpackConnectionHealthBanner', () => {
 			render( <JetpackConnectionHealthBanner siteId={ 1 } />, { initialState } );
 
 			expect(
-				screen.queryByText( /Jetpack encounters REST API connection issues./i )
+				screen.queryByText(
+					/Jetpack can’t communicate with your site because the REST API is not responding correctly./i
+				)
 			).toBeVisible();
 			expect( screen.queryByText( /Learn how to fix/i ) ).toBeVisible();
 		} );

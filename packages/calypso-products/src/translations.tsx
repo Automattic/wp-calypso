@@ -172,12 +172,12 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
 			context: 'Jetpack product name',
 		} ),
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( 'Stats' ),
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: translate( 'Stats' ),
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( 'Stats' ),
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI' ),
-		[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'AI' ),
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( 'AI' ),
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
 	};
 };
 
@@ -197,10 +197,10 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const backup = translate( 'VaultPress Backup' );
-	const search = translate( 'Site Search' );
-	const stats = translate( 'Stats (Personal)' );
-	const statsFree = translate( 'Stats (Free)' );
-	const statsCommercial = translate( 'Stats' );
+	const search = translate( 'Site Search', { context: 'Jetpack product name' } );
+	const stats = translate( 'Stats (Personal)', { context: 'Jetpack product name' } );
+	const statsFree = translate( 'Stats (Free)', { context: 'Jetpack product name' } );
+	const statsCommercial = translate( 'Stats', { context: 'Jetpack product name' } );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
 		<>
@@ -212,13 +212,13 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const aiAssistant = translate( 'AI' );
+	const aiAssistant = translate( 'AI', { context: 'Jetpack product name' } );
 	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
 		},
 	} );
-	const boost = translate( 'Boost' );
+	const boost = translate( 'Boost', { context: 'Jetpack product name' } );
 	const socialBasic = translate( 'Social', { context: 'Jetpack product name' } );
 	const socialAdvanced = translate( 'Social', { context: 'Jetpack product name' } );
 
