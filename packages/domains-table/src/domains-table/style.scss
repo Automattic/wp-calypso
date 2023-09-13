@@ -2,8 +2,25 @@
 @import "@automattic/onboarding/styles/mixins";
 
 
+@media ( max-width: 480px) {
+	html,
+	body,
+	#wpcom,
+	#content {
+		overflow-y: hidden;
+		height: 100vh;
+		main[role="main"] {
+			overflow-y: hidden;
+			height: 100vh;
+		}
+	}
+}
+
+
 .domains-table {
 	--domains-table-toolbar-height: 40px;
+	height: 100%;
+	overflow-y: hidden;
 
 	border-collapse: collapse;
 
@@ -160,6 +177,15 @@
 
 	@include break-large {
 		display: block;
+	}
+}
+
+.domains-table-mobile-cards {
+	height: 100%;
+	overflow-y: auto;
+	padding: 0 4px;
+	.domains-table__bulk-action-container {
+		margin-top: 16px;
 	}
 }
 
