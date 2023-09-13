@@ -11,6 +11,7 @@ export default function useValidateVerificationCode(): {
 	isError: boolean;
 	errorMessage?: string;
 	isVerified: boolean;
+	data: any;
 } {
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
@@ -53,7 +54,7 @@ export default function useValidateVerificationCode(): {
 				...( type === 'email' && {
 					// Replace if it exists, otherwise add it
 					emails: [
-						...oldContacts.emails.filter(
+						...( oldContacts.emails || [] ).filter(
 							( email: { email_address: string } ) => email.email_address !== params.value
 						),
 						newEmailItem,
@@ -62,7 +63,7 @@ export default function useValidateVerificationCode(): {
 				...( type === 'sms' && {
 					// Replace if it exists, otherwise add it
 					sms_numbers: [
-						...oldContacts.sms_numbers.filter(
+						...( oldContacts.sms_numbers || [] ).filter(
 							( sms: { sms_number: string } ) => sms.sms_number !== params.value
 						),
 						newSMSItem,
