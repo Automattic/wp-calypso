@@ -51,7 +51,7 @@ const CustomerHomeLaunchpad = ( {
 	const tasklistCompleted = completedSteps === numberOfSteps;
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 	const hasShareSiteTask = checklist?.some( ( task: Task ) => task.id === 'share_site' );
-	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.register() );
+	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 	const defaultExtraActions = {
 		...( hasShareSiteTask ? { setShareSiteModalIsOpen } : {} ),
