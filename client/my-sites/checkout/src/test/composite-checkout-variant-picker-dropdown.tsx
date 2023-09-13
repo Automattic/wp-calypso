@@ -15,6 +15,7 @@ import {
 	planWithoutDomain,
 	getActivePersonalPlanDataForType,
 	getBusinessPlanForInterval,
+	getJetpackPlanForInterval,
 	getVariantItemTextForInterval,
 	getPlansItemsState,
 	countryList,
@@ -159,6 +160,62 @@ describe( 'CheckoutMain with a variant picker', () => {
 					name: getVariantItemTextForInterval( expectedVariant ),
 				} )
 			).toNeverAppear();
+		}
+	);
+
+	it.each( [
+		{ activePlan: 'none', cartPlan: 'monthly', expectedVariant: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'monthly', expectedVariant: 'two-year' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ activePlan: 'none', cartPlan: 'two-year', expectedVariant: 'monthly' },
+	] )(
+		'renders the $expectedVariant variant with a discount percentage for a Jetpack $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const user = userEvent.setup();
+			const cartChanges = { products: [ getJetpackPlanForInterval( cartPlan ) ] };
+			render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
+
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			const currentVariantItem = await screen.findByRole( 'option', {
+				name: getVariantItemTextForInterval( cartPlan ),
+			} );
+			const variantItem = await screen.findByRole( 'option', {
+				name: getVariantItemTextForInterval( expectedVariant ),
+			} );
+
+			const currentVariantSlug = currentVariantItem.dataset.productSlug;
+			const variantSlug = variantItem.dataset.productSlug;
+
+			const variantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === variantSlug
+			);
+
+			const finalPrice = variantData.raw_price;
+			const variantInterval = parseInt( String( variantData.bill_period ), 10 );
+			const currentVariantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === currentVariantSlug
+			);
+			const currentVariantPrice = currentVariantData.raw_price;
+			const currentVariantInterval = parseInt( String( currentVariantData.bill_period ), 10 );
+			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
+			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
+
+			const discountPercentage = Math.round( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
+			if ( discountPercentage > 0 ) {
+				expect(
+					within( variantItem ).getByText( `Save ${ discountPercentage }%` )
+				).toBeInTheDocument();
+			} else {
+				expect(
+					within( variantItem ).queryByText( `Save ${ discountPercentage }%` )
+				).not.toBeInTheDocument();
+			}
 		}
 	);
 
