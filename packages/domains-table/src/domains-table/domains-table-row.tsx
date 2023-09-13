@@ -37,7 +37,7 @@ interface DomainsTableRowProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
-	pendingUpdates: DomainUpdateStatus[];
+	pendingUpdates?: DomainUpdateStatus[];
 }
 
 export function DomainsTableRow( {
