@@ -1,8 +1,8 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
 import { EditorComponent } from './editor-component';
-import type { EditorPreviewOptions } from './types';
+import type { EditorPreviewOptions, EditorToolbarSettingsButton } from './types';
 
 const panel = '.interface-navigable-region[class*="header"]';
 const settingsButtonLabel = 'Settings';
@@ -253,7 +253,7 @@ export class EditorToolbarComponent {
 		await Promise.race( [
 			( async () => {
 				// Works with Gutenberg >=v15.8.0
-				await this.openSettings();
+				await this.openSettings( 'Settings' );
 				await editorParent.getByRole( 'button', { name: 'Switch to draft' } ).click();
 			} )(),
 			( async () => {
@@ -268,15 +268,23 @@ export class EditorToolbarComponent {
 	/**
 	 * Opens the editor settings.
 	 */
-	async openSettings(): Promise< void > {
-		const label = await this.translateFromPage( settingsButtonLabel );
-		const selector = selectors.settingsButton( label );
-
-		if ( await this.targetIsOpen( selector ) ) {
-			return;
-		}
+	async openSettings( target: EditorToolbarSettingsButton ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selector );
+
+		let locator: Locator;
+		if ( target === 'Settings' ) {
+			const label = await this.translateFromPage( settingsButtonLabel );
+			const selector = selectors.settingsButton( label );
+
+			if ( await this.targetIsOpen( selector ) ) {
+				return;
+			}
+
+			locator = editorParent.locator( selector );
+		} else {
+			locator = editorParent.getByRole( 'button', { name: 'Jetpack', exact: true } );
+		}
+
 		await locator.click();
 	}
 

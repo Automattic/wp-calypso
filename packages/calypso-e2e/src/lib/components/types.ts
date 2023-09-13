@@ -15,17 +15,6 @@ export type EditorPreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
 
 /**
- * The different foldable sections on the sidebar.
- */
-export type ArticleSections =
-	| 'Summary'
-	| 'Revisions'
-	| 'Permalink'
-	| 'Categories'
-	| 'Tags'
-	| 'Discussion';
-
-/**
  * Post/Page privacy options.
  */
 export type ArticlePrivacyOptions = 'Public' | 'Private' | 'Password';
@@ -41,3 +30,8 @@ export interface ArticlePublishSchedule {
 	minutes: number;
 	meridian: 'am' | 'pm';
 }
+
+/**
+ * Settings button on the Editor Toolbar.
+ */
+export type EditorToolbarSettingsButton = 'Settings' | 'Jetpack';
