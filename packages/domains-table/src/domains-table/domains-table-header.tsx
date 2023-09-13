@@ -21,6 +21,7 @@ export const DomainsTableHeader = ( {
 		hideOwnerColumn,
 		domainsRequiringAttention,
 		canSelectAnyDomains,
+		filteredData,
 	} = useDomainsTable();
 
 	return (
@@ -34,6 +35,7 @@ export const DomainsTableHeader = ( {
 			hideOwnerColumn={ hideOwnerColumn }
 			domainsRequiringAttention={ domainsRequiringAttention }
 			canSelectAnyDomains={ canSelectAnyDomains }
+			domainCount={ filteredData.length }
 		/>
 	);
 };
