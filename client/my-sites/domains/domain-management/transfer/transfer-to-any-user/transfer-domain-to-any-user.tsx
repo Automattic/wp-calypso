@@ -10,11 +10,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
+import useDomainTransferRequestUpdate from 'calypso/data/domains/transfers/use-domain-transfer-request-update';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import wp from 'calypso/lib/wp';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
@@ -36,7 +36,7 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `domain-forwarding-notification`,
+	id: `domain-transfer-notification`,
 };
 
 export default function TransferDomainToAnyUser( {
@@ -59,6 +59,29 @@ export default function TransferDomainToAnyUser( {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const currentRoute = useSelector( getCurrentRoute );
+
+	const { domainTransferRequestUpdate } = useDomainTransferRequestUpdate(
+		selectedSite?.slug,
+		selectedDomainName,
+		{
+			onSuccess() {
+				dispatch(
+					successNotice(
+						translate( 'A domain transfer request has been sent to the receiving user.' ),
+						{ duration: 10000, isPersistent: true }
+					)
+				);
+			},
+			onError() {
+				dispatch(
+					errorNotice(
+						translate( 'An error occurred while initiating the domain transfer.' ),
+						noticeOptions
+					)
+				);
+			},
+		}
+	);
 
 	let selectedDomain: ResponseDomain | undefined;
 	if ( ! isRequestingSiteDomains ) {
@@ -89,28 +112,7 @@ export default function TransferDomainToAnyUser( {
 			return false;
 		}
 
-		wp.req
-			.post( `/sites/${ selectedSite?.ID }/domains/${ selectedDomainName }/transfer-to-any-user`, {
-				email,
-			} )
-			.then(
-				() => {
-					dispatch(
-						successNotice(
-							translate( 'A domain transfer request has been sent to the receiving user.' ),
-							{ duration: 10000, isPersistent: true }
-						)
-					);
-				},
-				() => {
-					dispatch(
-						errorNotice(
-							translate( 'An error occurred while initiating the domain transfer.' ),
-							noticeOptions
-						)
-					);
-				}
-			);
+		domainTransferRequestUpdate( email );
 
 		return false;
 	};
