@@ -509,13 +509,16 @@ export function StripeSetupIntentIdProvider( {
 export function StripeHookProvider( {
 	children,
 	fetchStripeConfiguration,
-	configurationArgs = null,
-	locale = undefined,
+	locale,
+	country,
 }: PropsWithChildren< {
 	fetchStripeConfiguration: GetStripeConfiguration;
-	configurationArgs?: undefined | null | GetStripeConfigurationArgs;
-	locale?: undefined | string;
+	locale?: string;
+	country?: string;
 } > ) {
+	const configurationArgs = {
+		country,
+	};
 	const { stripeConfiguration, stripeConfigurationError } = useStripeConfiguration(
 		fetchStripeConfiguration,
 		configurationArgs

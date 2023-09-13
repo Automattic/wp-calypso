@@ -10,8 +10,8 @@ You'll need to wrap this context provider around any component that wishes to us
 
 - `children: React.ReactNode`
 - `fetchStripeConfiguration: GetStripeConfiguration` A function to fetch the stripe configuration from the WP.com HTTP API.
-- `configurationArgs?: null | GetStripeConfigurationArgs` Options to pass to the fetchStripeConfiguration function, specifically `country`.
 - `locale?: string` An optional locale string used to localize error messages for the Stripe elements fields.
+- `country?: string` An optional country string used to determine which Stripe account to use. If not provided, the country will be detected based on Geo IP.
 
 ## StripeSetupIntentIdProvider
 
