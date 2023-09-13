@@ -39,7 +39,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 		page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 	};
 	const onRestoreClick = () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_file' ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files' ) );
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
 	// When the checkbox is clicked, we'll update the check state in the state
