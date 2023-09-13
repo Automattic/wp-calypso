@@ -20,9 +20,9 @@ interface ValidationData {
 	keywords: string[];
 }
 
-const TIMEOUT = 15 * 1000;
+const TIMEOUT = 30 * 1000;
 
-/**
+/**it com
  * Represents the flow of using the AI Assistant block.
  */
 export class AIAssistantFlow implements BlockFlow {
