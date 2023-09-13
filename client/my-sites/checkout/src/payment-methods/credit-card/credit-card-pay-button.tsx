@@ -3,6 +3,7 @@ import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composi
 import { styled } from '@automattic/wpcom-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
+import { useState, useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -15,6 +16,14 @@ import type { ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
+
+function showError( error: string ) {
+	return (
+		<div className="error">
+			<p>{ error }</p>
+		</div>
+	);
+}
 
 export default function CreditCardPayButton( {
 	disabled,
@@ -47,6 +56,12 @@ export default function CreditCardPayButton( {
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 
+	const [ displayError, setDisplayError ] = useState( '' );
+
+	useEffect( () => {
+		showError( displayError );
+	}, [ displayError ] );
+
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
 	// this prop yet.
@@ -60,7 +75,7 @@ export default function CreditCardPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
+				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayError ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
 						onClick( {
@@ -173,7 +188,8 @@ function ButtonContents( {
 function isCreditCardFormValid(
 	store: CardStoreType,
 	paymentPartner: string,
-	__: ( value: string ) => string
+	__: ( value: string ) => string,
+	setDisplayError: ( value: string ) => void
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
 
@@ -195,6 +211,8 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
+				document.body.scrollTop = document.documentElement.scrollTop = 0;
+				setDisplayError( __( 'Please fill out all required fields' ) );
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
