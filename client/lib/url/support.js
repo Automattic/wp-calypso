@@ -1,3 +1,4 @@
+// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 const root = 'https://wordpress.com/support';
 
 export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;

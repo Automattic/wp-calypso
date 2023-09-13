@@ -4,7 +4,7 @@ import {
 } from '@wordpress/block-editor';
 import { useRefEffect } from '@wordpress/compose';
 import { useMemo } from 'react';
-import { useGlobalStylesOutput } from '../../gutenberg-bridge';
+import { useSafeGlobalStylesOutput } from '../../gutenberg-bridge';
 import './style.scss';
 
 interface Props {
@@ -25,7 +25,7 @@ const GlobalStylesVariationContainer = ( {
 	onFocusOut,
 	...props
 }: Props ) => {
-	const [ styles ] = useGlobalStylesOutput();
+	const [ styles ] = useSafeGlobalStylesOutput();
 	// Reset leaked styles from WP common.css and remove main content layout padding and border.
 	const editorStyles = useMemo( () => {
 		if ( styles ) {

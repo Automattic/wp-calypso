@@ -1,3 +1,4 @@
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
 import LetsGetStarted from './internals/steps-repository/lets-get-started';
@@ -13,6 +14,7 @@ const podcasts: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
+		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -29,7 +31,7 @@ const podcasts: Flow = {
 					return navigate( 'chooseADomain' );
 
 				case 'launchpad':
-					return window.location.replace( `/view/${ siteSlug }` );
+					return window.location.replace( `/view/${ siteId ?? siteSlug }` );
 			}
 		};
 

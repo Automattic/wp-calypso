@@ -11,8 +11,6 @@ import { useCanvas } from './use-canvas';
 
 import './modal.scss';
 
-const GLOBAL_STYLES_TREATMENT_GROUP = '1';
-
 const GlobalStylesModal = () => {
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 	const { viewCanvasPath } = useCanvas();
@@ -63,18 +61,10 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
-	let description;
-	if ( wpcomGlobalStyles?.globalStylesInPersonalPlan === GLOBAL_STYLES_TREATMENT_GROUP ) {
-		description = __(
-			"Change all of your site's fonts, colors and more. Available on the Personal plan.",
-			'full-site-editing'
-		);
-	} else {
-		description = __(
-			"Change all of your site's fonts, colors and more. Available on the Premium plan.",
-			'full-site-editing'
-		);
-	}
+	const description = __(
+		"Change all of your site's fonts, colors and more. Available on the Premium plan.",
+		'full-site-editing'
+	);
 
 	return (
 		<Modal

@@ -1,4 +1,4 @@
-import { Dialog, Gridicon } from '@automattic/components';
+import { Count, Dialog, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -6,7 +6,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import Count from 'calypso/components/count';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PodcastIndicator from 'calypso/components/podcast-indicator';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';

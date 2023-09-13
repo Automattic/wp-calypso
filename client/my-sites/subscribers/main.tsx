@@ -1,8 +1,6 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -41,15 +39,6 @@ const SubscribersPage = ( {
 	sortTermChanged,
 }: SubscribersProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
-
-	useEffect( () => {
-		if ( selectedSite ) {
-			// Mark the `manage_subscribers` task as done when we visit this page.
-			updateLaunchpadSettings( selectedSite.slug, {
-				checklist_statuses: { manage_subscribers: true },
-			} );
-		}
-	}, [] );
 
 	const pageArgs = {
 		currentPage: pageNumber,

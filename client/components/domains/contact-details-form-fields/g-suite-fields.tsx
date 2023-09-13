@@ -1,5 +1,5 @@
 import { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
-import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
+import TaxFields from 'calypso/my-sites/checkout/src/components/tax-fields';
 
 export function GSuiteFields( {
 	taxInfo,

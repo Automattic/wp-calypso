@@ -1,0 +1,13 @@
+button.upgrade-link {
+	font-size: 0.75rem;
+	font-weight: 400;
+	display: contents;
+
+	span {
+		text-decoration: underline;
+	}
+
+	&.is-inline span {
+		margin-inline-start: 4px;
+	}
+}

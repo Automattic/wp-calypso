@@ -193,6 +193,10 @@ export const isVideoPressFlow = ( flowName ) => {
 	return flowName === 'videopress' || flowName === 'videopress-account';
 };
 
+export const isVideoPressTVFlow = ( flowName ) => {
+	return flowName === 'videopress-tv' || flowName === 'videopress-tv-purchase';
+};
+
 export const isWpccFlow = ( flowName ) => {
 	return flowName === 'wpcc';
 };

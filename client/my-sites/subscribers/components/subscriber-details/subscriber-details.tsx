@@ -1,18 +1,43 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
-import useSubscriptionPlans from '../../hooks/use-subscription-plans';
+import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
+import { useSubscriptionPlans } from '../../hooks';
 import { Subscriber } from '../../types';
 import { SubscriberProfile } from '../subscriber-profile';
+import { SubscriberStats } from '../subscriber-stats';
+
 import './styles.scss';
 
 type SubscriberDetailsProps = {
 	subscriber: Subscriber;
+	siteId: number;
+	subscriptionId?: number;
+	userId?: number;
+	newsletterCategoriesEnabled?: boolean;
+	newsletterCategories?: NewsletterCategory[];
 };
 
-const SubscriberDetails = ( { subscriber }: SubscriberDetailsProps ) => {
+const SubscriberDetails = ( {
+	subscriber,
+	siteId,
+	subscriptionId,
+	userId,
+	newsletterCategoriesEnabled,
+	newsletterCategories,
+}: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
+	const newsletterCategoryNames = useMemo(
+		() =>
+			newsletterCategories
+				?.filter( ( category ) => !! category.subscribed )
+				.map( ( category ) => category.name ),
+		[ newsletterCategories ]
+	);
 	const { avatar, date_subscribed, display_name, email_address, country, url } = subscriber;
+
 	const notApplicableLabel = translate( 'N/A', {
 		context: 'For free subscriptions the plan description is displayed as N/A (not applicable)',
 	} );
@@ -27,6 +52,9 @@ const SubscriberDetails = ( { subscriber }: SubscriberDetailsProps ) => {
 					compact={ false }
 				/>
 			</div>
+			{ config.isEnabled( 'individual-subscriber-stats' ) && (
+				<SubscriberStats siteId={ siteId } subscriptionId={ subscriptionId } userId={ userId } />
+			) }
 			<div className="subscriber-details__content">
 				<h3 className="subscriber-details__content-title">
 					{ translate( 'Newsletter subscription details' ) }
@@ -42,6 +70,18 @@ const SubscriberDetails = ( { subscriber }: SubscriberDetailsProps ) => {
 							dateFormat="LL"
 						/>
 					</div>
+					{ config.isEnabled( 'settings/newsletter-categories' ) && newsletterCategoriesEnabled && (
+						<div className="subscriber-details__content-column">
+							<div className="subscriber-details__content-label">
+								{ translate( 'Receives emails for' ) }
+							</div>
+							<div className="subscriber-details__content-value">
+								{ newsletterCategoryNames
+									? newsletterCategoryNames.join( ', ' )
+									: translate( 'Not subscribed to any newsletter categories' ) }
+							</div>
+						</div>
+					) }
 					<div className="subscriber-details__content-column">
 						<div className="subscriber-details__content-label">{ translate( 'Plan' ) }</div>
 						{ subscriptionPlans &&

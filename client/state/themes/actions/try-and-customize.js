@@ -18,8 +18,8 @@ export function tryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
-			// If theme is already installed, installation will silently fail,
-			// and we just switch to the customizer.
+			// If theme is already installed, installation will silently fail, and we just switch to the customizer.
+			// FIXME: Handle the case where the installation fails and the theme is not installed.
 			return dispatch( installAndTryAndCustomizeTheme( installId, siteId ) );
 		}
 

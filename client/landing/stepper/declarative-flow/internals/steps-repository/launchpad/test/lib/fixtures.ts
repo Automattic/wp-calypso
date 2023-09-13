@@ -258,6 +258,7 @@ export const defaultDomainResponse: ResponseDomain = {
 	isSubdomain: false,
 	isWPCOMDomain: false,
 	isWpcomStagingDomain: false,
+	lastTransferError: '',
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	name: '',

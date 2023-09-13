@@ -101,7 +101,7 @@ jest.mock( 'react-router-dom', () => ( {
 
 jest.mock( '@automattic/data-stores', () => ( {
 	...( jest.requireActual( '@automattic/data-stores' ) as object ),
-	useLaunchpad: ( siteSlug, siteIntentOption ) => {
+	useLaunchpad: ( siteSlug, siteIntentOption ): LaunchpadResponse => {
 		let checklist = [];
 
 		switch ( siteIntentOption ) {
@@ -243,6 +243,14 @@ describe( 'StepContent', () => {
 					isWPCOMDomain: true,
 				} )
 			);
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/211078228/memberships/status?source=launchpad` )
+			.reply( 200, {
+				connect_url: 'https://connect.stripe.com',
+				connected_account_default_currency: '',
+				connected_account_description: '',
+				connected_account_id: '',
+			} );
 	} );
 
 	afterEach( () => {

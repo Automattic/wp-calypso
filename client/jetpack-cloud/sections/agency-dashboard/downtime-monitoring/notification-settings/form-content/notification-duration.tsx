@@ -3,10 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import { availableNotificationDurations as durations } from '../../../sites-overview/utils';
+import useNotificationDurations from '../../../sites-overview/hooks/use-notification-durations';
 import FeatureRestrictionBadge from '../../feature-restriction-badge';
-import { RestrictionType } from '../../types';
+import UpgradeLink from '../../upgrade-link';
 import type { MonitorDuration } from '../../../sites-overview/types';
+import type { RestrictionType } from '../../types';
 
 interface Props {
 	selectedDuration?: MonitorDuration;
@@ -25,15 +26,16 @@ export default function NotificationDuration( {
 
 	const showPaidDuration = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
+	const durations = useNotificationDurations();
 	const selectableDuration = useMemo(
 		() => ( showPaidDuration ? durations : durations.filter( ( duration ) => ! duration.isPaid ) ),
-		[ showPaidDuration ]
+		[ durations, showPaidDuration ]
 	);
 
 	return (
 		<div className="notification-settings__content-block">
 			<div className="notification-settings__content-heading">
-				{ translate( 'Notify me about downtime:' ) }
+				{ translate( 'Monitor my site every:' ) }
 			</div>
 			<SelectDropdown
 				onToggle={ ( { open: isOpen }: { open: boolean } ) => {
@@ -58,7 +60,12 @@ export default function NotificationDuration( {
 						disabled={ restriction !== 'none' && duration.isPaid }
 					>
 						{ duration.label }
-						{ duration.isPaid && <FeatureRestrictionBadge restriction={ restriction } /> }
+						{ duration.isPaid && (
+							<>
+								<FeatureRestrictionBadge restriction={ restriction } />
+								{ restriction === 'upgrade_required' && <UpgradeLink isInline /> }
+							</>
+						) }
 					</SelectDropdown.Item>
 				) ) }
 			</SelectDropdown>

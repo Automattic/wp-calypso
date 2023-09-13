@@ -20,7 +20,7 @@ import {
 	ReceiptTitle,
 } from 'calypso/me/purchases/billing-history/receipt';
 import titles from 'calypso/me/purchases/titles';
-import { convertErrorToString } from 'calypso/my-sites/checkout/composite-checkout/lib/analytics';
+import { convertErrorToString } from 'calypso/my-sites/checkout/src/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

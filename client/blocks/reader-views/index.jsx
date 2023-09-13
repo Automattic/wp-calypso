@@ -5,7 +5,7 @@ import './style.scss';
 const ReaderViews = ( { viewCount } ) => {
 	return (
 		<div className="reader-views">
-			<SVGIcon classes="reader-views__icon" name="bar-chart" size="24" icon={ BarChart } />
+			<SVGIcon classes="reader-views__icon" name="bar-chart" size="20" icon={ BarChart } />
 			<span className="reader-views__view-count">{ viewCount }</span>
 		</div>
 	);

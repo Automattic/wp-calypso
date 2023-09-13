@@ -332,7 +332,7 @@ function DIFMPagePicker( props: StepProps ) {
 	const [ selectedPages, setSelectedPages ] = useState< string[] >(
 		isStoreFlow
 			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
-			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
 	);
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
 

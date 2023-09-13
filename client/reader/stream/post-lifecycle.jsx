@@ -23,6 +23,7 @@ class PostLifecycle extends Component {
 		isDiscoverStream: PropTypes.bool,
 		handleClick: PropTypes.func,
 		recStreamKey: PropTypes.string,
+		fixedHeaderHeight: PropTypes.number,
 	};
 
 	render() {
@@ -54,7 +55,12 @@ class PostLifecycle extends Component {
 			);
 		} else if ( ! isDiscoverStream && streamKey.indexOf( 'rec' ) > -1 ) {
 			return (
-				<EmptySearchRecommendedPost post={ post } postKey={ postKey } streamKey={ streamKey } />
+				<EmptySearchRecommendedPost
+					post={ post }
+					postKey={ postKey }
+					streamKey={ streamKey }
+					fixedHeaderHeight={ this.props.fixedHeaderHeight }
+				/>
 			);
 		} else if ( postKey.isGap ) {
 			return (

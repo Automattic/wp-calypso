@@ -13,7 +13,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
-import { mockCartEndpoint } from 'calypso/my-sites/checkout/composite-checkout/test/util';
+import { mockCartEndpoint } from 'calypso/my-sites/checkout/src/test/util';
 import { createReduxStore } from 'calypso/state';
 import {
 	PURCHASES_SITE_FETCH_COMPLETED,

@@ -1,5 +1,4 @@
 import { filter, flow } from 'lodash';
-import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
 import addImageWrapperElement from 'calypso/lib/post-normalizer/rule-add-image-wrapper-element';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
@@ -132,7 +131,6 @@ const fastPostNormalizationRules = flow( [
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
-	addDiscoverProperties,
 ] );
 
 export function runFastRules( post ) {

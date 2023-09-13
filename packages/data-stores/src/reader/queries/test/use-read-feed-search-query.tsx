@@ -1,5 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import useReadFeedSearchQuery, { FeedSort } from '../use-read-feed-search-query';

@@ -7,17 +7,16 @@ import './style.scss';
 export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( {
 	item,
 	onClick,
-	isExternal,
-	externalLink,
+	isLinkExternal,
 } ) => {
 	const translate = useTranslate();
 
-	// TODO: Refactor the external link with indirect checkout logic.
-	const isExternalLink = ( isExternal && item.externalUrl ) || !! externalLink;
+	// Open the link with new tab for `externalUrl` and `moreAboutUrl`.
+	const isOpeningNewTab = isLinkExternal && ( item.externalUrl || item.moreAboutUrl );
 
-	const href = isExternalLink ? externalLink || item.externalUrl : `#${ item.productSlug }`;
+	const href = isOpeningNewTab ? item.externalUrl || item.moreAboutUrl : `#${ item.productSlug }`;
 
-	const target = isExternalLink ? '_blank' : undefined;
+	const target = isOpeningNewTab ? '_blank' : undefined;
 
 	return (
 		<Button className="more-info-link" onClick={ onClick } href={ href } target={ target } plain>
@@ -25,7 +24,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( {
 				components: { productName: <>{ item.shortName }</> },
 			} ) }
 
-			{ isExternalLink && <Gridicon icon="external" size={ 16 } /> }
+			{ isOpeningNewTab && <Gridicon icon="external" size={ 16 } /> }
 		</Button>
 	);
 };

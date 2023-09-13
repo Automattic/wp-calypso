@@ -6,6 +6,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from '../availability-messages';
 
 jest.mock( 'i18n-calypso', () => ( {
+	...jest.requireActual( 'i18n-calypso' ),
 	translate: jest.fn( () => 'default' ),
 } ) );
 

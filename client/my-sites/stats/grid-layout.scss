@@ -122,8 +122,7 @@ $grid-vertical-gutters: 32px;
 		grid-area: social-followers;
 	}
 
-	.stats__module-wrapper--latest-post-summary,
-	.list-latest-post-summary {
+	.stats__module-wrapper--latest-post-summary {
 		grid-area: latest-post-summary;
 	}
 }

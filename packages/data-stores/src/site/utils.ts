@@ -13,8 +13,9 @@ export const createCustomHomeTemplateContent = (
 	}
 
 	if ( hasSections ) {
+		// blockGap":"0" removes the theme blockGap from the main group while allowing users to change it from the editor
 		content.push( `
-<!-- wp:group {"tagName":"main"} -->
+<!-- wp:group {"tagName":"main","style":{"spacing":{"blockGap":"0"}}} -->
 	<main class="wp-block-group">
 		${ mainHtml }
 	</main>

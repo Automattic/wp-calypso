@@ -149,7 +149,6 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 		<div className="settings-header__container">
 			<div className="settings-header__container-title">
 				<FormattedHeader
-					brandFont
 					className="settings-header__title"
 					headerText={ domain.name }
 					align="left"

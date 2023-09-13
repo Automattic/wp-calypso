@@ -15,6 +15,8 @@ export type DomainThankYouParams = {
 	hideProfessionalEmailStep: boolean;
 	launchpadScreen: ReturnType< typeof useSiteOption >;
 	selectedSiteSlug: string;
+	selectedSiteId?: number;
+	isDomainOnly: boolean;
 	siteIntent: ReturnType< typeof useSiteOption >;
 	redirectTo: 'home' | 'setup';
 };

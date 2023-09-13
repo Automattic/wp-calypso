@@ -1,8 +1,8 @@
 import { DomainSuggestions } from '@automattic/data-stores';
-import type { SingleFreeDomainSuggestion } from 'calypso/my-sites/plan-features-2023-grid/types';
+import type { DataResponse } from 'calypso/my-sites/plan-features-2023-grid/types';
 
-export function useSuggestedFreeDomainFromPaidDomain( paidDomainName?: string ): {
-	wpcomFreeDomainSuggestion: SingleFreeDomainSuggestion;
+export function useGetFreeSubdomainSuggestion( query: string ): {
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;
 	invalidateDomainSuggestionCache: () => void;
 } {
 	const {
@@ -10,15 +10,15 @@ export function useSuggestedFreeDomainFromPaidDomain( paidDomainName?: string ):
 		isInitialLoading,
 		isError,
 		invalidateCache: invalidateDomainSuggestionCache,
-	} = DomainSuggestions.useGetWordPressSubdomain( paidDomainName || '' );
+	} = DomainSuggestions.useGetWordPressSubdomain( query );
 
 	return {
 		wpcomFreeDomainSuggestion: {
 			isLoading: isInitialLoading,
-			entry: ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined,
+			result: ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined,
 		},
 		invalidateDomainSuggestionCache,
 	};
 }
 
-export default useSuggestedFreeDomainFromPaidDomain;
+export default useGetFreeSubdomainSuggestion;

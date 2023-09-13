@@ -1,5 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 import {
+	ALL_SITES_STATS_RECEIVE,
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
@@ -7,6 +8,7 @@ import {
 import 'calypso/state/stats/init';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 
+export const ALL_SITES_ID = -1;
 /**
  * Returns an action object to be used in signalling that stats for a given type of stats and query
  * have been received.
@@ -29,6 +31,16 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
 	};
 }
 
+export function receiveAllSitesStats( statType, query, data, date ) {
+	return {
+		type: ALL_SITES_STATS_RECEIVE,
+		statType,
+		query,
+		data,
+		date,
+	};
+}
+
 const wpcomV1Endpoints = {
 	statsInsights: 'stats/insights',
 	statsFileDownloads: 'stats/file-downloads',
@@ -43,6 +55,10 @@ const wpcomV2Endpoints = {
 	statsTopEarners: 'stats/top-earners',
 	statsTopCategories: 'stats/top-product-categories-by-usage',
 	statsTopCoupons: 'stats/top-coupons-by-usage',
+};
+
+const wpcomV2AllSitesEndpoints = {
+	allSitesStatsSummary: '/me/sites/stats/summary',
 };
 
 /**
@@ -94,6 +110,7 @@ export function requestSiteStats( siteId, statType, query ) {
 					return query;
 			}
 		} )();
+
 		const requestStats = subpath
 			? wpcom.req.get(
 					{
@@ -120,5 +137,74 @@ export function requestSiteStats( siteId, statType, query ) {
 					error,
 				} );
 			} );
+	};
+}
+
+export function requestAllSiteStats( statType, query ) {
+	const siteId = ALL_SITES_ID;
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_STATS_REQUEST,
+			statType,
+			siteId,
+			query,
+		} );
+
+		let path;
+		let apiNamespace;
+		if ( wpcomV2AllSitesEndpoints.hasOwnProperty( statType ) ) {
+			path = wpcomV2AllSitesEndpoints[ statType ];
+			apiNamespace = 'wpcom/v2';
+		}
+
+		if ( ! path ) {
+			return;
+		}
+
+		const requestStats = ( extraOptions ) =>
+			wpcom.req.get(
+				{
+					path,
+					apiNamespace,
+				},
+				{ ...query, ...extraOptions }
+			);
+
+		const MAX_RECURSION_DEPTH = 50; // Shouldn't be needed; but a failsafe to make sure we don't DDOS ourselves after an endpoint bug.
+
+		const fetchPage = ( extraOptions, depth = 0 ) =>
+			requestStats( extraOptions )
+				.then( ( data ) => {
+					let dispatchedStatType = statType;
+					if ( statType === 'allSitesStatsSummary' ) {
+						dispatchedStatType = 'statsSummary';
+					}
+					dispatch( receiveAllSitesStats( dispatchedStatType, query, data, Date.now() ) );
+					if (
+						data.has_more &&
+						data.next_site_offset &&
+						data.next_site_limit &&
+						depth < MAX_RECURSION_DEPTH
+					) {
+						return fetchPage(
+							{
+								...extraOptions,
+								site_offset: data.next_site_offset,
+								site_limit: data.next_site_limit,
+							},
+							depth + 1
+						);
+					}
+				} )
+				.catch( ( error ) => {
+					dispatch( {
+						type: SITE_STATS_REQUEST_FAILURE,
+						statType,
+						siteId,
+						query,
+						error,
+					} );
+				} );
+		return fetchPage( query );
 	};
 }

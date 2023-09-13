@@ -6,11 +6,13 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
+import { ALL_SITES_ID } from 'calypso/state/stats/lists/actions';
 import DatePicker from './stats-date-picker';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import PageViewTracker from './stats-page-view-tracker';
@@ -82,9 +84,14 @@ class StatsOverview extends Component {
 			);
 		} );
 
+		// By passing an empty date, we allow the API to choose the current date for
+		// each blog adjusted by its timezone.
+		const query = { date: '', period };
+
 		return (
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Stats' ) } />
+				<QuerySiteStats siteId={ ALL_SITES_ID } statType="allSitesStatsSummary" query={ query } />
 				<PageViewTracker
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }

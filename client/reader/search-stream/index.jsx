@@ -128,7 +128,11 @@ class SearchStream extends React.Component {
 		const segmentedControlClass = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		const hidePostsAndSites = this.state.feeds && this.state.feeds?.length === 1;
+		// Hide posts and sites if the only result has no feed ID. This can happen when searching
+		// for a specific site to add a rss to your feed. Originally added in
+		// https://github.com/Automattic/wp-calypso/pull/78555.
+		const hidePostsAndSites =
+			this.state.feeds && this.state.feeds?.length === 1 && ! this.state.feeds[ 0 ].feed_ID;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -163,6 +167,8 @@ class SearchStream extends React.Component {
 			/>,
 			', ',
 		] ).slice( 0, -1 );
+
+		const fixedAreaHeight = this.fixedAreaRef && this.fixedAreaRef.clientHeight;
 
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
@@ -218,6 +224,7 @@ class SearchStream extends React.Component {
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
 							wideDisplay={ wideDisplay }
+							isLoggedIn={ isLoggedIn }
 						/>
 					) }
 				</div>
@@ -225,7 +232,7 @@ class SearchStream extends React.Component {
 				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
-							<PostResults { ...this.props } />
+							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
 						</div>
 						<div className="search-stream__site-results">
 							{ query && (
@@ -246,7 +253,9 @@ class SearchStream extends React.Component {
 				) }
 				{ ! hidePostsAndSites && ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
-						{ ( searchType === SEARCH_TYPES.POSTS && <PostResults { ...this.props } /> ) ||
+						{ ( searchType === SEARCH_TYPES.POSTS && (
+							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
+						) ) ||
 							( query && (
 								<SiteResults
 									query={ query }

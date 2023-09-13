@@ -203,7 +203,28 @@ function ConnectDomainStep( {
 		verifyConnection( false );
 	}, [ showErrors, verifyConnection ] );
 
-	const renderBreadcrumbs = () => {
+	const renderTitle = () => {
+		const headerText = sprintf(
+			/* translators: %s: domain name being connected (ex.: example.com) */
+			__( 'Connect %s' ),
+			domain
+		);
+
+		return (
+			<div className={ baseClassName + '__title' }>
+				<FormattedHeader
+					className={ baseClassName + '__page-heading' }
+					headerText={ headerText }
+					align="left"
+				/>
+				{ modeType.ADVANCED === mode && (
+					<Badge className={ baseClassName + '__badge' }>{ __( 'Advanced' ) }</Badge>
+				) }
+			</div>
+		);
+	};
+
+	const renderHeader = () => {
 		let items = [
 			{
 				label: isUnderDomainManagementAll( currentRoute ) ? __( 'All Domains' ) : __( 'Domains' ),
@@ -246,7 +267,9 @@ function ConnectDomainStep( {
 			};
 		}
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader items={ items } mobileItem={ mobileItem } titleOverride={ renderTitle() } />
+		);
 	};
 
 	const goBack = () => {
@@ -255,28 +278,6 @@ function ConnectDomainStep( {
 		} else {
 			page( domainManagementList( selectedSite.slug, currentRoute ) );
 		}
-	};
-
-	const renderTitle = () => {
-		const headerText = sprintf(
-			/* translators: %s: domain name being connected (ex.: example.com) */
-			__( 'Connect %s' ),
-			domain
-		);
-
-		return (
-			<div className={ baseClassName + '__title' }>
-				<FormattedHeader
-					brandFont
-					className={ baseClassName + '__page-heading' }
-					headerText={ headerText }
-					align="left"
-				/>
-				{ modeType.ADVANCED === mode && (
-					<Badge className={ baseClassName + '__badge' }>{ __( 'Advanced' ) }</Badge>
-				) }
-			</div>
-		);
 	};
 
 	const renderContent = () => {
@@ -334,8 +335,7 @@ function ConnectDomainStep( {
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'connect-domain-setup__body-white' ] } />
-			{ renderBreadcrumbs() }
-			{ renderTitle() }
+			{ renderHeader() }
 			{ isTwoColumnLayout ? (
 				<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 			) : (

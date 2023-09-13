@@ -1,9 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	useLocalizeUrl,
-	removeLocaleFromPathLocaleInFront,
-	localeRegexString,
-} from '@automattic/i18n-utils';
+import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -18,7 +14,6 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
-import PoweredByWPFooter from 'calypso/layout/powered-by-wp-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
@@ -68,8 +63,7 @@ const LayoutLoggedOut = ( {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
-	const pathNameWithoutLocale =
-		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -79,13 +73,22 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage = sectionName === 'reader' && currentRoute.startsWith( '/tag/' );
+	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
 
-	const isReaderDiscoverPage = sectionName === 'reader' && currentRoute.startsWith( '/discover' );
+	const isReaderDiscoverPage =
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
 
 	const isReaderSearchPage =
-		sectionName === 'reader' &&
-		currentRoute.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) );
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
+
+	// It's used to add a class name for Gravatar login and magic login pages only (not for F2A pages)
+	const isGravatarLoginPage =
+		isGravatar &&
+		! currentRoute.startsWith( '/log-in/push' ) &&
+		! currentRoute.startsWith( '/log-in/authenticator' ) &&
+		! currentRoute.startsWith( '/log-in/sms' ) &&
+		! currentRoute.startsWith( '/log-in/webauthn' ) &&
+		! currentRoute.startsWith( '/log-in/backup' );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -103,6 +106,7 @@ const LayoutLoggedOut = ( {
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
+		'is-gravatar-login-page': isGravatarLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 	};
 
@@ -115,14 +119,11 @@ const LayoutLoggedOut = ( {
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		} else if ( ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) || isGravatar ) {
 			masterbar = null;
 		} else {
-			if ( ! isGravatar ) {
-				classes.dops = true;
-				// Using .is-gravatar instead of .gravatar to avoid style conflicts with the Gravatar component
-				classes[ oauth2Client.name ] = true;
-			}
+			classes.dops = true;
+			classes[ oauth2Client.name ] = true;
 
 			// Force masterbar for all Crowdsignal OAuth pages
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
@@ -196,7 +197,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 						isLoggedIn={ isLoggedIn }
 						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
+							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
 							window.location.reload();
 						} }
 					/>
@@ -209,15 +210,13 @@ const LayoutLoggedOut = ( {
 			{ [ 'themes', 'theme', 'reader' ].includes( sectionName ) && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
-						navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
+						navigate( `/${ e.target.value + pathNameWithoutLocale }` );
 						window.location.reload();
 					} }
 					currentRoute={ currentRoute }
 					isLoggedIn={ isLoggedIn }
 				/>
 			) }
-
-			{ isGravatar && <PoweredByWPFooter clientTitle={ oauth2Client.title } /> }
 		</div>
 	);
 };
@@ -254,10 +253,7 @@ export default withCurrentRoute(
 		const isWhiteLogin =
 			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
 		const noMasterbarForRoute =
-			isJetpackLogin ||
-			( isWhiteLogin && ! isPartnerSignup && ! isGravatar ) ||
-			isJetpackWooDnaFlow ||
-			isP2Login;
+			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&

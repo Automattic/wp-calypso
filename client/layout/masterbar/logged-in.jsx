@@ -32,6 +32,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
+import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import { getSiteSlug, isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -218,6 +219,7 @@ class MasterbarLoggedIn extends Component {
 			isCustomerHomeEnabled,
 			section,
 			currentRoute,
+			isSiteTrialExpired,
 		} = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
@@ -228,6 +230,7 @@ class MasterbarLoggedIn extends Component {
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: homeUrl;
+		mySitesUrl = isSiteTrialExpired ? `/home/` : mySitesUrl;
 
 		const icon =
 			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
@@ -604,6 +607,7 @@ export default connect(
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
+			isSiteTrialExpired: isTrialExpired( state, siteId ),
 		};
 	},
 	{

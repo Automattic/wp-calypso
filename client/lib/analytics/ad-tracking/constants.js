@@ -38,6 +38,7 @@ export const LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/ins
 export const QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js';
 export const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
 export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
+export const PARSLEY_SCRIPT_URL = 'https://cdn.parsely.com/keys/wordpress.com/p.js?ver=3.3.2';
 export const TRACKING_IDS = {
 	bingInit: '4074038',
 	criteo: '31321',
@@ -70,6 +71,7 @@ export const TRACKING_IDS = {
 	jetpackLinkedinId: '4537722',
 	jetpackTwitterPixelId: 'odlje',
 	wooGoogleTagManagerId: 'GTM-W64W8Q',
+	parselyTracker: 'wordpress.com',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';

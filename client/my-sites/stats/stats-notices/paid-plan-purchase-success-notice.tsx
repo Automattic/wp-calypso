@@ -1,15 +1,26 @@
-import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { removeStatsPurchaseSuccessParamFromCurrentUrl } from './lib/remove-stats-purchase-success-param';
+import { PaidPlanPurchaseSuccessJetpackStatsNoticeProps } from './types';
 
-const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
+const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
+	isOdysseyStats,
+}: PaidPlanPurchaseSuccessJetpackStatsNoticeProps ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+	const [ paramRemoved, setParamRemoved ] = useState( false );
+
+	useEffect( () => {
+		if ( paramRemoved ) {
+			return;
+		}
+		// Ensure it runs only once.
+		setParamRemoved( true );
+		removeStatsPurchaseSuccessParamFromCurrentUrl( isOdysseyStats );
+	}, [ paramRemoved, isOdysseyStats ] );
 
 	const dismissNotice = () => {
-		// TODO: Remove the query string from the window URL without a refresh.
 		setNoticeDismissed( true );
 	};
 
@@ -29,7 +40,7 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = () => {
 				onClose={ dismissNotice }
 			>
 				{ translate(
-					"{{p}}You'll now get instant access to upcoming features and priority support.{{/p}}",
+					"{{p}}You'll now get instant access to upcoming features and priority support if applicable.{{/p}}",
 					{
 						components: {
 							p: <p />,

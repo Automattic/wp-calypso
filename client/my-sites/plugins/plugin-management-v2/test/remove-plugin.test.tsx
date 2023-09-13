@@ -11,13 +11,9 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { getSite } from 'calypso/state/sites/selectors';
 import RemovePlugin from '../remove-plugin';
 import { site, plugin } from './utils/constants';
-
-const props = {
-	site,
-	plugin,
-};
 
 const initialState = {
 	sites: { items: { [ site.ID ]: site } },
@@ -75,9 +71,14 @@ describe( '<RemovePlugin>', () => {
 	} );
 
 	test( 'should render correctly and return null', async () => {
+		// The site object passed around Calypso is more than just the raw
+		// state.site.items object; pass in a version from the getSite selector
+		// so that we get other important properties like `canUpdateFiles`.
+		const testSite = getSite( store.getState(), site.ID );
+
 		const { container } = render(
 			<Provider store={ store }>
-				<RemovePlugin { ...props } />
+				<RemovePlugin site={ testSite } plugin={ plugin } />
 			</Provider>
 		);
 
@@ -93,7 +94,7 @@ describe( '<RemovePlugin>', () => {
 		// Test to check if modal is open and has `Remove Button`
 		const [ removeButtonOnModal ] = document.getElementsByClassName( 'button is-primary' );
 		expect( removeButtonOnModal ).toBeInTheDocument();
-		expect( removeButtonOnModal.textContent ).toEqual( `Remove ${ plugin.name }` );
+		expect( removeButtonOnModal.textContent ).toEqual( `Deactivate and remove ${ plugin.name }` );
 		// Simulate click which triggers API call to remove plugin
 		await userEvent.click( removeButtonOnModal );
 		// Test to check if modal is closed after the API is triggered

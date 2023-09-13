@@ -1,10 +1,9 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Count, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
-import Count from 'calypso/components/count';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';

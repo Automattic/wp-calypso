@@ -1,27 +1,54 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { removeStatsPurchaseSuccessParamFromCurrentUrl } from './lib/remove-stats-purchase-success-param';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null ) => {
-	const purchasePath = `/stats/purchase/${ siteId }`;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const from = isOdysseyStats ? 'jetpack' : 'calypso';
+	const purchasePath = `/stats/purchase/${ siteId }?productType=personal&from=${ from }-free-stats-purchase-success-notice`;
+
 	if ( ! isOdysseyStats ) {
 		return purchasePath;
 	}
 	return `https://wordpress.com${ purchasePath }`;
 };
 
-const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps ) => {
-	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+const handleUpgradeClick = (
+	event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
+	upgradeUrl: string,
+	isOdysseyStats: boolean
+) => {
+	event.preventDefault();
 
-	const dismissNotice = () => {
-		// TODO: Remove the query string from the window URL without a refresh.
-		setNoticeDismissed( true );
-	};
+	isOdysseyStats
+		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_success_banner_upgrade_clicked' )
+		: recordTracksEvent( 'calypso_stats_purchase_success_banner_upgrade_clicked' );
+
+	setTimeout( () => ( window.location.href = upgradeUrl ), 250 );
+};
+
+const FreePlanPurchaseSuccessJetpackStatsNotice = ( {
+	siteId,
+	isOdysseyStats,
+}: StatsNoticeProps ) => {
+	const translate = useTranslate();
+	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+	const [ paramRemoved, setParamRemoved ] = useState( false );
+
+	useEffect( () => {
+		if ( paramRemoved ) {
+			return;
+		}
+		// Ensure it runs only once.
+		setParamRemoved( true );
+		removeStatsPurchaseSuccessParamFromCurrentUrl( isOdysseyStats );
+	}, [ paramRemoved, isOdysseyStats ] );
+
+	const dismissNotice = () => setNoticeDismissed( true );
 
 	if ( noticeDismissed ) {
 		return null;
@@ -45,6 +72,9 @@ const FreePlanPurchaseSuccessJetpackStatsNotice = ( { siteId }: StatsNoticeProps
 							p: <p />,
 							jetpackStatsProductLink: (
 								<a
+									onClick={ ( e ) =>
+										handleUpgradeClick( e, getStatsPurchaseURL( siteId ), isOdysseyStats )
+									}
 									className="notice-banner__action-link"
 									href={ getStatsPurchaseURL( siteId ) }
 									target="_blank"

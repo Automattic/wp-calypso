@@ -1,39 +1,34 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
-import { FunctionComponent, Fragment, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { Fragment, useState, useEffect } from 'react';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import referralImage from 'calypso/assets/images/earn/referral.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
-import { IAppState } from 'calypso/state/types';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import type { SiteSlug } from 'calypso/types';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-interface ConnectedProps {
-	siteId: number | undefined;
-	selectedSiteSlug: SiteSlug;
-	isJetpack: boolean;
-	isAtomicSite: boolean;
-	trackCtaButton: ( feature: string ) => void;
-}
-
-const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
-	isJetpack,
-	isAtomicSite,
-	trackCtaButton,
-} ) => {
+const ReferAFriendSection = () => {
 	const translate = useTranslate();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
+	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
+
+	const trackCtaButton = ( feature: string ) => {
+		composeAnalytics(
+			recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
+			bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
+		);
+	};
 
 	useEffect( () => {
 		if ( peerReferralLink ) {
@@ -133,23 +128,4 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect(
-	( state: IAppState ) => {
-		const selectedSiteSlug = getSelectedSiteSlug( state );
-		const site = getSiteBySlug( state, selectedSiteSlug );
-		return {
-			siteId: site?.ID,
-			isJetpack: Boolean( isJetpackSite( state, site?.ID ?? null ) ),
-			isAtomicSite: Boolean( isSiteAutomatedTransfer( state, site?.ID ?? null ) ),
-		};
-	},
-	( dispatch ) => ( {
-		trackCtaButton: ( feature: string ) =>
-			dispatch(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_cta_button_click', { feature } ),
-					bumpStat( 'calypso_earn_page', 'cta-button-' + feature )
-				)
-			),
-	} )
-)( ReferAFriendSection );
+export default ReferAFriendSection;

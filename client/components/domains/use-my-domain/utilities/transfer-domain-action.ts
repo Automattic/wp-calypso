@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import page from 'page';
 import {
 	transferDomainError,
@@ -80,7 +81,13 @@ export const transferDomainAction: AuthCodeValidationHandler =
 					await startInboundTransfer( selectedSite.ID, domain, authCode );
 					page( domainManagementTransferIn( selectedSite.slug, domain ) );
 				} catch ( error ) {
-					onDone( { message: transferDomainError.GENERIC_ERROR } );
+					const errorMessage = error instanceof Error ? error.message : String( error );
+					const message =
+						transferDomainError.GENERIC_ERROR +
+						' ' +
+						__( 'Error message: ' ) +
+						`"${ errorMessage }"`;
+					onDone( { message } );
 				}
 			};
 

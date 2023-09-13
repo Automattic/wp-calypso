@@ -9,53 +9,47 @@ import { Icon, chevronLeft, chevronRight, check } from '@wordpress/icons';
 import classnames from 'classnames';
 import './style.scss';
 
-interface Props {
-	path: string;
+interface NavigatorItemProps {
 	className?: string;
 	icon?: JSX.Element;
 	children: React.ReactNode;
 	onClick?: () => void;
 	checked?: boolean;
+	active?: boolean;
 }
 
-const GenericButton = ( { icon, children, className, checked, ...props }: Props ) => {
+interface NavigatorButtonAsItemProps extends NavigatorItemProps {
+	path: string;
+}
+
+export function NavigatorItem( { icon, checked, active, children, ...props }: NavigatorItemProps ) {
+	const content = icon ? (
+		<HStack justify="flex-start">
+			<Icon className="navigator-item__icon" icon={ checked ? check : icon } size={ 24 } />
+			<FlexItem className="navigator-item__text">{ children }</FlexItem>
+		</HStack>
+	) : (
+		<FlexItem>{ children }</FlexItem>
+	);
+
 	const forwardIcon = isRTL() ? chevronLeft : chevronRight;
 
-	if ( icon ) {
-		return (
-			<Item
-				{ ...props }
-				className={ classnames( className, {
-					'navigator-button__checklist-item--checked': checked,
-				} ) }
-			>
-				<HStack justify="space-between">
-					<HStack justify="flex-start">
-						<Icon className="navigator-button__icon" icon={ checked ? check : icon } size={ 24 } />
-						<FlexItem className="navigator-button__text">{ children }</FlexItem>
-					</HStack>
-					<Icon icon={ forwardIcon } size={ 24 } />
-				</HStack>
-			</Item>
-		);
-	}
-
 	return (
-		<Item { ...{ className, ...props } }>
+		<Item
+			{ ...props }
+			className={ classnames( 'navigator-item', {
+				'navigator-item--checked': checked,
+				'navigator-item--active': active,
+			} ) }
+		>
 			<HStack justify="space-between">
-				<FlexItem>{ children }</FlexItem>
+				{ content }
 				<Icon icon={ forwardIcon } size={ 24 } />
 			</HStack>
 		</Item>
 	);
-};
+}
 
-export const NavigationButtonAsItem = ( { className, ...props }: Props ) => {
-	return (
-		<NavigatorButton
-			as={ GenericButton }
-			className={ classnames( 'navigator-button', className ) }
-			{ ...props }
-		/>
-	);
+export const NavigatorButtonAsItem = ( { ...props }: NavigatorButtonAsItemProps ) => {
+	return <NavigatorButton as={ NavigatorItem } { ...props } />;
 };

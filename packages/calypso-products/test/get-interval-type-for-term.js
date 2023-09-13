@@ -1,4 +1,10 @@
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY, TERM_TRIENNIALLY } from '../src/constants';
+import {
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_CENTENNIALLY,
+	TERM_MONTHLY,
+	TERM_TRIENNIALLY,
+} from '../src/constants';
 import { getIntervalTypeForTerm } from '../src/get-interval-type-for-term';
 
 describe( 'getIntervalTypeForTerm', () => {
@@ -20,5 +26,9 @@ describe( 'getIntervalTypeForTerm', () => {
 
 	test( 'should return 3-year intervalType if current plan is a 3-year plan', () => {
 		expect( getIntervalTypeForTerm( TERM_TRIENNIALLY ) ).toBe( '3yearly' );
+	} );
+
+	test( 'should return 100-year intervalType if current plan is a 100-year plan', () => {
+		expect( getIntervalTypeForTerm( TERM_CENTENNIALLY ) ).toBe( '100yearly' );
 	} );
 } );

@@ -35,7 +35,6 @@ import './themes-selection.scss';
 
 class ThemesSelection extends Component {
 	static propTypes = {
-		emptyContent: PropTypes.element,
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
@@ -62,7 +61,6 @@ class ThemesSelection extends Component {
 	};
 
 	static defaultProps = {
-		emptyContent: null,
 		showUploadButton: true,
 		forceWpOrgSearch: false,
 	};
@@ -75,7 +73,13 @@ class ThemesSelection extends Component {
 		}
 	}
 
-	recordSearchResultsClick = ( themeId, resultsRank, action, variation = '@theme' ) => {
+	recordSearchResultsClick = (
+		themeId,
+		resultsRank,
+		action,
+		variation = '@theme',
+		isActiveTheme = false
+	) => {
 		const { query, filterString, themes } = this.props;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
@@ -84,6 +88,7 @@ class ThemesSelection extends Component {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: themeId,
+			is_active_theme: isActiveTheme,
 			style_variation: variation,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
@@ -106,9 +111,13 @@ class ThemesSelection extends Component {
 
 	onScreenshotClick = ( themeId, resultsRank ) => {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! this.props.isThemeActive( themeId ) ) {
-			this.recordSearchResultsClick( themeId, resultsRank, 'screenshot_info' );
-		}
+		this.recordSearchResultsClick(
+			themeId,
+			resultsRank,
+			'screenshot_info',
+			'@theme',
+			this.props.isThemeActive( themeId )
+		);
 		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 
@@ -276,7 +285,6 @@ class ThemesSelection extends Component {
 					getPrice={ this.props.getPremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ isRequesting }
-					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
@@ -320,18 +328,7 @@ function bindGetThemeType( state ) {
 export const ConnectedThemesSelection = connect(
 	(
 		state,
-		{
-			filter,
-			page,
-			search,
-			tier,
-			vertical,
-			siteId,
-			source,
-			forceWpOrgSearch,
-			isLoading: isCustomizedThemeListLoading,
-			tabFilter,
-		}
+		{ filter, page, search, tier, vertical, siteId, source, forceWpOrgSearch, tabFilter }
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
@@ -366,17 +363,19 @@ export const ConnectedThemesSelection = connect(
 			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
 			number,
+			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
+			...( tabFilter === 'all' && { sort: 'date' } ),
 		};
 
-		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
+		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query );
 
 		const shouldFetchWpOrgThemes =
 			forceWpOrgSearch &&
 			sourceSiteId !== 'wporg' &&
 			// Only fetch WP.org themes when searching a term.
 			!! search &&
-			// unless just searching over locally installed themes
-			tabFilter !== 'my-themes' &&
+			// unless just searching over recommended or locally installed themes
+			! [ 'recommended', 'my-themes' ].includes( tabFilter ) &&
 			// WP.org themes are not a good fit for any of the tiers,
 			// unless the site can install themes, then they can be searched in the 'free' tier.
 			( ! tier || ( tier === 'free' && canInstallThemes ) );
@@ -399,9 +398,9 @@ export const ConnectedThemesSelection = connect(
 			source: sourceSiteId,
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes,
+			themes: themes || [],
 			isRequesting:
-				isCustomizedThemeListLoading ||
+				themes === null ||
 				isRequestingThemesForQuery( state, sourceSiteId, query ) ||
 				( shouldFetchWpOrgThemes && isRequestingThemesForQuery( state, 'wporg', wpOrgQuery ) ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
@@ -441,7 +440,8 @@ class ThemesSelectionWithPage extends React.Component {
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
 			nextProps.filter !== this.props.filter ||
-			nextProps.vertical !== this.props.vertical
+			nextProps.vertical !== this.props.vertical ||
+			nextProps.tabFilter !== this.props.tabFilter
 		) {
 			this.resetPage();
 		}

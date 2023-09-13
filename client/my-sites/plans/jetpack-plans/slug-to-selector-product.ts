@@ -18,12 +18,12 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SITE_PRODUCTS_WITH_FEATURES,
+	WOOCOMMERCE_EXTENSIONS_PRODUCTS,
 	objectIsProduct,
 	Plan,
 	Product,
 	PRODUCTS_LIST,
 	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	getJetpackProductWhatIsIncluded,
 	getJetpackProductWhatIsIncludedComingSoon,
@@ -61,6 +61,10 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 	 ).includes( slug );
 }
 
+function slugIsWooCommerceProductSlug( slug: string ) {
+	return slug in WOOCOMMERCE_EXTENSIONS_PRODUCTS;
+}
+
 function objectIsSelectorProduct(
 	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): item is SelectorProduct {
@@ -86,6 +90,10 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 
 	if ( slugIsJetpackProductSlug( slug ) ) {
 		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
+	}
+
+	if ( slugIsWooCommerceProductSlug( slug ) ) {
+		return ( WOOCOMMERCE_EXTENSIONS_PRODUCTS as Record< string, Product > )[ slug ];
 	}
 
 	if ( slugIsJetpackPlanSlug( slug ) ) {
@@ -156,8 +164,8 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
-		// We do not support TERM_BIENNIALLY or TERM_TRIENIALLY for Jetpack plans
-		if ( [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ) {
+		// We do not support TERM_TRIENIALLY for Jetpack plans
+		if ( [ TERM_TRIENNIALLY ].includes( item.term ) ) {
 			return null;
 		}
 
@@ -230,7 +238,7 @@ function itemToSelectorProduct(
 				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],
 			monthlyProductSlug,
-			term: [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ? TERM_ANNUALLY : item.term,
+			term: [ TERM_TRIENNIALLY ].includes( item.term ) ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},

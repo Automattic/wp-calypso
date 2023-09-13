@@ -33,6 +33,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		max-width: 75%;
 	}
 
 	&-body,
@@ -69,6 +70,7 @@
 	}
 
 	.launchpad__clipboard-button {
+		min-width: 18px;
 		opacity: 0;
 	}
 

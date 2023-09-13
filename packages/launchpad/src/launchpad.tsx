@@ -2,12 +2,14 @@ import { useLaunchpad } from '@automattic/data-stores';
 import { useRef, useMemo } from 'react';
 import Checklist from './checklist';
 import type { Task } from './types';
+import type { UseLaunchpadOptions } from '@automattic/data-stores';
 
 export interface LaunchpadProps {
 	siteSlug: string | null;
 	checklistSlug?: string | 0 | null | undefined;
 	makeLastTaskPrimaryAction?: boolean;
 	taskFilter?: ( tasks: Task[] ) => Task[];
+	useLaunchpadOptions?: UseLaunchpadOptions;
 }
 
 const Launchpad = ( {
@@ -15,8 +17,9 @@ const Launchpad = ( {
 	checklistSlug,
 	taskFilter,
 	makeLastTaskPrimaryAction,
+	useLaunchpadOptions = {},
 }: LaunchpadProps ) => {
-	const launchpadData = useLaunchpad( siteSlug || '', checklistSlug );
+	const launchpadData = useLaunchpad( siteSlug || '', checklistSlug, useLaunchpadOptions );
 	const { isFetchedAfterMount, data } = launchpadData;
 	const tasks = useRef< Task[] >( [] );
 

@@ -1315,20 +1315,10 @@ export const buildUpgradeFunction = ( planProps, cartItem ) => {
 	};
 
 	if ( selectedSite && flowName === 'site-selected' && ! cartItem ) {
-		wpcom.req.post(
-			`/domains/${ selectedSite.ID }/${ selectedSite.name }/convert-domain-only-to-site`,
-			{},
-			( error ) => {
-				if ( error ) {
-					errorNotice( error.message );
-					return;
-				}
-				submitSignupStep( step, {
-					cartItem,
-				} );
-				goToNextStep();
-			}
-		);
+		submitSignupStep( step, {
+			cartItem,
+		} );
+		goToNextStep();
 		return;
 	}
 

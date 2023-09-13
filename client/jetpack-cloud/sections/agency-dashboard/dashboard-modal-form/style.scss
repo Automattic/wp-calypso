@@ -27,13 +27,6 @@
 	}
 
 	@include break-mobile {
-		position: static;
-		justify-content: right;
-		flex-direction: initial;
-		margin-block-start: 32px;
-		width: auto;
-		padding: 0;
-
 		.dashboard-modal-form__footer-buttons {
 			justify-content: end;
 			width: 100%;

@@ -1,6 +1,5 @@
 import classNames from 'classnames';
-import type { ReactNode } from 'react';
-
+import { memo, forwardRef, ReactNode, HTMLAttributes } from 'react';
 import './style.scss';
 
 export type BadgeType =
@@ -18,6 +17,20 @@ type BadgeProps = {
 	children?: ReactNode;
 };
 
-export default function Badge( { className, children, type = 'warning' }: BadgeProps ) {
-	return <div className={ classNames( `badge badge--${ type }`, className ) }>{ children }</div>;
-}
+const Badge = memo(
+	forwardRef< HTMLDivElement, BadgeProps & HTMLAttributes< HTMLDivElement > >(
+		( { className, children, type = 'warning', ...props }, ref ) => {
+			return (
+				<div
+					ref={ ref }
+					className={ classNames( `badge badge--${ type }`, className ) }
+					{ ...props }
+				>
+					{ children }
+				</div>
+			);
+		}
+	)
+);
+
+export default Badge;

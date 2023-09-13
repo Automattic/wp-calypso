@@ -43,6 +43,7 @@ import {
 	TITAN_MAIL_YEARLY_SLUG,
 	isAkismetProduct,
 	isWpcomEnterpriseGridPlan,
+	is100Year,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -122,6 +123,10 @@ export function hasBusinessPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBusiness );
 }
 
+export function has100YearPlan( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some( is100Year );
+}
+
 export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isStarter );
 }
@@ -163,6 +168,17 @@ export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 
 export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
+}
+
+export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).every( ( item ) => {
+		return (
+			( isDomainTransfer( item ) &&
+				item.is_sale_coupon_applied &&
+				item.item_subtotal_integer === 0 ) ||
+			isPartialCredits( item )
+		);
+	} );
 }
 
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {

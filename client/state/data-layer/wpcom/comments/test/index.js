@@ -6,13 +6,7 @@ import {
 } from 'calypso/state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import {
-	fetchPostComments,
-	addComments,
-	announceFailure,
-	commentsFromApi,
-	handleDeleteSuccess,
-} from '../';
+import { fetchPostComments, addComments, commentsFromApi, handleDeleteSuccess } from '../';
 
 describe( 'wpcom-api', () => {
 	describe( 'post comments request', () => {
@@ -178,31 +172,6 @@ describe( 'wpcom-api', () => {
 					{ author: { name: 'joe' } },
 					{ author: { name: '♥' } },
 				] );
-			} );
-		} );
-
-		describe( '#announceFailure', () => {
-			test( 'should dispatch an error notice', () => {
-				const dispatch = jest.fn();
-				const getState = () => ( {
-					posts: {
-						queries: {},
-					},
-				} );
-
-				announceFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
-
-				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						type: NOTICE_CREATE,
-						notice: expect.objectContaining( {
-							status: 'is-error',
-							text: 'Could not retrieve comments for post',
-							duration: 5000,
-						} ),
-					} )
-				);
 			} );
 		} );
 

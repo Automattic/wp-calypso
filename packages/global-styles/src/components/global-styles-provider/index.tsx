@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback } from 'react';
+import { DEFAULT_GLOBAL_STYLES } from '../../constants';
 import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
 import { useGetGlobalStylesBaseConfig, useRegisterCoreBlocks } from '../../hooks';
-import type { GlobalStylesObject } from '../../types';
+import type { GlobalStylesObject, SetConfig, SetConfigCallback } from '../../types';
 
-const cleanEmptyObject = < T, >( object: T ) => {
+const cleanEmptyObject = < T extends Record< string, unknown > >( object: T | unknown ) => {
 	if ( object === null || typeof object !== 'object' || Array.isArray( object ) ) {
 		return object;
 	}
@@ -16,21 +17,19 @@ const cleanEmptyObject = < T, >( object: T ) => {
 	return Object.keys( cleanedNestedObjects ).length > 0 ? cleanedNestedObjects : undefined;
 };
 
-type SetConfig = ( callback: ( config: GlobalStylesObject ) => GlobalStylesObject ) => void;
-
 const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ] => {
 	const [ userConfig, setUserConfig ] = useState< GlobalStylesObject >( {
 		settings: {},
 		styles: {},
 	} );
-	const setConfig: SetConfig = useCallback(
-		( callback ) => {
+	const setConfig = useCallback(
+		( callback: SetConfigCallback ) => {
 			setUserConfig( ( currentConfig ) => {
 				const updatedConfig = callback( currentConfig );
 				return {
 					styles: cleanEmptyObject( updatedConfig.styles ) || {},
 					settings: cleanEmptyObject( updatedConfig.settings ) || {},
-				};
+				} as GlobalStylesObject;
 			} );
 		},
 		[ setUserConfig ]
@@ -48,10 +47,13 @@ const useGlobalStylesBaseConfig = (
 
 const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) => {
 	const [ isUserConfigReady, userConfig, setUserConfig ] = useGlobalStylesUserConfig();
-	const [ isBaseConfigReady, baseConfig ] = useGlobalStylesBaseConfig( siteId, stylesheet );
+	const [ isBaseConfigReady, baseConfig = DEFAULT_GLOBAL_STYLES ] = useGlobalStylesBaseConfig(
+		siteId,
+		stylesheet
+	);
 	const mergedConfig = useMemo( () => {
 		if ( ! baseConfig || ! userConfig ) {
-			return {};
+			return DEFAULT_GLOBAL_STYLES;
 		}
 		return mergeBaseAndUserConfigs( baseConfig, userConfig );
 	}, [ userConfig, baseConfig ] );

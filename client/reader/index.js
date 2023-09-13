@@ -14,13 +14,13 @@ import {
 	following,
 	incompleteUrlRedirects,
 	legacyRedirects,
-	prettyRedirects,
 	readA8C,
 	readFollowingP2,
 	sidebar,
 	updateLastRoute,
 	blogDiscoveryByFeedId,
-	sitesSubscriptionManager,
+	siteSubscriptionsManager,
+	siteSubscription,
 } from './controller';
 
 import './style.scss';
@@ -70,7 +70,6 @@ export default async function () {
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			updateLastRoute,
-			prettyRedirects,
 			sidebar,
 			feedDiscovery,
 			feedListing,
@@ -85,7 +84,6 @@ export default async function () {
 			'/read/blogs/:blog_id',
 			redirectLoggedOutToSignup,
 			updateLastRoute,
-			prettyRedirects,
 			sidebar,
 			blogListing,
 			makeLayout,
@@ -125,11 +123,20 @@ export default async function () {
 
 	// Sites subscription management
 	page(
+		'/read/subscriptions/:subscription_id',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		siteSubscription,
+		makeLayout,
+		clientRender
+	);
+	page(
 		'/read/subscriptions',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
-		sitesSubscriptionManager,
+		siteSubscriptionsManager,
 		makeLayout,
 		clientRender
 	);

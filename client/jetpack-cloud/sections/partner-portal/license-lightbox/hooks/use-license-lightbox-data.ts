@@ -15,8 +15,10 @@ export function useLicenseLightboxData( product: APIProductFamilyProduct ): Lice
 		 * To reuse existing product info, we need to convert the product slug to the format used in the product store.
 		 * We are also using only the monthly slug to ensure we hit the equivalent product in the product store.
 		 */
-		const normalizedSlug = product.slug.replaceAll( /-/g, '_' ) + '_monthly';
-		const productInfo = slugToSelectorProduct( normalizedSlug );
+		const baseSlug = product.slug.replaceAll( /-/g, '_' ).replace( /_(monthly|yearly)$/, '' );
+		const productInfo =
+			slugToSelectorProduct( baseSlug + '_monthly' ) ||
+			slugToSelectorProduct( baseSlug + '_yearly' );
 
 		const title = getProductTitle( product.name );
 

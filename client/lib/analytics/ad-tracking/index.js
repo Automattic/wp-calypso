@@ -19,3 +19,4 @@ export {
 	trackCustomAdWordsRemarketingEvent,
 } from './track-custom-events';
 export { initGTMContainer, loadGTMContainer } from './gtm-container';
+export { loadParselyTracker } from './parsely';

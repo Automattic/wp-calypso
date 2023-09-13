@@ -39,7 +39,7 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
 	shouldShowAddOns = false,
-	showSiteLogs = false,
+	showSiteMonitoring = false,
 } = {} ) {
 	let inbox = [];
 	if ( shouldShowInbox ) {
@@ -518,14 +518,14 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
-				...( showSiteLogs
+				...( showSiteMonitoring
 					? [
 							{
 								parent: 'tools.php',
-								slug: 'tools-site-logs',
-								title: translate( 'Site Logs' ),
+								slug: 'tools-site-monitoring',
+								title: translate( 'Site Monitoring' ),
 								type: 'submenu-item',
-								url: `/site-logs/${ siteDomain }`,
+								url: `/site-monitoring/${ siteDomain }`,
 							},
 					  ]
 					: [] ),
@@ -550,9 +550,25 @@ export default function buildFallbackResponse( {
 					slug: 'options-reading-php',
 					title: translate( 'Reading' ),
 					type: 'submenu-item',
-					url: config.isEnabled( 'settings/modernize-reading-settings' )
-						? `/settings/reading/${ siteDomain }`
-						: `https://${ siteDomain }/wp-admin/options-reading.php`,
+					url: `/settings/reading/${ siteDomain }`,
+				},
+				...( config.isEnabled( 'settings/newsletter-settings-page' )
+					? [
+							{
+								parent: 'options-general.php',
+								slug: 'options-newsletter-php',
+								title: translate( 'Newsletter' ),
+								type: 'submenu-item',
+								url: `/settings/newsletter/${ siteDomain }`,
+							},
+					  ]
+					: [] ),
+				{
+					parent: 'options-podcasting.php',
+					slug: 'options-podcasting-php',
+					title: translate( 'Podcasting' ),
+					type: 'submenu-item',
+					url: `/settings/podcasting/${ siteDomain }`,
 				},
 				{
 					parent: 'options-general.php',

@@ -13,7 +13,7 @@ import {
 	TestAccount,
 	SiteAssemblerFlow,
 } from '@automattic/calypso-e2e';
-import { Browser, Locator, Page } from 'playwright';
+import { Browser, Page } from 'playwright';
 import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
@@ -56,7 +56,9 @@ describe( 'Site Assembler', () => {
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }` ),
+				DataHelper.getCalypsoURL(
+					`/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
+				),
 				{
 					timeout: 30 * 1000,
 				}
@@ -68,10 +70,10 @@ describe( 'Site Assembler', () => {
 		} );
 
 		it( 'Select "Start designing" and land on the Site Assembler', async function () {
-			await startSiteFlow.clickButton( 'Start designing' );
+			await startSiteFlow.clickButton( 'Design your own' );
 			await page.waitForURL(
 				DataHelper.getCalypsoURL(
-					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }`
+					`/setup/site-setup/patternAssembler?siteSlug=${ selectedFreeDomain }&siteId=${ newSiteDetails.blog_details.blogid }`
 				),
 				{
 					timeout: 30 * 1000,
@@ -81,37 +83,46 @@ describe( 'Site Assembler', () => {
 	} );
 
 	describe( 'Site Assembler', function () {
-		let assembledPreviewLocator: Locator;
-		let startSiteFlow: SiteAssemblerFlow;
+		let siteAssemblerFlow: SiteAssemblerFlow;
 
 		beforeAll( async function () {
-			startSiteFlow = new SiteAssemblerFlow( page );
-			assembledPreviewLocator = page.locator( '.pattern-large-preview__patterns .block-renderer' );
+			siteAssemblerFlow = new SiteAssemblerFlow( page );
 		} );
 
 		it( 'Select "Header"', async function () {
-			await startSiteFlow.selectLayoutComponentType( 'Header' );
-			await startSiteFlow.selectLayoutComponent( 1 );
+			// The pane is now open by default.
+			// @see https://github.com/Automattic/wp-calypso/pull/80924
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
-			expect( await assembledPreviewLocator.count() ).toBe( 1 );
+			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 1 );
+		} );
 
-			await startSiteFlow.clickButton( 'Save' );
+		it( 'Select "Sections"', async function () {
+			await siteAssemblerFlow.clickLayoutComponentType( 'Sections' );
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
+			await siteAssemblerFlow.clickButton( 'Save and continue' );
+
+			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 2 );
 		} );
 
 		it( 'Select "Footer"', async function () {
-			await startSiteFlow.selectLayoutComponentType( 'Footer' );
-			await startSiteFlow.selectLayoutComponent( 1 );
+			await siteAssemblerFlow.clickLayoutComponentType( 'Footer' );
+			await siteAssemblerFlow.selectLayoutComponent( { index: 0 } );
 
-			expect( await assembledPreviewLocator.count() ).toBe( 2 );
-
-			await startSiteFlow.clickButton( 'Save' );
+			expect( await siteAssemblerFlow.getAssembledComponentsCount() ).toBe( 3 );
 		} );
 
-		it( 'Click "Continue" and land on the Site Editor', async function () {
-			await Promise.all( [
-				page.waitForURL( /processing/ ),
-				startSiteFlow.clickButton( 'Continue' ),
-			] );
+		it( 'Pick default style', async function () {
+			await siteAssemblerFlow.clickButton( 'Pick your style' );
+			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
+			await siteAssemblerFlow.clickButton( 'Save and continue' );
+		} );
+
+		it( 'Click "Save and continue" and land on the Site Editor', async function () {
+			const urlPromise = page.waitForURL( /processing/ );
+			await siteAssemblerFlow.clickButton( 'Start adding content' );
+			await urlPromise;
+
 			await page.waitForURL( /site-editor/, {
 				timeout: 30 * 1000,
 			} );

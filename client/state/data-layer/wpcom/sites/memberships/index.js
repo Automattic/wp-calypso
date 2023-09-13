@@ -20,7 +20,6 @@ export const membershipProductFromApi = ( product ) => ( {
 	formatted_price: product.price,
 	price: product.price,
 	title: product.title,
-	stripe_account: product.connected_destination_account_id,
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
 	multiple_per_user: product.multiple_per_user,
@@ -35,6 +34,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 			{
 				method: 'GET',
 				path: `/sites/${ action.siteId }/memberships/products?type=all&is_editable=true`,
+				apiNamespace: 'wpcom/v2',
 			},
 			action
 		),

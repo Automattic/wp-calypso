@@ -3,8 +3,12 @@ import { Component } from 'react';
 import type { ReactNode } from 'react';
 
 const ErrorContainer = styled.div`
-	margin: 2em;
+	display: flex;
 	text-align: center;
+	height: 190px;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
 `;
 
 export default class CheckoutErrorBoundary extends Component< CheckoutErrorBoundaryProps > {

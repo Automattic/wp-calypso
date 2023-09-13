@@ -62,9 +62,10 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 
 			// Poll for transfer status. If there are no plugins to verify, we can skip this step.
 			let stopPollingPlugins = ! pluginsToVerify || pluginsToVerify.length <= 0;
+			let backoffTime = 1000;
 
 			while ( ! stopPollingPlugins ) {
-				await wait( 500 );
+				await wait( backoffTime );
 
 				try {
 					const response: PluginsResponse = await wpcomRequest( {
@@ -83,14 +84,16 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 					// Ignore errors. It's normal to get errors the first couple of times we poll. The timeout will eventually catch it if the failures continue.
 				}
 
-				if ( maxFinishTime < new Date().getTime() ) {
+				if ( maxFinishTime <= new Date().getTime() ) {
 					handlePluginCheckFailure( {
 						type: 'plugin_check_timeout',
 						error: `plugin check took too long (${ totalTimeout / 1000 }s))`,
 						code: 'plugin_check_timeout',
 					} );
-					throw new Error( 'plugin check timeout' );
+					throw new Error( `plugin check timeout exceeded ${ totalTimeout / 1000 }s` );
 				}
+
+				backoffTime *= 2;
 			}
 
 			return { pluginsInstalled: true, siteSlug, siteId };

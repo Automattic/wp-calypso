@@ -27,10 +27,9 @@ import {
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
-import { getLabel, getSublabel } from './checkout-labels';
+import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
@@ -73,7 +72,7 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	}
 `;
 
-export const LineItem = styled( WPLineItem )< {
+export const LineItem = styled( CheckoutLineItem )< {
 	theme?: Theme;
 } >`
 	display: flex;
@@ -95,12 +94,6 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 } >`
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
-	}
-`;
-
-const GiftBadgeWrapper = styled.span`
-	@media ( max-width: 660px ) {
-		width: 100%;
 	}
 `;
 
@@ -595,72 +588,47 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 export function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
-	const sublabel = getSublabel( product );
+	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 
-	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
-		if ( isP2Plus( product ) ) {
-			// This is the price for one item for products with a quantity (eg. seats in a license).
-			const itemPrice = formatCurrency(
-				product.item_original_cost_for_quantity_one_integer,
-				product.currency,
-				{ isSmallestUnit: true, stripZeros: true }
-			);
-			const members = product?.current_quantity || 1;
-			const p2Options = {
-				args: {
-					itemPrice,
-					members,
-				},
-				count: members,
-			};
-
-			return (
-				<>
-					{ translate(
-						'Monthly subscription: %(itemPrice)s x %(members)s member',
-						'Monthly subscription: %(itemPrice)s x %(members)s members',
-						p2Options
-					) }
-				</>
-			);
-		}
-
-		const options = {
+	if ( isP2Plus( product ) ) {
+		// This is the price for one item for products with a quantity (eg. seats in a license).
+		const itemPrice = formatCurrency(
+			product.item_original_cost_for_quantity_one_integer,
+			product.currency,
+			{ isSmallestUnit: true, stripZeros: true }
+		);
+		const members = product?.current_quantity || 1;
+		const p2Options = {
 			args: {
-				sublabel,
-				price: formatCurrency( product.item_original_subtotal_integer, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
+				itemPrice,
+				members,
 			},
+			count: members,
 		};
 
-		if ( isTieredVolumeSpaceAddon( product ) ) {
-			const spaceQuantity = product?.quantity ?? 1;
-			return (
-				<>
-					{ translate( '%(quantity)s GB extra space, %(price)s per year', {
-						args: { quantity: spaceQuantity, price: options.args.price },
-					} ) }
-				</>
-			);
-		}
+		return (
+			<>
+				{ translate(
+					'Monthly subscription: %(itemPrice)s x %(members)s member',
+					'Monthly subscription: %(itemPrice)s x %(members)s members',
+					p2Options
+				) }
+			</>
+		);
+	}
 
-		if ( isMonthlyProduct( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
-		}
-
-		if ( isYearly( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per year', options ) }</>;
-		}
-
-		if ( isBiennially( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
-		}
-
-		if ( isTriennially( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per three years', options ) }</>;
-		}
+	if ( isTieredVolumeSpaceAddon( product ) ) {
+		const spaceQuantity = product?.quantity ?? 1;
+		return (
+			<>
+				{ translate( '%(quantity)s GB extra space, %(price)s per year', {
+					args: { quantity: spaceQuantity, price },
+				} ) }
+			</>
+		);
 	}
 
 	if (
@@ -668,32 +636,25 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product )
 	) {
-		let billingInterval = null;
-
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			billingInterval = translate( 'billed annually' );
+			const billingInterval = translate( 'billed annually' );
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+				</>
+			);
 		}
 
 		if ( product.months_per_bill_period === 1 ) {
-			billingInterval = translate( 'billed monthly' );
+			const billingInterval = translate( 'billed monthly' );
+			return (
+				<>
+					<DefaultLineItemSublabel product={ product } />: { billingInterval }
+				</>
+			);
 		}
 
-		if ( billingInterval === null ) {
-			return <>{ sublabel }</>;
-		}
-
-		return (
-			<>
-				{ translate( '%(productDescription)s: %(billingInterval)s', {
-					args: {
-						productDescription: sublabel,
-						billingInterval,
-					},
-					comment:
-						"Product description and billing interval (already translated) separated by a colon (e.g. 'Mailboxes and Productivity Tools: billed annually')",
-				} ) }
-			</>
-		);
+		return <DefaultLineItemSublabel product={ product } />;
 	}
 
 	if ( isDIFMProduct( product ) ) {
@@ -749,15 +710,8 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 		return (
 			<>
-				{ translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
-					args: {
-						premiumLabel,
-						sublabel: sublabel,
-						interval: translate( 'billed annually' ),
-					},
-					comment:
-						'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
-				} ) }
+				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( 'billed annually' ) }
 			</>
 		);
 	}
@@ -765,22 +719,51 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	if ( isDomainTransfer ) {
 		return (
 			<>
-				{ translate( ' %(sublabel)s: %(interval)s %(cost)s ', {
-					args: {
-						sublabel: sublabel,
-						cost: formatCurrency( product.item_original_cost_integer, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-						interval: translate( 'billed annually' ),
-					},
-					comment: 'Domain transfer and billing interval, separated by a colon. ',
-				} ) }
+				<DefaultLineItemSublabel product={ product } />: { translate( 'billed annually' ) }{ ' ' }
+				{ price }
 			</>
 		);
 	}
 
-	return <>{ sublabel || null }</>;
+	const shouldRenderBasicTermSublabel =
+		isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug );
+	if ( shouldRenderBasicTermSublabel && isMonthlyProduct( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per month', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isYearly( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per year', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isBiennially( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per two years', { args: { price } } ) }
+			</>
+		);
+	}
+
+	if ( shouldRenderBasicTermSublabel && isTriennially( product ) ) {
+		return (
+			<>
+				<DefaultLineItemSublabel product={ product } />:{ ' ' }
+				{ translate( '%(price)s per three years', { args: { price } } ) }
+			</>
+		);
+	}
+
+	return <DefaultLineItemSublabel product={ product } />;
 }
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
@@ -898,8 +881,11 @@ function PartnerLogo( { className }: { className?: string } ) {
 function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
-	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
-	if ( isFreeBundledDomainRegistration ) {
+	if ( product.is_included_for_100yearplan ) {
+		return <DiscountCallout>{ translate( 'Included with your plan' ) }</DiscountCallout>;
+	}
+
+	if ( product.is_bundled ) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 
@@ -935,7 +921,27 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 	return null;
 }
 
-function WPLineItem( {
+function GiftBadgeWithText() {
+	const translate = useTranslate();
+	return <GiftBadge>{ translate( 'Gift' ) }</GiftBadge>;
+}
+
+const MobileGiftWrapper = styled.div`
+	display: block;
+	width: 100%;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: none;
+	}
+`;
+
+const DesktopGiftWrapper = styled.div`
+	display: none;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: block;
+	}
+`;
+
+function CheckoutLineItem( {
 	children,
 	product,
 	className,
@@ -963,7 +969,6 @@ function WPLineItem( {
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const isMobile = useViewportMatch( 'small', '<' );
 	const hasBundledDomainsInCart = responseCart.products.some(
 		( product ) =>
 			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
@@ -1015,14 +1020,7 @@ function WPLineItem( {
 
 	const containsPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
-		products: [ product ],
 	} );
-
-	const giftBadgeElement = (
-		<GiftBadgeWrapper>
-			<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
-		</GiftBadgeWrapper>
-	);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -1031,10 +1029,18 @@ function WPLineItem( {
 			data-e2e-product-slug={ productSlug }
 			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
-			{ isMobile && responseCart.is_gift_purchase && giftBadgeElement }
+			{ responseCart.is_gift_purchase && (
+				<MobileGiftWrapper>
+					<GiftBadgeWithText />
+				</MobileGiftWrapper>
+			) }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
-				{ ! isMobile && responseCart.is_gift_purchase && giftBadgeElement }
+				{ responseCart.is_gift_purchase && (
+					<DesktopGiftWrapper>
+						<GiftBadgeWithText />
+					</DesktopGiftWrapper>
+				) }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice

@@ -10,7 +10,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import {
 	canUseTheme,
 	getThemeType,
@@ -72,7 +71,6 @@ const ThemeTypeBadgeTooltip = ( {
 	const isIncludedCurrentPlan = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
-	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteId );
 	const isPurchased = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
@@ -111,7 +109,10 @@ const ThemeTypeBadgeTooltip = ( {
 				textOnly: true,
 			} ),
 			[ WOOCOMMERCE_THEME ]: translate( 'WooCommerce theme' ),
-			[ MARKETPLACE_THEME ]: translate( 'Paid theme' ),
+			[ MARKETPLACE_THEME ]: translate( 'Partner theme', {
+				context: 'This theme is developed and supported by a theme partner',
+				textOnly: true,
+			} ),
 		} as { [ key: string ]: string };
 
 		if ( ! ( type in headers ) ) {
@@ -123,15 +124,9 @@ const ThemeTypeBadgeTooltip = ( {
 
 	let message;
 	if ( isLockedStyleVariation ) {
-		if ( globalStylesInPersonalPlan ) {
-			message = translate(
-				'Unlock this style, and tons of other features, by upgrading to a Personal plan.'
-			);
-		} else {
-			message = translate(
-				'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-			);
-		}
+		message = translate(
+			'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+		);
 	} else if ( type === PREMIUM_THEME ) {
 		if ( isPurchased ) {
 			message = translate( 'You have purchased this theme.' );

@@ -4,11 +4,11 @@ import type { GlobalStylesObject } from '../types';
 
 const useSyncGlobalStylesUserConfig = (
 	globalStyles: GlobalStylesObject[],
-	onChange?: ( globalStyle: GlobalStylesObject ) => void
+	onChange?: ( globalStyle?: GlobalStylesObject | null ) => void
 ) => {
 	const { user, setUserConfig } = useContext( GlobalStylesContext );
 	useEffect( () => {
-		setUserConfig( () =>
+		setUserConfig?.( () =>
 			globalStyles
 				.filter( Boolean )
 				.reduce(

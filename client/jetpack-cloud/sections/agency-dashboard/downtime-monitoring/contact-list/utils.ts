@@ -40,5 +40,5 @@ export const getContactActionEventName = (
 		},
 	};
 
-	return EVENT_NAMES[ type as keyof typeof EVENT_NAMES ][ action ];
+	return EVENT_NAMES[ type as keyof typeof EVENT_NAMES ]?.[ action ];
 };

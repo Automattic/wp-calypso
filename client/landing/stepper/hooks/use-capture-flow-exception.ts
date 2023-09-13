@@ -1,5 +1,5 @@
+import { captureException } from '@automattic/calypso-sentry';
 import { useCallback } from 'react';
-import { captureException } from 'calypso/lib/sentry';
 import { useIntent } from './use-intent';
 import { useSite } from './use-site';
 

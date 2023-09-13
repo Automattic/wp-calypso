@@ -3,7 +3,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { useDispatch } from 'react-redux';
 import usePayInvoiceMutation from 'calypso/state/partner-portal/invoices/hooks/pay-invoice-mutation';
@@ -55,7 +55,7 @@ describe( 'useInvoicesQuery', () => {
 			.get( '/wpcom/v2/jetpack-licensing/partner/invoices?starting_after=&ending_before=' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook(
+		const { result } = renderHook(
 			() =>
 				useInvoicesQuery( {
 					starting_after: '',
@@ -66,7 +66,7 @@ describe( 'useInvoicesQuery', () => {
 			}
 		);
 
-		await waitFor( () => result.current.isSuccess );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( formattedStub );
 	} );
@@ -84,7 +84,7 @@ describe( 'useInvoicesQuery', () => {
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result, waitFor } = renderHook(
+		const { result } = renderHook(
 			() =>
 				useInvoicesQuery(
 					{
@@ -98,9 +98,8 @@ describe( 'useInvoicesQuery', () => {
 			}
 		);
 
-		await waitFor( () => result.current.isError );
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
 
-		expect( result.current.isError ).toBe( true );
 		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
 		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
 			'partner-portal-invoices-failure'
@@ -132,7 +131,7 @@ describe( 'usePayInvoiceMutation', () => {
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result, waitFor } = renderHook( () => usePayInvoiceMutation(), {
+		const { result } = renderHook( () => usePayInvoiceMutation(), {
 			wrapper,
 		} );
 
@@ -167,12 +166,9 @@ describe( 'usePayInvoiceMutation', () => {
 		useDispatch.mockReturnValue( dispatch );
 
 		// Prevent console.error from being loud during testing because of the test 500 error.
-		const { result, waitFor } = renderHook(
-			() => usePayInvoiceMutation( { useErrorBoundary: false } ),
-			{
-				wrapper,
-			}
-		);
+		const { result } = renderHook( () => usePayInvoiceMutation( { useErrorBoundary: false } ), {
+			wrapper,
+		} );
 
 		try {
 			await act( async () => result.current.mutateAsync( { invoiceId: invoiceStub.id } ) );
@@ -182,7 +178,6 @@ describe( 'usePayInvoiceMutation', () => {
 		}
 
 		await waitFor( () => {
-			expect( result.current.isError ).toBe( true );
 			expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
 			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.text ).toBe( stub.message );
 			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(

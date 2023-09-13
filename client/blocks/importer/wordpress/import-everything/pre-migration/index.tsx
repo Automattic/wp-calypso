@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { NextButton, Title } from '@automattic/onboarding';
@@ -33,9 +32,12 @@ import './style.scss';
 interface PreMigrationProps {
 	targetSite: SiteDetails;
 	startImport: ( props?: StartImportTrackingProps ) => void;
+	initImportRun?: boolean;
 	isTargetSitePlanCompatible: boolean;
-	onContentOnlyClick: () => void;
 	isMigrateFromWp: boolean;
+	isTrial?: boolean;
+	onContentOnlyClick: () => void;
+	onFreeTrialClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -43,10 +45,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 ) => {
 	const {
 		startImport,
+		initImportRun,
 		targetSite,
 		isTargetSitePlanCompatible,
-		onContentOnlyClick,
 		isMigrateFromWp,
+		isTrial,
+		onContentOnlyClick,
+		onFreeTrialClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -58,37 +63,36 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 	const [ selectedHost, setSelectedHost ] = useState( 'generic' );
 	const [ selectedProtocol, setSelectedProtocol ] = useState< 'ftp' | 'ssh' >( 'ftp' );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
-	const [ showUpdatePluginInfo, setShowUpdatePluginInfo ] = useState( false );
-	const fetchMigrationEnabledOnMount = isTargetSitePlanCompatible ? true : false;
 	const [ continueImport, setContinueImport ] = useState( false );
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) ?? '';
 	const sourceSiteUrl = formatSlugToURL( sourceSiteSlug );
-
-	const toggleCredentialsForm = () => {
-		setShowCredentials( ! showCredentials );
-		dispatch( recordTracksEvent( 'calypso_site_migration_credentials_form_toggle' ) );
-	};
-
-	const onfetchCallback = ( siteCanMigrate: boolean ) => {
-		if ( ! siteCanMigrate ) {
-			setShowUpdatePluginInfo( true );
-		} else {
-			setShowUpdatePluginInfo( false );
-		}
-	};
 
 	const {
 		sourceSiteId,
 		sourceSite,
 		fetchMigrationEnabledStatus,
 		isFetchingData: isFetchingMigrationData,
-	} = useSiteMigrateInfo(
-		targetSite.ID,
-		sourceSiteSlug,
-		fetchMigrationEnabledOnMount,
-		onfetchCallback
-	);
+		siteCanMigrate,
+	} = useSiteMigrateInfo( targetSite.ID, sourceSiteSlug, isTargetSitePlanCompatible );
+
+	const showUpdatePluginInfo = typeof siteCanMigrate === 'boolean' ? ! siteCanMigrate : false;
+
+	const migrationTrackingProps = {
+		source_site_id: sourceSiteId,
+		source_site_url: sourceSiteUrl,
+		target_site_id: targetSite.ID,
+		target_site_slug: targetSite.slug,
+		is_migrate_from_wp: isMigrateFromWp,
+		is_trial: isTrial,
+	};
+
+	const toggleCredentialsForm = () => {
+		setShowCredentials( ! showCredentials );
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_credentials_form_toggle', migrationTrackingProps )
+		);
+	};
 
 	const [ queryTargetSitePlanStatus, setQueryTargetSitePlanStatus ] = useState<
 		'init' | 'fetching' | 'fetched'
@@ -106,7 +110,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 	}, [ queryTargetSitePlanStatus, isRequestingTargetSitePlans, fetchMigrationEnabledStatus ] );
 
-	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+	const { isLoading: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			setQueryTargetSitePlanStatus( 'fetching' );
 		},
@@ -135,9 +139,24 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		fetchMigrationEnabledStatus();
 	};
 
-	const onFreeTrialClick = () => {
-		addHostingTrial( targetSite.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
-	};
+	// We want to record the tracks event, so we use the same condition as the one in the render function
+	// This should be better handled by using a state after the refactor
+	useEffect( () => {
+		if ( ! showUpdatePluginInfo && isTargetSitePlanCompatible ) {
+			const _migrationTrackingProps: { [ key: string ]: unknown } = { ...migrationTrackingProps };
+			// There is a case where source_site_id is 0|undefined, so we need to delete it
+			delete _migrationTrackingProps?.source_site_id;
+
+			dispatch(
+				recordTracksEvent( 'calypso_site_migration_ready_screen', _migrationTrackingProps )
+			);
+		}
+	}, [ showUpdatePluginInfo, isTargetSitePlanCompatible ] );
+
+	// Initiate the migration if initImportRun is set
+	useEffect( () => {
+		initImportRun && startImport( { type: 'without-credentials', ...migrationTrackingProps } );
+	}, [] );
 
 	useEffect( () => {
 		if ( isTargetSitePlanCompatible && sourceSiteId ) {
@@ -152,7 +171,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 			return;
 		}
 		if ( sourceSite ) {
-			startImport();
+			startImport( migrationTrackingProps );
 		}
 	}, [ continueImport, sourceSite, startImport, showUpdatePluginInfo ] );
 
@@ -190,6 +209,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 								targetSite={ targetSite }
 								startImport={ startImport }
 								selectedHost={ selectedHost }
+								migrationTrackingProps={ migrationTrackingProps }
 								onChangeProtocol={ changeCredentialsProtocol }
 							/>
 						</div>
@@ -217,11 +237,11 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 					<ConfirmModal
 						sourceSiteSlug={ sourceSiteSlug }
 						targetSiteSlug={ targetSite.slug }
-						onClose={ () => setShowConfirmModal( false ) }
+						onClose={ hideConfirmModal }
 						onConfirm={ () => {
 							// reset migration confirmation to initial state
 							setMigrationConfirmed( false );
-							startImport( { type: 'without-credentials' } );
+							startImport( { type: 'without-credentials', ...migrationTrackingProps } );
 						} }
 					/>
 				) }
@@ -240,8 +260,8 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 								type="button"
 								onClick={ () => {
 									migrationConfirmed
-										? startImport( { type: 'without-credentials' } )
-										: setShowConfirmModal( true );
+										? startImport( { type: 'without-credentials', ...migrationTrackingProps } )
+										: displayConfirmModal();
 								} }
 							>
 								{ translate( 'Start migration' ) }
@@ -253,11 +273,51 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		);
 	}
 
+	function displayConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_display', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( true );
+	}
+
+	function hideConfirmModal() {
+		dispatch(
+			recordTracksEvent( 'calypso_site_migration_confirm_modal_hide', migrationTrackingProps )
+		);
+
+		setShowConfirmModal( false );
+	}
+
 	function renderUpdatePluginInfo() {
 		return (
 			<>
-				<UpdatePluginInfo isMigrateFromWp={ isMigrateFromWp } sourceSiteUrl={ sourceSiteUrl } />
+				<UpdatePluginInfo
+					isMigrateFromWp={ isMigrateFromWp }
+					sourceSiteUrl={ sourceSiteUrl }
+					migrationTrackingProps={ migrationTrackingProps }
+				/>
 				<Interval onTick={ fetchMigrationEnabledStatus } period={ EVERY_FIVE_SECONDS } />
+			</>
+		);
+	}
+
+	function renderUpgradePlan() {
+		return (
+			<>
+				{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
+				<PreMigrationUpgradePlan
+					sourceSiteSlug={ sourceSiteSlug }
+					sourceSiteUrl={ sourceSiteUrl }
+					targetSite={ targetSite }
+					startImport={ onUpgradeAndMigrateClick }
+					onFreeTrialClick={ onFreeTrialClick }
+					onContentOnlyClick={ onContentOnlyClick }
+					isBusy={
+						isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
+					}
+					migrationTrackingProps={ migrationTrackingProps }
+				/>
 			</>
 		);
 	}
@@ -274,22 +334,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		}
 
 		// If the target site is not plan compatible, we show the upgrade plan screen
-		return (
-			<>
-				{ queryTargetSitePlanStatus === 'fetching' && <QuerySites siteId={ targetSite.ID } /> }
-				<PreMigrationUpgradePlan
-					sourceSiteSlug={ sourceSiteSlug }
-					sourceSiteUrl={ sourceSiteUrl }
-					targetSite={ targetSite }
-					startImport={ onUpgradeAndMigrateClick }
-					onFreeTrialClick={ onFreeTrialClick }
-					onContentOnlyClick={ onContentOnlyClick }
-					isBusy={
-						isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
-					}
-				/>
-			</>
-		);
+		return renderUpgradePlan();
 	}
 
 	return render();

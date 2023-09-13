@@ -11,6 +11,7 @@ import {
 import { Button, Card, Gridicon } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
+import DOMPurify from 'dompurify';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -75,6 +76,7 @@ export class Banner extends Component {
 		isSiteWPForTeams: PropTypes.bool,
 		displayAsLink: PropTypes.bool,
 		showLinkIcon: PropTypes.bool,
+		extraContent: PropTypes.node,
 	};
 
 	static defaultProps = {
@@ -181,6 +183,14 @@ export class Banner extends Component {
 		);
 	}
 
+	sanitize( html ) {
+		// Getting an instance of DOMPurify this way is needed to fix a related JEST test.
+		return DOMPurify.sanitize( html, {
+			ALLOWED_TAGS: [ 'a' ],
+			ALLOWED_ATTR: [ 'href', 'target' ],
+		} );
+	}
+
 	getContent() {
 		const {
 			callToAction,
@@ -198,6 +208,7 @@ export class Banner extends Component {
 			target,
 			tracksImpressionName,
 			tracksImpressionProperties,
+			extraContent,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -217,7 +228,12 @@ export class Banner extends Component {
 				) }
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
-					{ description && <div className="banner__description">{ description }</div> }
+					{ description && (
+						<div
+							className="banner__description"
+							dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
+						></div>
+					) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
@@ -232,6 +248,7 @@ export class Banner extends Component {
 							) ) }
 						</ul>
 					) }
+					{ extraContent }
 				</div>
 				{ ( callToAction || price ) && (
 					<div className="banner__action">
@@ -306,7 +323,7 @@ export class Banner extends Component {
 			{ 'is-jetpack': jetpack },
 			{ 'is-atomic': isAtomic }
 		);
-
+		const href = ( disableHref || callToAction ) && ! forceHref ? null : this.getHref();
 		if ( dismissPreferenceName ) {
 			return (
 				<DismissibleCard
@@ -314,6 +331,7 @@ export class Banner extends Component {
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
+					href={ href }
 				>
 					{ this.getIcon() }
 					{ this.getContent() }
@@ -324,7 +342,7 @@ export class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
+				href={ href }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
 				displayAsLink={ displayAsLink }
 				showLinkIcon={ showLinkIcon }

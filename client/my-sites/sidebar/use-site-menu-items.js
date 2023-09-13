@@ -94,7 +94,7 @@ const useSiteMenuItems = () => {
 		shouldShowThemes,
 		shouldShowInbox,
 		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
-		showSiteLogs: isAtomic,
+		showSiteMonitoring: isAtomic,
 	};
 
 	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );

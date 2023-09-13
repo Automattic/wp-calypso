@@ -1,4 +1,10 @@
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY, TERM_TRIENNIALLY } from '../src/constants';
+import {
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_CENTENNIALLY,
+	TERM_MONTHLY,
+	TERM_TRIENNIALLY,
+} from '../src/constants';
 import { calculateMonthlyPrice, getBillingMonthsForTerm, getTermDuration } from '../src/index';
 
 describe( 'calculateMonthlyPrice', () => {
@@ -65,6 +71,9 @@ describe( 'getTermDuration', () => {
 	} );
 	test( 'should 1095 for triennial term', () => {
 		expect( getTermDuration( TERM_TRIENNIALLY ) ).toBe( 1095 );
+	} );
+	test( 'Should return 35000 for centennial term', () => {
+		expect( getTermDuration( TERM_CENTENNIALLY ) ).toBe( 35000 );
 	} );
 	test( 'should return undefined for unknown term', () => {
 		expect( getTermDuration( 'fake' ) ).toBeUndefined();

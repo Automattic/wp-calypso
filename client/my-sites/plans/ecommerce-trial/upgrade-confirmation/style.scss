@@ -1,7 +1,8 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
-body.ecommerce-trial-upgraded {
+body.ecommerce-trial-upgraded,
+body.business-trial-upgraded {
 	background-color: var(--color-surface);
 	font-family: $font-sf-pro-text;
 

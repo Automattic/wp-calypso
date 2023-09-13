@@ -38,22 +38,6 @@ body.transfer-to-other-user.theme-default.color-scheme {
 }
 
 body.transfer-to-other-user {
-	.formatted-header {
-		&.is-left-align,
-		&.is-right-align {
-			margin-bottom: 24px;
-
-			h1.formatted-header__title {
-				color: $gray-900;
-				font-size: $font-title-medium;
-
-				@include break-mobile {
-					font-size: $font-title-large;
-				}
-			}
-		}
-	}
-
 	.transfer-to-other-user__container {
 		.transfer-to-other-user__main {
 			margin: 16px;

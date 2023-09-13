@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
-import { isAkismetProduct } from '@automattic/calypso-products';
-import { useStripe, useStripeSetupIntentId } from '@automattic/calypso-stripe';
+import { is100Year, isAkismetProduct } from '@automattic/calypso-products';
+import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
 import {
@@ -19,7 +19,7 @@ import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import {
@@ -33,7 +33,6 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
-import type { ReloadSetupIntentId } from '@automattic/calypso-stripe';
 import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -84,14 +83,10 @@ export default function PaymentMethodSelector( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
-	const {
-		reload: reloadSetupIntentId,
-		setupIntentId: stripeSetupIntentId,
-		error: setupIntentError,
-	} = useStripeSetupIntentId();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const isAkismetPurchase = purchase ? isAkismetProduct( purchase ) : false;
+	const is100YearPlanPurchase = purchase ? is100Year( purchase ) : false;
 
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
@@ -105,10 +100,8 @@ export default function PaymentMethodSelector( {
 						translate( 'There was a problem assigning that payment method. Please try again.' )
 				)
 			);
-			// We need to regenerate the setup intent if the form was submitted.
-			reloadSetupIntentId();
 		},
-		[ reduxDispatch, translate, reloadSetupIntentId ]
+		[ reduxDispatch, translate ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -129,8 +122,6 @@ export default function PaymentMethodSelector( {
 			'There was a problem assigning that payment method. Please try again.'
 		);
 		reduxDispatch( errorNotice( message ) );
-		// We need to regenerate the setup intent if the form was submitted.
-		reloadSetupIntentId();
 	} );
 	useHandleRedirectChangeComplete( () => {
 		onPaymentSelectComplete( {
@@ -138,7 +129,6 @@ export default function PaymentMethodSelector( {
 			translate,
 			showSuccessMessage,
 			purchase,
-			reloadSetupIntentId,
 		} );
 	} );
 
@@ -147,12 +137,6 @@ export default function PaymentMethodSelector( {
 			reduxDispatch( errorNotice( stripeLoadingError.message ) );
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
-
-	useEffect( () => {
-		if ( setupIntentError ) {
-			reduxDispatch( errorNotice( setupIntentError.message ) );
-		}
-	}, [ setupIntentError, reduxDispatch ] );
 
 	const elements = useElements();
 
@@ -164,7 +148,6 @@ export default function PaymentMethodSelector( {
 					translate,
 					showSuccessMessage,
 					purchase,
-					reloadSetupIntentId,
 				} );
 			} }
 			onPaymentRedirect={ showRedirectMessage }
@@ -184,7 +167,6 @@ export default function PaymentMethodSelector( {
 							translate,
 							stripe,
 							stripeConfiguration,
-							stripeSetupIntentId,
 							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
 							eventSource: eventContext,
@@ -212,7 +194,10 @@ export default function PaymentMethodSelector( {
 				<div className="payment-method-selector__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						<TosText isAkismetPurchase={ isAkismetPurchase } />
+						<TosText
+							isAkismetPurchase={ isAkismetPurchase }
+							is100YearPlanPurchase={ is100YearPlanPurchase }
+						/>
 					</p>
 				</div>
 
@@ -243,21 +228,17 @@ function onPaymentSelectComplete( {
 	translate,
 	showSuccessMessage,
 	purchase,
-	reloadSetupIntentId,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
 	purchase?: Purchase | undefined;
-	reloadSetupIntentId: ReloadSetupIntentId;
 } ) {
 	if ( purchase ) {
 		showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	} else {
 		showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
 	}
-	// We need to regenerate the setup intent if the form was submitted.
-	reloadSetupIntentId();
 	successCallback();
 }
 

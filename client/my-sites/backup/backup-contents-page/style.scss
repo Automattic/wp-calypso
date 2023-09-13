@@ -28,17 +28,15 @@
 	&__header {
 		padding-left: 2px;
 		padding-right: 2px;
-		padding-bottom: 30px;
 
 		&.daily-backup-status {
 			box-shadow: none;
+			margin-bottom: 0;
 		}
 	}
 
 	&__body {
-		border-top: 1px solid var(--studio-gray-5);
 		overflow-x: auto;
-		padding-top: 30px;
 		padding-bottom: 14px;
 	}
 
@@ -49,6 +47,7 @@
 
 		&.is-root {
 			margin-left: 0;
+			padding-top: 30px;
 		}
 
 		&.wordpress > .file-card .file-card__actions {
@@ -120,6 +119,8 @@
 			}
 
 			&__actions {
+				display: flex;
+				gap: 1rem;
 				margin-top: 16px;
 			}
 
@@ -187,6 +188,56 @@
 
 				p {
 					font-size: 0.875rem;
+				}
+			}
+		}
+
+		.form-checkbox {
+			margin: 8px;
+			&.mixed {
+				background-color: var(--studio-gray-10);
+			}
+		}
+	}
+
+	.file-browser-header {
+		padding: 0 2px;
+		border-bottom: 1px solid var(--studio-gray-5);
+		.file-browser-header__action-buttons .button {
+			padding: 8px 32px;
+			margin-right: 16px;
+		}
+		.file-browser-header__selecting {
+			display: flex;
+			margin-top: 30px;
+
+			.bulk-select {
+				padding: 6px 0;
+			}
+			.count {
+				border: none;
+				font-weight: 400;
+				padding-top: 2px;
+			}
+			.file-browser-header__selecting-info {
+				flex-grow: 1;
+				font-size: $font-body-extra-small;
+				padding: 6px 0;
+			}
+			.form-checkbox {
+				margin: 8px;
+				&.mixed {
+					background-color: var(--studio-gray-10);
+				}
+			}
+			.button {
+				margin-left: 8px;
+				color: #000;
+				&.is-primary {
+					&:disabled {
+						color: #000;
+					}
+					color: #fff;
 				}
 			}
 		}

@@ -87,23 +87,11 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_all_support_eligibility() {
-		if ( $this->is_wpcom ) {
-			$other_eligibility  = \WPCOM_Help_Eligibility::get_user_other_support_eligibility();
-			$ticket_eligibility = \WPCOM_Help_Eligibility::get_user_tickets_support_eligibility();
-			$chat_eligibility   = \WPCOM_Help_Eligibility::get_user_chat_support_eligibility();
-
-			$response = array(
-				'is_user_eligible_for_upwork'  => $other_eligibility['upwork'],
-				'is_user_eligible_for_tickets' => $ticket_eligibility['is_user_eligible'],
-				'is_user_eligible_for_chat'    => $chat_eligibility['is_user_eligible'],
-			);
-		} else {
-			$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/all/mine' );
-			if ( is_wp_error( $body ) ) {
-				return $body;
-			}
-			$response = json_decode( wp_remote_retrieve_body( $body ) );
+		$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/all/mine' );
+		if ( is_wp_error( $body ) ) {
+			return $body;
 		}
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		return rest_ensure_response( $response );
 	}

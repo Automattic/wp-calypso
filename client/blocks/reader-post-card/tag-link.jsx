@@ -1,3 +1,4 @@
+import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -30,10 +31,12 @@ class TagLink extends Component {
 
 	render() {
 		const { tag } = this.props;
+		const path = addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( tag.slug ) }` );
+
 		return (
 			<span className="reader-post-card__tag">
 				<a
-					href={ '/tag/' + tag.slug }
+					href={ path }
 					className="reader-post-card__tag-link ignore-click"
 					onClick={ this.recordSingleTagClick }
 				>

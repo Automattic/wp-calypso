@@ -38,6 +38,5 @@ export type DomainTransferData = Record<
 >;
 
 export type DomainTransferForm = {
-	shouldImportDnsRecords: boolean;
 	domains: DomainTransferData;
 };

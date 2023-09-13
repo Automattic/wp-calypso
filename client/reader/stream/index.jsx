@@ -77,6 +77,7 @@ class ReaderStream extends Component {
 		trackScrollPage: PropTypes.func.isRequired,
 		translate: PropTypes.func,
 		useCompactCards: PropTypes.bool,
+		fixedHeaderHeight: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -443,6 +444,7 @@ class ReaderStream extends Component {
 					compact={ this.props.useCompactCards }
 					siteId={ primarySiteId }
 					showFollowButton={ this.props.showFollowButton }
+					fixedHeaderHeight={ this.props.fixedHeaderHeight }
 				/>
 				{ index === 0 && <ReaderPerformanceTrackerStop /> }
 			</Fragment>

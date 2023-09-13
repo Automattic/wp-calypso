@@ -17,6 +17,12 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 		actionDispatch && actionDispatch();
 	};
 
+	// Display task counter if task is incomplete and has the count properties;
+	const shouldDisplayTaskCounter =
+		task.target_repetitions &&
+		null !== task.repetition_count &&
+		undefined !== task.repetition_count;
+
 	return (
 		<li
 			className={ classnames( 'checklist-item__task', {
@@ -55,6 +61,11 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					) }
 					<span className="checklist-item__text">{ title }</span>
 					{ task.badge_text ? <Badge type="info-blue">{ task.badge_text }</Badge> : null }
+					{ shouldDisplayTaskCounter && (
+						<span className="checklist-item__counter">
+							{ task.repetition_count }/{ task.target_repetitions }
+						</span>
+					) }
 					{ shouldDisplayChevron && (
 						<Gridicon
 							aria-label={ translate( 'Task enabled' ) }

@@ -259,6 +259,7 @@
 		padding-bottom: 0;
 		margin: 0;
 		line-height: 24px;
+		-webkit-font-smoothing: subpixel-antialiased;
 
 		a {
 			color: $woo-purple-70;

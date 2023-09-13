@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import { Fragment, FunctionComponent } from 'react';
@@ -97,7 +98,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleBuiltByWpClick }
-						href="https://wordpress.com/website-design-service/?ref=tools-banner"
+						href={ localizeUrl( 'https://wordpress.com/website-design-service/?ref=tools-banner' ) }
 						target="_blank"
 					>
 						{ translate( 'Get started' ) }

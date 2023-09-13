@@ -1,19 +1,20 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	Onboard,
 	updateLaunchpadSettings,
 	useStarterDesignBySlug,
 	useStarterDesignsQuery,
+	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
 import {
 	isDefaultGlobalStylesVariationSlug,
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
-	isBlankCanvasDesign,
 	isAssemblerDesign,
+	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -21,25 +22,34 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeTypeBadge from 'calypso/components/theme-type-badge';
+import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { setActiveTheme } from 'calypso/state/themes/actions';
+import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import {
+	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
+	getTheme,
+	isSiteEligibleForManagedExternalThemes,
+} from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
 import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
-import { useSite } from '../../../../hooks/use-site';
-import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
-import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import {
 	getDesignEventProps,
@@ -53,7 +63,6 @@ import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import useRecipe from './hooks/use-recipe';
-import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
@@ -65,9 +74,10 @@ import type {
 } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
-const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
@@ -83,15 +93,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
-	const site = useSite();
-	const siteSlug = useSiteSlugParam();
-	const siteId = useSiteIdParam();
-	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const { site, siteSlug, siteSlugOrId } = useSiteData();
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
-	const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } = useSiteGlobalStylesStatus(
-		site?.ID
-	);
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 
@@ -122,18 +127,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		const blankCanvasDesignOffset = allDesigns.designs.findIndex( isBlankCanvasDesign );
-		if ( blankCanvasDesignOffset !== -1 ) {
-			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
-			const blankCanvasDesign = allDesigns.designs.splice( blankCanvasDesignOffset, 1 );
-			if (
-				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-				SITE_ASSEMBLER_AVAILABLE_INTENTS.includes( intent )
-			) {
-				allDesigns.designs.push( ...blankCanvasDesign );
-			}
-		}
-
+		// The design-first flow doesn't support premium themes and custom styles.
 		if ( isDesignFirstFlow ) {
 			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
 
@@ -207,7 +201,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 		select: ( design: Design ) => {
-			if ( isDesignFirstFlow && selectedDesignDetails?.style_variations ) {
+			if ( isDesignFirstFlow && design?.style_variations ) {
 				design.style_variations = [];
 			}
 
@@ -317,22 +311,61 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for unlocking a selected premium design
 
-	useQueryThemes( 'wpcom', { tier: '-marketplace', number: 1000 } );
+	useQueryThemes( 'wpcom', {
+		number: 1000,
+		...( ! isEnabled( 'design-picker/query-marketplace-themes' ) ? { tier: '-marketplace' } : {} ),
+	} );
+	useQueryProductsList();
 	useQuerySitePurchases( site ? site.ID : -1 );
 	useQuerySiteFeatures( [ site?.ID ] );
 
 	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
+	// This is needed while the screenshots property is not being indexed on ElasticSearch
+	// It should be removed when this property is ready on useQueryThemes
+	useQueryTheme( 'wpcom', selectedDesignThemeId );
+	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
+	const fullLengthScreenshot = theme?.screenshots?.[ 0 ]?.replace( /\?.*/, '' );
+
+	const marketplaceThemeProducts =
+		useSelector( ( state ) =>
+			getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( selectedDesignThemeId ) )
+		) || [];
+	const marketplaceProductSlug =
+		marketplaceThemeProducts.length !== 0
+			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts, PLAN_BUSINESS )
+			: null;
+
+	const selectedMarketplaceProduct =
+		marketplaceThemeProducts.find(
+			( product ) => product.product_slug === marketplaceProductSlug
+		) || marketplaceThemeProducts[ 0 ];
+
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
 			: false
 	);
+	const isMarketplaceThemeSubscribed = useSelector(
+		( state ) =>
+			site &&
+			selectedDesignThemeId &&
+			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
+	);
+	const isMarketplaceThemeSubscriptionNeeded = !! (
+		marketplaceProductSlug && ! isMarketplaceThemeSubscribed
+	);
+
+	const isExternallyManagedThemeAvailable = useSelector(
+		( state ) => site?.ID && isSiteEligibleForManagedExternalThemes( state, site.ID )
+	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
-	const shouldUpgrade =
+	const isLockedTheme =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.is_externally_managed &&
+			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
 		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
@@ -380,6 +413,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function handleCheckout() {
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 			theme: selectedDesign?.slug,
+			is_externally_managed: selectedDesign?.is_externally_managed,
 		} );
 
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
@@ -389,6 +423,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		let plan;
 		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
+		} else if ( selectedDesign?.is_externally_managed ) {
+			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS : '';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
@@ -401,6 +437,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
 				plan,
+				extraProducts:
+					selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
+						? [ marketplaceProductSlug ]
+						: [],
 			} );
 
 			setShowUpgradeModal( false );
@@ -458,7 +498,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: globalStylesInPersonalPlan ? 'personal' : 'premium',
+				plan: 'premium',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -482,15 +522,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for submitting the selected design
 
-	const { setDesignOnSite, applyThemeWithPatterns } = useDispatch( SITE_STORE );
+	const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	async function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 
-		await updateLaunchpadSettings( siteSlug, {
-			checklist_statuses: { design_completed: true },
-		} );
+		if ( siteSlugOrId ) {
+			await updateLaunchpadSettings( siteSlugOrId, {
+				checklist_statuses: { design_completed: true },
+			} );
+		}
 
 		if ( siteSlugOrId && _selectedDesign ) {
 			const positionIndex = designs.findIndex(
@@ -499,10 +541,29 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 			setPendingAction( () => {
 				if ( _selectedDesign?.is_virtual ) {
-					return applyThemeWithPatterns( siteSlugOrId, _selectedDesign ).then(
-						( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
-					);
+					const themeId = getThemeIdFromStylesheet( _selectedDesign.recipe?.stylesheet ?? '' );
+					return Promise.resolve()
+						.then( () =>
+							reduxDispatch(
+								activateOrInstallThenActivate(
+									themeId ?? '',
+									site?.ID ?? 0,
+									'assembler',
+									false,
+									false
+								) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
+							)
+						)
+						.then( ( activeThemeStylesheet: string ) =>
+							assembleSite( siteSlugOrId, activeThemeStylesheet, {
+								homeHtml: _selectedDesign.recipe?.pattern_html,
+								headerHtml: _selectedDesign.recipe?.header_html,
+								footerHtml: _selectedDesign.recipe?.footer_html,
+								siteSetupOption: 'assembler-virtual-theme',
+							} )
+						);
 				}
+
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
 					styleVariation: selectedStyleVariation,
 					globalStyles,
@@ -521,7 +582,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	}
 
-	function designYourOwn( design: Design, shouldGoToAssembler: boolean ) {
+	function designYourOwn( design: Design ) {
+		const shouldGoToAssembler = isAssemblerSupported();
 		if ( shouldGoToAssembler ) {
 			const _selectedDesign = {
 				...design,
@@ -551,7 +613,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			'calypso_signup_design_picker_design_your_own_top_button_click',
 			getDesignEventProps( { flow, intent, design } )
 		);
-		designYourOwn( design, true );
+		designYourOwn( design );
 	}
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
@@ -562,6 +624,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				intent,
 				design: _selectedDesign,
 				styleVariation: selectedStyleVariation,
+				colorVariation: selectedColorVariation,
+				fontVariation: selectedFontVariation,
 				optionalProps,
 			} );
 		}
@@ -604,7 +668,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	function getPrimaryActionButton() {
-		if ( shouldUpgrade ) {
+		if ( isLockedTheme ) {
 			return (
 				<Button className="navigation-link" primary borderless={ false } onClick={ upgradePlan }>
 					{ translate( 'Unlock theme' ) }
@@ -660,6 +724,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				<UpgradeModal
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
+					isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
+					isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
+					marketplaceProduct={ selectedMarketplaceProduct }
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
@@ -683,6 +750,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						shouldLimitGlobalStyles
 					}
 					title={ headerDesignTitle }
+					selectedDesignTitle={ designTitle }
 					description={ selectedDesign.description }
 					variations={
 						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
@@ -692,9 +760,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					actionButtons={ actionButtons }
 					recordDeviceClick={ recordDeviceClick }
 					limitGlobalStyles={ shouldLimitGlobalStyles }
-					globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
 					siteId={ site.ID }
 					stylesheet={ selectedDesign.recipe?.stylesheet }
+					screenshot={ fullLengthScreenshot }
+					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }

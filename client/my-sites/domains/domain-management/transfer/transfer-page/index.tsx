@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -11,7 +12,6 @@ import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -30,6 +30,7 @@ import {
 	domainManagementList,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	domainManagementTransferToAnyUser,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { useDispatch } from 'calypso/state';
@@ -59,6 +60,10 @@ import './style.scss';
 type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
 const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
 
+type ErrResponse = {
+	error?: string;
+};
+
 const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
@@ -77,7 +82,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const [ isLockingOrUnlockingDomain, setIsLockingOrUnlockingDomain ] = useState( false );
 	const domain = getSelectedDomain( props );
 
-	const renderBreadcrumbs = () => {
+	const renderHeader = () => {
 		const items = [
 			{
 				// translators: Internet domains, e.g. mygroovydomain.com
@@ -132,6 +137,22 @@ const TransferPage = ( props: TransferPageProps ) => {
 					// translators: Transfer a domain to another user
 					headerText={ __( 'To another user' ) }
 					mainText={ mainText }
+				/>
+			);
+		} else if ( isEnabled( 'domains/transfer-to-any-user' ) ) {
+			options.push(
+				<ActionCard
+					key="transfer-to-any-user"
+					buttonHref={ domainManagementTransferToAnyUser(
+						selectedSite?.slug,
+						selectedDomainName,
+						currentRoute
+					) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another user
+					headerText={ __( 'To another WordPress.com user' ) }
+					mainText={ __( 'Transfer this domain to another WordPress.com user' ) }
 				/>
 			);
 		}
@@ -216,9 +237,13 @@ const TransferPage = ( props: TransferPageProps ) => {
 					getNoticeOptions( selectedDomainName )
 				)
 			);
-		} catch ( { error } ) {
+		} catch ( error ) {
 			dispatch(
-				errorNotice( getDomainTransferCodeError( error ), getNoticeOptions( selectedDomainName ) )
+				errorNotice(
+					// Note: getDomainTransferCodeError handles undefined error codes.
+					getDomainTransferCodeError( ( error as ErrResponse )?.error ),
+					getNoticeOptions( selectedDomainName )
+				)
 			);
 		} finally {
 			setIsRequestingTransferCode( false );
@@ -377,8 +402,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 		<Main className="transfer-page" wideLayout>
 			<QueryDomainInfo domainName={ selectedDomainName } />
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<FormattedHeader brandFont headerText={ __( 'Transfer' ) } align="left" />
+			{ renderHeader() }
 			<Layout>
 				<Column type="main">{ renderContent() }</Column>
 				<Column type="sidebar">

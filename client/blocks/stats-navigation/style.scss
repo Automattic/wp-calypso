@@ -16,6 +16,11 @@
 			height: 24px;
 			cursor: pointer;
 		}
+
+		.page-modules-settings-action:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+			z-index: 0; //fix for left box-shadow being cut off
+		}
 	}
 
 	.section-nav__panel {

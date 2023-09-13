@@ -120,7 +120,9 @@ export default function LicenseProductCard( props: Props ) {
 
 								<div className="license-product-card__description">{ productDescription }</div>
 
-								<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
+								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
+									<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
+								) }
 							</div>
 
 							<div

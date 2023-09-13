@@ -53,7 +53,7 @@ export function activateTheme(
 		} );
 
 		return wpcom.req
-			.post( `/sites/${ siteId }/themes/mine`, {
+			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
 				theme: themeId,
 				...( dontChangeHomepage && { dont_change_homepage: true } ),
 				...( isEnabled( 'themes/theme-switch-persist-template' ) && {

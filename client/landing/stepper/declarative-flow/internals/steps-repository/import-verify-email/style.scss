@@ -1,0 +1,19 @@
+.verify-email--container {
+	max-width: 672px;
+	margin: auto;
+	text-align: center;
+
+	.onboarding-title {
+		margin-bottom: 2rem;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 3.5rem;
+		color: var(--studio-gray-100);
+	}
+
+	.action-buttons__next {
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+	}
+}

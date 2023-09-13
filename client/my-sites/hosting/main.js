@@ -5,11 +5,13 @@ import {
 	FEATURE_SITE_STAGING_SITES,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
@@ -24,6 +26,7 @@ import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mo
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
+import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
@@ -37,7 +40,11 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
-import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
+import {
+	isSiteOnECommerceTrial,
+	isSiteOnMigrationTrial,
+} from 'calypso/state/sites/plans/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
@@ -54,7 +61,7 @@ import './style.scss';
 
 const HEADING_OFFSET = 30;
 
-const ShowEnabledFeatureCards = ( { availableTypes, cards } ) => {
+const ShowEnabledFeatureCards = ( { availableTypes, cards, showDisabledCards = true } ) => {
 	const enabledCards = cards.filter(
 		( card ) => ! card.type || availableTypes.includes( card.type )
 	);
@@ -67,7 +74,7 @@ const ShowEnabledFeatureCards = ( { availableTypes, cards } ) => {
 			{ enabledCards.map( ( card ) => {
 				return <Fragment key={ card.feature }>{ card.content }</Fragment>;
 			} ) }
-			{ disabledCards.length > 0 && (
+			{ showDisabledCards && disabledCards.length > 0 && (
 				<FeatureExample>
 					{ disabledCards.map( ( card ) => {
 						return <Fragment key={ card.feature }>{ card.content }</Fragment>;
@@ -84,6 +91,7 @@ const MainCards = ( {
 	isBasicHostingDisabled,
 	isGithubIntegrationEnabled,
 	isWpcomStagingSite,
+	isMigrationTrial,
 	siteId,
 } ) => {
 	const mainCards = [
@@ -142,7 +150,13 @@ const MainCards = ( {
 		! isBasicHostingDisabled ? 'basic' : null,
 	].filter( ( type ) => type !== null );
 
-	return <ShowEnabledFeatureCards cards={ mainCards } availableTypes={ availableTypes } />;
+	return (
+		<ShowEnabledFeatureCards
+			cards={ mainCards }
+			availableTypes={ availableTypes }
+			showDisabledCards={ ! isMigrationTrial }
+		/>
+	);
 };
 
 const SidebarCards = ( { isBasicHostingDisabled } ) => {
@@ -195,6 +209,7 @@ class Hosting extends Component {
 			isAdvancedHostingDisabled,
 			isBasicHostingDisabled,
 			isECommerceTrial,
+			isMigrationTrial,
 			isSiteAtomic,
 			isTransferring,
 			isWpcomStagingSite,
@@ -206,6 +221,7 @@ class Hosting extends Component {
 			isLoadingSftpData,
 			hasAtomicFeature,
 			hasStagingSitesFeature,
+			isJetpack,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -293,6 +309,7 @@ class Hosting extends Component {
 
 			return (
 				<>
+					{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 					{ isGithubIntegrationEnabled && (
 						<>
 							<QueryKeyringServices />
@@ -307,6 +324,7 @@ class Hosting extends Component {
 								isBasicHostingDisabled={ isBasicHostingDisabled }
 								isGithubIntegrationEnabled={ isGithubIntegrationEnabled }
 								isWpcomStagingSite={ isWpcomStagingSite }
+								isMigrationTrial={ isMigrationTrial }
 								siteId={ siteId }
 							/>
 						</Column>
@@ -344,7 +362,16 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ banner }
+				{ ! isMigrationTrial && banner }
+				{ isMigrationTrial && (
+					<TrialBanner
+						callToAction={
+							<Button primary href={ `/plans/${ siteSlug }` }>
+								{ translate( 'Upgrade plan' ) }
+							</Button>
+						}
+					/>
+				) }
 				{ getContent() }
 				<QueryReaderTeams />
 			</Main>
@@ -365,7 +392,9 @@ export default connect(
 
 		return {
 			teams: getReaderTeams( state ),
+			isJetpack: isJetpackSite( state, siteId ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
+			isMigrationTrial: isSiteOnMigrationTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,

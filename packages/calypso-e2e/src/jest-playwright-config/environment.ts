@@ -141,17 +141,16 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			if ( this.failure ) {
 				let contextIndex = 1;
 
-				// Timestamp (actually date and time) of the failure.
-				const timestamp = new Date()
-					.toISOString()
-					.replace( /T/, '_' )
-					.replace( /\..+/, '' )
-					.replace( /:/g, '-' );
-
 				// Spec file name and step that filed.
-				const artifactPrefix = `${ this.testFilename }__${ sanitizeString(
-					this.failure.name
-				) }__${ timestamp }`;
+				let artifactPrefix = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+
+				if ( env.RUN_ID ) {
+					artifactPrefix = `${ artifactPrefix }__${ sanitizeString( env.RUN_ID ) }`;
+				}
+
+				if ( env.RETRY_COUNT ) {
+					artifactPrefix = `${ artifactPrefix }__retry-${ env.RETRY_COUNT }`;
+				}
 
 				for await ( const context of contexts ) {
 					let pageIndex = 1;
@@ -419,6 +418,17 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 						if ( response.status() === 502 ) {
 							await page.reload();
 						}
+					} );
+
+					// Add route abort for slow requests on AT sites.
+					await page.route( /store\/v1\/cart/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /rest\/v1\/batch/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /pubmine/, ( route ) => {
+						route.abort();
 					} );
 
 					const context = page.context();

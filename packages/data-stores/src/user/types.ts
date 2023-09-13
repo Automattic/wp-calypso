@@ -1,4 +1,5 @@
 import * as selectors from './selectors';
+import type { ActionCreators } from './actions';
 import type { SelectFromMap } from '../mapped-types';
 import type { Action } from 'redux';
 
@@ -86,3 +87,4 @@ export interface CreateAccountAction extends Action {
 }
 
 export type UserSelect = SelectFromMap< typeof selectors >;
+export type UserActions = ActionCreators;

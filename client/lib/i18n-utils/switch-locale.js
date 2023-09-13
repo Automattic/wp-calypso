@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
-import { captureException } from 'calypso/lib/sentry';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -112,7 +112,8 @@ export async function getFile( url ) {
 }
 
 export function getLanguageFile( targetLocaleSlug ) {
-	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
+	const languageRevisions = typeof window !== 'undefined' ? window.languageRevisions : {};
+	const url = getLanguageFileUrl( targetLocaleSlug, 'json', languageRevisions );
 
 	return getFile( url );
 }

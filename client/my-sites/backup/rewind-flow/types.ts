@@ -1,6 +1,7 @@
 export enum RewindFlowPurpose {
 	RESTORE,
 	DOWNLOAD,
+	GRANULAR_RESTORE,
 }
 
 export interface RewindConfig {

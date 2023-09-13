@@ -1,153 +1,99 @@
-import { Button } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { NavigatorHeader, NavigatorItem, NavigatorItemGroup } from '@automattic/onboarding';
 import {
-	NavigationButtonAsItem,
-	NavigatorHeader,
-	NavigatorItemGroup,
-} from '@automattic/onboarding';
-import {
+	Button,
 	__experimentalVStack as VStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
-import { focus } from '@wordpress/dom';
-import { header, footer, layout, color, typography } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef } from 'react';
-import { NAVIGATOR_PATHS } from './constants';
-import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import { header, footer, layout } from '@wordpress/icons';
+import i18n, { useTranslate } from 'i18n-calypso';
+import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
+import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import Survey from './survey';
-import type { MouseEvent } from 'react';
+import { PatternType } from './types';
 
 interface Props {
-	onSelect: ( name: string ) => void;
-	onContinueClick: ( callback?: () => void ) => void;
-	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
+	onMainItemSelect: ( name: string ) => void;
 	surveyDismissed: boolean;
 	setSurveyDismissed: ( dismissed: boolean ) => void;
 	hasSections: boolean;
 	hasHeader: boolean;
 	hasFooter: boolean;
-	hasColor: boolean;
-	hasFont: boolean;
+	onContinueClick: () => void;
 }
 
 const ScreenMain = ( {
-	onSelect,
-	onContinueClick,
-	recordTracksEvent,
+	onMainItemSelect,
 	surveyDismissed,
 	setSurveyDismissed,
 	hasSections,
 	hasHeader,
 	hasFooter,
-	hasColor,
-	hasFont,
+	onContinueClick,
 }: Props ) => {
 	const translate = useTranslate();
-	const [ disabled, setDisabled ] = useState( true );
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const { location } = useNavigator();
-	const isInitialLocation = location.isInitial && ! location.isBack;
-	const headerDescription = translate(
-		'Customize everything by first adding patterns and then choosing styles.'
-	);
+	const { title } = useScreen( 'main' );
+	const isEnglishLocale = useIsEnglishLocale();
+	const { location, params, goTo } = useNavigator();
+	const selectedCategory = params.categorySlug as string;
+	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
+	const buttonText =
+		isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
+			? translate( 'Pick your style' )
+			: translate( 'Save and continue' );
 
-	// Use the mousedown event to prevent either the button focusing or text selection
-	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
-		if ( disabled ) {
-			event.preventDefault();
-			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
-		}
+	const handleNavigatorItemSelect = ( type: PatternType, path: string, category: string ) => {
+		const nextPath = category !== selectedCategory ? `${ path }/${ category }` : path;
+		goTo( nextPath, { replace: true } );
+		onMainItemSelect( type );
 	};
-
-	const handleClick = () => {
-		if ( ! disabled ) {
-			onContinueClick();
-		}
-	};
-
-	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
-	useEffect( () => {
-		const timeoutId = window.setTimeout( () => setDisabled( false ), 300 );
-		return () => {
-			window.clearTimeout( timeoutId );
-		};
-	}, [] );
-
-	useEffect( () => {
-		if ( ! isInitialLocation || ! wrapperRef.current ) {
-			return;
-		}
-
-		const activeElement = wrapperRef.current.ownerDocument.activeElement;
-		if ( wrapperRef.current.contains( activeElement ) ) {
-			return;
-		}
-
-		const firstTabbable = ( focus.tabbable.find( wrapperRef.current ) as HTMLElement[] )[ 0 ];
-		const elementToFocus = firstTabbable ?? wrapperRef.current;
-		elementToFocus.focus();
-	}, [ isInitialLocation ] );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Design your own homepage' ) } /> }
-				description={ headerDescription }
+				title={ <NavigatorTitle title={ title } /> }
+				description={ translate(
+					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
+				) }
 				hideBack
 			/>
-			<div className="screen-container__body" ref={ wrapperRef }>
+			<div className="screen-container__body">
 				<VStack spacing="4">
 					<NavigatorItemGroup title={ translate( 'Patterns' ) }>
-						<NavigationButtonAsItem
+						<NavigatorItem
 							checked={ hasHeader }
-							path={ NAVIGATOR_PATHS.HEADER }
 							icon={ header }
 							aria-label={ translate( 'Header' ) }
-							onClick={ () => onSelect( 'header' ) }
+							onClick={ () =>
+								handleNavigatorItemSelect( 'header', NAVIGATOR_PATHS.MAIN, 'header' )
+							}
+							active={ location.path === NAVIGATOR_PATHS.MAIN_HEADER }
 						>
 							{ translate( 'Header' ) }
-						</NavigationButtonAsItem>
-						<NavigationButtonAsItem
+						</NavigatorItem>
+						<NavigatorItem
 							checked={ hasSections }
-							path={ NAVIGATOR_PATHS.SECTION_PATTERNS }
 							icon={ layout }
 							aria-label={ translate( 'Sections' ) }
-							onClick={ () => onSelect( 'section' ) }
+							onClick={ () =>
+								handleNavigatorItemSelect( 'section', NAVIGATOR_PATHS.SECTIONS, INITIAL_CATEGORY )
+							}
 						>
 							{ translate( 'Sections' ) }
-						</NavigationButtonAsItem>
-						<NavigationButtonAsItem
+						</NavigatorItem>
+
+						<NavigatorItem
 							checked={ hasFooter }
-							path={ NAVIGATOR_PATHS.FOOTER }
 							icon={ footer }
 							aria-label={ translate( 'Footer' ) }
-							onClick={ () => onSelect( 'footer' ) }
+							onClick={ () =>
+								handleNavigatorItemSelect( 'footer', NAVIGATOR_PATHS.MAIN, 'footer' )
+							}
+							active={ location.path === NAVIGATOR_PATHS.MAIN_FOOTER }
 						>
 							{ translate( 'Footer' ) }
-						</NavigationButtonAsItem>
-					</NavigatorItemGroup>
-					<NavigatorItemGroup title={ translate( 'Styles' ) }>
-						<>
-							<NavigationButtonAsItem
-								checked={ hasColor }
-								path={ NAVIGATOR_PATHS.COLOR_PALETTES }
-								icon={ color }
-								aria-label={ translate( 'Colors' ) }
-								onClick={ () => onSelect( 'color-palettes' ) }
-							>
-								{ translate( 'Colors' ) }
-							</NavigationButtonAsItem>
-							<NavigationButtonAsItem
-								checked={ hasFont }
-								path={ NAVIGATOR_PATHS.FONT_PAIRINGS }
-								icon={ typography }
-								aria-label={ translate( 'Fonts' ) }
-								onClick={ () => onSelect( 'font-pairings' ) }
-							>
-								{ translate( 'Fonts' ) }
-							</NavigationButtonAsItem>
-						</>
+						</NavigatorItem>
 					</NavigatorItemGroup>
 				</VStack>
 				{ ! surveyDismissed && <Survey setSurveyDismissed={ setSurveyDismissed } /> }
@@ -155,13 +101,16 @@ const ScreenMain = ( {
 			<div className="screen-container__footer">
 				<Button
 					className="pattern-assembler__button"
-					primary
-					aria-disabled={ disabled }
-					onMouseDown={ handleMouseDown }
-					onClick={ handleClick }
-				>
-					{ translate( 'Save and continue' ) }
-				</Button>
+					disabled={ isButtonDisabled }
+					showTooltip={ isButtonDisabled }
+					onClick={ onContinueClick }
+					label={
+						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : buttonText
+					}
+					variant="primary"
+					text={ buttonText }
+					__experimentalIsFocusable
+				/>
 			</div>
 		</>
 	);

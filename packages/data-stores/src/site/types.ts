@@ -131,6 +131,7 @@ export interface SiteDetails {
 	title: string;
 	visible?: boolean;
 	was_ecommerce_trial?: boolean;
+	was_migration_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
 
@@ -478,15 +479,6 @@ export interface LaunchPadCheckListTasksStatuses {
 	domain_upsell_deferred?: boolean;
 	plan_selected?: boolean;
 	plan_completed?: boolean;
-}
-
-export interface ThemeSetupOptions {
-	trim_content?: boolean;
-	vertical_id?: string;
-	pattern_ids?: number[] | string[];
-	header_pattern_ids?: number[] | string[];
-	footer_pattern_ids?: number[] | string[];
-	posts_source_site_id?: number;
 }
 
 export interface ActiveTheme {

@@ -32,8 +32,8 @@ export default function SiteWelcomeBanner( {
 	);
 
 	const savePreferenceType = useCallback(
-		( type: PreferenceType ) => {
-			dispatch( savePreference( preferenceName, { ...preference, [ type ]: true } ) );
+		( type: PreferenceType, value: boolean | number ) => {
+			dispatch( savePreference( preferenceName, { ...preference, [ type ]: value } ) );
 		},
 		[ dispatch, preference, preferenceName ]
 	);
@@ -47,16 +47,21 @@ export default function SiteWelcomeBanner( {
 
 	const isDismissed = preference?.dismiss;
 	const hideBanner = ! isDashboardView && homePagePreference?.view;
+	const viewDate = preference?.view_date;
 
 	useEffect( () => {
 		if ( ! isDismissed && ! hideBanner ) {
-			savePreferenceType( 'view' );
+			savePreferenceType( 'view', true );
+			if ( ! viewDate ) {
+				savePreferenceType( 'view_date', Date.now() );
+			}
 			handleTrackEvents(
 				isDashboardView
 					? 'calypso_jetpack_agency_dashboard_home_page_banner_view'
 					: 'calypso_jetpack_agency_dashboard_other_page_banner_view'
 			);
 		}
+		// We only want to run this once
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
@@ -65,7 +70,7 @@ export default function SiteWelcomeBanner( {
 	};
 
 	const dismissBanner = useCallback( () => {
-		savePreferenceType( 'dismiss' );
+		savePreferenceType( 'dismiss', true );
 		handleTrackEvents(
 			isDashboardView
 				? 'calypso_jetpack_agency_dashboard_home_page_banner_dismiss_click'

@@ -270,7 +270,8 @@ const getSortedPostsAndPages = ( data ) => {
 			if ( post.id in topPosts ) {
 				topPosts[ post.id ].views += post.views;
 			} else {
-				topPosts[ post.id ] = post;
+				// Use the shallow copy of the post object to avoid mutating the original data.
+				topPosts[ post.id ] = Object.assign( {}, post );
 			}
 		} );
 	} );

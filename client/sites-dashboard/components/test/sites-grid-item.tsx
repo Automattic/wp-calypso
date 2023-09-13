@@ -26,6 +26,11 @@ jest.mock( 'calypso/sites-dashboard/hooks/use-check-site-transfer-status.tsx', (
 	useCheckSiteTransferStatus: jest.fn(),
 } ) );
 
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: jest.fn(),
+} ) );
+
 describe( '<SitesGridItem>', () => {
 	beforeEach( () => {
 		( useCheckSiteTransferStatus as jest.Mock ).mockReturnValue( {

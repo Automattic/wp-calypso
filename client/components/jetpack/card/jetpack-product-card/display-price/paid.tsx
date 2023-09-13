@@ -19,6 +19,7 @@ type OwnProps = {
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
 	expiryDate?: Moment;
+	displayPriceText?: TranslateResult | null;
 };
 
 const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discountedPrice } ) => {
@@ -95,6 +96,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		currencyCode,
 		displayFrom,
 		tooltipText,
+		displayPriceText,
 	} = props;
 	const finalPrice = ( discountedPrice ?? originalPrice ) as number;
 	const isDiscounted = !! ( finalPrice && originalPrice && finalPrice < originalPrice );
@@ -113,6 +115,15 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 	) : (
 		<OriginalPrice { ...props } finalPrice={ finalPrice } />
 	);
+
+	// If the price is varied, we'll show the cost with a preset string.
+	if ( displayPriceText ) {
+		priceComponent = (
+			<span className="display-price__varied-card-price">
+				<PlanPrice productDisplayPrice={ displayPriceText } />
+			</span>
+		);
+	}
 
 	// If the pricing has a limited discount duration, the original price is handled in the duration string
 	// In this case, we'll just show the final price and not the crossed-out price.
@@ -142,14 +153,16 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<span className="display-price__details" aria-hidden="true">
-				<TimeFrame
-					billingTerm={ billingTerm }
-					discountedPriceDuration={ discountedPriceDuration }
-					formattedOriginalPrice={ formattedOriginalPrice }
-					isDiscounted={ isDiscounted }
-				/>
-			</span>
+			{ ! displayPriceText && (
+				<span className="display-price__details" aria-hidden="true">
+					<TimeFrame
+						billingTerm={ billingTerm }
+						discountedPriceDuration={ discountedPriceDuration }
+						formattedOriginalPrice={ formattedOriginalPrice }
+						isDiscounted={ isDiscounted }
+					/>
+				</span>
+			) }
 		</>
 	);
 };

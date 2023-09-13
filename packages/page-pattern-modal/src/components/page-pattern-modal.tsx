@@ -1,5 +1,11 @@
 import { parse as parseBlocks } from '@wordpress/blocks';
-import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
+import {
+	Button,
+	MenuItem as _MenuItem,
+	Modal,
+	NavigableMenu,
+	VisuallyHidden,
+} from '@wordpress/components';
 import { withInstanceId } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -12,6 +18,7 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition, FormattedPattern } from '../pattern-definition';
+import type { ComponentProps, ComponentType } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
@@ -20,7 +27,7 @@ interface PagePatternModalProps {
 	instanceId: string | number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
-	savePatternChoice: ( name: string ) => void;
+	savePatternChoice: ( name: string, selectedCategory: string | null ) => void;
 	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
@@ -31,6 +38,15 @@ interface PagePatternModalProps {
 interface PagePatternModalState {
 	selectedCategory: string | null;
 }
+
+// TODO: Remove this wrapper when MenuItem adds back button prop types
+type MenuItemProps = ComponentProps< typeof _MenuItem >;
+const MenuItem = _MenuItem as ComponentType<
+	MenuItemProps & {
+		variant?: ComponentProps< typeof Button >[ 'variant' ];
+		isPressed?: boolean;
+	}
+>;
 
 class PagePatternModal extends Component< PagePatternModalProps, PagePatternModalState > {
 	constructor( props: PagePatternModalProps ) {
@@ -43,7 +59,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	// Parse patterns blocks and memoize them.
 	getFormattedPatternsByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
 		const blocksByPatternSlugs = patterns.reduce(
-			( prev, { name, description = '', html, pattern_meta } ) => {
+			( prev, { name, title = '', description = '', html, pattern_meta } ) => {
 				// The default value is from https://github.com/Automattic/wp-calypso/blob/d22976d8250fb4479d5677f5434742878fbd0ef3/apps/editing-toolkit/editing-toolkit-plugin/block-patterns/class-block-patterns-from-api.php#L115
 				const viewportWidth = pattern_meta?.viewport_width
 					? Number( pattern_meta.viewport_width )
@@ -51,8 +67,8 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 
 				prev[ name ] = {
 					name,
-					// Keep showing the description as before instead of the title
-					title: description,
+					// A lot of patterns don't have a description, so we fallback to the title if it's blank
+					title: description || title,
 					blocks: html
 						? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
 						: [],
@@ -131,7 +147,8 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	setPattern = ( name: string ) => {
 		// Track selection and mark post as using a pattern in its postmeta.
 		trackSelection( name );
-		this.props.savePatternChoice( name );
+		const { selectedCategory } = this.state;
+		this.props.savePatternChoice( name, selectedCategory );
 
 		// Check to see if this is a blank pattern selection
 		// and reset the pattern if so.
@@ -385,7 +402,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 							{ this.getPatternCategories()?.map( ( { slug, name } ) => (
 								<MenuItem
 									key={ slug }
-									isTertiary
+									variant="tertiary"
 									aria-selected={ slug === selectedCategory }
 									data-slug={ slug }
 									onClick={ () => this.handleCategorySelection( slug ) }

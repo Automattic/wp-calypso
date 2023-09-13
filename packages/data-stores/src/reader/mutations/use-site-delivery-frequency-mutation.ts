@@ -1,12 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EmailDeliveryFrequency } from '../constants';
-import { callApi, applyCallbackToPages } from '../helpers';
-import { useCacheKey, useIsLoggedIn } from '../hooks';
+import { callApi, applyCallbackToPages, buildQueryKey } from '../helpers';
+import { useIsLoggedIn } from '../hooks';
 import type { PagedQueryResult, SiteSubscription, SiteSubscriptionDetails } from '../types';
 
 type SiteSubscriptionDeliveryFrequencyParams = {
 	delivery_frequency: EmailDeliveryFrequency;
 	blog_id: number | string;
+	subscriptionId: number;
 };
 
 type SubscriptionResponse = {
@@ -22,16 +23,9 @@ type SiteSubscriptionDeliveryFrequencyResponse = {
 	subscription: SubscriptionResponse | null;
 };
 
-const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
-	const { isLoggedIn } = useIsLoggedIn();
+const useSiteDeliveryFrequencyMutation = () => {
+	const { id, isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-
-	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
-	const siteSubscriptionDetailsCacheKey = useCacheKey( [
-		'read',
-		'site-subscription-details',
-		...( blog_id ? [ blog_id ] : [] ),
-	] );
 
 	return useMutation( {
 		mutationFn: async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {
@@ -60,31 +54,46 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
 
 			return response;
 		},
-		onMutate: async ( params ) => {
+		onMutate: async ( { blog_id, delivery_frequency, subscriptionId } ) => {
+			const siteSubscriptionsCacheKey = buildQueryKey(
+				[ 'read', 'site-subscriptions' ],
+				isLoggedIn,
+				id
+			);
+			const siteSubscriptionDetailsByBlogIdCacheKey = buildQueryKey(
+				[ 'read', 'site-subscription-details', String( blog_id ) ],
+				isLoggedIn,
+				id
+			);
+			const siteSubscriptionDetailsCacheKey = [
+				'read',
+				'subscriptions',
+				subscriptionId,
+				isLoggedIn,
+				id,
+			];
+
 			await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+			await queryClient.cancelQueries( siteSubscriptionDetailsByBlogIdCacheKey );
 			await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
 					siteSubscriptionsCacheKey
 				);
-			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
-				siteSubscriptionDetailsCacheKey
-			);
-
 			const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', SiteSubscription >(
 				previousSiteSubscriptions,
 				( page ) => ( {
 					...page,
 					subscriptions: page.subscriptions.map( ( siteSubscription ) => {
-						if ( siteSubscription.blog_ID === params.blog_id ) {
+						if ( siteSubscription.blog_ID === blog_id ) {
 							return {
 								...siteSubscription,
 								delivery_methods: {
 									...siteSubscription.delivery_methods,
 									email: {
 										...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
-										post_delivery_frequency: params.delivery_frequency,
+										post_delivery_frequency: delivery_frequency,
 									},
 								},
 							};
@@ -95,6 +104,26 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
 			);
 			queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 
+			const previousSiteSubscriptionDetailsByBlogId =
+				queryClient.getQueryData< SiteSubscriptionDetails >(
+					siteSubscriptionDetailsByBlogIdCacheKey
+				);
+			if ( previousSiteSubscriptionDetailsByBlogId ) {
+				queryClient.setQueryData( siteSubscriptionDetailsByBlogIdCacheKey, {
+					...previousSiteSubscriptionDetailsByBlogId,
+					delivery_methods: {
+						...previousSiteSubscriptionDetailsByBlogId.delivery_methods,
+						email: {
+							...previousSiteSubscriptionDetailsByBlogId.delivery_methods?.email,
+							post_delivery_frequency: delivery_frequency,
+						},
+					},
+				} );
+			}
+
+			const previousSiteSubscriptionDetails = queryClient.getQueryData< SiteSubscriptionDetails >(
+				siteSubscriptionDetailsCacheKey
+			);
 			if ( previousSiteSubscriptionDetails ) {
 				queryClient.setQueryData( siteSubscriptionDetailsCacheKey, {
 					...previousSiteSubscriptionDetails,
@@ -102,25 +131,39 @@ const useSiteDeliveryFrequencyMutation = ( blog_id?: string ) => {
 						...previousSiteSubscriptionDetails.delivery_methods,
 						email: {
 							...previousSiteSubscriptionDetails.delivery_methods?.email,
-							post_delivery_frequency: params.delivery_frequency,
+							post_delivery_frequency: delivery_frequency,
 						},
 					},
 				} );
 			}
 
-			return { previousSiteSubscriptions, previousSiteSubscriptionDetails };
+			return {
+				previousSiteSubscriptions,
+				previousSiteSubscriptionDetailsByBlogId,
+				previousSiteSubscriptionDetails,
+			};
 		},
-		onError: ( err, params, context ) => {
-			queryClient.setQueryData( siteSubscriptionsCacheKey, context?.previousSiteSubscriptions );
+		onError: ( err, { blog_id, subscriptionId }, context ) => {
 			queryClient.setQueryData(
-				siteSubscriptionDetailsCacheKey,
+				buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
+				context?.previousSiteSubscriptions
+			);
+			queryClient.setQueryData(
+				buildQueryKey( [ 'read', 'site-subscription-details', String( blog_id ) ], isLoggedIn, id ),
+				context?.previousSiteSubscriptionDetailsByBlogId
+			);
+			queryClient.setQueryData(
+				[ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ],
 				context?.previousSiteSubscriptionDetails
 			);
 		},
-		onSettled: () => {
+		onSettled: ( _data, _err, { blog_id, subscriptionId } ) => {
 			// pass in a more minimal key, everything to the right will be invalidated
 			queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
-			queryClient.invalidateQueries( siteSubscriptionDetailsCacheKey );
+			queryClient.invalidateQueries(
+				buildQueryKey( [ 'read', 'site-subscription-details', String( blog_id ) ], isLoggedIn, id )
+			);
+			queryClient.invalidateQueries( [ 'read', 'subscriptions', subscriptionId, isLoggedIn, id ] );
 		},
 	} );
 };

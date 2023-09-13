@@ -16,8 +16,7 @@ jest.mock( 'calypso/state/ui/selectors/get-selected-site-slug', () =>
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 jest.mock( 'calypso/state/analytics/actions/record' );
 
-import { render } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { render, renderHook } from '@testing-library/react';
 import {
 	useDaysOfBackupsSavedText,
 	useStorageUsageText,

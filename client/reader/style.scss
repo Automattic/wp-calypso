@@ -385,13 +385,10 @@
 		background: transparent;
 		color: var(--studio-white);
 		position: static;
-
 		@include breakpoint-deprecated( "<480px" ) {
 			.masterbar__item {
 				padding: 0 4px;
-				&:last-child {
-					padding-right: 20px;
-				}
+				width: auto;
 			}
 		}
 	}

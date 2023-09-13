@@ -1,11 +1,14 @@
 import config from '@automattic/calypso-config';
 import {
+	getPlan,
 	isDomainTransfer,
 	isConciergeSession,
 	isPlan,
 	isDomainRegistration,
-	isMonthly,
 	isAkismetFreeProduct,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
@@ -36,11 +39,12 @@ import {
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
+	isMonthlyPurchase,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getAddNewPaymentMethodPath } from '../utils';
+import { getAddNewPaymentMethodPath, isTemporarySitePurchase } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	GetManagePurchaseUrlFor,
@@ -96,18 +100,36 @@ class PurchaseNotice extends Component<
 			return this.getExpiringLaterText( purchase );
 		}
 
-		if ( isMonthly( purchase.productSlug ) ) {
-			const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
+		if ( isMonthlyPurchase( purchase ) ) {
+			const daysToExpiry = expiry.diff( moment(), 'days' );
+
+			if ( isTemporarySitePurchase( purchase ) ) {
+				return translate( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.', {
+					args: {
+						purchaseName: getName( purchase ),
+						daysToExpiry,
+					},
+				} );
+			}
 
 			return translate(
-				'%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
+				'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d days.',
 				{
 					args: {
 						purchaseName: getName( purchase ),
-						expiry: daysToExpiry,
+						daysToExpiry,
 					},
 				}
 			);
+		}
+
+		if ( isTemporarySitePurchase( purchase ) ) {
+			return translate( '%(purchaseName)s will expire and be removed %(expiry)s.', {
+				args: {
+					purchaseName: getName( purchase ),
+					expiry: expiry.fromNow(),
+				},
+			} );
 		}
 
 		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.', {
@@ -284,7 +306,7 @@ class PurchaseNotice extends Component<
 	};
 
 	renderPurchaseExpiringNotice() {
-		const EXCLUDED_PRODUCTS = [ 'ecommerce-trial-bundle-monthly' ];
+		const EXCLUDED_PRODUCTS = [ PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ];
 		const {
 			moment,
 			purchase,
@@ -1029,27 +1051,47 @@ class PurchaseNotice extends Component<
 		);
 	}
 
-	renderECommerceTrialNotice() {
+	renderTrialNotice( productSlug: string ) {
 		const { moment, purchase, selectedSite, translate } = this.props;
 		const onClick = () => {
 			return page( `/plans/${ selectedSite?.slug }` );
 		};
-		const expiry = moment( purchase.expiryDate );
-		const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
+		const expiry = moment.utc( purchase.expiryDate );
+		const daysToExpiry = isExpired( purchase )
+			? 0
+			: Math.ceil( expiry.diff( moment().utc(), 'days', true ) );
+		const productType =
+			productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
+				? translate( 'ecommerce' )
+				: getPlan( PLAN_BUSINESS )?.getTitle();
+		let noticeText;
+		if ( ! daysToExpiry ) {
+			// translators: %productType is the type of product (e.g. ecommerce)
+			noticeText = translate(
+				'Your free trial has expired. Upgrade your plan to keep your %(productType)s features.',
+				{
+					args: {
+						productType: productType as string,
+					},
+				}
+			);
+		} else {
+			// translators: %expiry is the number of days remaining on the trial, %productType is the type of product (e.g. ecommerce)
+			noticeText = translate(
+				'You have %(expiry)s day remaining on your free trial. Upgrade your plan to keep your %(productType)s features.',
+				'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your %(productType)s features.',
+				{
+					count: daysToExpiry,
+					args: {
+						expiry: daysToExpiry,
+						productType: productType as string,
+					},
+				}
+			);
+		}
 
 		return (
-			<Notice
-				showDismiss={ false }
-				status="is-info"
-				text={ translate(
-					'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your ecommerce features.',
-					{
-						args: {
-							expiry: daysToExpiry,
-						},
-					}
-				) }
-			>
+			<Notice showDismiss={ false } status="is-info" text={ noticeText }>
 				<NoticeAction onClick={ onClick }>{ translate( 'Upgrade Now' ) }</NoticeAction>
 			</Notice>
 		);
@@ -1066,8 +1108,11 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 
-		if ( purchase.productSlug === 'ecommerce-trial-bundle-monthly' ) {
-			return this.renderECommerceTrialNotice();
+		if (
+			purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
+			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY
+		) {
+			return this.renderTrialNotice( purchase.productSlug );
 		}
 
 		if ( purchase.isLocked && purchase.isInAppPurchase ) {

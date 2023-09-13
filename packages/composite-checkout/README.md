@@ -122,7 +122,6 @@ It has the following props.
 - `onPaymentRedirect?: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for redirect payment methods when payment begins to redirect. Passed the current payment method id and the transaction response as set by the payment processor function.
 - `onPaymentError?: ({paymentMethodId: string | null, transactionError: string | null }) => null`. A function to call for payment methods when payment is not successful.
 - `onPageLoadError?: ( errorType: string, error: Error, errorData?: Record< string, string | number | undefined > ) => void`. A function to call when an internal error boundary triggered.
-- `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
 - `onPaymentMethodChanged?: (method: string) => void`. A function to call when the active payment method is changed. The argument will be the method's id.
 - `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods). Can be disabled by [useTogglePaymentMethod](#useTogglePaymentMethod).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
@@ -206,6 +205,7 @@ Available props:
 - `areStepsActive?: boolean`. A boolean you can set to explicitly disable all the steps in the group.
 - `stepAreaHeader?: ReactNode`. A slot for additional components that can be injected at the top of the step group.
 - `loadingContent: ReactNode`. A component that will be displayed while checkout is loading. The default is [LoadingContent](#LoadingContent).
+- `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
 - `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
 
 ### CheckoutSubmitButton

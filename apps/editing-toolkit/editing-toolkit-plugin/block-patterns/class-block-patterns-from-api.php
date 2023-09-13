@@ -135,13 +135,6 @@ class Block_Patterns_From_API {
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
 
-					// The API /ptk/patterns/ adds all patterns to the category Featured because it's reused as All.
-					// Here we remove the category from All patterns because the editor crashes
-					// when rendering all patterns in the background.
-					if ( array_key_exists( 'featured', $pattern['categories'] ) ) {
-						unset( $pattern['categories']['featured'] );
-					}
-
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
 						array(

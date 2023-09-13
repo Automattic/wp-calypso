@@ -27,7 +27,11 @@ const SubscriberListContainer = ( {
 			{ grandTotal ? (
 				<>
 					<div className="subscriber-list-container__header">
-						<span className="subscriber-list-container__title">{ translate( 'Total' ) }</span>{ ' ' }
+						<span className="subscriber-list-container__title">
+							{ translate( 'Total', {
+								context: 'Total number of subscribers',
+							} ) }
+						</span>{ ' ' }
 						<span className="subscriber-list-container__subscriber-count">{ total }</span>
 					</div>
 					<SubscriberListActionsBar />

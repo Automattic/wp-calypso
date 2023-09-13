@@ -104,6 +104,44 @@ class Starter_Page_Templates {
 			},
 		);
 		register_meta( 'post', '_starter_page_template', $args );
+
+		$args = array(
+			'type'              => 'array',
+			'description'       => 'Selected category',
+			'show_in_rest'      => array(
+				'schema' => array(
+					'type'  => 'array',
+					'items' => array(
+						'type' => 'string',
+					),
+				),
+			),
+			'single'            => true,
+			'object_subtype'    => 'page',
+			'auth_callback'     => function () {
+				return current_user_can( 'edit_pages' );
+			},
+			'sanitize_callback' => function ( $meta_value ) {
+				if ( ! is_array( $meta_value ) ) {
+					return array();
+				}
+
+				if ( ! class_exists( '\A8C\FSE\Starter_Page_Templates' ) ) {
+					return array();
+				}
+
+				$starter_page_templates = \A8C\FSE\Starter_Page_Templates::get_instance();
+				// We need to pass a locale in here, but we don't actually depend on it, so we use the default site locale to optimise hitting the pattern cache for the site.
+				$all_page_templates     = $starter_page_templates->get_page_templates( $starter_page_templates->get_verticals_locale() );
+				$all_categories = array_merge( ...array_map( 'array_keys', wp_list_pluck( $all_page_templates, 'categories' ) ) );
+
+				$unique_categories = array_unique( $all_categories );
+
+				// Only permit values that are valid categories.
+				return array_intersect( $meta_value, $unique_categories );
+			},
+		);
+		register_meta( 'post', '_wpcom_template_layout_category', $args );
 	}
 
 	/**
@@ -297,7 +335,7 @@ class Starter_Page_Templates {
 	/**
 	 * Gets the locale to be used for fetching the site vertical
 	 */
-	private function get_verticals_locale() {
+	public function get_verticals_locale() {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 		return get_iso_639_locale( $language );

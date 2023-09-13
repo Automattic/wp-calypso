@@ -1,3 +1,4 @@
+import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	FEATURE_PREMIUM_THEMES_V2,
@@ -40,9 +41,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -80,54 +78,28 @@ import {
 	isWporgTheme,
 	getCanonicalTheme,
 	getPremiumThemePrice,
-	getThemeDetailsUrl,
-	getThemeRequestErrors,
-	getThemeForumUrl,
 	getThemeDemoUrl,
+	getThemeDetailsUrl,
+	getThemeForumUrl,
+	getThemeRequestErrors,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
+	getIsLivePreviewSupported,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
+import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
-
-const LivePreviewButton = ( {
-	isActive,
-	isAtomic,
-	isExternallyManagedTheme,
-	isWporg,
-	showTryAndCustomize,
-	siteSlug,
-	stylesheet,
-} ) => {
-	if ( isActive ) {
-		return null;
-	}
-	if ( showTryAndCustomize ) {
-		return null;
-	}
-	if ( isAtomic ) {
-		return null;
-	}
-	if ( isExternallyManagedTheme || isWporg ) {
-		return null;
-	}
-	return (
-		<Button href={ `https://${ siteSlug }/wp-admin/site-editor.php?theme_preview=${ stylesheet }` }>
-			Live Preview (PoC)
-		</Button>
-	);
-};
 
 const noop = () => {};
 
@@ -368,8 +340,8 @@ class ThemeSheet extends Component {
 		return null;
 	}
 
-	previewAction = ( event, type ) => {
-		const { demoUrl, isExternallyManagedTheme } = this.props;
+	previewAction = ( event, type, source ) => {
+		const { demoUrl, isExternallyManagedTheme, isWpcomTheme, isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -378,21 +350,28 @@ class ThemeSheet extends Component {
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
 			theme: this.props.themeId,
 			type,
+			source,
+			/**
+			 * To see tracks as the UI changes depending on whether Live Preview is available or not.
+			 *
+			 * @see https://github.com/Automattic/wp-calypso/pull/80540
+			 */
+			has_live_preview_cta: isLivePreviewSupported,
 		} );
 
-		if ( isExternallyManagedTheme && demoUrl ) {
-			window.open( demoUrl, '_blank', 'noreferrer,noopener' );
-			return;
+		// The embed live demo works only for WP.com themes
+		if ( isWpcomTheme && ! isExternallyManagedTheme ) {
+			const { preview } = this.props.options;
+			this.props.setThemePreviewOptions(
+				this.props.themeId,
+				this.props.defaultOption,
+				this.props.secondaryOption,
+				this.getSelectedStyleVariation()
+			);
+			return preview.action( this.props.themeId );
 		}
 
-		const { preview } = this.props.options;
-		this.props.setThemePreviewOptions(
-			this.props.themeId,
-			this.props.defaultOption,
-			this.props.secondaryOption,
-			this.getSelectedStyleVariation()
-		);
-		return preview.action( this.props.themeId );
+		return window.open( demoUrl, '_blank', 'noreferrer,noopener' );
 	};
 
 	shouldRenderForStaging() {
@@ -468,21 +447,6 @@ class ThemeSheet extends Component {
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
-	// Render "Open Live Demo" pseudo-button for mobiles.
-	// This is a legacy hack that shows the button under the preview screenshot for mobiles
-	// but not for desktop (becomes hidden behind the screenshot).
-	renderPreviewButton() {
-		return (
-			<div className="theme__sheet-preview-link">
-				<span className="theme__sheet-preview-link-text">
-					{ this.props.translate( 'Open live demo', {
-						context: 'Individual theme live preview button',
-					} ) }
-				</span>
-			</div>
-		);
-	}
-
 	renderScreenshot() {
 		const { isWpcomTheme, name: themeName, demoUrl, translate } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
@@ -509,21 +473,39 @@ class ThemeSheet extends Component {
 					className="theme__sheet-screenshot is-active"
 					href={ demoUrl }
 					onClick={ ( e ) => {
-						this.previewAction( e, 'screenshot' );
+						this.previewAction( e, 'screenshot', 'preview' );
 					} }
 					rel="noopener noreferrer"
 				>
-					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
+					{ this.shouldRenderPreviewButton() && (
+						<Button className="theme__sheet-preview-demo-site">
+							{ translate( 'Preview demo site' ) }
+						</Button>
+					) }
 					{ img }
 				</a>
 			);
 		}
 
-		return <div className="theme__sheet-screenshot">{ img }</div>;
+		return (
+			<div className="theme__sheet-screenshot">
+				{ this.shouldRenderPreviewButton() && (
+					<Button
+						className="theme__sheet-preview-demo-site"
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link', 'preview' );
+						} }
+					>
+						{ translate( 'Preview demo site' ) }
+					</Button>
+				) }
+				{ img }
+			</div>
+		);
 	}
 
 	renderWebPreview = () => {
-		const { locale, stylesheet, styleVariations, themeId } = this.props;
+		const { locale, siteSlug, stylesheet, styleVariations, themeId, translate } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
 			isDefaultGlobalStylesVariationSlug( style.slug )
 		);
@@ -534,67 +516,36 @@ class ThemeSheet extends Component {
 			{ language: locale, viewport_unit_to_px: true }
 		);
 
+		// Normally, the ThemeWebPreview component will generate the iframe token via uuid.
+		// Given that this page supports SSR, using uuid will cause hydration mismatch.
+		// To avoid this, we pass a custom token that consists of the theme ID and user/anon ID.
+		const iframeToken = themeId;
+		if ( typeof document !== 'undefined' ) {
+			iframeToken.concat( '-', getTracksAnonymousUserId() ?? siteSlug );
+		}
+
 		return (
 			<div className="theme__sheet-web-preview">
+				{ this.shouldRenderPreviewButton() && (
+					<Button
+						className="theme__sheet-preview-demo-site"
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link', 'preview' );
+						} }
+					>
+						{ translate( 'Preview demo site' ) }
+					</Button>
+				) }
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
 					iframeScaleRatio={ 0.5 }
+					iframeToken={ iframeToken }
 					isShowFrameBorder={ false }
 					isShowDeviceSwitcher={ false }
 					isFitHeight
 				/>
 			</div>
-		);
-	};
-
-	renderSectionNav = ( currentSection ) => {
-		const { siteSlug, themeId, demoUrl, translate, locale, isLoggedIn } = this.props;
-		const filterStrings = {
-			'': translate( 'Overview', { context: 'Filter label for theme content' } ),
-			setup: translate( 'Setup', { context: 'Filter label for theme content' } ),
-			support: translate( 'Support', { context: 'Filter label for theme content' } ),
-		};
-		const sitePart = siteSlug ? `/${ siteSlug }` : '';
-
-		const nav = (
-			<NavTabs label="Details">
-				{ this.getValidSections().map( ( section ) => (
-					<NavItem
-						key={ section }
-						path={ localizeThemesPath(
-							`/theme/${ themeId }${ section ? '/' + section : '' }${ sitePart }`,
-							locale,
-							! isLoggedIn
-						) }
-						selected={ section === currentSection }
-					>
-						{ filterStrings[ section ] }
-					</NavItem>
-				) ) }
-				{ this.shouldRenderPreviewButton() ? (
-					<NavItem
-						path={ demoUrl }
-						onClick={ ( e ) => {
-							this.previewAction( e, 'link' );
-						} }
-						className="theme__sheet-preview-nav-item"
-					>
-						{ translate( 'Open live demo', {
-							context: 'Individual theme live preview button',
-						} ) }
-					</NavItem>
-				) : null }
-			</NavTabs>
-		);
-
-		return (
-			<SectionNav
-				className="theme__sheet-section-nav"
-				selectedText={ filterStrings[ currentSection ] }
-			>
-				{ this.isLoaded() && nav }
-			</SectionNav>
 		);
 	};
 
@@ -625,19 +576,15 @@ class ThemeSheet extends Component {
 	renderHeader = () => {
 		const {
 			author,
+			isLoggedIn,
+			isLivePreviewSupported,
 			isWPForTeamsSite,
 			name,
 			retired,
+			siteId,
 			softLaunched,
+			themeId,
 			translate,
-			siteSlug,
-			stylesheet,
-			isAtomic,
-			isActive,
-			showTryAndCustomize,
-			isExternallyManagedTheme,
-			isWporg,
-			isLoggedIn,
 		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -661,29 +608,19 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
-						{ config.isEnabled( 'themes/block-theme-previews-poc' ) && (
-							<LivePreviewButton
-								isActive={ isActive }
-								isAtomic={ isAtomic }
-								isExternallyManagedTheme={ isExternallyManagedTheme }
-								isWporg={ isWporg }
-								showTryAndCustomize={ showTryAndCustomize }
-								siteSlug={ siteSlug }
-								stylesheet={ stylesheet }
-							></LivePreviewButton>
-						) }
 						{ shouldRenderButton &&
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						{ this.shouldRenderPreviewButton() && (
+						<LivePreviewButton siteId={ siteId } themeId={ themeId } />
+						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
 							<Button
 								onClick={ ( e ) => {
-									this.previewAction( e, 'link' );
+									this.previewAction( e, 'link', 'actions' );
 								} }
 							>
-								{ translate( 'Open live demo', {
-									context: 'Individual theme live preview button',
+								{ translate( 'Demo site', {
+									context: 'The button to open the demo site of individual theme',
 								} ) }
 							</Button>
 						) }
@@ -742,8 +679,8 @@ class ThemeSheet extends Component {
 				disableHref={ url === '' }
 				icon="notice"
 				href={ url }
-				title={ translate( 'Paid themes cannot be purchased on staging sites' ) }
-				description={ translate( 'Subscribe to this premium theme on your production site.' ) }
+				title={ translate( 'Partner themes cannot be purchased on staging sites' ) }
+				description={ translate( 'Subscribe to this theme on your production site.' ) }
 			/>
 		);
 	};
@@ -1081,11 +1018,11 @@ class ThemeSheet extends Component {
 
 		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 			return translate( 'Access this WooCommerce theme with a Business plan!' );
-		} else if ( isExternallyManagedTheme ) {
-			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
+		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
-			return translate( 'Subscribe to this premium theme!' );
+			return translate( 'Subscribe to this theme!' );
 		}
 
 		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
@@ -1104,13 +1041,13 @@ class ThemeSheet extends Component {
 			return translate(
 				'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 			);
-		} else if ( isExternallyManagedTheme ) {
-			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
+		} else if ( isExternallyManagedTheme && ! isMarketplaceThemeSubscribed ) {
+			if ( ! isSiteEligibleForManagedExternalThemes ) {
 				return translate(
-					'Unlock this theme by upgrading to a Business plan and subscribing to this premium theme.'
+					'Unlock this theme by upgrading to a Business plan and subscribing to this theme.'
 				);
 			}
-			return translate( 'Subscribe to this premium theme and unlock all its features.' );
+			return translate( 'Subscribe to this theme and unlock all its features.' );
 		}
 
 		return translate(
@@ -1132,14 +1069,11 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
-		const { globalStylesInPersonalPlan } = this.props;
-		const plan = globalStylesInPersonalPlan ? 'personal' : 'premium';
-
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/${ plan }?${ params.toString() }` );
+		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
@@ -1460,16 +1394,9 @@ class ThemeSheet extends Component {
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
-		const { shouldLimitGlobalStyles, globalStylesInPersonalPlan } =
-			useSiteGlobalStylesStatus( siteId );
+		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
-		return (
-			<Wrapped
-				{ ...props }
-				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-				globalStylesInPersonalPlan={ globalStylesInPersonalPlan }
-			/>
-		);
+		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
 	},
 	'withSiteGlobalStylesStatus'
 );
@@ -1565,6 +1492,8 @@ export default connect(
 		const isMarketplaceThemeSubscribed =
 			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
 
+		const isLivePreviewSupported = getIsLivePreviewSupported( state, themeId, siteId );
+
 		return {
 			...theme,
 			themeId,
@@ -1607,6 +1536,7 @@ export default connect(
 			isLoading,
 			isMarketplaceThemeSubscribed,
 			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
+			isLivePreviewSupported,
 		};
 	},
 	{

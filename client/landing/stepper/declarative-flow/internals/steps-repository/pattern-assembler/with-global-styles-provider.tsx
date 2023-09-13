@@ -8,7 +8,7 @@ import StepperLoader from '../../components/stepper-loader';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 const withGlobalStylesProvider = createHigherOrderComponent(
-	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps > ) => {
+	< OuterProps extends object >( InnerComponent: React.ComponentType< OuterProps > ) => {
 		return ( props: OuterProps ) => {
 			const selectedDesign = useSelect(
 				( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),

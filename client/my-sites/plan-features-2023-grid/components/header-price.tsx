@@ -1,14 +1,11 @@
-import { isWpcomEnterpriseGridPlan, PlanSlug } from '@automattic/calypso-products';
+import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PlanPrice from 'calypso/my-sites/plan-price';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { usePlanPricesDisplay } from '../hooks/use-plan-prices-display';
-import type { PlanProperties } from '../types';
+import { usePlansGridContext } from '../grid-context';
 
 interface PlanFeatures2023GridHeaderPriceProps {
-	planProperties: PlanProperties;
+	planSlug: PlanSlug;
 	isLargeCurrency: boolean;
 	isPlanUpgradeCreditEligible: boolean;
 	currentSitePlanSlug?: string | null;
@@ -23,19 +20,24 @@ const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
 	gap: 4px;
 `;
 
-const Badge = styled.div`
+const Badge = styled.div< { isForIntroOffer?: boolean } >`
 	text-align: center;
 	white-space: nowrap;
 	font-size: 0.75rem;
-	font-weight: 500;
-	letter-spacing: 0.2px;
 	line-height: 1.25rem;
-	padding: 0 12px;
 	border-radius: 4px;
 	height: 21px;
-	background-color: var( --studio-green-0 );
 	display: inline-block;
-	color: var( --studio-green-40 );
+	width: fit-content;
+	letter-spacing: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'inherit' : '0.2px' ) };
+	font-weight: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 600 : 500 ) };
+	text-align: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'left' : 'center' ) };
+	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? '0 6px' : '0 12px' ) };
+	background-color: ${ ( { isForIntroOffer } ) =>
+		isForIntroOffer ? 'inherit' : 'var( --studio-green-0 )' };
+	color: ${ ( { isForIntroOffer } ) =>
+		isForIntroOffer ? 'var( --studio-blue-50 )' : 'var( --studio-green-40 )' };
+	text-transform: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'uppercase' : 'none' ) };
 `;
 
 const HeaderPriceContainer = styled.div`
@@ -124,66 +126,79 @@ const HeaderPriceContainer = styled.div`
 `;
 
 const PlanFeatures2023GridHeaderPrice = ( {
-	planProperties,
+	planSlug,
 	isLargeCurrency,
 	isPlanUpgradeCreditEligible,
-	currentSitePlanSlug,
-	siteId,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
-	const { planName } = planProperties;
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const planPrices = usePlanPricesDisplay( {
-		planSlug: planName as PlanSlug,
-		returnMonthly: true,
-		currentSitePlanSlug,
-		siteId,
-	} );
-	const shouldShowDiscountedPrice = Boolean( planPrices.discountedPrice );
+	const { gridPlansIndex } = usePlansGridContext();
+	const {
+		pricing: { currencyCode, originalPrice, discountedPrice, introOffer },
+	} = gridPlansIndex[ planSlug ];
+	const shouldShowDiscountedPrice = Boolean( discountedPrice.monthly );
+	const isPricedPlan = null !== originalPrice.monthly;
 
-	if ( isWpcomEnterpriseGridPlan( planName ) ) {
+	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
 	}
 
 	return (
-		<HeaderPriceContainer>
-			{ shouldShowDiscountedPrice && (
-				<>
-					<Badge className="plan-features-2023-grid__badge">
-						{ isPlanUpgradeCreditEligible
-							? translate( 'Credit applied' )
-							: translate( 'One time discount' ) }
-					</Badge>
-					<PricesGroup isLargeCurrency={ isLargeCurrency }>
+		<>
+			{ isPricedPlan ? (
+				<HeaderPriceContainer>
+					{ introOffer && (
+						<>
+							<Badge className="plan-features-2023-grid__badge" isForIntroOffer={ true }>
+								{ translate( 'Limited Time Offer' ) }
+							</Badge>
+							<PlanPrice
+								currencyCode={ currencyCode }
+								rawPrice={ introOffer.rawPrice }
+								displayPerMonthNotation={ false }
+								isLargeCurrency={ isLargeCurrency }
+								priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							/>
+						</>
+					) }
+					{ ! introOffer && shouldShowDiscountedPrice && (
+						<>
+							<Badge className="plan-features-2023-grid__badge">
+								{ isPlanUpgradeCreditEligible
+									? translate( 'Credit applied' )
+									: translate( 'One time discount' ) }
+							</Badge>
+							<PricesGroup isLargeCurrency={ isLargeCurrency }>
+								<PlanPrice
+									currencyCode={ currencyCode }
+									rawPrice={ originalPrice.monthly }
+									displayPerMonthNotation={ false }
+									isLargeCurrency={ isLargeCurrency }
+									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+									original
+								/>
+								<PlanPrice
+									currencyCode={ currencyCode }
+									rawPrice={ discountedPrice.monthly }
+									displayPerMonthNotation={ false }
+									isLargeCurrency={ isLargeCurrency }
+									priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+									discounted
+								/>
+							</PricesGroup>
+						</>
+					) }
+					{ ! introOffer && ! shouldShowDiscountedPrice && (
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ planPrices.originalPrice }
+							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
-							original
 						/>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ planPrices.discountedPrice }
-							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
-							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
-							discounted
-						/>
-					</PricesGroup>
-				</>
-			) }
-			{ ! shouldShowDiscountedPrice && (
-				<PlanPrice
-					currencyCode={ currencyCode }
-					rawPrice={ planPrices.originalPrice }
-					displayPerMonthNotation={ false }
-					isLargeCurrency={ isLargeCurrency }
-					priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
-				/>
-			) }
-		</HeaderPriceContainer>
+					) }
+				</HeaderPriceContainer>
+			) : null }
+		</>
 	);
 };
 

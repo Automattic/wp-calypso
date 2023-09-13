@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { fireEvent, render, renderHook, screen } from '@testing-library/react';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
 import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';

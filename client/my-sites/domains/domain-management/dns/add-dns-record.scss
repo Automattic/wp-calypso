@@ -4,33 +4,6 @@
 @import "@wordpress/base-styles/colors";
 
 .add-dns-record {
-	header.formatted-header {
-		margin-bottom: 4px;
-
-		@include break-mobile {
-			margin-bottom: initial;
-		}
-
-		h1.formatted-header__title {
-			color: $gray-900;
-			font-size: $font-title-medium;
-
-			@include break-mobile {
-				font-size: $font-title-large;
-			}
-		}
-	}
-
-	.add-dns-record__mobile-subtitle {
-		padding: 0 16px;
-		color: var(--studio-gray-50);
-		font-size: $font-body-small;
-
-		@include break-mobile {
-			display: none;
-		}
-	}
-
 	.add-dns-record__sidebar {
 		display: none;
 		margin-top: 20px;

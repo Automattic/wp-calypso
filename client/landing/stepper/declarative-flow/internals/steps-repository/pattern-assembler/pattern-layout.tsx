@@ -19,6 +19,7 @@ type PatternLayoutProps = {
 	onAddFooter?: () => void;
 	onReplaceFooter?: () => void;
 	onDeleteFooter?: () => void;
+	onShuffle: ( type: string, pattern: Pattern, position?: number ) => void;
 };
 
 const PatternLayout = ( {
@@ -28,6 +29,7 @@ const PatternLayout = ( {
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
+	onShuffle,
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 
@@ -37,7 +39,8 @@ const PatternLayout = ( {
 				<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
 					{ ( m: any ) => (
 						<m.ul className="pattern-layout__list" layoutScroll>
-							{ sections.map( ( { title, category, key }: Pattern, index ) => {
+							{ sections.map( ( pattern: Pattern, index ) => {
+								const { title, category, key } = pattern;
 								return (
 									<m.li
 										key={ key }
@@ -55,6 +58,7 @@ const PatternLayout = ( {
 											onDelete={ () => onDeleteSection( index ) }
 											onMoveUp={ () => onMoveUpSection( index ) }
 											onMoveDown={ () => onMoveDownSection( index ) }
+											onShuffle={ () => onShuffle( 'sections', pattern, index ) }
 											disableMoveUp={ index === 0 }
 											disableMoveDown={ sections?.length === index + 1 }
 										/>

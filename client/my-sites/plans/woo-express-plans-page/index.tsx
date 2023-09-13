@@ -16,10 +16,10 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import { WooExpressPlans } from 'calypso/my-sites/plans/ecommerce-trial/wooexpress-plans';
+import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { useSelector } from 'calypso/state';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
+import { WooExpressPlans } from '../ecommerce-trial/wooexpress-plans';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';

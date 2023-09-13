@@ -4,29 +4,6 @@
 .intro-pricing-banner {
 	display: flex;
 	justify-content: center;
-
-	&.is-sticky {
-		position: fixed;
-		width: 100%;
-		left: 0;
-		top: var(--masterbar-height);
-		background-color: var(--color-surface);
-		box-shadow: 0 4px 4px 0 #00000014;
-		z-index: 2;
-		height: 74px;
-
-		align-items: center;
-
-		@include break-large {
-			height: 52px;
-		}
-
-
-		@media (max-width: $break-mobile) {
-			justify-content: flex-start;
-			padding-left: 15px;
-		}
-	}
 }
 
 .intro-pricing-banner.is-loading .intro-pricing-banner__item-label {

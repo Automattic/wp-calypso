@@ -42,7 +42,7 @@ describe( 'AuthFormHeader', () => {
 		const authQuery = {
 			...DEFAULT_PROPS.authQuery,
 			from: 'woocommerce-payments',
-			woodna_service_name: 'WooCommerce Payments',
+			woodna_service_name: 'WooPayments',
 		};
 		const props = {
 			...DEFAULT_PROPS,
@@ -53,7 +53,7 @@ describe( 'AuthFormHeader', () => {
 		// Notice we have \xa0. This is needed when we compare translated text.
 		// Please refer to https://stackoverflow.com/questions/54242039/intl-numberformat-space-character-does-not-match
 		const expectedText =
-			'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments';
+			'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments';
 
 		render( <AuthFormHeader { ...props } /> );
 

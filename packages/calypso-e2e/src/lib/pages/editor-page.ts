@@ -16,7 +16,10 @@ import {
 	EditorWelcomeTourComponent,
 	EditorBlockToolbarComponent,
 	EditorTemplateModalComponent,
+	EditorPopoverMenuComponent,
 	TemplateCategory,
+	BlockToolbarButtonIdentifier,
+	CookieBannerComponent,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
@@ -57,6 +60,8 @@ export class EditorPage {
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorTemplateModalComponent: EditorTemplateModalComponent;
+	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
+	private cookieBannerComponent: CookieBannerComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -85,6 +90,8 @@ export class EditorPage {
 			this.editor
 		);
 		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
+		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -95,8 +102,13 @@ export class EditorPage {
 	 * Example "new post": {@link https://wordpress.com/post}
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
-	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( type ), { timeout: 30 * 1000 } );
+	async visit(
+		type: 'post' | 'page' = 'post',
+		{ siteSlug = '' }: { siteSlug?: string } = {}
+	): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
+			timeout: 30 * 1000,
+		} );
 		await this.waitUntilLoaded();
 
 		return request;
@@ -116,6 +128,9 @@ export class EditorPage {
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+
+		// Accept the Cookie banner.
+		await this.cookieBannerComponent.acceptCookie();
 	}
 
 	/**
@@ -167,18 +182,28 @@ export class EditorPage {
 	 * Select a template category from the sidebar of options.
 	 *
 	 * @param {TemplateCategory} category Name of the category to select.
+	 * @param param1 Keyed object parameter.
+	 * @param {number} param1.timeout Timeout to apply.
 	 */
-	async selectTemplateCategory( category: TemplateCategory ) {
-		return await this.editorTemplateModalComponent.selectTemplateCategory( category );
+	async selectTemplateCategory(
+		category: TemplateCategory,
+		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
+	) {
+		return await this.editorTemplateModalComponent.selectTemplateCategory( category, timeout );
 	}
 
 	/**
 	 * Select a template from the grid of options.
 	 *
 	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param param1 Keyed object parameter.
+	 * @param {number} param1.timeout Timeout to apply.
 	 */
-	async selectTemplate( label: string ) {
-		return await this.editorTemplateModalComponent.selectTemplate( label );
+	async selectTemplate(
+		label: string,
+		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
+	) {
+		return await this.editorTemplateModalComponent.selectTemplate( label, timeout );
 	}
 
 	/**
@@ -415,6 +440,44 @@ export class EditorPage {
 		await this.editorBlockToolbarComponent.moveDown();
 	}
 
+	/**
+	 * Selects the matching option from the popover triggered by clicking
+	 * on a block toolbar button.
+	 *
+	 * @param {string} name Accessible name of the element.
+	 */
+	async selectFromToolbarPopover( name: string ) {
+		await this.editorPopoverMenuComponent.clickMenuButton( name );
+	}
+
+	/**
+	 * Clicks on a button with either the name or aria-label on the
+	 * editor toolbar.
+	 *
+	 * @param {BlockToolbarButtonIdentifier} name Object specifying either the
+	 * 	text label or aria-label of the button to be clicked.
+	 */
+	async clickBlockToolbarButton( name: BlockToolbarButtonIdentifier ): Promise< void > {
+		await this.editorBlockToolbarComponent.clickPrimaryButton( name );
+	}
+
+	/**
+	 * Select the parent block of the current block using the block toolbar.
+	 * This will fail and throw if the currently focused block doesn't have a parent.
+	 */
+	async selectParentBlock( expectedParentBlockName: string ): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
+		} else {
+			await this.editorBlockToolbarComponent.clickOptionsButton();
+			await this.editorPopoverMenuComponent.clickMenuButton(
+				`Select parent block (${ expectedParentBlockName })`
+			);
+			// It stays open on modal! We have to close it again.
+			await this.editorBlockToolbarComponent.clickOptionsButton();
+		}
+	}
+
 	//#endregion
 
 	//#region Settings Sidebar
@@ -564,7 +627,10 @@ export class EditorPage {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {URL} Published article's URL.
 	 */
-	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
+	async publish( {
+		visit = false,
+		timeout,
+	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
 		const actionsArray = [];
 
@@ -586,12 +652,14 @@ export class EditorPage {
 				this.page.waitForResponse(
 					async ( response ) =>
 						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
-						response.request().method() === 'POST'
+						response.request().method() === 'POST',
+					{ timeout: timeout }
 				),
 				this.page.waitForResponse(
 					async ( response ) =>
 						/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
-						response.request().method() === 'PUT'
+						response.request().method() === 'PUT',
+					{ timeout: timeout }
 				),
 			] ),
 			...actionsArray,
@@ -605,7 +673,7 @@ export class EditorPage {
 		}
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL );
+			await this.visitPublishedPost( publishedURL, { timeout: timeout } );
 		}
 
 		return new URL( publishedURL );
@@ -669,7 +737,10 @@ export class EditorPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	private async visitPublishedPost( url: string ): Promise< void > {
+	private async visitPublishedPost(
+		url: string,
+		{ timeout }: { timeout?: number } = {}
+	): Promise< void > {
 		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
 		// panel to close immediately and leave the post in the unsaved state for
 		// some reason. Since the post state is unsaved, the warning dialog will be
@@ -681,7 +752,7 @@ export class EditorPage {
 		// this listener can be removed.
 		this.allowLeavingWithoutSaving();
 
-		await this.page.goto( url, { waitUntil: 'domcontentloaded' } );
+		await this.page.goto( url, { waitUntil: 'domcontentloaded', timeout: timeout } );
 
 		await reloadAndRetry( this.page, confirmPostShown );
 
@@ -698,7 +769,7 @@ export class EditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.waitForSelector( '.entry-content', { timeout: 15 * 1000 } );
+			await page.getByRole( 'main' ).waitFor( { timeout: timeout } );
 		}
 	}
 

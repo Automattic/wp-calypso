@@ -3,20 +3,20 @@ import {
 	isPremiumPlan,
 	isPersonalPlan,
 	planLevelsMatch,
-	PlanSlug,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { isPopularPlan } from './is-popular-plan';
-import type { PlansIntent } from './use-wpcom-plans-with-intent';
+import type { PlansIntent } from './use-grid-plans';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {
-	intent: PlansIntent;
+	intent?: PlansIntent;
 	planSlugs: PlanSlug[];
 	currentSitePlanSlug?: PlanSlug | null;
 	selectedPlan?: PlanSlug; // Value of the `?plan=` query param, so we can highlight a given plan.
-	usePlanUpgradeabilityCheck?: ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
-		[ planSlug in PlanSlug ]: boolean;
+	planUpgradeability?: {
+		[ key: string ]: boolean;
 	};
 }
 
@@ -26,10 +26,9 @@ const useHighlightLabels = ( {
 	planSlugs,
 	currentSitePlanSlug,
 	selectedPlan,
-	usePlanUpgradeabilityCheck,
+	planUpgradeability,
 }: Props ) => {
 	const translate = useTranslate();
-	const planUpgradeability = usePlanUpgradeabilityCheck?.( { planSlugs } );
 
 	return planSlugs.reduce( ( acc, planSlug ) => {
 		const isCurrentPlan = currentSitePlanSlug === planSlug;

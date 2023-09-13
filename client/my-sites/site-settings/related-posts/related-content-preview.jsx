@@ -1,5 +1,9 @@
 import { localize } from 'i18n-calypso';
 import FormLabel from 'calypso/components/forms/form-label';
+import {
+	getLocalizedDate,
+	phpToMomentDatetimeFormat,
+} from 'calypso/my-sites/site-settings/date-time-format/utils';
 
 const RelatedContentPreview = ( {
 	showContext,
@@ -7,6 +11,8 @@ const RelatedContentPreview = ( {
 	showHeadline,
 	showThumbnails,
 	translate,
+	dateFormat,
+	timezoneString,
 } ) => {
 	const posts = [
 		{
@@ -40,7 +46,13 @@ const RelatedContentPreview = ( {
 			} ),
 		},
 	];
-	const postDate = `August 8, ${ new Date().getFullYear() - 1 }`;
+	let postDate = '';
+	if ( dateFormat && timezoneString ) {
+		const localizedDate = getLocalizedDate( timezoneString );
+		postDate = phpToMomentDatetimeFormat( localizedDate, dateFormat );
+	} else {
+		postDate = `August 8, ${ new Date().getFullYear() - 1 }`;
+	}
 
 	return (
 		<div className="related-posts__preview">

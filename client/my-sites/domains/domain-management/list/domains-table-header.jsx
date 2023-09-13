@@ -1,5 +1,5 @@
 import { Button, CompactCard } from '@automattic/components';
-import { Icon, arrowDown, arrowUp } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -63,7 +63,7 @@ class DomainsTableHeader extends PureComponent {
 		const isActiveColumn = sortKey === column.name;
 		const columnSortOrder = isActiveColumn ? sortOrder : column.initialSortOrder;
 
-		return <Icon icon={ columnSortOrder === 1 ? arrowDown : arrowUp } size={ 16 } />;
+		return <Icon icon={ columnSortOrder === 1 ? chevronDown : chevronUp } size={ 16 } />;
 	}
 
 	getSingleSortOption( column, sortOrder ) {

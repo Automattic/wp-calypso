@@ -1,4 +1,3 @@
-import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -7,6 +6,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
+import { useSelector } from 'calypso/state';
+import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -106,7 +108,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
@@ -141,7 +143,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						/>
 					</ThumbnailWrapper>
 					{ showSiteRenewLink && site.plan?.expired && (
-						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
+						<SitesGridActionRenew site={ site } hideRenewLink={ isTrialSitePlan } />
 					) }
 				</>
 			}
@@ -155,7 +157,10 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						<div className={ badges }>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
-							{ getSiteLaunchStatus( site ) !== 'public' && (
+							{ isTrialSitePlan && (
+								<SitesMigrationTrialBadge>{ __( 'Trial' ) }</SitesMigrationTrialBadge>
+							) }
+							{ getSiteLaunchStatus( site ) !== 'public' && ! isTrialSitePlan && (
 								<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 							) }
 							<EllipsisMenuContainer>

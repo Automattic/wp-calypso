@@ -11,13 +11,11 @@ jobs:
     name: Run PHPunit tests.
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '^18.13.0'
-
       - name: Checkout code
         uses: actions/checkout@HEAD
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
 
       - name: Composer install
         uses: nick-zh/composer-php@HEAD

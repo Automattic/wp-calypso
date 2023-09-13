@@ -97,6 +97,8 @@ class Login extends Component {
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
+		isGravatar: PropTypes.bool,
+		isGravatarLoginPage: PropTypes.bool,
 	};
 
 	state = {
@@ -168,7 +170,7 @@ class Login extends Component {
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
-		} else if ( this.props.isWoo ) {
+		} else if ( this.props.isWoo || this.props.isGravatar ) {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
@@ -291,6 +293,7 @@ class Login extends Component {
 			action,
 			currentQuery,
 			isGravatar,
+			isGravatarLoginPage,
 			isWooCoreProfilerFlow,
 		} = this.props;
 
@@ -388,7 +391,7 @@ class Login extends Component {
 						<p className="login__header-subtitle">
 							{ this.showContinueAsUser()
 								? translate(
-										"All Woo stores are powered by WordPress.com!{{br/}}First, select the account you'd like to use.",
+										"All Woo Express stores are powered by WordPress.com!{{br/}}First, select the account you'd like to use.",
 										{
 											components: {
 												br: <br />,
@@ -396,7 +399,7 @@ class Login extends Component {
 										}
 								  )
 								: translate(
-										"All Woo stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+										"All Woo Express stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 										{
 											components: {
 												signupLink: <a href={ this.getSignupUrl() } />,
@@ -436,16 +439,17 @@ class Login extends Component {
 			}
 
 			if ( isGravatar ) {
-				headerText = translate( 'Welcome back to %(clientTitle)s!', {
-					args: {
-						clientTitle: oauth2Client.title,
-					},
-				} );
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate( 'Log in with your WordPress.com account' ) }
-					</p>
-				);
+				headerText = translate( 'Login to Gravatar' );
+
+				if ( isGravatarLoginPage ) {
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate(
+								'If you prefer logging in with a password, or a social media account, choose below:'
+							) }
+						</p>
+					);
+				}
 			}
 		} else if ( isWooCoreProfilerFlow ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow;
@@ -554,6 +558,9 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
+				{ isGravatarLoginPage && (
+					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				) }
 				{ preHeader }
 				<div className="login__form-header">{ headerText }</div>
 				{ postHeader }
@@ -598,6 +605,7 @@ class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			currentQuery,
+			isGravatarLoginPage,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -724,6 +732,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
+				hideSignupLink={ isGravatarLoginPage }
 			/>
 		);
 	}
@@ -801,7 +810,10 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: true,
-				flow: ownProps.isJetpack ? 'jetpack' : null,
+				flow:
+					( ownProps.isJetpack && 'jetpack' ) ||
+					( ownProps.isGravatar && ownProps.oauth2Client.name ) ||
+					null,
 			} ),
 	} )
 )( localize( Login ) );

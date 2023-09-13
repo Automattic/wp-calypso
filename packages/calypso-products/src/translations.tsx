@@ -1,6 +1,7 @@
 import { translate, useTranslate } from 'i18n-calypso';
 import { createElement, useCallback, useMemo } from 'react';
 import {
+	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -14,30 +15,40 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_SCAN_BI_YEARLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SCAN_REALTIME,
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SEARCH_BI_YEARLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	PLAN_JETPACK_COMPLETE_BI_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_JETPACK_SEARCH_FREE,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_BOOST_BI_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_AI_YEARLY,
+	PRODUCT_JETPACK_AI_BI_YEARLY,
 	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_ALL_SITES,
 	JETPACK_TAG_FOR_BLOGGERS,
@@ -57,9 +68,19 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
+	PRODUCT_JETPACK_STATS_BI_YEARLY,
+	PRODUCT_JETPACK_STATS_YEARLY,
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
+	PRODUCT_JETPACK_MONITOR_YEARLY,
+	PRODUCT_JETPACK_MONITOR_MONTHLY,
+	PRODUCT_WOOCOMMERCE_BOOKINGS,
+	PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS,
+	PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES,
+	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
+	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
+	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -92,10 +113,12 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		),
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_BOOST ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
@@ -108,13 +131,20 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: translate( 'Scan' ),
 		[ PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SEARCH_FREE ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
+			components: {
+				s: <span style={ { whiteSpace: 'nowrap' } } />,
+			},
+		} ),
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 			components: {
 				s: <span style={ { whiteSpace: 'nowrap' } } />,
@@ -125,17 +155,29 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 				s: <span style={ { whiteSpace: 'nowrap' } } />,
 			},
 		} ),
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: translate( 'Social', {
+			context: 'Jetpack product name',
+		} ),
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social', { context: 'Jetpack product name' } ),
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social', {
+			context: 'Jetpack product name',
+		} ),
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: translate( 'Social', {
 			context: 'Jetpack product name',
 		} ),
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Social', { context: 'Jetpack product name' } ),
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
 			context: 'Jetpack product name',
 		} ),
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI' ),
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
 	};
 };
 
@@ -155,8 +197,10 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const backup = translate( 'VaultPress Backup' );
-	const search = translate( 'Site Search' );
-	const stats = translate( 'Stats' );
+	const search = translate( 'Site Search', { context: 'Jetpack product name' } );
+	const stats = translate( 'Stats (Personal)', { context: 'Jetpack product name' } );
+	const statsFree = translate( 'Stats (Free)', { context: 'Jetpack product name' } );
+	const statsCommercial = translate( 'Stats', { context: 'Jetpack product name' } );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
 		<>
@@ -168,13 +212,13 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const aiAssistant = translate( 'AI' );
+	const aiAssistant = translate( 'AI', { context: 'Jetpack product name' } );
 	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
 		},
 	} );
-	const boost = translate( 'Boost' );
+	const boost = translate( 'Boost', { context: 'Jetpack product name' } );
 	const socialBasic = translate( 'Social', { context: 'Jetpack product name' } );
 	const socialAdvanced = translate( 'Social', { context: 'Jetpack product name' } );
 
@@ -230,35 +274,47 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boost,
 		[ PRODUCT_JETPACK_BOOST ]: boost,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: search,
 		[ PRODUCT_JETPACK_SEARCH ]: search,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_WPCOM_SEARCH ]: search,
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: stats,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercial,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercial,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercial,
 		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: stats,
-		[ PRODUCT_JETPACK_STATS_FREE ]: stats,
+		[ PRODUCT_JETPACK_STATS_FREE ]: statsFree,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPress,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPress,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBasic,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasic,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasic,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvanced,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvanced,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvanced,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
@@ -301,33 +357,47 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 	const boost = translate( 'Get Boost' );
 	const aiAssistant = translate( 'Get AI' );
 	const social = translate( 'Get Social' );
+	const stats = translate( 'Get Stats' );
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistant,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backup,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boost,
 		[ PRODUCT_JETPACK_BOOST ]: boost,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: search,
 		[ PRODUCT_JETPACK_SEARCH ]: search,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPress,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPress,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: social,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: social,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: social,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: social,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: stats,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: stats,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: stats,
 	};
 };
 
@@ -370,6 +440,14 @@ export const getJetpackProductsTaglines = (): Record<
 	);
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: {
+			default: aiAssistantTagLine,
+			owned: aiAssistantOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_AI_YEARLY ]: {
+			default: aiAssistantTagLine,
+			owned: aiAssistantOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: {
 			default: aiAssistantTagLine,
 			owned: aiAssistantOwnedTagLine,
 		},
@@ -418,6 +496,10 @@ export const getJetpackProductsTaglines = (): Record<
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: {
+			default: boostTagLine,
+			owned: boostOwnedTagLine,
+		},
 		[ PRODUCT_JETPACK_BOOST ]: {
 			default: boostTagLine,
 			owned: boostOwnedTagLine,
@@ -426,13 +508,20 @@ export const getJetpackProductsTaglines = (): Record<
 			default: boostTagLine,
 			owned: boostOwnedTagLine,
 		},
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: { default: statsTagline },
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: { default: statsTagline },
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: { default: statsTagline },
 		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: { default: statsTagline },
 		[ PRODUCT_JETPACK_STATS_FREE ]: { default: statsTagline },
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: {
+			default: scanTagline,
+			owned: scanOwnedTagline,
+		},
 		[ PRODUCT_JETPACK_SCAN ]: {
 			default: scanTagline,
 			owned: scanOwnedTagline,
@@ -441,12 +530,16 @@ export const getJetpackProductsTaglines = (): Record<
 			default: scanTagline,
 			owned: scanOwnedTagline,
 		},
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: { default: antiSpamTagline },
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: { default: antiSpamTagline },
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: { default: antiSpamTagline },
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: { default: videoPressTagLine },
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: { default: videoPressTagLine },
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: { default: videoPressTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: { default: socialTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: { default: socialTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: {
@@ -512,17 +605,23 @@ export const getJetpackProductDisclaimers = (
 		<></>
 	);
 
+	const monitorDisclaimer = translate( 'Limit of 20 SMS per site, each month.' );
+
 	return {
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupDisclaimer,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorDisclaimer,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorDisclaimer,
 	};
 };
 
@@ -568,34 +667,55 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		'Easily share your website content on your social media channels from one place.'
 	);
 
+	const statsCommercialDescription = translate( 'The most advanced stats Jetpack has to offer.' );
+
+	const monitorDescription = translate(
+		'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantDescription,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeDescription,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupDescription,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupDescription,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupDescription,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDescription,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostDescription,
 		[ PRODUCT_JETPACK_BOOST ]: boostDescription,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostDescription,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: searchDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchDescription,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPressDescription,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressDescription,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpamDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedDescription,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialDescription,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialDescription,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialDescription,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorDescription,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorDescription,
 	};
 };
 
@@ -631,34 +751,51 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	//TODO: Fill in the right value.
 	const socialAdvancedShortDescription = translate( 'Write once, post everywhere.' );
 
+	const statsCommercialShortDescription = translate(
+		'The most advanced stats Jetpack has to offer.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantShortDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantShortDescription,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupShortDescription,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostShortDescription,
 		[ PRODUCT_JETPACK_BOOST ]: boostShortDescription,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostShortDescription,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: searchShortDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchShortDescription,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchShortDescription,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scanShortDescription,
 		[ PRODUCT_JETPACK_SCAN ]: scanShortDescription,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanShortDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanShortDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanShortDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPressShortDescription,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressShortDescription,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressShortDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpamShortDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamShortDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedShortDescription,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialShortDescription,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialShortDescription,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialShortDescription,
 	};
 };
 
@@ -696,34 +833,50 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		'Write once, post everywhere. Easily share your content on social media from WordPress.'
 	);
 
+	const monitorFeaturedText = translate(
+		'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantFeaturedText,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantFeaturedText,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPressFeaturedText,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressFeaturedText,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressFeaturedText,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpamFeaturedText,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamFeaturedText,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamFeaturedText,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scanFeaturedText,
 		[ PRODUCT_JETPACK_SCAN ]: scanFeaturedText,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanFeaturedText,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanFeaturedText,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: searchFeaturedText,
 		[ PRODUCT_JETPACK_SEARCH ]: searchFeaturedText,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchFeaturedText,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostFeaturedText,
 		[ PRODUCT_JETPACK_BOOST ]: boostFeaturedText,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedFeaturedText,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorFeaturedText,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorFeaturedText,
 	};
 };
 export const getJetpackProductsLightboxDescription = (): Record< string, TranslateResult > => {
@@ -757,35 +910,81 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const socialAdvancedLightboxDescription = translate(
 		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
 	);
+	const statsLightboxDescription = translate( 'The most advanced stats Jetpack has to offer.' );
+	const monitorLightboxDescription = translate(
+		'Upgrade Monitor with swift 1-minute monitoring alert intervals, SMS notifications, and multiple email recipients.'
+	);
+
+	// WooCommerce Products
+	const woocommerceBookingsLightboxDescription = translate(
+		'Allow customers to book appointments, make reservations or rent equipment without leaving your site.'
+	);
+	const woocommerceSubscriptionsLightboxDescription = translate(
+		'Let customers subscribe to your products or services and pay on a weekly, monthly, or annual basis.'
+	);
+	const woocommerceProductBundlesLightboxDescription = translate(
+		'Offer personalized product bundles, bulk discount packages, and assembled products.'
+	);
+	const woocommerceProductAddOnsLightboxDescription = translate(
+		'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
+	);
+
+	const woocommerceMinMaxQuantitiesLightboxDescription = translate(
+		'Minimum and maximum quantity rules for products, orders, and categories.'
+	);
+	const woocommerceAutomateWooLightboxDescription = translate(
+		'Powerful marketing automation for WooCommerce. AutomateWoo has the tools you need to grow your store and make more money.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantLightboxDescription,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPressLightboxDescription,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressLightboxDescription,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressLightboxDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpamLightboxDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamLightboxDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamLightboxDescription,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scanLightboxDescription,
 		[ PRODUCT_JETPACK_SCAN ]: scanLightboxDescription,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanLightboxDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanLightboxDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanLightboxDescription,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: searchLightboxDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchLightboxDescription,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchLightboxDescription,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostLightboxDescription,
 		[ PRODUCT_JETPACK_BOOST ]: boostLightboxDescription,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsLightboxDescription,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsLightboxDescription,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsLightboxDescription,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorLightboxDescription,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooLightboxDescription,
 	};
 };
 
@@ -906,42 +1105,167 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
 	];
+	const statsCommercialIncludesInfo = [
+		translate( 'Real-time data on visitors' ),
+		translate( 'Traffic stats and trends for post and pages' ),
+		translate( 'Detailed statistics about links leading to your site' ),
+		translate( 'GDPR compliant' ),
+		translate( 'Access to upcoming advanced features' ),
+		translate( 'Priority support' ),
+		translate( 'Commercial use' ),
+	];
 	const aiAssistantIncludesInfo = [
-		translate( 'Prompt based content generation' ),
-		translate( 'Generate text, tables, and lists' ),
-		translate( 'Adaptive Tone Adjustment' ),
-		translate( 'Superior spelling and Grammar Correction' ),
-		translate( 'Title & summary generation' ),
+		translate( 'Prompt-based content generation' ),
+		translate( 'Text, table, and list generation' ),
+		translate( 'Adaptive tone adjustment' ),
+		translate( 'Superior spelling and grammar correction' ),
+		translate( 'Title and summary generation' ),
+	];
+
+	// WooCommerce Extensions
+	const woocommerceBookingsIncludesInfo = [
+		translate(
+			'Flexible online booking system - book classes, schedule appointments, or reserve items'
+		),
+		translate( 'Support for one-on-one appointments or multi-person events' ),
+		translate( 'The ability to offer special pricing for groups, days, or individuals' ),
+		translate( 'Support for all timezones' ),
+		translate( 'The ability to require confirmations or offer free cancellations' ),
+		translate( 'Reminder notifications' ),
+		translate( 'Sync with Google Calendar' ),
+		translate( 'Support for add-ons to customize the experience' ),
+	];
+	const woocommerceSubscriptionsIncludesInfo = [
+		translate( 'Free Trials & Sign-Up Fees' ),
+		translate( 'Variable Subscriptions' ),
+		translate( 'Subscription Management' ),
+		translate( 'Subscriber Account Management' ),
+		translate( 'Synchronized Payments' ),
+		translate( 'Upgrades/Downgrades' ),
+		translate( 'Flexible Product Options' ),
+		translate( 'Multiple Subscriptions' ),
+		translate( 'Subscription Coupons' ),
+		translate( 'Customer Emails' ),
+	];
+	const woocommerceProductBundlesIncludesInfo = [
+		translate( 'Create bulk discount packages' ),
+		translate( 'Offer personalized boxes' ),
+		translate( 'Create assembled products' ),
+		translate( 'Recommend add-ons and essentials' ),
+		translate( 'Offer more engaging upsells' ),
+	];
+	const woocommerceProductAddOnsIncludesInfo = [
+		translate( 'Image-based selections - customers can see what they’re getting before they buy.' ),
+		translate(
+			'Flat fees - charge customers a flat fee regardless of how many products they ordered.'
+		),
+		translate(
+			'Percentage fees - charge a fee for the add-on based on a percent of the total price.'
+		),
+		translate(
+			'Text input - Let your customers enter custom text to create a custom t-shirt, add a monogram or personalize a card.'
+		),
+		translate(
+			'Dropdown - customers can choose between a few pre-defined options with a drop-down field for your add-on.'
+		),
+		translate( 'Checkboxes - make customization as easy and satisfying as checking a checkbox.' ),
+		translate(
+			'Custom price - let your customers name their price, perfect for tips, donations, and gratuity.'
+		),
+	];
+	const woocommerceMinMaxQuantitiesIncludesInfo = [
+		translate( 'The ability to set quantity rules for products, orders, and categories.' ),
+	];
+	const woocommerceAutomateWooIncludesInfo = [
+		translate(
+			'Follow-up Emails – Automatically email customers who buy specific products, ask for a review, or suggest other products they might like.'
+		),
+		translate(
+			'Abandoned Cart – Remind customers who left items in their cart using emails at set intervals.'
+		),
+		translate(
+			'Win Back Inactive Customers – Target inactive customers with email marketing campaigns. Include special offers and recommendations.'
+		),
+		translate(
+			'SMS Notifications – Send SMS notifications to customers or admins for any of AutomateWoo’s wide range of triggers.'
+		),
+		translate(
+			'Review Rewards – Encourage more product reviews by offering discounts. Limit the discount based on number of reviews posted and the rating given.'
+		),
+		translate(
+			'Wishlist Marketing – Send timed wishlist reminder emails and notify when a wished product goes on sale. Integrates with WooCommerce Wishlists or YITH Wishlists.'
+		),
+		translate(
+			'Card Expiry Notifications – Notify customers before a saved credit or debit card expires. This can reduce failed payments and churn when selling subscriptions.'
+		),
+		translate(
+			'Personalized Coupons – Generate dynamically customized coupons for customers to raise purchase rates.'
+		),
+		translate(
+			'Subscriptions Automation – Action WooCommerce Subscription events such as status changes, failed payments, and renewal reminders.'
+		),
+		translate(
+			'Bookings Automations – Send emails on WooCommerce Bookings events such as booking confirmation or completion.'
+		),
+		translate(
+			'Automatic VIP – Reward your best customers with VIP status based on different spending requirements.'
+		),
+	];
+	const monitorIncludesInfo = [
+		translate( '1-minute monitoring interval' ),
+		translate( 'Multiple email recipients' ),
+		translate( 'SMS notifications*' ),
 	];
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantIncludesInfo,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupIncludesInfoT1,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupIncludesInfoT2,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupIncludesInfoT2,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressIncludesInfo,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpamIncludesInfo,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamIncludesInfo,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamIncludesInfo,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scanIncludesInfo,
 		[ PRODUCT_JETPACK_SCAN ]: scanIncludesInfo,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanIncludesInfo,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanIncludesInfo,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanIncludesInfo,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: searchIncludesInfo,
 		[ PRODUCT_JETPACK_SEARCH ]: searchIncludesInfo,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchIncludesInfo,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostIncludesInfo,
 		[ PRODUCT_JETPACK_BOOST ]: boostIncludesInfo,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBasicIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasicIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialIncludesInfo,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialIncludesInfo,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialIncludesInfo,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorIncludesInfo,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooIncludesInfo,
 	};
 };
 
@@ -952,6 +1276,7 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 	const socialAdvancedIncludesInfo = [ translate( 'Multi-image sharing' ) ];
 
 	return {
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 	};
@@ -1023,41 +1348,144 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
+	const statsCommercialBenefits = [
+		translate( 'Better understand your audience' ),
+		translate( 'Discover your top performing posts & pages' ),
+		translate( 'Get detailed insights on the referrers that bring traffic from your site' ),
+		translate( 'See what countries your visitors are coming from' ),
+		translate(
+			'Find who is creating the most popular content on your team with our author metrics'
+		),
+		translate( 'View weekly and yearly trends with 7-day Highlights and Year in Review' ),
+	];
+
 	const aiAssistantBenefits = [
-		translate( 'Harness AI Power Directly from Your Editor' ),
-		translate( 'Unlock High‑Quality, Tailored Content at Your Command' ),
-		translate( 'Maintain Professional Standards with Ease' ),
-		translate( 'Best in-class support from WordPress experts' ),
+		translate( 'Harness AI power directly from your editor' ),
+		translate( 'Unlock high-quality, tailored content at your command' ),
+		translate( 'Maintain professional standards with ease' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+
+	// WooCommerce Extensions benefits
+	const woocommerceBookingsBenefits = [
+		translate(
+			'Let your customers book reservations, appointments, or rentals independently – no phone calls are required.'
+		),
+		translate(
+			'Offer discounts for groups or people booking multiple slots, show lower prices for early birds, higher prices on weekends, or special prices for kids.'
+		),
+		translate( 'Your customers see availability in their time zone' ),
+		translate( 'Reduce no-shows with reminder notifications' ),
+		translate( 'An intelligent booking system to avoid double-bookings' ),
+		translate( 'Boost your bookings with a range of add-ons' ),
+	];
+	const woocommerceSubscriptionsBenefits = [
+		translate( 'Multiple billing schedules available to suit your store’s needs' ),
+		translate( 'Integration with over 25 payment gateways for automatic recurring payments' ),
+		translate(
+			'Supports manual renewal payments through any WooCommerce payment gateway, along with automatic email invoices and receipts'
+		),
+		translate( 'Supports automatic rebilling on failed subscription payments' ),
+		translate( 'Give subscribers the ability to manage their own plan' ),
+		translate( 'Built-in renewal notifications and automatic emails' ),
+		translate(
+			'Detailed reports allow you to keep track of recurring revenue, the number of active subscribers, and more'
+		),
+	];
+	const woocommerceProductBundlesBenefits = [
+		translate( 'Sell more by creating discounted bundles or personalized boxes' ),
+		translate( 'Create product offerings made from multiple inventory-managed parts.' ),
+		translate(
+			'Boost your average order value by adding recommendations to popular products, and use discounts to maximize their impact.'
+		),
+	];
+	const woocommerceProductAddOnsBenefits = [
+		translate( 'You can offer special options to your customers.' ),
+		translate(
+			'Enable your customers to personalize products while they are shopping on your online store'
+		),
+	];
+	const woocommerceMinMaxQuantitiesBenefits = [
+		translate( 'Specify minimum and maximum quantity limits per product/variation or order.' ),
+		translate(
+			'Require specific products, or product categories, to be purchased in predefined quantity multiples.'
+		),
+		translate(
+			'Prevent overstocking or stockouts, maintain optimal inventory levels, and reduce storage costs.'
+		),
+	];
+	const woocommerceAutomateWooBenefits = [
+		translate( 'Effortless setup and management right from your WordPress backend' ),
+		translate( 'Send targeted, multi-step campaigns and offer customer incentives' ),
+		translate( 'Measure the success of your campaigns' ),
+		translate( 'Unlimited email sends' ),
+		translate( 'AutomateWoo is 100% extendable' ),
+		translate( 'Multilingual support. AutomateWoo has support for the popular WPML plugin' ),
+		translate( 'AutomateWoo integrates with your favorite plugins and services' ),
+	];
+
+	const monitorBenefits = [
+		translate(
+			'Rapid detection: With our 1-minute interval monitoring, we detect potential issues faster than ever before.'
+		),
+		translate(
+			'Multi-channel alerts: Get notified immediately when a site that you manage is down via SMS and email (multiple recipients).'
+		),
+		translate(
+			'Enhanced uptime: Experience less downtime and increased service reliability through prompt response and resolution.'
+		),
+		translate( 'Reduce potential revenue losses because your site went down.' ),
 	];
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
+		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantBenefits,
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPressBenefits,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressBenefits,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressBenefits,
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpamBenefits,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamBenefits,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamBenefits,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scanBenefits,
 		[ PRODUCT_JETPACK_SCAN ]: scanBenefits,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanBenefits,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanBenefits,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanBenefits,
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: searchBenefits,
 		[ PRODUCT_JETPACK_SEARCH ]: searchBenefits,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchBenefits,
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostBenefits,
 		[ PRODUCT_JETPACK_BOOST ]: boostBenefits,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialBenefits,
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialBenefits,
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialBenefits,
+		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorBenefits,
+		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorBenefits,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsBenefits,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTIONS ]: woocommerceSubscriptionsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_BUNDLES ]: woocommerceProductBundlesBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsBenefits,
+		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesBenefits,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooBenefits,
 	};
 };
 
@@ -1068,6 +1496,7 @@ export const getJetpackProductsBenefitsComingSoon = (): Record<
 	const socialAdvancedBenefits = [ translate( 'Share multiple images to social media' ) ];
 
 	return {
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
 	};
@@ -1123,14 +1552,18 @@ export const getJetpackProductsFAQs = (
 	return {
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupFAQs,
+		[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_COMPLETE ]: backupFAQs,
 		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scanFAQs,
 		[ PRODUCT_JETPACK_SCAN ]: scanFAQs,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanFAQs,
 	};
@@ -1146,7 +1579,6 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 		translate( 'Brute force attack protection' ),
 		translate( 'Downtime monitoring' ),
 		translate( 'CDN (Content Delivery Networks)' ),
-		translate( 'Stats' ),
 	];
 
 	return {
@@ -1156,6 +1588,11 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 			...freeBundleFeatures,
 		],
 		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: [
 			...socialFree,
 			...videoPressFree,
 			...freeBundleFeatures,
@@ -1170,6 +1607,7 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 			...videoPressFree,
 			...freeBundleFeatures,
 		],
+		[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: [ ...freeBundleFeatures ],
 		[ PLAN_JETPACK_COMPLETE ]: [ ...freeBundleFeatures ],
 		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: [ ...freeBundleFeatures ],
 	};
@@ -1281,6 +1719,7 @@ export const useJetpackStorageAmountTextByProductSlug = (): ( (
 				[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: ONE_GIGABYTE,
 				[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: TEN_GIGABYTES,
+				[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: ONE_TERABYTE,
 				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: TEN_GIGABYTES,
@@ -1291,6 +1730,7 @@ export const useJetpackStorageAmountTextByProductSlug = (): ( (
 
 				[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: TEN_GIGABYTES,
+				[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: ONE_TERABYTE,
 			}[ productSlug ] ),

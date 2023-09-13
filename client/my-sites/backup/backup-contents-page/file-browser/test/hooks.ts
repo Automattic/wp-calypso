@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { getFileExtension } from 'calypso/lib/media/utils/get-file-extension';
 import { useTruncatedFileName } from '../hooks';
 

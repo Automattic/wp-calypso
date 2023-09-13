@@ -4,13 +4,13 @@ import {
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/route';
-import { managePurchase } from 'calypso/me/purchases/paths';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	INDIRECT_CHECKOUT_PRODUCTS_LIST,
 	PURCHASE_FLOW_UPSELLS_MATRIX,
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	PurchaseURLCallback,
@@ -150,14 +150,13 @@ export const getPurchaseURLCallback =
 			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 		}
 		if ( purchase ) {
-			const relativePath = managePurchase( siteSlug, purchase.id );
+			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.id );
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 		}
 
 		// Visit the indirect checkout URL to determine the purchasable product on another page.
-		// TODO: Use the checkout URL and product page URL respectively to alternate the externalUrl.
 		if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			return product.externalUrl?.replace( '{siteSlug}', siteSlug ) || '';
+			return product.indirectCheckoutUrl?.replace( '{siteSlug}', siteSlug ) || '';
 		}
 
 		let url;

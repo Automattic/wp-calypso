@@ -80,7 +80,6 @@
 .reader-related-card.card.is-compact {
 	box-shadow: none;
 	flex: 1 1 auto;
-	padding: 0;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		display: flex;
@@ -90,6 +89,8 @@
 
 .reader-related-card.card {
 	z-index: z-index("root", ".reader-related-card.card");
+	padding: 16px;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 	.reader-related-card__meta {
 		display: flex;
@@ -281,7 +282,6 @@
 }
 @include breakpoint-deprecated( "<660px" ) {
 	.reader-stream__recommended-posts {
-		border-bottom: 5px solid var(--color-neutral-0) !important;
 		margin: 0 !important;
 
 		.reader-stream__recommended-posts-header {

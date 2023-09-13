@@ -1,3 +1,6 @@
+import { TranslateResult } from 'i18n-calypso';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
@@ -8,6 +11,7 @@ export type SiteColumns = Array< {
 	className?: string;
 	isExpandable?: boolean;
 	isSortable?: boolean;
+	showInfo?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -42,13 +46,16 @@ export interface MonitorSettings {
 	monitor_active: boolean;
 	monitor_site_status: boolean;
 	last_down_time: string;
-	monitor_deferment_time: number;
+	check_interval: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
 	monitor_user_sms_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
 	monitor_notify_additional_user_emails: Array< MonitorContactEmail >;
 	monitor_notify_additional_user_sms: Array< MonitorContactSMS >;
+	is_over_limit: boolean;
+	sms_sent_count: number;
+	sms_monthly_limit: number;
 }
 
 interface StatsObject {
@@ -89,6 +96,8 @@ export interface Site {
 	jetpack_boost_scores: BoostData;
 	php_version_num: number;
 	is_connected: boolean;
+	has_paid_agency_monitor: boolean;
+	is_atomic: boolean;
 }
 export interface SiteNode {
 	value: Site;
@@ -121,7 +130,7 @@ export interface ScanNode {
 	threats: number;
 }
 
-interface PluginNode {
+export interface PluginNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
 	value: string;
@@ -154,17 +163,18 @@ export interface RowMetaData {
 	};
 	link: string;
 	isExternalLink: boolean;
-	tooltip?: string;
+	tooltip?: TranslateResult;
 	tooltipId: string;
 	siteDown?: boolean;
 	eventName: string | undefined;
 }
 
-export type PreferenceType = 'dismiss' | 'view';
+export type PreferenceType = 'dismiss' | 'view' | 'view_date';
 
 export type Preference = {
 	dismiss?: boolean;
 	view?: boolean;
+	view_date?: string;
 };
 
 export type StatusEventNames = {
@@ -181,7 +191,10 @@ export type AllowedActionTypes =
 	| 'view_site'
 	| 'visit_wp_admin'
 	| 'clone_site'
-	| 'site_settings';
+	| 'site_settings'
+	| 'set_up_site'
+	| 'change_domain'
+	| 'hosting_configuration';
 
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
@@ -214,6 +227,8 @@ export interface DashboardDataContextInterface {
 		phoneNumbers: Array< string >;
 		refetchIfFailed: () => void;
 	};
+	products: APIProductFamilyProduct[];
+	isLargeScreen: boolean;
 }
 
 export type AgencyDashboardFilterOption =
@@ -234,6 +249,7 @@ export type ProductInfo = { name: string; key: string; status: 'rejected' | 'ful
 export type PurchasedProductsInfo = {
 	selectedSite: string;
 	selectedProducts: Array< ProductInfo >;
+	type?: string;
 };
 
 export interface APIError {
@@ -247,14 +263,20 @@ export interface APIToggleFavorite {
 	[ key: string ]: any;
 }
 
+interface MonitorURLS {
+	monitor_url: string;
+	options: Array< string >;
+	check_interval: number;
+}
+
 export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
 		email_notifications: boolean;
 		sms_notifications: boolean;
 		wp_note_notifications: boolean;
-		jetmon_defer_status_down_minutes: number;
 		contacts?: MonitorContacts;
+		urls?: MonitorURLS[];
 	};
 }
 
@@ -262,8 +284,8 @@ export interface UpdateMonitorSettingsParams {
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	sms_notifications?: boolean;
-	jetmon_defer_status_down_minutes?: number;
 	contacts?: MonitorContacts;
+	urls?: MonitorURLS[];
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;

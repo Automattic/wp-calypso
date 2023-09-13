@@ -1,3 +1,4 @@
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSitePosts } from 'calypso/state/posts/actions';
@@ -9,7 +10,6 @@ import {
 	getThemeType,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 

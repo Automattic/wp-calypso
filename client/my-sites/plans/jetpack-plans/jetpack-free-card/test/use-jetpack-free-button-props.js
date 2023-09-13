@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn(),
@@ -16,7 +19,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

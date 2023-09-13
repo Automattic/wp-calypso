@@ -1,0 +1,46 @@
+import { Moment } from 'moment';
+import { AppState } from 'calypso/types';
+import getECommerceTrialDaysLeft from './get-ecommerce-trial-days-left';
+import getECommerceTrialExpiration from './get-ecommerce-trial-expiration';
+import getMigrationTrialDaysLeft from './get-migration-trial-days-left';
+import getMigrationTrialExpiration from './get-migration-trial-expiration';
+import isECommerceTrialExpired from './is-ecommerce-trial-expired';
+import isMigrationTrialExpired from './is-migration-trial-expired';
+import isSiteOnECommerceTrial from './is-site-on-ecommerce-trial';
+import isSiteOnMigrationTrial from './is-site-on-migration-trial';
+
+export function getTrialDaysLeft( state: AppState, siteId: number ): number | null {
+	if ( isSiteOnECommerceTrial( state, siteId ) ) {
+		return getECommerceTrialDaysLeft( state, siteId );
+	}
+
+	if ( isSiteOnMigrationTrial( state, siteId ) ) {
+		return getMigrationTrialDaysLeft( state, siteId );
+	}
+
+	return null;
+}
+
+export function getTrialExpiration( state: AppState, siteId: number ): Moment | null {
+	if ( isSiteOnECommerceTrial( state, siteId ) ) {
+		return getECommerceTrialExpiration( state, siteId );
+	}
+
+	if ( isSiteOnMigrationTrial( state, siteId ) ) {
+		return getMigrationTrialExpiration( state, siteId );
+	}
+
+	return null;
+}
+
+export function isTrialExpired( state: AppState, siteId: number ): boolean | null {
+	if ( isSiteOnECommerceTrial( state, siteId ) ) {
+		return isECommerceTrialExpired( state, siteId );
+	}
+
+	if ( isSiteOnMigrationTrial( state, siteId ) ) {
+		return isMigrationTrialExpired( state, siteId );
+	}
+
+	return null;
+}

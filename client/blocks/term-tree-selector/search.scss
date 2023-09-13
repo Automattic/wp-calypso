@@ -15,6 +15,7 @@
 		border-width: 0 0 1px;
 		background: var(--color-surface);
 		font-size: $font-body-small;
-		-webkit-appearance: none;
+		appearance: none;
+		border-radius: 2px 2px 0 0;
 	}
 }

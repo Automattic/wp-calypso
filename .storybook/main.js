@@ -7,6 +7,7 @@ const storybookConfig = storybookDefaultConfig( {
 		'../client/**/*.stories.{js,jsx,ts,tsx}',
 		'../packages/design-picker/src/**/*.stories.{ts,tsx}',
 		'../packages/components/src/**/*.stories.{js,jsx,ts,tsx}',
+		'../packages/domains-table/src/**/*.stories.{js,jsx,ts,tsx}',
 	],
 } );
 
@@ -15,6 +16,7 @@ storybookConfig.previewHead = ( head ) => `
 	${ head }
 	<script>
 		window.configData = ${ JSON.stringify( configData ) };
+		window.__i18n_text_domain__ = 'default';
 	</script>
 `;
 

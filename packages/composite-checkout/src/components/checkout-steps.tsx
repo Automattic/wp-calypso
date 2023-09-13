@@ -34,6 +34,7 @@ import type {
 	CheckoutStepGroupState,
 	CheckoutStepCompleteStatus,
 	CheckoutStepGroupStore,
+	StepChangedCallback,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
@@ -323,10 +324,12 @@ function CheckoutStepGroupWrapper( {
 	children,
 	className,
 	loadingContent,
+	onStepChanged,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
+	onStepChanged?: StepChangedCallback;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -352,8 +355,21 @@ function CheckoutStepGroupWrapper( {
 		} );
 	}, [ store ] );
 
-	// Change the step if the url changes
-	useChangeStepNumberForUrl( store.actions.setActiveStepNumber );
+	const previousStepNumber = useRef( store.state.activeStepNumber );
+	const activePaymentMethod = usePaymentMethod();
+	// Call the `onStepChanged` callback when a step changes.
+	useEffect( () => {
+		if ( store.state.activeStepNumber !== previousStepNumber.current ) {
+			onStepChanged?.( {
+				stepNumber: store.state.activeStepNumber,
+				previousStepNumber: previousStepNumber.current,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+			} );
+			previousStepNumber.current = store.state.activeStepNumber;
+		}
+		// We only want to run this when the step changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ store.state.activeStepNumber ] );
 
 	// WordPress.com checkout session activity.
 	const classNames = joinClasses( [
@@ -386,6 +402,7 @@ function CheckoutStepGroupWrapper( {
 export const CheckoutStep = ( {
 	activeStepContent,
 	activeStepFooter,
+	activeStepHeader,
 	completeStepContent,
 	titleContent,
 	stepId,
@@ -410,12 +427,11 @@ export const CheckoutStep = ( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { onPageLoadError, onStepChanged } = useContext( CheckoutContext );
+	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
-	const activePaymentMethod = usePaymentMethod();
 
 	// This is the callback called when you press "Continue" on a step.
 	const goToNextStep = async () => {
@@ -424,16 +440,8 @@ export const CheckoutStep = ( {
 		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
 		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
 		setThisStepCompleteStatus( completeResult );
-		if ( completeResult ) {
-			onStepChanged?.( {
-				stepNumber: nextStepNumber,
-				previousStepNumber: stepNumber,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-			} );
-			if ( nextStepNumber ) {
-				saveStepNumberToUrl( nextStepNumber );
-				setActiveStepNumber( nextStepNumber );
-			}
+		if ( completeResult && nextStepNumber ) {
+			setActiveStepNumber( nextStepNumber );
 		}
 		setFormReady();
 		return completeResult;
@@ -472,6 +480,7 @@ export const CheckoutStep = ( {
 			}
 			activeStepContent={
 				<>
+					{ activeStepHeader }
 					{ activeStepContent }
 					{ activeStepFooter }
 				</>
@@ -553,7 +562,7 @@ export const SubmitFooterWrapper = styled.div`
 	}
 `;
 
-export function CheckoutStepArea( {
+function CheckoutStepArea( {
 	children,
 	className,
 }: PropsWithChildren< {
@@ -1038,92 +1047,27 @@ Stepper.propTypes = {
 	isActive: PropTypes.bool,
 };
 
-function saveStepNumberToUrl( stepNumber: number ) {
-	if ( ! window?.history || ! window?.location ) {
-		return;
-	}
-	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
-	if ( window.location.hash === newHash ) {
-		return;
-	}
-	const newUrl = window.location.hash
-		? window.location.href.replace( window.location.hash, newHash )
-		: window.location.href + newHash;
-	debug( 'updating url to', newUrl );
-	// We've seen this call to replaceState fail sometimes when the current URL
-	// is somehow different ("A history state object with URL
-	// 'https://wordpress.com/checkout/example.com#step2' cannot be created
-	// in a document with origin 'https://wordpress.com' and URL
-	// 'https://www.username@wordpress.com/checkout/example.com'.") so we
-	// wrap this in try/catch. It's not critical that the step number is saved to
-	// the URL.
-	try {
-		window.history.replaceState( null, '', newUrl );
-	} catch ( error ) {
-		debug( 'changing the url failed' );
-		return;
-	}
-	// Modifying history does not trigger a hashchange event which is what
-	// composite-checkout uses to change its current step, so we must fire one
-	// manually.
-	//
-	// We use try/catch because we support IE11 and that browser does not include
-	// HashChange.
-	try {
-		const event = new HashChangeEvent( 'hashchange' );
-		window.dispatchEvent( event );
-	} catch ( error ) {
-		debug( 'hashchange firing failed' );
-	}
-}
-
-function getStepNumberFromUrl() {
-	const hashValue = window.location?.hash;
-	if ( hashValue?.startsWith?.( '#step' ) ) {
-		const parts = hashValue.split( '#step' );
-		const stepNumber = parts.length > 1 ? parts[ 1 ] : '1';
-		return parseInt( stepNumber, 10 );
-	}
-	return 1;
-}
-
-function useChangeStepNumberForUrl( setActiveStepNumber: ( stepNumber: number ) => void ) {
-	// If there is a step number on page load, remove it
-	useEffect( () => {
-		const newStepNumber = getStepNumberFromUrl();
-		if ( newStepNumber ) {
-			saveStepNumberToUrl( 1 );
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
-
-	useEffect( () => {
-		let isSubscribed = true;
-		window.addEventListener?.( 'hashchange', () => {
-			const newStepNumber = getStepNumberFromUrl();
-			debug( 'step number in url changed to', newStepNumber );
-			isSubscribed && setActiveStepNumber( newStepNumber );
-		} );
-		return () => {
-			isSubscribed = false;
-		};
-	}, [ setActiveStepNumber ] );
-}
-
 export function CheckoutStepGroup( {
 	children,
 	areStepsActive,
 	stepAreaHeader,
 	store,
+	onStepChanged,
 	loadingContent,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
+	onStepChanged?: StepChangedCallback;
 	loadingContent?: ReactNode;
 } > ) {
 	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
-		<CheckoutStepGroupWrapper store={ stepGroupStore } loadingContent={ loadingContent }>
+		<CheckoutStepGroupWrapper
+			store={ stepGroupStore }
+			loadingContent={ loadingContent }
+			onStepChanged={ onStepChanged }
+		>
 			{ stepAreaHeader }
 			<CheckoutStepArea>
 				<CheckoutStepGroupInner areStepsActive={ areStepsActive }>

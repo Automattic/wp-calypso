@@ -37,6 +37,12 @@ export interface Secrets {
 	martechTosUploadCredentials: {
 		bearer_token: string;
 	};
+	socialAccounts: {
+		tumblr: {
+			username: string;
+			password: string;
+		};
+	};
 	mailosaur: {
 		apiKey: string;
 		inviteInboxId: string;
@@ -44,6 +50,7 @@ export interface Secrets {
 		domainsInboxId: string;
 		defaultUserInboxId: string;
 		totpUserInboxId: string;
+		manualTesting: string;
 	};
 	testAccounts: {
 		[ key in TestAccountName ]: TestAccountCredentials;

@@ -74,3 +74,16 @@ export function useGetWordPressSubdomain( paidDomainName: string ) {
 		vendor: 'dot',
 	} );
 }
+
+/**
+ * Returns a custom .com domain suggestion for a given query
+ */
+export function useGetSingleCustomDotComDomainSuggestion( query: string, locale?: string ) {
+	return useGetDomainSuggestions( query, {
+		quantity: 1,
+		include_wordpressdotcom: false,
+		include_dotblogsubdomain: false,
+		locale,
+		tlds: [ 'com' ],
+	} );
+}

@@ -2,8 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { fireEvent, render, renderHook, screen } from '@testing-library/react';
 import nock from 'nock';
 import { ReactElement } from 'react';
 import { Provider } from 'react-redux';

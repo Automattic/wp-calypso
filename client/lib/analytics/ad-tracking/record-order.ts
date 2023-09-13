@@ -23,6 +23,7 @@ import {
 } from './google-analytics-4';
 import { initGTMContainer, loadGTMContainer } from './gtm-container';
 import { loadTrackingScripts } from './load-tracking-scripts';
+import { loadParselyTracker } from './parsely';
 import { isWooExpressUpgrade } from './woo';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { WpcomJetpackCartInfo } from 'calypso/lib/analytics/utils/split-wpcom-jetpack-cart-info';
@@ -81,6 +82,7 @@ export async function recordOrder(
 	recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInParsely( cart, orderId );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -706,6 +708,29 @@ function recordOrderInAkismetGTM(
 
 		debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
 	}
+}
+
+/**
+ * Sends a purchase conversion event to Prasely.
+ */
+function recordOrderInParsely( cart: ResponseCart, orderId: number | null | undefined ): void {
+	loadParselyTracker()
+		.then( () => {
+			debug( `loadParselyTracker: Loaded Parsely tracker ${ TRACKING_IDS.parselyTracker }` );
+
+			// We ensure that we can track with Parsely
+			if ( ! mayWeTrackByTracker( 'parsely' ) ) {
+				return;
+			}
+
+			// Record Parsely purchase
+			window.PARSELY.conversions.trackPurchase( `Order Id ${ orderId }` );
+
+			debug( `recordOrderInParsely: Record Parsely purchase`, orderId );
+		} )
+		.catch( ( error ) => {
+			debug( 'recordOrderInParsely: Error loading Parsely', error );
+		} );
 }
 
 /**

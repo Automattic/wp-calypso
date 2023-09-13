@@ -17,11 +17,20 @@ export const AVAILABLE_PAGE_MODULES = {
 	traffic: [
 		{
 			key: 'authors',
-			label: translate( 'Authors' ),
+			get label() {
+				return translate( 'Authors' );
+			},
 			icon: commentAuthorAvatar,
 			defaultValue: true,
 		},
-		{ key: 'videos', label: translate( 'Videos' ), icon: video, defaultValue: true },
+		{
+			key: 'videos',
+			get label() {
+				return translate( 'Videos' );
+			},
+			icon: video,
+			defaultValue: true,
+		},
 	],
 };
 
@@ -46,7 +55,9 @@ const insights = {
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
-	label: translate( 'Subscribers' ),
+	get label() {
+		return translate( 'Subscribers' );
+	},
 	path: '/stats/subscribers',
 	showIntervals: false,
 } as NavItem;

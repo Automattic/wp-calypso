@@ -1,4 +1,3 @@
-import { InitialEntry } from '@remix-run/router';
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
@@ -108,7 +107,7 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( state, action ) => {
+const initialRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_INITIAL_ROUTE' ) {
 		return action.route;
 	}

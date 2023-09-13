@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
-import { getBoostRating, getBoostRatingClass } from '../utils';
+import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import ExpandedCard from './expanded-card';
 import type { BoostData } from '../types';
 

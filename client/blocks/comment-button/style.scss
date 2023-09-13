@@ -5,6 +5,7 @@
 	cursor: pointer;
 	display: flex;
 	height: 20px;
+	gap: 4px;
 
 	// highlight button
 	&:hover,
@@ -39,8 +40,4 @@
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 13px;
 	font-weight: 500;
-}
-
-.comment-button__icon {
-	margin-right: 4px;
 }

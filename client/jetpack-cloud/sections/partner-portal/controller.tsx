@@ -3,6 +3,7 @@ import LicenseSelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-port
 import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
+import DownloadProducts from 'calypso/jetpack-cloud/sections/partner-portal/primary/download-products';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
@@ -32,6 +33,7 @@ import {
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import Header from './header';
+import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 import type PageJS from 'page';
 
 export function partnerContext( context: PageJS.Context, next: () => void ): void {
@@ -97,6 +99,13 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	next();
 }
 
+export function downloadProductsContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <DownloadProducts />;
+	next();
+}
+
 export function assignLicenseContext( context: PageJS.Context, next: () => void ): void {
 	const { page, search } = context.query;
 	const state = context.store.getState();
@@ -153,6 +162,13 @@ export function pricesContext( context: PageJS.Context, next: () => void ): void
 export function landingPageContext() {
 	page.redirect( '/partner-portal/licenses' );
 	return;
+}
+
+export function wpcomAtomicHostingContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <WPCOMAtomicHosting />;
+	next();
 }
 
 /**

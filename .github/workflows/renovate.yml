@@ -1,0 +1,122 @@
+# Note: when pushing a change to this file, Renovate will run in the same way it
+# runs on trunk. This basically lets us test it live, which doesn't normally have
+# much consequence. Just be mindful about major changes.
+
+name: Renovate
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        type: choice
+        default: debug
+        options:
+          - debug
+          - trace
+      dryRun:
+        description: 'Dry run?'
+        type: choice
+        default: 'no'
+        options:
+          - 'no'
+          - full
+          - lookup
+          - extract
+      repoCache:
+        description: 'Reset or disable the cache?'
+        type: choice
+        default: enabled
+        options:
+          - enabled
+          - disabled
+          - reset
+  schedule:
+    # Run every 30 minutes:
+    - cron: '0,30 * * * *'
+  pull_request:
+    paths:
+      - '.github/workflows/renovate.yml'
+      - 'renovate.json5'
+      - 'renovate.json'
+
+concurrency:
+  group: renovate-${{ github.ref }}
+
+env:
+  # Set as a workflow variable so that multiple jobs can use the value.
+  RENOVATE_VERSION: 36.31.0
+  cache_archive: renovate_cache.tar.gz
+  # This is the dir renovate provides -- if we set our own, we run into permissions issues.
+  cache_dir: /tmp/renovate/cache/renovate/repository
+  cache_key: gandalfs-renovate-cache
+
+jobs:
+  renovate:
+    name: Renovate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dawidd6/action-download-artifact@v2
+        if: github.event.inputs.repoCache != 'disabled'
+        continue-on-error: true
+        with:
+          name: ${{ env.cache_key }}
+          path: cache-download
+
+      - name: Extract renovate cache
+        run: |
+          set -x
+          # Skip if no cache is set, such as the first time it runs.
+          if [ ! -d cache-download ] ; then
+            echo "No cache found."
+            exit 0
+          fi
+
+          # Handle nested archive issue:
+          mv "cache-download/$cache_archive" $cache_archive
+
+          # Make sure the directory exists, and extract it:
+          mkdir -p $cache_dir
+          tar -xzf $cache_archive -C $cache_dir
+          rm $cache_archive
+
+          # Unfortunately, the permissions expected within renovate's docker container
+          # are different than the ones given after the cache is restored. We have to
+          # change ownership to solve this.
+          sudo chown -R runneradmin:root /tmp/renovate/
+          ls -R $cache_dir
+
+      - uses: renovatebot/github-action@v39.0.1
+        with:
+          configurationFile: renovate.json5
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          renovate-version: ${{ env.RENOVATE_VERSION }}
+        env:
+          LOG_LEVEL: ${{ github.event.inputs.logLevel || 'debug' }}
+          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun == 'no' && 'null' || github.event.inputs.dryRun || 'null' }}
+          RENOVATE_REPOSITORY_CACHE: ${{ github.event.inputs.repoCache || 'enabled' }}
+
+      # If we don't compress it, the upload takes 100x longer. (Not a joke!)
+      - name: Compress renovate cache
+        run: |
+          ls $cache_dir
+          # The -C is important -- otherwise we end up extracting the files with
+          # their full path, ultimately leading to a nested directory situation.
+          # To solve *that*, we'd have to extract to root (/), which isn't safe.
+          tar -czvf $cache_archive -C $cache_dir .
+
+      - uses: actions/upload-artifact@v3
+        if: github.event.inputs.repoCache != 'disabled'
+        with:
+          name: ${{ env.cache_key }}
+          path: ${{ env.cache_archive }}
+          # Since this is created frequently, we don't need to keep it for long.
+          retention-days: 1
+
+  validate-renovate-config:
+    name: Validate Renovate Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Config Validator
+        run: yarn dlx -p renovate@$RENOVATE_VERSION renovate-config-validator

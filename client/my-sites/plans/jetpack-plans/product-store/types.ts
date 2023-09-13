@@ -108,8 +108,7 @@ export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
 export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
-	isExternal?: boolean;
-	externalLink?: string;
+	isLinkExternal?: boolean;
 };
 
 export type PricingBreakdownProps = {

@@ -448,6 +448,12 @@ export default function VerifyContactForm( {
 						noCountryList && <QuerySmsCountries />
 					}
 					<FormPhoneInput
+						countrySelectProps={ {
+							'data-testid': 'country-code-select',
+						} }
+						phoneInputProps={ {
+							'data-testid': 'phone-number-input',
+						} }
 						isDisabled={ noCountryList || showCodeVerification }
 						countriesList={ countriesList }
 						initialCountryCode={ contactInfo.countryCode }
@@ -493,6 +499,7 @@ export default function VerifyContactForm( {
 					{ showCodeVerification ? translate( 'Later' ) : translate( 'Back' ) }
 				</Button>
 				<Button
+					data-testid="submit-verify-contact"
 					disabled={
 						! isCompleteContactInfo( type, contactInfo, showCodeVerification ) ||
 						isSubmittingVerificationCode ||

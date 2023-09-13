@@ -53,7 +53,6 @@
 }
 
 .signup-form__social-buttons {
-	a.social-buttons__button,
 	button {
 		display: block;
 		margin: 0 auto 15px;
@@ -113,21 +112,6 @@
 	@include break-medium {
 		// 2 columns + the 60px wide "or" element
 		width: calc(var(--signup-form-column-max-width) * 2 + 60px - 32px);
-	}
-}
-
-.signup-form__is-dev-account-checkbox {
-	margin-bottom: 48px;
-
-	@include break-large {
-		width: fit-content;
-	}
-
-	// The SelectCardCheckbox label is flex by default, which is good for badges, but makes
-	// the <strong> section of the label it's own block and not wrap nicely with the rest
-	// of the label.
-	&.select-card-checkbox__container .select-card-checkbox__label {
-		display: inline;
 	}
 }
 

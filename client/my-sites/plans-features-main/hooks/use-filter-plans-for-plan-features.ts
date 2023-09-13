@@ -4,12 +4,11 @@ import {
 	isFreePlan,
 	isPersonalPlan,
 	isPremiumPlan,
-	PlanSlug,
 } from '@automattic/calypso-products';
-import { GridPlan } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
+import type { GridPlan } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 
 interface Props {
-	plans: Record< PlanSlug, GridPlan >;
+	plans: Omit< GridPlan, 'features' >[];
 	isDisplayingPlansNeededForFeature: boolean;
 	selectedPlan?: string;
 	hideFreePlan?: boolean;
@@ -30,42 +29,44 @@ const useFilterPlansForPlanFeatures = ( {
 	hideEcommercePlan,
 }: Props ) => {
 	const filteredPlans = isDisplayingPlansNeededForFeature
-		? Object.entries( plans ).reduce( ( acc, [ planSlug, gridPlan ] ) => {
+		? plans.map( ( gridPlan ) => {
 				if ( selectedPlan && isEcommercePlan( selectedPlan ) ) {
-					return isEcommercePlan( planSlug ) ? { ...acc, [ planSlug ]: gridPlan } : acc;
+					return isEcommercePlan( gridPlan.planSlug )
+						? gridPlan
+						: { ...gridPlan, isVisible: false };
 				}
 
 				if ( selectedPlan && isBusinessPlan( selectedPlan ) ) {
-					return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug )
-						? { ...acc, [ planSlug ]: gridPlan }
-						: acc;
+					return isBusinessPlan( gridPlan.planSlug ) || isEcommercePlan( gridPlan.planSlug )
+						? gridPlan
+						: { ...gridPlan, isVisible: false };
 				}
 
 				if ( selectedPlan && isPremiumPlan( selectedPlan ) ) {
-					return isPremiumPlan( planSlug ) ||
-						isBusinessPlan( planSlug ) ||
-						isEcommercePlan( planSlug )
-						? { ...acc, [ planSlug ]: gridPlan }
-						: acc;
+					return isPremiumPlan( gridPlan.planSlug ) ||
+						isBusinessPlan( gridPlan.planSlug ) ||
+						isEcommercePlan( gridPlan.planSlug )
+						? gridPlan
+						: { ...gridPlan, isVisible: false };
 				}
 
-				return acc;
-		  }, {} as Record< PlanSlug, GridPlan > )
+				return gridPlan;
+		  } )
 		: plans;
 
-	return Object.entries( filteredPlans ).reduce( ( acc, [ planSlug, gridPlan ] ) => {
+	return filteredPlans.map( ( gridPlan ) => {
 		if (
-			( hideFreePlan && isFreePlan( planSlug ) ) ||
-			( hidePersonalPlan && isPersonalPlan( planSlug ) ) ||
-			( hidePremiumPlan && isPremiumPlan( planSlug ) ) ||
-			( hideBusinessPlan && isBusinessPlan( planSlug ) ) ||
-			( hideEcommercePlan && isEcommercePlan( planSlug ) )
+			( hideFreePlan && isFreePlan( gridPlan.planSlug ) ) ||
+			( hidePersonalPlan && isPersonalPlan( gridPlan.planSlug ) ) ||
+			( hidePremiumPlan && isPremiumPlan( gridPlan.planSlug ) ) ||
+			( hideBusinessPlan && isBusinessPlan( gridPlan.planSlug ) ) ||
+			( hideEcommercePlan && isEcommercePlan( gridPlan.planSlug ) )
 		) {
-			return acc;
+			return { ...gridPlan, isVisible: false };
 		}
 
-		return { ...acc, [ planSlug ]: gridPlan };
-	}, {} as Record< PlanSlug, GridPlan > );
+		return gridPlan;
+	} );
 };
 
 export default useFilterPlansForPlanFeatures;

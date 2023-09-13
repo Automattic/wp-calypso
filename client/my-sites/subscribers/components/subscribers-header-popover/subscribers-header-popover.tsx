@@ -1,6 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -26,8 +24,6 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
 	const recordExport = useRecordExport();
-	const locale = useLocale();
-	const { hasTranslation } = useI18n();
 
 	const onDownloadCsvClick = () => {
 		dispatch(
@@ -60,11 +56,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 				focusOnShow={ false }
 			>
 				<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
-					{ ( locale.startsWith( 'en' ) || hasTranslation( 'Download subscribers as CSV' ) ) &&
-						translate( 'Download subscribers as CSV' ) }
-					{ ! locale.startsWith( 'en' ) &&
-						! hasTranslation( 'Download subscribers as CSV' ) &&
-						translate( 'Download email subscribers as CSV' ) }
+					{ translate( 'Download subscribers as CSV' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
 		</div>

@@ -1,0 +1,22 @@
+@import "../upgrade-confirmation/style";
+
+body.business-trial-upgraded {
+	.feature-included-card__card {
+		text-align: center;
+		margin-bottom: 0;
+	}
+
+	.feature-included-card__illustration {
+		margin: auto;
+	}
+
+	.feature-included-card__link {
+		text-align: center !important;
+	}
+
+	.trial-upgrade-confirmation__tasks {
+		grid-template-columns: repeat(auto-fill, 240px) !important;
+		grid-column-gap: 28px !important;
+		grid-row-gap: 28px !important;
+	}
+}

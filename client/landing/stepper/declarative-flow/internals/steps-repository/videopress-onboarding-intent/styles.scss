@@ -1,0 +1,415 @@
+html.modal-showing {
+	overflow: hidden;
+}
+
+.videopress.intro .signup-header {
+	z-index: 0;
+}
+
+.videopress-onboarding-intent {
+	max-width: 1200px !important;
+	font-family: "SF Pro Display", $sans;
+
+	.videopress-onboarding-intent__step-content {
+		display: grid;
+		grid-template: "a b c" 1fr;
+		grid-row-gap: 48px;
+		justify-items: center;
+	}
+
+	@media (max-width: 1060px) {
+		.videopress-onboarding-intent__step-content {
+			grid-template: "a b" 1fr;
+		}
+	}
+
+	@media (max-width: 760px) {
+		.videopress-onboarding-intent__step-content {
+			grid-template: "a" 1fr;
+		}
+	}
+
+	.videopress-intent-item__preview {
+		width: 328px;
+		height: 220px;
+		overflow: hidden;
+		border: solid 8px #212121;
+		border-radius: 8px; /* stylelint-disable-line */
+		cursor: pointer;
+		transition: border-color 0.3s ease-in-out;
+
+		&:hover,
+		&:focus-visible {
+			border-color: #ffe61c;
+		}
+	}
+
+	.videopress-intent-item {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		width: 328px;
+		position: relative;
+	}
+
+	.videopress-intent-item__coming-soon,
+	.videopress-intro-modal__coming-soon {
+		text-transform: uppercase;
+		background-color: #fff;
+		color: #000;
+		border-radius: 30px; /* stylelint-disable-line */
+		font-size: 12px; /* stylelint-disable-line */
+		font-weight: 600;
+		padding: 5px 12px;
+	}
+
+	.videopress-intent-item__coming-soon {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		font-size: 11px; /* stylelint-disable-line */
+		padding: 1px 8px;
+	}
+
+	.videopress-intent-item__description {
+		display: flex;
+		flex-direction: column;
+		text-align: center;
+		gap: 4px;
+
+		.videopress-intent-item__title {
+			font-size: 17px; /* stylelint-disable-line */
+			font-weight: 600;
+		}
+
+		.videopress-intent-item__description {
+			font-size: 14px; /* stylelint-disable-line */
+			font-weight: 400;
+			color: #a7aaad;
+		}
+	}
+
+	.intro__more-modal {
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		padding: 24px;
+		z-index: 100;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		pointer-events: none;
+		box-sizing: border-box;
+
+		.intro__more-modal-container {
+			border-radius: 8px; /* stylelint-disable-line */
+			background-color: #000;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+			will-change: opacity, transform;
+			opacity: 0;
+			transform: scale(0.9);
+			transition: 0.2s ease-in-out;
+			box-shadow: 0 100px 80px rgba(0, 0, 0, 0.08), 0 20px 10px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+			border: 1px solid #fff3;
+		}
+		&.show {
+			pointer-events: all;
+
+			.intro__more-modal-container {
+				opacity: 1;
+				animation-name: intro__more-modal-pop;
+				animation-duration: 0.3s;
+				animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+				animation-fill-mode: forwards;
+				transform-origin: center center;
+			}
+		}
+
+		.intro__more-modal-header {
+			display: flex;
+			justify-content: right;
+			margin-right: 24px;
+			margin-top: 24px;
+
+			button {
+				cursor: pointer;
+				padding: 4px;
+
+				&:focus-visible {
+					border: 1px solid var(--color-text);
+				}
+			}
+		}
+
+		@keyframes intro__more-modal-pop {
+			0% {
+				opacity: 0;
+				transform: scale(0.9);
+			}
+
+			50% {
+				opacity: 1;
+				transform: scale(1.01);
+			}
+
+			100% {
+				opacity: 1;
+				transform: scale(1);
+			}
+		}
+	}
+
+	.videopress-intro-modal {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		height: 100%;
+		padding: 24px 32px;
+		font-size: 18px; /* stylelint-disable-line */
+		font-weight: 400;
+
+
+		.intro__scrollpane {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			align-items: center;
+			overflow-y: scroll;
+		}
+
+		.intro__title {
+			margin-top: 16px;
+			text-align: center;
+			font-size: 44px; /* stylelint-disable-line */
+			font-weight: 400;
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		}
+
+		.intro__description {
+			color: #a7aaad;
+			max-width: 420px;
+			text-align: center;
+		}
+
+		.videopress-intro-modal__list {
+			margin-top: 40px;
+			margin-bottom: 48px;
+			list-style: none;
+
+			li {
+				display: flex;
+				flex-direction: row;
+				align-items: baseline;
+				margin-bottom: 4px;
+
+				a {
+					color: #ffe61c;
+					border-bottom: 1px solid currentColor;
+					font-weight: 500;
+					padding: 1px;
+				}
+
+				.checkmark-icon {
+					margin-right: 16px;
+				}
+			}
+		}
+
+		.videopress-intro-modal__button-column {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			align-items: center;
+			flex: 1;
+
+			a.is-primary,
+			button.is-primary {
+				width: auto;
+				max-width: initial;
+				font-weight: 500;
+				padding: 12px 24px;
+				border-radius: 4px;
+				background-color: #ffe61c;
+				color: #000;
+				border: none;
+			}
+
+			.learn-more {
+				margin-top: 16px;
+
+				a {
+					color: #a7aaad;
+					transition: color 0.1s ease-in-out;
+					&:hover {
+						color: #fff;
+					}
+				}
+
+			}
+		}
+
+		.videopress-intro-modal__screenshots {
+			margin-top: 48px;
+			text-align: center;
+			width: 100%;
+
+			img {
+				max-width: 80%;
+			}
+		}
+
+		.videopress-intro-modal__waitlist {
+			display: flex;
+			gap: 8px;
+			min-height: 46px; /* so it doesn't shrink when the thank you message is presented */
+
+			input {
+				min-width: 300px;
+				border: 1px solid transparent;
+				border-radius: 4px;
+
+				&.is-error {
+					border: 1px solid #f00;
+				}
+			}
+
+			.button {
+				white-space: nowrap;
+				width: auto;
+				box-sizing: border-box;
+				max-width: none;
+				min-width: fit-content;
+			}
+
+			.videopress-intro-modal__waitlist-response {
+				width: 100%;
+				text-align: center;
+				font-size: 22px; /* stylelint-disable-line */
+				font-weight: 600;
+			}
+		}
+
+		.videopress-intro-modal__waitlist-presentation {
+			display: flex;
+			flex-direction: column;
+			align-content: center;
+			gap: 16px;
+
+			.videopress-intro-modal__waitlist-description {
+				max-width: 460px;
+				margin: 0 auto;
+			}
+
+			.videopress-intro-modal__waitlist-description,
+			.videopress-intro-modal__waitlist-description a,
+			.videopress-intro-modal__waitlist-description button {
+				font-size: 15px; /* stylelint-disable-line */
+				font-weight: 400;
+				text-align: center;
+				color: #a7aaad;
+			}
+
+			.videopress-intro-modal__waitlist-description button,
+			.videopress-intro-modal__waitlist-description a {
+				text-decoration: underline;
+			}
+
+			.videopress-intro-modal__waitlist-description button {
+				background: none;
+				border: none;
+				padding: 0;
+				margin: 0;
+			}
+		}
+
+		.videopress-intro-modal-other__question-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			background-color: rgb(36, 36, 36);
+			padding: 32px;
+			width: 100%;
+			max-width: 660px;
+			border-radius: 4px;
+
+			.title {
+				font-size: 18px; /* stylelint-disable-line */
+				font-weight: 600;
+			}
+
+			.subtitle {
+				font-size: 17px; /* stylelint-disable-line */
+				opacity: 0.7;
+			}
+
+			.answer-text {
+				margin-top: 24px;
+				height: 174px;
+			}
+
+			.response-text {
+				width: 100%;
+				text-align: center;
+				font-size: 22px; /* stylelint-disable-line */
+				font-weight: 600;
+			}
+		}
+
+		.videopress-intro-modal__dots-separator {
+			display: flex;
+			height: 4px;
+			margin-top: 48px;
+			margin-bottom: 48px;
+		}
+
+		.videopress-intro-modal__survey {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: linear-gradient(116.82deg, #fffc1b 0%, #ffe61c 0.01%, #ffc700 100%);
+			color: #000;
+			padding: 32px;
+			display: flex;
+			justify-content: space-around;
+
+			.button-survey {
+				display: inline-flex;
+				align-items: center;
+				gap: 4px;
+				color: #000;
+				white-space: nowrap;
+
+				background: none;
+				border: 1px solid #000;
+				border-radius: 4px;
+				font-size: 14px; /* stylelint-disable-line */
+				font-weight: 500;
+				padding: 4px 8px;
+			}
+
+			.videopress-intro-modal__survey-title {
+				font-weight: 600;
+			}
+		}
+
+		@media (max-width: 700px) {
+			.videopress-intro-modal__survey {
+				flex-direction: column;
+
+				.button-survey {
+					justify-content: center;
+					margin-top: 24px;
+					height: 44px;
+				}
+			}
+		}
+	}
+}

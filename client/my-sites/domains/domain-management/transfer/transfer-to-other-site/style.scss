@@ -5,15 +5,6 @@
 .transfer-domain-to-other-site {
 	background: var(--studio-white);
 
-	.formatted-header__title {
-		font-size: $font-title-medium;
-
-		@include break-medium {
-			font-size: $font-title-large;
-		}
-
-	}
-
 	&__card {
 		padding: 0;
 		box-shadow: none;

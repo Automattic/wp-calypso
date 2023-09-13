@@ -91,6 +91,11 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ siteSlug, site ] );
 
+	if ( launchpadScreenOption === 'skipped' ) {
+		window.location.assign( `/home/${ siteSlug }` );
+		return;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ almostReadyToLaunchText } />

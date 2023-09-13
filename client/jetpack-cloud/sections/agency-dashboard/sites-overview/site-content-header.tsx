@@ -31,7 +31,7 @@ export default function SiteContentHeader( { content, pageTitle, showStickyConte
 					</div>
 				</div>
 
-				{ showStickyContent && content }
+				{ content }
 			</div>
 		</div>
 	);

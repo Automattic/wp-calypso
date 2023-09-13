@@ -1,15 +1,17 @@
 @import "@automattic/typography/styles/fonts";
 
-.components-navigator-button.navigator-button {
+.components-item.navigator-item {
 	height: 44px;
-	padding: 0 8px;
-	margin: 0 -8px;
+	line-height: 44px;
+	padding: 0 5px 0 8px;
+	margin: 0 -11px;
 	font-size: $font-body-small;
 	font-weight: 400;
 	letter-spacing: -0.15px;
 	color: var(--studio-gray-100);
 	border: none;
 	background: transparent;
+	cursor: pointer;
 
 	svg {
 		flex-shrink: 0;
@@ -34,29 +36,30 @@
 		background-color: var(--studio-blue-0);
 	}
 
-	.navigator-button__text {
+	.navigator-item__text {
 		padding-left: 1px;
 	}
 
-	&__checklist-item--checked {
+	&--checked {
 		&:focus {
 			color: var(--studio-gray-100);
 		}
 
-		.navigator-button__text {
-			line-height: 24px;
-		}
-
-		.navigator-button__icon {
+		.navigator-item__icon {
 			fill: var(--studio-gray-100);
 		}
 
 		&:hover,
 		&:focus-visible {
 			color: var(--studio-blue-50);
-			.navigator-button__icon {
+			.navigator-item__icon {
 				fill: var(--studio-blue-50);
 			}
 		}
+	}
+
+	&--active {
+		background-color: var(--studio-blue-0);
+		color: var(--studio-blue-50);
 	}
 }

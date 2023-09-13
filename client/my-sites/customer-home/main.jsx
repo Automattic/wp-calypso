@@ -12,11 +12,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -24,9 +26,9 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
@@ -43,6 +45,7 @@ import {
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
@@ -51,6 +54,8 @@ import './style.scss';
 const Home = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
+	isJetpack,
+	isPossibleJetpackConnectionProblem,
 	isRequestingSitePlugins,
 	isSiteLaunching,
 	site,
@@ -67,7 +72,7 @@ const Home = ( {
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
 
-	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
+	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
@@ -170,23 +175,33 @@ const Home = ( {
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
 			{ header }
-			{ isLoading ? (
-				<div className="customer-home__loading-placeholder"></div>
-			) : (
+			{ ! isLoading && ! layout && homeLayoutError ? (
+				<TrackComponentView
+					eventName="calypso_customer_home_my_site_view_layout_error"
+					eventProperties={ {
+						site_id: siteId,
+						error: homeLayoutError?.message ?? 'Layout is not available.',
+					} }
+				/>
+			) : null }
+			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
+			{ ! isLoading && layout && ! homeLayoutError ? (
 				<>
-					<Primary cards={ layout.primary } />
-					<PluginsAnnouncementModal />
+					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout.secondary } siteId={ siteId } />
+							<Secondary cards={ layout?.secondary } siteId={ siteId } />
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
-							<Tertiary cards={ layout.tertiary } />
+							<Tertiary cards={ layout?.tertiary } />
 						</div>
 					</div>
 				</>
-			) }
+			) : null }
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
@@ -222,6 +237,7 @@ const mapStateToProps = ( state ) => {
 		site: getSelectedSite( state ),
 		sitePlan: getSitePlan( state, siteId ),
 		siteId,
+		isJetpack: isJetpackSite( state, siteId ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:
@@ -258,4 +274,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default connectHome( withTrackingTool( 'HotJar' )( Home ) );
+export default connectHome( withJetpackConnectionProblem( withTrackingTool( 'HotJar' )( Home ) ) );

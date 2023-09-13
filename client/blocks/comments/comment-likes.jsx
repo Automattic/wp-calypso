@@ -54,6 +54,7 @@ class CommentLikeButtonContainer extends Component {
 				likedLabel={ likedLabel }
 				iconSize={ 18 }
 				icon={ likeIcon }
+				defaultLabel={ translate( 'Like' ) }
 			/>
 		);
 	}

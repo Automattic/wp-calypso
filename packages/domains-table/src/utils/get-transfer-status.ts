@@ -1,0 +1,30 @@
+import { DomainData } from '@automattic/data-stores';
+import { transferStatus } from './constants';
+
+export function getTransferStatus( domainFromApi: DomainData ) {
+	if ( domainFromApi.transfer_status === 'pending_owner' ) {
+		return transferStatus.PENDING_OWNER;
+	}
+
+	if ( domainFromApi.transfer_status === 'pending_registry' ) {
+		return transferStatus.PENDING_REGISTRY;
+	}
+
+	if ( domainFromApi.transfer_status === 'cancelled' ) {
+		return transferStatus.CANCELLED;
+	}
+
+	if ( domainFromApi.transfer_status === 'completed' ) {
+		return transferStatus.COMPLETED;
+	}
+
+	if ( domainFromApi.transfer_status === 'pending_start' ) {
+		return transferStatus.PENDING_START;
+	}
+
+	if ( domainFromApi.transfer_status === 'pending_async' ) {
+		return transferStatus.PENDING_ASYNC;
+	}
+
+	return null;
+}

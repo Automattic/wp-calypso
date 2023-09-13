@@ -36,6 +36,13 @@ export const TEST_ACCOUNT_NAMES = [
 	'notificationsUser',
 	'googleLoginUser',
 	'appleLoginUser',
+	'jetpackAtomicDefaultUser',
+	'jetpackAtomicPhpOldUser',
+	'jetpackAtomicPhpNewUser',
+	'jetpackAtomicEcommPlanUser',
+	'jetpackAtomicPrivateUser',
+	'jetpackAtomicWpBetaUser',
+	'jetpackAtomicWpPreviousUser',
 ] as const;
 
 /**
@@ -138,6 +145,13 @@ export class SecretsManager {
 			password: 'FAKE_VALUE',
 		};
 
+		const fakeFullAccount = {
+			...fakeAccount,
+			userID: 0,
+			email: 'FAKE_VALUE',
+			testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+		};
+
 		return {
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
@@ -149,6 +163,12 @@ export class SecretsManager {
 			martechTosUploadCredentials: {
 				bearer_token: 'FAKE_VALUE',
 			},
+			socialAccounts: {
+				tumblr: {
+					username: 'FAKE_VALUE',
+					password: 'FAKE_VALUE',
+				},
+			},
 			mailosaur: {
 				apiKey: 'FAKE_VALUE',
 				inviteInboxId: 'FAKE_VALUE',
@@ -156,19 +176,14 @@ export class SecretsManager {
 				domainsInboxId: 'FAKE_VALUE',
 				defaultUserInboxId: 'FAKE_VALUE',
 				totpUserInboxId: 'FAKE_VALUE',
+				manualTesting: 'FAKE_VALUE',
 			},
 			testAccounts: {
 				defaultUser: {
-					...fakeAccount,
-					userID: 0,
-					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
-					email: 'FAKE_VALUE',
+					...fakeFullAccount,
 				},
 				atomicUser: {
-					...fakeAccount,
-					userID: 0,
-					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
-					email: 'FAKE_VALUE',
+					...fakeFullAccount,
 				},
 				eCommerceUser: { ...fakeAccount },
 				simpleSiteFreePlanUser: { ...fakeAccount },
@@ -219,6 +234,27 @@ export class SecretsManager {
 				},
 				appleLoginUser: {
 					...fakeAccount,
+				},
+				jetpackAtomicDefaultUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicPhpOldUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicPhpNewUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicEcommPlanUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicPrivateUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicWpBetaUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicWpPreviousUser: {
+					...fakeFullAccount,
 				},
 			},
 			otherTestSites: {

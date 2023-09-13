@@ -59,7 +59,7 @@ export default function PostsList( props: Props ) {
 	if ( isError && hasLocalUser ) {
 		return (
 			<Notice
-				className="promote-post-i2__aux-wrapper"
+				className="promote-post-notice promote-post-i2__aux-wrapper"
 				status="is-error"
 				icon="mention"
 				showDismiss={ false }

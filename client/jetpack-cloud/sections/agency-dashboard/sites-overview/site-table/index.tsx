@@ -9,7 +9,6 @@ import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteSort from '../site-sort';
 import SiteTableRow from '../site-table-row';
-import { getProductSlugFromProductType } from '../utils';
 import type { SiteData, SiteColumns } from '../types';
 
 interface Props {
@@ -60,7 +59,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 										<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
 											{ column.title }
 
-											{ !! getProductSlugFromProductType( column.key ) && (
+											{ column.showInfo && (
 												<Icon
 													className="site-table__tooltip-icon"
 													size={ 16 }

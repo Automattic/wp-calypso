@@ -1,6 +1,10 @@
 import config from '@automattic/calypso-config';
 import { WordPressWordmark } from '@automattic/components';
-import { isDefaultLocale, addLocaleToPath } from '@automattic/i18n-utils';
+import {
+	isDefaultLocale,
+	addLocaleToPath,
+	addLocaleToPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -34,12 +38,7 @@ class MasterbarLoggedOut extends Component {
 
 	renderTagsItem() {
 		const { translate } = this.props;
-
-		const tagsUrl = '/tags';
-		// TODO - renable adding locale once we enable locales for these pages.
-		// if ( ! isDefaultLocale( locale ) ) {
-		// 	tagsUrl = addLocaleToPath( tagsUrl, locale );
-		// }
+		const tagsUrl = addLocaleToPathLocaleInFront( '/tags' );
 
 		return (
 			<Item url={ tagsUrl }>
@@ -53,12 +52,7 @@ class MasterbarLoggedOut extends Component {
 
 	renderSearchItem() {
 		const { translate } = this.props;
-
-		const searchUrl = '/read/search';
-		// TODO - renable adding locale once we enable locales for these pages.
-		// if ( ! isDefaultLocale( locale ) ) {
-		// 	searchUrl = addLocaleToPath( searchUrl, locale );
-		// }
+		const searchUrl = addLocaleToPathLocaleInFront( '/read/search' );
 
 		return (
 			<Item url={ searchUrl }>
@@ -72,12 +66,7 @@ class MasterbarLoggedOut extends Component {
 
 	renderDiscoverItem() {
 		const { translate } = this.props;
-
-		const discoverUrl = '/discover';
-		// TODO - renable adding locale once we enable locales for these pages.
-		// if ( ! isDefaultLocale( locale ) ) {
-		// 	discoverUrl = addLocaleToPath( discoverUrl, locale );
-		// }
+		const discoverUrl = addLocaleToPathLocaleInFront( '/discover' );
 
 		return (
 			<Item url={ discoverUrl }>

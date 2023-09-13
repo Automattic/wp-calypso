@@ -33,7 +33,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
-import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-wpcom-plans-with-intent';
+import type { PlansIntent } from 'calypso/my-sites/plan-features-2023-grid/hooks/npm-ready/data-store/use-grid-plans';
 import './style.scss';
 
 interface Props {
@@ -125,9 +125,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			</div>
 		);
 	};
-	const replacePaidDomainWithFreeDomain = ( freeDomainSuggestion: DomainSuggestion ) => {
-		setDomain( freeDomainSuggestion );
+
+	const removePaidDomain = () => {
 		setDomainCartItem( null );
+	};
+
+	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: DomainSuggestion ) => {
+		setDomain( freeDomainSuggestion );
 	};
 
 	const plansFeaturesList = () => {
@@ -153,7 +157,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
-					replacePaidDomainWithFreeDomain={ replacePaidDomainWithFreeDomain }
+					removePaidDomain={ removePaidDomain }
+					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 				/>
 				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
@@ -161,11 +166,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if (
-			flowName === DOMAIN_UPSELL_FLOW ||
-			isNewHostedSiteCreationFlow( flowName ) ||
-			isOnboardingPMFlow( flowName )
-		) {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return __( 'The right plan for the right project' );
+		}
+
+		if ( flowName === DOMAIN_UPSELL_FLOW || isOnboardingPMFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
@@ -200,7 +205,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'Welcome to the best place for your WordPress website.' );
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
 		}
 
 		if ( ! hideFreePlan ) {

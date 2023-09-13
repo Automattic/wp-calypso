@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { useSiteIdParam } from '../use-site-id-param';
 
 jest.mock( 'react-router-dom', () => ( {

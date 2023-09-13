@@ -98,7 +98,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 				{ titleComponentLocation === TitleLocation.BODY && titleComponentHeader }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
-							if ( ! child || ! isValidElement( child ) ) {
+							if ( ! child || ! isValidElement< { isPrimary?: boolean } >( child ) ) {
 								return child;
 							}
 							return PromoCardCta === child.type ? cloneElement( child, { isPrimary } ) : child;

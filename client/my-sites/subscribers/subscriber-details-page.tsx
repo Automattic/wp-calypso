@@ -1,10 +1,11 @@
-import { Spinner } from '@wordpress/components';
+import { Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useDispatch } from 'react-redux';
 import { Item } from 'calypso/components/breadcrumb';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
+import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -14,7 +15,7 @@ import { UnsubscribeModal } from './components/unsubscribe-modal';
 import { SubscribersFilterBy, SubscribersSortBy } from './constants';
 import { getSubscriberDetailsUrl, getSubscribersUrl } from './helpers';
 import { useUnsubscribeModal } from './hooks';
-import useSubscriberDetailsQuery from './queries/use-subscriber-details-query';
+import { useSubscriberDetailsQuery } from './queries';
 import './subscriber-details-style.scss';
 
 type SubscriberDetailsPageProps = {
@@ -39,11 +40,19 @@ const SubscriberDetailsPage = ( {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
-	const { data: subscriber, isLoading } = useSubscriberDetailsQuery(
+	const { data: subscriber, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		selectedSiteId,
 		subscriptionId,
 		userId
 	);
+
+	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
+		useSubscribedNewsletterCategories( {
+			siteId: selectedSiteId as number,
+			subscriptionId: subscriptionId || subscriber?.subscription_id,
+		} );
+
+	const isLoading = isLoadingDetails || isLoadingNewsletterCategories;
 
 	const pageArgs = {
 		currentPage: pageNumber,
@@ -99,7 +108,16 @@ const SubscriberDetailsPage = ( {
 			<FixedNavigationHeader navigationItems={ navigationItems }>
 				<SubscriberPopover onUnsubscribe={ unsubscribeClickHandler } />
 			</FixedNavigationHeader>
-			{ subscriber && ! isLoading && <SubscriberDetails subscriber={ subscriber } /> }
+			{ subscriber && ! isLoading && selectedSiteId && (
+				<SubscriberDetails
+					subscriber={ subscriber }
+					siteId={ selectedSiteId }
+					subscriptionId={ subscriptionId }
+					userId={ userId }
+					newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
+					newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
+				/>
+			) }
 			<UnsubscribeModal
 				subscriber={ modalSubscriber }
 				onCancel={ resetSubscriber }

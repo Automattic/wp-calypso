@@ -26,6 +26,7 @@ import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { withSitesSortingPreference } from 'calypso/state/sites/hooks/with-sites-sorting';
 import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import JetpackAgencyAddSite from '../jetpack/add-new-site-button';
 import SiteSelectorAddSite from './add-site';
 import SitesList from './sites-list';
 import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
@@ -39,8 +40,10 @@ const debug = debugFactory( 'calypso:site-selector' );
 export class SiteSelector extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
+		isJetpackAgencyDashboard: PropTypes.bool,
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		wpcomSiteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		showAddNewSite: PropTypes.bool,
 		showAllSites: PropTypes.bool,
 		indicator: PropTypes.bool,
@@ -70,6 +73,7 @@ export class SiteSelector extends Component {
 		showAllSites: false,
 		showHiddenSites: false,
 		siteBasePath: false,
+		wpcomSiteBasePath: false,
 		indicator: false,
 		hideSelected: false,
 		selected: null,
@@ -478,7 +482,28 @@ export class SiteSelector extends Component {
 								{ this.props.translate( 'Manage sites' ) }
 							</Button>
 						) }
-						{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
+						{ this.props.showAddNewSite &&
+							( this.props.isJetpackAgencyDashboard ? (
+								<JetpackAgencyAddSite
+									onClickAddNewSite={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_add_new_site_click'
+										)
+									}
+									onClickWpcomMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_create_wpcom_site_click'
+										)
+									}
+									onClickJetpackMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_connect_jetpack_site_click'
+										)
+									}
+								/>
+							) : (
+								<SiteSelectorAddSite />
+							) ) }
 					</div>
 				) }
 			</div>
@@ -487,13 +512,19 @@ export class SiteSelector extends Component {
 }
 
 const navigateToSite =
-	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) =>
+	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath, wpcomSiteBasePath } ) =>
 	( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
-		const pathname = getPathnameForSite();
-		if ( pathname ) {
-			page( pathname );
+
+		// We will need to open a new tab if we have wpcomSiteBasePath prop and current site is an Atomic site.
+		if ( site?.is_wpcom_atomic && wpcomSiteBasePath ) {
+			window.open( getCompleteSiteURL( wpcomSiteBasePath ) );
+		} else {
+			const pathname = getPathnameForSite();
+			if ( pathname ) {
+				page( pathname );
+			}
 		}
 
 		function getPathnameForSite() {
@@ -510,35 +541,13 @@ const navigateToSite =
 				}
 
 				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-				if ( path.match( /^\/backup\/.*\/(download|restore|contents)/ ) ) {
+				if ( path.match( /^\/backup\/.*\/(download|restore|contents|granular-restore)/ ) ) {
 					return '/backup';
 				}
 
 				return path;
 			} else if ( siteBasePath ) {
-				const base = getSiteBasePath();
-
-				// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
-				const urlType = determineUrlType( base );
-
-				// Get URL parts and modify the path.
-				const { origin, pathname: urlPathname, search } = getUrlParts( base );
-				const newPathname = `${ urlPathname }/${ site.slug }`;
-
-				try {
-					// Get an absolute URL from the original URL, the modified path, and some defaults.
-					const absoluteUrl = getUrlFromParts( {
-						origin: origin || window.location.origin,
-						pathname: newPathname,
-						search,
-					} );
-
-					// Format the absolute URL down to the original URL type.
-					return format( absoluteUrl, urlType );
-				} catch {
-					// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
-					return null;
-				}
+				return getCompleteSiteURL( getSiteBasePath() );
 			}
 		}
 
@@ -569,12 +578,41 @@ const navigateToSite =
 				}
 			}
 
+			// Defaults to /advertising/campaigns when switching sites in the 3rd level
+			if ( path.match( /^\/advertising\/campaigns\/\d+/ ) ) {
+				path = '/advertising/campaigns';
+			}
+
 			// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-			if ( path.match( /^\/backup\/.*\/(download|restore|contents)/ ) ) {
+			if ( path.match( /^\/backup\/.*\/(download|restore|contents|granular-restore)/ ) ) {
 				path = '/backup';
 			}
 
 			return path;
+		}
+
+		function getCompleteSiteURL( base ) {
+			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+			const urlType = determineUrlType( base );
+
+			// Get URL parts and modify the path.
+			const { origin, pathname: urlPathname, search } = getUrlParts( base );
+			const newPathname = `${ urlPathname }/${ site.slug }`;
+
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					origin: origin || window.location.origin,
+					pathname: newPathname,
+					search,
+				} );
+
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+				return null;
+			}
 		}
 	};
 

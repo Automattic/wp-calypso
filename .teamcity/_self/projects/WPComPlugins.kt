@@ -234,8 +234,7 @@ private object BlazeDashboard : WPComPluginBuild(
 	pluginSlug = "blaze-dashboard",
 	archiveDir = "./dist/",
 	withPRNotify = "false",
-	// TODO: Update doc link when the doc is released
-	docsLink = "TODO",
+	docsLink = "PCYsg-SuD-p2",
 	buildSteps = {
 		bashNodeScript {
 			name = "Translate Blaze Dashboard"

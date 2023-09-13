@@ -8,7 +8,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import version_compare from 'calypso/lib/version-compare';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import useNoticeVisibilityQuery from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';

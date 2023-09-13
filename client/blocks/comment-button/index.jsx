@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
@@ -20,6 +21,7 @@ function CommentButton( props ) {
 				href: 'a' === tagName ? href : null,
 				onClick,
 				target: 'a' === tagName ? target : null,
+				title: translate( 'Comment' ),
 			},
 			( prop ) => prop === null
 		),
@@ -34,6 +36,7 @@ CommentButton.propTypes = {
 	commentCount: PropTypes.number,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
+	post: PropTypes.object,
 	showLabel: PropTypes.bool,
 	tagName: PropTypes.string,
 	target: PropTypes.string,
@@ -44,6 +47,7 @@ CommentButton.defaultProps = {
 	commentCount: 0,
 	href: null,
 	onClick: noop,
+	post: {},
 	showLabel: true,
 	size: 24,
 	tagName: 'li',

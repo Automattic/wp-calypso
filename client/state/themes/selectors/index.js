@@ -7,8 +7,11 @@ export { doesThemeBundleUsableSoftwareSet } from 'calypso/state/themes/selectors
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
+export { getIsLivePreviewSupported } from 'calypso/state/themes/selectors/get-is-live-preview-supported';
+export { getIsLivePreviewStarted } from 'calypso/state/themes/selectors/get-is-live-preview-preparing';
 export { getJetpackUpgradeUrlIfPremiumTheme } from 'calypso/state/themes/selectors/get-jetpack-upgrade-url-if-premium-theme';
 export { getLastThemeQuery } from 'calypso/state/themes/selectors/get-last-theme-query';
+export { getLivePreviewUrl } from 'calypso/state/themes/selectors/get-live-preview-url';
 export { getMarketplaceThemeSubscriptionPrices } from 'calypso/state/themes/selectors/get-marketplace-theme-subscription-prices';
 export { getPremiumThemePrice } from 'calypso/state/themes/selectors/get-premium-theme-price';
 export { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
@@ -35,8 +38,6 @@ export { getThemeRequestErrors } from 'calypso/state/themes/selectors/get-theme-
 export { getThemesForQuery } from 'calypso/state/themes/selectors/get-themes-for-query';
 export { getThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors/get-themes-for-query-ignoring-page';
 export { getThemesFoundForQuery } from 'calypso/state/themes/selectors/get-themes-found-for-query';
-export { getThemeShowcaseDescription } from 'calypso/state/themes/selectors/get-theme-showcase-description';
-export { getThemeShowcaseTitle } from 'calypso/state/themes/selectors/get-theme-showcase-title';
 export { getThemeSignupUrl } from 'calypso/state/themes/selectors/get-theme-signup-url';
 export { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 export { getThemeSupportUrl } from 'calypso/state/themes/selectors/get-theme-support-url';

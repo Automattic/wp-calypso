@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-export type CampaignsFilterType = 'all' | 'active' | 'created' | 'finished' | 'rejected';
+export type CampaignsFilterType = '' | 'active' | 'created' | 'finished' | 'rejected';
 
 interface Props {
 	campaignsFilter: CampaignsFilterType;
@@ -31,9 +31,8 @@ export default function CampaignsFilter( props: Props ) {
 
 	const options = [
 		{
-			value: 'all',
+			value: '',
 			label: translate( 'All' ),
-			selectedCondition: campaignsFilter === 'all' || ! campaignsFilter,
 		},
 		{
 			value: 'active',
@@ -58,9 +57,7 @@ export default function CampaignsFilter( props: Props ) {
 			{ options.map( ( option ) => (
 				<SegmentedControl.Item
 					key={ option.value }
-					selected={
-						option.selectedCondition ? option.selectedCondition : campaignsFilter === option.value
-					}
+					selected={ campaignsFilter === option.value }
 					onClick={ () => handleChange( option.value as CampaignsFilterType ) }
 				>
 					<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }>{ option.label }</span>

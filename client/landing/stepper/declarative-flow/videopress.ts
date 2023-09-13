@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PlansSelect, SiteSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
@@ -8,11 +9,11 @@ import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { PLANS_STORE, SITE_STORE, USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
-import Intro from './internals/steps-repository/intro';
 import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
@@ -27,8 +28,16 @@ const videopress: Flow = {
 		return translate( 'Video' );
 	},
 	useSteps() {
+		const isIntentEnabled = config.isEnabled( 'videopress-onboarding-user-intent' );
+
 		return [
-			{ slug: 'intro', component: Intro },
+			{
+				slug: 'intro',
+				asyncComponent: () =>
+					isIntentEnabled
+						? import( './internals/steps-repository/videopress-onboarding-intent' )
+						: import( './internals/steps-repository/intro' ),
+			},
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
 			{ slug: 'options', component: SiteOptions },
 			{ slug: 'chooseADomain', component: ChooseADomain },
@@ -61,6 +70,7 @@ const videopress: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
+		const siteId = useSiteIdParam();
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -280,7 +290,7 @@ const videopress: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.replace( `/view/${ _siteSlug }` );
+					return window.location.replace( `/view/${ siteId ?? _siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

@@ -53,6 +53,14 @@ describe( 'reducer', () => {
 			expect( newState ).toEqual( expectedState );
 		} );
 
+		test( 'should handle non-array response', () => {
+			const initialState = WPCOM_RESPONSE;
+			const action = activePromotionsReceiveAction( {} );
+
+			const newState = itemsReducer( initialState, action );
+			expect( newState ).toEqual( [] );
+		} );
+
 		test( 'should persist state', () => {
 			const activePromotions = WPCOM_RESPONSE;
 			const initialState = activePromotions;

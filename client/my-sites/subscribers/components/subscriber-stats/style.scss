@@ -1,0 +1,22 @@
+@import "@wordpress/base-styles/mixins";
+
+.subscriber-details .subscriber-stats {
+	margin-bottom: 32px;
+
+	&__tip {
+		display: flex;
+		align-items: center;
+		color: var(--studio-gray-50);
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+		margin-top: 8px;
+
+		svg {
+			margin-right: 2px;
+		}
+
+		path {
+			fill: var(--studio-gray-50);
+		}
+	}
+}

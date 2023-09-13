@@ -1,6 +1,10 @@
 import { Button } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { Icon, info } from '@wordpress/icons';
+import { removeQueryArgs } from '@wordpress/url';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -20,6 +24,7 @@ import DomainHeader from 'calypso/my-sites/domains/domain-management/components/
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
+	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
 	domainUseMyDomain,
@@ -42,6 +47,7 @@ import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
+import DomainForwardingCard from './cards/domain-forwarding-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
@@ -73,15 +79,17 @@ const Settings = ( {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
 
+	const queryParams = new URLSearchParams( window.location.search );
+
 	useEffect( () => {
 		if ( ! contactInformation ) {
 			requestWhois( selectedDomainName );
 		}
-	}, [ contactInformation, selectedDomainName ] );
+	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
 	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
 
-	const renderBreadcrumbs = () => {
+	const renderHeader = () => {
 		const previousPath = domainManagementList(
 			selectedSite?.slug,
 			currentRoute,
@@ -104,7 +112,17 @@ const Settings = ( {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader
+				items={ items }
+				mobileItem={ mobileItem }
+				titleOverride={
+					domain ? (
+						<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+					) : null
+				}
+			/>
+		);
 	};
 
 	const renderSecurityAccordion = () => {
@@ -141,7 +159,6 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			! hasConnectableSites ||
 			domain.type === domainTypes.TRANSFER
 		) {
 			return null;
@@ -149,11 +166,15 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Connect a WordPress.com site', { textOnly: true } ) }
+				title={ translate( 'Create a WordPress.com site', { textOnly: true } ) }
 				key="status"
 				expanded
 			>
-				<DomainOnlyConnectCard selectedDomainName={ domain.domain } selectedSite={ selectedSite } />
+				<DomainOnlyConnectCard
+					selectedDomainName={ domain.domain }
+					selectedSite={ selectedSite }
+					hasConnectableSites={ hasConnectableSites }
+				/>
 			</Accordion>
 		);
 	};
@@ -214,7 +235,7 @@ const Settings = ( {
 			return (
 				<Accordion
 					title={ translate( 'Redirect settings', { textOnly: true } ) }
-					subtitle="Update your site redirect"
+					subtitle={ translate( 'Update your site redirect' ) }
 					key="main"
 					expanded
 				>
@@ -262,10 +283,18 @@ const Settings = ( {
 			return null;
 		}
 
+		const onClose = () => {
+			page.redirect(
+				window.location.pathname + removeQueryArgs( window.location.search, 'nameservers' )
+			);
+		};
+
 		return (
 			<Accordion
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
+				expanded={ queryParams.get( 'nameservers' ) === 'true' }
+				onClose={ onClose }
 			>
 				{ domain.canManageNameServers ? (
 					<NameServersCard
@@ -284,6 +313,50 @@ const Settings = ( {
 		);
 	};
 
+	const renderDnsRecordsNotice = () => {
+		if (
+			( ! englishLocales.includes( getLocaleSlug() || '' ) &&
+				! i18n.hasTranslation(
+					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
+				) ) ||
+			areAllWpcomNameServers() ||
+			! nameservers ||
+			! nameservers.length
+		) {
+			return null;
+		}
+
+		return (
+			<div className="dns-records-card-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="dns-records-card-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="dns-records-card-notice__message">
+					{ translate(
+						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit(
+											selectedSite.slug,
+											selectedDomainName,
+											currentRoute,
+											{ nameservers: true }
+										) }
+									/>
+								),
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
 	const renderDnsRecords = () => {
 		if (
 			! domain ||
@@ -295,20 +368,56 @@ const Settings = ( {
 		}
 
 		return (
+			<div className="dns-records-card">
+				<Accordion
+					title={ translate( 'DNS records', { textOnly: true } ) }
+					subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
+				>
+					{ domain.canManageDnsRecords ? (
+						<>
+							{ renderDnsRecordsNotice() }
+							<DnsRecords
+								dns={ dns }
+								selectedDomainName={ selectedDomainName }
+								selectedSite={ selectedSite }
+								currentRoute={ currentRoute }
+							/>
+						</>
+					) : (
+						<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
+					) }
+				</Accordion>
+			</div>
+		);
+	};
+
+	const renderForwardingSection = () => {
+		if (
+			! domain ||
+			domain.type === domainTypes.SITE_REDIRECT ||
+			domain.transferStatus === transferStatus.PENDING_ASYNC ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		let translatedTitle;
+		if (
+			englishLocales.includes( getLocaleSlug() || '' ) ||
+			i18n.hasTranslation( 'Domain forwarding' )
+		) {
+			translatedTitle = translate( 'Domain forwarding', { textOnly: true } );
+		} else {
+			translatedTitle = translate( 'Domain Forwarding', { textOnly: true } );
+		}
+
+		return (
 			<Accordion
-				title={ translate( 'DNS records', { textOnly: true } ) }
-				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
+				className="domain-forwarding-card__accordion"
+				title={ translatedTitle }
+				subtitle={ translate( 'Forward your domain to another' ) }
 			>
-				{ domain.canManageDnsRecords ? (
-					<DnsRecords
-						dns={ dns }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite }
-						currentRoute={ currentRoute }
-					/>
-				) : (
-					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
-				) }
+				<DomainForwardingCard domain={ domain } />
 			</Accordion>
 		);
 	};
@@ -459,6 +568,7 @@ const Settings = ( {
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
+				{ renderForwardingSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
@@ -481,7 +591,7 @@ const Settings = ( {
 
 	if ( ! domain ) {
 		// TODO: Update this placeholder
-		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
+		return <DomainMainPlaceholder breadcrumbs={ renderHeader } />;
 	}
 
 	return (
@@ -489,8 +599,7 @@ const Settings = ( {
 		<Main wideLayout className="domain-settings-page">
 			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
+			{ renderHeader() }
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

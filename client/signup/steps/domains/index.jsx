@@ -26,6 +26,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
@@ -257,13 +258,16 @@ class DomainsStep extends Component {
 	};
 
 	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
+		const { flowName } = this.props;
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
 			: {};
 
-		const suggestion = this.props.step.suggestion;
+		const { step } = this.props;
+		const { lastDomainSearched } = step.domainForm ?? {};
 
+		const { suggestion } = step;
 		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
 
 		const siteUrl =
@@ -278,6 +282,28 @@ class DomainsStep extends Component {
 					productSlug: suggestion.product_slug,
 			  } )
 			: undefined;
+
+		switch ( flowName ) {
+			case 'onboarding':
+				if ( isPurchasingItem ) {
+					loadExperimentAssignment(
+						'calypso_onboarding_plans_paid_domain_on_free_plan_confidence_check'
+					);
+				} else {
+					loadExperimentAssignment(
+						'calypso_gf_signup_onboarding_free_free_dont_miss_out_modal_v3'
+					);
+				}
+				break;
+			case 'onboarding-pm':
+				if ( isPurchasingItem ) {
+					loadExperimentAssignment( 'calypso_onboardingpm_plans_paid_domain_on_free_plan' );
+				} else {
+					loadExperimentAssignment(
+						'calypso_gf_signup_onboarding_pm_free_free_dont_miss_out_modal_v3'
+					);
+				}
+		}
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
@@ -305,7 +331,9 @@ class DomainsStep extends Component {
 				{ domainItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem,
-				signupDomainOrigin ? { signupDomainOrigin } : {}
+				signupDomainOrigin ? { signupDomainOrigin } : {},
+				suggestion?.domain_name ? { siteUrl: suggestion?.domain_name } : {},
+				lastDomainSearched ? { lastDomainSearched } : {}
 			)
 		);
 
@@ -338,9 +366,14 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem, {
-				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
-			} )
+			Object.assign(
+				{ domainItem },
+				useThemeHeadstartItem,
+				{
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
+				},
+				{ siteUrl: domain }
+			)
 		);
 
 		this.props.goToNextStep();
@@ -374,7 +407,7 @@ class DomainsStep extends Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, useThemeHeadstartItem )
+			Object.assign( { domainItem }, useThemeHeadstartItem, { siteUrl: domain } )
 		);
 
 		this.props.goToNextStep();

@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import Page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { WPImportError } from 'calypso/blocks/importer/wordpress/types';
+import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
 import Notice from 'calypso/components/notice';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -91,6 +91,17 @@ class ImporterError extends PureComponent {
 						ei: (
 							<Button className="importer__error-pane is-link" onClick={ this.everythingImport } />
 						),
+						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					},
+				}
+			);
+		}
+
+		if ( this.props.code === FileTooLarge.FILE_TOO_LARGE ) {
+			return this.props.translate(
+				'The file you are importing is too large. {{cs}}Please contact support to continue{{/cs}}.',
+				{
+					components: {
 						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
 					},
 				}

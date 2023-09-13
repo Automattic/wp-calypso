@@ -1,4 +1,5 @@
 import deepfreeze from 'deep-freeze';
+import { getAfterDateForFeed } from 'calypso/reader/discover/helper';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestPage as requestPageAction,
@@ -82,6 +83,7 @@ describe( 'streams', () => {
 							tag_recs_per_card: 5,
 							site_recs_per_card: 5,
 							tags: [],
+							after: getAfterDateForFeed(),
 						},
 					},
 				},
@@ -89,13 +91,14 @@ describe( 'streams', () => {
 					stream: 'discover:dailyprompt',
 					expected: {
 						method: 'GET',
-						path: `/read/tags/dailyprompt/posts`,
+						path: `/read/tags/dailyprompt/cards`,
 						apiNamespace: 'wpcom/v2',
 						query: {
 							...query,
 							tag_recs_per_card: 5,
 							site_recs_per_card: 5,
 							tags: [],
+							after: getAfterDateForFeed(),
 						},
 					},
 				},

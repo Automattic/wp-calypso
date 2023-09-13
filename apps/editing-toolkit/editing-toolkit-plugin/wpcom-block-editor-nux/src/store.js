@@ -80,7 +80,7 @@ const reducer = combineReducers( {
 	shouldShowFirstPostPublishedModal: shouldShowFirstPostPublishedModalReducer,
 } );
 
-const actions = {
+export const actions = {
 	*fetchWelcomeGuideStatus() {
 		const response = yield apiFetchControls( { path: '/wpcom/v2/block-editor/nux' } );
 

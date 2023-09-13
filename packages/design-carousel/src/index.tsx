@@ -5,8 +5,12 @@ import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef } from 'react';
 import Swiper from 'swiper';
+import { Navigation, Keyboard, Mousewheel } from 'swiper/modules';
 import { Item } from './item';
-import 'swiper/dist/css/swiper.css';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/keyboard';
+import 'swiper/css/mousewheel';
 import type { Design } from '@automattic/design-picker/src/types';
 
 type DesignCarouselProps = {
@@ -30,9 +34,13 @@ export default function DesignCarousel( {
 	useEffect( () => {
 		if ( selectedDesigns ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
+				cssMode: true,
 				autoHeight: true,
 				mousewheel: true,
-				keyboard: true,
+				keyboard: {
+					enabled: true,
+					onlyInViewport: false,
+				},
 				threshold: 5,
 				slideToClickedSlide: true,
 				slidesPerView: 'auto',
@@ -42,6 +50,7 @@ export default function DesignCarousel( {
 					prevEl: '.design-carousel__carousel-nav-button--back',
 					nextEl: '.design-carousel__carousel-nav-button--next',
 				},
+				modules: [ Navigation, Keyboard, Mousewheel ],
 			} );
 		}
 		return () => {

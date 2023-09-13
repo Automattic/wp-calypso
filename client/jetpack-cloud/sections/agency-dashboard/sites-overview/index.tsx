@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
-import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import SectionNav from 'calypso/components/section-nav';
@@ -23,18 +22,19 @@ import {
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
+import DashboardBanners from './dashboard-banners';
 import DashboardDataContext from './dashboard-data-context';
+import { DASHBOARD_PRODUCT_SLUGS_BY_TYPE } from './lib/constants';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
+import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
-import SiteDowntimeMonitoringUpgradeBanner from './site-downtime-monitoring-upgrade-banner';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
-import SiteSurveyBanner from './site-survey-banner';
-import SiteWelcomeBanner from './site-welcome-banner';
-import { getProductSlugFromProductType } from './utils';
+import SiteTopHeaderButtons from './site-top-header-buttons';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
@@ -47,6 +47,9 @@ export default function SitesOverview() {
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const containerRef = createRef< any >();
+	const siteTableRef = createRef< HTMLTableElement >();
+
+	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
@@ -80,6 +83,8 @@ export default function SitesOverview() {
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
 	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+
+	const { data: products } = useProductsQuery();
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
@@ -184,7 +189,7 @@ export default function SitesOverview() {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
 			product_slug: selectedLicenses
-				?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+				?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
 				// If multiple products are selected, pass them as a comma-separated list.
 				.join( ',' ),
 			source: 'dashboard',
@@ -210,7 +215,7 @@ export default function SitesOverview() {
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
 								site_id: selectedLicensesSiteId,
 								products: selectedLicenses
-									?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+									?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
 									// If multiple products are selected, pass them as a comma-separated list.
 									.join( ',' ),
 							} )
@@ -229,8 +234,7 @@ export default function SitesOverview() {
 		);
 	};
 
-	const showIssueLicenseButtonsLargeScreen =
-		isWithinBreakpoint( '>960px' ) && selectedLicensesCount > 0;
+	const isLargeScreen = isWithinBreakpoint( '>960px' );
 
 	return (
 		<div className="sites-overview">
@@ -239,16 +243,28 @@ export default function SitesOverview() {
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
-						<SiteSurveyBanner isDashboardView />
-						<SiteWelcomeBanner isDashboardView />
-						<SiteDowntimeMonitoringUpgradeBanner />
+						<DashboardBanners />
 
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
-							content={ renderIssueLicenseButton() }
+							content={
+								// render content only on large screens, The buttons for small scren have their own section
+								isLargeScreen &&
+								( selectedLicensesCount > 0 ? (
+									renderIssueLicenseButton()
+								) : (
+									<SiteTopHeaderButtons />
+								) )
+							}
 							pageTitle={ pageTitle }
-							showStickyContent={ !! showIssueLicenseButtonsLargeScreen }
+							// Only renderIssueLicenseButton should be sticky.
+							showStickyContent={ !! ( selectedLicensesCount > 0 && isLargeScreen ) }
 						/>
+
+						{
+							// Render the add site and issue license buttons on mobile as a different component.
+							! isLargeScreen && <SiteTopHeaderButtons />
+						}
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={
@@ -296,6 +312,8 @@ export default function SitesOverview() {
 											return;
 										},
 									},
+									products: products ?? [],
+									isLargeScreen: showLargeScreen,
 								} }
 							>
 								<>
@@ -305,7 +323,7 @@ export default function SitesOverview() {
 										isLoading={ isLoading }
 										currentPage={ currentPage }
 										isFavoritesTab={ isFavoritesTab }
-										ref={ containerRef }
+										ref={ siteTableRef }
 									/>
 								</>
 							</DashboardDataContext.Provider>
@@ -313,7 +331,7 @@ export default function SitesOverview() {
 					</div>
 				</div>
 			</div>
-			{ isWithinBreakpoint( '<960px' ) && selectedLicensesCount > 0 && (
+			{ ! isLargeScreen && selectedLicensesCount > 0 && (
 				<div className="sites-overview__issue-licenses-button-small-screen">
 					{ renderIssueLicenseButton() }
 				</div>

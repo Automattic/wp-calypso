@@ -1,11 +1,15 @@
 import config from '@automattic/calypso-config';
+import { InfiniteData } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
-import { BlazablePost, Campaign } from 'calypso/data/promote-post/types';
 import {
-	PagedBlazeContentData,
-	PagedBlazeSearchResponse,
-} from 'calypso/my-sites/promote-post-i2/main';
+	BlazablePost,
+	BlazePagedItem,
+	Campaign,
+	CampaignQueryResult,
+	PostQueryResult,
+} from 'calypso/data/promote-post/types';
+import { PagedBlazeContentData } from 'calypso/my-sites/promote-post-i2/main';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -172,18 +176,25 @@ export const canCancelCampaign = ( status: string ) => {
 	);
 };
 
+type PagedDataMode = 'campaigns' | 'posts';
+
+type BlazeDataPaged = {
+	campaigns?: Campaign[];
+	posts?: BlazablePost[];
+};
+
 export const getPagedBlazeSearchData = (
-	mode: 'campaigns' | 'posts',
-	pagedData?: PagedBlazeSearchResponse
+	mode: PagedDataMode,
+	pagedData?: InfiniteData< CampaignQueryResult | PostQueryResult >
 ): PagedBlazeContentData => {
 	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
 	if ( lastPage ) {
 		const { has_more_pages, total_items } = lastPage;
 
-		let foundContent = pagedData?.pages
-			?.map( ( item: any ) => item[ mode ] )
+		let foundContent: BlazePagedItem[] = pagedData?.pages
+			?.map( ( item: BlazeDataPaged ) => item[ mode ] )
 			?.flat()
-			?.filter( ( item: BlazablePost | Campaign ) => 'undefined' !== typeof item );
+			?.filter( ( item?: BlazePagedItem ): item is BlazePagedItem => 'undefined' !== typeof item );
 
 		if ( foundContent?.length ) {
 			switch ( mode ) {
@@ -222,17 +233,19 @@ export const getShortDateString = ( date: string ) => {
 	const timestamp = moment( Date.parse( date ) );
 	const now = moment();
 
-	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
-	switch ( dateDiff ) {
-		case 0:
-			return __( 'hours ago' );
-		case 1:
-			return __( '1 day ago' );
-		default:
-			return timestamp.isSame( now, 'year' )
-				? moment( date ).format( 'MMM DD' )
-				: moment( date ).format( 'MMM DD, YYYY' );
+	const minuteDiff = Math.abs( now.diff( timestamp, 'minutes' ) );
+	if ( minuteDiff < 1 ) {
+		return __( 'Now' );
 	}
+
+	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
+	if ( dateDiff < 7 ) {
+		return timestamp.fromNow();
+	}
+
+	return timestamp.isSame( now, 'year' )
+		? moment( date ).format( 'MMM DD' )
+		: moment( date ).format( 'MMM DD, YYYY' );
 };
 
 export const getLongDateString = ( date: string ) => {

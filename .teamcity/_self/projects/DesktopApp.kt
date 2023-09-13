@@ -13,6 +13,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.retryBuild
 
 object DesktopApp : Project({
 	id("WpDesktop")
@@ -100,8 +101,11 @@ object E2ETests : BuildType({
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
+
+				cd desktop
+
 				# Run tests
-				cd desktop && yarn run test:e2e --reporters=jest-teamcity --reporters=default
+				yarn run test:e2e --reporters=jest-teamcity --reporters=default
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
@@ -163,6 +167,16 @@ object E2ETests : BuildType({
 				+:*
 				-:pull*
 			""".trimIndent()
+			triggerRules = """
+				-:**.md
+				-:test/e2e/**
+				-:packages/calypso-e2e/**
+			""".trimIndent()
+		}
+		retryBuild {
+			attempts = 1
+			delaySeconds = 20
+			moveToTheQueueTop = true
 		}
 	}
 })

@@ -43,22 +43,6 @@ body.connect-domain-setup__body-white {
 		align-items: center;
 		margin-bottom: 16px;
 
-		.connect-domain-step__page-heading.formatted-header {
-			margin-bottom: 0;
-		}
-
-		.connect-domain-step__page-heading .formatted-header__title {
-			margin-bottom: 0;
-
-			@include break-zoomed-in {
-				font-size: $font-title-medium;
-			}
-
-			@include break-small {
-				font-size: $font-title-large;
-			}
-		}
-
 		div.connect-domain-step__badge {
 			display: inline-flex;
 			justify-content: center;

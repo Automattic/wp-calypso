@@ -185,10 +185,23 @@ button {
 		}
 	}
 
+	.components-button.is-link {
+		color: var(--color-accent);
+
+		&:hover:not(:disabled):not(.disabled),
+		&:focus:not(:disabled):not(.disabled) {
+			color: var(--color-neutral-70);
+		}
+	}
+
 	// WordPress.org components no longer use blue-50 as the primary color.
 	// This changes the primary color to blue-50 to conform to the WordPress.com colors.
 	--color-accent: var(--studio-blue-50);
 	--color-accent-60: var(--studio-blue-60);
+	--wp-components-color-accent-darker-10: var(--studio-blue-60);
+	--wp-components-color-accent-darker-20: var(--studio-blue-70);
+	--wp-components-color-accent: var(--studio-blue-50);
+
 }
 
 .import-focused .step-container.site-picker {

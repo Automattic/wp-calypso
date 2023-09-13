@@ -22,6 +22,13 @@ import {
 } from './wpcom-site-editor-document-actions-dropdown-click';
 import wpcomSiteEditorExitClick from './wpcom-site-editor-exit-click';
 import {
+	wpcomSiteEditorSidebarNavigationClick,
+	wpcomSiteEditorSidebarPagesClick,
+	wpcomSiteEditorSidebarPatternsClick,
+	wpcomSiteEditorSidebarStylesClick,
+	wpcomSiteEditorSidebarTemplatesClick,
+} from './wpcom-site-editor-sidebar-clicks';
+import {
 	wpcomTemplatePartChooseCapture,
 	wpcomTemplatePartChooseBubble,
 	wpcomTemplatePartReplaceBubble,
@@ -70,11 +77,16 @@ const EVENTS_MAPPING = [
 	wpcomBlockEditorPostPublishAddNewClick(),
 	wpcomBlockEditorSaveClick(),
 	wpcomBlockEditorSaveDraftClick(),
-	wpcomSiteEditorExitClick(),
 	wpcomSiteEditorDocumentActionsDropdownOpen(),
-	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
 	wpcomSiteEditorDocumentActionsRevertClick(),
 	wpcomSiteEditorDocumentActionsShowAllClick(),
+	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
+	wpcomSiteEditorExitClick(),
+	wpcomSiteEditorSidebarNavigationClick(),
+	wpcomSiteEditorSidebarPagesClick(),
+	wpcomSiteEditorSidebarPatternsClick(),
+	wpcomSiteEditorSidebarStylesClick(),
+	wpcomSiteEditorSidebarTemplatesClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );

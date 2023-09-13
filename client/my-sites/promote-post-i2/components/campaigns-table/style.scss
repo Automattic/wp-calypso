@@ -148,18 +148,17 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	}
 
 	.campaign-item__header-image {
-		height: 78px;
-		margin-right: 16px;
-		min-width: 108px;
-		width: 108px; // TODO: adjust height and width for mobile devices as well.
-
-		img,
+		&,
 		&-skeleton {
 			background-color: #f5f5f5;
+			background-repeat: no-repeat;
+			background-position: 50% 50%;
+			background-size: cover;
 			border: 1px solid #eee;
 			border-radius: 4px;
 			display: block;
 			height: 78px;
+			margin-right: 16px;
 			min-width: 108px;
 			width: 108px; // TODO: adjust height and width for mobile devices as well.
 		}

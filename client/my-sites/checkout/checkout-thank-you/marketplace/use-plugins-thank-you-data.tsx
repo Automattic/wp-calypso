@@ -30,8 +30,8 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	// texts
 	const title = translate( 'Your site, more powerful than ever' );
 	const subtitle = translate(
-		'All set! Time to put your new plugin to work and take your site further.',
-		'All set! Time to put your new plugins to work and take your site further.',
+		'All set! Time to put your new plugin to work.',
+		'All set! Time to put your new plugins to work.',
 		{
 			count: pluginSlugs.length,
 		}

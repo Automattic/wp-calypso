@@ -1,5 +1,19 @@
-import { BackupPathInfoResponse, FileBrowserItemInfo } from '../types';
-import { convertBytes, parseBackupPathInfo } from '../util';
+/**
+ * @jest-environment jsdom
+ */
+
+import {
+	BackupLsResponse,
+	BackupPathInfoResponse,
+	FileBrowserItem,
+	FileBrowserItemInfo,
+} from '../types';
+import {
+	convertBytes,
+	encodeToBase64,
+	parseBackupContentsData,
+	parseBackupPathInfo,
+} from '../util';
 
 describe( 'convertBytes', () => {
 	it( 'should correctly convert bytes to KB', () => {
@@ -80,6 +94,102 @@ describe( 'parseBackupPathInfo', () => {
 		};
 
 		const result = parseBackupPathInfo( payload );
+		expect( result ).toEqual( expected );
+	} );
+} );
+
+describe( 'encodeToBase64', () => {
+	it( 'should return Base64 encoded string for English text', () => {
+		const text = 'Hello, World!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( 'SGVsbG8sIFdvcmxkIQ==' );
+	} );
+
+	it( 'should return Base64 encoded string for Spanish text', () => {
+		const text = '¡Hola, Piña!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( 'wqFIb2xhLCBQacOxYSE=' );
+	} );
+
+	it( 'should return Base64 encoded string for Japanese text', () => {
+		const text = 'こんにちは、世界!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( '44GT44KT44Gr44Gh44Gv44CB5LiW55WMIQ==' );
+	} );
+
+	it( 'should return Base64 encoded string for Chinese text', () => {
+		const text = '你好，世界！';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( '5L2g5aW977yM5LiW55WM77yB' );
+	} );
+
+	it( 'should return Base64 encoded string for Arabic text', () => {
+		const text = 'مرحبا، العالم!';
+		const encoded = encodeToBase64( text );
+		expect( encoded ).toBe( '2YXYsdit2KjYp9iMINin2YTYudin2YTZhSE=' );
+	} );
+} );
+
+describe( 'parseBackupContentsData', () => {
+	it( 'should return an empty array if `ok` is false', () => {
+		expect(
+			parseBackupContentsData( { ok: false, error: 'Some error message', contents: {} } )
+		).toEqual( [] );
+	} );
+
+	it( 'should map properties correctly for directories', () => {
+		const payload: BackupLsResponse = {
+			ok: true,
+			error: '',
+			contents: {
+				plugins: {
+					has_children: true,
+					id: 'cjI6,ZjI6Lw==',
+					total_items: 89,
+					type: 'dir',
+				},
+			},
+		};
+
+		const expected: FileBrowserItem[] = [
+			{
+				name: 'plugins',
+				type: 'dir',
+				hasChildren: true,
+				totalItems: 89,
+				id: 'cjI6,ZjI6Lw==',
+			},
+		];
+
+		const result = parseBackupContentsData( payload );
+		expect( result ).toEqual( expected );
+	} );
+
+	it( 'should map properties correctly for files', () => {
+		const payload: BackupLsResponse = {
+			ok: true,
+			error: '',
+			contents: {
+				'index.php': {
+					has_children: false,
+					id: 'ZjY6L2luZGV4LnBocA==',
+					period: '1690411648',
+					type: 'file',
+				},
+			},
+		};
+
+		const expected: FileBrowserItem[] = [
+			{
+				name: 'index.php',
+				type: 'code',
+				hasChildren: false,
+				period: '1690411648',
+				id: 'ZjY6L2luZGV4LnBocA==',
+			},
+		];
+
+		const result = parseBackupContentsData( payload );
 		expect( result ).toEqual( expected );
 	} );
 } );

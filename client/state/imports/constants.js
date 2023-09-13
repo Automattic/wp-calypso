@@ -16,3 +16,5 @@ export const appStates = Object.freeze( {
 	UPLOADING: 'importer-uploading',
 	IMPORT_CLEAR: 'importer-clear',
 } );
+
+export const MAX_FILE_SIZE = 104857000; // In bytes. The file limit is 100mb, but we leave 600 bytes for headers and other meta that are sent.

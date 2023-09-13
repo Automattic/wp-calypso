@@ -1,4 +1,4 @@
-import { isFreePlan } from '@automattic/calypso-products';
+import { PLAN_100_YEARS, isFreePlan } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,6 +12,8 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 
 	const siteHasPaidPlan =
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
+
+	const siteHasHundredYearPlan = selectedSite?.plan?.product_slug === PLAN_100_YEARS;
 
 	let title = translate( 'Get your domain' );
 	let line = translate(
@@ -38,9 +40,11 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 
 	if ( siteHasPaidPlan && hasDomainCredit ) {
 		title = translate( 'Claim your free domain' );
-		line = translate(
-			'You have a free one-year domain registration or transfer included with your plan.'
-		);
+		line = siteHasHundredYearPlan
+			? translate( 'You have a free domain registration or transfer included with your plan.' )
+			: translate(
+					'You have a free one-year domain registration or transfer included with your plan.'
+			  );
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );

@@ -20,6 +20,10 @@ const TransferredDomainDetails = ( {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
+	const getStartTransferHref = ( siteSlug: string, domainName: string ) => {
+		return domainUseMyDomain( siteSlug, domainName, useMyDomainInputMode.startPendingTransfer );
+	};
+
 	const renderStartTransferButton = () => {
 		if ( ! domain.currentUserIsOwner || transferStatus.PENDING_START !== domain.transferStatus ) {
 			return null;
@@ -28,20 +32,52 @@ const TransferredDomainDetails = ( {
 		return (
 			<Button
 				primary
-				href={ domainUseMyDomain(
-					selectedSite.slug,
-					domain.name,
-					useMyDomainInputMode.startPendingTransfer
-				) }
+				href={ getStartTransferHref( selectedSite.slug, domain.name ) }
 				disabled={ isLoadingPurchase }
 			>
-				{ translate( 'Start transfer' ) }
+				{ domain.lastTransferError
+					? translate( 'Restart transfer' )
+					: translate( 'Start transfer' ) }
 			</Button>
 		);
 	};
 
 	const getDescriptionText = () => {
-		const { currentUserIsOwner, name, owner } = domain;
+		const { currentUserIsOwner, lastTransferError, name, owner } = domain;
+
+		if ( lastTransferError ) {
+			return currentUserIsOwner
+				? translate(
+						'We tried to start a transfer for your domain {{strong}}%(domain)s{{/strong}} but we got the following error: {{br/}}{{br/}}{{p}}{{code}}%(lastTransferError)s{{/code}}{{/p}}' +
+							'Please restart the transfer or contact your current domain provider for more details.',
+						{
+							args: {
+								domain: name,
+								lastTransferError,
+							},
+							components: {
+								strong: <strong />,
+								br: <br />,
+								p: <p />,
+								code: <code />,
+							},
+						}
+				  )
+				: translate(
+						'We tried to start a transfer for the domain {{strong}}%(domain)s{{/strong}} but an error occurred. ' +
+							'Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, for more details.',
+						{
+							args: {
+								domain: name,
+								owner,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+				  );
+		}
+
 		if ( transferStatus.PENDING_START === domain.transferStatus ) {
 			return currentUserIsOwner
 				? translate(
@@ -105,13 +141,11 @@ const TransferredDomainDetails = ( {
 
 		return hasTranslation(
 			'Your transfer has been started and is waiting for authorization from your current ' +
-				'domain provider. This process can take up to 5-10 days. If you need to cancel or expedite the ' +
-				'transfer please contact them for assistance.'
+				"domain provider. Your current domain provider should allow you to speed this process up, either through their website or an email they've already sent you."
 		) || isEnglishLocale
 			? translate(
 					'Your transfer has been started and is waiting for authorization from your current ' +
-						'domain provider. This process can take up to 5-10 days. If you need to cancel or expedite the ' +
-						'transfer please contact them for assistance.'
+						"domain provider. Your current domain provider should allow you to speed this process up, either through their website or an email they've already sent you."
 			  )
 			: translate(
 					'Your transfer has been started and is waiting for authorization from your current ' +

@@ -1,8 +1,10 @@
 import {
-	PLAN_JETPACK_SECURITY_T1_YEARLY,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_BI_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 } from '@automattic/calypso-products';
 import CompleteLg from 'calypso/assets/images/jetpack/hero-complete-lg.png';
 import CompleteMd from 'calypso/assets/images/jetpack/hero-complete-md.png';
@@ -13,6 +15,11 @@ import { HeroImageProps } from '../types';
 import './style.scss';
 
 const HERO_IMAGES: Record< string, { lg: string; md: string; sm: string } > = {
+	[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: {
+		lg: SecurityLg,
+		md: SecurityLg,
+		sm: SecuritySm,
+	},
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
 		lg: SecurityLg,
 		md: SecurityLg,
@@ -22,6 +29,11 @@ const HERO_IMAGES: Record< string, { lg: string; md: string; sm: string } > = {
 		lg: SecurityLg,
 		md: SecurityLg,
 		sm: SecuritySm,
+	},
+	[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: {
+		lg: CompleteLg,
+		md: CompleteMd,
+		sm: CompleteSm,
 	},
 	[ PLAN_JETPACK_COMPLETE ]: {
 		lg: CompleteLg,

@@ -1,5 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
+import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
@@ -55,6 +56,7 @@ const ReaderTagSidebar = ( { tag } ) => {
 	const relatedSitesLinks = relatedMetaByTag.data?.related_sites?.map( ( relatedSite ) => (
 		<ReaderListFollowingItem key={ relatedSite.feed_ID } follow={ relatedSite } path="/" />
 	) );
+	const tagsPageUrl = addLocaleToPathLocaleInFront( '/tags' );
 
 	return (
 		<>
@@ -80,7 +82,11 @@ const ReaderTagSidebar = ( { tag } ) => {
 					<div className="reader-post-card__tags">{ tagLinks }</div>
 				</div>
 			) }
-			<a className="reader-tag-sidebar-tags-page" href="/tags" onClick={ trackTagsPageLinkClick }>
+			<a
+				className="reader-tag-sidebar-tags-page"
+				href={ tagsPageUrl }
+				onClick={ trackTagsPageLinkClick }
+			>
 				{ translate( 'See all tags' ) }
 			</a>
 			{ relatedSitesLinks && (

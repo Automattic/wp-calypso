@@ -28,6 +28,7 @@ export default function NotAvailableBadge() {
 				context={ wrapperRef.current }
 				isVisible={ showPopover }
 				position="bottom"
+				showDelay={ 300 }
 				className="not-available-badge__tooltip"
 			>
 				{ translate( 'One of the selected sites does not have a Basic plan.' ) }
