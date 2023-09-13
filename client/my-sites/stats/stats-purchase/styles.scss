@@ -73,10 +73,9 @@
 		}
 
 		.stats-purchase-wizard__card-title-indicator {
-
 			&.active {
-				background: var(--color-sidebar-menu-selected-background);
-				border-color: var(--color-sidebar-menu-selected-background);
+				background-color: var(--color-primary);
+				border-color: var(--color-primary);
 			}
 		}
 
@@ -106,11 +105,6 @@
 
 		.stats-purchase-wizard__personal-tos {
 			display: none;
-		}
-
-		.stats-purchase-wizard__card-title-indicator.active {
-			background-color: var(--color-primary);
-			border-color: var(--color-primary);
 		}
 
 		.stats-purchase-wizard__card-grid {
