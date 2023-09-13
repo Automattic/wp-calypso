@@ -1,4 +1,5 @@
 import { Locator } from 'playwright';
+import { envVariables } from '../../..';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -20,7 +21,7 @@ interface ValidationData {
 	keywords: string[];
 }
 
-const TIMEOUT = 30 * 1000;
+const TIMEOUT = envVariables.TEST_ON_ATOMIC ? 30 * 1000 : 15 * 1000;
 
 /**it com
  * Represents the flow of using the AI Assistant block.
@@ -91,9 +92,9 @@ export class AIAssistantFlow implements BlockFlow {
 	 * @param {Locator} block Locator to the block.
 	 */
 	private async enterInput( block: Locator ) {
-		await block
-			.getByRole( 'textbox', { name: 'Ask Jetpack AI' } )
-			.fill( this.configurationData.query );
+		const input = block.getByRole( 'textbox', { name: 'Ask Jetpack AI' } );
+		await input.waitFor();
+		await input.fill( this.configurationData.query );
 	}
 
 	/**
@@ -102,15 +103,14 @@ export class AIAssistantFlow implements BlockFlow {
 	 * @param {Locator} block Locator to the block.
 	 */
 	private async waitForQuery( block: Locator ) {
+		const stopButton = block.getByRole( 'button', { name: 'Stop request' } );
 		try {
-			await block
-				.getByRole( 'button', { name: 'Stop request' } )
-				.waitFor( { state: 'detached', timeout: TIMEOUT } );
+			await stopButton.waitFor( { state: 'detached', timeout: TIMEOUT } );
 		} catch {
 			// Stop the generation request after the timeout is met.
 			// AI Assistant block will retain any generated
 			// text up to this point.
-			await block.getByRole( 'button', { name: 'Stop request' } ).click();
+			await stopButton.click();
 		}
 	}
 
