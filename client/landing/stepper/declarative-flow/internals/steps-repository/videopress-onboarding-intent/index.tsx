@@ -99,6 +99,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			title={ __( 'Create a community' ) }
 			description={ __( 'The easiest way to upload videos and create a community around them.' ) }
 			image={ ChannelIntentImage }
+			isComingSoon={ true }
 			onClick={ onVideoChannelIntentClicked }
 		/>,
 		<VideoPressOnboardingIntentItem
@@ -106,6 +107,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 			title={ __( 'Share a video' ) }
 			description={ __( 'Just put a video on the internet.' ) }
 			image={ SingleVideoIntentImage }
+			isComingSoon={ true }
 			onClick={ onUploadVideoIntentClicked }
 		/>,
 		'vpcom' !== fromReferrer && (
