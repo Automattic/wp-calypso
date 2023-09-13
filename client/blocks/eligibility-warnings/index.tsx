@@ -44,6 +44,7 @@ import './style.scss';
 const noop = () => {};
 
 interface ExternalProps {
+	siteId?: number | null;
 	isEligible?: boolean;
 	backUrl: string;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
@@ -357,7 +358,7 @@ const processMarketplaceExceptions = (
 };
 
 const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalProps ) => {
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId( state ) || ownProps.siteId || null;
 	const siteSlug = getSelectedSiteSlug( state );
 	let eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
 	let isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );

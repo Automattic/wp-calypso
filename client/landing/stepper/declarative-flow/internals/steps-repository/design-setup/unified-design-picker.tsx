@@ -768,6 +768,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					showCloseIcon={ true }
 				>
 					<EligibilityWarnings
+						siteId={ site?.ID }
 						currentContext="plugin-details"
 						standaloneProceed
 						isMarketplace={ selectedDesign?.is_externally_managed }
