@@ -1,7 +1,7 @@
 # Notices
 
 A subtree of state that manages global notices.
-Supported types of notices are `error`, `success`.
+Supported types of notices are `error`, `success`, `info`, and `warning`.
 
 ## How to use?
 
@@ -9,7 +9,7 @@ Supported types of notices are `error`, `success`.
 
 ```js
 import { useDispatch } from 'react-redux';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 function Component() {
 	const reduxDispatch = useDispatch();
