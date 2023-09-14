@@ -1,6 +1,7 @@
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -10,6 +11,11 @@ import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import {
+	showUpdatePrimaryDomainErrorNotice,
+	showUpdatePrimaryDomainSuccessNotice,
+} from 'calypso/state/domains/management/actions';
+import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
@@ -27,6 +33,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const { data } = useSiteDomainsQuery( siteSlug );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
+	const dispatch = useDispatch();
 
 	const item = {
 		label: translate( 'Domains' ),
@@ -55,7 +62,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					isAllSitesView={ false }
 					siteSlug={ siteSlug }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
-					onDomainAction={ ( action, domain ) => {
+					onDomainAction={ async ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
 							sendNudge( {
 								nudge: 'dns-settings',
@@ -65,7 +72,12 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 						}
 
 						if ( action === 'set-primary' ) {
-							// TODO
+							try {
+								await dispatch( setPrimaryDomain( siteSlug, domain.domain ) );
+								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
+							} catch ( error ) {
+								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
+							}
 						}
 					} }
 				/>

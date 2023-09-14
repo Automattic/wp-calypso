@@ -74,7 +74,7 @@ export const DomainsTableRowActions = ( {
 			icon={ <Gridicon icon="ellipsis" /> }
 			label={ __( 'Domain actions' ) }
 		>
-			{ () => (
+			{ ( { onClose } ) => (
 				<MenuGroup className="domains-table-row__actions-group">
 					<MenuItemLink href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }>
 						{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
@@ -93,7 +93,12 @@ export const DomainsTableRowActions = ( {
 						</MenuItemLink>
 					) }
 					{ canMakePrimarySiteAddress && (
-						<MenuItemLink onClick={ () => onDomainAction?.( 'set-primary', domain ) }>
+						<MenuItemLink
+							onClick={ () => {
+								onDomainAction?.( 'set-primary', domain );
+								onClose();
+							} }
+						>
 							{ __( 'Make primary site address' ) }
 						</MenuItemLink>
 					) }
