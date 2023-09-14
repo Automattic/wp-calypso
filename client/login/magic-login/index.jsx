@@ -320,7 +320,7 @@ class MagicLogin extends Component {
 				</div>
 				<div className="grav-powered-magic-login__gravatar-info">
 					{ ! isGravatar && (
-						<div className="grav-powered-magic-login__gravatar-heading">
+						<div className="grav-powered-magic-login__gravatar-info-heading">
 							<img
 								src="https://gravatar.com/images/grav-logo-blue.svg"
 								width={ 18 }
