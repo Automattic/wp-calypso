@@ -7,6 +7,7 @@ import formatCurrency from '@automattic/format-currency';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -31,6 +32,7 @@ interface PersonalPurchaseProps {
 	redirectUri: string;
 	from: string;
 	isStandalone?: boolean;
+	type: string;
 }
 
 const PersonalPurchase = ( {
@@ -45,7 +47,11 @@ const PersonalPurchase = ( {
 	adminUrl,
 	redirectUri,
 	from,
+<<<<<<< HEAD
 	isStandalone,
+=======
+	type,
+>>>>>>> 2fbdeb2c8d (add type & tracks events to personal purchase)
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -193,9 +199,10 @@ const PersonalPurchase = ( {
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
 					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-					onClick={ () =>
-						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } )
-					}
+					onClick={ () => {
+						recordTracksEvent( `${ type }_stats_free_plan_selected` );
+						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } );
+					} }
 				>
 					{ translate( 'Continue with Jetpack Stats for free' ) }
 				</ButtonComponent>
@@ -203,7 +210,8 @@ const PersonalPurchase = ( {
 				<ButtonComponent
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
-					onClick={ () =>
+					onClick={ () => {
+						recordTracksEvent( 'jetpack_stats_personal_plan_selected' );
 						gotoCheckoutPage( {
 							from,
 							type: 'pwyw',
@@ -211,8 +219,8 @@ const PersonalPurchase = ( {
 							adminUrl,
 							redirectUri,
 							price: subscriptionValue / MIN_STEP_SPLITS,
-						} )
-					}
+						} );
+					} }
 				>
 					{ isStandalone ? translate( 'Get Stats Personal' ) : translate( 'Get Jetpack Stats' ) }
 				</ButtonComponent>
