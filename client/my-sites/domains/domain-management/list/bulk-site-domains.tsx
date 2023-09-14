@@ -40,7 +40,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
-			<Main wideLayout>
+			<Main className="bulk-domains-main">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				<DomainsTable domains={ data?.domains } isAllSitesView={ false } siteSlug={ siteSlug } />
