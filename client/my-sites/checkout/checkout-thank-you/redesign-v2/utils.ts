@@ -1,11 +1,10 @@
-import { is100Year, isWpComPlan } from '@automattic/calypso-products';
+import { isWpComPlan } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 import { isBulkDomainTransfer } from '../utils';
 
 /**
  * Determines whether the current checkout flow is for a redesign V2 purchase.
  * Used for gradually rolling out the redesign.
- *
  * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
  */
 export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
@@ -22,8 +21,8 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 		return true;
 	}
 
-	// ThankYou page for only purchasing a plan ignored for the 100 years plan.
-	if ( purchases.length > 0 && ! purchases.some( is100Year ) ) {
+	// ThankYou page for only purchasing a plan.
+	if ( purchases.length === 1 ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
 	}
 	return false;
