@@ -13,6 +13,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
@@ -384,6 +385,18 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_WPCOM_STARTER,
+			},
+		},
+
+		'plans-ecommerce-fulfilled': {
+			stepName: 'plans-ecommerce-fulfilled',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 

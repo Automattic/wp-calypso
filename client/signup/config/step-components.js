@@ -62,6 +62,7 @@ const stepNameToModuleName = {
 	'p2-join-workspace': 'p2-join-workspace',
 	'plans-business-monthly': 'plans',
 	'plans-ecommerce-monthly': 'plans',
+	'plans-ecommerce-fulfilled': 'plans',
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
 	'plans-business-2y': 'plans',
