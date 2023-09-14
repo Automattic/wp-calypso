@@ -70,6 +70,7 @@ const ProductCard = ( {
 	const personalLabel = translate( 'Personal site' );
 	const commercialLabel = translate( 'Commercial site' );
 	const personalProductTitle = translate( 'What is Jetpack Stats worth to you?' );
+	const commercialProductTitle = translate( 'Upgrade your Jetpack Stats' );
 
 	// Default titles for no site type selected.
 	const typeSelectionScreenLabel = translate( 'Select your site type', {
@@ -77,7 +78,15 @@ const ProductCard = ( {
 			site: siteSlug,
 		},
 	} );
-	const purchaseScreenLabel = personalProductTitle;
+	let purchaseScreenLabel = personalProductTitle;
+
+	if ( siteType === TYPE_PERSONAL ) {
+		purchaseScreenLabel = personalProductTitle;
+	}
+
+	if ( siteType === TYPE_COMMERCIAL ) {
+		purchaseScreenLabel = commercialProductTitle;
+	}
 
 	const showCelebration =
 		siteType &&
