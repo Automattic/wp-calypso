@@ -8,6 +8,7 @@ import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-lo
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequest from 'calypso/state/selectors/get-request';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
+import isGranularBackupDownloadRequested from 'calypso/state/selectors/is-granular-backup-download-requested';
 import Error from './error';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
@@ -63,6 +64,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const downloadRewindId = backupProgress?.rewindId;
 	const downloadInfoRequest = useSelector( ( state ) =>
 		getRequest( state, getRewindBackupProgress( siteId ) )
+	);
+
+	const isGranularRestore = useSelector( ( state ) =>
+		isGranularBackupDownloadRequested( state, siteId )
 	);
 
 	const requestDownload = useCallback(
@@ -247,7 +252,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		if ( ! isDownloadInfoRequestComplete ) {
 			return <Loading />;
 		} else if (
-			isOtherDownloadInfo ||
+			( isOtherDownloadInfo && ! isGranularRestore ) ||
 			( downloadProgress === undefined && isDownloadURLNotReady )
 		) {
 			return renderConfirm();
