@@ -73,7 +73,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 						if ( action === 'set-primary' ) {
 							try {
-								await dispatch( setPrimaryDomain( siteId, domain.domain ) );
+								await dispatch( setPrimaryDomain( siteId as number, domain.domain ) );
 								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
 							} catch ( error ) {
 								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
