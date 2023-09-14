@@ -12,21 +12,7 @@ const SiteRow = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	marginBottom: 24,
-} );
-
-const StagingDetailsContainer = styled.div( {
-	display: 'flex',
-	justifyContent: 'space-between',
 	'.site-icon': { flexShrink: 0 },
-	flexGrow: 1,
-	'@media screen and (max-width: 768px)': {
-		gap: '0.5em',
-		flexDirection: 'column',
-	},
-} );
-
-const StagingDetailsTitleContainer = styled.div( {
-	display: 'flex',
 } );
 
 const SiteInfo = styled.div( {
@@ -93,45 +79,21 @@ export const ManageStagingSiteCardContent = ( {
 					) }
 				</p>
 				<SiteRow>
-					<StagingDetailsContainer>
-						<StagingDetailsTitleContainer>
-							<SiteIcon siteId={ stagingSite.id } size={ 40 } />
-							<SiteInfo>
-								<SiteNameContainer>
-									<SiteName
-										href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
-										title={ translate( 'Visit Dashboard' ) }
-									>
-										{ stagingSite.name }
-									</SiteName>
-									<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
-								</SiteNameContainer>
-								<StagingSiteLink>
-									<a href={ stagingSite.url }>{ stagingSite.url }</a>
-								</StagingSiteLink>
-							</SiteInfo>
-						</StagingDetailsTitleContainer>
-						<div>
-							<ConfirmationModalButton
-								disabled={ isButtonDisabled }
-								isCompact={ true }
-								isPrimary={ true }
-								onConfirm={ () => {
-									// eslint-disable-next-line no-console
-									console.log( 'Pull from staging site' );
-								} }
-								modalTitle={ translate( 'Confirm pulling from staging site' ) }
-								modalMessage={ translate(
-									'Are you sure you want to pull from your staging site to production? This action cannot be undone.'
-								) }
-								confirmLabel={ translate( 'Pull from staging' ) }
-								cancelLabel={ translate( 'Cancel' ) }
+					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
+					<SiteInfo>
+						<SiteNameContainer>
+							<SiteName
+								href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+								title={ translate( 'Visit Dashboard' ) }
 							>
-								<Gridicon icon="arrow-down" />
-								<span>{ translate( 'Pull from staging' ) }</span>
-							</ConfirmationModalButton>
-						</div>
-					</StagingDetailsContainer>
+								{ stagingSite.name }
+							</SiteName>
+							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
+						</SiteNameContainer>
+						<StagingSiteLink>
+							<a href={ stagingSite.url }>{ stagingSite.url }</a>
+						</StagingSiteLink>
+					</SiteInfo>
 				</SiteRow>
 				<ActionButtons>
 					<Button
@@ -141,6 +103,22 @@ export const ManageStagingSiteCardContent = ( {
 					>
 						<span>{ translate( 'Manage staging site' ) }</span>
 					</Button>
+					<ConfirmationModalButton
+						disabled={ isButtonDisabled }
+						onConfirm={ () => {
+							// eslint-disable-next-line no-console
+							console.log( 'Pull from staging site' );
+						} }
+						modalTitle={ translate( 'Confirm pulling from staging site' ) }
+						modalMessage={ translate(
+							'Are you sure you want to pull from your staging site to production? This action cannot be undone.'
+						) }
+						confirmLabel={ translate( 'Pull from staging' ) }
+						cancelLabel={ translate( 'Cancel' ) }
+					>
+						<Gridicon icon="arrow-down" />
+						<span>{ translate( 'Pull from staging' ) }</span>
+					</ConfirmationModalButton>
 					<ConfirmationModalButton
 						disabled={ isButtonDisabled }
 						onConfirm={ onDeleteClick }
