@@ -57,15 +57,17 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				</div>
 
 				<div>
-					<DomainsTableRowActions
-						siteSlug={ siteSlug }
-						domain={ currentDomainData }
-						isAllSitesView={ isAllSitesView }
-						canSetPrimaryDomainForSite={
-							site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false
-						}
-						isSiteOnFreePlan={ site?.plan?.is_free ?? true }
-					/>
+					{ currentDomainData && (
+						<DomainsTableRowActions
+							siteSlug={ siteSlug }
+							domain={ currentDomainData }
+							isAllSitesView={ isAllSitesView }
+							canSetPrimaryDomainForSite={
+								site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false
+							}
+							isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+						/>
+					) }
 				</div>
 			</div>
 
