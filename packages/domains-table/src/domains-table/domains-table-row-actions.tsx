@@ -75,7 +75,7 @@ export const DomainsTableRowActions = ( {
 			label={ __( 'Domain actions' ) }
 		>
 			{ () => (
-				<MenuGroup>
+				<MenuGroup className="domains-table-row__actions-group">
 					<MenuItemLink href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }>
 						{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
 					</MenuItemLink>
