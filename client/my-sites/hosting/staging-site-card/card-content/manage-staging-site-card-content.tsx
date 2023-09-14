@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { urlToSlug } from 'calypso/lib/url';
-import { DeleteStagingSite } from 'calypso/my-sites/hosting/staging-site-card/delete-staging-site';
+import { ConfirmationModalButton } from 'calypso/my-sites/hosting/staging-site-card/confirm-modal-button';
 import { StagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 
@@ -103,14 +103,21 @@ export const ManageStagingSiteCardContent = ( {
 					>
 						<span>{ translate( 'Manage staging site' ) }</span>
 					</Button>
-					<DeleteStagingSite
+					<ConfirmationModalButton
 						disabled={ isButtonDisabled }
-						onClickDelete={ onDeleteClick }
+						onConfirm={ onDeleteClick }
 						isBusy={ isBusy }
+						isScary={ true }
+						modalTitle={ translate( 'Confirm staging site deletion' ) }
+						modalMessage={ translate(
+							'Are you sure you want to delete the staging site? This action cannot be undone.'
+						) }
+						confirmLabel={ translate( 'Delete staging site' ) }
+						cancelLabel={ translate( 'Cancel' ) }
 					>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Delete staging site' ) }</span>
-					</DeleteStagingSite>
+					</ConfirmationModalButton>
 				</ActionButtons>
 			</>
 		);
