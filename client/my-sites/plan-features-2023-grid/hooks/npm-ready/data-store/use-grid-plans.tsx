@@ -133,7 +133,7 @@ interface Props {
 	/**
 	 * If the subdomain generation is unsuccessful we do not show the free plan
 	 */
-	isSubdomainGenerated: boolean;
+	isSubdomainNotGenerated?: boolean;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -141,10 +141,10 @@ const usePlanTypesWithIntent = ( {
 	selectedPlan,
 	sitePlanSlug,
 	hideEnterprisePlan,
-	isSubdomainGenerated,
+	isSubdomainNotGenerated = false,
 }: Pick<
 	Props,
-	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainGenerated'
+	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainNotGenerated'
 > ): string[] => {
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 	const isBloggerAvailable =
@@ -220,10 +220,10 @@ const usePlanTypesWithIntent = ( {
 			planTypes = availablePlanTypes;
 	}
 
-	// Filters out the free plan unless a valid subdomain is generated.
+	// Filters out the free plan  isSubdomainNotGenerated
 	// This is because, on a free plan,  a custom domain can only redirect to the hosted site.
 	// To effectively communicate this, a valid subdomain is necessary.
-	if ( ! isSubdomainGenerated ) {
+	if ( isSubdomainNotGenerated ) {
 		planTypes = planTypes.filter( ( planType ) => planType !== TYPE_FREE );
 	}
 
@@ -241,7 +241,7 @@ const useGridPlans = ( {
 	hideEnterprisePlan,
 	isInSignup,
 	usePlanUpgradeabilityCheck,
-	isSubdomainGenerated,
+	isSubdomainNotGenerated,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -249,7 +249,7 @@ const useGridPlans = ( {
 			selectedPlan,
 			sitePlanSlug,
 			hideEnterprisePlan,
-			isSubdomainGenerated,
+			isSubdomainNotGenerated,
 		} ),
 		term,
 	} );
@@ -259,7 +259,7 @@ const useGridPlans = ( {
 			selectedPlan,
 			sitePlanSlug,
 			hideEnterprisePlan,
-			isSubdomainGenerated,
+			isSubdomainNotGenerated,
 		} ),
 		term,
 	} );

@@ -336,7 +336,7 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
 		showLegacyStorageFeature,
-		isSubdomainGenerated: !! resolvedSubdomainName.result,
+		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
