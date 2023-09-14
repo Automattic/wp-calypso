@@ -105,6 +105,22 @@ export const ManageStagingSiteCardContent = ( {
 					</Button>
 					<ConfirmationModalButton
 						disabled={ isButtonDisabled }
+						onConfirm={ () => {
+							// eslint-disable-next-line no-console
+							console.log( 'Pull from staging site' );
+						} }
+						modalTitle={ translate( 'Confirm pulling from staging site' ) }
+						modalMessage={ translate(
+							'Are you sure you want to pull from your staging site to production? This action cannot be undone.'
+						) }
+						confirmLabel={ translate( 'Pull from staging' ) }
+						cancelLabel={ translate( 'Cancel' ) }
+					>
+						<Gridicon icon="arrow-down" />
+						<span>{ translate( 'Pull from staging' ) }</span>
+					</ConfirmationModalButton>
+					<ConfirmationModalButton
+						disabled={ isButtonDisabled }
 						onConfirm={ onDeleteClick }
 						isBusy={ isBusy }
 						isScary={ true }

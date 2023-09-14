@@ -17,6 +17,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { IAppState } from 'calypso/state/types';
+import { ConfirmationModalButton } from './confirm-modal-button';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
@@ -75,6 +76,21 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
+					<ConfirmationModalButton
+						onConfirm={ () => {
+							// eslint-disable-next-line no-console
+							console.log( 'Push to production' );
+						} }
+						modalTitle={ translate( 'Confirm pushing staging site to production' ) }
+						modalMessage={ translate(
+							'Are you sure you want to push your staging site to production? This action cannot be undone.'
+						) }
+						confirmLabel={ translate( 'Push to production' ) }
+						cancelLabel={ translate( 'Cancel' ) }
+					>
+						<Gridicon icon="arrow-up" />
+						<span>{ translate( 'Push to production' ) }</span>
+					</ConfirmationModalButton>
 				</ActionButtons>
 			</>
 		);
