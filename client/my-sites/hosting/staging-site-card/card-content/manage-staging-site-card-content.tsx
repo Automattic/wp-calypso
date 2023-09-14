@@ -15,6 +15,17 @@ const SiteRow = styled.div( {
 	'.site-icon': { flexShrink: 0 },
 } );
 
+const LeftActionsContainer = styled.div( {
+	gap: '1em',
+	display: 'flex',
+	flexDirection: 'row',
+	'@media screen and (max-width: 768px)': {
+		gap: '0.5em',
+		flexDirection: 'column',
+		'.button': { flexGrow: 1 },
+	},
+} );
+
 const SiteInfo = styled.div( {
 	display: 'flex',
 	flexDirection: 'column',
@@ -43,6 +54,7 @@ const StagingSiteLink = styled.div( {
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
+	justifyContent: 'space-between',
 
 	'@media screen and (max-width: 768px)': {
 		gap: '0.5em',
@@ -96,29 +108,31 @@ export const ManageStagingSiteCardContent = ( {
 					</SiteInfo>
 				</SiteRow>
 				<ActionButtons>
-					<Button
-						primary
-						href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
-						disabled={ isButtonDisabled }
-					>
-						<span>{ translate( 'Manage staging site' ) }</span>
-					</Button>
-					<ConfirmationModalButton
-						disabled={ isButtonDisabled }
-						onConfirm={ () => {
-							// eslint-disable-next-line no-console
-							console.log( 'Pull from staging site' );
-						} }
-						modalTitle={ translate( 'Confirm pulling from staging site' ) }
-						modalMessage={ translate(
-							'Are you sure you want to pull from your staging site to production? This action cannot be undone.'
-						) }
-						confirmLabel={ translate( 'Pull from staging' ) }
-						cancelLabel={ translate( 'Cancel' ) }
-					>
-						<Gridicon icon="arrow-down" />
-						<span>{ translate( 'Pull from staging' ) }</span>
-					</ConfirmationModalButton>
+					<LeftActionsContainer>
+						<Button
+							primary
+							href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+							disabled={ isButtonDisabled }
+						>
+							<span>{ translate( 'Manage staging site' ) }</span>
+						</Button>
+						<ConfirmationModalButton
+							disabled={ isButtonDisabled }
+							onConfirm={ () => {
+								// eslint-disable-next-line no-console
+								console.log( 'Pull from staging site' );
+							} }
+							modalTitle={ translate( 'Confirm pulling from staging site' ) }
+							modalMessage={ translate(
+								'Are you sure you want to pull from your staging site to production? This action cannot be undone.'
+							) }
+							confirmLabel={ translate( 'Pull from staging' ) }
+							cancelLabel={ translate( 'Cancel' ) }
+						>
+							<Gridicon icon="arrow-down" />
+							<span>{ translate( 'Pull from staging' ) }</span>
+						</ConfirmationModalButton>
+					</LeftActionsContainer>
 					<ConfirmationModalButton
 						disabled={ isButtonDisabled }
 						onConfirm={ onDeleteClick }
