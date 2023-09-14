@@ -9,7 +9,11 @@ import type { SiteDetails } from '@automattic/data-stores';
 export default function usePluginVersionInfo(
 	plugin: PluginComponentProps,
 	selectedSite?: SiteDetails
-) {
+): {
+	currentVersionsRange: { min: string; max: string };
+	updatedVersions: string[];
+	hasUpdate: boolean;
+} {
 	const allSites = useSelector( getSites );
 
 	const sites = plugin?.sites
@@ -26,24 +30,26 @@ export default function usePluginVersionInfo(
 	const state = useSelector( ( state ) => state );
 	const pluginsOnSites: any = getPluginOnSites( state, siteIds, plugin?.slug );
 
-	const hasUpdate = sites.some( ( site ) => {
+	const getSitePlugin = ( site: SiteDetails ) => {
 		const siteId = selectedSite ? selectedSite.ID : site.ID;
-		const sitePlugin = pluginsOnSites?.sites[ siteId ];
+		return pluginsOnSites?.sites[ siteId ];
+	};
+
+	const hasUpdate = sites.some( ( site ) => {
+		const sitePlugin = getSitePlugin( site );
 		return sitePlugin?.update?.new_version && site.canUpdateFiles;
 	} );
 
 	const updatedVersions = sites
 		.map( ( site ) => {
-			const siteId = selectedSite ? selectedSite.ID : site.ID;
-			const sitePlugin = pluginsOnSites?.sites[ siteId ];
+			const sitePlugin = getSitePlugin( site );
 			return sitePlugin?.update?.new_version;
 		} )
 		.filter( ( version ) => version );
 
 	const currentVersions = sites
 		.map( ( site ) => {
-			const siteId = selectedSite ? selectedSite.ID : site.ID;
-			const sitePlugin = pluginsOnSites?.sites[ siteId ];
+			const sitePlugin = getSitePlugin( site );
 			return sitePlugin?.version;
 		} )
 		.filter( ( version ) => version );
