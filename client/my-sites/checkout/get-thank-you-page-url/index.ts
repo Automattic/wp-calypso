@@ -566,7 +566,7 @@ function getFallbackDestination( {
 				...( marketplacePluginSlugs.length ? { plugins: marketplacePluginSlugs.join( ',' ) } : {} ),
 				...( marketplaceThemeSlugs.length ? { themes: marketplaceThemeSlugs.join( ',' ) } : {} ),
 			},
-			`marketplace/thank-you/${ siteSlug }`
+			`/marketplace/thank-you/${ siteSlug }`
 		);
 	}
 
