@@ -452,11 +452,14 @@
 	.domains__content {
 		width: 100%;
 		@include break-small {
-			max-width: 700px;
+			max-width: 780px;
 		}
 
 		.domains__step-content {
-			padding: 0 48px 0 32px;
+			padding: 0 16px;
+			@include break-small {
+				padding: 0 48px 0 32px;
+			}
 		}
 		// Hide domain prices
 		.domain-product-price {
