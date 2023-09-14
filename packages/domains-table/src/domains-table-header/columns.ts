@@ -11,6 +11,7 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
 				{ count }
 			),
+		sortLabel: __( 'Domain', __i18n_text_domain__ ),
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,

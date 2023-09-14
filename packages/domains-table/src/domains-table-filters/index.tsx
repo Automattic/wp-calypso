@@ -1,9 +1,8 @@
-import { Button, Gridicon, SelectDropdown } from '@automattic/components';
+import { Gridicon, SelectDropdown } from '@automattic/components';
 import SearchControl, { SearchIcon } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import { useDomainsTable } from '../domains-table/domains-table';
 import { domainsTableColumns } from '../domains-table-header/columns';
 
@@ -25,7 +24,8 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 		useDomainsTable();
 
 	const options: any[] = [];
-	const sortName = domainsTableColumns.find( ( column ) => column.name === sortKey )?.label;
+	const selected = domainsTableColumns.find( ( column ) => column.name === sortKey );
+	const sortName = selected?.sortLabel || selected?.label;
 	const selectedSort = `${ sortName } ${ sortDirection }`;
 
 	domainsTableColumns
@@ -36,7 +36,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 					key={ `${ column.name }asc` }
 					onClick={ () => onSortChange( column, 'asc' ) }
 				>
-					{ column.label } Asc
+					{ column?.sortLabel || column?.label } Asc
 				</SelectDropdown.Item>
 			);
 
@@ -45,35 +45,19 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 					key={ `${ column.name }desc` }
 					onClick={ () => onSortChange( column, 'desc' ) }
 				>
-					{ column.label } Desc
+					{ column?.sortLabel || column?.label } Desc
 				</SelectDropdown.Item>
 			);
 		} );
 
-	const [ search, setSearch ] = useState( filter.query );
 	const isMobileDevice = isMobile();
-
-	const handleSearchChange = ( query: string ) => {
-		if ( query === '' ) {
-			setSearch( '' );
-			onSearch( '' );
-		} else if ( isMobileDevice ) {
-			setSearch( query );
-		} else {
-			onSearch( query );
-		}
-	};
-
-	const handleSearch = () => {
-		onSearch( search );
-	};
 
 	return (
 		<div className="domains-table-filter">
 			<SearchControl
 				searchIcon={ <SearchIcon /> }
 				className="domains-table-filter__search"
-				onSearch={ handleSearchChange }
+				onSearch={ onSearch }
 				defaultValue={ filter.query }
 				isReskinned
 				placeholder={ __( 'Search by domain…' ) }
@@ -81,10 +65,6 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 			/>
 			{ isMobileDevice && (
 				<>
-					<Button primary={ Boolean( search ) } onClick={ handleSearch }>
-						{ __( 'Filter' ) }
-					</Button>
-
 					<div className="domains-table-mobile-cards-controls">
 						<SelectDropdown
 							selectedText={ selectedSort }
