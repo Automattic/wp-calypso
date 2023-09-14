@@ -337,6 +337,7 @@ const PlansFeaturesMain = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
+		isInSignup,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {

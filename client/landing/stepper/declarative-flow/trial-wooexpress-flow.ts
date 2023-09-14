@@ -54,6 +54,8 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
+		const aff = queryParams.get( 'aff' );
+		const vendorId = queryParams.get( 'vid' );
 
 		if ( profilerData ) {
 			try {
@@ -69,6 +71,15 @@ const wooexpress: Flow = {
 		const getStartUrl = () => {
 			let hasFlowParams = false;
 			const flowParams = new URLSearchParams();
+			const queryParams = new URLSearchParams();
+
+			if ( vendorId ) {
+				queryParams.set( 'vid', vendorId );
+			}
+
+			if ( aff ) {
+				queryParams.set( 'aff', aff );
+			}
 
 			if ( locale && locale !== 'en' ) {
 				flowParams.set( 'locale', locale );
@@ -78,12 +89,19 @@ const wooexpress: Flow = {
 			const redirectTarget =
 				`/setup/wooexpress` +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			// Early return approach
-			if ( locale || locale === 'en' ) {
-				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+
+			let queryString = `redirect_to=${ redirectTarget }`;
+
+			if ( queryParams.toString() ) {
+				queryString = `${ queryString }&${ queryParams.toString() }`;
 			}
 
-			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			// Early return approach
+			if ( locale || locale === 'en' ) {
+				return `/start/account/user/${ locale }?variationName=${ flowName }&${ queryString }`;
+			}
+
+			return `/start/account/user?variationName=${ flowName }&${ queryString }`;
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the

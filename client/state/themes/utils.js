@@ -1,4 +1,4 @@
-import { get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
+import { get, includes, map, omit, omitBy, some, startsWith } from 'lodash';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -65,7 +65,13 @@ export function normalizeWpcomTheme( theme ) {
 		download_uri: 'download',
 	};
 
-	return mapKeys( theme, ( value, key ) => get( attributesMap, key, key ) );
+	if ( ! theme ) {
+		return {};
+	}
+
+	return Object.fromEntries(
+		Object.entries( theme ).map( ( [ key, value ] ) => [ attributesMap[ key ] ?? key, value ] )
+	);
 }
 
 /**
@@ -82,8 +88,11 @@ export function normalizeWporgTheme( theme ) {
 		download_link: 'download',
 	};
 
-	const normalizedTheme = mapKeys( omit( theme, [ 'sections', 'author' ] ), ( value, key ) =>
-		get( attributesMap, key, key )
+	const normalizedTheme = Object.fromEntries(
+		Object.entries( omit( theme, [ 'sections', 'author' ] ) ).map( ( [ key, value ] ) => [
+			attributesMap[ key ] ?? key,
+			value,
+		] )
 	);
 
 	const description = get( theme, [ 'sections', 'description' ] );

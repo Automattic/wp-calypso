@@ -2,23 +2,28 @@ import {
 	REWIND_BACKUP,
 	REWIND_BACKUP_DISMISS,
 	REWIND_BACKUP_REQUEST,
+	REWIND_BACKUP_SET_DOWNLOAD_ID,
 	REWIND_BACKUP_DISMISS_PROGRESS,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_UPDATE_ERROR,
+	REWIND_GRANULAR_BACKUP_REQUEST,
 } from 'calypso/state/action-types';
 import { keyedReducer } from 'calypso/state/utils';
 
-export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type, rewindId } ) => {
-	switch ( type ) {
+export const backupRequest = keyedReducer( 'siteId', ( state = undefined, action ) => {
+	switch ( action.type ) {
 		// Show confirmation dialog
 		case REWIND_BACKUP_REQUEST:
-			return rewindId;
+			return action.rewindId;
 
 		// Dismiss confirmation dialog
 		case REWIND_BACKUP_DISMISS:
 		// Start backup
 		case REWIND_BACKUP:
 			return undefined;
+
+		case REWIND_BACKUP_SET_DOWNLOAD_ID:
+			return action.downloadId;
 
 		default:
 			return state;
@@ -28,6 +33,7 @@ export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type
 export const backupProgress = keyedReducer( 'siteId', ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case REWIND_BACKUP:
+		case REWIND_GRANULAR_BACKUP_REQUEST:
 			return {
 				backupPoint: '',
 				downloadId: 0,

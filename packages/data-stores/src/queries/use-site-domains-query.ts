@@ -10,7 +10,7 @@ export interface DomainData {
 	can_update_contact_info: boolean;
 	cannot_manage_dns_records_reason: unknown;
 	cannot_manage_name_servers_reason: unknown;
-	cannot_update_contact_info_reason: unknown;
+	cannot_update_contact_info_reason: string | null;
 	connection_mode: unknown;
 	current_user_can_add_email: boolean;
 	current_user_can_create_site_from_domain_only: boolean;
