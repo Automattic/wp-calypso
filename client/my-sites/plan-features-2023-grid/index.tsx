@@ -70,7 +70,7 @@ export interface PlanFeatures2023GridProps {
 	gridPlanForSpotlight?: GridPlan;
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
@@ -78,7 +78,7 @@ export interface PlanFeatures2023GridProps {
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
-	intervalType?: string;
+	intervalType: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
@@ -652,13 +652,13 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					! isInSignup ||
 					! ( flowName === 'onboarding' ) );
 
-			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan(
-				storageOptions,
+			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
+				flowName: flowName ?? '',
 				intervalType,
-				showUpgradeableStorage,
 				isInSignup,
-				flowName
-			);
+				showUpgradeableStorage,
+				storageOptions,
+			} );
 
 			const storageJSX = canUpgradeStorageForPlan ? (
 				<StorageAddOnDropdown

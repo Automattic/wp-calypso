@@ -305,9 +305,9 @@ const FeatureFootnote = styled.span`
 `;
 
 type PlanComparisonGridProps = {
-	intervalType?: string;
+	intervalType: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
@@ -320,13 +320,13 @@ type PlanComparisonGridProps = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	showLegacyStorageFeature?: boolean;
-	showUpgradeableStorage?: boolean;
+	showUpgradeableStorage: boolean;
 };
 
 type PlanComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
 	flowName?: string | null;
@@ -532,12 +532,12 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planSlug: PlanSlug;
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	isStorageFeature: boolean;
 	flowName?: string | null;
-	intervalType?: string;
+	intervalType: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
-	showUpgradeableStorage: boolean | undefined;
+	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 } > = ( {
 	feature,
@@ -581,13 +581,13 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		: false;
 	const storageOptions = gridPlan.features.storageOptions;
 	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
-	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan(
-		storageOptions,
+	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
+		flowName: flowName ?? '',
 		intervalType,
-		showUpgradeableStorage,
 		isInSignup,
-		flowName
-	);
+		showUpgradeableStorage,
+		storageOptions,
+	} );
 
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
@@ -688,13 +688,13 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planFeatureFootnotes: PlanFeatureFootnotes;
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	isHighlighted: boolean;
-	intervalType?: string;
+	intervalType: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
-	showUpgradeableStorage: boolean | undefined;
+	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 } > = ( {
 	feature,
