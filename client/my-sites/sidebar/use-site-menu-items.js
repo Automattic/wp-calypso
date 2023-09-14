@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
-import { useEffect } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
@@ -19,6 +20,7 @@ import buildFallbackResponse from './static-data/fallback-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
@@ -62,6 +64,38 @@ const useSiteMenuItems = () => {
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
+	// Temporary fix to display the Newsletter menu item in the Settings menu for Jetpack sites.
+	// This can be removed once the code is released: https://github.com/Automattic/jetpack/pull/33065
+	const menuItemsWithNewsletterSettings = useMemo( () => {
+		if ( ! isJetpack || ! Array.isArray( menuItems ) || menuItems.length === 0 ) {
+			return menuItems;
+		}
+
+		return menuItems.map( ( menuItem ) => {
+			if ( menuItem.icon === 'dashicons-admin-settings' && Array.isArray( menuItem.children ) ) {
+				// Check if the 'Newsletter' submenu already exists.
+				const newsletterExists = menuItem.children.some( ( child ) => child.slug === 'newsletter' );
+
+				if ( ! newsletterExists ) {
+					return {
+						...menuItem,
+						children: [
+							...menuItem.children,
+							{
+								parent: menuItem.children[ 0 ].parent,
+								slug: 'newsletter',
+								title: translate( 'Newsletter' ),
+								type: 'submenu-item',
+								url: `/settings/newsletter/${ siteDomain }`,
+							},
+						],
+					};
+				}
+			}
+			return menuItem;
+		} );
+	}, [ isJetpack, menuItems, siteDomain, translate ] );
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
@@ -97,7 +131,7 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
 };
 
 export default useSiteMenuItems;
