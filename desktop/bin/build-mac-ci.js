@@ -18,7 +18,8 @@ const isReleaseBuild =
 	process.platform === 'darwin' && !! circleTag && circleTag.startsWith( 'desktop-v' );
 
 // Build Apple Silicon binaries only unless tagged for release.
-const arches = isReleaseBuild ? [ 'x64', 'arm64' ] : [ 'arm64' ];
+// const arches = isReleaseBuild ? [ 'x64', 'arm64' ] : [ 'arm64' ];
+const arches = [ 'x64', 'arm64' ];
 
 for ( let i = 0; i < arches.length; i++ ) {
 	const arch = arches[ i ];
