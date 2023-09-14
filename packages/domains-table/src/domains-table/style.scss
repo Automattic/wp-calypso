@@ -119,6 +119,19 @@
 
 	.domains-table-row__actions {
 		text-align: right;
+
+	}
+}
+
+.domains-table-row__actions-group {
+	.components-menu-item__button:hover {
+		background-color: var(--color-primary);
+		border: 0;
+		box-shadow: none;
+		color: var(--color-text-inverted);
+	}
+	a:visited {
+		color: var(--color-neutral-70);
 	}
 }
 

@@ -1,3 +1,4 @@
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
@@ -5,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
+import { ResponseDomain } from '../utils/types';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
@@ -19,9 +21,9 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 
 	const {
 		ref,
+		site,
 		siteSlug,
 		currentDomainData,
-		userCanAddSiteToDomain,
 		isSelected,
 		handleSelectDomain,
 		domainStatusPurchaseActions,
@@ -29,6 +31,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		shouldDisplayPrimaryDomainLabel,
 		showBulkActions,
 		isLoadingSiteDomainsDetails,
+		isAllSitesView,
 	} = useDomainRow( domain );
 
 	return (
@@ -54,11 +57,17 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				</div>
 
 				<div>
-					<DomainsTableRowActions
-						canConnectDomainToASite={ userCanAddSiteToDomain }
-						siteSlug={ siteSlug }
-						domainName={ domain.domain }
-					/>
+					{ currentDomainData && (
+						<DomainsTableRowActions
+							siteSlug={ siteSlug }
+							domain={ currentDomainData }
+							isAllSitesView={ isAllSitesView }
+							canSetPrimaryDomainForSite={
+								site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false
+							}
+							isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+						/>
+					) }
 				</div>
 			</div>
 
@@ -76,12 +85,12 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Status' ) } </span>
-				{ isLoadingSiteDomainsDetails ? (
+				{ ! currentDomainData || isLoadingSiteDomainsDetails ? (
 					<LoadingPlaceholder style={ { width: '50%' } } />
 				) : (
 					<DomainsTableStatusCell
 						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData }
+						currentDomainData={ currentDomainData as ResponseDomain }
 						domainStatusPurchaseActions={ domainStatusPurchaseActions }
 						pendingUpdates={ pendingUpdates }
 					/>

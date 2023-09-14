@@ -1,3 +1,4 @@
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
@@ -125,11 +126,17 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 			</td>
 			<td></td>
 			<td className="domains-table-row__actions">
-				<DomainsTableRowActions
-					canConnectDomainToASite={ userCanAddSiteToDomain }
-					siteSlug={ siteSlug }
-					domainName={ domain.domain }
-				/>
+				{ currentDomainData && (
+					<DomainsTableRowActions
+						siteSlug={ siteSlug }
+						domain={ currentDomainData }
+						isAllSitesView={ isAllSitesView }
+						canSetPrimaryDomainForSite={
+							site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false
+						}
+						isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+					/>
+				) }
 			</td>
 		</tr>
 	);
