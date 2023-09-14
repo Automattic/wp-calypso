@@ -334,7 +334,8 @@ class ManagePurchase extends Component<
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
-			isAkismetFreeProduct( purchase )
+			isAkismetFreeProduct( purchase ) ||
+			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
 			return null;
 		}
@@ -362,6 +363,7 @@ class ManagePurchase extends Component<
 			! isEcommerce( purchase ) &&
 			! isPro( purchase ) &&
 			! isComplete( purchase ) &&
+			! is100Year( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
 			! isPlan( purchase ) &&
