@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 import { Button, ButtonProps } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
