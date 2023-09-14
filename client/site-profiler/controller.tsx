@@ -6,6 +6,7 @@ import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 export function siteProfilerContext( context: PageJS.Context, next: () => void ): void {
 	if ( ! config.isEnabled( 'site-profiler' ) ) {
 		page.redirect( '/' );
+		return;
 	}
 
 	context.primary = (
