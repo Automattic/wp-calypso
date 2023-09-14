@@ -6,9 +6,12 @@
 	align-items: center;
 	justify-content: space-between;
 
-	.search-component.domains-table-filter__search {
-		max-width: 50%;
+	@media ( min-width: 480px ) {
+		.search-component.domains-table-filter__search {
+			max-width: 50%;
+		}
 	}
+
 
 	&__search {
 		--color-surface: var(--studio-white);

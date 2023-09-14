@@ -13,6 +13,13 @@
 .domains-table-bulk-actions-toolbar__select.select-dropdown {
 	height: var(--domains-table-toolbar-height);
 	z-index: 1; // Needed for the dropdown to appear overtop of the checkboxes
+	@media ( max-width: 480px) {
+		width: 100%;
+
+		.select-dropdown__container {
+			min-width: 100%;
+		}
+	}
 
 	.select-dropdown__header {
 		height: var(--domains-table-toolbar-height);
