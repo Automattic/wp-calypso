@@ -28,7 +28,7 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 				onVideoThumbnailClick={ onVideoThumbnailClick }
 				isVideoExpanded={ isExpanded }
 			/>
-			<div className="reader-post-card__post-details">{ children }</div>
+			<div className="reader-post-card__post-actions">{ children }</div>
 		</div>
 	);
 };

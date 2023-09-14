@@ -440,7 +440,7 @@
 
 // In-stream Recommendations
 .reader-stream__recommended-posts {
-	padding-bottom: 12px;
+	padding-bottom: 16px;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 15px;
