@@ -14,6 +14,7 @@ export type DomainsTableColumn =
 	| {
 			name: string;
 			label: string | ( ( count: number ) => string ) | null;
+			sortLabel?: string;
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';
 			supportsOrderSwitching?: boolean;
@@ -31,6 +32,7 @@ export type DomainsTableColumn =
 	| {
 			name: string;
 			label: string | ( ( count: number ) => string ) | null;
+			sortLabel?: string;
 			isSortable?: false;
 			initialSortDirection?: never;
 			supportsOrderSwitching?: never;
