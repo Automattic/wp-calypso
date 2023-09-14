@@ -1,14 +1,13 @@
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useOdieAssistantContext } from 'calypso/odie/context';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -16,7 +15,7 @@ import {
 	showUpdatePrimaryDomainSuccessNotice,
 } from 'calypso/state/domains/management/actions';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
 
@@ -26,6 +25,7 @@ interface BulkSiteDomainsProps {
 }
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
+	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const userCanSetPrimaryDomains = useSelector(
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
@@ -73,7 +73,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 						if ( action === 'set-primary' ) {
 							try {
-								await dispatch( setPrimaryDomain( siteSlug, domain.domain ) );
+								await dispatch( setPrimaryDomain( siteId, domain.domain ) );
 								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
 							} catch ( error ) {
 								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
