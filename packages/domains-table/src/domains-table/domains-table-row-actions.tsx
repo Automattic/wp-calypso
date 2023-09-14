@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentType } from 'react';
+import { ResponseDomain } from '../utils/types';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -10,21 +11,14 @@ interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem 
 const MenuItemLink = MenuItem as ComponentType< MenuItemLinkProps >;
 
 interface DomainsTableRowActionsProps {
-	canConnectDomainToASite: boolean;
 	siteSlug: string;
-	domainName: string;
+	domain: ResponseDomain;
 }
 
-export const DomainsTableRowActions = ( {
-	canConnectDomainToASite,
-	siteSlug,
-	domainName,
-}: DomainsTableRowActionsProps ) => {
+export const DomainsTableRowActions = ( { domain, siteSlug }: DomainsTableRowActionsProps ) => {
 	const { __ } = useI18n();
 
-	if ( ! canConnectDomainToASite ) {
-		return null;
-	}
+	const canConnectDomainToASite = domain.currentUserCanCreateSiteFromDomainOnly;
 
 	return (
 		<DropdownMenu
@@ -35,7 +29,9 @@ export const DomainsTableRowActions = ( {
 			{ () => (
 				<MenuGroup>
 					{ canConnectDomainToASite && (
-						<MenuItemLink href={ domainManagementTransferToOtherSiteLink( siteSlug, domainName ) }>
+						<MenuItemLink
+							href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }
+						>
 							{ __( 'Connect to an existing site' ) }
 						</MenuItemLink>
 					) }
