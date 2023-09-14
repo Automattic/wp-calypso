@@ -91,9 +91,7 @@ const StatsCommercialPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-
-	const handleClick = ( event: React.MouseEvent, isOdysseyStats: boolean ) => {
+	const handleClick = ( event: React.MouseEvent ) => {
 		const emailSubject = translate( 'Jetpack Stats Commercial Classification Dispute' );
 		const emailBody = `Hi Jetpack Team,\n
 I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
@@ -108,8 +106,6 @@ Thanks\n\n`;
 		) }&body=${ encodeURIComponent( emailBody ) }`;
 
 		event.preventDefault();
-
-		const type = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 
 		recordTracksEvent( `${ type }_stats_purchase_commercial_update_classification_clicked` );
 
