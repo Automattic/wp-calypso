@@ -1,9 +1,18 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { FormEvent, useState } from 'react';
 import './styles.scss';
 
 export default function DomainAnalyzer() {
 	const translate = useTranslate();
+	const [ , setDomain ] = useState( '' );
+
+	const onSubmit = ( e: FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+
+		const domainEl = e.currentTarget.elements.namedItem( 'domain' ) as HTMLInputElement;
+		setDomain( domainEl.value );
+	};
 
 	return (
 		<div className="domain-analyzer">
@@ -14,13 +23,13 @@ export default function DomainAnalyzer() {
 				) }
 			</p>
 
-			<form className="domain-analyzer--form">
+			<form className="domain-analyzer--form" onSubmit={ onSubmit }>
 				<div className="domain-analyzer--form-container">
 					<div className="col-1">
 						<input type="text" name="domain" placeholder={ translate( 'mysite.com' ) } />
 					</div>
 					<div className="col-2">
-						<Button>{ translate( 'Check site' ) }</Button>
+						<Button type="submit">{ translate( 'Check site' ) }</Button>
 					</div>
 				</div>
 			</form>
