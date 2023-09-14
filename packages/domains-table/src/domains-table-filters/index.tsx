@@ -27,7 +27,8 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 	const options: any[] = [];
 	const selected = domainsTableColumns.find( ( column ) => column.name === sortKey );
 	const sortName = selected?.sortLabel || selected?.label;
-	const selectedSort = `${ sortName } ${ sortDirection }`;
+	const arrow = sortDirection === 'asc' ? '↓' : '↑';
+	const selectedSort = `${ sortName } ${ arrow }`;
 
 	domainsTableColumns
 		.filter( ( column ) => column.label !== null )
@@ -37,7 +38,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 					key={ `${ column.name }asc` }
 					onClick={ () => onSortChange( column, 'asc' ) }
 				>
-					{ column?.sortLabel || column?.label } Asc
+					{ column?.sortLabel || column?.label } ↑
 				</SelectDropdown.Item>
 			);
 
@@ -46,7 +47,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 					key={ `${ column.name }desc` }
 					onClick={ () => onSortChange( column, 'desc' ) }
 				>
-					{ column?.sortLabel || column?.label } Desc
+					{ column?.sortLabel || column?.label } ↓
 				</SelectDropdown.Item>
 			);
 		} );
