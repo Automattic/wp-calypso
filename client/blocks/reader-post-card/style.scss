@@ -191,9 +191,20 @@
 		.reader-excerpt__content {
 			margin: 7px 0 0;
 		}
-		.reader-post-card__featured-images,
-		.reader-post-card__gallery-image {
+		.reader-featured-image {
 			margin-top: 24px;
+		}
+		.reader-post-card__featured-images,
+		.reader-featured-video {
+			margin-top: 24px;
+			.reader-featured-image {
+				margin-top: 0;
+			}
+		}
+		div[role="presentation"] {
+			margin-top: 24px;
+			padding-bottom: 24px;
+			border-bottom: 1px solid var(--color-neutral-5);
 		}
 		.reader-post-actions {
 			margin-top: 24px;
