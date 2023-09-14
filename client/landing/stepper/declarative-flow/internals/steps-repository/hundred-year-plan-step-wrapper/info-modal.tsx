@@ -4,6 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { SMALL_BREAKPOINT } from './constants';
 import HundredYearPlanLogo from './hundred-year-plan-logo';
 
 const StyledModal = styled( Modal )`
@@ -27,7 +28,7 @@ const Wrapper = styled.div`
 	justify-content: center;
 	gap: 32px;
 	padding: 0;
-	@media ( min-width: 960px ) {
+	@media ( min-width: ${ SMALL_BREAKPOINT }px ) {
 		gap: 60px;
 		padding: 0 90px;
 	}
@@ -112,7 +113,7 @@ const RowTitle = styled.div`
 	line-height: 26px; /* 144.444% */
 	text-transform: uppercase;
 
-	@media ( min-width: 960px ) {
+	@media ( min-width: ${ SMALL_BREAKPOINT }px ) {
 		font-size: 18px;
 	}
 `;
@@ -127,7 +128,7 @@ const RowContent = styled.div`
 	font-style: normal;
 	font-weight: 400;
 	line-height: 26px; /* 144.444% */
-	@media ( min-width: 960px ) {
+	@media ( min-width: ${ SMALL_BREAKPOINT }px ) {
 		font-size: 18px;
 	}
 `;

@@ -1,4 +1,4 @@
-import { PLAN_100_YEARS } from '@automattic/calypso-products';
+import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -57,25 +57,13 @@ const HundredYearPlanFlow: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/setup`,
-			pageTitle: 'Newsletter',
+			pageTitle: ( getPlan( PLAN_100_YEARS )?.getTitle() || '' ) as string,
 		} );
 
 		// Send non-logged-in users to account screen.
 		if ( ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
 		}
-
-		// trigger guides on step movement, we don't care about failures or response
-		// wpcom.req.post(
-		// 	'guides/trigger',
-		// 	{
-		// 		apiNamespace: 'wpcom/v2/',
-		// 	},
-		// 	{
-		// 		flow: flowName,
-		// 		step: _currentStep,
-		// 	}
-		// );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
@@ -91,13 +79,13 @@ const HundredYearPlanFlow: Flow = {
 				case 'siteCreationStep':
 					return navigate( 'processing' );
 				case 'processing':
-					if ( providedDependencies?.goToCheckout ) {
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
+					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
+						setSignupCompleteSlug( providedDependencies.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								( providedDependencies?.siteSlug as string ) ?? ''
+								providedDependencies.siteSlug as string
 							) }?signup=1`
 						);
 					}

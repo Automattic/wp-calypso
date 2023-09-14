@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactElement, PropsWithChildren } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SMALL_BREAKPOINT } from './constants';
 import HundredYearPlanLogo from './hundred-year-plan-logo';
 import InfoModal from './info-modal';
 
@@ -221,7 +222,7 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 function HundredYearPlanStepWrapper( props: Props ) {
 	const { stepContent, stepName, flowName, formattedHeader } = props;
 
-	const isMobile = useBreakpoint( '<960px' );
+	const isMobile = useBreakpoint( `<${ SMALL_BREAKPOINT }px` );
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
