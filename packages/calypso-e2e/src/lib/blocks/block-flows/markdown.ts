@@ -10,7 +10,7 @@ interface ValidationData {
 }
 
 /**
- * Represents the flow of using the AI Assistant block.
+ * Represents the flow of using the Markdown block.
  */
 export class MarkdownFlow implements BlockFlow {
 	private configurationData: ConfigurationData;

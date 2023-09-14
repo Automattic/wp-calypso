@@ -8,7 +8,6 @@ import {
 	MapFlow,
 	GifFlow,
 	envVariables,
-	RelatedPostsFlow,
 } from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared/block-smoke-testing';
 
@@ -22,20 +21,6 @@ const blockFlows: BlockFlow[] = [
 if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 	blockFlows.push(
 		new MapFlow( { address: '1455 Quebec Street, Vancouver', select: '1455 Quebec St' } )
-	);
-}
-
-// Related posts block do not show up on private sites, as one would expect.
-// However, it also does not appear on eCommerce plan sites.
-// @see: https://github.com/Automattic/jetpack/issues/33062
-if (
-	envVariables.ATOMIC_VARIATION !== 'private' &&
-	envVariables.ATOMIC_VARIATION !== 'ecomm-plan'
-) {
-	blockFlows.push(
-		new RelatedPostsFlow( {
-			headline: `Related Posts from this user`,
-		} )
 	);
 }
 

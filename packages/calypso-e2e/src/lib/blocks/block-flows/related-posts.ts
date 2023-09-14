@@ -5,7 +5,9 @@ interface ConfigurationData {
 }
 
 /**
- * Represents the flow of using the AI Assistant block.
+ * Represents the flow of using the Related Posts block.
+ *
+ * Note, this block must be turned on from Jetpack Settings > Traffic for AT sites.
  */
 export class RelatedPostsFlow implements BlockFlow {
 	blockSidebarName = 'Related Posts';
