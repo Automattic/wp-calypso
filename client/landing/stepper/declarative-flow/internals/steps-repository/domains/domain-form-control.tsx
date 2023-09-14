@@ -117,6 +117,10 @@ export function DomainFormControl( {
 	};
 
 	const getSideContent = () => {
+		if ( HUNDRED_YEAR_PLAN_FLOW === flow ) {
+			return null;
+		}
+
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
 				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />

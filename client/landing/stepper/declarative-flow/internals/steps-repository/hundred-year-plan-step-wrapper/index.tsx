@@ -1,6 +1,7 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Gridicon, WordPressLogo } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/format-currency';
 import { StepContainer } from '@automattic/onboarding';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -105,8 +106,9 @@ const Price = styled.div`
 `;
 
 const LearnMore = styled( Button )`
-	&.components-button.is-link {
-		color: var( --studio-gray-0 );
+	&.components-button.is-link:not( :disabled ):not( .disabled ) {
+		color: var( --studio-gray-5 );
+		text-decoration: none;
 		text-align: right;
 		font-size: 14px;
 		font-style: normal;
@@ -117,6 +119,15 @@ const LearnMore = styled( Button )`
 
 		.gridicon {
 			margin-inline-start: 4px;
+		}
+
+		&:hover {
+			color: var( --studio-gray-0 );
+			text-decoration: underline;
+		}
+
+		&:focus {
+			color: var( --studio-gray-0 );
 		}
 	}
 `;
@@ -172,10 +183,19 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 	const translate = useTranslate();
 
 	const productPrice = useSelect(
-		( select ) =>
-			select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.combined_cost_display,
+		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.cost,
 		[]
 	);
+	const currencyCode = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.currency_code,
+		[]
+	);
+	const displayCost =
+		productPrice &&
+		currencyCode &&
+		formatCurrency( productPrice, currencyCode, {
+			stripZeros: true,
+		} );
 
 	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
 
@@ -212,7 +232,7 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 							<Gridicon icon="info-outline" size={ 16 } />
 						</>
 					</LearnMore>
-					<Price className={ ! productPrice ? 'is-price-loading' : '' }>{ productPrice }</Price>
+					<Price className={ ! displayCost ? 'is-price-loading' : '' }>{ displayCost }</Price>
 				</Info>
 			</InfoColumnContainer>
 		</>

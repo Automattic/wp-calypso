@@ -450,9 +450,9 @@
 	}
 
 	.domains__content {
+		width: 100%;
 		@include break-small {
 			max-width: 700px;
-			width: 100%;
 		}
 
 		.domains__step-content {
@@ -466,11 +466,12 @@
 		.badge.badge--warning {
 			display: none;
 		}
-		// Change button accent colour
+		// Change button styles
 		.button.is-primary {
 			@include primary-button-black-theme;
 		}
 
+		// Reset styles for the featured domain suggestion
 		.domain-suggestion.card.featured-domain-suggestion {
 			box-shadow: none;
 			border-top: 1px solid transparent;
@@ -492,6 +493,7 @@
 			}
 
 			.domain-registration-suggestion__title-wrapper {
+				gap: 4px;
 				@include break-mobile {
 					flex-direction: row;
 					align-items: center;
@@ -508,6 +510,11 @@
 					font-weight: 500;
 				}
 			}
+		}
+
+		// Hide the domain explanation image
+		.register-domain-step__domain-side-content-container-domain-explanation-image {
+			display: none;
 		}
 	}
 }

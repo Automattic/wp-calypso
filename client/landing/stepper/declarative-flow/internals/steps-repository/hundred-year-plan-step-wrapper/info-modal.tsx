@@ -70,7 +70,7 @@ const Header = styled.div`
 
 const AnnouncementLink = styled( Button )`
 	&.is-link {
-		color: var( --studio-gray-0 );
+		color: var( --studio-gray-5 );
 		text-align: right;
 		font-family: 'SF Pro Text', sans-serif;
 		font-size: 14px;
@@ -84,6 +84,11 @@ const AnnouncementLink = styled( Button )`
 
 		.gridicon {
 			margin-inline-start: 4px;
+		}
+
+		&:hover {
+			color: var( --studio-gray-0 );
+			text-decoration: underline;
 		}
 	}
 `;
