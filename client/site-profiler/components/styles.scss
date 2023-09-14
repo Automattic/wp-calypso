@@ -1,0 +1,26 @@
+.is-section-site-profiler {
+	h1 {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		/* stylelint-disable-next-line */
+		font-size: 4.375rem;
+		color: var(--studio-gray-100);
+	}
+
+	h2 {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		/* stylelint-disable-next-line */
+		font-size: 2.5rem;
+	}
+
+	h3 {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 1.75rem;
+	}
+
+	p {
+		font-family: "Noto Sans", Helvetica, Arial, sans-serif;
+		/* stylelint-disable-next-line */
+		font-size: 1.125rem;
+		color: var(--studio-gray-80);
+	}
+}
