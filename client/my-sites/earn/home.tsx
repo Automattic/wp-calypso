@@ -131,7 +131,7 @@ const Home = () => {
 	const getPremiumPlanNames = () => {
 		const nonAtomicJetpackText = eligibleForProPlan
 			? translate( 'Available only with a Pro plan.' )
-			: translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+			: translate( 'Available only with a Premium, Business, or Commerce plan.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;

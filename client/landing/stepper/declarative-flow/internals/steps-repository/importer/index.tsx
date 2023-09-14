@@ -32,6 +32,7 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { requestSites } from 'calypso/state/sites/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
@@ -74,6 +75,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Effects
 		 */
+		useEffect( () => {
+			dispatch( requestSites() );
+		}, [ dispatch ] );
+
 		useEffect( () => {
 			! siteId && site?.ID && setSiteId( site.ID );
 		}, [ siteId, site ] );

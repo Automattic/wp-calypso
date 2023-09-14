@@ -206,6 +206,9 @@ export function DomainsTableRow( {
 			{ ! hideOwnerColumn && <td>{ renderOwnerCell() }</td> }
 			<td>{ renderSiteCell() }</td>
 			<td>
+				<DomainsTableRegisteredUntilCell domain={ domain } />
+			</td>
+			<td>
 				{ isLoadingRowDetails ? (
 					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 				) : (
@@ -216,9 +219,6 @@ export function DomainsTableRow( {
 						pendingUpdates={ pendingUpdates }
 					/>
 				) }
-			</td>
-			<td>
-				<DomainsTableRegisteredUntilCell domain={ domain } />
 			</td>
 			<td></td>
 			<td className="domains-table-row__actions">

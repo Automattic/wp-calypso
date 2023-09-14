@@ -5,13 +5,12 @@
 .domains-table {
 	--domains-table-toolbar-height: 40px;
 
-	border-collapse: collapse;
-
 	table {
 		margin-top: 30px;
+		border-collapse: collapse;
 
 		tr {
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid #f0f0f0;
 		}
 	}
 
