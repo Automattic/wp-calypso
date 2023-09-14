@@ -3,7 +3,13 @@ import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentType } from 'react';
 import { type as domainTypes, transferStatus } from '../utils/constants';
-import { domainMagementDNS, domainManagementLink } from '../utils/paths';
+import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
+import { isDomainUpdateable } from '../utils/is-updateable';
+import {
+	domainMagementDNS,
+	domainManagementEditContactInfo,
+	domainManagementLink,
+} from '../utils/paths';
 import { ResponseDomain } from '../utils/types';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
@@ -30,6 +36,9 @@ export const DomainsTableRowActions = ( {
 		domain.canManageDnsRecords &&
 		domain.transferStatus !== transferStatus.PENDING_ASYNC &&
 		domain.type !== domainTypes.SITE_REDIRECT;
+	const canManageContactInfo =
+		domain.type === domainTypes.REGISTERED &&
+		( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) );
 
 	return (
 		<DropdownMenu
@@ -45,6 +54,11 @@ export const DomainsTableRowActions = ( {
 					{ canManageDNS && (
 						<MenuItemLink href={ domainMagementDNS( siteSlug, domain.name ) }>
 							{ __( 'Manage DNS' ) }
+						</MenuItemLink>
+					) }
+					{ canManageContactInfo && (
+						<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
+							{ __( 'Manage contact information' ) }
 						</MenuItemLink>
 					) }
 					{ canConnectDomainToASite && (
