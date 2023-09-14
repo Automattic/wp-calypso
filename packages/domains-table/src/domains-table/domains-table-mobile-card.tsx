@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
+import { ResponseDomain } from '../utils/types';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
@@ -87,7 +88,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				) : (
 					<DomainsTableStatusCell
 						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData }
+						currentDomainData={ currentDomainData as ResponseDomain }
 						domainStatusPurchaseActions={ domainStatusPurchaseActions }
 						pendingUpdates={ pendingUpdates }
 					/>
