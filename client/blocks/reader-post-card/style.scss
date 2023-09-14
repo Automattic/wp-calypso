@@ -184,6 +184,29 @@
 		}
 	}
 
+	&:not(.is-compact) {
+		padding-top: 24px;
+		.reader-post-card__post {
+			margin-top: 0;
+		}
+		.reader-post-card__title {
+			margin-top: 24px;
+		}
+		.reader-excerpt__content {
+			margin-top: 18px;
+			margin-bottom: 24px;
+		}
+		.reader-post-actions {
+			margin: 24px 0;
+		}
+		.comments__comment-list.is-inline {
+			margin: 0 0 0 10px;
+			.comments__form {
+				margin-top: 0;
+			}
+		}
+	}
+
 	&.is-compact.has-thumbnail {
 		.ellipsis-menu__toggle {
 			padding-bottom: 36px;
@@ -462,10 +485,6 @@
 	line-height: 1.4;
 	margin-top: -4px;
 	overflow-wrap: break-word;
-
-	&:not(.is-compact) {
-		margin-top: 16px;
-	}
 }
 
 // Needs to overwrite .reader__content a
