@@ -186,9 +186,6 @@
 
 	&:not(.is-compact) {
 		padding-top: 24px;
-		.reader-post-card__post {
-			margin-top: 0;
-		}
 		.reader-post-card__title {
 			margin-top: 24px;
 		}
@@ -460,7 +457,6 @@
 	display: flex;
 	flex-direction: column;
 	margin-left: 52px;
-	margin-top: 6px;
 
 	.reader-post-card__post-details {
 		width: 100%;
