@@ -10,7 +10,7 @@ import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
 import { useDomainsTable } from './domains-table';
-import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
@@ -130,7 +130,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'expire_renew' ) {
 					return (
 						<td key={ column.name }>
-							<DomainsTableRegisteredUntilCell domain={ domain } />
+							<DomainsTableExpiresRewnewsOnCell domain={ domain } />
 						</td>
 					);
 				}
