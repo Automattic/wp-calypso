@@ -170,7 +170,7 @@ describe( 'The celebration step', () => {
 
 			expect( screen.getByText( 'Your site’s ready!' ) ).toBeInTheDocument();
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Now it’s time to edit your content' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Now it’s time to edit your content.' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Visit your site' } ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Edit your content' } ) ).toBeInTheDocument();
 		} );

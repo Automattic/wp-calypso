@@ -132,7 +132,7 @@ describe( 'The useCelebrationData hook', () => {
 
 			expect( result.current ).toEqual( {
 				title: 'Your site’s ready!',
-				subTitle: 'Now it’s time to edit your content',
+				subTitle: 'Now it’s time to edit your content.',
 				primaryCtaName: 'Edit your content',
 				primaryCtaText: 'Edit your content',
 				primaryCtaLink: `/site-editor/${ siteSlug }?canvas=edit&assembler=1`,
