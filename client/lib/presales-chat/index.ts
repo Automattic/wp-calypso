@@ -70,6 +70,10 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		isLoggedIn
 	);
 
+	const openChat = () => {
+		window.zE( 'messenger', 'open' );
+	};
+
 	useEffect( () => {
 		// presales chat is always shown by default
 		if ( enabled && isPresalesChatAvailable && isMessagingScriptLoaded ) {
@@ -81,5 +85,6 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		isChatActive: isPresalesChatAvailable && isEligibleForPresalesChat,
 		isLoading: isLoadingAvailability,
 		isPresalesChatAvailable,
+		openChat,
 	};
 }
