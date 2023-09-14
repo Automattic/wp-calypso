@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
@@ -121,7 +120,6 @@ class PostByline extends Component {
 							</span>
 						) }
 					</div>
-					{ ! compact && <TagsList post={ post } /> }
 				</div>
 				{ ! compact && (
 					<ReaderPostEllipsisMenu

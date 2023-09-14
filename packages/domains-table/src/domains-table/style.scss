@@ -2,16 +2,38 @@
 @import "@automattic/onboarding/styles/mixins";
 
 
+@media ( max-width: 480px) {
+	html,
+	body,
+	#wpcom,
+	#content {
+		overflow-y: hidden;
+		height: 100vh;
+		main[role="main"] {
+			overflow-y: hidden;
+			height: 100vh;
+		}
+	}
+}
+
+
 .domains-table {
 	--domains-table-toolbar-height: 40px;
+	height: 100%;
+	overflow-y: hidden;
 
 	border-collapse: collapse;
 
+	@media ( max-width: 480px ) {
+		padding: 13px;
+	}
+
 	table {
 		margin-top: 30px;
+		border-collapse: collapse;
 
 		tr {
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid #f0f0f0;
 		}
 	}
 
@@ -64,10 +86,13 @@
 
 	.domains-table-row__status-cell {
 		display: flex;
-		width: 100px;
 		align-items: center;
 		gap: 4px;
 		font-size: $font-body-small;
+
+		@media ( min-width: 480px) {
+			width: 100px;
+		}
 
 		&__status-success,
 		&__status-verifying,
@@ -94,6 +119,19 @@
 
 	.domains-table-row__actions {
 		text-align: right;
+
+	}
+}
+
+.domains-table-row__actions-group {
+	.components-menu-item__button:hover {
+		background-color: var(--color-primary);
+		border: 0;
+		box-shadow: none;
+		color: var(--color-text-inverted);
+	}
+	a:visited {
+		color: var(--color-neutral-70);
 	}
 }
 
@@ -152,5 +190,96 @@
 
 	@include break-large {
 		display: block;
+	}
+}
+
+.domains-table-mobile-cards {
+	height: calc(100vh - 280px);
+	overflow-y: auto;
+	padding: 3px;
+
+	.domains-table-mobile-cards-select-all {
+		display: flex;
+		align-items: center;
+		span {
+			font-size: smaller;
+		}
+	}
+
+	.domains-table__bulk-action-container {
+		margin-top: 16px;
+	}
+
+	&-controls {
+		width: 100%;
+		display: flex;
+		gap: 16px;
+	}
+
+	&-sort-dropdown {
+		width: 100%;
+		flex-grow: 1;
+		.select-dropdown__container {
+			width: 100%;
+			.select-dropdown__header {
+				text-transform: capitalize;
+			}
+		}
+	}
+}
+
+.domains-table-mobile-card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px 0;
+	border-bottom: 1px solid #f0f0f0;
+
+	&-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		.domains-table__domain-name {
+			text-align: left;
+		}
+
+		.components-base-control,
+		.components-checkbox-control__input,
+		.components-checkbox-control__checked {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	> div {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&-label {
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		color: var(--gray-gray-60);
+	}
+
+	&-registered-date {
+		font-size: $font-body-small;
+	}
+
+	&-email {
+		a.add-email-button {
+			color: var(--studio-blue-50);
+			font-size: $font-body-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px; /* 142.857% */
+			letter-spacing: -0.15px;
+			text-decoration: underline;
+		}
 	}
 }

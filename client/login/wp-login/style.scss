@@ -542,14 +542,14 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-section-login.is-gravatar {
+.layout.is-section-login.is-grav-powered-client {
 	.login__form-gutenboarding-wordpress-logo {
 		display: none;
 	}
 }
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
-.layout.is-section-login.is-gravatar-login-page {
+.layout.is-section-login.is-grav-powered-login-page {
 	background-color: #e7e9ea;
 
 	.layout__content {
@@ -662,11 +662,7 @@ $image-height: 47px;
 
 		&:hover:not(&:disabled),
 		&:focus {
-			background-color: #163d98;
-		}
-
-		&:focus {
-			box-shadow: 0 0 0 2px #399ce3;
+			background-color: darken(#1d4fc4, 10%);
 		}
 	}
 
@@ -681,18 +677,18 @@ $image-height: 47px;
 	}
 
 	.login__divider,
-	.gravatar-login__divider {
+	.grav-powered-login__divider {
 		margin-top: 30px;
 	}
 
-	.gravatar-login__divider {
+	.grav-powered-login__divider {
 		background-color: #e7e9ea;
 		width: 80px;
 		margin-left: 0;
 		margin-bottom: 20px;
 	}
 
-	.gravatar-login__footer {
+	.grav-powered-login__footer {
 		display: flex;
 		flex-direction: column;
 		font-size: 15px;
@@ -719,7 +715,7 @@ $image-height: 47px;
 		}
 
 		.login__divider,
-		.gravatar-login__divider {
+		.grav-powered-login__divider {
 			margin-top: 48px;
 		}
 	}
