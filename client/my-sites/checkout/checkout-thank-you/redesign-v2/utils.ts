@@ -5,6 +5,7 @@ import { isBulkDomainTransfer } from '../utils';
 /**
  * Determines whether the current checkout flow is for a redesign V2 purchase.
  * Used for gradually rolling out the redesign.
+ *
  * @returns {boolean} True if the checkout flow is for a redesign V2 purchase, false otherwise.
  */
 export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
