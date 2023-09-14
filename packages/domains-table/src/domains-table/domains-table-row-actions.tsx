@@ -12,6 +12,9 @@ import {
 	domainManagementTransferToOtherSiteLink,
 } from '../utils/paths';
 import { ResponseDomain } from '../utils/types';
+import { useDomainsTable } from './domains-table';
+
+export type DomainAction = 'manage-dns-settings';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -30,6 +33,7 @@ export const DomainsTableRowActions = ( {
 	siteSlug,
 	isAllSitesView,
 }: DomainsTableRowActionsProps ) => {
+	const { onDomainAction } = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canConnectDomainToASite = domain.currentUserCanCreateSiteFromDomainOnly;
@@ -53,7 +57,10 @@ export const DomainsTableRowActions = ( {
 						{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
 					</MenuItemLink>
 					{ canManageDNS && (
-						<MenuItemLink href={ domainMagementDNS( siteSlug, domain.name ) }>
+						<MenuItemLink
+							onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
+							href={ domainMagementDNS( siteSlug, domain.name ) }
+						>
 							{ __( 'Manage DNS' ) }
 						</MenuItemLink>
 					) }

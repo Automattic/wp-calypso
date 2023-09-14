@@ -29,6 +29,8 @@ import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
+import { ResponseDomain } from '../utils/types';
+import { DomainAction } from './domains-table-row-actions';
 
 interface BaseDomainsTableProps {
 	domains: PartialDomainData[] | undefined;
@@ -41,6 +43,7 @@ interface BaseDomainsTableProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	onDomainAction?( action: DomainAction, domain: ResponseDomain ): void;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -80,6 +83,7 @@ type Value = {
 	handleRestartDomainStatusPolling: () => void;
 	showBulkActions: boolean;
 	setShowBulkActions: ( showBulkActions: boolean ) => void;
+	onDomainAction: BaseDomainsTableProps[ 'onDomainAction' ];
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -94,6 +98,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		isAllSitesView,
 		domainStatusPurchaseActions,
 		children,
+		onDomainAction,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -328,6 +333,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		handleRestartDomainStatusPolling,
 		showBulkActions,
 		setShowBulkActions,
+		onDomainAction,
 	};
 
 	return (

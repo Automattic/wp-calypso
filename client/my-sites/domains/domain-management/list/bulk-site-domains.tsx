@@ -6,6 +6,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
@@ -20,6 +21,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { data } = useSiteDomainsQuery( siteSlug );
 	const translate = useTranslate();
+	const { sendNudge } = useOdieAssistantContext();
 
 	const item = {
 		label: translate( 'Domains' ),
@@ -43,7 +45,20 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 			<Main className="bulk-domains-main">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				<DomainsTable domains={ data?.domains } isAllSitesView={ false } siteSlug={ siteSlug } />
+				<DomainsTable
+					domains={ data?.domains }
+					isAllSitesView={ false }
+					siteSlug={ siteSlug }
+					onDomainAction={ ( action, domain ) => {
+						if ( action === 'manage-dns-settings' ) {
+							sendNudge( {
+								nudge: 'dns-settings',
+								initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+								context: { domain: domain.domain },
+							} );
+						}
+					} }
+				/>
 			</Main>
 			<UsePresalesChat />
 		</>
