@@ -1,5 +1,4 @@
 import {
-	is100Year,
 	isBlogger,
 	isBusiness,
 	isChargeback,
@@ -1062,7 +1061,7 @@ function PurchaseDetailsWrapper(
 			/>
 		);
 	}
-	if ( ( purchases.some( isBusiness ) || purchases.some( is100Year ) ) && props.selectedSite ) {
+	if ( purchases.some( isBusiness ) && props.selectedSite ) {
 		return (
 			<BusinessPlanDetails
 				purchases={ purchases }
