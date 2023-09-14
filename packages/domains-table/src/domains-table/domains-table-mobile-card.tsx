@@ -82,7 +82,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Status' ) } </span>
-				{ isLoadingSiteDomainsDetails ? (
+				{ ! currentDomainData || isLoadingSiteDomainsDetails ? (
 					<LoadingPlaceholder style={ { width: '50%' } } />
 				) : (
 					<DomainsTableStatusCell
