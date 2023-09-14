@@ -12,7 +12,7 @@ import { getReceiptById } from 'calypso/state/receipts/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 
 interface Props {
-	site: number | string;
+	siteSlug: string;
 	receiptId: number;
 }
 
@@ -74,7 +74,7 @@ const CustomizedWordPressLogo = styled( WordPressLogo )`
 	fill: var( --studio-white );
 `;
 
-export default function HundredYearPlanThankYou( { receiptId }: Props ) {
+export default function HundredYearPlanThankYou( { siteSlug, receiptId }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
@@ -119,8 +119,14 @@ export default function HundredYearPlanThankYou( { receiptId }: Props ) {
 								) }
 							</Highlight>
 							<ButtonBar isMobile={ isMobile }>
-								<StyledButton dark>{ translate( 'View plan benefits' ) }</StyledButton>
-								<StyledButton>{ translate( 'Access premium support' ) }</StyledButton>
+								<StyledButton dark onClick={ () => page( `/plans/my-plan/${ siteSlug }` ) }>
+									{ translate( 'View plan benefits' ) }
+								</StyledButton>
+								<StyledButton
+									onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }
+								>
+									{ translate( 'Start building site ' ) }
+								</StyledButton>
 							</ButtonBar>
 						</div>
 						<video

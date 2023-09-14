@@ -478,7 +478,10 @@ export function licensingThankYouAutoActivationCompleted( context, next ) {
 
 export function hundredYearCheckoutThankYou( context, next ) {
 	context.primary = (
-		<HundredYearPlanThankYou site={ context.params.site } receiptId={ context.params.receiptId } />
+		<HundredYearPlanThankYou
+			siteSlug={ context.params.site }
+			receiptId={ context.params.receiptId }
+		/>
 	);
 	next();
 }
