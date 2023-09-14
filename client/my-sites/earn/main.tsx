@@ -79,7 +79,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	};
 
 	const isAdSection = ( currentSection: string | undefined ) =>
-		currentSection && currentSection.includes( 'ads' );
+		currentSection && currentSection.startsWith( 'ads' );
 
 	const getComponent = ( currentSection: string | undefined ) => {
 		switch ( currentSection ) {
