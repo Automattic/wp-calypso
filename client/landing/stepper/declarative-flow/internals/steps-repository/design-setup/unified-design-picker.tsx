@@ -40,6 +40,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
@@ -116,6 +117,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 		[ site ]
 	);
+	const isJetpack = useSelector( ( state ) => site && isJetpackSite( state, site?.ID ) );
 	useEffect( () => {
 		if ( isAtomic ) {
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
@@ -400,6 +402,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const hasEligibilityMessages =
 		! isAtomic &&
+		! isJetpack &&
 		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
 
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
