@@ -192,18 +192,40 @@
 }
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
-.gravatar-magic-login {
+.grav-powered-magic-login {
 	max-width: 560px;
+	line-height: 1.5;
 
-	.gravatar-magic-login__content,
+	&.grav-powered-magic-login--wp-job-manager {
+
+		a,
+		.grav-powered-magic-login__content a,
+		.grav-powered-magic-login__footer button {
+			color: #2404eb;
+		}
+
+		button[type="submit"].form-button.is-primary {
+			&,
+			&:disabled {
+				background-color: #2404eb;
+			}
+
+			&:hover:not(&:disabled),
+			&:focus {
+				background-color: darken(#2404eb, 10%);
+			}
+		}
+	}
+
+	.grav-powered-magic-login__content,
+	.grav-powered-magic-login__gravatar-info,
 	input[type="text"].form-text-input,
 	button {
 		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	}
 
-	.gravatar-magic-login__content {
+	.grav-powered-magic-login__content {
 		background-color: #fff;
-		line-height: 1.5;
 		color: #00101c;
 		border-radius: 2px;
 		padding: 20px 30px;
@@ -218,7 +240,7 @@
 		}
 	}
 
-	.gravatar-magic-login__header,
+	.grav-powered-magic-login__header,
 	.magic-login__form-header {
 		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 		font-size: 24px;
@@ -238,12 +260,8 @@
 		margin-bottom: 0;
 	}
 
-	.gravatar-magic-login__sub-header {
+	.grav-powered-magic-login__sub-header {
 		margin-bottom: 52px;
-	}
-
-	.magic-login__form-sub-header {
-		margin-bottom: 24px;
 	}
 
 	// Hide the label, but keep it for accessibility
@@ -277,13 +295,13 @@
 		color: #fff;
 	}
 
-	.gravatar-magic-login__divider {
+	.grav-powered-magic-login__divider {
 		background-color: #e7e9ea;
 		width: 80px;
 		margin: 32px 0 20px;
 	}
 
-	.gravatar-magic-login__footer {
+	.grav-powered-magic-login__footer {
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
@@ -301,27 +319,56 @@
 			text-decoration: underline;
 		}
 
-		&.gravatar-magic-login__footer--email-verification {
+		&.grav-powered-magic-login__footer--email-verification {
 			color: #949494;
 		}
 	}
 
-	.gravatar-magic-login__show-magic-login {
+	.grav-powered-magic-login__show-magic-login {
 		margin-top: 16px;
 	}
 
+	.grav-powered-magic-login__gravatar-info {
+		margin-top: 32px;
+	}
+
+	.grav-powered-magic-login__gravatar-info-heading {
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+		color: rgba(#00101c, 0.8);
+		margin-bottom: 20px;
+
+		img {
+			margin-right: 8px;
+		}
+	}
+
+	.grav-powered-magic-login__gravatar-info-items {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		font-size: 13px;
+		color: #646970;
+	}
+
+	.gridicons-checkmark {
+		margin-right: 8px;
+		transform: translateY(4px);
+	}
+
 	@include break-small {
-		.gravatar-magic-login__content {
+		.grav-powered-magic-login__content {
 			padding: 40px 56px;
 		}
 
-		.gravatar-magic-login__header,
+		.grav-powered-magic-login__header,
 		.magic-login__form-header {
 			font-size: 40px;
 			margin-top: 48px;
 		}
 
-		.gravatar-magic-login__sub-header {
+		.grav-powered-magic-login__sub-header {
 			margin-bottom: 80px;
 
 			strong {
@@ -334,12 +381,16 @@
 			margin-top: 44px;
 		}
 
-		.gravatar-magic-login__divider {
+		.grav-powered-magic-login__divider {
 			margin-top: 48px;
 		}
 
-		.gravatar-magic-login__show-magic-login {
+		.grav-powered-magic-login__show-magic-login {
 			margin-top: 0;
+		}
+
+		.grav-powered-magic-login__gravatar-info {
+			margin-top: 40px;
 		}
 	}
 }

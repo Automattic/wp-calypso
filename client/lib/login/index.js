@@ -4,11 +4,12 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
-	isGravatarOAuth2Client,
+	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
 
 export function getSocialServiceFromClientId( clientId ) {
 	if ( ! clientId ) {
@@ -84,17 +85,23 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl += '/' + signupFlow;
 	}
 
-	if (
-		isAkismetOAuth2Client( oauth2Client ) ||
-		isGravatarOAuth2Client( oauth2Client ) ||
-		isIntenseDebateOAuth2Client( oauth2Client )
-	) {
+	if ( isAkismetOAuth2Client( oauth2Client ) || isIntenseDebateOAuth2Client( oauth2Client ) ) {
 		const oauth2Flow = 'wpcc';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
 		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+	}
+
+	// Gravatar powered clients signup via the magic login page
+	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+		signupUrl = login( {
+			locale,
+			twoFactorAuthType: 'link',
+			oauth2ClientId: oauth2Client.id,
+			redirectTo: redirectTo,
+		} );
 	}
 
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
