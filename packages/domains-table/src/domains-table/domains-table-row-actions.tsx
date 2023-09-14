@@ -3,7 +3,7 @@ import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentType } from 'react';
 import { canSetAsPrimary } from '../utils/can-set-as-primary';
-import { type as domainTypes, transferStatus } from '../utils/constants';
+import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../utils/constants';
 import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainUpdateable } from '../utils/is-updateable';
@@ -12,6 +12,7 @@ import {
 	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
+	domainUseMyDomain,
 } from '../utils/paths';
 import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-make-domain-primary';
 import { ResponseDomain } from '../utils/types';
@@ -64,6 +65,8 @@ export const DomainsTableRowActions = ( {
 		) &&
 		isRecentlyRegistered( domain.registrationDate ) &&
 		! domain.pointsToWpcom;
+	const canTransferToWPCOM =
+		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 
 	return (
 		<DropdownMenu
@@ -92,6 +95,17 @@ export const DomainsTableRowActions = ( {
 					{ canMakePrimarySiteAddress && (
 						<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
 							{ __( 'Make primary site address' ) }
+						</MenuItemLink>
+					) }
+					{ canTransferToWPCOM && (
+						<MenuItemLink
+							href={ domainUseMyDomain(
+								siteSlug,
+								domain.name,
+								useMyDomainInputMode.transferDomain
+							) }
+						>
+							{ __( 'Transfer to WordPress.com' ) }
 						</MenuItemLink>
 					) }
 					{ canConnectDomainToASite && (
