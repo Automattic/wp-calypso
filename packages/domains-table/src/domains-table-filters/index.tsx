@@ -1,7 +1,7 @@
 import { Gridicon, SelectDropdown } from '@automattic/components';
 import SearchControl, { SearchIcon } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem, ToggleControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainsTable } from '../domains-table/domains-table';
 import { domainsTableColumns } from '../domains-table-header/columns';
@@ -14,6 +14,7 @@ export interface DomainsTableFilter {
 
 interface DomainsTableFiltersProps {
 	onSearch( query: string ): void;
+
 	filter: DomainsTableFilter;
 }
 
@@ -73,17 +74,18 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 							{ options }
 						</SelectDropdown>
 
-						<DropdownMenu
-							className="domains-table-mobile-cards-overflow"
-							icon={ <Gridicon icon="ellipsis" /> }
-							label={ __( 'Domain actions' ) }
-						>
+						<DropdownMenu icon={ <Gridicon icon="ellipsis" /> } label={ __( 'Domain actions' ) }>
 							{ () => (
 								<MenuGroup>
-									<MenuItem onClick={ () => setShowBulkActions( ! showBulkActions ) }>
-										{ showBulkActions
-											? __( 'Disable Bulk Actions ' )
-											: __( 'Enable Bulk Actions ' ) }
+									<MenuItem
+										onClick={ () => setShowBulkActions( ! showBulkActions ) }
+										className="domains-table-mobile-cards-controls-bulk-toggle"
+									>
+										<ToggleControl
+											label={ __( 'Bulk actions ' ) }
+											onChange={ () => setShowBulkActions( ! showBulkActions ) }
+											checked={ showBulkActions }
+										/>
 									</MenuItem>
 								</MenuGroup>
 							) }

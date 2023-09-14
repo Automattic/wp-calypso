@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -27,6 +28,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		pendingUpdates,
 		shouldDisplayPrimaryDomainLabel,
 		showBulkActions,
+		isLoadingSiteDomainsDetails,
 	} = useDomainRow( domain );
 
 	return (
@@ -74,12 +76,16 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Status' ) } </span>
-				<DomainsTableStatusCell
-					siteSlug={ siteSlug }
-					currentDomainData={ currentDomainData }
-					domainStatusPurchaseActions={ domainStatusPurchaseActions }
-					pendingUpdates={ pendingUpdates }
-				/>
+				{ isLoadingSiteDomainsDetails ? (
+					<LoadingPlaceholder style={ { width: '50%' } } />
+				) : (
+					<DomainsTableStatusCell
+						siteSlug={ siteSlug }
+						currentDomainData={ currentDomainData }
+						domainStatusPurchaseActions={ domainStatusPurchaseActions }
+						pendingUpdates={ pendingUpdates }
+					/>
+				) }
 			</div>
 		</div>
 	);

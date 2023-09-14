@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { useI18n } from '@wordpress/react-i18n';
 //eslint-disable-next-line no-restricted-imports
@@ -16,8 +17,7 @@ export const DomainsTableEmailIndicator = ( {
 	} );
 
 	if ( isLoading || ! siteSlug ) {
-		//todo show skeleton
-		return null;
+		return <LoadingPlaceholder style={ { width: '50%' } } />;
 	}
 
 	if ( mailboxes.length === 0 ) {

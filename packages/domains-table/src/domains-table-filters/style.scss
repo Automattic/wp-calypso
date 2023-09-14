@@ -1,6 +1,17 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/variables";
 
+.domains-table-mobile-cards-controls-bulk-toggle {
+	.components-base-control.components-toggle-control {
+		margin-bottom: 0;
+		width: 100%;
+	}
+
+	.components-form-toggle {
+		order: 2;
+	}
+}
+
 .domains-table-filter {
 	display: flex;
 	justify-content: space-between;
