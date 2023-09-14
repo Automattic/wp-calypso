@@ -47,11 +47,8 @@ const PersonalPurchase = ( {
 	adminUrl,
 	redirectUri,
 	from,
-<<<<<<< HEAD
 	isStandalone,
-=======
 	type,
->>>>>>> 2fbdeb2c8d (add type & tracks events to personal purchase)
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
