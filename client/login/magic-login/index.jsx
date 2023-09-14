@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { addLocaleToPath } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -30,6 +31,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
@@ -56,6 +58,7 @@ class MagicLogin extends Component {
 		showCheckYourEmail: PropTypes.bool.isRequired,
 		isSendingEmail: PropTypes.bool.isRequired,
 		emailRequested: PropTypes.bool.isRequired,
+		localeSuggestions: PropTypes.array,
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
@@ -71,12 +74,22 @@ class MagicLogin extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if (
-			isGravPoweredOAuth2Client( this.props.oauth2Client ) &&
-			prevProps.isSendingEmail &&
-			this.props.emailRequested
-		) {
-			this.startResendEmailCountdown();
+		const { oauth2Client, emailRequested, localeSuggestions, path } = this.props;
+
+		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+			if ( prevProps.isSendingEmail && emailRequested ) {
+				this.startResendEmailCountdown();
+			}
+
+			if ( ! prevProps.localeSuggestions && localeSuggestions ) {
+				const userLocale = localeSuggestions.find(
+					( { locale } ) => locale === navigator.language.toLowerCase()
+				);
+
+				if ( userLocale ) {
+					page( addLocaleToPath( path, userLocale.locale ) );
+				}
+			}
 		}
 	}
 
@@ -398,6 +411,7 @@ const mapState = ( state ) => ( {
 		getLastCheckedUsernameOrEmail( state ) ||
 		getCurrentQueryArguments( state ).email_address ||
 		getInitialQueryArguments( state ).email_address,
+	localeSuggestions: getLocaleSuggestions( state ),
 } );
 
 const mapDispatch = {
