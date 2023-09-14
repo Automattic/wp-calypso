@@ -257,7 +257,7 @@ class MagicLogin extends Component {
 						</div>
 						{ resendEmailCountdown !== 0 && (
 							<div>
-								{ translate( '%(resendEmailCountdown)s seconds remaining', {
+								{ translate( 'Resend available in %(resendEmailCountdown)s seconds', {
 									args: { resendEmailCountdown },
 								} ) }
 								...
