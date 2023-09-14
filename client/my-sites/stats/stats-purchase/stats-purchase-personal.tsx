@@ -31,6 +31,7 @@ interface PersonalPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
+	isStandalone?: boolean;
 }
 
 const PersonalPurchase = ( {
@@ -45,6 +46,7 @@ const PersonalPurchase = ( {
 	adminUrl,
 	redirectUri,
 	from,
+	isStandalone,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -231,7 +233,7 @@ const PersonalPurchase = ( {
 						} )
 					}
 				>
-					{ translate( 'Get Stats Personal' ) }
+					{ isStandalone ? translate( 'Get Stats Personal' ) : translate( 'Get Jetpack Stats' ) }
 				</ButtonComponent>
 			) }
 		</div>
