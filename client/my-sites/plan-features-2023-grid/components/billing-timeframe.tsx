@@ -36,7 +36,6 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		planSlugs: [ yearlyVariantPlanSlug ],
 		withoutProRatedCredits: true,
 		storageAddOns: storageAddOnsForPlan,
-		currencyCode,
 	} )?.[ yearlyVariantPlanSlug ];
 
 	if ( isMonthlyPlan && originalPrice?.monthly && yearlyVariantPricing && ! introOffer ) {
