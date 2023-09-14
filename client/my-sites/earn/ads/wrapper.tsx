@@ -24,11 +24,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { requestWordAdsApproval, dismissWordAdsError } from 'calypso/state/wordads/approve/actions';
 import {
 	isRequestingWordAdsApprovalForSite,
@@ -49,7 +45,6 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
@@ -57,7 +52,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
 	const wordAdsError = useSelector( ( state ) => getWordAdsErrorForSite( state, site ?? {} ) );
 	const wordAdsSuccess = useSelector( ( state ) => getWordAdsSuccessForSite( state, site ?? {} ) );
-	const isUnsafe = useSelector( ( state ) => isSiteWordadsUnsafe( state, siteId ) );
+	const isUnsafe = useSelector( ( state ) => isSiteWordadsUnsafe( state, site?.ID ) );
 	const canActivateWordAds = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'activate_wordads' )
 	);
@@ -65,7 +60,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
 	const adsProgramName = useSelector( ( state ) =>
-		isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds'
+		isJetpackSite( state, site?.ID ) ? 'Ads' : 'WordAds'
 	);
 
 	const canActivateWordadsInstant =
@@ -77,10 +72,10 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
 
 	const requestAdsApproval = () =>
-		! requestingWordAdsApproval ? dispatch( requestWordAdsApproval( siteId ) ) : null;
+		! requestingWordAdsApproval ? dispatch( requestWordAdsApproval( site?.ID ) ) : null;
 
 	const handleDismissWordAdsError = () => {
-		dispatch( dismissWordAdsError( siteId ) );
+		dispatch( dismissWordAdsError( site?.ID ) );
 	};
 
 	const renderInstantActivationToggle = ( component: ReactNode ) => {
@@ -334,9 +329,9 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 
 	return (
 		<div>
-			<QuerySites siteId={ siteId } />
-			<QuerySiteFeatures siteIds={ [ siteId ] } />
-			<QueryWordadsStatus siteId={ siteId } />
+			<QuerySites siteId={ site?.ID } />
+			<QuerySiteFeatures siteIds={ [ site?.ID ] } />
+			<QueryWordadsStatus siteId={ site?.ID } />
 			{ getComponentAndNotice().notice }
 			{ getComponentAndNotice().component }
 		</div>
