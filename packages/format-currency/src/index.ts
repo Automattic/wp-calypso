@@ -379,7 +379,14 @@ function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): n
 		currency,
 		noDecimals: false,
 	} );
-	return defaultFormatter.resolvedOptions().maximumFractionDigits;
+	let numberOfDecimals = defaultFormatter.resolvedOptions().maximumFractionDigits;
+	if ( currency === 'IDR' && numberOfDecimals !== 0 ) {
+		// IDR seems to vary in the number of decimals it uses based on
+		// implementation so we standardize on 0 here and on the backend. See
+		// https://github.com/Automattic/payments-shilling/issues/2022
+		numberOfDecimals = 0;
+	}
+	return numberOfDecimals;
 }
 
 function prepareNumberForFormatting(

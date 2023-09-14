@@ -117,6 +117,25 @@ describe( 'formatCurrency', () => {
 		expect( money3 ).toBe( '9.800.900,32 €' );
 	} );
 
+	test( 'returns a number with commas at the ten thousand spaces for INR for IN locale', () => {
+		const money = formatter.formatCurrency( 3262700, 'INR', { locale: 'en-IN' } );
+		expect( money ).toBe( '₹32,62,700.00' );
+	} );
+
+	test( 'returns a number with commas at the thousand spaces for INR for US locale', () => {
+		const money = formatter.formatCurrency( 3262700, 'INR', { locale: 'en-US' } );
+		expect( money ).toBe( '₹3,262,700.00' );
+	} );
+
+	test( 'returns a number formatted without decimals in IDR', () => {
+		const money = formatter.formatCurrency( 536400, 'IDR', {
+			locale: 'en-US',
+			stripZeros: true,
+			isSmallestUnit: true,
+		} );
+		expect( money ).toBe( 'Rp 536,400' );
+	} );
+
 	test( 'returns a number in latin numbers even for locales which default to other character sets', () => {
 		const money = formatter.formatCurrency( 9800900, 'INR', { locale: 'mr-IN' } );
 		expect( money ).toBe( '₹9,800,900.00' );
@@ -270,7 +289,7 @@ describe( 'formatCurrency', () => {
 				locale: 'in-ID',
 				isSmallestUnit: true,
 			} );
-			expect( money ).toBe( 'Rp 1.072.800,00' );
+			expect( money ).toBe( 'Rp 107.280.000,00' );
 		} );
 	} );
 } );
