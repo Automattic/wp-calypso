@@ -83,7 +83,7 @@ function useHasRightSpace( parentElement: HTMLElement | undefined, isVisible: bo
 }
 
 export function useSubmenuPopoverProps< T extends HTMLElement >(
-	options: { offset?: number; flip?: boolean; resize?: boolean; inline?: boolean } = {}
+	options: { offset?: 0; flip?: true; resize?: true; inline?: false } = {}
 ) {
 	const { offset = 0, inline = false, flip = true, resize = true } = options;
 	const [ isVisible, setIsVisible ] = useState( false );
