@@ -31,7 +31,7 @@ const contextLinks = {
 		post_id: 240330,
 	},
 	cancel_purchase: {
-		link: ' https://wordpress.com/support/manage-purchases/cancel-a-purchase/',
+		link: 'https://wordpress.com/support/manage-purchases/cancel-a-purchase/',
 		post_id: 111349,
 	},
 	categories: {
