@@ -801,12 +801,6 @@ export class CheckoutThankYou extends Component<
 		if ( purchases.some( isPremium ) ) {
 			return [ 'premium-plan-details', purchases.find( isPremium ) ];
 		}
-		if ( purchases.some( isBusiness ) ) {
-			return [ 'business-plan-details', purchases.find( isBusiness ) ];
-		}
-		if ( purchases.some( is100Year ) ) {
-			return [ 'business-plan-details', purchases.find( is100Year ) ];
-		}
 		if ( purchases.some( isPro ) ) {
 			return [ 'pro-plan-details', purchases.find( isPro ) ];
 		}

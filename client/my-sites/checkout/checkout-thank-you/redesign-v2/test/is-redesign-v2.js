@@ -1,9 +1,4 @@
-import {
-	findPlansKeys,
-	GROUP_WPCOM,
-	PLAN_100_YEARS,
-	TYPE_100_YEAR,
-} from '@automattic/calypso-products';
+import { findPlansKeys, GROUP_WPCOM } from '@automattic/calypso-products';
 import { isRedesignV2 } from '../utils';
 
 describe( 'isRedesignV2', () => {
@@ -49,8 +44,7 @@ describe( 'isRedesignV2', () => {
 
 	it( 'should return true for supported plans and there are no failed purchases', () => {
 		const wpcomPlans = findPlansKeys( { group: GROUP_WPCOM } );
-		const wpcomPlansWithout100YearPlan = wpcomPlans.filter( ( plan ) => plan !== PLAN_100_YEARS );
-		const supportedPlans = [ ...wpcomPlansWithout100YearPlan ];
+		const supportedPlans = [ ...wpcomPlans ];
 		for ( const plan of supportedPlans ) {
 			const props = {
 				receipt: {
@@ -62,18 +56,5 @@ describe( 'isRedesignV2', () => {
 			};
 			expect( isRedesignV2( props ) ).toBe( true );
 		}
-	} );
-
-	it( 'should return false for 100 year plan', () => {
-		const [ hundredYearPlan ] = findPlansKeys( { group: TYPE_100_YEAR } );
-		const props = {
-			receipt: {
-				data: {
-					purchases: [ { productSlug: hundredYearPlan } ],
-					failedPurchases: [],
-				},
-			},
-		};
-		expect( isRedesignV2( props ) ).toBe( false );
 	} );
 } );
