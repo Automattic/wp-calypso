@@ -296,8 +296,8 @@ const pluginBundleFlow: Flow = {
 			};
 		}
 
-		const canManageOptions = useCanUserManageOptions();
-		if ( canManageOptions === 'requesting' ) {
+		const { canManageOptions, isLoading } = useCanUserManageOptions();
+		if ( isLoading ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 			};
