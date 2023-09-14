@@ -4,28 +4,24 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
+import { DomainsTable } from '../domains-table';
 import { DomainsTableRow } from '../domains-table-row';
 
-const noop = jest.fn();
-
-const render = ( el ) =>
+const render = ( el, props ) =>
 	renderWithProvider( el, {
 		wrapper: ( { children } ) => (
-			<table>
+			<DomainsTable { ...props }>
 				<tbody>{ children }</tbody>
-			</table>
+			</DomainsTable>
 		),
 	} );
 
 test( 'domain name is rendered in the row', () => {
-	render(
-		<DomainsTableRow
-			domain={ testPartialDomain( { domain: 'example1.com' } ) }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	const partialDomain = testPartialDomain( { domain: 'example1.com' } );
+	render( <DomainsTableRow domain={ partialDomain } />, {
+		domains: [ partialDomain ],
+		isAllSitesView: true,
+	} );
 
 	expect( screen.queryByText( 'example1.com' ) ).toBeInTheDocument();
 } );
@@ -37,14 +33,10 @@ test( 'wpcom domains do not link to management interface', async () => {
 		wpcom_domain: true,
 	} );
 
-	render(
-		<DomainsTableRow
-			domain={ partialDomain }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	render( <DomainsTableRow domain={ partialDomain } />, {
+		domains: [ partialDomain ],
+		isAllSitesView: true,
+	} );
 
 	expect( screen.getByText( 'example.wordpress.com' ) ).not.toHaveAttribute( 'href' );
 } );
@@ -60,15 +52,11 @@ test( 'domain name links to management interface', async () => {
 		options: { is_redirect: false },
 	} );
 
-	const { rerender } = render(
-		<DomainsTableRow
-			domain={ partialDomain }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	const { rerender } = render( <DomainsTableRow domain={ partialDomain } />, {
+		domains: [ partialDomain ],
+		isAllSitesView: true,
+		fetchSite,
+	} );
 
 	// Expect the row to fetch detailed site data
 	expect( fetchSite ).toHaveBeenCalledWith( 123 );
@@ -89,13 +77,11 @@ test( 'domain name links to management interface', async () => {
 
 	// Test site-specific link
 	rerender(
-		<DomainsTableRow
-			domain={ partialDomain }
-			fetchSite={ fetchSite }
-			isAllSitesView={ false }
-			isSelected={ false }
-			onSelect={ noop }
-		/>
+		<DomainsTable domains={ [ partialDomain ] } fetchSite={ fetchSite } isAllSitesView={ false }>
+			<tbody>
+				<DomainsTableRow domain={ partialDomain } />
+			</tbody>
+		</DomainsTable>
 	);
 
 	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
@@ -129,16 +115,12 @@ test( `redirect links use the site's unmapped URL for the site slug`, async () =
 		domains: [ fullRedirectDomain, fullUnmappedDomain ],
 	} );
 
-	const { rerender } = render(
-		<DomainsTableRow
-			domain={ partialRedirectDomain }
-			fetchSiteDomains={ fetchSiteDomains }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	const { rerender } = render( <DomainsTableRow domain={ partialRedirectDomain } />, {
+		domains: [ partialRedirectDomain ],
+		fetchSite,
+		fetchSiteDomains,
+		isAllSitesView: true,
+	} );
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
 
@@ -151,13 +133,15 @@ test( `redirect links use the site's unmapped URL for the site slug`, async () =
 
 	// Test site-specific link
 	rerender(
-		<DomainsTableRow
-			domain={ partialRedirectDomain }
+		<DomainsTable
+			domains={ [ partialRedirectDomain ] }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
-			isSelected={ false }
-			onSelect={ noop }
-		/>
+		>
+			<tbody>
+				<DomainsTableRow domain={ partialRedirectDomain } />
+			</tbody>
+		</DomainsTable>
 	);
 
 	expect( screen.getByRole( 'link', { name: 'redirect.blog' } ) ).toHaveAttribute(
@@ -184,16 +168,12 @@ test( 'transfer domains link to the transfer management interface', async () => 
 		options: { is_redirect: false },
 	} );
 
-	const { rerender } = render(
-		<DomainsTableRow
-			domain={ partialDomain }
-			fetchSiteDomains={ fetchSiteDomains }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	const { rerender } = render( <DomainsTableRow domain={ partialDomain } />, {
+		domains: [ partialDomain ],
+		fetchSite,
+		fetchSiteDomains,
+		isAllSitesView: true,
+	} );
 
 	expect( fetchSiteDomains ).toHaveBeenCalledWith( 123 );
 
@@ -206,13 +186,15 @@ test( 'transfer domains link to the transfer management interface', async () => 
 
 	// Test site-specific link
 	rerender(
-		<DomainsTableRow
-			domain={ partialDomain }
+		<DomainsTable
+			domains={ [ partialDomain ] }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
-			isSelected={ false }
-			onSelect={ noop }
-		/>
+		>
+			<tbody>
+				<DomainsTableRow domain={ partialDomain } />
+			</tbody>
+		</DomainsTable>
 	);
 
 	expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
@@ -234,16 +216,12 @@ test( 'when a site is associated with a domain, display its name', async () => {
 
 	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
-	render(
-		<DomainsTableRow
-			domain={ primaryPartial }
-			fetchSiteDomains={ fetchSiteDomains }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	render( <DomainsTableRow domain={ primaryPartial } />, {
+		domains: [ primaryPartial ],
+		fetchSite,
+		fetchSiteDomains,
+		isAllSitesView: true,
+	} );
 
 	await waitFor( () => expect( screen.queryByText( 'Primary Domain Blog' ) ).toBeInTheDocument() );
 } );
@@ -254,6 +232,7 @@ test( 'Parenthetical username is removed from owner column', async () => {
 		blog_id: 123,
 		primary_domain: true,
 		owner: 'Joe Blogs (joeblogs)',
+		current_user_is_owner: false,
 	} );
 
 	const fetchSiteDomains = jest.fn().mockResolvedValue( {
@@ -262,16 +241,12 @@ test( 'Parenthetical username is removed from owner column', async () => {
 
 	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
-	render(
-		<DomainsTableRow
-			domain={ primaryPartial }
-			fetchSiteDomains={ fetchSiteDomains }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	render( <DomainsTableRow domain={ primaryPartial } />, {
+		domains: [ primaryPartial ],
+		isAllSitesView: true,
+		fetchSite,
+		fetchSiteDomains,
+	} );
 
 	await waitFor( () => expect( screen.queryByText( 'Joe Blogs' ) ).toBeInTheDocument() );
 } );
@@ -282,6 +257,7 @@ test( `Doesn't strip parentheses used in the name portion of the owner field`, a
 		blog_id: 123,
 		primary_domain: true,
 		owner: 'Joe (Danger) Blogs (joeblogs)',
+		current_user_is_owner: false,
 	} );
 
 	const fetchSiteDomains = jest.fn().mockResolvedValue( {
@@ -290,16 +266,12 @@ test( `Doesn't strip parentheses used in the name portion of the owner field`, a
 
 	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
-	render(
-		<DomainsTableRow
-			domain={ primaryPartial }
-			fetchSiteDomains={ fetchSiteDomains }
-			fetchSite={ fetchSite }
-			isAllSitesView
-			isSelected={ false }
-			onSelect={ noop }
-		/>
-	);
+	render( <DomainsTableRow domain={ primaryPartial } />, {
+		domains: [ primaryPartial ],
+		fetchSite,
+		fetchSiteDomains,
+		isAllSitesView: true,
+	} );
 
 	await waitFor( () => expect( screen.queryByText( 'Joe (Danger) Blogs' ) ).toBeInTheDocument() );
 } );
@@ -327,16 +299,12 @@ describe( 'site linking ctas', () => {
 			options: { is_redirect: false },
 		} );
 
-		render(
-			<DomainsTableRow
-				domain={ primaryPartial }
-				fetchSiteDomains={ fetchSiteDomains }
-				fetchSite={ fetchSite }
-				isAllSitesView
-				isSelected={ false }
-				onSelect={ noop }
-			/>
-		);
+		render( <DomainsTableRow domain={ primaryPartial } />, {
+			domains: [ primaryPartial ],
+			fetchSite,
+			fetchSiteDomains,
+			isAllSitesView: true,
+		} );
 
 		await waitFor( () => {
 			const createLink = screen.queryByText( 'Add site' );
@@ -389,14 +357,10 @@ describe( 'registered until cell', () => {
 			expiry: '2024-08-01T00:00:00+00:00',
 		} );
 
-		render(
-			<DomainsTableRow
-				domain={ partialDomain }
-				isAllSitesView
-				isSelected={ false }
-				onSelect={ noop }
-			/>
-		);
+		render( <DomainsTableRow domain={ partialDomain } />, {
+			domains: [ partialDomain ],
+			isAllSitesView: true,
+		} );
 
 		expect( screen.getByText( 'Aug 1, 2024' ) ).toBeInTheDocument();
 	} );
@@ -409,14 +373,10 @@ describe( 'registered until cell', () => {
 			has_registration: false,
 		} );
 
-		render(
-			<DomainsTableRow
-				domain={ partialDomain }
-				isAllSitesView
-				isSelected={ false }
-				onSelect={ noop }
-			/>
-		);
+		render( <DomainsTableRow domain={ partialDomain } />, {
+			domains: [ partialDomain ],
+			isAllSitesView: true,
+		} );
 
 		expect( screen.getByText( '-' ) ).toBeInTheDocument();
 	} );

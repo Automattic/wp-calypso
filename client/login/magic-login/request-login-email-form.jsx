@@ -46,7 +46,7 @@ class RequestLoginEmailForm extends Component {
 
 		showTos: PropTypes.bool,
 		headerText: PropTypes.string,
-		subHeaderText: PropTypes.string,
+		hideSubHeaderText: PropTypes.bool,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		onSendEmailLogin: PropTypes.func,
@@ -113,7 +113,7 @@ class RequestLoginEmailForm extends Component {
 			translate,
 			showTos,
 			headerText,
-			subHeaderText,
+			hideSubHeaderText,
 			inputPlaceholder,
 			submitButtonLabel,
 		} = this.props;
@@ -141,7 +141,7 @@ class RequestLoginEmailForm extends Component {
 		const tos = (
 			<div className="magic-login__tos">
 				{ this.props.translate(
-					'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+					`By clicking "Continue", you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a WordPress.com account if you don't already have one.`,
 					{
 						components: {
 							tosLink: (
@@ -190,7 +190,7 @@ class RequestLoginEmailForm extends Component {
 				) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<p className="magic-login__form-sub-header">
-						{ subHeaderText ||
+						{ ! hideSubHeaderText &&
 							translate(
 								'Get a link sent to the email address associated with your account to log in instantly without your password.'
 							) }
