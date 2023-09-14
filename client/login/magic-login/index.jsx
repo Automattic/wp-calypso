@@ -298,7 +298,7 @@ class MagicLogin extends Component {
 						createAccountForNewUser
 					/>
 					{
-						// Show the login link for A12s only
+						// Show the login link for proxied A12s only
 						window.configData?.env_id !== 'production' && (
 							<>
 								<hr className="grav-powered-magic-login__divider" />
