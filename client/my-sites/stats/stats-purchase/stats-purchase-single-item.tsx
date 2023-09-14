@@ -72,6 +72,9 @@ interface StatsPersonalPurchaseProps {
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
 
+const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+const type = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
 const StatsCommercialPurchase = ( {
 	siteId,
 	siteSlug,
@@ -241,6 +244,7 @@ const StatsPersonalPurchase = ( {
 				redirectUri={ redirectUri }
 				from={ from }
 				isStandalone={ true }
+				type={ type }
 			/>
 		</>
 	);
