@@ -9,6 +9,7 @@ import {
 	domainMagementDNS,
 	domainManagementEditContactInfo,
 	domainManagementLink,
+	domainManagementTransferToOtherSiteLink,
 } from '../utils/paths';
 import { ResponseDomain } from '../utils/types';
 
@@ -73,7 +74,3 @@ export const DomainsTableRowActions = ( {
 		</DropdownMenu>
 	);
 };
-
-export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `/domains/manage/all/${ domainName }/transfer/other-site/${ siteSlug }`;
-}
