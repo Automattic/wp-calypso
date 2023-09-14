@@ -1,6 +1,6 @@
 #### Unreleased
 
-#### v8.0.0 (2023-09-13)
+#### v8.0.0 (2023-09-14)
 
 - Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 46.5.1, which
   may result in more rule violations which were not previously detected.
