@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
+@import "../hundred-year-plan-step-wrapper/mixins";
 
 .domains {
 	.step-container {
@@ -185,6 +186,7 @@
 			border-bottom: 1px solid var(--studio-gray-5);
 			border-top: 1px solid #fff;
 			padding: 16px 20px;
+			margin-bottom: 0;
 
 			@include break-mobile {
 				padding: 16px 5px;
@@ -426,6 +428,27 @@
 	.step-container {
 		margin: 0;
 	}
+
+	.step-container__header {
+		.formatted-header {
+			.formatted-header__title {
+				font-size: rem(32px);
+				@include break-small {
+					font-size: rem(44px);
+				}
+			}
+			@include break-small {
+				margin-top: 60px;
+				margin-bottom: 0;
+			}
+			margin: 32px 16px;
+		}
+
+		@include break-small {
+			margin-bottom: 40px;
+		}
+	}
+
 	.domains__content {
 		@include break-small {
 			max-width: 700px;
@@ -445,8 +468,46 @@
 		}
 		// Change button accent colour
 		.button.is-primary {
-			background: var(--studio-gray-100);
-			border-color: var(--studio-gray-100);
+			@include primary-button-black-theme;
+		}
+
+		.domain-suggestion.card.featured-domain-suggestion {
+			box-shadow: none;
+			border-top: 1px solid transparent;
+			border-bottom: 1px solid var(--studio-gray-5);
+			border-radius: 0;
+			margin-bottom: 0;
+			padding: 16px 20px;
+			@include break-mobile {
+				padding: 16px 5px;
+			}
+
+			&:hover {
+				border-bottom: 1px solid var(--studio-gray-50);
+				border-top: 1px solid var(--studio-gray-50);
+			}
+
+			.domain-suggestion__content {
+				min-height: 54px;
+			}
+
+			.domain-registration-suggestion__title-wrapper {
+				@include break-mobile {
+					flex-direction: row;
+					align-items: center;
+					gap: 12px;
+				}
+				.domain-registration-suggestion__badges {
+					margin-bottom: 0;
+				}
+			}
+
+			.domain-registration-suggestion__domain-title {
+				font-size: 1rem;
+				.domain-registration-suggestion__domain-title-tld {
+					font-weight: 500;
+				}
+			}
 		}
 	}
 }

@@ -1,19 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "../hundred-year-plan-step-wrapper/mixins";
 
 .hundred-year-plan-setup {
 	.step-container__content {
 		.components-button.setup-form__submit.is-primary {
-			background: var(--studio-gray-100);
-			&.disabled {
-				background-color: var(--studio-gray-60);
-			}
-			&:focus {
-				outline: 2px solid var(--studio-gray-100);
-				box-shadow: none;
-				outline-color: var(--studio-gray-100);
-				border-color: var(--studio-gray-100);
-			}
+			@include primary-button-black-theme;
 		}
 		.formatted-header {
 			.formatted-header__title {
@@ -21,6 +13,9 @@
 				@include break-small {
 					font-size: rem(44px);
 				}
+			}
+			@include break-small {
+				margin-top: 72px;
 			}
 			margin: 32px 16px;
 		}

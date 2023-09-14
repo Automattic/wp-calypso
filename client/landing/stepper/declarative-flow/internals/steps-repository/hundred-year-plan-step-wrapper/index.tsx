@@ -27,7 +27,6 @@ const FlexWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
 	width: 100%;
 `;
 
@@ -134,6 +133,7 @@ const StyledFoldableCard = styled( FoldableCard )`
 	}
 
 	&.card.foldable-card {
+		margin: 0;
 		.foldable-card__header {
 			.foldable-card__main {
 				justify-content: flex-end;
