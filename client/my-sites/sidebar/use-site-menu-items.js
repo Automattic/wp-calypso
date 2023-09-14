@@ -54,7 +54,7 @@ const useSiteMenuItems = () => {
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, selectedSiteId ) );
 
-	const shouldShowInbox = ! isP2;
+	const shouldShowMailboxes = ! isP2;
 
 	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
 
@@ -92,7 +92,7 @@ const useSiteMenuItems = () => {
 		siteDomain,
 		shouldShowWooCommerce,
 		shouldShowThemes,
-		shouldShowInbox,
+		shouldShowMailboxes,
 		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
 		showSiteMonitoring: isAtomic,
 	};

@@ -267,6 +267,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'mailboxes',
+		paths: [ '/mailboxes' ],
+		module: 'calypso/my-sites/email',
+		group: 'sites',
+	},
+	{
 		name: 'inbox',
 		paths: [ '/inbox' ],
 		module: 'calypso/my-sites/email',

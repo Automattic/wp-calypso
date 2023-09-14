@@ -137,7 +137,7 @@ const MailboxItems = ( { mailboxes } ) => {
 				align="center"
 				brandFont
 				className="mailbox-selection-list__header"
-				headerText={ translate( 'Welcome to Inbox!' ) }
+				headerText={ translate( 'My Mailboxes!' ) }
 				subHeaderText={ translate( 'Choose the mailbox you’d like to open.' ) }
 			/>
 
