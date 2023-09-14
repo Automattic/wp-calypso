@@ -1,0 +1,39 @@
+@import "@automattic/onboarding/styles/mixins";
+
+.hundred-year-plan {
+	height: 100%;
+	padding: 0;
+	.signup-header {
+		display: none;
+	}
+}
+
+.step-container.hundred-year-plan.hundred-year-plan {
+	max-width: none;
+	height: 100%;
+	padding: 0;
+	.step-container__content {
+		min-height: 100%;
+	}
+
+	.step-container__navigation.action-buttons.should-sticky-nav-buttons {
+		background-color: transparent;
+	}
+
+	.step-container__navigation.action-buttons .step-container__navigation-logo {
+		fill: var(--studio-gray-0);
+		stroke: var(--studio-gray-0);
+	}
+
+	.hundred-year-plan-step-wrapper__info-column-container {
+		@media (min-width: 960px) {
+			background-image: url(calypso/assets/images/hundred-year-plan-onboarding/stars-solo.webp);
+			background-color: #000;
+		}
+
+		.is-price-loading {
+			@include onboarding-placeholder;
+			width: 100px;
+		}
+	}
+}
