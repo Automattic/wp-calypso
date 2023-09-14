@@ -91,15 +91,17 @@ export class EditorSettingsSidebarComponent {
 	//#endregion
 
 	/**
-	 * Closes the sidebar only for Mobile viewport.
+	 * Closes the sidebar for mobile viewport.
+	 *
+	 * This method can close both the post/page settings as well as the Jetpack
+	 * sidebar.
 	 */
 	async closeSidebarForMobile(): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			return;
 		}
 		const editorParent = await this.editor.parent();
-		const closeButton = editorParent.getByRole( 'button', { name: 'Close Settings' } );
-		await closeButton.click();
+		await editorParent.getByRole( 'button', { name: /Close Settings|Close plugin/ } ).click();
 	}
 
 	/**

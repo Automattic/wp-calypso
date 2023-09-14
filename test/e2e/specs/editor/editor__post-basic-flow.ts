@@ -64,8 +64,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Categories and Tags', function () {
-		it( 'Open settings', async function () {
-			await editorPage.openSettings();
+		it( 'Open post settings', async function () {
+			await editorPage.openSettings( 'Settings' );
 		} );
 
 		it( 'Add post category', async function () {
@@ -75,14 +75,15 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Add post tag', async function () {
 			await editorPage.addTag( tag );
 		} );
+
+		afterAll( async function () {
+			// For mobile, but doesn't hurt to do this for Desktop either.
+			await editorPage.closeSettings();
+		} );
 	} );
 
 	describe( 'Jetpack features', function () {
-		beforeAll( async function () {
-			await editorPage.openSettings();
-		} );
-
-		it( 'Open Jetpack post settings', async function () {
+		it( 'Open Jetpack settings', async function () {
 			await editorPage.openSettings( 'Jetpack' );
 		} );
 
@@ -113,15 +114,15 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Dismiss social preview', async function () {
 			await page.keyboard.press( 'Escape' );
 		} );
+
+		afterAll( async function () {
+			// For mobile, but doesn't hurt to do this for Desktop either.
+			await editorPage.closeSettings();
+		} );
 	} );
 
 	describe( 'Preview', function () {
 		let previewPage: Page;
-
-		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
-		it( 'Close settings sidebar', async function () {
-			await editorPage.closeSettings();
-		} );
 
 		it( 'Launch preview', async function () {
 			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
