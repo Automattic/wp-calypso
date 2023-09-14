@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { Button, Dialog } from '@automattic/components';
+import { Button } from '@automattic/components';
 import {
 	Onboard,
 	updateLaunchpadSettings,
@@ -22,7 +22,6 @@ import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
@@ -67,6 +66,7 @@ import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
+import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useRecipe from './hooks/use-recipe';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -82,7 +82,6 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
-
 const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
@@ -437,7 +436,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 		setShowUpgradeModal( false );
 	}
-	function getPlan() {
+	function navigateToCheckout() {
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
 			( set ) => set.slug === 'woo-on-plans'
 		);
@@ -450,7 +449,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
-		return plan;
+		goToCheckout( {
+			flowName: flow,
+			stepName,
+			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
+			// When the user is done with checkout, send them back to the current url
+			destination: window.location.href.replace( window.location.origin, '' ),
+			plan,
+			extraProducts:
+				selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
+					? [ marketplaceProductSlug ]
+					: [],
+		} );
 	}
 	function handleCheckout() {
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
@@ -462,18 +472,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			if ( selectedDesign?.is_externally_managed && hasEligibilityMessages ) {
 				setShowEligibility( true );
 			} else {
-				goToCheckout( {
-					flowName: flow,
-					stepName,
-					siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-					// When the user is done with checkout, send them back to the current url
-					destination: window.location.href.replace( window.location.origin, '' ),
-					plan: getPlan(),
-					extraProducts:
-						selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
-							? [ marketplaceProductSlug ]
-							: [],
-				} );
+				navigateToCheckout();
 			}
 		}
 		setShowUpgradeModal( false );
@@ -763,37 +762,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					checkout={ handleCheckout }
 				/>
 				<QueryEligibility siteId={ site?.ID } />
-				<Dialog
-					additionalClassNames="plugin-details-cta__dialog-content"
-					additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-					isVisible={ showEligibility }
-					onClose={ () => setShowEligibility( false ) }
-					showCloseIcon={ true }
-				>
-					<EligibilityWarnings
-						siteId={ site?.ID }
-						currentContext="plugin-details"
-						standaloneProceed
-						isMarketplace={ selectedDesign?.is_externally_managed }
-						isMarketplaceException={ selectedDesign?.is_externally_managed }
-						onProceed={ () => {
-							goToCheckout( {
-								flowName: flow,
-								stepName,
-								siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-								// When the user is done with checkout, send them back to the current url
-								destination: window.location.href.replace( window.location.origin, '' ),
-								plan: getPlan(),
-								extraProducts:
-									selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
-										? [ marketplaceProductSlug ]
-										: [],
-							} );
-							setShowEligibility( false );
-						} }
-						backUrl="#"
-					/>
-				</Dialog>
+				<EligibilityWarningsModal
+					site={ site }
+					isMarketplace={ selectedDesign?.is_externally_managed }
+					isOpen={ showEligibility }
+					handleClose={ () => setShowEligibility( false ) }
+					handleContinue={ () => {
+						navigateToCheckout();
+						setShowEligibility( false );
+					} }
+				/>
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ handleCheckoutForPremiumGlobalStyles }
 					closeModal={ closePremiumGlobalStylesModal }
