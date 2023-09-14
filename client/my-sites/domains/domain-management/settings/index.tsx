@@ -146,6 +146,7 @@ const Settings = ( {
 				title={ translate( 'Domain security', { textOnly: true } ) }
 				subtitle={ getSslReadableStatus( domain ) }
 				key="security"
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<DomainSecurityDetails
 					domain={ domain }
@@ -170,6 +171,7 @@ const Settings = ( {
 				title={ translate( 'Create a WordPress.com site', { textOnly: true } ) }
 				key="status"
 				expanded
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<DomainOnlyConnectCard
 					selectedDomainName={ domain.domain }
@@ -190,7 +192,8 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded={ ! selectedSite?.options?.is_domain_only }
+					expanded={ ! selectedSite?.options?.is_domain_only && ! domain.isMoveToNewSitePending }
+					isDisabled={ domain.isMoveToNewSitePending }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }
@@ -296,6 +299,7 @@ const Settings = ( {
 				subtitle={ getNameServerSectionSubtitle() }
 				expanded={ queryParams.get( 'nameservers' ) === 'true' }
 				onClose={ onClose }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				{ domain.canManageNameServers ? (
 					<NameServersCard
@@ -373,6 +377,7 @@ const Settings = ( {
 				<Accordion
 					title={ translate( 'DNS records', { textOnly: true } ) }
 					subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
+					isDisabled={ domain.isMoveToNewSitePending }
 				>
 					{ domain.canManageDnsRecords ? (
 						<>
@@ -417,6 +422,7 @@ const Settings = ( {
 				className="domain-forwarding-card__accordion"
 				title={ translatedTitle }
 				subtitle={ translate( 'Forward your domain to another' ) }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<DomainForwardingCard domain={ domain } />
 			</Accordion>
@@ -447,7 +453,14 @@ const Settings = ( {
 
 		const getPlaceholderAccordion = () => {
 			const label = translate( 'Contact information', { textOnly: true } );
-			return <Accordion title={ label } subtitle={ label } isPlaceholder></Accordion>;
+			return (
+				<Accordion
+					title={ label }
+					subtitle={ label }
+					isPlaceholder
+					isDisabled={ domain.isMoveToNewSitePending }
+				></Accordion>
+			);
 		};
 
 		if ( ! domain || ! domains ) {
@@ -470,7 +483,11 @@ const Settings = ( {
 
 		if ( ! domain.currentUserCanManage ) {
 			return (
-				<Accordion title={ titleLabel } subtitle={ `${ privacyProtectionLabel }` }>
+				<Accordion
+					isDisabled={ domain.isMoveToNewSitePending }
+					title={ titleLabel }
+					subtitle={ `${ privacyProtectionLabel }` }
+				>
 					{ getContactsPrivacyInfo() }
 				</Accordion>
 			);
@@ -486,6 +503,7 @@ const Settings = ( {
 			<Accordion
 				title={ titleLabel }
 				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				{ getContactsPrivacyInfo() }
 			</Accordion>
@@ -549,6 +567,7 @@ const Settings = ( {
 				subtitle={ translate( 'Additional contact verification required for your domain', {
 					textOnly: true,
 				} ) }
+				isDisabled={ domain.isMoveToNewSitePending }
 			>
 				<ContactVerificationCard
 					contactInformation={ contactInformation }
@@ -561,7 +580,7 @@ const Settings = ( {
 
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
-		if ( ! domain || domain.isMoveToNewSitePending ) {
+		if ( ! domain ) {
 			return undefined;
 		}
 		return (
@@ -581,7 +600,7 @@ const Settings = ( {
 	};
 
 	const renderSettingsCards = () => {
-		if ( ! domain || domain.isMoveToNewSitePending ) {
+		if ( ! domain ) {
 			return undefined;
 		}
 		return (

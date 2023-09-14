@@ -47,6 +47,7 @@ const DomainTransferInfoCard = ( { domain, selectedSite }: DomainInfoCardProps )
 				)
 			}
 			ctaText={ translate( 'Transfer' ) }
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	);
 };
