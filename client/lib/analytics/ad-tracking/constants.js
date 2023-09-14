@@ -84,5 +84,5 @@ export const GA_PRODUCT_BRAND_AKISMET = 'Akismet';
 /**
  * Vendor Id's from refer.wordpress.com
  */
-export const WOOEXPRESS_AFFILIATE_VENDOR_ID = 67386441;
-export const WPCOM_AFFILIATE_VENDOR_ID = 67402;
+export const WOOEXPRESS_AFFILIATE_VENDOR_ID = '67386441';
+export const WPCOM_AFFILIATE_VENDOR_ID = '67402';
