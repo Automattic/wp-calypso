@@ -2,8 +2,10 @@ import { Gridicon } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentType } from 'react';
+import { canSetAsPrimary } from '../utils/can-set-as-primary';
 import { type as domainTypes, transferStatus } from '../utils/constants';
 import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
+import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainUpdateable } from '../utils/is-updateable';
 import {
 	domainMagementDNS,
@@ -11,6 +13,7 @@ import {
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
 } from '../utils/paths';
+import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-make-domain-primary';
 import { ResponseDomain } from '../utils/types';
 import { useDomainsTable } from './domains-table';
 
@@ -26,14 +29,18 @@ interface DomainsTableRowActionsProps {
 	siteSlug: string;
 	domain: ResponseDomain;
 	isAllSitesView: boolean;
+	canSetPrimaryDomainForSite: boolean;
+	isSiteOnFreePlan: boolean;
 }
 
 export const DomainsTableRowActions = ( {
 	domain,
 	siteSlug,
 	isAllSitesView,
+	canSetPrimaryDomainForSite,
+	isSiteOnFreePlan,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction } = useDomainsTable();
+	const { onDomainAction, userCanSetPrimaryDomains = false } = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canConnectDomainToASite = domain.currentUserCanCreateSiteFromDomainOnly;
@@ -44,6 +51,19 @@ export const DomainsTableRowActions = ( {
 	const canManageContactInfo =
 		domain.type === domainTypes.REGISTERED &&
 		( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) );
+	const canMakePrimarySiteAddress =
+		! isAllSitesView &&
+		canSetAsPrimary(
+			domain,
+			shouldUpgradeToMakeDomainPrimary( domain, {
+				isDomainOnly: domain.currentUserCanCreateSiteFromDomainOnly,
+				canSetPrimaryDomainForSite,
+				userCanSetPrimaryDomains,
+				isSiteOnFreePlan,
+			} )
+		) &&
+		isRecentlyRegistered( domain.registrationDate ) &&
+		! domain.pointsToWpcom;
 
 	return (
 		<DropdownMenu
@@ -67,6 +87,11 @@ export const DomainsTableRowActions = ( {
 					{ canManageContactInfo && (
 						<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
 							{ __( 'Manage contact information' ) }
+						</MenuItemLink>
+					) }
+					{ canMakePrimarySiteAddress && (
+						<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
+							{ __( 'Make primary site address' ) }
 						</MenuItemLink>
 					) }
 					{ canConnectDomainToASite && (

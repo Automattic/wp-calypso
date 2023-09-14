@@ -8,6 +8,8 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector } from 'calypso/state';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
@@ -19,6 +21,9 @@ interface BulkSiteDomainsProps {
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const userCanSetPrimaryDomains = useSelector(
+		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	);
 	const { data } = useSiteDomainsQuery( siteSlug );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
@@ -49,6 +54,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					domains={ data?.domains }
 					isAllSitesView={ false }
 					siteSlug={ siteSlug }
+					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
 							sendNudge( {

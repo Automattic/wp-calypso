@@ -44,6 +44,7 @@ interface BaseDomainsTableProps {
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	onDomainAction?( action: DomainAction, domain: ResponseDomain ): void;
+	userCanSetPrimaryDomains?: boolean;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -84,6 +85,7 @@ type Value = {
 	showBulkActions: boolean;
 	setShowBulkActions: ( showBulkActions: boolean ) => void;
 	onDomainAction: BaseDomainsTableProps[ 'onDomainAction' ];
+	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -99,6 +101,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		domainStatusPurchaseActions,
 		children,
 		onDomainAction,
+		userCanSetPrimaryDomains,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -334,6 +337,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		showBulkActions,
 		setShowBulkActions,
 		onDomainAction,
+		userCanSetPrimaryDomains,
 	};
 
 	return (
