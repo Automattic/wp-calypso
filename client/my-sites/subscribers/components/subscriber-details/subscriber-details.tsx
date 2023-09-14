@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
@@ -132,7 +133,9 @@ const SubscriberDetails = ( {
 							<div className="subscriber-details__content-label">
 								{ translate( 'Acquisition source' ) }
 							</div>
-							<div className="subscriber-details__content-value">{ url }</div>
+							<div className="subscriber-details__content-value">
+								<ExternalLink href={ url }>{ url }</ExternalLink>
+							</div>
 						</div>
 					) }
 				</div>
