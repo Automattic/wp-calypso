@@ -185,19 +185,21 @@
 	}
 
 	&:not(.is-compact) {
-		padding-top: 24px;
 		.reader-post-card__title {
 			margin-top: 24px;
 		}
 		.reader-excerpt__content {
-			margin-top: 18px;
-			margin-bottom: 24px;
+			margin: 7px 0 0;
+		}
+		.reader-post-card__featured-images,
+		.reader-post-card__gallery-image {
+			margin-top: 24px;
 		}
 		.reader-post-actions {
-			margin: 24px 0;
+			margin-top: 24px;
 		}
 		.comments__comment-list.is-inline {
-			margin: 0 0 0 10px;
+			margin: 24px 0 0 10px;
 			.comments__form {
 				margin-top: 0;
 			}
