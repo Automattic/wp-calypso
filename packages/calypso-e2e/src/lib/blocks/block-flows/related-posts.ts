@@ -1,5 +1,9 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
+interface ConfigurationData {
+	headline?: string;
+}
+
 /**
  * Represents the flow of using the AI Assistant block.
  */
@@ -7,7 +11,17 @@ export class RelatedPostsFlow implements BlockFlow {
 	blockSidebarName = 'Related Posts';
 	blockEditorSelector = 'div[aria-label="Block: Related Posts"]';
 
+	private configurationData: ConfigurationData;
 	private noRelatedPosts = false;
+
+	/**
+	 * Constructs an instance of this block flow with data to be used when configuring and validating the block.
+	 *
+	 * @param {ConfigurationData} configurationData data with which to configure and validate the block
+	 */
+	constructor( configurationData: ConfigurationData ) {
+		this.configurationData = configurationData;
+	}
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
@@ -22,6 +36,19 @@ export class RelatedPostsFlow implements BlockFlow {
 		} );
 
 		await block.waitFor();
+
+		if ( this.configurationData.headline ) {
+			await context.editorPage.openSettings();
+			await context.editorPage.clickSettingsTab( 'Block' );
+
+			const editorParent = await context.editorPage.getEditorParent();
+			// Toggle on the Headline text field.
+			await editorParent.getByLabel( 'Display headline' ).click();
+			// Fill the headline field.
+			await editorParent
+				.getByLabel( 'Headline', { exact: true } )
+				.fill( this.configurationData.headline );
+		}
 
 		// This section requires understanding the implementation detail for this block a little.
 		// In short, even on sites with many posts, this block renders a notice stating that preview
@@ -48,10 +75,16 @@ export class RelatedPostsFlow implements BlockFlow {
 
 		if ( this.noRelatedPosts ) {
 			// For sites with no related posts at all, the block will not render.
-			await publishedBlock.waitFor( { state: 'detached' } );
-		} else {
-			// For sites with related posts, the block will render.
-			await publishedBlock.waitFor();
+			return await publishedBlock.waitFor( { state: 'detached' } );
+		}
+
+		// For sites with related posts, the block will render.
+		await publishedBlock.waitFor();
+
+		if ( this.configurationData.headline ) {
+			await publishedBlock
+				.getByRole( 'heading', { name: this.configurationData.headline } )
+				.waitFor();
 		}
 	}
 }

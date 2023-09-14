@@ -15,7 +15,6 @@ import { createBlockTests } from './shared/block-smoke-testing';
 const blockFlows: BlockFlow[] = [
 	new StarRatingBlock( { rating: 3.5 } ),
 	new GifFlow( { query: 'https://giphy.com/embed/MDJ9IbxxvDUQM' } ),
-	new RelatedPostsFlow(),
 ];
 
 // Private sites change behaivor of the Map block.
@@ -23,6 +22,20 @@ const blockFlows: BlockFlow[] = [
 if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 	blockFlows.push(
 		new MapFlow( { address: '1455 Quebec Street, Vancouver', select: '1455 Quebec St' } )
+	);
+}
+
+// Related posts block do not show up on private sites, as one would expect.
+// However, it also does not appear on eCommerce plan sites.
+// @see: https://github.com/Automattic/jetpack/issues/33062
+if (
+	envVariables.ATOMIC_VARIATION !== 'private' &&
+	envVariables.ATOMIC_VARIATION !== 'ecomm-plan'
+) {
+	blockFlows.push(
+		new RelatedPostsFlow( {
+			headline: `Related Posts from this user`,
+		} )
 	);
 }
 
