@@ -23,7 +23,7 @@ export const isRedesignV2 = ( props: CheckoutThankYouCombinedProps ) => {
 	}
 
 	// ThankYou page for only purchasing a plan ignored for the 100 years plan.
-	if ( purchases.length === 1 && ! purchases.some( is100Year ) ) {
+	if ( purchases.length > 0 && ! purchases.some( is100Year ) ) {
 		return isWpComPlan( purchases[ 0 ].productSlug );
 	}
 	return false;
