@@ -353,6 +353,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 						</b>
 					</p>
 					<RenewButton
+						primary
 						purchase={ purchase }
 						selectedSite={ selectedSite }
 						subscriptionId={ parseInt( domain?.subscriptionId ?? '', 10 ) }
