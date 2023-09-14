@@ -2,6 +2,7 @@ import { Button as CalypsoButton } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -16,6 +17,7 @@ interface CommercialPurchaseProps {
 	adminUrl: string;
 	redirectUri: string;
 	from: string;
+	type: string;
 }
 
 const CommercialPurchase = ( {
@@ -26,6 +28,7 @@ const CommercialPurchase = ( {
 	adminUrl,
 	redirectUri,
 	from,
+	type,
 }: CommercialPurchaseProps ) => {
 	const translate = useTranslate();
 
@@ -66,9 +69,10 @@ const CommercialPurchase = ( {
 			<ButtonComponent
 				variant="primary"
 				primary={ isWPCOMSite ? true : undefined }
-				onClick={ () =>
-					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-				}
+				onClick={ () => {
+					recordTracksEvent( `${ type }_stats_purchase_commercial_plan_selected` );
+					gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } );
+				} }
 			>
 				{ translate( 'Get Jetpack Stats' ) }
 			</ButtonComponent>
