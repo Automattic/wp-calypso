@@ -93,7 +93,7 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 				<FormattedHeader brandFont headerText={ getHeaderText() } subHeaderAlign="center" />
 			}
 			justifyStepContent="center"
-			stepName="new-existing-site"
+			stepName="new-or-existing-site"
 			flowName={ flow }
 			recordTracksEvent={ recordTracksEvent }
 		/>
