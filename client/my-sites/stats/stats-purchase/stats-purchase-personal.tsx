@@ -211,7 +211,7 @@ const PersonalPurchase = ( {
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
 					onClick={ () => {
-						recordTracksEvent( 'jetpack_stats_personal_plan_selected' );
+						recordTracksEvent( `${ type }_stats_personal_plan_selected` );
 						gotoCheckoutPage( {
 							from,
 							type: 'pwyw',
