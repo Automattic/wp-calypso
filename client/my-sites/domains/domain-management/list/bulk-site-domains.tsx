@@ -63,6 +63,10 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 								context: { domain: domain.domain },
 							} );
 						}
+
+						if ( action === 'set-primary' ) {
+							// TODO
+						}
 					} }
 				/>
 			</Main>

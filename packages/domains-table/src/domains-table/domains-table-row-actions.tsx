@@ -18,7 +18,7 @@ import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-mak
 import { ResponseDomain } from '../utils/types';
 import { useDomainsTable } from './domains-table';
 
-export type DomainAction = 'manage-dns-settings';
+export type DomainAction = 'manage-dns-settings' | 'set-primary';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -63,8 +63,8 @@ export const DomainsTableRowActions = ( {
 				isSiteOnFreePlan,
 			} )
 		) &&
-		isRecentlyRegistered( domain.registrationDate ) &&
-		! domain.pointsToWpcom;
+		! isRecentlyRegistered( domain.registrationDate ) &&
+		domain.pointsToWpcom;
 	const canTransferToWPCOM =
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 
@@ -93,7 +93,7 @@ export const DomainsTableRowActions = ( {
 						</MenuItemLink>
 					) }
 					{ canMakePrimarySiteAddress && (
-						<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
+						<MenuItemLink onClick={ () => onDomainAction?.( 'set-primary', domain ) }>
 							{ __( 'Make primary site address' ) }
 						</MenuItemLink>
 					) }
