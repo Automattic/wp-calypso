@@ -1,4 +1,3 @@
-import { findIndex } from 'lodash';
 import { keysAreEqual } from 'calypso/reader/post-key';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 
@@ -21,11 +20,12 @@ function getOffsetItem( state, currentItem, offset ) {
 	}
 
 	const stream = state.reader.streams[ streamKey ];
-	let index = findIndex( stream.items, ( item ) => keysAreEqual( item, currentItem ) );
+	let index = stream.items?.findIndex( ( item ) => keysAreEqual( item, currentItem ) ) ?? -1;
 
 	// If we didn't find a match, check x-posts too
 	if ( index < 0 ) {
-		index = findIndex( stream.items, ( item ) => keysAreEqual( item.xPostMetadata, currentItem ) );
+		index =
+			stream.items?.findIndex( ( item ) => keysAreEqual( item.xPostMetadata, currentItem ) ) ?? -1;
 	}
 
 	if ( index < 0 ) {
