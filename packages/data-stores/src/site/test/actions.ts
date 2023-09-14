@@ -469,7 +469,6 @@ describe( 'Site Actions', () => {
 			request: {
 				path: `/sites/${ siteSlug }/theme-setup/?_locale=user`,
 				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
 				method: 'POST',
 			},
 		} );
@@ -484,7 +483,7 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSwitchApiRequest( {
 					theme: 'zoologist',
-					dont_change_homepage: false,
+					dont_change_homepage: true,
 				} )
 			);
 
@@ -506,7 +505,7 @@ describe( 'Site Actions', () => {
 			);
 		} );
 
-		it( 'should call theme-setup api if the design needs to do that', () => {
+		it( 'should call theme-setup api', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
 			const generator = setDesignOnSite( siteSlug, {
 				...mockedDesign,
@@ -523,25 +522,6 @@ describe( 'Site Actions', () => {
 
 			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
 			expect( generator.next().value ).toEqual( createMockedThemeSetupApiRequest() );
-
-			// Second iteration: Complete the cycle
-			expect( generator.next().done ).toEqual( true );
-		} );
-
-		it( "should not call theme-setup api if the design doesn't need to do that", () => {
-			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const generator = setDesignOnSite( siteSlug, {
-				...mockedDesign,
-				slug: 'twentytwentythree',
-			} );
-
-			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
-			expect( generator.next().value ).toEqual(
-				createMockedThemeSwitchApiRequest( {
-					theme: 'twentytwentythree',
-					dont_change_homepage: false,
-				} )
-			);
 
 			// Second iteration: Complete the cycle
 			expect( generator.next().done ).toEqual( true );

@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -369,9 +368,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield wpcomRequest( {
 			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup/?_locale=user`,
 			apiNamespace: 'wpcom/v2',
-			body: {
-				trim_content: true,
-			},
 			method: 'POST',
 		} );
 	}
@@ -385,8 +381,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			selectedDesign.slug ||
 			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] ||
 			selectedDesign.theme;
-		const shouldRunThemeSetup = THEME_SLUGS_THAT_SHOULD_RUN_THEME_SETUP.includes( themeSlug );
-		const { keepHomepage = shouldRunThemeSetup, styleVariation, globalStyles } = options;
+		const { keepHomepage = true, styleVariation, globalStyles } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 			apiVersion: '1.1',
@@ -423,9 +418,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			yield* setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
 		}
 
-		if ( shouldRunThemeSetup ) {
-			yield* runThemeSetupOnSite( siteSlug );
-		}
+		yield* runThemeSetupOnSite( siteSlug );
 
 		return activatedTheme;
 	}
