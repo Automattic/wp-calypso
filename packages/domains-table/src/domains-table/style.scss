@@ -182,7 +182,17 @@
 
 .domains-table-mobile-cards {
 	height: 100%;
+	overflow-x: visible;
 	overflow-y: auto;
+
+	.domains-table-mobile-cards-select-all {
+		display: flex;
+		align-items: center;
+		span {
+			font-size: smaller;
+		}
+	}
+
 	.domains-table__bulk-action-container {
 		margin-top: 16px;
 	}

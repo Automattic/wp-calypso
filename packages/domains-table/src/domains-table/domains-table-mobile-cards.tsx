@@ -1,11 +1,9 @@
 import { CheckboxControl } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useDomainsTable } from './domains-table';
 import { DomainsTableMobileCard } from './domains-table-mobile-card';
 
 export const DomainsTableMobileCards = () => {
-	const { __ } = useI18n();
-
 	const {
 		showBulkActions,
 		filteredData,
@@ -20,14 +18,32 @@ export const DomainsTableMobileCards = () => {
 		<div className="domains-table-mobile-cards">
 			<div className="domains-table__bulk-action-container">
 				{ showBulkActions && canSelectAnyDomains && (
-					<CheckboxControl
-						data-testid="domains-select-all-checkbox"
-						__nextHasNoMarginBottom
-						onChange={ changeBulkSelection }
-						indeterminate={ bulkSelectionStatus === 'some-domains' }
-						checked={ bulkSelectionStatus === 'all-domains' }
-						aria-label={ __( 'Select all tick boxes for domains in table', __i18n_text_domain__ ) }
-					/>
+					<div className="domains-table-mobile-cards-select-all">
+						<CheckboxControl
+							data-testid="domains-select-all-checkbox"
+							__nextHasNoMarginBottom
+							onChange={ changeBulkSelection }
+							indeterminate={ bulkSelectionStatus === 'some-domains' }
+							checked={ bulkSelectionStatus === 'all-domains' }
+							aria-label={ __(
+								'Select all tick boxes for domains in table',
+								__i18n_text_domain__
+							) }
+						/>
+						<span>
+							{ ' ' }
+							{ sprintf(
+								/* translators: Heading which displays the number of domains in a table */
+								_n(
+									'Select %(count)d domain',
+									'Select all %(count)d domains',
+									filteredData.length,
+									__i18n_text_domain__
+								),
+								{ count: filteredData.length }
+							) }{ ' ' }
+						</span>
+					</div>
 				) }
 			</div>
 			{ filteredData.map( ( domain ) => (
