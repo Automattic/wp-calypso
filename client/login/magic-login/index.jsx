@@ -54,6 +54,8 @@ class MagicLogin extends Component {
 		locale: PropTypes.string.isRequired,
 		query: PropTypes.object,
 		showCheckYourEmail: PropTypes.bool.isRequired,
+		isSendingEmail: PropTypes.bool.isRequired,
+		emailRequested: PropTypes.bool.isRequired,
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
