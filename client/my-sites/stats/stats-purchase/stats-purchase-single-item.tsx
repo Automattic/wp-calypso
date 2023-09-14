@@ -31,6 +31,7 @@ interface StatsCommercialPurchaseProps {
 	redirectUri: string;
 	from: string;
 	showClassificationDispute?: boolean;
+	type: string;
 }
 
 interface StatsSingleItemPagePurchaseProps {
@@ -299,6 +300,7 @@ const StatsSingleItemPagePurchase = ( {
 				redirectUri={ redirectUri }
 				from={ from }
 				showClassificationDispute={ !! isCommercial }
+				type={ type }
 			/>
 		</StatsSingleItemPagePurchaseFrame>
 	);
