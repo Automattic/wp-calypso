@@ -136,7 +136,13 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	return (
 		<div className="themes-list" ref={ themesListRef }>
 			{ props.themes.map( ( theme, index ) => (
-				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
+				<ThemeBlock
+					key={ 'theme-block' + index }
+					theme={ theme }
+					index={ index }
+					tabFilter={ tabFilter }
+					{ ...props }
+				/>
 			) ) }
 			{ /* Don't show second upsell nudge when less than 6 rows are present.
 				 Second plan upsell at 7th row is implemented through CSS. */ }
@@ -193,7 +199,7 @@ ThemesList.defaultProps = {
 };
 
 function ThemeBlock( props ) {
-	const { theme, index } = props;
+	const { theme, index, tabFilter } = props;
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
 
 	if ( isEmpty( theme ) ) {
@@ -208,7 +214,10 @@ function ThemeBlock( props ) {
 		<Theme
 			key={ 'theme-' + theme.id }
 			buttonContents={ props.getButtonOptions( theme.id, selectedStyleVariation ) }
-			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, selectedStyleVariation ) }
+			screenshotClickUrl={ props.getScreenshotUrl?.( theme.id, {
+				tabFilter,
+				styleVariationSlug: selectedStyleVariation?.slug,
+			} ) }
 			onScreenshotClick={ props.onScreenshotClick }
 			onStyleVariationClick={ ( themeId, themeIndex, variation ) => {
 				setSelectedStyleVariation( variation );

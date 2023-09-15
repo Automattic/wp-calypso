@@ -19,6 +19,7 @@ describe( 'useIsLargeCurrency', () => {
 					monthly: 0,
 					full: 0,
 				},
+				currencyCode: 'USD',
 			},
 		},
 		{
@@ -32,19 +33,21 @@ describe( 'useIsLargeCurrency', () => {
 					monthly: 0,
 					full: 0,
 				},
+				currencyCode: 'USD',
 			},
 		},
 		{
 			planSlug: PLAN_PREMIUM,
 			pricing: {
 				originalPrice: {
-					monthly: 300,
-					full: 300000,
+					monthly: 2500,
+					full: 3000000,
 				},
 				discountedPrice: {
 					monthly: 0,
-					full: 0,
+					full: 20,
 				},
+				currencyCode: 'USD',
 			},
 		},
 	];
@@ -59,5 +62,11 @@ describe( 'useIsLargeCurrency', () => {
 		expect(
 			useIsLargeCurrency( { gridPlans: gridPlans as GridPlan[], returnMonthly: false } )
 		).toEqual( true );
+	} );
+
+	test( 'should return true for large, when combined, original and discounted values', () => {
+		expect(
+			useIsLargeCurrency( { gridPlans: gridPlans as GridPlan[], returnMonthly: true } )
+		).toEqual( false );
 	} );
 } );

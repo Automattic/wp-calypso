@@ -11,25 +11,30 @@ export function getSitePlanRawPrice(
 	productSlug: string,
 	{
 		returnMonthly,
+		returnSmallestUnit,
 	}: {
 		/**
-		 * If true, attempt to calculate and return the monthly price. Note that this
-		 * is not precise as it relies on float division and could have rounding
-		 * errors.
+		 * If true, attempt to calculate and return the monthly price.
 		 */
 		returnMonthly?: boolean;
+		/**
+		 * If true, represent price as a currency's smallest unit ( as integers
+		 * instead of floats ). If precision matters, set to true, as otherwise the
+		 * price relies on float division and could have rounding errors.
+		 */
+		returnSmallestUnit?: boolean;
 	} = {}
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
-	if ( ! plan ) {
+	const rawPrice = plan?.rawPrice ?? -1;
+
+	if ( ! plan || rawPrice < 0 ) {
 		return null;
 	}
 
-	if ( ( plan.rawPrice ?? -1 ) < 0 ) {
-		return null;
-	}
-
-	const price = plan.rawPrice + parseFloat( plan.rawDiscount );
+	const price = returnSmallestUnit
+		? plan.rawPriceInteger + plan.rawDiscountInteger
+		: rawPrice + parseFloat( plan.rawDiscount );
 
 	return returnMonthly ? calculateMonthlyPriceForPlan( productSlug, price ) : price;
 }

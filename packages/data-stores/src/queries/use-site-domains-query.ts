@@ -123,7 +123,9 @@ export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomains
 				path: `/sites/${ siteIdOrSlug }/domains`,
 				apiVersion: '1.2',
 			} ),
+		staleTime: 1000 * 60 * 5, // 5 minutes
 		...options,
+		meta: { persist: false, ...options.meta },
 		enabled: Boolean( siteIdOrSlug ) && options.enabled,
 	};
 }

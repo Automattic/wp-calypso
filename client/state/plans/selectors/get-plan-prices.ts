@@ -22,17 +22,30 @@ export function getPlanPrices(
 		planSlug,
 		siteId,
 		returnMonthly,
-	}: { planSlug: PlanSlug; siteId: SiteId | null; returnMonthly: boolean }
+		returnSmallestUnit,
+	}: {
+		planSlug: PlanSlug;
+		siteId: SiteId | null;
+		returnMonthly: boolean;
+		returnSmallestUnit?: boolean;
+	}
 ): PlanPrices {
 	const plan = getPlan( planSlug );
 	const productId = plan?.getProductId();
 
 	return {
-		rawPrice: productId ? getPlanRawPrice( state, productId, returnMonthly ) : null,
-		discountedRawPrice: productId ? getDiscountedRawPrice( state, productId, returnMonthly ) : null,
+		rawPrice: productId
+			? getPlanRawPrice( state, productId, returnMonthly, returnSmallestUnit )
+			: null,
+		discountedRawPrice: productId
+			? getDiscountedRawPrice( state, productId, returnMonthly, returnSmallestUnit )
+			: null,
 		planDiscountedRawPrice:
 			siteId && planSlug
-				? getPlanDiscountedRawPrice( state, siteId, planSlug, { returnMonthly } )
+				? getPlanDiscountedRawPrice( state, siteId, planSlug, {
+						returnMonthly,
+						returnSmallestUnit,
+				  } )
 				: null,
 	};
 }

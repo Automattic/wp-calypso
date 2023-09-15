@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
@@ -61,6 +62,9 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					domains={ data?.domains }
 					isAllSitesView={ false }
 					siteSlug={ siteSlug }
+					shouldDisplayContactInfoBulkAction={ isEnabled(
+						'domains/bulk-actions-contact-info-editing'
+					) }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 					onDomainAction={ async ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {

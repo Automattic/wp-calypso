@@ -424,3 +424,100 @@ test( 'search for a domain hides other domains from table', async () => {
 	expect( screen.queryByText( 'dog.com' ) ).toBeInTheDocument();
 	expect( screen.queryByText( 'cat.org' ) ).not.toBeInTheDocument();
 } );
+
+test( 'when isAllSitesView is true, display site column', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull ],
+		} )
+	);
+
+	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial ] }
+			isAllSitesView
+			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( fetchSite ).toHaveBeenCalled();
+	} );
+
+	expect( screen.queryByText( 'Site' ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'Primary Domain Blog' ) ).toBeInTheDocument();
+} );
+
+test( 'when isAllSitesView is false, do not display site column', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull ],
+		} )
+	);
+
+	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial ] }
+			isAllSitesView={ false }
+			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
+			siteSlug={ primaryPartial.domain }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( fetchSite ).toHaveBeenCalled();
+	} );
+
+	expect( screen.queryByText( 'Site' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Primary Domain Blog' ) ).not.toBeInTheDocument();
+} );
+
+test( 'when isAllSitesView is false, hide wordpress.com domain if there is a wpcom staging domain', () => {
+	const [ wpcomDomain ] = testDomain( {
+		domain: 'primary-domain.wordpress.com',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+		wpcom_domain: true,
+	} );
+
+	const [ wpcomStagingDomain ] = testDomain( {
+		domain: 'primary-domain.wpcomstaging.com',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+		wpcom_domain: true,
+		is_wpcom_staging_domain: true,
+	} );
+
+	render(
+		<DomainsTable
+			domains={ [ wpcomDomain, wpcomStagingDomain ] }
+			isAllSitesView={ false }
+			siteSlug={ wpcomStagingDomain.domain }
+		/>
+	);
+
+	expect( screen.queryByText( 'primary-domain.wpcomstaging.com' ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'primary-domain.wordpress.com' ) ).not.toBeInTheDocument();
+} );

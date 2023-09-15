@@ -1,5 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
-import { filter, forEach, compact, partition, get } from 'lodash';
+import { filter, forEach, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -89,7 +89,7 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 	const [ toReload, toProcess ] = partition( posts, '_should_reload' );
 	toReload.forEach( ( post ) => dispatch( reloadPost( post ) ) );
 
-	const normalizedPosts = compact( toProcess ).map( runFastRules );
+	const normalizedPosts = toProcess.filter( Boolean ).map( runFastRules );
 
 	// dispatch post like additions before the posts. Cuts down on rerenders a bit.
 	forEach( normalizedPosts, ( post ) => {
@@ -114,7 +114,7 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 		( processedPosts ) =>
 			dispatch( {
 				type: READER_POSTS_RECEIVE,
-				posts: compact( processedPosts ), // prune out the "null" rejections
+				posts: processedPosts.filter( Boolean ), // prune out the "null" rejections
 			} )
 	);
 
