@@ -37,7 +37,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 
 	const layoutTitles = {
-		earnings: translate( '%(wordads)s hiEarnings', { args: { wordads: adsProgramName } } ),
+		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 		settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Recurring Payments' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
