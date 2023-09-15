@@ -35,8 +35,6 @@ export class MapFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.page.pause();
-
 		await context.addedBlockLocator.scrollIntoViewIfNeeded();
 		await context.addedBlockLocator.getByRole( 'button', { name: 'Add marker' } ).waitFor();
 
