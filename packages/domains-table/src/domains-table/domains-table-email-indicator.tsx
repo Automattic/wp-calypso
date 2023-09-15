@@ -61,7 +61,7 @@ export const DomainsTableEmailIndicator = ( {
 	}
 
 	if ( ! domain.current_user_can_add_email ) {
-		return null;
+		return '-';
 	}
 
 	return (
