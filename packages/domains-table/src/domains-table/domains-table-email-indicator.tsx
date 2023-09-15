@@ -74,7 +74,7 @@ export const DomainsTableEmailIndicator = ( {
 	);
 };
 
-export function emailManagementEdit( siteSlug, domainName ) {
+export function emailManagementEdit( siteSlug: string, domainName: string ) {
 	// Encodes only real domain names and not parameter placeholders
 	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.

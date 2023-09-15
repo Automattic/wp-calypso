@@ -41,6 +41,18 @@ export function testDomain(
 		expiry: '2026-03-11T00:00:00+00:00',
 		wpcom_domain: false,
 		current_user_is_owner: true,
+		current_user_can_add_email: false,
+		google_apps_subscription: {
+			status: '',
+			is_eligible_for_introductory_offer: false,
+			total_user_count: 0,
+		},
+		titan_mail_subscription: {
+			status: '',
+			is_eligible_for_introductory_offer: false,
+			maximum_mailbox_count: 0,
+		},
+		email_forwards_count: 0,
 	};
 
 	const partialOnlyDefaults = Object.entries( defaults ).filter( ( [ key ] ) =>
@@ -91,10 +103,12 @@ export function testDomain(
 		google_apps_subscription: {
 			status: '',
 			is_eligible_for_introductory_offer: false,
+			total_user_count: 0,
 		},
 		titan_mail_subscription: {
 			status: '',
 			is_eligible_for_introductory_offer: false,
+			maximum_mailbox_count: 0,
 		},
 		pending_whois_update: false,
 		tld_maintenance_end_time: 0,
