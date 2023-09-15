@@ -23,7 +23,7 @@ import {
 	ReactNode,
 } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
-import { domainsTableColumns } from '../domains-table-header/columns';
+import { allSitesViewColumns, siteSpecificViewColumns } from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
@@ -45,6 +45,7 @@ interface BaseDomainsTableProps {
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	onDomainAction?( action: DomainAction, domain: ResponseDomain ): void;
 	userCanSetPrimaryDomains?: boolean;
+	shouldDisplayContactInfoBulkAction?: boolean;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -86,6 +87,8 @@ type Value = {
 	setShowBulkActions: ( showBulkActions: boolean ) => void;
 	onDomainAction: BaseDomainsTableProps[ 'onDomainAction' ];
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
+	shouldDisplayContactInfoBulkAction: boolean;
+	domainsTableColumns: DomainsTableColumn[];
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -102,6 +105,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		children,
 		onDomainAction,
 		userCanSetPrimaryDomains,
+		shouldDisplayContactInfoBulkAction = false,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -163,6 +167,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 
+	const domainsTableColumns = isAllSitesView ? allSitesViewColumns : siteSpecificViewColumns;
+
 	const sortedDomains = useMemo( () => {
 		const selectedColumnDefinition = domainsTableColumns.find(
 			( column ) => column.name === sortKey
@@ -188,7 +194,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 			}
 			return result;
 		} );
-	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
+	}, [ fetchedSiteDomains, domains, sortKey, sortDirection, domainsTableColumns ] );
 
 	const filteredData = useFuzzySearch( {
 		data: sortedDomains ?? [],
@@ -338,6 +344,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		setShowBulkActions,
 		onDomainAction,
 		userCanSetPrimaryDomains,
+		shouldDisplayContactInfoBulkAction,
+		domainsTableColumns,
 	};
 
 	return (

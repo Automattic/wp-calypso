@@ -33,7 +33,7 @@ const SitePreview = ( {
 		DEVICE_TYPES.PHONE,
 	];
 
-	const previewUrl = ! isUnsupportedPlan ? `https://${ siteSlug }` : null;
+	const previewUrl = ! isUnsupportedPlan && siteSlug ? `https://${ siteSlug }` : null;
 	const loadingMessage = ! isUnsupportedPlan
 		? translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 				components: { strong: <strong /> },

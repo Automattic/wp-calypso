@@ -145,7 +145,9 @@ const LayoutLoggedOut = ( {
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
 	} else if (
-		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName ) &&
+		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions', 'site-profiler' ].includes(
+			sectionName
+		) &&
 		! isReaderTagPage &&
 		! isReaderSearchPage &&
 		! isReaderDiscoverPage
@@ -201,7 +203,7 @@ const LayoutLoggedOut = ( {
 				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
 			) }
 
-			{ sectionName === 'plugins' && (
+			{ [ 'plugins', 'site-profiler' ].includes( sectionName ) && (
 				<>
 					<UniversalNavbarFooter
 						currentRoute={ currentRoute }

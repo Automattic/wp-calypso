@@ -227,16 +227,6 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
-				return {
-					statusText: translate( 'Action required' ),
-					statusClass: 'status-error',
-					status: translate( 'Action required' ),
-					icon: 'info',
-					listStatusWeight: 600,
-				};
-			}
-
 			if ( domain.isPendingIcannVerification && domain.isIcannVerificationSuspended ) {
 				return {
 					statusText: translate( 'Suspended' ),
@@ -525,6 +515,16 @@ export function resolveDomainStatus(
 					icon: 'info',
 					noticeText: noticeText,
 					listStatusWeight: 400,
+				};
+			}
+
+			if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
+				return {
+					statusText: translate( 'Action required' ),
+					statusClass: 'status-error',
+					status: translate( 'Action required' ),
+					icon: 'info',
+					listStatusWeight: 600,
 				};
 			}
 

@@ -30,6 +30,7 @@ interface DesignPreviewProps {
 	isVirtual?: boolean;
 	screenshot?: string;
 	isExternallyManaged?: boolean;
+	disableGlobalStyles?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
 	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -63,6 +64,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	screenshot,
 	isVirtual,
 	isExternallyManaged,
+	disableGlobalStyles,
 	selectedColorVariation,
 	onSelectColorVariation,
 	selectedFontVariation,
@@ -90,6 +92,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		stylesheet,
 		isVirtual,
 		isExternallyManaged,
+		disableGlobalStyles,
 		limitGlobalStyles,
 		variations,
 		splitDefaultVariation,

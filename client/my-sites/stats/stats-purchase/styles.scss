@@ -92,21 +92,6 @@
 			}
 		}
 
-		.stats-purchase-wizard__card-panel {
-			.stats-purchase-wizard__personal-tos,
-			.stats-purchase-wizard__commercial-tos {
-				display: block;
-
-				.is-link {
-					color: var(--color-primary);
-				}
-			}
-		}
-
-		.stats-purchase-wizard__personal-tos {
-			display: none;
-		}
-
 		.stats-purchase-wizard__card-grid {
 			color: var(--studio-black);
 		}

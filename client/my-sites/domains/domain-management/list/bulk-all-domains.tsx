@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	DomainsTable,
 	useDomainsTable,
@@ -92,6 +93,9 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				<DomainsTable
 					domains={ domains }
 					isAllSitesView
+					shouldDisplayContactInfoBulkAction={ isEnabled(
+						'domains/bulk-actions-contact-info-editing'
+					) }
 					domainStatusPurchaseActions={ purchaseActions }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {

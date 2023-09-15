@@ -31,7 +31,7 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		if ( isEnabled( 'domains/management' ) ) {
+		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
 			pageContext.primary = (
 				<DomainManagement.BulkSiteDomains
 					analyticsPath={ domainManagementRoot( ':site' ) }
@@ -56,7 +56,7 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		if ( isEnabled( 'domains/management' ) ) {
+		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
 			pageContext.primary = (
 				<>
 					<DomainManagement.BulkAllDomains
