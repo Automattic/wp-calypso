@@ -2,21 +2,6 @@
 @import "@automattic/onboarding/styles/mixins";
 
 
-@media ( max-width: 480px) {
-	html,
-	body,
-	#wpcom,
-	#content {
-		overflow-y: hidden;
-		height: 100vh;
-		main[role="main"] {
-			overflow-y: hidden;
-			height: 100vh;
-		}
-	}
-}
-
-
 .domains-table {
 	--domains-table-toolbar-height: 40px;
 	height: 100%;
