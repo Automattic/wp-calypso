@@ -18,9 +18,10 @@ const debug = debugFactory( 'composite-checkout:transaction-status-handler' );
  *
  * For example, if the transaction status changes to "pending", this will set
  * the form status to "submitting"; if the transaction status changes to
- * "redirecting", this will perform the redirect.
+ * "redirecting", this will perform the redirect. If there is an error, the
+ * `onPaymentError` callback will be called.
  */
-export default function TransactionStatusHandler( {
+export default function FormAndTransactionEventHandler( {
 	onPaymentComplete,
 	onPaymentRedirect,
 	onPaymentError,

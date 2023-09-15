@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { useFormStatusManager } from '../lib/form-status';
 import { useTransactionStatusManager } from '../lib/transaction-status';
+import FormAndTransactionEventHandler from './form-and-transaction-event-handler';
 import { FormStatusProvider } from './form-status-provider';
-import TransactionStatusHandler from './transaction-status-handler';
 import { TransactionStatusProvider } from './transaction-status-provider';
 import type { PaymentEventCallback, PaymentErrorCallback } from '../types';
 
@@ -32,7 +32,7 @@ export function FormAndTransactionProvider( {
 	return (
 		<TransactionStatusProvider transactionStatusManager={ transactionStatusManager }>
 			<FormStatusProvider formStatusManager={ formStatusManager }>
-				<TransactionStatusHandler
+				<FormAndTransactionEventHandler
 					onPaymentComplete={ onPaymentComplete }
 					onPaymentRedirect={ onPaymentRedirect }
 					onPaymentError={ onPaymentError }
