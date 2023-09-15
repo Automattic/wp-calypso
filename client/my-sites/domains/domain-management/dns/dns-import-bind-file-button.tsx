@@ -70,16 +70,13 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		} );
 
 		try {
-			const recordsToImport = await wpcom.req.post(
-				{
-					path: `/domains/dns/import/bind/${ domain }`,
-					apiNamespace: 'wpcom/v2',
-				},
-				formData
-			);
-			console.log( { recordsToImport } );
+			const recordsToImport = await wpcom.req.post( {
+				path: `/domains/dns/import/bind/${ domain }`,
+				apiNamespace: 'wpcom/v2',
+				formData,
+			} );
 
-			setRecordsToImport( [] );
+			setRecordsToImport( recordsToImport );
 			showImportBindFileDialog();
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {
@@ -88,9 +85,6 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		} finally {
 			setSubmitting( false );
 		}
-
-		// TODO: Remove this when the new endpoint is ready
-		// showImportBindFileDialog();
 	};
 
 	return (
