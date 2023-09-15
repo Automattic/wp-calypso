@@ -53,6 +53,7 @@ $icon-border-radius: 50%;
 		top: 100%;
 		right: 6px;
 		display: flex;
+		max-width: calc(100% - 74px);
 		padding: 0;
 		margin-top: 20px;
 		border: none;
@@ -75,7 +76,7 @@ $icon-border-radius: 50%;
 		button {
 			border-radius: 4px;
 			@include break-medium {
-				width: 85px;
+				min-width: 85px;
 			}
 		}
 
