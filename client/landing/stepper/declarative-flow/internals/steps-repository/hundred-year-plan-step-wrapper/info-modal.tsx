@@ -194,7 +194,7 @@ export default function InfoModal( { onClose }: { onClose: () => void } ) {
 						</RowContent>
 					</RowItem>
 					<RowItem>
-						<RowTitle>{ translate( 'Top-Tier Managed Wordpress Hosting' ) }</RowTitle>
+						<RowTitle>{ translate( 'Top-Tier Managed WordPress Hosting' ) }</RowTitle>
 						<RowContent>
 							{ translate(
 								'The very best managed WordPress experience with unmetered bandwidth, best-in-class speed, and unstoppable security bundled in one convenient package.'
