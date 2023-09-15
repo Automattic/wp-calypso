@@ -210,6 +210,7 @@ export default ( state = initialState, { type, payload }: AnyAction ) => {
 					checkState: parentNode.checkState === 'checked' ? 'checked' : 'unchecked',
 					childrenLoaded: false,
 					children: [],
+					totalItems: childPath.totalItems,
 				} );
 			}
 
