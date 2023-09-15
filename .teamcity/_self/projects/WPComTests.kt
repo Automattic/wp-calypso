@@ -322,21 +322,6 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		features {
 			perfmon {}
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
 		}
 
 		failureConditions {
