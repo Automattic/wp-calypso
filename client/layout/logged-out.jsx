@@ -21,6 +21,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
+	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -44,6 +45,7 @@ const LayoutLoggedOut = ( {
 	isJetpackWooDnaFlow,
 	isP2Login,
 	isGravatar,
+	isWPJobManager,
 	isGravPoweredClient,
 	wccomFrom,
 	masterbarIsHidden,
@@ -108,6 +110,7 @@ const LayoutLoggedOut = ( {
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
+		'is-wp-job-manager': isWPJobManager,
 		'is-grav-powered-client': isGravPoweredClient,
 		'is-grav-powered-login-page': isGravPoweredLoginPage,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
@@ -252,6 +255,7 @@ export default withCurrentRoute(
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
 			currentRoute.startsWith( '/log-in' ) &&
@@ -283,6 +287,7 @@ export default withCurrentRoute(
 			isJetpackWooDnaFlow,
 			isP2Login,
 			isGravatar,
+			isWPJobManager,
 			isGravPoweredClient,
 			wccomFrom,
 			masterbarIsHidden,
