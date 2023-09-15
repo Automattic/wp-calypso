@@ -47,7 +47,10 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		beforeAll( async () => {
 			page = await browser.newPage();
 
-			const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+			const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+				{ gutenberg: 'stable', siteType: 'simple', accountName: 'defaultUser' },
+			] );
+
 			testAccount = new TestAccount( accountName );
 
 			restAPIClient = new RestAPIClient( testAccount.credentials );
