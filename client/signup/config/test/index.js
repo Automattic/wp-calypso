@@ -60,7 +60,7 @@ describe( 'index', () => {
 	/**
 	 * Before cleaning up a step, make sure to investigate if the step is 'phantom' submitted inside another step.
 	 * Steps can be submitted without a step component or it being included in a flow.
-	 * Eg: https://github.com/Automattic/wp-calypso/pull/81771
+	 * Eg: https://github.com/Automattic/wp-calypso/pull/81778
 	 */
 	test( 'All step definitions should have a step component mapping', () => {
 		const stepModuleMap = getStepModuleMap();
