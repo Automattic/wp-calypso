@@ -9,10 +9,12 @@ $masterbar-color-secondary: #101517;
 @import "calypso/assets/stylesheets/shared/animation";
 
 // Hide the masterbar on WP Mobile App views.
-.is-mobile-app-view {
+body.is-mobile-app-view {
 	.masterbar {
 		display: none;
 	}
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-checkout-height: 0px;
 }
 
 // The WordPress.com Masterbar
