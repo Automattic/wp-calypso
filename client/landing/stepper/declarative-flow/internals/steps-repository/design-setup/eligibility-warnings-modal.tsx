@@ -1,6 +1,7 @@
 import { Dialog } from '@automattic/components';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import type { SiteDetails } from '@automattic/data-stores';
+import './eligibility-warnings-modal.scss';
 
 export const EligibilityWarningsModal = ( {
 	site,
@@ -17,8 +18,7 @@ export const EligibilityWarningsModal = ( {
 } ) => {
 	return (
 		<Dialog
-			additionalClassNames="plugin-details-cta__dialog-content"
-			additionalOverlayClassNames="plugin-details-cta__modal-overlay"
+			additionalClassNames="eligibility-warnings-modal__dialog-content"
 			isVisible={ isOpen }
 			onClose={ handleClose }
 			showCloseIcon={ true }
