@@ -10,6 +10,7 @@ import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
 import { useDomainsTable } from './domains-table';
+import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
@@ -153,7 +154,13 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				}
 
 				if ( column.name === 'email' ) {
-					return <td key={ column.name }></td>;
+					return (
+						<td>
+							{ ! isAllSitesView && domain.current_user_can_add_email && (
+								<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+							) }
+						</td>
+					);
 				}
 
 				if ( column.name === 'action' ) {

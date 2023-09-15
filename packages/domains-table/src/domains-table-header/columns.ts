@@ -54,12 +54,6 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		sortFunctions: [],
 		width: '15%',
 	},
-	{
-		name: 'email',
-		label: __( 'Email', __i18n_text_domain__ ),
-		isSortable: false,
-		width: '15%',
-	},
 	{ name: 'action', label: null },
 ];
 
@@ -95,7 +89,7 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
-		width: '20%',
+		width: '15%',
 	},
 	{
 		name: 'status',
@@ -105,6 +99,12 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		supportsOrderSwitching: true,
 		sortFunctions: [],
 		width: '15%',
+	},
+	{
+		name: 'email',
+		label: __( 'Email', __i18n_text_domain__ ),
+		isSortable: false,
+		width: '20%',
 	},
 	{ name: 'action', label: null },
 ];

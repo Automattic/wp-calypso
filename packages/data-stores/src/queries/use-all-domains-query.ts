@@ -16,6 +16,7 @@ export type PartialDomainData = Pick<
 	| 'expiry'
 	| 'wpcom_domain'
 	| 'current_user_is_owner'
+	| 'current_user_can_add_email'
 >;
 
 export interface AllDomainsQueryFnData {
