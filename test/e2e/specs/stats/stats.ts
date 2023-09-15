@@ -27,7 +27,9 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	let testAccount: TestAccount;
 	let statsPage: StatsPage;
 
-	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+		{ gutenberg: 'stable', siteType: 'simple', accountName: 'defaultUser' },
+	] );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -80,8 +82,10 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 
 		it( 'Click link to see all annual insights', async function () {
 			await statsPage.clickViewAllAnnualInsights();
+			// Right now, we can't actually verify stats data because if run right after a test site purge,
+			// there may be nothing in there. We just verify that we can get to the page.
 
-			await statsPage.annualInsightPresentForYear( 2023 );
+			// TODO: find a reliable way to extend this to check data too.
 		} );
 
 		it( 'Go back', async function () {

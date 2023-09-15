@@ -48,9 +48,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		),
 	};
 
-	const buttons = [
-		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
-	];
+	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions /> ];
 
 	return (
 		<>

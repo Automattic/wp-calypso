@@ -9,7 +9,6 @@ import {
 	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
 import {
-	isDefaultGlobalStylesVariationSlug,
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
@@ -17,7 +16,7 @@ import {
 	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
@@ -97,7 +96,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
-	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
+	const isDesignFirstFlow =
+		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
+
+	// The design-first flow put the checkout at the last step, so we cannot show any upsell modal.
+	// Therefore, we need to hide any feature that needs to check out right away, e.g.: Premium theme.
+	// But maybe we can enable the global styles since it's gated under the Premium plan.
+	const disableCheckoutImmediately = isDesignFirstFlow;
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
@@ -127,16 +132,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		// The design-first flow doesn't support premium themes and custom styles.
-		if ( isDesignFirstFlow ) {
-			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
-
-			allDesigns.designs = allDesigns.designs.map( ( design ) => {
-				design.style_variations = design.style_variations?.filter( ( variation ) =>
-					isDefaultGlobalStylesVariationSlug( variation.slug )
-				);
-				return design;
-			} );
+		if ( disableCheckoutImmediately ) {
+			allDesigns.designs = allDesigns.designs
+				.filter(
+					( design ) =>
+						! (
+							design.is_premium ||
+							design.is_externally_managed ||
+							design.is_bundled_with_woo_commerce
+						)
+				)
+				.map( ( design ) => {
+					design.style_variations = [];
+					return design;
+				} );
 		}
 
 		return allDesigns;
@@ -192,6 +201,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		recordPreviewStyleVariation
 	);
 
+	const shouldUnlockGlobalStyles =
+		shouldLimitGlobalStyles && selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId;
+
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
 		window.scrollTo( { top: 0 } );
@@ -201,7 +213,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 		select: ( design: Design ) => {
-			if ( isDesignFirstFlow && design?.style_variations ) {
+			if ( disableCheckoutImmediately && design?.style_variations ) {
 				design.style_variations = [];
 			}
 
@@ -452,7 +464,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function unlockPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_show',
 				getEventPropsByDesign( selectedDesign, {
@@ -467,7 +479,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function closePremiumGlobalStylesModal() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_close_button_click',
 				getEventPropsByDesign( selectedDesign, {
@@ -482,7 +494,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, {
@@ -507,7 +519,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function tryPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_try_button_click',
 				getEventPropsByDesign( selectedDesign, {
@@ -677,7 +689,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		const selectStyle = () => {
-			if ( shouldLimitGlobalStyles && numOfSelectedGlobalStyles ) {
+			if ( shouldUnlockGlobalStyles ) {
 				unlockPremiumGlobalStyles();
 			} else {
 				pickDesign();
@@ -765,6 +777,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					screenshot={ fullLengthScreenshot }
 					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
+					disableGlobalStyles={ disableCheckoutImmediately }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }
 					selectedFontVariation={ selectedFontVariation }

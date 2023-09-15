@@ -97,7 +97,7 @@ export const useDomainsTable = () => useContext( Context ) as Value;
 
 export const DomainsTable = ( props: DomainsTableProps ) => {
 	const {
-		domains,
+		domains: allDomains,
 		fetchSiteDomains,
 		fetchSite,
 		isAllSitesView,
@@ -122,6 +122,26 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	const [ domainsRequiringAttention, setDomainsRequiringAttention ] = useState<
 		number | undefined
 	>( undefined );
+
+	const domains = useMemo( () => {
+		if ( isAllSitesView || ! allDomains ) {
+			return allDomains;
+		}
+
+		const hasWpcomStagingDomain = allDomains.find( ( domain ) => domain.is_wpcom_staging_domain );
+
+		if ( ! hasWpcomStagingDomain ) {
+			return allDomains;
+		}
+
+		return allDomains.filter( ( domain ) => {
+			if ( domain.wpcom_domain ) {
+				return domain.is_wpcom_staging_domain;
+			}
+
+			return true;
+		} );
+	}, [ allDomains, isAllSitesView ] );
 
 	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
 	const allSiteDomains = useQueries( {

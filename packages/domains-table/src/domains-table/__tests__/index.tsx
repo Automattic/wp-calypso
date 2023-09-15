@@ -491,3 +491,33 @@ test( 'when isAllSitesView is false, do not display site column', async () => {
 	expect( screen.queryByText( 'Site' ) ).not.toBeInTheDocument();
 	expect( screen.queryByText( 'Primary Domain Blog' ) ).not.toBeInTheDocument();
 } );
+
+test( 'when isAllSitesView is false, hide wordpress.com domain if there is a wpcom staging domain', () => {
+	const [ wpcomDomain ] = testDomain( {
+		domain: 'primary-domain.wordpress.com',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+		wpcom_domain: true,
+	} );
+
+	const [ wpcomStagingDomain ] = testDomain( {
+		domain: 'primary-domain.wpcomstaging.com',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+		wpcom_domain: true,
+		is_wpcom_staging_domain: true,
+	} );
+
+	render(
+		<DomainsTable
+			domains={ [ wpcomDomain, wpcomStagingDomain ] }
+			isAllSitesView={ false }
+			siteSlug={ wpcomStagingDomain.domain }
+		/>
+	);
+
+	expect( screen.queryByText( 'primary-domain.wpcomstaging.com' ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'primary-domain.wordpress.com' ) ).not.toBeInTheDocument();
+} );

@@ -44,7 +44,8 @@ export const DomainsTableRowActions = ( {
 	const { onDomainAction, userCanSetPrimaryDomains = false } = useDomainsTable();
 	const { __ } = useI18n();
 
-	const canConnectDomainToASite = domain.currentUserCanCreateSiteFromDomainOnly;
+	const canViewDetails = domain.type !== domainTypes.WPCOM;
+	const canConnectDomainToASite = isAllSitesView && domain.currentUserCanCreateSiteFromDomainOnly;
 	const canManageDNS =
 		domain.canManageDnsRecords &&
 		domain.transferStatus !== transferStatus.PENDING_ASYNC &&
@@ -68,6 +69,55 @@ export const DomainsTableRowActions = ( {
 	const canTransferToWPCOM =
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 
+	const getActions = ( onClose?: () => void ) => {
+		return [
+			canViewDetails && (
+				<MenuItemLink href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }>
+					{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
+				</MenuItemLink>
+			),
+			canManageDNS && (
+				<MenuItemLink
+					onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
+					href={ domainMagementDNS( siteSlug, domain.name ) }
+				>
+					{ __( 'Manage DNS' ) }
+				</MenuItemLink>
+			),
+			canManageContactInfo && (
+				<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
+					{ __( 'Manage contact information' ) }
+				</MenuItemLink>
+			),
+			canMakePrimarySiteAddress && (
+				<MenuItemLink
+					onClick={ () => {
+						onDomainAction?.( 'set-primary', domain );
+						onClose?.();
+					} }
+				>
+					{ __( 'Make primary site address' ) }
+				</MenuItemLink>
+			),
+			canTransferToWPCOM && (
+				<MenuItemLink
+					href={ domainUseMyDomain( siteSlug, domain.name, useMyDomainInputMode.transferDomain ) }
+				>
+					{ __( 'Transfer to WordPress.com' ) }
+				</MenuItemLink>
+			),
+			canConnectDomainToASite && (
+				<MenuItemLink href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }>
+					{ __( 'Connect to an existing site' ) }
+				</MenuItemLink>
+			),
+		];
+	};
+
+	if ( getActions().filter( Boolean ).length === 0 ) {
+		return null;
+	}
+
 	return (
 		<DropdownMenu
 			className="domains-table-row__actions"
@@ -76,50 +126,7 @@ export const DomainsTableRowActions = ( {
 		>
 			{ ( { onClose } ) => (
 				<MenuGroup className="domains-table-row__actions-group">
-					<MenuItemLink href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }>
-						{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
-					</MenuItemLink>
-					{ canManageDNS && (
-						<MenuItemLink
-							onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
-							href={ domainMagementDNS( siteSlug, domain.name ) }
-						>
-							{ __( 'Manage DNS' ) }
-						</MenuItemLink>
-					) }
-					{ canManageContactInfo && (
-						<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
-							{ __( 'Manage contact information' ) }
-						</MenuItemLink>
-					) }
-					{ canMakePrimarySiteAddress && (
-						<MenuItemLink
-							onClick={ () => {
-								onDomainAction?.( 'set-primary', domain );
-								onClose();
-							} }
-						>
-							{ __( 'Make primary site address' ) }
-						</MenuItemLink>
-					) }
-					{ canTransferToWPCOM && (
-						<MenuItemLink
-							href={ domainUseMyDomain(
-								siteSlug,
-								domain.name,
-								useMyDomainInputMode.transferDomain
-							) }
-						>
-							{ __( 'Transfer to WordPress.com' ) }
-						</MenuItemLink>
-					) }
-					{ canConnectDomainToASite && (
-						<MenuItemLink
-							href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }
-						>
-							{ __( 'Connect to an existing site' ) }
-						</MenuItemLink>
-					) }
+					{ getActions( onClose ) }
 				</MenuGroup>
 			) }
 		</DropdownMenu>

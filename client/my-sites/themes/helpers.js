@@ -70,29 +70,14 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 	return path;
 }
 
-export function addStyleVariation( options, styleVariation, isLoggedIn ) {
+export function addOptionsToGetUrl( options, { tabFilter, styleVariationSlug } ) {
 	return mapValues( options, ( option ) =>
 		Object.assign( {}, option, {
 			...( option.getUrl && {
-				getUrl: ( t ) =>
-					isLoggedIn
-						? option.getUrl( t, styleVariation )
-						: option.getUrl( t, null, styleVariation ),
+				getUrl: ( t ) => option.getUrl( t, { tabFilter, styleVariationSlug } ),
 			} ),
 		} )
 	);
-}
-
-export function appendStyleVariationToThemesPath( path, styleVariation ) {
-	if ( ! styleVariation ) {
-		return path;
-	}
-
-	const [ base, query ] = path.split( '?' );
-	const params = new URLSearchParams( query );
-	params.set( 'style_variation', styleVariation.slug );
-
-	return `${ base }?${ params.toString() }`;
 }
 
 /**

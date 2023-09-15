@@ -181,6 +181,12 @@
 	}
 }
 
+.domains-table-row__renews-on-cell {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
 .domains-table-row__domain-type-text {
 	display: none;
 	font-size: $font-body-extra-small;
