@@ -195,6 +195,7 @@ const PersonalPurchase = ( {
 				<ButtonComponent
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
+					disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
 					onClick={ () => {
 						recordTracksEvent( `${ type }_stats_free_plan_selected` );
 						gotoCheckoutPage( { from, type: 'free', siteSlug, adminUrl, redirectUri } );
