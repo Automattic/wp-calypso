@@ -6,6 +6,7 @@ import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Option, SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import { useSubscribersFilterOptions } from 'calypso/landing/subscriptions/hooks';
+import useSubscribersTotalsQueries from 'calypso/my-sites/stats/hooks/use-subscribers-totals-query';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import './style.scss';
@@ -26,10 +27,14 @@ const ListActionsBar = () => {
 		setSortTerm,
 		filterOption,
 		setFilterOption,
+		siteId,
 	} = useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
-	const filterOptions = useSubscribersFilterOptions();
+	const { data: subscribersTotals = { total: 0 } } = useSubscribersTotalsQueries( siteId );
+	const totalSubscribers = subscribersTotals?.total ?? 0;
+	const skipAll = totalSubscribers > 30000; // 30000 is the limit of subscribers that can be fetched without breaking the endpoint. This is a temporal solution.
+	const filterOptions = useSubscribersFilterOptions( skipAll );
 	const selectedText = translate( 'Subscribers: %s', {
 		args: getOptionLabel( filterOptions, filterOption ) || '',
 	} );

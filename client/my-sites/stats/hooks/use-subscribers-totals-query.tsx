@@ -1,13 +1,13 @@
 import { useQueries } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-const querySubscribersTotals = ( siteId: number | null ): Promise< any > => {
+const querySubscribersTotals = ( siteId?: number ): Promise< any > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/stats/followers`,
 	} );
 };
 
-const queryMore = ( siteId: number | null ): Promise< any > => {
+const queryMore = ( siteId?: number ): Promise< any > => {
 	return wpcom.req.get( {
 		apiNamespace: 'wpcom/v2',
 		path: `/sites/${ siteId }/subscribers/counts`,
@@ -40,7 +40,7 @@ const selectPaidSubscribers = ( payload: {
 	};
 };
 
-export default function useSubscribersTotalsQueries( siteId: number | null ) {
+export default function useSubscribersTotalsQueries( siteId?: number ) {
 	const queries = useQueries( {
 		queries: [
 			{

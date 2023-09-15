@@ -2,6 +2,7 @@ import { translate } from 'i18n-calypso';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
+import useSubscribersTotalsQueries from 'calypso/my-sites/stats/hooks/use-subscribers-totals-query';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -38,6 +39,7 @@ type SubscribersPageContextProps = {
 	showAddSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
 	addSubscribersCallback: () => void;
+	siteId?: number;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -62,8 +64,15 @@ export const SubscribersPageProvider = ( {
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
+	const { data: subscribersTotals = { total: 0 } } = useSubscribersTotalsQueries( siteId || 0 );
+	const totalSubscribers = subscribersTotals?.total ?? 0;
 
-	const grandTotalQueryResult = useSubscribersQuery( { siteId } );
+	// 30000 is the limit of subscribers that can be fetched without breaking the endpoint. This is a temporal solution.
+	filterOption =
+		filterOption === SubscribersFilterBy.All && totalSubscribers > 30000
+			? SubscribersFilterBy.WPCOM
+			: filterOption;
+	const grandTotalQueryResult = useSubscribersQuery( { siteId, filterOption } );
 	const grandTotal = grandTotalQueryResult.data?.total || 0;
 
 	const dispatch = useDispatch();
@@ -134,6 +143,7 @@ export const SubscribersPageProvider = ( {
 				showAddSubscribersModal,
 				setShowAddSubscribersModal,
 				addSubscribersCallback,
+				siteId,
 			} }
 		>
 			{ children }
