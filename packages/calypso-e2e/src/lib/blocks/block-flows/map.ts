@@ -1,7 +1,12 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
-	address: string;
+	address?: string;
+	// Often, the list of locations returned by the Map block is not formatted exactly
+	// like the initial input address. We could do fuzzy matching with a third party lib,
+	// but that seems excessive - so instead, the caller is expected to supply the expected
+	// target text.
+	select?: string;
 }
 
 const blockParentSelector = '[aria-label="Block: Map"]';
@@ -25,23 +30,34 @@ export class MapFlow implements BlockFlow {
 	blockEditorSelector = blockParentSelector;
 
 	/**
-	 * Configure the block in the editor with the configuration data from the constructor
+	 * Configure the block in the editor with the configuration data from the constructor.
 	 *
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		const block = editorCanvas.getByRole( 'document', { name: 'Block: Map' } );
+		await context.addedBlockLocator.scrollIntoViewIfNeeded();
+		await context.addedBlockLocator.getByRole( 'button', { name: 'Add marker' } ).waitFor();
 
-		// Enter the supplied address.
-		const editorParent = await context.editorPage.getEditorParent();
-		await editorParent.getByPlaceholder( 'Add a marker' ).fill( this.configurationData.address );
+		if ( this.configurationData.address && this.configurationData.select ) {
+			// Note: there are at least two providers of Maps data on macOS:
+			// mapbox and Apple Maps.
+			// The locators differ between the two, but the data entry portion
+			// should work the same between the two services.
 
-		// Wait for the popover.
-		await editorParent.locator( '.components-popover' ).getByRole( 'listbox' ).waitFor();
-		await context.page.keyboard.press( 'Enter' );
+			// Enter the supplied address.
+			const editorParent = await context.editorPage.getEditorParent();
+			await editorParent
+				.getByRole( 'textbox', { name: 'Add a marker' } )
+				.type( this.configurationData.address, { delay: 5 } );
 
-		await block.locator( '.wp-block-jetpack-map-marker' ).waitFor();
+			// Wait for the popover and click on the first matching item.
+			await editorParent
+				.locator( '.components-popover' )
+				.getByRole( 'listbox' )
+				.filter( { hasText: this.configurationData.select } )
+				.first()
+				.click();
+		}
 	}
 
 	/**

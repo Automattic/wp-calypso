@@ -52,7 +52,9 @@ export interface SitePlanData {
 	productName: string;
 	productSlug: string;
 	rawDiscount: string;
+	rawDiscountInteger: number;
 	rawPrice: number;
+	rawPriceInteger: number;
 	subscribedDate?: string;
 	userIsOwner?: boolean;
 }

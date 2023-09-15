@@ -1,7 +1,9 @@
 import { DomainData } from '@automattic/data-stores';
 import { type as domainTypes } from './constants';
 
-export function getDomainType( domainFromApi: DomainData ) {
+export function getDomainType(
+	domainFromApi: Pick< DomainData, 'type' | 'wpcom_domain' | 'has_registration' >
+) {
 	if ( domainFromApi.type === 'redirect' ) {
 		return domainTypes.SITE_REDIRECT;
 	}

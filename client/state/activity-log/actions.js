@@ -238,7 +238,7 @@ export function setRewindBackupDownloadId( siteId, downloadId ) {
  * Request a backup up to a specific Activity.
  *
  * @param  {string|number} siteId Site ID
- * @param  {number}        rewindId Rewind ID
+ * @param  {string|number} rewindId Rewind ID
  * @returns {Object}        action object
  */
 export function rewindRequestBackup( siteId, rewindId ) {

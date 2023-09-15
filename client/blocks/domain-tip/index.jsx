@@ -1,4 +1,8 @@
-import { FEATURE_CUSTOM_DOMAIN, isFreePlanProduct } from '@automattic/calypso-products';
+import {
+	FEATURE_CUSTOM_DOMAIN,
+	isFreePlanProduct,
+	is100YearPlan,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -55,6 +59,22 @@ class DomainTip extends Component {
 		);
 	}
 
+	getDomainUpsellNudgeText() {
+		const siteHas100YearPlan = is100YearPlan( this.props.site?.plan?.product_slug );
+
+		if ( ! this.props.hasDomainCredit ) {
+			return this.props.translate( 'Purchase a custom domain for your site.' );
+		}
+
+		if ( siteHas100YearPlan ) {
+			return this.props.translate( 'Your plan includes a free custom domain. Grab this one!' );
+		}
+
+		return this.props.translate(
+			'Your plan includes a free custom domain for one year. Grab this one!'
+		);
+	}
+
 	render() {
 		if ( this.props.isIneligible ) {
 			return null;
@@ -84,13 +104,7 @@ class DomainTip extends Component {
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					feature={ FEATURE_CUSTOM_DOMAIN }
 					href={ `/domains/add/${ this.props.siteSlug }` }
-					description={
-						this.props.hasDomainCredit
-							? this.props.translate(
-									'Your plan includes a free custom domain for one year. Grab this one!'
-							  )
-							: this.props.translate( 'Purchase a custom domain for your site.' )
-					}
+					description={ this.getDomainUpsellNudgeText() }
 					forceDisplay
 					title={ title }
 					showIcon

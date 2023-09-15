@@ -102,6 +102,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 
 		const discountedPrice = formatCurrency( pricing.discountedPrice.full, 'USD', {
 			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent( `per month, ${ discountedPrice } for the first year` );
 	} );
@@ -131,6 +132,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		);
 		const discountedPrice = formatCurrency( pricing.discountedPrice.full, 'USD', {
 			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
 			`per month, ${ discountedPrice } for the first two years`
@@ -162,6 +164,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		);
 		const discountedPrice = formatCurrency( pricing.discountedPrice.full, 'USD', {
 			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
 			`per month, ${ discountedPrice } for the first three years`
@@ -191,6 +194,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 
 		const originalPrice = formatCurrency( pricing.originalPrice.full, 'USD', {
 			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
 			`per month, ${ originalPrice } billed annually, Excl. Taxes`
@@ -222,6 +226,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		);
 		const originalPrice = formatCurrency( pricing.originalPrice.full, 'USD', {
 			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
 			`per month, ${ originalPrice } billed every two years, Excl. Taxes`
@@ -253,6 +258,7 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		);
 		const originalPrice = formatCurrency( pricing.originalPrice.full, 'USD', {
 			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 		expect( container ).toHaveTextContent(
 			`per month, ${ originalPrice } billed every three years, Excl. Taxes`

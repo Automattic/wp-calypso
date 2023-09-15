@@ -4,7 +4,7 @@ export const type = {
 	SITE_REDIRECT: 'redirect',
 	WPCOM: 'wpcom',
 	TRANSFER: 'transfer',
-};
+} as const;
 
 export const useMyDomainInputMode = {
 	domainInput: 'domain-input',

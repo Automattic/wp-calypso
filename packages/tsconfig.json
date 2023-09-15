@@ -35,6 +35,7 @@
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },
 		{ "path": "./launchpad" },
+		{ "path": "./launchpad-navigator" },
 		{ "path": "./mini-cart" },
 		{ "path": "./onboarding" },
 		{ "path": "./page-pattern-modal" },

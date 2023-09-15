@@ -1,22 +1,21 @@
 import { useMemo } from 'react';
+import { ORDERED_PATTERN_CATEGORIES } from '../constants';
 import type { Category } from '../types';
-
-const patternCategoriesOrder = [ 'posts', 'gallery', 'call-to-action' ];
 
 const useCategoriesOrder = ( categories: Category[] ) => {
 	return useMemo(
 		() =>
 			categories.sort( ( { name: aName }, { name: bName } ) => {
 				if ( aName && bName ) {
-					// Sort categories according to `patternCategoriesOrder`.
-					let aIndex = patternCategoriesOrder.indexOf( aName );
-					let bIndex = patternCategoriesOrder.indexOf( bName );
+					// Sort categories according to `ORDERED_PATTERN_CATEGORIES`.
+					let aIndex = ORDERED_PATTERN_CATEGORIES.indexOf( aName );
+					let bIndex = ORDERED_PATTERN_CATEGORIES.indexOf( bName );
 					// All other categories should come after that.
 					if ( aIndex < 0 ) {
-						aIndex = patternCategoriesOrder.length;
+						aIndex = ORDERED_PATTERN_CATEGORIES.length;
 					}
 					if ( bIndex < 0 ) {
-						bIndex = patternCategoriesOrder.length;
+						bIndex = ORDERED_PATTERN_CATEGORIES.length;
 					}
 					return aIndex - bIndex;
 				}

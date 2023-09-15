@@ -1,4 +1,4 @@
-import { uniqBy } from 'lodash';
+import { uniqueBy } from '@automattic/js-utils';
 import { READER_FEED_SEARCH_RECEIVE } from 'calypso/state/reader/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
@@ -22,7 +22,10 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 export const items = keyedReducer( 'queryKey', ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_FEED_SEARCH_RECEIVE:
-			return uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' );
+			return uniqueBy(
+				( state ?? [] ).concat( action.payload.feeds ),
+				( a, b ) => a.feed_URL === b.feed_URL
+			);
 	}
 
 	return state;

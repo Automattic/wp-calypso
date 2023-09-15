@@ -12,7 +12,7 @@ export type SubscriberRowProps = {
 };
 
 export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: SubscriberRowProps ) => {
-	const { avatar, display_name, email_address, date_subscribed, open_rate } = subscriber;
+	const { avatar, display_name, email_address, url, date_subscribed, open_rate } = subscriber;
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
 
 	return (
@@ -21,7 +21,12 @@ export const SubscriberRow = ( { subscriber, onView, onUnsubscribe }: Subscriber
 				<FormCheckbox />
 			</div>
 			<span className="subscriber-list__profile-column" role="cell">
-				<SubscriberProfile avatar={ avatar } displayName={ display_name } email={ email_address } />
+				<SubscriberProfile
+					avatar={ avatar }
+					displayName={ display_name }
+					email={ email_address }
+					url={ url }
+				/>
 			</span>
 			<span className="subscriber-list__subscription-type-column" role="cell">
 				{ subscriptionPlans &&

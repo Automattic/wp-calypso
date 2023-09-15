@@ -1,10 +1,10 @@
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, MouseEvent, ReactNode } from 'react';
 import { shallowEqual } from 'react-redux';
 import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
@@ -40,16 +40,44 @@ import {
 } from 'calypso/state/memberships/subscribers/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
+import { Query } from '../types';
 import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
 
 import './style.scss';
 
-function MembershipsSection( { query } ) {
+type MembershipsSectionProps = {
+	query?: Query;
+};
+
+type Subscriber = {
+	id: string;
+	status: string;
+	start_date: string;
+	end_date: string;
+	// appears as both subscriber.user_email & subscriber.user.user_email in this file
+	user_email: string;
+	user: {
+		ID: string;
+		name: string;
+		user_email: string;
+	};
+	plan: {
+		connected_account_product_id: string;
+		title: string;
+		renewal_price: number;
+		currency: string;
+		renew_interval: string;
+	};
+	renew_interval: string;
+	all_time_total: number;
+};
+
+function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const source = getSource();
-	const [ cancelledSubscriber, setCancelledSubscriber ] = useState( null );
+	const [ cancelledSubscriber, setCancelledSubscriber ] = useState< Subscriber | null >( null );
 	const [ disconnectedConnectedAccountId, setDisconnectedConnectedAccountId ] = useState( null );
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
@@ -69,7 +97,7 @@ function MembershipsSection( { query } ) {
 	const connectedAccountDescription = useSelector( ( state ) =>
 		getConnectedAccountDescriptionForSiteId( state, site?.ID )
 	);
-	const connectUrl = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
+	const connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
 
 	const {
 		commission,
@@ -88,10 +116,14 @@ function MembershipsSection( { query } ) {
 	}, [ query, site ] );
 
 	function renderEarnings() {
+		if ( ! site ) {
+			return <LoadingEllipsis />;
+		}
+
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Earnings' ) } />
-				<QueryMembershipsEarnings siteId={ site?.ID } />
+				<QueryMembershipsEarnings siteId={ site.ID } />
 				<Card>
 					<div className="memberships__module-content module-content">
 						<ul className="memberships__earnings-breakdown-list">
@@ -135,7 +167,7 @@ function MembershipsSection( { query } ) {
 	}
 
 	const fetchNextSubscriberPage = useCallback(
-		( force ) => {
+		( force: boolean ) => {
 			const fetched = Object.keys( subscribers ).length;
 			if ( fetched < totalSubscribers || force ) {
 				dispatch( requestSubscribers( site?.ID, fetched ) );
@@ -144,7 +176,7 @@ function MembershipsSection( { query } ) {
 		[ dispatch, site, subscribers, totalSubscribers ]
 	);
 
-	function onCloseDisconnectStripeAccount( reason ) {
+	function onCloseDisconnectStripeAccount( reason: string | undefined ) {
 		if ( reason === 'disconnect' ) {
 			dispatch(
 				requestDisconnectSiteStripeAccount(
@@ -158,7 +190,7 @@ function MembershipsSection( { query } ) {
 		setDisconnectedConnectedAccountId( null );
 	}
 
-	function onCloseCancelSubscription( reason ) {
+	function onCloseCancelSubscription( reason: string | undefined ) {
 		if ( reason === 'cancel' ) {
 			dispatch(
 				requestSubscriptionStop(
@@ -171,7 +203,7 @@ function MembershipsSection( { query } ) {
 		setCancelledSubscriber( null );
 	}
 
-	function downloadSubscriberList( event ) {
+	function downloadSubscriberList( event: MouseEvent< HTMLButtonElement > ) {
 		event.preventDefault();
 		const fileName = [ site?.slug, 'memberships', 'subscribers' ].join( '_' ) + '.csv';
 
@@ -282,7 +314,7 @@ function MembershipsSection( { query } ) {
 		);
 	}
 
-	function getIntervalDependantWording( subscriber ) {
+	function getIntervalDependantWording( subscriber: Subscriber | null ) {
 		const subscriber_email = subscriber?.user.user_email ?? '';
 		const plan_name = subscriber?.plan.title ?? '';
 
@@ -313,11 +345,15 @@ function MembershipsSection( { query } ) {
 	}
 
 	function renderManagePlans() {
+		if ( ! site ) {
+			return <LoadingEllipsis />;
+		}
+
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Manage plans' ) } />
 				<Card href={ '/earn/payments-plans/' + site?.slug }>
-					<QueryMembershipProducts siteId={ site?.ID } />
+					<QueryMembershipProducts siteId={ site.ID } />
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
 							<Gridicon size={ 24 } icon="credit-card" />
@@ -394,7 +430,7 @@ function MembershipsSection( { query } ) {
 		);
 	}
 
-	function renderSubscriberSubscriptionSummary( subscriber ) {
+	function renderSubscriberSubscriptionSummary( subscriber: Subscriber ) {
 		const title = subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : ' ';
 		if ( subscriber.plan.renew_interval === 'one-time' ) {
 			/* translators: Information about a one-time payment made by a subscriber to a site owner.
@@ -445,7 +481,7 @@ function MembershipsSection( { query } ) {
 		}
 	}
 
-	function renderSubscriberActions( subscriber ) {
+	function renderSubscriberActions( subscriber: Subscriber ) {
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
 				<PopoverMenuItem
@@ -464,7 +500,7 @@ function MembershipsSection( { query } ) {
 		);
 	}
 
-	function renderSubscriber( subscriber ) {
+	function renderSubscriber( subscriber: Subscriber ) {
 		return (
 			<Card className="memberships__subscriber-profile is-compact" key={ subscriber.id }>
 				{ renderSubscriberActions( subscriber ) }
@@ -540,7 +576,7 @@ function MembershipsSection( { query } ) {
 		return null;
 	}
 
-	function renderOnboarding( cta, intro ) {
+	function renderOnboarding( cta: ReactNode, intro?: ReactNode | null ) {
 		return (
 			<Card>
 				<div className="memberships__onboarding-wrapper">
@@ -607,23 +643,11 @@ function MembershipsSection( { query } ) {
 						) }
 					</div>
 					<div>
-						<h3>
-							{ englishLocales.includes( getLocaleSlug() ) ||
-							i18n.hasTranslation( 'Simple fees structure' )
-								? translate( 'Simple fees structure' )
-								: translate( 'No membership fees' ) }
-						</h3>
+						<h3>{ translate( 'Simple fees structure' ) }</h3>
 						<p>
 							<CommissionFees commission={ commission } siteSlug={ site?.slug } />
 						</p>
-						<p>
-							{ preventWidows(
-								englishLocales.includes( getLocaleSlug() ) ||
-									i18n.hasTranslation( 'No fixed monthly or annual fees charged.' )
-									? translate( 'No fixed monthly or annual fees charged.' )
-									: translate( 'No monthly or annual fees charged.' )
-							) }
-						</p>
+						<p>{ preventWidows( translate( 'No fixed monthly or annual fees charged.' ) ) }</p>
 					</div>
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
@@ -687,10 +711,14 @@ function MembershipsSection( { query } ) {
 		);
 	}
 
+	if ( ! site ) {
+		return <LoadingEllipsis />;
+	}
+
 	return (
 		<div>
-			<QueryMembershipsEarnings siteId={ site?.ID } />
-			<QueryMembershipsSettings siteId={ site?.ID } source={ source } />
+			<QueryMembershipsEarnings siteId={ site.ID } />
+			<QueryMembershipsSettings siteId={ site.ID } source={ source } />
 			{ connectedAccountId && renderStripeConnected() }
 			{ connectUrl && renderConnectStripe() }
 

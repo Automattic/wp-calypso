@@ -7,6 +7,7 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
@@ -34,10 +35,11 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( { rewin
 		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 
 		dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_download_multiple_files' ) );
 		page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 	};
 	const onRestoreClick = () => {
-		// TODO: Add tracking
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_restore_multiple_files' ) );
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
 	// When the checkbox is clicked, we'll update the check state in the state
