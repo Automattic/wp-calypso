@@ -178,7 +178,7 @@ Thanks\n\n`;
 									<Button
 										variant="secondary"
 										disabled={ ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked }
-										onClick={ ( e: React.MouseEvent ) => handleClick( e, isOdysseyStats ) }
+										onClick={ ( e: React.MouseEvent ) => handleClick( e ) }
 									>
 										{ translate( 'Request update' ) }
 									</Button>
