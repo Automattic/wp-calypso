@@ -25,7 +25,6 @@ const ReaderPostActions = ( props ) => {
 		site,
 		onCommentClick,
 		showEdit,
-		showViews,
 		showSuggestedFollows,
 		iconSize,
 		className,
@@ -53,7 +52,6 @@ const ReaderPostActions = ( props ) => {
 
 	const listClassnames = classnames( className, {
 		'reader-post-actions': true,
-		'has-views': showViews,
 	} );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
@@ -142,7 +140,6 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
 	showFollow: PropTypes.bool,
-	showViews: PropTypes.bool,
 	showSuggestedFollows: PropTypes.bool,
 	iconSize: PropTypes.number,
 	visitUrl: PropTypes.string,
@@ -152,7 +149,6 @@ ReaderPostActions.propTypes = {
 ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showFollow: true,
-	showViews: false,
 	showVisit: false,
 	showSuggestedFollows: false,
 	iconSize: 20,
