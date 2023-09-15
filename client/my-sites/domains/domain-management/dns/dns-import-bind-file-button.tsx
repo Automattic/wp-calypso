@@ -21,7 +21,7 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 	const [ submitting, setSubmitting ] = useState( false );
 	const [ recordsToImport, setRecordsToImport ] = useState< string[] | null >( null );
 
-	const className = classNames( 'dns__breadcrumb-button add-record', {
+	const className = classNames( 'dns__breadcrumb-button import-bind-file', {
 		'is-icon-button': isMobile,
 	} );
 
@@ -32,7 +32,6 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {
 				dispatch( errorNotice( error.message ) );
-				return;
 			}
 		} finally {
 			setSubmitting( false );
