@@ -2,7 +2,7 @@ import { PLAN_PERSONAL, WPCOM_FEATURES_UPLOAD_AUDIO_FILES } from '@automattic/ca
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { map, pick, flowRight } from 'lodash';
+import { pick, flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
@@ -37,7 +37,7 @@ import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingPublishNotice from './publish-notice';
-import podcastingTopics from './topics';
+import TopicsSelector from './topics-selector';
 
 /**
  * Selectors, actions, and query components
@@ -132,32 +132,13 @@ class PodcastingDetails extends Component {
 	renderTopicSelector( key ) {
 		const { fields, handleSelect, isRequestingSettings, isPodcastingEnabled } = this.props;
 		return (
-			<FormSelect
+			<TopicsSelector
 				id={ key }
 				name={ key }
 				onChange={ handleSelect }
 				value={ fields[ key ] || 0 }
 				disabled={ isRequestingSettings || ! isPodcastingEnabled }
-			>
-				<option value="0">None</option>
-				{ map( Object.entries( podcastingTopics ), ( [ topic, subtopics ] ) => {
-					// The keys for podcasting in Apple Podcasts use &amp;
-					const topicKey = topic.replace( '&', '&amp;' );
-					return [
-						<option key={ topicKey } value={ topicKey }>
-							{ topic }
-						</option>,
-						...map( subtopics, ( subtopic ) => {
-							const subtopicKey = topicKey + ',' + subtopic.replace( '&', '&amp;' );
-							return (
-								<option key={ subtopicKey } value={ subtopicKey }>
-									{ topic } » { subtopic }
-								</option>
-							);
-						} ),
-					];
-				} ) }
-			</FormSelect>
+			/>
 		);
 	}
 
