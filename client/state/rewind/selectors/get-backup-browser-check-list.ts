@@ -25,7 +25,6 @@ const addChildrenToList = (
 			id: currentNode.id,
 			path: getNodeFullPath( currentNode ),
 		} );
-		currentList.totalItems++;
 		return currentList;
 	}
 
@@ -43,7 +42,6 @@ const addChildrenToList = (
 			id: currentNode.id,
 			path: getNodeFullPath( currentNode ),
 		} );
-		currentList.totalItems++;
 		return currentList;
 	}
 
@@ -62,10 +60,11 @@ const addChildrenToList = (
 			path: getNodeFullPath( currentNode ),
 		} );
 
-		// Lets sum only the selected children
-		currentList.totalItems = currentList.totalItems + selectedChildren;
-
 		currentNode.children.forEach( ( node: BackupBrowserItem ) => {
+			if ( node.checkState === 'checked' ) {
+				currentList.totalItems += node.totalItems;
+			}
+
 			if ( node.checkState === 'unchecked' ) {
 				currentList.excludeList.push( {
 					id: node.id,
@@ -81,7 +80,7 @@ const addChildrenToList = (
 	currentNode.children.forEach( ( node: BackupBrowserItem ) => {
 		if ( 'checked' === node.checkState ) {
 			currentList.includeList.push( { id: node.id, path: getNodeFullPath( node ) } );
-			currentList.totalItems++;
+			currentList.totalItems += node.totalItems;
 		}
 		if ( 'mixed' === node.checkState ) {
 			currentList = addChildrenToList( node, currentList );
