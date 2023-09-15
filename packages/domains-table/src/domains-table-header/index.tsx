@@ -60,6 +60,7 @@ type DomainsTableHeaderProps = {
 	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
 	canSelectAnyDomains?: boolean;
+	isAllSitesView?: boolean;
 };
 
 export const DomainsTableHeader = ( {
@@ -74,6 +75,7 @@ export const DomainsTableHeader = ( {
 	hideOwnerColumn = false,
 	domainsRequiringAttention,
 	canSelectAnyDomains = true,
+	isAllSitesView,
 }: DomainsTableHeaderProps ) => {
 	const { __ } = useI18n();
 	const listHeaderClasses = classNames( 'domains-table-header', headerClasses || '' );
@@ -114,6 +116,9 @@ export const DomainsTableHeader = ( {
 
 				{ columns.map( ( column ) => {
 					if ( column.name === 'owner' && hideOwnerColumn ) {
+						return null;
+					}
+					if ( column.name === 'email' && isAllSitesView ) {
 						return null;
 					}
 					return (

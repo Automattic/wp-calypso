@@ -54,6 +54,12 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		sortFunctions: [],
 		width: '15%',
 	},
+	{
+		name: 'email',
+		label: __( 'Email', __i18n_text_domain__ ),
+		isSortable: false,
+		width: '15%',
+	},
 	{ name: 'action', label: null },
 ];
 
