@@ -7,12 +7,10 @@ import {
 } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueries } from '@tanstack/react-query';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { createElement, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryWhois from 'calypso/components/data/query-whois';
@@ -22,13 +20,11 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { domainManagementList, isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
-import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isRequestingWhoisSelector from 'calypso/state/selectors/is-requesting-whois';
@@ -91,12 +87,6 @@ export default function BulkEditContactInfoPage( {
 	);
 
 	const currentRoute = useSelector( getCurrentRoute );
-	const allDomainsWhoisData = useSelector( ( state: IAppState ) => {
-		return selectedDomains?.map( ( domain ) => {
-			const whoisData = findRegistrantWhois( getWhoisData( state, domain.domain ) );
-			return { [ domain.domain ]: whoisData };
-		} );
-	} );
 	const isRequestingWhois = useSelector( ( state: IAppState ) =>
 		selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
 	);
@@ -209,46 +199,6 @@ export default function BulkEditContactInfoPage( {
 			);
 		}
 
-		const firstSelectedDomainWhois = Object.values( allDomainsWhoisData?.[ 0 ] ?? {} )[ 0 ];
-		const firstDomainWithIncompatibleWhois = allDomainsWhoisData?.find( ( domainWhoisData ) => {
-			const currentWhois = Object.values( domainWhoisData )[ 0 ];
-			if ( ! firstSelectedDomainWhois || ! currentWhois ) {
-				return false;
-			}
-
-			const test = Object.keys( firstSelectedDomainWhois ).some(
-				( key ) => currentWhois[ key ] !== firstSelectedDomainWhois[ key ]
-			);
-			return test;
-		} );
-
-		// const firstDomainWithIncompatibleWhois = allDomainsWhoisData?.find( ( domainWhoisData ) => {
-		// 	const whoisData = Object.values( domainWhoisData )[ 0 ];
-		// 	if ( typeof whoisData === 'object' && 'extra' in whoisData ) {
-		// 		return true;
-		// 	}
-		// } );
-
-		if (
-			firstDomainWithIncompatibleWhois &&
-			allDomainsWhoisData &&
-			allDomainsWhoisData.length > 1
-		) {
-			const text = createInterpolateElement(
-				sprintf(
-					/* translators: the domain is the name of incompatible domain*/
-					translate(
-						'The domain <strong>%(domain)s</strong> has contact fields that makes it incompatible for bulk editing.'
-					),
-					{ domain: Object.keys( firstDomainWithIncompatibleWhois )[ 0 ] }
-				),
-				{
-					strong: createElement( 'strong' ),
-				}
-			);
-			return <InfoNotice redesigned={ false } text={ text } />;
-		}
-
 		return (
 			<EditContactInfoFormCard
 				domainRegistrationAgreementUrl={ firstSelectedDomain.domain_registration_agreement_url }
@@ -281,6 +231,11 @@ export default function BulkEditContactInfoPage( {
 				icon={ false }
 			/>
 		);
+
+		const domainsWithUnmodifiableContactInfo =
+			selectedDomains &&
+			selectedDomains.length > 1 &&
+			selectedDomains.filter( ( domain ) => domain.whois_update_unmodifiable_fields.length > 0 );
 
 		return (
 			<>
@@ -325,6 +280,33 @@ export default function BulkEditContactInfoPage( {
 								) }
 							</Button>
 						) }
+					</div>
+				) }
+				{ domainsWithUnmodifiableContactInfo && domainsWithUnmodifiableContactInfo.length > 0 && (
+					<div className="edit-contact-info-page__sidebar" style={ { marginBottom: '8px' } }>
+						<div className="edit-contact-info-page__sidebar-title">
+							<p>
+								<strong>{ translate( 'The following domain fields will not be updated:' ) }</strong>
+							</p>
+						</div>
+						<div className="edit-contact-info-page__sidebar-content">
+							<ul>
+								{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
+									<li key={ domain.domain }>
+										<strong>{ domain.domain }</strong>
+										<ul style={ { listStyleType: 'circle' } }>
+											{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
+												<li key={ field }>
+													{ field
+														.replace( /_/, ' ' )
+														.replace( /^(.)/, ( match ) => match.toUpperCase() ) }
+												</li>
+											) ) }
+										</ul>
+									</li>
+								) ) }
+							</ul>
+						</div>
 					</div>
 				) }
 				<div className="edit-contact-info-page__sidebar">
