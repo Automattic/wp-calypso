@@ -206,7 +206,7 @@ class MagicLogin extends Component {
 		const { usernameOrEmail, resendEmailCountdown } = this.state;
 		const emailAddress = usernameOrEmail.includes( '@' ) ? usernameOrEmail : null;
 
-		const sendEmailTextOptions = {
+		const emailTextOptions = {
 			components: {
 				sendEmailButton: (
 					<button
@@ -267,11 +267,11 @@ class MagicLogin extends Component {
 							{ resendEmailCountdown === 0
 								? translate(
 										'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
-										sendEmailTextOptions
+										emailTextOptions
 								  )
 								: translate(
 										'{{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
-										sendEmailTextOptions
+										emailTextOptions
 								  ) }
 						</div>
 					</div>
