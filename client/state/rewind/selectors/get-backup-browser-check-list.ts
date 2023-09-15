@@ -26,6 +26,8 @@ const addChildrenToList = (
 			path: getNodeFullPath( currentNode ),
 		} );
 
+		// If the current node is the root, let's go through direct children and
+		// sum the `totalItems` of each of them.
 		if ( currentNode.path === '/' ) {
 			currentNode.children.forEach( ( node: BackupBrowserItem ) => {
 				if ( node.checkState === 'checked' ) {
