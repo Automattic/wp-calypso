@@ -37,12 +37,7 @@ export class MarkdownFlow implements BlockFlow {
 	 * test execution.
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		const block = editorCanvas.getByRole( 'document', {
-			name: `Block: ${ this.blockSidebarName }`,
-		} );
-
-		const textarea = block.getByRole( 'textbox', { name: 'Markdown' } );
+		const textarea = context.addedBlockLocator.getByRole( 'textbox', { name: 'Markdown' } );
 
 		await textarea.fill( this.configurationData.text );
 

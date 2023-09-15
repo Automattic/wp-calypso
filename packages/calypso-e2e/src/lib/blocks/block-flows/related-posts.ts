@@ -32,12 +32,7 @@ export class RelatedPostsFlow implements BlockFlow {
 	 * test execution.
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		const block = editorCanvas.getByRole( 'document', {
-			name: `Block: ${ this.blockSidebarName }`,
-		} );
-
-		await block.waitFor();
+		await context.addedBlockLocator.waitFor();
 
 		if ( this.configurationData.headline ) {
 			await context.editorPage.openSettings();
@@ -58,8 +53,10 @@ export class RelatedPostsFlow implements BlockFlow {
 		// When no related posts are actually available, the published page will not render the block.
 		// If the number of "Preview unavailable" message corresponds to the number of available "slots",
 		// the site really has no related posts thus the published page will not render this block.
-		const noRelatedPostsNotice = await block.getByText( /Preview unavailable/ ).count();
-		const postSlotCount = await block.getByRole( 'menuitem' ).count();
+		const noRelatedPostsNotice = await context.addedBlockLocator
+			.getByText( /Preview unavailable/ )
+			.count();
+		const postSlotCount = await context.addedBlockLocator.getByRole( 'menuitem' ).count();
 
 		if ( noRelatedPostsNotice === postSlotCount ) {
 			this.noRelatedPosts = true;
