@@ -9,6 +9,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	is100Year,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
@@ -96,7 +97,7 @@ class PurchaseNotice extends Component<
 		const { translate, moment, selectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 
-		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
+		if ( selectedSite && purchase.expiryStatus === 'manualRenew' && ! is100Year( purchase ) ) {
 			return this.getExpiringLaterText( purchase );
 		}
 
@@ -339,6 +340,9 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 
+		if ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) {
+			return null;
+		}
 		let noticeStatus = 'is-info';
 
 		if ( isCloseToExpiration( currentPurchase ) && ! isRecentMonthlyPurchase( currentPurchase ) ) {
@@ -795,7 +799,8 @@ class PurchaseNotice extends Component<
 		if (
 			! currentPurchaseNeedsToRenewSoon &&
 			! currentPurchaseIsExpiring &&
-			! anotherPurchaseIsExpiring
+			! anotherPurchaseIsExpiring &&
+			! is100Year( purchase )
 		) {
 			if ( ! currentPurchaseCreditCardExpiresBeforeSubscription ) {
 				noticeStatus = 'is-success';
