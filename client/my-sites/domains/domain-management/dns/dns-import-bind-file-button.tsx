@@ -56,10 +56,8 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		}
 
 		setSubmitting( true );
-		const formData: [ string, File, string ][] = [];
-		[ ...files ].forEach( ( file: File ) => {
-			formData.push( [ 'files[]', file, file.name ] );
-		} );
+
+		const formData = [ [ 'files[]', files[ 0 ], files[ 0 ].name ] ];
 
 		try {
 			const recordsToImport = await wpcom.req.post( {
