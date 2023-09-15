@@ -25,6 +25,15 @@ const addChildrenToList = (
 			id: currentNode.id,
 			path: getNodeFullPath( currentNode ),
 		} );
+
+		if ( currentNode.path === '/' ) {
+			currentNode.children.forEach( ( node: BackupBrowserItem ) => {
+				if ( node.checkState === 'checked' ) {
+					currentList.totalItems += node.totalItems;
+				}
+			} );
+		}
+
 		return currentList;
 	}
 

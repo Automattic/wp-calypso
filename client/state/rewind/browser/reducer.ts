@@ -13,6 +13,7 @@ const initialState: AppState = {
 		checkState: 'unchecked',
 		childrenLoaded: false,
 		children: [],
+		totalItems: 0,
 	},
 };
 
