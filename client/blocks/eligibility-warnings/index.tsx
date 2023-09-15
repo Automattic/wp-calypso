@@ -53,7 +53,7 @@ interface ExternalProps {
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
-	isMarketplaceException?: boolean;
+	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
 	disableContinueButton?: boolean;
 }
@@ -322,7 +322,7 @@ EligibilityWarnings.defaultProps = {
 
 /**
  * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the
- * INSTALL_PURCHASED_PLUGINS feature is present or it is a marketplace exception.
+ * INSTALL_PURCHASED_PLUGINS feature is present or is onboarding flow.
  *
  * Starter plans do not have the ATOMIC feature, but they have the
  * INSTALL_PURCHASED_PLUGINS feature which allows them to buy marketplace
@@ -332,12 +332,15 @@ EligibilityWarnings.defaultProps = {
  * 'NO_BUSINESS_PLAN' hold on atomic transfer; however, if we're about to buy a
  * marketplace addon which provides the ATOMIC feature, then we can ignore this
  * hold.
+ *
+ * The Onboarding flow takes care of upgrading the Business plan so we can
+ * can ignore the 'NO_BUSINESS_PLAN' hold.
  */
 const processMarketplaceExceptions = (
 	state: Record< string, unknown >,
 	eligibilityData: EligibilityData,
 	isEligible: boolean,
-	isMarketplaceException?: boolean
+	isOnboarding?: boolean
 ) => {
 	// If no eligibilityHolds are defined, skip.
 	if ( typeof eligibilityData.eligibilityHolds === 'undefined' ) {
@@ -347,7 +350,7 @@ const processMarketplaceExceptions = (
 	// If not explicit exception and missing INSTALL_PURCHASED_PLUGINS feature, skip.
 	const siteId = getSelectedSiteId( state );
 	if (
-		! isMarketplaceException &&
+		! isOnboarding &&
 		! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
 	) {
 		return { eligibilityData, isEligible };
@@ -374,7 +377,7 @@ const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalPr
 			state,
 			eligibilityData,
 			isEligible,
-			ownProps.isMarketplaceException
+			ownProps.isOnboarding
 		) );
 	}
 

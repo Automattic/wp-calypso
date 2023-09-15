@@ -26,8 +26,8 @@ export const EligibilityWarningsModal = ( {
 			<EligibilityWarnings
 				siteId={ site?.ID }
 				standaloneProceed
+				isOnboarding
 				isMarketplace={ isMarketplace }
-				isMarketplaceException={ isMarketplace }
 				onProceed={ handleContinue }
 			/>
 		</Dialog>
