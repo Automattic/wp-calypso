@@ -19,7 +19,7 @@ const blockFlows: BlockFlow[] = [
 // Private sites change behaivor of the Map block.
 // @see: https://github.com/Automattic/jetpack/issues/32991
 if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
-	blockFlows.push( new MapFlow( { address: '1455 Quebec St, Vancouver, BC V6A 3Z7' } ) );
+	blockFlows.push( new MapFlow( { address: '1455 Quebec Street, Vancouver, BC' } ) );
 }
 
 createBlockTests( 'Blocks: Other Jetpack Blocks', blockFlows );
