@@ -27,7 +27,7 @@ export default function DomainContactInfo( { navigation }: StepProps ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-contact-info__header"
-					headerText={ __( 'Enter your contact informaiton' ) }
+					headerText={ __( 'Enter your contact information' ) }
 					subHeaderText={ __(
 						'Domain owners are required to provide correct contact information.'
 					) }
