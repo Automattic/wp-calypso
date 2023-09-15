@@ -63,12 +63,14 @@ export function CheckoutProvider( {
 		children,
 		initiallySelectedPaymentMethodId,
 	};
-	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
 
+	// Keep track of enabled/disabled payment methods.
+	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
 	const availablePaymentMethodIds = paymentMethods
 		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
 		.map( ( method ) => method.id );
 
+	// Automatically select first payment method unless explicitly set or disabled.
 	if (
 		selectFirstAvailablePaymentMethod &&
 		! initiallySelectedPaymentMethodId &&
@@ -77,20 +79,26 @@ export function CheckoutProvider( {
 		initiallySelectedPaymentMethodId = availablePaymentMethodIds[ 0 ];
 	}
 
+	// Keep track of selected payment method.
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
 
+	// Reset the selected payment method if the list of payment methods changes.
 	useResetSelectedPaymentMethodWhenListChanges(
 		availablePaymentMethodIds,
 		initiallySelectedPaymentMethodId,
 		setPaymentMethodId
 	);
 
+	// Keep track of form status state (loading, validating, ready, etc).
 	const formStatusManager = useFormStatusManager( Boolean( isLoading ), Boolean( isValidating ) );
+
+	// Keep track of transaction status state (pending, complete, redirecting, etc).
 	const transactionStatusManager = useTransactionStatusManager();
 	const { transactionLastResponse, transactionStatus, transactionError } = transactionStatusManager;
 
+	// When form status or transaction status changes, call the appropriate callbacks.
 	useCallEventCallbacks( {
 		onPaymentComplete,
 		onPaymentRedirect,
@@ -102,6 +110,7 @@ export function CheckoutProvider( {
 		transactionLastResponse,
 	} );
 
+	// Create a big blob of state to store in React Context for use by all this Provider's children.
 	const value: CheckoutContextInterface = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
@@ -150,6 +159,11 @@ export function CheckoutProvider( {
 	);
 }
 
+/**
+ * Even though CheckoutProvider is TypeScript, it's possible for consumers to
+ * misuse it in ways that are not easy to debug. This helper component throws
+ * errors if the props are not what they should be.
+ */
 function CheckoutProviderPropValidator( {
 	propsToValidate,
 }: {
@@ -170,6 +184,7 @@ function CheckoutProviderPropValidator( {
 	return null;
 }
 
+// When form status or transaction status changes, call the appropriate callbacks.
 function useCallEventCallbacks( {
 	onPaymentComplete,
 	onPaymentRedirect,
@@ -235,6 +250,7 @@ function useCallEventCallbacks( {
 	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
 }
 
+// Reset the selected payment method if the list of payment methods changes.
 function useResetSelectedPaymentMethodWhenListChanges(
 	availablePaymentMethodIds: string[],
 	initiallySelectedPaymentMethodId: string | null,
