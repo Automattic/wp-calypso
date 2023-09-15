@@ -2,6 +2,7 @@ import { PartialDomainData } from '@automattic/data-stores';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { getDomainType } from '../utils/get-domain-type';
+import { emailManagementEdit } from '../utils/paths';
 
 interface DomainsTableEmailIndicatorProps {
 	domain: PartialDomainData;
@@ -79,14 +80,3 @@ export const DomainsTableEmailIndicator = ( {
 		</a>
 	);
 };
-
-export function emailManagementEdit( siteSlug: string, domainName: string ) {
-	// Encodes only real domain names and not parameter placeholders
-	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
-		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
-		// Note they are encoded twice since page.js decodes the path by default.
-		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
-	}
-
-	return '/email/' + domainName + '/manage/' + siteSlug;
-}
