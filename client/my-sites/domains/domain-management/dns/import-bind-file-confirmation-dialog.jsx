@@ -12,7 +12,7 @@ function ImportBindFileConfirmationDialog( { onClose, visible, recordsToImport }
 		onClose( false );
 	};
 
-	const buttons = [
+	const importButtons = [
 		{
 			action: 'cancel',
 			label: __( 'Cancel' ),
@@ -34,6 +34,7 @@ function ImportBindFileConfirmationDialog( { onClose, visible, recordsToImport }
 
 	const renderRecordAsString = ( record ) => {
 		const recordAsString = `${ record.host } ${ record.class } ${ record.type }`;
+
 		switch ( record.type ) {
 			case 'A':
 			case 'AAAA':
@@ -45,28 +46,28 @@ function ImportBindFileConfirmationDialog( { onClose, visible, recordsToImport }
 				return `${ recordAsString } ${ record.aux } ${ record.data }`;
 			case 'SRV':
 				return `${ record.service }.${ record.protocol }.${ recordAsString } ${ record.aux } ${ record.weight } ${ record.port } ${ record.data }`;
+			default:
+				return recordAsString;
 		}
 	};
 
 	const renderImportedRecords = () => {
-		let records = '';
-		recordsToImport.forEach( ( record ) => {
-			records += renderRecordAsString( record ) + '\n';
-		} );
-		return records;
+		return recordsToImport.reduce( ( output, record ) => {
+			return output + renderRecordAsString( record ) + '\n';
+		}, '' );
 	};
 
 	return (
 		<Dialog
 			isVisible={ visible }
-			buttons={ recordsToImport && recordsToImport.length > 0 ? buttons : okButton }
+			buttons={ recordsToImport && recordsToImport.length > 0 ? importButtons : okButton }
 			onClose={ onCancel }
 		>
 			<h1>{ __( 'Import DNS records' ) }</h1>
 			{ recordsToImport && recordsToImport.length > 0 ? (
 				<>
 					<p>{ __( 'The following DNS records will be added to your domain:' ) }</p>
-					<pre className="import-records-dialog__records">{ renderImportedRecords() }</pre>
+					<pre>{ renderImportedRecords() }</pre>
 				</>
 			) : (
 				<p>{ __( "We couldn't find valid DNS records in the selected BIND file." ) }</p>
