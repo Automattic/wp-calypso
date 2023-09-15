@@ -114,7 +114,6 @@ export interface CheckoutContextInterface {
 	setDisabledPaymentMethodIds: ( methods: string[] ) => void;
 	paymentMethodId: string | null;
 	setPaymentMethodId: ( id: string ) => void;
-	transactionStatusManager: TransactionStatusManager | null;
 	paymentProcessors: PaymentProcessorProp;
 	onPageLoadError?: CheckoutPageErrorCallback;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;

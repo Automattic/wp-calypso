@@ -17,6 +17,7 @@ import { LineItem, CheckoutProviderProps, FormStatus, TransactionStatus } from '
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormStatusProvider } from './form-status-provider';
 import TransactionStatusHandler from './transaction-status-handler';
+import { TransactionStatusProvider } from './transaction-status-provider';
 import type {
 	PaymentEventCallback,
 	PaymentErrorCallback,
@@ -118,7 +119,6 @@ export function CheckoutProvider( {
 			setDisabledPaymentMethodIds,
 			paymentMethodId,
 			setPaymentMethodId,
-			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
 			onPaymentMethodChanged,
@@ -127,7 +127,6 @@ export function CheckoutProvider( {
 			paymentMethodId,
 			paymentMethods,
 			disabledPaymentMethodIds,
-			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
 			onPaymentMethodChanged,
@@ -147,12 +146,14 @@ export function CheckoutProvider( {
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<LineItemsProvider items={ items } total={ total }>
-					<FormStatusProvider formStatusManager={ formStatusManager }>
-						<CheckoutContext.Provider value={ value }>
-							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-							{ children }
-						</CheckoutContext.Provider>
-					</FormStatusProvider>
+					<TransactionStatusProvider transactionStatusManager={ transactionStatusManager }>
+						<FormStatusProvider formStatusManager={ formStatusManager }>
+							<CheckoutContext.Provider value={ value }>
+								<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+								{ children }
+							</CheckoutContext.Provider>
+						</FormStatusProvider>
+					</TransactionStatusProvider>
 				</LineItemsProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
