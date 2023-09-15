@@ -660,6 +660,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeSlugWithRepo',
 			],
+			defaultDependencies: {
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
 		},
 		'site-picker': {
 			stepName: 'site-picker',

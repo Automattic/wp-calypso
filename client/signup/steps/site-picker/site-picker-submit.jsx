@@ -21,11 +21,6 @@ export class SitePickerSubmit extends Component {
 			siteSlug,
 		} );
 
-		this.props.submitSignupStep(
-			{ stepName: 'themes', wasSkipped: true },
-			{ themeSlugWithRepo: 'pub/twentysixteen' }
-		);
-
 		if ( hasPaidPlan ) {
 			this.props.submitSignupStep(
 				{ stepName: 'plans-site-selected', wasSkipped: true },
