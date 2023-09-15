@@ -32,16 +32,29 @@ function ImportBindFileConfirmationDialog( { onClose, visible, recordsToImport }
 		},
 	];
 
-	const renderImportedRecords = () => {
-		if ( ! recordsToImport ) {
-			return '';
+	const renderRecordAsString = ( record ) => {
+		const recordAsString = `${ record.host } ${ record.class } ${ record.type }`;
+		switch ( record.type ) {
+			case 'A':
+				return `${ recordAsString } ${ record.ip }`;
+			case 'AAAA':
+				return `${ recordAsString } ${ record.ipv6 }`;
+			case 'CNAME':
+			case 'NS':
+				return `${ recordAsString } ${ record.target }`;
+			case 'MX':
+				return `${ recordAsString } ${ record.pri } ${ record.target }`;
+			case 'TXT':
+				return `${ recordAsString } ${ record.txt }`;
+			case 'SRV':
+				return `${ record.service }.${ record.protocol }.${ recordAsString } ${ record.aux } ${ record.weight } ${ record.port } ${ record.target }`;
 		}
+	};
 
+	const renderImportedRecords = () => {
 		let records = '';
-		console.log( 'recordsToImport' );
-		console.log( recordsToImport );
-		( recordsToImport || [] ).forEach( ( record ) => {
-			records += `${ record }\n`;
+		recordsToImport.forEach( ( record ) => {
+			records += renderRecordAsString( record ) + '\n';
 		} );
 		return records;
 	};
@@ -49,17 +62,17 @@ function ImportBindFileConfirmationDialog( { onClose, visible, recordsToImport }
 	return (
 		<Dialog
 			isVisible={ visible }
-			buttons={ recordsToImport ? buttons : okButton }
+			buttons={ recordsToImport && recordsToImport.length > 0 ? buttons : okButton }
 			onClose={ onCancel }
 		>
 			<h1>{ __( 'Import DNS records' ) }</h1>
-			{ recordsToImport ? (
+			{ recordsToImport && recordsToImport.length > 0 ? (
 				<>
 					<p>{ __( 'The following DNS records will be added to your domain:' ) }</p>
-					<code className="import-records-dialog__records">{ renderImportedRecords() }</code>
+					<pre className="import-records-dialog__records">{ renderImportedRecords() }</pre>
 				</>
 			) : (
-				<p>{ __( 'We could not find valid DNS records in the file you chose' ) }</p>
+				<p>{ __( "We couldn't find valid DNS records in the selected file." ) }</p>
 			) }
 		</Dialog>
 	);
