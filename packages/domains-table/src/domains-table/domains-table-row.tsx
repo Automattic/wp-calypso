@@ -9,6 +9,7 @@ import { useDomainRow } from '../use-domain-row';
 import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
+import { useDomainsTable } from './domains-table';
 import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
@@ -40,6 +41,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		domainStatusPurchaseActions,
 		pendingUpdates,
 	} = useDomainRow( domain );
+	const { canSelectAnyDomains, domainsTableColumns } = useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -79,7 +81,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				{ ! domain.wpcom_domain && (
+				{ canSelectAnyDomains && ! domain.wpcom_domain && (
 					<CheckboxControl
 						__nextHasNoMarginBottom
 						checked={ isSelected }
@@ -91,53 +93,90 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 					/>
 				) }
 			</td>
-			<td>
-				{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
-				{ isManageableDomain ? (
-					<a
-						className="domains-table__domain-name"
-						href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
-					>
-						{ domain.domain }
-					</a>
-				) : (
-					<span className="domains-table__domain-name">{ domain.domain }</span>
-				) }
-				{ domainTypeText && (
-					<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
-				) }
-			</td>
-			{ ! hideOwnerColumn && <td>{ renderOwnerCell() }</td> }
-			<td>{ renderSiteCell() }</td>
-			<td>
-				<DomainsTableRegisteredUntilCell domain={ domain } />
-			</td>
-			<td>
-				{ isLoadingRowDetails ? (
-					<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
-				) : (
-					<DomainsTableStatusCell
-						siteSlug={ siteSlug }
-						currentDomainData={ currentDomainData }
-						domainStatusPurchaseActions={ domainStatusPurchaseActions }
-						pendingUpdates={ pendingUpdates }
-					/>
-				) }
-			</td>
-			<td></td>
-			<td className="domains-table-row__actions">
-				{ currentDomainData && (
-					<DomainsTableRowActions
-						siteSlug={ siteSlug }
-						domain={ currentDomainData }
-						isAllSitesView={ isAllSitesView }
-						canSetPrimaryDomainForSite={
-							site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false
-						}
-						isSiteOnFreePlan={ site?.plan?.is_free ?? true }
-					/>
-				) }
-			</td>
+			{ domainsTableColumns.map( ( column ) => {
+				if ( column.name === 'domain' ) {
+					return (
+						<td key={ column.name }>
+							{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
+							{ isManageableDomain ? (
+								<a
+									className="domains-table__domain-name"
+									href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+								>
+									{ domain.domain }
+								</a>
+							) : (
+								<span className="domains-table__domain-name">{ domain.domain }</span>
+							) }
+							{ domainTypeText && (
+								<span className="domains-table-row__domain-type-text">{ domainTypeText }</span>
+							) }
+						</td>
+					);
+				}
+
+				if ( column.name === 'owner' ) {
+					if ( ! hideOwnerColumn ) {
+						return <td key={ column.name }>{ renderOwnerCell() }</td>;
+					}
+
+					return null;
+				}
+
+				if ( column.name === 'site' ) {
+					return <td key={ column.name }>{ renderSiteCell() }</td>;
+				}
+
+				if ( column.name === 'expire_renew' ) {
+					return (
+						<td key={ column.name }>
+							<DomainsTableRegisteredUntilCell domain={ domain } />
+						</td>
+					);
+				}
+
+				if ( column.name === 'status' ) {
+					return (
+						<td key={ column.name }>
+							{ isLoadingRowDetails ? (
+								<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
+							) : (
+								<DomainsTableStatusCell
+									siteSlug={ siteSlug }
+									currentDomainData={ currentDomainData }
+									domainStatusPurchaseActions={ domainStatusPurchaseActions }
+									pendingUpdates={ pendingUpdates }
+								/>
+							) }
+						</td>
+					);
+				}
+
+				if ( column.name === 'email' ) {
+					return <td key={ column.name }></td>;
+				}
+
+				if ( column.name === 'action' ) {
+					return (
+						<td key={ column.name } className="domains-table-row__actions">
+							{ currentDomainData && (
+								<DomainsTableRowActions
+									siteSlug={ siteSlug }
+									domain={ currentDomainData }
+									isAllSitesView={ isAllSitesView }
+									canSetPrimaryDomainForSite={
+										site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ??
+										false
+									}
+									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+								/>
+							) }
+						</td>
+					);
+				}
+
+				throw new Error( `untreated cell: ${ column.name }` );
+			} ) }
 		</tr>
 	);
 }

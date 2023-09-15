@@ -3,8 +3,8 @@ import SearchControl, { SearchIcon } from '@automattic/search';
 import { isMobile } from '@automattic/viewport';
 import { DropdownMenu, MenuGroup, MenuItem, ToggleControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { ReactNode } from 'react';
 import { useDomainsTable } from '../domains-table/domains-table';
-import { domainsTableColumns } from '../domains-table-header/columns';
 
 import './style.scss';
 
@@ -21,10 +21,16 @@ interface DomainsTableFiltersProps {
 export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersProps ) => {
 	const { __ } = useI18n();
 
-	const { sortKey, sortDirection, onSortChange, setShowBulkActions, showBulkActions } =
-		useDomainsTable();
+	const {
+		sortKey,
+		sortDirection,
+		onSortChange,
+		setShowBulkActions,
+		showBulkActions,
+		domainsTableColumns,
+	} = useDomainsTable();
 
-	const options: any[] = [];
+	const options: ReactNode[] = [];
 	const selected = domainsTableColumns.find( ( column ) => column.name === sortKey );
 	const sortName = selected?.sortLabel || selected?.label;
 	const arrow = sortDirection === 'asc' ? '↓' : '↑';
