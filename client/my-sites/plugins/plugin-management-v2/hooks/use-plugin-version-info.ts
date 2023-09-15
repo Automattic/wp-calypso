@@ -8,7 +8,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 export default function usePluginVersionInfo(
 	plugin: PluginComponentProps,
-	selectedSite?: SiteDetails
+	selectedSiteId?: number
 ): {
 	currentVersionsRange: { min: string; max: string };
 	updatedVersions: string[];
@@ -27,11 +27,13 @@ export default function usePluginVersionInfo(
 		: [];
 
 	const siteIds = siteObjectsToSiteIds( sites );
-	const state = useSelector( ( state ) => state );
-	const pluginsOnSites: any = getPluginOnSites( state, siteIds, plugin?.slug );
+
+	const pluginsOnSites: any = useSelector( ( state ) =>
+		getPluginOnSites( state, siteIds, plugin?.slug )
+	);
 
 	const getSitePlugin = ( site: SiteDetails ) => {
-		const siteId = selectedSite ? selectedSite.ID : site.ID;
+		const siteId = selectedSiteId || site.ID;
 		return pluginsOnSites?.sites[ siteId ];
 	};
 

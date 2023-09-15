@@ -2,11 +2,26 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
+
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: jest.fn(),
+} ) );
+
+jest.mock( '../../plugin-management-v2/hooks/use-plugin-version-info', () => {
+	return jest.fn().mockImplementation( () => {
+		return {
+			currentVersionsRange: {
+				min: '1.0.0',
+				max: null,
+			},
+			updatedVersions: [ '1.0.0' ],
+			hasUpdate: true,
+		};
+	} );
+} );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = ( key ) => {
@@ -49,38 +64,11 @@ describe( 'PluginDetailsHeader', () => {
 		plugin,
 	};
 
-	const initialState = {
-		currentUser: {
-			capabilities: {},
-		},
-		plugins: {
-			installed: {
-				isRequesting: {},
-				plugins: {},
-				status: {},
-			},
-		},
-		sites: {},
-		ui: { selectedSiteId: 1234 },
-	};
-
-	const mockStore = configureStore();
-	const store = mockStore( initialState );
-	const queryClient = new QueryClient();
-
-	const Wrapper = ( { children } ) => (
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		</Provider>
-	);
-
 	test.each( [ { configEnabled: true }, { configEnabled: false } ] )(
 		'should render the correct author url (configEnabled: $configEnabled)',
 		( { configEnabled } ) => {
 			config.isEnabled.mockImplementation( () => configEnabled );
-			render( <PluginDetailsHeader { ...mockedProps } />, {
-				wrapper: Wrapper,
-			} );
+			render( <PluginDetailsHeader { ...mockedProps } /> );
 			const want = /\/plugins\/.*\?s=developer:.*/;
 			const have = screen.getByText( plugin.author_name ).getAttribute( 'href' );
 			expect( have ).toMatch( want );

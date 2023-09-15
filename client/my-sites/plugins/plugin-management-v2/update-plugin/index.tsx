@@ -26,7 +26,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 
 	const { currentVersionsRange, updatedVersions, hasUpdate } = usePluginVersionInfo(
 		plugin,
-		selectedSite
+		selectedSite?.ID
 	);
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );

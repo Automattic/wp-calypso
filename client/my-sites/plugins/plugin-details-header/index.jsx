@@ -19,7 +19,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 
-	const { currentVersionsRange } = usePluginVersionInfo( plugin, selectedSite );
+	const { currentVersionsRange } = usePluginVersionInfo( plugin, selectedSite?.ID );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
