@@ -4,6 +4,11 @@
 @media ( max-width: 480px ) {
 	.bulk-domains-main {
 		overflow-y: hidden;
+		/*
+		 * The 47px value comes from https://github.com/Automattic/wp-calypso/blob/d7e2ada/client/my-sites/sidebar/style.scss#L751.
+		 * Using 46px, which is the masterbar height CSS variable, introduces an annoying 1px scroll.
+		 * We're using this magic number elsewhere too, so a clean up would be appreciated.
+		 */
 		height: calc(100vh - 47px);
 		padding-bottom: 0 !important;
 		display: flex;
