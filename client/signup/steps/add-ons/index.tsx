@@ -3,11 +3,13 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import AddOnsGrid from 'calypso/my-sites/add-ons/components/add-ons-grid';
-import useAddOns, { AddOnMeta } from 'calypso/my-sites/add-ons/hooks/use-add-ons';
+import useAddOns from 'calypso/my-sites/add-ons/hooks/use-add-ons';
 import NavigationLink from 'calypso/signup/navigation-link';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch } from 'calypso/state';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import type { AddOnMeta } from '@automattic/data-stores';
+
 import './styles.scss';
 
 interface Props {

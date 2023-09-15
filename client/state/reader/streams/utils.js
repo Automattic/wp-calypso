@@ -1,4 +1,3 @@
-import { last } from 'lodash';
 import { sameXPost } from 'calypso/reader/stream/utils';
 
 /**
@@ -26,7 +25,7 @@ export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
  */
 export const combineXPosts = ( postKeys ) =>
 	postKeys.reduce( ( accumulator, postKey ) => {
-		const lastPostKey = last( accumulator );
+		const lastPostKey = accumulator[ accumulator.length - 1 ];
 		if ( sameXPost( lastPostKey, postKey ) ) {
 			accumulator[ accumulator.length - 1 ] = addDuplicateXPostToPostKey( lastPostKey, postKey );
 		} else {

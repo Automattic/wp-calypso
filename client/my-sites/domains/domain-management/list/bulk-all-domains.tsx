@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	DomainsTable,
 	useDomainsTable,
@@ -12,6 +13,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { handleRenewNowClick, shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 import { Purchase } from 'calypso/lib/purchases/types';
+import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useDispatch } from 'calypso/state';
 import DomainHeader from '../components/domain-header';
 import OptionsDomainButton from './options-domain-button';
@@ -25,6 +27,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains } = useDomainsTable();
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { sendNudge } = useOdieAssistantContext();
 
 	const item = {
 		label: translate( 'All Domains' ),
@@ -84,13 +87,25 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
-			<Main wideLayout>
+			<Main className="bulk-domains-main">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				<DomainsTable
 					domains={ domains }
 					isAllSitesView
+					shouldDisplayContactInfoBulkAction={ isEnabled(
+						'domains/bulk-actions-contact-info-editing'
+					) }
 					domainStatusPurchaseActions={ purchaseActions }
+					onDomainAction={ ( action, domain ) => {
+						if ( action === 'manage-dns-settings' ) {
+							sendNudge( {
+								nudge: 'dns-settings',
+								initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+								context: { domain: domain.domain },
+							} );
+						}
+					} }
 				/>
 			</Main>
 			<UsePresalesChat />

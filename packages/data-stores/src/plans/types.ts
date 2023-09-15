@@ -95,6 +95,19 @@ export interface PricedAPIPlan {
 	 * @deprecated use raw_price_integer as using floats for currency is not safe.
 	 */
 	raw_price: number;
+
+	/**
+	 * The orig cost in the currency's smallest unit. Note that origCostInteger is never null. Although orig_cost
+	 * is undefined if the cost of a store product is overridden by a promotion or a coupon, orig_cost_integer
+	 * is not. origCostInteger will return a price identical to raw_price_integer instead.
+	 */
+	orig_cost_integer: number;
+
+	/**
+	 * The orig cost as a float.
+	 *
+	 * @deprecated use orig_cost_integer as using floats for currency is not safe.
+	 */
 	orig_cost?: number | null;
 	currency_code: string;
 }

@@ -319,11 +319,12 @@ export function redirectToPermalinkIfLoggedOut( context, next ) {
 	if ( ! siteFragment || ! context.path ) {
 		return next();
 	}
-	// Check if the path is in this format.
-	// - /page/{site}/{id}
-	// - /post/{site}/{id}
-	// - /edit/jetpack-portfolio/{site}/{id}
-	// - /edit/jetpack-testimonial/{site}/{id}
+	// "single view" pages are parsed from URLs like these:
+	// (posts, pages, custom post types, etc…)
+	//  - /page/{site}/{post_id}
+	//  - /post/{site}/{post_id}
+	//  - /edit/jetpack-portfolio/{site}/{post_id}
+	//  - /edit/jetpack-testimonial/{site}/{post_id}
 	const postId = parseInt( context.params.post, 10 );
 	const linksToSingleView = postId > 0;
 	if ( linksToSingleView ) {

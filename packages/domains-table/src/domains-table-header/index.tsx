@@ -13,7 +13,8 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 export type DomainsTableColumn =
 	| {
 			name: string;
-			label: string | null;
+			label: string | ( ( count: number ) => string ) | null;
+			sortLabel?: string;
 			isSortable: true;
 			initialSortDirection: 'asc' | 'desc';
 			supportsOrderSwitching?: boolean;
@@ -30,7 +31,8 @@ export type DomainsTableColumn =
 	  }
 	| {
 			name: string;
-			label: string | null;
+			label: string | ( ( count: number ) => string ) | null;
+			sortLabel?: string;
 			isSortable?: false;
 			initialSortDirection?: never;
 			supportsOrderSwitching?: never;
@@ -53,6 +55,7 @@ type DomainsTableHeaderProps = {
 	onChangeSortOrder: ( selectedColumn: DomainsTableColumn ) => void;
 	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
 	onBulkSelectionChange(): void;
+	domainCount: number;
 	headerClasses?: string;
 	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
@@ -66,6 +69,7 @@ export const DomainsTableHeader = ( {
 	bulkSelectionStatus,
 	onBulkSelectionChange,
 	onChangeSortOrder,
+	domainCount,
 	headerClasses,
 	hideOwnerColumn = false,
 	domainsRequiringAttention,
@@ -122,7 +126,10 @@ export const DomainsTableHeader = ( {
 								} ) }
 								tabIndex={ column?.isSortable ? 0 : -1 }
 							>
-								{ column?.headerComponent || column?.label }
+								{ column?.headerComponent ||
+									( typeof column?.label === 'function'
+										? column.label( domainCount )
+										: column?.label ) }
 								{ column?.name === 'status' && domainsRequiringAttention && (
 									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
 								) }

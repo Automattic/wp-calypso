@@ -18,7 +18,6 @@ export const NAVIGATOR_PATHS = {
 };
 
 export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
-export const INITIAL_CATEGORY = 'posts';
 
 export const INITIAL_SCREEN = 'main';
 
@@ -56,3 +55,17 @@ export const PATTERN_CATEGORIES = [
 	//'testimonials', -- Not exist
 	// 'text', -- Hidden
 ];
+
+export const ORDERED_PATTERN_CATEGORIES = [
+	'call-to-action',
+	'about',
+	'services',
+	'store',
+	'quotes',
+	'posts',
+	'newsletter',
+	'gallery',
+	'contact',
+];
+
+export const INITIAL_CATEGORY = ORDERED_PATTERN_CATEGORIES[ 0 ];

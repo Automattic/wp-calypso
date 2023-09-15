@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { compact, get, isEqual, sortBy } from 'lodash';
+import { get, isEqual, sortBy } from 'lodash';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
 /**
@@ -75,8 +75,8 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query = {} } ) =>
  * @returns {Object<string, Object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {
-	failures: unionWith( list.failures, compact( [ item.onFailure ] ) ),
-	successes: unionWith( list.successes, compact( [ item.onSuccess ] ) ),
+	failures: unionWith( list.failures, [ item.onFailure ].filter( Boolean ) ),
+	successes: unionWith( list.successes, [ item.onSuccess ].filter( Boolean ) ),
 } );
 
 /**

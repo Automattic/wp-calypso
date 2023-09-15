@@ -57,7 +57,7 @@ export class Login extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
-		isGravatar: PropTypes.bool,
+		isGravPoweredClient: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
@@ -223,7 +223,7 @@ export class Login extends Component {
 		);
 	}
 
-	renderGravatarLoginBlockFooter() {
+	renderGravPoweredLoginBlockFooter() {
 		const { oauth2Client, translate, locale, currentQuery, currentRoute } = this.props;
 
 		const magicLoginUrl = login( {
@@ -245,8 +245,8 @@ export class Login extends Component {
 
 		return (
 			<>
-				<hr className="gravatar-login__divider" />
-				<div className="gravatar-login__footer">
+				<hr className="grav-powered-login__divider" />
+				<div className="grav-powered-login__footer">
 					<a
 						href={ magicLoginUrl }
 						onClick={ () =>
@@ -290,7 +290,7 @@ export class Login extends Component {
 			isJetpack,
 			isWhiteLogin,
 			isP2Login,
-			isGravatar,
+			isGravPoweredClient,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -331,7 +331,7 @@ export class Login extends Component {
 						twoFactorAuthType={ twoFactorAuthType }
 						isWhiteLogin={ isWhiteLogin }
 						isP2Login={ isP2Login }
-						isGravatar={ isGravatar }
+						isGravPoweredClient={ isGravPoweredClient }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
 						oauth2ClientId={ this.props.oauth2Client?.id }
@@ -341,9 +341,9 @@ export class Login extends Component {
 			</>
 		);
 
-		// It's used to toggle UIs for Gravatar login and magic login pages only (not for F2A pages)
-		const isGravatarLoginPage =
-			isGravatar &&
+		// It's used to toggle UIs for the login and magic login of Gravatar powered clients only (not for F2A pages)
+		const isGravPoweredLoginPage =
+			isGravPoweredClient &&
 			! currentRoute.startsWith( '/log-in/push' ) &&
 			! currentRoute.startsWith( '/log-in/authenticator' ) &&
 			! currentRoute.startsWith( '/log-in/sms' ) &&
@@ -360,14 +360,14 @@ export class Login extends Component {
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
 				isP2Login={ isP2Login }
-				isGravatar={ isGravatar }
-				isGravatarLoginPage={ isGravatarLoginPage }
+				isGravPoweredClient={ isGravPoweredClient }
+				isGravPoweredLoginPage={ isGravPoweredLoginPage }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
-				footer={ isGravatarLoginPage ? this.renderGravatarLoginBlockFooter() : footer }
+				footer={ isGravPoweredLoginPage ? this.renderGravPoweredLoginBlockFooter() : footer }
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
