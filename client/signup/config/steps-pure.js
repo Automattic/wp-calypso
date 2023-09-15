@@ -409,7 +409,8 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'addOnItem' ],
+			optionalDependencies: [ 'addOnItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE,
 				themeSlugWithRepo: 'pub/twentytwentytwo',
