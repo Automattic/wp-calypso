@@ -83,6 +83,12 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		width: '25%',
 	},
 	{
+		name: 'email',
+		label: __( 'Email', __i18n_text_domain__ ),
+		isSortable: false,
+		width: '20%',
+	},
+	{
 		name: 'expire_renew',
 		label: __( 'Expires / renews on', __i18n_text_domain__ ),
 		isSortable: true,
@@ -99,12 +105,6 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		supportsOrderSwitching: true,
 		sortFunctions: [],
 		width: '15%',
-	},
-	{
-		name: 'email',
-		label: __( 'Email', __i18n_text_domain__ ),
-		isSortable: false,
-		width: '20%',
 	},
 	{ name: 'action', label: null },
 ];
