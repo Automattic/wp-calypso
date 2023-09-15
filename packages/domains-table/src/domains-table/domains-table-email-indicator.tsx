@@ -1,18 +1,21 @@
 import { PartialDomainData } from '@automattic/data-stores';
-import { translate } from 'i18n-calypso';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { getDomainType } from '../utils/get-domain-type';
+
+interface DomainsTableEmailIndicatorProps {
+	domain: PartialDomainData;
+	siteSlug: string;
+}
 
 export const DomainsTableEmailIndicator = ( {
 	domain,
 	siteSlug,
-}: {
-	domain: PartialDomainData;
-	siteSlug: string;
-} ) => {
-	// mailbox logic below moved from client/my-sites/domains/domain-management/list/domain-row.jsx
+}: DomainsTableEmailIndicatorProps ) => {
+	const { __, _n } = useI18n();
 
 	if ( ! [ 'mapped', 'registered' ].includes( getDomainType( domain ) ) ) {
-		return null;
+		return '-';
 	}
 
 	const googleStatus = domain.google_apps_subscription?.status || '';
@@ -23,30 +26,33 @@ export const DomainsTableEmailIndicator = ( {
 	if ( googleStatus && ! [ '', 'no_subscription', 'other_provider' ].includes( googleStatus ) ) {
 		const count = domain?.google_apps_subscription?.total_user_count ?? 0;
 
-		message = translate( '%(count)d mailbox', '%(count)d mailboxes', {
-			count,
-			args: {
+		message = sprintf(
+			/* translators: The number of GSuite mailboxes active for the current domain */
+			_n( '%(count)d mailbox', '%(count)d mailboxes', count ),
+			{
 				count,
-			},
-			comment: 'The number of GSuite mailboxes active for the current domain',
-		} );
+			}
+		);
 	} else if ( titanStatus && ( titanStatus === 'active' || titanStatus === 'suspended' ) ) {
 		const count = domain.titan_mail_subscription?.maximum_mailbox_count ?? 1;
-		message = translate( '%(count)d mailbox', '%(count)d mailboxes', {
-			args: {
+
+		message = sprintf(
+			/* translators: The number of mailboxes for the current domain */
+			_n( '%(count)d mailbox', '%(count)d mailboxes', count ),
+			{
 				count,
-			},
-			count,
-			comment: '%(count)d is the number of mailboxes for the current domain',
-		} );
+			}
+		);
 	} else if ( domain.email_forwards_count > 0 ) {
-		message = translate( '%(count)d forward', '%(count)d forwards', {
-			count: domain.email_forwards_count,
-			args: {
-				count: domain.email_forwards_count,
-			},
-			comment: 'The number of email forwards active for the current domain',
-		} );
+		const count = domain.email_forwards_count;
+
+		message = sprintf(
+			/* translators: The number of email forwards active for the current domain */
+			_n( '%(count)d forward', '%(count)d forwards', count ),
+			{
+				count,
+			}
+		);
 	}
 
 	if ( message ) {
@@ -69,7 +75,7 @@ export const DomainsTableEmailIndicator = ( {
 			className="domains-table-add-email-button"
 			href={ `/email/${ domain.domain }/manage/${ siteSlug }` }
 		>
-			{ translate( '+ Add email' ) }
+			{ __( '+ Add email' ) }
 		</a>
 	);
 };
