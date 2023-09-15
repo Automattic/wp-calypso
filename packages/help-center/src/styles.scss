@@ -65,6 +65,9 @@ $head-foot-height: 50px;
 		}
 
 		.help-center__container-content {
+			&.is-relative {
+				flex: auto;
+			}
 			overflow-y: auto;
 			padding: 16px;
 		}

@@ -14,7 +14,14 @@ export type Nudge = {
 
 export type MessageRole = 'user' | 'bot';
 
-export type MessageType = 'message' | 'action' | 'meta' | 'error' | 'placeholder' | 'help-link';
+export type MessageType =
+	| 'message'
+	| 'action'
+	| 'meta'
+	| 'error'
+	| 'placeholder'
+	| 'help-link'
+	| 'introduction';
 
 export type Message = {
 	content: string;

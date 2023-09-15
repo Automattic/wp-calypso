@@ -1,10 +1,10 @@
-import { HelpIcon } from '@automattic/help-center';
-import { TextControl, Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormTextInputWithAction from '../components/forms/form-text-input-with-action';
 import { useOdieAssistantContext } from './context';
 import ChatMessage from './message';
 import { useOdieGetChatPollQuery, useOdieSendMessage } from './query';
@@ -43,7 +43,6 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
-	const [ userInteracted, setUserInteracted ] = useState( false );
 
 	const dispatch = useDispatch();
 
@@ -91,7 +90,6 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 	const handleMessageChange = ( text: string ) => {
 		setInput( text );
 	};
-
 	const handleSendMessage = async () => {
 		try {
 			setIsLoading( true );
@@ -131,7 +129,6 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 
 	const handleToggleVisibility = () => {
 		const newVisibility = ! isVisible;
-		setUserInteracted( true );
 
 		dispatch(
 			recordTracksEvent( 'calypso_odie_chat_toggle_visibility_click', {
@@ -143,25 +140,6 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 
 		setIsVisible( newVisibility );
 	};
-
-	function handleKeyDown( event: React.KeyboardEvent< HTMLInputElement > ) {
-		if ( event.key === 'Enter' || event.keyCode === 13 ) {
-			// Prevent a newline from being entered into the textbox
-			event.preventDefault();
-
-			handleSendMessage();
-		}
-	}
-
-	function handleFormSubmit( event: React.FormEvent ) {
-		event.preventDefault();
-
-		if ( isLoading ) {
-			return;
-		}
-
-		handleSendMessage();
-	}
 
 	function handleAsideToggle() {
 		setShowAside( ! showAside );
@@ -194,27 +172,9 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 					'chatbox-header-with-help': hasAside,
 				} ) }
 			>
-				{ ! simple ? (
-					<span>{ botName }</span>
-				) : (
-					<button className="chatbox-header-button" onClick={ handleToggleVisibility }>
-						<span
-							className={ classnames( {
-								'chatbox-attention': ! userInteracted || isNudging,
-							} ) }
-						>
-							{ botName }
-						</span>
-					</button>
-				) }
-				<Button
-					className="chatbox-aside-btn"
-					onClick={ handleAsideToggle }
-					type="button"
-					icon={ <HelpIcon /> }
-					iconSize={ 16 }
-				>
-					{ showAside ? 'Ask Wapuu' : "I'm looking for something else" }
+				<span>{ botName }</span>
+				<Button primary className="chatbox-aside-btn" onClick={ handleAsideToggle } type="button">
+					{ showAside ? 'Ask Wapuu' : 'Different communication channels' }
 				</Button>
 			</div>
 
@@ -232,25 +192,20 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 								/>
 							) ) }
 						</div>
-						<form onSubmit={ handleFormSubmit }>
-							<div className="chatbox-input-area">
-								<TextControl
-									className="chatbox-input"
-									type="text"
-									value={ input }
-									onChange={ handleMessageChange }
-									onKeyDown={ handleKeyDown }
-								/>
-								<Button
-									disabled={ isLoading }
-									onClick={ handleSendMessage }
-									className="chatbox-send-btn"
-									type="button"
-								>
-									Send
-								</Button>
-							</div>
-						</form>
+						<div className="chatbox-input-area">
+							<FormTextInputWithAction
+								className="reader-sidebar-tags__text-input"
+								placeholder="Enter message"
+								action="Send"
+								onAction={ handleSendMessage }
+								onChange={ handleMessageChange }
+								inputRef={ undefined }
+								disabled={ undefined }
+								isError={ undefined }
+								isValid={ undefined }
+								clearOnSubmit
+							/>
+						</div>
 					</div>
 				) ) }
 		</div>

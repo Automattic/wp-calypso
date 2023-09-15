@@ -129,7 +129,7 @@ export const HelpCenterContactPage: FC = () => {
 
 	return (
 		<div className="help-center-contact-page">
-			<BackButton />
+			{ ! isWapuuEnabled && <BackButton /> }
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }

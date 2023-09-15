@@ -5,13 +5,14 @@ import {
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OdieAssistant from '..';
+import useOdieUserTracking from '../trackLocation/useOdieUserTracking';
 import { getOdieInitialMessages } from './initial-messages';
 import { getOdieInitialPrompt } from './initial-prompts';
+import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
 import type { Chat, Context, Message, Nudge, OdieAllowedSectionNames } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
@@ -41,6 +42,7 @@ interface OdieAssistantContextInterface {
 	isNudging: boolean;
 	isVisible: boolean;
 	lastNudge: Nudge | null;
+	lastUserLocations: OdieUserTracking[];
 	sendNudge: ( nudge: Nudge ) => void;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
@@ -64,6 +66,7 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
+	lastUserLocations: [],
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -85,8 +88,6 @@ const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
-const allowedTreatmentSections = [ 'plans' ];
-
 // Create a provider component for the context
 const OdieAssistantProvider = ( {
 	aside = null,
@@ -104,12 +105,8 @@ const OdieAssistantProvider = ( {
 	children?: ReactNode;
 } ) => {
 	const dispatch = useDispatch();
-	const [ , experimentAssignment ] = useExperiment( 'calypso_plans_wapuu_sales_agent_v1' );
-	const odieIsEnabled =
-		config.isEnabled( 'odie' ) ||
-		config.isEnabled( 'wapuu' ) ||
-		( experimentAssignment?.variationName === 'treatment' &&
-			allowedTreatmentSections.includes( sectionName ) );
+	const odieIsEnabled = config.isEnabled( 'wapuu' );
+	const lastUserLocations = useOdieUserTracking();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const [ showAside, setShowAside ] = useState( false );
@@ -118,7 +115,11 @@ const OdieAssistantProvider = ( {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ messages, setMessages ] = useState< Message[] >( [
-		{ content: getOdieInitialPrompt( sectionName ), role: 'bot', type: 'message' },
+		{
+			content: getOdieInitialPrompt( sectionName ),
+			role: 'bot',
+			type: botSetting === 'supportDocs' ? 'introduction' : 'message',
+		},
 		...getOdieInitialMessages( botSetting ),
 	] );
 	const [ chat, setChat ] = useState< Chat >( {
@@ -131,7 +132,11 @@ const OdieAssistantProvider = ( {
 			chat_id: null,
 			context: { section_name: sectionName, site_id: siteId },
 			messages: [
-				{ content: getOdieInitialPrompt( sectionName ), role: 'bot', type: 'message' },
+				{
+					content: getOdieInitialPrompt( sectionName ),
+					role: 'bot',
+					type: botSetting === 'supportDocs' ? 'introduction' : 'message',
+				},
 				...getOdieInitialMessages( botSetting ),
 			],
 		} );
@@ -184,6 +189,7 @@ const OdieAssistantProvider = ( {
 				isNudging,
 				isVisible: visibility,
 				lastNudge,
+				lastUserLocations,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,
@@ -200,7 +206,13 @@ const OdieAssistantProvider = ( {
 		>
 			{ children }
 
-			{ odieIsEnabled && <OdieAssistant botNameSlug={ botNameSlug } aside={ aside } /> }
+			{ odieIsEnabled && (
+				<OdieAssistant
+					botNameSlug={ botNameSlug }
+					aside={ aside }
+					simple={ botSetting === 'supportDocs' }
+				/>
+			) }
 		</OdieAssistantContext.Provider>
 	);
 };

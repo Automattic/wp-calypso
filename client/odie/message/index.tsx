@@ -1,7 +1,8 @@
 import { Spinner } from '@wordpress/components';
-import { Icon, page as pageIcon, pencil } from '@wordpress/icons';
+import { Icon, page as pageIcon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { RefObject } from 'react';
+import WapuuAvatar from 'calypso/assets/images/odie/wapuu-avatar.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import { useOdieAssistantContext } from '../context';
 import CustomALink from './custom-a-link';
@@ -28,7 +29,8 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 		'odie-chatbox-message',
 		isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu',
 		{
-			'full-width-message': message.type === 'help-link',
+			'odie-full-width-message': message.type === 'help-link',
+			'odie-introduction-message': message.type === 'introduction',
 		}
 	);
 
@@ -68,13 +70,15 @@ const ChatMessage = ( { message, isLast, messageEndRef }: ChatMessageProps ) => 
 						icon={ pageIcon }
 					/>
 					<div className="odie-chatbox-help-link__content">{ message.content }</div>
-					<Icon
-						className="odie-chatbox-message-help-icon"
-						width={ 32 }
-						height={ 32 }
-						icon={ pencil }
-					/>
 				</div>
+			) }
+			{ message.type === 'introduction' && (
+				<>
+					<div className="odie-introduction-message-content">
+						<img src={ WapuuAvatar } alt="Wapuu profile" className="odie-chatbox-message-avatar" />
+						<div className="odie-chatbox-introduction-message">{ message.content }</div>
+					</div>
+				</>
 			) }
 		</div>
 	);

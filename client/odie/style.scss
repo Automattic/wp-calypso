@@ -18,15 +18,8 @@
 }
 
 .chatbox-aside-btn {
-	color: var(--theme-text-color);
-	box-shadow: none !important;
+	margin-right: 8px;
 }
-
-.chatbox-aside-btn:hover {
-	color: var(--theme-highlight-color) !important;
-	box-shadow: none !important;
-}
-
 .chatbox-aside-container {
 	height: 100%;
 	width: 100%;
@@ -95,8 +88,6 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: top;
-	padding-left: 4px;
-	padding-right: 4px;
 }
 
 .chatbox-input {
@@ -199,7 +190,7 @@
 
 /* When chatbox is hidden */
 .chatbox-hide-vertical {
-	transform: translateY(calc(100% + 5px));
+	transform: translateY(calc(100% + 75px));
 }
 
 /* When chatbox is visible */
