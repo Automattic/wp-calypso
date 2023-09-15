@@ -23,7 +23,7 @@ import {
 	ReactNode,
 } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
-import { domainsTableColumns } from '../domains-table-header/columns';
+import { allSitesViewColumns, siteSpecificViewColumns } from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
@@ -88,6 +88,7 @@ type Value = {
 	onDomainAction: BaseDomainsTableProps[ 'onDomainAction' ];
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
 	shouldDisplayContactInfoBulkAction: boolean;
+	domainsTableColumns: DomainsTableColumn[];
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -166,6 +167,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 
+	const domainsTableColumns = isAllSitesView ? allSitesViewColumns : siteSpecificViewColumns;
+
 	const sortedDomains = useMemo( () => {
 		const selectedColumnDefinition = domainsTableColumns.find(
 			( column ) => column.name === sortKey
@@ -191,7 +194,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 			}
 			return result;
 		} );
-	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
+	}, [ fetchedSiteDomains, domains, sortKey, sortDirection, domainsTableColumns ] );
 
 	const filteredData = useFuzzySearch( {
 		data: sortedDomains ?? [],
@@ -342,6 +345,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		onDomainAction,
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction,
+		domainsTableColumns,
 	};
 
 	return (
