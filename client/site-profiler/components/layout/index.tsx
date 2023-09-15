@@ -5,12 +5,17 @@ import './styles.scss';
 interface Props {
 	children: React.ReactNode;
 	className?: string;
+	isMonoBg?: boolean;
 }
 
 export function LayoutBlock( props: Props ) {
-	const { children, className } = props;
+	const { children, className, isMonoBg } = props;
 
-	return <div className={ classnames( 'l-block', className ) }>{ children }</div>;
+	return (
+		<div className={ classnames( 'l-block', className, { 'is-mono-bg': isMonoBg } ) }>
+			<div className="l-block-content">{ children }</div>
+		</div>
+	);
 }
 
 export function LayoutBlockSection( props: Props ) {

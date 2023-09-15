@@ -1,9 +1,16 @@
 .l-block {
-	border: solid 1px;
-	padding: 2rem 0;
+	padding: 5rem 0;
+
+	&.is-mono-bg {
+		background-color: #e9eff5;
+	}
+}
+
+.l-block-content {
+	max-width: 1224px;
+	margin: 0 auto;
 }
 
 .l-block-section {
-	border: dashed 1px;
-	padding: 2rem 0;
+	padding: 1.5rem 0;
 }
