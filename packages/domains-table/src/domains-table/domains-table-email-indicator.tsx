@@ -19,13 +19,13 @@ export const DomainsTableEmailIndicator = ( {
 		return '-';
 	}
 
-	const googleStatus = domain.google_apps_subscription?.status || '';
-	const titanStatus = domain.titan_mail_subscription?.status || '';
+	const googleStatus = domain.google_apps_subscription?.status;
+	const titanStatus = domain.titan_mail_subscription?.status;
 
 	let message = null;
 
-	if ( googleStatus && ! [ '', 'no_subscription', 'other_provider' ].includes( googleStatus ) ) {
-		const count = domain?.google_apps_subscription?.total_user_count ?? 0;
+	if ( googleStatus && ! [ 'no_subscription', 'other_provider' ].includes( googleStatus ) ) {
+		const count = domain.google_apps_subscription?.total_user_count ?? 0;
 
 		message = sprintf(
 			/* translators: The number of GSuite mailboxes active for the current domain */
@@ -34,7 +34,7 @@ export const DomainsTableEmailIndicator = ( {
 				count,
 			}
 		);
-	} else if ( titanStatus && ( titanStatus === 'active' || titanStatus === 'suspended' ) ) {
+	} else if ( titanStatus === 'active' || titanStatus === 'suspended' ) {
 		const count = domain.titan_mail_subscription?.maximum_mailbox_count ?? 1;
 
 		message = sprintf(
@@ -74,7 +74,7 @@ export const DomainsTableEmailIndicator = ( {
 	return (
 		<a
 			className="domains-table-add-email-button"
-			href={ `/email/${ domain.domain }/manage/${ siteSlug }` }
+			href={ emailManagementEdit( siteSlug, domain.domain ) }
 		>
 			{ __( '+ Add email' ) }
 		</a>
