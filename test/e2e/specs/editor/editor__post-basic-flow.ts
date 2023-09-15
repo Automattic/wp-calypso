@@ -20,6 +20,8 @@ const quote =
 const title = DataHelper.getRandomPhrase();
 const category = 'Uncategorized';
 const tag = 'test-tag';
+const seoTitle = 'SEO example title';
+const seoDescription = 'SEO example description';
 
 declare const browser: Browser;
 
@@ -91,8 +93,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			'Enter SEO title and preview',
 			async function () {
 				await editorPage.enterSEODetails( {
-					title: 'SEO example title',
-					description: 'SEO example description',
+					title: seoTitle,
+					description: seoDescription,
 				} );
 			}
 		);
@@ -109,6 +111,14 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 			await dialog.getByRole( 'tab', { name: 'Tumblr' } ).click();
 			await dialog.getByRole( 'tabpanel', { name: 'Tumblr' } ).waitFor();
+			await dialog
+				.filter( {
+					// Look for either the SEO title, or the post title,
+					// depending on whether the platform had SEO options
+					// two steps previously.
+					hasText: new RegExp( `${ seoTitle }|${ title }` ),
+				} )
+				.waitFor();
 		} );
 
 		it( 'Dismiss social preview', async function () {
