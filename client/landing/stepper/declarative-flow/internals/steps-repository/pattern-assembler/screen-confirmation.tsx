@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NavigatorHeader } from '@automattic/onboarding';
 import {
 	__experimentalVStack as VStack,
@@ -18,31 +17,22 @@ interface Props {
 const ScreenConfirmation = ( { onConfirm }: Props ) => {
 	const translate = useTranslate();
 	const { title, description, continueLabel } = useScreen( 'confirmation' );
-	const hasEnTranslation = useHasEnTranslation();
 
 	const list = [
 		{
 			icon: image,
 			title: translate( 'Upload images' ),
-			description: hasEnTranslation( 'Showcase your photos in their best light.' )
-				? translate( 'Showcase your photos in their best light.' )
-				: null,
+			description: translate( 'Showcase your photos in their best light.' ),
 		},
 		{
 			icon: verse,
 			title: translate( 'Start writing' ),
-			description: hasEnTranslation( 'Get things going and share your insights.' )
-				? translate( 'Get things going and share your insights.' )
-				: null,
+			description: translate( 'Get things going and share your insights.' ),
 		},
 		{
 			icon: layout,
-			title: hasEnTranslation( 'Customize every detail' )
-				? translate( 'Customize every detail' )
-				: translate( 'Customize in editor' ),
-			description: hasEnTranslation( 'Make your site even more unique.' )
-				? translate( 'Make your site even more unique.' )
-				: null,
+			title: translate( 'Customize every detail' ),
+			description: translate( 'Make your site even more unique.' ),
 		},
 	];
 
