@@ -1,10 +1,9 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { UserSelect, SiteDetails, Domain } from '@automattic/data-stores';
+import { UserSelect, SiteDetails } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { domainItem } from 'calypso/lib/cart-values/cart-items';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -118,13 +117,6 @@ const HundredYearPlanFlow: Flow = {
 						product_slug: PLAN_100_YEARS,
 					},
 				];
-				if ( providedDependencies?.selectedDomain ) {
-					const domain = providedDependencies.selectedDomain as Domain;
-					if ( domain.is_renewable && domain.product_slug ) {
-						const domainCartItem = domainItem( domain.product_slug, domain.domain );
-						productsToAdd.push( domainCartItem );
-					}
-				}
 				await addProductsToCart( siteSlug, HUNDRED_YEAR_PLAN_FLOW, productsToAdd );
 				return {
 					siteId: site?.ID,

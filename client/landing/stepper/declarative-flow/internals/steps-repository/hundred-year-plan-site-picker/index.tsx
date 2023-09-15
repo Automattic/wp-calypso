@@ -234,7 +234,7 @@ const HundredYearPlanSitePicker: Step = function HundredYearPlanSitePicker( { na
 	const isFetching = ! site || ! siteDomain || ! siteTitle;
 
 	const selectSite = () => {
-		navigation.submit?.( { selectedSite: site, selectedDomain: siteDomain } );
+		navigation.submit?.( { selectedSite: site } );
 	};
 
 	const onSelectSite = ( siteId: SiteId ) => {
