@@ -1,17 +1,24 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import './styles.scss';
 
-export default function DomainAnalyzer() {
+interface Props {
+	onFormSubmit: ( domain: string ) => void;
+	isBusy?: boolean;
+}
+
+export default function DomainAnalyzer( props: Props ) {
 	const translate = useTranslate();
-	const [ , setDomain ] = useState( '' );
+	const { isBusy, onFormSubmit } = props;
 
 	const onSubmit = ( e: FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
 
 		const domainEl = e.currentTarget.elements.namedItem( 'domain' ) as HTMLInputElement;
-		setDomain( domainEl.value );
+		const domain = domainEl.value;
+
+		domain && onFormSubmit( domain );
 	};
 
 	return (
@@ -29,7 +36,9 @@ export default function DomainAnalyzer() {
 						<input type="text" name="domain" placeholder={ translate( 'mysite.com' ) } />
 					</div>
 					<div className="col-2">
-						<Button type="submit">{ translate( 'Check site' ) }</Button>
+						<Button isBusy={ isBusy } type="submit">
+							{ translate( 'Check site' ) }
+						</Button>
 					</div>
 				</div>
 			</form>

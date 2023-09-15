@@ -10,7 +10,7 @@ export function siteProfilerContext( context: PageJS.Context, next: () => void )
 	}
 
 	context.primary = (
-		<Main wideLayout>
+		<Main fullWidthLayout>
 			<SiteProfiler />
 		</Main>
 	);
