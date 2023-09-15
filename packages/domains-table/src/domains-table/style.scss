@@ -271,15 +271,14 @@
 		font-size: $font-body-small;
 	}
 
-	&-email {
-		a.add-email-button {
-			font-size: $font-body-small;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 20px; /* 142.857% */
-			letter-spacing: -0.15px;
-			text-decoration: underline !important;
-			color: var(--color-link);
-		}
-	}
+}
+
+a.domains-table-add-email-button {
+	font-size: $font-body-small;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px; /* 142.857% */
+	letter-spacing: -0.15px;
+	text-decoration: underline;
+	color: var(--color-link);
 }

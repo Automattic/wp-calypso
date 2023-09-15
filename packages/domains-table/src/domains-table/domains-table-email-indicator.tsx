@@ -22,7 +22,10 @@ export const DomainsTableEmailIndicator = ( {
 
 	if ( mailboxes.length === 0 ) {
 		return (
-			<a className="add-email-button" href={ `/email/${ domain.domain }/manage/${ siteSlug }` }>
+			<a
+				className="domains-table-add-email-button"
+				href={ `/email/${ domain.domain }/manage/${ siteSlug }` }
+			>
 				{ __( 'Add email ' ) }
 			</a>
 		);
