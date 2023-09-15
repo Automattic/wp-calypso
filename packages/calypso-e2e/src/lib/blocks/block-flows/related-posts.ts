@@ -61,6 +61,9 @@ export class RelatedPostsFlow implements BlockFlow {
 		if ( noRelatedPostsNotice === postSlotCount ) {
 			this.noRelatedPosts = true;
 		}
+
+		// For mobile viewports, this block automatically opens the Block Settings sidebar.
+		await context.editorPage.closeSettings();
 	}
 
 	/**
