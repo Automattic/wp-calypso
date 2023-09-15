@@ -25,56 +25,9 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		'is-icon-button': isMobile,
 	} );
 
-	const processRecords = ( records ) => {
-		return records.map( ( record ) => {
-			const processedRecord = {
-				name: record.host,
-				type: record.type,
-			};
-
-			switch ( record.type ) {
-				case 'A':
-					return {
-						...processedRecord,
-						data: record.ip,
-					};
-				case 'AAAA':
-					return {
-						...processedRecord,
-						data: record.ipv6,
-					};
-				case 'CNAME':
-				case 'NS':
-					return {
-						...processedRecord,
-						data: record.target,
-					};
-				case 'MX':
-					return {
-						...processedRecord,
-						data: record.target,
-						aux: record.pri,
-					};
-				case 'TXT':
-					return {
-						...processedRecord,
-						data: record.txt,
-					};
-				case 'SRV':
-					return {
-						...processedRecord,
-						...record,
-					};
-				default:
-					return null;
-			}
-		} );
-	};
-
 	const importDnsRecords = async () => {
 		try {
-			const recordsToAdd = processRecords( recordsToImport );
-			await dispatch( updateDns( domain, recordsToAdd, [] ) );
+			await dispatch( updateDns( domain, recordsToImport, [] ) );
 			dispatch( successNotice( __( 'BIND file imported succesfully!' ) ) );
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {
