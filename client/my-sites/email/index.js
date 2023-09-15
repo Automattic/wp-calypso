@@ -73,7 +73,7 @@ export default function () {
 	page(
 		paths.emailManagementMailboxes( ':site' ),
 		...commonHandlers,
-		controller.emailManagementInbox,
+		controller.emailManagementMailboxes,
 		makeLayout,
 		clientRender
 	);
