@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
+import { updateDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import ImportBindFileConfirmationDialog from './import-bind-file-confirmation-dialog';
 import { DnsImportBindFileButtonProps } from './types';
@@ -24,17 +25,57 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 		'is-icon-button': isMobile,
 	} );
 
+	const processRecords = ( records ) => {
+		return records.map( ( record ) => {
+			const processedRecord = {
+				name: record.host,
+				type: record.type,
+			};
+
+			switch ( record.type ) {
+				case 'A':
+					return {
+						...processedRecord,
+						data: record.ip,
+					};
+				case 'AAAA':
+					return {
+						...processedRecord,
+						data: record.ipv6,
+					};
+				case 'CNAME':
+				case 'NS':
+					return {
+						...processedRecord,
+						data: record.target,
+					};
+				case 'MX':
+					return {
+						...processedRecord,
+						data: record.target,
+						aux: record.pri,
+					};
+				case 'TXT':
+					return {
+						...processedRecord,
+						data: record.txt,
+					};
+				case 'SRV':
+					return {
+						...processedRecord,
+						...record,
+					};
+				default:
+					return null;
+			}
+		} );
+	};
+
 	const importDnsRecords = async () => {
-		console.log( 'importing DNS records' );
 		try {
-			await wpcom.req.post(
-				{
-					path: `/domains/${ domain }/dns`,
-					apiVersion: '1.1',
-				},
-				{ recordsToImport }
-			);
-			dispatch( successNotice( __( 'DNS records imported succesfully!' ) ) );
+			const recordsToAdd = processRecords( recordsToImport );
+			await dispatch( updateDns( domain, recordsToAdd, [] ) );
+			dispatch( successNotice( __( 'BIND file imported succesfully!' ) ) );
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {
 				dispatch( errorNotice( error.message ) );
@@ -47,7 +88,6 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 
 	const closeImportBindFileDialog = ( result: boolean ) => {
 		setImportBindFileConfirmationDialogIsVisible( false );
-		setRecordsToImport( [] );
 		if ( result ) {
 			importDnsRecords();
 		}
