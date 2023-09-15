@@ -225,8 +225,8 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 }
 
 export default connect(
-	( state: IAppState, ownProps?: AtomicTransferDialogProps | { siteId: number } ) => {
-		const siteId = getSelectedSiteId( state ) ?? ownProps?.siteId;
+	( state: IAppState ) => {
+		const siteId = getSelectedSiteId( state );
 		const themeId = getThemeForAtomicTransferDialog( state );
 
 		if ( ! siteId ) {
