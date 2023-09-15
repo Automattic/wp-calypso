@@ -232,6 +232,10 @@ class MagicLogin extends Component {
 						onClick={ () => {
 							this.resetResendEmailCountdown();
 							showMagicLogin();
+
+							this.props.recordTracksEvent(
+								`calypso_${ oauth2Client.name }_magic_login_click_use_different_email`
+							);
 						} }
 					/>
 				),
