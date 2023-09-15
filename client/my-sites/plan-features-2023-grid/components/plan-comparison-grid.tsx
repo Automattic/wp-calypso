@@ -25,6 +25,7 @@ import PlanTypeSelector from 'calypso/my-sites/plans-features-main/components/pl
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/npm-ready/use-highlight-adjacency-matrix';
 import useIsLargeCurrency from '../hooks/npm-ready/use-is-large-currency';
+import { isStorageUpgradeableForPlan } from '../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { getStorageStringFromFeature, usePricingBreakpoint } from '../util';
@@ -33,6 +34,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
+import StorageAddOnDropdown from './storage-add-on-dropdown';
 import type {
 	GridPlan,
 	TransformedFeatureObject,
@@ -303,9 +305,9 @@ const FeatureFootnote = styled.span`
 `;
 
 type PlanComparisonGridProps = {
-	intervalType?: string;
+	intervalType: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	flowName?: string | null;
 	currentSitePlanSlug?: string | null;
@@ -318,12 +320,13 @@ type PlanComparisonGridProps = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	showLegacyStorageFeature?: boolean;
+	showUpgradeableStorage: boolean;
 };
 
 type PlanComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
 	flowName?: string | null;
@@ -529,18 +532,23 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planSlug: PlanSlug;
+	isInSignup: boolean;
 	isStorageFeature: boolean;
 	flowName?: string | null;
-	intervalType?: string;
+	intervalType: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 } > = ( {
 	feature,
 	visibleGridPlans,
 	planSlug,
+	isInSignup,
 	isStorageFeature,
+	flowName,
 	intervalType,
 	activeTooltipId,
+	showUpgradeableStorage,
 	setActiveTooltipId,
 } ) => {
 	const { gridPlansIndex } = usePlansGridContext();
@@ -571,7 +579,16 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				( feature ) => feature.getSlug() === featureSlug
 		  )
 		: false;
-	const storageOption = gridPlan.features.storageOptions.find( ( option ) => ! option.isAddOn );
+	const storageOptions = gridPlan.features.storageOptions;
+	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
+	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
+		flowName: flowName ?? '',
+		intervalType,
+		isInSignup,
+		showUpgradeableStorage,
+		storageOptions,
+	} );
+
 	const cellClasses = classNames(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
@@ -595,9 +612,16 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
-						{ getStorageStringFromFeature( storageOption?.slug || '' ) }
-					</StorageButton>
+					{ canUpgradeStorageForPlan ? (
+						<StorageAddOnDropdown
+							planSlug={ planSlug }
+							storageOptions={ gridPlan.features.storageOptions }
+						/>
+					) : (
+						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
+							{ getStorageStringFromFeature( defaultStorageOption?.slug || '' ) }
+						</StorageButton>
+					) }
 				</>
 			) : (
 				<>
@@ -664,11 +688,13 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
 	planFeatureFootnotes: PlanFeatureFootnotes;
+	isInSignup: boolean;
 	isStorageFeature: boolean;
 	flowName?: string | null;
 	isHighlighted: boolean;
-	intervalType?: string;
+	intervalType: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
+	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
 } > = ( {
 	feature,
@@ -676,12 +702,14 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures,
 	visibleGridPlans,
 	planFeatureFootnotes,
+	isInSignup,
 	isStorageFeature,
 	flowName,
 	isHighlighted,
 	intervalType,
 	activeTooltipId,
 	setActiveTooltipId,
+	showUpgradeableStorage,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -741,11 +769,13 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planSlug={ planSlug }
+					isInSignup={ isInSignup }
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
 					setActiveTooltipId={ setActiveTooltipId }
+					showUpgradeableStorage={ showUpgradeableStorage }
 				/>
 			) ) }
 		</Row>
@@ -767,6 +797,7 @@ export const PlanComparisonGrid = ( {
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
+	showUpgradeableStorage,
 }: PlanComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
@@ -979,12 +1010,14 @@ export const PlanComparisonGrid = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visibleGridPlans={ visibleGridPlans }
 									planFeatureFootnotes={ planFeatureFootnotes }
+									isInSignup={ isInSignup }
 									isStorageFeature={ false }
 									flowName={ flowName }
 									isHighlighted={ feature.getSlug() === selectedFeature }
 									intervalType={ intervalType }
 									activeTooltipId={ activeTooltipId }
 									setActiveTooltipId={ setActiveTooltipId }
+									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -994,12 +1027,14 @@ export const PlanComparisonGrid = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visibleGridPlans={ visibleGridPlans }
 									planFeatureFootnotes={ planFeatureFootnotes }
+									isInSignup={ isInSignup }
 									isStorageFeature={ true }
 									flowName={ flowName }
 									isHighlighted={ false }
 									intervalType={ intervalType }
 									activeTooltipId={ activeTooltipId }
 									setActiveTooltipId={ setActiveTooltipId }
+									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
 							) : null }
 						</div>

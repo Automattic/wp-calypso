@@ -20,10 +20,12 @@ import {
 	type PlanSlug,
 	type FeatureObject,
 	type StorageOption,
+	isBusinessPlan,
+	isEcommercePlan,
 } from '@automattic/calypso-products';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
+import type { AddOnMeta, PlanIntroductoryOffer, PricedAPIPlan } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
 // TODO clk: move to plans data store
@@ -68,9 +70,13 @@ export type UsePricedAPIPlans = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => 
 export type UsePricingMetaForGridPlans = ( {
 	planSlugs,
 	withoutProRatedCredits,
+	storageAddOns,
+	currencyCode,
 }: {
 	planSlugs: PlanSlug[];
 	withoutProRatedCredits?: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
+	currencyCode?: string | null;
 } ) => { [ planSlug: string ]: PricingMetaForGridPlan } | null;
 
 // TODO clk: move to types. will consume plan properties
@@ -95,6 +101,7 @@ export type GridPlan = {
 	} | null;
 	highlightLabel?: React.ReactNode | null;
 	pricing: PricingMetaForGridPlan;
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
 };
 
 // TODO clk: move to plans data store
@@ -135,6 +142,7 @@ interface Props {
 	 * If the subdomain generation is unsuccessful we do not show the free plan
 	 */
 	isSubdomainNotGenerated?: boolean;
+	storageAddOns: ( AddOnMeta | null )[] | null;
 }
 
 const usePlanTypesWithIntent = ( {
@@ -243,6 +251,7 @@ const useGridPlans = ( {
 	isInSignup,
 	usePlanUpgradeabilityCheck,
 	isSubdomainNotGenerated,
+	storageAddOns,
 }: Props ): Omit< GridPlan, 'features' >[] | null => {
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
@@ -279,6 +288,7 @@ const useGridPlans = ( {
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
 	const pricingMeta = usePricingMetaForGridPlans( {
 		planSlugs: availablePlanSlugs,
+		storageAddOns,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
@@ -316,6 +326,9 @@ const useGridPlans = ( {
 						product_slug: planSlug,
 				  };
 
+		const storageAddOnsForPlan =
+			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
+
 		return {
 			planSlug,
 			isVisible: planSlugsForIntent.includes( planSlug ),
@@ -329,6 +342,7 @@ const useGridPlans = ( {
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
+			storageAddOnsForPlan,
 		};
 	} );
 };

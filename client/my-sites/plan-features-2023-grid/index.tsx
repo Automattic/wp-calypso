@@ -47,6 +47,7 @@ import { StickyContainer } from './components/sticky-container';
 import StorageAddOnDropdown from './components/storage-add-on-dropdown';
 import PlansGridContextProvider, { type PlansIntent } from './grid-context';
 import useIsLargeCurrency from './hooks/npm-ready/use-is-large-currency';
+import { isStorageUpgradeableForPlan } from './lib/is-storage-upgradeable-for-plan';
 import { DataResponse } from './types';
 import { getStorageStringFromFeature } from './util';
 import type {
@@ -69,7 +70,7 @@ export interface PlanFeatures2023GridProps {
 	gridPlanForSpotlight?: GridPlan;
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
-	isInSignup?: boolean;
+	isInSignup: boolean;
 	siteId?: number | null;
 	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
@@ -77,7 +78,7 @@ export interface PlanFeatures2023GridProps {
 	flowName?: string | null;
 	paidDomainName?: string;
 	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
-	intervalType?: string;
+	intervalType: string;
 	currentSitePlanSlug?: string | null;
 	hidePlansFeatureComparison?: boolean;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
@@ -280,6 +281,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						{ this.renderPlanPrice( [ gridPlan ] ) }
 						{ this.renderBillingTimeframe( [ gridPlan ] ) }
 						{ this.renderMobileFreeDomain( gridPlan.planSlug, gridPlan.isMonthlyPlan ) }
+						{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						{ this.renderTopButtons( [ gridPlan ] ) }
 						{ this.maybeRenderRefundNotice( [ gridPlan ] ) }
 						<CardContainer
@@ -295,7 +297,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						>
 							{ this.renderPreviousFeaturesIncludedTitle( [ gridPlan ] ) }
 							{ this.renderPlanFeaturesList( [ gridPlan ] ) }
-							{ this.renderPlanStorageOptions( [ gridPlan ] ) }
 						</CardContainer>
 					</div>
 				);
@@ -636,7 +637,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanStorageOptions( renderedGridPlans: GridPlan[], options?: PlanRowOptions ) {
-		const { translate, intervalType, showUpgradeableStorage } = this.props;
+		const { translate, intervalType, isInSignup, flowName, showUpgradeableStorage } = this.props;
 
 		return renderedGridPlans.map( ( { planSlug, features: { storageOptions } } ) => {
 			if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -644,14 +645,28 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			}
 
 			const shouldRenderStorageTitle =
-				storageOptions.length === 1 ||
-				( intervalType !== 'yearly' && storageOptions.length > 0 ) ||
-				( ! showUpgradeableStorage && storageOptions.length > 0 );
-			const canUpgradeStorageForPlan =
-				storageOptions.length > 1 && intervalType === 'yearly' && showUpgradeableStorage;
+				storageOptions.length > 0 &&
+				( storageOptions.length === 1 ||
+					intervalType !== 'yearly' ||
+					! showUpgradeableStorage ||
+					! isInSignup ||
+					! ( flowName === 'onboarding' ) );
+
+			const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
+				flowName: flowName ?? '',
+				intervalType,
+				isInSignup,
+				showUpgradeableStorage,
+				storageOptions,
+			} );
 
 			const storageJSX = canUpgradeStorageForPlan ? (
-				<StorageAddOnDropdown planSlug={ planSlug } storageOptions={ storageOptions } />
+				<StorageAddOnDropdown
+					label={ translate( 'Storage' ) }
+					planSlug={ planSlug }
+					storageOptions={ storageOptions }
+					showPrice
+				/>
 			) : (
 				storageOptions.map( ( storageOption ) => {
 					if ( ! storageOption?.isAddOn ) {
@@ -704,6 +719,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			plansComparisonGridRef,
 			toggleShowPlansComparisonGrid,
 			showPlansComparisonGrid,
+			showUpgradeableStorage,
 		} = this.props;
 
 		return (
@@ -774,6 +790,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 								selectedPlan={ selectedPlan }
 								selectedFeature={ selectedFeature }
 								showLegacyStorageFeature={ showLegacyStorageFeature }
+								showUpgradeableStorage={ showUpgradeableStorage }
 							/>
 							<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 								<Button onClick={ toggleShowPlansComparisonGrid }>
