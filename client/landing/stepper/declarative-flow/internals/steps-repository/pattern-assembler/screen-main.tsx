@@ -1,4 +1,3 @@
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { NavigatorHeader, NavigatorItem, NavigatorItemGroup } from '@automattic/onboarding';
 import {
 	Button,
@@ -6,7 +5,7 @@ import {
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { header, footer, layout } from '@wordpress/icons';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { NAVIGATOR_PATHS, INITIAL_CATEGORY } from './constants';
 import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
@@ -33,15 +32,10 @@ const ScreenMain = ( {
 	onContinueClick,
 }: Props ) => {
 	const translate = useTranslate();
-	const { title } = useScreen( 'main' );
-	const isEnglishLocale = useIsEnglishLocale();
+	const { title, description, continueLabel } = useScreen( 'main' );
 	const { location, params, goTo } = useNavigator();
 	const selectedCategory = params.categorySlug as string;
 	const isButtonDisabled = ! hasSections && ! hasHeader && ! hasFooter;
-	const buttonText =
-		isEnglishLocale || i18n.hasTranslation( 'Pick your style' )
-			? translate( 'Pick your style' )
-			: translate( 'Save and continue' );
 
 	const handleNavigatorItemSelect = ( type: PatternType, path: string, category: string ) => {
 		const nextPath = category !== selectedCategory ? `${ path }/${ category }` : path;
@@ -53,9 +47,7 @@ const ScreenMain = ( {
 		<>
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ title } /> }
-				description={ translate(
-					'Create your homepage by first adding patterns and then choosing a color palette and font style.'
-				) }
+				description={ description }
 				hideBack
 			/>
 			<div className="screen-container__body">
@@ -105,10 +97,10 @@ const ScreenMain = ( {
 					showTooltip={ isButtonDisabled }
 					onClick={ onContinueClick }
 					label={
-						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : buttonText
+						isButtonDisabled ? translate( 'Add your first pattern to get started.' ) : continueLabel
 					}
 					variant="primary"
-					text={ buttonText }
+					text={ continueLabel }
 					__experimentalIsFocusable
 				/>
 			</div>

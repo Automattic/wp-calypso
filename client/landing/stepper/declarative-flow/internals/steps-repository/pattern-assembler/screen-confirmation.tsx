@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { Icon, image, verse, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useScreen } from './hooks';
 import NavigatorTitle from './navigator-title';
 import './screen-confirmation.scss';
 
@@ -16,6 +17,7 @@ interface Props {
 
 const ScreenConfirmation = ( { onConfirm }: Props ) => {
 	const translate = useTranslate();
+	const { title, description, continueLabel } = useScreen( 'confirmation' );
 	const hasEnTranslation = useHasEnTranslation();
 
 	const list = [
@@ -47,12 +49,8 @@ const ScreenConfirmation = ( { onConfirm }: Props ) => {
 	return (
 		<>
 			<NavigatorHeader
-				title={ <NavigatorTitle title={ translate( 'Great job!' ) } /> }
-				description={
-					hasEnTranslation( 'Time to add some content and bring your site to life!' )
-						? translate( 'Time to add some content and bring your site to life!' )
-						: translate( 'Bring your site to life with some content.' )
-				}
+				title={ <NavigatorTitle title={ title } /> }
+				description={ description }
 				hideBack
 			/>
 			<div className="screen-container__body">
@@ -72,9 +70,7 @@ const ScreenConfirmation = ( { onConfirm }: Props ) => {
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" primary onClick={ onConfirm }>
-					{ hasEnTranslation( 'Start adding content' )
-						? translate( 'Start adding content' )
-						: translate( 'Continue' ) }
+					{ continueLabel }
 				</Button>
 			</div>
 		</>

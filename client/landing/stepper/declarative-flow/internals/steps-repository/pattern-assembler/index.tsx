@@ -426,11 +426,9 @@ const PatternAssembler = ( {
 			return undefined;
 		}
 
-		// Commit the following string for the translation
-		// translate( 'Back to %(pageTitle)s' );
-		return translate( 'Back to %(clientTitle)s', {
+		return translate( 'Back to %(pageTitle)s', {
 			args: {
-				clientTitle: currentScreen.previousScreen.title,
+				pageTitle: currentScreen.previousScreen.backLabel || currentScreen.previousScreen.title,
 			},
 		} );
 	};
