@@ -282,3 +282,11 @@ a.domains-table-add-email-button {
 	text-decoration: underline;
 	color: var(--color-link);
 }
+
+a.domains-table-view-email-button {
+	color: var(--studio-gray-90);
+	font-size: $font-body-small;
+	&:hover {
+		color: var(--color-link);
+	}
+}

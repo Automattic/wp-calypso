@@ -156,9 +156,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'email' ) {
 					return (
 						<td>
-							{ domain.current_user_can_add_email && (
-								<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
-							) }
+							<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
 						</td>
 					);
 				}

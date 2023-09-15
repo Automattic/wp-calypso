@@ -71,7 +71,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				</div>
 			</div>
 
-			{ ! isAllSitesView && domain.current_user_can_add_email && (
+			{ ! isAllSitesView && (
 				<div className="domains-table-mobile-card-email">
 					<span className="domains-table-mobile-card-label"> { __( 'Email' ) } </span>
 					<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />

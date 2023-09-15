@@ -1,5 +1,6 @@
 import { PartialDomainData } from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
+import { getDomainType } from '../utils/get-domain-type';
 
 export const DomainsTableEmailIndicator = ( {
 	domain,
@@ -10,9 +11,7 @@ export const DomainsTableEmailIndicator = ( {
 } ) => {
 	// mailbox logic below moved from client/my-sites/domains/domain-management/list/domain-row.jsx
 
-	// todo copied this check but in prod it never looks like `domans.type` should be MAPPED or REGISTERED
-	// need to investigate further
-	if ( ! [ 'MAPPED', 'REGISTERED' ].includes( domain.type ) ) {
+	if ( ! [ 'mapped', 'registered' ].includes( getDomainType( domain ) ) ) {
 		return null;
 	}
 
@@ -53,7 +52,7 @@ export const DomainsTableEmailIndicator = ( {
 	if ( message ) {
 		return (
 			<a
-				className="domains-table-add-email-button"
+				className="domains-table-view-email-button"
 				href={ emailManagementEdit( siteSlug, domain.domain ) }
 			>
 				{ message }
@@ -61,7 +60,10 @@ export const DomainsTableEmailIndicator = ( {
 		);
 	}
 
-	//todo in prod nothing gets rendered sometimes - needed to only show this option when it makes sense.
+	if ( ! domain.current_user_can_add_email ) {
+		return null;
+	}
+
 	return (
 		<a
 			className="domains-table-add-email-button"
