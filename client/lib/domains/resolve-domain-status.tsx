@@ -469,8 +469,8 @@ export function resolveDomainStatus(
 					icon: 'check_circle',
 				};
 			}
-			// domain.transferStatus === transferStatus.COMPLETED &&
-			if ( ! domain.pointsToWpcom ) {
+
+			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
 				const hasTranslation =
 					englishLocales.includes( String( getLocaleSlug() ) ) ||
 					i18n.hasTranslation(
