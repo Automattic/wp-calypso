@@ -96,29 +96,6 @@ const PersonalPurchase = ( {
 
 	return (
 		<div>
-			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<ul>
-					{ subscriptionValue > 0 ? (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-							{ translate( 'Instant access to upcoming features' ) }
-						</li>
-					) : (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-							{ translate( 'No access to upcoming features' ) }
-						</li>
-					) }
-					{ subscriptionValue >= defaultStartingValue ? (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-							{ translate( 'Priority support' ) }
-						</li>
-					) : (
-						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-							{ translate( 'No priority support' ) }
-						</li>
-					) }
-				</ul>
-			</div>
-
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
 					'This plan is for personal sites only. If your site is used for a commercial activity, {{Button}}you will need to choose a commercial plan{{/Button}}.',
@@ -146,6 +123,29 @@ const PersonalPurchase = ( {
 					},
 				} ) }
 			</p>
+
+			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
+				<ul>
+					{ subscriptionValue > 0 ? (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+							{ translate( 'Instant access to upcoming features' ) }
+						</li>
+					) : (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+							{ translate( 'No access to upcoming features' ) }
+						</li>
+					) }
+					{ subscriptionValue >= defaultStartingValue ? (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+							{ translate( 'Priority support' ) }
+						</li>
+					) : (
+						<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+							{ translate( 'No priority support' ) }
+						</li>
+					) }
+				</ul>
+			</div>
 
 			{ subscriptionValue === 0 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__persnal-checklist` }>
