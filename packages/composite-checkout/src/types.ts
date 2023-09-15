@@ -103,11 +103,6 @@ export type FormStatusManager = {
 	setFormStatus: FormStatusSetter;
 };
 
-export interface FormStatusContextInterface {
-	formStatus: FormStatus;
-	setFormStatus: ( newStatus: FormStatus ) => void;
-}
-
 export interface CheckoutContextInterface {
 	allPaymentMethods: PaymentMethod[];
 	disabledPaymentMethodIds: string[];
