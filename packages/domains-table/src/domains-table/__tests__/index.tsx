@@ -424,3 +424,70 @@ test( 'search for a domain hides other domains from table', async () => {
 	expect( screen.queryByText( 'dog.com' ) ).toBeInTheDocument();
 	expect( screen.queryByText( 'cat.org' ) ).not.toBeInTheDocument();
 } );
+
+test( 'when isAllSitesView is true, display site column', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull ],
+		} )
+	);
+
+	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial ] }
+			isAllSitesView
+			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( fetchSite ).toHaveBeenCalled();
+	} );
+
+	expect( screen.queryByText( 'Site' ) ).toBeInTheDocument();
+	expect( screen.queryByText( 'Primary Domain Blog' ) ).toBeInTheDocument();
+} );
+
+test( 'when isAllSitesView is false, do not display site column', async () => {
+	const [ primaryPartial, primaryFull ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		Promise.resolve( {
+			domains: [ primaryFull ],
+		} )
+	);
+
+	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+
+	render(
+		<DomainsTable
+			domains={ [ primaryPartial ] }
+			isAllSitesView={ false }
+			fetchSiteDomains={ fetchSiteDomains }
+			fetchSite={ fetchSite }
+			siteSlug={ primaryPartial.domain }
+		/>
+	);
+
+	await waitFor( () => {
+		expect( fetchSite ).toHaveBeenCalled();
+	} );
+
+	expect( screen.queryByText( 'Site' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Primary Domain Blog' ) ).not.toBeInTheDocument();
+} );
