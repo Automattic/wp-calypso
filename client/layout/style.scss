@@ -130,7 +130,16 @@ body.is-focus-sites {
 		padding-bottom: 0;
 	}
 }
-
+body.is-mobile-app-view {
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable */
+	--sidebar-width-max: 0px;
+	--sidebar-width-min: 0px;
+	/* stylelint-enable */
+	.layout__secondary {
+		display: none;
+	}
+}
 // Setup the secondary element, which contains the sidebar and
 // the site-selector elements.
 .layout__secondary {
