@@ -45,6 +45,7 @@ interface BaseDomainsTableProps {
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
 	onDomainAction?( action: DomainAction, domain: ResponseDomain ): void;
 	userCanSetPrimaryDomains?: boolean;
+	shouldDisplayContactInfoBulkAction?: boolean;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -86,6 +87,7 @@ type Value = {
 	setShowBulkActions: ( showBulkActions: boolean ) => void;
 	onDomainAction: BaseDomainsTableProps[ 'onDomainAction' ];
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
+	shouldDisplayContactInfoBulkAction: boolean;
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -102,6 +104,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		children,
 		onDomainAction,
 		userCanSetPrimaryDomains,
+		shouldDisplayContactInfoBulkAction = false,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -338,6 +341,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		setShowBulkActions,
 		onDomainAction,
 		userCanSetPrimaryDomains,
+		shouldDisplayContactInfoBulkAction,
 	};
 
 	return (
