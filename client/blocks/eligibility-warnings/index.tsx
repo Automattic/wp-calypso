@@ -46,7 +46,7 @@ const noop = () => {};
 interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
-	backUrl: string;
+	backUrl?: string;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;

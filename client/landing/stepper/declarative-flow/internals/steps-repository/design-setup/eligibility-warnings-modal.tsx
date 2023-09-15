@@ -25,12 +25,10 @@ export const EligibilityWarningsModal = ( {
 		>
 			<EligibilityWarnings
 				siteId={ site?.ID }
-				currentContext="plugin-details"
 				standaloneProceed
 				isMarketplace={ isMarketplace }
 				isMarketplaceException={ isMarketplace }
 				onProceed={ handleContinue }
-				backUrl="#"
 			/>
 		</Dialog>
 	);
