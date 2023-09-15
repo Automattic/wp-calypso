@@ -156,7 +156,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'email' ) {
 					return (
 						<td>
-							{ ! isAllSitesView && domain.current_user_can_add_email && (
+							{ domain.current_user_can_add_email && (
 								<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
 							) }
 						</td>

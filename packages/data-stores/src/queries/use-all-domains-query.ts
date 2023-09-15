@@ -17,6 +17,9 @@ export type PartialDomainData = Pick<
 	| 'wpcom_domain'
 	| 'current_user_is_owner'
 	| 'current_user_can_add_email'
+	| 'google_apps_subscription'
+	| 'titan_mail_subscription'
+	| 'email_forwards_count'
 >;
 
 export interface AllDomainsQueryFnData {
