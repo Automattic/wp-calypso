@@ -78,6 +78,16 @@ export default function BulkEditContactInfoPage( {
 		: null;
 	const firstSelectedDomain = selectedDomains?.[ 0 ];
 
+	// If all domains have the same registration agreement then we can link directly to it. Otherwise we
+	// use `''` and the form will fall back to a support page which links to all the different agreements.
+	const allDomainsShareAgreementUrl = selectedDomains?.every(
+		( domain ) =>
+			domain.domain_registration_agreement_url ===
+			firstSelectedDomain?.domain_registration_agreement_url
+	);
+	const domainRegistrationAgreementUrl =
+		( allDomainsShareAgreementUrl && firstSelectedDomain?.domain_registration_agreement_url ) || '';
+
 	const [ showAllSelectedDomains, setShowAllSelectedDomains ] = useState( false );
 	const domainListElementId = useId();
 
@@ -217,7 +227,7 @@ export default function BulkEditContactInfoPage( {
 
 		return (
 			<EditContactInfoFormCard
-				domainRegistrationAgreementUrl={ firstSelectedDomain.domain_registration_agreement_url }
+				domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
 				selectedDomain={ getSelectedDomain( {
 					domains: reduxDomains,
 					selectedDomainName: firstSelectedDomain.domain,
