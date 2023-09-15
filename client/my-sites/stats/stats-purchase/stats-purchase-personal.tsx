@@ -4,7 +4,6 @@ import {
 	Button as CalypsoButton,
 } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -188,24 +187,6 @@ const PersonalPurchase = ( {
 					</ul>
 				</div>
 			) }
-
-			<p className={ `${ COMPONENT_CLASS_NAME }__personal-tos` }>
-				{ translate(
-					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
-					{
-						components: {
-							a: (
-								<Button
-									variant="link"
-									target="_blank"
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-								/>
-							),
-							b: <Button variant="link" href="#" />,
-						},
-					}
-				) }
-			</p>
 
 			{ subscriptionValue === 0 ? (
 				<ButtonComponent
