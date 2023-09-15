@@ -36,18 +36,15 @@ function ImportBindFileConfirmationDialog( { onClose, visible, recordsToImport }
 		const recordAsString = `${ record.host } ${ record.class } ${ record.type }`;
 		switch ( record.type ) {
 			case 'A':
-				return `${ recordAsString } ${ record.ip }`;
 			case 'AAAA':
-				return `${ recordAsString } ${ record.ipv6 }`;
 			case 'CNAME':
 			case 'NS':
-				return `${ recordAsString } ${ record.target }`;
-			case 'MX':
-				return `${ recordAsString } ${ record.pri } ${ record.target }`;
 			case 'TXT':
-				return `${ recordAsString } ${ record.txt }`;
+				return `${ recordAsString } ${ record.data }`;
+			case 'MX':
+				return `${ recordAsString } ${ record.aux } ${ record.data }`;
 			case 'SRV':
-				return `${ record.service }.${ record.protocol }.${ recordAsString } ${ record.aux } ${ record.weight } ${ record.port } ${ record.target }`;
+				return `${ record.service }.${ record.protocol }.${ recordAsString } ${ record.aux } ${ record.weight } ${ record.port } ${ record.data }`;
 		}
 	};
 
@@ -72,7 +69,7 @@ function ImportBindFileConfirmationDialog( { onClose, visible, recordsToImport }
 					<pre className="import-records-dialog__records">{ renderImportedRecords() }</pre>
 				</>
 			) : (
-				<p>{ __( "We couldn't find valid DNS records in the selected file." ) }</p>
+				<p>{ __( "We couldn't find valid DNS records in the selected BIND file." ) }</p>
 			) }
 		</Dialog>
 	);
