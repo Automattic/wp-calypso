@@ -277,7 +277,9 @@ const useGridPlans = ( {
 
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = usePricedAPIPlans( { planSlugs: availablePlanSlugs } );
-	const pricingMeta = usePricingMetaForGridPlans( { planSlugs: availablePlanSlugs } );
+	const pricingMeta = usePricingMetaForGridPlans( {
+		planSlugs: availablePlanSlugs,
+	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
 	if ( ! pricingMeta || ! pricedAPIPlans ) {

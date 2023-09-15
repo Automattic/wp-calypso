@@ -59,11 +59,17 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 
 	const discountedPriceFullTermText =
 		currencyCode && discountedPrice?.full
-			? formatCurrency( discountedPrice.full, currencyCode, { stripZeros: true } )
+			? formatCurrency( discountedPrice.full, currencyCode, {
+					stripZeros: true,
+					isSmallestUnit: true,
+			  } )
 			: null;
 	const originalPriceFullTermText =
 		currencyCode && originalPrice?.full
-			? formatCurrency( originalPrice.full, currencyCode, { stripZeros: true } )
+			? formatCurrency( originalPrice.full, currencyCode, {
+					stripZeros: true,
+					isSmallestUnit: true,
+			  } )
 			: null;
 
 	/*
