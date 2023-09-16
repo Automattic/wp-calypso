@@ -160,3 +160,7 @@ export function testDomain(
 export function testPartialDomain( defaults: Partial< PartialDomainData > = {} ) {
 	return testDomain( defaults )[ 0 ];
 }
+
+export function testFullDomain( defaults: Partial< PartialDomainData > = {} ) {
+	return testDomain( defaults )[ 1 ];
+}

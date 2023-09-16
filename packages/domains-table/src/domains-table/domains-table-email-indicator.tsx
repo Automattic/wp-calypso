@@ -1,6 +1,7 @@
 import { PartialDomainData } from '@automattic/data-stores';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { type as domainTypes } from '../utils/constants';
 import { getDomainType } from '../utils/get-domain-type';
 import { emailManagementEdit } from '../utils/paths';
 
@@ -15,14 +16,16 @@ export const DomainsTableEmailIndicator = ( {
 }: DomainsTableEmailIndicatorProps ) => {
 	const { __, _n } = useI18n();
 
-	if ( ! [ 'mapped', 'registered' ].includes( getDomainType( domain ) ) ) {
+	const domainType = getDomainType( domain );
+
+	if ( domainType !== domainTypes.MAPPED && domainType !== domainTypes.REGISTERED ) {
 		return '-';
 	}
 
 	const googleStatus = domain.google_apps_subscription?.status;
 	const titanStatus = domain.titan_mail_subscription?.status;
 
-	let message = null;
+	let message = '';
 
 	if ( googleStatus && ! [ 'no_subscription', 'other_provider' ].includes( googleStatus ) ) {
 		const count = domain.google_apps_subscription?.total_user_count ?? 0;

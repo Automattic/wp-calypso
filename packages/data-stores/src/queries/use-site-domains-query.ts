@@ -25,7 +25,7 @@ export interface DomainData {
 	domain: string;
 	domain_notice_states: unknown;
 	supports_domain_connect: unknown;
-	email_forwards_count: 0;
+	email_forwards_count: number;
 	expiry: string;
 	expiry_soon: boolean;
 	expired: boolean;
