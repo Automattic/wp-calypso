@@ -16,20 +16,20 @@
 
 		.domains-table {
 			flex: 1;
+			height: 100%;
+			overflow-y: hidden;
+
+			border-collapse: collapse;
+
+			@media ( max-width: 480px ) {
+				padding: 13px;
+			}
 		}
 	}
 }
 
 .domains-table {
 	--domains-table-toolbar-height: 40px;
-	height: 100%;
-	overflow-y: hidden;
-
-	border-collapse: collapse;
-
-	@media ( max-width: 480px ) {
-		padding: 13px;
-	}
 
 	table {
 		margin-top: 30px;
