@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -49,6 +48,7 @@ import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import { filterDomainsByOwner } from './helpers';
+import { ManageAllDomainsCTA } from './manage-domains-cta';
 import {
 	countDomainsInOrangeStatus,
 	filterOutWpcomDomains,
@@ -56,7 +56,6 @@ import {
 	getSimpleSortFunctionBy,
 	getReverseSimpleSortFunctionBy,
 } from './utils';
-
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
@@ -235,7 +234,9 @@ export class SiteDomains extends Component {
 					/>
 				) }
 
-				{ ! this.isLoading() && this.renderManageDomainsSection( nonWpcomDomains ) }
+				{ ! this.isLoading() && (
+					<ManageAllDomainsCTA shouldDisplaySeparator={ nonWpcomDomains.length === 0 } />
+				) }
 
 				<DomainToPlanNudge />
 			</>
@@ -319,34 +320,6 @@ export class SiteDomains extends Component {
 				buttons={ buttons }
 				mobileButtons={ mobileButtons }
 			/>
-		);
-	}
-
-	renderManageDomainsSection( nonWpcomDomains ) {
-		const { dispatch, translate } = this.props;
-
-		const handleClick = () => {
-			dispatch( recordTracksEvent( 'calypso_domain_management_see_all_domains_link_click' ) );
-		};
-
-		return (
-			<div
-				className={ classnames( 'domain-management__all-domains-section', {
-					separator: nonWpcomDomains.length === 0,
-				} ) }
-			>
-				<p css={ { marginBottom: '1rem', textAlign: 'center' } }>
-					{ translate( 'Manage all the domains you own on WordPress.com' ) }
-				</p>
-				<Button
-					className="domain-management__all-domains-link"
-					href={ domainManagementRoot() }
-					key="breadcrumb_see_all_domains_link"
-					onClick={ handleClick }
-				>
-					{ translate( 'Manage all domains' ) }
-				</Button>
-			</div>
 		);
 	}
 

@@ -18,6 +18,7 @@ import {
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DomainHeader from '../components/domain-header';
+import { ManageAllDomainsCTA } from './manage-domains-cta';
 import OptionsDomainButton from './options-domain-button';
 
 interface BulkSiteDomainsProps {
@@ -83,6 +84,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 						}
 					} }
 				/>
+				<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
 			</Main>
 			<UsePresalesChat />
 		</>
