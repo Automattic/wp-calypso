@@ -16,20 +16,20 @@
 
 		.domains-table {
 			flex: 1;
+			height: 100%;
+			overflow-y: hidden;
+
+			border-collapse: collapse;
+
+			@media ( max-width: 480px ) {
+				padding: 13px;
+			}
 		}
 	}
 }
 
 .domains-table {
 	--domains-table-toolbar-height: 40px;
-	height: 100%;
-	overflow-y: hidden;
-
-	border-collapse: collapse;
-
-	@media ( max-width: 480px ) {
-		padding: 13px;
-	}
 
 	table {
 		margin-top: 30px;
@@ -57,6 +57,11 @@
 		.components-checkbox-control__input-container {
 			margin-right: 16px;
 		}
+	}
+
+	.domains-table__action-ellipsis-column-header {
+		width: 0;
+		min-width: fit-content;
 	}
 
 	td {
@@ -88,6 +93,7 @@
 	}
 
 	.domains-table-row__status-cell {
+		white-space: nowrap;
 		display: flex;
 		align-items: center;
 		gap: 4px;
