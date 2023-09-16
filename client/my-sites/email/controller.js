@@ -249,7 +249,7 @@ export default {
 
 	emailManagementMailboxes( pageContext, next ) {
 		pageContext.primary = (
-			// Defer PageViewTracker to `InboxManagement` component, since we track different page
+			// Defer PageViewTracker to `MailboxesManagement` component, since we track different page
 			// view contexts depending on a few parameters
 			<MailboxesManagement
 				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
