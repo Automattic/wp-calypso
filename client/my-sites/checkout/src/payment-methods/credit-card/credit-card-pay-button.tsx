@@ -7,9 +7,10 @@ import { useState, useEffect } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import { useDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
-import Notice from 'calypso/components/notice';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
@@ -17,16 +18,6 @@ import type { ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
-
-const showError = ( error: string ) => {
-	document.body.scrollTop = document.documentElement.scrollTop = 0;
-
-	return (
-		<Notice status="is-error" icon="mention">
-			{ error }
-		</Notice>
-	);
-};
 
 export default function CreditCardPayButton( {
 	disabled,
@@ -60,11 +51,14 @@ export default function CreditCardPayButton( {
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 
 	const [ displayError, setDisplayError ] = useState( '' );
-
+	const reduxDispatch = useDispatch();
 	useEffect( () => {
-		showError( displayError );
-	}, [ displayError ] );
+		document.body.scrollTop = document.documentElement.scrollTop = 0;
 
+		if ( displayError ) {
+			reduxDispatch( errorNotice( displayError ) );
+		}
+	}, [ displayError ] );
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
 	// this prop yet.
