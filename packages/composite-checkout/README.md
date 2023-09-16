@@ -325,14 +325,6 @@ An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be me
 
 A function to create a `CheckoutStepGroupStore` which can be passed to [CheckoutStepGroup](#CheckoutStepGroup) if you need additional control over the steps.
 
-### getDefaultOrderReviewStep
-
-Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display an itemized order review.
-
-### getDefaultOrderSummaryStep
-
-Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a brief order summary.
-
 ### getDefaultPaymentMethodStep
 
 Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).

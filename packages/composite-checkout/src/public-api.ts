@@ -23,7 +23,7 @@ import {
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
 import CheckoutSubmitButton from './components/checkout-submit-button';
-import { getDefaultPaymentMethodStep, getDefaultOrderReviewStep } from './components/default-steps';
+import { getDefaultPaymentMethodStep } from './components/default-steps';
 import LoadingContent from './components/loading-content';
 import {
 	OrderReviewLineItems,
@@ -88,7 +88,6 @@ export {
 	SubmitButtonWrapper,
 	checkoutTheme,
 	createCheckoutStepGroupStore,
-	getDefaultOrderReviewStep,
 	getDefaultPaymentMethodStep,
 	makeErrorResponse,
 	makeManualResponse,
