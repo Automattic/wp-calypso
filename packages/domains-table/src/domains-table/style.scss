@@ -59,6 +59,11 @@
 		}
 	}
 
+	.domains-table__action-ellipsis-column-header {
+		width: 0;
+		min-width: fit-content;
+	}
+
 	td {
 		padding: 20px 0;
 		height: 44px;
