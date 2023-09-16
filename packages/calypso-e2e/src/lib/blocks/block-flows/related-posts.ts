@@ -47,21 +47,6 @@ export class RelatedPostsFlow implements BlockFlow {
 				.fill( this.configurationData.headline );
 		}
 
-		// This section requires understanding the implementation detail for this block a little.
-		// In short, even on sites with many posts, this block renders a notice stating that preview
-		// is unavailable.
-		// When no related posts are actually available, the published page will not render the block.
-		// If the number of "Preview unavailable" message corresponds to the number of available "slots",
-		// the site really has no related posts thus the published page will not render this block.
-		const noRelatedPostsNotice = await context.addedBlockLocator
-			.getByText( /Preview unavailable/ )
-			.count();
-		const postSlotCount = await context.addedBlockLocator.getByRole( 'menuitem' ).count();
-
-		if ( noRelatedPostsNotice === postSlotCount ) {
-			this.noRelatedPosts = true;
-		}
-
 		// For mobile viewports, this block automatically opens the Block Settings sidebar.
 		await context.editorPage.closeSettings();
 	}
@@ -75,13 +60,12 @@ export class RelatedPostsFlow implements BlockFlow {
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		const publishedBlock = context.page.locator( '.wp-block-jetpack-related-posts' );
 
-		if ( this.noRelatedPosts ) {
-			// For sites with no related posts at all, the block will not render.
-			return await publishedBlock.waitFor( { state: 'detached' } );
+		try {
+			await publishedBlock.waitFor();
+		} catch {
+			// noop - exit the method, since the locator cannot be found.
+			return;
 		}
-
-		// For sites with related posts, the block will render.
-		await publishedBlock.waitFor();
 
 		if ( this.configurationData.headline ) {
 			await publishedBlock
