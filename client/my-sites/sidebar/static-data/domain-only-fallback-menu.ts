@@ -19,7 +19,7 @@ const domainOnlyFallbackMenu = ( { siteDomain }: { siteDomain: string } ) => {
 		},
 		{
 			icon: 'dashicons-email',
-			slug: 'inbox',
+			slug: 'mailboxes',
 			title: translate( 'My Mailboxes' ),
 			type: 'menu-item',
 			url: `/mailboxes/${ siteDomain }`,

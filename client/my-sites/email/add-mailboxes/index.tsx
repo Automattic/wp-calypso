@@ -41,7 +41,7 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
 	emailManagement,
-	emailManagementInbox,
+	emailManagementMailboxes,
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
@@ -377,7 +377,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		);
 
 		if ( source === INBOX_SOURCE ) {
-			url = emailManagementInbox( selectedSite?.slug );
+			url = emailManagementMailboxes( selectedSite?.slug );
 		}
 
 		page( url );
