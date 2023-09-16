@@ -167,3 +167,14 @@ export function isUnderEmailManagementAll( path: string ) {
 export function domainMagementDNS( siteName: string, domainName: string ) {
 	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
+
+export function emailManagementEdit( siteSlug: string, domainName: string ) {
+	// Encodes only real domain names and not parameter placeholders
+	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
+		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
+		// Note they are encoded twice since page.js decodes the path by default.
+		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
+	}
+
+	return '/email/' + domainName + '/manage/' + siteSlug;
+}

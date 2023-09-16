@@ -280,15 +280,22 @@
 		font-size: $font-body-small;
 	}
 
-	&-email {
-		a.add-email-button {
-			color: var(--studio-blue-50);
-			font-size: $font-body-small;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 20px; /* 142.857% */
-			letter-spacing: -0.15px;
-			text-decoration: underline;
-		}
+}
+
+a.domains-table-add-email-button {
+	font-size: $font-body-small;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px; /* 142.857% */
+	letter-spacing: -0.15px;
+	text-decoration: underline;
+	color: var(--color-link);
+}
+
+a.domains-table-view-email-button {
+	color: var(--studio-gray-90);
+	font-size: $font-body-small;
+	&:hover {
+		color: var(--color-link);
 	}
 }
