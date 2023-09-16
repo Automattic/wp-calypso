@@ -210,6 +210,7 @@ export default function BulkEditContactInfoPage( {
 				showContactInfoNote={ false }
 				backUrl={ domainsListPath }
 				onSubmitButtonClick={ handleSubmitButtonClick }
+				bulkEdit={ true }
 			/>
 		);
 	};

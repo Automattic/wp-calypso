@@ -46,6 +46,7 @@ class EditContactInfoFormCard extends Component {
 		showContactInfoNote: PropTypes.bool,
 		backUrl: PropTypes.string.isRequired,
 		onSubmitButtonClick: PropTypes.func, // Callback can return "cancel" to cancel the default form handling
+		bulkEdit: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -449,6 +450,9 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	getIsFieldDisabled = ( name ) => {
+		if ( this.props.bulkEdit ) {
+			return false;
+		}
 		const unmodifiableFields = get(
 			this.props,
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
