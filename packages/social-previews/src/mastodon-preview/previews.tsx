@@ -6,14 +6,10 @@ import { MastodonLinkPreview } from './link-preview';
 import { MastodonPostPreview } from './post-preview';
 import { MastodonPreviewProps } from './types';
 
-export type MastodonPreviewsProps = MastodonPreviewProps &
-	SocialPreviewsBaseProps & {
-		isSocialPost: boolean;
-	};
+export type MastodonPreviewsProps = MastodonPreviewProps & SocialPreviewsBaseProps;
 
 export const MastodonPreviews: React.FC< MastodonPreviewsProps > = ( {
 	headingLevel,
-	isSocialPost,
 	hidePostPreview,
 	hideLinkPreview,
 	...props
@@ -31,7 +27,7 @@ export const MastodonPreviews: React.FC< MastodonPreviewsProps > = ( {
 					<p className="social-preview__section-desc">
 						{ __( 'This is what your social post will look like on Mastodon:', 'social-previews' ) }
 					</p>
-					{ isSocialPost ? (
+					{ props.isSocialPost ? (
 						<MastodonPostPreview { ...props } />
 					) : (
 						<MastodonLinkPreview { ...props } />
