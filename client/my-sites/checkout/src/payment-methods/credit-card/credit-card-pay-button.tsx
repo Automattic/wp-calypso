@@ -53,9 +53,8 @@ export default function CreditCardPayButton( {
 	const [ displayError, setDisplayError ] = useState( '' );
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
-		document.body.scrollTop = document.documentElement.scrollTop = 0;
-
 		if ( displayError ) {
+			document.body.scrollTop = document.documentElement.scrollTop = 0;
 			reduxDispatch( errorNotice( displayError ) );
 		}
 	}, [ displayError ] );
@@ -69,65 +68,63 @@ export default function CreditCardPayButton( {
 	}
 
 	return (
-		<>
-			<Button
-				disabled={ disabled }
-				onClick={ () => {
-					if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayError ) ) {
-						if ( paymentPartner === 'stripe' ) {
-							debug( 'submitting stripe payment' );
-							onClick( {
-								stripe,
-								name: cardholderName?.value,
-								stripeConfiguration,
-								cardNumberElement,
-								paymentPartner,
-								countryCode: fields?.countryCode?.value ?? '',
-								postalCode: fields?.postalCode?.value ?? '',
-								state: fields?.state?.value,
-								city: fields?.city?.value,
-								organization: fields?.organization?.value,
-								address: fields?.address1?.value,
-								useForAllSubscriptions,
-								eventSource: 'checkout',
-							} );
-							return;
-						}
-						if ( paymentPartner === 'ebanx' ) {
-							debug( 'submitting ebanx payment' );
-							onClick( {
-								name: cardholderName?.value || '',
-								countryCode: fields?.countryCode?.value || '',
-								number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
-								cvv: fields?.cvv?.value || '',
-								'expiration-date': fields[ 'expiration-date' ]?.value || '',
-								state: fields?.state?.value || '',
-								city: fields?.city?.value || '',
-								postalCode: fields[ 'postal-code' ]?.value || '',
-								address: fields[ 'address-1' ]?.value || '',
-								streetNumber: fields[ 'street-number' ]?.value || '',
-								phoneNumber: fields[ 'phone-number' ]?.value || '',
-								document: fields?.document?.value || '', // Taxpayer Identification Number
-								paymentPartner,
-							} );
-							return;
-						}
-						throw new Error(
-							'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
-						);
+		<Button
+			disabled={ disabled }
+			onClick={ () => {
+				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayError ) ) {
+					if ( paymentPartner === 'stripe' ) {
+						debug( 'submitting stripe payment' );
+						onClick( {
+							stripe,
+							name: cardholderName?.value,
+							stripeConfiguration,
+							cardNumberElement,
+							paymentPartner,
+							countryCode: fields?.countryCode?.value ?? '',
+							postalCode: fields?.postalCode?.value ?? '',
+							state: fields?.state?.value,
+							city: fields?.city?.value,
+							organization: fields?.organization?.value,
+							address: fields?.address1?.value,
+							useForAllSubscriptions,
+							eventSource: 'checkout',
+						} );
+						return;
 					}
-				} }
-				buttonType="primary"
-				isBusy={ FormStatus.SUBMITTING === formStatus }
-				fullWidth
-			>
-				<ButtonContents
-					formStatus={ formStatus }
-					total={ total }
-					activeButtonText={ activeButtonText }
-				/>
-			</Button>
-		</>
+					if ( paymentPartner === 'ebanx' ) {
+						debug( 'submitting ebanx payment' );
+						onClick( {
+							name: cardholderName?.value || '',
+							countryCode: fields?.countryCode?.value || '',
+							number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
+							cvv: fields?.cvv?.value || '',
+							'expiration-date': fields[ 'expiration-date' ]?.value || '',
+							state: fields?.state?.value || '',
+							city: fields?.city?.value || '',
+							postalCode: fields[ 'postal-code' ]?.value || '',
+							address: fields[ 'address-1' ]?.value || '',
+							streetNumber: fields[ 'street-number' ]?.value || '',
+							phoneNumber: fields[ 'phone-number' ]?.value || '',
+							document: fields?.document?.value || '', // Taxpayer Identification Number
+							paymentPartner,
+						} );
+						return;
+					}
+					throw new Error(
+						'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
+					);
+				}
+			} }
+			buttonType="primary"
+			isBusy={ FormStatus.SUBMITTING === formStatus }
+			fullWidth
+		>
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ total }
+				activeButtonText={ activeButtonText }
+			/>
+		</Button>
 	);
 }
 
