@@ -2,7 +2,6 @@ import Button from './components/button';
 import CheckoutErrorBoundary from './components/checkout-error-boundary';
 import CheckoutModal from './components/checkout-modal';
 import CheckoutOrderSummaryStep, {
-	CheckoutOrderSummary,
 	CheckoutOrderSummaryStepTitle,
 } from './components/checkout-order-summary';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
@@ -24,12 +23,7 @@ import {
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
 import CheckoutSubmitButton from './components/checkout-submit-button';
-import {
-	getDefaultOrderSummary,
-	getDefaultOrderSummaryStep,
-	getDefaultPaymentMethodStep,
-	getDefaultOrderReviewStep,
-} from './components/default-steps';
+import { getDefaultPaymentMethodStep, getDefaultOrderReviewStep } from './components/default-steps';
 import LoadingContent from './components/loading-content';
 import {
 	OrderReviewLineItems,
@@ -71,7 +65,6 @@ export {
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
 	CheckoutModal,
-	CheckoutOrderSummary,
 	CheckoutOrderSummaryStep,
 	CheckoutOrderSummaryStepTitle,
 	CheckoutPaymentMethods,
@@ -96,8 +89,6 @@ export {
 	checkoutTheme,
 	createCheckoutStepGroupStore,
 	getDefaultOrderReviewStep,
-	getDefaultOrderSummary,
-	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	makeErrorResponse,
 	makeManualResponse,
