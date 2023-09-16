@@ -4,7 +4,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs, isUserOnTitanFreeTrial } from 'calypso/lib/titan';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import { emailManagement, emailManagementEdit } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

@@ -38,7 +38,7 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
 	emailManagement,
 	emailManagementInbox,
