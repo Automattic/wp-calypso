@@ -128,6 +128,17 @@ export default function BulkEditContactInfoPage( {
 		return 'cancel';
 	};
 
+	const getFieldMapping = ( field: string ) => {
+		const fieldMapping: Record< string, string > = {
+			first_name: translate( 'First name' ),
+			last_name: translate( 'Last name' ),
+			organization: translate( 'Organization' ),
+			country_code: translate( 'Country' ),
+		};
+
+		return fieldMapping[ field ];
+	};
+
 	const renderHeader = () => {
 		const items = [
 			{
@@ -297,11 +308,7 @@ export default function BulkEditContactInfoPage( {
 										<strong>{ domain.domain }</strong>
 										<ul style={ { listStyleType: 'circle' } }>
 											{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
-												<li key={ field }>
-													{ field
-														.replace( /_/, ' ' )
-														.replace( /^(.)/, ( match ) => match.toUpperCase() ) }
-												</li>
+												<li key={ field }>{ getFieldMapping( field ) }</li>
 											) ) }
 										</ul>
 									</li>
