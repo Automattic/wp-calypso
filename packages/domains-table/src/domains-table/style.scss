@@ -93,6 +93,7 @@
 	}
 
 	.domains-table-row__status-cell {
+		white-space: nowrap;
 		display: flex;
 		align-items: center;
 		gap: 4px;
