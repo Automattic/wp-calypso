@@ -710,6 +710,9 @@ const PlansFeaturesMain = ( {
 							planTypeSelectorProps={ planTypeSelectorProps }
 							ref={ plansComparisonGridRef }
 							observableForOdieRef={ observableForOdieRef }
+							onStorageAddOnClick={ () => {
+								recordTracksEvent( 'calypso_plans_page_storage_add_on_click' );
+							} }
 						/>
 					</div>
 				</>

@@ -321,6 +321,7 @@ type PlanComparisonGridProps = {
 	selectedFeature?: string;
 	showLegacyStorageFeature?: boolean;
 	showUpgradeableStorage: boolean;
+	onStorageAddOnClick?: () => void;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -539,6 +540,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
+	onStorageAddOnClick?: () => void;
 } > = ( {
 	feature,
 	visibleGridPlans,
@@ -550,6 +552,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	activeTooltipId,
 	showUpgradeableStorage,
 	setActiveTooltipId,
+	onStorageAddOnClick,
 } ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
@@ -616,6 +619,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 						<StorageAddOnDropdown
 							planSlug={ planSlug }
 							storageOptions={ gridPlan.features.storageOptions }
+							onStorageAddOnClick={ onStorageAddOnClick }
 						/>
 					) : (
 						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
@@ -696,6 +700,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
+	onStorageAddOnClick?: () => void;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -710,6 +715,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	activeTooltipId,
 	setActiveTooltipId,
 	showUpgradeableStorage,
+	onStorageAddOnClick,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -776,6 +782,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					activeTooltipId={ activeTooltipId }
 					setActiveTooltipId={ setActiveTooltipId }
 					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
 				/>
 			) ) }
 		</Row>
@@ -798,6 +805,7 @@ export const PlanComparisonGrid = ( {
 	selectedPlan,
 	selectedFeature,
 	showUpgradeableStorage,
+	onStorageAddOnClick,
 }: PlanComparisonGridProps ) => {
 	const translate = useTranslate();
 	const { gridPlans, allFeaturesList } = usePlansGridContext();
@@ -1018,6 +1026,7 @@ export const PlanComparisonGrid = ( {
 									activeTooltipId={ activeTooltipId }
 									setActiveTooltipId={ setActiveTooltipId }
 									showUpgradeableStorage={ showUpgradeableStorage }
+									onStorageAddOnClick={ onStorageAddOnClick }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -1035,6 +1044,7 @@ export const PlanComparisonGrid = ( {
 									activeTooltipId={ activeTooltipId }
 									setActiveTooltipId={ setActiveTooltipId }
 									showUpgradeableStorage={ showUpgradeableStorage }
+									onStorageAddOnClick={ onStorageAddOnClick }
 								/>
 							) : null }
 						</div>

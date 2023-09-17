@@ -12,6 +12,7 @@ type StorageAddOnDropdownProps = {
 	planSlug: PlanSlug;
 	storageOptions: StorageOption[];
 	showPrice?: boolean;
+	onStorageAddOnClick?: () => void;
 };
 
 type StorageAddOnOptionProps = {
@@ -52,6 +53,7 @@ export const StorageAddOnDropdown = ( {
 	planSlug,
 	storageOptions,
 	showPrice = false,
+	onStorageAddOnClick,
 }: StorageAddOnDropdownProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const { storageAddOnsForPlan } = gridPlansIndex[ planSlug ];
@@ -92,9 +94,10 @@ export const StorageAddOnDropdown = ( {
 			label={ label }
 			options={ selectControlOptions }
 			value={ selectedOption }
-			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) =>
-				setSelectedStorageOptionForPlan( { addOnSlug: selectedItem?.key || '', planSlug } )
-			}
+			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
+				onStorageAddOnClick && onStorageAddOnClick();
+				setSelectedStorageOptionForPlan( { addOnSlug: selectedItem?.key || '', planSlug } );
+			} }
 		/>
 	);
 };
