@@ -16,8 +16,11 @@ export default function DomainInformation( props: Props ) {
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
 	const [ fetchWhoisRawData, setFetchWhoisRawData ] = useState( false );
 
-	const { data: whoisRawData, isFetching: whoisRawDataFetching } =
-		useDomainAnalyzerWhoisRawDataQuery( domain, fetchWhoisRawData );
+	const {
+		data: whoisRawData,
+		isFetching: whoisRawDataFetching,
+		isError: isFetchingError,
+	} = useDomainAnalyzerWhoisRawDataQuery( domain, fetchWhoisRawData );
 
 	return (
 		<div className="domain-information">
@@ -233,6 +236,8 @@ export default function DomainInformation( props: Props ) {
 								Display raw WHOIS output
 							</Button>
 						) }
+
+						{ isFetchingError && <p>Error fetching WHOIS data; please try again later.</p> }
 
 						{ whoisRawData && (
 							<div className="whois-raw-data">
