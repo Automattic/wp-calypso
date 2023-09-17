@@ -285,7 +285,7 @@ export default function BulkEditContactInfoPage( {
 
 		const domainsWithUnmodifiableContactInfo =
 			selectedDomains &&
-			selectedDomains.length > 1 &&
+			selectedDomains.length > 0 &&
 			selectedDomains.filter( ( domain ) => domain.whois_update_unmodifiable_fields.length > 0 );
 
 		return (
