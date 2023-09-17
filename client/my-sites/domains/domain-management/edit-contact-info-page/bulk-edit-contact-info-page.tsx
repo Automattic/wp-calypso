@@ -13,6 +13,7 @@ import page from 'page';
 import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QueryWhois from 'calypso/components/data/query-whois';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
@@ -32,7 +33,6 @@ import { IAppState } from 'calypso/state/types';
 import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
-
 import './style.scss';
 
 interface BulkEditContactInfoPageProps {
@@ -88,7 +88,7 @@ export default function BulkEditContactInfoPage( {
 
 	const currentRoute = useSelector( getCurrentRoute );
 	const isRequestingWhois = useSelector( ( state: IAppState ) =>
-		firstSelectedDomain ? isRequestingWhoisSelector( state, firstSelectedDomain.domain ) : false
+		selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
 	);
 
 	const isDataLoading = () =>
@@ -126,6 +126,22 @@ export default function BulkEditContactInfoPage( {
 		}
 
 		return 'cancel';
+	};
+
+	const getFieldMapping = ( field: string ) => {
+		const fieldMapping: Record< string, string > = {
+			first_name: translate( 'First name' ),
+			last_name: translate( 'Last name' ),
+			organization: translate( 'Organization' ),
+			country_code: translate( 'Country' ),
+		};
+
+		if ( fieldMapping[ field ] ) {
+			return fieldMapping[ field ];
+		}
+
+		// Unrecognized field so we don't have a translation, but fallback to something readable in English at least.
+		return field.replace( /_/, ' ' ).replace( /^(.)/, ( match ) => match.toUpperCase() );
 	};
 
 	const renderHeader = () => {
@@ -210,6 +226,7 @@ export default function BulkEditContactInfoPage( {
 				showContactInfoNote={ false }
 				backUrl={ domainsListPath }
 				onSubmitButtonClick={ handleSubmitButtonClick }
+				bulkEdit={ true }
 			/>
 		);
 	};
@@ -231,6 +248,11 @@ export default function BulkEditContactInfoPage( {
 				icon={ false }
 			/>
 		);
+
+		const domainsWithUnmodifiableContactInfo =
+			selectedDomains &&
+			selectedDomains.length > 1 &&
+			selectedDomains.filter( ( domain ) => domain.whois_update_unmodifiable_fields.length > 0 );
 
 		return (
 			<>
@@ -277,6 +299,29 @@ export default function BulkEditContactInfoPage( {
 						) }
 					</div>
 				) }
+				{ domainsWithUnmodifiableContactInfo && domainsWithUnmodifiableContactInfo.length > 0 && (
+					<div className="edit-contact-info-page__sidebar" style={ { marginBottom: '8px' } }>
+						<div className="edit-contact-info-page__sidebar-title">
+							<p>
+								<strong>{ translate( 'The following domain fields will not be updated:' ) }</strong>
+							</p>
+						</div>
+						<div className="edit-contact-info-page__sidebar-content">
+							<ul>
+								{ domainsWithUnmodifiableContactInfo.map( ( domain ) => (
+									<li key={ domain.domain }>
+										<strong>{ domain.domain }</strong>
+										<ul style={ { listStyleType: 'circle' } }>
+											{ domain.whois_update_unmodifiable_fields.map( ( field: string ) => (
+												<li key={ field }>{ getFieldMapping( field ) }</li>
+											) ) }
+										</ul>
+									</li>
+								) ) }
+							</ul>
+						</div>
+					</div>
+				) }
 				<div className="edit-contact-info-page__sidebar">
 					<div className="edit-contact-info-page__sidebar-title">
 						<p>
@@ -314,6 +359,9 @@ export default function BulkEditContactInfoPage( {
 		return (
 			<>
 				{ firstSelectedDomain && <QuerySiteDomains siteId={ firstSelectedDomain.blog_id } /> }
+				{ selectedDomains?.map( ( domain ) => (
+					<QueryWhois domain={ domain.domain } />
+				) ) }
 				<DomainMainPlaceholder goBack={ goToDomainsList } />
 			</>
 		);
