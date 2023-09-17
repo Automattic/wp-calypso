@@ -87,7 +87,7 @@ export default function ( pageBase = '/' ) {
 	statsPage( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
 
 	// Stat Purchase Page
-	statsPage( '/stats/purchase/:site?', purchase );
+	statsPage( '/stats/purchase/:site', purchase );
 
 	// Anything else should redirect to default stats page
 	statsPage( '*', redirectToSiteTrafficPage );
