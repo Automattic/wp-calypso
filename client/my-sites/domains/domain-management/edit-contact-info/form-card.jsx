@@ -292,41 +292,7 @@ class EditContactInfoFormCard extends Component {
 			}
 		);
 
-		const { email } = newContactDetails;
-		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
-			wp.me()
-				.settings()
-				.update( { user_email: email } )
-				.then( ( data ) => {
-					if ( data.user_email_change_pending ) {
-						this.props.infoNotice(
-							this.props.translate(
-								'There is a pending change of your WordPress.com email to %(newEmail)s. Please check your inbox for a confirmation link.',
-								{
-									args: { newEmail: data.new_user_email },
-								}
-							),
-							{
-								showDismiss: true,
-								isPersistent: true,
-								duration: null,
-							}
-						);
-					}
-				} )
-				.catch( () => {
-					this.props.errorNotice(
-						this.props.translate(
-							'There was a problem updating your WordPress.com Account email.'
-						),
-						{
-							showDismiss: true,
-							isPersistent: true,
-							duration: null,
-						}
-					);
-				} );
-		}
+		this.updateWpcomEmail( newContactDetails, updateWpcomEmail );
 	};
 
 	onWhoisUpdateSuccess = () => {
@@ -424,6 +390,7 @@ class EditContactInfoFormCard extends Component {
 				this.state.transferLock,
 				this.state.updateWpcomEmail
 			);
+			this.updateWpcomEmail( newContactDetails, this.state.updateWpcomEmail );
 			if ( result === 'cancel' ) {
 				return;
 			}
@@ -461,6 +428,44 @@ class EditContactInfoFormCard extends Component {
 		);
 		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
 	};
+
+	updateWpcomEmail( newContactDetails, updateWpcomEmail ) {
+		const { email } = newContactDetails;
+		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
+			wp.me()
+				.settings()
+				.update( { user_email: email } )
+				.then( ( data ) => {
+					if ( data.user_email_change_pending ) {
+						this.props.infoNotice(
+							this.props.translate(
+								'There is a pending change of your WordPress.com email to %(newEmail)s. Please check your inbox for a confirmation link.',
+								{
+									args: { newEmail: data.new_user_email },
+								}
+							),
+							{
+								showDismiss: true,
+								isPersistent: true,
+								duration: null,
+							}
+						);
+					}
+				} )
+				.catch( () => {
+					this.props.errorNotice(
+						this.props.translate(
+							'There was a problem updating your WordPress.com Account email.'
+						),
+						{
+							showDismiss: true,
+							isPersistent: true,
+							duration: null,
+						}
+					);
+				} );
+		}
+	}
 
 	shouldDisableSubmitButton() {
 		const { haveContactDetailsChanged, formSubmitting } = this.state;
