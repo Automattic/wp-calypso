@@ -10,6 +10,7 @@ import {
 	redirectToActivity,
 	redirectToDefaultModulePage,
 	redirectToDefaultWordAdsPeriod,
+	purchase,
 } from 'calypso/my-sites/stats/controller';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import config from './lib/config-api';
@@ -84,6 +85,9 @@ export default function ( pageBase = '/' ) {
 	// Anything else should redirect to default WordAds stats page
 	statsPage( '/stats/wordads/(.*)', redirectToDefaultWordAdsPeriod );
 	statsPage( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
+
+	// Stat Purchase Page
+	statsPage( '/stats/purchase/:site?', purchase );
 
 	// Anything else should redirect to default stats page
 	statsPage( '*', redirectToSiteTrafficPage );

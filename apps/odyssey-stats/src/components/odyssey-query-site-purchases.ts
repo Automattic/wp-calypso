@@ -52,7 +52,7 @@ const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
 	}, [ siteId, reduxDispatch ] );
 };
 
-export default function OdysseyQuerySitePurchases( siteId: number | null ) {
+export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number | null } ) {
 	useOdysseyQuerySitePurchases( siteId );
 
 	return null;
