@@ -141,10 +141,6 @@ In addition, `CheckoutProvider` monitors the [transaction status](#useTransactio
 - If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will register an error as above if there is no url).
 - If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
-### CheckoutReviewOrder
-
-Renders a list of the line items and their `displayValue` properties followed by the `total` line item, and whatever `submitButton` is in the current payment method.
-
 ### CheckoutStep
 
 A checkout step. This should be a direct child of [CheckoutStepGroup](#CheckoutStepGroup) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). If you want to make something that looks like a step but is not connected to other steps, use a [CheckoutStepBody](#CheckoutStepBody) instead.
@@ -243,28 +239,6 @@ An enum that holds the values of the [form status](#useFormStatus).
 
 A placeholder used while checkout is initially loading (when [FormStatus](#FormStatus) is `LOADING`). Can be replaced using the `loadingContent` prop of [CheckoutStepGroup](#CheckoutStepGroup).
 
-### MainContentWrapper
-
-A styled div, controlled by the [theme](#checkoutTheme), that's used as an inner wrapper for the [CheckoutStepGroup](#CheckoutStepGroup) component. You shouldn't need to use this manually.
-
-### OrderReviewLineItems
-
-Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
-
-An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
-
-This component provides just a simple list of label and price. If you want to modify how each line item is displayed, or if you want to provide any actions for that item (eg: the ability to delete the item from the order), you cannot use this component; instead you should create a custom component.
-
-### OrderReviewSection
-
-A wrapper for a section of a list of related line items. Renders its `children` prop.
-
-### OrderReviewTotal
-
-Renders the `total` prop like a line item, but with different styling.
-
-An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
-
 ### PaymentLogo
 
 Renders a logo for a credit card.
@@ -277,22 +251,6 @@ Takes two props:
 ### PaymentMethodStep
 
 A pre-built [CheckoutStep](#CheckoutStep) to select the payment method. It does not require any props but any of the [CheckoutStep](#CheckoutStep) props can be overridden by passing them to this component.
-
-### RadioButton
-
-Renders a radio button wrapper for payment methods or other similar boxes.
-
-Props:
-
-- `name: string`
-- `id: string`
-- `label: React.ReactNode`
-- `disabled?: boolean`
-- `checked?: boolean`
-- `value: string`
-- `onChange?: () => void`
-- `ariaLabel: string`
-- `children?: React.ReactNode`
 
 ### PaymentProcessorResponseType
 
@@ -324,10 +282,6 @@ An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be me
 ## createCheckoutStepGroupStore
 
 A function to create a `CheckoutStepGroupStore` which can be passed to [CheckoutStepGroup](#CheckoutStepGroup) if you need additional control over the steps.
-
-### getDefaultPaymentMethodStep
-
-Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
 
 ### makeErrorResponse
 
@@ -369,14 +323,6 @@ A React Hook that will return true if the current step is the currently active s
 ### useIsStepComplete
 
 A React Hook that will return true if the current step is complete as defined by the `isCompleteCallback` of that step. Only works within a step.
-
-### useLineItems
-
-A React Hook that will return a two element array where the first element is the current array of line items (matching the `items` from the `CheckoutProvider`), and the second element is the current total (matching the `total` from the `CheckoutProvider`). Only works within [CheckoutProvider](#CheckoutProvider).
-
-### useLineItemsOfType
-
-A React Hook taking one string argument that will return an array of [line items](#line-items) from the cart (derived from the same data returned by [useLineItems](#useLineItems)) whose `type` property matches that string. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### usePaymentMethod
 
@@ -432,3 +378,5 @@ A React Hook that returns an object with the following properties to be used by 
 In the root of the monorepo, run `yarn workspace @automattic/composite-checkout run storybook` which will start a local webserver that will display the component.
 
 To run the tests for this package, run `yarn run test-packages composite-checkout`.
+
+**Please don't add anything to this package that is specific to WordPress.com checkout! It is a general purpose toolkit.**

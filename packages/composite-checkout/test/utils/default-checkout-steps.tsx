@@ -2,9 +2,9 @@ import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
+	getDefaultPaymentMethodStep,
 } from '../../src/components/default-steps';
 import {
-	getDefaultPaymentMethodStep,
 	CheckoutStepGroup,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
