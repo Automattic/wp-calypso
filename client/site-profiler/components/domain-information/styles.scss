@@ -18,12 +18,29 @@
 		}
 
 		.name {
-			width: 200px;
+			min-width: 200px;
 			text-transform: uppercase;
 		}
 	}
 
 	.col {
 		max-width: 300px;
+	}
+
+	.whois-raw-data {
+		p {
+			font-size: 0.875rem !important;
+			/* stylelint-disable-next-line */
+			line-height: 1.25rem;
+			color: var(--studio-gray) !important;
+		}
+
+		pre {
+			font-size: 0.875rem;
+			/* stylelint-disable-next-line */
+			line-height: 1.25rem;
+			padding: 0;
+			margin: 0;
+		}
 	}
 }

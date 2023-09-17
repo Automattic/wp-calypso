@@ -36,7 +36,7 @@ export default function SiteProfiler() {
 					) }
 					{ data?.whois && (
 						<LayoutBlockSection>
-							<DomainInformation whois={ data.whois } />
+							<DomainInformation domain={ domain } whois={ data.whois } />
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>
