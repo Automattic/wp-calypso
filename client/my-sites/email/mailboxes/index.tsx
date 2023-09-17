@@ -12,7 +12,7 @@ import { getConfiguredTitanMailboxCount } from 'calypso/lib/titan';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailHome from 'calypso/my-sites/email/email-management/email-home';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
+import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import MailboxSelectionList from 'calypso/my-sites/email/mailboxes/mailbox-selection-list';
 import ProgressLine from 'calypso/my-sites/email/mailboxes/mailbox-selection-list/progress-line';
 import { emailManagementMailboxes } from 'calypso/my-sites/email/paths';
@@ -137,7 +137,7 @@ const MailboxesManagement = ( {
 					sectionHeaderLabel={ translate( 'Domains' ) }
 					selectedIntervalLength={ selectedIntervalLength }
 					showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
-					source={ INBOX_SOURCE }
+					source={ MAILBOXES_SOURCE }
 				/>
 			</>
 		</CalypsoShoppingCartProvider>

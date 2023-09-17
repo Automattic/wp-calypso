@@ -13,7 +13,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection-list';
 import ProgressLine from 'calypso/my-sites/email/inbox/mailbox-selection-list/progress-line';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
+import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import { emailManagementInbox } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -130,7 +130,7 @@ const InboxManagement = ( { selectedIntervalLength } ) => {
 					sectionHeaderLabel={ translate( 'Domains' ) }
 					selectedIntervalLength={ selectedIntervalLength }
 					showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
-					source={ INBOX_SOURCE }
+					source={ MAILBOXES_SOURCE }
 				/>
 			</>
 		</CalypsoShoppingCartProvider>
