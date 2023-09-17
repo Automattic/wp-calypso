@@ -19,7 +19,7 @@ export default function DomainInformation( props: Props ) {
 	const {
 		data: whoisRawData,
 		isFetching: whoisRawDataFetching,
-		isError: isFetchingError,
+		isError: whoisRawDataFetchingError,
 	} = useDomainAnalyzerWhoisRawDataQuery( domain, fetchWhoisRawData );
 
 	return (
@@ -237,7 +237,9 @@ export default function DomainInformation( props: Props ) {
 							</Button>
 						) }
 
-						{ isFetchingError && <p>Error fetching WHOIS data; please try again later.</p> }
+						{ whoisRawDataFetchingError && (
+							<p>Error fetching WHOIS data; please try again later.</p>
+						) }
 
 						{ whoisRawData && (
 							<div className="whois-raw-data">
