@@ -9,6 +9,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useQueries } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import page from 'page';
 import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -77,6 +78,28 @@ export default function BulkEditContactInfoPage( {
 		? allSiteDomains.filter( ( { domain } ) => selectedDomainsArg.includes( domain ) )
 		: null;
 	const firstSelectedDomain = selectedDomains?.[ 0 ];
+
+	// If all domains have the same registration agreement then we can link directly to it. Otherwise we
+	// use `''` and the form will fall back to a support page which links to all the different agreements.
+	const allDomainsShareAgreementUrl = selectedDomains?.every(
+		( domain ) =>
+			domain.domain_registration_agreement_url ===
+			firstSelectedDomain?.domain_registration_agreement_url
+	);
+	const domainRegistrationAgreementUrl =
+		( allDomainsShareAgreementUrl && firstSelectedDomain?.domain_registration_agreement_url ) || '';
+
+	const anyDomainSupportsTransferLockOptOut =
+		selectedDomains?.some( ( domain ) => {
+			if ( ! domain.transfer_lock_on_whois_update_optional ) {
+				return false;
+			}
+
+			const registrationDatePlus60Days = moment.utc( domain.registration_date ).add( 60, 'days' );
+			const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
+
+			return ! isLocked;
+		} ) ?? false;
 
 	const [ showAllSelectedDomains, setShowAllSelectedDomains ] = useState( false );
 	const domainListElementId = useId();
@@ -217,7 +240,8 @@ export default function BulkEditContactInfoPage( {
 
 		return (
 			<EditContactInfoFormCard
-				domainRegistrationAgreementUrl={ firstSelectedDomain.domain_registration_agreement_url }
+				forceShowTransferLockOptOut={ anyDomainSupportsTransferLockOptOut }
+				domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
 				selectedDomain={ getSelectedDomain( {
 					domains: reduxDomains,
 					selectedDomainName: firstSelectedDomain.domain,
