@@ -18,7 +18,7 @@ export default function QueryProductsList( {
 	currency,
 }: {
 	currency?: string;
-	type?: string | null;
+	type?: string;
 } ) {
 	const isRequesting = useSelector( ( state: object ) => isProductsListFetching( state ) );
 	const dispatch = useDispatch();
