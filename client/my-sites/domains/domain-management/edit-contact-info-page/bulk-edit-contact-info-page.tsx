@@ -200,9 +200,19 @@ export default function BulkEditContactInfoPage( {
 		);
 
 		if ( firstDomainUserCanNotManage ) {
+			// domains passed to NonOwnerCard expects name to be on the domain to properly show the message
+			// otherwise nothing is rendered.
+			const nonOwnerDomains = allSiteDomains?.map( ( domain ) => {
+				return {
+					name: domain.domain,
+					type: domain.type,
+					owner: domain.owner,
+				};
+			} );
+
 			return (
 				<NonOwnerCard
-					domains={ partialDomainsData }
+					domains={ nonOwnerDomains }
 					selectedDomainName={ firstDomainUserCanNotManage.domain }
 				/>
 			);
