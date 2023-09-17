@@ -3,6 +3,7 @@ import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useMemo } from 'react';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -20,6 +21,7 @@ import {
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
 import EmptyDomainsListCard from './empty-domains-list-card';
 import { filterDomainsByOwner } from './helpers';
@@ -91,6 +93,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 							try {
 								await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
 								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
+								page.redirect( domainManagementList( domain.domain ) );
 							} catch ( error ) {
 								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
 							}
