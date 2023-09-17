@@ -41,7 +41,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 	const hasDomainCredit = useSelector( ( state ) => hasDomainCreditSelector( state, site?.ID ) );
-	const { data, isLoading } = useSiteDomainsQuery( site?.slug );
+	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
@@ -94,6 +94,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 								await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
 								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
 								page.redirect( domainManagementList( domain.domain ) );
+								refetch();
 							} catch ( error ) {
 								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
 							}
