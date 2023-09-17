@@ -136,7 +136,12 @@ export default function BulkEditContactInfoPage( {
 			country_code: translate( 'Country' ),
 		};
 
-		return fieldMapping[ field ];
+		if ( fieldMapping[ field ] ) {
+			return fieldMapping[ field ];
+		}
+
+		// Unrecognized field so we don't have a translation, but fallback to something readable in English at least.
+		return field.replace( /_/, ' ' ).replace( /^(.)/, ( match ) => match.toUpperCase() );
 	};
 
 	const renderHeader = () => {
