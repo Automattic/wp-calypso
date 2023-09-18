@@ -53,6 +53,7 @@ export function testDomain(
 			maximum_mailbox_count: 0,
 		},
 		email_forwards_count: 0,
+		tld_maintenance_end_time: 0,
 	};
 
 	const partialOnlyDefaults = Object.entries( defaults ).filter( ( [ key ] ) =>
