@@ -31,9 +31,9 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const [ intentClickNumber, setIntentClicksNumber ] = useState( 1 );
 	const [ modal, setModal ] = useState< ReactElement | null >( null );
-	const [ randomizedItems, setRandomizedItems ] = useState<
-		typeof VideoPressOnboardingIntentItem | null
-	>( null );
+	const [ randomizedItems, setRandomizedItems ] = useState< Array< React.ReactNode > | null >(
+		null
+	);
 	const urlQueryParams = useQuery();
 	const fromReferrer = urlQueryParams.get( 'from' ) ?? '';
 
@@ -151,8 +151,7 @@ const VideoPressOnboardingIntent: Step = ( { navigation } ) => {
 	const stepContent = (
 		<>
 			<div className="videopress-onboarding-intent__step-content">
-				{ randomizedItems &&
-					randomizedItems.map( ( item: typeof VideoPressOnboardingIntentItem ) => item ) }
+				{ randomizedItems && randomizedItems.map( ( item ) => item ) }
 				<VideoPressOnboardingIntentItem
 					title={ __( 'Other' ) }
 					description={ __( 'What are you looking for? Let us know!' ) }
