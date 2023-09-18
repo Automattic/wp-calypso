@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { DomainData } from '@automattic/data-stores';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import moment from 'moment';
 import React from 'react';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
-import { DomainsTable } from '../domains-table';
+import { DomainsTable, DomainsTableProps } from '../domains-table';
 import { DomainsTableRow } from '../domains-table-row';
 
 const render = ( el, props ) =>
@@ -384,9 +385,34 @@ describe( 'expires or renew on cell', () => {
 } );
 
 describe( 'domain status cell', () => {
+	const renderDomainStatusCell = (
+		domain: Partial< DomainData >,
+		props?: Partial< DomainsTableProps >
+	) => {
+		const [ partialDomain, fullDomain ] = testDomain( domain );
+
+		const fetchSiteDomains = jest.fn().mockResolvedValue( {
+			domains: [ fullDomain ],
+		} );
+
+		const fetchSite = jest.fn().mockResolvedValue( {
+			ID: 123,
+			URL: 'https://example.com',
+			options: { is_redirect: false },
+		} );
+
+		return render( <DomainsTableRow domain={ partialDomain } />, {
+			domains: [ partialDomain ],
+			isAllSitesView: true,
+			fetchSite,
+			fetchSiteDomains,
+			...props,
+		} );
+	};
+
 	describe( 'mapped domain actions', () => {
 		test( 'when a mapped domain is close to its expiry date and doesnt point to wpcom, refer the user to the mapping setup page', async () => {
-			const [ partialDomain, fullDomain ] = testDomain( {
+			renderDomainStatusCell( {
 				domain: 'example.com',
 				blog_id: 123,
 				wpcom_domain: false,
@@ -396,23 +422,6 @@ describe( 'domain status cell', () => {
 				expiry: moment().add( 3, 'days' ).toISOString(),
 				points_to_wpcom: false,
 				auto_renewing: false,
-			} );
-
-			const fetchSiteDomains = jest.fn().mockResolvedValue( {
-				domains: [ fullDomain ],
-			} );
-
-			const fetchSite = jest.fn().mockResolvedValue( {
-				ID: 123,
-				URL: 'https://example.com',
-				options: { is_redirect: false },
-			} );
-
-			render( <DomainsTableRow domain={ partialDomain } />, {
-				domains: [ partialDomain ],
-				isAllSitesView: true,
-				fetchSite,
-				fetchSiteDomains,
 			} );
 
 			await waitFor( () => {
@@ -437,7 +446,7 @@ describe( 'domain status cell', () => {
 		} );
 
 		test( 'when a mapped domain has mapping errors, refer the user to the mapping setup page', async () => {
-			const [ partialDomain, fullDomain ] = testDomain( {
+			renderDomainStatusCell( {
 				domain: 'example.com',
 				blog_id: 123,
 				wpcom_domain: false,
@@ -447,23 +456,6 @@ describe( 'domain status cell', () => {
 				registration_date: moment().subtract( 5, 'days' ).toISOString(),
 				expiry: moment().add( 60, 'days' ).toISOString(),
 				points_to_wpcom: false,
-			} );
-
-			const fetchSiteDomains = jest.fn().mockResolvedValue( {
-				domains: [ fullDomain ],
-			} );
-
-			const fetchSite = jest.fn().mockResolvedValue( {
-				ID: 123,
-				URL: 'https://example.com',
-				options: { is_redirect: false },
-			} );
-
-			render( <DomainsTableRow domain={ partialDomain } />, {
-				domains: [ partialDomain ],
-				isAllSitesView: true,
-				fetchSite,
-				fetchSiteDomains,
 			} );
 
 			await waitFor( () => {
@@ -484,6 +476,280 @@ describe( 'domain status cell', () => {
 				expect(
 					screen.queryByText( "We noticed that something wasn't updated correctly." )
 				).toBeInTheDocument();
+			} );
+		} );
+	} );
+
+	describe( 'expired domains actions', () => {
+		let dateTimeFormatSpy;
+		const OriginalTimeFormat = Intl.DateTimeFormat;
+
+		beforeAll( () => {
+			dateTimeFormatSpy = jest.spyOn( global.Intl, 'DateTimeFormat' );
+			dateTimeFormatSpy.mockImplementation(
+				( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
+			);
+		} );
+
+		afterAll( () => {
+			dateTimeFormatSpy.mockClear();
+		} );
+
+		test( 'when the domain expires, display a renew now cta if the user is the owner', async () => {
+			const onRenewNowClick = jest.fn();
+
+			renderDomainStatusCell(
+				{
+					domain: 'example.com',
+					blog_id: 123,
+					wpcom_domain: false,
+					expired: true,
+					is_renewable: true,
+					expiry: '2023-08-01T00:00:00+00:00',
+					renewable_until: '2024-08-01T00:00:00+00:00',
+					current_user_is_owner: true,
+				},
+				{
+					domainStatusPurchaseActions: {
+						isPurchasedDomain: () => true,
+						onRenewNowClick,
+					},
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Expired' ) );
+			} );
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'tooltip' ) ).toHaveTextContent(
+					'This domain expired on August 1, 2023. You can renew the domain at the regular rate until August 1, 2024.'
+				);
+			} );
+
+			const renewNowButton = screen.getByText( 'Renew now' );
+
+			expect( renewNowButton ).toBeInTheDocument();
+			fireEvent.click( renewNowButton );
+
+			expect( onRenewNowClick ).toHaveBeenCalledWith(
+				'example.com',
+				expect.objectContaining( {
+					domain: 'example.com',
+				} )
+			);
+		} );
+
+		test( 'when the domain expires, display a notice if the user is not the owner', async () => {
+			renderDomainStatusCell(
+				{
+					domain: 'example.com',
+					blog_id: 123,
+					wpcom_domain: false,
+					expired: true,
+					is_renewable: true,
+					expiry: '2023-08-01T00:00:00+00:00',
+					renewable_until: '2024-08-01T00:00:00+00:00',
+					current_user_is_owner: false,
+				},
+				{
+					domainStatusPurchaseActions: {
+						isPurchasedDomain: () => true,
+					},
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Expired' ) );
+			} );
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'tooltip' ) ).toHaveTextContent(
+					'This domain expired on August 1, 2023. The domain owner can renew the domain at the regular rate until August 1, 2024.'
+				);
+			} );
+
+			const renewNowButton = screen.queryByText( 'Renew now' );
+
+			expect( renewNowButton ).not.toBeInTheDocument();
+		} );
+
+		test( 'when the domain expires, display a renew now with credits cta if the user is the owner', async () => {
+			const onRenewNowClick = jest.fn();
+
+			renderDomainStatusCell(
+				{
+					domain: 'example.com',
+					blog_id: 123,
+					wpcom_domain: false,
+					expired: true,
+					is_renewable: false,
+					is_redeemable: true,
+					expiry: '2023-08-01T00:00:00+00:00',
+					redeemable_until: '2024-08-01T00:00:00+00:00',
+					current_user_is_owner: true,
+				},
+				{
+					domainStatusPurchaseActions: {
+						isPurchasedDomain: () => true,
+						onRenewNowClick,
+					},
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Expired' ) );
+			} );
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'tooltip' ) ).toHaveTextContent(
+					'This domain expired on August 1, 2023. You can still renew the domain until August 1, 2024 by paying an additional redemption fee.'
+				);
+			} );
+
+			const renewNowButton = screen.getByText( 'Renew now' );
+
+			expect( renewNowButton ).toBeInTheDocument();
+			fireEvent.click( renewNowButton );
+
+			expect( onRenewNowClick ).toHaveBeenCalledWith(
+				'example.com',
+				expect.objectContaining( {
+					domain: 'example.com',
+				} )
+			);
+		} );
+
+		test( 'when the domain expires, display a notice if the domain is redeemable but the user is not the owner', async () => {
+			renderDomainStatusCell(
+				{
+					domain: 'example.com',
+					blog_id: 123,
+					wpcom_domain: false,
+					expired: true,
+					is_renewable: false,
+					is_redeemable: true,
+					expiry: '2023-08-01T00:00:00+00:00',
+					redeemable_until: '2024-08-01T00:00:00+00:00',
+					current_user_is_owner: false,
+				},
+				{
+					domainStatusPurchaseActions: {
+						isPurchasedDomain: () => true,
+					},
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Expired' ) );
+			} );
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'tooltip' ) ).toHaveTextContent(
+					'This domain expired on August 1, 2023. The domain owner can still renew the domain until August 1, 2024 by paying an additional redemption fee.'
+				);
+			} );
+
+			const renewNowButton = screen.queryByText( 'Renew now' );
+
+			expect( renewNowButton ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'domain about to expire actions', () => {
+		test( 'when there is less than 30 days to expire and the viewer is the owner, display the renew now cta', async () => {
+			const onRenewNowClick = jest.fn();
+
+			renderDomainStatusCell(
+				{
+					domain: 'example.com',
+					blog_id: 123,
+					wpcom_domain: false,
+					type: 'registered',
+					has_registration: true,
+					current_user_is_owner: true,
+					expired: false,
+					expiry: moment().add( 29, 'days' ).toISOString(),
+				},
+				{
+					domainStatusPurchaseActions: {
+						isPurchasedDomain: () => true,
+						onRenewNowClick,
+					},
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Expiring soon' ) );
+			} );
+
+			const renewNow = screen.getByText( 'Renew now' );
+
+			expect( renewNow ).toBeInTheDocument();
+			fireEvent.click( renewNow );
+
+			expect( onRenewNowClick ).toHaveBeenCalledWith(
+				'example.com',
+				expect.objectContaining( {
+					domain: 'example.com',
+				} )
+			);
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				const tooltip = screen.getByRole( 'tooltip' );
+
+				expect( tooltip ).toHaveTextContent( /This domain will expire on\s.+\./ );
+			} );
+		} );
+
+		test( 'when there is less than 30 days to expire and the viewer is not the owner, display the renew notice', async () => {
+			const onRenewNowClick = jest.fn();
+
+			renderDomainStatusCell(
+				{
+					domain: 'example.com',
+					blog_id: 123,
+					wpcom_domain: false,
+					type: 'registered',
+					has_registration: true,
+					current_user_is_owner: false,
+					expired: false,
+					expiry: moment().add( 29, 'days' ).toISOString(),
+				},
+				{
+					domainStatusPurchaseActions: {
+						isPurchasedDomain: () => true,
+						onRenewNowClick,
+					},
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Expiring soon' ) );
+			} );
+
+			const renewNow = screen.queryByText( 'Renew now' );
+
+			expect( renewNow ).not.toBeInTheDocument();
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				const tooltip = screen.getByRole( 'tooltip' );
+
+				expect( tooltip ).toHaveTextContent(
+					/This domain will expire on\s.+\. It can be renewed by the owner./
+				);
 			} );
 		} );
 	} );

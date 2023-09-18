@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import moment from 'moment';
 import {
@@ -55,7 +54,7 @@ export type ResolveDomainStatusOptionsBag = {
 };
 
 export type DomainStatusPurchaseActions = {
-	isCreditCardExpiring: ( domain: ResponseDomain ) => boolean;
+	isCreditCardExpiring?: ( domain: ResponseDomain ) => boolean;
 	onRenewNowClick?: ( siteSlug: string, domain: ResponseDomain ) => void;
 	isPurchasedDomain?: ( domain: ResponseDomain ) => boolean;
 };
@@ -273,58 +272,8 @@ export function resolveDomainStatus(
 			if ( domain.expired ) {
 				let renewCta;
 
-				if ( domain.isRenewable ) {
-					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
-
-					renewCta =
-						isPurchasedDomain && siteSlug && domain.currentUserIsOwner
-							? translate(
-									'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Renew now{{/a}}',
-									{
-										components: {
-											strong: <strong />,
-											a: <Button plain onClick={ () => onRenewNowClick?.() } />,
-										},
-										args: { renewableUntil },
-									}
-							  )
-							: translate(
-									'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
-									{
-										components: {
-											strong: <strong />,
-										},
-										args: { renewableUntil },
-									}
-							  );
-				} else if ( domain.isRedeemable ) {
-					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
-
-					renewCta =
-						isPurchasedDomain && siteSlug && domain.currentUserIsOwner
-							? translate(
-									'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee. {{a}}Renew now{{/a}}',
-									{
-										components: {
-											strong: <strong />,
-											a: <Button plain onClick={ () => onRenewNowClick?.() } />,
-										},
-										args: { redeemableUntil },
-									}
-							  )
-							: translate(
-									'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
-									{
-										components: {
-											strong: <strong />,
-										},
-										args: { redeemableUntil },
-									}
-							  );
-				}
-
 				const domainExpirationMessage = translate(
-					'This domain expired on {{strong}}%(expiryDate)s{{/strong}}. ',
+					'This domain expired on {{strong}}%(expiryDate)s{{/strong}}.',
 					{
 						components: {
 							strong: <strong />,
@@ -336,8 +285,77 @@ export function resolveDomainStatus(
 				);
 
 				const noticeText = [ domainExpirationMessage ];
-				if ( renewCta ) {
-					noticeText.push( renewCta );
+
+				if ( domain.isRenewable ) {
+					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
+
+					if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { renewableUntil },
+								}
+							)
+						);
+
+						renewCta = {
+							onClick: onRenewNowClick,
+							label: translate( 'Renew now' ),
+						};
+					} else {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { renewableUntil },
+								}
+							)
+						);
+					}
+				} else if ( domain.isRedeemable ) {
+					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
+
+					if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { redeemableUntil },
+								}
+							)
+						);
+
+						renewCta = {
+							onClick: onRenewNowClick,
+							label: translate( 'Renew now' ),
+						};
+					} else {
+						noticeText.push( ' ' );
+						noticeText.push(
+							translate(
+								'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { redeemableUntil },
+								}
+							)
+						);
+					}
 				}
 
 				return {
@@ -346,22 +364,14 @@ export function resolveDomainStatus(
 					status: translate( 'Expired', { context: 'domain status' } ),
 					icon: 'info',
 					noticeText,
+					callToAction: renewCta,
 					listStatusWeight: 1000,
 				};
 			}
 
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const renewCta =
-					isPurchasedDomain && siteSlug && domain.currentUserIsOwner
-						? translate( '{{a}}Renew now{{/a}}', {
-								components: {
-									a: <Button plain onClick={ () => onRenewNowClick?.() } />,
-								},
-						  } )
-						: translate( 'It can be renewed by the owner.' );
-
 				const domainExpirationMessage = translate(
-					'This domain will expire on {{strong}}%(expiryDate)s{{/strong}}. ',
+					'This domain will expire on {{strong}}%(expiryDate)s{{/strong}}.',
 					{
 						args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
 						components: { strong: <strong /> },
@@ -369,8 +379,17 @@ export function resolveDomainStatus(
 				);
 
 				const expiresMessage = [ domainExpirationMessage ];
-				if ( renewCta ) {
-					expiresMessage.push( renewCta );
+
+				let callToAction;
+
+				if ( isPurchasedDomain && siteSlug && domain.currentUserIsOwner ) {
+					callToAction = {
+						onClick: onRenewNowClick,
+						label: translate( 'Renew now' ),
+					};
+				} else {
+					expiresMessage.push( ' ' );
+					expiresMessage.push( translate( 'It can be renewed by the owner.' ) );
 				}
 
 				if ( isExpiringSoon( domain, 5 ) ) {
@@ -380,6 +399,7 @@ export function resolveDomainStatus(
 						status: translate( 'Expiring soon' ),
 						icon: 'info',
 						noticeText: expiresMessage,
+						callToAction,
 						listStatusWeight: 1000,
 					};
 				}
@@ -390,6 +410,7 @@ export function resolveDomainStatus(
 					status: translate( 'Expiring soon' ),
 					icon: 'info',
 					noticeText: expiresMessage,
+					callToAction,
 					listStatusWeight: 800,
 				};
 			}
