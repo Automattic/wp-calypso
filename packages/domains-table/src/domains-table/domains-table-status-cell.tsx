@@ -1,41 +1,22 @@
-import { Spinner, Button } from '@automattic/components';
+import { Spinner } from '@automattic/components';
 import { DomainUpdateStatus } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { StatusPopover } from '../status-popover';
-import { DomainStatusPurchaseActions, resolveDomainStatus } from '../utils/resolve-domain-status';
-import { ResponseDomain } from '../utils/types';
+import { ResolveDomainStatusReturn } from '../utils/resolve-domain-status';
 
 interface DomainsTableStatusCellProps {
-	currentDomainData?: ResponseDomain;
-	siteSlug?: string;
-	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
+	domainStatus: ResolveDomainStatusReturn | null;
 	pendingUpdates: DomainUpdateStatus[];
 }
 
 export const DomainsTableStatusCell = ( {
-	currentDomainData,
-	siteSlug,
-	domainStatusPurchaseActions,
+	domainStatus,
 	pendingUpdates,
 }: DomainsTableStatusCellProps ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
-	if ( ! currentDomainData ) {
-		return null;
-	}
-	const currentRoute = window.location.pathname;
-	const domainStatus = resolveDomainStatus( currentDomainData, {
-		siteSlug: siteSlug,
-		translate,
-		getMappingErrors: true,
-		currentRoute,
-		isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
-		isCreditCardExpiring: domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
-		onRenewNowClick: () =>
-			domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
-	} );
 
 	const getActionName = ( status: DomainUpdateStatus ) => {
 		if ( 'message' in status ) {
@@ -93,14 +74,6 @@ export const DomainsTableStatusCell = ( {
 				>
 					{ domainStatus.noticeText }
 				</StatusPopover>
-			) }
-			{ domainStatus?.callToAction && (
-				<Button
-					onClick={ domainStatus.callToAction.onClick }
-					href={ domainStatus.callToAction.href }
-				>
-					{ domainStatus.callToAction.label }
-				</Button>
 			) }
 		</div>
 	);

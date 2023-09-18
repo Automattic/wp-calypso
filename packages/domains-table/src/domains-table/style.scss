@@ -314,6 +314,12 @@
 		font-size: $font-body-small;
 	}
 
+	&-status {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
 	&-loading-placeholder {
 		display: flex;
 		flex-direction: column;

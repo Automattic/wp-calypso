@@ -125,6 +125,20 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		return updates;
 	}, [ domain.domain, domainResults, updatingDomain ] );
 
+	const domainStatus = currentDomainData
+		? resolveDomainStatus( currentDomainData, {
+				siteSlug: siteSlug,
+				translate,
+				getMappingErrors: true,
+				currentRoute: window.location.pathname,
+				isPurchasedDomain: domainStatusPurchaseActions?.isPurchasedDomain?.( currentDomainData ),
+				isCreditCardExpiring:
+					domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
+				onRenewNowClick: () =>
+					domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', currentDomainData ),
+		  } )
+		: null;
+
 	return {
 		ref,
 		site,
@@ -141,6 +155,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		isSelected,
 		handleSelectDomain,
 		isAllSitesView,
+		domainStatus,
 		domainStatusPurchaseActions,
 		pendingUpdates,
 		currentDomainData,

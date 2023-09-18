@@ -68,6 +68,11 @@ export const allSitesViewColumns = (
 		supportsOrderSwitching: true,
 		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
 	},
+	{
+		name: 'status_action',
+		label: null,
+		isSortable: false,
+	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
 
@@ -113,6 +118,11 @@ export const siteSpecificViewColumns = (
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
 		sortFunctions: getStatusSortFunctions( translate, domainStatusPurchaseActions ),
+	},
+	{
+		name: 'status_action',
+		label: null,
+		isSortable: false,
 	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
