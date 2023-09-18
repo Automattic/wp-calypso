@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { DomainsApiError } from 'calypso/lib/domains/types';
 import wp from 'calypso/lib/wp';
 
-type TransferInfo = {
+export type TransferInfo = {
 	address1: string;
 	address2: string;
 	city: string;
@@ -19,7 +19,7 @@ type TransferInfo = {
 	termsAccepted: boolean;
 };
 
-export default function useDomainTransferReceive(
+export function useDomainTransferReceive(
 	domainName: string,
 	queryOptions: {
 		onSuccess?: () => void;

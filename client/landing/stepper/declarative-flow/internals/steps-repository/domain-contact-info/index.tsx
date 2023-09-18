@@ -7,7 +7,10 @@ import { useDispatch } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import FormattedHeader from 'calypso/components/formatted-header';
-import useDomainTransferReceive from 'calypso/data/domains/transfers/use-domain-transfer-receive';
+import {
+	useDomainTransferReceive,
+	TransferInfo,
+} from 'calypso/data/domains/transfers/use-domain-transfer-receive';
 import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
@@ -99,7 +102,7 @@ function ContactInfo( {
 			} );
 	}
 
-	function submitForm( contactInfo ) {
+	function submitForm( contactInfo: TransferInfo ) {
 		domainTransferReceive( contactInfo );
 		onSubmit?.( contactInfo );
 	}
