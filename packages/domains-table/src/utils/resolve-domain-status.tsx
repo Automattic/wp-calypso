@@ -464,6 +464,10 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
+				const ctaLink = domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+					nameservers: true,
+				} );
+
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-success',
@@ -474,16 +478,14 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-											nameservers: true,
-										} ) }
-									/>
-								),
+								a: <a href={ ctaLink } />,
 							},
 						}
 					),
+					callToAction: {
+						href: ctaLink,
+						label: translate( 'Point to WordPress.com' ),
+					},
 					listStatusWeight: 600,
 				};
 			}

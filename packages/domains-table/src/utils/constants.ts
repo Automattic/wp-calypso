@@ -15,12 +15,12 @@ export const useMyDomainInputMode = {
 } as const;
 
 export const transferStatus = {
-	PENDING_OWNER: 'PENDING_OWNER',
-	PENDING_REGISTRY: 'PENDING_REGISTRY',
-	CANCELLED: 'CANCELLED',
-	COMPLETED: 'COMPLETED',
-	PENDING_START: 'PENDING_START',
-	PENDING_ASYNC: 'PENDING_ASYNC',
+	PENDING_OWNER: 'pending_owner',
+	PENDING_REGISTRY: 'pending_registry',
+	CANCELLED: 'cancelled',
+	COMPLETED: 'completed',
+	PENDING_START: 'pending_start',
+	PENDING_ASYNC: 'pending_async',
 };
 
 export const registrar = {

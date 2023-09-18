@@ -6,6 +6,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import moment from 'moment';
 import React from 'react';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
+import { transferStatus } from '../../utils/constants';
 import { DomainsTable, DomainsTableProps } from '../domains-table';
 import { DomainsTableRow } from '../domains-table-row';
 
@@ -818,6 +819,39 @@ describe( 'domain status cell', () => {
 					'We sent an email to the domain owner. Please complete the verification or your domain will stop working.'
 				);
 			} );
+		} );
+	} );
+
+	test( 'when the domain is transferred but doesnt point to wpcom, display the cta so the user can point it', async () => {
+		renderDomainStatusCell( {
+			domain: 'example.com',
+			blog_id: 123,
+			wpcom_domain: false,
+			type: 'registered',
+			has_registration: true,
+			points_to_wpcom: false,
+			transfer_status: transferStatus.COMPLETED,
+		} );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Active' ) );
+		} );
+
+		const changeAddress = screen.queryByText( 'Point to WordPress.com' );
+		expect( changeAddress ).toBeInTheDocument();
+		expect( changeAddress ).toHaveAttribute(
+			'href',
+			'/domains/manage/example.com/edit/example.com?nameservers=true'
+		);
+
+		fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+		await waitFor( () => {
+			const tooltip = screen.getByRole( 'tooltip' );
+
+			expect( tooltip ).toHaveTextContent(
+				'Transfer successful! To make this domain work with your WordPress.com site you need to point it to WordPress.com name servers.'
+			);
 		} );
 	} );
 } );
