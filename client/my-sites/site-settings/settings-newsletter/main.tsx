@@ -3,6 +3,9 @@ import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banne
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { useSelector } from 'calypso/state';
+import { isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import wrapSettingsForm from '../wrap-settings-form';
 
@@ -63,8 +66,18 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 		settings,
 		updateFields,
 	}: NewsletterSettingsFormProps ) => {
-		const disabled = isRequestingSettings || isSavingSettings;
+		const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+
+		const isSubscriptionsModuleActive = useSelector( ( state ) => {
+			if ( ! siteId ) {
+				return null;
+			}
+			return isJetpackModuleActive( state, siteId, 'subscriptions' );
+		} );
+
+		const disabled = ! isSubscriptionsModuleActive || isRequestingSettings || isSavingSettings;
 		const savedSubscriptionOptions = settings?.subscription_options;
+
 		return (
 			<form onSubmit={ handleSubmitForm }>
 				<NewsletterSettingsSection
