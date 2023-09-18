@@ -753,4 +753,71 @@ describe( 'domain status cell', () => {
 			} );
 		} );
 	} );
+
+	describe( 'verify domain e-mail actions', () => {
+		test( 'when there domain is pending e-mail verification and the viewer is the owner, display the change email cta', async () => {
+			renderDomainStatusCell( {
+				domain: 'example.com',
+				blog_id: 123,
+				wpcom_domain: false,
+				type: 'registered',
+				has_registration: true,
+				is_pending_icann_verification: true,
+				is_icann_verification_suspended: false,
+				current_user_is_owner: true,
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Verify email' ) );
+			} );
+
+			const changeAddress = screen.queryByText( 'Change address' );
+
+			expect( changeAddress ).toBeInTheDocument();
+			expect( changeAddress ).toHaveAttribute(
+				'href',
+				'/domains/manage/example.com/edit-contact-info/example.com'
+			);
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				const tooltip = screen.getByRole( 'tooltip' );
+
+				expect( tooltip ).toHaveTextContent(
+					'We sent you an email to verify your contact information. Please complete the verification or your domain will stop working.'
+				);
+			} );
+		} );
+
+		test( 'when there domain is pending e-mail verification and the viewer is not the owner, display a notice', async () => {
+			renderDomainStatusCell( {
+				domain: 'example.com',
+				blog_id: 123,
+				wpcom_domain: false,
+				type: 'registered',
+				has_registration: true,
+				is_pending_icann_verification: true,
+				is_icann_verification_suspended: false,
+				current_user_is_owner: false,
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Verify email' ) );
+			} );
+
+			const changeAddress = screen.queryByText( 'Change address' );
+			expect( changeAddress ).not.toBeInTheDocument();
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				const tooltip = screen.getByRole( 'tooltip' );
+
+				expect( tooltip ).toHaveTextContent(
+					'We sent an email to the domain owner. Please complete the verification or your domain will stop working.'
+				);
+			} );
+		} );
+	} );
 } );

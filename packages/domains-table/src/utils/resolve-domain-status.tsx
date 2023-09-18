@@ -237,19 +237,8 @@ export function resolveDomainStatus(
 			if ( domain.isPendingIcannVerification ) {
 				const noticeText = domain.currentUserIsOwner
 					? translate(
-							'We sent you an email to verify your contact information. Please complete the verification or your domain will stop working. You can also {{a}}change your email address{{/a}} if you like.',
+							'We sent you an email to verify your contact information. Please complete the verification or your domain will stop working.',
 							{
-								components: {
-									a: (
-										<a
-											href={ domainManagementEditContactInfo(
-												siteSlug as string,
-												domain.name,
-												currentRoute
-											) }
-										></a>
-									),
-								},
 								args: {
 									domainName: domain.name,
 								},
@@ -264,6 +253,16 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Verify email' ),
 					noticeText,
+					callToAction: domain.currentUserIsOwner
+						? {
+								label: translate( 'Change address' ),
+								href: domainManagementEditContactInfo(
+									siteSlug as string,
+									domain.name,
+									currentRoute
+								),
+						  }
+						: undefined,
 					icon: 'info',
 					listStatusWeight: 600,
 				};
