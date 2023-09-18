@@ -4,6 +4,46 @@
 $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
-.domain-user-transfer {
-	margin: 0;
+.domain-contact-info {
+
+	.domain-contact-info__terms {
+		font-size: 0.875rem;
+	}
+
+	.domain-contact-info__term {
+		padding-left: 24px;
+		position: relative;
+		font-size: $font-body-extra-small;
+
+		margin-bottom: 4px;
+		margin-left: 12px;
+		margin-top: 4px;
+
+		> svg {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 16px;
+			height: 16px;
+
+			.rtl & {
+				left: auto;
+				right: 0;
+			}
+		}
+
+		p {
+			font-size: $font-body-extra-small;
+			margin: 0;
+			word-break: break-word;
+		}
+	}
+
+	.contact-details-form-fields__contact-details {
+		margin-bottom: 15px;
+	}
+	.contact-details-form-fields__extra-fields {
+		margin-bottom: 15px;
+	}
+
 }

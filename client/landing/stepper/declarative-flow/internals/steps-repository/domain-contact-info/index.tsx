@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
-import { CheckboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
@@ -47,9 +47,9 @@ function ContactInfo( {
 		| undefined;
 } ) {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 	const { domain } = useDomainParams();
 	const dispatch = useDispatch();
-	const [ termsAccepted, setTermsAccepted ] = useState( false );
 
 	const { domainTransferReceive } = useDomainTransferReceive( domain ?? '', {
 		onSuccess() {
@@ -100,12 +100,12 @@ function ContactInfo( {
 	}
 
 	function submitForm( contactInfo ) {
-		domainTransferReceive( { ...contactInfo, termsAccepted } );
-		onSubmit( { ...contactInfo, termsAccepted } );
+		domainTransferReceive( { ...contactInfo } );
+		onSubmit( { ...contactInfo } );
 	}
 
 	return (
-		<form>
+		<form className="domain-contact-info">
 			<ContactDetailsFormFields
 				eventFormName="Edit Contact Info"
 				contactDetails={ {
@@ -126,17 +126,39 @@ function ContactInfo( {
 				getIsFieldDisabled={ getIsFieldDisabled }
 				onSubmit={ submitForm }
 				onValidate={ validate }
-				labelTexts={ { submitButton: translate( 'Receive domain transfer' ) } }
-				disableSubmitButton={ ! termsAccepted }
+				labelTexts={ { submitButton: translate( 'Accept domain transfer' ) } }
 				isSubmitting={ false }
 				updateWpcomEmailCheckboxHidden={ true }
 				cancelHidden={ true }
-			></ContactDetailsFormFields>
-			<CheckboxControl
-				label="I agree to the terms of service"
-				checked={ termsAccepted }
-				onChange={ setTermsAccepted }
-			/>
+			>
+				<div className="domain-contact-info__terms">
+					<strong>{ translate( 'By accepting this transfer' ) }</strong>
+				</div>
+				<div className="domain-contact-info__term">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>
+						{ translate(
+							'You agree to the {{a}}Domain Registration Agreement{{/a}} for %(domainName)s.',
+							{
+								args: {
+									domainName: domain ?? '',
+								},
+								components: {
+									a: (
+										<a
+											href={ localizeUrl(
+												'https://wordpress.com/automattic-domain-name-registration-agreement/'
+											) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				</div>
+			</ContactDetailsFormFields>
 		</form>
 	);
 }
