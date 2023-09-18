@@ -31,16 +31,17 @@ export const createUserEmailPendingUpdate = ( newEmail ) => async ( dispatch ) =
 			);
 		}
 	} catch ( error ) {
+		const errorMessage =
+			error.code === 'invalid_input'
+				? translate( 'There was a problem updating your WordPress.com account email: %(error)s', {
+						args: { error: error.message },
+				  } )
+				: translate( 'There was a problem updating your WordPress.com account email.' );
 		dispatch(
-			errorNotice(
-				translate( 'There was a problem updating your WordPress.com Account email: %(error)s', {
-					args: { error: error.message },
-				} ),
-				{
-					showDismiss: true,
-					isPersistent: true,
-				}
-			)
+			errorNotice( errorMessage, {
+				showDismiss: true,
+				isPersistent: true,
+			} )
 		);
 	}
 };
