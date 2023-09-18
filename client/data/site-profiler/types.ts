@@ -64,11 +64,9 @@ export interface HostingProvider {
 
 export interface DomainAnalyzerQueryResponse {
 	domain: string;
-	hosting_provider: {
-		name: string;
-	};
 	whois: WhoIs;
 	dns: DNS[];
+	is_domain_available: boolean;
 }
 
 export interface DomainAnalyzerWhoisRawDataQueryResponse {
