@@ -13,6 +13,7 @@ export function canBulkUpdate( domain: PartialDomainData ): boolean {
 			domainTypes.SITE_REDIRECT,
 			domainTypes.MAPPED,
 			domainTypes.WPCOM,
+			domainTypes.TRANSFER,
 		] as ( typeof domainTypes )[ keyof typeof domainTypes ][]
 	 ).includes( getDomainType( domain ) );
 }
