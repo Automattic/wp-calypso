@@ -457,6 +457,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					themes: selectedDesign?.slug,
 			  } )
 			: window.location.href.replace( window.location.origin, '' );
+
 		goToCheckout( {
 			flowName: flow,
 			stepName,
