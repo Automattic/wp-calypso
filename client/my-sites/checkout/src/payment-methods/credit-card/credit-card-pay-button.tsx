@@ -50,14 +50,15 @@ export default function CreditCardPayButton( {
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 
-	const [ displayError, setDisplayError ] = useState( '' );
+	const [ displayFieldsError, setDisplayFieldsError ] = useState( '' );
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
-		if ( displayError ) {
+		if ( displayFieldsError ) {
 			document.body.scrollTop = document.documentElement.scrollTop = 0;
-			reduxDispatch( errorNotice( displayError ) );
+			reduxDispatch( errorNotice( displayFieldsError ) );
+			setDisplayFieldsError( '' );
 		}
-	}, [ displayError ] );
+	}, [ displayFieldsError ] );
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
 	// this prop yet.
@@ -71,7 +72,7 @@ export default function CreditCardPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayError ) ) {
+				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
 						onClick( {
@@ -185,7 +186,7 @@ function isCreditCardFormValid(
 	store: CardStoreType,
 	paymentPartner: string,
 	__: ( value: string ) => string,
-	setDisplayError: ( value: string ) => void
+	setDisplayFieldsError: ( value: string ) => void
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
 
@@ -197,7 +198,9 @@ function isCreditCardFormValid(
 				// Touch the field so it displays a validation error
 				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
 				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
-				setDisplayError( 'Please fill out all required fields' );
+				setDisplayFieldsError(
+					__( 'Something seems to be missing — please fill out all the required fields.' )
+				);
 			}
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
@@ -208,7 +211,9 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
-				setDisplayError( 'Please fill out all required fields' );
+				setDisplayFieldsError(
+					__( 'Something seems to be missing — please fill out all the required fields.' )
+				);
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
