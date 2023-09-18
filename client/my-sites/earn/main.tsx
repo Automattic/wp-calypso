@@ -52,6 +52,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				path: '/earn' + pathSuffix,
 				id: 'earn',
 			},
+			{
+				title: translate( 'Settings' ),
+				path: '/earn/payments' + pathSuffix,
+				id: 'payments',
+			},
 		];
 	};
 
