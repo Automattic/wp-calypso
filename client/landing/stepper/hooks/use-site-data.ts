@@ -4,8 +4,8 @@ import { useSiteSlugParam } from './use-site-slug-param';
 
 export const useSiteData = () => {
 	const site = useSite();
-	const siteSlug = useSiteSlugParam();
-	const siteId = useSiteIdParam();
+	const siteSlug = useSiteSlugParam() ?? '';
+	const siteId = Number( useSiteIdParam() ) ?? 0;
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 
 	return {

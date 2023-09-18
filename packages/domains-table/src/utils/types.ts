@@ -5,7 +5,7 @@ export type CannotAddEmailReason = {
 	message: string;
 };
 
-export type DomainType = keyof typeof domainType;
+export type DomainType = ( typeof domainType )[ keyof typeof domainType ];
 
 interface EmailSubscription {
 	expiryDate?: string;

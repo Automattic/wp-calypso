@@ -81,6 +81,7 @@ export class RestAPIClient {
 
 	/**
 	 * Constructs an instance of the API client.
+	 *
 	 * @param {AccountCredentials} credentials User credentials.
 	 * @param {string} [bearerToken] BearerToken for the user.
 	 */
@@ -94,6 +95,7 @@ export class RestAPIClient {
 	 *
 	 * If the token has been previously obtained, this method returns the value.
 	 * Otherwise, an API call is made to obtain the bearer token and the resulting value is returned
+	 *
 	 * @returns {Promise<string>} String representing the bearer token.
 	 * @throws {Error} If the API responded with a success status of false.
 	 */
@@ -132,6 +134,7 @@ export class RestAPIClient {
 
 	/**
 	 * Returns the appropriate authorization header.
+	 *
 	 * @returns {Promise<string>} Authorization header in the requested scheme.
 	 * @throws {Error} If a scheme not yet implemented is requested.
 	 */
@@ -146,6 +149,7 @@ export class RestAPIClient {
 
 	/**
 	 * Returns the formatted Content-Type header string.
+	 *
 	 * @returns {string} Content-Type header string.
 	 */
 	private getContentTypeHeader( value: 'json' ): string {
@@ -154,6 +158,7 @@ export class RestAPIClient {
 
 	/**
 	 * Returns a fully constructed URL object pointing to the request endpoint.
+	 *
 	 * @param {EndpointVersions} version Version of the API to use.
 	 * @param {string} endpoint REST API path.
 	 * @param {EndpointNamespace} [namespace] REST API namespace.
@@ -171,6 +176,7 @@ export class RestAPIClient {
 
 	/**
 	 * Sends the request to the endpoint, then returns the decoded JSON.
+	 *
 	 * @param {URL} url URL of the endpoint.
 	 * @param {RequestParams} params Parameters for the request.
 	 * @returns {Promise<any>} Decoded JSON response.
@@ -190,6 +196,7 @@ export class RestAPIClient {
 	 * the response JSON:
 	 * - domain
 	 * - blog id
+	 *
 	 * @returns {Promise<AllDomainsResponse>} JSON array of sites.
 	 * @throws {Error} If API responded with an error.
 	 */
@@ -215,6 +222,7 @@ export class RestAPIClient {
 
 	/**
 	 * Given parameters, create a new site.
+	 *
 	 * @param {NewSiteParams} newSiteParams Details for the new site.
 	 * @returns {Promise<NewSiteResponse>} Confirmation details for the new site.
 	 * @throws {ErrorResponse} If API responded with an error.
@@ -262,6 +270,7 @@ export class RestAPIClient {
 	 *
 	 * Otherwise the active subscription must be first cancelled
 	 * or else the REST API will throw a HTTP 403 status.
+	 *
 	 * @param { {id: number, domain: string}} targetSite Details for the target site to be deleted.
 	 * @returns {SiteDeletionResponse | null} Null if deletion was unsuccessful or not performed. SiteDeletionResponse otherwise.
 	 */
@@ -315,6 +324,7 @@ export class RestAPIClient {
 
 	/**
 	 * Creates a user invite.
+	 *
 	 * @param {number} siteID ID of the site where a new invite will be created.
 	 * @param param0 Keyed object parameter.
 	 * @param {string[]} param0.email List of emails to send invites to.
@@ -455,6 +465,7 @@ export class RestAPIClient {
 	/**
 	 * Returns the account information for the user authenticated
 	 * via the bearer token.
+	 *
 	 * @returns {Promise<MyAccountInformationResponse>} Response containing user details.
 	 * @throws {Error} If API responded with an error.
 	 */
@@ -480,6 +491,7 @@ export class RestAPIClient {
 
 	/**
 	 * Updates the user's settings.
+	 *
 	 * @param {SettingsParams} details Key/value attributes to be set for the user.
 	 * @returns { { [key: string]: string | number } } Generic object.
 	 * @throws {Error} If an unknown attribute or invalid value for a known attribute was provided.
@@ -515,6 +527,7 @@ export class RestAPIClient {
 	 * The userID, username and email of the account that is
 	 * authenticated via the bearer token is checked against the
 	 * supplied parameters.
+	 *
 	 * @param { AccountDetails} expectedAccountDetails Details of the accounts to be closed.
 	 * @returns {Promise<boolean>} True if account closure was successful. False otherwise.
 	 */
@@ -576,6 +589,7 @@ export class RestAPIClient {
 
 	/**
 	 * Returns Calypso preferences for the user.
+	 *
 	 * @returns {Promise<CalypsoPreferencesResponse>} JSON response containing Calypso preferences.
 	 */
 	async getCalypsoPreferences(): Promise< CalypsoPreferencesResponse > {
@@ -594,6 +608,7 @@ export class RestAPIClient {
 
 	/**
 	 * Gets the latest posts from blogs a user follows.
+	 *
 	 * @returns {Promise<ReaderResponse>} An Array of posts.
 	 * @throws {Error} If API responded with an error.
 	 */
@@ -624,6 +639,7 @@ export class RestAPIClient {
 
 	/**
 	 * Given a siteID, checks whether any posts exists of a given state.
+	 *
 	 * @param {number} siteID Site ID.
 	 * @param param1 Keyed object parameter.
 	 * @param {SitePostState} param1.state State of the published post.
@@ -645,11 +661,12 @@ export class RestAPIClient {
 			params
 		);
 
-		return response.counts.all[ state ] !== 0;
+		return response.counts.all[ state ] !== undefined && response.counts.all[ state ] > 0;
 	}
 
 	/**
 	 * Creates a post on the site.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @param {NewPostParams} details Details of the new post.
 	 */
@@ -679,6 +696,7 @@ export class RestAPIClient {
 
 	/**
 	 * Deletes a post denoted by postID from the site.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @param {number} postID Target post ID.
 	 */
@@ -709,6 +727,7 @@ export class RestAPIClient {
 
 	/**
 	 * Creates a comment on the given post.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @param {number} postID Target post ID.
 	 * @param {string} comment Details of the new comment.
@@ -745,6 +764,7 @@ export class RestAPIClient {
 
 	/**
 	 * Deletes a given comment from a site.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @param {number} commentID Target comment ID.
 	 * @returns {Promise< any >} Decoded JSON response.
@@ -775,6 +795,7 @@ export class RestAPIClient {
 
 	/**
 	 * Method to perform two similar operations - like and unlike a comment.
+	 *
 	 * @param {'like'|'unlike'} action Action to perform on the comment.
 	 * @param {number} siteID Target site ID.
 	 * @param {number} commentID Target comment ID.
@@ -826,6 +847,7 @@ export class RestAPIClient {
 
 	/**
 	 * Uploads a media file.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @param param1 Optional object parameter.
 	 * @param {TestFile} param1.media Local media file to be uploaded.
@@ -885,6 +907,7 @@ export class RestAPIClient {
 
 	/**
 	 * Clears the shopping cart.
+	 *
 	 * @param {number} siteID Site that has the shopping cart.
 	 * @throws {Error} If the user doesn't have access to the siteID.
 	 * @returns {{success:true}} If the request was successful.
@@ -916,6 +939,7 @@ export class RestAPIClient {
 
 	/**
 	 * Gets a list of plugins installed in a site.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @returns {Promise<AllPluginsResponse>} An Array of plugins.
 	 * @throws {Error} If API responded with an error.
@@ -945,6 +969,7 @@ export class RestAPIClient {
 
 	/**
 	 * Modifies a plugin installed in a site.
+	 *
 	 * @param {number} siteID Target site ID.
 	 * @param {string} pluginID Plugin ID.
 	 * @param {PluginResponse} details Key/value attributes to be set for the user.
@@ -981,6 +1006,7 @@ export class RestAPIClient {
 
 	/**
 	 * Finds a plugin by name, deactivates it, and removes it from the site.
+	 *
 	 * @returns {Promise<PluginRemovalResponse | null>} Null if plugin removal was unsuccessful or not performed. PluginRemovalResponse otherwise.
 	 * @throws {Error} If API responded with an error.
 	 */
@@ -1022,6 +1048,7 @@ export class RestAPIClient {
 	 *
 	 * As noted in the comments, this method is quite overloaded as its outcome
 	 * differs depending on the current state of the widget (activate/deactivated).
+	 *
 	 * @param {number} siteID ID of the target site.
 	 * @param {string} widgetID ID of the target widget.
 	 */
@@ -1061,6 +1088,7 @@ export class RestAPIClient {
 
 	/**
 	 * Returns the list of widgets for a siteID.
+	 *
 	 * @param {number} siteID ID of the target site.
 	 * @returns {AllWidgetsResponse} Array of Widgets object describing the list of widgets on the site.
 	 */
@@ -1089,6 +1117,7 @@ export class RestAPIClient {
 
 	/**
 	 * Deletes or deactivates all widgets for a given site.
+	 *
 	 * @param {number} siteID ID of the target site.
 	 */
 	async deleteAllWidgets( siteID: number ): Promise< void > {
@@ -1102,6 +1131,7 @@ export class RestAPIClient {
 	/**
 	 * Execute a primitive Jetpack site search request.
 	 * Useful for checking if something has been indexed yet.
+	 *
 	 * @param {number} siteId ID of the target site.
 	 * @param {JetpackSearchParams} searchParams The search parameters.
 	 */
@@ -1140,6 +1170,7 @@ export class RestAPIClient {
 
 	/**
 	 * Returns an array of existing publicize (social) connections.
+	 *
 	 * @param {number} siteID Site ID.
 	 * @returns {Promise<Array<PublicizeConnection>>} Array of Publicize connections.
 	 */
@@ -1168,6 +1199,7 @@ export class RestAPIClient {
 
 	/**
 	 * Given siteID and connectionID, deletes the connection.
+	 *
 	 * @param {number} siteID Site ID.
 	 * @param {number} connectionID Publicize connection ID.
 	 * @returns {Promise<PublicizeConnectionDeletedResponse>} Confirmation of connection being deleted.
@@ -1197,6 +1229,7 @@ export class RestAPIClient {
 
 	/**
 	 * Given a site ID, returns the list of newsletter subscribers.
+	 *
 	 * @param {number} siteID Site ID to return list of users for.
 	 */
 	async getAllSubscribers( siteID: number ): Promise< Subscriber[] > {
@@ -1220,6 +1253,7 @@ export class RestAPIClient {
 	/**
 	 * Given a siteID and email address of the subscribed user to delete,
 	 * removes the subscribed user.
+	 *
 	 * @param {number} siteID Site ID where the user is subscribed.
 	 * @param {string} email Email address of the subscriber to delete.
 	 */

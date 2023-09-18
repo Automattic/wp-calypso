@@ -6,6 +6,7 @@ import {
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
 	isTransferringHostedSiteCreationFlow,
+	HUNDRED_YEAR_PLAN_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -20,6 +21,7 @@ import { useInterval } from 'calypso/lib/interval';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
+import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -119,6 +121,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		isUpdateDesignFlow( flowName )
 	) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
+	}
+
+	if ( HUNDRED_YEAR_PLAN_FLOW === flowName ) {
+		return <HundredYearPlanFlowProcessingScreen />;
 	}
 
 	const subtitle = getSubtitle();

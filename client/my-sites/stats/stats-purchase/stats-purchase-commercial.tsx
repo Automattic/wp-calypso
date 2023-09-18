@@ -1,5 +1,4 @@
 import { Button as CalypsoButton } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -58,37 +57,11 @@ const CommercialPurchase = ( {
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<p>{ translate( 'Benefits:' ) }</p>
 				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 					<li>{ translate( 'Instant access to upcoming features' ) }</li>
 					<li>{ translate( 'Priority support' ) }</li>
 				</ul>
 			</div>
-
-			<p className={ `${ COMPONENT_CLASS_NAME }__commercial-tos` }>
-				{ translate(
-					`By clicking the button below, you agree to our {{a}}Terms of Service{{/a}} and to {{b}}share details{{/b}} with WordPress.com.`,
-					{
-						components: {
-							a: (
-								<Button
-									variant="link"
-									target="_blank"
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-								/>
-							),
-							b: (
-								<Button
-									variant="link"
-									target="_blank"
-									rel="noopener noreferrer"
-									href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
-								/>
-							),
-						},
-					}
-				) }
-			</p>
 
 			<ButtonComponent
 				variant="primary"

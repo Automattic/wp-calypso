@@ -9,6 +9,7 @@ import {
 	JobStatus,
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
+import { isMobile } from '@automattic/viewport';
 import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
@@ -22,12 +23,14 @@ import {
 	ReactNode,
 } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
-import { domainsTableColumns } from '../domains-table-header/columns';
+import { allSitesViewColumns, siteSpecificViewColumns } from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
+import { ResponseDomain } from '../utils/types';
+import { DomainAction } from './domains-table-row-actions';
 
 interface BaseDomainsTableProps {
 	domains: PartialDomainData[] | undefined;
@@ -40,6 +43,10 @@ interface BaseDomainsTableProps {
 		siteIdOrSlug: number | string | null | undefined
 	) => Promise< SiteDomainsQueryFnData >;
 	fetchSite?: ( siteIdOrSlug: number | string | null | undefined ) => Promise< SiteDetails >;
+	onDomainAction?( action: DomainAction, domain: ResponseDomain ): void;
+	userCanSetPrimaryDomains?: boolean;
+	shouldDisplayContactInfoBulkAction?: boolean;
+	isFetchingDomains?: boolean;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -49,6 +56,7 @@ export type DomainsTablePropsNoChildren =
 export type DomainsTableProps = DomainsTablePropsNoChildren & { children: ReactNode | ReactNode[] };
 
 type Value = {
+	isFetchingDomains?: boolean;
 	filter: DomainsTableFilter;
 	setFilter: (
 		value: ( ( prevState: DomainsTableFilter ) => DomainsTableFilter ) | DomainsTableFilter
@@ -66,7 +74,7 @@ type Value = {
 	handleUpdateContactInfo: () => void;
 	changeBulkSelection: () => void;
 	getBulkSelectionStatus: () => 'all-domains' | 'some-domains' | 'no-domains';
-	onSortChange: ( selectedColumn: DomainsTableColumn ) => void;
+	onSortChange: ( selectedColumn: DomainsTableColumn, direction?: 'asc' | 'desc' ) => void;
 	handleSelectDomain: ( domain: PartialDomainData ) => void;
 	onDomainsRequiringAttentionChange: ( domainsRequiringAttention: number ) => void;
 	fetchSiteDomains?: (
@@ -77,6 +85,12 @@ type Value = {
 	completedJobs: JobStatus[];
 	domainResults: Map< string, DomainUpdateStatus[] >;
 	handleRestartDomainStatusPolling: () => void;
+	showBulkActions: boolean;
+	setShowBulkActions: ( showBulkActions: boolean ) => void;
+	onDomainAction: BaseDomainsTableProps[ 'onDomainAction' ];
+	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
+	shouldDisplayContactInfoBulkAction: boolean;
+	domainsTableColumns: DomainsTableColumn[];
 };
 
 const Context = createContext< Value | undefined >( undefined );
@@ -85,12 +99,16 @@ export const useDomainsTable = () => useContext( Context ) as Value;
 
 export const DomainsTable = ( props: DomainsTableProps ) => {
 	const {
-		domains,
+		domains: allDomains,
 		fetchSiteDomains,
 		fetchSite,
 		isAllSitesView,
 		domainStatusPurchaseActions,
 		children,
+		onDomainAction,
+		userCanSetPrimaryDomains,
+		shouldDisplayContactInfoBulkAction = false,
+		isFetchingDomains,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -101,11 +119,32 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		sortDirection: 'asc',
 	} );
 
+	const [ showBulkActions, setShowBulkActions ] = useState( Boolean( ! isMobile() ) );
 	const [ selectedDomains, setSelectedDomains ] = useState( () => new Set< string >() );
 	const [ filter, setFilter ] = useState< DomainsTableFilter >( () => ( { query: '' } ) );
 	const [ domainsRequiringAttention, setDomainsRequiringAttention ] = useState<
 		number | undefined
 	>( undefined );
+
+	const domains = useMemo( () => {
+		if ( isAllSitesView || ! allDomains ) {
+			return allDomains;
+		}
+
+		const hasWpcomStagingDomain = allDomains.find( ( domain ) => domain.is_wpcom_staging_domain );
+
+		if ( ! hasWpcomStagingDomain ) {
+			return allDomains;
+		}
+
+		return allDomains.filter( ( domain ) => {
+			if ( domain.wpcom_domain ) {
+				return domain.is_wpcom_staging_domain;
+			}
+
+			return true;
+		} );
+	}, [ allDomains, isAllSitesView ] );
 
 	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) || [] ) ];
 	const allSiteDomains = useQueries( {
@@ -151,6 +190,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 
+	const domainsTableColumns = isAllSitesView ? allSitesViewColumns : siteSpecificViewColumns;
+
 	const sortedDomains = useMemo( () => {
 		const selectedColumnDefinition = domainsTableColumns.find(
 			( column ) => column.name === sortKey
@@ -176,7 +217,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 			}
 			return result;
 		} );
-	}, [ fetchedSiteDomains, domains, sortKey, sortDirection ] );
+	}, [ fetchedSiteDomains, domains, sortKey, sortDirection, domainsTableColumns ] );
 
 	const filteredData = useFuzzySearch( {
 		data: sortedDomains ?? [],
@@ -210,17 +251,18 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		return null;
 	}
 
-	const onSortChange = ( selectedColumn: DomainsTableColumn ) => {
+	const onSortChange = ( selectedColumn: DomainsTableColumn, direction?: 'asc' | 'desc' ) => {
 		if ( ! selectedColumn.isSortable ) {
 			return;
 		}
 
 		const newSortDirection =
-			selectedColumn.name === sortKey &&
+			direction ||
+			( selectedColumn.name === sortKey &&
 			selectedColumn.supportsOrderSwitching &&
 			sortDirection === 'asc'
 				? 'desc'
-				: selectedColumn.initialSortDirection;
+				: selectedColumn.initialSortDirection );
 
 		setSort( {
 			sortKey: selectedColumn.name,
@@ -321,6 +363,13 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		completedJobs,
 		domainResults,
 		handleRestartDomainStatusPolling,
+		showBulkActions,
+		setShowBulkActions,
+		onDomainAction,
+		userCanSetPrimaryDomains,
+		shouldDisplayContactInfoBulkAction,
+		domainsTableColumns,
+		isFetchingDomains,
 	};
 
 	return (

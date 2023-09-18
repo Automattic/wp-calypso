@@ -12,7 +12,7 @@ import page from 'page';
 import { getStatsPurchaseURL } from 'calypso/my-sites/stats/stats-purchase/stats-purchase-notice';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { AddOnMeta } from '../hooks/use-add-ons';
+import type { AddOnMeta } from '@automattic/data-stores';
 
 type ActionPrimary = {
 	text: string;

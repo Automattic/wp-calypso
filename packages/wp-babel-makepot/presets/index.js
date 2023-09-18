@@ -1,4 +1,5 @@
 const path = require( 'path' );
+const decoratorsPreset = require( './decorators' );
 const defaultPreset = require( './default' );
 
 /**
@@ -29,6 +30,7 @@ const extendBaseOptions = ( { presets = [], plugins = [], ...rest } ) => ( {
 
 const presets = {
 	default: extendBaseOptions( defaultPreset ),
+	decorators: extendBaseOptions( decoratorsPreset ),
 };
 
 module.exports = presets;

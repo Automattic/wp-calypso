@@ -1,6 +1,6 @@
 import { extendAction } from '@automattic/state-utils';
 import debugModule from 'debug';
-import { compact, get } from 'lodash';
+import { get } from 'lodash';
 import wpcom, { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 import {
@@ -73,7 +73,7 @@ export const queueRequest =
 			method,
 			fetcher
 		)(
-			...compact( [
+			...[
 				{ path, formData, onStreamRecord, responseType },
 				{ ...query }, // wpcom mutates the query so hand it a copy
 				method === 'POST' && body,
@@ -95,7 +95,7 @@ export const queueRequest =
 								dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) )
 						  );
 				},
-			] )
+			].filter( Boolean )
 		);
 
 		if ( 'POST' === method && onProgress ) {

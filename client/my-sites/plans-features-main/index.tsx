@@ -8,6 +8,7 @@ import {
 	isPersonalPlan,
 	PlanSlug,
 	PLAN_PERSONAL,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -41,6 +42,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import useAddOns from '../add-ons/hooks/use-add-ons';
 import { FreePlanFreeDomainDialog } from './components/free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './components/free-plan-paid-domain-dialog';
 import { LoadingPlaceHolder } from './components/loading-placeholder';
@@ -216,6 +218,9 @@ const PlansFeaturesMain = ( {
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 	const translate = useTranslate();
 	const plansComparisonGridRef = useRef< HTMLDivElement >( null );
+	const storageAddOns = useAddOns( siteId ?? undefined ).filter(
+		( addOn ) => addOn?.productSlug === PRODUCT_1GB_SPACE
+	);
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -249,6 +254,17 @@ const PlansFeaturesMain = ( {
 	}, [ setShowDomainUpsellDialog ] );
 
 	const { isVisible, setIsVisible, trackEvent } = useOdieAssistantContext();
+	const currentUserName = useSelector( getCurrentUserName );
+	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
+		useGetFreeSubdomainSuggestion(
+			paidDomainName || siteTitle || signupFlowUserName || currentUserName
+		);
+	const resolvedSubdomainName: DataResponse< string > = {
+		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
+		result: signupFlowSubdomain
+			? signupFlowSubdomain
+			: wpcomFreeDomainSuggestion.result?.domain_name,
+	};
 
 	const isDisplayingPlansNeededForFeature = () => {
 		if (
@@ -276,10 +292,6 @@ const PlansFeaturesMain = ( {
 		// Standardizing it or not is TBD; see Automattic/growth-foundations#63 and pdgrnI-2nV-p2#comment-4110 for relevant discussion.
 		if ( ! cartItemForPlan ) {
 			recordTracksEvent( 'calypso_signup_free_plan_click' );
-
-			/**
-			 * After the experiments are loaded now open the relevant modal based on previous step parameters
-			 */
 			if ( paidDomainName ) {
 				toggleIsFreePlanPaidDomainDialogOpen();
 				return;
@@ -329,6 +341,8 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 		usePlanUpgradeabilityCheck,
 		showLegacyStorageFeature,
+		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+		storageAddOns,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
@@ -397,17 +411,6 @@ const PlansFeaturesMain = ( {
 	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
 		hidePlanSelector = true;
 	}
-	const currentUserName = useSelector( getCurrentUserName );
-	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
-		useGetFreeSubdomainSuggestion(
-			paidDomainName || siteTitle || signupFlowUserName || currentUserName
-		);
-	const resolvedSubdomainName: DataResponse< string > = {
-		isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
-		result: signupFlowSubdomain
-			? signupFlowSubdomain
-			: wpcomFreeDomainSuggestion.result?.domain_name,
-	};
 
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
@@ -438,11 +441,24 @@ const PlansFeaturesMain = ( {
 	/**
 	 * The effects on /plans page need to be checked if this variable is initialized
 	 */
-	let planActionOverrides: PlanActionOverrides | undefined = undefined;
+	let planActionOverrides: PlanActionOverrides | undefined;
+	if ( isInSignup ) {
+		planActionOverrides = {
+			loggedInFreePlan: {
+				status:
+					isPlanUpsellEnabledOnFreeDomain.isLoading || wpcomFreeDomainSuggestion.isLoading
+						? 'blocked'
+						: 'enabled',
+			},
+		};
+	}
 	if ( sitePlanSlug && isFreePlan( sitePlanSlug ) ) {
 		planActionOverrides = {
 			loggedInFreePlan: {
-				status: isPlanUpsellEnabledOnFreeDomain.isLoading ? 'blocked' : 'enabled',
+				status:
+					isPlanUpsellEnabledOnFreeDomain.isLoading || wpcomFreeDomainSuggestion.isLoading
+						? 'blocked'
+						: 'enabled',
 				callback: () => {
 					page.redirect( `/add-ons/${ siteSlug }` );
 				},
@@ -630,8 +646,8 @@ const PlansFeaturesMain = ( {
 					</FreePlanSubHeader>
 				) ) }
 			{ isDisplayingPlansNeededForFeature() && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
-			{ isLoadingGridPlans && <Spinner size={ 30 } /> }
-			{ ! isLoadingGridPlans && (
+			{ ( isLoadingGridPlans || resolvedSubdomainName.isLoading ) && <Spinner size={ 30 } /> }
+			{ ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading && (
 				<>
 					{ ! hidePlanSelector && <PlanTypeSelector { ...planTypeSelectorProps } /> }
 					<div

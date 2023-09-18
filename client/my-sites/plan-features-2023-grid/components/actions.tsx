@@ -437,6 +437,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		currencyCode || 'USD',
 		{
 			stripZeros: true,
+			isSmallestUnit: true,
 		}
 	);
 

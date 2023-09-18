@@ -1,5 +1,6 @@
 import {
 	DOMAIN_UPSELL_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	ONBOARDING_PM_FLOW,
 } from '@automattic/onboarding';
@@ -97,6 +98,10 @@ export function DomainFormControl( {
 		includeWordPressDotCom = false;
 	}
 
+	if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
+		includeWordPressDotCom = false;
+	}
+
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
@@ -112,6 +117,10 @@ export function DomainFormControl( {
 	};
 
 	const getSideContent = () => {
+		if ( HUNDRED_YEAR_PLAN_FLOW === flow ) {
+			return null;
+		}
+
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
 				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />

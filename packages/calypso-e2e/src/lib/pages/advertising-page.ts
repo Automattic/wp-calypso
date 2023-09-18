@@ -63,7 +63,10 @@ export class AdvertisingPage {
 	) {
 		// Wait for promote the banner to finish loading on desktop.
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.page.getByRole( 'main' ).locator( '.posts-list-banner__container' ).waitFor();
+			await this.page
+				.getByRole( 'main' )
+				.locator( '.posts-list-banner__container' )
+				.waitFor( { timeout: 20 * 1000 } ); // Banner can be pretty slow on some sites.
 		}
 
 		if ( row !== undefined && row >= 0 ) {

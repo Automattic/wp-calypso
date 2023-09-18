@@ -148,7 +148,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 								a: (
 									<a
 										href={ localizeUrl(
-											'https://wordpress.com/support/manage-purchases/#upgrade-credit'
+											'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
 										) }
 										className="get-apps__desktop-link"
 									/>

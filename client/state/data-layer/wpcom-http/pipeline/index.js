@@ -1,4 +1,4 @@
-import { compact, pick } from 'lodash';
+import { pick } from 'lodash';
 import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
 import { retryOnFailure } from './retry-on-failure';
 
@@ -60,8 +60,8 @@ export const processInboundChain =
 				nextData: originalData,
 				nextError: originalError,
 				nextHeaders: originalHeaders,
-				failures: compact( [ originalRequest.onFailure ] ),
-				successes: compact( [ originalRequest.onSuccess ] ),
+				failures: [ originalRequest.onFailure ].filter( Boolean ),
+				successes: [ originalRequest.onSuccess ].filter( Boolean ),
 			} ),
 			[ 'failures', 'nextData', 'nextError', 'nextHeaders', 'successes', 'shouldAbort' ]
 		);

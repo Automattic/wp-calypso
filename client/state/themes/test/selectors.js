@@ -7,6 +7,7 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
+import { getQueryArgs } from '@wordpress/url';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	getTheme,
@@ -1528,9 +1529,15 @@ describe( 'themes selectors', () => {
 				'mood'
 			);
 
-			expect( signupUrl ).toEqual(
-				'/start/with-theme?ref=calypshowcase&theme=mood&premium=true&theme_type=premium'
-			);
+			const queryArgs = getQueryArgs( signupUrl );
+
+			expect( signupUrl.startsWith( '/start/with-theme' ) ).toBe( true );
+			expect( queryArgs ).toEqual( {
+				ref: 'calypshowcase',
+				theme: 'mood',
+				premium: 'true',
+				theme_type: 'premium',
+			} );
 		} );
 	} );
 

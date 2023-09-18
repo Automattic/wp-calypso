@@ -1,11 +1,30 @@
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { getSimpleSortFunctionBy, getSiteSortFunctions } from '../utils';
 import { DomainsTableColumn } from '.';
 
-export const domainsTableColumns: DomainsTableColumn[] = [
+const domainLabel = ( count: number, isBulkSelection: boolean ) =>
+	isBulkSelection
+		? sprintf(
+				/* translators: Heading which displays the number of selected domains in a table */
+				_n(
+					'%(count)d domain selected',
+					'%(count)d domains selected',
+					count,
+					__i18n_text_domain__
+				),
+				{ count }
+		  )
+		: sprintf(
+				/* translators: Heading which displays the number of domains in a table */
+				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
+				{ count }
+		  );
+
+export const allSitesViewColumns: DomainsTableColumn[] = [
 	{
 		name: 'domain',
-		label: __( 'Domain', __i18n_text_domain__ ),
+		label: domainLabel,
+		sortLabel: __( 'Domain', __i18n_text_domain__ ),
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
@@ -19,7 +38,6 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-		width: '20%',
 	},
 	{
 		name: 'site',
@@ -28,7 +46,14 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: getSiteSortFunctions(),
-		width: '20%',
+	},
+	{
+		name: 'expire_renew',
+		label: __( 'Expires / renews on', __i18n_text_domain__ ),
+		isSortable: true,
+		initialSortDirection: 'asc',
+		supportsOrderSwitching: true,
+		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 	},
 	{
 		name: 'status',
@@ -37,16 +62,49 @@ export const domainsTableColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
 		sortFunctions: [],
-		width: '15%',
+	},
+	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
+];
+
+export const siteSpecificViewColumns: DomainsTableColumn[] = [
+	{
+		name: 'domain',
+		label: domainLabel,
+		sortLabel: __( 'Domain', __i18n_text_domain__ ),
+		isSortable: true,
+		initialSortDirection: 'asc',
+		supportsOrderSwitching: true,
+		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		width: '35%',
 	},
 	{
-		name: 'registered-until',
-		label: __( 'Registered until', __i18n_text_domain__ ),
+		name: 'owner',
+		label: __( 'Owner', __i18n_text_domain__ ),
+		isSortable: true,
+		initialSortDirection: 'asc',
+		supportsOrderSwitching: true,
+		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+	},
+	{
+		name: 'email',
+		label: __( 'Email', __i18n_text_domain__ ),
+		isSortable: false,
+	},
+	{
+		name: 'expire_renew',
+		label: __( 'Expires / renews on', __i18n_text_domain__ ),
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
-		width: '15%',
 	},
-	{ name: 'action', label: null },
+	{
+		name: 'status',
+		label: __( 'Status', __i18n_text_domain__ ),
+		isSortable: true,
+		initialSortDirection: 'desc',
+		supportsOrderSwitching: true,
+		sortFunctions: [],
+	},
+	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];

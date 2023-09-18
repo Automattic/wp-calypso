@@ -9,7 +9,6 @@ import {
 	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
 import {
-	isDefaultGlobalStylesVariationSlug,
 	UnifiedDesignPicker,
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
@@ -17,12 +16,13 @@ import {
 	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -37,6 +37,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -63,6 +64,7 @@ import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
+import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useRecipe from './hooks/use-recipe';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
@@ -77,7 +79,6 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
-
 const SiteIntent = Onboard.SiteIntent;
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
@@ -98,11 +99,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
-	const isDesignFirstFlow = queryParams.get( 'flowToReturnTo' ) === 'design-first';
+	const isDesignFirstFlow =
+		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
+
+	// The design-first flow put the checkout at the last step, so we cannot show any upsell modal.
+	// Therefore, we need to hide any feature that needs to check out right away, e.g.: Premium theme.
+	// But maybe we can enable the global styles since it's gated under the Premium plan.
+	const disableCheckoutImmediately = isDesignFirstFlow;
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
+	const [ showEligibility, setShowEligibility ] = useState( false );
 
 	const { goToCheckout } = useCheckout();
 
+	const isJetpack = useSelect(
+		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
+		[ site ]
+	);
 	const isAtomic = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 		[ site ]
@@ -128,16 +140,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		// The design-first flow doesn't support premium themes and custom styles.
-		if ( isDesignFirstFlow ) {
-			allDesigns.designs = allDesigns.designs.filter( ( design ) => design.is_premium === false );
-
-			allDesigns.designs = allDesigns.designs.map( ( design ) => {
-				design.style_variations = design.style_variations?.filter( ( variation ) =>
-					isDefaultGlobalStylesVariationSlug( variation.slug )
-				);
-				return design;
-			} );
+		if ( disableCheckoutImmediately ) {
+			allDesigns.designs = allDesigns.designs
+				.filter(
+					( design ) =>
+						! (
+							design.is_premium ||
+							design.is_externally_managed ||
+							design.is_bundled_with_woo_commerce
+						)
+				)
+				.map( ( design ) => {
+					design.style_variations = [];
+					return design;
+				} );
 		}
 
 		return allDesigns;
@@ -145,7 +161,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
-			seed: siteSlugOrId || undefined,
+			seed: siteSlugOrId ? String( siteSlugOrId ) : undefined,
 			_locale: locale,
 		},
 		{
@@ -193,6 +209,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		recordPreviewStyleVariation
 	);
 
+	const shouldUnlockGlobalStyles =
+		shouldLimitGlobalStyles && selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId;
+
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
 		window.scrollTo( { top: 0 } );
@@ -202,7 +221,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 		select: ( design: Design ) => {
-			if ( isDesignFirstFlow && design?.style_variations ) {
+			if ( disableCheckoutImmediately && design?.style_variations ) {
 				design.style_variations = [];
 			}
 
@@ -376,6 +395,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		[ site ]
 	);
 
+	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
+
+	const hasEligibilityMessages =
+		! isAtomic &&
+		! isJetpack &&
+		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
+
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTypeBadge
 			canGoToCheckout={ false }
@@ -410,13 +436,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 		setShowUpgradeModal( false );
 	}
-
-	function handleCheckout() {
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-			theme: selectedDesign?.slug,
-			is_externally_managed: selectedDesign?.is_externally_managed,
-		} );
-
+	function navigateToCheckout() {
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
 			( set ) => set.slug === 'woo-on-plans'
 		);
@@ -430,29 +450,39 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 		}
 
+		// When the user is done with checkout, send them back to the current url
+		// If the theme is externally managed, send them to the marketplace thank you page
+		const destination = selectedDesign?.is_externally_managed
+			? addQueryArgs( `/marketplace/thank-you/${ siteSlug }`, {
+					themes: selectedDesign?.slug,
+			  } )
+			: window.location.href.replace( window.location.origin, '' );
+		goToCheckout( {
+			flowName: flow,
+			stepName,
+			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
+			destination,
+			plan,
+			extraProducts:
+				selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
+					? [ marketplaceProductSlug ]
+					: [],
+		} );
+	}
+	function handleCheckout() {
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+			is_externally_managed: selectedDesign?.is_externally_managed,
+		} );
+
 		if ( siteSlugOrId ) {
-			// When the user is done with checkout, send them back to the current url
-			// If the theme is externally managed, send them to the marketplace thank you page
-			const destination = selectedDesign?.is_externally_managed
-				? addQueryArgs( `/marketplace/thank-you/${ siteSlug }`, {
-						themes: selectedDesign?.slug,
-				  } )
-				: window.location.href.replace( window.location.origin, '' );
-
-			goToCheckout( {
-				flowName: flow,
-				stepName,
-				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-				destination,
-				plan,
-				extraProducts:
-					selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
-						? [ marketplaceProductSlug ]
-						: [],
-			} );
-
-			setShowUpgradeModal( false );
+			if ( selectedDesign?.is_externally_managed && hasEligibilityMessages ) {
+				setShowEligibility( true );
+			} else {
+				navigateToCheckout();
+			}
 		}
+		setShowUpgradeModal( false );
 	}
 
 	// ********** Logic for Premium Global Styles
@@ -460,7 +490,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function unlockPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_show',
 				getEventPropsByDesign( selectedDesign, {
@@ -475,7 +505,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function closePremiumGlobalStylesModal() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_close_button_click',
 				getEventPropsByDesign( selectedDesign, {
@@ -490,7 +520,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function handleCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, {
@@ -515,7 +545,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	function tryPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
-		if ( selectedDesign && numOfSelectedGlobalStyles ) {
+		if ( shouldUnlockGlobalStyles ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_try_button_click',
 				getEventPropsByDesign( selectedDesign, {
@@ -685,7 +715,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		const selectStyle = () => {
-			if ( shouldLimitGlobalStyles && numOfSelectedGlobalStyles ) {
+			if ( shouldUnlockGlobalStyles ) {
 				unlockPremiumGlobalStyles();
 			} else {
 				pickDesign();
@@ -738,6 +768,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
 				/>
+				<QueryEligibility siteId={ site?.ID } />
+				<EligibilityWarningsModal
+					site={ site }
+					isMarketplace={ selectedDesign?.is_externally_managed }
+					isOpen={ showEligibility }
+					handleClose={ () => setShowEligibility( false ) }
+					handleContinue={ () => {
+						navigateToCheckout();
+						setShowEligibility( false );
+					} }
+				/>
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ handleCheckoutForPremiumGlobalStyles }
 					closeModal={ closePremiumGlobalStylesModal }
@@ -773,6 +814,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					screenshot={ fullLengthScreenshot }
 					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
+					disableGlobalStyles={ disableCheckoutImmediately }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }
 					selectedFontVariation={ selectedFontVariation }

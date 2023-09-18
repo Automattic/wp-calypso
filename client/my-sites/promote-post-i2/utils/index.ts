@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { InfiniteData } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import moment from 'moment';
 import {
 	BlazablePost,
@@ -115,8 +115,10 @@ export const getCampaignDurationFormatted = ( start_date?: string, end_date?: st
 	if ( campaignDays === 0 ) {
 		durationFormatted = '-';
 	} else {
-		const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
-		const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
+		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+		const format = _x( 'MMM D', 'shorter date format' );
+		const dateStartFormatted = moment.utc( start_date ).format( format );
+		const dateEndFormatted = moment.utc( end_date ).format( format );
 		durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted }`;
 	}
 
@@ -243,9 +245,13 @@ export const getShortDateString = ( date: string ) => {
 		return timestamp.fromNow();
 	}
 
-	return timestamp.isSame( now, 'year' )
-		? moment( date ).format( 'MMM DD' )
-		: moment( date ).format( 'MMM DD, YYYY' );
+	const format = timestamp.isSame( now, 'year' )
+		? // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`). Wrap text [] to be displayed as is, for example `DD [de] MMM` will be formatted as `05 de sep.`.
+		  _x( 'MMM DD', 'short date format' )
+		: // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`), `YYYY` refers to the full year format (e.g. `2023`). Wrap text [] to be displayed as is, for example `DD [de] MMM [de] YYYY` will be formatted as `05 de sep. de 2023`.
+		  _x( 'MMM DD, YYYY', 'short date with year format' );
+
+	return moment( date ).format( format );
 };
 
 export const getLongDateString = ( date: string ) => {

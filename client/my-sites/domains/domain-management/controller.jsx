@@ -5,6 +5,7 @@ import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
 	domainManagementAllEditSelectedContactInfo,
+	domainManagementEditSelectedContactInfo,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
@@ -31,7 +32,7 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		if ( isEnabled( 'domains/management' ) ) {
+		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
 			pageContext.primary = (
 				<DomainManagement.BulkSiteDomains
 					analyticsPath={ domainManagementRoot( ':site' ) }
@@ -56,7 +57,7 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		if ( isEnabled( 'domains/management' ) ) {
+		if ( isEnabled( 'domains/bulk-actions-table' ) ) {
 			pageContext.primary = (
 				<>
 					<DomainManagement.BulkAllDomains
@@ -185,6 +186,19 @@ export default {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementAllEditSelectedContactInfo() }
+				analyticsTitle="Domain Management > Edit Selected Contact Info"
+				component={ DomainManagement.BulkEditContactInfoPage }
+				context={ pageContext }
+				needsDomains
+			/>
+		);
+		next();
+	},
+
+	domainManagementEditSelectedContactInfo( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementEditSelectedContactInfo( ':site' ) }
 				analyticsTitle="Domain Management > Edit Selected Contact Info"
 				component={ DomainManagement.BulkEditContactInfoPage }
 				context={ pageContext }

@@ -28,9 +28,8 @@ const StatsCommercialPriceDisplay = ( {
 					</div>
 				) }
 				<div className={ `${ COMPONENT_CLASS_NAME }__pricing-amount` }>
-					{ planPriceObject.hasNonZeroFraction
-						? `${ planPriceObject.integer }${ planPriceObject.fraction }`
-						: `${ planPriceObject.integer }` }
+					{ `${ planPriceObject.integer }` }
+					{ planPriceObject.hasNonZeroFraction && <sup>{ `${ planPriceObject.fraction }` }</sup> }
 				</div>
 				{ planPriceObject.symbolPosition === 'after' && (
 					<div className={ `${ COMPONENT_CLASS_NAME }__pricing-currency` }>

@@ -24,7 +24,7 @@ import ReferAFriendSection from './refer-a-friend';
 import { Query } from './types';
 
 type EarningsMainProps = {
-	section: string;
+	section?: string;
 	query: Query;
 	path: string;
 };
@@ -37,14 +37,25 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 
 	const layoutTitles = {
-		earnings: translate( '%(wordads)s hiEarnings', { args: { wordads: adsProgramName } } ),
+		earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 		settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Recurring Payments' ),
 		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
-	const getFilters = () => {
+	const getEarnTabs = () => {
+		const pathSuffix = site?.slug ? '/' + site?.slug : '';
+		return [
+			{
+				title: translate( 'Tools' ),
+				path: '/earn' + pathSuffix,
+				id: 'earn',
+			},
+		];
+	};
+
+	const getAdTabs = () => {
 		const pathSuffix = site?.slug ? '/' + site?.slug : '';
 		const tabs = [];
 
@@ -69,8 +80,8 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return tabs;
 	};
 
-	const getSelectedText = () => {
-		const selected = find( getFilters(), { path: path } );
+	const getEarnSelectedText = () => {
+		const selected = find( getEarnTabs(), { path: path } );
 		if ( selected ) {
 			return selected.title;
 		}
@@ -78,7 +89,19 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return '';
 	};
 
-	const getComponent = ( currentSection: string ) => {
+	const getAdSelectedText = () => {
+		const selected = find( getAdTabs(), { path: path } );
+		if ( selected ) {
+			return selected.title;
+		}
+
+		return '';
+	};
+
+	const isAdSection = ( currentSection: string | undefined ) =>
+		currentSection && currentSection.startsWith( 'ads' );
+
+	const getComponent = ( currentSection: string | undefined ) => {
 		switch ( currentSection ) {
 			case 'ads-earnings':
 				return (
@@ -158,28 +181,49 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		);
 	};
 
-	const getSectionNav = ( currentSection: string ) => {
+	const getEarnSectionNav = () => {
 		const currentPath = getCurrentPath();
 
 		return (
-			! currentSection.startsWith( 'payments' ) &&
-			! currentSection.startsWith( 'refer-a-friend' ) && (
-				<SectionNav selectedText={ getSelectedText() }>
+			<div id="earn-navigation">
+				<SectionNav selectedText={ getEarnSelectedText() }>
 					<NavTabs>
-						{ getFilters().map( ( filterItem ) => {
+						{ getEarnTabs().map( ( tabItem ) => {
 							return (
 								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === currentPath }
+									key={ tabItem.id }
+									path={ tabItem.path }
+									selected={ tabItem.path === currentPath }
 								>
-									{ filterItem.title }
+									{ tabItem.title }
 								</NavItem>
 							);
 						} ) }
 					</NavTabs>
 				</SectionNav>
-			)
+			</div>
+		);
+	};
+
+	const getAdSectionNav = () => {
+		const currentPath = getCurrentPath();
+
+		return (
+			<SectionNav selectedText={ getAdSelectedText() }>
+				<NavTabs>
+					{ getAdTabs().map( ( filterItem ) => {
+						return (
+							<NavItem
+								key={ filterItem.id }
+								path={ filterItem.path }
+								selected={ filterItem.path === currentPath }
+							>
+								{ filterItem.title }
+							</NavItem>
+						);
+					} ) }
+				</NavTabs>
+			</SectionNav>
 		);
 	};
 
@@ -204,8 +248,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				) }
 				align="left"
 			/>
+			{ getEarnSectionNav() }
 			{ getHeaderCake() }
-			{ section && getSectionNav( section ) }
+			{ isAdSection( section ) && getAdSectionNav() }
 			{ getComponent( section ) }
 		</Main>
 	);
