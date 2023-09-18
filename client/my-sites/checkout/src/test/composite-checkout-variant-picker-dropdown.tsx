@@ -171,10 +171,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 		{ activePlan: 'none', cartPlan: 'two-year', expectedVariant: 'monthly' },
 	] )(
 		'renders the $expectedVariant variant with a discount percentage for a Jetpack $cartPlan plan when the current plan is $activePlan',
-		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
-				data: getActivePersonalPlanDataForType( activePlan ),
-			} ) );
+		async ( { cartPlan, expectedVariant } ) => {
 			const user = userEvent.setup();
 			const cartChanges = { products: [ getJetpackPlanForInterval( cartPlan ) ] };
 			render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
