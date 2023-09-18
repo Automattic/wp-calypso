@@ -13,6 +13,7 @@ export const DomainsTableHeader = () => {
 		canSelectAnyDomains,
 		filteredData,
 		domainsTableColumns,
+		selectedDomains,
 	} = useDomainsTable();
 
 	return (
@@ -27,6 +28,7 @@ export const DomainsTableHeader = () => {
 			domainsRequiringAttention={ domainsRequiringAttention }
 			canSelectAnyDomains={ canSelectAnyDomains }
 			domainCount={ filteredData.length }
+			selectedDomainsCount={ selectedDomains.size }
 		/>
 	);
 };

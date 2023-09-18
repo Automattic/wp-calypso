@@ -521,3 +521,30 @@ test( 'when isAllSitesView is false, hide wordpress.com domain if there is a wpc
 	expect( screen.queryByText( 'primary-domain.wpcomstaging.com' ) ).toBeInTheDocument();
 	expect( screen.queryByText( 'primary-domain.wordpress.com' ) ).not.toBeInTheDocument();
 } );
+
+test( 'when selecting a domain, display the selected count instead of the total count', () => {
+	const [ primaryPartial ] = testDomain( {
+		domain: 'primary-domain.blog',
+		blog_id: 123,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	const [ notPrimaryPartial ] = testDomain( {
+		domain: 'not-primary-domain.blog',
+		blog_id: 124,
+		primary_domain: true,
+		owner: 'owner',
+	} );
+
+	render( <DomainsTable domains={ [ primaryPartial, notPrimaryPartial ] } isAllSitesView /> );
+
+	expect( screen.queryByText( '2 domains' ) ).toBeInTheDocument();
+
+	const firstDomainsCheckbox = getDomainCheckbox( 'primary-domain.blog' );
+
+	fireEvent.click( firstDomainsCheckbox );
+
+	expect( screen.queryByText( '2 domains' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( '1 domain selected' ) ).toBeInTheDocument();
+} );

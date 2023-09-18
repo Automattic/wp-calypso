@@ -2,15 +2,28 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { getSimpleSortFunctionBy, getSiteSortFunctions } from '../utils';
 import { DomainsTableColumn } from '.';
 
-export const allSitesViewColumns: DomainsTableColumn[] = [
-	{
-		name: 'domain',
-		label: ( count: number ) =>
-			sprintf(
+const domainLabel = ( count: number, isBulkSelection: boolean ) =>
+	isBulkSelection
+		? sprintf(
+				/* translators: Heading which displays the number of selected domains in a table */
+				_n(
+					'%(count)d domain selected',
+					'%(count)d domains selected',
+					count,
+					__i18n_text_domain__
+				),
+				{ count }
+		  )
+		: sprintf(
 				/* translators: Heading which displays the number of domains in a table */
 				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
 				{ count }
-			),
+		  );
+
+export const allSitesViewColumns: DomainsTableColumn[] = [
+	{
+		name: 'domain',
+		label: domainLabel,
 		sortLabel: __( 'Domain', __i18n_text_domain__ ),
 		isSortable: true,
 		initialSortDirection: 'asc',
@@ -56,12 +69,7 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 export const siteSpecificViewColumns: DomainsTableColumn[] = [
 	{
 		name: 'domain',
-		label: ( count: number ) =>
-			sprintf(
-				/* translators: Heading which displays the number of domains in a table */
-				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
-				{ count }
-			),
+		label: domainLabel,
 		sortLabel: __( 'Domain', __i18n_text_domain__ ),
 		isSortable: true,
 		initialSortDirection: 'asc',
