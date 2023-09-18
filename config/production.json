@@ -148,7 +148,6 @@
 		"ssr/sample-log-cache-misses": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
-		"stats/paid-stats": true,
 		"stats/paid-wpcom-stats": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
