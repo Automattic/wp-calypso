@@ -122,6 +122,7 @@ export const setUpActionsForTasks = ( {
 					};
 					break;
 				case 'site_launched':
+				case 'videopress_launched':
 					action = async () => {
 						await wpcomRequest( {
 							path: `/sites/${ siteSlug }/launch`,
