@@ -135,7 +135,7 @@ body.is-mobile-app-view {
 	/* stylelint-disable length-zero-no-unit */
 	--sidebar-width-max: 0px;
 	--sidebar-width-min: 0px;
-	/* stylelint-enable */
+	/* stylelint-enable length-zero-no-unit */
 	.layout__secondary {
 		display: none;
 	}
