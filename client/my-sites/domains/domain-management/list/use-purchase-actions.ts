@@ -1,9 +1,12 @@
 import { DomainStatusPurchaseActions, ResponseDomain } from '@automattic/domains-table';
+import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { handleRenewNowClick, shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 export const usePurchaseActions = () => {
+	useQueryUserPurchases();
+
 	const dispatch = useDispatch();
 	const purchases = useSelector( getUserPurchases );
 
