@@ -133,14 +133,14 @@
 }
 
 .domains-table-row__actions-group {
-	.components-menu-item__button:hover {
-		background-color: var(--color-primary);
-		border: 0;
-		box-shadow: none;
-		color: var(--color-text-inverted);
-	}
-	a:visited {
-		color: var(--color-neutral-70);
+	.components-button {
+		&:visited {
+			color: var(--color-text);
+		}
+
+		&:hover:not(:disabled) {
+			color: var(--color-primary);
+		}
 	}
 }
 
