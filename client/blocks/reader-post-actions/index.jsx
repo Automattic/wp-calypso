@@ -8,8 +8,6 @@ import PostEditButton from 'calypso/blocks/post-edit-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare, shouldShowReblog } from 'calypso/blocks/reader-share/helper';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
-import ReaderViews from 'calypso/blocks/reader-views';
-import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import LikeButton from 'calypso/reader/like-button';
@@ -27,14 +25,10 @@ const ReaderPostActions = ( props ) => {
 		site,
 		onCommentClick,
 		showEdit,
-		showViews,
-		showVisit,
 		showSuggestedFollows,
 		iconSize,
 		className,
-		visitUrl,
 		fullPost,
-		translate,
 		showFollow,
 	} = props;
 
@@ -56,34 +50,13 @@ const ReaderPostActions = ( props ) => {
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', post );
 	};
 
-	function onPermalinkVisit() {
-		stats.recordPermalinkClick( 'card', post );
-	}
-
 	const listClassnames = classnames( className, {
 		'reader-post-actions': true,
-		'has-views': showViews,
 	} );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
 		<ul className={ listClassnames }>
-			{ showVisit && (
-				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ReaderVisitLink
-						href={ visitUrl || post.URL }
-						iconSize={ iconSize }
-						onClick={ onPermalinkVisit }
-					>
-						{ translate( 'Visit' ) }
-					</ReaderVisitLink>
-				</li>
-			) }
-			{ showViews && (
-				<li className="reader-post-actions__item reader-post-actions__views">
-					<ReaderViews viewCount={ post.views } />
-				</li>
-			) }
 			{ showEdit && site && userCan( 'edit_post', post ) && (
 				<li className="reader-post-actions__item">
 					<PostEditButton
@@ -167,7 +140,6 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
 	showFollow: PropTypes.bool,
-	showViews: PropTypes.bool,
 	showSuggestedFollows: PropTypes.bool,
 	iconSize: PropTypes.number,
 	visitUrl: PropTypes.string,
@@ -177,7 +149,6 @@ ReaderPostActions.propTypes = {
 ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showFollow: true,
-	showViews: false,
 	showVisit: false,
 	showSuggestedFollows: false,
 	iconSize: 20,

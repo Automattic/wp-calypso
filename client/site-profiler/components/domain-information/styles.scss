@@ -1,0 +1,29 @@
+.domain-information-details {
+	margin: 0;
+	list-style: none;
+
+	ul {
+		margin: 0;
+		list-style: none;
+	}
+
+	& > li {
+		display: flex;
+		padding: 1rem 0;
+		border-top: solid 1px var(--studio-gray-5);
+		gap: 2rem;
+
+		&:first-child {
+			border: none;
+		}
+
+		.name {
+			width: 200px;
+			text-transform: uppercase;
+		}
+	}
+
+	.col {
+		max-width: 300px;
+	}
+}

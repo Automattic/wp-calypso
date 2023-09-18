@@ -25,7 +25,6 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-		width: '20%',
 	},
 	{
 		name: 'site',
@@ -34,7 +33,6 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: getSiteSortFunctions(),
-		width: '20%',
 	},
 	{
 		name: 'expire_renew',
@@ -43,7 +41,6 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
-		width: '15%',
 	},
 	{
 		name: 'status',
@@ -52,9 +49,8 @@ export const allSitesViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
 		sortFunctions: [],
-		width: '15%',
 	},
-	{ name: 'action', label: null },
+	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
 
 export const siteSpecificViewColumns: DomainsTableColumn[] = [
@@ -80,7 +76,11 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
-		width: '25%',
+	},
+	{
+		name: 'email',
+		label: __( 'Email', __i18n_text_domain__ ),
+		isSortable: false,
 	},
 	{
 		name: 'expire_renew',
@@ -89,7 +89,6 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
 		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
-		width: '20%',
 	},
 	{
 		name: 'status',
@@ -98,7 +97,6 @@ export const siteSpecificViewColumns: DomainsTableColumn[] = [
 		initialSortDirection: 'desc',
 		supportsOrderSwitching: true,
 		sortFunctions: [],
-		width: '15%',
 	},
-	{ name: 'action', label: null },
+	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];

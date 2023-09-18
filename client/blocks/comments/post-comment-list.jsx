@@ -648,7 +648,8 @@ class PostCommentList extends Component {
 			this.props.showConversationFollowButton &&
 			shouldShowConversationFollowButton( this.props.post );
 
-		const showManageCommentsButton = this.props.canUserModerateComments && commentCount > 0;
+		const showManageCommentsButton =
+			! expandableView && this.props.canUserModerateComments && commentCount > 0;
 
 		return (
 			<div

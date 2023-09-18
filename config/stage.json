@@ -145,7 +145,7 @@
 		"stats/new-video-summary": false,
 		"stats/subscribers-chart-section": false,
 		"stats/paid-stats": true,
-		"stats/paid-wpcom-stats": false,
+		"stats/paid-wpcom-stats": true,
 		"stats/type-detection": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
@@ -174,7 +174,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"newsletter/stats": false,
 		"yolo/hosting-metrics-i1": true
 	},
 	"siftscience_key": "e00e878351",

@@ -10,43 +10,31 @@ import './style.scss';
 
 export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'all-domains';
 
-export type DomainsTableColumn =
-	| {
-			name: string;
-			label: string | ( ( count: number ) => string ) | null;
-			sortLabel?: string;
-			isSortable: true;
-			initialSortDirection: 'asc' | 'desc';
-			supportsOrderSwitching?: boolean;
-			sortFunctions?: Array<
-				(
-					first: DomainData,
-					second: DomainData,
-					sortOrder: number,
-					sites?: SiteDetails[]
-				) => number
-			>;
-			headerComponent?: ReactNode;
-			width?: CSSProperties[ 'width' ];
-	  }
-	| {
-			name: string;
-			label: string | ( ( count: number ) => string ) | null;
-			sortLabel?: string;
-			isSortable?: false;
-			initialSortDirection?: never;
-			supportsOrderSwitching?: never;
-			sortFunctions?: [
-				(
-					first: DomainData,
-					second: DomainData,
-					sortOrder: number,
-					sites?: SiteDetails[]
-				) => number
-			];
-			headerComponent?: ReactNode;
-			width?: CSSProperties[ 'width' ];
-	  };
+interface BaseDomainsTableColumn {
+	name: string;
+	label: string | ( ( count: number ) => string ) | null;
+	sortFunctions?: Array<
+		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => number
+	>;
+	headerComponent?: ReactNode;
+	width?: CSSProperties[ 'width' ];
+	className?: string;
+}
+
+export type DomainsTableColumn = BaseDomainsTableColumn &
+	(
+		| {
+				isSortable: true;
+				sortLabel?: string;
+				initialSortDirection: 'asc' | 'desc';
+				supportsOrderSwitching?: boolean;
+		  }
+		| {
+				isSortable?: false;
+				initialSortDirection?: never;
+				supportsOrderSwitching?: never;
+		  }
+	 );
 
 type DomainsTableHeaderProps = {
 	columns: DomainsTableColumn[];
@@ -117,7 +105,11 @@ export const DomainsTableHeader = ( {
 						return null;
 					}
 					return (
-						<th key={ column.name } style={ { width: column.width } }>
+						<th
+							key={ column.name }
+							className={ column.className }
+							style={ { width: column.width } }
+						>
 							<Button
 								plain
 								onClick={ () => onChangeSortOrder( column ) }

@@ -8,7 +8,7 @@ import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
 import { ResponseDomain } from '../utils/types';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
-import { DomainsTableRegisteredUntilCell } from './domains-table-registered-until-cell';
+import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
 
@@ -71,22 +71,24 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				</div>
 			</div>
 
-			<div className="domains-table-mobile-card-email">
-				<span className="domains-table-mobile-card-label"> { __( 'Email' ) } </span>
-				<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
-			</div>
+			{ ! isAllSitesView && (
+				<div className="domains-table-mobile-card-email">
+					<span className="domains-table-mobile-card-label"> { __( 'Email' ) } </span>
+					<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+				</div>
+			) }
 
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Expires / renews on' ) } </span>
 				<span className="domains-table-mobile-card-registered-date">
-					<DomainsTableRegisteredUntilCell domain={ domain } />
+					<DomainsTableExpiresRewnewsOnCell domain={ domain } />
 				</span>
 			</div>
 
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Status' ) } </span>
 				{ ! currentDomainData || isLoadingSiteDomainsDetails ? (
-					<LoadingPlaceholder style={ { width: '50%' } } />
+					<LoadingPlaceholder style={ { width: '30%' } } />
 				) : (
 					<DomainsTableStatusCell
 						siteSlug={ siteSlug }

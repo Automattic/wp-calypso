@@ -333,7 +333,7 @@ describe( 'site linking ctas', () => {
 	} );
 } );
 
-describe( 'registered until cell', () => {
+describe( 'expires or renew on cell', () => {
 	let dateTimeFormatSpy;
 
 	beforeAll( () => {
@@ -362,7 +362,7 @@ describe( 'registered until cell', () => {
 			isAllSitesView: true,
 		} );
 
-		expect( screen.getByText( 'Aug 1, 2024' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Aug 1, 2024/ ) ).toBeInTheDocument();
 	} );
 
 	test( 'when its not a registered domain, do not display an expiration date', () => {

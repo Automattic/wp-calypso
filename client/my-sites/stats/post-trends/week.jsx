@@ -13,7 +13,6 @@ class PostTrendsWeek extends Component {
 		max: PropTypes.number,
 		streakData: PropTypes.object,
 		moment: PropTypes.func,
-		userLocale: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -23,7 +22,7 @@ class PostTrendsWeek extends Component {
 
 	getDayComponents() {
 		const days = [];
-		const { month, startDate, streakData, max, moment, userLocale } = this.props;
+		const { month, startDate, streakData, max, moment } = this.props;
 
 		for ( let i = 0; i < 7; i++ ) {
 			const dayDate = moment( startDate ).locale( 'en' ).add( i, 'day' );
@@ -50,7 +49,7 @@ class PostTrendsWeek extends Component {
 				<Day
 					key={ dayDate.format( 'MMDD' ) }
 					className={ classNames.join( ' ' ) }
-					label={ dayDate.locale( userLocale ).format( 'L' ) }
+					date={ dayDate.toDate() }
 					postCount={ postCount }
 				/>
 			);

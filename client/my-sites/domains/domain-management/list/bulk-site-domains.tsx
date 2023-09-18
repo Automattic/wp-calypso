@@ -1,7 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import { useMemo } from 'react';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -16,9 +19,15 @@ import {
 	showUpdatePrimaryDomainSuccessNotice,
 } from 'calypso/state/domains/management/actions';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
+import EmptyDomainsListCard from './empty-domains-list-card';
+import { filterDomainsByOwner } from './helpers';
+import { ManageAllDomainsCTA } from './manage-domains-cta';
 import OptionsDomainButton from './options-domain-button';
+import { filterOutWpcomDomains } from './utils';
 
 interface BulkSiteDomainsProps {
 	analyticsPath: string;
@@ -26,15 +35,22 @@ interface BulkSiteDomainsProps {
 }
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isMobile = useMobileBreakpoint();
+	const site = useSelector( getSelectedSite );
 	const userCanSetPrimaryDomains = useSelector(
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
-	const { data } = useSiteDomainsQuery( siteSlug );
+	const hasDomainCredit = useSelector( ( state ) => hasDomainCreditSelector( state, site?.ID ) );
+	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID );
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
+
+	const hasNonWpcomDomains = useMemo( () => {
+		return (
+			filterDomainsByOwner( filterOutWpcomDomains( data?.domains ?? [] ), undefined ).length > 0
+		);
+	}, [ data ] );
 
 	const item = {
 		label: translate( 'Domains' ),
@@ -48,9 +64,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		),
 	};
 
-	const buttons = [
-		<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions allDomainsList />,
-	];
+	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions /> ];
 
 	return (
 		<>
@@ -61,7 +75,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				<DomainsTable
 					domains={ data?.domains }
 					isAllSitesView={ false }
-					siteSlug={ siteSlug }
+					siteSlug={ site?.slug ?? null }
 					shouldDisplayContactInfoBulkAction={ isEnabled(
 						'domains/bulk-actions-contact-info-editing'
 					) }
@@ -75,16 +89,31 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 							} );
 						}
 
-						if ( action === 'set-primary' ) {
+						if ( action === 'set-primary' && site ) {
 							try {
-								await dispatch( setPrimaryDomain( siteId as number, domain.domain ) );
+								await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
 								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
+								page.replace( domainManagementList( domain.domain ) );
+								refetch();
 							} catch ( error ) {
 								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
 							}
 						}
 					} }
 				/>
+				{ ! isMobile && (
+					<>
+						{ ! isLoading && (
+							<EmptyDomainsListCard
+								selectedSite={ site }
+								hasDomainCredit={ !! hasDomainCredit }
+								isCompact={ hasNonWpcomDomains }
+								hasNonWpcomDomains={ hasNonWpcomDomains }
+							/>
+						) }
+						<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+					</>
+				) }
 			</Main>
 			<UsePresalesChat />
 		</>

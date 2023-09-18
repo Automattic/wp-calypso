@@ -52,7 +52,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 			return domain.blog_id.toString( 10 );
 		}
 
-		if ( site.options.is_redirect && site.options.unmapped_url ) {
+		if ( site.options?.is_redirect && site.options?.unmapped_url ) {
 			return new URL( site.options.unmapped_url ).host;
 		}
 

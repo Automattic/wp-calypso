@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
 
-import './style.scss';
+import './empty-domains-list-card-styles.scss';
 
 function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNonWpcomDomains } ) {
 	const translate = useTranslate();
