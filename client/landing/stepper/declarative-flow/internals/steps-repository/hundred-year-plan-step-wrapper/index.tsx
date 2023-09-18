@@ -151,6 +151,8 @@ const StyledFoldableCard = styled( FoldableCard )`
 			}
 			.gridicons-chevron-down {
 				fill: var( --studio-gray-0 );
+				height: 16px;
+				width: 16px;
 			}
 			.foldable-card__action.foldable-card__expand {
 				.screen-reader-text {
@@ -211,7 +213,7 @@ function InfoColumn( { isMobile, openModal }: { isMobile: boolean; openModal: ()
 					<WordPressLogo size={ 24 } />
 				</WordPressLogoWrapper>
 
-				<HundredYearPlanLogo />
+				<HundredYearPlanLogo width={ isMobile ? 40 : undefined } />
 				<Info isMobile={ isMobile }>
 					<Title>{ planTitle }</Title>
 					<Description isMobile={ isMobile }>
