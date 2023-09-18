@@ -15,21 +15,22 @@ import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import GlobalNotices from 'calypso/components/global-notices';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from 'calypso/my-sites/checkout/src/payment-methods/credit-card';
 import { actions } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/store';
-import { createReduxStore } from 'calypso/state';
-import { fetchStripeConfiguration, stripeConfiguration } from './util';
+import { createTestReduxStore, fetchStripeConfiguration, stripeConfiguration } from './util';
 import type { CardStoreType } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/types';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
-	const store = createReduxStore();
+	const store = createTestReduxStore();
 	const queryClient = new QueryClient();
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
+				<GlobalNotices />
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 					<CheckoutProvider
 						paymentMethods={ paymentMethods }
@@ -142,5 +143,36 @@ describe( 'Credit card payment method', () => {
 		await waitFor( () => {
 			expect( processorFunction ).not.toHaveBeenCalled();
 		} );
+	} );
+
+	it( 'displays error message overlay when a credit card field is empty and submit is clicked', async () => {
+		const user = userEvent.setup();
+		const store = createCreditCardPaymentMethodStore( {} );
+		const paymentMethod = getPaymentMethod( store );
+		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		render(
+			<TestWrapper
+				paymentMethods={ [ paymentMethod ] }
+				paymentProcessors={ { card: processorFunction } }
+			></TestWrapper>
+		);
+
+		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
+
+		// Partially fill the form, leaving security code field empty
+		await user.type( screen.getAllByLabelText( /Cardholder name/i )[ 1 ], customerName );
+		await user.type( screen.getByLabelText( /Card number/i ), cardNumber );
+		await user.type( screen.getByLabelText( /Expiry date/i ), cardExpiry );
+		//await user.type( screen.getAllByLabelText( /Security code/i )[ 0 ], '' );
+
+		// Try to submit the form
+		await user.click( await screen.findByText( activePayButtonText ) );
+
+		// Verify the error message overlay appears
+		await waitFor( () => {
+			expect( screen.getByText( /Something seems to be missing/i ) );
+		} );
+		// For debugging
+		screen.debug();
 	} );
 } );

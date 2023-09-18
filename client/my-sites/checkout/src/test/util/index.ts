@@ -10,6 +10,7 @@ import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
+import noticesReducer from 'calypso/state/notices/reducer';
 import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 import type {
 	CartKey,
@@ -1559,6 +1560,7 @@ export function createTestReduxStore() {
 	const rootReducer = ( state, action ) => {
 		return {
 			...state,
+			notices: noticesReducer( state, action ),
 			plans: {
 				items: getPlansItemsState(),
 			},
