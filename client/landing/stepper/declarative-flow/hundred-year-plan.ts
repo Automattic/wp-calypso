@@ -1,5 +1,5 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
-import { UserSelect, SiteDetails } from '@automattic/data-stores';
+import { UserSelect } from '@automattic/data-stores';
 import { HUNDRED_YEAR_PLAN_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
@@ -9,6 +9,7 @@ import {
 	setSignupCompleteSlug,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { SiteId, SiteSlug } from 'calypso/types';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -104,23 +105,23 @@ const HundredYearPlanFlow: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
 			const updateCartForExistingSite = async () => {
-				if ( ! providedDependencies?.selectedSite ) {
+				if ( ! providedDependencies?.siteSlug || ! providedDependencies?.siteId ) {
 					return;
 				}
-				const site: SiteDetails = providedDependencies.selectedSite as SiteDetails;
-				const siteSlug = new URL( site.URL ).host;
-				if ( ! siteSlug ) {
-					return;
-				}
+
+				const siteSlug: SiteSlug = providedDependencies.siteSlug as SiteSlug;
+				const siteId: SiteId = providedDependencies.siteSlug as SiteId;
+
 				const productsToAdd = [
 					{
 						product_slug: PLAN_100_YEARS,
 					},
 				];
 				await addProductsToCart( siteSlug, HUNDRED_YEAR_PLAN_FLOW, productsToAdd );
+
 				return {
-					siteId: site?.ID,
-					siteSlug: siteSlug,
+					siteId,
+					siteSlug,
 					goToCheckout: true,
 				};
 			};
