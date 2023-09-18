@@ -96,7 +96,8 @@ export const StorageAddOnDropdown = ( {
 			value={ selectedOption }
 			onChange={ ( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
 				onStorageAddOnClick && onStorageAddOnClick();
-				setSelectedStorageOptionForPlan( { addOnSlug: selectedItem?.key || '', planSlug } );
+				selectedItem?.key &&
+					setSelectedStorageOptionForPlan( { addOnSlug: selectedItem.key, planSlug } );
 			} }
 		/>
 	);
