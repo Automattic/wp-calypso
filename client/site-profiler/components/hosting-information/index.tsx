@@ -16,7 +16,16 @@ export default function HostingInformation( props: Props ) {
 			<ul className="hosting-information-details result-list">
 				<li>
 					<div className="name">Provider</div>
-					<div>{ hostingProvider?.name }</div>
+					<div>
+						{ hostingProvider?.slug !== 'automattic' && <>{ hostingProvider?.name }</> }
+						{ hostingProvider?.slug === 'automattic' && (
+							<>
+								<a href={ localizeUrl( 'https://automattic.com' ) }>{ hostingProvider?.name }</a>
+								&nbsp;&nbsp;
+								<a href={ localizeUrl( 'https://automattic.com/login' ) }>(login)</a>
+							</>
+						) }
+					</div>
 				</li>
 				{ hostingProvider?.slug === 'automattic' && (
 					<li>
