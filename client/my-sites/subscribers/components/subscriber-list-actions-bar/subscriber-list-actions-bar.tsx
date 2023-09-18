@@ -33,8 +33,8 @@ const ListActionsBar = () => {
 	const recordSort = useRecordSort();
 	const { data: subscribersTotals = { total: 0 } } = useSubscribersTotalsQueries( siteId );
 	const totalSubscribers = subscribersTotals?.total ?? 0;
-	const skipAll = totalSubscribers > 30000; // 30000 is the limit of subscribers that can be fetched without breaking the endpoint. This is a temporal solution.
-	const filterOptions = useSubscribersFilterOptions( skipAll );
+	const hasManySubscribers = totalSubscribers > 30000; // 30000 is the limit of subscribers that can be fetched without breaking the endpoint. This is a temporal solution.
+	const filterOptions = useSubscribersFilterOptions( hasManySubscribers );
 	const selectedText = translate( 'Subscribers: %s', {
 		args: getOptionLabel( filterOptions, filterOption ) || '',
 	} );
@@ -60,14 +60,16 @@ const ListActionsBar = () => {
 				initialSelected={ filterOption }
 			/>
 
-			<SortControls
-				options={ sortOptions }
-				value={ sortTerm }
-				onChange={ ( term ) => {
-					setSortTerm( term );
-					recordSort( { sort_field: term } );
-				} }
-			/>
+			{ ! hasManySubscribers && (
+				<SortControls
+					options={ sortOptions }
+					value={ sortTerm }
+					onChange={ ( term ) => {
+						setSortTerm( term );
+						recordSort( { sort_field: term } );
+					} }
+				/>
+			) }
 		</div>
 	);
 };
