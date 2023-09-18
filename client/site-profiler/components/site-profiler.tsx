@@ -18,23 +18,29 @@ export default function SiteProfiler() {
 
 	return (
 		<>
-			{ ! data && (
+			<LayoutBlock>
+				<DomainAnalyzer onFormSubmit={ onFormSubmit } isBusy={ isFetching } />
+			</LayoutBlock>
+
+			{ data && (
 				<LayoutBlock>
-					<DomainAnalyzer onFormSubmit={ onFormSubmit } isBusy={ isFetching } />
+					{ data && (
+						<LayoutBlockSection>
+							<HeadingInformation />
+						</LayoutBlockSection>
+					) }
+					{ data && (
+						<LayoutBlockSection>
+							<HostingInformation />
+						</LayoutBlockSection>
+					) }
+					{ data?.whois && (
+						<LayoutBlockSection>
+							<DomainInformation domain={ domain } whois={ data.whois } />
+						</LayoutBlockSection>
+					) }
 				</LayoutBlock>
 			) }
-
-			<LayoutBlock>
-				<LayoutBlockSection>
-					<HeadingInformation />
-				</LayoutBlockSection>
-				<LayoutBlockSection>
-					<HostingInformation />
-				</LayoutBlockSection>
-				<LayoutBlockSection>
-					<DomainInformation />
-				</LayoutBlockSection>
-			</LayoutBlock>
 
 			<LayoutBlock isMonoBg>
 				<HostingInto />

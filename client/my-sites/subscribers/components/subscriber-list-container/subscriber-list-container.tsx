@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { numberFormat, translate } from 'i18n-calypso';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { NoSearchResults } from 'calypso/my-sites/subscribers/components/no-search-results';
@@ -32,7 +32,9 @@ const SubscriberListContainer = ( {
 								context: 'Total number of subscribers',
 							} ) }
 						</span>{ ' ' }
-						<span className="subscriber-list-container__subscriber-count">{ total }</span>
+						<span className="subscriber-list-container__subscriber-count">
+							{ numberFormat( total, 0 ) }
+						</span>
 					</div>
 					<SubscriberListActionsBar />
 

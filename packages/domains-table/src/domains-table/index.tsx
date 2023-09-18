@@ -1,4 +1,4 @@
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { DomainsTable as InternalDomainsTable, DomainsTablePropsNoChildren } from './domains-table';
 import { DomainsTableBody } from './domains-table-body';
 import { DomainsTableBulkUpdateNotice } from './domains-table-bulk-update-notice';
@@ -8,11 +8,13 @@ import { DomainsTableToolbar } from './domains-table-toolbar';
 import './style.scss';
 
 export function DomainsTable( props: DomainsTablePropsNoChildren ) {
+	const isMobile = useMobileBreakpoint();
+
 	return (
 		<InternalDomainsTable { ...props }>
 			<DomainsTableBulkUpdateNotice />
 			<DomainsTableToolbar />
-			{ isMobile() ? (
+			{ isMobile ? (
 				<DomainsTableMobileCards />
 			) : (
 				<table>

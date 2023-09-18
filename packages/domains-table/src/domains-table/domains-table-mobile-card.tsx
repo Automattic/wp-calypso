@@ -71,10 +71,12 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 				</div>
 			</div>
 
-			<div className="domains-table-mobile-card-email">
-				<span className="domains-table-mobile-card-label"> { __( 'Email' ) } </span>
-				<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
-			</div>
+			{ ! isAllSitesView && (
+				<div className="domains-table-mobile-card-email">
+					<span className="domains-table-mobile-card-label"> { __( 'Email' ) } </span>
+					<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+				</div>
+			) }
 
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Expires / renews on' ) } </span>
@@ -86,7 +88,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			<div>
 				<span className="domains-table-mobile-card-label"> { __( 'Status' ) } </span>
 				{ ! currentDomainData || isLoadingSiteDomainsDetails ? (
-					<LoadingPlaceholder style={ { width: '50%' } } />
+					<LoadingPlaceholder style={ { width: '30%' } } />
 				) : (
 					<DomainsTableStatusCell
 						siteSlug={ siteSlug }

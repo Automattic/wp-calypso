@@ -32,19 +32,21 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 
 	const options: ReactNode[] = [];
 	const selected = domainsTableColumns.find( ( column ) => column.name === sortKey );
-	const sortName = selected?.sortLabel || selected?.label;
+	const sortName = selected && 'sortLabel' in selected ? selected.sortLabel : selected?.label;
 	const arrow = sortDirection === 'asc' ? '↓' : '↑';
 	const selectedSort = `${ sortName } ${ arrow }`;
 
 	domainsTableColumns
 		.filter( ( column ) => column.label !== null )
 		.forEach( ( column ) => {
+			const label = 'sortLabel' in column ? column.sortLabel : column.label;
+
 			options.push(
 				<SelectDropdown.Item
 					key={ `${ column.name }asc` }
 					onClick={ () => onSortChange( column, 'asc' ) }
 				>
-					{ column?.sortLabel || column?.label } ↑
+					{ label } ↑
 				</SelectDropdown.Item>
 			);
 
@@ -53,7 +55,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 					key={ `${ column.name }desc` }
 					onClick={ () => onSortChange( column, 'desc' ) }
 				>
-					{ column?.sortLabel || column?.label } ↓
+					{ label } ↓
 				</SelectDropdown.Item>
 			);
 		} );

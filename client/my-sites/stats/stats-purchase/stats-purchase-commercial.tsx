@@ -57,7 +57,6 @@ const CommercialPurchase = ( {
 			<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
-				<p>{ translate( 'Benefits:' ) }</p>
 				<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--included` }>
 					<li>{ translate( 'Instant access to upcoming features' ) }</li>
 					<li>{ translate( 'Priority support' ) }</li>

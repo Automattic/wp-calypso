@@ -1,32 +1,35 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/onboarding/styles/mixins";
 
-
-@media ( max-width: 480px) {
-	html,
-	body,
-	#wpcom,
-	#content {
+@media ( max-width: 480px ) {
+	.bulk-domains-main {
 		overflow-y: hidden;
-		height: 100vh;
-		main[role="main"] {
+		/*
+		 * The 47px value comes from https://github.com/Automattic/wp-calypso/blob/d7e2ada/client/my-sites/sidebar/style.scss#L751.
+		 * Using 46px, which is the masterbar height CSS variable, introduces an annoying 1px scroll.
+		 * We're using this magic number elsewhere too, so a clean up would be appreciated.
+		 */
+		height: calc(100vh - 47px);
+		padding-bottom: 0 !important;
+		display: flex;
+		flex-direction: column;
+
+		.domains-table {
+			flex: 1;
+			height: 100%;
 			overflow-y: hidden;
-			height: 100vh;
+
+			border-collapse: collapse;
+
+			@media ( max-width: 480px ) {
+				padding: 13px;
+			}
 		}
 	}
 }
 
-
 .domains-table {
 	--domains-table-toolbar-height: 40px;
-	height: 100%;
-	overflow-y: hidden;
-
-	border-collapse: collapse;
-
-	@media ( max-width: 480px ) {
-		padding: 13px;
-	}
 
 	table {
 		margin-top: 30px;
@@ -54,6 +57,11 @@
 		.components-checkbox-control__input-container {
 			margin-right: 16px;
 		}
+	}
+
+	.domains-table__action-ellipsis-column-header {
+		width: 0;
+		min-width: fit-content;
 	}
 
 	td {
@@ -85,6 +93,7 @@
 	}
 
 	.domains-table-row__status-cell {
+		white-space: nowrap;
 		display: flex;
 		align-items: center;
 		gap: 4px;
@@ -123,15 +132,39 @@
 	}
 }
 
-.domains-table-row__actions-group {
-	.components-menu-item__button:hover {
-		background-color: var(--color-primary);
-		border: 0;
-		box-shadow: none;
-		color: var(--color-text-inverted);
+.domains-table-row-loading-placeholder {
+	td {
+		padding-right: 16px;
 	}
-	a:visited {
-		color: var(--color-neutral-70);
+	&-checkbox-column {
+		width: 5%;
+	}
+	&-domain-column {
+		width: 25%;
+	}
+	&-owner-column {
+		width: 15%;
+	}
+	&-site-column {
+		width: 25%;
+	}
+	&-expires-column {
+		width: 25%;
+	}
+	&-status-column {
+		width: 15%;
+	}
+}
+
+.domains-table-row__actions-group {
+	.components-button {
+		&:visited {
+			color: var(--color-text);
+		}
+
+		&:hover:not(:disabled) {
+			color: var(--color-primary);
+		}
 	}
 }
 
@@ -277,15 +310,44 @@
 		font-size: $font-body-small;
 	}
 
-	&-email {
-		a.add-email-button {
-			color: var(--studio-blue-50);
-			font-size: $font-body-small;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 20px; /* 142.857% */
-			letter-spacing: -0.15px;
-			text-decoration: underline;
+	&-loading-placeholder {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 16px 0;
+		border-bottom: 1px solid #f0f0f0;
+
+		> div {
+			display: flex;
+			justify-content: space-between;
+			gap: 80px;
 		}
+
+		&-actions {
+			width: 50px;
+		}
+
+		&-status {
+			width: 120px;
+		}
+	}
+
+}
+
+a.domains-table-add-email-button {
+	font-size: $font-body-small;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px; /* 142.857% */
+	letter-spacing: -0.15px;
+	text-decoration: underline;
+	color: var(--color-link);
+}
+
+a.domains-table-view-email-button {
+	color: var(--studio-gray-90);
+	font-size: $font-body-small;
+	&:hover {
+		color: var(--color-link);
 	}
 }

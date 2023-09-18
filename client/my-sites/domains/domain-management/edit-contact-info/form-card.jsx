@@ -46,6 +46,8 @@ class EditContactInfoFormCard extends Component {
 		showContactInfoNote: PropTypes.bool,
 		backUrl: PropTypes.string.isRequired,
 		onSubmitButtonClick: PropTypes.func, // Callback can return "cancel" to cancel the default form handling
+		bulkEdit: PropTypes.bool,
+		forceShowTransferLockOptOut: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -147,13 +149,13 @@ class EditContactInfoFormCard extends Component {
 	handleFormSubmittingComplete = () => this.setState( { formSubmitting: false } );
 
 	renderTransferLockOptOut() {
-		const { domainRegistrationAgreementUrl, translate } = this.props;
+		const { domainRegistrationAgreementUrl, translate, forceShowTransferLockOptOut } = this.props;
 		const registrationDatePlus60Days = moment
 			.utc( this.props.selectedDomain.registrationDate )
 			.add( 60, 'days' );
 		const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
 
-		if ( ! isLocked ) {
+		if ( forceShowTransferLockOptOut || ! isLocked ) {
 			return (
 				<>
 					<TransferLockOptOutForm
@@ -449,6 +451,9 @@ class EditContactInfoFormCard extends Component {
 	};
 
 	getIsFieldDisabled = ( name ) => {
+		if ( this.props.bulkEdit ) {
+			return false;
+		}
 		const unmodifiableFields = get(
 			this.props,
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
@@ -469,7 +474,8 @@ class EditContactInfoFormCard extends Component {
 	}
 
 	render() {
-		const { selectedDomain, showContactInfoNote, translate } = this.props;
+		const { selectedDomain, showContactInfoNote, translate, forceShowTransferLockOptOut } =
+			this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
@@ -504,7 +510,8 @@ class EditContactInfoFormCard extends Component {
 						updateWpcomEmailCheckboxDisabled={ updateWpcomEmailCheckboxDisabled }
 						onUpdateWpcomEmailCheckboxChange={ this.handleUpdateWpcomEmailCheckboxChange }
 					>
-						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
+						{ ( forceShowTransferLockOptOut || canUseDesignatedAgent ) &&
+							this.renderTransferLockOptOut() }
 					</ContactDetailsFormFields>
 				</form>
 				{ this.renderDialog() }

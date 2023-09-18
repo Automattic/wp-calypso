@@ -24,7 +24,7 @@ interface BulkAllDomainsProps {
 }
 
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
-	const { domains } = useDomainsTable();
+	const { domains, isLoading } = useDomainsTable();
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { sendNudge } = useOdieAssistantContext();
@@ -91,6 +91,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				<DomainsTable
+					isFetchingDomains={ isLoading }
 					domains={ domains }
 					isAllSitesView
 					shouldDisplayContactInfoBulkAction={ isEnabled(
