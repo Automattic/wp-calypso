@@ -25,7 +25,12 @@ export default function SubscriptionsModuleBanner() {
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID;
-	const siteJetpackSettings = useSelector( ( state ) => getJetpackSettings( state, siteId ) );
+	const siteJetpackSettings = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+		getJetpackSettings( state, siteId );
+	} );
 	const isModuleActive = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return null;
