@@ -83,7 +83,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				{ canSelectAnyDomains && canBulkUpdate( domain, currentDomainData ) && (
+				{ canSelectAnyDomains && canBulkUpdate( domain ) && (
 					<CheckboxControl
 						__nextHasNoMarginBottom
 						checked={ isSelected }
