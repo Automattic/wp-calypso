@@ -27,6 +27,7 @@ import EmptyDomainsListCard from './empty-domains-list-card';
 import { filterDomainsByOwner } from './helpers';
 import { ManageAllDomainsCTA } from './manage-domains-cta';
 import OptionsDomainButton from './options-domain-button';
+import { usePurchaseActions } from './use-purchase-actions';
 import { filterOutWpcomDomains } from './utils';
 
 interface BulkSiteDomainsProps {
@@ -64,6 +65,8 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		),
 	};
 
+	const purchaseActions = usePurchaseActions();
+
 	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions /> ];
 
 	return (
@@ -80,6 +83,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					shouldDisplayContactInfoBulkAction={ isEnabled(
 						'domains/bulk-actions-contact-info-editing'
 					) }
+					domainStatusPurchaseActions={ purchaseActions }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 					onDomainAction={ async ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
