@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
+import { canBulkUpdate } from '../utils/can-bulk-update';
 import { domainInfoContext } from '../utils/constants';
 import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
@@ -82,7 +83,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	return (
 		<tr key={ domain.domain } ref={ ref }>
 			<td>
-				{ canSelectAnyDomains && ! domain.wpcom_domain && (
+				{ canSelectAnyDomains && canBulkUpdate( domain ) && (
 					<CheckboxControl
 						__nextHasNoMarginBottom
 						checked={ isSelected }

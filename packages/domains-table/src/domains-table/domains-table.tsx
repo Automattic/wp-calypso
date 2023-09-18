@@ -28,6 +28,7 @@ import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
 import { shouldHideOwnerColumn } from '../utils';
+import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
 import { DomainAction } from './domains-table-row-actions';
@@ -268,7 +269,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	};
 
 	const hasSelectedDomains = selectedDomains.size > 0;
-	const selectableDomains = domains.filter( ( domain ) => ! domain.wpcom_domain );
+	const selectableDomains = domains.filter( canBulkUpdate );
 	const canSelectAnyDomains = selectableDomains.length > 0;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
@@ -287,9 +288,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 	const changeBulkSelection = () => {
 		if ( filter.query ) {
 			if ( ! hasSelectedDomains ) {
-				setSelectedDomains(
-					new Set( filteredData.filter( ( domain ) => ! domain.wpcom_domain ).map( getDomainId ) )
-				);
+				setSelectedDomains( new Set( filteredData.filter( canBulkUpdate ).map( getDomainId ) ) );
 			} else {
 				setSelectedDomains( new Set() );
 			}
@@ -298,10 +297,8 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		}
 
 		if ( ! hasSelectedDomains || ! areAllDomainsSelected ) {
-			// filter out wpcom domains from bulk selection
-			setSelectedDomains(
-				new Set( domains.filter( ( domain ) => ! domain.wpcom_domain ).map( getDomainId ) )
-			);
+			// filter out unselectable domains from bulk selection
+			setSelectedDomains( new Set( domains.filter( canBulkUpdate ).map( getDomainId ) ) );
 		} else {
 			setSelectedDomains( new Set() );
 		}

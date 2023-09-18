@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
+import { canBulkUpdate } from '../utils/can-bulk-update';
 import { ResponseDomain } from '../utils/types';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
@@ -38,7 +39,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		<div className="domains-table-mobile-card" ref={ ref }>
 			<div>
 				<div className="domains-table-mobile-card-header">
-					{ ! domain.wpcom_domain && showBulkActions && (
+					{ canBulkUpdate( domain ) && showBulkActions && (
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ isSelected }
