@@ -32,7 +32,7 @@ export const createUserEmailPendingUpdate = ( newEmail ) => async ( dispatch ) =
 		}
 	} catch ( error ) {
 		const errorMessage =
-			error.code === 'invalid_input'
+			error.error === 'invalid_input'
 				? translate( 'There was a problem updating your WordPress.com account email: %(error)s', {
 						args: { error: error.message },
 				  } )
