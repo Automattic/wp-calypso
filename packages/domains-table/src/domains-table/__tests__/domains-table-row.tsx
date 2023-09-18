@@ -10,6 +10,8 @@ import { transferStatus } from '../../utils/constants';
 import { DomainsTable, DomainsTableProps } from '../domains-table';
 import { DomainsTableRow } from '../domains-table-row';
 
+const siteSlug = 'site123.com';
+
 const render = ( el, props ) =>
 	renderWithProvider( el, {
 		wrapper: ( { children } ) => (
@@ -80,7 +82,12 @@ test( 'domain name links to management interface', async () => {
 
 	// Test site-specific link
 	rerender(
-		<DomainsTable domains={ [ partialDomain ] } fetchSite={ fetchSite } isAllSitesView={ false }>
+		<DomainsTable
+			siteSlug={ siteSlug }
+			domains={ [ partialDomain ] }
+			fetchSite={ fetchSite }
+			isAllSitesView={ false }
+		>
 			<tbody>
 				<DomainsTableRow domain={ partialDomain } />
 			</tbody>
@@ -137,6 +144,7 @@ test( `redirect links use the site's unmapped URL for the site slug`, async () =
 	// Test site-specific link
 	rerender(
 		<DomainsTable
+			siteSlug={ siteSlug }
 			domains={ [ partialRedirectDomain ] }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
@@ -190,6 +198,7 @@ test( 'transfer domains link to the transfer management interface', async () => 
 	// Test site-specific link
 	rerender(
 		<DomainsTable
+			siteSlug={ siteSlug }
 			domains={ [ partialDomain ] }
 			fetchSiteDomains={ fetchSiteDomains }
 			isAllSitesView={ false }
