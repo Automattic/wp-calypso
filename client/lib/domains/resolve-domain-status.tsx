@@ -184,7 +184,17 @@ export function resolveDomainStatus(
 					status: translate( 'Pending' ),
 					icon: 'info',
 					noticeText: translate(
-						'This domain is being disconnected. It should be updated within a few minutes.'
+						"This domain is being disconnected. It should be updated within a few minutes. Once the disconnect is complete, you'll be able to manage it {{a}}here{{/a}}.",
+						{
+							components: {
+								a: (
+									<a
+										href={ domainManagementEdit( '', domain.domain, currentRoute ) }
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
 					),
 					listStatusWeight: 400,
 				};
