@@ -66,7 +66,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )(
 		settings,
 		updateFields,
 	}: NewsletterSettingsFormProps ) => {
-		const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+		const siteId = useSelector( getSelectedSiteId );
 
 		const isSubscriptionsModuleActive = useSelector( ( state ) => {
 			if ( ! siteId ) {

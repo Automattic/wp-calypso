@@ -29,13 +29,13 @@ export default function SubscriptionsModuleBanner() {
 		if ( ! siteId ) {
 			return null;
 		}
-		getJetpackSettings( state, siteId );
+		return getJetpackSettings( state, siteId );
 	} );
 	const isModuleActive = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return null;
 		}
-		isJetpackModuleActive( state, siteId, moduleSlug );
+		return isJetpackModuleActive( state, siteId, moduleSlug );
 	} );
 	const prevIsModuleActive = usePrevious( isModuleActive );
 	const [ bannerState, bannerDispatch ] = useBannerDismissReducer();
