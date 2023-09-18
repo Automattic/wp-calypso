@@ -854,4 +854,39 @@ describe( 'domain status cell', () => {
 			);
 		} );
 	} );
+
+	describe( 'transfer actions', () => {
+		test( 'when the domain is ready to be transferred, offer the user a way to start it', async () => {
+			renderDomainStatusCell( {
+				domain: 'example.com',
+				blog_id: 123,
+				wpcom_domain: false,
+				type: 'transfer',
+				has_registration: true,
+				points_to_wpcom: false,
+				transfer_status: transferStatus.PENDING_START,
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Complete setup' ) );
+			} );
+
+			const changeAddress = screen.queryByText( 'Start transfer' );
+			expect( changeAddress ).toBeInTheDocument();
+			expect( changeAddress ).toHaveAttribute(
+				'href',
+				'/domains/add/use-my-domain/example.com?initialQuery=example.com&initialMode=start-pending-transfer'
+			);
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				const tooltip = screen.getByRole( 'tooltip' );
+
+				expect( tooltip ).toHaveTextContent(
+					'You need to start the domain transfer for your domain.'
+				);
+			} );
+		} );
+	} );
 } );

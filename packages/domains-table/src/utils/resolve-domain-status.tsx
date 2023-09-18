@@ -576,22 +576,15 @@ export function resolveDomainStatus(
 					statusClass: 'status-warning',
 					status: translate( 'Complete setup' ),
 					icon: 'info',
-					noticeText: translate(
-						'You need to {{a}}start the domain transfer{{/a}} for your domain.',
-						{
-							components: {
-								a: (
-									<a
-										href={ domainUseMyDomain(
-											siteSlug as string,
-											domain.name,
-											useMyDomainInputMode.startPendingTransfer
-										) }
-									/>
-								),
-							},
-						}
-					),
+					noticeText: translate( 'You need to start the domain transfer for your domain.' ),
+					callToAction: {
+						label: translate( 'Start transfer' ),
+						href: domainUseMyDomain(
+							siteSlug as string,
+							domain.name,
+							useMyDomainInputMode.startPendingTransfer
+						),
+					},
 					listStatusWeight: 600,
 				};
 			} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
