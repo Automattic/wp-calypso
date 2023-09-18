@@ -1,4 +1,4 @@
-import { Spinner } from '@automattic/components';
+import { Spinner, Button } from '@automattic/components';
 import { DomainUpdateStatus } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -26,7 +26,7 @@ export const DomainsTableStatusCell = ( {
 		return null;
 	}
 	const currentRoute = window.location.pathname;
-	const { status, noticeText, statusClass } = resolveDomainStatus( currentDomainData, {
+	const domainStatus = resolveDomainStatus( currentDomainData, {
 		siteSlug: siteSlug,
 		translate,
 		getMappingErrors: true,
@@ -60,12 +60,12 @@ export const DomainsTableStatusCell = ( {
 
 	return (
 		<div
-			className={ classNames(
-				'domains-table-row__status-cell',
-				`domains-table-row__status-cell__${ statusClass }`
-			) }
+			className={ classNames( 'domains-table-row__status-cell', {
+				[ `domains-table-row__status-cell__${ domainStatus?.statusClass }` ]:
+					!! domainStatus?.statusClass,
+			} ) }
 		>
-			{ status }
+			{ domainStatus?.status ?? translate( 'Unknown status' ) }
 			{ pendingUpdates.length > 0 && (
 				<StatusPopover popoverTargetElement={ <Spinner size={ 16 } /> }>
 					<div className="domains-bulk-update-status-popover">
@@ -87,10 +87,20 @@ export const DomainsTableStatusCell = ( {
 					</div>
 				</StatusPopover>
 			) }
-			{ noticeText && (
-				<StatusPopover className={ `domains-table-row__status-cell__${ statusClass }` }>
-					{ noticeText }
+			{ domainStatus?.noticeText && (
+				<StatusPopover
+					className={ `domains-table-row__status-cell__${ domainStatus.statusClass }` }
+				>
+					{ domainStatus.noticeText }
 				</StatusPopover>
+			) }
+			{ domainStatus?.callToAction && (
+				<Button
+					onClick={ domainStatus.callToAction.onClick }
+					href={ domainStatus.callToAction.href }
+				>
+					{ domainStatus.callToAction.label }
+				</Button>
 			) }
 		</div>
 	);

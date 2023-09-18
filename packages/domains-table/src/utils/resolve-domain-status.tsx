@@ -24,22 +24,25 @@ import {
 } from './url-support';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
-export type ResolveDomainStatusReturn =
-	| {
-			statusText: TranslateResult | TranslateResult[];
-			statusClass:
-				| 'status-error'
-				| 'status-warning'
-				| 'status-alert'
-				| 'status-success'
-				| 'status-neutral'
-				| 'status-premium';
-			status: TranslateResult;
-			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
-			listStatusWeight?: number;
-			noticeText?: TranslateResult | Array< TranslateResult > | null;
-	  }
-	| Record< string, never >;
+export type ResolveDomainStatusReturn = {
+	statusText: TranslateResult | TranslateResult[];
+	statusClass:
+		| 'status-error'
+		| 'status-warning'
+		| 'status-alert'
+		| 'status-success'
+		| 'status-neutral'
+		| 'status-premium';
+	status: TranslateResult;
+	icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
+	listStatusWeight?: number;
+	noticeText?: TranslateResult | Array< TranslateResult > | null;
+	callToAction?: {
+		href?: string;
+		onClick?(): void;
+		label: string;
+	};
+};
 
 export type ResolveDomainStatusOptionsBag = {
 	siteSlug?: string | null;
@@ -47,7 +50,7 @@ export type ResolveDomainStatusOptionsBag = {
 	getMappingErrors?: boolean | null;
 	translate: I18N[ 'translate' ];
 	isPurchasedDomain?: boolean | null;
-	onRenewNowClick?: any;
+	onRenewNowClick?(): void;
 	isCreditCardExpiring?: boolean | null;
 };
 
@@ -65,10 +68,10 @@ export function resolveDomainStatus(
 		currentRoute = null,
 		translate,
 		isPurchasedDomain = false,
-		onRenewNowClick = null,
+		onRenewNowClick,
 		isCreditCardExpiring = false,
 	}: ResolveDomainStatusOptionsBag
-): ResolveDomainStatusReturn {
+): ResolveDomainStatusReturn | null {
 	const transferOptions = {
 		components: {
 			strong: <strong />,
@@ -625,6 +628,6 @@ export function resolveDomainStatus(
 			};
 
 		default:
-			return {};
+			return null;
 	}
 }

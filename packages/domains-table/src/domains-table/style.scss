@@ -110,26 +110,23 @@
 			width: 100px;
 		}
 
+		svg {
+			color: currentColor;
+		}
+
 		&__status-success,
-		&__status-verifying,
-		&__status-premium,
-		&__status-alert,
-		&__status-warning,
-		&__status-error {
+		&__status-premium {
 			color: var(--studio-green-50);
-			& svg {
-				color: var(--studio-green-50);
-			}
 		}
 
 		&__status-verifying,
+		&__status-warning {
+			color: var(--studio-orange-50);
+		}
+
 		&__status-alert,
-		&__status-warning,
 		&__status-error {
 			color: var(--studio-red-50);
-			& svg {
-				color: var(--studio-red-50);
-			}
 		}
 	}
 
