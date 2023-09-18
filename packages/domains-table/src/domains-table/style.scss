@@ -132,6 +132,30 @@
 	}
 }
 
+.domains-table-row-loading-placeholder {
+	td {
+		padding-right: 16px;
+	}
+	&-checkbox-column {
+		width: 5%;
+	}
+	&-domain-column {
+		width: 25%;
+	}
+	&-owner-column {
+		width: 15%;
+	}
+	&-site-column {
+		width: 25%;
+	}
+	&-expires-column {
+		width: 25%;
+	}
+	&-status-column {
+		width: 15%;
+	}
+}
+
 .domains-table-row__actions-group {
 	.components-button {
 		&:visited {
@@ -284,6 +308,28 @@
 
 	&-registered-date {
 		font-size: $font-body-small;
+	}
+
+	&-loading-placeholder {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 16px 0;
+		border-bottom: 1px solid #f0f0f0;
+
+		> div {
+			display: flex;
+			justify-content: space-between;
+			gap: 80px;
+		}
+
+		&-actions {
+			width: 50px;
+		}
+
+		&-status {
+			width: 120px;
+		}
 	}
 
 }

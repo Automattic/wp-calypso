@@ -46,6 +46,7 @@ interface BaseDomainsTableProps {
 	onDomainAction?( action: DomainAction, domain: ResponseDomain ): void;
 	userCanSetPrimaryDomains?: boolean;
 	shouldDisplayContactInfoBulkAction?: boolean;
+	isFetchingDomains?: boolean;
 }
 
 export type DomainsTablePropsNoChildren =
@@ -55,6 +56,7 @@ export type DomainsTablePropsNoChildren =
 export type DomainsTableProps = DomainsTablePropsNoChildren & { children: ReactNode | ReactNode[] };
 
 type Value = {
+	isFetchingDomains?: boolean;
 	filter: DomainsTableFilter;
 	setFilter: (
 		value: ( ( prevState: DomainsTableFilter ) => DomainsTableFilter ) | DomainsTableFilter
@@ -106,6 +108,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		onDomainAction,
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction = false,
+		isFetchingDomains,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -366,6 +369,7 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		userCanSetPrimaryDomains,
 		shouldDisplayContactInfoBulkAction,
 		domainsTableColumns,
+		isFetchingDomains,
 	};
 
 	return (
