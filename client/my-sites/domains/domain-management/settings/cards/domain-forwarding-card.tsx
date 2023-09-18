@@ -306,6 +306,23 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 			return;
 		}
 
+		const newNoticeText =
+			"This domain is your site's main address. You can forward subdomains or {{a}}set a new primary site address{{/a}} to forward the root domain.";
+
+		let noticeText;
+		if ( hasTranslation( newNoticeText ) || isEnglishLocale ) {
+			noticeText = translate(
+				"This domain is your site's main address. You can forward subdomains or {{a}}set a new primary site address{{/a}} to forward the root domain.",
+				{
+					components: {
+						a: <a href={ `/domains/manage/${ domain.domain }` } />,
+					},
+				}
+			);
+		} else {
+			return;
+		}
+
 		return (
 			<div className="domain-forwarding-card-notice">
 				<Icon
@@ -314,17 +331,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					className="domain-forwarding-card-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="domain-forwarding-card-notice__message">
-					{ translate(
-						'Domains set as the {{strong}}primary site address{{/strong}} can not be forwarded. To forward this domain, please {{a}}set a new primary site address{{/a}}.',
-						{
-							components: {
-								strong: <strong />,
-								a: <a href={ `/domains/manage/${ domain.domain }` } />,
-							},
-						}
-					) }
-				</div>
+				<div className="domain-forwarding-card-notice__message">{ noticeText }</div>
 			</div>
 		);
 	};
