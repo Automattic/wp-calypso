@@ -26,7 +26,7 @@ export default function DomainInformation( props: Props ) {
 		<div className="domain-information">
 			<h3>Domain information</h3>
 
-			<ul className="domain-information-details">
+			<ul className="domain-information-details result-list">
 				{ whois.registrar_url && (
 					<li>
 						<div className="name">Registrar</div>
