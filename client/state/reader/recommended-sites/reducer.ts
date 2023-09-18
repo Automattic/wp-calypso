@@ -1,4 +1,4 @@
-import { uniqBy } from 'lodash';
+import { uniqueBy } from '@automattic/js-utils';
 import {
 	READER_RECOMMENDED_SITE_DISMISSED,
 	READER_RECOMMENDED_SITE_FOLLOWED,
@@ -19,9 +19,9 @@ import { RecommendedSite } from './types';
 export const items = keyedReducer< RecommendedSite[] >( 'seed', ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_RECOMMENDED_SITES_RECEIVE:
-			return uniqBy(
+			return uniqueBy(
 				state.concat( ( action as ReturnType< typeof receiveRecommendedSites > ).payload.sites ),
-				'feedId'
+				( a, b ) => a.feedId === b.feedId
 			);
 		case READER_RECOMMENDED_SITE_FOLLOWED:
 		case READER_RECOMMENDED_SITE_DISMISSED:

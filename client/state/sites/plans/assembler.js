@@ -26,7 +26,9 @@ export const createSitePlanObject = ( plan ) => {
 		productSlug: plan.product_slug,
 		productDisplayPrice: plan.product_display_price,
 		rawDiscount: plan.raw_discount,
+		rawDiscountInteger: plan.raw_discount_integer,
 		rawPrice: plan.raw_price,
+		rawPriceInteger: plan.raw_price_integer,
 		subscribedDate: plan.subscribed_date,
 		userIsOwner: Boolean( plan.user_is_owner ),
 	};

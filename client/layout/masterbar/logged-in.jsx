@@ -501,6 +501,14 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderLaunchpadNavigator() {
+		if ( config.isEnabled( 'launchpad/navigator' ) ) {
+			return <AsyncLoad require="./masterbar-launchpad-navigator" />;
+		}
+
+		return null;
+	}
+
 	render() {
 		const { isInEditor, isCheckout, isCheckoutPending, loadHelpCenterIcon } = this.props;
 		const { isMobile } = this.state;
@@ -559,6 +567,7 @@ class MasterbarLoggedIn extends Component {
 						{ this.renderCart() }
 						{ this.renderMe() }
 						{ loadHelpCenterIcon && this.renderHelpCenter() }
+						{ this.renderLaunchpadNavigator() }
 						{ this.renderNotifications() }
 					</div>
 				</Masterbar>

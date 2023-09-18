@@ -10,41 +10,31 @@ import './style.scss';
 
 export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'all-domains';
 
-export type DomainsTableColumn =
-	| {
-			name: string;
-			label: string | null;
-			isSortable: true;
-			initialSortDirection: 'asc' | 'desc';
-			supportsOrderSwitching?: boolean;
-			sortFunctions?: Array<
-				(
-					first: DomainData,
-					second: DomainData,
-					sortOrder: number,
-					sites?: SiteDetails[]
-				) => number
-			>;
-			headerComponent?: ReactNode;
-			width?: CSSProperties[ 'width' ];
-	  }
-	| {
-			name: string;
-			label: string | null;
-			isSortable?: false;
-			initialSortDirection?: never;
-			supportsOrderSwitching?: never;
-			sortFunctions?: [
-				(
-					first: DomainData,
-					second: DomainData,
-					sortOrder: number,
-					sites?: SiteDetails[]
-				) => number
-			];
-			headerComponent?: ReactNode;
-			width?: CSSProperties[ 'width' ];
-	  };
+interface BaseDomainsTableColumn {
+	name: string;
+	label: string | ( ( count: number, isBulkSelection: boolean ) => string ) | null;
+	sortFunctions?: Array<
+		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => number
+	>;
+	headerComponent?: ReactNode;
+	width?: CSSProperties[ 'width' ];
+	className?: string;
+}
+
+export type DomainsTableColumn = BaseDomainsTableColumn &
+	(
+		| {
+				isSortable: true;
+				sortLabel?: string;
+				initialSortDirection: 'asc' | 'desc';
+				supportsOrderSwitching?: boolean;
+		  }
+		| {
+				isSortable?: false;
+				initialSortDirection?: never;
+				supportsOrderSwitching?: never;
+		  }
+	 );
 
 type DomainsTableHeaderProps = {
 	columns: DomainsTableColumn[];
@@ -53,6 +43,8 @@ type DomainsTableHeaderProps = {
 	onChangeSortOrder: ( selectedColumn: DomainsTableColumn ) => void;
 	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
 	onBulkSelectionChange(): void;
+	domainCount: number;
+	selectedDomainsCount: number;
 	headerClasses?: string;
 	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
@@ -66,6 +58,8 @@ export const DomainsTableHeader = ( {
 	bulkSelectionStatus,
 	onBulkSelectionChange,
 	onChangeSortOrder,
+	domainCount,
+	selectedDomainsCount,
 	headerClasses,
 	hideOwnerColumn = false,
 	domainsRequiringAttention,
@@ -88,6 +82,8 @@ export const DomainsTableHeader = ( {
 
 		return <Icon icon={ columnSortOrder === 'asc' ? chevronDown : chevronUp } size={ 16 } />;
 	};
+
+	const isBulkSelection = bulkSelectionStatus !== 'no-domains';
 
 	return (
 		<thead className={ listHeaderClasses }>
@@ -113,7 +109,11 @@ export const DomainsTableHeader = ( {
 						return null;
 					}
 					return (
-						<th key={ column.name } style={ { width: column.width } }>
+						<th
+							key={ column.name }
+							className={ column.className }
+							style={ { width: column.width } }
+						>
 							<Button
 								plain
 								onClick={ () => onChangeSortOrder( column ) }
@@ -122,7 +122,13 @@ export const DomainsTableHeader = ( {
 								} ) }
 								tabIndex={ column?.isSortable ? 0 : -1 }
 							>
-								{ column?.headerComponent || column?.label }
+								{ column?.headerComponent ||
+									( typeof column?.label === 'function'
+										? column.label(
+												isBulkSelection ? selectedDomainsCount : domainCount,
+												isBulkSelection
+										  )
+										: column?.label ) }
 								{ column?.name === 'status' && domainsRequiringAttention && (
 									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>
 								) }

@@ -295,6 +295,21 @@ export function emailManagementInbox( siteName = null ) {
 	return `/inbox`;
 }
 
+/**
+ * Retrieves the url of the Mailboxes page:
+ *
+ *   https://wordpress.com/mailboxes/:siteName
+ *
+ * @param {string|null|undefined} siteName - slug of the current site
+ * @returns {string} the corresponding url
+ */
+export function emailManagementMailboxes( siteName = null ) {
+	if ( siteName ) {
+		return `/mailboxes/${ siteName }`;
+	}
+	return `/mailboxes`;
+}
+
 export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }

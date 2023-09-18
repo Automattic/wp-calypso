@@ -8,6 +8,7 @@ import {
 	NEWSLETTER_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	ONBOARDING_PM_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -31,6 +32,7 @@ import {
 	recordAddDomainButtonClickInTransferDomain,
 } from 'calypso/state/domains/actions';
 import { ONBOARD_STORE } from '../../../../stores';
+import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
 import type { Step } from '../../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
@@ -169,6 +171,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case DOMAIN_UPSELL_FLOW:
 			case ONBOARDING_PM_FLOW:
 				return __( 'Enter some descriptive keywords to get started' );
+			case HUNDRED_YEAR_PLAN_FLOW:
+				return __( 'Secure your 100-Year domain and start building your legacy.' );
 			default:
 				return createInterpolateElement(
 					__(
@@ -186,6 +190,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		if ( flow === NEWSLETTER_FLOW ) {
 			return __( 'Your domain. Your identity.' );
+		}
+
+		if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
+			return __( 'Find the perfect domain' );
 		}
 
 		return __( 'Choose a domain' );
@@ -272,8 +280,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		return ! isCopySiteFlow( flow );
 	};
 
+	const Container = flow === HUNDRED_YEAR_PLAN_FLOW ? HundredYearPlanStepWrapper : StepContainer;
+
 	return (
-		<StepContainer
+		<Container
 			stepName="domains"
 			isWideLayout={ true }
 			hideBack={ shouldHideBackButton() }
@@ -287,7 +297,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"
-					align="left"
+					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
+					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

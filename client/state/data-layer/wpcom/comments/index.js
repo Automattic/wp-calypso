@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import { compact, get, startsWith, pickBy, map } from 'lodash';
+import { get, startsWith, pickBy, map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,
@@ -155,7 +155,7 @@ export const deleteComment = ( action ) => ( dispatch, getState ) => {
 export const handleDeleteSuccess = ( { options, refreshCommentListQuery } ) => {
 	const showSuccessNotice = get( options, 'showSuccessNotice', false );
 
-	return compact( [
+	return [
 		showSuccessNotice &&
 			successNotice( translate( 'Comment deleted permanently.' ), {
 				duration: 5000,
@@ -163,7 +163,7 @@ export const handleDeleteSuccess = ( { options, refreshCommentListQuery } ) => {
 				isPersistent: true,
 			} ),
 		!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
-	] );
+	].filter( Boolean );
 };
 
 export const announceDeleteFailure = ( action ) => {

@@ -170,6 +170,14 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+	page(
+		paths.domainManagementEditSelectedContactInfo( ':site' ),
+		noSite,
+		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
+		domainManagementController.domainManagementEditSelectedContactInfo,
+		makeLayout,
+		clientRender
+	);
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementEdit,

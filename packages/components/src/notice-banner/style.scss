@@ -1,5 +1,7 @@
 @import "@automattic/components/src/styles/typography";
 
+$banner-title-height: 30px;
+
 :root {
 	--font-title-small: 20px;
 	--font-body: 16px;
@@ -27,9 +29,11 @@
 }
 
 .notice-banner__icon-wrapper {
-	margin-right: 20px;
 	width: calc(var(--spacing-base) * 3);
 	height: calc(var(--spacing-base) * 3);
+	margin-right: 20px;
+	// Align the icon vertically in the middle compared to the title.
+	margin-top: calc(($banner-title-height - var(--spacing-base) * 3) / 2);
 }
 
 .notice-banner__close-button {
@@ -72,7 +76,7 @@
 	font-family: $font-sf-pro-display;
 	font-weight: 500;
 	font-size: var(--font-title-small);
-	line-height: 30px;
+	line-height: $banner-title-height;
 	margin-bottom: 8px;
 }
 
@@ -118,6 +122,7 @@
 		fill: var(--jp-black);
 	}
 
+	// TODO: Move out these two classes to StatsNotices since they are defined and passed there.
 	.notice-banner__action-button,
 	.notice-banner__action-link {
 		font-family: inherit;

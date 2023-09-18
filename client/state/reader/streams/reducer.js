@@ -1,4 +1,3 @@
-import { findIndex, last, filter } from 'lodash';
 import moment from 'moment';
 import { keysAreEqual } from 'calypso/reader/post-key';
 import {
@@ -41,12 +40,16 @@ export const items = ( state = [], action ) => {
 			gap = action.payload.gap;
 			streamItems = action.payload.streamItems;
 
+			if ( ! Array.isArray( streamItems ) ) {
+				return state;
+			}
+
 			if ( gap ) {
 				const beforeGap = takeWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
 				const afterGap = takeRightWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
 
 				// after query param is inclusive, so we need to drop duplicate post
-				if ( keysAreEqual( last( streamItems ), afterGap[ 0 ] ) ) {
+				if ( keysAreEqual( streamItems[ streamItems.length - 1 ], afterGap[ 0 ] ) ) {
 					streamItems.pop();
 				}
 
@@ -58,7 +61,7 @@ export const items = ( state = [], action ) => {
 				// create a new gap if we still need one
 				let nextGap = [];
 				const from = gap.from;
-				const to = moment( last( streamItems ).date );
+				const to = moment( streamItems[ streamItems.length - 1 ]?.date );
 				if ( ! from.isSame( to ) ) {
 					nextGap = [ { isGap: true, from, to } ];
 				}
@@ -73,7 +76,7 @@ export const items = ( state = [], action ) => {
 			}, state );
 
 			// Find any x-posts
-			newXPosts = filter( streamItems, ( postKey ) => postKey.xPostMetadata );
+			newXPosts = streamItems.filter( ( postKey ) => postKey.xPostMetadata );
 
 			if ( ! newXPosts ) {
 				return newState;
@@ -86,7 +89,7 @@ export const items = ( state = [], action ) => {
 			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {
 			const postKey = action.payload.postKey;
-			const indexToRemove = findIndex( state, ( item ) => keysAreEqual( item, postKey ) );
+			const indexToRemove = state.findIndex( ( item ) => keysAreEqual( item, postKey ) );
 
 			if ( indexToRemove === -1 ) {
 				return state;
@@ -133,7 +136,7 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			}
 
 			maxDate = moment( streamItems[ 0 ].date );
-			minDate = moment( last( streamItems ).date );
+			minDate = moment( streamItems[ streamItems.length - 1 ].date );
 
 			// only retain posts that are newer than ones we already have
 			if ( state.lastUpdated ) {
@@ -149,7 +152,7 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			newItems = [ ...streamItems ];
 
 			// Find any x-posts and filter out duplicates
-			newXPosts = filter( newItems, ( postKey ) => postKey.xPostMetadata );
+			newXPosts = newItems.filter( ( postKey ) => postKey.xPostMetadata );
 
 			if ( newXPosts ) {
 				newItems = combineXPosts( newItems );
@@ -176,16 +179,18 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
  * This is relevant for keyboard navigation
  */
 export const selected = ( state = null, action ) => {
-	let idx;
 	switch ( action.type ) {
-		case READER_STREAMS_SELECT_ITEM:
+		case READER_STREAMS_SELECT_ITEM: {
 			return action.payload.postKey;
-		case READER_STREAMS_SELECT_NEXT_ITEM:
-			idx = findIndex( action.payload.items, ( item ) => keysAreEqual( item, state ) );
+		}
+		case READER_STREAMS_SELECT_NEXT_ITEM: {
+			const idx = action.payload.items?.findIndex( ( item ) => keysAreEqual( item, state ) ) ?? -1;
 			return idx === action.payload.items.length - 1 ? state : action.payload.items[ idx + 1 ];
-		case READER_STREAMS_SELECT_PREV_ITEM:
-			idx = findIndex( action.payload.items, ( item ) => keysAreEqual( item, state ) );
+		}
+		case READER_STREAMS_SELECT_PREV_ITEM: {
+			const idx = action.payload.items?.findIndex( ( item ) => keysAreEqual( item, state ) ) ?? -1;
 			return idx === 0 ? state : action.payload.items[ idx - 1 ];
+		}
 	}
 	return state;
 };
