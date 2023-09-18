@@ -25,9 +25,10 @@ import {
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
 } from 'calypso/state/domains/management/selectors';
-import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { createUserEmailPendingUpdate } from 'calypso/state/user-settings/thunks/create-user-email-pending-update';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
 
 import './style.scss';
@@ -432,38 +433,7 @@ class EditContactInfoFormCard extends Component {
 	updateWpcomEmail( newContactDetails, updateWpcomEmail ) {
 		const { email } = newContactDetails;
 		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
-			wp.me()
-				.settings()
-				.update( { user_email: email } )
-				.then( ( data ) => {
-					if ( data.user_email_change_pending ) {
-						this.props.infoNotice(
-							this.props.translate(
-								'There is a pending change of your WordPress.com email to %(newEmail)s. Please check your inbox for a confirmation link.',
-								{
-									args: { newEmail: data.new_user_email },
-								}
-							),
-							{
-								showDismiss: true,
-								isPersistent: true,
-								duration: null,
-							}
-						);
-					}
-				} )
-				.catch( () => {
-					this.props.errorNotice(
-						this.props.translate(
-							'There was a problem updating your WordPress.com Account email.'
-						),
-						{
-							showDismiss: true,
-							isPersistent: true,
-							duration: null,
-						}
-					);
-				} );
+			this.props.createUserEmailPendingUpdate( email );
 		}
 	}
 
@@ -540,9 +510,9 @@ export default connect(
 	{
 		errorNotice,
 		fetchSiteDomains,
-		infoNotice,
 		requestWhois,
 		saveWhois,
 		successNotice,
+		createUserEmailPendingUpdate,
 	}
 )( localize( EditContactInfoFormCard ) );
