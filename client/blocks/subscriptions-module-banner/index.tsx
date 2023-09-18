@@ -29,8 +29,7 @@ export default function SubscriptionsModuleBanner() {
 	);
 	const isModuleActiveRef = useRef( isModuleActive );
 	const [ bannerState, bannerDispatch ] = useBannerDismissReducer();
-	// const showSubscriptionBanner = useSubscriptionBanner( siteId, bannerState.dismissed );
-	const showSubscriptionBanner = true;
+	const showSubscriptionBanner = useSubscriptionBanner( siteId, bannerState.dismissed );
 
 	/**
 	 * Callbacks
@@ -40,28 +39,30 @@ export default function SubscriptionsModuleBanner() {
 			stb_enabled: true,
 			stc_enabled: true,
 		} );
-	}, [ getFormSettings, siteJetpackSettings ] );
+	}, [ siteJetpackSettings ] );
 
 	const onEnableSubscriptionsModule = useCallback( () => {
-		dispatch( activateModule( siteId, moduleSlug ) );
-		recordTracksEvent( 'calypso_subscriptions_module_enable' );
-	}, [ siteId ] );
+		if ( typeof siteId === 'number' ) {
+			dispatch( activateModule( siteId, moduleSlug ) );
+			recordTracksEvent( 'calypso_subscriptions_module_enable' );
+		}
+	}, [ dispatch, siteId ] );
 
 	const onNoticeDismiss = useCallback( () => {
 		bannerDispatch( { type: 'dismiss', payload: true } );
 		recordTracksEvent( 'calypso_subscriptions_banner_dismiss' );
-	}, [] );
+	}, [ bannerDispatch ] );
 
 	const onModuleActivationTransition = useCallback( () => {
 		const settings = prepareModuleSettings();
 		dispatch( saveJetpackSettings( siteId, settings ) );
-	}, [ siteId, prepareModuleSettings ] );
+	}, [ prepareModuleSettings, dispatch, siteId ] );
 
 	const detectModuleActivationTransition = useCallback( () => {
 		if ( ! isModuleActiveRef.current && isModuleActive ) {
 			onModuleActivationTransition();
 		}
-	}, [ isModuleActive ] );
+	}, [ isModuleActive, onModuleActivationTransition ] );
 
 	/**
 	 * Effects
