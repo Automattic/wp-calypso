@@ -1,11 +1,30 @@
 import { getDomainId } from '../get-domain-id';
 import { useDomainsTable } from './domains-table';
 import { DomainsTableRow } from './domains-table-row';
+import DomainsTableRowLoading from './domains-table-row-loading';
 
 import './style.scss';
 
 export function DomainsTableBody() {
-	const { filteredData } = useDomainsTable();
+	const { filteredData, isFetchingDomains } = useDomainsTable();
+
+	if ( isFetchingDomains ) {
+		return (
+			<tbody>
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+				<DomainsTableRowLoading />
+			</tbody>
+		);
+	}
 
 	return (
 		<tbody>
