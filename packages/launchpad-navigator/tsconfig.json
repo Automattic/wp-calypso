@@ -7,5 +7,9 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../data-stores" }, { "path": "../launchpad" } ]
+	"references": [
+		{ "path": "../components" },
+		{ "path": "../data-stores" },
+		{ "path": "../launchpad" }
+	]
 }
