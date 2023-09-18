@@ -21,6 +21,7 @@ import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
+import StatsSection from './stats';
 import { Query } from './types';
 
 type EarningsMainProps = {
@@ -51,6 +52,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				title: translate( 'Tools' ),
 				path: '/earn' + pathSuffix,
 				id: 'earn',
+			},
+			{
+				title: translate( 'Stats' ),
+				path: '/earn/stats' + pathSuffix,
+				id: 'stats',
 			},
 			{
 				title: translate( 'Settings' ),
@@ -131,6 +137,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				return <MembershipsSection query={ query } />;
 			case 'payments-plans':
 				return <MembershipsProductsSection />;
+
+			case 'stats':
+				return <StatsSection />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
