@@ -113,7 +113,7 @@ describe( 'Site Assembler', () => {
 		} );
 
 		it( 'Pick default style', async function () {
-			await siteAssemblerFlow.clickButton( 'Pick your styles' );
+			await siteAssemblerFlow.clickButton( 'Pick your style' );
 			await siteAssemblerFlow.pickStyle( 'Color: Free style' );
 			await siteAssemblerFlow.clickButton( 'Save and continue' );
 		} );
