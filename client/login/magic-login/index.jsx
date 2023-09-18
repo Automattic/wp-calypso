@@ -270,7 +270,7 @@ class MagicLogin extends Component {
 										emailTextOptions
 								  )
 								: translate(
-										'{{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
+										'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
 										emailTextOptions
 								  ) }
 						</div>
