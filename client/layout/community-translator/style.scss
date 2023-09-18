@@ -163,16 +163,3 @@ body {
 		margin-right: 8px;
 	}
 }
-
-.has-deliverable-highlighted {
-	// Disable translatable strings highlight when deliverable is highlighted
-	.translator-translatable {
-		text-shadow: none !important;
-	}
-
-	#notices,
-	.environment-badge,
-	.community-translator {
-		display: none !important;
-	}
-}
