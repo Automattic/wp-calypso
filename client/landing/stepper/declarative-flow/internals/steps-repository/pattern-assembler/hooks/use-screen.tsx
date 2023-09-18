@@ -59,10 +59,10 @@ const useScreen = ( screenName: ScreenName, options: UseScreenOptions = {} ): Sc
 				? translate( 'Pick your styles' )
 				: translate( 'Pick your style' ),
 			description: hasEnTranslation(
-				'Add style to your page with our expertly curated color palettes and font parings.'
+				'Add style to your page with our expertly curated color palettes and font pairings.'
 			)
 				? translate(
-						'Add style to your page with our expertly curated color palettes and font parings.'
+						'Add style to your page with our expertly curated color palettes and font pairings.'
 				  )
 				: translate(
 						'Create your homepage by first adding patterns and then choosing a color palette and font style.'
