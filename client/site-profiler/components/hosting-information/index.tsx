@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { DNS, HostingProvider } from 'calypso/data/site-profiler/types';
 
 interface Props {
@@ -17,10 +18,14 @@ export default function HostingInformation( props: Props ) {
 					<div className="name">Provider</div>
 					<div>{ hostingProvider?.name }</div>
 				</li>
-				<li>
-					<div className="name">Support</div>
-					<div>Contact support</div>
-				</li>
+				{ hostingProvider?.slug === 'automattic' && (
+					<li>
+						<div className="name">Support</div>
+						<div>
+							<a href={ localizeUrl( 'https://wordpress.com/help/contact' ) }>Contact support</a>
+						</div>
+					</li>
+				) }
 				<li>
 					<div className="name">A Records</div>
 					<div>
