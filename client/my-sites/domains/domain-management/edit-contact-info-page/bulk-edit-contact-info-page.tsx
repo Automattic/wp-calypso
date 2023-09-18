@@ -140,7 +140,6 @@ export default function BulkEditContactInfoPage( {
 	const handleSubmitButtonClick = (
 		newContactDetails: Record< string, string >,
 		transferLock: boolean
-		// updateWpcomEmail: boolean
 	) => {
 		const domainNames = selectedDomains?.map( ( domain ) => domain.domain );
 
