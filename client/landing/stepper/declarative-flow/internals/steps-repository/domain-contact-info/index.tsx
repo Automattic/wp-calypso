@@ -100,8 +100,8 @@ function ContactInfo( {
 	}
 
 	function submitForm( contactInfo ) {
-		domainTransferReceive( { ...contactInfo } );
-		onSubmit( { ...contactInfo } );
+		domainTransferReceive( contactInfo );
+		onSubmit?.( contactInfo );
 	}
 
 	return (
