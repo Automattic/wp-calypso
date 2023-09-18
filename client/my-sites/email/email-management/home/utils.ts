@@ -232,7 +232,7 @@ export function recordEmailAppLaunchEvent( {
  * Tracks an event for the key 'calypso_{source}_upsell', where {source} defaults to "email".
  *
  * Events tracked:
- * `calypso_mailboxes_upsell`, when upsell triggered by a CTA click from My Mailboxes.
+ * `calypso_inbox_upsell`, when upsell triggered by a CTA click from My Mailboxes.
  * `calypso_email_upsell`, when upsell triggered by a CTA click from Upgrades > Emails.
  *
  * @param source - source generating the event.
