@@ -89,24 +89,33 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					) }
 					domainStatusPurchaseActions={ purchaseActions }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
-					onDomainAction={ async ( action, domain ) => {
+					onDomainAction={ ( action, domain ) => {
 						if ( action === 'manage-dns-settings' ) {
-							sendNudge( {
-								nudge: 'dns-settings',
-								initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
-								context: { domain: domain.domain },
-							} );
+							return {
+								action: () => {
+									sendNudge( {
+										nudge: 'dns-settings',
+										initialMessage: `I see you want to change your DNS settings for your domain ${ domain.name }. That's a complex thing, but I can guide you and help you at any moment.`,
+										context: { domain: domain.domain },
+									} );
+								},
+							};
 						}
 
-						if ( action === 'set-primary' && site ) {
-							try {
-								await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
-								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
-								page.replace( domainManagementList( domain.domain ) );
-								refetch();
-							} catch ( error ) {
-								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
-							}
+						if ( action === 'set-primary-address' && site ) {
+							return {
+								message: 'Set domain as the primary site address',
+								action: async () => {
+									try {
+										await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
+										dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
+										page.replace( domainManagementList( domain.domain ) );
+										await refetch();
+									} catch ( error ) {
+										dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
+									}
+								},
+							};
 						}
 
 						if ( action === 'change-site-address' ) {

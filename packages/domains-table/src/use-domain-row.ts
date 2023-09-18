@@ -20,6 +20,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		handleSelectDomain,
 		domainResults,
 		showBulkActions,
+		updatingDomain,
 	} = useDomainsTable();
 
 	const translate = useTranslate();
@@ -106,6 +107,20 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 
 	const isSelected = selectedDomains.has( getDomainId( domain ) );
 
+	const pendingUpdates = useMemo( () => {
+		const updates = domainResults.get( domain.domain ) ?? [];
+
+		if ( domain.domain === updatingDomain?.domain && updatingDomain.message ) {
+			updates.unshift( {
+				created_at: updatingDomain.created_at,
+				message: updatingDomain.message,
+				status: '',
+			} );
+		}
+
+		return updates;
+	}, [ domain.domain, domainResults, updatingDomain ] );
+
 	return {
 		ref,
 		site,
@@ -123,7 +138,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		handleSelectDomain,
 		isAllSitesView,
 		domainStatusPurchaseActions,
-		pendingUpdates: domainResults.get( domain.domain ) || [],
+		pendingUpdates,
 		currentDomainData,
 		showBulkActions,
 	};

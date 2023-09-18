@@ -26,7 +26,7 @@ export interface JobStatus {
 	complete: boolean;
 }
 
-export interface DomainUpdateStatus {
+interface DomainUpdateRemoteStatus {
 	status: '' | 'success' | 'failed';
 	action: 'set_auto_renew' | 'update_contact_info';
 	created_at: number;
@@ -34,6 +34,14 @@ export interface DomainUpdateStatus {
 	whois?: unknown;
 	transfer_lock?: boolean;
 }
+
+interface DomainUpdateDerivedStatus {
+	status: '';
+	message: string;
+	created_at: number;
+}
+
+export type DomainUpdateStatus = DomainUpdateRemoteStatus | DomainUpdateDerivedStatus;
 
 export const getBulkDomainUpdateStatusQueryKey = () => {
 	return [ 'domains', 'bulk-actions' ];
