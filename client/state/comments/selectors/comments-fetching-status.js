@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { size } from 'lodash';
 import { fetchStatusInitialState } from 'calypso/state/comments/reducer';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 import { getStateKey } from 'calypso/state/comments/utils';
@@ -10,7 +9,7 @@ export const commentsFetchingStatus = createSelector(
 	( state, siteId, postId, commentTotal = 0 ) => {
 		const fetchStatus =
 			state.comments.fetchStatus[ getStateKey( siteId, postId ) ] ?? fetchStatusInitialState;
-		const hasMoreComments = commentTotal > size( getPostCommentItems( state, siteId, postId ) );
+		const hasMoreComments = commentTotal > getPostCommentItems( state, siteId, postId ).length;
 
 		return {
 			haveEarlierCommentsToFetch: fetchStatus.before && hasMoreComments,
@@ -22,7 +21,7 @@ export const commentsFetchingStatus = createSelector(
 	( state, siteId, postId, commentTotal = 0 ) => {
 		const fetchStatus =
 			state.comments.fetchStatus[ getStateKey( siteId, postId ) ] ?? fetchStatusInitialState;
-		const hasMoreComments = commentTotal > size( getPostCommentItems( state, siteId, postId ) );
+		const hasMoreComments = commentTotal > getPostCommentItems( state, siteId, postId ).length;
 		return [ fetchStatus, hasMoreComments ];
 	}
 );
