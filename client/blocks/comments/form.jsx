@@ -148,7 +148,7 @@ class PostCommentForm extends Component {
 					<Gravatar user={ this.props.currentUser } />
 					<AutoresizingFormTextarea
 						value={ this.getCommentText() }
-						placeholder={ translate( 'Enter your comment here…' ) }
+						placeholder={ translate( 'Add a comment…' ) }
 						onKeyUp={ this.handleKeyUp }
 						onKeyDown={ this.handleKeyDown }
 						onFocus={ this.handleFocus }
