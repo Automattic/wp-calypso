@@ -888,5 +888,38 @@ describe( 'domain status cell', () => {
 				);
 			} );
 		} );
+
+		test( 'when the last attempt to transfer failed, offer the user a way to retry it', async () => {
+			renderDomainStatusCell( {
+				domain: 'example.com',
+				blog_id: 123,
+				wpcom_domain: false,
+				type: 'transfer',
+				has_registration: true,
+				points_to_wpcom: true,
+				last_transfer_error: 'failed',
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Complete setup' ) );
+			} );
+
+			const changeAddress = screen.queryByText( 'Retry transfer' );
+			expect( changeAddress ).toBeInTheDocument();
+			expect( changeAddress ).toHaveAttribute(
+				'href',
+				'/domains/manage/example.com/transfer/example.com'
+			);
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				const tooltip = screen.getByRole( 'tooltip' );
+
+				expect( tooltip ).toHaveTextContent(
+					'There was an error when initiating your domain transfer. Please see the details or retry.'
+				);
+			} );
+		} );
 	} );
 } );

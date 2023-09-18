@@ -11,6 +11,7 @@ import { isRecentlyRegistered } from './is-recently-registered';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
+	domainManagementTransfer,
 	domainMappingSetup,
 	domainUseMyDomain,
 } from './paths';
@@ -549,6 +550,8 @@ export function resolveDomainStatus(
 
 		case domainTypes.TRANSFER:
 			if ( domain.lastTransferError ) {
+				const ctaLink = domainManagementTransfer( siteSlug as string, domain.domain, currentRoute );
+
 				return {
 					statusText: translate( 'Complete setup' ),
 					statusClass: 'status-warning',
@@ -558,14 +561,14 @@ export function resolveDomainStatus(
 						'There was an error when initiating your domain transfer. Please {{a}}see the details or retry{{/a}}.',
 						{
 							components: {
-								a: (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute ) }
-									/>
-								),
+								a: <a href={ ctaLink } />,
 							},
 						}
 					),
+					callToAction: {
+						label: translate( 'Retry transfer' ),
+						href: ctaLink,
+					},
 					listStatusWeight: 600,
 				};
 			}
