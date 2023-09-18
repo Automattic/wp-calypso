@@ -16,7 +16,9 @@ const render = ( el, props ) =>
 	renderWithProvider( el, {
 		wrapper: ( { children } ) => (
 			<DomainsTable { ...props }>
-				<tbody>{ children }</tbody>
+				<table>
+					<tbody>{ children }</tbody>
+				</table>
 			</DomainsTable>
 		),
 	} );
