@@ -1,5 +1,4 @@
-import { Gridicon } from '@automattic/components';
-import { FloatingNavigator } from '@automattic/launchpad-navigator';
+import { FloatingNavigator, LaunchpadNavigatorIcon } from '@automattic/launchpad-navigator';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -25,7 +24,7 @@ const MasterbarLaunchpadNavigator = () => {
 					'is-active': launchpadIsVisible,
 				} ) }
 				tooltip={ translate( 'My tasks' ) }
-				icon={ <Gridicon icon="checkmark-circle" /> }
+				icon={ <LaunchpadNavigatorIcon /> }
 			/>
 			{ launchpadIsVisible && (
 				<div className="masterbar__launchpad-navigator">

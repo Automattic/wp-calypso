@@ -1,3 +1,19 @@
+export interface DNS {
+	host: string;
+	class: string;
+	ttl: number;
+	type: string;
+	ip?: string;
+	target?: string;
+	mname?: string;
+	rname?: string;
+	serial?: number;
+	refresh?: number;
+	retry?: number;
+	expire?: number;
+	'minimum-ttl'?: number;
+}
+
 export interface WhoIs {
 	admin_city: string;
 	admin_country: string;
@@ -40,11 +56,25 @@ export interface WhoIs {
 	updated_date: string;
 }
 
+export interface HostingProvider {
+	slug: string;
+	name: string;
+	is_cdn: boolean;
+}
+
 export interface DomainAnalyzerQueryResponse {
 	domain: string;
-	hosting_provider: {
-		name: string;
-	};
 	whois: WhoIs;
-	dns: any;
+	dns: DNS[];
+	is_domain_available: boolean;
+}
+
+export interface DomainAnalyzerWhoisRawDataQueryResponse {
+	domain: string;
+	whois: string[];
+}
+
+export interface HostingProviderQueryResponse {
+	domain: string;
+	hosting_provider: HostingProvider;
 }

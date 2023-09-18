@@ -61,6 +61,7 @@ const SiteSubscriptionsManager = () => {
 								: translate( 'Manage your newsletter and blog subscriptions.' )
 						}
 						align="left"
+						brandFont
 					/>
 					<Spacer />
 					<AddSitesButton />

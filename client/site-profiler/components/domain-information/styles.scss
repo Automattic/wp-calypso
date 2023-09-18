@@ -1,29 +1,23 @@
 .domain-information-details {
-	margin: 0;
-	list-style: none;
-
-	ul {
-		margin: 0;
-		list-style: none;
-	}
-
-	& > li {
-		display: flex;
-		padding: 1rem 0;
-		border-top: solid 1px var(--studio-gray-5);
-		gap: 2rem;
-
-		&:first-child {
-			border: none;
+	.whois-raw-data {
+		button {
+			margin-bottom: 0.5rem;
 		}
 
-		.name {
-			width: 200px;
-			text-transform: uppercase;
+		p {
+			font-size: 0.875rem !important;
+			/* stylelint-disable-next-line */
+			line-height: 1.25rem;
+			color: var(--studio-gray) !important;
 		}
-	}
 
-	.col {
-		max-width: 300px;
+		pre {
+			font-size: 0.875rem;
+			/* stylelint-disable-next-line */
+			line-height: 1.25rem;
+			padding: 0;
+			margin: 0;
+			white-space: pre-line;
+		}
 	}
 }

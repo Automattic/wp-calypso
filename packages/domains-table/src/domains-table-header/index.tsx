@@ -12,7 +12,7 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 
 interface BaseDomainsTableColumn {
 	name: string;
-	label: string | ( ( count: number ) => string ) | null;
+	label: string | ( ( count: number, isBulkSelection: boolean ) => string ) | null;
 	sortFunctions?: Array<
 		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => number
 	>;
@@ -44,6 +44,7 @@ type DomainsTableHeaderProps = {
 	bulkSelectionStatus: DomainsTableBulkSelectionStatus;
 	onBulkSelectionChange(): void;
 	domainCount: number;
+	selectedDomainsCount: number;
 	headerClasses?: string;
 	hideOwnerColumn?: boolean;
 	domainsRequiringAttention?: number;
@@ -58,6 +59,7 @@ export const DomainsTableHeader = ( {
 	onBulkSelectionChange,
 	onChangeSortOrder,
 	domainCount,
+	selectedDomainsCount,
 	headerClasses,
 	hideOwnerColumn = false,
 	domainsRequiringAttention,
@@ -80,6 +82,8 @@ export const DomainsTableHeader = ( {
 
 		return <Icon icon={ columnSortOrder === 'asc' ? chevronDown : chevronUp } size={ 16 } />;
 	};
+
+	const isBulkSelection = bulkSelectionStatus !== 'no-domains';
 
 	return (
 		<thead className={ listHeaderClasses }>
@@ -120,7 +124,10 @@ export const DomainsTableHeader = ( {
 							>
 								{ column?.headerComponent ||
 									( typeof column?.label === 'function'
-										? column.label( domainCount )
+										? column.label(
+												isBulkSelection ? selectedDomainsCount : domainCount,
+												isBulkSelection
+										  )
 										: column?.label ) }
 								{ column?.name === 'status' && domainsRequiringAttention && (
 									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>

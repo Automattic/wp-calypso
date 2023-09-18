@@ -2,6 +2,7 @@ import { CheckboxControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useDomainsTable } from './domains-table';
 import { DomainsTableMobileCard } from './domains-table-mobile-card';
+import DomainsTableMobileCardLoading from './domains-table-mobile-card-loading';
 
 export const DomainsTableMobileCards = () => {
 	const {
@@ -10,6 +11,7 @@ export const DomainsTableMobileCards = () => {
 		canSelectAnyDomains,
 		changeBulkSelection,
 		getBulkSelectionStatus,
+		isFetchingDomains,
 	} = useDomainsTable();
 
 	const bulkSelectionStatus = getBulkSelectionStatus();
@@ -46,6 +48,17 @@ export const DomainsTableMobileCards = () => {
 					</div>
 				) }
 			</div>
+			{ isFetchingDomains && (
+				<>
+					<DomainsTableMobileCardLoading />
+					<DomainsTableMobileCardLoading />
+					<DomainsTableMobileCardLoading />
+					<DomainsTableMobileCardLoading />
+					<DomainsTableMobileCardLoading />
+					<DomainsTableMobileCardLoading />
+				</>
+			) }
+
 			{ filteredData.map( ( domain ) => (
 				<DomainsTableMobileCard key={ domain.domain } domain={ domain } />
 			) ) }

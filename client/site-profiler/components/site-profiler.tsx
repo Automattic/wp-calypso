@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';
+import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import HostingInto from 'calypso/site-profiler/components/hosting-into';
 import { LayoutBlock, LayoutBlockSection } from 'calypso/site-profiler/components/layout';
 import DomainAnalyzer from './domain-analyzer';
@@ -11,6 +12,7 @@ import './styles.scss';
 export default function SiteProfiler() {
 	const [ domain, setDomain ] = useState( '' );
 	const { data, isFetching } = useDomainAnalyzerQuery( domain );
+	const { data: hostingProviderData } = useHostingProviderQuery( domain );
 
 	const onFormSubmit = ( domain: string ) => {
 		setDomain( domain );
@@ -31,12 +33,15 @@ export default function SiteProfiler() {
 					) }
 					{ data && (
 						<LayoutBlockSection>
-							<HostingInformation />
+							<HostingInformation
+								dns={ data.dns }
+								hostingProvider={ hostingProviderData?.hosting_provider }
+							/>
 						</LayoutBlockSection>
 					) }
 					{ data?.whois && (
 						<LayoutBlockSection>
-							<DomainInformation whois={ data.whois } />
+							<DomainInformation domain={ domain } whois={ data.whois } />
 						</LayoutBlockSection>
 					) }
 				</LayoutBlock>

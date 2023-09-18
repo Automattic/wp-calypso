@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { get, range } from 'lodash';
+import { get } from 'lodash';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 import 'calypso/state/terms/init';
@@ -35,7 +35,9 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
 		return false;
 	}
 
-	return range( 1, lastPage + 1 ).some( ( page ) => {
+	const pages = Array.from( { length: lastPage }, ( _, i ) => i + 1 );
+
+	return pages.some( ( page ) => {
 		const termsQuery = { ...query, page };
 		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
 	} );
