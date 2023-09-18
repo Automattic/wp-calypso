@@ -1,3 +1,4 @@
+import { SiteDetails } from '@automattic/data-stores';
 import page, { Callback, Context } from 'page';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -34,7 +35,8 @@ const siteSelection = ( context: Context, next: () => void ) => {
 	const isRequesting = isRequestingSite( state, siteId );
 	const site = getSite( state, siteId );
 
-	if ( site?.ID || isRequesting ) {
+	// If options stored on WPCOM exists or it's already requesting, we do not need to fetch it again.
+	if ( ( site?.options && 'is_commercial' in site.options ) || isRequesting ) {
 		next();
 		return;
 	}
@@ -43,7 +45,7 @@ const siteSelection = ( context: Context, next: () => void ) => {
 	wpcom.req
 		.get( { path: '/site', apiNamespace: 'jetpack/v4' } )
 		.then( ( site: { data: string } ) => JSON.parse( site.data ) )
-		.then( ( site: object ) => {
+		.then( ( site: SiteDetails ) => {
 			dispatch( { type: ODYSSEY_SITE_RECEIVE, site } );
 			dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );
 		} )
