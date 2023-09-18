@@ -135,13 +135,10 @@ function ContactInfo( {
 				cancelHidden={ true }
 			>
 				<div className="domain-contact-info__terms">
-					<strong>{ translate( 'By accepting this transfer' ) }</strong>
-				</div>
-				<div className="domain-contact-info__term">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
 						{ translate(
-							'You agree to the {{a}}Domain Registration Agreement{{/a}} for %(domainName)s.',
+							'By accepting this transfer, you agree to the {{a}}Domain Registration Agreement{{/a}} for %(domainName)s.',
 							{
 								args: {
 									domainName: domain ?? '',

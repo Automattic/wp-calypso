@@ -5,17 +5,12 @@ $font-family: "SF Pro Text", $sans;
 $heading-font-family: "SF Pro Display", $sans;
 
 .domain-contact-info {
-
 	.domain-contact-info__terms {
-		font-size: 0.875rem;
-	}
-
-	.domain-contact-info__term {
 		padding-left: 24px;
 		position: relative;
-		font-size: $font-body-extra-small;
+		font-size: $font-body-small;
 
-		margin-left: 5px;
+		margin-left: 0;
 		margin-top: 10px;
 
 		> svg {
@@ -32,7 +27,7 @@ $heading-font-family: "SF Pro Display", $sans;
 		}
 
 		p {
-			font-size: $font-body-extra-small;
+			font-size: $font-body-small;
 			margin: 0;
 			word-break: break-word;
 		}
@@ -42,7 +37,7 @@ $heading-font-family: "SF Pro Display", $sans;
 		margin-bottom: 15px;
 	}
 	.contact-details-form-fields__extra-fields {
-		margin-bottom: 15px;
+		margin-bottom: 20px;
 	}
 
 }
