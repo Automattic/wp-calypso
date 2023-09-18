@@ -1,7 +1,8 @@
 import { Card } from '@automattic/components';
 import { Notice } from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFormSettings } from 'calypso/my-sites/site-settings/form-discussion';
@@ -16,31 +17,28 @@ import useSubscriptionBanner from './use-subscription-banner';
 
 import './style.scss';
 
+const moduleSlug = 'subscriptions';
+
 export default function SubscriptionsModuleBanner() {
-	const moduleSlug = 'subscriptions';
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const siteId = site?.ID as number;
+	const siteId = site?.ID;
 	const siteJetpackSettings = useSelector( ( state ) => getJetpackSettings( state, siteId ) );
-	const isModuleActive = useSelector( ( state ) =>
-		isJetpackModuleActive( state, siteId, moduleSlug )
-	);
-	const isModuleActiveRef = useRef( isModuleActive );
+	const isModuleActive = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+		isJetpackModuleActive( state, siteId, moduleSlug );
+	} );
+	const prevIsModuleActive = usePrevious( isModuleActive );
 	const [ bannerState, bannerDispatch ] = useBannerDismissReducer();
 	const showSubscriptionBanner = useSubscriptionBanner( siteId, bannerState.dismissed );
 
 	/**
 	 * Callbacks
 	 */
-	const prepareModuleSettings = useCallback( () => {
-		return Object.assign( {}, getFormSettings( siteJetpackSettings ), {
-			stb_enabled: true,
-			stc_enabled: true,
-		} );
-	}, [ siteJetpackSettings ] );
-
 	const onEnableSubscriptionsModule = useCallback( () => {
 		if ( typeof siteId === 'number' ) {
 			dispatch( activateModule( siteId, moduleSlug ) );
@@ -54,23 +52,22 @@ export default function SubscriptionsModuleBanner() {
 	}, [ bannerDispatch ] );
 
 	const onModuleActivationTransition = useCallback( () => {
-		const settings = prepareModuleSettings();
+		const settings = {
+			...getFormSettings( siteJetpackSettings ),
+			stb_enabled: true,
+			stc_enabled: true,
+		};
 		dispatch( saveJetpackSettings( siteId, settings ) );
-	}, [ prepareModuleSettings, dispatch, siteId ] );
-
-	const detectModuleActivationTransition = useCallback( () => {
-		if ( ! isModuleActiveRef.current && isModuleActive ) {
-			onModuleActivationTransition();
-		}
-	}, [ isModuleActive, onModuleActivationTransition ] );
+	}, [ siteJetpackSettings, dispatch, siteId ] );
 
 	/**
 	 * Effects
 	 */
-	useEffect( detectModuleActivationTransition, [ detectModuleActivationTransition ] );
 	useEffect( () => {
-		isModuleActiveRef.current = isModuleActive;
-	}, [ isModuleActive ] );
+		if ( ! prevIsModuleActive && isModuleActive ) {
+			onModuleActivationTransition();
+		}
+	}, [ isModuleActive, onModuleActivationTransition, prevIsModuleActive ] );
 
 	/**
 	 * Templates
