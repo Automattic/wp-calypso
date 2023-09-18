@@ -6,6 +6,7 @@ import {
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 
@@ -51,8 +52,11 @@ function getGroupName( keyType: KeyType ) {
 
 export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabilityCheck = false ) {
 	const isEnglishLocale = useIsEnglishLocale();
+	const isWpMobileAppUser = isWpMobileApp();
+
 	const { canConnectToZendesk } = useChatStatus();
-	const isEligibleForPresalesChat = enabled && isEnglishLocale && canConnectToZendesk;
+	const isEligibleForPresalesChat =
+		enabled && isEnglishLocale && canConnectToZendesk && ! isWpMobileAppUser;
 
 	const group = getGroupName( keyType );
 
