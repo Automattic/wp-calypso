@@ -9,10 +9,15 @@ $masterbar-color-secondary: #101517;
 @import "calypso/assets/stylesheets/shared/animation";
 
 // Hide the masterbar on WP Mobile App views.
-.is-mobile-app-view {
+body.is-mobile-app-view {
 	.masterbar {
 		display: none;
 	}
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-checkout-height: 0px;
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 }
 
 // The WordPress.com Masterbar
