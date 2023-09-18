@@ -277,25 +277,24 @@ export default function SiteStatusContent( {
 
 		if ( type === 'boost' ) {
 			const overallScore = rows.site.value.jetpack_boost_scores.overall;
-			if ( hasBoost ) {
-				if ( overallScore ) {
-					return (
-						<div
-							className={ classNames(
-								'sites-overview__boost-score',
-								getBoostRatingClass( overallScore )
-							) }
-						>
-							{ translate( '%(rating)s Score', {
-								args: { rating: getBoostRating( overallScore ) },
-								comment:
-									'%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
-							} ) }
-						</div>
-					);
-				}
 
-				// If we do not have score, we will need to redirect user to WP-admin to configure boost.
+			if ( overallScore ) {
+				return (
+					<div
+						className={ classNames(
+							'sites-overview__boost-score',
+							getBoostRatingClass( overallScore )
+						) }
+					>
+						{ translate( '%(rating)s Score', {
+							args: { rating: getBoostRating( overallScore ) },
+							comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
+						} ) }
+					</div>
+				);
+			}
+
+			if ( hasBoost ) {
 				return (
 					<a
 						className="sites-overview__column-action-button"
