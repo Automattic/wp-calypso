@@ -338,7 +338,7 @@ class MagicLogin extends Component {
 						headerText={ translate( 'Sign in with your email' ) }
 						hideSubHeaderText
 						inputPlaceholder={ translate( 'Enter your email address' ) }
-						submitButtonLabel={ translate( 'Continue' ) }
+						submitButtonLabel={ translate( 'Send me login link' ) }
 						tosComponent={ this.renderGravPoweredMagicLoginTos() }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
