@@ -48,3 +48,8 @@ export interface DomainAnalyzerQueryResponse {
 	whois: WhoIs;
 	dns: any;
 }
+
+export interface DomainAnalyzerWhoisRawDataQueryResponse {
+	domain: string;
+	whois: string[];
+}

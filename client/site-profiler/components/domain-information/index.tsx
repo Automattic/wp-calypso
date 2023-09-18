@@ -1,16 +1,26 @@
 import { Button } from '@wordpress/components';
+import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useDomainAnalyzerWhoisRawDataQuery } from 'calypso/data/site-profiler/use-domain-whois-raw-data-query';
 import type { WhoIs } from 'calypso/data/site-profiler/types';
 import './styles.scss';
 
 interface Props {
+	domain: string;
 	whois: WhoIs;
 }
 
 export default function DomainInformation( props: Props ) {
-	const { whois } = props;
+	const { domain, whois } = props;
 	const moment = useLocalizedMoment();
 	const momentFormat = 'YYYY-MM-DD HH:mm:ss UTC';
+	const [ fetchWhoisRawData, setFetchWhoisRawData ] = useState( false );
+
+	const {
+		data: whoisRawData,
+		isFetching: whoisRawDataFetching,
+		isError: whoisRawDataFetchingError,
+	} = useDomainAnalyzerWhoisRawDataQuery( domain, fetchWhoisRawData );
 
 	return (
 		<div className="domain-information">
@@ -216,8 +226,33 @@ export default function DomainInformation( props: Props ) {
 				</li>
 				<li>
 					<div className="name">WhoIs</div>
-					<div>
-						<Button variant="link">Display raw WHOIS output</Button>
+					<div className="whois-raw-data">
+						{ ! whoisRawData && (
+							<Button
+								isBusy={ whoisRawDataFetching }
+								onClick={ () => setFetchWhoisRawData( true ) }
+								variant="link"
+							>
+								Display raw WHOIS output
+							</Button>
+						) }
+
+						{ whoisRawDataFetchingError && (
+							<p>Error fetching WHOIS data; please try again later.</p>
+						) }
+
+						{ whoisRawData && (
+							<div className="whois-raw-data">
+								<p>
+									This WHOIS data is provided for information purposes for domains registered
+									through WordPress.com. We do not guarantee its accuracy. This information is shown
+									for the sole purpose of assisting you in obtaining information about domain name
+									registration records; any use of this data for any other purpose is expressly
+									forbidden.
+								</p>
+								<pre>{ whoisRawData.whois.join( '\n' ) }</pre>
+							</div>
+						) }
 					</div>
 				</li>
 			</ul>
