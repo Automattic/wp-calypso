@@ -130,12 +130,20 @@ $calypso-header-height: 31px;
 	.plugin-details__actions {
 		position: relative;
 		grid-area: actions;
-		background-color: var(--studio-gray-0);
-		padding: 40px;
 		height: fit-content;
 
 		@include breakpoint-deprecated( "<1280px" ) {
 			margin-top: 40px;
+		}
+
+
+		.plugin-details__sidebar {
+			background-color: var(--studio-gray-0);
+			padding: 40px;
+		}
+
+		.plugin-details-download-card {
+			margin-top: 50px;
 		}
 	}
 
