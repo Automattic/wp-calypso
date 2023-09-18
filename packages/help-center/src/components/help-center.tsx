@@ -136,7 +136,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 				sectionName="help-center"
 				botSetting="supportDocs"
 				botName="Help center"
-				aside={
+				helpCenter={
 					<HelpCenterContainer handleClose={ handleClose } hidden={ false } isRelative={ true } />
 				}
 			/>

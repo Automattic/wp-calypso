@@ -1,6 +1,8 @@
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { useRef, useEffect, useState } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SplitButton from 'calypso/components/split-button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -16,19 +18,20 @@ export const WAPUU_ERROR_MESSAGE =
 	"Wapuu oopsie! 😺 My bad, but even cool pets goof. Let's laugh it off! 🎉, ask me again as I forgot what you said!";
 
 type OdieAssistantProps = {
-	aside?: React.ReactNode;
+	helpCenter?: React.ReactNode;
 	botNameSlug: string;
 	simple?: boolean;
 };
 
 const OdieAssistant = ( props: OdieAssistantProps ) => {
-	const { aside = null, simple, botNameSlug } = props;
+	const { helpCenter = null, simple, botNameSlug } = props;
 	const {
+		addMessage,
 		botName,
 		botSetting,
 		lastNudge,
 		chat,
-		addMessage,
+		clearChat,
 		setMessages,
 		isLoading,
 		setIsLoading,
@@ -36,10 +39,12 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		setIsNudging,
 		isVisible,
 		setIsVisible,
-		showAside,
-		setShowAside,
+		isHelpCenterVisible,
+		setIsHelpCenterVisible,
+		onSearchDoc,
+		onContactUs,
 	} = useOdieAssistantContext();
-	const hasAside = aside !== null;
+	const hasHelpCenter = helpCenter !== null;
 	const [ input, setInput ] = useState( '' );
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 	const { data: chatData } = useOdieGetChatPollQuery( chat.chat_id ?? null );
@@ -141,10 +146,6 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 		setIsVisible( newVisibility );
 	};
 
-	function handleAsideToggle() {
-		setShowAside( ! showAside );
-	}
-
 	return (
 		<div
 			className={ classnames( 'chatbox', {
@@ -169,18 +170,52 @@ const OdieAssistant = ( props: OdieAssistantProps ) => {
 			) }
 			<div
 				className={ classnames( 'chatbox-header', {
-					'chatbox-header-with-help': hasAside,
+					'chatbox-header-with-help': hasHelpCenter,
 				} ) }
 			>
 				<span>{ botName }</span>
-				<Button primary className="chatbox-aside-btn" onClick={ handleAsideToggle } type="button">
-					{ showAside ? 'Ask Wapuu' : 'Different communication channels' }
-				</Button>
+				{ ! isHelpCenterVisible && (
+					<SplitButton
+						className="chatbox-help-center-btn"
+						label="Contact us"
+						primary
+						onClick={ onContactUs }
+					>
+						<PopoverMenuItem onClick={ onSearchDoc } icon="search">
+							Search
+						</PopoverMenuItem>
+						<PopoverMenuItem onClick={ clearChat } icon="refresh">
+							Clear conversation
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							onClick={ () => {
+								setIsVisible( false );
+							} }
+							icon="chevron-down"
+						>
+							Hide Help center
+						</PopoverMenuItem>
+					</SplitButton>
+				) }
+				{ isHelpCenterVisible && (
+					<Button
+						primary
+						className="chatbox-help-center-btn"
+						onClick={ () => {
+							setIsHelpCenterVisible( false );
+						} }
+						type="button"
+					>
+						Ask Wapuu
+					</Button>
+				) }
 			</div>
 
-			{ hasAside && showAside && <div className="chatbox-aside-container">{ aside }</div> }
-			{ ! hasAside ||
-				( hasAside && ! showAside && (
+			{ hasHelpCenter && isHelpCenterVisible && (
+				<div className="chatbox-help-center-container">{ helpCenter }</div>
+			) }
+			{ ! hasHelpCenter ||
+				( hasHelpCenter && ! isHelpCenterVisible && (
 					<div className="chat-box-message-container">
 						<div className="chatbox-messages">
 							{ chat.messages.map( ( message, index ) => (

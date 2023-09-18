@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 
 export type OdieUserTracking = {
 	path: string;
-	timeSpent: number;
-	elementsClicked: string[];
+	time_spent: number;
+	elements_clicked: string[];
 };
 
 const isUserReadableInteractiveElement = ( element: HTMLElement ) => {
@@ -17,6 +17,15 @@ const isUserReadableInteractiveElement = ( element: HTMLElement ) => {
 	}
 };
 
+/**
+ * `useOdieUserTracking` is a custom React Hook that monitors user interactions on the website. It keeps track of
+ * the paths visited, the time spent on each path, and the interactive elements clicked by the user during their
+ * visit. This information is accumulated within a session and is retained for the last 10 path transitions.
+ *
+ * It returns an array of user tracking data objects, each containing the path visited, time spent, and the
+ * interactive elements that were clicked on that path.
+ * @returns {OdieUserTracking[]} An array of user tracking data.
+ */
 const useOdieUserTracking = (): OdieUserTracking[] => {
 	const [ userLocations, setUserLocations ] = useState< OdieUserTracking[] >( [] );
 	const currentPath = useRef( window.location.pathname );
@@ -36,15 +45,15 @@ const useOdieUserTracking = (): OdieUserTracking[] => {
 		const newCurrentPath = window.location.pathname;
 
 		if ( currentPath.current !== newCurrentPath ) {
-			const timeSpent = now - startTime.current;
+			const time_spent = now - startTime.current;
 
 			setUserLocations( ( prevLocations ) =>
 				[
 					...prevLocations,
 					{
 						path: currentPath.current,
-						timeSpent,
-						elementsClicked: [ ...elementsClicked.current ],
+						time_spent,
+						elements_clicked: [ ...elementsClicked.current ],
 					},
 				].slice( -10 )
 			);

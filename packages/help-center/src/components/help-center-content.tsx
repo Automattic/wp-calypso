@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { CardBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -47,17 +46,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean } > = ( { isRelative =
 		} ),
 		[]
 	);
-	const isWapuuEnabled = config.isEnabled( 'wapuu' );
 
 	useEffect( () => {
-		if ( isWapuuEnabled ) {
-			navigate( '/contact-options' );
-			return;
-		}
 		if ( initialRoute ) {
 			navigate( initialRoute );
 		}
-	}, [ initialRoute, isWapuuEnabled ] );
+	}, [ initialRoute ] );
 
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {

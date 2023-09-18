@@ -41,7 +41,7 @@ export const HelpCenterContactPage: FC = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const isWapuuEnabled = config.isEnabled( 'wapuu' );
-	const { setShowAside, setIsLoading } = useOdieAssistantContext();
+	const { setIsLoading } = useOdieAssistantContext();
 
 	const renderEmail = useShouldRenderEmailOption();
 	const {
@@ -209,23 +209,6 @@ export const HelpCenterContactPage: FC = () => {
 							</div>
 						</Link>
 					) }
-					{ isWapuuEnabled && (
-						<Link onClick={ () => setShowAside( false ) } to="#">
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'odie' ) }
-								role="button"
-								tabIndex={ 0 }
-							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ comment } />
-								</div>
-								<div>
-									<h2>{ __( 'Wapuu', __i18n_text_domain__ ) }</h2>
-									<p>{ __( 'Get an immediate reply using a trained AI', __i18n_text_domain__ ) }</p>
-								</div>
-							</div>
-						</Link>
-					) }
 				</div>
 			</div>
 		</div>
@@ -237,6 +220,10 @@ export const HelpCenterContactButton: FC = () => {
 	const { url, isLoading } = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
+	const isWapuuEnabled = config.isEnabled( 'wapuu' );
+	if ( isWapuuEnabled ) {
+		return null;
+	}
 
 	const trackContactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {

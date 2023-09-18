@@ -1,8 +1,11 @@
+import type { OdieUserTracking } from '../trackLocation/useOdieUserTracking';
+
 export type Context = {
 	nudge_id?: string | undefined;
 	section_name?: string;
 	session_id?: string;
 	site_id: number | null;
+	user_tracking?: OdieUserTracking[];
 	// etc
 };
 

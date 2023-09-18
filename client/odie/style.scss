@@ -17,10 +17,11 @@
 	z-index: 998;
 }
 
-.chatbox-aside-btn {
+.chatbox-help-center-btn {
 	margin-right: 8px;
+	display: flex;
 }
-.chatbox-aside-container {
+.chatbox-help-center-container {
 	height: 100%;
 	width: 100%;
 	overflow-y: scroll;
@@ -184,13 +185,13 @@
 }
 
 .using-environment-badge {
-	margin-bottom: 64px;
-	height: calc(100vh - 120px - 64px);
+	margin-bottom: 86px;
+	height: calc(100vh - 120px - 86px);
 }
 
 /* When chatbox is hidden */
 .chatbox-hide-vertical {
-	transform: translateY(calc(100% + 75px));
+	transform: translateY(calc(100% + 97px));
 }
 
 /* When chatbox is visible */
