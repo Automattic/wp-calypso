@@ -88,14 +88,15 @@ export function resolveDomainStatus(
 		},
 	};
 
-	const mappingSetupComponents = {
-		strong: <strong />,
-		a: <a href={ domainMappingSetup( siteSlug as string, domain.domain ) } />,
+	const mappingSetupCallToAction = {
+		href: domainMappingSetup( siteSlug as string, domain.domain ),
+		label: translate( 'Go to setup' ),
 	};
 
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			if ( isExpiringSoon( domain, 30 ) ) {
+				let callToAction;
 				const expiresMessage =
 					null !== domain.bundledPlanSubscriptionId
 						? translate(
@@ -113,10 +114,8 @@ export function resolveDomainStatus(
 				let noticeText = null;
 
 				if ( ! domain.pointsToWpcom ) {
-					noticeText = translate(
-						"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
-						{ components: mappingSetupComponents }
-					);
+					noticeText = translate( "We noticed that something wasn't updated correctly." );
+					callToAction = mappingSetupCallToAction;
 				}
 
 				let status = translate( 'Active' );
@@ -133,6 +132,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusWeight: isExpiringSoon( domain, 7 ) ? 1000 : 800,
 					noticeText,
+					callToAction,
 				};
 			}
 
@@ -150,10 +150,8 @@ export function resolveDomainStatus(
 						statusClass: 'status-alert',
 						status: translate( 'Error' ),
 						icon: 'info',
-						noticeText: translate(
-							"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
-							{ components: mappingSetupComponents }
-						),
+						noticeText: translate( "We noticed that something wasn't updated correctly." ),
+						callToAction: mappingSetupCallToAction,
 						listStatusWeight: 1000,
 					};
 				}

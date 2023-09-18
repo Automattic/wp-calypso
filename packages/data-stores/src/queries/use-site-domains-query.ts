@@ -29,7 +29,7 @@ export interface DomainData {
 	expiry: string;
 	expiry_soon: boolean;
 	expired: boolean;
-	auto_renewing: 0;
+	auto_renewing: boolean;
 	pending_registration: boolean;
 	pending_registration_time: string;
 	has_registration: boolean;

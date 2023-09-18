@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import moment from 'moment';
 import React from 'react';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { DomainsTable } from '../domains-table';
@@ -379,5 +380,111 @@ describe( 'expires or renew on cell', () => {
 		} );
 
 		expect( screen.getByText( '-' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'domain status cell', () => {
+	describe( 'mapped domain actions', () => {
+		test( 'when a mapped domain is close to its expiry date and doesnt point to wpcom, refer the user to the mapping setup page', async () => {
+			const [ partialDomain, fullDomain ] = testDomain( {
+				domain: 'example.com',
+				blog_id: 123,
+				wpcom_domain: false,
+				type: 'mapping',
+				has_registration: false,
+				expired: false,
+				expiry: moment().add( 3, 'days' ).toISOString(),
+				points_to_wpcom: false,
+				auto_renewing: false,
+			} );
+
+			const fetchSiteDomains = jest.fn().mockResolvedValue( {
+				domains: [ fullDomain ],
+			} );
+
+			const fetchSite = jest.fn().mockResolvedValue( {
+				ID: 123,
+				URL: 'https://example.com',
+				options: { is_redirect: false },
+			} );
+
+			render( <DomainsTableRow domain={ partialDomain } />, {
+				domains: [ partialDomain ],
+				isAllSitesView: true,
+				fetchSite,
+				fetchSiteDomains,
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Expiring soon' ) );
+			} );
+
+			const goToSetup = screen.getByText( 'Go to setup' );
+
+			expect( goToSetup ).toBeInTheDocument();
+			expect( goToSetup ).toHaveAttribute(
+				'href',
+				'/domains/mapping/example.com/setup/example.com?step=&show-errors=false&firstVisit=false'
+			);
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				expect(
+					screen.queryByText( "We noticed that something wasn't updated correctly." )
+				).toBeInTheDocument();
+			} );
+		} );
+
+		test( 'when a mapped domain has mapping errors, refer the user to the mapping setup page', async () => {
+			const [ partialDomain, fullDomain ] = testDomain( {
+				domain: 'example.com',
+				blog_id: 123,
+				wpcom_domain: false,
+				type: 'mapping',
+				has_registration: false,
+				expired: false,
+				registration_date: moment().subtract( 5, 'days' ).toISOString(),
+				expiry: moment().add( 60, 'days' ).toISOString(),
+				points_to_wpcom: false,
+			} );
+
+			const fetchSiteDomains = jest.fn().mockResolvedValue( {
+				domains: [ fullDomain ],
+			} );
+
+			const fetchSite = jest.fn().mockResolvedValue( {
+				ID: 123,
+				URL: 'https://example.com',
+				options: { is_redirect: false },
+			} );
+
+			render( <DomainsTableRow domain={ partialDomain } />, {
+				domains: [ partialDomain ],
+				isAllSitesView: true,
+				fetchSite,
+				fetchSiteDomains,
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Error' ) );
+			} );
+
+			const goToSetup = screen.getByText( 'Go to setup' );
+
+			expect( goToSetup ).toBeInTheDocument();
+			expect( goToSetup ).toHaveAttribute(
+				'href',
+				'/domains/mapping/example.com/setup/example.com?step=&show-errors=false&firstVisit=false'
+			);
+
+			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
+
+			await waitFor( () => {
+				expect(
+					screen.queryByText( "We noticed that something wasn't updated correctly." )
+				).toBeInTheDocument();
+			} );
+		} );
 	} );
 } );
