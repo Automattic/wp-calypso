@@ -786,6 +786,9 @@ export class SiteSettingsFormGeneral extends Component {
 									/>
 								</FormFieldset>
 								<FormSettingExplanation>
+									{ translate( 'Choose someone to look after your site when you pass away.' ) }
+								</FormSettingExplanation>
+								<FormSettingExplanation>
 									{ translate(
 										'To take ownership of the site, we ask that the person you designate contacts us at {{a}}wordpress.com/help{{/a}} with a copy of the death certificate.',
 										{
