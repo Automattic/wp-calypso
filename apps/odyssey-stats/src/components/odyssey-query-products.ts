@@ -42,6 +42,7 @@ export default function QueryProductsList( {
 					error,
 				} )
 			);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dispatch, type, currency ] );
 	return null;
 }
