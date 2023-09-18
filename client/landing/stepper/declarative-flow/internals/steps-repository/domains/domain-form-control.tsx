@@ -233,7 +233,7 @@ export function DomainFormControl( {
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
 				// when it's provided via the query arg, follow the convention of /start/domains to show it
-				initialState.hideInitialQuery = ! domainSearchInQuery;
+				initialState.hideInitialQuery = ! initialQuery;
 			}
 		}
 
