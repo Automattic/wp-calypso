@@ -1,6 +1,7 @@
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
+import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -12,7 +13,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import BannerActivation from './banner-activation';
 import type { FollowersQuery } from './types';
 import type { Member } from '../types';
 
@@ -86,7 +86,7 @@ function Subscribers( props: Props ) {
 		case 'loading':
 			return (
 				<>
-					<BannerActivation />
+					<SubscriptionsModuleBanner />
 
 					<PeopleListSectionHeader
 						isPlaceholder={ isLoading }

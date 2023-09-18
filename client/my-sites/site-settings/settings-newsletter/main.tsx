@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -88,6 +89,7 @@ const NewsletterSettings = () => {
 		<Main>
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Newsletter Settings' ) } align="left" />
+			<SubscriptionsModuleBanner />
 			<NewsletterSettingsForm />
 		</Main>
 	);

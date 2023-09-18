@@ -4,8 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useCallback } from 'react';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import useBannerDismissReducer from 'calypso/my-sites/people/subscribers/hooks/use-banner-dismiss-reducer';
-import useSubscriptionBanner from 'calypso/my-sites/people/subscribers/hooks/use-subscription-banner';
 import { getFormSettings } from 'calypso/my-sites/site-settings/form-discussion';
 import { useDispatch, useSelector } from 'calypso/state';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
@@ -13,8 +11,12 @@ import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import useBannerDismissReducer from './use-banner-dismiss-reducer';
+import useSubscriptionBanner from './use-subscription-banner';
 
-export default function BannerActivation() {
+import './style.scss';
+
+export default function SubscriptionsModuleBanner() {
 	const moduleSlug = 'subscriptions';
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -27,7 +29,8 @@ export default function BannerActivation() {
 	);
 	const isModuleActiveRef = useRef( isModuleActive );
 	const [ bannerState, bannerDispatch ] = useBannerDismissReducer();
-	const showSubscriptionBanner = useSubscriptionBanner( siteId, bannerState.dismissed );
+	// const showSubscriptionBanner = useSubscriptionBanner( siteId, bannerState.dismissed );
+	const showSubscriptionBanner = true;
 
 	/**
 	 * Callbacks
@@ -75,7 +78,7 @@ export default function BannerActivation() {
 		<>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			{ showSubscriptionBanner && (
-				<Card className="people-subscription-banner">
+				<Card className="subscriptions-module-banner">
 					<Notice
 						status="info"
 						onRemove={ onNoticeDismiss }
