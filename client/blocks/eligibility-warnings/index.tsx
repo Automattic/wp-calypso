@@ -347,7 +347,7 @@ const processMarketplaceExceptions = (
 		return { eligibilityData, isEligible };
 	}
 
-	// If not explicit exception and missing INSTALL_PURCHASED_PLUGINS feature, skip.
+	// If is not Onboarding flow and missing INSTALL_PURCHASED_PLUGINS feature, skip.
 	const siteId = getSelectedSiteId( state );
 	if (
 		! isOnboarding &&
