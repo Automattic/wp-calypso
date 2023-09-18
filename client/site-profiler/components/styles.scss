@@ -1,7 +1,5 @@
-.is-section-site-profiler {
-	.layout__content {
-		padding: 0;
-	}
+.is-section-site-profiler .layout__content {
+	padding: 0;
 
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
@@ -19,6 +17,11 @@
 	h3 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		font-size: 1.75rem;
+		margin-bottom: 1.25rem;
+	}
+
+	h4 {
+		margin-bottom: 1rem;
 	}
 
 	p {
@@ -26,5 +29,16 @@
 		/* stylelint-disable-next-line */
 		font-size: 1.125rem;
 		color: var(--studio-gray-80);
+	}
+
+	a,
+	button.is-link {
+		color: var(--wp-admin-theme-color);
+		text-decoration: underline;
+		font-size: 1rem;
+
+		&:hover {
+			color: var(--wp-admin-theme-color-darker-20);
+		}
 	}
 }

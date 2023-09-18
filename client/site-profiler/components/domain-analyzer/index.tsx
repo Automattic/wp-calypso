@@ -33,7 +33,12 @@ export default function DomainAnalyzer( props: Props ) {
 			<form className="domain-analyzer--form" onSubmit={ onSubmit }>
 				<div className="domain-analyzer--form-container">
 					<div className="col-1">
-						<input type="text" name="domain" placeholder={ translate( 'mysite.com' ) } />
+						<input
+							type="text"
+							name="domain"
+							autoComplete="off"
+							placeholder={ translate( 'mysite.com' ) }
+						/>
 					</div>
 					<div className="col-2">
 						<Button isBusy={ isBusy } type="submit">
