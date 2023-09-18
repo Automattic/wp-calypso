@@ -394,7 +394,7 @@ export default function BulkEditContactInfoPage( {
 			<>
 				{ firstSelectedDomain && <QuerySiteDomains siteId={ firstSelectedDomain.blog_id } /> }
 				{ selectedDomains?.map( ( domain ) => (
-					<QueryWhois domain={ domain.domain } />
+					<QueryWhois domain={ domain.domain } key={ domain.domain } />
 				) ) }
 				<DomainMainPlaceholder goBack={ goToDomainsList } />
 			</>
