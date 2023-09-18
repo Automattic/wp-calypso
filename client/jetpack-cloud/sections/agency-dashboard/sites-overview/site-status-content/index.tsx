@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import ToggleActivateMonitoring from '../../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from '../context';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
@@ -108,11 +109,17 @@ export default function SiteStatusContent( {
 		return page( issueLicenseRedirectUrl );
 	};
 
+	const handleGetBoostScoreAction = () => {
+		// TODO - should open a modal.
+	};
+
 	const handleDeselectLicenseAction = () => {
 		dispatch( unselectLicense( siteId, type ) );
 	};
 
 	const hasBoost = rows.site.value.has_boost;
+
+	const adminUrl = useSelector( ( state ) => getJetpackAdminUrl( state, siteId ) );
 
 	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
 		if ( viewsTrend === 'up' ) {
@@ -271,21 +278,44 @@ export default function SiteStatusContent( {
 		if ( type === 'boost' ) {
 			const overallScore = rows.site.value.jetpack_boost_scores.overall;
 			if ( hasBoost ) {
+				if ( overallScore ) {
+					return (
+						<div
+							className={ classNames(
+								'sites-overview__boost-score',
+								getBoostRatingClass( overallScore )
+							) }
+						>
+							{ translate( '%(rating)s Score', {
+								args: { rating: getBoostRating( overallScore ) },
+								comment:
+									'%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
+							} ) }
+						</div>
+					);
+				}
+
+				// If we do not have score, we will need to redirect user to WP-admin to configure boost.
 				return (
-					<div
-						className={ classNames(
-							'sites-overview__boost-score',
-							getBoostRatingClass( overallScore )
-						) }
+					<a
+						className="sites-overview__column-action-button"
+						href={ adminUrl }
+						target="_blank"
+						rel="noreferrer"
 					>
-						{ translate( '%(rating)s Score', {
-							args: { rating: getBoostRating( overallScore ) },
-							comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
-						} ) }
-					</div>
+						{ translate( 'Configure Boost' ) }
+					</a>
 				);
 			}
-			return <div></div>;
+
+			return (
+				<button
+					className="sites-overview__column-action-button"
+					onClick={ handleGetBoostScoreAction }
+				>
+					{ translate( 'Get Score' ) }
+				</button>
+			);
 		}
 
 		switch ( status ) {
@@ -318,18 +348,20 @@ export default function SiteStatusContent( {
 			}
 			case 'inactive': {
 				content = ! isLicenseSelected ? (
-					<button onClick={ handleSelectLicenseAction }>
-						<span className="sites-overview__status-select-license">
-							<Gridicon icon="plus-small" size={ 16 } />
-							<span>{ translate( 'Add' ) }</span>
-						</span>
+					<button
+						className="sites-overview__column-action-button"
+						onClick={ handleSelectLicenseAction }
+					>
+						<Gridicon icon="plus-small" size={ 16 } />
+						<span>{ translate( 'Add' ) }</span>
 					</button>
 				) : (
-					<button onClick={ handleDeselectLicenseAction }>
-						<span className="sites-overview__status-unselect-license">
-							<Gridicon icon="checkmark" size={ 16 } />
-							<span>{ translate( 'Selected' ) }</span>
-						</span>
+					<button
+						className="sites-overview__column-action-button is-selected"
+						onClick={ handleDeselectLicenseAction }
+					>
+						<Gridicon icon="checkmark" size={ 16 } />
+						<span>{ translate( 'Selected' ) }</span>
 					</button>
 				);
 				break;
