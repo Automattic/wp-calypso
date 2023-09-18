@@ -93,7 +93,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 							try {
 								await dispatch( setPrimaryDomain( site.ID, domain.domain ) );
 								dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
-								page.redirect( domainManagementList( domain.domain ) );
+								page.replace( domainManagementList( domain.domain ) );
 								refetch();
 							} catch ( error ) {
 								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
