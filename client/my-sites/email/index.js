@@ -17,18 +17,6 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 
 const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
 
-const emailInboxSiteSelectionHeader = ( context, next ) => {
-	context.getSiteSelectionHeaderText = () => {
-		return translate( 'Select a site to open {{strong}}My Inbox{{/strong}}', {
-			components: {
-				strong: <strong />,
-			},
-		} );
-	};
-
-	next();
-};
-
 const emailMailboxesSiteSelectionHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
 		return translate( 'Select a site to open {{strong}}My Mailboxes{{/strong}}', {
@@ -43,23 +31,6 @@ const emailMailboxesSiteSelectionHeader = ( context, next ) => {
 
 export default function () {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
-
-	page(
-		paths.emailManagementInbox(),
-		siteSelection,
-		emailInboxSiteSelectionHeader,
-		sites,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		paths.emailManagementInbox( ':site' ),
-		...commonHandlers,
-		controller.emailManagementInbox,
-		makeLayout,
-		clientRender
-	);
 
 	page(
 		paths.emailManagementMailboxes(),
