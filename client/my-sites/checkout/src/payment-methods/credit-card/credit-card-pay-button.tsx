@@ -190,6 +190,12 @@ function isCreditCardFormValid(
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
 
+	function setFieldsError() {
+		setDisplayFieldsError(
+			__( 'Something seems to be missing — please fill out all the required fields.' )
+		);
+	}
+
 	switch ( paymentPartner ) {
 		case 'stripe': {
 			const fields = selectors.getFields( store.getState() );
@@ -198,9 +204,7 @@ function isCreditCardFormValid(
 				// Touch the field so it displays a validation error
 				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
 				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
-				setDisplayFieldsError(
-					__( 'Something seems to be missing — please fill out all the required fields.' )
-				);
+				setFieldsError();
 			}
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
@@ -211,9 +215,7 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
-				setDisplayFieldsError(
-					__( 'Something seems to be missing — please fill out all the required fields.' )
-				);
+				setFieldsError();
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
