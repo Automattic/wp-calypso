@@ -175,6 +175,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 										false
 									}
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
+									isSimpleSite={ ! site?.is_wpcom_atomic }
 								/>
 							) }
 						</td>

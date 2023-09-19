@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
-import { DomainsTable } from '@automattic/domains-table';
+import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import { UsePresalesChat } from 'calypso/components/data/domain-management';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -69,6 +70,9 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions /> ];
 
+	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
+		useState< ResponseDomain | null >( null );
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
@@ -104,6 +108,10 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
 							}
 						}
+
+						if ( action === 'change-site-address' ) {
+							setChangeSiteAddressSourceDomain( domain );
+						}
 					} }
 				/>
 				{ ! isMobile && (
@@ -118,6 +126,15 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 						) }
 						<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
 					</>
+				) }
+				{ changeSiteAddressSourceDomain && (
+					<SiteAddressChanger
+						currentDomain={ changeSiteAddressSourceDomain }
+						currentDomainSuffix={ changeSiteAddressSourceDomain.name.match( /\.\w+\.\w+$/ )?.[ 0 ] }
+						isDialogVisible
+						onClose={ () => setChangeSiteAddressSourceDomain( null ) }
+						onSiteAddressChanged={ () => refetch() }
+					/>
 				) }
 			</Main>
 			<UsePresalesChat />
