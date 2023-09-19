@@ -13,7 +13,7 @@
 		z-index: 1;
 	}
 
-	.domains-table-filter {
+	.domains-table-toolbar {
 		position: sticky;
 		z-index: 1;
 	}
@@ -24,7 +24,10 @@
 }
 
 .domains-table {
-	--domains-table-toolbar-height: 40px;
+	.domains-table-toolbar {
+		--domains-table-toolbar-height: 40px;
+		background: var(--color-surface-backdrop);
+	}
 
 	table {
 		margin-top: 14px; /* 30px - 16px of the table heading padding */

@@ -3,7 +3,7 @@ import SearchControl, { SearchIcon } from '@automattic/search';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { DropdownMenu, MenuGroup, MenuItem, ToggleControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode } from 'react';
 import { useDomainsTable } from '../domains-table/domains-table';
 import './style.scss';
 
@@ -21,19 +21,6 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 	const { __ } = useI18n();
 
 	const isMobile = useMobileBreakpoint();
-	const filterContainer = useRef< HTMLDivElement >( null );
-
-	useEffect( () => {
-		if ( ! filterContainer.current ) {
-			return;
-		}
-
-		if ( isMobile ) {
-			filterContainer.current.style.top = `${ filterContainer.current.offsetTop }px`;
-		} else {
-			filterContainer.current.style.top = 'unset';
-		}
-	}, [ isMobile ] );
 
 	const {
 		sortKey,
@@ -75,7 +62,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 		} );
 
 	return (
-		<div className="domains-table-filter" ref={ filterContainer }>
+		<div className="domains-table-filter">
 			<SearchControl
 				searchIcon={ <SearchIcon /> }
 				className="domains-table-filter__search"
