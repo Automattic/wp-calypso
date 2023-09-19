@@ -24497,12 +24497,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:wp-prettier@2.8.5":
-  version: 2.8.5
-  resolution: "wp-prettier@npm:2.8.5"
+"prettier@npm:wp-prettier@3.0.3-beta-4":
+  version: 3.0.3-beta-4
+  resolution: "wp-prettier@npm:3.0.3-beta-4"
   bin:
-    prettier: bin-prettier.js
-  checksum: 2b00bb73cb56daabc45fc165c8b02471052d3b01eebbdbb6954a891a3e9498c76f5c6776c083c3c34cc9304f015c2fde68b5e979aeb4cdebc25037308b113cf7
+    prettier: bin/prettier.cjs
+  checksum: 07f5d0bcb65a9fce47a38ff594108a994c0fe4df359f0330627830dde7e9884c0c7f572c735b015a078959c3231bdb27959f1fa9708a8e82e9457bc08ddb1fa8
   languageName: node
   linkType: hard
 
@@ -31430,7 +31430,7 @@ __metadata:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    prettier: "npm:wp-prettier@2.8.5"
+    prettier: "npm:wp-prettier@3.0.3-beta-4"
     react: ^18.2.0
     react-dom: ^18.2.0
     react-intersection-observer: ^9.4.3

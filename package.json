@@ -269,7 +269,7 @@
 		"postcss": "^8.4.5",
 		"postcss-cli": "^9.0.1",
 		"postcss-custom-properties": "^11.0.0",
-		"prettier": "npm:wp-prettier@2.8.5",
+		"prettier": "npm:wp-prettier@3.0.3-beta-4",
 		"react-refresh": "^0.14.0",
 		"readline-sync": "^1.4.10",
 		"recursive-copy": "^2.0.14",
