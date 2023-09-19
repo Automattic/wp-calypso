@@ -4,7 +4,7 @@ import { SubscribersFilterBy } from 'calypso/my-sites/subscribers/constants';
 
 const FilterBy = SubscribersFilterBy;
 
-const useSubscribersFilterOptions = ( skipAllOption: boolean ) => {
+const useSubscribersFilterOptions = ( skipAllOption: boolean, siteId: number | null ) => {
 	const translate = useTranslate();
 
 	const options = skipAllOption ? [] : [ { value: FilterBy.All, label: translate( 'All' ) } ];
@@ -13,7 +13,7 @@ const useSubscribersFilterOptions = ( skipAllOption: boolean ) => {
 		{ value: FilterBy.WPCOM, label: translate( 'Via WordPress.com' ) }
 	);
 
-	return useMemo( () => options, [ translate ] );
+	return useMemo( () => options, [ translate, siteId ] );
 };
 
 export default useSubscribersFilterOptions;
