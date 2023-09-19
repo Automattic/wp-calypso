@@ -314,6 +314,8 @@ function PluginDetails( props ) {
 						href={ localizeUrl(
 							'https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/'
 						) }
+						target="_blank"
+						rel="noreferrer noopener"
 					/>
 				),
 			},
