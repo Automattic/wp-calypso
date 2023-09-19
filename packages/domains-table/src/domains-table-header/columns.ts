@@ -1,6 +1,7 @@
+import { DomainData, PartialDomainData } from '@automattic/data-stores';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { I18N } from 'i18n-calypso';
-import { getSimpleSortFunctionBy, getSiteSortFunctions, getStatusSortFunctions } from '../utils';
+import { getSimpleSortFunctionBy, getStatusSortFunctions } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableColumn } from '.';
 
@@ -42,7 +43,7 @@ export const allSitesViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
 	},
 	{
 		name: 'site',
@@ -50,7 +51,7 @@ export const allSitesViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: getSiteSortFunctions(),
+		sortFunctions: [ getSimpleSortFunctionBy( 'blog_name' ) ],
 	},
 	{
 		name: 'expire_renew',
@@ -58,7 +59,7 @@ export const allSitesViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
 	},
 	{
 		name: 'status',
@@ -96,7 +97,7 @@ export const siteSpecificViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'owner' ) ],
 	},
 	{
 		name: 'email',
@@ -109,7 +110,7 @@ export const siteSpecificViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
-		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
+		sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ) ],
 	},
 	{
 		name: 'status',
@@ -126,3 +127,33 @@ export const siteSpecificViewColumns = (
 	},
 	{ name: 'action', label: null, className: 'domains-table__action-ellipsis-column-header' },
 ];
+export const applyColumnSort = (
+	domains: PartialDomainData[],
+	domainData: Record< number, DomainData[] >,
+	columns: DomainsTableColumn[],
+	sortKey: string,
+	sortDirection: 'asc' | 'desc'
+) => {
+	const selectedColumnDefinition = columns.find( ( column ) => column.name === sortKey );
+
+	const getFullDomainData = ( domain: PartialDomainData ) =>
+		domainData[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
+
+	return [ ...domains ].sort( ( first, second ) => {
+		let result = 0;
+
+		const fullFirst = getFullDomainData( first );
+		const fullSecond = getFullDomainData( second );
+		if ( ! fullFirst || ! fullSecond ) {
+			return result;
+		}
+
+		for ( const sortFunction of selectedColumnDefinition?.sortFunctions ?? [] ) {
+			result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
+			if ( result !== 0 ) {
+				break;
+			}
+		}
+		return result;
+	} );
+};

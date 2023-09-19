@@ -24,7 +24,11 @@ import {
 	ReactNode,
 } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
-import { allSitesViewColumns, siteSpecificViewColumns } from '../domains-table-header/columns';
+import {
+	allSitesViewColumns,
+	siteSpecificViewColumns,
+	applyColumnSort,
+} from '../domains-table-header/columns';
 import { DomainsTableColumn } from '../domains-table-header/index';
 import { getDomainId } from '../get-domain-id';
 import { useDomainBulkUpdateStatus } from '../use-domain-bulk-update-status';
@@ -215,30 +219,17 @@ export const DomainsTable = ( props: DomainsTableProps ) => {
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
 
 	const sortedDomains = useMemo( () => {
-		const selectedColumnDefinition = domainsTableColumns.find(
-			( column ) => column.name === sortKey
+		if ( ! domains ) {
+			return;
+		}
+
+		return applyColumnSort(
+			domains,
+			fetchedSiteDomains,
+			domainsTableColumns,
+			sortKey,
+			sortDirection
 		);
-
-		const getFullDomainData = ( domain: PartialDomainData ) =>
-			fetchedSiteDomains?.[ domain.blog_id ]?.find( ( d ) => d.domain === domain.domain );
-
-		return domains?.sort( ( first, second ) => {
-			let result = 0;
-
-			const fullFirst = getFullDomainData( first );
-			const fullSecond = getFullDomainData( second );
-			if ( ! fullFirst || ! fullSecond ) {
-				return result;
-			}
-
-			for ( const sortFunction of selectedColumnDefinition?.sortFunctions || [] ) {
-				result = sortFunction( fullFirst, fullSecond, sortDirection === 'asc' ? 1 : -1 );
-				if ( result !== 0 ) {
-					break;
-				}
-			}
-			return result;
-		} );
 	}, [ fetchedSiteDomains, domains, sortKey, sortDirection, domainsTableColumns ] );
 
 	const filteredData = useFuzzySearch( {
