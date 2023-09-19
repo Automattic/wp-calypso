@@ -85,7 +85,7 @@ export function testDomain(
 		email_forwards_count: 0,
 		expiry_soon: false,
 		expired: false,
-		auto_renewing: 0,
+		auto_renewing: false,
 		pending_registration: false,
 		pending_registration_time: '',
 		has_email_forward_dns_records: null,

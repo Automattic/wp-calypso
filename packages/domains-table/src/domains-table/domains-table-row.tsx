@@ -16,6 +16,7 @@ import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
+import { DomainsTableStatusCTA } from './domains-table-status-cta';
 
 interface DomainsTableRowProps {
 	domain: PartialDomainData;
@@ -40,7 +41,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		handleSelectDomain,
 		isAllSitesView,
 		hideOwnerColumn,
-		domainStatusPurchaseActions,
+		domainStatus,
 		pendingUpdates,
 	} = useDomainRow( domain );
 	const { canSelectAnyDomains, domainsTableColumns } = useDomainsTable();
@@ -144,11 +145,19 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 								<LoadingPlaceholder style={ { width: `${ placeholderWidth }%` } } />
 							) : (
 								<DomainsTableStatusCell
-									siteSlug={ siteSlug }
-									currentDomainData={ currentDomainData }
-									domainStatusPurchaseActions={ domainStatusPurchaseActions }
+									domainStatus={ domainStatus }
 									pendingUpdates={ pendingUpdates }
 								/>
+							) }
+						</td>
+					);
+				}
+
+				if ( column.name === 'status_action' ) {
+					return (
+						<td key={ column.name }>
+							{ ! domainStatus?.callToAction || isLoadingRowDetails ? null : (
+								<DomainsTableStatusCTA callToAction={ domainStatus.callToAction } />
 							) }
 						</td>
 					);
