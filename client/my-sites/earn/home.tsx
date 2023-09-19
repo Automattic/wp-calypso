@@ -33,6 +33,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import StatsSection from './components/stats';
+import EarnLaunchpad from './launchpad';
 
 import './style.scss';
 
@@ -494,10 +495,11 @@ const Home = () => {
 				</div>
 			) }
 			{ ! isLoading && (
-				<>
+				<div>
+					<EarnLaunchpad />
 					<StatsSection />
 					<PromoSection { ...promos } />
-				</>
+				</div>
 			) }
 		</>
 	);

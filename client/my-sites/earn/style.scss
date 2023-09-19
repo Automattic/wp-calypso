@@ -1,5 +1,38 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+
+.earn__launchpad {
+	padding: 4px 20px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	margin-bottom: 16px;
+	display: flex;
+	gap: 30px;
+	background: #fff;
+
+	.earn__launchpad-header {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		.earn__launchpad-progress-bar-container {
+			margin: 5px;
+		}
+
+		.earn__launchpad-title {
+			flex: 1;
+			font-size: 1rem;
+			font-weight: 500;
+			font-family: $font-sf-pro-display;
+		}
+	}
+	.launchpad__checklist-wrapper {
+		flex: 1;
+	}
+	.checklist-item__task-content {
+		padding: 12px 0;
+	}
+}
 
 .earn .promo-section__promos img {
 	width: 48px;
