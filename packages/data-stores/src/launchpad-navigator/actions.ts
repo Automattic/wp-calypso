@@ -1,18 +1,22 @@
 import apiFetch, { type APIFetchOptions } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { STORE_KEY } from './constants';
+import {
+	LAUNCHPAD_NAVIGATOR_RECEIVE_ACTIVE_CHECKLIST_SLUG,
+	LAUNCHPAD_NAVIGATOR_REMOVE_CHECKLIST,
+	STORE_KEY,
+} from './constants';
 import type { GeneratorReturnType } from '../mapped-types';
 
 export const receiveActiveChecklistSlug = ( activeChecklistSlug: string | null ) =>
 	( {
-		type: 'LAUNCHPAD_NAVIGATOR_RECEIVE_ACTIVE_CHECKLIST_SLUG',
+		type: LAUNCHPAD_NAVIGATOR_RECEIVE_ACTIVE_CHECKLIST_SLUG,
 		active_checklist_slug: activeChecklistSlug,
 	} as const );
 
 export const removeChecklistFromNavigatorList = ( checklist_slug: string ) =>
 	( {
-		type: 'LAUNCHPAD_NAVIGATOR_REMOVE_CHECKLIST',
+		type: LAUNCHPAD_NAVIGATOR_REMOVE_CHECKLIST,
 		checklist_slug,
 	} as const );
 
