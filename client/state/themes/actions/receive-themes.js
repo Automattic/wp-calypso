@@ -25,17 +25,19 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 			 * because Jetpack theme API does not support search queries
 			 */
 			filteredThemes = filter( themes, ( theme ) => isThemeMatchingQuery( query, theme ) );
+
+			// Jetpack API returns all themes in one response (no paging)
+			found = filteredThemes.length;
 		}
 
 		if ( 'wporg' === siteId ) {
 			/*
 			 * We need to do client-side filtering for wporg results
-			 * because we fetch them directly from the wporg API
+			 * because we fetch them directly from the wporg API.
 			 */
 			filteredThemes = filter( themes, ( theme ) => ! isDelisted( theme ) );
+			found = filteredThemes.length;
 		}
-
-		found = filteredThemes.length;
 
 		dispatch( {
 			type: THEMES_REQUEST_SUCCESS,
