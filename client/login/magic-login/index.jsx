@@ -73,9 +73,10 @@ class MagicLogin extends Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
 		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
-			this.props.recordTracksEvent(
-				`calypso_${ this.props.oauth2Client.name }_magic_login_email_form`
-			);
+			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
+				client_id: this.props.oauth2Client.id,
+				client_name: this.props.oauth2Client.name,
+			} );
 		}
 	}
 
@@ -99,13 +100,17 @@ class MagicLogin extends Component {
 			}
 
 			if ( ! prevProps.showCheckYourEmail && showCheckYourEmail ) {
-				this.props.recordTracksEvent(
-					`calypso_${ oauth2Client.name }_magic_login_email_verification`
-				);
+				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_verification', {
+					client_id: oauth2Client.id,
+					client_name: oauth2Client.name,
+				} );
 			}
 
 			if ( prevProps.showCheckYourEmail && ! showCheckYourEmail ) {
-				this.props.recordTracksEvent( `calypso_${ oauth2Client.name }_magic_login_email_form` );
+				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
+					client_id: oauth2Client.id,
+					client_name: oauth2Client.name,
+				} );
 			}
 		}
 	}
@@ -233,7 +238,8 @@ class MagicLogin extends Component {
 							} );
 
 							this.props.recordTracksEvent(
-								`calypso_${ oauth2Client.name }_magic_login_click_resend_email`
+								'calypso_gravatar_powered_magic_login_click_resend_email',
+								{ client_id: oauth2Client.id, client_name: oauth2Client.name }
 							);
 						} }
 						disabled={ isSendingEmail }
@@ -247,7 +253,8 @@ class MagicLogin extends Component {
 							showMagicLogin();
 
 							this.props.recordTracksEvent(
-								`calypso_${ oauth2Client.name }_magic_login_click_use_different_email`
+								'calypso_gravatar_powered_magic_login_click_use_different_email',
+								{ client_id: oauth2Client.id, client_name: oauth2Client.name }
 							);
 						} }
 					/>
@@ -365,7 +372,8 @@ class MagicLogin extends Component {
 										href={ loginUrl }
 										onClick={ () =>
 											this.props.recordTracksEvent(
-												`calypso_${ oauth2Client.name }_magic_login_click_login_page_link`
+												'calypso_gravatar_powered_magic_login_click_login_page_link',
+												{ client_id: oauth2Client.id, client_name: oauth2Client.name }
 											)
 										}
 									/>
