@@ -1,5 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import {
+	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
@@ -23,6 +25,7 @@ import { downloadCloud, uploadCloud } from 'calypso/reader/icons';
 import { useDispatch } from 'calypso/state';
 import { markFollowsAsStale } from 'calypso/state/reader/follows/actions';
 import ReaderSiteSubscriptions from './reader-site-subscriptions';
+
 import './style.scss';
 
 const useMarkFollowsAsStaleOnUnmount = () => {
@@ -68,7 +71,8 @@ const SiteSubscriptionsManager = () => {
 
 					<SubscriptionsEllipsisMenu
 						toggleTitle={ translate( 'More' ) }
-						popoverClassName="site-subscriptions-manager__import-export-popover"
+						// popoverClassName="site-subscriptions-manager__import-export-popover"
+						popoverClassName="site-subscriptions-manager__more-actions-popover"
 						verticalToggle
 					>
 						<VStack spacing={ 1 }>
@@ -78,6 +82,9 @@ const SiteSubscriptionsManager = () => {
 								iconSize={ 20 }
 								exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS }
 							/>
+							<Button icon={ <Gridicon icon="bell" /> } href="/me/notifications">
+								{ translate( 'Manage notifications' ) }
+							</Button>
 						</VStack>
 					</SubscriptionsEllipsisMenu>
 				</HStack>

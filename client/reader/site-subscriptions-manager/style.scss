@@ -37,16 +37,25 @@
 		border-top: 1px solid $studio-gray-5;
 	}
 
-	&__import-export-popover {
+	&__more-actions-popover {
 		box-sizing: border-box;
 		width: 305px;
 
-		button.components-button {
-			svg {
-				fill: none;
+		.components-button {
+			cursor: pointer;
+			justify-content: flex-start;
+
+			&:visited {
+				color: inherit;
 			}
 
-			justify-content: flex-start;
+			&.reader-import-button,
+			&.reader-export-button {
+				svg {
+					fill: none;
+				}
+			}
+
 
 			.reader-import-button__label,
 			.reader-export-button__label {
