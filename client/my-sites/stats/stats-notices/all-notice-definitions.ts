@@ -51,10 +51,9 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! isOwnedByTeam51;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showUpgradeNoticeOnOdyssey = config.isEnabled( 'stats/paid-stats' ) && isOdysseyStats;
+			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
 
-			const showUpgradeNoticeForJetpackNotAtomic =
-				config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
+			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
 			return !! (
 				( showUpgradeNoticeOnOdyssey ||
@@ -90,10 +89,9 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! isOwnedByTeam51;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showUpgradeNoticeOnOdyssey = config.isEnabled( 'stats/paid-stats' ) && isOdysseyStats;
+			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
 
-			const showUpgradeNoticeForJetpackNotAtomic =
-				config.isEnabled( 'stats/paid-stats' ) && isSiteJetpackNotAtomic;
+			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
 			return !! (
 				( showUpgradeNoticeOnOdyssey ||
